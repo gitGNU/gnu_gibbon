@@ -1,0 +1,25 @@
+# German translations for Gibbon.
+# Copyright (C) 2009 Guido Flohr
+# This file is distributed under the same license as the Gibbon package.
+# Guido Flohr <guido@imperia.net>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gibbon 0.1.1\n"
+"Report-Msgid-Bugs-To: guido@imperia.net\n"
+"POT-Creation-Date: 2009-09-16 14:26+0300\n"
+"PO-Revision-Date: 2009-09-16 14:26+0300\n"
+"Last-Translator: Guido Flohr <guido@imperia.net>\n"
+"Language-Team: Guido Flohr <guido@imperia.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../data/gibbon.desktop.in.in.h:1
+msgid "Gtk+ frontend for the First Internet Backgammon Server FIBS"
+msgstr ""
+
+#: ../data/gibbon.desktop.in.in.h:2
+msgid "Play backgammon online on FIBs."
+msgstr ""

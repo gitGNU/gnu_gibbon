@@ -1,0 +1,9 @@
+[Desktop Entry]
+_Name=Gtk+ frontend for the First Internet Backgammon Server FIBS
+_Comment=Play backgammon online on FIBs.
+Exec=gibbon
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Games;GTK;
+X-later-GNOME-DocPath=gibbon/gibbon.xml
