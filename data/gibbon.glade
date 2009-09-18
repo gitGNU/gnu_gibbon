@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Sep 18 18:02:27 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Sep 18 18:06:37 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -344,6 +344,7 @@
                     </child>
                   </widget>
                   <packing>
+                    <property name="expand">False</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
@@ -353,7 +354,14 @@
                     <child>
                       <widget class="GtkComboBox" id="combobox1">
                         <property name="visible">True</property>
+                        <property name="items" translatable="yes">Kibitz
+Say
+Whisper</property>
                       </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                      </packing>
                     </child>
                     <child>
                       <widget class="GtkEntry" id="entry1">

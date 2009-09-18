@@ -1,6 +1,22 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Fri Sep 18 18:02:27 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Sep 18 18:06:37 2009 -->
 <interface>
+  <object class="GtkListStore" id="model1">
+    <columns>
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">Kibitz</col>
+      </row>
+      <row>
+        <col id="0">Say</col>
+      </row>
+      <row>
+        <col id="0">Whisper</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkUIManager" id="uimanager1">
     <child>
       <object class="GtkActionGroup" id="actiongroup1">
@@ -339,6 +355,7 @@
                     </child>
                   </object>
                   <packing>
+                    <property name="expand">False</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
@@ -348,7 +365,18 @@
                     <child>
                       <object class="GtkComboBox" id="combobox1">
                         <property name="visible">True</property>
+                        <property name="model">model1</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="renderer1"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                      </packing>
                     </child>
                     <child>
                       <object class="GtkEntry" id="entry1">
