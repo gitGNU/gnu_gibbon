@@ -33,7 +33,10 @@ AM_MAINTAINER_MODE
 
 AC_CONFIG_HEADERS(config.h)
 
+AC_PROG_LIBTOOL
+
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
+AC_PATH_PROG(GTK_BUILDER_CONVERT, gtk-builder-convert)
 IT_PROG_INTLTOOL([0.40.0])
 
 PKG_PROG_PKG_CONFIG
@@ -55,13 +58,16 @@ AM_GLIB_GNU_GETTEXT([external])
 m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.13.0])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.13.0])
 m4_define(gibbon_gconf_requirement, [gconf-2.0])
+m4_define(gibbon_libglade_requirement, [libglade-2.0 >= 2.6.0])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_gtk_requirement
     gibbon_gconf_requirement
+    gibbon_libglade_requirement
 )
+
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
-GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement ["]
+GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_libglade_requirement ["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 GIBBON_LIBS="${GIBBON_LIBS}"
@@ -73,6 +79,7 @@ AM_GCONF_SOURCE_2
 AC_CONFIG_FILES([ 
     Makefile
     src/Makefile
+    data/Makefile
     data/gibbon.desktop.in
     po/Makefile.in
 ])

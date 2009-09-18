@@ -19,4 +19,5 @@
 
 [encoding: UTF-8]
 data/gibbon.desktop.in.in
+data/gibbon.glade
 src/gibbon.c

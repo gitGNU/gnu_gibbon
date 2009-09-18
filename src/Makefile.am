@@ -24,8 +24,11 @@ AM_CPPFLAGS = 				\
 	-DLIBDIR=\""$(libdir)"\"
 
 gibbon_SOURCES =	\
-	gibbon.c 
+	gibbon.c 	\
+	gtkmainwindow.c
 
-noinst_HEADERS = game.h
+noinst_HEADERS = game.h \
+	gtkmainwindow.h
 
+gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS)

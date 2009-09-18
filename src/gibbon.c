@@ -21,20 +21,116 @@
 
 #include <locale.h>
 
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
+
+#include "gtkmainwindow.h"
+
+static gchar *builder_filename = NULL;
+
+static const GOptionEntry options[] =
+{
+	{ "ui-file", 'u', 0, G_OPTION_ARG_FILENAME, &builder_filename,
+	  N_("Use alternatve UI definition (developers only)"),
+	  N_("FILENAME")}, 
+	{ NULL }
+};
+
+/* FIXME! Handlers do not belong here! */
+G_MODULE_EXPORT void on_window_destroy (GtkObject *object, gpointer user_data);
+
+static void init_i18n (void);
+static guint parse_command_line (int argc, char *argv[]);
+static GtkBuilder *get_builder (void);
 
 int
 main(int argc, char *argv[])
-{
-	gchar *locale_dir;
-
-	setlocale(LC_ALL, "");
-
-	locale_dir = g_build_filename(DATADIR, "locale", NULL);
-	bindtextdomain(GETTEXT_PACKAGE, locale_dir);
-	g_free(locale_dir);
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	textdomain(GETTEXT_PACKAGE);
+{	
+        GtkBuilder *builder;
+        GtkWidget *window;
+        
+        init_i18n ();
+        
+        if (!parse_command_line (argc, argv))
+                return 1;
+                
+        gtk_init (&argc, &argv);
+        
+        builder = get_builder ();
+        if (!builder)
+                return 1;
+                
+        window = main_window (builder);
+        if (!window)
+                return 1;
+        
+        gtk_widget_show (window);       
+        gtk_main ();
 
 	return 0;
+}
+
+static void
+init_i18n (void)
+{
+        gchar *locale_dir;
+
+        setlocale(LC_ALL, "");
+
+        locale_dir = g_build_filename(DATADIR, "locale", NULL);
+        bindtextdomain(GETTEXT_PACKAGE, locale_dir);
+        g_free(locale_dir);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+        textdomain(GETTEXT_PACKAGE);
+}
+ 
+static guint 
+parse_command_line (int argc, char *argv[])
+{
+        GOptionContext *context;
+        GError *error = NULL;
+
+        context = g_option_context_new (_("- Gtk+ frontend for FIBS"));
+        g_option_context_add_main_entries (context, options, PACKAGE);
+        g_option_context_add_group (context, gtk_get_option_group (TRUE));
+        g_option_context_parse (context, &argc, &argv, &error);
+        
+        if (error) {
+                g_print ("%s\n%s\n",
+                         error->message,
+                         _("Run `%s --help' for more information!"));
+                g_error_free (error);
+                return 0;
+        }
+        
+        return 1;
+}
+
+static GtkBuilder *
+get_builder (void)
+{
+        GtkBuilder *builder = gtk_builder_new ();
+        gchar *builder_filename_buf = NULL;
+        GError *error = NULL;
+        
+        /* It is unsafe to guess that we are in a development environment
+         * just because there is a data/gibbon.xml file.  Rather require
+         * an option!
+         */
+        if (!builder_filename)
+                builder_filename = builder_filename_buf 
+                        = g_build_filename(DATADIR, PACKAGE, 
+                                           PACKAGE ".xml", NULL);
+                                           
+        if (!gtk_builder_add_from_file (builder, builder_filename, &error)) {
+                g_print ("%s\n", error->message);
+                g_error_free (error);
+                g_object_unref (G_OBJECT (builder));              
+                return NULL;
+        }
+        
+        if (builder_filename_buf)
+                g_free(builder_filename_buf);
+        
+        return builder;
 }

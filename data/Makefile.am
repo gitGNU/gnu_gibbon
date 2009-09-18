@@ -15,14 +15,25 @@
 # License along with Gibbon; if not, see <http://www.gnu.org/licenses/>.
 
 desktopdir = $(datadir)/applications
-desktop_in_files = gibbon.desktop.in
+desktop_in_files = $(PACKAGE).desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+
 @INTLTOOL_DESKTOP_RULE@
+
+glade_files = $(PACKAGE).glade
+
+gtkbuilderdir = $(datadir)/$(PACKAGE)
+gtkbuilder_DATA = $(PACKAGE).xml
 
 EXTRA_DIST = \
 	$(desktop_in_files) \
 	$(schemas_in_files) \
-	gibbon.pc.in
+	$(glade_files) \
+	$(gtkbuilder_DATA) \
+	$(PACKAGE).pc.in
 
 CLEANFILES = \
 	$(desktop_DATA)
+
+$(PACKAGE).xml: $(PACKAGE).glade
+	@GTK_BUILDER_CONVERT@ $(PACKAGE).glade $(PACKAGE).xml
