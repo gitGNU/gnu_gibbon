@@ -1,0 +1,13 @@
+*.o
+*.a
+/po/stamp-it
+/src/gibbon
+/src/gibbon.exe
+autom4te.cache
+.*
+!.gitignore
+Makefile
+config.h
+config.log
+config.status
+/stamp-h1
