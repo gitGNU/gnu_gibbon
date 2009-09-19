@@ -15,15 +15,26 @@
  * License along with Gibbon; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_GTK_MAINWINDOW_H
-#define _GIBBON_GTK_MAINWINDOW_H
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
-extern GtkWidget *main_window(GtkBuilder *builder);
+#include "gtkconnectiondialog.h"
 
-#endif
+GtkWidget *connection_dialog(GtkBuilder *builder)
+{
+        GtkWidget *window = GTK_WIDGET (gtk_builder_get_object (builder, 
+                                                                "connection_dialog"));
+        if (!window) {
+                g_print (_("Internal error: Cannot find widget '%s'!\n"),
+                           "connection_dialog");
+                return NULL;
+        }
+        
+        gtk_builder_connect_signals (builder, NULL);          
+        g_object_unref (G_OBJECT (builder));
+
+        return window;
+}
