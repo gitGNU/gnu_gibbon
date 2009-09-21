@@ -19,6 +19,12 @@
 # Please keep this file in alphabetical order.
 
 [encoding: UTF-8]
+data/gibbon.desktop.in
 data/gibbon.desktop.in.in
 data/gibbon.glade
+data/gibbon.xml
+src/gibbon-resolver.c
 src/gibbon.c
+src/gtkconnectiondialog.c
+src/gtkmainwindow.c
+src/gui.c

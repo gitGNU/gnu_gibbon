@@ -30,8 +30,7 @@ EXTRA_DIST = \
 	$(desktop_in_files) \
 	$(schemas_in_files) \
 	$(glade_files) \
-	$(gtkbuilder_DATA) \
-	$(PACKAGE).pc.in
+	$(gtkbuilder_DATA)
 
 CLEANFILES = \
 	$(desktop_DATA)
