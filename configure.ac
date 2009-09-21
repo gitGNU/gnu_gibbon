@@ -1,18 +1,19 @@
-dnl This file is part of Gibbon 
-dnl Copyright (C) 2009 Guido Flohr
-dnl 
-dnl Gibbon is free software; you can redistribute it and/or
-dnl modify it under the terms of the GNU Lesser General Public
-dnl License as published by the Free Software Foundation; either
-dnl version 3 of the License, or (at your option) any later version.
+dnl This file is part of Gibbon, a graphical frontend to the First Internet 
+dnl Backgammon Server FIBS.
+dnl Copyright (C) 2009 Guido Flohr, http://guido-flohr.net/.
+dnl
+dnl Gibbon is free software: you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation, either version 3 of the License, or
+dnl (at your option) any later version.
 dnl
 dnl Gibbon is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl Lesser General Public License for more details.
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
 dnl
-dnl You should have received a copy of the GNU Lesser General Public
-dnl License along with Gibbon; if not, see <http://www.gnu.org/licenses/>.
+dnl You should have received a copy of the GNU General Public License
+dnl along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ(2.63)
 

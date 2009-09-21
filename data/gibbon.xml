@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Fri Sep 18 19:53:56 2009 -->
+<!--Generated with glade3 3.4.5 on Mon Sep 21 20:24:56 2009 -->
 <interface>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -27,15 +27,18 @@
           </object>
         </child>
         <child>
-          <object class="GtkAction" id="menu_connect_item">
-            <property name="stock_id" translatable="yes">gtk-connect</property>
-            <property name="name">menu_connect_item</property>
+          <object class="GtkAction" id="connect_menu_item">
+            <property name="stock_id">gtk-network</property>
+            <property name="name">connect_menu_item</property>
+            <property name="label" translatable="yes">_Connect</property>
+            <signal handler="on_connect_menu_item_activate" name="activate"/>
           </object>
         </child>
         <child>
-          <object class="GtkAction" id="menu_disconnect_item">
+          <object class="GtkAction" id="disconnect_menu_item">
             <property name="stock_id" translatable="yes">gtk-disconnect</property>
-            <property name="name">menu_disconnect_item</property>
+            <property name="name">disconnect_menu_item</property>
+            <signal handler="on_disconnect_menu_item_activate" name="activate"/>
           </object>
         </child>
         <child>
@@ -62,8 +65,8 @@
     <ui>
       <menubar name="menubar">
         <menu action="menuitem1">
-          <menuitem action="menu_connect_item"/>
-          <menuitem action="menu_disconnect_item"/>
+          <menuitem action="connect_menu_item"/>
+          <menuitem action="disconnect_menu_item"/>
           <separator/>
           <menuitem action="imagemenuitem5"/>
         </menu>
@@ -86,10 +89,97 @@
         <child>
           <object class="GtkTable" id="table1">
             <property name="visible">True</property>
-            <property name="n_rows">5</property>
+            <property name="n_rows">6</property>
             <property name="n_columns">2</property>
             <child>
               <placeholder/>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Server</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkEntry" id="conn_entry_server">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">fibs.com</property>
+                <property name="truncate_multiline">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Port</property>
+              </object>
+              <packing>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="conn_entry_port">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">4321</property>
+                <property name="truncate_multiline">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Login</property>
+              </object>
+              <packing>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="conn_entry_login">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Password</property>
+              </object>
+              <packing>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="conn_entry_password">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="visibility">False</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
             </child>
             <child>
               <object class="GtkCheckButton" id="conn_checkbutton_remember">
@@ -106,88 +196,21 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="conn_entry_password">
+              <object class="GtkLinkButton" id="register_link">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="has_tooltip">True</property>
+                <property name="label" translatable="yes">Get new account on fibs.com</property>
+                <property name="relief">GTK_RELIEF_NONE</property>
+                <property name="uri">http://fibs.com/javafibs/register.html</property>
+                <signal handler="on_register_link_clicked" name="clicked"/>
               </object>
               <packing>
-                <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
+                <property name="top_attach">5</property>
+                <property name="bottom_attach">6</property>
               </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label4">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Password</property>
-              </object>
-              <packing>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="entry2">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label3">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Username</property>
-              </object>
-              <packing>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="conn_entry_port">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text" translatable="yes">4321</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Port</property>
-              </object>
-              <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="conn_entry_server">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text" translatable="yes">fibs.com</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Server</property>
-              </object>
             </child>
           </object>
           <packing>
@@ -205,6 +228,7 @@
                 <property name="receives_default">True</property>
                 <property name="label" translatable="yes">gtk-cancel</property>
                 <property name="use_stock">True</property>
+                <signal handler="on_conn_button_cancel_clicked" name="clicked"/>
               </object>
             </child>
             <child>
@@ -216,6 +240,7 @@
                 <property name="receives_default">True</property>
                 <property name="label" translatable="yes">gtk-connect</property>
                 <property name="use_stock">True</property>
+                <signal handler="on_conn_button_connect_clicked" name="clicked"/>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -231,6 +256,7 @@
     </child>
     <action-widgets>
       <action-widget response="0">conn_checkbutton_remember</action-widget>
+      <action-widget response="0">register_link</action-widget>
       <action-widget response="0">conn_button_cancel</action-widget>
       <action-widget response="0">conn_button_connect</action-widget>
     </action-widgets>
@@ -255,7 +281,9 @@
             <child>
               <object class="GtkToolButton" id="toolbar_connect_button">
                 <property name="visible">True</property>
-                <property name="stock_id">gtk-connect</property>
+                <property name="label" translatable="yes">Connect</property>
+                <property name="stock_id">gtk-network</property>
+                <signal handler="toggle_connect" name="clicked"/>
               </object>
               <packing>
                 <property name="homogeneous">True</property>
@@ -402,13 +430,13 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="resize">False</property>
+                    <property name="resize">True</property>
                     <property name="shrink">True</property>
                   </packing>
                 </child>
               </object>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>

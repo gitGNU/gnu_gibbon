@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Sep 18 19:53:56 2009 -->
+<!--Generated with glade3 3.4.5 on Mon Sep 21 20:24:56 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -15,10 +15,97 @@
         <child>
           <widget class="GtkTable" id="table1">
             <property name="visible">True</property>
-            <property name="n_rows">5</property>
+            <property name="n_rows">6</property>
             <property name="n_columns">2</property>
             <child>
               <placeholder/>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Server</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_server">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">fibs.com</property>
+                <property name="truncate_multiline">True</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Port</property>
+              </widget>
+              <packing>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_port">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">4321</property>
+                <property name="truncate_multiline">True</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Login</property>
+              </widget>
+              <packing>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_login">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Password</property>
+              </widget>
+              <packing>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_password">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="visibility">False</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
             </child>
             <child>
               <widget class="GtkCheckButton" id="conn_checkbutton_remember">
@@ -36,88 +123,22 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkEntry" id="conn_entry_password">
+              <widget class="GtkLinkButton" id="register_link">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="has_tooltip">True</property>
+                <property name="label" translatable="yes">Get new account on fibs.com</property>
+                <property name="relief">GTK_RELIEF_NONE</property>
+                <property name="response_id">0</property>
+                <property name="uri">http://fibs.com/javafibs/register.html</property>
+                <signal name="clicked" handler="on_register_link_clicked"/>
               </widget>
               <packing>
-                <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
+                <property name="top_attach">5</property>
+                <property name="bottom_attach">6</property>
               </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label4">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Password</property>
-              </widget>
-              <packing>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="entry2">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label3">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Username</property>
-              </widget>
-              <packing>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_port">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text" translatable="yes">4321</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Port</property>
-              </widget>
-              <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_server">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text" translatable="yes">fibs.com</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Server</property>
-              </widget>
             </child>
           </widget>
           <packing>
@@ -136,6 +157,7 @@
                 <property name="label" translatable="yes">gtk-cancel</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">0</property>
+                <signal name="clicked" handler="on_conn_button_cancel_clicked"/>
               </widget>
             </child>
             <child>
@@ -148,6 +170,7 @@
                 <property name="label" translatable="yes">gtk-connect</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">0</property>
+                <signal name="clicked" handler="on_conn_button_connect_clicked"/>
               </widget>
               <packing>
                 <property name="position">1</property>
@@ -179,19 +202,27 @@
                   <widget class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImageMenuItem" id="menu_connect_item">
+                      <widget class="GtkImageMenuItem" id="connect_menu_item">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-connect</property>
+                        <property name="label" translatable="yes">_Connect</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_connect_menu_item_activate"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image1">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-network</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkImageMenuItem" id="menu_disconnect_item">
+                      <widget class="GtkImageMenuItem" id="disconnect_menu_item">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="label" translatable="yes">gtk-disconnect</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_disconnect_menu_item_activate"/>
                       </widget>
                     </child>
                     <child>
@@ -244,7 +275,9 @@
             <child>
               <widget class="GtkToolButton" id="toolbar_connect_button">
                 <property name="visible">True</property>
-                <property name="stock_id">gtk-connect</property>
+                <property name="label" translatable="yes">Connect</property>
+                <property name="stock_id">gtk-network</property>
+                <signal name="clicked" handler="toggle_connect"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>
@@ -387,13 +420,13 @@ Whisper</property>
                     </child>
                   </widget>
                   <packing>
-                    <property name="resize">False</property>
+                    <property name="resize">True</property>
                     <property name="shrink">True</property>
                   </packing>
                 </child>
               </widget>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>

@@ -1,18 +1,20 @@
-/* This file is part of Gibbon
- * Copyright (C) 2009 Guido Flohr
- * 
- * Gibbon is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
+/*
+ * This file is part of Gibbon, a graphical frontend to the First Internet 
+ * Backgammon Server FIBS.
+ * Copyright (C) 2009 Guido Flohr, http://guido-flohr.net/.
+ *
+ * Gibbon is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * Gibbon is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Gibbon; if not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -24,7 +26,10 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "gtkmainwindow.h"
+#include "gui.h"
+#include "gibbon.h"
+
+GibbonConnection *connection = NULL;
 
 static gchar *builder_filename = NULL;
 
@@ -36,33 +41,40 @@ static const GOptionEntry options[] =
 	{ NULL }
 };
 
-/* FIXME! Handlers do not belong here! */
-G_MODULE_EXPORT void on_window_destroy (GtkObject *object, gpointer user_data);
-
 static void init_i18n (void);
 static guint parse_command_line (int argc, char *argv[]);
-static GtkBuilder *get_builder (void);
 
 int
 main(int argc, char *argv[])
 {	
-        GtkBuilder *builder;
-        GtkWidget *window;
+        gchar *builder_filename_buf = NULL;
         
         init_i18n ();
         
         if (!parse_command_line (argc, argv))
                 return 1;
-                
+        
+        if (!g_thread_supported ()) 
+                g_thread_init (NULL);
+        
+        connection = gibbon_connection_new ();
+        
         gtk_init (&argc, &argv);
         
-        builder = get_builder ();
-        if (!builder)
+        /* It is unsafe to guess that we are in a development environment
+         * just because there is a data/gibbon.xml file.  Rather require
+         * an option!
+         */
+        if (!builder_filename)
+                builder_filename = builder_filename_buf 
+                        = g_build_filename(DATADIR, PACKAGE, 
+                                           PACKAGE ".xml", NULL);
+                                           
+        if (!init_gui (builder_filename))               
                 return 1;
-                
-        window = main_window (builder);
-        if (!window)
-                return 1;
+
+        if (builder_filename_buf)
+                g_free(builder_filename_buf);
         
         gtk_widget_show (window);       
         gtk_main ();
@@ -104,33 +116,4 @@ parse_command_line (int argc, char *argv[])
         }
         
         return 1;
-}
-
-static GtkBuilder *
-get_builder (void)
-{
-        GtkBuilder *builder = gtk_builder_new ();
-        gchar *builder_filename_buf = NULL;
-        GError *error = NULL;
-        
-        /* It is unsafe to guess that we are in a development environment
-         * just because there is a data/gibbon.xml file.  Rather require
-         * an option!
-         */
-        if (!builder_filename)
-                builder_filename = builder_filename_buf 
-                        = g_build_filename(DATADIR, PACKAGE, 
-                                           PACKAGE ".xml", NULL);
-                                           
-        if (!gtk_builder_add_from_file (builder, builder_filename, &error)) {
-                g_print ("%s\n", error->message);
-                g_error_free (error);
-                g_object_unref (G_OBJECT (builder));              
-                return NULL;
-        }
-        
-        if (builder_filename_buf)
-                g_free(builder_filename_buf);
-        
-        return builder;
 }
