@@ -20,6 +20,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <sys/types.h>
+#include <netdb.h>
+
 #include "gibbon-resolver.h"
 #include "gui.h"
 
@@ -81,10 +84,10 @@ gibbon_resolver_class_init (GibbonResolverClass *klass)
                               G_SIGNAL_RUN_FIRST,
                               0,
                               NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              g_cclosure_marshal_VOID__POINTER,
                               G_TYPE_NONE,
                               1,
-                              G_TYPE_STRING);
+                              G_TYPE_POINTER);
         
 }
 
@@ -101,14 +104,24 @@ gibbon_resolver_new (const gchar *hostname)
 static gpointer *
 gibbon_resolver_resolve_worker (gpointer data)
 {
-        /* GibbonResolver *self = GIBBON_RESOLVER (data); */
-
-        g_print ("Start resolving ...\n");
-        sleep (500);
-
-        /* g_signal_emit (G_OBJECT (self), signals[RESOLVED], 0, hostname, 0); */
+        GibbonResolver *self = GIBBON_RESOLVER (data);
+        struct addrinfo hints;
+        struct addrinfo *result;
+        int s;
+ 
+        memset (&hints, 0, sizeof hints);       
+        hints.ai_family = AF_UNSPEC;
+        hints.ai_socktype = SOCK_STREAM;
         
-        g_print ("Resolver thread exiting ...\n");
+        s = getaddrinfo (self->priv->hostname, NULL, &hints, &result);
+        if (s != 0) {
+                display_error (_("Error resolving address for %s: %s\n"),
+                               self->priv->hostname, gai_strerror (s));
+                result = NULL;
+        }
+        
+        g_signal_emit (G_OBJECT (self), signals[RESOLVED], 0, result);
+        
         return NULL;
 }
 
@@ -131,4 +144,12 @@ gibbon_resolver_resolve (GibbonResolver *self)
         }
         
         return 0;
+}
+
+const gchar *
+gibbon_resolver_get_hostname (GibbonResolver *self)
+{
+        g_return_val_if_fail (GIBBON_IS_RESOLVER (self), NULL);
+        
+        return self->priv->hostname;
 }

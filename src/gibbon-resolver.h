@@ -51,6 +51,8 @@ struct _GibbonResolver
 GibbonResolver *gibbon_resolver_new (const gchar *hostname);
 gint gibbon_resolver_resolve (GibbonResolver *self);
 
+const gchar *gibbon_resolver_get_hostname (GibbonResolver *self);
+
 G_END_DECLS
 
 #endif

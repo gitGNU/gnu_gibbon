@@ -48,8 +48,6 @@ struct _GibbonConnectionPrivate {
         gchar *password;
         
         enum gibbon_connection_state state;
-        
-        GibbonResolver *resolver;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -61,9 +59,8 @@ struct _GibbonConnectionPrivate {
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
 
 static void gibbon_connection_connect_addr (GibbonConnection *self,
-                                            GibbonResolver *resolver,
-                                            const gchar *hostname,
-                                            const void *result);
+                                            const gpointer addrinfo,
+                                            GObject *resolver);
 
 static void
 gibbon_connection_init (GibbonConnection *conn)
@@ -78,8 +75,6 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->login = NULL;
         
         conn->priv->state = GIBBON_CONNECTION_DISCONNECTED;
-        
-        conn->priv->resolver = NULL;
 }
 
 static void
@@ -100,10 +95,6 @@ gibbon_connection_finalize (GObject *object)
         if (conn->priv->login)
                 g_free (conn->priv->login);
         conn->priv->login = NULL;
-
-        if (conn->priv->resolver)
-                g_object_unref (G_OBJECT (conn->priv->resolver));
-        conn->priv->resolver = NULL;
 
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -233,6 +224,8 @@ gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
 void
 gibbon_connection_connect (GibbonConnection *self)
 {
+        GibbonResolver *resolver;
+        
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
         g_return_if_fail (gibbon_connection_disconnected (self));
@@ -248,34 +241,38 @@ gibbon_connection_connect (GibbonConnection *self)
                        self->priv->host);
         
         self->priv->state = GIBBON_CONNECTION_RESOLVING;        
-        if (self->priv->resolver)
-                g_object_unref (G_OBJECT (self->priv->resolver));
-        self->priv->resolver = gibbon_resolver_new (self->priv->host);
-        g_signal_connect_swapped (G_OBJECT (self->priv->resolver), "resolved",
+        
+        resolver = gibbon_resolver_new (self->priv->host);
+        g_signal_connect_swapped (G_OBJECT (resolver), "resolved",
                                   G_CALLBACK (gibbon_connection_connect_addr), 
                                   self);
 
-        if (gibbon_resolver_resolve (GIBBON_RESOLVER (self->priv->resolver))) {
-                g_assert (0);
+        if (gibbon_resolver_resolve (resolver)) {
+                /* The resolver has displayed the error message.  */
+                gibbon_connection_disconnect (self);
         }
 }
 
 void
 gibbon_connection_connect_addr (GibbonConnection *self, 
-                                GibbonResolver *resolver,
-                                const gchar *hostname,
-                                const void *result)
+                                const gpointer addrinfo,
+                                GObject *resolver)
 {
-        g_print ("Connection?\n");
+        const gchar *hostname;
+        
+        g_return_if_fail (GIBBON_IS_RESOLVER (resolver));
+
+        hostname = gibbon_resolver_get_hostname (GIBBON_RESOLVER (resolver));        
+        g_object_unref (resolver);
+                
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        g_print ("Resolving?\n");
         if (self->priv->state != GIBBON_CONNECTION_RESOLVING)
                 return;
-        g_print ("Result for hostname %s?\n", self->priv->host);
         if (g_strcmp0 (self->priv->host, hostname) != 0)
                 return;
                 
-        g_print ("Not yet implemented :-(\n");
+        g_print ("%s resolved, connecting not yet implemented :-(\n",
+                 hostname);
 }
         
 gboolean
@@ -297,8 +294,4 @@ gibbon_connection_disconnect (GibbonConnection *self)
         self->priv->state = GIBBON_CONNECTION_DISCONNECTED;
         g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
                        self->priv->host);
-         
-        if (self->priv->resolver)
-                g_object_unref (G_OBJECT (self->priv->resolver));
-        self->priv->resolver = NULL;
 }

@@ -71,6 +71,24 @@ PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
 GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_libglade_requirement ["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
+AC_CHECK_LIB(nsl, gethostbyname)
+AC_CHECK_LIB(socket, connect)
+
+AC_CHECK_FUNC(res_query, ,
+  [AC_CHECK_LIB(resolv, res_query, [],
+    [ save_libs="$LIBS"
+      LIBS="-lresolv $LIBS"
+      AC_MSG_CHECKING([for res_query in -lresolv (alternate version)])
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([[#include <resolv.h>]], [[res_query(0,0,0,0,0)]])], 
+        [ AC_MSG_RESULT(yes) ],
+        [ AC_MSG_RESULT(no)
+          LIBS="$save_libs"
+          AC_CHECK_LIB(bind, res_query,
+            [], [ AC_MSG_ERROR(res_query not found) ] ) ] ) ] )
+  ]
+)
+
 GIBBON_LIBS="${GIBBON_LIBS}"
 AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
