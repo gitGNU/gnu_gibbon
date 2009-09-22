@@ -69,10 +69,11 @@ am__vpath_adj = case $$p in \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(desktopdir)" \
-	"$(DESTDIR)$(gtkbuilderdir)"
+	"$(DESTDIR)$(gtkbuilderdir)" "$(DESTDIR)$(schemasdir)"
 desktopDATA_INSTALL = $(INSTALL_DATA)
 gtkbuilderDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(desktop_DATA) $(gtkbuilder_DATA)
+schemasDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(desktop_DATA) $(gtkbuilder_DATA) $(schemas_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
@@ -239,6 +240,9 @@ top_srcdir = @top_srcdir@
 desktopdir = $(datadir)/applications
 desktop_in_files = $(PACKAGE).desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+schemasdir = $(GCONF_SCHEMA_FILE_DIR)
+schemas_in_files = $(PACKAGE).schemas.in
+schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
 glade_files = $(PACKAGE).glade
 gtkbuilderdir = $(datadir)/$(PACKAGE)
 gtkbuilder_DATA = $(PACKAGE).xml
@@ -325,6 +329,23 @@ uninstall-gtkbuilderDATA:
 	  echo " rm -f '$(DESTDIR)$(gtkbuilderdir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(gtkbuilderdir)/$$f"; \
 	done
+install-schemasDATA: $(schemas_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(schemasdir)" || $(MKDIR_P) "$(DESTDIR)$(schemasdir)"
+	@list='$(schemas_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(schemasDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(schemasdir)/$$f'"; \
+	  $(schemasDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(schemasdir)/$$f"; \
+	done
+
+uninstall-schemasDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(schemas_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(schemasdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(schemasdir)/$$f"; \
+	done
 tags: TAGS
 TAGS:
 
@@ -362,7 +383,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(gtkbuilderdir)"; do \
+	for dir in "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(gtkbuilderdir)" "$(DESTDIR)$(schemasdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -408,7 +429,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-desktopDATA install-gtkbuilderDATA
+install-data-am: install-data-local install-desktopDATA \
+	install-gtkbuilderDATA install-schemasDATA
 
 install-dvi: install-dvi-am
 
@@ -442,25 +464,35 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-desktopDATA uninstall-gtkbuilderDATA
+uninstall-am: uninstall-desktopDATA uninstall-gtkbuilderDATA \
+	uninstall-schemasDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-desktopDATA install-dvi \
-	install-dvi-am install-exec install-exec-am \
-	install-gtkbuilderDATA install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-desktopDATA uninstall-gtkbuilderDATA
-
+	install-data install-data-am install-data-local \
+	install-desktopDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-gtkbuilderDATA install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-schemasDATA install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am uninstall uninstall-am uninstall-desktopDATA \
+	uninstall-gtkbuilderDATA uninstall-schemasDATA
 
 @INTLTOOL_DESKTOP_RULE@
+@INTLTOOL_SCHEMAS_RULE@
+
+@GCONF_SCHEMAS_INSTALL_TRUE@install-data-local:
+@GCONF_SCHEMAS_INSTALL_TRUE@	if test -z "$(DESTDIR)" ; then \
+@GCONF_SCHEMAS_INSTALL_TRUE@                for p in $(schemas_DATA) ; do \
+@GCONF_SCHEMAS_INSTALL_TRUE@			GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(top_builddir)/data/$$p ; \
+@GCONF_SCHEMAS_INSTALL_TRUE@		done \
+@GCONF_SCHEMAS_INSTALL_TRUE@	fi
+@GCONF_SCHEMAS_INSTALL_FALSE@install-data-local:
 
 $(PACKAGE).xml: $(PACKAGE).glade
 	@GTK_BUILDER_CONVERT@ $(PACKAGE).glade $(PACKAGE).xml

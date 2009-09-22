@@ -32,6 +32,7 @@ GtkBuilder *builder = NULL;
 
 GtkWidget *window = NULL;
 GtkWidget *connection_dialog = NULL;
+GConfClient *conf_client = NULL;
 
 static GtkWidget *statusbar = NULL;
 
@@ -44,6 +45,15 @@ static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
 gint
 init_gui (const gchar *builder_filename)
 {
+        const gchar *default_server;
+        gint default_port;
+        gchar *default_port_str;
+        const gchar *default_login;
+        const gchar *default_password;
+        gboolean default_save_password;
+        GObject *entry;
+        GObject *check;
+        
         builder = get_builder (builder_filename);
         
         if (!builder)
@@ -83,6 +93,61 @@ init_gui (const gchar *builder_filename)
                           G_CALLBACK (cb_disconnected), NULL);
 
         set_state_disconnected ();
+        
+        /* FIXME! All this stuff has to go into a new class
+         * GibbonPreferences.
+         */
+        conf_client = gconf_client_get_default ();
+        
+        default_server = 
+                gconf_client_get_string (conf_client,
+                                         GIBBON_GCONF_PREFS_PREFIX "server",
+                                         NULL);
+        default_port = 
+                gconf_client_get_int (conf_client,
+                                      GIBBON_GCONF_PREFS_PREFIX "port",
+                                      NULL);
+        default_login = 
+                gconf_client_get_string (conf_client,
+                                         GIBBON_GCONF_PREFS_PREFIX "login",
+                                         NULL);
+        default_save_password = 
+                gconf_client_get_bool (conf_client,
+                                       GIBBON_GCONF_PREFS_PREFIX "save_pwd",
+                                       NULL);
+        default_password = default_save_password ?
+                gconf_client_get_string (conf_client,
+                                         GIBBON_GCONF_PREFS_PREFIX "password",
+                                         NULL)
+                : NULL;
+        
+        if (default_server) {
+                entry = gtk_builder_get_object (builder, "conn_entry_server");
+                gtk_entry_set_text (GTK_ENTRY (entry), default_server);
+        }
+        
+        if (default_port) {
+                entry = gtk_builder_get_object (builder, "conn_entry_port");
+                default_port_str = g_strdup_printf ("%d", default_port);
+                gtk_entry_set_text (GTK_ENTRY (entry), default_port_str); 
+                g_free (default_port_str);
+        }
+        
+        if (default_login) {
+                entry = gtk_builder_get_object (builder, "conn_entry_login");
+                gtk_entry_set_text (GTK_ENTRY (entry), default_login);
+        }
+        
+        check = gtk_builder_get_object (builder, "conn_checkbutton_remember");
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), 
+                                      default_save_password);
+        
+        entry = gtk_builder_get_object (builder, "conn_entry_password");
+        if (default_save_password && default_password) {
+                gtk_entry_set_text (GTK_ENTRY (entry), default_password);
+        } else {
+                gtk_entry_set_text (GTK_ENTRY (entry), "");
+        }
         
 	return 1;
 }

@@ -25,11 +25,16 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <gconf/gconf-client.h>
+
+#define GIBBON_GCONF_PREFIX "/apps/gibbon/"
+#define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
 
 extern GtkBuilder *builder;
 
 extern GtkWidget *window;
 extern GtkWidget *connection_dialog;
+extern GConfClient *conf_client;
 
 extern gint init_gui (const gchar *builder_filename);
 extern const gchar *get_trimmed_entry_text (const gchar *id);

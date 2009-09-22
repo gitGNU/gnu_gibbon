@@ -39,6 +39,7 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         const gchar *port = get_trimmed_entry_text ("conn_entry_port");
         const gchar *login = get_trimmed_entry_text ("conn_entry_login");
         const gchar *password = get_entry_text ("conn_entry_password");
+        GObject *check_button;
         unsigned long portno;
         char *endptr;
         
@@ -90,6 +91,45 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         gibbon_connection_set_port (connection, portno);
         gibbon_connection_set_login (connection, login);
         gibbon_connection_set_password (connection, password);
+        
+        gconf_client_set_string (conf_client, 
+                                 GIBBON_GCONF_PREFS_PREFIX "server",
+                                 server,
+                                 NULL);
+        gconf_client_set_int (conf_client,
+                              GIBBON_GCONF_PREFS_PREFIX "port",
+                              portno,
+                              NULL);
+        gconf_client_set_string (conf_client, 
+                                 GIBBON_GCONF_PREFS_PREFIX "login",
+                                 login,
+                                 NULL);
+        check_button = gtk_builder_get_object (builder, 
+                                               "conn_checkbutton_remember");
+        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_button))) {
+                gconf_client_set_string (conf_client, 
+                                         GIBBON_GCONF_PREFS_PREFIX "password",
+                                         password,
+                                         NULL);
+                gconf_client_set_bool (conf_client,
+                                       GIBBON_GCONF_PREFS_PREFIX "save_pwd",
+                                       TRUE, NULL);
+        } else {
+                /* First overwrite the password, then unset it.  One of the
+                 * two will hopefully succeed.
+                 */
+                gconf_client_set_string (conf_client, 
+                                         GIBBON_GCONF_PREFS_PREFIX "password",
+                                         "",
+                                         NULL);
+                gconf_client_unset (conf_client, 
+                                         GIBBON_GCONF_PREFS_PREFIX "password",
+                                         NULL);
+                gconf_client_set_bool (conf_client,
+                                       GIBBON_GCONF_PREFS_PREFIX "save_pwd",
+                                       FALSE, NULL);
+        }
+        
         gibbon_connection_connect (connection);
 }
 
