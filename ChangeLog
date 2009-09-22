@@ -1,0 +1,95 @@
+commit 34a958a082f1223a718abbb2de9e0717b78eec63
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Sep 22 14:47:38 2009 +0300
+
+    Asynchronous hostname resolution now working.
+
+commit df01d7c0dbe2ad98b138afdaa204146d4e5456e5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Sep 21 23:50:56 2009 +0300
+
+    Made ready for distcheck makefile target.
+
+commit ca1d7a3f70dc755d8cb513aecf950b447bdd6478
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Sep 21 22:17:37 2009 +0300
+
+    Do not track configure.
+
+commit c06e3bfa65a83865e94ce250b4d5cb17ae9d4312
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Sep 21 22:17:01 2009 +0300
+
+    Changed license to GPL v3.
+
+commit 2d18b543d33abdc98d268a871f5219e5c444810c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Sep 21 21:12:57 2009 +0300
+
+    Can now connect and disconnect with stubs for DNS.
+
+commit 14aebe80e804073c96cc6e33b17e3197762df29c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Sep 19 14:11:49 2009 +0300
+
+    Connection dialog.
+
+commit 6a0c172927faf6a57369ce3fedeaf640d8729e4f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 19:56:08 2009 +0300
+
+    Packing more or less solved.
+
+commit 713f0953ff7e2c9c4e6bd82ec6f965abf7200d6c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 18:07:40 2009 +0300
+
+    More packing tweaks.  TODO: lower left pane must fill but not expand.
+
+commit a8ac682b3859de26c039e8daeb0ac0370ec28cf7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 18:03:13 2009 +0300
+
+    Packing now basically working.  TODO: Combo should not expand or fill.
+
+commit def8418a04cef64b4cf14b57b65f8517585928ce
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 17:54:41 2009 +0300
+
+    Packing re-done, wip.
+
+commit 92b05b1a340fc75e6f08b8a7082d28639de680cd
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 17:54:20 2009 +0300
+
+    Git infrastructure.
+
+commit 65ee037a0ede3ee0e284e72e122a27ffc84fcdc9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 17:29:51 2009 +0300
+
+    Git infrastructure.
+
+commit 102abf97633fca5bddb92cf70f81afd09251ef3e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Sep 18 17:29:33 2009 +0300
+
+    Skeleton for GUI.
+
+commit 299bcb801fc3b82c9577038d2cd89ecead1d4cb5
+Author: guido <guido@localhost.localdomain>
+Date:   Wed Sep 16 18:15:23 2009 +0300
+
+    Skeleton for Gtk+ app with glade and GtkBuilder.
+
+commit 939b2894aac8969643d1adc723148d198b8221a7
+Author: guido <guido@localhost.localdomain>
+Date:   Wed Sep 16 14:33:44 2009 +0300
+
+    Skeleton for build.
+
+commit 28f1f0ed23555671ad4cc2f60268b330da37c492
+Author: guido <guido@localhost.localdomain>
+Date:   Wed Sep 16 13:10:23 2009 +0300
+
+    New.
