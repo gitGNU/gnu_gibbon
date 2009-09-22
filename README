@@ -1,1 +1,6 @@
 A Gtk frontend for FIBS.
+
+You can get the sources from git://guido-flohr.net/c/gibbon.git.  Check
+http://git-scm.org/ if you don't know how to access git:// URLs.
+
+Gibbon was written by Guido Flohr (guido@imperia.net).
