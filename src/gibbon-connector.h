@@ -57,11 +57,12 @@ enum GibbonConnectorState {
         GIBBON_CONNECTOR_ERROR
 };
 
-GibbonConnector *gibbon_connector_new (const gchar *hostname);
+GibbonConnector *gibbon_connector_new (const gchar *hostname, guint port);
 gboolean gibbon_connector_connect (GibbonConnector *self);
 void gibbon_connector_cancel (GibbonConnector *self);
 enum GibbonConnectorState gibbon_connector_get_state (GibbonConnector *self);
 const gchar *gibbon_connector_error (GibbonConnector *self);
+gint gibbon_connector_steal_socket (GibbonConnector *self);
 
 G_END_DECLS
 

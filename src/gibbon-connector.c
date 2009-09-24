@@ -23,12 +23,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <netdb.h>
+#include <errno.h>
 
 #include "gibbon-connector.h"
 #include "gui.h"
 
 struct _GibbonConnectorPrivate {
         gchar *hostname;
+        guint port;
         gchar *error;
         enum GibbonConnectorState state;
         void* mutex;
@@ -56,7 +58,7 @@ gibbon_connector_init (GibbonConnector *conn)
         conn->priv->mutex = NULL;
         conn->priv->worker = NULL;
         
-        conn->priv->socket_fd = 0;
+        conn->priv->socket_fd = -1;
 }
 
 static void
@@ -72,9 +74,9 @@ gibbon_connector_finalize (GObject *object)
                 g_free (connector->priv->error);        
         connector->priv->error = NULL;
         
-        if (connector->priv->socket_fd)
+        if (connector->priv->socket_fd >= 0)
                 close (connector->priv->socket_fd);
-        connector->priv->socket_fd = 0;
+        connector->priv->socket_fd = -1;
  
         connector->priv->worker = NULL;
 
@@ -96,11 +98,12 @@ gibbon_connector_class_init (GibbonConnectorClass *klass)
 }
 
 GibbonConnector *
-gibbon_connector_new (const gchar *hostname)
+gibbon_connector_new (const gchar *hostname, guint port)
 {
          GibbonConnector *self = g_object_new (GIBBON_TYPE_CONNECTOR, NULL);
 
          self->priv->hostname = g_strdup (hostname);
+         self->priv->port = port;
          self->priv->mutex = g_mutex_new ();
          
          return self;
@@ -111,8 +114,12 @@ gibbon_connector_connect_worker (GibbonConnector *self)
 {
         struct addrinfo hints;
         struct addrinfo *results;
+        struct addrinfo *ai;
         int s;
-
+        int socket_fd = -1;
+        int last_errno = 0;
+        gchar *service = NULL;
+                
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
@@ -123,12 +130,14 @@ gibbon_connector_connect_worker (GibbonConnector *self)
         memset (&hints, 0, sizeof hints);       
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
-
+        
         self->priv->state = GIBBON_CONNECTOR_RESOLVING;        
         g_mutex_unlock (self->priv->mutex);
         
-        s = getaddrinfo (self->priv->hostname, NULL, &hints, &results);
-
+        service = g_strdup_printf ("%u", self->priv->port);
+        s = getaddrinfo (self->priv->hostname, service, &hints, &results);
+        g_free (service);
+        
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
@@ -145,7 +154,30 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 g_mutex_unlock (self->priv->mutex);
                 return NULL;
         }
+        
+        self->priv->state = GIBBON_CONNECTOR_CONNECTING;
+
         g_mutex_unlock (self->priv->mutex);
+
+        for (ai = results; ai != NULL; ai = ai->ai_next) {
+                socket_fd = socket (ai->ai_family, ai->ai_socktype,
+                                    ai->ai_protocol);
+                
+                last_errno = errno;
+
+                if (socket_fd < 0) {
+                        last_errno = errno;
+                        continue;
+                }
+                
+                if (connect (socket_fd, ai->ai_addr, ai->ai_addrlen) < 0) {
+                        last_errno = errno;
+                        continue;
+                }
+                break; /* Success! */
+        }
+
+        freeaddrinfo (results);
         
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
@@ -154,8 +186,16 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 return NULL;
         }
 
-        self->priv->error = g_strdup ("Resolved.  Connecting not yet implemented.\n");
-        self->priv->state = GIBBON_CONNECTOR_ERROR;
+        if (ai == NULL) {
+                self->priv->state = GIBBON_CONNECTOR_ERROR;
+                self->priv->error = g_strdup (strerror (last_errno));
+                g_mutex_unlock (self->priv->mutex);
+                return NULL;
+        }
+
+        self->priv->socket_fd = socket_fd;
+        self->priv->state = GIBBON_CONNECTOR_CONNECTED;
+        
         g_mutex_unlock (self->priv->mutex);
         
         return NULL;
@@ -212,4 +252,11 @@ gibbon_connector_error (GibbonConnector *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTOR (self), NULL);
         return self->priv->error;
+}
+
+gint
+gibbon_connector_steal_socket (GibbonConnector *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CONNECTOR (self), -1);
+        g_return_val_if_fail (self->priv->socket_fd >= 0, -1);
 }

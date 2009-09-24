@@ -287,7 +287,8 @@ gibbon_connection_connect (GibbonConnection *self)
         if (self->priv->connector)
                 g_object_unref (self->priv->connector);
 
-        self->priv->connector = gibbon_connector_new (self->priv->hostname);  
+        self->priv->connector = gibbon_connector_new (self->priv->hostname,
+                                                      self->priv->port);  
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
         if (!gibbon_connector_connect (self->priv->connector)) {
