@@ -257,6 +257,13 @@ gibbon_connector_error (GibbonConnector *self)
 gint
 gibbon_connector_steal_socket (GibbonConnector *self)
 {
+        int socket_fd;
+        
         g_return_val_if_fail (GIBBON_IS_CONNECTOR (self), -1);
         g_return_val_if_fail (self->priv->socket_fd >= 0, -1);
+        
+        socket_fd = self->priv->socket_fd;
+        self->priv->socket_fd = -1;
+        
+        return socket_fd;
 }

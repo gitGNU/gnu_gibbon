@@ -31,6 +31,7 @@
 enum gibbon_connection_signals {
         RESOLVING,
         CONNECTING,
+        CONNECTED,
         DISCONNECTED,
         LAST_SIGNAL
 };
@@ -46,6 +47,9 @@ struct _GibbonConnectionPrivate {
         
         GibbonConnector *connector;
         gchar *error;
+        
+        GIOChannel *io;
+        guint in_watcher;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -72,6 +76,9 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
         conn->priv->error = NULL;
+        
+        conn->priv->io = NULL;
+        conn->priv->in_watcher = 0;
 }
 
 static void
@@ -101,6 +108,14 @@ gibbon_connection_finalize (GObject *object)
                 g_free (conn->priv->error);
         g_free (conn->priv->error);
 
+        if (conn->priv->in_watcher)
+                g_source_remove (conn->priv->in_watcher);
+        conn->priv->in_watcher = 0;
+        
+        if (conn->priv->io)
+                g_io_channel_shutdown (conn->priv->io, FALSE, NULL);
+        conn->priv->io = NULL;
+        
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
 
@@ -125,6 +140,16 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_TYPE_STRING);
         signals[CONNECTING] =
                 g_signal_new ("connecting",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__STRING,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_STRING);
+        signals[CONNECTED] =
+                g_signal_new ("connected",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -237,6 +262,62 @@ gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
 }
 
 static gboolean
+gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
+{
+        gchar buf[8192];
+        GIOStatus status;
+        gsize bytes_read;
+        GError *error = NULL;
+        
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+        
+        status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
+                                          &bytes_read, &error);
+        if (status != G_IO_STATUS_NORMAL) {
+                g_print ("Aua\n");
+        } else if (status == G_IO_STATUS_NORMAL) {
+                buf[bytes_read] = 0;
+                g_print (buf);
+        }
+        
+        return TRUE;
+}
+
+static gboolean
+gibbon_connection_on_input (GIOChannel *channel,
+                            GIOCondition condition,
+                            GibbonConnection *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
+
+        if (G_IO_IN & condition) {
+                return gibbon_connection_handle_input (self, channel);
+        }
+        
+        return TRUE;
+}
+
+static void
+gibbon_connection_establish (GibbonConnection *self)
+{
+        int socket_fd;
+        
+        g_return_if_fail (GIBBON_IS_CONNECTION (self));
+
+        socket_fd = gibbon_connector_steal_socket (self->priv->connector);
+        g_object_unref (self->priv->connector);
+        
+        self->priv->io = g_io_channel_unix_new (socket_fd);
+        g_io_channel_set_encoding (self->priv->io, NULL, NULL);
+        g_io_channel_set_buffered (self->priv->io, FALSE);
+        self->priv->in_watcher = 
+                g_io_add_watch (self->priv->io, 
+                                G_IO_IN | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
+                                (GIOFunc) gibbon_connection_on_input,
+                                self);
+}
+
+static gboolean
 gibbon_connection_wait_connect (GibbonConnection *self)
 {
         enum GibbonConnectorState last_state;
@@ -272,7 +353,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                         gibbon_connection_disconnect (self);
                         return FALSE;
                 case GIBBON_CONNECTOR_CONNECTED:
-                        gibbon_connection_disconnect (self);
+                        gibbon_connection_establish (self);
                         return FALSE;
         }
         
@@ -313,6 +394,10 @@ gibbon_connection_disconnect (GibbonConnection *self)
         }
         self->priv->connector = NULL;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
+        
+        if (self->priv->in_watcher)
+                g_source_remove (self->priv->in_watcher);
+        self->priv->in_watcher = 0;
         
         g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
                        error);
