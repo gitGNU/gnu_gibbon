@@ -40,5 +40,7 @@ extern gint init_gui (const gchar *builder_filename);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);
 extern void display_error (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
+extern void set_state_connecting (void);
+extern void set_state_disconnected (void);
 
 #endif

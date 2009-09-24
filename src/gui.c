@@ -37,9 +37,8 @@ GConfClient *conf_client = NULL;
 static GtkWidget *statusbar = NULL;
 
 static GtkBuilder *get_builder (const gchar* filename);
-static void set_state_connecting ();
-static void set_state_disconnected ();
 static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
+static void cb_connecting (GtkWidget *emitter, const gchar *hostname);
 static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
 
 gint
@@ -60,35 +59,20 @@ init_gui (const gchar *builder_filename)
                 return 0;
                 
         window = GTK_WIDGET (gtk_builder_get_object (builder, "window"));
-        if (!window) {
-                g_print (_("Internal error: Cannot find widget '%s'!\n"),
-                         "window");
-                return 0;
-        }
-        
         connection_dialog = 
                 GTK_WIDGET (gtk_builder_get_object (builder, 
                                                     "connection_dialog"));
-        if (!connection_dialog) {
-                g_print (_("Internal error: Cannot find widget '%s'!\n"),
-                         "connection_dialog");
-                return 0;
-        }
-        
         statusbar = 
                 GTK_WIDGET (gtk_builder_get_object (builder, 
                                                     "statusbar"));
-        if (!statusbar) {
-                g_print (_("Internal error: Cannot find widget '%s'!\n"),
-                         "statusbar");
-                return 0;
-        }
         gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));
         
         gtk_builder_connect_signals (builder, NULL);
 
         g_signal_connect (G_OBJECT (connection), "resolving",
                           G_CALLBACK (cb_resolving), NULL);
+        g_signal_connect (G_OBJECT (connection), "connecting",
+                          G_CALLBACK (cb_connecting), NULL);
         g_signal_connect (G_OBJECT (connection), "disconnected",
                           G_CALLBACK (cb_disconnected), NULL);
 
@@ -157,12 +141,6 @@ get_entry_text (const gchar *id)
 {
         GtkWidget *entry = GTK_WIDGET (gtk_builder_get_object (builder, id));
         
-        if (!entry) {
-                g_print (_("Internal error: Cannot find widget '%s'!\n"),
-                         id);
-                return "";
-        }
-        
         return gtk_entry_get_text (GTK_ENTRY (entry));
 }
 
@@ -190,7 +168,7 @@ display_error (const gchar *message_format, ...)
 {
         va_list args;
         gchar *message;
-        
+
         va_start (args, message_format);
         message = g_strdup_vprintf (message_format, args);        
         va_end (args);
@@ -205,7 +183,7 @@ display_error (const gchar *message_format, ...)
         g_free (message);
         
         gtk_dialog_run (GTK_DIALOG (dialog));
-        
+
         gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
@@ -226,95 +204,68 @@ get_builder (const gchar *builder_filename)
         return builder;
 }
 
-static void
+void
 set_state_connecting ()
 {
-        GObject *tool_button = 
+        GObject *connect_button = 
                 gtk_builder_get_object (builder, "toolbar_connect_button");
+        GObject *disconnect_button = 
+                gtk_builder_get_object (builder, "toolbar_disconnect_button");
         GObject *connect_item = 
                 gtk_builder_get_object (builder, "connect_menu_item");
         GObject *disconnect_item = 
                 gtk_builder_get_object (builder, "disconnect_menu_item");
         
-        if (!tool_button) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "toolbar_connect_button");
-        } else {
-                gtk_tool_button_set_stock_id (GTK_TOOL_BUTTON (tool_button),
-                                              GTK_STOCK_DISCONNECT);
-                gtk_tool_button_set_label (GTK_TOOL_BUTTON (tool_button),
-                                           _("Disconnect"));
-        }
-        
-        if (!connect_item) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "connect_menu_item");
-        } else {
-                gtk_action_set_sensitive (GTK_ACTION (connect_item), FALSE);
-        }
-        
-        if (!disconnect_item) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "disconnect_menu_item");
-        } else {
-                gtk_action_set_sensitive (GTK_ACTION (disconnect_item), TRUE);
-        }
+        gtk_widget_set_sensitive (GTK_WIDGET (connect_button), FALSE);
+        gtk_action_set_sensitive (GTK_ACTION (connect_item), FALSE);
+        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), TRUE);
+        gtk_action_set_sensitive (GTK_ACTION (disconnect_item), TRUE);
 }
 
-static void
+void
 set_state_disconnected ()
 {
-        GObject *tool_button = 
+        GObject *connect_button = 
                 gtk_builder_get_object (builder, "toolbar_connect_button");
+        GObject *disconnect_button = 
+                gtk_builder_get_object (builder, "toolbar_disconnect_button");
         GObject *connect_item = 
                 gtk_builder_get_object (builder, "connect_menu_item");
         GObject *disconnect_item = 
                 gtk_builder_get_object (builder, "disconnect_menu_item");
         
-        if (!tool_button) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "toolbar_connect_button");
-        } else {
-                gtk_tool_button_set_stock_id (GTK_TOOL_BUTTON (tool_button),
-                                              GTK_STOCK_NETWORK);
-                gtk_tool_button_set_label (GTK_TOOL_BUTTON (tool_button),
-                                           _("Connect"));
-        }
-        
-        if (!connect_item) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "connect_menu_item");
-        } else {
-                gtk_action_set_sensitive (GTK_ACTION (connect_item), TRUE);
-        }
-        
-        if (!disconnect_item) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         "disconnect_menu_item");
-        } else {
-                gtk_action_set_sensitive (GTK_ACTION (disconnect_item), FALSE);
-        }
+        gtk_widget_set_sensitive (GTK_WIDGET (connect_button), TRUE);
+        gtk_action_set_sensitive (GTK_ACTION (connect_item), TRUE);
+        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), FALSE);
+        gtk_action_set_sensitive (GTK_ACTION (disconnect_item), FALSE);
 }
 
 static void
 cb_resolving (GtkWidget *emitter, const gchar *hostname)
 {
-/*        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
-        gchar *msg = g_strdup_printf (_("Connecting as %s to port %u on %s."),
-                                      gibbon_connection_get_login (connection),
-                                      gibbon_connection_get_port (connection),
-                                      gibbon_connection_get_host (connection)); */
         gchar *msg = g_strdup_printf (_("Resolving address for %s."), hostname);
         
         gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
         gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
         g_free (msg);
-        
-        set_state_connecting ();
 }
 
 static void
-cb_disconnected (GtkWidget *emitter, const gchar *hostname)
+cb_connecting (GtkWidget *emitter, const gchar *hostname)
+{
+        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
+        gchar *msg = g_strdup_printf (_("Connecting as %s to port %u on %s."),
+                                      gibbon_connection_get_login (connection),
+                                      gibbon_connection_get_port (connection),
+                                      gibbon_connection_get_hostname (connection));
+        
+        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
+        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
+        g_free (msg);
+}
+
+static void
+cb_disconnected (GtkWidget *emitter, const gchar *error)
 {
         gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
         gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));

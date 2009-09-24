@@ -54,9 +54,10 @@ main(int argc, char *argv[])
         if (!parse_command_line (argc, argv))
                 return 1;
         
-        if (!g_thread_supported ()) 
+        if (!g_thread_supported ()) {
                 g_thread_init (NULL);
-        
+		gdk_threads_init ();
+	}
         connection = gibbon_connection_new ();
         
         gtk_init (&argc, &argv);

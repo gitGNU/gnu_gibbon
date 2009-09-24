@@ -34,29 +34,14 @@ on_window_destroy (GtkObject *object, gpointer user_data)
 }
 
 G_MODULE_EXPORT void
-toggle_connect (GtkObject *object, gpointer user_data)
-{
-        if (gibbon_connection_disconnected (connection))
-                gtk_dialog_run (GTK_DIALOG (connection_dialog));
-	else
-		gibbon_connection_disconnect (connection);
-}
-
-G_MODULE_EXPORT void
 on_connect_menu_item_activate (GtkObject *object, gpointer user_data)
 {
-        if (gibbon_connection_disconnected (connection))
-                gtk_dialog_run (GTK_DIALOG (connection_dialog));
-	else
-		g_print (_("Already connected.\n"));
+        gtk_dialog_run (GTK_DIALOG (connection_dialog));
 }
 
 G_MODULE_EXPORT void
 on_disconnect_menu_item_activate (GtkObject *object, gpointer user_data)
 {
-        if (!gibbon_connection_disconnected (connection))
-                gibbon_connection_disconnect (connection);
-	else
-		g_print (_("Not connected.\n"));
+        set_state_disconnected ();
+        gibbon_connection_disconnect (connection);
 }
-

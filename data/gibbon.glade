@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Sep 22 16:15:01 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Sep 23 13:32:24 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -277,7 +277,17 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Connect</property>
                 <property name="stock_id">gtk-network</property>
-                <signal name="clicked" handler="toggle_connect"/>
+                <signal name="clicked" handler="on_connect_menu_item_activate"/>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="toolbar_disconnect_button">
+                <property name="visible">True</property>
+                <property name="stock_id">gtk-disconnect</property>
+                <signal name="clicked" handler="on_disconnect_menu_item_activate"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>

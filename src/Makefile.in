@@ -66,7 +66,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_gibbon_OBJECTS = gibbon.$(OBJEXT) gibbon-connection.$(OBJEXT) \
-	gibbon-resolver.$(OBJEXT) gtkmainwindow.$(OBJEXT) \
+	gibbon-connector.$(OBJEXT) gtkmainwindow.$(OBJEXT) \
 	gtkconnectiondialog.$(OBJEXT) gui.$(OBJEXT)
 gibbon_OBJECTS = $(am_gibbon_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -264,7 +264,7 @@ AM_CPPFLAGS = \
 gibbon_SOURCES = \
 	gibbon.c 		\
 	gibbon-connection.c	\
-	gibbon-resolver.c	\
+	gibbon-connector.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c
@@ -273,7 +273,7 @@ noinst_HEADERS = \
 	game.h			\
 	gibbon.h		\
 	gibbon-connection.h	\
-	gibbon-resolver.h	\
+	gibbon-connector.h	\
 	gui.h
 
 gibbon_LDFLAGS = -export-dynamic
@@ -350,7 +350,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-resolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkconnectiondialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkmainwindow.Po@am__quote@

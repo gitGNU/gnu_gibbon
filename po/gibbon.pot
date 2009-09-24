@@ -1,0 +1,209 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-09-24 15:11+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../data/gibbon.desktop.in.h:1 ../data/gibbon.desktop.in.in.h:1
+msgid "Gtk+ frontend for the First Internet Backgammon Server FIBS"
+msgstr ""
+
+#: ../data/gibbon.desktop.in.h:2 ../data/gibbon.desktop.in.in.h:2
+msgid "Play backgammon online on FIBs."
+msgstr ""
+
+#: ../data/gibbon.glade.h:1
+msgid "4321"
+msgstr ""
+
+#: ../data/gibbon.glade.h:2
+msgid "Connect"
+msgstr ""
+
+#: ../data/gibbon.glade.h:3
+msgid "Connection Data"
+msgstr ""
+
+#: ../data/gibbon.glade.h:4
+msgid "Get new account on fibs.com"
+msgstr ""
+
+#: ../data/gibbon.glade.h:5
+msgid ""
+"Kibitz\n"
+"Say\n"
+"Whisper"
+msgstr ""
+
+#: ../data/gibbon.glade.h:8 ../data/gibbon.schemas.in.h:1
+msgid "Login"
+msgstr ""
+
+#: ../data/gibbon.glade.h:9
+msgid "Opp"
+msgstr ""
+
+#: ../data/gibbon.glade.h:10 ../data/gibbon.schemas.in.h:2
+msgid "Password"
+msgstr ""
+
+#: ../data/gibbon.glade.h:11 ../data/gibbon.schemas.in.h:3
+msgid "Port"
+msgstr ""
+
+#: ../data/gibbon.glade.h:12
+msgid "Remember password"
+msgstr ""
+
+#: ../data/gibbon.glade.h:13 ../data/gibbon.schemas.in.h:5
+msgid "Server"
+msgstr ""
+
+#: ../data/gibbon.glade.h:14
+msgid "Wat"
+msgstr ""
+
+#: ../data/gibbon.glade.h:15
+msgid "_Connect"
+msgstr ""
+
+#: ../data/gibbon.glade.h:16
+msgid "_File"
+msgstr ""
+
+#: ../data/gibbon.glade.h:17
+msgid "_Help"
+msgstr ""
+
+#: ../data/gibbon.glade.h:18
+msgid "fibs.com"
+msgstr ""
+
+#: ../data/gibbon.glade.h:19
+msgid "gtk-about"
+msgstr ""
+
+#: ../data/gibbon.glade.h:20
+msgid "gtk-cancel"
+msgstr ""
+
+#: ../data/gibbon.glade.h:21
+msgid "gtk-connect"
+msgstr ""
+
+#: ../data/gibbon.glade.h:22
+msgid "gtk-disconnect"
+msgstr ""
+
+#: ../data/gibbon.glade.h:23
+msgid "gtk-quit"
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:4
+msgid "Remember password?"
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:6
+msgid "Should your password be stored on your hard disk?"
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:7
+msgid "The port number of the server, normally 4321."
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:8
+msgid "The server that you want to connect to, usually fibs.com."
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:9
+msgid "Your password on that server."
+msgstr ""
+
+#: ../data/gibbon.schemas.in.h:10
+msgid "Your username on that server."
+msgstr ""
+
+#: ../src/gibbon-connector.c:140
+#, c-format
+msgid "Error resolving address for %s: %s\n"
+msgstr ""
+
+#: ../src/gibbon-connector.c:176
+#, c-format
+msgid "Failed to create connector thread: %s."
+msgstr ""
+
+#: ../src/gibbon.c:39
+msgid "Use alternatve UI definition (developers only)"
+msgstr ""
+
+#: ../src/gibbon.c:40
+msgid "FILENAME"
+msgstr ""
+
+#: ../src/gibbon.c:106
+msgid "- Gtk+ frontend for FIBS"
+msgstr ""
+
+#: ../src/gibbon.c:114
+#, c-format
+msgid "Run `%s --help' for more information!"
+msgstr ""
+
+#: ../src/gtkconnectiondialog.c:50
+#, c-format
+msgid "Invalid port '%s': %s."
+msgstr ""
+
+#: ../src/gtkconnectiondialog.c:58
+#, c-format
+msgid "Invalid port number '%s'."
+msgstr ""
+
+#: ../src/gtkconnectiondialog.c:65
+msgid "You have to specify your user name (login)."
+msgstr ""
+
+#: ../src/gtkconnectiondialog.c:72
+msgid "Guest login is not supported."
+msgstr ""
+
+#: ../src/gtkconnectiondialog.c:78
+msgid "You have to specify a password."
+msgstr ""
+
+#: ../src/gui.c:68 ../src/gui.c:271
+msgid "Disconnected"
+msgstr ""
+
+#: ../src/gui.c:154
+#, c-format
+msgid "Internal error: Cannot find widget `%s'!\n"
+msgstr ""
+
+#: ../src/gui.c:198
+#, c-format
+msgid "Do you need to pass the option `--ui-file'?\n"
+msgstr ""
+
+#: ../src/gui.c:246
+#, c-format
+msgid "Resolving address for %s."
+msgstr ""
+
+#: ../src/gui.c:257
+#, c-format
+msgid "Connecting as %s to port %u on %s."
+msgstr ""

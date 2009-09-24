@@ -27,7 +27,7 @@ AM_CPPFLAGS = 				\
 gibbon_SOURCES =		\
 	gibbon.c 		\
 	gibbon-connection.c	\
-	gibbon-resolver.c	\
+	gibbon-connector.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c
@@ -36,7 +36,7 @@ noinst_HEADERS =		\
 	game.h			\
 	gibbon.h		\
 	gibbon-connection.h	\
-	gibbon-resolver.h	\
+	gibbon-connector.h	\
 	gui.h
 
 gibbon_LDFLAGS = -export-dynamic

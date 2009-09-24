@@ -25,29 +25,27 @@
 #include <netdb.h>
 
 #include "gibbon-connection.h"
-#include "gibbon-resolver.h"
-
-enum gibbon_connection_state {
-        GIBBON_CONNECTION_DISCONNECTED,
-        GIBBON_CONNECTION_RESOLVING,
-        GIBBON_CONNECTION_CONNECTING,
-        GIBBON_CONNECTION_CONNECTED,
-};
+#include "gibbon-connector.h"
+#include "gui.h"
 
 enum gibbon_connection_signals {
         RESOLVING,
+        CONNECTING,
         DISCONNECTED,
         LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
 
 struct _GibbonConnectionPrivate {
-        gchar *host;
+        gchar *hostname;
         guint port;
         gchar *login;
         gchar *password;
         
-        enum gibbon_connection_state state;
+        enum GibbonConnectorState connector_state;
+        
+        GibbonConnector *connector;
+        gchar *error;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -58,10 +56,6 @@ struct _GibbonConnectionPrivate {
                                       GibbonConnectionPrivate))
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
 
-static void gibbon_connection_connect_addr (GibbonConnection *self,
-                                            const gpointer addrinfo,
-                                            GObject *resolver);
-
 static void
 gibbon_connection_init (GibbonConnection *conn)
 {
@@ -69,12 +63,15 @@ gibbon_connection_init (GibbonConnection *conn)
                                                         GIBBON_TYPE_CONNECTION, 
                                                         GibbonConnectionPrivate);
 
-        conn->priv->host = NULL;
+        conn->priv->hostname = NULL;
         conn->priv->port = 0;
         conn->priv->password = NULL;
         conn->priv->login = NULL;
         
-        conn->priv->state = GIBBON_CONNECTION_DISCONNECTED;
+        conn->priv->connector = NULL;
+        conn->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
+        
+        conn->priv->error = NULL;
 }
 
 static void
@@ -82,9 +79,9 @@ gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *conn = GIBBON_CONNECTION (object);
 
-        if (conn->priv->host)
-                g_free (conn->priv->host);
-        conn->priv->host = NULL;
+        if (conn->priv->hostname)
+                g_free (conn->priv->hostname);
+        conn->priv->hostname = NULL;
 
         conn->priv->port = 0;
 
@@ -95,6 +92,14 @@ gibbon_connection_finalize (GObject *object)
         if (conn->priv->login)
                 g_free (conn->priv->login);
         conn->priv->login = NULL;
+
+        if (conn->priv->connector)
+                gibbon_connector_cancel (conn->priv->connector);
+        conn->priv->connector = NULL;
+
+        if (conn->priv->error)
+                g_free (conn->priv->error);
+        g_free (conn->priv->error);
 
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -107,9 +112,19 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
         g_type_class_add_private (klass, sizeof (GibbonConnectionPrivate));
 
         object_class->finalize = gibbon_connection_finalize;
-        
+
         signals[RESOLVING] =
                 g_signal_new ("resolving",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__STRING,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_STRING);
+        signals[CONNECTING] =
+                g_signal_new ("connecting",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -137,29 +152,29 @@ gibbon_connection_new (void)
 }
 
 void
-gibbon_connection_set_host (GibbonConnection *self, const gchar *host)
+gibbon_connection_set_hostname (GibbonConnection *self, const gchar *hostname)
 {
-        const gchar *new_host = NULL;
+        const gchar *new_hostname = NULL;
         
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
-        if (!(host && host[0])) {
-                new_host = GIBBON_CONNECTION_DEFAULT_HOST;
+        if (!(hostname && hostname[0])) {
+                new_hostname = GIBBON_CONNECTION_DEFAULT_HOST;
         } else {
-                new_host = host;
+                new_hostname = hostname;
         }
         
-        if (self->priv->host)
-                g_free (self->priv->host);
+        if (self->priv->hostname)
+                g_free (self->priv->hostname);
         
-        self->priv->host = g_strdup (new_host);
+        self->priv->hostname = g_strdup (new_hostname);
 }
 
 const gchar *
-gibbon_connection_get_host (GibbonConnection *self)
+gibbon_connection_get_hostname (GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
-        return self->priv->host;
+        return self->priv->hostname;
 }
 
 guint
@@ -221,77 +236,90 @@ gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
         self->priv->password = g_strdup (password);
 }
 
+static gboolean
+gibbon_connection_wait_connect (GibbonConnection *self)
+{
+        enum GibbonConnectorState last_state;
+        GibbonConnector *connector;
+        
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+        
+        connector = self->priv->connector;
+        if (!connector)
+                return FALSE;
+                
+        last_state = self->priv->connector_state;
+        self->priv->connector_state = 
+                gibbon_connector_get_state (connector);
+        
+        if (last_state == self->priv->connector_state)
+                return TRUE;
+
+        switch (self->priv->connector_state) {
+                case GIBBON_CONNECTOR_INITIAL:
+                        return FALSE;
+                case GIBBON_CONNECTOR_RESOLVING:
+                        g_signal_emit (self, signals[RESOLVING], 0, 
+                                       self->priv->hostname);
+                        break;
+                case GIBBON_CONNECTOR_CONNECTING:
+                        g_signal_emit (self, signals[CONNECTING], 0, 
+                                       self->priv->hostname);
+                        break;
+                case GIBBON_CONNECTOR_CANCELLED:
+                        return FALSE;
+                case GIBBON_CONNECTOR_ERROR:
+                        gibbon_connection_disconnect (self);
+                        return FALSE;
+                case GIBBON_CONNECTOR_CONNECTED:
+                        gibbon_connection_disconnect (self);
+                        return FALSE;
+        }
+        
+        return TRUE;
+}
+
 void
 gibbon_connection_connect (GibbonConnection *self)
 {
-        GibbonResolver *resolver;
-        
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
-        g_return_if_fail (gibbon_connection_disconnected (self));
- 
-        self->priv->state = GIBBON_CONNECTION_CONNECTING; 
+        if (self->priv->connector)
+                g_object_unref (self->priv->connector);
 
-        /* FIXME: Rather let the signal be emitted by the resolver, when it
-         * actually starts resolving.  That will give it a chance omit the
-         * signal if we have a plain IP address, and no resolution is
-         * needed.
-         */
-        g_signal_emit (G_OBJECT (self), signals[RESOLVING], 0, 
-                       self->priv->host);
+        self->priv->connector = gibbon_connector_new (self->priv->hostname);  
+        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
-        self->priv->state = GIBBON_CONNECTION_RESOLVING;        
-        
-        resolver = gibbon_resolver_new (self->priv->host);
-        g_signal_connect_swapped (G_OBJECT (resolver), "resolved",
-                                  G_CALLBACK (gibbon_connection_connect_addr), 
-                                  self);
-
-        if (gibbon_resolver_resolve (resolver)) {
-                /* The resolver has displayed the error message.  */
+        if (!gibbon_connector_connect (self->priv->connector)) {
+                display_error (gibbon_connector_error (self->priv->connector));
                 gibbon_connection_disconnect (self);
+                return;
         }
-}
-
-void
-gibbon_connection_connect_addr (GibbonConnection *self, 
-                                const gpointer addrinfo,
-                                GObject *resolver)
-{
-        const gchar *hostname;
         
-        g_return_if_fail (GIBBON_IS_RESOLVER (resolver));
-
-        hostname = gibbon_resolver_get_hostname (GIBBON_RESOLVER (resolver));        
-        g_object_unref (resolver);
-                
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        if (self->priv->state != GIBBON_CONNECTION_RESOLVING)
-                return;
-        if (g_strcmp0 (self->priv->host, hostname) != 0)
-                return;
-                
-        g_print ("%s resolved, connecting not yet implemented :-(\n",
-                 hostname);
-}
-        
-gboolean
-gibbon_connection_disconnected (GibbonConnection *self)
-{
-        if (self->priv->state == GIBBON_CONNECTION_DISCONNECTED)
-                return TRUE;
-
-        return FALSE;
+        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
 }
 
 void
 gibbon_connection_disconnect (GibbonConnection *self)
 {
+        gchar *error= NULL;
+        
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
-        g_return_if_fail (!gibbon_connection_disconnected (self));
-
-        self->priv->state = GIBBON_CONNECTION_DISCONNECTED;
+        if (self->priv->connector) {
+                error = g_strdup (gibbon_connector_error (self->priv->connector));
+                gibbon_connector_cancel (self->priv->connector);
+        }
+        self->priv->connector = NULL;
+        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
+        
         g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
-                       self->priv->host);
+                       error);
+        
+        if (error) {
+                gdk_threads_enter ();
+                display_error (error);
+                gdk_threads_leave (); 
+                g_free (error);
+        }
 }

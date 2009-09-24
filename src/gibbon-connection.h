@@ -50,9 +50,9 @@ struct _GibbonConnection
 
 GibbonConnection *gibbon_connection_new (void);
 
-const gchar *gibbon_connection_get_host (GibbonConnection *connection);
-void gibbon_connection_set_host (GibbonConnection *connection, 
-                                 const gchar *host);
+const gchar *gibbon_connection_get_hostname (GibbonConnection *connection);
+void gibbon_connection_set_hostname (GibbonConnection *connection, 
+                                     const gchar *host);
 guint gibbon_connection_get_port (GibbonConnection *connection);
 void gibbon_connection_set_port (GibbonConnection *connection, guint port);
 const gchar *gibbon_connection_get_password (GibbonConnection *connection);
@@ -64,7 +64,6 @@ void gibbon_connection_set_login (GibbonConnection *connection,
 
 void gibbon_connection_connect (GibbonConnection *connection);
 void gibbon_connection_disconnect (GibbonConnection *connection);
-gboolean gibbon_connection_disconnected (GibbonConnection *connection);
 
 G_END_DECLS
 

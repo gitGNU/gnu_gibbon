@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Tue Sep 22 16:15:01 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Sep 23 13:32:24 2009 -->
 <interface>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -283,7 +283,17 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Connect</property>
                 <property name="stock_id">gtk-network</property>
-                <signal handler="toggle_connect" name="clicked"/>
+                <signal handler="on_connect_menu_item_activate" name="clicked"/>
+              </object>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="toolbar_disconnect_button">
+                <property name="visible">True</property>
+                <property name="stock_id">gtk-disconnect</property>
+                <signal handler="on_disconnect_menu_item_activate" name="clicked"/>
               </object>
               <packing>
                 <property name="homogeneous">True</property>

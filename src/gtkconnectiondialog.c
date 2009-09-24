@@ -49,16 +49,14 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
                 if (errno) {
                         display_error (_("Invalid port '%s': %s."),
                                          port, g_strerror (errno));
-                        if (gibbon_connection_disconnected (connection))
-                                gtk_dialog_run (GTK_DIALOG (connection_dialog));
+                        gtk_dialog_run (GTK_DIALOG (connection_dialog));
                                            
                         return;
                 }
                 
                 if (*endptr != '\000') {
                         display_error (_("Invalid port number '%s'."), port);
-                        if (gibbon_connection_disconnected (connection))
-                                gtk_dialog_run (GTK_DIALOG (connection_dialog));
+                        gtk_dialog_run (GTK_DIALOG (connection_dialog));
                         return;
                 }
         }
@@ -66,28 +64,25 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         if (login[0] == '\000') {
                 display_error (_("You have to specify your user "
                                  "name (login)."));
-                if (gibbon_connection_disconnected (connection))
-                        gtk_dialog_run (GTK_DIALOG (connection_dialog));
+                gtk_dialog_run (GTK_DIALOG (connection_dialog));
                 return;
         }
         
         if (0 == g_strcmp0 ("guest", login)) {
                 display_error (_("Guest login is not supported."));
-                if (gibbon_connection_disconnected (connection))
-                        gtk_dialog_run (GTK_DIALOG (connection_dialog));
+                gtk_dialog_run (GTK_DIALOG (connection_dialog));
                 return;
         }
         
         if (password[0] == '\000') {
                 display_error (_("You have to specify a password."));
-                if (gibbon_connection_disconnected (connection))
-                        gtk_dialog_run (GTK_DIALOG (connection_dialog));
+                gtk_dialog_run (GTK_DIALOG (connection_dialog));
                 return;
         }
         
         gtk_widget_hide (GTK_WIDGET (connection_dialog));
         
-        gibbon_connection_set_host (connection, server);
+        gibbon_connection_set_hostname (connection, server);
         gibbon_connection_set_port (connection, portno);
         gibbon_connection_set_login (connection, login);
         gibbon_connection_set_password (connection, password);
@@ -129,7 +124,8 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
                                        GIBBON_GCONF_PREFS_PREFIX "save_pwd",
                                        FALSE, NULL);
         }
-        
+
+        set_state_connecting ();        
         gibbon_connection_connect (connection);
 }
 
