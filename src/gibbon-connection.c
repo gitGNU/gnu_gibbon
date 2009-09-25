@@ -86,6 +86,8 @@ static gboolean gibbon_connection_on_output (GIOChannel *channel,
                                              GIOCondition condition,
                                              GibbonConnection *self);
 
+static guint session_connected = 0;
+
 static void
 gibbon_connection_init (GibbonConnection *conn)
 {
@@ -408,16 +410,21 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                        self->priv->hostname);
                         self->priv->session = gibbon_session_new ();
 
-                        g_signal_connect (G_OBJECT (self->priv->session),
-                                          "html-server-output",
-                                          G_CALLBACK (html_server_output_cb),
-                                          self);
+                        /* FIXME! Gtk weirdness.  I thought that connecting
+                         * signals happens on a per instance base.
+                         */
+                        if (!session_connected++) {
+                                g_signal_connect (G_OBJECT (self->priv->session),
+                                                  "html-server-output",
+                                                  G_CALLBACK (html_server_output_cb),
+                                                  self);
 
-                        g_signal_connect_swapped (
-                                G_OBJECT (self), 
-                                "cooked-server-output",
-                                G_CALLBACK (gibbon_session_server_output_cb), 
-                                self->priv->session);
+                                g_signal_connect_swapped (
+                                        G_OBJECT (self), 
+                                        "cooked-server-output",
+                                        G_CALLBACK (gibbon_session_server_output_cb), 
+                                        self->priv->session);
+                        }
                 }
                 g_signal_emit (self, signals[signal], 0, ptr);
                 gdk_threads_leave ();
