@@ -253,7 +253,8 @@ EXTRA_DIST = \
 	$(gtkbuilder_DATA)
 
 CLEANFILES = \
-	$(desktop_DATA)
+	$(desktop_DATA) \
+	$(schemas_DATA)
 
 all: all-am
 

@@ -308,7 +308,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                           &bytes_read, &error);
         if (status != G_IO_STATUS_NORMAL) {
                 gdk_threads_enter ();
-                display_error (_("Error reading from server: %s.\n"),
+                display_error (_("Error receiving data from server: %s.\n"),
                                error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
@@ -345,7 +345,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 g_print (self->priv->in_buffer);
                 g_print ("\n");
                 gibbon_connection_queue_command (self,
-                                                 "login %s_%s 1018 %s %s",
+                                                 "login %s_%s 9999 %s %s",
                                                  PACKAGE,
                                                  VERSION,
                                                  self->priv->login,
@@ -391,14 +391,13 @@ gibbon_connection_on_output (GIOChannel *channel,
                                                             &bytes_written,
                                                             &error)) {
                 gdk_threads_enter ();
-                display_error (_("Error while sending data to server: %s\n"),
+                display_error (_("Error while sending data to server: %s.\n"),
                                error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
                 gibbon_connection_disconnect (self);
                 return FALSE;
         }
-        g_print (">>> %s\n", buffer);
         
         if (bytes_written >= strlen (buffer)) {
                 g_source_remove (self->priv->out_watcher);

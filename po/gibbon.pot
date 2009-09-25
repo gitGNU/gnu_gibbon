@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-24 15:11+0300\n"
+"POT-Creation-Date: 2009-09-25 12:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgid "Gtk+ frontend for the First Internet Backgammon Server FIBS"
 msgstr ""
 
 #: ../data/gibbon.desktop.in.h:2 ../data/gibbon.desktop.in.in.h:2
-msgid "Play backgammon online on FIBs."
+msgid "Play backgammon online on FIBS."
 msgstr ""
 
 #: ../data/gibbon.glade.h:1
@@ -135,12 +135,22 @@ msgstr ""
 msgid "Your username on that server."
 msgstr ""
 
-#: ../src/gibbon-connector.c:140
+#: ../src/gibbon-connection.c:311
 #, c-format
-msgid "Error resolving address for %s: %s\n"
+msgid "Error receiving data from server: %s.\n"
 msgstr ""
 
-#: ../src/gibbon-connector.c:176
+#: ../src/gibbon-connection.c:394
+#, c-format
+msgid "Error while sending data to server: %s.\n"
+msgstr ""
+
+#: ../src/gibbon-connector.c:149
+#, c-format
+msgid "Error resolving address for %s: %s.\n"
+msgstr ""
+
+#: ../src/gibbon-connector.c:216
 #, c-format
 msgid "Failed to create connector thread: %s."
 msgstr ""
@@ -164,7 +174,7 @@ msgstr ""
 
 #: ../src/gtkconnectiondialog.c:50
 #, c-format
-msgid "Invalid port '%s': %s."
+msgid "Invalid port `%s': %s."
 msgstr ""
 
 #: ../src/gtkconnectiondialog.c:58

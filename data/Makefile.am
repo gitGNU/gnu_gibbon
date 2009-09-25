@@ -48,7 +48,8 @@ EXTRA_DIST = \
 	$(gtkbuilder_DATA)
 
 CLEANFILES = \
-	$(desktop_DATA)
+	$(desktop_DATA) \
+	$(schemas_DATA)
 
 $(PACKAGE).xml: $(PACKAGE).glade
 	@GTK_BUILDER_CONVERT@ $(PACKAGE).glade $(PACKAGE).xml

@@ -1,6 +1,6 @@
 [Desktop Entry]
 _Name=Gtk+ frontend for the First Internet Backgammon Server FIBS
-_Comment=Play backgammon online on FIBs.
+_Comment=Play backgammon online on FIBS.
 Exec=gibbon
 Terminal=false
 Type=Application

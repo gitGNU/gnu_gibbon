@@ -47,7 +47,7 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
                 errno = 0;
                 portno = strtoul (port, &endptr, 10);
                 if (errno) {
-                        display_error (_("Invalid port '%s': %s."),
+                        display_error (_("Invalid port `%s': %s."),
                                          port, g_strerror (errno));
                         gtk_dialog_run (GTK_DIALOG (connection_dialog));
                                            

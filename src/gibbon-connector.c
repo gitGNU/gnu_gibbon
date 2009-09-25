@@ -147,7 +147,7 @@ gibbon_connector_connect_worker (GibbonConnector *self)
         if (s != 0) {
                 self->priv->error = 
                         g_strdup_printf (_("Error resolving address for "
-                                           "%s: %s\n"),
+                                           "%s: %s.\n"),
                                          self->priv->hostname, 
                                          gai_strerror (s));
                 self->priv->state = GIBBON_CONNECTOR_ERROR;
