@@ -1,8 +1,8 @@
 <gconfschemafile>
   <schemalist>
     <schema>
-      <key>/schemas/apps/gibbon/preferences/server</key>
-      <applyto>/apps/gibbon/preferences/server</applyto>
+      <key>/schemas/apps/gibbon/preferences/server/host</key>
+      <applyto>/apps/gibbon/preferences/server/host</applyto>
       <owner>gibbon</owner>
       <type>string</type>
       <default>fibs.com</default>
@@ -17,8 +17,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gibbon/preferences/port</key>
-      <applyto>/apps/gibbon/preferences/port</applyto>
+      <key>/schemas/apps/gibbon/preferences/server/port</key>
+      <applyto>/apps/gibbon/preferences/server/port</applyto>
       <owner>gibbon</owner>
       <type>int</type>
       <default>4321</default>
@@ -33,8 +33,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gibbon/preferences/login</key>
-      <applyto>/apps/gibbon/preferences/login</applyto>
+      <key>/schemas/apps/gibbon/preferences/server/login</key>
+      <applyto>/apps/gibbon/preferences/server/login</applyto>
       <owner>gibbon</owner>
       <type>string</type>
       <locale name="C">
@@ -48,8 +48,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gibbon/preferences/password</key>
-      <applyto>/apps/gibbon/preferences/password</applyto>
+      <key>/schemas/apps/gibbon/preferences/server/password</key>
+      <applyto>/apps/gibbon/preferences/server/password</applyto>
       <owner>gibbon</owner>
       <type>string</type>
       <locale name="C">
@@ -63,8 +63,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gibbon/preferences/save_pwd</key>
-      <applyto>/apps/gibbon/preferences/save_pwd</applyto>
+      <key>/schemas/apps/gibbon/preferences/server/save_pwd</key>
+      <applyto>/apps/gibbon/preferences/server/save_pwd</applyto>
       <owner>gibbon</owner>
       <type>bool</type>
       <default>FALSE</default>
@@ -76,6 +76,17 @@
       <locale name="de">
 	<short>Passwort speichern?</short>
 	<long>Soll das Passwort auf der lokalen Festplatte gespeichert werden?</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/gibbon/preferences/server/address</key>
+      <applyto>/apps/gibbon/preferences/server/address</applyto>
+      <owner>gibbon</owner>
+      <type>bool</type>
+      <default>FALSE</default>
+      <locale name="C">
+	<short>E-mail address</short>
+	<long>E-mail address to display on the server</long>
       </locale>
     </schema>
   </schemalist>

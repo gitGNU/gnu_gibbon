@@ -55,6 +55,7 @@ init_gui (const gchar *builder_filename)
         const gchar *default_login;
         const gchar *default_password;
         gboolean default_save_password;
+        const gchar *default_address;
         GObject *entry;
         GObject *check;
         PangoFontDescription *font_desc;
@@ -105,25 +106,29 @@ init_gui (const gchar *builder_filename)
         
         default_server = 
                 gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_PREFS_PREFIX "server",
+                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "host",
                                          NULL);
         default_port = 
                 gconf_client_get_int (conf_client,
-                                      GIBBON_GCONF_PREFS_PREFIX "port",
+                                      GIBBON_GCONF_SERVER_PREFS_PREFIX "port",
                                       NULL);
         default_login = 
                 gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_PREFS_PREFIX "login",
+                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "login",
                                          NULL);
         default_save_password = 
                 gconf_client_get_bool (conf_client,
-                                       GIBBON_GCONF_PREFS_PREFIX "save_pwd",
+                                       GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd",
                                        NULL);
         default_password = default_save_password ?
                 gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_PREFS_PREFIX "password",
+                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "password",
                                          NULL)
                 : NULL;
+        default_address = 
+                gconf_client_get_string (conf_client,
+                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "address",
+                                         NULL);
         
         if (default_server) {
                 entry = gtk_builder_get_object (builder, "conn_entry_server");
@@ -140,6 +145,11 @@ init_gui (const gchar *builder_filename)
         if (default_login) {
                 entry = gtk_builder_get_object (builder, "conn_entry_login");
                 gtk_entry_set_text (GTK_ENTRY (entry), default_login);
+        }
+        
+        if (default_address) {
+                entry = gtk_builder_get_object (builder, "conn_entry_address");
+                gtk_entry_set_text (GTK_ENTRY (entry), default_address);
         }
         
         check = gtk_builder_get_object (builder, "conn_checkbutton_remember");

@@ -29,6 +29,7 @@
 
 #define GIBBON_GCONF_PREFIX "/apps/gibbon/"
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
+#define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
 
 extern GtkBuilder *builder;
 
