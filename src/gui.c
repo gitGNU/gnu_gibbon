@@ -32,6 +32,7 @@ GtkBuilder *builder = NULL;
 
 GtkWidget *window = NULL;
 GtkWidget *connection_dialog = NULL;
+GtkWidget *server_text_view = NULL;
 GConfClient *conf_client = NULL;
 
 static GtkWidget *statusbar = NULL;
@@ -40,6 +41,9 @@ static GtkBuilder *get_builder (const gchar* filename);
 static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
 static void cb_connecting (GtkWidget *emitter, const gchar *hostname);
 static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
+static void cb_raw_server_output (GtkWidget *emitter, const gchar *text);
+static void cb_login (GtkWidget *emitter, const gchar *hostname);
+static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
 
 gint
 init_gui (const gchar *builder_filename)
@@ -52,6 +56,7 @@ init_gui (const gchar *builder_filename)
         gboolean default_save_password;
         GObject *entry;
         GObject *check;
+        PangoFontDescription *font_desc;
         
         builder = get_builder (builder_filename);
         
@@ -62,6 +67,9 @@ init_gui (const gchar *builder_filename)
         connection_dialog = 
                 GTK_WIDGET (gtk_builder_get_object (builder, 
                                                     "connection_dialog"));
+        server_text_view = 
+                GTK_WIDGET (gtk_builder_get_object (builder,
+                                                    "server_text_view"));
         statusbar = 
                 GTK_WIDGET (gtk_builder_get_object (builder, 
                                                     "statusbar"));
@@ -69,13 +77,22 @@ init_gui (const gchar *builder_filename)
         
         gtk_builder_connect_signals (builder, NULL);
 
+        font_desc = pango_font_description_from_string ("monospace 10");
+        gtk_widget_modify_font (server_text_view, font_desc);
+        pango_font_description_free (font_desc);
+        
         g_signal_connect (G_OBJECT (connection), "resolving",
                           G_CALLBACK (cb_resolving), NULL);
         g_signal_connect (G_OBJECT (connection), "connecting",
                           G_CALLBACK (cb_connecting), NULL);
+        g_signal_connect (G_OBJECT (connection), "login",
+                          G_CALLBACK (cb_login), NULL);
+        g_signal_connect (G_OBJECT (connection), "logged-in",
+                          G_CALLBACK (cb_logged_in), NULL);
         g_signal_connect (G_OBJECT (connection), "disconnected",
                           G_CALLBACK (cb_disconnected), NULL);
-
+        g_signal_connect (G_OBJECT (connection), "raw-server-output",
+                          G_CALLBACK (cb_raw_server_output), NULL);
         set_state_disconnected ();
         
         /* FIXME! All this stuff has to go into a new class
@@ -265,10 +282,54 @@ cb_connecting (GtkWidget *emitter, const gchar *hostname)
 }
 
 static void
+cb_login (GtkWidget *emitter, const gchar *hostname)
+{
+        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
+        gchar *msg = g_strdup_printf (_("Log in as %s on %s, port %u."),
+                                      gibbon_connection_get_login (connection),
+                                      gibbon_connection_get_hostname (connection),
+                                      gibbon_connection_get_port (connection));
+        
+        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
+        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
+        g_free (msg);
+}
+
+static void
+cb_logged_in (GtkWidget *emitter, const gchar *hostname)
+{
+        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
+        gchar *msg = g_strdup_printf (_("Logged in as %s on %s, port %u."),
+                                      gibbon_connection_get_login (connection),
+                                      gibbon_connection_get_hostname (connection),
+                                      gibbon_connection_get_port (connection));
+        
+        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
+        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
+        g_free (msg);
+}
+
+static void
 cb_disconnected (GtkWidget *emitter, const gchar *error)
 {
         gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
         gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));
         
         set_state_disconnected ();
+}
+
+static void
+cb_raw_server_output (GtkWidget *emitter, const gchar *text)
+{
+        GtkTextBuffer *buffer = 
+                gtk_text_view_get_buffer (GTK_TEXT_VIEW (server_text_view));
+        GtkTextIter iter;
+        
+        gtk_text_buffer_insert_at_cursor (buffer, text, -1);
+        gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
+        
+        gtk_text_buffer_get_end_iter (buffer, &iter);
+       
+        gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (server_text_view),
+                                      &iter, 0, FALSE, 0, 0); 
 }
