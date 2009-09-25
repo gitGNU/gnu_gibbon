@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 
 #include <netdb.h>
+#include <string.h>
 
 #include "gibbon-connection.h"
 #include "gibbon-connector.h"
@@ -50,6 +51,11 @@ struct _GibbonConnectionPrivate {
         
         GIOChannel *io;
         guint in_watcher;
+        gchar *in_buffer;
+        guint out_watcher;
+        gchar *out_buffer;
+        
+        GArray* command_queue;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -59,6 +65,13 @@ struct _GibbonConnectionPrivate {
                                       GIBBON_TYPE_CONNECTION,           \
                                       GibbonConnectionPrivate))
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
+
+static gboolean gibbon_connection_on_input (GIOChannel *channel,
+                                            GIOCondition condition,
+                                            GibbonConnection *self);
+static gboolean gibbon_connection_on_output (GIOChannel *channel,
+                                             GIOCondition condition,
+                                             GibbonConnection *self);
 
 static void
 gibbon_connection_init (GibbonConnection *conn)
@@ -78,14 +91,19 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->error = NULL;
         
         conn->priv->io = NULL;
+
         conn->priv->in_watcher = 0;
+        conn->priv->in_buffer = g_strconcat ("", NULL);
+        
+        conn->priv->out_watcher = 0;
+        conn->priv->out_buffer = g_strconcat ("", NULL);
 }
 
 static void
 gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *conn = GIBBON_CONNECTION (object);
-
+        
         if (conn->priv->hostname)
                 g_free (conn->priv->hostname);
         conn->priv->hostname = NULL;
@@ -112,9 +130,21 @@ gibbon_connection_finalize (GObject *object)
                 g_source_remove (conn->priv->in_watcher);
         conn->priv->in_watcher = 0;
         
+        if (conn->priv->out_watcher)
+                g_source_remove (conn->priv->out_watcher);
+        conn->priv->out_watcher = 0;
+        
         if (conn->priv->io)
                 g_io_channel_shutdown (conn->priv->io, FALSE, NULL);
         conn->priv->io = NULL;
+        
+        if (conn->priv->in_buffer)
+                g_free (conn->priv->in_buffer);
+        conn->priv->in_buffer = NULL;
+        
+        if (conn->priv->out_buffer)
+                g_free (conn->priv->out_buffer);
+        conn->priv->out_buffer = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -264,20 +294,64 @@ gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
 static gboolean
 gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 {
-        gchar buf[8192];
+        gchar buf[7];
         GIOStatus status;
         gsize bytes_read;
         GError *error = NULL;
-        
+        gchar *head;
+        gchar *ptr;
+        gchar *line_end;
+                
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
                                           &bytes_read, &error);
         if (status != G_IO_STATUS_NORMAL) {
-                g_print ("Aua\n");
-        } else if (status == G_IO_STATUS_NORMAL) {
-                buf[bytes_read] = 0;
-                g_print (buf);
+                gdk_threads_enter ();
+                display_error (_("Error reading from server: %s.\n"),
+                               error->message);
+                gdk_threads_leave ();
+                g_error_free (error);
+                
+                gibbon_connection_disconnect (self);
+                return FALSE;
+        }
+        
+        /* The input fifo is not exactly efficient.  */
+        head = self->priv->in_buffer;
+        buf[bytes_read] = 0;
+        
+        self->priv->in_buffer = g_strconcat (head, buf, NULL);
+        g_free (head);
+        
+        ptr = self->priv->in_buffer;
+        while ((line_end = index (ptr, '\012')) != NULL) {
+                *line_end = 0;
+                if (line_end > ptr && *(line_end - 1) == '\015')
+                        *(line_end - 1) = 0;
+                /* FIXME! Signal this as raw input instead! */
+                g_print ("%s\n", ptr);
+                ptr = line_end + 1;
+        }
+        if (ptr != self->priv->in_buffer) {
+                head = self->priv->in_buffer;
+                self->priv->in_buffer = g_strdup (ptr);
+                g_free (head);
+        }
+        
+        /* Only while not logged in: */
+        if (strcmp (self->priv->in_buffer, "login: ") == 0) {
+                /* FIXME! Signal raw input instead! */
+                g_print (self->priv->in_buffer);
+                g_print ("\n");
+                gibbon_connection_queue_command (self,
+                                                 "login %s_%s 1018 %s %s",
+                                                 PACKAGE,
+                                                 VERSION,
+                                                 self->priv->login,
+                                                 self->priv->password);
+                g_free (self->priv->in_buffer);
+                self->priv->in_buffer = g_strdup ("");
         }
         
         return TRUE;
@@ -293,6 +367,47 @@ gibbon_connection_on_input (GIOChannel *channel,
         if (G_IO_IN & condition) {
                 return gibbon_connection_handle_input (self, channel);
         }
+        
+        return TRUE;
+}
+
+static gboolean
+gibbon_connection_on_output (GIOChannel *channel,
+                             GIOCondition condition,
+                             GibbonConnection *self)
+{
+        gchar *buffer;
+        gsize bytes_written;
+        GError *error = NULL;
+        
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
+        g_return_val_if_fail (G_IO_OUT & condition, TRUE);
+        
+        buffer = self->priv->out_buffer;
+        
+        if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (self->priv->io,
+                                                            buffer,
+                                                            strlen (buffer),
+                                                            &bytes_written,
+                                                            &error)) {
+                gdk_threads_enter ();
+                display_error (_("Error while sending data to server: %s\n"),
+                               error->message);
+                gdk_threads_leave ();
+                g_error_free (error);
+                gibbon_connection_disconnect (self);
+                return FALSE;
+        }
+        g_print (">>> %s\n", buffer);
+        
+        if (bytes_written >= strlen (buffer)) {
+                g_source_remove (self->priv->out_watcher);
+                return FALSE;
+        }
+                        
+        /* Not exactly efficient to only write one byte at a time
+         * but it avoids blocking and our strings are short.  */
+        strcpy (buffer, buffer + bytes_written);
         
         return TRUE;
 }
@@ -382,9 +497,39 @@ gibbon_connection_connect (GibbonConnection *self)
 }
 
 void
+gibbon_connection_queue_command (GibbonConnection *self, 
+                                 const gchar *format, ...)
+{
+        va_list args;
+        gchar *formatted;
+        gchar *new_buf;
+        
+        g_return_if_fail (GIBBON_IS_CONNECTION (self));
+        
+        va_start (args, format);
+        formatted = g_strdup_vprintf (format, args);        
+        va_end (args);
+        
+        new_buf = g_strconcat (self->priv->out_buffer, formatted, 
+                               "\015\012", NULL);
+        g_free (self->priv->out_buffer);
+        self->priv->out_buffer = new_buf;
+
+        if (!self->priv->out_watcher) {
+                self->priv->out_watcher = 
+                        g_io_add_watch (self->priv->io, 
+                                        G_IO_OUT,
+                                        (GIOFunc) gibbon_connection_on_output,
+                                        self);
+        }        
+}
+
+void
 gibbon_connection_disconnect (GibbonConnection *self)
 {
         gchar *error= NULL;
+        guint i;
+        gchar *ptr;
         
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
@@ -398,6 +543,28 @@ gibbon_connection_disconnect (GibbonConnection *self)
         if (self->priv->in_watcher)
                 g_source_remove (self->priv->in_watcher);
         self->priv->in_watcher = 0;
+        
+        if (self->priv->in_buffer)
+                g_free (self->priv->in_buffer);
+        self->priv->in_buffer = NULL;
+        
+        if (self->priv->out_watcher)
+                g_source_remove (self->priv->out_watcher);
+        self->priv->in_watcher = 0;
+        
+        if (self->priv->out_buffer)
+                g_free (self->priv->out_buffer);
+        self->priv->out_buffer = NULL;
+        
+        if (self->priv->command_queue) {
+                for (i = 0;
+                     (ptr = g_array_index (self->priv->command_queue, 
+                                           gchar*, 0)) != NULL;
+                     ++i) {
+                        g_free (ptr);
+                }
+                g_array_free (self->priv->command_queue, TRUE);
+        }
         
         g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
                        error);

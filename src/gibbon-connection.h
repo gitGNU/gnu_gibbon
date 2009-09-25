@@ -65,6 +65,9 @@ void gibbon_connection_set_login (GibbonConnection *connection,
 void gibbon_connection_connect (GibbonConnection *connection);
 void gibbon_connection_disconnect (GibbonConnection *connection);
 
+void gibbon_connection_queue_command (GibbonConnection *connection,
+                                      const gchar *command, ...);
+
 G_END_DECLS
 
 #endif
