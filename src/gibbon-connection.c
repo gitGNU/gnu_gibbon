@@ -348,7 +348,7 @@ gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
 static gboolean
 gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 {
-        gchar buf[7];
+        gchar buf[4096];
         GIOStatus status;
         gsize bytes_read;
         GError *error = NULL;
@@ -380,7 +380,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         /* The input fifo is not exactly efficient.  */
         head = self->priv->in_buffer;
         buf[bytes_read] = 0;
-        
+
         self->priv->in_buffer = g_strconcat (head, buf, NULL);
         g_free (head);
         
@@ -409,7 +409,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 self->priv->in_buffer = g_strdup (ptr);
                 g_free (head);
         }
-        
+
         /* Only while not logged in: */
         if (self->priv->state == WAIT_LOGIN_PROMPT 
            && strcmp (self->priv->in_buffer, "login: ") == 0) {
@@ -629,14 +629,16 @@ gibbon_connection_disconnect (GibbonConnection *self)
         self->priv->in_watcher = 0;
         
         if (self->priv->in_buffer)
-                self->priv->in_buffer = g_strdup ("");
+                g_free (self->priv->in_buffer);
+        self->priv->in_buffer = g_strdup ("");
         
         if (self->priv->out_watcher)
                 g_source_remove (self->priv->out_watcher);
-        self->priv->in_watcher = 0;
+        self->priv->out_watcher = 0;
         
         if (self->priv->out_buffer)
-                self->priv->out_buffer = g_strdup ("");
+                g_free (self->priv->out_buffer);
+        self->priv->out_buffer = g_strdup ("");
         
         if (self->priv->io) {
                 g_io_channel_close (self->priv->io);
