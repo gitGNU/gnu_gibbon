@@ -42,6 +42,7 @@ static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
 static void cb_connecting (GtkWidget *emitter, const gchar *hostname);
 static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
 static void cb_raw_server_output (GtkWidget *emitter, const gchar *text);
+static void cb_cooked_server_output (GtkWidget *emitter, const gchar *text);
 static void cb_login (GtkWidget *emitter, const gchar *hostname);
 static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
 
@@ -93,6 +94,8 @@ init_gui (const gchar *builder_filename)
                           G_CALLBACK (cb_disconnected), NULL);
         g_signal_connect (G_OBJECT (connection), "raw-server-output",
                           G_CALLBACK (cb_raw_server_output), NULL);
+        g_signal_connect (G_OBJECT (connection), "cooked-server-output",
+                          G_CALLBACK (cb_cooked_server_output), NULL);
         set_state_disconnected ();
         
         /* FIXME! All this stuff has to go into a new class
@@ -323,13 +326,26 @@ cb_raw_server_output (GtkWidget *emitter, const gchar *text)
 {
         GtkTextBuffer *buffer = 
                 gtk_text_view_get_buffer (GTK_TEXT_VIEW (server_text_view));
-        GtkTextIter iter;
         
         gtk_text_buffer_insert_at_cursor (buffer, text, -1);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
         
-        gtk_text_buffer_get_end_iter (buffer, &iter);
-       
-        gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (server_text_view),
-                                      &iter, 0, FALSE, 0, 0); 
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (server_text_view),
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
 }
+
+static void
+cb_cooked_server_output (GtkWidget *emitter, const gchar *text)
+{
+        GtkTextBuffer *buffer = 
+                gtk_text_view_get_buffer (GTK_TEXT_VIEW (server_text_view));
+        
+        gtk_text_buffer_insert_at_cursor (buffer, text, -1);
+        gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
+        
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (server_text_view),
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
+}
+

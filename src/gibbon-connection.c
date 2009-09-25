@@ -402,7 +402,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 }
                 g_signal_emit (self, signals[signal], 0, ptr);
                 gdk_threads_leave ();
-                g_print ("%s\n", ptr);
                 ptr = line_end + 1;
         }
         if (ptr != self->priv->in_buffer) {
@@ -418,8 +417,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 g_signal_emit (self, signals[RAW_SERVER_OUTPUT], 0,
                                self->priv->in_buffer);
                 gdk_threads_leave ();
-                g_print (self->priv->in_buffer);
-                g_print ("\n");
                 gibbon_connection_queue_command (self,
                                                  "login %s_%s 9999 %s %s",
                                                  PACKAGE,
