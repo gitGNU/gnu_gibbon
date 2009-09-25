@@ -44,4 +44,7 @@ extern void display_error (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
 extern void set_state_connecting (void);
 extern void set_state_disconnected (void);
 
+G_MODULE_EXPORT void html_server_output_cb (GObject *emitter, 
+                                            const gchar *html);
+
 #endif

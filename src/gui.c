@@ -42,20 +42,19 @@ static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
 static void cb_connecting (GtkWidget *emitter, const gchar *hostname);
 static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
 static void cb_raw_server_output (GtkWidget *emitter, const gchar *text);
-static void cb_cooked_server_output (GtkWidget *emitter, const gchar *text);
 static void cb_login (GtkWidget *emitter, const gchar *hostname);
 static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
 
 gint
 init_gui (const gchar *builder_filename)
 {
-        const gchar *default_server;
+        gchar *default_server;
         gint default_port;
         gchar *default_port_str;
-        const gchar *default_login;
-        const gchar *default_password;
+        gchar *default_login;
+        gchar *default_password;
         gboolean default_save_password;
-        const gchar *default_address;
+        gchar *default_address;
         GObject *entry;
         GObject *check;
         PangoFontDescription *font_desc;
@@ -95,8 +94,6 @@ init_gui (const gchar *builder_filename)
                           G_CALLBACK (cb_disconnected), NULL);
         g_signal_connect (G_OBJECT (connection), "raw-server-output",
                           G_CALLBACK (cb_raw_server_output), NULL);
-        g_signal_connect (G_OBJECT (connection), "cooked-server-output",
-                          G_CALLBACK (cb_cooked_server_output), NULL);
         set_state_disconnected ();
         
         /* FIXME! All this stuff has to go into a new class
@@ -133,6 +130,7 @@ init_gui (const gchar *builder_filename)
         if (default_server) {
                 entry = gtk_builder_get_object (builder, "conn_entry_server");
                 gtk_entry_set_text (GTK_ENTRY (entry), default_server);
+                g_free (default_server);
         }
         
         if (default_port) {
@@ -145,11 +143,13 @@ init_gui (const gchar *builder_filename)
         if (default_login) {
                 entry = gtk_builder_get_object (builder, "conn_entry_login");
                 gtk_entry_set_text (GTK_ENTRY (entry), default_login);
+                g_free (default_login);
         }
         
         if (default_address) {
                 entry = gtk_builder_get_object (builder, "conn_entry_address");
                 gtk_entry_set_text (GTK_ENTRY (entry), default_address);
+                g_free (default_address);
         }
         
         check = gtk_builder_get_object (builder, "conn_checkbutton_remember");
@@ -345,13 +345,13 @@ cb_raw_server_output (GtkWidget *emitter, const gchar *text)
                 0.0, TRUE, 0.5, 1);
 }
 
-static void
-cb_cooked_server_output (GtkWidget *emitter, const gchar *text)
+G_MODULE_EXPORT void html_server_output_cb (GObject *emitter, 
+                                            const gchar *html)
 {
         GtkTextBuffer *buffer = 
                 gtk_text_view_get_buffer (GTK_TEXT_VIEW (server_text_view));
         
-        gtk_text_buffer_insert_at_cursor (buffer, text, -1);
+        gtk_text_buffer_insert_at_cursor (buffer, html, -1);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
         
         gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (server_text_view),

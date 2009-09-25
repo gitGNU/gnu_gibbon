@@ -27,6 +27,7 @@
 
 #include "gibbon-connection.h"
 #include "gibbon-connector.h"
+#include "gibbon-session.h"
 #include "gui.h"
 
 enum gibbon_connection_signals {
@@ -67,7 +68,7 @@ struct _GibbonConnectionPrivate {
         guint out_watcher;
         gchar *out_buffer;
         
-        GArray* command_queue;
+        GibbonSession *session;
 };
 
 #define GIBBON_CONNECTION_DEFAULT_PORT 4321
@@ -111,6 +112,8 @@ gibbon_connection_init (GibbonConnection *conn)
         
         conn->priv->out_watcher = 0;
         conn->priv->out_buffer = g_strconcat ("", NULL);
+        
+        conn->priv->session = NULL;
 }
 
 static void
@@ -159,6 +162,10 @@ gibbon_connection_finalize (GObject *object)
         if (conn->priv->out_buffer)
                 g_free (conn->priv->out_buffer);
         conn->priv->out_buffer = NULL;
+        
+        if (conn->priv->session)
+                g_free (conn->priv->session);
+        conn->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -399,6 +406,18 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         signal = COOKED_SERVER_OUTPUT;
                         g_signal_emit (self, signals[LOGGED_IN], 0,
                                        self->priv->hostname);
+                        self->priv->session = gibbon_session_new ();
+
+                        g_signal_connect (G_OBJECT (self->priv->session),
+                                          "html-server-output",
+                                          G_CALLBACK (html_server_output_cb),
+                                          self);
+
+                        g_signal_connect_swapped (
+                                G_OBJECT (self), 
+                                "cooked-server-output",
+                                G_CALLBACK (gibbon_session_server_output_cb), 
+                                self->priv->session);
                 }
                 g_signal_emit (self, signals[signal], 0, ptr);
                 gdk_threads_leave ();
@@ -461,11 +480,12 @@ gibbon_connection_on_output (GIOChannel *channel,
         gsize bytes_written;
         GError *error = NULL;
         
+gchar *written;
+
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
         g_return_val_if_fail (G_IO_OUT & condition, TRUE);
         
         buffer = self->priv->out_buffer;
-        
         if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (self->priv->io,
                                                             buffer,
                                                             strlen (buffer),
@@ -479,16 +499,15 @@ gibbon_connection_on_output (GIOChannel *channel,
                 gibbon_connection_disconnect (self);
                 return FALSE;
         }
-        
+
         if (bytes_written >= strlen (buffer)) {
                 g_source_remove (self->priv->out_watcher);
+                self->priv->out_watcher = 0;
                 return FALSE;
         }
                         
-        /* Not exactly efficient to only write one byte at a time
-         * but it avoids blocking and our strings are short.  */
         strcpy (buffer, buffer + bytes_written);
-        
+
         return TRUE;
 }
 
@@ -591,7 +610,7 @@ gibbon_connection_queue_command (GibbonConnection *self,
         va_start (args, format);
         formatted = g_strdup_vprintf (format, args);        
         va_end (args);
-        
+
         new_buf = g_strconcat (self->priv->out_buffer, formatted, 
                                "\015\012", NULL);
         g_free (self->priv->out_buffer);
@@ -605,7 +624,7 @@ gibbon_connection_queue_command (GibbonConnection *self,
                                         G_IO_OUT,
                                         (GIOFunc) gibbon_connection_on_output,
                                         self);
-        }        
+        } 
 }
 
 void

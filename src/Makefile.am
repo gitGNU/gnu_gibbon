@@ -28,6 +28,7 @@ gibbon_SOURCES =		\
 	gibbon.c 		\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
+	gibbon-session.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c
@@ -37,6 +38,7 @@ noinst_HEADERS =		\
 	gibbon.h		\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
+	gibbon-session.h	\
 	gui.h
 
 gibbon_LDFLAGS = -export-dynamic
