@@ -501,6 +501,7 @@ gibbon_connection_establish (GibbonConnection *self)
 
         socket_fd = gibbon_connector_steal_socket (self->priv->connector);
         g_object_unref (self->priv->connector);
+        self->priv->connector = NULL;
         
         self->priv->io = g_io_channel_unix_new (socket_fd);
         g_io_channel_set_encoding (self->priv->io, NULL, NULL);
@@ -564,7 +565,7 @@ gibbon_connection_connect (GibbonConnection *self)
                 g_object_unref (self->priv->connector);
 
         self->priv->connector = gibbon_connector_new (self->priv->hostname,
-                                                      self->priv->port); 
+                                                      self->priv->port);
         self->priv->state = WAIT_LOGIN_PROMPT; 
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
@@ -611,8 +612,6 @@ void
 gibbon_connection_disconnect (GibbonConnection *self)
 {
         gchar *error= NULL;
-        guint i;
-        gchar *ptr;
         
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
@@ -630,26 +629,20 @@ gibbon_connection_disconnect (GibbonConnection *self)
         self->priv->in_watcher = 0;
         
         if (self->priv->in_buffer)
-                g_free (self->priv->in_buffer);
-        self->priv->in_buffer = NULL;
+                self->priv->in_buffer = g_strdup ("");
         
         if (self->priv->out_watcher)
                 g_source_remove (self->priv->out_watcher);
         self->priv->in_watcher = 0;
         
         if (self->priv->out_buffer)
-                g_free (self->priv->out_buffer);
-        self->priv->out_buffer = NULL;
+                self->priv->out_buffer = g_strdup ("");
         
-        if (self->priv->command_queue) {
-                for (i = 0;
-                     (ptr = g_array_index (self->priv->command_queue, 
-                                           gchar*, 0)) != NULL;
-                     ++i) {
-                        g_free (ptr);
-                }
-                g_array_free (self->priv->command_queue, TRUE);
+        if (self->priv->io) {
+                g_io_channel_close (self->priv->io);
+                g_io_channel_unref (self->priv->io);
         }
+        self->priv->io = NULL;
         
         g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
                        error);
