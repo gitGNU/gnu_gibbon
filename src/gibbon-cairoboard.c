@@ -35,6 +35,13 @@ static gboolean gibbon_cairoboard_expose (GtkWidget *object,
                                           GdkEventExpose *event);
 static void gibbon_cairoboard_draw (GibbonCairoboard *board, cairo_t *cr);
 
+struct GibbonColor {
+        double red;
+        double green;
+        double blue;
+        double alpha;
+};
+
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
 {
@@ -95,22 +102,67 @@ gibbon_cairoboard_expose (GtkWidget *widget, GdkEventExpose *event)
 static void
 gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
-        double x, y, radius;
         GtkWidget *widget;
+        GtkAllocation *allocation;
+        double design_width = 810;
+        double design_height = 380;
+        double aspect_ratio = design_width / design_height;
+        double widget_ratio;
+        double translate_x, translate_y, scale_x, scale_y;
+        struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
+        struct GibbonColor bearoff_compartment_color = { 0, 0, 0, 0 };
+        double outer_border_w = 10;
+        double outer_border_h = 10;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
+g_print ("Aspect ratio: %g (810 x 380)\n", aspect_ratio);
+
         widget = GTK_WIDGET (self);
+        allocation = &widget->allocation;
+        
+        if (!allocation->height)
+                return;
+        if (!allocation->width)
+                return;
+        
+        widget_ratio = (double) allocation->width / allocation->height;
+g_print ("Widget ratio: %g (%d x %d)\n", widget_ratio, allocation->width, allocation->height);
 
-        x = 0 + widget->allocation.width / 2;
-        y = 0 + widget->allocation.height / 2;
-        radius = MIN (widget->allocation.width / 2,
-                      widget->allocation.height / 2) - 5;
+        if (widget_ratio > aspect_ratio) {
+                translate_y = 0;
+                translate_x = (allocation->width 
+                               - (allocation->height / aspect_ratio)) / 2;
+                scale_y = 0;
+                scale_x = (allocation->height / aspect_ratio) 
+                        / allocation->width;
+        } else {
+                translate_x = 0;
+                translate_y = (allocation->height 
+                               - (allocation->width / aspect_ratio)) / 2;
+                scale_x = 0;
+                scale_y = (allocation->width / aspect_ratio) 
+                        / allocation->height;
+        }
 
-        cairo_arc (cr, x, y, radius, 0, 2 * 3.1415927);
+        cairo_translate (cr, translate_x, translate_y);
+        cairo_translate (cr, scale_x, scale_y);
 
-        cairo_set_source_rgb (cr, 1, 1, 1);
-        cairo_fill_preserve (cr);
+        /* Board background.  */
+        cairo_rectangle (cr,
+                         0, 0,
+                         design_width, design_height);
+
+        cairo_set_source_rgb (cr, 
+                              board_color.red, 
+                              board_color.green,
+                              board_color.blue);
+        cairo_fill (cr);
+        
+        /* Bear-off compartments.  */
+        cairo_rectangle (cr,
+                         10, 10, 30, 150);
         cairo_set_source_rgb (cr, 0, 0, 0);
-        cairo_stroke (cr);
+        
+        cairo_fill (cr);
 }

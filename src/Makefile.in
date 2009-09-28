@@ -67,8 +67,9 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_gibbon_OBJECTS = gibbon.$(OBJEXT) gibbon-cairoboard.$(OBJEXT) \
 	gibbon-connection.$(OBJEXT) gibbon-connector.$(OBJEXT) \
-	gibbon-session.$(OBJEXT) gtkmainwindow.$(OBJEXT) \
-	gtkconnectiondialog.$(OBJEXT) gui.$(OBJEXT)
+	gibbon-design.$(OBJEXT) gibbon-session.$(OBJEXT) \
+	gtkmainwindow.$(OBJEXT) gtkconnectiondialog.$(OBJEXT) \
+	gui.$(OBJEXT)
 gibbon_OBJECTS = $(am_gibbon_OBJECTS)
 am__DEPENDENCIES_1 =
 gibbon_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -267,6 +268,7 @@ gibbon_SOURCES = \
 	gibbon-cairoboard.c	\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
+	gibbon-design.c		\
 	gibbon-session.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
@@ -278,6 +280,7 @@ noinst_HEADERS = \
 	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
+	gibbon-design.h		\
 	gibbon-session.h	\
 	gui.h
 
@@ -357,6 +360,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-cairoboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-design.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-session.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkconnectiondialog.Po@am__quote@
