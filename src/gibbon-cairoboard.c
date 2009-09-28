@@ -102,11 +102,6 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         
         widget = GTK_WIDGET (self);
 
-         widget->allocation.x,
-         widget->allocation.y,
-         widget->allocation.width,
-         widget->allocation.height);
-         
         x = 0 + widget->allocation.width / 2;
         y = 0 + widget->allocation.height / 2;
         radius = MIN (widget->allocation.width / 2,
