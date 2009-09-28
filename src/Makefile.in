@@ -65,10 +65,10 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_gibbon_OBJECTS = gibbon.$(OBJEXT) gibbon-connection.$(OBJEXT) \
-	gibbon-connector.$(OBJEXT) gibbon-session.$(OBJEXT) \
-	gtkmainwindow.$(OBJEXT) gtkconnectiondialog.$(OBJEXT) \
-	gui.$(OBJEXT)
+am_gibbon_OBJECTS = gibbon.$(OBJEXT) gibbon-cairoboard.$(OBJEXT) \
+	gibbon-connection.$(OBJEXT) gibbon-connector.$(OBJEXT) \
+	gibbon-session.$(OBJEXT) gtkmainwindow.$(OBJEXT) \
+	gtkconnectiondialog.$(OBJEXT) gui.$(OBJEXT)
 gibbon_OBJECTS = $(am_gibbon_OBJECTS)
 am__DEPENDENCIES_1 =
 gibbon_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -264,6 +264,7 @@ AM_CPPFLAGS = \
 
 gibbon_SOURCES = \
 	gibbon.c 		\
+	gibbon-cairoboard.c	\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
 	gibbon-session.c	\
@@ -274,6 +275,7 @@ gibbon_SOURCES = \
 noinst_HEADERS = \
 	game.h			\
 	gibbon.h		\
+	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
 	gibbon-session.h	\
@@ -352,6 +354,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-cairoboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-connector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gibbon-session.Po@am__quote@

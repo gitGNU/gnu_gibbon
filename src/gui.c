@@ -27,6 +27,7 @@
 
 #include "gui.h"
 #include "gibbon.h"
+#include "gibbon-cairoboard.h"
 
 GtkBuilder *builder = NULL;
 
@@ -58,7 +59,9 @@ init_gui (const gchar *builder_filename)
         GObject *entry;
         GObject *check;
         PangoFontDescription *font_desc;
-        
+        GibbonCairoboard *board = NULL;
+        GObject *left_vpane;
+                        
         builder = get_builder (builder_filename);
         
         if (!builder)
@@ -162,6 +165,15 @@ init_gui (const gchar *builder_filename)
         } else {
                 gtk_entry_set_text (GTK_ENTRY (entry), "");
         }
+        
+        left_vpane = gtk_builder_get_object (builder, "left_vpane");
+                        
+        board = gibbon_cairoboard_new ();
+        gtk_widget_show (GTK_WIDGET (board));
+        gtk_widget_set_size_request (GTK_WIDGET (board), 256, 256);
+        
+        gtk_widget_destroy (gtk_paned_get_child1 (GTK_PANED (left_vpane)));
+        gtk_paned_add1 (GTK_PANED (left_vpane), GTK_WIDGET (board));
         
 	return 1;
 }
