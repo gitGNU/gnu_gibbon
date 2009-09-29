@@ -21,8 +21,8 @@ AM_CPPFLAGS = 				\
 	-I$(top_srcdir)			\
 	-I$(srcdir)			\
 	$(GIBBON_CFLAGS)		\
-	-DDATADIR=\""$(datadir)"\"	\
-	-DLIBDIR=\""$(libdir)"\"
+	-DGIBBON_DATADIR=\""$(datadir)"\"	\
+	-DGIBBON_LIBDIR=\""$(libdir)"\"
 
 gibbon_SOURCES =		\
 	gibbon.c 		\

@@ -25,7 +25,10 @@
 #include <errno.h>
 
 #ifndef G_OS_WIN32
-#include <netdb.h>
+# include <netdb.h>
+#else
+# include <winsock.h>
+# include <windns.h>
 #endif
 
 #include "gibbon-connector.h"
