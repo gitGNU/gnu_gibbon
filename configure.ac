@@ -47,7 +47,7 @@ AC_MSG_RESULT([$gibbon_native_msdos])
 
 AC_CONFIG_HEADERS(config.h)
 
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AC_PATH_PROG(GTK_BUILDER_CONVERT, gtk-builder-convert)
