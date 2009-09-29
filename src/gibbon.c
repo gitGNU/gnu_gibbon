@@ -70,7 +70,7 @@ main(int argc, char *argv[])
          */
         if (!builder_filename)
                 builder_filename = builder_filename_buf 
-                        = g_build_filename(DATADIR, PACKAGE, 
+                        = g_build_filename(GIBBON_DATADIR, PACKAGE, 
                                            PACKAGE ".xml", NULL);
                                            
         if (!init_gui (builder_filename))               
@@ -92,7 +92,7 @@ init_i18n (void)
 
         setlocale(LC_ALL, "");
 
-        locale_dir = g_build_filename(DATADIR, "locale", NULL);
+        locale_dir = g_build_filename(GIBBON_DATADIR, "locale", NULL);
         bindtextdomain(GETTEXT_PACKAGE, locale_dir);
         g_free(locale_dir);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
