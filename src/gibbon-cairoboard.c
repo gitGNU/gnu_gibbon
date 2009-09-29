@@ -104,20 +104,29 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
         GtkAllocation *allocation;
-        double design_width = 810;
+        double design_width = 510;
         double design_height = 380;
         double aspect_ratio = design_width / design_height;
         double widget_ratio;
-        double translate_x, translate_y, scale_x, scale_y;
-        struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
-        struct GibbonColor bearoff_compartment_color = { 0, 0, 0, 0 };
+        double translate_x, translate_y, scale;
+        struct GibbonColor frame_color = { 0.2, 0.15, 0, 1 };
+        struct GibbonColor bearoff_color = { 0, 0, 0, 1 };
         double outer_border_w = 10;
         double outer_border_h = 10;
+        double checker_width = 30;
+        double checker_height = 10;
+        double point_width = checker_width;
+        double point_length = 5 * checker_width;
+        struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
+        double board_x, board_y;
+        double dice_area_height = 2 * checker_width;
+        struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
+        struct GibbonColor point_color2 = { 0.5, 0.5, 0.5, 1 };
+        double d;
+        gint i;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
-g_print ("Aspect ratio: %g (810 x 380)\n", aspect_ratio);
-
         widget = GTK_WIDGET (self);
         allocation = &widget->allocation;
         
@@ -127,26 +136,21 @@ g_print ("Aspect ratio: %g (810 x 380)\n", aspect_ratio);
                 return;
         
         widget_ratio = (double) allocation->width / allocation->height;
-g_print ("Widget ratio: %g (%d x %d)\n", widget_ratio, allocation->width, allocation->height);
 
         if (widget_ratio > aspect_ratio) {
+                scale = allocation->height / design_height; 
                 translate_y = 0;
                 translate_x = (allocation->width 
-                               - (allocation->height / aspect_ratio)) / 2;
-                scale_y = 0;
-                scale_x = (allocation->height / aspect_ratio) 
-                        / allocation->width;
+                               - scale * design_width) / 2;
         } else {
+                scale = allocation->width / design_width;
                 translate_x = 0;
                 translate_y = (allocation->height 
-                               - (allocation->width / aspect_ratio)) / 2;
-                scale_x = 0;
-                scale_y = (allocation->width / aspect_ratio) 
-                        / allocation->height;
+                               - scale * design_height) / 2;
         }
 
         cairo_translate (cr, translate_x, translate_y);
-        cairo_translate (cr, scale_x, scale_y);
+        cairo_scale (cr, scale, scale);
 
         /* Board background.  */
         cairo_rectangle (cr,
@@ -154,15 +158,124 @@ g_print ("Widget ratio: %g (%d x %d)\n", widget_ratio, allocation->width, alloca
                          design_width, design_height);
 
         cairo_set_source_rgb (cr, 
-                              board_color.red, 
-                              board_color.green,
-                              board_color.blue);
+                              frame_color.red, 
+                              frame_color.green,
+                              frame_color.blue);
         cairo_fill (cr);
         
         /* Bear-off compartments.  */
+        cairo_set_source_rgb (cr, 
+                              bearoff_color.red, 
+                              bearoff_color.green, 
+                              bearoff_color.blue);
         cairo_rectangle (cr,
-                         10, 10, 30, 150);
-        cairo_set_source_rgb (cr, 0, 0, 0);
-        
+                         outer_border_w, outer_border_h, 
+                         checker_width, 15 * checker_height);        
         cairo_fill (cr);
+        cairo_rectangle (cr,
+                         outer_border_w, 
+                         design_height - outer_border_h - 15 * checker_height,
+                         checker_width, 15 * checker_height);
+        cairo_fill (cr);
+        cairo_rectangle (cr,
+                         design_width - outer_border_w - checker_width,
+                         outer_border_h,
+                         checker_width, 15 * checker_height);
+        cairo_fill (cr);
+        cairo_rectangle (cr,
+                         design_width - outer_border_w - checker_width,
+                         design_height - outer_border_h - 15 * checker_height,
+                         checker_width, 15 * checker_height);
+        cairo_fill (cr);
+        
+        /* Board background.  */
+        cairo_set_source_rgb (cr,
+                              board_color.red,
+                              board_color.green,
+                              board_color.blue);
+        board_x = 2 * outer_border_w + checker_width;
+        board_y = outer_border_h;
+         
+        cairo_rectangle (cr,
+                         board_x, board_y,
+                         6 * point_width,
+                         2 * point_length + dice_area_height);
+        cairo_fill (cr);
+        cairo_rectangle (cr,
+                         design_width - board_x - 6 * point_width, board_y,
+                         6 * point_width,
+                         2 * point_length + dice_area_height);
+        cairo_fill (cr);
+        
+        cairo_set_source_rgb (cr,
+                              point_color1.red,
+                              point_color1.green,
+                              point_color1.blue);
+        for (i = 0; i < 6; i += 2) {
+                cairo_move_to (cr, board_x + i * point_width, board_y);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr, 
+                               design_width - board_x - (6 - i) * point_width,
+                               board_y);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr,
+                               board_x + (i + 1) * point_width,
+                               design_height - outer_border_h);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, -point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr,
+                               design_width - board_x - (5 - i) * point_width,
+                               design_height - outer_border_h);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, -point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+        }
+
+        cairo_set_source_rgb (cr,
+                              point_color2.red,
+                              point_color2.green,
+                              point_color2.blue);
+        for (i = 0; i < 6; i += 2) {
+                cairo_move_to (cr, board_x + (i + 1) * point_width, board_y);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr, 
+                               design_width - board_x - (5 - i) * point_width,
+                               board_y);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr,
+                               board_x + i * point_width,
+                               design_height - outer_border_h);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, -point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+                
+                cairo_move_to (cr,
+                               design_width - board_x - (6 - i) * point_width,
+                               design_height - outer_border_h);
+                cairo_rel_line_to (cr, point_width, 0);
+                cairo_rel_line_to (cr, -point_width / 2, -point_length);
+                cairo_close_path (cr);
+                cairo_fill (cr);
+        }
 }
