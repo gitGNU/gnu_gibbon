@@ -22,7 +22,6 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
-#include <netdb.h>
 #include <string.h>
 
 #include "gibbon-connection.h"
@@ -393,6 +392,10 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         self->priv->in_buffer = g_strconcat (head, buf, NULL);
         g_free (head);
         
+#ifndef HAVE_INDEX
+#define index(str, c) memchr (str, c, strlen (str))
+#endif
+
         ptr = self->priv->in_buffer;
         while ((line_end = index (ptr, '\012')) != NULL) {
                 *line_end = 0;

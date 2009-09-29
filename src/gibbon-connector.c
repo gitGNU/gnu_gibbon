@@ -22,8 +22,11 @@
 
 #include <unistd.h>
 #include <sys/types.h>
-#include <netdb.h>
 #include <errno.h>
+
+#ifndef G_OS_WIN32
+#include <netdb.h>
+#endif
 
 #include "gibbon-connector.h"
 #include "gui.h"
@@ -112,6 +115,10 @@ gibbon_connector_new (const gchar *hostname, guint port)
 static gpointer *
 gibbon_connector_connect_worker (GibbonConnector *self)
 {
+#ifdef G_OS_WIN32
+	gibbon_connector_cancel (self);
+	return NULL;
+#else
         struct addrinfo hints;
         struct addrinfo *results;
         struct addrinfo *ai;
@@ -119,7 +126,7 @@ gibbon_connector_connect_worker (GibbonConnector *self)
         int socket_fd = -1;
         int last_errno = 0;
         gchar *service = NULL;
-                
+       
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
@@ -199,6 +206,7 @@ gibbon_connector_connect_worker (GibbonConnector *self)
         g_mutex_unlock (self->priv->mutex);
         
         return NULL;
+#endif /* G_OS_WIN32 */
 }
 
 gboolean

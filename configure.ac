@@ -30,7 +30,20 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([1.10 gnu])
 
+AC_CANONICAL_HOST
+
 AM_MAINTAINER_MODE
+
+AC_MSG_CHECKING([for MS-DOS])
+case "$host" in
+	*-*-mingw*)
+		gibbon_native_msdos=yes
+        	;;
+	*)
+		gibbon_native_msdos=no
+		;;
+esac
+AC_MSG_RESULT([$gibbon_native_msdos])
 
 AC_CONFIG_HEADERS(config.h)
 
@@ -59,12 +72,12 @@ AM_GLIB_GNU_GETTEXT([external])
 m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.13.0])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.13.0])
 m4_define(gibbon_gconf_requirement, [gconf-2.0])
-m4_define(gibbon_libglade_requirement, [libglade-2.0 >= 2.6.0])
+m4_define(gibbon_gthread_requirement, [gthread-2.0])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_gtk_requirement
     gibbon_gconf_requirement
-    gibbon_libglade_requirement
+    gibbon_gthread_requirement
 )
 
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
@@ -74,20 +87,24 @@ AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 AC_CHECK_LIB(nsl, gethostbyname)
 AC_CHECK_LIB(socket, connect)
 
-AC_CHECK_FUNC(res_query, ,
-  [AC_CHECK_LIB(resolv, res_query, [],
-    [ save_libs="$LIBS"
-      LIBS="-lresolv $LIBS"
-      AC_MSG_CHECKING([for res_query in -lresolv (alternate version)])
-      AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([[#include <resolv.h>]], [[res_query(0,0,0,0,0)]])], 
-        [ AC_MSG_RESULT(yes) ],
-        [ AC_MSG_RESULT(no)
-          LIBS="$save_libs"
-          AC_CHECK_LIB(bind, res_query,
-            [], [ AC_MSG_ERROR(res_query not found) ] ) ] ) ] )
-  ]
-)
+if test $gibbon_native_msdos = no; then
+  AC_CHECK_FUNC(res_query, ,
+    [AC_CHECK_LIB(resolv, res_query, [],
+      [ save_libs="$LIBS"
+        LIBS="-lresolv $LIBS"
+        AC_MSG_CHECKING([for res_query in -lresolv (alternate version)])
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM([[#include <resolv.h>]], [[res_query(0,0,0,0,0)]])], 
+          [ AC_MSG_RESULT(yes) ],
+          [ AC_MSG_RESULT(no)
+            LIBS="$save_libs"
+            AC_CHECK_LIB(bind, res_query,
+              [], [ AC_MSG_ERROR(res_query not found) ] ) ] ) ] )
+    ]
+  )
+fi
+
+AC_CHECK_FUNCS (index)
 
 GIBBON_LIBS="${GIBBON_LIBS}"
 AC_SUBST(GIBBON_LIBS)

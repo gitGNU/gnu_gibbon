@@ -26,7 +26,9 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
+#ifdef G_OS_UNIX
+# include <gdk/gdkx.h>
+#endif
 
 #include "gibbon.h"
 #include "gibbon-connection.h"
