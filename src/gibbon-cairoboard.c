@@ -104,7 +104,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
         GtkAllocation *allocation;
-        double design_width = 510;
+        double design_width = 490;
         double design_height = 380;
         double aspect_ratio = design_width / design_height;
         double widget_ratio;
