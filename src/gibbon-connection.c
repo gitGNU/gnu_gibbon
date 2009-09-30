@@ -375,7 +375,11 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
                                           &bytes_read, &error);
         if (status != G_IO_STATUS_NORMAL) {
+                /* FIXME! This causes a crash if the server closes the
+                 * connection.
+                 */
                 gdk_threads_enter ();
+g_print ("Status is: %d\n", status);
                 display_error (_("Error receiving data from server: %s.\n"),
                                error->message);
                 gdk_threads_leave ();
