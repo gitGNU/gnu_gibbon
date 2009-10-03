@@ -51,6 +51,11 @@ static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       guint number,
                                       double x, double y,
                                       struct GibbonColor *color);
+static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
+                              guint value, gint side);
+static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
+                               const gchar *text,
+                               double x, double y, double ext);
 
 #ifdef M_PI
 # undef M_PI
@@ -313,6 +318,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                 gibbon_draw_bearoff (self, cr, checkers[26]);
         if (checkers[27] != 0)
                 gibbon_draw_bearoff (self, cr, checkers[27]);
+                
+        gibbon_draw_cube (self, cr, 2, 0);
 }
 
 static void
@@ -368,7 +375,7 @@ gibbon_draw_bearoff (GibbonCairoboard *self, cairo_t *cr, gint checkers)
         double outer_height = 10;
         double x = design_width - outer_width - checker_width;
         double y;
-        double separator_width = 1;
+        double separator_width = 0.2;
         gint direction;
         gint i;
         
@@ -495,4 +502,73 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr,
                                                * checker_width), 
                                           color);
         }
+}
+
+static void
+gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr, 
+                  guint value, gint side)
+{
+        double cube_width = 30;
+        double cube_text_width = 22;
+        struct GibbonColor foreground = { 0, 0, 0, 1 };
+        struct GibbonColor background = { 0.9, 0.9, 0.9, 1 };
+        double design_height = 380;
+        double outer_width = 10;
+        double outer_height = 10;
+        double checker_width = 30;
+        double x = outer_width + checker_width / 2 - cube_width / 2;
+        double y = design_height / 2 - cube_width / 2;
+        const gchar *font_family = "serif";
+        const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
+        const cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
+        gchar *text;
+        
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        
+        cairo_set_source_rgb (cr,
+                              background.red,
+                              background.green,
+                              background.blue);
+
+        x = outer_width + checker_width / 2 - cube_width / 2;
+
+        if (side < 0) {
+                y = design_height - outer_height - cube_width;                
+        } else if (side > 0) {
+                y = outer_height;
+        } else {
+                y = design_height / 2 - cube_width / 2;
+                value = 2;
+        }
+        
+        cairo_rectangle (cr, x, y, cube_width, cube_width);
+        cairo_fill (cr);
+        
+        cairo_select_font_face (cr, font_family, slant, weight);
+        cairo_set_source_rgb (cr,
+                              foreground.red,
+                              foreground.green,
+                              foreground.blue);
+        
+        text = g_strdup_printf ("%u", (unsigned) value);
+        gibbon_write_text (self, cr, text, 
+                           x + cube_width / 2, y + cube_width / 2, 
+                           cube_text_width);
+        g_free (text);
+}
+
+static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
+                               const gchar *text,
+                               double x, double y, double ext)
+{
+        cairo_text_extents_t te;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        cairo_set_font_size (cr, ext);
+        cairo_text_extents (cr, text, &te);
+        cairo_move_to (cr, 
+                       x - te.width / 2 - te.x_bearing, 
+                       y + te.height / 2);
+        cairo_show_text (cr, text);
 }
