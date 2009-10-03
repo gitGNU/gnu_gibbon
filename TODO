@@ -1,3 +1,4 @@
 - beginning with glib 2.2, there is a GResolver object allowing asynchronous
   DNS, based on libasyncns for Unix and a native implementation for MS-DOS.
   Integrate it as soon as it is widely available.
+- GibbonCairoboard should query a GibbonDesign for the values.
