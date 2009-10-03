@@ -26,6 +26,13 @@ struct _GibbonCairoboardPrivate {
         gint dummy;
 };
 
+struct GibbonColor {
+        double red;
+        double green;
+        double blue;
+        double alpha;
+};
+
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GIBBON_TYPE_CAIROBOARD,           \
                                       GibbonCairoboardPrivate))
@@ -34,13 +41,21 @@ G_DEFINE_TYPE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_AREA);
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
 static void gibbon_cairoboard_draw (GibbonCairoboard *board, cairo_t *cr);
+static void gibbon_draw_bar (GibbonCairoboard *board, cairo_t *cr,
+                             gint checkers);
+static void gibbon_draw_bearoff (GibbonCairoboard *board, cairo_t *cr,
+                                 gint checkers);
+static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
+                               guint pos, gint checkers);
+static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
+                                      guint number,
+                                      double x, double y,
+                                      struct GibbonColor *color);
 
-struct GibbonColor {
-        double red;
-        double green;
-        double blue;
-        double alpha;
-};
+#ifdef M_PI
+# undef M_PI
+#endif
+#define M_PI 3.14159265358979323846
 
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
@@ -110,7 +125,6 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         double widget_ratio;
         double translate_x, translate_y, scale;
         struct GibbonColor frame_color = { 0.2, 0.15, 0, 1 };
-        struct GibbonColor bearoff_color = { 0, 0, 0, 1 };
         double outer_border_w = 10;
         double outer_border_h = 10;
         double checker_width = 30;
@@ -118,12 +132,19 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         double point_width = checker_width;
         double point_length = 5 * checker_width;
         struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
+        struct GibbonColor bearoff_color = board_color;
         double board_x, board_y;
         double dice_area_height = 2 * checker_width;
         struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
         struct GibbonColor point_color2 = { 0.5, 0.5, 0.5, 1 };
-        double d;
+
         gint i;
+        gint checkers[28] = { 3, -3, 
+                1, 0, 0, 0, 0, 6,
+                0, 0, 0, -2, 0, 0,
+                0, 0, 2, 0, 0, 0,
+                -6, 0, 0, 0, 0, -1,
+                3, -3 };
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
@@ -277,5 +298,201 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                 cairo_rel_line_to (cr, -point_width / 2, -point_length);
                 cairo_close_path (cr);
                 cairo_fill (cr);
+        }
+        
+        if (checkers[0] != 0)
+                gibbon_draw_bar (self, cr, checkers[0]);
+        if (checkers[1] != 0)
+                gibbon_draw_bar (self, cr, checkers[1]);
+                
+        for (i = 2; i < 26; ++i)
+                if (checkers[i])
+                        gibbon_draw_point (self, cr, i - 2, checkers[i]);
+        
+        if (checkers[26] != 0)
+                gibbon_draw_bearoff (self, cr, checkers[26]);
+        if (checkers[27] != 0)
+                gibbon_draw_bearoff (self, cr, checkers[27]);
+}
+
+static void
+gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint checkers)
+{
+        struct GibbonColor black = { 0, 0, 0, 1 };
+        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor *color;
+        double checker_width = 30;
+        double design_width = 490;
+        double design_height = 380;
+        double x = design_width / 2, y = design_height / 2;
+        gint direction;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        g_return_if_fail (checkers != 0);
+        
+        if (checkers < 0) {
+                color = &black;
+                direction = -1;
+                checkers = -checkers;
+        } else if (checkers > 0) {
+                color = &white;
+                direction = 1;
+        }
+        
+        y += direction * checker_width;
+        gibbon_draw_flat_checker (self, cr, ((guint) checkers + 1) / 2,
+                                  x, y, color);
+        
+        if (checkers < 2)
+                return;
+                
+        y += direction * checker_width;
+        gibbon_draw_flat_checker (self, cr, (guint) checkers + 1,
+                                  x, y, color);
+}
+
+static void
+gibbon_draw_bearoff (GibbonCairoboard *self, cairo_t *cr, gint checkers)
+{
+        struct GibbonColor black = { 0, 0, 0, 1 };
+        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor shade_on_black = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor shade_on_white = { 0, 0, 0, 1 };
+        struct GibbonColor *color;
+        struct GibbonColor *shade_color;
+        double checker_width = 30;
+        double checker_height = 10;
+        double design_width = 490;
+        double design_height = 380;
+        double outer_width = 10;
+        double outer_height = 10;
+        double x = design_width - outer_width - checker_width;
+        double y;
+        double separator_width = 1;
+        gint direction;
+        gint i;
+        
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        g_return_if_fail (checkers != 0);
+        
+        if (checkers < 0) {
+                color = &black;
+                shade_color = &shade_on_black;
+                direction = -1;
+                checkers = -checkers;
+                y = design_height - outer_height - checker_height;
+        } else if (checkers > 0) {
+                color = &white;
+                shade_color = &shade_on_white;
+                direction = 1;
+                y = outer_height;
+        }
+        
+        cairo_set_source_rgb (cr,
+                              color->red,
+                              color->green,
+                              color->blue);         
+        for (i = 0; i < checkers; ++i) {
+                cairo_rectangle (cr, x, y + i * direction * checker_height,
+                                 checker_width, checker_height);
+                cairo_fill (cr);
+        }
+        
+        cairo_set_source_rgb (cr,
+                              shade_color->red,
+                              shade_color->green,
+                              shade_color->blue);
+        cairo_set_line_width (cr, separator_width);
+        cairo_set_line_cap (cr, CAIRO_LINE_CAP_BUTT);
+        cairo_set_dash (cr, 0, 0, 0);
+        for (i = 0; i < checkers; ++i) {
+                if (direction > 0)
+                        cairo_move_to (cr, x, 
+                                       y + ((i + 1) * direction 
+                                            * checker_height));
+                else
+                        cairo_move_to (cr, x,
+                                       y + i * direction * checker_height);
+                cairo_rel_line_to (cr, checker_width, 0);
+                cairo_stroke (cr);
+        }
+}
+
+static void
+gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
+                          double x, double y, struct GibbonColor *color)
+{
+        double checker_width = 30;
+        
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        
+        cairo_set_source_rgb (cr,
+                              color->red,
+                              color->green,
+                              color->blue);
+         
+        cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
+
+        cairo_fill (cr);        
+}
+
+static void
+gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, 
+                   guint pos, gint checkers)
+{
+        struct GibbonColor black = { 0, 0, 0, 1 };
+        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor *color;
+        double x, y;
+        double design_width = 490;
+        double design_height = 380;
+        double outer_border_h = 10;
+        double checker_width = 30;
+        double bar_width = 30;
+        double point_width = 30;
+        
+        gint direction;
+        gint i;
+        
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        g_return_if_fail (checkers != 0);
+        g_return_if_fail (pos < 24);
+        
+        if (checkers < 0) {
+                color = &black;
+                checkers = -checkers;
+        } else if (checkers > 0) {
+                color = &white;
+        }
+        
+        if (pos < 6) {
+                x = design_width / 2 + bar_width / 2 + point_width / 2
+                        + (5 - pos) * point_width;
+                y = outer_border_h + checker_width / 2;
+                direction = 1;
+        } else if (pos < 12) {
+                x = design_width / 2 - bar_width / 2 - point_width / 2
+                        - (11 - pos) * point_width;
+                y = outer_border_h + checker_width / 2;
+                direction = 1;
+        } else if (pos < 18) {
+                x = design_width / 2 - bar_width / 2 - point_width / 2
+                        - (16 - pos) * point_width;
+                y = design_height - outer_border_h - checker_width / 2;
+                direction = -1;
+        } else {
+                x = design_width / 2 + bar_width / 2 + point_width / 2
+                        + (pos - 18) * point_width;
+                y = design_height - outer_border_h - checker_width / 2;
+                direction = -1;
+        }
+        
+        for (i = 0; i < 5 && i < checkers; ++i) {
+                gibbon_draw_flat_checker (self, cr, 
+                                          (checkers + 4 - i) / 5, 
+                                          x, 
+                                          y + (direction * i 
+                                               * checker_width), 
+                                          color);
         }
 }
