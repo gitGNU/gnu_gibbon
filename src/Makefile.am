@@ -17,6 +17,12 @@
 
 bin_PROGRAMS = gibbon
 
+platform_libadd =
+
+if MSDOS
+platform_libadd += -ldnsapi -lws2_32
+endif
+
 AM_CPPFLAGS = 				\
 	-I$(top_srcdir)			\
 	-I$(srcdir)			\
@@ -46,4 +52,4 @@ noinst_HEADERS =		\
 	gui.h
 
 gibbon_LDFLAGS = -export-dynamic
-gibbon_LDADD = $(GIBBON_LIBS)
+gibbon_LDADD = $(GIBBON_LIBS) $(platform_libadd)

@@ -51,6 +51,10 @@ G_DEFINE_TYPE (GibbonConnector, gibbon_connector, G_TYPE_OBJECT);
 
 static gpointer *gibbon_connector_connect_worker (GibbonConnector *self);
 
+#ifdef G_OS_WIN32
+static gchar *strerror_msdos (DWORD code);
+#endif
+
 static void
 gibbon_connector_init (GibbonConnector *conn)
 {
@@ -115,21 +119,28 @@ gibbon_connector_new (const gchar *hostname, guint port)
          return self;
 }
 
+/* TODO! When glib 2.22 becomes established, move this code to the more
+ * portable GResolver API.
+ */
 static gpointer *
 gibbon_connector_connect_worker (GibbonConnector *self)
 {
-#ifdef G_OS_WIN32
-	gibbon_connector_cancel (self);
-	return NULL;
-#else
+        int socket_fd = -1;
+        int last_errno = 0;
+#ifndef G_OS_WIN32
         struct addrinfo hints;
         struct addrinfo *results;
         struct addrinfo *ai;
         int s;
-        int socket_fd = -1;
-        int last_errno = 0;
         gchar *service = NULL;
-       
+#else
+	DNS_STATUS resolve_status;
+	DNS_RECORD *results = NULL;
+	DNS_RECORD *ai;
+	gchar *errmsg;
+	struct sockaddr_in sa_in;
+#endif
+
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
@@ -137,16 +148,29 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 return NULL;
         }
 
+#ifndef G_OS_WIN32
         memset (&hints, 0, sizeof hints);       
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
+#endif
         
         self->priv->state = GIBBON_CONNECTOR_RESOLVING;        
         g_mutex_unlock (self->priv->mutex);
-        
+
+#ifndef G_OS_WIN32        
         service = g_strdup_printf ("%u", self->priv->port);
         s = getaddrinfo (self->priv->hostname, service, &hints, &results);
         g_free (service);
+#else
+g_print ("Starting resolve\n");
+	resolve_status = DnsQuery_A (self->priv->hostname, 
+				     DNS_TYPE_A,
+			             DNS_QUERY_STANDARD,
+				     NULL,
+                                     &results,
+                                     NULL);
+g_print ("Resolve done\n");
+#endif
         
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
@@ -154,6 +178,8 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 gibbon_connector_cancel (self);
                 return NULL;
         }
+
+#ifndef G_OS_WIN32
         if (s != 0) {
                 self->priv->error = 
                         g_strdup_printf (_("Error resolving address for "
@@ -164,16 +190,27 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 g_mutex_unlock (self->priv->mutex);
                 return NULL;
         }
+#else
+	if (resolve_status != NOERROR) {
+		errmsg = strerror_msdos (resolve_status);
+		self->priv->error = 
+			g_strdup_printf (_("Error resolving address for "
+                                           "%s: %s.\n"),
+                                           self->priv->hostname, errmsg);
+		g_free (errmsg);
+		self->priv->state = GIBBON_CONNECTOR_ERROR;
+		return NULL;
+	}
+#endif
         
         self->priv->state = GIBBON_CONNECTOR_CONNECTING;
 
         g_mutex_unlock (self->priv->mutex);
 
+#ifndef G_OS_WIN32
         for (ai = results; ai != NULL; ai = ai->ai_next) {
                 socket_fd = socket (ai->ai_family, ai->ai_socktype,
                                     ai->ai_protocol);
-                
-                last_errno = errno;
 
                 if (socket_fd < 0) {
                         last_errno = errno;
@@ -182,12 +219,41 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 
                 if (connect (socket_fd, ai->ai_addr, ai->ai_addrlen) < 0) {
                         last_errno = errno;
+                        (void) close (socket_fd);
                         continue;
                 }
                 break; /* Success! */
         }
 
         freeaddrinfo (results);
+#else
+        for (ai = results; ai != NULL; ai = ai->pNext) {
+                if (ai->wType != DNS_TYPE_A)
+                        continue;
+                if (g_strcmp0 (ai->pName, self->priv->hostname))
+                        continue;
+
+                /* MS-DOS does not support IPv6?! */
+                socket_fd = socket (PF_INET, SOCK_STREAM, 0);
+                if (socket_fd < 0) {
+                        last_errno = errno;
+                        continue;
+                }
+                
+                sa_in.sin_family = AF_INET;
+                sa_in.sin_port = htons (self->priv->port);
+                sa_in.sin_addr.s_addr = (unsigned long) ai->Data.A.IpAddress;
+                
+                if (connect (socket_fd, &sa_in, sizeof (sa_in)) < 0) {
+                        last_errno = errno;
+                        (void) close (socket_fd);
+                        continue;
+                }
+                break; /* Success! */
+        }
+        
+        DnsRecordListFree (results, DnsFreeRecordList);
+#endif
         
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
@@ -205,11 +271,10 @@ gibbon_connector_connect_worker (GibbonConnector *self)
 
         self->priv->socket_fd = socket_fd;
         self->priv->state = GIBBON_CONNECTOR_CONNECTED;
-        
+
         g_mutex_unlock (self->priv->mutex);
         
         return NULL;
-#endif /* G_OS_WIN32 */
 }
 
 gboolean
@@ -278,3 +343,43 @@ gibbon_connector_steal_socket (GibbonConnector *self)
         
         return socket_fd;
 }
+
+#ifdef G_OS_WIN32
+/* No wonder that MS-DOS applications never report errors ...  */
+static gchar *
+strerror_msdos (DWORD code) 
+{
+	WCHAR *buffer = NULL;
+	gchar *retval;
+	size_t length;
+
+	/* This API is so sick that it is no wonder that MS-DOS applications
+         * usually take guesses or just give numerical error codes, when it
+         * comes to error reporting.  The necessary cast for the pointer to
+	 * the output buffer is really weird.
+         */
+        /* FIXME! Get rid of the warning about de-referencing a type punned
+         * pointer.
+         */
+	if (!FormatMessageW (FORMAT_MESSAGE_FROM_SYSTEM
+		             | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+                             0,
+                             code,
+                             0,
+                             (LPWSTR) &buffer,
+                             0,
+                             NULL)) {
+		return g_strdup_printf (_("Windows error %u."), 
+                                        (unsigned) code);
+        }
+	/* A UTF-8 character can be at most 6 bytes big, plus the terminating
+         * null-byte.
+         */
+	length = 1 + 6 * wcslen (buffer);
+	retval = g_malloc (length);
+	WideCharToMultiByte (CP_UTF8, 0, buffer, -1, retval, length, 0, 0);
+	LocalFree (buffer);	
+
+	return retval;
+}
+#endif

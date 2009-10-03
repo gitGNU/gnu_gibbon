@@ -506,8 +506,6 @@ gibbon_connection_on_output (GIOChannel *channel,
         gchar *buffer;
         gsize bytes_written;
         GError *error = NULL;
-        
-gchar *written;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
         g_return_val_if_fail (G_IO_OUT & condition, TRUE);
