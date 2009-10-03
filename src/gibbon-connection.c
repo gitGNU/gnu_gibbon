@@ -374,19 +374,32 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
                                           &bytes_read, &error);
-        if (status != G_IO_STATUS_NORMAL) {
-                /* FIXME! This causes a crash if the server closes the
-                 * connection.
-                 */
-                gdk_threads_enter ();
-g_print ("Status is: %d\n", status);
-                display_error (_("Error receiving data from server: %s.\n"),
-                               error->message);
-                gdk_threads_leave ();
-                g_error_free (error);
-                
-                gibbon_connection_disconnect (self);
-                return FALSE;
+        switch (status) {
+                case G_IO_STATUS_ERROR:
+                        gdk_threads_enter ();
+                        display_error (_("Error receiving data from server: %s."),
+                                       error->message);
+                        gdk_threads_leave ();
+                        g_error_free (error);
+
+                        gibbon_connection_disconnect (self);
+                        return FALSE;
+                        
+                case G_IO_STATUS_EOF:
+                        gdk_threads_enter ();
+                        display_error (_("End-of-file while receiving data "
+                                         "from server."));
+                        gdk_threads_leave ();
+                        
+                        gibbon_connection_disconnect (self);
+                        return FALSE;
+                        
+                case G_IO_STATUS_AGAIN:
+                        /* FIXME! What is the appropriate reaction?  */
+                        return TRUE;
+                        
+                case G_IO_STATUS_NORMAL:
+                        break;
         }
         
         /* The input fifo is not exactly efficient.  */
