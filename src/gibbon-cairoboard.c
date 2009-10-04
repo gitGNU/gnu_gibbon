@@ -53,9 +53,14 @@ static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       struct GibbonColor *color);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
                               guint value, gint side);
+static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr,
+                              guint left, guint right, gint side);
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
                                const gchar *text,
                                double x, double y, double ext);
+static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
+                             guint value, gint side,
+                             double x, double y);
 
 #ifdef M_PI
 # undef M_PI
@@ -320,6 +325,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                 gibbon_draw_bearoff (self, cr, checkers[27]);
                 
         gibbon_draw_cube (self, cr, 2, 0);
+        gibbon_draw_dice (self, cr, 6, 5, -1);
 }
 
 static void
@@ -571,4 +577,141 @@ static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
                        x - te.width / 2 - te.x_bearing, 
                        y + te.height / 2);
         cairo_show_text (cr, text);
+}
+
+static void
+gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr, guint left, guint right,
+                  gint side)
+{
+        double design_width = 490;
+        double design_height = 380;
+        double y;
+        double die_width = 20;
+        double bar_width = 30;
+        double point_width = 30;
+                
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        
+        g_return_if_fail (left);
+        g_return_if_fail (right);
+        g_return_if_fail (left <= 6);
+        g_return_if_fail (right <= 6);
+       
+        y = design_height / 2;
+
+        gibbon_draw_die (self, cr, 
+                         left,
+                         side,
+                         design_width / 2 + bar_width / 2 + 3 * point_width
+                         - 0.75 * die_width, 
+                         y);
+        gibbon_draw_die (self, cr, 
+                         right,
+                         side,
+                         design_width / 2 + bar_width / 2 + 3 * point_width
+                         + 0.75 * die_width, 
+                         y);
+}
+
+static void
+gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr, 
+                 guint value, gint side,
+                 double x, double y)
+{
+        struct GibbonColor black = { 0, 0, 0, 1 };
+        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor fg_on_black = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor fg_on_white = { 0, 0, 0, 1 };
+        struct GibbonColor *bg_color;
+        struct GibbonColor *fg_color;
+        double die_width = 20;
+        double eye_radius = 2;
+        double eye_distance = 5;
+        
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self)); 
+        g_return_if_fail (value <= 6);
+        g_return_if_fail (side != 0);
+        
+        if (side < 0) {
+                bg_color = &black;
+                fg_color = &fg_on_black;
+        } else {
+                bg_color = &white;
+                fg_color = &fg_on_white;
+        }
+        
+        cairo_set_source_rgb (cr,
+                              bg_color->red,
+                              bg_color->green,
+                              bg_color->blue);
+        
+        x = x - die_width / 2;
+        y = y - die_width / 2;
+        
+        cairo_rectangle (cr, 
+                         x, y,
+                         die_width, die_width);
+        cairo_fill (cr);
+
+        cairo_set_source_rgb (cr,
+                              fg_color->red,
+                              fg_color->green,
+                              fg_color->blue);
+                              
+        /* Top left.  */
+        if (value != 1) {
+                cairo_arc (cr, 
+                           x + die_width / 2 - eye_distance, 
+                           y + die_width / 2 - eye_distance, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Top right.  */
+        if (value > 3) {
+                cairo_arc (cr, 
+                           x + die_width / 2 + eye_distance, 
+                           y + die_width / 2 - eye_distance, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Middle left.  */
+        if (value == 6) {
+                cairo_arc (cr, 
+                           x + die_width / 2 - eye_distance, 
+                           y + die_width / 2, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Middle right.  */
+        if (value == 6) {
+                cairo_arc (cr, 
+                           x + die_width / 2 + eye_distance, 
+                           y + die_width / 2, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Bottom left.  */
+        if (value > 3) {
+                cairo_arc (cr, 
+                           x + die_width / 2 - eye_distance, 
+                           y + die_width / 2 + eye_distance, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Bottom right.  */
+        if (value != 1) {
+                cairo_arc (cr, 
+                           x + die_width / 2 + eye_distance, 
+                           y + die_width / 2 + eye_distance, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
+        /* Center.  */
+        if (value == 1 || value == 3 || value == 5) {
+                cairo_arc (cr, 
+                           x + die_width / 2, 
+                           y + die_width / 2, 
+                           eye_radius, 0, 2 * M_PI);
+                cairo_fill (cr);
+        }
 }
