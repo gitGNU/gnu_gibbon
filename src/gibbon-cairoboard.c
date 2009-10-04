@@ -50,7 +50,8 @@ static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
 static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       guint number,
                                       double x, double y,
-                                      struct GibbonColor *color);
+                                      struct GibbonColor *color,
+                                      struct GibbonColor *text_color);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
                               guint value, gint side);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr,
@@ -334,6 +335,9 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint checkers)
         struct GibbonColor black = { 0, 0, 0, 1 };
         struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
         struct GibbonColor *color;
+        struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor text_on_white = { 0, 0, 0, 1 };
+        struct GibbonColor *text_color;
         double checker_width = 30;
         double design_width = 490;
         double design_height = 380;
@@ -345,23 +349,25 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint checkers)
         
         if (checkers < 0) {
                 color = &black;
+                text_color = &text_on_black;
                 direction = -1;
                 checkers = -checkers;
         } else if (checkers > 0) {
                 color = &white;
+                text_color = &text_on_white;
                 direction = 1;
         }
         
         y += direction * checker_width;
         gibbon_draw_flat_checker (self, cr, ((guint) checkers + 1) / 2,
-                                  x, y, color);
+                                  x, y, color, text_color);
         
         if (checkers < 2)
                 return;
                 
         y += direction * checker_width;
-        gibbon_draw_flat_checker (self, cr, (guint) checkers + 1,
-                                  x, y, color);
+        gibbon_draw_flat_checker (self, cr, (guint) checkers / 2,
+                                  x, y, color, text_color);
 }
 
 static void
@@ -433,9 +439,16 @@ gibbon_draw_bearoff (GibbonCairoboard *self, cairo_t *cr, gint checkers)
 
 static void
 gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
-                          double x, double y, struct GibbonColor *color)
+                          double x, double y, 
+                          struct GibbonColor *color,
+                          struct GibbonColor *text_color)
 {
         double checker_width = 30;
+        double text_width = 10;
+        gchar *texts[] = { "2", "3", "4", "5", "6", "7", "8" };
+        const gchar *font_family = "sans-serif";
+        const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
+        const cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
@@ -446,7 +459,24 @@ gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
          
         cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
 
-        cairo_fill (cr);        
+        cairo_fill (cr);
+        
+        /* On normal points, we can only have a maximum of 3 checkers,
+         * on the bar it is 15: We have to spaces for the bar, and a
+         * maximum of 15 checkers.
+         */
+        g_return_if_fail (number <= 8);
+        
+        if (number > 1) {
+                cairo_select_font_face (cr, font_family, slant, weight);
+                cairo_set_source_rgb (cr,
+                                      text_color->red,
+                                      text_color->green,
+                                      text_color->blue);
+                gibbon_write_text (self, cr, texts[number - 2], 
+                                   x, y, 
+                                   text_width);
+        }        
 }
 
 static void
@@ -456,6 +486,9 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr,
         struct GibbonColor black = { 0, 0, 0, 1 };
         struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
         struct GibbonColor *color;
+        struct GibbonColor text_on_white = { 0, 0, 0, 1 };
+        struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor *text_color;
         double x, y;
         double design_width = 490;
         double design_height = 380;
@@ -473,9 +506,11 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr,
         
         if (checkers < 0) {
                 color = &black;
+                text_color = &text_on_black;
                 checkers = -checkers;
         } else if (checkers > 0) {
                 color = &white;
+                text_color = &text_on_white;
         }
         
         if (pos < 6) {
@@ -506,7 +541,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr,
                                           x, 
                                           y + (direction * i 
                                                * checker_width), 
-                                          color);
+                                          color, text_color);
         }
 }
 
