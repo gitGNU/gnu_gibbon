@@ -31,6 +31,8 @@
 #include "gui.h"
 
 #define CLIP_WELCOME 1
+#define CLIP_WHO_INFO 5
+#define CLIP_WHO_INFO_END 6
 
 enum gibbon_connection_signals {
         HTML_SERVER_OUTPUT,
@@ -43,6 +45,9 @@ static void gibbon_session_send_server_message (GibbonSession *self,
 static void gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message,
                                          const gchar *ptr);                                                
+static void gibbon_session_clip_who_info (GibbonSession *self,
+                                          const gchar *message,
+                                          const gchar *ptr);                                                
 struct _GibbonSessionPrivate {
         gint dummy;
 };
@@ -97,6 +102,61 @@ gibbon_session_new ()
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
 
         return self;
+}
+
+static void
+gibbon_session_dispatch_clip_message (GibbonSession *self,
+                                      const gchar *message)
+{
+        unsigned long int code;
+        gchar *endptr;
+        
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+        
+        code = strtoul (message, &endptr, 10);
+        
+        /* Skip whitespace.  */
+        while (*endptr == ' ' || *endptr == '\t' || *endptr == '\r'
+               || *endptr == '\f' || *endptr == '\v')
+                endptr++;
+        
+        switch (code) {
+                case CLIP_WELCOME:
+                        gibbon_session_clip_welcome (self, message, endptr);
+                        break;
+                case CLIP_WHO_INFO:
+                        gibbon_session_clip_who_info (self, message, endptr);
+                        break;
+                case CLIP_WHO_INFO_END: /* Ignored.  */
+                        break;
+                default: 
+                        gibbon_session_send_server_message (self, message);
+        }
+}
+
+static void
+gibbon_session_send_server_message (GibbonSession *self,
+                                    const gchar *output)
+{
+        /* FIXME! HTML escape the message first and embed it
+         * in <em>emphasized</em>.
+         */
+        g_signal_emit (self, signals[HTML_SERVER_OUTPUT], 0, output);
+}
+
+G_MODULE_EXPORT void
+gibbon_session_server_output_cb (GibbonSession *self, 
+                                 const gchar *output,
+                                 GObject *emitter)
+{
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (output[0] >= '0' && output[0] <= '9') {
+                gibbon_session_dispatch_clip_message (self, output);
+                return;
+        }
+        
+        gibbon_session_send_server_message (self, output);
 }
 
 static void
@@ -160,51 +220,88 @@ gibbon_session_clip_welcome (GibbonSession *self,
 }
 
 static void
-gibbon_session_dispatch_clip_message (GibbonSession *self,
-                                      const gchar *message)
+gibbon_session_clip_who_info (GibbonSession *self, 
+                              const gchar *message, const gchar *ptr)
 {
-        unsigned long int code;
-        gchar *endptr;
+        gchar **tokens;
+        gchar *who;
+        gchar *opponent;
+        gchar *watching;
+        gboolean ready;
+        gboolean away;
+        gchar *rating;
+        gchar *experience;
+        gchar *idle;
+        gchar *login;
+        gchar *client;
+        gchar *email;
+        gchar *hostname;
         
         g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 13);
         
-        code = strtoul (message, &endptr, 10);
+        g_return_if_fail (tokens[0]);
+        g_return_if_fail (tokens[1]);
+        g_return_if_fail (tokens[2]);
+        g_return_if_fail (tokens[3]);
+        g_return_if_fail (tokens[4]);
+        g_return_if_fail (tokens[5]);
+        g_return_if_fail (tokens[6]);
+        g_return_if_fail (tokens[7]);
+        g_return_if_fail (tokens[8]);
+        g_return_if_fail (tokens[9]);
+        g_return_if_fail (tokens[10]);
+        g_return_if_fail (tokens[11]);
         
-        /* Skip whitespace.  */
-        while (*endptr == ' ' || *endptr == '\t' || *endptr == '\r'
-               || *endptr == '\f' || *endptr == '\v')
-                endptr++;
-        
-        switch (code) {
-                case CLIP_WELCOME:
-                        gibbon_session_clip_welcome (self, message, endptr);
-                        break;
-                default: 
-                        gibbon_session_send_server_message (self, message);
+        who = tokens[0];
+        g_print ("Who: %s", who);
+
+        opponent = tokens[1];
+        if (opponent[0] == '-' && opponent[1] == 0)
+                opponent = NULL;
+        else
+                g_print (", playing against %s", opponent);
+                
+        watching = tokens[2];
+        if (watching[0] == '-' && watching[1] == 0)
+                watching = NULL;
+        else
+                g_print (", watching %s", watching);
+                
+        g_return_if_fail (tokens[3][0] == '0' || tokens[3][0] == '1');
+        g_return_if_fail (tokens[3][1] == 0);
+        if (tokens[3][0] == '1') {
+                ready = TRUE;
+                g_print (", is ready");
+        } else {
+                ready = FALSE;
+                g_print (", is not ready");
         }
-}
-
-static void
-gibbon_session_send_server_message (GibbonSession *self,
-                                    const gchar *output)
-{
-        /* FIXME! HTML escape the message first and embed it
-         * in <em>emphasized</em>.
-         */
-        g_signal_emit (self, signals[HTML_SERVER_OUTPUT], 0, output);
-}
-
-G_MODULE_EXPORT void
-gibbon_session_server_output_cb (GibbonSession *self, 
-                                 const gchar *output,
-                                 GObject *emitter)
-{
-        g_return_if_fail (GIBBON_IS_SESSION (self));
-
-        if (output[0] >= '0' && output[0] <= '9') {
-                gibbon_session_dispatch_clip_message (self, output);
-                return;
-        }
         
-        gibbon_session_send_server_message (self, output);
+        g_return_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1');
+        g_return_if_fail (tokens[4][1] == 0);
+        if (tokens[4][0] == '1') {
+                away = TRUE;
+                g_print (", is away");
+        } else {
+                away = FALSE;
+                g_print (", is not away");
+        }
+
+        rating = tokens[5];
+        experience = tokens[6];
+        g_print (", with rating %s and experience %s", rating, experience);
+        
+        idle = tokens[7];
+        login = tokens[8];
+        hostname = tokens[9];
+        client = tokens[10];
+        email = tokens[11];
+        
+        g_print (", logged in from %s with address %s", hostname, email);
+        
+        g_print (".\n");
+                
+        g_strfreev (tokens);
 }
