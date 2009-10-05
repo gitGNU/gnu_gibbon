@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Sep 27 10:55:25 2009 -->
+<!--Generated with glade3 3.4.5 on Mon Oct  5 18:30:18 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -21,109 +21,26 @@
               <placeholder/>
             </child>
             <child>
-              <widget class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">This is usually `fibs.com'.</property>
-                <property name="label" translatable="yes">Server</property>
-              </widget>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_server">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text">fibs.com</property>
-                <property name="truncate_multiline">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">Unless you know better, this will be probably 4321.</property>
-                <property name="label" translatable="yes">Port</property>
-              </widget>
-              <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_port">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text">4321</property>
-                <property name="truncate_multiline">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label3">
-                <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">Your username (case-senstive!)</property>
-                <property name="label" translatable="yes">Login</property>
-              </widget>
-              <packing>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_login">
+              <widget class="GtkEntry" id="conn_entry_address">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
               </widget>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
+                <property name="top_attach">6</property>
+                <property name="bottom_attach">7</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label4">
+              <widget class="GtkLabel" id="label5">
                 <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">Your password (case-sensitive).  You cannot recover lost passwords!</property>
-                <property name="label" translatable="yes">Password</property>
+                <property name="tooltip" translatable="yes">Optional, you do not have to give your e-mail address.</property>
+                <property name="label" translatable="yes">E-mail address</property>
               </widget>
               <packing>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="conn_entry_password">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="visibility">False</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkCheckButton" id="conn_checkbutton_remember">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="label" translatable="yes">Remember password</property>
-                <property name="response_id">0</property>
-                <property name="draw_indicator">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">4</property>
-                <property name="bottom_attach">5</property>
+                <property name="top_attach">6</property>
+                <property name="bottom_attach">7</property>
               </packing>
             </child>
             <child>
@@ -145,27 +62,110 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label5">
+              <widget class="GtkCheckButton" id="conn_checkbutton_remember">
                 <property name="visible">True</property>
-                <property name="tooltip" translatable="yes">Optional, you do not have to give your e-mail address.</property>
-                <property name="label" translatable="yes">E-mail address</property>
+                <property name="can_focus">True</property>
+                <property name="label" translatable="yes">Remember password</property>
+                <property name="response_id">0</property>
+                <property name="draw_indicator">True</property>
               </widget>
               <packing>
-                <property name="top_attach">6</property>
-                <property name="bottom_attach">7</property>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">4</property>
+                <property name="bottom_attach">5</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkEntry" id="conn_entry_address">
+              <widget class="GtkEntry" id="conn_entry_password">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="visibility">False</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">Your password (case-sensitive).  You cannot recover lost passwords!</property>
+                <property name="label" translatable="yes">Password</property>
+              </widget>
+              <packing>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_login">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
               </widget>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">6</property>
-                <property name="bottom_attach">7</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
               </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">Your username (case-senstive!)</property>
+                <property name="label" translatable="yes">Login</property>
+              </widget>
+              <packing>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_port">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text">4321</property>
+                <property name="truncate_multiline">True</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">Unless you know better, this will be probably 4321.</property>
+                <property name="label" translatable="yes">Port</property>
+              </widget>
+              <packing>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="conn_entry_server">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text">fibs.com</property>
+                <property name="truncate_multiline">True</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">This is usually `fibs.com'.</property>
+                <property name="label" translatable="yes">Server</property>
+              </widget>
             </child>
           </widget>
           <packing>
@@ -186,6 +186,10 @@
                 <property name="response_id">0</property>
                 <signal name="clicked" handler="on_conn_button_cancel_clicked"/>
               </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+              </packing>
             </child>
             <child>
               <widget class="GtkButton" id="conn_button_connect">
@@ -200,6 +204,8 @@
                 <signal name="clicked" handler="on_conn_button_connect_clicked"/>
               </widget>
               <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -217,6 +223,7 @@
     <child>
       <widget class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <widget class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
@@ -352,6 +359,7 @@
               <widget class="GtkVPaned" id="left_vpane">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                 <property name="position">231</property>
                 <property name="position_set">True</property>
                 <child>
@@ -370,6 +378,7 @@
                 <child>
                   <widget class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
+                    <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                     <child>
                       <widget class="GtkToolbar" id="toolbar1">
                         <property name="visible">True</property>
