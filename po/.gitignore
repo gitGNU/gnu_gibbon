@@ -1,2 +1,4 @@
 POTFILES
-Makefile.in
+Makefile.in.in
+*.gmo
+gibbon.pot

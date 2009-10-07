@@ -44,6 +44,7 @@ case "$host" in
 		;;
 esac
 AC_MSG_RESULT([$gibbon_native_msdos])
+AM_CONDITIONAL(MSDOS, test x$gibbon_native_msdos = xyes)
 
 AC_CONFIG_HEADERS(config.h)
 
