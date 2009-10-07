@@ -22,6 +22,8 @@
 
 #include <glib.h>
 
+#include "gibbon-design.h"
+
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_CAIROBOARD             (gibbon_cairoboard_get_type ())
@@ -48,7 +50,7 @@ struct _GibbonCairoboard
         GibbonCairoboardPrivate *priv;
 };
 
-GibbonCairoboard *gibbon_cairoboard_new (void);
+GibbonCairoboard *gibbon_cairoboard_new (const GibbonDesign *design);
 
 G_END_DECLS
 

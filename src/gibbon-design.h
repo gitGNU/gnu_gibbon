@@ -48,9 +48,21 @@ struct _GibbonDesign
         GibbonDesignPrivate *priv;
 };
 
+struct GibbonColor {
+        double red;
+        double green;
+        double blue;
+        double alpha;
+};
+
 GibbonDesign *gibbon_design_new (void);
 
 guint gibbon_design_get_box_color (GibbonDesign *self);
+
+/* These are resulting properties that cannot be set.  */
+double gibbon_design_get_width (const GibbonDesign *self);
+double gibbon_design_get_height (const GibbonDesign *self);
+double gibbon_design_get_aspect_ratio (const GibbonDesign *self);
 
 G_END_DECLS
 

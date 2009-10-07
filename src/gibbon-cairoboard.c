@@ -21,16 +21,10 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-cairoboard.h"
+#include "gibbon-design.h"
 
 struct _GibbonCairoboardPrivate {
-        gint dummy;
-};
-
-struct GibbonColor {
-        double red;
-        double green;
-        double blue;
-        double alpha;
+        const GibbonDesign *design;
 };
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -97,9 +91,11 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 }
 
 GibbonCairoboard *
-gibbon_cairoboard_new ()
+gibbon_cairoboard_new (const GibbonDesign *design)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
+
+        self->priv->design = design;
 
         return self;
 }
@@ -130,9 +126,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
         GtkAllocation *allocation;
-        double design_width = 490;
-        double design_height = 380;
-        double aspect_ratio = design_width / design_height;
+        double design_width;
+        double design_height;
         double widget_ratio;
         double translate_x, translate_y, scale;
         struct GibbonColor frame_color = { 0.2, 0.15, 0, 1 };
@@ -148,6 +143,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         double dice_area_height = 2 * checker_width;
         struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
         struct GibbonColor point_color2 = { 0.5, 0.5, 0.5, 1 };
+        double aspect_ratio;
 
         gint i;
         gint checkers[28] = { 3, -3, 
@@ -158,6 +154,10 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                 3, -3 };
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        
+        design_width = gibbon_design_get_width (self->priv->design);
+        design_height = gibbon_design_get_height (self->priv->design);
+        aspect_ratio = gibbon_design_get_aspect_ratio (self->priv->design);
         
         widget = GTK_WIDGET (self);
         allocation = &widget->allocation;

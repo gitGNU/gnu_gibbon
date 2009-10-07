@@ -30,7 +30,6 @@
 #include "gibbon.h"
 
 GibbonConnection *connection = NULL;
-GibbonDesign *design = NULL;
 
 static gchar *builder_filename = NULL;
 
@@ -60,7 +59,6 @@ main(int argc, char *argv[])
 		gdk_threads_init ();
 	}
         connection = gibbon_connection_new ();
-        design = gibbon_design_new ();
                 
         gtk_init (&argc, &argv);
         

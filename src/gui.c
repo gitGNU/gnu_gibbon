@@ -27,6 +27,7 @@
 
 #include "gui.h"
 #include "gibbon.h"
+#include "gibbon-design.h"
 #include "gibbon-cairoboard.h"
 
 GtkBuilder *builder = NULL;
@@ -37,6 +38,8 @@ GtkWidget *server_text_view = NULL;
 GConfClient *conf_client = NULL;
 
 static GtkWidget *statusbar = NULL;
+
+static GibbonDesign *design = NULL;
 
 static GtkBuilder *get_builder (const gchar* filename);
 static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
@@ -168,7 +171,8 @@ init_gui (const gchar *builder_filename)
         
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
                         
-        board = gibbon_cairoboard_new ();
+        design = gibbon_design_new ();
+        board = gibbon_cairoboard_new (design);
         gtk_widget_show (GTK_WIDGET (board));
         gtk_widget_set_size_request (GTK_WIDGET (board), 256, 256);
         

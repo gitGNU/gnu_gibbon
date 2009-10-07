@@ -25,9 +25,7 @@
 #endif
 
 #include "gibbon-connection.h"
-#include "gibbon-design.h"
 
 extern GibbonConnection *connection;
-extern GibbonDesign *design;
 
 #endif

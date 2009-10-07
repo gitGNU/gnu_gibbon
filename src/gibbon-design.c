@@ -23,7 +23,9 @@
 #include "gibbon-design.h"
 
 struct _GibbonDesignPrivate {
-        gint dummy;
+        
+        /* FIXME! These have to become derived!  */
+        double design_width, design_height;
 };
 
 #define GIBBON_DESIGN_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -50,7 +52,7 @@ gibbon_design_finalize (GObject *object)
 static void
 gibbon_design_class_init (GibbonDesignClass *klass)
 {
-        GtkDrawingAreaClass* parent_class = G_OBJECT_CLASS (klass);
+        GObject* parent_class = G_OBJECT_CLASS (klass);
 
         g_type_class_add_private (klass, sizeof (GibbonDesignPrivate));
 
@@ -62,5 +64,36 @@ gibbon_design_new ()
 {
         GibbonDesign *self = g_object_new (GIBBON_TYPE_DESIGN, NULL);
 
+        /* FIXME! These have to become derived.  */
+        self->priv->design_width = 490;
+        self->priv->design_height = 380;
+
         return self;
 }
+
+double
+gibbon_design_get_width (const GibbonDesign *self)
+{
+        g_return_val_if_fail (GIBBON_IS_DESIGN (self), 490);
+        
+        /* FIXME! Calculate this value!  */
+        return self->priv->design_width;
+}
+
+double
+gibbon_design_get_height (const GibbonDesign *self)
+{
+        g_return_val_if_fail (GIBBON_IS_DESIGN (self), 380);
+        
+        /* FIXME! Calculate this value!  */
+        return self->priv->design_height;
+}
+
+double
+gibbon_design_get_aspect_ratio (const GibbonDesign *self)
+{
+        g_return_val_if_fail (GIBBON_IS_DESIGN (self), (double) 380 / 490);
+        
+        return gibbon_design_get_width (self) / gibbon_design_get_height (self);
+}
+
