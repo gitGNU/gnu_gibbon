@@ -760,6 +760,6 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
         
         memcpy (&self->priv->pos, pos, sizeof self->priv->pos);
         
-        g_print ("FIXME! Trigger redraw event!\n");
+        gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
