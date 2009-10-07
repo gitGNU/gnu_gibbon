@@ -25,6 +25,7 @@
 
 #include <glib/gi18n.h>
 
+#include "game.h"
 #include "gui.h"
 #include "gibbon.h"
 #include "gibbon-design.h"
@@ -73,6 +74,8 @@ static void create_player_menu (GtkBuilder *builder);
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
                           GtkTreeIter *iter, gpointer data);
+
+static struct GibbonPosition initial_position;
 
 gint
 init_gui (const gchar *builder_filename)
@@ -198,6 +201,19 @@ init_gui (const gchar *builder_filename)
                         
         design = gibbon_design_new ();
         board = gibbon_cairoboard_new (design);
+        
+        memset (&initial_position, 0, sizeof initial_position);
+        initial_position.checkers[0] = -2; 
+        initial_position.checkers[5] = 5;
+        initial_position.checkers[7] = 3; 
+        initial_position.checkers[11] = -5;
+        initial_position.checkers[12] = 5;
+        initial_position.checkers[16] = -3;
+        initial_position.checkers[18] = -5;
+        initial_position.checkers[23] = 2;
+        
+        gibbon_cairoboard_set_position (board, &initial_position);
+        
         gtk_widget_show (GTK_WIDGET (board));
         /* FIXME! This should occupy reasonable space by default!  Do
          * not hardcode the values.

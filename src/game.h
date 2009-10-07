@@ -24,4 +24,16 @@
 # include <config.h>
 #endif
 
+/* Whenever a number of checkers has to be given, a negative number
+ * is used for player 1's checkers, a positive for player 2's checkers.
+ */
+struct GibbonPosition {
+        /* Number of checkers on the bar for player 1.  */
+        gint bar0;
+        gint bar1;
+        gint checkers[24];
+        gint bear_off0;
+        gint bear_off1;
+};
+
 #endif
