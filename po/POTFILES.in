@@ -26,6 +26,7 @@ data/gibbon.schemas.in
 data/gibbon.xml
 src/gibbon-connection.c
 src/gibbon-connector.c
+src/gibbon-session.c
 src/gibbon.c
 src/gtkconnectiondialog.c
 src/gtkmainwindow.c
