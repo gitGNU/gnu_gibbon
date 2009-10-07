@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Wed Oct  7 17:41:30 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Oct  7 20:06:20 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -555,6 +555,50 @@ Whisper</property>
             <property name="position">3</property>
           </packing>
         </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="GtkMenu" id="player_menu">
+    <property name="visible">True</property>
+    <child>
+      <widget class="GtkMenuItem" id="invite_player_menu_item">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Invite this player to a match.</property>
+        <property name="label" translatable="yes">Invite</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_invite_player_menu_item_activate" object="player_view"/>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkMenuItem" id="look_player_menu_item">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Look at the current board of this player.</property>
+        <property name="label" translatable="yes">Look</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_look_player_menu_item_activate" object="player_view"/>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkMenuItem" id="watch_player_menu_item">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Watch the ongoing matches of this player.</property>
+        <property name="label" translatable="yes">Watch</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkSeparatorMenuItem" id="menuitem2">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">menuitem2</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkMenuItem" id="tell_player_menu_item">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Send a message to this player.</property>
+        <property name="label" translatable="yes">Tell</property>
+        <property name="use_underline">True</property>
       </widget>
     </child>
   </widget>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Wed Oct  7 17:41:30 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Oct  7 20:06:20 2009 -->
 <interface>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -74,6 +74,51 @@
           <menuitem action="about_menu_item"/>
         </menu>
       </menubar>
+    </ui>
+  </object>
+  <object class="GtkUIManager" id="uimanager2">
+    <child>
+      <object class="GtkActionGroup" id="actiongroup2">
+        <child>
+          <object class="GtkAction" id="invite_player_menu_item">
+            <property name="name">invite_player_menu_item</property>
+            <property name="tooltip" translatable="yes">Invite this player to a match.</property>
+            <property name="label" translatable="yes">Invite</property>
+            <signal handler="on_invite_player_menu_item_activate" name="activate" object="player_view"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="look_player_menu_item">
+            <property name="name">look_player_menu_item</property>
+            <property name="tooltip" translatable="yes">Look at the current board of this player.</property>
+            <property name="label" translatable="yes">Look</property>
+            <signal handler="on_look_player_menu_item_activate" name="activate" object="player_view"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="watch_player_menu_item">
+            <property name="name">watch_player_menu_item</property>
+            <property name="tooltip" translatable="yes">Watch the ongoing matches of this player.</property>
+            <property name="label" translatable="yes">Watch</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="tell_player_menu_item">
+            <property name="name">tell_player_menu_item</property>
+            <property name="tooltip" translatable="yes">Send a message to this player.</property>
+            <property name="label" translatable="yes">Tell</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <ui>
+      <popup name="player_menu">
+        <menuitem action="invite_player_menu_item"/>
+        <menuitem action="look_player_menu_item"/>
+        <menuitem action="watch_player_menu_item"/>
+        <separator/>
+        <menuitem action="tell_player_menu_item"/>
+      </popup>
     </ui>
   </object>
   <object class="GtkDialog" id="connection_dialog">
@@ -561,5 +606,8 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkMenu" constructor="uimanager2" id="player_menu">
+    <property name="visible">True</property>
   </object>
 </interface>

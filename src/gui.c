@@ -36,6 +36,7 @@ GtkBuilder *builder = NULL;
 GtkWidget *window = NULL;
 GtkWidget *connection_dialog = NULL;
 GtkWidget *server_text_view = NULL;
+
 GConfClient *conf_client = NULL;
 GibbonPlayerList *players = NULL;
 
@@ -43,6 +44,9 @@ static GtkWidget *statusbar = NULL;
 
 static GibbonDesign *design = NULL;
 
+/* The converter in Glade 3.4.x converts menus to GtkAction.  Until we
+ * upgrade to 3.5.4 or better, construct the menu manually.  */
+static GtkWidget *player_menu = NULL;
 
 static GtkBuilder *get_builder (const gchar* filename);
 static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
@@ -52,11 +56,20 @@ static void cb_raw_server_output (GtkWidget *emitter, const gchar *text);
 static void cb_login (GtkWidget *emitter, const gchar *hostname);
 static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
 
-static void view_on_button_pressed (GtkTreeView *view,
-                                    GdkEventButton *event,
-                                    gpointer user_data);
+G_MODULE_EXPORT void on_invite_player_menu_item_activate (GtkObject *object, 
+                                                          gpointer user_data);
+G_MODULE_EXPORT void on_look_player_menu_item_activate (GtkObject *object, 
+                                                        gpointer user_data);
 
-static GtkTreeView *create_player_view (GtkBuilder *builder);
+static gboolean view_on_button_pressed (GtkTreeView *view,
+                                        GdkEventButton *event,
+                                        gpointer user_data);
+static void view_player_popup_menu (GtkTreeView *view, GdkEventButton *event, 
+                                    gpointer userdata);
+
+static void create_player_view (GtkBuilder *builder);
+static void create_player_menu (GtkBuilder *builder);
+
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
                           GtkTreeIter *iter, gpointer data);
@@ -197,7 +210,9 @@ init_gui (const gchar *builder_filename)
         players = gibbon_player_list_new ();
         create_player_view (builder);
         
-	return 1;
+        create_player_menu (builder);
+        
+       	return 1;
 }
 
 const gchar *
@@ -395,7 +410,7 @@ G_MODULE_EXPORT void html_server_output_cb (GObject *emitter,
                 0.0, TRUE, 0.5, 1);
 }
 
-static GtkTreeView *
+static void
 create_player_view (GtkBuilder *builder)
 {
         GtkTreeView *view;
@@ -470,8 +485,24 @@ create_player_view (GtkBuilder *builder)
         gibbon_player_list_connect_view (players, view);        
         g_signal_connect (view, "button-press-event", 
                           (GCallback) view_on_button_pressed, NULL);
-                          
-        return view; 
+}
+
+static void
+create_player_menu (GtkBuilder *builder)
+{
+        GtkWidget *menu_item;
+        GtkTreeView *view;
+        
+        view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "player_view"));
+        
+        player_menu = gtk_menu_new ();
+        
+        menu_item = gtk_menu_item_new_with_label (_("Look"));
+        g_signal_connect(menu_item, "activate",
+                        (GCallback) on_look_player_menu_item_activate, view);
+                
+        gtk_menu_shell_append (GTK_MENU_SHELL (player_menu), menu_item);
+        gtk_widget_show_all (player_menu);
 }
 
 static void print2digits (GtkTreeViewColumn *tree_column,
@@ -486,3 +517,88 @@ static void print2digits (GtkTreeViewColumn *tree_column,
         cell_text->text = g_strdup_printf("%.2f", d);
 }
 
+static gboolean 
+view_on_button_pressed (GtkTreeView *view,
+                        GdkEventButton *event,
+                        gpointer userdata)
+{
+        GtkTreeSelection *selection;
+        GtkTreePath *path;
+        
+        if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
+                return FALSE;
+                
+        selection = gtk_tree_view_get_selection (view);
+        if (gtk_tree_selection_count_selected_rows (selection)  <= 1) {
+                if (gtk_tree_view_get_path_at_pos(view, event->x, event->y,
+                                                  &path, NULL, NULL, NULL)) {
+                        gtk_tree_selection_unselect_all(selection);
+                        gtk_tree_selection_select_path(selection, path);
+                        gtk_tree_path_free(path);
+                }
+        }
+
+        view_player_popup_menu (view, event, userdata);
+
+        return TRUE;
+}
+
+static void 
+view_player_popup_menu (GtkTreeView *view, GdkEventButton *event, 
+                        gpointer userdata)
+{
+        gtk_widget_show_all(player_menu);
+
+        gtk_menu_popup (GTK_MENU (player_menu), NULL, NULL, NULL, NULL,
+                           (event != NULL) ? event->button : 0,
+                           gdk_event_get_time((GdkEvent*)event));
+}
+
+G_MODULE_EXPORT void
+on_look_player_menu_item_activate (GtkObject *object, gpointer user_data)
+{
+        GtkTreeView *view = GTK_TREE_VIEW (user_data);
+        GtkTreeSelection *selection;
+        gint num_rows;
+        GList *selected_rows;
+        GList *first;
+        GtkTreePath *path;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        gchar *who;
+                
+        selection = gtk_tree_view_get_selection (view);
+        num_rows = gtk_tree_selection_count_selected_rows (selection);
+
+        /* Should actually not happen.  */        
+        if (num_rows != 1)
+                return;
+        
+        selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+        if (!selected_rows)
+                return;
+        
+        first = g_list_first (selected_rows);
+        if (first && first->data) {
+                path = (GtkTreePath *) first->data;
+                model = gtk_tree_view_get_model (view);
+                
+                if (gtk_tree_model_get_iter (model, &iter, path)) {
+                        gtk_tree_model_get (model, &iter,
+                                            GIBBON_PLAYER_LIST_COL_NAME, &who,
+                                            -1);
+                        
+                        gibbon_connection_queue_command (connection,
+                                                         "look %s", who);  
+                }
+        }
+        
+        g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);        
+        g_list_free (selected_rows);
+}
+
+G_MODULE_EXPORT void
+on_invite_player_menu_item_activate (GtkObject *object, gpointer user_data)
+{
+
+}

@@ -528,6 +528,11 @@ gibbon_connection_on_output (GIOChannel *channel,
         if (bytes_written >= strlen (buffer)) {
                 g_source_remove (self->priv->out_watcher);
                 self->priv->out_watcher = 0;
+                g_free (self->priv->out_buffer);
+                /* FIXME!  Rather set the buffer to NULL and re-allocate
+                 * on demand.  
+                 */
+                self->priv->out_buffer = g_strdup ("");
                 return FALSE;
         }
                         
@@ -640,8 +645,6 @@ gibbon_connection_queue_command (GibbonConnection *self,
                                "\015\012", NULL);
         g_free (self->priv->out_buffer);
         self->priv->out_buffer = new_buf;
-
-        g_signal_emit (G_OBJECT (self), signals[LOGIN], 0, NULL);
 
         if (!self->priv->out_watcher) {
                 self->priv->out_watcher = 
