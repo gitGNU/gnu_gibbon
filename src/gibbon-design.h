@@ -37,22 +37,22 @@ typedef struct _GibbonDesignPrivate GibbonDesignPrivate;
 
 struct _GibbonDesignClass
 {
-        GtkDrawingAreaClass parent_class;
+        GObjectClass parent_class;
 };
 
 GType gibbon_design_get_type (void) G_GNUC_CONST;
 
 struct _GibbonDesign
 {
-        GtkDrawingArea parent_instance;
+        GObject parent_instance;
         GibbonDesignPrivate *priv;
 };
 
 struct GibbonColor {
-        double red;
-        double green;
-        double blue;
-        double alpha;
+        gdouble red;
+        gdouble green;
+        gdouble blue;
+        gdouble alpha;
 };
 
 GibbonDesign *gibbon_design_new (void);
@@ -60,9 +60,9 @@ GibbonDesign *gibbon_design_new (void);
 guint gibbon_design_get_box_color (GibbonDesign *self);
 
 /* These are resulting properties that cannot be set.  */
-double gibbon_design_get_width (const GibbonDesign *self);
-double gibbon_design_get_height (const GibbonDesign *self);
-double gibbon_design_get_aspect_ratio (const GibbonDesign *self);
+gdouble gibbon_design_get_width (const GibbonDesign *self);
+gdouble gibbon_design_get_height (const GibbonDesign *self);
+gdouble gibbon_design_get_aspect_ratio (const GibbonDesign *self);
 
 G_END_DECLS
 

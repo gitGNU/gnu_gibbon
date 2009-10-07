@@ -29,6 +29,7 @@
 #include "gibbon.h"
 #include "gibbon-design.h"
 #include "gibbon-cairoboard.h"
+#include "gibbon-player-list.h"
 
 GtkBuilder *builder = NULL;
 
@@ -36,10 +37,12 @@ GtkWidget *window = NULL;
 GtkWidget *connection_dialog = NULL;
 GtkWidget *server_text_view = NULL;
 GConfClient *conf_client = NULL;
+GibbonPlayerList *players = NULL;
 
 static GtkWidget *statusbar = NULL;
 
 static GibbonDesign *design = NULL;
+
 
 static GtkBuilder *get_builder (const gchar* filename);
 static void cb_resolving (GtkWidget *emitter, const gchar *hostname);
@@ -48,6 +51,15 @@ static void cb_disconnected (GtkWidget *emitter, const gchar *hostname);
 static void cb_raw_server_output (GtkWidget *emitter, const gchar *text);
 static void cb_login (GtkWidget *emitter, const gchar *hostname);
 static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
+
+static void view_on_button_pressed (GtkTreeView *view,
+                                    GdkEventButton *event,
+                                    gpointer user_data);
+
+static GtkTreeView *create_player_view (GtkBuilder *builder);
+static void print2digits (GtkTreeViewColumn *tree_column,
+                          GtkCellRenderer *cell, GtkTreeModel *tree_model,
+                          GtkTreeIter *iter, gpointer data);
 
 gint
 init_gui (const gchar *builder_filename)
@@ -174,10 +186,16 @@ init_gui (const gchar *builder_filename)
         design = gibbon_design_new ();
         board = gibbon_cairoboard_new (design);
         gtk_widget_show (GTK_WIDGET (board));
+        /* FIXME! This should occupy reasonable space by default!  Do
+         * not hardcode the values.
+         */
         gtk_widget_set_size_request (GTK_WIDGET (board), 256, 256);
         
         gtk_widget_destroy (gtk_paned_get_child1 (GTK_PANED (left_vpane)));
         gtk_paned_add1 (GTK_PANED (left_vpane), GTK_WIDGET (board));
+        
+        players = gibbon_player_list_new ();
+        create_player_view (builder);
         
 	return 1;
 }
@@ -341,6 +359,8 @@ cb_logged_in (GtkWidget *emitter, const gchar *hostname)
 static void
 cb_disconnected (GtkWidget *emitter, const gchar *error)
 {
+        gibbon_player_list_clear (players);
+        
         gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
         gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));
         
@@ -373,5 +393,96 @@ G_MODULE_EXPORT void html_server_output_cb (GObject *emitter,
         gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (server_text_view),
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
+}
+
+static GtkTreeView *
+create_player_view (GtkBuilder *builder)
+{
+        GtkTreeView *view;
+        GtkTreeViewColumn *col;
+        GtkCellRenderer *renderer;
+        
+        view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "player_view"));
+
+        g_assert (view);
+        g_assert (players);
+        
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Name"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_NAME,
+                NULL);
+        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_NAME);
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+                
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Available"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_AVAILABLE,
+                NULL);
+        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_NAME);
+        gtk_tree_view_column_set_clickable (col, TRUE);
+                
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Rating"),
+                renderer,
+                "text", GIBBON_PLAYER_LIST_COL_RATING,
+                NULL);
+        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RATING);
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_cell_data_func (col, renderer,
+                print2digits, (gpointer) GIBBON_PLAYER_LIST_COL_RATING, NULL);
+        
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Exp."),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                NULL);
+        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RATING);
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Opponent"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_OPPONENT,
+                NULL);
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,      
+                _("Watching"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_WATCHING,
+                NULL);
+                
+        gibbon_player_list_connect_view (players, view);        
+        g_signal_connect (view, "button-press-event", 
+                          (GCallback) view_on_button_pressed, NULL);
+                          
+        return view; 
+}
+
+static void print2digits (GtkTreeViewColumn *tree_column,
+                          GtkCellRenderer *cell, GtkTreeModel *tree_model,
+                          GtkTreeIter *iter, gpointer data)
+{
+        GtkCellRendererText *cell_text = (GtkCellRendererText *) cell;
+        gdouble d;
+
+        g_free(cell_text->text);
+        gtk_tree_model_get(tree_model, iter, (gint)data, &d, -1);
+        cell_text->text = g_strdup_printf("%.2f", d);
 }
 

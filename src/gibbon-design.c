@@ -25,7 +25,7 @@
 struct _GibbonDesignPrivate {
         
         /* FIXME! These have to become derived!  */
-        double design_width, design_height;
+        gdouble design_width, design_height;
 };
 
 #define GIBBON_DESIGN_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -39,7 +39,12 @@ gibbon_design_init (GibbonDesign *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_DESIGN, 
                                                   GibbonDesignPrivate);
+
+        /* FIXME! These have to become derived.  */
+        self->priv->design_width = 490;
+        self->priv->design_height = 380;
 }
+
 
 static void
 gibbon_design_finalize (GObject *object)
@@ -52,7 +57,7 @@ gibbon_design_finalize (GObject *object)
 static void
 gibbon_design_class_init (GibbonDesignClass *klass)
 {
-        GObject* parent_class = G_OBJECT_CLASS (klass);
+        GObjectClass* parent_class = G_OBJECT_CLASS (klass);
 
         g_type_class_add_private (klass, sizeof (GibbonDesignPrivate));
 
@@ -64,14 +69,10 @@ gibbon_design_new ()
 {
         GibbonDesign *self = g_object_new (GIBBON_TYPE_DESIGN, NULL);
 
-        /* FIXME! These have to become derived.  */
-        self->priv->design_width = 490;
-        self->priv->design_height = 380;
-
         return self;
 }
 
-double
+gdouble
 gibbon_design_get_width (const GibbonDesign *self)
 {
         g_return_val_if_fail (GIBBON_IS_DESIGN (self), 490);
@@ -80,7 +81,7 @@ gibbon_design_get_width (const GibbonDesign *self)
         return self->priv->design_width;
 }
 
-double
+gdouble
 gibbon_design_get_height (const GibbonDesign *self)
 {
         g_return_val_if_fail (GIBBON_IS_DESIGN (self), 380);
@@ -89,10 +90,10 @@ gibbon_design_get_height (const GibbonDesign *self)
         return self->priv->design_height;
 }
 
-double
+gdouble
 gibbon_design_get_aspect_ratio (const GibbonDesign *self)
 {
-        g_return_val_if_fail (GIBBON_IS_DESIGN (self), (double) 380 / 490);
+        g_return_val_if_fail (GIBBON_IS_DESIGN (self), (gdouble) 380 / 490);
         
         return gibbon_design_get_width (self) / gibbon_design_get_height (self);
 }

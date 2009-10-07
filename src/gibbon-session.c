@@ -42,12 +42,19 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 static void gibbon_session_send_server_message (GibbonSession *self, 
                                                 const gchar *output);
-static void gibbon_session_clip_welcome (GibbonSession *self,
-                                         const gchar *message,
-                                         const gchar *ptr);                                                
-static void gibbon_session_clip_who_info (GibbonSession *self,
-                                          const gchar *message,
-                                          const gchar *ptr);                                                
+static gboolean gibbon_session_clip_welcome (GibbonSession *self,
+                                             const gchar *message,
+                                             const gchar *ptr);                                                
+static gboolean gibbon_session_clip_who_info (GibbonSession *self,
+                                              const gchar *message,
+                                              const gchar *ptr);                                                
+
+static gboolean free_vector (gchar **);
+static gboolean parse_integer (const gchar *str, gint* result,
+                               const gchar *what);
+static gboolean parse_float (const gchar *str, gdouble* result,
+                             const gchar *what);
+
 struct _GibbonSessionPrivate {
         gint dummy;
 };
@@ -110,7 +117,8 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
 {
         unsigned long int code;
         gchar *endptr;
-        
+        gboolean r = FALSE;
+                
         g_return_if_fail (GIBBON_IS_SESSION (self));
         
         code = strtoul (message, &endptr, 10);
@@ -122,16 +130,19 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
         
         switch (code) {
                 case CLIP_WELCOME:
-                        gibbon_session_clip_welcome (self, message, endptr);
+                        r = gibbon_session_clip_welcome (self, message, endptr);
                         break;
                 case CLIP_WHO_INFO:
-                        gibbon_session_clip_who_info (self, message, endptr);
+                        r = gibbon_session_clip_who_info (self, message, endptr);
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
+                        r = TRUE;
                         break;
                 default: 
-                        gibbon_session_send_server_message (self, message);
+                        break;
         }
+        if (!r)
+                gibbon_session_send_server_message (self, message);
 }
 
 static void
@@ -159,7 +170,7 @@ gibbon_session_server_output_cb (GibbonSession *self,
         gibbon_session_send_server_message (self, output);
 }
 
-static void
+static gboolean
 gibbon_session_clip_welcome (GibbonSession *self, 
                              const gchar *message, const gchar *ptr)
 {
@@ -170,7 +181,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
         gchar *reply;
         gchar *mail;
         
-        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 4);
         
@@ -217,9 +228,11 @@ gibbon_session_clip_welcome (GibbonSession *self,
         }
         
         g_strfreev (tokens);
+        
+        return TRUE;
 }
 
-static void
+static gboolean
 gibbon_session_clip_who_info (GibbonSession *self, 
                               const gchar *message, const gchar *ptr)
 {
@@ -228,80 +241,167 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gchar *opponent;
         gchar *watching;
         gboolean ready;
+        gboolean available;
         gboolean away;
-        gchar *rating;
-        gchar *experience;
+        gdouble rating;
+        gint experience;
         gchar *idle;
         gchar *login;
         gchar *client;
         gchar *email;
         gchar *hostname;
         
-        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 13);
-        
-        g_return_if_fail (tokens[0]);
-        g_return_if_fail (tokens[1]);
-        g_return_if_fail (tokens[2]);
-        g_return_if_fail (tokens[3]);
-        g_return_if_fail (tokens[4]);
-        g_return_if_fail (tokens[5]);
-        g_return_if_fail (tokens[6]);
-        g_return_if_fail (tokens[7]);
-        g_return_if_fail (tokens[8]);
-        g_return_if_fail (tokens[9]);
-        g_return_if_fail (tokens[10]);
-        g_return_if_fail (tokens[11]);
+        g_return_val_if_fail (tokens, FALSE);
+        g_return_val_if_fail (tokens[11], FALSE);
         
         who = tokens[0];
-        g_print ("Who: %s", who);
-
+        
         opponent = tokens[1];
         if (opponent[0] == '-' && opponent[1] == 0)
-                opponent = NULL;
-        else
-                g_print (", playing against %s", opponent);
+                opponent = "";
                 
         watching = tokens[2];
         if (watching[0] == '-' && watching[1] == 0)
-                watching = NULL;
-        else
-                g_print (", watching %s", watching);
+                watching = "";
                 
-        g_return_if_fail (tokens[3][0] == '0' || tokens[3][0] == '1');
-        g_return_if_fail (tokens[3][1] == 0);
+        g_return_val_if_fail (tokens[3][0] == '0' || tokens[3][0] == '1',
+                              free_vector (tokens));
+        g_return_val_if_fail (tokens[3][1] == 0, free_vector (tokens));
         if (tokens[3][0] == '1') {
                 ready = TRUE;
-                g_print (", is ready");
         } else {
                 ready = FALSE;
-                g_print (", is not ready");
         }
         
-        g_return_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1');
-        g_return_if_fail (tokens[4][1] == 0);
+        g_return_val_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1',
+                              free_vector (tokens));
+        g_return_val_if_fail (tokens[4][1] == 0, free_vector (tokens));
         if (tokens[4][0] == '1') {
                 away = TRUE;
-                g_print (", is away");
         } else {
                 away = FALSE;
-                g_print (", is not away");
         }
 
-        rating = tokens[5];
-        experience = tokens[6];
-        g_print (", with rating %s and experience %s", rating, experience);
+        g_return_val_if_fail (parse_float (tokens[5], &rating,
+                                           "rating"),
+                              free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[6], &experience,
+                                             "experience"),
+                              free_vector (tokens));
         
         idle = tokens[7];
         login = tokens[8];
         hostname = tokens[9];
         client = tokens[10];
         email = tokens[11];
+
+        available = ready && !away && !opponent[0];
         
-        g_print (", logged in from %s with address %s", hostname, email);
-        
-        g_print (".\n");
+        gibbon_player_list_set (players, who, available, rating, experience,
+                                opponent, watching);
                 
         g_strfreev (tokens);
+        
+        return TRUE;
+}
+
+static gboolean
+parse_integer (const gchar *str, gint *result, const gchar *what)
+{
+        char *endptr;
+        long int r;
+                
+        if (!str) {
+                g_print ("Error parsing %s: NULL pointer passed.\n",
+                         what);
+                return FALSE;
+        }
+        
+        errno = 0;
+
+        r = strtol (str, &endptr, 10);
+        
+        if (errno) {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, strerror (errno));
+                return FALSE;
+        }
+        
+        if (*endptr != 0) {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, "Trailing garbage in integer");
+                return FALSE;
+        }
+        
+        *result = (gint) r;
+        
+        return TRUE;       
+}
+
+static gboolean
+parse_float (const gchar *str, gdouble *result, const gchar *what)
+{
+        char *endptr;
+        long int r;
+        gdouble fract = 0.1;
+        
+        if (!str) {
+                g_print ("Error parsing %s: NULL pointer passed.\n",
+                         what);
+                return FALSE;
+        }
+        
+        errno = 0;
+
+        r = strtol (str, &endptr, 10);
+        
+        if (errno) {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, strerror (errno));
+                return FALSE;
+        }
+        
+        if (*endptr == 0) {
+                *result = (gdouble) r;
+                return TRUE;
+        }
+        
+        if (*endptr != '.') {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, "Expected decimal point");
+                return FALSE;
+        }
+
+        *result = (gdouble) r;
+
+        while (TRUE) {
+                ++endptr;
+                if (!*endptr)
+                        break;
+                if (*endptr < '0' || *endptr > '9') {
+                        g_print ("Error parsing %s: `%s': %s.\n",
+                                 what, str, "Trailing garbage");
+                        return FALSE;
+                }
+                *result += (*endptr - '0') / fract;
+                fract /= 10;
+                
+                if (fract < 0.000001)
+                        break;
+        }
+        
+        return TRUE;       
+}
+
+/* Convenience function: Free a vector (returned from the tokenizer)
+ * and return FALSE so that it can be used in g_return_val_if_fail().
+ */
+static gboolean
+free_vector (gchar ** v)
+{
+        g_free (v);
+        return FALSE;
 }

@@ -36,6 +36,7 @@ gibbon_SOURCES =		\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
 	gibbon-design.c		\
+	gibbon-player-list.c	\
 	gibbon-session.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
@@ -48,6 +49,7 @@ noinst_HEADERS =		\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
 	gibbon-design.h		\
+	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h
 

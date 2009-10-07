@@ -43,7 +43,7 @@ static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
                                guint pos, gint checkers);
 static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       guint number,
-                                      double x, double y,
+                                      gdouble x, gdouble y,
                                       struct GibbonColor *color,
                                       struct GibbonColor *text_color);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
@@ -52,10 +52,10 @@ static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr,
                               guint left, guint right, gint side);
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
                                const gchar *text,
-                               double x, double y, double ext);
+                               gdouble x, gdouble y, gdouble ext);
 static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
                              guint value, gint side,
-                             double x, double y);
+                             gdouble x, gdouble y);
 
 #ifdef M_PI
 # undef M_PI
@@ -126,24 +126,24 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
         GtkAllocation *allocation;
-        double design_width;
-        double design_height;
-        double widget_ratio;
-        double translate_x, translate_y, scale;
+        gdouble design_width;
+        gdouble design_height;
+        gdouble widget_ratio;
+        gdouble translate_x, translate_y, scale;
         struct GibbonColor frame_color = { 0.2, 0.15, 0, 1 };
-        double outer_border_w = 10;
-        double outer_border_h = 10;
-        double checker_width = 30;
-        double checker_height = 10;
-        double point_width = checker_width;
-        double point_length = 5 * checker_width;
+        gdouble outer_border_w = 10;
+        gdouble outer_border_h = 10;
+        gdouble checker_width = 30;
+        gdouble checker_height = 10;
+        gdouble point_width = checker_width;
+        gdouble point_length = 5 * checker_width;
         struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
         struct GibbonColor bearoff_color = board_color;
-        double board_x, board_y;
-        double dice_area_height = 2 * checker_width;
+        gdouble board_x, board_y;
+        gdouble dice_area_height = 2 * checker_width;
         struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
         struct GibbonColor point_color2 = { 0.5, 0.5, 0.5, 1 };
-        double aspect_ratio;
+        gdouble aspect_ratio;
 
         gint i;
         gint checkers[28] = { 3, -3, 
@@ -167,7 +167,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         if (!allocation->width)
                 return;
         
-        widget_ratio = (double) allocation->width / allocation->height;
+        widget_ratio = (gdouble) allocation->width / allocation->height;
 
         if (widget_ratio > aspect_ratio) {
                 scale = allocation->height / design_height; 
@@ -338,10 +338,10 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint checkers)
         struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
         struct GibbonColor text_on_white = { 0, 0, 0, 1 };
         struct GibbonColor *text_color;
-        double checker_width = 30;
-        double design_width = 490;
-        double design_height = 380;
-        double x = design_width / 2, y = design_height / 2;
+        gdouble checker_width = 30;
+        gdouble design_width = 490;
+        gdouble design_height = 380;
+        gdouble x = design_width / 2, y = design_height / 2;
         gint direction;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
@@ -379,15 +379,15 @@ gibbon_draw_bearoff (GibbonCairoboard *self, cairo_t *cr, gint checkers)
         struct GibbonColor shade_on_white = { 0, 0, 0, 1 };
         struct GibbonColor *color;
         struct GibbonColor *shade_color;
-        double checker_width = 30;
-        double checker_height = 10;
-        double design_width = 490;
-        double design_height = 380;
-        double outer_width = 10;
-        double outer_height = 10;
-        double x = design_width - outer_width - checker_width;
-        double y;
-        double separator_width = 0.2;
+        gdouble checker_width = 30;
+        gdouble checker_height = 10;
+        gdouble design_width = 490;
+        gdouble design_height = 380;
+        gdouble outer_width = 10;
+        gdouble outer_height = 10;
+        gdouble x = design_width - outer_width - checker_width;
+        gdouble y;
+        gdouble separator_width = 0.2;
         gint direction;
         gint i;
         
@@ -439,12 +439,12 @@ gibbon_draw_bearoff (GibbonCairoboard *self, cairo_t *cr, gint checkers)
 
 static void
 gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
-                          double x, double y, 
+                          gdouble x, gdouble y, 
                           struct GibbonColor *color,
                           struct GibbonColor *text_color)
 {
-        double checker_width = 30;
-        double text_width = 10;
+        gdouble checker_width = 30;
+        gdouble text_width = 10;
         gchar *texts[] = { "2", "3", "4", "5", "6", "7", "8" };
         const gchar *font_family = "sans-serif";
         const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
@@ -489,13 +489,13 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr,
         struct GibbonColor text_on_white = { 0, 0, 0, 1 };
         struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
         struct GibbonColor *text_color;
-        double x, y;
-        double design_width = 490;
-        double design_height = 380;
-        double outer_border_h = 10;
-        double checker_width = 30;
-        double bar_width = 30;
-        double point_width = 30;
+        gdouble x, y;
+        gdouble design_width = 490;
+        gdouble design_height = 380;
+        gdouble outer_border_h = 10;
+        gdouble checker_width = 30;
+        gdouble bar_width = 30;
+        gdouble point_width = 30;
         
         gint direction;
         gint i;
@@ -549,16 +549,16 @@ static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr, 
                   guint value, gint side)
 {
-        double cube_width = 30;
-        double cube_text_width = 22;
+        gdouble cube_width = 30;
+        gdouble cube_text_width = 22;
         struct GibbonColor foreground = { 0, 0, 0, 1 };
         struct GibbonColor background = { 0.9, 0.9, 0.9, 1 };
-        double design_height = 380;
-        double outer_width = 10;
-        double outer_height = 10;
-        double checker_width = 30;
-        double x = outer_width + checker_width / 2 - cube_width / 2;
-        double y = design_height / 2 - cube_width / 2;
+        gdouble design_height = 380;
+        gdouble outer_width = 10;
+        gdouble outer_height = 10;
+        gdouble checker_width = 30;
+        gdouble x = outer_width + checker_width / 2 - cube_width / 2;
+        gdouble y = design_height / 2 - cube_width / 2;
         const gchar *font_family = "serif";
         const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
         const cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
@@ -600,7 +600,7 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr,
 
 static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
                                const gchar *text,
-                               double x, double y, double ext)
+                               gdouble x, gdouble y, gdouble ext)
 {
         cairo_text_extents_t te;
 
@@ -618,12 +618,12 @@ static void
 gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr, guint left, guint right,
                   gint side)
 {
-        double design_width = 490;
-        double design_height = 380;
-        double y;
-        double die_width = 20;
-        double bar_width = 30;
-        double point_width = 30;
+        gdouble design_width = 490;
+        gdouble design_height = 380;
+        gdouble y;
+        gdouble die_width = 20;
+        gdouble bar_width = 30;
+        gdouble point_width = 30;
                 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
@@ -651,7 +651,7 @@ gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr, guint left, guint right,
 static void
 gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr, 
                  guint value, gint side,
-                 double x, double y)
+                 gdouble x, gdouble y)
 {
         struct GibbonColor black = { 0, 0, 0, 1 };
         struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
@@ -659,9 +659,9 @@ gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr,
         struct GibbonColor fg_on_white = { 0, 0, 0, 1 };
         struct GibbonColor *bg_color;
         struct GibbonColor *fg_color;
-        double die_width = 20;
-        double eye_radius = 2;
-        double eye_distance = 5;
+        gdouble die_width = 20;
+        gdouble eye_radius = 2;
+        gdouble eye_distance = 5;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self)); 
         g_return_if_fail (value <= 6);

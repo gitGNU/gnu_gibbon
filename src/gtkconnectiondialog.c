@@ -43,7 +43,7 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         const gchar *password = get_entry_text ("conn_entry_password");
         const gchar *address = get_entry_text ("conn_entry_address");
         GObject *check_button;
-        unsigned long portno;
+        unsigned long portno = 4321;
         char *endptr;
         
         if (port[0] != '\000') {

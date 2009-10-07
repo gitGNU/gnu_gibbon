@@ -2,3 +2,5 @@
   DNS, based on libasyncns for Unix and a native implementation for MS-DOS.
   Integrate it as soon as it is widely available.
 - GibbonCairoboard should query a GibbonDesign for the values.
+- Turn GtkBuilder xml file into a string constant instead of loading it
+  at run-time.  Rationale: Too many run-time checks required otherwise.
