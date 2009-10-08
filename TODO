@@ -7,3 +7,4 @@
 - Change structure of match position.
 - Set up a consistent convention for positive and negative checker
   numbers.
+- Write a function that finds the player name for a selection.
