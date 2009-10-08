@@ -312,7 +312,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         for (i = 0; i < 24; ++i)
                 if (self->priv->pos.checkers[i])
                         gibbon_draw_point (self, cr, i);
-        
+
         gibbon_draw_bear_off (self, cr, -1);
         gibbon_draw_bear_off (self, cr, 1);
 
@@ -387,7 +387,7 @@ gibbon_draw_bear_off (GibbonCairoboard *self, cairo_t *cr, gint side)
         gdouble separator_width = 0.2;
         gint direction;
         gint i;
-        guint checkers;
+        gint checkers;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
@@ -406,6 +406,10 @@ gibbon_draw_bear_off (GibbonCairoboard *self, cairo_t *cr, gint side)
         } else {
                 g_return_if_fail (side);
         }
+
+        if (checkers < 0)
+                checkers = -checkers;
+        g_return_if_fail (checkers <= 15);
         
         cairo_set_source_rgb (cr,
                               color->red,
@@ -753,12 +757,40 @@ gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
 void
 gibbon_cairoboard_set_position (GibbonCairoboard *self,
-                                struct GibbonPosition *pos)
+                                const struct GibbonPosition *pos)
 {
+        struct GibbonPosition *mypos;
+        gint i;
+        
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self)); 
         g_return_if_fail (pos);
         
-        memcpy (&self->priv->pos, pos, sizeof self->priv->pos);
+        mypos = &self->priv->pos;
+
+        /* FIXME! Copy names and free them when necessary.  */
+        memset (mypos, 0, sizeof *mypos);
+        mypos->match_length = pos->match_length;
+        mypos->score[0] = pos->score[0];        
+        mypos->score[1] = pos->score[1];
+        mypos->bar0 = pos->bar0;
+        mypos->bar1 = pos->bar1;
+        
+        for (i = 0; i < 24; ++i)
+                mypos->checkers[i] = pos->checkers[i];
+        
+        mypos->bear_off0 = pos->bear_off0;
+        mypos->bear_off1 = pos->bear_off1;
+        
+        mypos->turn = pos->turn;
+        
+        mypos->dice0[0] = pos->dice0[0];
+        mypos->dice0[1] = pos->dice0[1];
+        mypos->dice1[0] = pos->dice1[0];
+        mypos->dice1[1] = pos->dice1[1];
+        
+        mypos->cube = pos->cube;
+        mypos->may_double[0] = pos->may_double[0];
+        mypos->may_double[1] = pos->may_double[1];
         
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }

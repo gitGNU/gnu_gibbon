@@ -44,6 +44,7 @@ GibbonPlayerList *players = NULL;
 static GtkWidget *statusbar = NULL;
 
 static GibbonDesign *design = NULL;
+static GibbonCairoboard *board = NULL;
 
 /* The converter in Glade 3.4.x converts menus to GtkAction.  Until we
  * upgrade to 3.5.4 or better, construct the menu manually.  */
@@ -90,7 +91,6 @@ init_gui (const gchar *builder_filename)
         GObject *entry;
         GObject *check;
         PangoFontDescription *font_desc;
-        GibbonCairoboard *board = NULL;
         GObject *left_vpane;
                         
         builder = get_builder (builder_filename);
@@ -211,7 +211,9 @@ init_gui (const gchar *builder_filename)
         initial_position.checkers[16] = -3;
         initial_position.checkers[18] = -5;
         initial_position.checkers[23] = 2;
-        
+        initial_position.match_length = 23;
+        initial_position.score[0] = 5;
+        initial_position.score[1] = 7;
         gibbon_cairoboard_set_position (board, &initial_position);
         
         gtk_widget_show (GTK_WIDGET (board));
@@ -617,4 +619,10 @@ G_MODULE_EXPORT void
 on_invite_player_menu_item_activate (GtkObject *object, gpointer user_data)
 {
 
+}
+
+void
+set_position (const struct GibbonPosition *pos)
+{
+        gibbon_cairoboard_set_position (board, pos);
 }

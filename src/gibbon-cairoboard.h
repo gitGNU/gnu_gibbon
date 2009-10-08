@@ -54,7 +54,7 @@ struct _GibbonCairoboard
 GibbonCairoboard *gibbon_cairoboard_new (const GibbonDesign *design);
 
 void gibbon_cairoboard_set_position (GibbonCairoboard *self,
-                                    struct GibbonPosition *pos);
+                                     const struct GibbonPosition *pos);
                                                   
 G_END_DECLS
 

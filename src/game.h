@@ -24,16 +24,35 @@
 # include <config.h>
 #endif
 
+#include <glib.h>
+
 /* Whenever a number of checkers has to be given, a negative number
  * is used for player 1's checkers, a positive for player 2's checkers.
  */
 struct GibbonPosition {
-        /* Number of checkers on the bar for player 1.  */
+	gchar *player0;
+	gchar *player1;
+
+	gint match_length;
+	gint score[2];
+
         gint bar0;
         gint bar1;
+
         gint checkers[24];
+
+	/* FIXME! These numbers can be calculated as a difference!  */
         gint bear_off0;
         gint bear_off1;
+
+	/* Whose turn is it? -1, 0 (game over), or 1.  */
+	gint turn;
+
+	gint dice0[2];
+	gint dice1[2];
+
+	gint cube;
+	gboolean may_double[2];
 };
 
 #endif

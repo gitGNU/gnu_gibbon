@@ -28,6 +28,7 @@
 #include <gconf/gconf-client.h>
 
 #include "gibbon-player-list.h"
+#include "game.h"
 
 #define GIBBON_GCONF_PREFIX "/apps/gibbon/"
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
@@ -46,6 +47,7 @@ extern const gchar *get_entry_text (const gchar *id);
 extern void display_error (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
 extern void set_state_connecting (void);
 extern void set_state_disconnected (void);
+extern void set_position (const struct GibbonPosition *pos);
 
 G_MODULE_EXPORT void html_server_output_cb (GObject *emitter, 
                                             const gchar *html);

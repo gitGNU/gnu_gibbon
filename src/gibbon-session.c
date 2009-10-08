@@ -29,6 +29,7 @@
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
 #include "gui.h"
+#include "game.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -48,6 +49,10 @@ static gboolean gibbon_session_clip_welcome (GibbonSession *self,
 static gboolean gibbon_session_clip_who_info (GibbonSession *self,
                                               const gchar *message,
                                               const gchar *ptr);                                                
+static void gibbon_session_dispatch_clip_message (GibbonSession *self,
+                                                  const gchar *message);
+static gboolean gibbon_session_handle_board (GibbonSession *self,
+                                             const gchar *board);
 
 static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
@@ -165,6 +170,9 @@ gibbon_session_server_output_cb (GibbonSession *self,
         if (output[0] >= '0' && output[0] <= '9') {
                 gibbon_session_dispatch_clip_message (self, output);
                 return;
+        } else if (0 == strncmp ("board:", output, 6)) {
+                if (gibbon_session_handle_board (self, output + 6))
+                        return;
         }
         
         gibbon_session_send_server_message (self, output);
@@ -250,12 +258,14 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gchar *client;
         gchar *email;
         gchar *hostname;
-        
+        gint i;
+                
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 13);
         g_return_val_if_fail (tokens, FALSE);
-        g_return_val_if_fail (tokens[11], FALSE);
+        for (i = 0; i <= 11; ++i)
+                g_return_val_if_fail (tokens[i], free_vector (tokens));
         
         who = tokens[0];
         
@@ -404,4 +414,98 @@ free_vector (gchar ** v)
 {
         g_free (v);
         return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_board (GibbonSession *self, const gchar *string)
+{
+        gchar **tokens;
+        struct GibbonPosition pos;
+        gint i;
+                        
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+        g_return_val_if_fail (string, FALSE);
+        
+        /* FIXME! Fill structure completely instead! */
+        memset (&pos, 0, sizeof pos);
+        
+        tokens = g_strsplit (string, ":", 99);
+
+        g_return_val_if_fail (tokens, FALSE);
+        
+        for (i = 0; i <= 35; ++i)
+                g_return_val_if_fail (tokens[i], free_vector (tokens));
+        
+        pos.player0 = tokens[0];
+        g_return_val_if_fail (pos.player0[0], free_vector (tokens));
+        
+        pos.player1 = tokens[1];
+        g_return_val_if_fail (pos.player1[0], free_vector (tokens));
+        
+        g_return_val_if_fail (parse_integer (tokens[2], &pos.match_length, 
+                              "match length"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.match_length > 0, free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[3], &pos.score[0], "score0"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.score[0] >= 0, free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[4], &pos.score[1], "score1"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.score[1] >= 0, free_vector (tokens));
+        
+        g_return_val_if_fail (parse_integer (tokens[5], &pos.bar0, "bar0"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.bar0 >= -15 && pos.bar0 <= 15,
+                              free_vector (tokens));
+        
+        for (i = 6; i < 30; ++i) {
+                g_return_val_if_fail (parse_integer (tokens[i], 
+                                                     &pos.checkers[i - 6],
+                                                     "checker"),
+                                      free_vector (tokens));
+                g_return_val_if_fail (pos.checkers[i - 6] >= -15
+                                      && pos.checkers[i - 6] <= 15,
+                                      free_vector (tokens));
+        }
+        
+        g_return_val_if_fail (parse_integer (tokens[30], &pos.bar1, "bar1"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.bar1 >= -15 && pos.bar1 <= 15,
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[31], &pos.turn, "turn"),
+                              free_vector (tokens));
+        g_return_val_if_fail ((pos.turn >= -1 && pos.turn <= 1),
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[32], &pos.dice0[0], 
+                                             "dice0[0]"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.dice0[0] >= 0 && pos.dice0[0] <= 6, 
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[33], &pos.dice0[1], 
+                                             "dice0[1]"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.dice0[1] >= 0 && pos.dice0[1] <= 6, 
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[34], &pos.dice1[0], 
+                                             "dice1[0]"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.dice1[0] >= 0 && pos.dice1[0] <= 6, 
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[35], &pos.dice1[1], 
+                                             "dice1[1]"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.dice1[1] >= 0 && pos.dice1[1] <= 6, 
+                              free_vector (tokens));
+        
+        g_strfreev (tokens);
+        
+        set_position (&pos);
+        
+        return TRUE;
 }
