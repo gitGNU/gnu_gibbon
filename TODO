@@ -4,3 +4,6 @@
 - GibbonCairoboard should query a GibbonDesign for the values.
 - Turn GtkBuilder xml file into a string constant instead of loading it
   at run-time.  Rationale: Too many run-time checks required otherwise.
+- Change structure of match position.
+- Set up a consistent convention for positive and negative checker
+  numbers.
