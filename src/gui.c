@@ -60,6 +60,8 @@ static void cb_logged_in (GtkWidget *emitter, const gchar *hostname);
 
 G_MODULE_EXPORT void on_invite_player_menu_item_activate (GtkObject *object, 
                                                           gpointer user_data);
+G_MODULE_EXPORT void on_watch_player_menu_item_activate (GtkObject *object, 
+                                                         gpointer user_data);
 G_MODULE_EXPORT void on_look_player_menu_item_activate (GtkObject *object, 
                                                         gpointer user_data);
 
@@ -515,11 +517,18 @@ create_player_menu (GtkBuilder *builder)
         
         player_menu = gtk_menu_new ();
         
+        menu_item = gtk_menu_item_new_with_label (_("Watch"));
+        g_signal_connect(menu_item, "activate",
+                        (GCallback) on_watch_player_menu_item_activate, view);
+                
+        gtk_menu_shell_append (GTK_MENU_SHELL (player_menu), menu_item);
+        
         menu_item = gtk_menu_item_new_with_label (_("Look"));
         g_signal_connect(menu_item, "activate",
                         (GCallback) on_look_player_menu_item_activate, view);
                 
         gtk_menu_shell_append (GTK_MENU_SHELL (player_menu), menu_item);
+        
         gtk_widget_show_all (player_menu);
 }
 
@@ -608,6 +617,49 @@ on_look_player_menu_item_activate (GtkObject *object, gpointer user_data)
                         
                         gibbon_connection_queue_command (connection,
                                                          "look %s", who);  
+                }
+        }
+        
+        g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);        
+        g_list_free (selected_rows);
+}
+
+G_MODULE_EXPORT void
+on_watch_player_menu_item_activate (GtkObject *object, gpointer user_data)
+{
+        GtkTreeView *view = GTK_TREE_VIEW (user_data);
+        GtkTreeSelection *selection;
+        gint num_rows;
+        GList *selected_rows;
+        GList *first;
+        GtkTreePath *path;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        gchar *who;
+                
+        selection = gtk_tree_view_get_selection (view);
+        num_rows = gtk_tree_selection_count_selected_rows (selection);
+
+        /* Should actually not happen.  */        
+        if (num_rows != 1)
+                return;
+        
+        selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+        if (!selected_rows)
+                return;
+        
+        first = g_list_first (selected_rows);
+        if (first && first->data) {
+                path = (GtkTreePath *) first->data;
+                model = gtk_tree_view_get_model (view);
+                
+                if (gtk_tree_model_get_iter (model, &iter, path)) {
+                        gtk_tree_model_get (model, &iter,
+                                            GIBBON_PLAYER_LIST_COL_NAME, &who,
+                                            -1);
+                        
+                        gibbon_connection_queue_command (connection,
+                                                         "watch %s", who);  
                 }
         }
         
