@@ -49,8 +49,7 @@ static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       struct GibbonColor *text_color);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
                               guint value, gint side);
-static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr,
-                              guint left, guint right, gint side);
+static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
                                const gchar *text,
                                gdouble x, gdouble y, gdouble ext);
@@ -74,8 +73,15 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
 static void
 gibbon_cairoboard_finalize (GObject *object)
 {
-/*        GibbonCairoboard *self = GIBBON_CAIROBOARD (object); */
-
+        GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
+        
+        if (self->priv->pos.player0)
+                g_free (self->priv->pos.player0);
+        self->priv->pos.player0 = NULL;
+        if (self->priv->pos.player1)
+                g_free (self->priv->pos.player1);
+        self->priv->pos.player1 = NULL;
+        
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
 
@@ -317,7 +323,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gibbon_draw_bear_off (self, cr, 1);
 
         gibbon_draw_cube (self, cr, 2, 0);
-        gibbon_draw_dice (self, cr, 6, 5, -1);
+        gibbon_draw_dice (self, cr);
 }
 
 static void
@@ -332,12 +338,17 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
         gdouble checker_width = 30;
         gdouble design_width = 490;
         gdouble design_height = 380;
-        gdouble x = design_width / 2, y = design_height / 2;
+        gdouble x, y;
         gint direction;
         guint checkers;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
-                
+        
+        design_width = gibbon_design_get_width (self->priv->design);
+        design_height = gibbon_design_get_height (self->priv->design);
+        x = design_width / 2;
+        y = design_height / 2;
+        
         if (side < 0) {
                 color = &black;
                 text_color = &text_on_black;
@@ -619,11 +630,10 @@ static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
 }
 
 static void
-gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr, guint left, guint right,
-                  gint side)
+gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
 {
-        gdouble design_width = 490;
-        gdouble design_height = 380;
+        gdouble design_width;
+        gdouble design_height;
         gdouble y;
         gdouble die_width = 20;
         gdouble bar_width = 30;
@@ -631,25 +641,56 @@ gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr, guint left, guint right,
                 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
-        g_return_if_fail (left);
-        g_return_if_fail (right);
-        g_return_if_fail (left <= 6);
-        g_return_if_fail (right <= 6);
+        design_width = gibbon_design_get_width (self->priv->design);
+        design_height = gibbon_design_get_height (self->priv->design);
+        
+        g_return_if_fail (self->priv->pos.dice0[0] >= 0
+                          && self->priv->pos.dice0[0] <= 6);
+        g_return_if_fail (self->priv->pos.dice0[1] >= 0
+                          && self->priv->pos.dice0[1] <= 6);
+        g_return_if_fail (self->priv->pos.dice1[0] >= 0
+                          && self->priv->pos.dice1[0] <= 6);
+        g_return_if_fail (self->priv->pos.dice1[1] >= 0
+                          && self->priv->pos.dice1[1] <= 6);
        
         y = design_height / 2;
 
-        gibbon_draw_die (self, cr, 
-                         left,
-                         side,
-                         design_width / 2 + bar_width / 2 + 3 * point_width
-                         - 0.75 * die_width, 
-                         y);
-        gibbon_draw_die (self, cr, 
-                         right,
-                         side,
-                         design_width / 2 + bar_width / 2 + 3 * point_width
-                         + 0.75 * die_width, 
-                         y);
+        if (self->priv->pos.dice0[0]) {
+                gibbon_draw_die (self, cr, 
+                                 self->priv->pos.dice0[0],
+                                 -1,
+                                 design_width / 2 + bar_width / 2 + 3 * point_width
+                                 - 0.75 * die_width, 
+                                 y);
+        }
+        
+        if (self->priv->pos.dice0[1]) {
+                gibbon_draw_die (self, cr, 
+                                 self->priv->pos.dice0[1],
+                                 -1,
+                                 design_width / 2 + bar_width / 2 + 3 * point_width
+                                 + 0.75 * die_width, 
+                                 y);
+        }
+
+        if (self->priv->pos.dice1[0]) {
+                gibbon_draw_die (self, cr, 
+                                 self->priv->pos.dice1[0],
+                                 1,
+                                 design_width / 2 - bar_width / 2 - 3 * point_width
+                                 - 0.75 * die_width, 
+                                 y);
+        }
+        
+        if (self->priv->pos.dice1[1]) {
+                gibbon_draw_die (self, cr, 
+                                 self->priv->pos.dice1[1],
+                                 1,
+                                 design_width / 2 - bar_width / 2 - 3 * point_width
+                                 + 0.75 * die_width, 
+                                 y);
+        }
+
 }
 
 static void
@@ -674,7 +715,7 @@ gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr,
         if (side < 0) {
                 bg_color = &black;
                 fg_color = &fg_on_black;
-        } else {
+        } else if (side > 0) {
                 bg_color = &white;
                 fg_color = &fg_on_white;
         }
@@ -760,38 +801,22 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
                                 const struct GibbonPosition *pos)
 {
         struct GibbonPosition *mypos;
-        gint i;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self)); 
         g_return_if_fail (pos);
         
         mypos = &self->priv->pos;
 
-        /* FIXME! Copy names and free them when necessary.  */
-        memset (mypos, 0, sizeof *mypos);
-        mypos->match_length = pos->match_length;
-        mypos->score[0] = pos->score[0];        
-        mypos->score[1] = pos->score[1];
-        mypos->bar0 = pos->bar0;
-        mypos->bar1 = pos->bar1;
-        
-        for (i = 0; i < 24; ++i)
-                mypos->checkers[i] = pos->checkers[i];
-        
-        mypos->bear_off0 = pos->bear_off0;
-        mypos->bear_off1 = pos->bear_off1;
-        
-        mypos->turn = pos->turn;
-        
-        mypos->dice0[0] = pos->dice0[0];
-        mypos->dice0[1] = pos->dice0[1];
-        mypos->dice1[0] = pos->dice1[0];
-        mypos->dice1[1] = pos->dice1[1];
-        
-        mypos->cube = pos->cube;
-        mypos->may_double[0] = pos->may_double[0];
-        mypos->may_double[1] = pos->may_double[1];
+        if (mypos->player0)
+                g_free (mypos->player0);
+        if (mypos->player1)
+                g_free (mypos->player1);
+                
+        self->priv->pos = *pos;
+        if (self->priv->pos.player0)
+                self->priv->pos.player0 = g_strdup (self->priv->pos.player0);
+        if (self->priv->pos.player1)
+                self->priv->pos.player1 = g_strdup (self->priv->pos.player1);
         
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }
-

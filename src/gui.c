@@ -216,6 +216,10 @@ init_gui (const gchar *builder_filename)
         initial_position.match_length = 23;
         initial_position.score[0] = 5;
         initial_position.score[1] = 7;
+        initial_position.dice0[0] = 3;
+        initial_position.dice0[1] = 0;
+        initial_position.dice1[0] = 1;
+        initial_position.dice1[1] = 0;
         gibbon_cairoboard_set_position (board, &initial_position);
         
         gtk_widget_show (GTK_WIDGET (board));
