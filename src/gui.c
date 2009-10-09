@@ -232,7 +232,8 @@ init_gui (const gchar *builder_filename)
         gtk_widget_set_size_request (GTK_WIDGET (board), 256, 256);
         
         gtk_widget_destroy (gtk_paned_get_child1 (GTK_PANED (left_vpane)));
-        gtk_paned_add1 (GTK_PANED (left_vpane), GTK_WIDGET (board));
+        gtk_paned_pack1 (GTK_PANED (left_vpane), GTK_WIDGET (board),
+	 		 TRUE, FALSE);
         
         players = gibbon_player_list_new ();
         create_player_view (builder);
