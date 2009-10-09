@@ -38,7 +38,7 @@ static gboolean gibbon_cairoboard_expose (GtkWidget *object,
                                           GdkEventExpose *event);
 static void gibbon_cairoboard_draw (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_bar (GibbonCairoboard *board, cairo_t *cr, gint side);
-static void gibbon_draw_bear_off (GibbonCairoboard *board, cairo_t *cr,
+static void gibbon_draw_home (GibbonCairoboard *board, cairo_t *cr,
                                   gint side);
 static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
                                guint point);
@@ -144,7 +144,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gdouble point_width = checker_width;
         gdouble point_length = 5 * checker_width;
         struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
-        struct GibbonColor bearoff_color = board_color;
+        struct GibbonColor home_color = board_color;
         gdouble board_x, board_y;
         gdouble dice_area_height = 2 * checker_width;
         struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
@@ -197,9 +197,9 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         
         /* Bear-off compartments.  */
         cairo_set_source_rgb (cr, 
-                              bearoff_color.red, 
-                              bearoff_color.green, 
-                              bearoff_color.blue);
+                              home_color.red, 
+                              home_color.green, 
+                              home_color.blue);
         cairo_rectangle (cr,
                          outer_border_w, outer_border_h, 
                          checker_width, 15 * checker_height);        
@@ -318,8 +318,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                 if (self->priv->pos.checkers[i])
                         gibbon_draw_point (self, cr, i);
 
-        gibbon_draw_bear_off (self, cr, -1);
-        gibbon_draw_bear_off (self, cr, 1);
+        gibbon_draw_home (self, cr, -1);
+        gibbon_draw_home (self, cr, 1);
 
         gibbon_draw_cube (self, cr);
         gibbon_draw_dice (self, cr);
@@ -378,7 +378,7 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
 }
 
 static void
-gibbon_draw_bear_off (GibbonCairoboard *self, cairo_t *cr, gint side)
+gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, gint side)
 {
         struct GibbonColor black = { 0, 0, 0, 1 };
         struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
@@ -406,13 +406,13 @@ gibbon_draw_bear_off (GibbonCairoboard *self, cairo_t *cr, gint side)
                 shade_color = &shade_on_black;
                 direction = -1;
                 y = design_height - outer_height - checker_height;
-                checkers = self->priv->pos.bear_off0;
+                checkers = self->priv->pos.home0;
         } else if (side > 0) {
                 color = &white;
                 shade_color = &shade_on_white;
                 direction = 1;
                 y = outer_height;
-                checkers = self->priv->pos.bear_off1;
+                checkers = self->priv->pos.home1;
         } else {
                 g_return_if_fail (side);
         }

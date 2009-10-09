@@ -42,8 +42,8 @@ struct GibbonPosition {
         gint checkers[24];
 
 	/* FIXME! These numbers can be calculated as a difference!  */
-        gint bear_off0;
-        gint bear_off1;
+        gint home0;
+        gint home1;
 
 	/* Whose turn is it? -1, 0 (game over), or 1.  */
 	gint turn;
