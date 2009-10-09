@@ -47,8 +47,7 @@ static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       gdouble x, gdouble y,
                                       struct GibbonColor *color,
                                       struct GibbonColor *text_color);
-static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr,
-                              guint value, gint side);
+static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
                                const gchar *text,
@@ -322,7 +321,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gibbon_draw_bear_off (self, cr, -1);
         gibbon_draw_bear_off (self, cr, 1);
 
-        gibbon_draw_cube (self, cr, 2, 0);
+        gibbon_draw_cube (self, cr);
         gibbon_draw_dice (self, cr);
 }
 
@@ -561,8 +560,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         }}
 
 static void
-gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr, 
-                  guint value, gint side)
+gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
         gdouble cube_width = 30;
         gdouble cube_text_width = 22;
@@ -578,7 +576,9 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr,
         const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
         const cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
         gchar *text;
-        
+        guint value;
+        gint side;
+                
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
         cairo_set_source_rgb (cr,
@@ -588,13 +588,22 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr,
 
         x = outer_width + checker_width / 2 - cube_width / 2;
 
+        value = self->priv->pos.cube;
+        if (self->priv->pos.cube == 1) {
+                side = 0;
+                value = 2;
+        } else if (self->priv->pos.may_double[0]) {
+                side = 1;
+        } else {
+                side = -1;
+        }
+        
         if (side < 0) {
                 y = design_height - outer_height - cube_width;                
         } else if (side > 0) {
                 y = outer_height;
         } else {
                 y = design_height / 2 - cube_width / 2;
-                value = 2;
         }
         
         cairo_rectangle (cr, x, y, cube_width, cube_width);

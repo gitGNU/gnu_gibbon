@@ -220,6 +220,9 @@ init_gui (const gchar *builder_filename)
         initial_position.dice0[1] = 0;
         initial_position.dice1[0] = 1;
         initial_position.dice1[1] = 0;
+        initial_position.cube = 32;
+        initial_position.may_double[0] = 1;
+        initial_position.may_double[1] = 0;
         gibbon_cairoboard_set_position (board, &initial_position);
         
         gtk_widget_show (GTK_WIDGET (board));

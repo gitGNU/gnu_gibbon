@@ -433,7 +433,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 
         g_return_val_if_fail (tokens, FALSE);
         
-        for (i = 0; i <= 35; ++i)
+        for (i = 0; i <= 38; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
         
         pos.player0 = tokens[0];
@@ -503,9 +503,26 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail (pos.dice1[1] >= 0 && pos.dice1[1] <= 6, 
                               free_vector (tokens));
         
+        g_return_val_if_fail (parse_integer (tokens[36], &pos.cube, "cube"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.cube, free_vector (tokens));
+        
+        g_return_val_if_fail (parse_integer (tokens[37], &pos.may_double[0], 
+                              "may double 0"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.may_double[0] == 0 || pos.may_double[0] == 1, 
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[38], &pos.may_double[1], 
+                              "may double 0"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.may_double[0] == 0 || pos.may_double[0] == 1, 
+                              free_vector (tokens));
+
         g_strfreev (tokens);
         
         set_position (&pos);
-        
+
+return FALSE;        
         return TRUE;
 }
