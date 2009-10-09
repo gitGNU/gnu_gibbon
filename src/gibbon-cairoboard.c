@@ -45,8 +45,7 @@ static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
 static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       guint number,
                                       gdouble x, gdouble y,
-                                      struct GibbonColor *color,
-                                      struct GibbonColor *text_color);
+                                      gint side);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
@@ -328,12 +327,6 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 static void
 gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
 {
-        struct GibbonColor black = { 0, 0, 0, 1 };
-        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
-        struct GibbonColor *color;
-        struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
-        struct GibbonColor text_on_white = { 0, 0, 0, 1 };
-        struct GibbonColor *text_color;
         gdouble checker_width = 30;
         gdouble design_width = 490;
         gdouble design_height = 380;
@@ -342,6 +335,7 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
         guint checkers;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        g_return_if_fail (side);
         
         design_width = gibbon_design_get_width (self->priv->design);
         design_height = gibbon_design_get_height (self->priv->design);
@@ -349,17 +343,11 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
         y = design_height / 2;
         
         if (side < 0) {
-                color = &black;
-                text_color = &text_on_black;
                 direction = -1;
                 checkers = self->priv->pos.bar0;
         } else if (side > 0) {
-                color = &white;
-                text_color = &text_on_white;
                 direction = 1;
                 checkers = self->priv->pos.bar1;
-        } else {
-                g_return_if_fail (side);
         }
         
         if (!checkers)
@@ -367,14 +355,14 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
                 
         y += direction * checker_width;
         gibbon_draw_flat_checker (self, cr, ((guint) checkers + 1) / 2,
-                                  x, y, color, text_color);
+                                  x, y, side);
         
         if (checkers < 2)
                 return;
                 
         y += direction * checker_width;
         gibbon_draw_flat_checker (self, cr, (guint) checkers / 2,
-                                  x, y, color, text_color);
+                                  x, y, side);
 }
 
 static void
@@ -453,18 +441,36 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, gint side)
 
 static void
 gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
-                          gdouble x, gdouble y, 
-                          struct GibbonColor *color,
-                          struct GibbonColor *text_color)
+                          gdouble x, gdouble y, gint side)
 {
+        struct GibbonColor black = { 0, 0, 0, 1 };
+        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor *color;
+        struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
+        struct GibbonColor text_on_white = { 0, 0, 0, 1 };
+        struct GibbonColor *text_color;
+
         gdouble checker_width = 30;
         gdouble text_width = 10;
         gchar *texts[] = { "2", "3", "4", "5", "6", "7", "8" };
         const gchar *font_family = "sans-serif";
         const cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
         const cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
+        cairo_pattern_t *pat;
+        gdouble shade_offset = checker_width / 15;
+        gdouble checker_radius = checker_width / 2;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        
+        g_return_if_fail (side);
+        
+        if (side < 0) {
+                color = &black;
+                text_color = &text_on_black;
+        } else {
+                color = &white;
+                text_color = &text_on_white;
+        }
         
         cairo_set_source_rgb (cr,
                               color->red,
@@ -474,9 +480,41 @@ gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
         cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
 
         cairo_fill (cr);
+
+        if (side > 0) {        
+                pat = cairo_pattern_create_radial (x - shade_offset, 
+                                                   y - shade_offset / 2, 
+                                                   checker_radius 
+                                                       - shade_offset,
+                                                   x - shade_offset, 
+                                                   y - shade_offset / 2, 
+                                                   checker_radius 
+                                                       + shade_offset);
+                cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0);
+                cairo_pattern_add_color_stop_rgba (pat, 1, 0, 0, 0, 1);
+                cairo_set_source (cr, pat);
+                cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
+                cairo_fill (cr);
+                cairo_pattern_destroy (pat);
+        } else if (side < 0) {
+                pat = cairo_pattern_create_radial (x + shade_offset, 
+                                                   y + shade_offset / 2, 
+                                                   checker_radius
+                                                       - shade_offset / 2,
+                                                   x + shade_offset, 
+                                                   y + shade_offset / 2, 
+                                                   checker_radius
+                                                       + 1.5 * shade_offset);
+                cairo_pattern_add_color_stop_rgba (pat, 0, 0.7, 0.7, 0.7, 0);
+                cairo_pattern_add_color_stop_rgba (pat, 1, 0.7, 0.7, 0.7, 1);
+                cairo_set_source (cr, pat);
+                cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
+                cairo_fill (cr);
+                cairo_pattern_destroy (pat);
+        }
         
         /* On normal points, we can only have a maximum of 3 checkers,
-         * on the bar it is 15: We have to spaces for the bar, and a
+         * on the bar it is 15: We have two spaces for the bar, and a
          * maximum of 15 checkers.
          */
         g_return_if_fail (number <= 8);
@@ -496,12 +534,6 @@ gibbon_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
 static void
 gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
 {
-        struct GibbonColor black = { 0, 0, 0, 1 };
-        struct GibbonColor white = { 0.9, 0.9, 0.9, 1 };
-        struct GibbonColor *color;
-        struct GibbonColor text_on_white = { 0, 0, 0, 1 };
-        struct GibbonColor text_on_black = { 0.9, 0.9, 0.9, 1 };
-        struct GibbonColor *text_color;
         gdouble x, y;
         gdouble design_width = 490;
         gdouble design_height = 380;
@@ -509,6 +541,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         gdouble checker_width = 30;
         gdouble bar_width = 30;
         gdouble point_width = 30;
+        int side;
         
         gint direction;
         gint i;
@@ -520,12 +553,10 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         checkers = self->priv->pos.checkers[point];
         
         if (checkers < 0) {
-                color = &black;
-                text_color = &text_on_black;
                 checkers = -checkers;
+                side = -1;
         } else if (checkers > 0) {
-                color = &white;
-                text_color = &text_on_white;
+                side = 1;
         }
         
         if (point < 6) {
@@ -556,7 +587,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
                                           x, 
                                           y + (direction * i 
                                                * checker_width), 
-                                          color, text_color);
+                                          side);
         }}
 
 static void
