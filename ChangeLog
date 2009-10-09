@@ -1,3 +1,57 @@
+commit 0b45232bc69e5ad874c78ebb5f811b3dbdbf1d24
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 9 09:05:52 2009 +0300
+
+    Renamed.
+
+commit 6ae3d6f24fbd4321033db0e1ccf594e43c4a33d6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 9 09:03:55 2009 +0300
+
+    Draw doubling cube.
+
+commit 4d0a24b786990b45d3ce3a539ffc854db40a70d8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 21:28:40 2009 +0300
+
+    Draw dice.
+
+commit 47fc82b6905634d8d9ce39e0d3d6ee1ce144935a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 10:01:58 2009 +0300
+
+    Updated.
+
+commit 8853404fec9dfa1569a10df2aaae62c2ed7f820d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 09:34:40 2009 +0300
+
+    Implemented watch command.
+
+commit e85c641448edc15ed69b02afc176796233664e16
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 09:34:31 2009 +0300
+
+    Updated.
+
+commit a7709a734a615212e6b328d3e5522aba7ee69da4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 09:23:04 2009 +0300
+
+    Look half-way implemented.
+
+commit 74722f6e63e7ad4804c8a37f8f9b4bd6f4a337b6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 8 09:22:55 2009 +0300
+
+    Updated.
+
+commit 49de67dc9b791bdd317949cecc12280ba2466982
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Oct 7 23:32:24 2009 +0300
+
+    Updated.
+
 commit 073e9e63b67a08e7e07d3c38c82ba3893814a3d7
 Author: Guido Flohr <guido@imperia.net>
 Date:   Wed Oct 7 23:27:38 2009 +0300
