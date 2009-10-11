@@ -32,6 +32,7 @@ AM_CPPFLAGS = 				\
 
 gibbon_SOURCES =		\
 	gibbon.c 		\
+	gibbon-board-editor.c	\
 	gibbon-cairoboard.c	\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
@@ -45,6 +46,7 @@ gibbon_SOURCES =		\
 noinst_HEADERS =		\
 	game.h			\
 	gibbon.h		\
+	gibbon-board-editor.h	\
 	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\

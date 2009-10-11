@@ -24,8 +24,36 @@
 #include "gibbon-design.h"
 #include "game.h"
 
+/* This lookup table determines, iff and where to draw a certain checker.
+ * The index is the number of checkers, the first number is the position
+ * in steps of 0.5 checker widths, the third one is the maximum number
+ * when to draw it.  This takes into account that piled checkers may get
+ * invisible.
+ */
+struct checker_rule {
+        gdouble pos;
+        guint max_checkers;
+};
+struct checker_rule checker_lookup[15] = {
+        { 0.0,  1 },
+        { 1.0, 10 },
+        { 2.0, 11 },
+        { 3.0, 12 },
+        { 4.0,  5 },
+        { 0.5,  6 },
+        { 1.5, 13 },
+        { 2.5, 14 },
+        { 3.5,  9 },
+        { 1.0, 10 },
+        { 2.0, 11 },
+        { 3.0, 12 },
+        { 1.5, 13 },
+        { 2.5, 14 },
+        { 2.0, 15 }
+};
+
 struct _GibbonCairoboardPrivate {
-        const GibbonDesign *design;
+        GibbonDesign *design;
         struct GibbonPosition pos;
 };
 
@@ -44,7 +72,7 @@ static void gibbon_draw_point (GibbonCairoboard *board, cairo_t *cr,
                                guint point);
 static void gibbon_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
                                       guint number,
-                                      gdouble x, gdouble y,
+                                       gdouble x, gdouble y,
                                       gint side);
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
@@ -72,13 +100,17 @@ static void
 gibbon_cairoboard_finalize (GObject *object)
 {
         GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
+ 
+        if (self->priv->design)
+                g_object_unref (self->priv->design);
+        self->priv->design = NULL;
         
-        if (self->priv->pos.player0)
-                g_free (self->priv->pos.player0);
-        self->priv->pos.player0 = NULL;
-        if (self->priv->pos.player1)
-                g_free (self->priv->pos.player1);
-        self->priv->pos.player1 = NULL;
+        if (self->priv->pos.player[0])
+                g_free (self->priv->pos.player[0]);
+        self->priv->pos.player[0] = NULL;
+        if (self->priv->pos.player[1])
+                g_free (self->priv->pos.player[1]);
+        self->priv->pos.player[1] = NULL;
         
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
@@ -96,7 +128,7 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 }
 
 GibbonCairoboard *
-gibbon_cairoboard_new (const GibbonDesign *design)
+gibbon_cairoboard_new (GibbonDesign *design)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
 
@@ -344,10 +376,10 @@ gibbon_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
         
         if (side < 0) {
                 direction = -1;
-                checkers = self->priv->pos.bar0;
+                checkers = self->priv->pos.bar[0];
         } else if (side > 0) {
                 direction = 1;
-                checkers = self->priv->pos.bar1;
+                checkers = self->priv->pos.bar[1];
         }
         
         if (!checkers)
@@ -394,13 +426,13 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, gint side)
                 shade_color = &shade_on_black;
                 direction = -1;
                 y = design_height - outer_height - checker_height;
-                checkers = self->priv->pos.home0;
+                checkers = self->priv->pos.home[0];
         } else if (side > 0) {
                 color = &white;
                 shade_color = &shade_on_white;
                 direction = 1;
                 y = outer_height;
-                checkers = self->priv->pos.home1;
+                checkers = self->priv->pos.home[1];
         } else {
                 g_return_if_fail (side);
         }
@@ -546,6 +578,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         gint direction;
         gint i;
         gint checkers;
+        struct checker_rule *pos;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (point < 24);
@@ -558,6 +591,7 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         } else if (checkers > 0) {
                 side = 1;
         }
+        g_return_if_fail (checkers <= 15);
         
         if (point < 6) {
                 x = design_width / 2 + bar_width / 2 + point_width / 2
@@ -581,14 +615,18 @@ gibbon_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
                 direction = -1;
         }
         
-        for (i = 0; i < 5 && i < checkers; ++i) {
-                gibbon_draw_flat_checker (self, cr, 
-                                          (checkers + 4 - i) / 5, 
-                                          x, 
-                                          y + (direction * i 
-                                               * checker_width), 
-                                          side);
-        }}
+        for (i = 0; i < checkers; ++i) {
+                pos = checker_lookup + i;
+                if (i <= pos->max_checkers) {
+                        gibbon_draw_flat_checker (self, cr, 
+                                                  1, 
+                                                  x, 
+                                                  y + (direction * pos->pos 
+                                                        * checker_width), 
+                                                  side);
+                }
+        }
+}
 
 static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
@@ -684,47 +722,47 @@ gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
         design_width = gibbon_design_get_width (self->priv->design);
         design_height = gibbon_design_get_height (self->priv->design);
         
-        g_return_if_fail (self->priv->pos.dice0[0] >= 0
-                          && self->priv->pos.dice0[0] <= 6);
-        g_return_if_fail (self->priv->pos.dice0[1] >= 0
-                          && self->priv->pos.dice0[1] <= 6);
-        g_return_if_fail (self->priv->pos.dice1[0] >= 0
-                          && self->priv->pos.dice1[0] <= 6);
-        g_return_if_fail (self->priv->pos.dice1[1] >= 0
-                          && self->priv->pos.dice1[1] <= 6);
+        g_return_if_fail (self->priv->pos.dice[0][0] >= 0
+                          && self->priv->pos.dice[0][0] <= 6);
+        g_return_if_fail (self->priv->pos.dice[0][1] >= 0
+                          && self->priv->pos.dice[0][1] <= 6);
+        g_return_if_fail (self->priv->pos.dice[1][0] >= 0
+                          && self->priv->pos.dice[1][0] <= 6);
+        g_return_if_fail (self->priv->pos.dice[1][1] >= 0
+                          && self->priv->pos.dice[1][1] <= 6);
        
         y = design_height / 2;
 
-        if (self->priv->pos.dice0[0]) {
+        if (self->priv->pos.dice[0][0]) {
                 gibbon_draw_die (self, cr, 
-                                 self->priv->pos.dice0[0],
+                                 self->priv->pos.dice[0][0],
                                  -1,
                                  design_width / 2 + bar_width / 2 + 3 * point_width
                                  - 0.75 * die_width, 
                                  y);
         }
         
-        if (self->priv->pos.dice0[1]) {
+        if (self->priv->pos.dice[0][1]) {
                 gibbon_draw_die (self, cr, 
-                                 self->priv->pos.dice0[1],
+                                 self->priv->pos.dice[0][1],
                                  -1,
                                  design_width / 2 + bar_width / 2 + 3 * point_width
                                  + 0.75 * die_width, 
                                  y);
         }
 
-        if (self->priv->pos.dice1[0]) {
+        if (self->priv->pos.dice[1][0]) {
                 gibbon_draw_die (self, cr, 
-                                 self->priv->pos.dice1[0],
+                                 self->priv->pos.dice[1][0],
                                  1,
                                  design_width / 2 - bar_width / 2 - 3 * point_width
                                  - 0.75 * die_width, 
                                  y);
         }
         
-        if (self->priv->pos.dice1[1]) {
+        if (self->priv->pos.dice[1][1]) {
                 gibbon_draw_die (self, cr, 
-                                 self->priv->pos.dice1[1],
+                                 self->priv->pos.dice[1][1],
                                  1,
                                  design_width / 2 - bar_width / 2 - 3 * point_width
                                  + 0.75 * die_width, 
@@ -847,16 +885,18 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
         
         mypos = &self->priv->pos;
 
-        if (mypos->player0)
-                g_free (mypos->player0);
-        if (mypos->player1)
-                g_free (mypos->player1);
+        if (mypos->player[0])
+                g_free (mypos->player[0]);
+        if (mypos->player[1])
+                g_free (mypos->player[1]);
                 
         self->priv->pos = *pos;
-        if (self->priv->pos.player0)
-                self->priv->pos.player0 = g_strdup (self->priv->pos.player0);
-        if (self->priv->pos.player1)
-                self->priv->pos.player1 = g_strdup (self->priv->pos.player1);
+        if (self->priv->pos.player[0])
+                self->priv->pos.player[0] = 
+                        g_strdup (self->priv->pos.player[0]);
+        if (self->priv->pos.player[1])
+                self->priv->pos.player[1] = 
+                        g_strdup (self->priv->pos.player[1]);
         
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }

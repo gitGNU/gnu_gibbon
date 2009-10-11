@@ -30,26 +30,22 @@
  * is used for player 1's checkers, a positive for player 2's checkers.
  */
 struct GibbonPosition {
-	gchar *player0;
-	gchar *player1;
+	gchar *player[2];
 
 	gint match_length;
 	gint score[2];
 
-        gint bar0;
-        gint bar1;
+        gint bar[2];
 
         gint checkers[24];
 
 	/* FIXME! These numbers can be calculated as a difference!  */
-        gint home0;
-        gint home1;
+        gint home[2];
 
 	/* Whose turn is it? -1, 0 (game over), or 1.  */
 	gint turn;
 
-	gint dice0[2];
-	gint dice1[2];
+	gint dice[2][2];
 
 	gint cube;
 	gboolean may_double[2];

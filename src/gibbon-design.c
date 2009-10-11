@@ -72,6 +72,19 @@ gibbon_design_new ()
         return self;
 }
 
+GibbonDesign *
+gibbon_design_copy (const GibbonDesign *original)
+{
+        GibbonDesign *self;
+        
+        g_return_val_if_fail (GIBBON_IS_DESIGN (original), NULL);
+        
+        self = gibbon_design_new ();
+        *self->priv = *original->priv;
+        
+        return self;
+}
+
 gdouble
 gibbon_design_get_width (const GibbonDesign *self)
 {
@@ -97,4 +110,3 @@ gibbon_design_get_aspect_ratio (const GibbonDesign *self)
         
         return gibbon_design_get_width (self) / gibbon_design_get_height (self);
 }
-

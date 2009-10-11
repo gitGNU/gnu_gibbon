@@ -56,6 +56,7 @@ struct GibbonColor {
 };
 
 GibbonDesign *gibbon_design_new (void);
+GibbonDesign *gibbon_design_copy (const GibbonDesign *original);
 
 guint gibbon_design_get_box_color (GibbonDesign *self);
 
@@ -63,6 +64,7 @@ guint gibbon_design_get_box_color (GibbonDesign *self);
 gdouble gibbon_design_get_width (const GibbonDesign *self);
 gdouble gibbon_design_get_height (const GibbonDesign *self);
 gdouble gibbon_design_get_aspect_ratio (const GibbonDesign *self);
+
 
 G_END_DECLS
 

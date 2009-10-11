@@ -31,6 +31,7 @@
 #include "gibbon-design.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
+#include "gibbon-board-editor.h"
 
 GtkBuilder *builder = NULL;
 
@@ -216,15 +217,20 @@ init_gui (const gchar *builder_filename)
         initial_position.match_length = 23;
         initial_position.score[0] = 5;
         initial_position.score[1] = 7;
-        initial_position.dice0[0] = 3;
-        initial_position.dice0[1] = 0;
-        initial_position.dice1[0] = 1;
-        initial_position.dice1[1] = 0;
-        initial_position.cube = 32;
+        initial_position.dice[0][0] = 0;
+        initial_position.dice[0][1] = 0;
+        initial_position.dice[1][0] = 0;
+        initial_position.dice[1][1] = 0;
+        initial_position.bar[0] = 0;
+        initial_position.bar[1] = 0;
+        initial_position.home[0] = 0;
+        initial_position.home[1] = 0;
+        initial_position.cube = 1;
         initial_position.may_double[0] = 1;
-        initial_position.may_double[1] = 0;
+        initial_position.may_double[1] = 1;
+
         gibbon_cairoboard_set_position (board, &initial_position);
-        
+
         gtk_widget_show (GTK_WIDGET (board));
         /* FIXME! This should occupy reasonable space by default!  Do
          * not hardcode the values.
@@ -685,4 +691,15 @@ void
 set_position (const struct GibbonPosition *pos)
 {
         gibbon_cairoboard_set_position (board, pos);
+}
+
+G_MODULE_EXPORT void
+on_edit_menu_item_activate (GtkObject *object, gpointer user_data)
+{
+        GibbonDesign *new_design = gibbon_design_copy (design);
+        GibbonBoardEditor *editor;
+        
+        GtkWidget *dialog = 
+                GTK_WIDGET (gtk_builder_get_object (builder, "board_editor"));
+        editor = gibbon_board_editor_new (new_design, dialog);
 }

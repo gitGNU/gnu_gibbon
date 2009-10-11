@@ -436,11 +436,11 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         for (i = 0; i <= 38; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
         
-        pos.player0 = tokens[0];
-        g_return_val_if_fail (pos.player0[0], free_vector (tokens));
+        pos.player[0] = tokens[0];
+        g_return_val_if_fail (pos.player[0][0], free_vector (tokens));
         
-        pos.player1 = tokens[1];
-        g_return_val_if_fail (pos.player1[0], free_vector (tokens));
+        pos.player[1] = tokens[1];
+        g_return_val_if_fail (pos.player[0][0], free_vector (tokens));
         
         g_return_val_if_fail (parse_integer (tokens[2], &pos.match_length, 
                               "match length"),
@@ -454,9 +454,9 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                               free_vector (tokens));
         g_return_val_if_fail (pos.score[1] >= 0, free_vector (tokens));
         
-        g_return_val_if_fail (parse_integer (tokens[5], &pos.bar0, "bar0"),
+        g_return_val_if_fail (parse_integer (tokens[5], &pos.bar[0], "bar0"),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.bar0 >= -15 && pos.bar0 <= 15,
+        g_return_val_if_fail (pos.bar[0] >= -15 && pos.bar[0] <= 15,
                               free_vector (tokens));
         
         for (i = 6; i < 30; ++i) {
@@ -469,9 +469,9 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                                       free_vector (tokens));
         }
         
-        g_return_val_if_fail (parse_integer (tokens[30], &pos.bar1, "bar1"),
+        g_return_val_if_fail (parse_integer (tokens[30], &pos.bar[1], "bar1"),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.bar1 >= -15 && pos.bar1 <= 15,
+        g_return_val_if_fail (pos.bar[1] >= -15 && pos.bar[1] <= 15,
                               free_vector (tokens));
 
         g_return_val_if_fail (parse_integer (tokens[31], &pos.turn, "turn"),
@@ -479,28 +479,28 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail ((pos.turn >= -1 && pos.turn <= 1),
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[32], &pos.dice0[0], 
-                                             "dice0[0]"),
+        g_return_val_if_fail (parse_integer (tokens[32], &pos.dice[0][0], 
+                                             "dice[0][0]"),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.dice0[0] >= 0 && pos.dice0[0] <= 6, 
-                              free_vector (tokens));
-
-        g_return_val_if_fail (parse_integer (tokens[33], &pos.dice0[1], 
-                                             "dice0[1]"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.dice0[1] >= 0 && pos.dice0[1] <= 6, 
+        g_return_val_if_fail (pos.dice[0][0] >= 0 && pos.dice[0][0] <= 6, 
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[34], &pos.dice1[0], 
-                                             "dice1[0]"),
+        g_return_val_if_fail (parse_integer (tokens[33], &pos.dice[0][1], 
+                                             "dice[0][1]"),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.dice1[0] >= 0 && pos.dice1[0] <= 6, 
+        g_return_val_if_fail (pos.dice[0][1] >= 0 && pos.dice[0][1] <= 6, 
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[35], &pos.dice1[1], 
-                                             "dice1[1]"),
+        g_return_val_if_fail (parse_integer (tokens[34], &pos.dice[1][0], 
+                                             "dice[1][0]"),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.dice1[1] >= 0 && pos.dice1[1] <= 6, 
+        g_return_val_if_fail (pos.dice[1][0] >= 0 && pos.dice[1][0] <= 6, 
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[35], &pos.dice[1][1], 
+                                             "dice[1][1]"),
+                              free_vector (tokens));
+        g_return_val_if_fail (pos.dice[1][1] >= 0 && pos.dice[1][1] <= 6, 
                               free_vector (tokens));
         
         g_return_val_if_fail (parse_integer (tokens[36], &pos.cube, "cube"),
