@@ -9,3 +9,5 @@
   numbers.
 - Write a function that finds the player name for a selection.
 - Implement a ping function to avoid timeouts.
+- Change the constructor of gibbon_cairoboard to handle failure without
+  warnings.

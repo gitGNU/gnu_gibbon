@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-design.h"
+#include "gui.h"
 
 struct _GibbonDesignPrivate {
         
@@ -109,4 +110,9 @@ gibbon_design_get_aspect_ratio (const GibbonDesign *self)
         g_return_val_if_fail (GIBBON_IS_DESIGN (self), (gdouble) 380 / 490);
         
         return gibbon_design_get_width (self) / gibbon_design_get_height (self);
+}
+
+G_MODULE_EXPORT void
+on_edit_save_button_clicked (GtkObject *object)
+{
 }

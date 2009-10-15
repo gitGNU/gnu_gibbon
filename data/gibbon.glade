@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Oct 12 00:37:09 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Oct 14 10:03:58 2009 -->
 <glade-interface>
   <widget class="GtkDialog" id="connection_dialog">
     <property name="border_width">5</property>
@@ -385,15 +385,17 @@
                 <property name="position_set">True</property>
                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                 <child>
-                  <widget class="GtkButton" id="button1">
+                  <widget class="GtkEventBox" id="eventbox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Dummy for board</property>
-                    <property name="response_id">0</property>
+                    <child>
+                      <widget class="GtkImage" id="image1">
+                        <property name="visible">True</property>
+                        <property name="pixbuf">board.svg</property>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
-                    <property name="resize">True</property>
+                    <property name="resize">False</property>
                     <property name="shrink">True</property>
                   </packing>
                 </child>
@@ -670,7 +672,7 @@ Image</property>
                                   </widget>
                                 </child>
                                 <child>
-                                  <widget class="GtkColorButton" id="colorbutton1">
+                                  <widget class="GtkColorButton" id="board_editor_board_color">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>

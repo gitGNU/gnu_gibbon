@@ -17,12 +17,17 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <svg-cairo.h>
+#include <gdome.h>
 
 #include "gibbon-cairoboard.h"
 #include "gibbon-design.h"
 #include "game.h"
+#include "gui.h"
 
 /* This lookup table determines, iff and where to draw a certain checker.
  * The index is the number of checkers, the first number is the position
@@ -55,6 +60,8 @@ struct checker_rule checker_lookup[15] = {
 struct _GibbonCairoboardPrivate {
         GibbonDesign *design;
         struct GibbonPosition pos;
+        
+        svg_cairo_t *scr;
 };
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -82,11 +89,40 @@ static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
 static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
                              guint value, gint side,
                              gdouble x, gdouble y);
-
+static void gibbon_add_xml_id (GibbonCairoboard *board, GdomeElement *el,
+                               GdomeDOMString *id_name, 
+                               GdomeDOMString *xml_id_name);
+static void gibbon_cairoboard_draw_element (GibbonCairoboard *board,
+                                            GdomeDOMImplementation *di,
+                                            GdomeElement *el);
+                                            
 #ifdef M_PI
 # undef M_PI
 #endif
 #define M_PI 3.14159265358979323846
+
+static const gchar *
+svg_cairo_strerror (svg_cairo_status_t status)
+{
+        switch (status) {
+                case SVG_CAIRO_STATUS_SUCCESS:
+                        return _("No error (this should not happen)!");
+                case SVG_CAIRO_STATUS_NO_MEMORY:
+                        return ("Out of memory!");
+                case SVG_CAIRO_STATUS_IO_ERROR:
+                        return ("Input/output error!");
+                case SVG_CAIRO_STATUS_FILE_NOT_FOUND:
+                        return ("File not found!");
+                case SVG_CAIRO_STATUS_INVALID_VALUE:
+                        return ("Invalid value!");
+                case SVG_CAIRO_STATUS_INVALID_CALL:
+                        return ("Invalid call!");
+                case SVG_CAIRO_STATUS_PARSE_ERROR:
+                        return ("Parse error!");
+        }
+        
+        return _("Unknown error!");
+}
 
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
@@ -94,6 +130,10 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_CAIROBOARD, 
                                                   GibbonCairoboardPrivate);
+        
+        self->priv->scr = NULL;
+
+        return;
 }
 
 static void
@@ -112,6 +152,10 @@ gibbon_cairoboard_finalize (GObject *object)
                 g_free (self->priv->pos.player[1]);
         self->priv->pos.player[1] = NULL;
         
+        if (self->priv->scr)
+                svg_cairo_destroy (self->priv->scr);
+        self->priv->scr = NULL;
+        
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
 
@@ -128,12 +172,85 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 }
 
 GibbonCairoboard *
-gibbon_cairoboard_new (GibbonDesign *design)
+gibbon_cairoboard_new (const gchar *filename)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
+        svg_cairo_status_t status;
+        gchar *saved_locale;
+        gchar *data;
+        gchar *mem;
+        GError *error;
+        GdomeDOMImplementation *di;
+        GdomeDocument *dom;
+        GdomeException exc;
+        GdomeElement *el;
+        GdomeDOMString *id_name;
+        GdomeDOMString *xml_id_name;
+        GdomeDOMString *id;
+                
+        if (!g_file_get_contents (filename, &data, NULL, &error)) {
+                display_error (_("Error reading board definition `%s': %s\n"),
+                                 filename, error->message);
+                g_error_free (error);
+                g_object_unref (self);
+                return NULL;
+        }
+        
+        di = gdome_di_mkref ();
+        dom = gdome_di_createDocFromMemory (di, data, 
+                                            GDOME_LOAD_PARSING, &exc);
+        g_free (data);
+        if (dom == NULL) {
+                display_error (_("Error parsing board definition `%s'.\n"),
+                               filename);
+                g_object_unref (self);
+                return NULL;
+        }
+        id_name = gdome_str_mkref ("id");
+        xml_id_name = gdome_str_mkref ("xml:id");
+        gibbon_add_xml_id (self, gdome_doc_documentElement (dom, &exc), 
+                           id_name, xml_id_name);
+        gdome_str_unref (id_name);
+        gdome_str_unref (xml_id_name);
+        
+        id = gdome_str_mkref ("point24");
+        el = gdome_doc_getElementById (dom, id, &exc);
+        gdome_str_unref (id);
+        if (el == NULL) {
+                display_error (_("Board definition `%s' lacks element "
+                                 "with id `%s'.\n"), filename, "point24");
+                g_object_unref (self);
+                return NULL;
+        }
+        gibbon_cairoboard_draw_element (self, di, el);
+        
+        gdome_di_saveDocToMemory (di, dom, &mem, GDOME_SAVE_STANDARD, &exc);
+        gdome_doc_unref (dom, &exc);
 
-        self->priv->design = design;
-
+        status = svg_cairo_create (&self->priv->scr);
+        if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                display_error (_("Error creating libsvg-cairo context: %s\n"),
+                               svg_cairo_strerror (status));
+                g_object_unref (self);
+                free (mem);
+                return NULL;
+        }
+        
+        /* Libsvg has a nasty bug: It parses doubles in a locale-dependent
+         * manner.  We therefore have to fallback to th C locale while
+         * parsing.  This is not thread-safe ...
+         */
+        saved_locale = setlocale (LC_NUMERIC, "POSIX");
+        status = svg_cairo_parse_buffer (self->priv->scr, mem, strlen (mem));
+        setlocale (LC_NUMERIC, saved_locale);
+        free (mem);
+        if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                display_error (_("Error parsing `%s': %s\n"),
+                               filename, svg_cairo_strerror (status));
+                g_object_unref (self);
+                return NULL;
+        }
+        
         return self;
 }
 
@@ -163,32 +280,19 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
         GtkAllocation *allocation;
-        gdouble design_width;
-        gdouble design_height;
         gdouble widget_ratio;
         gdouble translate_x, translate_y, scale;
-        struct GibbonColor frame_color = { 0.2, 0.15, 0, 1 };
-        gdouble outer_border_w = 10;
-        gdouble outer_border_h = 10;
-        gdouble checker_width = 30;
-        gdouble checker_height = 10;
-        gdouble point_width = checker_width;
-        gdouble point_length = 5 * checker_width;
-        struct GibbonColor board_color = { 0.4, 0.25, 0, 1 };
-        struct GibbonColor home_color = board_color;
-        gdouble board_x, board_y;
-        gdouble dice_area_height = 2 * checker_width;
-        struct GibbonColor point_color1 = { 0.6, 0, 0, 1 };
-        struct GibbonColor point_color2 = { 0.5, 0.5, 0.5, 1 };
         gdouble aspect_ratio;
+        unsigned int width;
+        unsigned int height;
 
         gint i;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
-        design_width = gibbon_design_get_width (self->priv->design);
-        design_height = gibbon_design_get_height (self->priv->design);
-        aspect_ratio = gibbon_design_get_aspect_ratio (self->priv->design);
+        svg_cairo_get_size (self->priv->scr, &width, &height);
+g_print ("Size: %d x %d\n", width, height);
+        aspect_ratio = (double) width / height;
         
         widget = GTK_WIDGET (self);
         allocation = &widget->allocation;
@@ -201,146 +305,25 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         widget_ratio = (gdouble) allocation->width / allocation->height;
 
         if (widget_ratio > aspect_ratio) {
-                scale = allocation->height / design_height; 
+                scale = (gdouble) allocation->height / height; 
                 translate_y = 0;
                 translate_x = (allocation->width 
-                               - scale * design_width) / 2;
+                               - scale * width) / 2;
         } else {
-                scale = allocation->width / design_width;
+                scale = (gdouble) allocation->width / width;
                 translate_x = 0;
                 translate_y = (allocation->height 
-                               - scale * design_height) / 2;
+                               - scale * height) / 2;
         }
 
         cairo_translate (cr, translate_x, translate_y);
         cairo_scale (cr, scale, scale);
 
-        /* Board background.  */
-        cairo_rectangle (cr,
-                         0, 0,
-                         design_width, design_height);
-
-        cairo_set_source_rgb (cr, 
-                              frame_color.red, 
-                              frame_color.green,
-                              frame_color.blue);
-        cairo_fill (cr);
-        
-        /* Bear-off compartments.  */
-        cairo_set_source_rgb (cr, 
-                              home_color.red, 
-                              home_color.green, 
-                              home_color.blue);
-        cairo_rectangle (cr,
-                         outer_border_w, outer_border_h, 
-                         checker_width, 15 * checker_height);        
-        cairo_fill (cr);
-        cairo_rectangle (cr,
-                         outer_border_w, 
-                         design_height - outer_border_h - 15 * checker_height,
-                         checker_width, 15 * checker_height);
-        cairo_fill (cr);
-        cairo_rectangle (cr,
-                         design_width - outer_border_w - checker_width,
-                         outer_border_h,
-                         checker_width, 15 * checker_height);
-        cairo_fill (cr);
-        cairo_rectangle (cr,
-                         design_width - outer_border_w - checker_width,
-                         design_height - outer_border_h - 15 * checker_height,
-                         checker_width, 15 * checker_height);
-        cairo_fill (cr);
-        
-        /* Board background.  */
-        cairo_set_source_rgb (cr,
-                              board_color.red,
-                              board_color.green,
-                              board_color.blue);
-        board_x = 2 * outer_border_w + checker_width;
-        board_y = outer_border_h;
-         
-        cairo_rectangle (cr,
-                         board_x, board_y,
-                         6 * point_width,
-                         2 * point_length + dice_area_height);
-        cairo_fill (cr);
-        cairo_rectangle (cr,
-                         design_width - board_x - 6 * point_width, board_y,
-                         6 * point_width,
-                         2 * point_length + dice_area_height);
-        cairo_fill (cr);
-        
-        cairo_set_source_rgb (cr,
-                              point_color1.red,
-                              point_color1.green,
-                              point_color1.blue);
-        for (i = 0; i < 6; i += 2) {
-                cairo_move_to (cr, board_x + i * point_width, board_y);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr, 
-                               design_width - board_x - (6 - i) * point_width,
-                               board_y);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr,
-                               board_x + (i + 1) * point_width,
-                               design_height - outer_border_h);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, -point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr,
-                               design_width - board_x - (5 - i) * point_width,
-                               design_height - outer_border_h);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, -point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-        }
-
-        cairo_set_source_rgb (cr,
-                              point_color2.red,
-                              point_color2.green,
-                              point_color2.blue);
-        for (i = 0; i < 6; i += 2) {
-                cairo_move_to (cr, board_x + (i + 1) * point_width, board_y);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr, 
-                               design_width - board_x - (5 - i) * point_width,
-                               board_y);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr,
-                               board_x + i * point_width,
-                               design_height - outer_border_h);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, -point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-                
-                cairo_move_to (cr,
-                               design_width - board_x - (6 - i) * point_width,
-                               design_height - outer_border_h);
-                cairo_rel_line_to (cr, point_width, 0);
-                cairo_rel_line_to (cr, -point_width / 2, -point_length);
-                cairo_close_path (cr);
-                cairo_fill (cr);
-        }
+        svg_cairo_set_viewport_dimension (self->priv->scr,
+                                          allocation->width,
+                                          allocation->height);
+        svg_cairo_render (self->priv->scr, cr);
+return;
         
         gibbon_draw_bar (self, cr, -1);
         gibbon_draw_bar (self, cr, 1);
@@ -899,4 +882,76 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
                         g_strdup (self->priv->pos.player[1]);
         
         gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+/* We all know that XML & friends suck.  This is one example.  Contrary to 
+ * popular believe, getElementById does not search an element with a certain
+ * "id" attribute, but for an element with an attribute that has the ID
+ * property and the value you are looking for.  This is basically okay,
+ * but there is no way to tell gdome, which attributes have the ID attribute
+ * unless you validate the document.  And we definitely want to avoid that.
+ */
+static void 
+gibbon_add_xml_id (GibbonCairoboard *self, 
+                   GdomeElement *el,
+                   GdomeDOMString *name,
+                   GdomeDOMString *xml_name)
+{
+        GdomeException exc;
+        GdomeAttr *attr = gdome_el_getAttributeNode (el, name, &exc);
+        GdomeDOMString *value = NULL;
+        GdomeNode *child = NULL;
+
+        if (attr) {
+                value = gdome_a_value (attr, &exc);
+                if (value) {
+                        gdome_el_setAttribute (el, xml_name, value, &exc);
+
+                        /* FIXME! This does actually not remove the
+                         * attribute.
+                         */
+                        gdome_el_removeAttribute (el, name, &exc);
+                }
+        }
+        
+        for (child = gdome_el_firstChild (el, &exc); child != NULL;
+             child = gdome_el_nextSibling ((GdomeElement *) child, &exc)) {
+                if (gdome_n_nodeType (child, &exc)
+                    == GDOME_ELEMENT_NODE) {
+                        gibbon_add_xml_id (self, (GdomeElement *) child,
+                                           name, xml_name);
+                }
+        }
+}
+
+static void
+gibbon_cairoboard_draw_element (GibbonCairoboard *self,
+                                GdomeDOMImplementation *di, 
+                                GdomeElement *el)
+{
+        GdomeException e;
+        GdomeDOMString *name;
+        GdomeDocument *doc;
+        gchar *mem;
+        GdomeNode *copy;
+        GdomeElement *root;
+GdomeNode *a;
+
+        name = gdome_str_mkref ("svg");
+        doc = gdome_di_createDocument (di, NULL, name, NULL, &e);
+g_print ("doc: %p, e: %d\n", doc, e);
+        root = gdome_doc_documentElement (doc, &e);
+g_print ("root: %p, e: %d\n", root, e);
+        
+        copy = gdome_el_cloneNode (el, FALSE, &e);
+g_print ("copy: %p, e: %d\n", copy, e);
+        a = gdome_el_appendChild (root, copy, &e);
+g_print ("a: %p, e: %d\n", a, e);
+        
+        gdome_di_saveDocToMemory (di, doc, &mem, GDOME_SAVE_STANDARD, &e);
+        gdome_str_unref (name);
+        gdome_doc_unref (doc, &e);
+        
+        g_print (mem);
+        free (mem);
 }

@@ -15,15 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
+pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
+pixmap_DATA = \
+	default.svg
 
-SUBDIRS = src data pixmaps po
-
-EXTRA DIST = 
-
-DISTCLEANFILES =		\
-	intltool-extract	\
-	intltool-merge		\
-	intltool-update
-
-EXTRA_DIST = config.rpath
+EXTRA_DIST = $(pixmap_DATA)

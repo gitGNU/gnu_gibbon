@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Mon Oct 12 00:37:09 2009 -->
+<!--Generated with glade3 3.4.5 on Wed Oct 14 10:03:58 2009 -->
 <interface>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -464,14 +464,17 @@
                 <property name="position_set">True</property>
                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                 <child>
-                  <object class="GtkButton" id="button1">
+                  <object class="GtkEventBox" id="eventbox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Dummy for board</property>
+                    <child>
+                      <object class="GtkImage" id="image1">
+                        <property name="visible">True</property>
+                        <property name="pixbuf">board.svg</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
-                    <property name="resize">True</property>
+                    <property name="resize">False</property>
                     <property name="shrink">True</property>
                   </packing>
                 </child>
@@ -710,7 +713,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkColorButton" id="colorbutton1">
+                                  <object class="GtkColorButton" id="board_editor_board_color">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -931,7 +934,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">colorbutton1</action-widget>
+      <action-widget response="0">board_editor_board_color</action-widget>
       <action-widget response="0">colorbutton2</action-widget>
       <action-widget response="0">button3</action-widget>
       <action-widget response="0">edit_ok_button</action-widget>

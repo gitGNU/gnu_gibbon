@@ -28,7 +28,6 @@
 #include "game.h"
 #include "gui.h"
 #include "gibbon.h"
-#include "gibbon-design.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
 #include "gibbon-board-editor.h"
@@ -44,7 +43,6 @@ GibbonPlayerList *players = NULL;
 
 static GtkWidget *statusbar = NULL;
 
-static GibbonDesign *design = NULL;
 static GibbonCairoboard *board = NULL;
 
 /* The converter in Glade 3.4.x converts menus to GtkAction.  Until we
@@ -95,7 +93,8 @@ init_gui (const gchar *builder_filename)
         GObject *check;
         PangoFontDescription *font_desc;
         GObject *left_vpane;
-                        
+        gchar *board_filename;
+        
         builder = get_builder (builder_filename);
         
         if (!builder)
@@ -201,9 +200,12 @@ init_gui (const gchar *builder_filename)
         }
         
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
-                        
-        design = gibbon_design_new ();
-        board = gibbon_cairoboard_new (design);
+        
+        board_filename = g_build_filename (GIBBON_DATADIR, 
+                                           "pixmaps", PACKAGE,
+                                           "default.svg", NULL);                
+        board = gibbon_cairoboard_new (board_filename);
+        g_free (board_filename);
         
         memset (&initial_position, 0, sizeof initial_position);
         initial_position.checkers[0] = -2; 
@@ -245,7 +247,7 @@ init_gui (const gchar *builder_filename)
         create_player_view (builder);
         
         create_player_menu (builder);
-        
+                
        	return 1;
 }
 
@@ -696,10 +698,4 @@ set_position (const struct GibbonPosition *pos)
 G_MODULE_EXPORT void
 on_edit_menu_item_activate (GtkObject *object, gpointer user_data)
 {
-        GibbonDesign *new_design = gibbon_design_copy (design);
-        GibbonBoardEditor *editor;
-        
-        GtkWidget *dialog = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "board_editor"));
-        editor = gibbon_board_editor_new (new_design, dialog);
 }

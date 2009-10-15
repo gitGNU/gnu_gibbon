@@ -72,17 +72,25 @@ AM_GLIB_GNU_GETTEXT([external])
 
 m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.13.0])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.13.0])
-m4_define(gibbon_gconf_requirement, [gconf-2.0])
-m4_define(gibbon_gthread_requirement, [gthread-2.0])
+m4_define(gibbon_gconf_requirement, [gconf-2.0 >= 2.24.0])
+m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
+m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
+m4_define(gibbon_gdome_requirement, [gdome2 >= 0.8.1])
+m4_define(gibbon_libsvg_requirement, [libsvg >= 0.1.4])
+m4_define(gibbon_libsvg_cairo_requirement, [libsvg-cairo >= 0.1.6])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_gtk_requirement
     gibbon_gconf_requirement
     gibbon_gthread_requirement
+    gibbon_libxml_requirement
+    gibbon_gdome_requirement
+    gibbon_libsvg_requirement
+    gibbon_libsvg_cairo_requirement
 )
 
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
-GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_libglade_requirement ["]
+GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_gthread_requirement [, ]gibbon_libxml_requirement[, ]gibbon_gdome_requirement[, ]gibbon_libsvg_requirement[, ]gibbon_libsvg_cairo_requirement["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
@@ -105,7 +113,7 @@ if test $gibbon_native_msdos = no; then
   )
 fi
 
-AC_CHECK_FUNCS (index)
+AC_CHECK_FUNCS ([index])
 
 GIBBON_LIBS="${GIBBON_LIBS}"
 AC_SUBST(GIBBON_LIBS)
@@ -118,6 +126,7 @@ AC_CONFIG_FILES([
     src/Makefile
     data/Makefile
     data/gibbon.desktop.in
+    pixmaps/Makefile
     po/Makefile.in
 ])
 AC_OUTPUT

@@ -29,6 +29,7 @@
 
 #include "gibbon-player-list.h"
 #include "game.h"
+#include "gibbon-board-editor.h"
 
 #define GIBBON_GCONF_PREFIX "/apps/gibbon/"
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
@@ -40,6 +41,7 @@ extern GtkWidget *window;
 extern GtkWidget *connection_dialog;
 extern GConfClient *conf_client;
 extern GibbonPlayerList *players;
+extern GibbonBoardEditor *editor;
 
 extern gint init_gui (const gchar *builder_filename);
 extern const gchar *get_trimmed_entry_text (const gchar *id);

@@ -24,6 +24,7 @@ data/gibbon.desktop.in.in
 data/gibbon.glade
 data/gibbon.schemas.in
 data/gibbon.xml
+src/gibbon-cairoboard.c
 src/gibbon-connection.c
 src/gibbon-connector.c
 src/gibbon-session.c
