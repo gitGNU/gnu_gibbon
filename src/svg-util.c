@@ -478,7 +478,7 @@ svg_util_set_stroke_line_cap (gpointer closure,
                               svg_stroke_line_cap_t 
                               line_cap)
 { 
-        g_print ("set_stoke_line_cap :-(\n");
+        g_print ("set_stroke_line_cap :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -487,7 +487,7 @@ svg_util_set_stroke_line_join (gpointer closure,
                                svg_stroke_line_join_t 
                                line_join)
 { 
-        g_print ("set_stoke_line_join :-(\n");
+        g_print ("set_stroke_line_join :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -495,7 +495,7 @@ static svg_status_t
 svg_util_set_stroke_miter_limit (gpointer closure, 
                                  double limit)
 { 
-        g_print ("set_stoke_miter_limit :-(\n");
+        g_print ("set_stroke_miter_limit :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -510,7 +510,7 @@ static svg_status_t
 svg_util_set_stroke_paint (gpointer closure, 
                            const svg_paint_t *paint)
 { 
-        g_print ("set_stoke_paint :-(\n");
+        g_print ("set_stroke_paint :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -518,7 +518,7 @@ static svg_status_t
 svg_util_set_stroke_width (gpointer closure, 
                            svg_length_t *width)
 { 
-        g_print ("set_stoke_width :-(\n");
+        g_print ("set_stroke_width :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
