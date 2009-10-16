@@ -28,7 +28,8 @@ AM_CPPFLAGS = 				\
 	-I$(srcdir)			\
 	$(GIBBON_CFLAGS)		\
 	-DGIBBON_DATADIR=\""$(datadir)"\"	\
-	-DGIBBON_LIBDIR=\""$(libdir)"\"
+	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
+	-D_ISOC99_SOURCE
 
 gibbon_SOURCES =		\
 	gibbon.c 		\
@@ -39,7 +40,8 @@ gibbon_SOURCES =		\
 	gibbon-session.c	\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
-	gui.c
+	gui.c			\
+	svg-util.c
 
 noinst_HEADERS =		\
 	game.h			\
@@ -49,7 +51,8 @@ noinst_HEADERS =		\
 	gibbon-connector.h	\
 	gibbon-player-list.h	\
 	gibbon-session.h	\
-	gui.h
+	gui.h			\
+	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) $(platform_libadd)

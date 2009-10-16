@@ -109,17 +109,17 @@ svg_cairo_strerror (svg_cairo_status_t status)
                 case SVG_CAIRO_STATUS_SUCCESS:
                         return _("No error (this should not happen)!");
                 case SVG_CAIRO_STATUS_NO_MEMORY:
-                        return ("Out of memory!");
+                        return _("Out of memory!");
                 case SVG_CAIRO_STATUS_IO_ERROR:
-                        return ("Input/output error!");
+                        return _("Input/output error!");
                 case SVG_CAIRO_STATUS_FILE_NOT_FOUND:
-                        return ("File not found!");
+                        return _("File not found!");
                 case SVG_CAIRO_STATUS_INVALID_VALUE:
-                        return ("Invalid value!");
+                        return _("Invalid value!");
                 case SVG_CAIRO_STATUS_INVALID_CALL:
-                        return ("Invalid call!");
+                        return _("Invalid call!");
                 case SVG_CAIRO_STATUS_PARSE_ERROR:
-                        return ("Parse error!");
+                        return _("Parse error!");
         }
         
         return _("Unknown error!");
@@ -184,6 +184,7 @@ gibbon_cairoboard_new (const gchar *filename)
         GHashTable *ids;
         xmlNode *node;
         svg_cairo_t *scr;
+        double x, y, width, height;
                         
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 display_error (_("Error reading board definition `%s': %s\n"),
@@ -200,6 +201,9 @@ gibbon_cairoboard_new (const gchar *filename)
                 g_object_unref (self);
                 return NULL;
         }
+svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, filename,
+                         &x, &y, &width, &height);
+g_print ("Root: (%f|%f) %f x %f\n", x, y, width, height);
         
         ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
                                      xmlFree, NULL);
@@ -214,6 +218,9 @@ gibbon_cairoboard_new (const gchar *filename)
                 xmlFree (doc);
                 return NULL;
         }
+svg_util_get_dimensions (node, doc, filename,
+                         &x, &y, &width, &height);
+g_print ("White checker: (%f|%f) %f x %f\n", x, y, width, height);
         scr = gibbon_cairoboard_draw_node (self, node, doc);
         g_hash_table_unref (ids);
                 
