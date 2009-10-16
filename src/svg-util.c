@@ -555,7 +555,9 @@ svg_util_set_viewport_dimension (gpointer closure,
                                  svg_length_t *width,
                                  svg_length_t *height)
 { 
-        g_print ("set_viewport_dimension :-(\n");
+
+        /* Looks like we can ignore that?  */
+        
         return SVG_STATUS_SUCCESS; 
 }
 
