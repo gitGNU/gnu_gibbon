@@ -30,7 +30,6 @@
 #include "gibbon.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
-#include "gibbon-board-editor.h"
 
 GtkBuilder *builder = NULL;
 

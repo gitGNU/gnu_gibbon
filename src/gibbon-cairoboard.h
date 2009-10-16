@@ -22,7 +22,6 @@
 
 #include <glib.h>
 
-#include "gibbon-design.h"
 #include "game.h"
 
 G_BEGIN_DECLS
