@@ -40,6 +40,7 @@ typedef struct svg_util_render_context {
         /* Device state.  */
         gdouble x;
         gdouble y;
+        gchar *font_family;
 } svg_util_render_context;
 
 static svg_status_t svg_util_begin_group (gpointer closure, double opacity);
@@ -247,16 +248,17 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
 
+        memset (&ctx, 0, sizeof ctx);
+        
         ctx.min_x = INFINITY;
         ctx.min_y = INFINITY;
-        ctx.width = 0;
-        ctx.height = 0;
-        
-        /* Initialize device.  */
-        ctx.x = 0;
-        ctx.y = 0;
-        
+                
         status = svg_render (svg, &svg_util_render_engine, &ctx);
+        (void) svg_destroy (svg);
+
+        if (ctx.font_family)
+                g_free (ctx.font_family);
+                
         if (status != SVG_STATUS_SUCCESS) {
                 display_error (_("Error getting SVG dimensions of `%s': %s.\n"),
                                filename, svg_strerror (status));
@@ -265,7 +267,6 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
         
-        (void) svg_destroy (svg);
         
         *x = ctx.min_x;
         *y = ctx.min_y;
@@ -311,7 +312,7 @@ svg_util_move_to (gpointer closure, double x, double y)
 
 static svg_status_t
 svg_util_line_to (gpointer closure, double x, double y)
-{ 
+{
         svg_util_render_context *ctx = (svg_util_render_context *) closure;
         gdouble x1, x2;
         gdouble y1, y2;
@@ -355,6 +356,7 @@ svg_util_curve_to (gpointer closure,
                    double x2, double y2,
                    double x3, double y3)
 {
+        g_print ("curve_to :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -363,6 +365,7 @@ svg_util_quadratic_curve_to (gpointer closure,
                              double x1, double y1,
                              double x2, double y2)
 {
+        g_print ("quadratic_curve_to :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -376,12 +379,14 @@ svg_util_arc_to (gpointer closure,
                  double x,
                  double y)
 { 
+        g_print ("arc_to :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_close_path (gpointer closure)
 { 
+        g_print ("close_path :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -406,18 +411,28 @@ static svg_status_t
 svg_util_set_fill_rule (gpointer closure, 
                         svg_fill_rule_t fill_rule)
 { 
+        g_print ("set_fill_rule :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_set_font_family (gpointer closure, const char *family)
 { 
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        if (ctx->font_family)
+                g_free (ctx->font_family);
+                
+        /* g_strdup handles NULL arguments gracefully.  */
+        ctx->font_family = g_strdup (ctx->font_family);
+        
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_set_font_size (gpointer closure, double size)
 { 
+        g_print ("set_font_size :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -425,6 +440,7 @@ static svg_status_t
 svg_util_set_font_style (gpointer closure, 
                          svg_font_style_t font_style)
 { 
+        g_print ("set_font_style :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -432,6 +448,7 @@ static svg_status_t
 svg_util_set_font_weight (gpointer closure, 
                           unsigned int font_weight)
 { 
+        g_print ("set_font_weight :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -461,6 +478,7 @@ svg_util_set_stroke_line_cap (gpointer closure,
                               svg_stroke_line_cap_t 
                               line_cap)
 { 
+        g_print ("set_stoke_line_cap :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -469,6 +487,7 @@ svg_util_set_stroke_line_join (gpointer closure,
                                svg_stroke_line_join_t 
                                line_join)
 { 
+        g_print ("set_stoke_line_join :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -476,6 +495,7 @@ static svg_status_t
 svg_util_set_stroke_miter_limit (gpointer closure, 
                                  double limit)
 { 
+        g_print ("set_stoke_miter_limit :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -490,6 +510,7 @@ static svg_status_t
 svg_util_set_stroke_paint (gpointer closure, 
                            const svg_paint_t *paint)
 { 
+        g_print ("set_stoke_paint :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -497,6 +518,7 @@ static svg_status_t
 svg_util_set_stroke_width (gpointer closure, 
                            svg_length_t *width)
 { 
+        g_print ("set_stoke_width :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -504,6 +526,7 @@ static svg_status_t
 svg_util_set_text_anchor (gpointer closure, 
                           svg_text_anchor_t text_anchor)
 { 
+        g_print ("set_text_anchor :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -513,6 +536,7 @@ svg_util_transform (gpointer closure,
                     double c, double d,
                     double e, double f)
 { 
+        g_print ("transform :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -522,6 +546,7 @@ svg_util_apply_view_box (gpointer closure,
                          svg_length_t *width,
                          svg_length_t *height)
 { 
+        g_print ("apply_view_box :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -530,6 +555,7 @@ svg_util_set_viewport_dimension (gpointer closure,
                                  svg_length_t *width,
                                  svg_length_t *height)
 { 
+        g_print ("set_viewport_dimension :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -540,12 +566,14 @@ svg_util_render_line (gpointer closure,
                       svg_length_t *x2,
                       svg_length_t *y2)
 { 
+        g_print ("render_line :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_render_path (gpointer closure)
 { 
+        g_print ("render_path :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -556,6 +584,7 @@ svg_util_render_ellipse (gpointer closure,
                          svg_length_t *rx,
                          svg_length_t *ry)
 { 
+        g_print ("render_ellipse :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -568,6 +597,7 @@ svg_util_render_rect (gpointer closure,
                       svg_length_t *rx,
                       svg_length_t *ry)
 { 
+        g_print ("render_rect :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -577,6 +607,7 @@ svg_util_render_text (gpointer closure,
                       svg_length_t *y,
                       const char *utf8)
 { 
+        g_print ("render_text :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -590,5 +621,6 @@ svg_util_render_image (gpointer closure,
                        svg_length_t *width,
                        svg_length_t *height)
 { 
+        g_print ("render_image :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
