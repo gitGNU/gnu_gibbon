@@ -22,7 +22,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <svg-cairo.h>
-#include <gdome.h>
+#include <libxml/parser.h>
 
 #include "gibbon-cairoboard.h"
 #include "gibbon-design.h"
@@ -89,13 +89,11 @@ static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
 static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
                              guint value, gint side,
                              gdouble x, gdouble y);
-static void gibbon_add_xml_id (GibbonCairoboard *board, GdomeElement *el,
-                               GdomeDOMString *id_name, 
-                               GdomeDOMString *xml_id_name);
-static void gibbon_cairoboard_draw_element (GibbonCairoboard *board,
-                                            GdomeDOMImplementation *di,
-                                            GdomeElement *el);
-                                            
+static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
+                                        xmlNode *node, GHashTable *id_hash);
+static svg_cairo_t *gibbon_cairoboard_draw_node (GibbonCairoboard *board,
+                                                 xmlNode *node, xmlDoc *doc);
+                                                                                                                         
 #ifdef M_PI
 # undef M_PI
 #endif
@@ -166,11 +164,15 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 
         g_type_class_add_private (klass, sizeof (GibbonCairoboardPrivate));
 
+        /* Initializ libxml.  */
+        LIBXML_TEST_VERSION
+        
         G_OBJECT_CLASS (parent_class)->finalize = gibbon_cairoboard_finalize;
         GTK_WIDGET_CLASS (parent_class)->expose_event = 
                 gibbon_cairoboard_expose;
 }
 
+/* FIXME! How can we return NULL in the constructor?  */
 GibbonCairoboard *
 gibbon_cairoboard_new (const gchar *filename)
 {
@@ -178,15 +180,11 @@ gibbon_cairoboard_new (const gchar *filename)
         svg_cairo_status_t status;
         gchar *saved_locale;
         gchar *data;
-        gchar *mem;
         GError *error;
-        GdomeDOMImplementation *di;
-        GdomeDocument *dom;
-        GdomeException exc;
-        GdomeElement *el;
-        GdomeDOMString *id_name;
-        GdomeDOMString *xml_id_name;
-        GdomeDOMString *id;
+        xmlDoc *doc;
+        GHashTable *ids;
+        xmlNode *node;
+        svg_cairo_t *scr;
                 
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 display_error (_("Error reading board definition `%s': %s\n"),
@@ -196,43 +194,37 @@ gibbon_cairoboard_new (const gchar *filename)
                 return NULL;
         }
         
-        di = gdome_di_mkref ();
-        dom = gdome_di_createDocFromMemory (di, data, 
-                                            GDOME_LOAD_PARSING, &exc);
-        g_free (data);
-        if (dom == NULL) {
+        doc = xmlReadMemory (data, strlen (data), filename, NULL, 0);
+        if (doc == NULL) {
                 display_error (_("Error parsing board definition `%s'.\n"),
                                filename);
                 g_object_unref (self);
                 return NULL;
         }
-        id_name = gdome_str_mkref ("id");
-        xml_id_name = gdome_str_mkref ("xml:id");
-        gibbon_add_xml_id (self, gdome_doc_documentElement (dom, &exc), 
-                           id_name, xml_id_name);
-        gdome_str_unref (id_name);
-        gdome_str_unref (xml_id_name);
         
-        id = gdome_str_mkref ("point24");
-        el = gdome_doc_getElementById (dom, id, &exc);
-        gdome_str_unref (id);
-        if (el == NULL) {
-                display_error (_("Board definition `%s' lacks element "
-                                 "with id `%s'.\n"), filename, "point24");
+        ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
+                                     xmlFree, NULL);
+        gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc), ids);
+        node = g_hash_table_lookup (ids, (const xmlChar *) "checker_w_24_1");
+        if (!node) {
+                display_error (_("Board definition `%s' does not have an "
+                                 "element `%s'.\n"),
+                               filename, "checker_w_24_1");
                 g_object_unref (self);
+                g_free (data);
+                xmlFree (doc);
                 return NULL;
         }
-        gibbon_cairoboard_draw_element (self, di, el);
-        
-        gdome_di_saveDocToMemory (di, dom, &mem, GDOME_SAVE_STANDARD, &exc);
-        gdome_doc_unref (dom, &exc);
-
+        scr = gibbon_cairoboard_draw_node (self, node, doc);
+        g_hash_table_unref (ids);
+                
         status = svg_cairo_create (&self->priv->scr);
         if (status != SVG_CAIRO_STATUS_SUCCESS) {
                 display_error (_("Error creating libsvg-cairo context: %s\n"),
                                svg_cairo_strerror (status));
                 g_object_unref (self);
-                free (mem);
+                g_free (data);
+                xmlFree (doc);
                 return NULL;
         }
         
@@ -241,15 +233,19 @@ gibbon_cairoboard_new (const gchar *filename)
          * parsing.  This is not thread-safe ...
          */
         saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_cairo_parse_buffer (self->priv->scr, mem, strlen (mem));
+        status = svg_cairo_parse_buffer (self->priv->scr, data, strlen (data));
         setlocale (LC_NUMERIC, saved_locale);
-        free (mem);
         if (status != SVG_CAIRO_STATUS_SUCCESS) {
                 display_error (_("Error parsing `%s': %s\n"),
                                filename, svg_cairo_strerror (status));
                 g_object_unref (self);
+                g_free (data);
+                xmlFree (doc);
                 return NULL;
         }
+        
+        xmlFree (doc);
+        g_free (data);
         
         return self;
 }
@@ -884,74 +880,78 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-/* We all know that XML & friends suck.  This is one example.  Contrary to 
- * popular believe, getElementById does not search an element with a certain
- * "id" attribute, but for an element with an attribute that has the ID
- * property and the value you are looking for.  This is basically okay,
- * but there is no way to tell gdome, which attributes have the ID attribute
- * unless you validate the document.  And we definitely want to avoid that.
- */
-static void 
-gibbon_add_xml_id (GibbonCairoboard *self, 
-                   GdomeElement *el,
-                   GdomeDOMString *name,
-                   GdomeDOMString *xml_name)
+static void
+gibbon_cairoboard_save_ids (GibbonCairoboard *self,
+                            xmlNode *node, GHashTable *hash) 
 {
-        GdomeException exc;
-        GdomeAttr *attr = gdome_el_getAttributeNode (el, name, &exc);
-        GdomeDOMString *value = NULL;
-        GdomeNode *child = NULL;
-
-        if (attr) {
-                value = gdome_a_value (attr, &exc);
-                if (value) {
-                        gdome_el_setAttribute (el, xml_name, value, &exc);
-
-                        /* FIXME! This does actually not remove the
-                         * attribute.
-                         */
-                        gdome_el_removeAttribute (el, name, &exc);
-                }
-        }
+        xmlNode *cur;
+        xmlChar *id;
         
-        for (child = gdome_el_firstChild (el, &exc); child != NULL;
-             child = gdome_el_nextSibling ((GdomeElement *) child, &exc)) {
-                if (gdome_n_nodeType (child, &exc)
-                    == GDOME_ELEMENT_NODE) {
-                        gibbon_add_xml_id (self, (GdomeElement *) child,
-                                           name, xml_name);
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+        g_return_if_fail (node != NULL);
+        
+        for (cur = node; cur != NULL; cur = cur->next) {
+                if (cur->type == XML_ELEMENT_NODE) {
+                        id = xmlGetProp (cur, (const xmlChar *) "id");
+                        if (!id)
+                                id = xmlGetProp (cur, 
+                                                 (const xmlChar*) "xml:id");
+                        if (id)
+                                g_hash_table_insert (hash, id, cur);
                 }
+                
+                if (cur->children)
+                        gibbon_cairoboard_save_ids (self, cur->children, hash);
         }
 }
 
-static void
-gibbon_cairoboard_draw_element (GibbonCairoboard *self,
-                                GdomeDOMImplementation *di, 
-                                GdomeElement *el)
+static svg_cairo_t *
+gibbon_cairoboard_draw_node (GibbonCairoboard *self, 
+                             xmlNode *node, xmlDoc *doc)
 {
-        GdomeException e;
-        GdomeDOMString *name;
-        GdomeDocument *doc;
-        gchar *mem;
-        GdomeNode *copy;
-        GdomeElement *root;
-GdomeNode *a;
+        xmlBuffer* buf;
+        gchar *svg;
+        svg_cairo_t *scr = NULL;
+        gchar *saved_locale;
+        svg_cairo_status_t status;
+        unsigned int width;
+        unsigned int height;
+                        
+        g_return_val_if_fail (GIBBON_IS_CAIROBOARD (self), NULL);
+        
+        status = svg_cairo_create (&scr);
+        if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                display_error (_("Error creating libsvg-cairo context: %s\n"),
+                               svg_cairo_strerror (status));
+                return NULL;
+        }
+                
+        buf = xmlBufferCreate ();
+        xmlNodeDump (buf, doc, node, 0, 0);
+        svg = g_strdup_printf ("<svg>%s</svg>", buf->content);
+        xmlBufferFree (buf);
 
-        name = gdome_str_mkref ("svg");
-        doc = gdome_di_createDocument (di, NULL, name, NULL, &e);
-g_print ("doc: %p, e: %d\n", doc, e);
-        root = gdome_doc_documentElement (doc, &e);
-g_print ("root: %p, e: %d\n", root, e);
-        
-        copy = gdome_el_cloneNode (el, FALSE, &e);
-g_print ("copy: %p, e: %d\n", copy, e);
-        a = gdome_el_appendChild (root, copy, &e);
-g_print ("a: %p, e: %d\n", a, e);
-        
-        gdome_di_saveDocToMemory (di, doc, &mem, GDOME_SAVE_STANDARD, &e);
-        gdome_str_unref (name);
-        gdome_doc_unref (doc, &e);
-        
-        g_print (mem);
-        free (mem);
+        saved_locale = setlocale (LC_NUMERIC, "POSIX");
+        status = svg_cairo_parse_buffer (scr, svg, strlen (svg));
+        setlocale (LC_NUMERIC, saved_locale);
+        if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                display_error (_("Error parsing internal SVG node: %s.\n"),
+                               svg_cairo_strerror (status));
+                g_free (svg);
+                svg_cairo_destroy (scr);
+                
+                return NULL;
+        }
+
+        /* FIXME! This method in libsvg-cairo only works with a valid
+         * viewBox or width and height in the svg root element.  We have
+         * to include libsvg-cairo in gibbon, and make that more accurate.
+         * Furthermore, the returned values must be double, not unsigned
+         * integers.
+         */
+        svg_cairo_get_size (scr, &width, &height);
+        g_print ("Checker dimensions: %u|%u.\n", width, height);
+        g_free (svg);
+                
+        return scr;
 }

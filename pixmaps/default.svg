@@ -75,4 +75,9 @@
 	<polygon fill="#990000" points="350,370 380,370 365,220" />
 	<polygon fill="#7f7f7f" points="380,370 410,370 395,220" />
 	<polygon fill="#990000" points="410,370 440,370 425,220" />
+
+	<g id="checker_w_24_1">
+		<circle cx="425" cy="25" r="15" 
+		        fill="#dddddd" stroke="black" stroke-width="1"/>
+	</g>
 </svg>
