@@ -403,8 +403,18 @@ svg_util_quadratic_curve_to (gpointer closure,
                              double x1, double y1,
                              double x2, double y2)
 {
-        g_print ("quadratic_curve_to :-(\n");
-        return SVG_STATUS_SUCCESS; 
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x, y;
+        
+        x = ctx->x;
+        y = ctx->y;
+        
+        return svg_util_curve_to (closure,
+                                  x  + 2.0 / 3.0 * (x1 - x),  
+                                  y  + 2.0 / 3.0 * (y1 - y),
+                                  x2 + 2.0 / 3.0 * (x1 - x2), 
+                                  y2 + 2.0 / 3.0 * (y1 - y2),
+                                  x2, y2);
 }
 
 static svg_status_t
