@@ -36,8 +36,8 @@ typedef struct svg_util_render_context {
         
         gdouble min_x;
         gdouble min_y;
-        gdouble width;
-        gdouble height;
+        gdouble max_x;
+        gdouble max_y;
         
         /* Device state.  */
         gdouble x;
@@ -147,9 +147,14 @@ static svg_status_t svg_util_render_image (gpointer closure,
                                            svg_length_t *width,
                                            svg_length_t *height);
 
-static svg_status_t svg_util_length_to_pixel (svg_util_render_context *ctx, 
-                                              svg_length_t *length, 
-                                              gdouble *pixel);
+static void bezier_boundings (gdouble x0, gdouble y0,
+                              gdouble x1, gdouble y1,
+                              gdouble x2, gdouble y2,
+                              gdouble x3, gdouble y3,
+                              gdouble *x, gdouble *y,
+                              gdouble *width, gdouble *height);
+static void bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
+                                gdouble *x, gdouble *width);
 
 svg_render_engine_t svg_util_render_engine = {
         svg_util_begin_group,
@@ -289,8 +294,8 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         
         *x = ctx.min_x;
         *y = ctx.min_y;
-        *width = ctx.width;
-        *height = ctx.height;
+        *width = ctx.max_x - ctx.min_x;
+        *height = ctx.max_y - ctx.min_y;
         
         return FALSE;
 }
@@ -358,11 +363,11 @@ svg_util_line_to (gpointer closure, double x, double y)
         if (y1 < ctx->min_y)
                 ctx->min_y = y1;
         
-        if (x2 - x1 > ctx->width)
-                ctx->width = x2 - x1;
+        if (x2 > ctx->max_x)
+                ctx->max_x = x2;
                 
-        if (y2 - y1 > ctx->height)
-                ctx->height = y2 - y1;
+        if (y2 > ctx->max_y)
+                ctx->max_y = y2;
                 
         ctx->x = x;
         ctx->y = y;
@@ -376,7 +381,20 @@ svg_util_curve_to (gpointer closure,
                    double x2, double y2,
                    double x3, double y3)
 {
-        g_print ("curve_to :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x, y, width, height;
+        
+        bezier_boundings (ctx->x, ctx->y, x1, y1, x2, y2, x3, y3,
+                          &x, &y, &width, &height);
+
+        ctx->x = x3;
+        ctx->y = y3;
+        
+        if (x < ctx->min_x)
+                ctx->min_x = x;
+        if (y < ctx->min_y)
+                ctx->min_y = y;
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -647,4 +665,96 @@ svg_util_render_image (gpointer closure,
 { 
         g_print ("render_image :-(\n");
         return SVG_STATUS_SUCCESS; 
+}
+
+/* Given the four control points of a two-dimensional cubic Bézier curve, 
+ * calculate the bounding rectangle.  We split the 2D Bézier into its two
+ * single-dimensional components, ...
+ */
+static void
+bezier_boundings (gdouble x0, gdouble y0,
+                  gdouble x1, gdouble y1,
+                  gdouble x2, gdouble y2,
+                  gdouble x3, gdouble y3,
+                  gdouble *x, gdouble *y, gdouble *width, gdouble *height)
+{
+        /* Divida et impera!  Split the 2D spline into two 1D splines.  */
+        bezier1d_boundings (x0, x1, x2, x3, x, width);
+        bezier1d_boundings (y0, y1, y2, y3, y, height);
+}
+
+/* ... and calculate the extrema of the component functions.  If they are
+ * inside our definition interval from 0 to 1, they are candidates for
+ * the extrema that have to compete against the values at the edges
+ * 0 and 1.
+ */
+static void
+bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
+                    gdouble *x, gdouble *width)
+{
+        gdouble min_x = x0;
+        gdouble max_x = x0;
+        gdouble c0, c1, c2, c3;
+        gdouble p, q, rad, root;
+        gdouble t1 = 0, t2 = 0;
+        gdouble f;
+
+        if (x3 < min_x)
+                min_x = x3;
+        if (x3 > max_x)
+                max_x = x3;
+
+        /*
+         * Calculate the component function:
+         * 
+         *     f(t) = c0 t^3 + c1 t^2 + c2 t + c3
+         *
+         * The formula is straightforward:
+         */
+        c0 = -x0 + 3 * x1 - 3 * x2 + x3;
+        c1 = 3 * x0 - 6 * x1 + 3 * x2;
+        c2 = -3 * x0 + 3 * x1;
+        c3 = x0;
+
+        /*
+         * Now calculate df/dt:
+         *
+         *     f'(t) = 3c0 t^2 + 2 c1t + c2
+         *
+         * We need the roots of this function:
+         */
+        if (!c0) {
+                if (c1)
+                        t2 = -0.5 * (c2 / c1);
+        } else if (!c1) {
+                t2 = sqrt (c2 / c0);
+                t2 = -t2;
+        } else {
+                p = (2 * c1) / (3 * c0);
+                q = c2 / (3 * c0);
+                rad = p * p - 4 * q;
+                if (rad >= 0) {
+                        root = sqrt (rad);
+                        t1 = -p / 2 + root / 2;
+                        t2 = -p / 2 - root / 2;
+                }
+        }
+
+        if (t1 >= 0 && t1 <= 1) {
+                f = c0 * t1 * t1 * t1 + c1 * t1 * t1 + c2 * t1 + c3;
+                if (f < min_x)
+                        min_x = f;
+                else if (f > max_x)
+                        max_x = f;
+        }
+        if (t2 != t1 && t2 >= 0 && t2 <= 1) {
+                f = c0 * t2 * t2 * t2 + c1 * t2 * t2 + c2 * t2 + c3;
+                if (f < min_x)
+                        min_x = f;
+                else if (f > max_x)
+                        max_x = f;
+        }
+
+        *x = min_x;
+        *width = max_x - min_x;
 }
