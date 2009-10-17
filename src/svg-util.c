@@ -32,6 +32,8 @@
 #include "gui.h"
 
 typedef struct svg_util_render_context {
+        const gchar *filename;
+        
         gdouble min_x;
         gdouble min_y;
         gdouble width;
@@ -40,7 +42,11 @@ typedef struct svg_util_render_context {
         /* Device state.  */
         gdouble x;
         gdouble y;
+        
         gchar *font_family;
+        gdouble font_size;
+        
+        gdouble stroke_width;        
 } svg_util_render_context;
 
 static svg_status_t svg_util_begin_group (gpointer closure, double opacity);
@@ -141,6 +147,10 @@ static svg_status_t svg_util_render_image (gpointer closure,
                                            svg_length_t *width,
                                            svg_length_t *height);
 
+static svg_status_t svg_util_length_to_pixel (svg_util_render_context *ctx, 
+                                              svg_length_t *length, 
+                                              gdouble *pixel);
+
 svg_render_engine_t svg_util_render_engine = {
         svg_util_begin_group,
         svg_util_begin_element,
@@ -204,6 +214,10 @@ svg_strerror (svg_status_t status)
         return _("Unknown error!");
 }
 
+/*
+ * This routine is buggy on purpose.  It can only measure out a simple subset
+ * of SVG files.
+ */
 gboolean
 svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                          gdouble *x, gdouble *y,
@@ -250,8 +264,13 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
 
         memset (&ctx, 0, sizeof ctx);
         
+        ctx.filename = filename;
+        
         ctx.min_x = INFINITY;
         ctx.min_y = INFINITY;
+        
+        /* This is only a guess but we can rely on libsvg to initialize it.  */
+        ctx.font_size = 10;
                 
         status = svg_render (svg, &svg_util_render_engine, &ctx);
         (void) svg_destroy (svg);
@@ -304,6 +323,7 @@ static svg_status_t
 svg_util_move_to (gpointer closure, double x, double y)
 {
         svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
         ctx->x = x;
         ctx->y = y;
 
@@ -518,6 +538,8 @@ static svg_status_t
 svg_util_set_stroke_width (gpointer closure, 
                            svg_length_t *width)
 { 
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
         g_print ("set_stroke_width :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
