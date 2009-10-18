@@ -31,6 +31,21 @@
 #include "svg-util.h"
 #include "gui.h"
 
+struct svg_util_render_state {
+        cairo_matrix_t transform;
+        
+        gchar *font_family;
+        gdouble font_size;
+        guint font_weight;
+        svg_font_style_t font_style;
+        gboolean font_dirty;
+        svg_text_anchor_t text_anchor;
+        
+        gdouble stroke_width;        
+        
+        struct svg_util_render_state *prev;
+};
+
 typedef struct svg_util_render_context {
         const gchar *filename;
         
@@ -39,16 +54,17 @@ typedef struct svg_util_render_context {
         gdouble max_x;
         gdouble max_y;
         
-        /* Device state.  */
         gdouble x;
         gdouble y;
         
-        gchar *font_family;
-        gdouble font_size;
-        
-        gdouble stroke_width;        
+        struct svg_util_render_state *state;
 } svg_util_render_context;
 
+static struct svg_util_render_state 
+        *svg_util_push_state (struct svg_util_render_state *state);
+static struct svg_util_render_state
+        *svg_util_pop_state (struct svg_util_render_state *state);
+        
 static svg_status_t svg_util_begin_group (gpointer closure, double opacity);
 static svg_status_t svg_util_begin_element (gpointer closure);
 static svg_status_t svg_util_end_element (gpointer closure);
@@ -273,16 +289,17 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         
         ctx.min_x = INFINITY;
         ctx.min_y = INFINITY;
-        
-        /* This is only a guess but we can rely on libsvg to initialize it.  */
-        ctx.font_size = 10;
-                
+        ctx.max_x = -INFINITY;
+        ctx.max_y = -INFINITY;
+
+        ctx.state = svg_util_push_state (NULL);
+
         status = svg_render (svg, &svg_util_render_engine, &ctx);
         (void) svg_destroy (svg);
 
-        if (ctx.font_family)
-                g_free (ctx.font_family);
-                
+        while (ctx.state)
+                ctx.state = svg_util_pop_state (ctx.state);
+
         if (status != SVG_STATUS_SUCCESS) {
                 display_error (_("Error getting SVG dimensions of `%s': %s.\n"),
                                filename, svg_strerror (status));
@@ -302,25 +319,25 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
 
 static svg_status_t
 svg_util_begin_group (gpointer closure, double opacity)
-{ 
+{
         return SVG_STATUS_SUCCESS;
 }
 
 static svg_status_t
 svg_util_begin_element (gpointer closure)
-{ 
+{
         return SVG_STATUS_SUCCESS;
 }
 
 static svg_status_t
 svg_util_end_element (gpointer closure)
-{ 
+{
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_end_group (gpointer closure, double opacity)
-{ 
+{
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -358,16 +375,16 @@ svg_util_line_to (gpointer closure, double x, double y)
                 y2 = ctx->y;
         }
         
-        if (x1 < ctx->min_x)
-                ctx->min_x = x1;
-        if (y1 < ctx->min_y)
-                ctx->min_y = y1;
+        if (x1 - ctx->state->stroke_width / 2 < ctx->min_x)
+                ctx->min_x = x1 - ctx->state->stroke_width / 2;
+        if (y1 - ctx->state->stroke_width / 2 < ctx->min_y)
+                ctx->min_y = y1 - ctx->state->stroke_width / 2;
         
-        if (x2 > ctx->max_x)
-                ctx->max_x = x2;
+        if (x2 + ctx->state->stroke_width / 2 > ctx->max_x)
+                ctx->max_x = x2 + ctx->state->stroke_width / 2;
                 
-        if (y2 > ctx->max_y)
-                ctx->max_y = y2;
+        if (y2 + ctx->state->stroke_width / 2 > ctx->max_y)
+                ctx->max_y = y2 + ctx->state->stroke_width / 2;
                 
         ctx->x = x;
         ctx->y = y;
@@ -390,11 +407,16 @@ svg_util_curve_to (gpointer closure,
         ctx->x = x3;
         ctx->y = y3;
         
-        if (x < ctx->min_x)
-                ctx->min_x = x;
-        if (y < ctx->min_y)
+        if (x - ctx->state->stroke_width / 2 < ctx->min_x)
+                ctx->min_x = x - ctx->state->stroke_width / 2;
+        if (y - ctx->state->stroke_width / 2 < ctx->min_y)
                 ctx->min_y = y;
 
+        if (x + width + ctx->state->stroke_width / 2 > ctx->max_x)
+                ctx->max_x = x + width + ctx->state->stroke_width / 2;
+        if (y + height + ctx->state->stroke_width / 2 > ctx->max_y)
+                ctx->max_y = y + height + ctx->state->stroke_width / 2;
+                
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -434,7 +456,9 @@ svg_util_arc_to (gpointer closure,
 static svg_status_t
 svg_util_close_path (gpointer closure)
 { 
-        g_print ("close_path :-(\n");
+        /* Closing the path cannot change the convex hull of the current
+         * path.  It is safe to ignore this event.
+         */
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -459,7 +483,6 @@ static svg_status_t
 svg_util_set_fill_rule (gpointer closure, 
                         svg_fill_rule_t fill_rule)
 { 
-        g_print ("set_fill_rule :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -468,11 +491,12 @@ svg_util_set_font_family (gpointer closure, const char *family)
 { 
         svg_util_render_context *ctx = (svg_util_render_context *) closure;
 
-        if (ctx->font_family)
-                g_free (ctx->font_family);
+        if (ctx->state->font_family)
+                g_free (ctx->state->font_family);
                 
         /* g_strdup handles NULL arguments gracefully.  */
-        ctx->font_family = g_strdup (ctx->font_family);
+        ctx->state->font_family = g_strdup (ctx->state->font_family);
+        ctx->state->font_dirty = 1;
         
         return SVG_STATUS_SUCCESS; 
 }
@@ -480,7 +504,11 @@ svg_util_set_font_family (gpointer closure, const char *family)
 static svg_status_t
 svg_util_set_font_size (gpointer closure, double size)
 { 
-        g_print ("set_font_size :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        ctx->state->font_size = size;
+        ctx->state->font_dirty = 1;
+        
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -488,7 +516,11 @@ static svg_status_t
 svg_util_set_font_style (gpointer closure, 
                          svg_font_style_t font_style)
 { 
-        g_print ("set_font_style :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        ctx->state->font_style = font_style;
+        ctx->state->font_dirty = 1;
+        
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -496,7 +528,11 @@ static svg_status_t
 svg_util_set_font_weight (gpointer closure, 
                           unsigned int font_weight)
 { 
-        g_print ("set_font_weight :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        ctx->state->font_weight = font_weight;
+        ctx->state->font_dirty = 1;
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -526,7 +562,6 @@ svg_util_set_stroke_line_cap (gpointer closure,
                               svg_stroke_line_cap_t 
                               line_cap)
 { 
-        g_print ("set_stroke_line_cap :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -535,7 +570,6 @@ svg_util_set_stroke_line_join (gpointer closure,
                                svg_stroke_line_join_t 
                                line_join)
 { 
-        g_print ("set_stroke_line_join :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -543,7 +577,6 @@ static svg_status_t
 svg_util_set_stroke_miter_limit (gpointer closure, 
                                  double limit)
 { 
-        g_print ("set_stroke_miter_limit :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -558,7 +591,6 @@ static svg_status_t
 svg_util_set_stroke_paint (gpointer closure, 
                            const svg_paint_t *paint)
 { 
-        g_print ("set_stroke_paint :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -568,7 +600,8 @@ svg_util_set_stroke_width (gpointer closure,
 { 
         svg_util_render_context *ctx = (svg_util_render_context *) closure;
         
-        g_print ("set_stroke_width :-(\n");
+        ctx->state->stroke_width = width->value;
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -576,7 +609,10 @@ static svg_status_t
 svg_util_set_text_anchor (gpointer closure, 
                           svg_text_anchor_t text_anchor)
 { 
-        g_print ("set_text_anchor :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        ctx->state->text_anchor = text_anchor;
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -586,7 +622,9 @@ svg_util_transform (gpointer closure,
                     double c, double d,
                     double e, double f)
 { 
-        g_print ("transform :-(\n");
+        g_print ("Transform: %f | %f | %f | %f | %f | %f.\n",
+                a, b, c, d, e, f);
+                        
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -596,7 +634,7 @@ svg_util_apply_view_box (gpointer closure,
                          svg_length_t *width,
                          svg_length_t *height)
 { 
-        g_print ("apply_view_box :-(\n");
+        /* Ignored for now. :-( */
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -607,7 +645,6 @@ svg_util_set_viewport_dimension (gpointer closure,
 { 
 
         /* Looks like we can ignore that?  */
-        
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -625,7 +662,6 @@ svg_util_render_line (gpointer closure,
 static svg_status_t
 svg_util_render_path (gpointer closure)
 { 
-        g_print ("render_path :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -635,21 +671,57 @@ svg_util_render_ellipse (gpointer closure,
                          svg_length_t *cy,
                          svg_length_t *rx,
                          svg_length_t *ry)
-{ 
-        g_print ("render_ellipse :-(\n");
+{
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        if (cx->value - rx->value - ctx->state->stroke_width / 2 < ctx->min_x)
+                ctx->min_x = cx->value - rx->value - ctx->state->stroke_width / 2;
+        if (cy->value - ry->value - ctx->state->stroke_width / 2 < ctx->min_y)
+                ctx->min_y = cy->value - ry->value - ctx->state->stroke_width / 2;
+        if (cx->value + rx->value + ctx->state->stroke_width / 2 > ctx->max_x)
+                ctx->max_x = cx->value + rx->value + ctx->state->stroke_width / 2;
+        if (cy->value + ry->value + ctx->state->stroke_width / 2 > ctx->max_y)
+                ctx->max_y = cy->value + ry->value + ctx->state->stroke_width / 2;
+                
+        ctx->x = cx->value - rx->value;
+        ctx->y = cy->value - ry->value;
+        
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_render_rect (gpointer closure,
-                      svg_length_t *x,
-                      svg_length_t *y,
-                      svg_length_t *width,
-                      svg_length_t *height,
-                      svg_length_t *rx,
-                      svg_length_t *ry)
+                      svg_length_t *_x,
+                      svg_length_t *_y,
+                      svg_length_t *_width,
+                      svg_length_t *_height,
+                      svg_length_t *_rx,
+                      svg_length_t *_ry)
 { 
-        g_print ("render_rect :-(\n");
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x = _x->value;
+        gdouble y = _y->value;
+        gdouble width = _width->value;
+        gdouble height = _height->value;
+        gdouble surplus = ctx->state->stroke_width / 2;
+        
+        if (x - surplus < ctx->min_x)
+                ctx->min_x = x - surplus;
+        if (y - surplus < ctx->min_y)
+                ctx->min_y = y - surplus;
+        if (x + surplus + width > ctx->max_x)
+                ctx->max_x = x + surplus + width;
+        if (y + surplus  + height > ctx->max_y)
+                ctx->max_y = y + surplus + height;
+        
+        /* This is not completely accurate, if we draw a rounded rectangle.
+         * However, libsvg-cairo also seems to rely on a move_to operation
+         * after a rectangle is rendered, in order to initialize cairo's
+         * current point.
+         */
+        ctx->x = x;
+        ctx->y = y;
+                
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -767,4 +839,36 @@ bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
 
         *x = min_x;
         *width = max_x - min_x;
+}
+
+static struct svg_util_render_state 
+        *svg_util_push_state (struct svg_util_render_state *state)
+{
+        struct svg_util_render_state *new_state = g_malloc (sizeof *state);
+        
+        cairo_matrix_init_identity (&new_state->transform);
+
+        /* Cairo default font size.  */
+        new_state->font_size = 10;
+        new_state->font_style = SVG_FONT_STYLE_NORMAL;
+        new_state->font_weight = 1;
+        new_state->font_dirty = TRUE;
+        new_state->text_anchor = SVG_TEXT_ANCHOR_START;
+                      
+        new_state->prev = state;
+        
+        return new_state;
+}
+
+static struct svg_util_render_state
+        *svg_util_pop_state (struct svg_util_render_state *state)
+{
+        struct svg_util_render_state *prev_state = state->prev;
+        
+        if (state->font_family)
+                g_free (state->font_family);
+        
+        g_free (state);
+
+        return prev_state;
 }
