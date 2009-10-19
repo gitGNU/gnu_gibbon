@@ -848,14 +848,14 @@ bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
                 }
         }
 
-        if (t1 >= 0 && t1 <= 1) {
+        if (t1 > 0 && t1 < 1) {
                 f = c0 * t1 * t1 * t1 + c1 * t1 * t1 + c2 * t1 + c3;
                 if (f < min_x)
                         min_x = f;
                 else if (f > max_x)
                         max_x = f;
         }
-        if (t2 != t1 && t2 >= 0 && t2 <= 1) {
+        if (t2 > 0 && t2 < 1 && t2 != t1 && t2 >= 0 && t2 <= 1) {
                 f = c0 * t2 * t2 * t2 + c1 * t2 * t2 + c2 * t2 + c3;
                 if (f < min_x)
                         min_x = f;
