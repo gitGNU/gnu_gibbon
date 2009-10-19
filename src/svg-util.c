@@ -320,24 +320,50 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
 static svg_status_t
 svg_util_begin_group (gpointer closure, double opacity)
 {
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        ctx->state = svg_util_push_state (ctx->state);
+
         return SVG_STATUS_SUCCESS;
 }
 
 static svg_status_t
 svg_util_begin_element (gpointer closure)
 {
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        ctx->state = svg_util_push_state (ctx->state);
+
         return SVG_STATUS_SUCCESS;
 }
 
 static svg_status_t
 svg_util_end_element (gpointer closure)
 {
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        
+        ctx->state = svg_util_pop_state (ctx->state);
+        
+        /* Handle wrong stacking gracefully.  */
+        g_warn_if_fail (ctx->state);
+        if (!ctx->state)
+                ctx->state = svg_util_push_state (NULL);
+        
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_end_group (gpointer closure, double opacity)
 {
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        ctx->state = svg_util_pop_state (ctx->state);
+        
+        /* Handle wrong stacking gracefully.  */
+        g_warn_if_fail (ctx->state);
+        if (!ctx->state)
+                ctx->state = svg_util_push_state (NULL);
+        
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -844,8 +870,10 @@ bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
 static struct svg_util_render_state 
         *svg_util_push_state (struct svg_util_render_state *state)
 {
-        struct svg_util_render_state *new_state = g_malloc (sizeof *state);
-        
+        struct svg_util_render_state *new_state = g_malloc (sizeof *new_state);
+
+        memset (new_state, 0, sizeof *new_state);
+                
         cairo_matrix_init_identity (&new_state->transform);
 
         /* Cairo default font size.  */
