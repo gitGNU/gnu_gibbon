@@ -385,6 +385,7 @@ svg_util_move_to (gpointer closure, double x, double y)
         
         ctx->x = x;
         ctx->y = y;
+        cairo_matrix_transform_point (&ctx->state->transform, &ctx->x, &ctx->y);
 
         return SVG_STATUS_SUCCESS; 
 }
@@ -412,20 +413,9 @@ svg_util_line_to (gpointer closure, double x, double y)
                 y2 = ctx->y;
         }
         
-        if (x1 - ctx->state->stroke_width / 2 < ctx->min_x)
-                ctx->min_x = x1 - ctx->state->stroke_width / 2;
-        if (y1 - ctx->state->stroke_width / 2 < ctx->min_y)
-                ctx->min_y = y1 - ctx->state->stroke_width / 2;
+        svg_util_move_to (ctx, x, y);              
+        update_boundings (ctx, x1, y1, x2 - x1, y1 - y1);
         
-        if (x2 + ctx->state->stroke_width / 2 > ctx->max_x)
-                ctx->max_x = x2 + ctx->state->stroke_width / 2;
-                
-        if (y2 + ctx->state->stroke_width / 2 > ctx->max_y)
-                ctx->max_y = y2 + ctx->state->stroke_width / 2;
-                
-        ctx->x = x;
-        ctx->y = y;
-
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -441,19 +431,9 @@ svg_util_curve_to (gpointer closure,
         bezier_boundings (ctx->x, ctx->y, x1, y1, x2, y2, x3, y3,
                           &x, &y, &width, &height);
 
-        ctx->x = x3;
-        ctx->y = y3;
-        
-        if (x - ctx->state->stroke_width / 2 < ctx->min_x)
-                ctx->min_x = x - ctx->state->stroke_width / 2;
-        if (y - ctx->state->stroke_width / 2 < ctx->min_y)
-                ctx->min_y = y;
-
-        if (x + width + ctx->state->stroke_width / 2 > ctx->max_x)
-                ctx->max_x = x + width + ctx->state->stroke_width / 2;
-        if (y + height + ctx->state->stroke_width / 2 > ctx->max_y)
-                ctx->max_y = y + height + ctx->state->stroke_width / 2;
-                
+        svg_util_move_to (ctx, x3, y3);
+        update_boundings (ctx, x, y, width, height);
+                       
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -659,9 +639,13 @@ svg_util_transform (gpointer closure,
                     double c, double d,
                     double e, double f)
 { 
-        g_print ("Transform: %f | %f | %f | %f | %f | %f.\n",
-                a, b, c, d, e, f);
-                        
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        cairo_matrix_t new_transform;
+        
+        cairo_matrix_init (&new_transform, a, b, c, d, e, f);
+        cairo_matrix_multiply (&ctx->state->transform, &ctx->state->transform,
+                               &new_transform);
+                               
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -709,55 +693,33 @@ svg_util_render_ellipse (gpointer closure,
                          svg_length_t *rx,
                          svg_length_t *ry)
 {
-        svg_util_render_context *ctx = (svg_util_render_context *) closure;
-        
-        if (cx->value - rx->value - ctx->state->stroke_width / 2 < ctx->min_x)
-                ctx->min_x = cx->value - rx->value - ctx->state->stroke_width / 2;
-        if (cy->value - ry->value - ctx->state->stroke_width / 2 < ctx->min_y)
-                ctx->min_y = cy->value - ry->value - ctx->state->stroke_width / 2;
-        if (cx->value + rx->value + ctx->state->stroke_width / 2 > ctx->max_x)
-                ctx->max_x = cx->value + rx->value + ctx->state->stroke_width / 2;
-        if (cy->value + ry->value + ctx->state->stroke_width / 2 > ctx->max_y)
-                ctx->max_y = cy->value + ry->value + ctx->state->stroke_width / 2;
+        update_boundings (closure, 
+                          cx->value - rx->value, cy->value - ry->value,
+                          2 * rx->value, 2 * ry->value);
+
+        /* FIXME! Will the ellipse move the current point?  */
                 
-        ctx->x = cx->value - rx->value;
-        ctx->y = cy->value - ry->value;
-        
         return SVG_STATUS_SUCCESS; 
 }
 
 static svg_status_t
 svg_util_render_rect (gpointer closure,
-                      svg_length_t *_x,
-                      svg_length_t *_y,
-                      svg_length_t *_width,
-                      svg_length_t *_height,
-                      svg_length_t *_rx,
-                      svg_length_t *_ry)
+                      svg_length_t *x,
+                      svg_length_t *y,
+                      svg_length_t *width,
+                      svg_length_t *height,
+                      svg_length_t *rx,
+                      svg_length_t *ry)
 { 
-        svg_util_render_context *ctx = (svg_util_render_context *) closure;
-        gdouble x = _x->value;
-        gdouble y = _y->value;
-        gdouble width = _width->value;
-        gdouble height = _height->value;
-        gdouble surplus = ctx->state->stroke_width / 2;
-        
-        if (x - surplus < ctx->min_x)
-                ctx->min_x = x - surplus;
-        if (y - surplus < ctx->min_y)
-                ctx->min_y = y - surplus;
-        if (x + surplus + width > ctx->max_x)
-                ctx->max_x = x + surplus + width;
-        if (y + surplus  + height > ctx->max_y)
-                ctx->max_y = y + surplus + height;
-        
         /* This is not completely accurate, if we draw a rounded rectangle.
          * However, libsvg-cairo also seems to rely on a move_to operation
          * after a rectangle is rendered, in order to initialize cairo's
          * current point.
          */
-        ctx->x = x;
-        ctx->y = y;
+        svg_util_move_to (closure, x->value, y->value);
+        update_boundings (closure, 
+                          x->value, y->value,
+                          width->value, height->value);
                 
         return SVG_STATUS_SUCCESS; 
 }
@@ -988,4 +950,42 @@ arc_boundings (gdouble cx, gdouble cy, gdouble radius,
 
         *width = max_x - min_x;
         *height = max_y - min_y;
+}
+
+static void 
+update_boundings (struct svg_util_render_context *ctx,
+                  gdouble x, gdouble y, gdouble width, gdouble height)
+{
+        gdouble min_x, max_x, min_y, max_y;
+        
+        min_x = x;
+        min_y = y;
+        max_x = x + width;
+        max_y = y + height;
+        
+        cairo_matrix_transform_point (&ctx->state->transform, &min_x, &min_y);
+        cairo_matrix_transform_point (&ctx->state->transform, &max_y, &max_y);
+        
+        /* We ignore the stroke width for now.  But this decision has to
+         * be checked again.  It probably makes sense for calculating the
+         * dimension of the board, but for the checkers for example it may
+         * cause problems.  Adjacent checkers could then overlap.  Maybe it
+         * is bettere to make it optional.
+         */
+        if (min_x < ctx->min_x)
+                ctx->min_x = min_x;
+        if (min_x > ctx->max_x)
+                ctx->max_x = min_x;
+        if (min_y < ctx->min_y)
+                ctx->min_y = min_y;
+        if (min_y > ctx->max_y)
+                ctx->max_y = max_y;
+        if (max_x < ctx->min_x)
+                ctx->min_x = max_x;
+        if (max_x > ctx->max_x)
+                ctx->max_x = max_x;
+        if (max_y < ctx->min_y)
+                ctx->min_y = max_y;
+        if (max_y > ctx->max_y)
+                ctx->max_y = max_y;
 }
