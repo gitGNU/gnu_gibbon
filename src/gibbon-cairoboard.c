@@ -94,8 +94,6 @@ static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr,
 #endif
 static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
                                         xmlNode *node, GHashTable *id_hash);
-static svg_cairo_t *gibbon_cairoboard_draw_node (GibbonCairoboard *board,
-                                                 xmlNode *node, xmlDoc *doc);
                                                                                                                          
 #ifdef M_PI
 # undef M_PI
@@ -183,7 +181,6 @@ gibbon_cairoboard_new (const gchar *filename)
         xmlDoc *doc;
         GHashTable *ids;
         xmlNode *node;
-        svg_cairo_t *scr;
         double x, y, width, height;
                         
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
@@ -201,10 +198,13 @@ gibbon_cairoboard_new (const gchar *filename)
                 g_object_unref (self);
                 return NULL;
         }
-svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, filename,
-                         &x, &y, &width, &height);
-g_print ("Root: (%f|%f) %f x %f\n", x, y, width, height);
-        
+        /* FIXME! Check return value!
+         * FIXME! Use the calculated values!
+         */
+        svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, filename,
+                                 &x, &y, &width, &height);
+
+        /* The hash keys, the id strings, must be freed with xmlFree().  */ 
         ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
                                      xmlFree, NULL);
         gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc), ids);
@@ -215,22 +215,22 @@ g_print ("Root: (%f|%f) %f x %f\n", x, y, width, height);
                                filename, "checker_w_24_1");
                 g_object_unref (self);
                 g_free (data);
-                xmlFree (doc);
+                xmlFreeDoc (doc);
                 return NULL;
         }
-svg_util_get_dimensions (node, doc, filename,
-                         &x, &y, &width, &height);
-g_print ("White checker: (%f|%f) %f x %f\n", x, y, width, height);
-        scr = gibbon_cairoboard_draw_node (self, node, doc);
         g_hash_table_unref (ids);
-                
+
+        /* FIXME! Check return value!  */
+        svg_util_get_dimensions (node, doc, filename,
+                                 &x, &y, &width, &height);
+
         status = svg_cairo_create (&self->priv->scr);
         if (status != SVG_CAIRO_STATUS_SUCCESS) {
                 display_error (_("Error creating libsvg-cairo context: %s\n"),
                                svg_cairo_strerror (status));
                 g_object_unref (self);
                 g_free (data);
-                xmlFree (doc);
+                xmlFreeDoc (doc);
                 return NULL;
         }
         
@@ -246,11 +246,12 @@ g_print ("White checker: (%f|%f) %f x %f\n", x, y, width, height);
                                filename, svg_cairo_strerror (status));
                 g_object_unref (self);
                 g_free (data);
-                xmlFree (doc);
+                xmlFreeDoc (doc);
                 return NULL;
         }
-        
-        xmlFree (doc);
+       
+        xmlFreeDoc (doc);
+
         g_free (data);
         
         return self;
@@ -287,7 +288,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gdouble aspect_ratio;
         unsigned int width;
         unsigned int height;
-
+        
         gint i;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
@@ -627,55 +628,4 @@ gibbon_cairoboard_save_ids (GibbonCairoboard *self,
                 if (cur->children)
                         gibbon_cairoboard_save_ids (self, cur->children, hash);
         }
-}
-
-static svg_cairo_t *
-gibbon_cairoboard_draw_node (GibbonCairoboard *self, 
-                             xmlNode *node, xmlDoc *doc)
-{
-        xmlBuffer* buf;
-        gchar *svg;
-        svg_cairo_t *scr = NULL;
-        gchar *saved_locale;
-        svg_cairo_status_t status;
-        unsigned int width;
-        unsigned int height;
-                        
-        g_return_val_if_fail (GIBBON_IS_CAIROBOARD (self), NULL);
-        
-        status = svg_cairo_create (&scr);
-        if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                display_error (_("Error creating libsvg-cairo context: %s\n"),
-                               svg_cairo_strerror (status));
-                return NULL;
-        }
-                
-        buf = xmlBufferCreate ();
-        xmlNodeDump (buf, doc, node, 0, 0);
-        svg = g_strdup_printf ("<svg>%s</svg>", buf->content);
-        xmlBufferFree (buf);
-
-        saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_cairo_parse_buffer (scr, svg, strlen (svg));
-        setlocale (LC_NUMERIC, saved_locale);
-        if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                display_error (_("Error parsing internal SVG node: %s.\n"),
-                               svg_cairo_strerror (status));
-                g_free (svg);
-                svg_cairo_destroy (scr);
-                
-                return NULL;
-        }
-
-        /* FIXME! This method in libsvg-cairo only works with a valid
-         * viewBox or width and height in the svg root element.  We have
-         * to include libsvg-cairo in gibbon, and make that more accurate.
-         * Furthermore, the returned values must be double, not unsigned
-         * integers.
-         */
-        svg_cairo_get_size (scr, &width, &height);
-        g_print ("Checker dimensions: %u|%u.\n", width, height);
-        g_free (svg);
-                
-        return scr;
 }

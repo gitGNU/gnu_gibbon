@@ -255,13 +255,15 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                          gdouble *x, gdouble *y,
                          gdouble *width, gdouble *height)
 {
-        xmlBuffer* buf;
-        gchar *xml_src;
+        xmlChar *xml_src = NULL;
         gchar *saved_locale;
         svg_t *svg = NULL;
         svg_status_t status;
         svg_util_render_context ctx;
-                
+        xmlDoc *doc_copy = NULL;
+        xmlNode *root_copy = NULL;
+        xmlNode *node_copy = NULL;
+                        
         g_return_val_if_fail (node, FALSE);
         g_return_val_if_fail (x, FALSE);
         g_return_val_if_fail (y, FALSE);
@@ -275,17 +277,38 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
 
-        buf = xmlBufferCreate ();
-        xmlNodeDump (buf, doc, node, 0, 0);
-        xml_src = strcmp ("svg", (char *) node->name) ?
-                g_strdup_printf ("<svg>%s</svg>", buf->content)
-                : g_strdup ((gchar *) buf->content);
-        xmlBufferFree (buf);
+        doc_copy = xmlCopyDoc (doc, FALSE);
+        if (!doc_copy) {
+                display_error (_("Error copying SVG structure!\n"));
+                svg_destroy (svg);
+                return FALSE;
+        }
 
+        root_copy = xmlCopyNode (xmlDocGetRootElement (doc), 0);
+        if (!root_copy) {
+                display_error (_("Error copying SVG root element!\n"));
+                xmlFreeDoc (doc_copy);
+                return FALSE;
+        }
+        xmlAddChild ((xmlNodePtr) doc_copy, root_copy);
+
+        node_copy = xmlCopyNode (node, 1);        
+        if (!node_copy) {
+                display_error (_("Error copying SVG node!\n"));
+                xmlFreeDoc (doc_copy);
+                return FALSE;
+        }
+        xmlAddChild (root_copy, node_copy);
+
+        xmlDocDumpFormatMemory (doc_copy, &xml_src, NULL, 1);
+        
+        xmlFreeDoc (doc_copy);
+        
         saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_parse_buffer (svg, xml_src, strlen (xml_src));
+        status = svg_parse_buffer (svg, xml_src, 
+                                   strlen (xml_src));
         setlocale (LC_NUMERIC, saved_locale);
-        g_free (xml_src);
+        xmlFree (xml_src);
         if (status != SVG_STATUS_SUCCESS) {
                 display_error (_("Error parsing SVG file `%s': %s\n"),
                                filename, svg_strerror (status));
@@ -318,7 +341,6 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 
                 return FALSE;
         }
-        
         
         *x = ctx.min_x;
         *y = ctx.min_y;
