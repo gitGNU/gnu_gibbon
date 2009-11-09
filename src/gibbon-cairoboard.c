@@ -61,6 +61,8 @@ struct _GibbonCairoboardPrivate {
         struct GibbonPosition pos;
         
         svg_cairo_t *scr;
+
+        svg_cairo_t *scr_white_checker;
 };
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -131,6 +133,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
                                                   GibbonCairoboardPrivate);
         
         self->priv->scr = NULL;
+        self->priv->scr_white_checker = NULL;
 
         return;
 }
@@ -150,6 +153,10 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->scr)
                 svg_cairo_destroy (self->priv->scr);
         self->priv->scr = NULL;
+        
+        if (self->priv->scr_white_checker)
+                svg_cairo_destroy (self->priv->scr_white_checker);
+        self->priv->scr_white_checker = NULL;
         
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
@@ -182,6 +189,7 @@ gibbon_cairoboard_new (const gchar *filename)
         GHashTable *ids;
         xmlNode *node;
         double x, y, width, height;
+        xmlChar *xml_src = NULL;
                         
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 display_error (_("Error reading board definition `%s': %s\n"),
@@ -198,62 +206,85 @@ gibbon_cairoboard_new (const gchar *filename)
                 g_object_unref (self);
                 return NULL;
         }
-        /* FIXME! Check return value!
-         * FIXME! Use the calculated values!
-         */
-        svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, filename,
-                                 &x, &y, &width, &height);
+        
+        g_free (data);
+        
+        if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
+                                      filename, NULL,
+                                      &x, &y, &width, &height)) {
+            g_object_unref (self);
+            xmlFreeDoc (doc);
+            return NULL;
+        }
 
         /* The hash keys, the id strings, must be freed with xmlFree().  */ 
         ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
                                      xmlFree, NULL);
         gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc), ids);
+
+        /* FIXME! This must go into a routine of its own, because it is
+         * always the same for all components.  
+         */
         node = g_hash_table_lookup (ids, (const xmlChar *) "checker_w_24_1");
         if (!node) {
                 display_error (_("Board definition `%s' does not have an "
                                  "element `%s'.\n"),
                                filename, "checker_w_24_1");
                 g_object_unref (self);
-                g_free (data);
                 xmlFreeDoc (doc);
                 return NULL;
         }
         g_hash_table_unref (ids);
 
-        /* FIXME! Check return value!  */
-        svg_util_get_dimensions (node, doc, filename,
-                                 &x, &y, &width, &height);
+        status = svg_cairo_create (&self->priv->scr_white_checker);
+        if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                display_error (_("Error creating libsvg-cairo context: %s\n"),
+                               svg_cairo_strerror (status));
+                g_object_unref (self);
+                xmlFreeDoc (doc);
+                return NULL;
+        }
+        
+        if (!svg_util_get_dimensions (node, doc, filename, 
+                                      self->priv->scr_white_checker,
+                                      &x, &y, &width, &height)) {
+                g_object_unref (self);
+                xmlFreeDoc (doc);
+                return NULL;
+        }
 
         status = svg_cairo_create (&self->priv->scr);
         if (status != SVG_CAIRO_STATUS_SUCCESS) {
                 display_error (_("Error creating libsvg-cairo context: %s\n"),
                                svg_cairo_strerror (status));
                 g_object_unref (self);
-                g_free (data);
                 xmlFreeDoc (doc);
                 return NULL;
         }
+        
+        xmlDocDumpFormatMemory (doc, &xml_src, NULL, 1);
         
         /* Libsvg has a nasty bug: It parses doubles in a locale-dependent
          * manner.  We therefore have to fallback to th C locale while
          * parsing.  This is not thread-safe ...
          */
         saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_cairo_parse_buffer (self->priv->scr, data, strlen (data));
+        status = svg_cairo_parse_buffer (self->priv->scr, 
+                                         (char *) xml_src, 
+                                         strlen ((char *) xml_src));
         setlocale (LC_NUMERIC, saved_locale);
         if (status != SVG_CAIRO_STATUS_SUCCESS) {
                 display_error (_("Error parsing `%s': %s\n"),
                                filename, svg_cairo_strerror (status));
                 g_object_unref (self);
-                g_free (data);
+                xmlFree (xml_src);
                 xmlFreeDoc (doc);
                 return NULL;
         }
        
+        xmlFree (xml_src);
         xmlFreeDoc (doc);
 
-        g_free (data);
-        
         return self;
 }
 

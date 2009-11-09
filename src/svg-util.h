@@ -26,9 +26,11 @@
 
 #include <glib.h>
 #include <libxml/parser.h>
+#include <svg-cairo.h>
 
 extern gboolean svg_util_get_dimensions (xmlNode* node, xmlDoc *doc,
                                          const gchar *filename,
+                                         svg_cairo_t *cr,
                                          double *x, double *y,
                                          double *width, double *height);
 

@@ -246,12 +246,9 @@ svg_strerror (svg_status_t status)
         return _("Unknown error!");
 }
 
-/*
- * This routine is buggy on purpose.  It can only measure out a simple subset
- * of SVG files.
- */
 gboolean
 svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
+                         svg_cairo_t *cr,
                          gdouble *x, gdouble *y,
                          gdouble *width, gdouble *height)
 {
@@ -305,14 +302,14 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         xmlFreeDoc (doc_copy);
         
         saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_parse_buffer (svg, xml_src, 
-                                   strlen (xml_src));
+        status = svg_parse_buffer (svg, (char *) xml_src, 
+                                   strlen ((char *) xml_src));
         setlocale (LC_NUMERIC, saved_locale);
-        xmlFree (xml_src);
         if (status != SVG_STATUS_SUCCESS) {
                 display_error (_("Error parsing SVG file `%s': %s\n"),
                                filename, svg_strerror (status));
                 (void) svg_destroy (svg);
+                xmlFree (xml_src);
                 
                 return FALSE;
         }
@@ -338,7 +335,8 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 display_error (_("Error getting SVG dimensions of `%s': %s.\n"),
                                filename, svg_strerror (status));
                 (void) svg_destroy (svg);
-                
+                xmlFree (xml_src);
+                        
                 return FALSE;
         }
         
@@ -347,7 +345,28 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         *width = ctx.max_x - ctx.min_x;
         *height = ctx.max_y - ctx.min_y;
         
-        return FALSE;
+        if (cr) {
+                /* "Steal" this element.  */
+                xmlUnlinkNode (node);
+                xmlFreeNode (node);
+                *x = *y = 0;
+
+                saved_locale = setlocale (LC_NUMERIC, "POSIX");
+                status = svg_cairo_parse_buffer (cr, (char *) xml_src, 
+                                                 strlen ((char *) xml_src));
+                setlocale (LC_NUMERIC, saved_locale);
+                if (status != SVG_STATUS_SUCCESS) {
+                        display_error (_("Error parsing SVG file `%s': %s\n"),
+                                       filename, svg_strerror (status));
+                        xmlFree (xml_src);
+                
+                        return FALSE;
+                }
+        }
+        
+        xmlFree (xml_src);
+        
+        return TRUE;
 }
 
 static svg_status_t
