@@ -619,7 +619,8 @@ gibbon_connection_connect (GibbonConnection *self)
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
         if (!gibbon_connector_connect (self->priv->connector)) {
-                display_error (gibbon_connector_error (self->priv->connector));
+                display_error ("%s", 
+                               gibbon_connector_error (self->priv->connector));
                 gibbon_connection_disconnect (self);
                 return;
         }
@@ -698,7 +699,7 @@ gibbon_connection_disconnect (GibbonConnection *self)
         
         if (error) {
                 gdk_threads_enter ();
-                display_error (error);
+                display_error ("%s", error);
                 gdk_threads_leave (); 
                 g_free (error);
         }

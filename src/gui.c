@@ -292,7 +292,7 @@ display_error (const gchar *message_format, ...)
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
                                         GTK_BUTTONS_CLOSE,
-                                        message);
+                                        "%s", message);
         
         g_free (message);
         
