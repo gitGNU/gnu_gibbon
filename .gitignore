@@ -5,6 +5,7 @@
 /src/gibbon
 /src/gibbon.exe
 autom4te.cache
+aclocal.m4
 .*
 !.gitignore
 Makefile
