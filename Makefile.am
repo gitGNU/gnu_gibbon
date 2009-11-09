@@ -19,11 +19,9 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = libsvg libsvg-cairo src data pixmaps po
 
-EXTRA DIST = 
-
 DISTCLEANFILES =		\
 	intltool-extract	\
 	intltool-merge		\
 	intltool-update
 
-EXTRA_DIST = config.rpath
+EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath
