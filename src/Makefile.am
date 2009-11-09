@@ -57,4 +57,4 @@ noinst_HEADERS =		\
 	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
-gibbon_LDADD = $(GIBBON_LIBS) $(platform_libadd)
+gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)

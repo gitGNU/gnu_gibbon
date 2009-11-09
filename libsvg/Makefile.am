@@ -41,6 +41,7 @@ libsvg_a_SOURCES = \
 	svg_length.c \
 	svg_paint.c \
 	svg_parser.c \
+	svg_parser_libxml.c \
 	svg_pattern.c \
 	svg_path.c \
 	svg_str.c \
