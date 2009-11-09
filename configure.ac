@@ -21,8 +21,6 @@ m4_define(gibbon_major_version, 0)
 m4_define(gibbon_minor_version, 1)
 m4_define(gibbon_micro_version, 1)
 m4_define(gibbon_version, gibbon_major_version.gibbon_minor_version.gibbon_micro_version)
-m4_define(gibbon_api_version, gibbon_major_version.gibbon_minor_version)
-m4_define(gibbon_interface_age, 3)
 
 AC_INIT([gibbon],[gibbon_version])
 AC_CONFIG_SRCDIR(src/gibbon.c)
@@ -121,6 +119,8 @@ AM_GCONF_SOURCE_2
 
 AC_CONFIG_FILES([ 
     Makefile
+    libsvg/Makefile
+    libsvg-cairo/Makefile
     src/Makefile
     data/Makefile
     data/gibbon.desktop.in

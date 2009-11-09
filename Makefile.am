@@ -17,7 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src data pixmaps po
+SUBDIRS = libsvg libsvg-cairo src data pixmaps po
 
 EXTRA DIST = 
 

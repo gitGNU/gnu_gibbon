@@ -351,6 +351,13 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 xmlFreeNode (node);
                 *x = *y = 0;
 
+                /* libsvg does not work if the decimal separator is
+                 * not a dot.
+                 * 
+                 * Besides, it is a major embarassment that we have to
+                 * xml parse the source again but the API of libsvg-cairo
+                 * doesn't give us another chance.
+                 */
                 saved_locale = setlocale (LC_NUMERIC, "POSIX");
                 status = svg_cairo_parse_buffer (cr, (char *) xml_src, 
                                                  strlen ((char *) xml_src));

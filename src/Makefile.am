@@ -25,6 +25,8 @@ endif
 
 AM_CPPFLAGS = 				\
 	-I$(top_srcdir)			\
+	-I$(top_srcdir)/libsvg		\
+	-I$(top_srcdir)/libsvg-cairo	\
 	-I$(srcdir)			\
 	$(GIBBON_CFLAGS)		\
 	-DGIBBON_DATADIR=\""$(datadir)"\"	\
