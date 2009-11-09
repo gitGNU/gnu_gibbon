@@ -1,0 +1,10 @@
+This package contains modified sources of libsvg-cairo.  Since the library
+seems to be unmaintained, it is included here to allow bugfixes.
+
+The original author is Carl Worth, the original copyright notice was
+
+    Copyright (C) 2002 University of Southern California 
+
+The files were originally licensed under the terms of the GNU Library
+General Public License version 2.  They are relicensed here under the
+terms of the GNU Lesser General Public License version 3.

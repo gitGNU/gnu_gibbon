@@ -1,0 +1,21 @@
+This package contains modified sources of libsvg.  Since the library
+seems to be unmaintained, it is included here to allow bugfixes.
+
+The original authors in order of appearance are:
+
+    Carl D. Worth
+    Petter Mattis
+    Spencer Kimball
+    Josh MacDonald
+    Raph Levien
+    Steven Kramer
+
+The original copyright holders were:
+
+    Copyright (C) 2002 USC/Information Sciences Institute
+    Copyright (C) 2000 Eazel, Inc.
+    Copyright (C) 2002 Dom Lachowicz <cinamod@hotmail.com>
+
+The files were originally licensed under the terms of the GNU Library
+General Public License version 2.  They are relicensed here under the
+terms of the GNU Lesser General Public License version 3.
