@@ -32,3 +32,4 @@ src/gibbon.c
 src/gtkconnectiondialog.c
 src/gtkmainwindow.c
 src/gui.c
+src/svg-util.c
