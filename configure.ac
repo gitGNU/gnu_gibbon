@@ -87,6 +87,9 @@ AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
 AC_CHECK_LIB(socket, connect)
+AC_CHECK_LIB(jpeg, jpeg_destroy_decompress, 
+    test_jpeg=ok,
+    AC_MSG_ERROR([jpeg library not found]))
 
 if test $gibbon_native_msdos = no; then
   AC_CHECK_FUNC(res_query, ,
@@ -107,7 +110,7 @@ fi
 
 AC_CHECK_FUNCS ([index])
 
-GIBBON_LIBS="${GIBBON_LIBS}"
+GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
 
