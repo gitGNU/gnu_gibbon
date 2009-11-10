@@ -248,9 +248,8 @@ svg_strerror (svg_status_t status)
 
 gboolean
 svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
-                         svg_cairo_t *scr,
-                         gdouble *x, gdouble *y,
-                         gdouble *width, gdouble *height)
+                         struct svg_component **_component,
+                         gboolean render)
 {
         xmlChar *xml_src = NULL;
         gchar *saved_locale;
@@ -260,12 +259,21 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         xmlDoc *doc_copy = NULL;
         xmlNode *root_copy = NULL;
         xmlNode *node_copy = NULL;
-                        
+        struct svg_component *component;
+                      
         g_return_val_if_fail (node, FALSE);
-        g_return_val_if_fail (x, FALSE);
-        g_return_val_if_fail (y, FALSE);
-        g_return_val_if_fail (width, FALSE);
-        g_return_val_if_fail (height, FALSE);
+        
+        *_component = g_malloc0 (sizeof **_component);
+        component = *_component;
+        if (render) {
+                status = svg_cairo_create (&component->scr);
+                if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                        g_error (_("Error creating libsvg-cairo context: %s\n"),
+                                svg_cairo_strerror (status));
+                        g_free (component);
+                        return FALSE;
+                }
+        }
         
         status = svg_create (&svg);
         if (status != SVG_STATUS_SUCCESS) {
@@ -340,12 +348,12 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
         
-        *x = ctx.min_x;
-        *y = ctx.min_y;
-        *width = ctx.max_x - ctx.min_x;
-        *height = ctx.max_y - ctx.min_y;
+        component->x = ctx.min_x;
+        component->y = ctx.min_y;
+        component->width = ctx.max_x - ctx.min_x;
+        component->height = ctx.max_y - ctx.min_y;
         
-        if (scr) {
+        if (render) {
                 /* "Steal" this element.  */
                 xmlUnlinkNode (node);
                 xmlFreeNode (node);
@@ -358,7 +366,8 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                  * doesn't give us another chance.
                  */
                 saved_locale = setlocale (LC_NUMERIC, "POSIX");
-                status = svg_cairo_parse_buffer (scr, (char *) xml_src, 
+                status = svg_cairo_parse_buffer (component->scr, 
+                                                 (char *) xml_src, 
                                                  strlen ((char *) xml_src));
                 setlocale (LC_NUMERIC, saved_locale);
                 if (status != SVG_STATUS_SUCCESS) {
@@ -1043,18 +1052,6 @@ svg_util_create_component (gboolean render)
         struct svg_component *svg;
         svg_cairo_status_t status;
                 
-        svg = g_malloc0 (sizeof *svg);
-
-        if (render) {
-                status = svg_cairo_create (&svg->scr);
-                if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                        g_error (_("Error creating libsvg-cairo context: %s\n"),
-                                svg_cairo_strerror (status));
-                        g_free (svg);
-                        return NULL;
-                }
-        }
-        
         return svg;        
 }
 

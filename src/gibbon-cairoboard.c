@@ -208,14 +208,8 @@ gibbon_cairoboard_new (const gchar *filename)
                 return NULL;
         }
 
-        self->priv->board = svg_util_create_component (TRUE);
-        
         if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
-                                      filename, self->priv->board->scr,
-                                      &self->priv->board->x, 
-                                      &self->priv->board->y, 
-                                      &self->priv->board->width, 
-                                      &self->priv->board->height)) {
+                                      filename, &self->priv->board, TRUE)) {
             g_object_unref (self);
             xmlFreeDoc (doc);
             return NULL;
@@ -614,14 +608,9 @@ gibbon_cairoboard_get_component (GibbonCairoboard *self,
                 return NULL;
         }
 
-        svg = svg_util_create_component (TRUE);        
         if (!svg_util_get_dimensions (node, doc, filename, 
-                                      svg->scr,
-                                      &svg->x, &svg->y, 
-                                      &svg->width, &svg->height)) {
-                svg_util_free_component (svg);
+                                      &svg, render))
                 return NULL;
-        }
 
         return svg;
 }
