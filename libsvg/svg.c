@@ -210,17 +210,21 @@ svg_render (svg_t		*svg,
     if (svg->group_element == NULL)
 	return SVG_STATUS_SUCCESS;
 
-    /* XXX: Currently, the SVG parser doesn't resolve relative URLs
+    /* FIXME! Currently, the SVG parser doesn't resolve relative URLs
        properly, so I'll just cheese things in by changing the current
        directory -- at least I'll be nice about it and restore it
        afterwards. */
 
-    getcwd (orig_dir, MAXPATHLEN);
-    chdir (svg->dir_name);
+    if (!getcwd (orig_dir, MAXPATHLEN))
+        return SVG_STATUS_IO_ERROR;
+        
+    if (0 != chdir (svg->dir_name))
+        return SVG_STATUS_IO_ERROR;
     
     status = svg_element_render (svg->group_element, engine, closure);
 
-    chdir (orig_dir);
+    if (0 != chdir (orig_dir))
+        return SVG_STATUS_IO_ERROR;
 
     return status;
 }
