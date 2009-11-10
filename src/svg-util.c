@@ -248,7 +248,7 @@ svg_strerror (svg_status_t status)
 
 gboolean
 svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
-                         svg_cairo_t *cr,
+                         svg_cairo_t *scr,
                          gdouble *x, gdouble *y,
                          gdouble *width, gdouble *height)
 {
@@ -345,11 +345,10 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         *width = ctx.max_x - ctx.min_x;
         *height = ctx.max_y - ctx.min_y;
         
-        if (cr) {
+        if (scr) {
                 /* "Steal" this element.  */
                 xmlUnlinkNode (node);
                 xmlFreeNode (node);
-                *x = *y = 0;
 
                 /* libsvg does not work if the decimal separator is
                  * not a dot.
@@ -359,7 +358,7 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                  * doesn't give us another chance.
                  */
                 saved_locale = setlocale (LC_NUMERIC, "POSIX");
-                status = svg_cairo_parse_buffer (cr, (char *) xml_src, 
+                status = svg_cairo_parse_buffer (scr, (char *) xml_src, 
                                                  strlen ((char *) xml_src));
                 setlocale (LC_NUMERIC, saved_locale);
                 if (status != SVG_STATUS_SUCCESS) {
@@ -1036,4 +1035,56 @@ update_boundings (struct svg_util_render_context *ctx,
                 ctx->min_y = max_y;
         if (max_y > ctx->max_y)
                 ctx->max_y = max_y;
+}
+
+struct svg_component *
+svg_util_create_component (gboolean render)
+{
+        struct svg_component *svg;
+        svg_cairo_status_t status;
+                
+        svg = g_malloc0 (sizeof *svg);
+
+        if (render) {
+                status = svg_cairo_create (&svg->scr);
+                if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                        g_error (_("Error creating libsvg-cairo context: %s\n"),
+                                svg_cairo_strerror (status));
+                        g_free (svg);
+                        return NULL;
+                }
+        }
+        
+        return svg;        
+}
+
+void 
+svg_util_free_component (struct svg_component *svg)
+{
+        if (svg->scr)
+                (void) svg_cairo_destroy (svg->scr);
+        g_free (svg);
+}
+
+const gchar *
+svg_cairo_strerror (svg_cairo_status_t status)
+{
+        switch (status) {
+                case SVG_CAIRO_STATUS_SUCCESS:
+                        return _("No error (this should not happen)!");
+                case SVG_CAIRO_STATUS_NO_MEMORY:
+                        return _("Out of memory!");
+                case SVG_CAIRO_STATUS_IO_ERROR:
+                        return _("Input/output error!");
+                case SVG_CAIRO_STATUS_FILE_NOT_FOUND:
+                        return _("File not found!");
+                case SVG_CAIRO_STATUS_INVALID_VALUE:
+                        return _("Invalid value!");
+                case SVG_CAIRO_STATUS_INVALID_CALL:
+                        return _("Invalid call!");
+                case SVG_CAIRO_STATUS_PARSE_ERROR:
+                        return _("Parse error!");
+        }
+        
+        return _("Unknown error!");
 }

@@ -60,9 +60,10 @@ struct checker_rule checker_lookup[15] = {
 struct _GibbonCairoboardPrivate {
         struct GibbonPosition pos;
         
-        svg_cairo_t *scr;
-
-        svg_cairo_t *scr_white_checker;
+        struct svg_component *board;
+        
+        struct svg_component *white_checker;
+        struct svg_component *black_checker;
 };
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -96,34 +97,11 @@ static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr,
 #endif
 static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
                                         xmlNode *node, GHashTable *id_hash);
-                                                                                                                         
+                                     
 #ifdef M_PI
 # undef M_PI
 #endif
 #define M_PI 3.14159265358979323846
-
-static const gchar *
-svg_cairo_strerror (svg_cairo_status_t status)
-{
-        switch (status) {
-                case SVG_CAIRO_STATUS_SUCCESS:
-                        return _("No error (this should not happen)!");
-                case SVG_CAIRO_STATUS_NO_MEMORY:
-                        return _("Out of memory!");
-                case SVG_CAIRO_STATUS_IO_ERROR:
-                        return _("Input/output error!");
-                case SVG_CAIRO_STATUS_FILE_NOT_FOUND:
-                        return _("File not found!");
-                case SVG_CAIRO_STATUS_INVALID_VALUE:
-                        return _("Invalid value!");
-                case SVG_CAIRO_STATUS_INVALID_CALL:
-                        return _("Invalid call!");
-                case SVG_CAIRO_STATUS_PARSE_ERROR:
-                        return _("Parse error!");
-        }
-        
-        return _("Unknown error!");
-}
 
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
@@ -131,9 +109,10 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_CAIROBOARD, 
                                                   GibbonCairoboardPrivate);
-        
-        self->priv->scr = NULL;
-        self->priv->scr_white_checker = NULL;
+
+        self->priv->board = NULL;
+        self->priv->white_checker = NULL;
+        self->priv->black_checker = NULL;
 
         return;
 }
@@ -150,13 +129,13 @@ gibbon_cairoboard_finalize (GObject *object)
                 g_free (self->priv->pos.player[1]);
         self->priv->pos.player[1] = NULL;
         
-        if (self->priv->scr)
-                svg_cairo_destroy (self->priv->scr);
-        self->priv->scr = NULL;
+        if (self->priv->board)
+                svg_util_free_component (self->priv->board);
+        self->priv->board = NULL;
         
-        if (self->priv->scr_white_checker)
-                svg_cairo_destroy (self->priv->scr_white_checker);
-        self->priv->scr_white_checker = NULL;
+        if (self->priv->white_checker)
+                svg_util_free_component (self->priv->white_checker);
+        self->priv->white_checker = NULL;
         
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
@@ -236,31 +215,16 @@ gibbon_cairoboard_new (const gchar *filename)
         }
         g_hash_table_unref (ids);
 
-        status = svg_cairo_create (&self->priv->scr_white_checker);
-        if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                display_error (_("Error creating libsvg-cairo context: %s\n"),
-                               svg_cairo_strerror (status));
-                g_object_unref (self);
-                xmlFreeDoc (doc);
-                return NULL;
-        }
-        
+        self->priv->white_checker = svg_util_create_component (TRUE);        
         if (!svg_util_get_dimensions (node, doc, filename, 
-                                      self->priv->scr_white_checker,
+                                      self->priv->white_checker->scr,
                                       &x, &y, &width, &height)) {
                 g_object_unref (self);
                 xmlFreeDoc (doc);
                 return NULL;
         }
 
-        status = svg_cairo_create (&self->priv->scr);
-        if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                display_error (_("Error creating libsvg-cairo context: %s\n"),
-                               svg_cairo_strerror (status));
-                g_object_unref (self);
-                xmlFreeDoc (doc);
-                return NULL;
-        }
+        self->priv->board = svg_util_create_component (TRUE);
         
         xmlDocDumpFormatMemory (doc, &xml_src, NULL, 1);
         
@@ -269,7 +233,7 @@ gibbon_cairoboard_new (const gchar *filename)
          * parsing.  This is not thread-safe ...
          */
         saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_cairo_parse_buffer (self->priv->scr, 
+        status = svg_cairo_parse_buffer (self->priv->board->scr, 
                                          (char *) xml_src, 
                                          strlen ((char *) xml_src));
         setlocale (LC_NUMERIC, saved_locale);
@@ -324,7 +288,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
-        svg_cairo_get_size (self->priv->scr, &width, &height);
+        svg_cairo_get_size (self->priv->board->scr, &width, &height);
 g_print ("Size: %d x %d\n", width, height);
         aspect_ratio = (double) width / height;
         
@@ -353,10 +317,10 @@ g_print ("Size: %d x %d\n", width, height);
         cairo_translate (cr, translate_x, translate_y);
         cairo_scale (cr, scale, scale);
 
-        svg_cairo_set_viewport_dimension (self->priv->scr,
+        svg_cairo_set_viewport_dimension (self->priv->board->scr,
                                           allocation->width,
                                           allocation->height);
-        svg_cairo_render (self->priv->scr, cr);
+        svg_cairo_render (self->priv->board->scr, cr);
 return;
         
         gibbon_draw_bar (self, cr, -1);
@@ -660,3 +624,4 @@ gibbon_cairoboard_save_ids (GibbonCairoboard *self,
                         gibbon_cairoboard_save_ids (self, cur->children, hash);
         }
 }
+

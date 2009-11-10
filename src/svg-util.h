@@ -28,10 +28,18 @@
 #include <libxml/parser.h>
 #include <svg-cairo.h>
 
+struct svg_component {
+        svg_cairo_t *scr;
+        gdouble x, y, width, height;
+};
+
 extern gboolean svg_util_get_dimensions (xmlNode* node, xmlDoc *doc,
                                          const gchar *filename,
-                                         svg_cairo_t *cr,
+                                         svg_cairo_t *scr,
                                          double *x, double *y,
                                          double *width, double *height);
+struct svg_component* svg_util_create_component (gboolean render);
+void svg_util_free_component (struct svg_component *svg);
+const gchar *svg_cairo_strerror (svg_cairo_status_t status);
 
 #endif
