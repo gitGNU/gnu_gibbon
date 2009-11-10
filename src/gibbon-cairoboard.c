@@ -171,13 +171,10 @@ gibbon_cairoboard_new (const gchar *filename)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
         svg_cairo_status_t status;
-        gchar *saved_locale;
         gchar *data;
         GError *error;
         xmlDoc *doc;
         xmlNode *node;
-        double x, y, width, height;
-        xmlChar *xml_src = NULL;
                         
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 display_error (_("Error reading board definition `%s': %s\n"),
@@ -197,14 +194,6 @@ gibbon_cairoboard_new (const gchar *filename)
         
         g_free (data);
         
-        if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
-                                      filename, NULL,
-                                      &x, &y, &width, &height)) {
-            g_object_unref (self);
-            xmlFreeDoc (doc);
-            return NULL;
-        }
-
         self->priv->ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
                                                  xmlFree, NULL);        
         gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc));
@@ -221,27 +210,17 @@ gibbon_cairoboard_new (const gchar *filename)
 
         self->priv->board = svg_util_create_component (TRUE);
         
-        xmlDocDumpFormatMemory (doc, &xml_src, NULL, 1);
-        
-        /* Libsvg has a nasty bug: It parses doubles in a locale-dependent
-         * manner.  We therefore have to fallback to th C locale while
-         * parsing.  This is not thread-safe ...
-         */
-        saved_locale = setlocale (LC_NUMERIC, "POSIX");
-        status = svg_cairo_parse_buffer (self->priv->board->scr, 
-                                         (char *) xml_src, 
-                                         strlen ((char *) xml_src));
-        setlocale (LC_NUMERIC, saved_locale);
-        if (status != SVG_CAIRO_STATUS_SUCCESS) {
-                display_error (_("Error parsing `%s': %s\n"),
-                               filename, svg_cairo_strerror (status));
-                g_object_unref (self);
-                xmlFree (xml_src);
-                xmlFreeDoc (doc);
-                return NULL;
+        if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
+                                      filename, self->priv->board->scr,
+                                      &self->priv->board->x, 
+                                      &self->priv->board->y, 
+                                      &self->priv->board->width, 
+                                      &self->priv->board->height)) {
+            g_object_unref (self);
+            xmlFreeDoc (doc);
+            return NULL;
         }
-       
-        xmlFree (xml_src);
+
         xmlFreeDoc (doc);
 
         return self;
