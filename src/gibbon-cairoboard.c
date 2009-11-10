@@ -60,6 +60,8 @@ struct checker_rule checker_lookup[15] = {
 struct _GibbonCairoboardPrivate {
         struct GibbonPosition pos;
         
+        GHashTable *ids;
+
         struct svg_component *board;
         
         struct svg_component *white_checker;
@@ -96,7 +98,7 @@ static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr,
                              gdouble x, gdouble y);
 #endif
 static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
-                                        xmlNode *node, GHashTable *id_hash);
+                                        xmlNode *node);
                                      
 #ifdef M_PI
 # undef M_PI
@@ -128,7 +130,11 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->pos.player[1])
                 g_free (self->priv->pos.player[1]);
         self->priv->pos.player[1] = NULL;
-        
+
+        if (self->priv->ids)
+                g_hash_table_destroy (self->priv->ids);
+        self->priv->ids = NULL;
+                
         if (self->priv->board)
                 svg_util_free_component (self->priv->board);
         self->priv->board = NULL;
@@ -165,7 +171,6 @@ gibbon_cairoboard_new (const gchar *filename)
         gchar *data;
         GError *error;
         xmlDoc *doc;
-        GHashTable *ids;
         xmlNode *node;
         double x, y, width, height;
         xmlChar *xml_src = NULL;
@@ -196,15 +201,15 @@ gibbon_cairoboard_new (const gchar *filename)
             return NULL;
         }
 
-        /* The hash keys, the id strings, must be freed with xmlFree().  */ 
-        ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
-                                     xmlFree, NULL);
-        gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc), ids);
+        self->priv->ids = g_hash_table_new_full (g_str_hash, g_str_equal, 
+                                                 xmlFree, NULL);        
+        gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc));
 
         /* FIXME! This must go into a routine of its own, because it is
          * always the same for all components.  
          */
-        node = g_hash_table_lookup (ids, (const xmlChar *) "checker_w_24_1");
+        node = g_hash_table_lookup (self->priv->ids, 
+                                    (const xmlChar *) "checker_w_24_1");
         if (!node) {
                 display_error (_("Board definition `%s' does not have an "
                                  "element `%s'.\n"),
@@ -213,7 +218,6 @@ gibbon_cairoboard_new (const gchar *filename)
                 xmlFreeDoc (doc);
                 return NULL;
         }
-        g_hash_table_unref (ids);
 
         self->priv->white_checker = svg_util_create_component (TRUE);        
         if (!svg_util_get_dimensions (node, doc, filename, 
@@ -601,8 +605,7 @@ gibbon_cairoboard_set_position (GibbonCairoboard *self,
 }
 
 static void
-gibbon_cairoboard_save_ids (GibbonCairoboard *self,
-                            xmlNode *node, GHashTable *hash) 
+gibbon_cairoboard_save_ids (GibbonCairoboard *self, xmlNode *node) 
 {
         xmlNode *cur;
         xmlChar *id;
@@ -617,11 +620,11 @@ gibbon_cairoboard_save_ids (GibbonCairoboard *self,
                                 id = xmlGetProp (cur, 
                                                  (const xmlChar*) "xml:id");
                         if (id)
-                                g_hash_table_insert (hash, id, cur);
+                                g_hash_table_insert (self->priv->ids, id, cur);
                 }
                 
                 if (cur->children)
-                        gibbon_cairoboard_save_ids (self, cur->children, hash);
+                        gibbon_cairoboard_save_ids (self, cur->children);
         }
 }
 
