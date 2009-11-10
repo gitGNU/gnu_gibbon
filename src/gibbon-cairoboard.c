@@ -99,7 +99,11 @@ static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr,
 #endif
 static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
                                         xmlNode *node);
-                                     
+static struct svg_component *
+        gibbon_cairoboard_get_component (GibbonCairoboard *board,
+                                         const gchar *id, gboolean render,
+                                         xmlDoc *doc, const gchar *filename);
+   
 #ifdef M_PI
 # undef M_PI
 #endif
@@ -205,26 +209,13 @@ gibbon_cairoboard_new (const gchar *filename)
                                                  xmlFree, NULL);        
         gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc));
 
-        /* FIXME! This must go into a routine of its own, because it is
-         * always the same for all components.  
-         */
-        node = g_hash_table_lookup (self->priv->ids, 
-                                    (const xmlChar *) "checker_w_24_1");
-        if (!node) {
-                display_error (_("Board definition `%s' does not have an "
-                                 "element `%s'.\n"),
-                               filename, "checker_w_24_1");
+        self->priv->white_checker = 
+                gibbon_cairoboard_get_component (self,
+                                                 "checker_w_24_1", TRUE,
+                                                 doc, filename);
+        if (!self->priv->white_checker) {
+                xmlFree (doc);
                 g_object_unref (self);
-                xmlFreeDoc (doc);
-                return NULL;
-        }
-
-        self->priv->white_checker = svg_util_create_component (TRUE);        
-        if (!svg_util_get_dimensions (node, doc, filename, 
-                                      self->priv->white_checker->scr,
-                                      &x, &y, &width, &height)) {
-                g_object_unref (self);
-                xmlFreeDoc (doc);
                 return NULL;
         }
 
@@ -293,7 +284,6 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
         svg_cairo_get_size (self->priv->board->scr, &width, &height);
-g_print ("Size: %d x %d\n", width, height);
         aspect_ratio = (double) width / height;
         
         widget = GTK_WIDGET (self);
@@ -628,3 +618,31 @@ gibbon_cairoboard_save_ids (GibbonCairoboard *self, xmlNode *node)
         }
 }
 
+static struct svg_component *
+gibbon_cairoboard_get_component (GibbonCairoboard *self,
+                                 const gchar *id, gboolean render,
+                                 xmlDoc *doc, const gchar *filename)
+{
+        struct svg_component *svg;
+        xmlNode *node = 
+                g_hash_table_lookup (self->priv->ids, (const xmlChar *) id);
+
+
+        if (!node) {
+                display_error (_("Board definition `%s' does not have an "
+                                 "element `%s'.\n"),
+                               filename, "checker_w_24_1");
+                return NULL;
+        }
+
+        svg = svg_util_create_component (TRUE);        
+        if (!svg_util_get_dimensions (node, doc, filename, 
+                                      svg->scr,
+                                      &svg->x, &svg->y, 
+                                      &svg->width, &svg->height)) {
+                svg_util_free_component (svg);
+                return NULL;
+        }
+
+        return svg;
+}
