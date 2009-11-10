@@ -14,3 +14,7 @@
 - Make libsvg work in locales with a decimal comma 
   (http://bugs.gentoo.org/show_bug.cgi?id=292501)
 - Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
+- Do not return NULL from constructor of GibbonCairoboard in case the 
+  constructor fails.
+- Rewrite libsvg so that we can move and clone elements.
+- Rewrite libsvg so that we can get the dimensions of every element.
