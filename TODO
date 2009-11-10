@@ -11,3 +11,6 @@
 - Implement a ping function to avoid timeouts.
 - Change the constructor of gibbon_cairoboard to handle failure without
   warnings.
+- Make libsvg work in locales with a decimal comma 
+  (http://bugs.gentoo.org/show_bug.cgi?id=292501)
+- Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
