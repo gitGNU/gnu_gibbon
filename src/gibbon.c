@@ -107,7 +107,9 @@ parse_command_line (int argc, char *argv[])
         g_option_context_add_main_entries (context, options, PACKAGE);
         g_option_context_add_group (context, gtk_get_option_group (TRUE));
         g_option_context_parse (context, &argc, &argv, &error);
-        
+
+        g_option_context_free (context);
+
         if (error) {
                 g_print ("%s\n%s\n",
                          error->message,
