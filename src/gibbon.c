@@ -80,6 +80,8 @@ main(int argc, char *argv[])
         gtk_widget_show (window);       
         gtk_main ();
 
+	cleanup_gui ();
+
 	return 0;
 }
 

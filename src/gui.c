@@ -197,6 +197,8 @@ init_gui (const gchar *builder_filename)
         } else {
                 gtk_entry_set_text (GTK_ENTRY (entry), "");
         }
+	if (default_password)
+		g_free (default_password);
         
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
         
@@ -697,4 +699,11 @@ set_position (const struct GibbonPosition *pos)
 G_MODULE_EXPORT void
 on_edit_menu_item_activate (GtkObject *object, gpointer user_data)
 {
+}
+
+/* This method is mostly here to make valgrind happy.  */
+void
+cleanup_gui ()
+{
+
 }

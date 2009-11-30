@@ -1,0 +1,12 @@
+# g_get_home_dir always returns the same string.
+{
+   g_get_home_dir
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/libc-*.so
+   fun:__nss_database_lookup
+   fun:getpwnam_r
+   obj:/usr/lib/libglib-*.so.*
+   fun:g_get_home_dir
+}
+

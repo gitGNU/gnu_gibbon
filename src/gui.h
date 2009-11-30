@@ -42,6 +42,7 @@ extern GConfClient *conf_client;
 extern GibbonPlayerList *players;
 
 extern gint init_gui (const gchar *builder_filename);
+extern void cleanup_gui (void);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);
 extern void display_error (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
