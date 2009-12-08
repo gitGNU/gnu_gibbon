@@ -52,6 +52,7 @@ G_DEFINE_TYPE (GibbonConnector, gibbon_connector, G_TYPE_OBJECT);
 static gpointer *gibbon_connector_connect_worker (GibbonConnector *self);
 
 #ifdef G_OS_WIN32
+/* Test.  */
 static gchar *strerror_msdos (DWORD code);
 #endif
 
