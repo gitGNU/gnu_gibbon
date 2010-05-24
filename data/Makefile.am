@@ -36,20 +36,15 @@ else
 install-data-local:
 endif
 
-glade_files = $(PACKAGE).glade
-
 gtkbuilderdir = $(datadir)/$(PACKAGE)
 gtkbuilder_DATA = $(PACKAGE).xml
 
 EXTRA_DIST = \
 	$(desktop_in_files) \
 	$(schemas_in_files) \
-	$(glade_files) \
 	$(gtkbuilder_DATA)
 
 CLEANFILES = \
 	$(desktop_DATA) \
 	$(schemas_DATA)
 
-$(PACKAGE).xml: $(PACKAGE).glade
-	@GTK_BUILDER_CONVERT@ $(PACKAGE).glade $(PACKAGE).xml
