@@ -80,9 +80,10 @@ main(int argc, char *argv[])
         gtk_widget_show (window);       
         gtk_main ();
 
-	cleanup_gui ();
+        g_object_unref (connection);
+        cleanup_gui ();
 
-	return 0;
+        return 0;
 }
 
 static void
