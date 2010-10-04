@@ -165,7 +165,7 @@ gibbon_connection_finalize (GObject *object)
         conn->priv->out_buffer = NULL;
         
         if (conn->priv->session)
-                g_free (conn->priv->session);
+                g_object_unref (conn->priv->session);
         conn->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
