@@ -334,9 +334,9 @@ set_state_connecting ()
                 gtk_builder_get_object (builder, "disconnect_menu_item");
         
         gtk_widget_set_sensitive (GTK_WIDGET (connect_button), FALSE);
-        gtk_action_set_sensitive (GTK_ACTION (connect_item), FALSE);
+        gtk_widget_set_sensitive (GTK_WIDGET (connect_item), FALSE);
         gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), TRUE);
-        gtk_action_set_sensitive (GTK_ACTION (disconnect_item), TRUE);
+        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_item), TRUE);
 }
 
 void
