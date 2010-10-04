@@ -227,6 +227,8 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 mail = gconf_client_get_string (conf_client,
                                                 GIBBON_GCONF_SERVER_PREFS_PREFIX
                                                 "address", NULL);
+
+                gibbon_connection_queue_command (connection, "set boardstyle 3");
                 if (mail) {
                         gibbon_connection_queue_command (connection, 
                                                          "address %s",
