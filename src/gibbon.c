@@ -80,7 +80,9 @@ main(int argc, char *argv[])
         gtk_widget_show (window);       
         gtk_main ();
 
-        g_object_unref (connection);
+        if (connection)
+                g_object_unref (connection);
+
         cleanup_gui ();
 
         return 0;
