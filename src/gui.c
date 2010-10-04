@@ -197,9 +197,10 @@ init_gui (const gchar *builder_filename)
         } else {
                 gtk_entry_set_text (GTK_ENTRY (entry), "");
         }
-	if (default_password)
-		g_free (default_password);
         
+        if (default_password)
+                g_free (default_password);
+
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
         
         board_filename = g_build_filename (GIBBON_DATADIR, 
@@ -351,9 +352,9 @@ set_state_disconnected ()
                 gtk_builder_get_object (builder, "disconnect_menu_item");
         
         gtk_widget_set_sensitive (GTK_WIDGET (connect_button), TRUE);
-        gtk_action_set_sensitive (GTK_ACTION (connect_item), TRUE);
+        gtk_widget_set_sensitive (GTK_WIDGET (connect_item), TRUE);
         gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), FALSE);
-        gtk_action_set_sensitive (GTK_ACTION (disconnect_item), FALSE);
+        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_item), FALSE);
 }
 
 static void
