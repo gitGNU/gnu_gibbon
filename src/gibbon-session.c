@@ -61,7 +61,10 @@ static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
 
 struct _GibbonSessionPrivate {
-        gint dummy;
+        gchar *login;
+
+        gchar *watching;
+        gchar *opponent;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -77,14 +80,30 @@ gibbon_session_init (GibbonSession *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_SESSION, 
                                                   GibbonSessionPrivate);
+
+        self->priv->login = NULL;
+        self->priv->watching = NULL;
+        self->priv->opponent = NULL;
 }
 
 static void
 gibbon_session_finalize (GObject *object)
 {
-/*        GibbonSession *self = GIBBON_SESSION (object); */
+        GibbonSession *self = GIBBON_SESSION (object);
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
+
+        if (self->priv->login)
+                g_free (self->priv->login);
+        self->priv->login = NULL;
+
+        if (self->priv->watching)
+                g_free (self->priv->watching);
+        self->priv->watching = NULL;
+
+        if (self->priv->opponent)
+                g_free (self->priv->opponent);
+        self->priv->opponent = NULL;
 }
 
 static void
@@ -109,9 +128,11 @@ gibbon_session_class_init (GibbonSessionClass *klass)
 }
 
 GibbonSession *
-gibbon_session_new ()
+gibbon_session_new (const gchar *login)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
+
+        self->priv->login = g_strdup (login);
 
         return self;
 }
@@ -261,7 +282,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gchar *email;
         gchar *hostname;
         gint i;
-                
+
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 13);
@@ -316,7 +337,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                 opponent, watching);
                 
         g_strfreev (tokens);
-        
+
         return TRUE;
 }
 

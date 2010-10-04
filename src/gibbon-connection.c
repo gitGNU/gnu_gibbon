@@ -428,7 +428,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         signal = COOKED_SERVER_OUTPUT;
                         g_signal_emit (self, signals[LOGGED_IN], 0,
                                        self->priv->hostname);
-                        self->priv->session = gibbon_session_new ();
+                        self->priv->session = gibbon_session_new (self->priv->login);
 
                         /* FIXME! Gtk weirdness.  I thought that connecting
                          * signals happens on a per instance base.

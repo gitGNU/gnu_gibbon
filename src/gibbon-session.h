@@ -48,7 +48,7 @@ struct _GibbonSession
         GibbonSessionPrivate *priv;
 };
 
-GibbonSession *gibbon_session_new ();
+GibbonSession *gibbon_session_new (const gchar *login);
 G_MODULE_EXPORT void gibbon_session_server_output_cb (GibbonSession *object, 
                                                       const gchar *line,
                                                       GObject *emitter);
