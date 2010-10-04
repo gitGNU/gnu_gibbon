@@ -260,8 +260,8 @@ svg_cairo_create (svg_cairo_t **svg_cairo)
     (*svg_cairo)->state = NULL;
     /* XXX: These arbitrary constants don't belong. The viewport
      * handling should be reworked. */
-    (*svg_cairo)->viewport_width = 450;
-    (*svg_cairo)->viewport_height = 450;
+    (*svg_cairo)->viewport_width = 490;
+    (*svg_cairo)->viewport_height = 380;
  
     status = svg_create (&(*svg_cairo)->svg);
     if (status)
