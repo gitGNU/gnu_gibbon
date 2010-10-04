@@ -66,6 +66,9 @@ struct _GibbonCairoboardPrivate {
         
         struct svg_component *white_checker;
         struct svg_component *black_checker;
+
+        struct svg_component *white_dice[6];
+        struct svg_component *black_dice[6];
 };
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -116,6 +119,8 @@ static struct svg_component *
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
 {
+        size_t i;
+
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_CAIROBOARD, 
                                                   GibbonCairoboardPrivate);
@@ -124,6 +129,17 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv->white_checker = NULL;
         self->priv->black_checker = NULL;
 
+        for (i = 0;
+             i < sizeof self->priv->white_dice / sizeof self->priv->white_dice[0];
+             ++i) {
+            self->priv->white_dice[i] = NULL;
+        }
+        for (i = 0;
+             i < sizeof self->priv->black_dice / sizeof self->priv->black_dice[0];
+             ++i) {
+            self->priv->black_dice[i] = NULL;
+        }
+
         return;
 }
 
@@ -131,7 +147,8 @@ static void
 gibbon_cairoboard_finalize (GObject *object)
 {
         GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
- 
+        size_t i;
+
         if (self->priv->pos.player[0])
                 g_free (self->priv->pos.player[0]);
         self->priv->pos.player[0] = NULL;
@@ -155,6 +172,21 @@ gibbon_cairoboard_finalize (GObject *object)
                 svg_util_free_component (self->priv->black_checker);
         self->priv->black_checker = NULL;
         
+        for (i = 0;
+             i < sizeof self->priv->white_dice / sizeof self->priv->white_dice[0];
+             ++i) {
+            if (self->priv->white_dice[i])
+                    svg_util_free_component (self->priv->white_dice[i]);
+            self->priv->white_dice[i] = NULL;
+        }
+        for (i = 0;
+             i < sizeof self->priv->black_dice / sizeof self->priv->black_dice[0];
+             ++i) {
+                if (self->priv->black_dice[i])
+                        svg_util_free_component (self->priv->black_dice[i]);
+            self->priv->black_dice[i] = NULL;
+        }
+
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
 
@@ -183,6 +215,8 @@ gibbon_cairoboard_new (const gchar *filename)
         GError *error;
         xmlDoc *doc;
         xmlNode *node;
+        int i;
+        char id_str[8];
                         
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 display_error (_("Error reading board definition `%s': %s\n"),
@@ -224,6 +258,34 @@ gibbon_cairoboard_new (const gchar *filename)
                 xmlFree (doc);
                 g_object_unref (self);
                 return NULL;
+        }
+
+        strncpy (id_str, "die_w_6", 8);
+        for (i = 0; i < 6; ++i) {
+                id_str[6] = '1' + i;
+                self->priv->white_dice[i] =
+                        gibbon_cairoboard_get_component (self,
+                                                         id_str, TRUE,
+                                                         doc, filename);
+                if (!self->priv->white_dice[i]) {
+                        xmlFree (doc);
+                        g_object_unref (self);
+                        return NULL;
+                }
+        }
+
+        strncpy (id_str, "die_b_6", 8);
+        for (i = 0; i < 6; ++i) {
+                id_str[6] = '1' + i;
+                self->priv->black_dice[i] =
+                        gibbon_cairoboard_get_component (self,
+                                                         id_str, TRUE,
+                                                         doc, filename);
+                if (!self->priv->black_dice[i]) {
+                        xmlFree (doc);
+                        g_object_unref (self);
+                        return NULL;
+                }
         }
 
         if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
@@ -398,40 +460,6 @@ gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint 
                                                       x, y);
                 text_width = self->priv->black_checker->width * 0.75;
         }
-                
-#if (0)
-        if (side > 0) {        
-                pat = cairo_pattern_create_radial (x - shade_offset, 
-                                                   y - shade_offset / 2, 
-                                                   checker_radius 
-                                                       - shade_offset,
-                                                   x - shade_offset, 
-                                                   y - shade_offset / 2, 
-                                                   checker_radius 
-                                                       + shade_offset);
-                cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0);
-                cairo_pattern_add_color_stop_rgba (pat, 1, 0, 0, 0, 1);
-                cairo_set_source (cr, pat);
-                cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
-                cairo_fill (cr);
-                cairo_pattern_destroy (pat);
-        } else if (side < 0) {
-                pat = cairo_pattern_create_radial (x + shade_offset, 
-                                                   y + shade_offset / 2, 
-                                                   checker_radius
-                                                       - shade_offset / 2,
-                                                   x + shade_offset, 
-                                                   y + shade_offset / 2, 
-                                                   checker_radius
-                                                       + 1.5 * shade_offset);
-                cairo_pattern_add_color_stop_rgba (pat, 0, 0.7, 0.7, 0.7, 0);
-                cairo_pattern_add_color_stop_rgba (pat, 1, 0.7, 0.7, 0.7, 1);
-                cairo_set_source (cr, pat);
-                cairo_arc (cr, x, y, checker_width / 2, 0, 2 * M_PI);
-                cairo_fill (cr);
-                cairo_pattern_destroy (pat);
-        }
-#endif
         
         if (number > 1) {
                 cairo_select_font_face (cr, font_family, slant, weight);
