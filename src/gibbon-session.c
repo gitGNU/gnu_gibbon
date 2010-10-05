@@ -335,7 +335,38 @@ gibbon_session_clip_who_info (GibbonSession *self,
         
         gibbon_player_list_set (players, who, available, rating, experience,
                                 opponent, watching);
-                
+
+        if (!strcmp (who, self->priv->login)) {
+                if (!opponent[0])
+                        opponent = NULL;
+                if (!watching[0])
+                        watching = NULL;
+                if (self->priv->opponent) {
+                        if (opponent) {
+                                if (strcmp (opponent, self->priv->opponent)) {
+                                        g_free (self->priv->opponent);
+                                        self->priv->opponent = g_strdup (opponent);
+                                }
+                        } else {
+                                self->priv->opponent = g_strdup (opponent);
+                        }
+                } else if (opponent) {
+                        self->priv->opponent = g_strdup (opponent);
+                }
+                if (self->priv->watching) {
+                        if (watching) {
+                                if (strcmp (watching, self->priv->watching)) {
+                                        g_free (self->priv->watching);
+                                        self->priv->watching = g_strdup (watching);
+                                }
+                        } else {
+                                self->priv->watching = g_strdup (watching);
+                        }
+                } else if (watching) {
+                        self->priv->watching = g_strdup (watching);
+                }
+        }
+
         g_strfreev (tokens);
 
         return TRUE;
