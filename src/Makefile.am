@@ -38,6 +38,8 @@ gibbon_SOURCES =		\
 	gibbon-cairoboard.c	\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
+	gibbon-game.c           \
+	gibbon-match.c          \
 	gibbon-player-list.c	\
 	gibbon-session.c	\
 	gtkmainwindow.c		\
@@ -51,6 +53,8 @@ noinst_HEADERS =		\
 	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
+	gibbon-game.h           \
+	gibbon-match.h          \
 	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h			\

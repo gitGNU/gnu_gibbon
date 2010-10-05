@@ -26,6 +26,8 @@ data/gibbon.xml
 src/gibbon-cairoboard.c
 src/gibbon-connection.c
 src/gibbon-connector.c
+src/gibbon-game.c
+src/gibbon-match.c
 src/gibbon-session.c
 src/gibbon.c
 src/gtkconnectiondialog.c
