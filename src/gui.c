@@ -678,6 +678,8 @@ on_watch_player_menu_item_activate (GtkObject *object, gpointer user_data)
                         
                         gibbon_connection_queue_command (connection,
                                                          "watch %s", who);  
+                        gibbon_connection_queue_command (connection,
+                                                         "board");
                 }
         }
         
