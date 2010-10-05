@@ -18,3 +18,4 @@
   constructor fails.
 - Rewrite libsvg so that we can move and clone elements.
 - Rewrite libsvg so that we can get the dimensions of every element.
+- Glib 2.2 now has the GResolver API.  Use it!
