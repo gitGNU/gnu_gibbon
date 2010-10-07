@@ -17,7 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libsvg libsvg-cairo src data pixmaps po
+SUBDIRS = libsgf libsvg libsvg-cairo src data pixmaps po
 
 DISTCLEANFILES =		\
 	intltool-extract	\

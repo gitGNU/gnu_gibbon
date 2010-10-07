@@ -1,0 +1,33 @@
+noinst_PROGRAMS = sgfgen
+
+sgfgen_SOURCES = sgfgen.c
+
+EXTRA_DIST = sgf_extras.def sgf_properties.def
+
+noinst_HEADERS = \
+        gg_utils.h \
+	sgftree.h \
+	sgf_properties.h
+
+# Remove these files here... they are created locally
+DISTCLEANFILES = *~
+
+AM_CPPFLAGS =                           \
+         -I$(top_srcdir)                \
+	 -I$(srcdir)                    \
+	 $(GIBBON_CFLAGS)               \
+	 -D_ISOC99_SOURCE
+
+noinst_LIBRARIES = libsgf.a
+
+libsgf_a_SOURCES = \
+        gg_utils.c \
+	sgf_utils.c \
+	sgfnode.c \
+	sgftree.c
+
+# To rebuild sgf_properties.h in case sgf_properties.def or sgf_extras.def 
+# is changed, 'make sgf_properties'. Normally this is not needed.
+sgf_properties:
+	cat $(srcdir)/sgf_properties.def $(srcdir)/sgf_extras.def |\
+		./sgfgen > sgf_properties.h
