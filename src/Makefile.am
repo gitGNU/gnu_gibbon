@@ -25,7 +25,6 @@ endif
 
 AM_CPPFLAGS = 				\
 	-I$(top_srcdir)			\
-	-I$(top_srcdir)/libsgf          \
 	-I$(top_srcdir)/libsvg		\
 	-I$(top_srcdir)/libsvg-cairo	\
 	-I$(srcdir)			\
@@ -62,4 +61,4 @@ noinst_HEADERS =		\
 	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
-gibbon_LDADD = $(GIBBON_LIBS) ../libsgf/libsgf.a ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
+gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)

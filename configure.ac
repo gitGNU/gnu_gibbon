@@ -115,12 +115,8 @@ AC_SUBST(GIBBON_CFLAGS)
 
 AM_GCONF_SOURCE_2
 
-dnl Needed by libsgf.
-AC_HEADER_TIME
-
 AC_CONFIG_FILES([ 
     Makefile
-    libsgf/Makefile
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile
