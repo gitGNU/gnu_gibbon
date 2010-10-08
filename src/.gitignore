@@ -1,2 +1,5 @@
 gobject-skeleton.c
 gobject-skeleton.h
+sgf_l.c
+sgf_y.c
+sgf_y.h

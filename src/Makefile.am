@@ -33,6 +33,8 @@ AM_CPPFLAGS = 				\
 	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
 	-D_ISOC99_SOURCE
 
+BUILT_SOURCES = sgf_y.c sgf_l.c
+
 gibbon_SOURCES =		\
 	gibbon.c 		\
 	gibbon-cairoboard.c	\
@@ -45,6 +47,8 @@ gibbon_SOURCES =		\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c			\
+	sgf_l.l                 \
+	sgf_y.y                 \
 	svg-util.c
 
 noinst_HEADERS =		\
@@ -58,7 +62,10 @@ noinst_HEADERS =		\
 	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h			\
+	sgf_y.h                 \
 	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
+
+EXTRA_DIST = $(BUILT_SOURCES) sgf_y.h
