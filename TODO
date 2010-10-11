@@ -19,3 +19,6 @@
 - Rewrite libsvg so that we can move and clone elements.
 - Rewrite libsvg so that we can get the dimensions of every element.
 - Glib 2.2 now has the GResolver API.  Use it!
+- Get rid of list.c and list.h for SGF code.
+- Get rid of strdup for SGF code.
+- Make SGF code readable.
