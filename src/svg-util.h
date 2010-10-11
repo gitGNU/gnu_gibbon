@@ -33,6 +33,8 @@ struct svg_component {
         gdouble x, y, width, height;
 };
 
+G_BEGIN_DECLS
+
 extern gboolean svg_util_get_dimensions (xmlNode* node, xmlDoc *doc,
                                          const gchar *filename,
                                          struct svg_component **svg,
@@ -40,5 +42,7 @@ extern gboolean svg_util_get_dimensions (xmlNode* node, xmlDoc *doc,
 
 void svg_util_free_component (struct svg_component *svg);
 const gchar *svg_cairo_strerror (svg_cairo_status_t status);
+
+G_END_DECLS
 
 #endif
