@@ -31,7 +31,8 @@ AM_CPPFLAGS = 				\
 	$(GIBBON_CFLAGS)		\
 	-DGIBBON_DATADIR=\""$(datadir)"\"	\
 	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
-	-D_ISOC99_SOURCE
+	-D_ISOC99_SOURCE		\
+	-D_SVID_SOURCE
 
 BUILT_SOURCES = sgf_y.c sgf_l.c
 
@@ -47,6 +48,7 @@ gibbon_SOURCES =		\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c			\
+	list.c			\
 	sgf_l.l                 \
 	sgf_y.y                 \
 	svg-util.c
@@ -62,6 +64,7 @@ noinst_HEADERS =		\
 	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h			\
+	list.h			\
 	sgf_y.h                 \
 	svg-util.h
 
