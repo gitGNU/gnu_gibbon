@@ -16,6 +16,7 @@
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS = gibbon
+noinst_PROGRAMS = sgftest
 
 platform_libadd =
 
@@ -70,5 +71,12 @@ noinst_HEADERS =		\
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
+
+sgftest_SOURCES = sgftest.c	\
+	list.c			\
+	sgf_l.l                 \
+	sgf_y.y
+
+sgftest_LDADD = $(GIBBON_LIBS) $(platform_libadd)
 
 EXTRA_DIST = $(BUILT_SOURCES) sgf_y.h
