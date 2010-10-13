@@ -59,11 +59,6 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PATH_PROG(GZIP, gzip)
 
-AC_PROG_YACC
-AM_PROG_LEX
-AM_YFLAGS='-d'
-AC_SUBST(AM_YFLAGS)
-
 AC_SUBST(ACLOCAL_AMFLAGS, "$ACLOCAL_FLAGS -I m4")
 
 GETTEXT_PACKAGE=gibbon
@@ -122,6 +117,7 @@ AM_GCONF_SOURCE_2
 
 AC_CONFIG_FILES([ 
     Makefile
+    libgsgf/Makefile
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile

@@ -16,7 +16,6 @@
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS = gibbon
-noinst_PROGRAMS = sgftest
 
 platform_libadd =
 
@@ -35,8 +34,6 @@ AM_CPPFLAGS = 				\
 	-D_ISOC99_SOURCE		\
 	-D_SVID_SOURCE
 
-BUILT_SOURCES = sgf_y.c sgf_l.c
-
 gibbon_SOURCES =		\
 	gibbon.c 		\
 	gibbon-cairoboard.c	\
@@ -49,9 +46,6 @@ gibbon_SOURCES =		\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c			\
-	list.c			\
-	sgf_l.l                 \
-	sgf_y.y                 \
 	svg-util.c
 
 noinst_HEADERS =		\
@@ -65,18 +59,7 @@ noinst_HEADERS =		\
 	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h			\
-	list.h			\
-	sgf_y.h                 \
 	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
-
-sgftest_SOURCES = sgftest.c	\
-	list.c			\
-	sgf_l.l                 \
-	sgf_y.y
-
-sgftest_LDADD = $(GIBBON_LIBS) $(platform_libadd)
-
-EXTRA_DIST = $(BUILT_SOURCES) sgf_y.h
