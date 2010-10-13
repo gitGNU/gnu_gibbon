@@ -1,3 +1,492 @@
+commit 4b06ea067897788f2fbb4d02b235f3cc1901f5b5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Oct 13 18:50:53 2010 +0200
+
+    Removed core dump from repository.
+
+commit 7b787defa29b4e8835670b1c4eb9dcc880b0680f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Oct 13 18:49:19 2010 +0200
+
+    Foundations for own SGF parser.
+
+commit b5669f40ee0bdbe227cf9e97901de0d0b264f4b4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 12 10:01:27 2010 +0200
+
+    Tests for SGFParser.
+
+commit 50b5e8f3dfa231ad7a906ca7f6b7f2a73969a22f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 11 19:58:19 2010 +0200
+
+    Stolen from GNU backgammon.
+
+commit a8dadb266dcc1c761955ae7013fefaaf59e74120
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 11 19:56:47 2010 +0200
+
+    Temporarily need strdup().
+
+commit ca643473e58c12389306811858bdc5bac16c01a6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 11 19:54:31 2010 +0200
+
+    Temporarily stolen from GNU backgammon.
+
+commit 858c43fcd6d04cb349d4d3a68d821ade0d8cff87
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 11 19:52:44 2010 +0200
+
+    Updated.
+
+commit 05179f45a95bae064cf2e8833f61156b2d585c1c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 11 19:47:10 2010 +0200
+
+    C++ compatibility.
+
+commit 21c9dea29e7a14cf9c68220ffecbf33b8e5444da
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 8 09:29:56 2010 +0200
+
+    Stole SGF parser from GNU backgammon.
+
+commit 41036a3c973f6d7127a2cd0a3f1c50d8bee3a818
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 7 20:18:29 2010 +0200
+
+    Parser-generator tools are required.
+
+commit 488457e5a2524860384eb5bd27b69a58f7279bae
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 7 20:13:38 2010 +0200
+
+    Library libsgf.a is too specific to GNU go.
+
+commit c62e5649af7613e184156ead325861c1734ce566
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 7 18:49:01 2010 +0200
+
+    Stole libsgf from GNU Go.
+
+commit 3ec083a63040d5f9ccf419e5b06667fe04e8c6a9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 7 18:11:45 2010 +0200
+
+    Re-generated.
+
+commit 6520cef80f027d5cb3dec7efbf29f62d9c44455f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 7 18:10:20 2010 +0200
+
+    Require my versions f automake and inttool.
+
+commit f7affd40b205e7a5dac8cfc089c2f0a912b2ddcf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 09:23:08 2010 +0300
+
+    Added.
+
+commit e1ef86a1c350f307c67c68c24d5a65d32d3cf353
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 09:07:36 2010 +0300
+
+    Issue board command after watch.
+
+commit 415425898a8e9fd614e21fc63a037d821b41c5d8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 08:41:21 2010 +0300
+
+    Skeleton for match and game objects.
+
+commit 54160de032b4ca3ead2517378c541c0af0e83a1d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 08:31:32 2010 +0300
+
+    Reminder for GResolver API added.
+
+commit 68fa61d9d4fc02c9a51bdb239ad72b87d95e0b4e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 08:30:52 2010 +0300
+
+    Ignore private skeleton file.
+
+commit 5deed1ab124b5770507afea712ac02c69fff1a92
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 08:11:40 2010 +0300
+
+    Keep tracking of current opponent and watchee.
+
+commit 1e3741475a45d93e7bf19ffce4d7f394ac290270
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 07:42:53 2010 +0300
+
+    Glade file replaced by XML builder file data/gibbon.xml.
+
+commit c38684d6ddf44e8a40cca718fbe16a3522683556
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 5 00:12:48 2010 +0300
+
+    Keep track of current user, opponent and watches.
+
+commit d82ca089205f9295b643b11a56679444f318baa7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 18:54:27 2010 +0300
+
+    Always set boardstyle to parsable format.
+
+commit dbaa125cea9d661ba3594eb7d38d80d04fbbb14f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 18:53:40 2010 +0300
+
+    Do not g_free() session but g_object_unref() it.
+
+commit ecfa82628a25568cb41095d4e8d78e504a4cda4e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 18:53:17 2010 +0300
+
+    Only finalize existing connection.
+
+commit f0edd9047034598ad829554e72cf25e56e07c7db
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 18:52:45 2010 +0300
+
+    Menu items are now widgets again, not actions.
+
+commit 2f5b6f020863778dccc27d3204976167f82afd97
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 17:56:47 2010 +0300
+
+    Store svg components for dice.
+
+commit f960337ff09f868bb2966df46ab66bec611bcd11
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 17:35:19 2010 +0300
+
+    Keep svg files with and without internal entities.
+
+commit c43c4b525284cd91c8b591bd5b920b2a7c1b17da
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 17:30:00 2010 +0300
+
+    Added dice.
+
+commit af350c024979f39a47190bb132fdc045df12c52a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 16:00:09 2010 +0300
+
+    Display checkers.
+
+commit 0c355e8619700c50d36e3766ca0ac71d23bdbd2e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 14:46:24 2010 +0300
+
+    Finalized connection object on exit to make valgrind happy.
+
+commit b82311d9c43f41afa5fe7b73e3f8846b55461ac7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 14:45:50 2010 +0300
+
+    Menu items are widgets once again, not actions.
+
+commit be79524ec00062b40ca68d65528501933d311382
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 13:31:44 2010 +0300
+
+    Size allocation for server output window.
+
+commit 57fcbddbefc4b833e11bd3fcce92f15f5bec8880
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 4 13:27:10 2010 +0300
+
+    Changed hardcoded default dimensions.
+
+commit 84c900d1dea5473c9949d93519b23804665c1756
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Oct 3 13:31:00 2010 +0300
+
+    Replaced deprecated function png_set_gray_1_2_4_to_8 with
+    png_set_expand_gray_1_2_4_to_8.
+
+commit 7148aaa031799215b76984d106d5a05cbad2a536
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon May 24 12:43:33 2010 +0200
+
+    Match actual image size.
+
+commit 4cd664353e45501713e508f83df731eefe5fe7fe
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon May 24 12:42:44 2010 +0200
+
+    Glade-3 now supports GtkBuilder natively.  But we need gtk+-2.16.
+
+commit 06217c7d6d3bd31c561c0229a5c91ef8ecf724a6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 8 13:39:25 2009 +0100
+
+    Reverted last commit.
+
+commit f39c7054c56ff76bcd7c0ff65e1a475ae5fa1409
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 8 13:35:11 2009 +0100
+
+    Test.
+
+commit 170489f8d2773dadf6498e18d0b7640362f16ddc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 30 10:32:36 2009 +0100
+
+    Valgrind stuff.
+
+commit 963e5f7e245db1b71762427793ef1630d8f15075
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 29 15:13:53 2009 +0100
+
+    Fixed memory leak.
+
+commit 47b9bb75517c62eab48ba8d7c90a05bb5ee226b7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 11 09:52:12 2009 +0200
+
+    Foundations for drawing flat checkers.
+
+commit 47cfa1b1b6bf50ba4c49eec6eb276960c7fee5f6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 09:54:34 2009 +0200
+
+    Simplified interface for svg_util_get_dimensions.
+
+commit a7d0c725125d7ca1503e82cde6cc9c8fe696c370
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 09:41:35 2009 +0200
+
+    Cleaned up constructor.
+
+commit 1498afed362679df01ab224403f26b6f2fc637ff
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 09:28:13 2009 +0200
+
+    Move code from constructor into separate function.
+
+commit 185099ef6e79ba5ac9494712adc6bfb6a277d393
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 09:27:10 2009 +0200
+
+    Updated.
+
+commit 59e5b971305a96fb42df18d050aef54e9837a28f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 09:09:50 2009 +0200
+
+    More refactoring, clean up constructor.
+
+commit f50bc8a367da7527be4e96126f7a37fde58e4519
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 08:57:17 2009 +0200
+
+    Cleanup: Cut some spaghettis into digestable pieces.
+
+commit 21334e95aee8e4043d8865fa0a687e5fad088f2b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 08:37:42 2009 +0200
+
+    Updated.
+
+commit 375949446f7c7bc554851b85151e745eac59d612
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 10 08:04:18 2009 +0200
+
+    Fixed warnings.
+
+commit d08d92a165a73ba3e48341239afb544a7e74ebee
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 15:52:56 2009 +0200
+
+    - Compile libxml2 parser version.
+    - Link against local libsvg and libsvg-cairo.
+
+commit 68fb55f606f58104af806eb414b27f15f7eb4a0a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 15:51:34 2009 +0200
+
+    Check for libjpeg.
+
+commit 8d3ebd2a8153bb851c9347ba2753bd88c35c8885
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 15:19:39 2009 +0200
+
+    Both libsvg and libsvg-cairo are now included.
+
+commit e22220d60ffe615af6e66653d42af5c32dc825e3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 15:16:48 2009 +0200
+
+    Relinsed libsvg and libsvg-cairo to LGPL version 3.
+
+commit 3d8ee353500f560783fd24511115fd5c5dbd923c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 15:16:14 2009 +0200
+
+    Relinsed libsvg and libsvg-cairo to LGPL version 3.
+
+commit 40117e6b04f4649e6c1f88d7078c517c4ca051d8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 14:28:06 2009 +0200
+
+    Added new source file.
+
+commit f2a5d2a0e49b16dd2ee282bec5ae991960d0e8eb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 14:25:15 2009 +0200
+
+    Do not version control generated files.
+
+commit 2b67fc5582b126446c5872634dfa91b9bf7b2461
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 14:24:29 2009 +0200
+
+    Integrate libsvg and libsvg-cairo, so that we can fix bugs there.
+
+commit 5a4bf409f1f6b29a43ec545423ae6e4c0db178cf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 12:15:04 2009 +0200
+
+    Fixed potential format string problems/vulnerabilities.
+
+commit 65991b6b97bdcfc3f7c6f0da17369f1883e5268e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 9 12:04:28 2009 +0200
+
+    Allow to remove measured components from SVG board.
+
+commit ebe48ab763d22e3d537ec020d8fe5746520e2e81
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 27 09:43:17 2009 +0200
+
+    Calculate dimensions of arbitrary SVG elements.
+
+commit b40b3d8b4b4b1b9cb0defeed00bc376b1fb8ae5a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 23 09:05:34 2009 +0300
+
+    Central routine or updating the dimensions.
+
+commit 9786de5ff7972e6ec0fb780a4a5700fb68995b29
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Oct 20 22:45:14 2009 +0300
+
+    Calculate boundings of arcs.
+
+commit a64fef1ee20a422b80dbdc671a8c3f928ff495ff
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 19 10:36:53 2009 +0300
+
+    Tiny optimization in calculation of bezier boundings.
+
+commit fab329a1a50d826df9d282fa2b750c7faefbcb0a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 19 10:23:36 2009 +0300
+
+    Stack states.
+
+commit a8ee192c381aaa7c4d0e0a3c601cfcb1b719e169
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Oct 18 17:41:52 2009 +0300
+
+    Basic support for a state stack.
+
+commit 255dc638cea477ca2485899d61cec90598759058
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 22:04:11 2009 +0300
+
+    Implement quadratic_curve_to like in libsvg-cairo.
+
+commit 66e36f53437c1f517047e313b0a4c73d91c76eb9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 21:38:36 2009 +0300
+
+    Calculate the bounding rectangle of cubic Bézier curves.
+
+commit 43538273d9c2b811a7a7f1df28ecfcaf0deb5f71
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 21:11:46 2009 +0300
+
+    More dimension tracking.
+
+commit bb62d9eca36cea9f7833100a4c486b4478d6950e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 00:32:08 2009 +0300
+
+    Ignore viewport dimensions?
+
+commit c56686f7ae3f1140ae7ad619ce00462a897725c1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 00:14:20 2009 +0300
+
+    Fixed typo.
+
+commit 29c948b643ea94122e8795d2c786960fc4ac7e66
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Oct 17 00:08:35 2009 +0300
+
+    Track lines and movements in svg.
+
+commit 4dfb1d578455f5a61ae8d3ab1a316acfa7eb232a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 16 23:44:53 2009 +0300
+
+    Get dimensions of linear draw operations.
+
+commit 847778e025991613abf17d7b6b4b0e1fbbab0b15
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 16 20:30:16 2009 +0300
+
+    Obsolete stuff deleted.
+
+commit 92c4fdfba2abc8041109e52b5459a842791e0a04
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 16 09:50:16 2009 +0300
+
+    Identify svg elements, and render them individually.
+
+commit 575eb9e578aee205755ed1d8b22373637dbcf69e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 15 20:53:38 2009 +0300
+
+    Fighting my way to the xml hell.
+
+commit 709de4c6b269abe56655411a9786d87b1b920ddb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Oct 12 00:40:20 2009 +0300
+
+    Design tweaks.
+
+commit 039c25b4c05b8a35b05c8cd19aef0c30a16a0150
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Oct 11 10:17:24 2009 +0300
+
+    - pile checkers on points
+    - use arrays instead of coding indices into names for position
+
+commit f47c0d978731ea2631a3c2fd844971e54b43481b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 9 14:23:23 2009 +0300
+
+    Make board expand with window.
+
+commit 6547dafa2c175512d3096fda430d2d9bfacb3bd4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 9 10:36:03 2009 +0300
+
+    3D effects for checkers.
+
+commit c22511d82737a84750fd52642af621fe26c75efa
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 9 09:06:19 2009 +0300
+
+    Updated.
+
 commit 0b45232bc69e5ad874c78ebb5f811b3dbdbf1d24
 Author: Guido Flohr <guido@imperia.net>
 Date:   Fri Oct 9 09:05:52 2009 +0300
