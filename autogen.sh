@@ -22,6 +22,7 @@ set -x
 glib-gettextize --copy --force        || exit 1
 intltoolize --copy --force --automake || exit 1
 libtoolize --copy --force --automake  || exit 1
+gtkdocize                             || exit 1
 aclocal -I m4                         || exit 1
 autoheader                            || exit 1
 automake --gnu --add-missing --force-missing --warnings=all || exit 1

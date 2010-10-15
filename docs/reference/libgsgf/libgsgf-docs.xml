@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "version.xml">
+]>
+<book lang="en" id="libgsgf" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <title>LIBGSGF Reference Manual</title>
+  <bookinfo>
+    <title>LIBGSGF Reference Manual</title>
+    <releaseinfo>
+      for LIBGSF &version;
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" 
+             url="http://guido-flohr.net"
+        >http://guido-flohr.net/project/gibbon/libgsgf/reference/</ulink>.
+    </releaseinfo>
+  </bookinfo>
+
+  <xi:include href="xml/overview.xml"/>
+
+  <part>
+    <title>API Reference</title>
+    <xi:include href="xml/gsgf-collection.xml"/>
+    <xi:include href="xml/gsgf-error.xml"/>
+  </part>
+</book>

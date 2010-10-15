@@ -1,0 +1,24 @@
+<part>
+  <title>LIBGSGF Overview</title>
+
+  <chapter>
+    <title>Introduction</title>
+
+    <para>
+      The Simple Game Format (SGF) is a file format used by several
+      board game applications for string matches, games, and positions,
+      see <ulink url="http://www.red-bean.com/sgf/">http://www.red-bean.com/sgf/</ulink>.
+      The library libgsgf can be used to read and write such files,
+      and modify the structure of such data.
+    </para>
+
+    <para>
+      The library is currently part of
+      <ulink url="http://guido-flohr.net/projects/gibbon">Gibbon</ulink>.
+      If you want to use it in your own project you can simply copy
+      the corresponding subdirectory into your own build structure.
+      Alternatively, you can simply ask, and the library can be turned
+      into a project of its own, and distributed as a shared library.
+    </para>
+  </chapter>
+</part>

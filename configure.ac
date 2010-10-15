@@ -115,6 +115,8 @@ AC_SUBST(GIBBON_CFLAGS)
 
 AM_GCONF_SOURCE_2
 
+GTK_DOC_CHECK([1.15])
+
 AC_CONFIG_FILES([ 
     Makefile
     libgsgf/Makefile
@@ -125,6 +127,10 @@ AC_CONFIG_FILES([
     data/gibbon.desktop.in
     pixmaps/Makefile
     po/Makefile.in
+    docs/Makefile
+    docs/reference/Makefile
+    docs/reference/libgsgf/Makefile
+    docs/reference/libgsgf/version.xml
 ])
 AC_OUTPUT
 
