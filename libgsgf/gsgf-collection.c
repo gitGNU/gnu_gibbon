@@ -34,6 +34,14 @@
 
 enum gsgf_parser_state {
         GSGF_PARSER_STATE_INIT,
+        GSGF_PARSER_STATE_NODE,
+        GSGF_PARSER_STATE_PROPERTY,
+        GSGF_PARSER_STATE_PROP_VALUE,
+        GSGF_PARSER_STATE_VALUE,
+        GSGF_PARSER_STATE_PROP_CLOSE,
+        GSGF_PARSER_STATE_PROPERTIES,
+        GSGF_PARSER_STATE_PROP_VALUE_READ,
+        GSGF_PARSER_STATE_GAME_TREES,
 };
 
 typedef struct {
@@ -41,12 +49,13 @@ typedef struct {
         GCancellable *cancellable;
         guint lineno;
         guint colno;
+        guint start_lineno;
+        guint start_colno;
         gchar buffer[8192];
         gsize bufsize;
         gsize bufpos;
         GError **error;
         GSGFError estatus;
-        gint lookahead;
         enum gsgf_parser_state state;
 } GSGFParserContext;
 
@@ -60,10 +69,11 @@ struct _GSGFCollectionPrivate {
 G_DEFINE_TYPE (GSGFCollection, gsgf_collection, G_TYPE_OBJECT)
 ;
 
-#define GSGF_TOKEN_PROP_IDENT 256
-#define GSGF_TOKEN_VALUE_TEXT 257
-#define GSGF_TOKEN_VALUE_NUMBER 258
-#define GSGF_TOKEN_VALUE_REAL 259
+#define GSGF_TOKEN_EOF 256
+#define GSGF_TOKEN_PROP_IDENT 257
+#define GSGF_TOKEN_VALUE_TEXT 258
+#define GSGF_TOKEN_VALUE_NUMBER 259
+#define GSGF_TOKEN_VALUE_REAL 260
 
 static gint gsgf_yylex(GSGFParserContext *ctx, GString **value);
 static gint gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value);
@@ -71,6 +81,8 @@ static gssize gsgf_yyread(GSGFParserContext *ctx);
 static gint gsgf_yyread_prop_ident(GSGFParserContext *ctx, gchar c,
                                    GString **value);
 static void gsgf_yyread_linebreak(GSGFParserContext *ctx, gchar c);
+static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
+                         gint token, GError **error);
 
 static GRegex *double_pattern = NULL;
 
@@ -85,7 +97,7 @@ static void gsgf_collection_init(GSGFCollection *self)
 
 static void gsgf_collection_finalize(GObject *object)
 {
-        GSGFCollection *collection = GSGF_COLLECTION (object);
+//        GSGFCollection *collection = GSGF_COLLECTION (object);
 
         /* g_free (...) */
 
@@ -148,11 +160,10 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
         ctx.cancellable = cancellable;
         ctx.error = error;
         ctx.estatus = GSGF_ERROR_NONE;
-        ctx.lineno = 1;
-        ctx.colno = 0;
+        ctx.lineno = ctx.start_lineno = 1;
+        ctx.colno = ctx.start_colno = 0;
         ctx.bufsize = 0;
         ctx.bufpos = 0;
-        ctx.lookahead = 1;
         ctx.state = GSGF_PARSER_STATE_INIT;
 
         do {
@@ -161,19 +172,129 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                 else
                         token = gsgf_yylex(&ctx, &value);
 
+                if (value) {
+                        g_print("%d:%d: Token: %d \"%s\"\n",
+                                ctx.start_lineno, ctx.start_colno + 1, token, value->str);
+                        g_string_free(value, TRUE);
+                } else if (token < 256 && token >= 32)
+                        g_print("%d:%d: Token: %c NONE\n",
+                                ctx.start_lineno, ctx.start_colno + 1, (char) token);
+                else
+                        g_print("%d:%d: Token: %d NONE\n",
+                                ctx.start_lineno, ctx.start_colno + 1, token);
+
+                if (token == -1)
+                        return self;
+
                 switch (ctx.state) {
                         case GSGF_PARSER_STATE_INIT:
+                                if (token == '(') {
+                                        ctx.state = GSGF_PARSER_STATE_NODE;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("'('"), token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_NODE:
+                                if (token == ';') {
+                                        ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("';'"), token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_PROPERTY:
+                                if (token == GSGF_TOKEN_PROP_IDENT) {
+                                        ctx.state = GSGF_PARSER_STATE_PROP_VALUE;
+                                } else if (token == ';') {
+                                        ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                } else if (token == '(') {
+                                        ctx.state = GSGF_PARSER_STATE_NODE;
+                                } else if (token == ')') {
+                                        ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("property, ';', or '('"),
+                                                     token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_PROP_VALUE:
+                                if (token == '[') {
+                                        ctx.state = GSGF_PARSER_STATE_VALUE;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("'['"), token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_VALUE:
+                                if (token == ']')
+                                        ctx.state = GSGF_PARSER_STATE_PROPERTIES;
+                                else if (token == GSGF_TOKEN_VALUE_TEXT)
+                                        ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
+                                else if (token == GSGF_TOKEN_VALUE_NUMBER)
+                                        ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
+                                else if (token == GSGF_TOKEN_VALUE_REAL)
+                                        ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
+                                else {
+                                        gsgf_yyerror(&ctx, _("value or ']'"),
+                                                     token, error);
+                                        return self;
+                                }
+
+                                break;
+                        case GSGF_PARSER_STATE_PROPERTIES:
+                                if (token == '[') {
+                                        ctx.state = GSGF_PARSER_STATE_VALUE;
+                                } else if (token == ';') {
+                                        ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                } else if (token == '(') {
+                                        ctx.state = GSGF_PARSER_STATE_NODE;
+                                } else if (token == ')') {
+                                        ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("'[', ';', or '('"),
+                                                     token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_PROP_CLOSE:
+                                if (token == ']') {
+                                        ctx.state = GSGF_PARSER_STATE_PROP_VALUE_READ;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("']'"), token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_PROP_VALUE_READ:
+                                if (token == '[') {
+                                        ctx.state = GSGF_PARSER_STATE_VALUE;
+                                } else if (token == ';') {
+                                        ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                } else if (token == '(') {
+                                        ctx.state = GSGF_PARSER_STATE_NODE;
+                                } else if (token == ')') {
+                                        ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                } else if (token == GSGF_TOKEN_PROP_IDENT) {
+                                        ctx.state = GSGF_PARSER_STATE_PROP_VALUE;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("'[', ';', '(', ')', or property"),
+                                                     token, error);
+                                        return self;
+                                }
+                                break;
+                        case GSGF_PARSER_STATE_GAME_TREES:
+                                if (token == '(') {
+                                        ctx.state = GSGF_PARSER_STATE_NODE;
+                                } else if (token == GSGF_TOKEN_EOF) {
+                                        return self;
+                                } else {
+                                        gsgf_yyerror(&ctx, _("'('"), token, error);
+                                        return self;
+                                }
                                 break;
                 }
 
-                if (value) {
-                        g_print("Token: %d \"%s\"\n", token, value->str);
-                        g_string_free(value, TRUE);
-                } else if (token < 256 && token >= 32)
-                        g_print("Token: %c NONE\n", (char) token);
-                else
-                        g_print("Token: %d NONE\n", token);
-        } while (token != -1);
+        } while (token != GSGF_TOKEN_EOF);
 
         return self;
 }
@@ -197,9 +318,7 @@ GSGFCollection *
 gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
                            GError **error)
 {
-        GInputStream
-                        *stream =
-                                        G_INPUT_STREAM (g_file_read (file, cancellable, error));
+        GInputStream *stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
 
         if (!stream)
                 return NULL;
@@ -213,7 +332,10 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
 
         *value = NULL;
 
-        while (24) {
+        ctx->start_lineno = ctx->lineno;
+        ctx->start_colno = ctx->colno;
+
+        while (1) {
                 if (ctx->bufsize == 0 || ctx->bufpos >= ctx->bufsize) {
                         g_print("must read\n");
                         if (0 >= gsgf_yyread(ctx))
@@ -237,13 +359,15 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
                         case '\f':
                         case '\v':
                         case '\t':
+                                ctx->start_colno = ctx->colno;
                                 break;
                         case '\r':
                         case '\n':
                                 c = '\n';
                                 gsgf_yyread_linebreak(ctx, c);
-                                ctx->colno = 0;
+                                ctx->colno = ctx->start_colno = 0;
                                 ++ctx->lineno;
+                                ctx->start_lineno = ctx->lineno;
                                 break;
                         default:
                                 if (c < ' ' || c >= 127)
@@ -252,16 +376,16 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
                                                         GSGF_ERROR,
                                                         GSGF_ERROR_SYNTAX,
                                                         _("%d:%d:Illegal binary character '#%d'"),
-                                                        ctx->lineno,
-                                                        ctx->colno, c);
+                                                        ctx->start_lineno,
+                                                        ctx->start_colno, c);
                                 else
                                         g_set_error(
                                                         ctx->error,
                                                         GSGF_ERROR,
                                                         GSGF_ERROR_SYNTAX,
                                                         _("%d:%d:Illegal character '%c'"),
-                                                        ctx->lineno,
-                                                        ctx->colno, c);
+                                                        ctx->start_lineno,
+                                                        ctx->start_colno, c);
                                 return -1;
                 }
         }
@@ -272,7 +396,8 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
 static gssize gsgf_yyread(GSGFParserContext *ctx)
 {
         gssize read_bytes = g_input_stream_read(ctx->stream, ctx->buffer,
-                        sizeof ctx->buffer, ctx->cancellable, ctx->error);
+                                                sizeof ctx->buffer, ctx->cancellable,
+                                                ctx->error);
 
         g_print("Got %d bytes\n", read_bytes);
         if (read_bytes <= 0)
@@ -299,7 +424,7 @@ static gint gsgf_yyread_prop_ident(GSGFParserContext *ctx, gchar c,
                         if (0 >= gsgf_yyread(ctx)) {
                                 g_string_free(*value, TRUE);
                                 *value = NULL;
-                                return -1;
+                                return GSGF_TOKEN_EOF;
                         }
                 }
 
@@ -329,13 +454,16 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
 
         *value = g_string_new("");
 
+        ctx->start_lineno = ctx->lineno;
+        ctx->start_colno = ctx->colno;
+
         while (1) {
                 if (ctx->bufsize == 0 || ctx->bufpos >= ctx->bufsize) {
                         g_print("must read\n");
                         if (0 >= gsgf_yyread(ctx)) {
                                 g_string_free(*value, TRUE);
                                 *value = NULL;
-                                return -1;
+                                return GSGF_TOKEN_EOF;
                         }
                 }
 
@@ -408,4 +536,20 @@ static void gsgf_yyread_linebreak(GSGFParserContext *ctx, gchar first)
         second = ctx->buffer[ctx->bufpos];
         if ((second == '\r' && first == '\n') || (second == '\n' && first == '\r'))
                 ++ctx->bufpos;
+}
+
+static void
+gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **error)
+{
+        if (token == GSGF_TOKEN_EOF)
+                g_set_error(ctx->error, GSGF_ERROR, GSGF_ERROR_SYNTAX,
+                            _("%d:%d: Unexpected end of file"),
+                            ctx->lineno, ctx->colno);
+        else
+                g_set_error(ctx->error,
+                                GSGF_ERROR,
+                                GSGF_ERROR_SYNTAX,
+                                _("%d:%d: Expected %s"),
+                                ctx->start_lineno,
+                                ctx->start_colno + 1, expect);
 }
