@@ -22,5 +22,6 @@
 
 #include <libgsgf/gsgf-error.h>
 #include <libgsgf/gsgf-collection.h>
+#include <libgsgf/gsgf-property.h>
 
 #endif

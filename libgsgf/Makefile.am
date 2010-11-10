@@ -30,12 +30,14 @@ AM_CPPFLAGS =				\
 
 libgsgf_a_SOURCES = 			\
 	gsgf-error.c			\
-	gsgf-collection.c
+	gsgf-collection.c		\
+	gsgf-property.c
 
 noinst_HEADERS =			\
 	gsgf.h				\
 	gsgf-error.h			\
-	gsgf-collection.h
+	gsgf-collection.h		\
+	gsgf-property.h
 
 libgsgftest_SOURCES = libgsgftest.c
 libgsgftest_LDADD = $(GIBBON_LIBS) $(srcdir)/libgsgf.a $(platform_libadd)
