@@ -1,0 +1,26 @@
+<SECTION>
+<FILE>gsgf-collection</FILE>
+<TITLE>GSGFCollection</TITLE>
+GSGFCollectionClass
+GSGFCollection
+GSGFCollectionPrivate
+gsgf_collection_new
+gsgf_collection_parse_stream
+gsgf_collection_parse_file
+<SUBSECTION Standard>
+GSGF_COLLECTION
+GSGF_IS_COLLECTION
+GSGF_TYPE_COLLECTION
+gsgf_collection_get_type
+GSGF_COLLECTION_CLASS
+GSGF_IS_COLLECTION_CLASS
+GSGF_COLLECTION_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-error</FILE>
+GSGF_ERROR
+GSGFError
+gsgf_error_quark
+</SECTION>
+

@@ -1,0 +1,86 @@
+<MACRO>
+<NAME>GSGF_ERROR</NAME>
+#define GSGF_ERROR gsgf_error_quark ()
+</MACRO>
+<ENUM>
+<NAME>GSGFError</NAME>
+typedef enum {
+        GSGF_ERROR_NONE = 0,
+        GSGF_ERROR_SYNTAX = 1
+} GSGFError;
+</ENUM>
+<FUNCTION>
+<NAME>gsgf_error_quark</NAME>
+<RETURNS>GQuark </RETURNS>
+void 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_COLLECTION</NAME>
+#define GSGF_TYPE_COLLECTION             (gsgf_collection_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_COLLECTION</NAME>
+#define GSGF_COLLECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, GSGFCollection))
+</MACRO>
+<MACRO>
+<NAME>GSGF_COLLECTION_CLASS</NAME>
+#define GSGF_COLLECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_COLLECTION</NAME>
+#define GSGF_IS_COLLECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COLLECTION))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_COLLECTION_CLASS</NAME>
+#define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COLLECTION))
+</MACRO>
+<MACRO>
+<NAME>GSGF_COLLECTION_GET_CLASS</NAME>
+#define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFCollectionClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCollection</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCollectionPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCollectionClass</NAME>
+struct _GSGFCollectionClass
+{
+        GObjectClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_collection_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFCollection</NAME>
+struct _GSGFCollection
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        GSGFCollectionPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_collection_new</NAME>
+<RETURNS>GSGFCollection *</RETURNS>
+ 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_collection_parse_stream</NAME>
+<RETURNS>GSGFCollection *</RETURNS>
+GInputStream *stream, GCancellable *cancellable, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_collection_parse_file</NAME>
+<RETURNS>GSGFCollection *</RETURNS>
+GFile *file, GCancellable *cancellable, GError **error 
+</FUNCTION>
