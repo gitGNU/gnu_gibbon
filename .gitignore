@@ -21,3 +21,4 @@ ltmain.sh
 missing
 mkinstalldirs
 ylwrap
+gtk-doc.make
