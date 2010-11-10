@@ -1,4 +1,21 @@
 <SECTION>
+<FILE>gsgf-property</FILE>
+<TITLE>GSGFProperty</TITLE>
+GSGFPropertyClass
+GSGFProperty
+GSGFPropertyPrivate
+gsgf_property_new
+<SUBSECTION Standard>
+GSGF_PROPERTY
+GSGF_IS_PROPERTY
+GSGF_TYPE_PROPERTY
+gsgf_property_get_type
+GSGF_PROPERTY_CLASS
+GSGF_IS_PROPERTY_CLASS
+GSGF_PROPERTY_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-collection</FILE>
 <TITLE>GSGFCollection</TITLE>
 GSGFCollectionClass
