@@ -172,10 +172,11 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                 else
                         token = gsgf_yylex(&ctx, &value);
 
+                /* FIXME! Free value! */
+
                 if (value) {
                         g_print("%d:%d: Token: %d \"%s\"\n",
                                 ctx.start_lineno, ctx.start_colno + 1, token, value->str);
-                        g_string_free(value, TRUE);
                 } else if (token < 256 && token >= 32)
                         g_print("%d:%d: Token: %c NONE\n",
                                 ctx.start_lineno, ctx.start_colno + 1, (char) token);
