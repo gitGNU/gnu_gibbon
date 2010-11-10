@@ -184,8 +184,11 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         g_print("%d:%d: Token: %d NONE\n",
                                 ctx.start_lineno, ctx.start_colno + 1, token);
 
-                if (token == -1)
+                if (token == -1) {
+                        if (value)
+                                g_string_free(value, TRUE);
                         return self;
+                }
 
                 switch (ctx.state) {
                         case GSGF_PARSER_STATE_INIT:
@@ -201,6 +204,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
                                 } else {
                                         gsgf_yyerror(&ctx, _("';'"), token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -216,6 +221,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 } else {
                                         gsgf_yyerror(&ctx, _("property, ';', or '('"),
                                                      token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -224,6 +231,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_VALUE;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'['"), token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -239,6 +248,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 else {
                                         gsgf_yyerror(&ctx, _("value or ']'"),
                                                      token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
 
@@ -255,6 +266,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 } else {
                                         gsgf_yyerror(&ctx, _("'[', ';', or '('"),
                                                      token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -263,6 +276,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_PROP_VALUE_READ;
                                 } else {
                                         gsgf_yyerror(&ctx, _("']'"), token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -280,6 +295,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 } else {
                                         gsgf_yyerror(&ctx, _("'[', ';', '(', ')', or property"),
                                                      token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
@@ -287,13 +304,20 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                 } else if (token == GSGF_TOKEN_EOF) {
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'('"), token, error);
+                                        if (value)
+                                                g_string_free(value, TRUE);
                                         return self;
                                 }
                                 break;
                 }
+
+                if (value)
+                        g_string_free(value, TRUE);
 
         } while (token != GSGF_TOKEN_EOF);
 
