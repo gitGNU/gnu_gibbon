@@ -17,10 +17,34 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GSGF_H
-# define _GSGF_H
+#ifndef _LIBGSGF_ERROR_H
+# define _LIBGSGF_ERROR_H
 
-#include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-collection.h>
+#include <glib.h>
+
+G_BEGIN_DECLS
+
+/**
+ * GSGF_ERROR:
+ *
+ * Error domain for GSGF.  Errors in this domain will be from the
+ * #GSGFError enumeration.
+ * See #GError for more information on error domains.
+ **/
+#define GSGF_ERROR gsgf_error_quark ()
+
+/**
+ * GSGFError:
+ * @GSGF_ERROR_NONE: No error.
+ * @GSGF_ERROR_SYNTAX: Syntax error.
+ */
+typedef enum {
+        GSGF_ERROR_NONE = 0,
+        GSGF_ERROR_SYNTAX = 1
+} GSGFError;
+
+extern GQuark gsgf_error_quark (void);
+
+G_END_DECLS
 
 #endif

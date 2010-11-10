@@ -23,14 +23,13 @@
 
 #include <stdio.h>
 
-#include <libgsgf/gsgf-collection.h>
+#include <libgsgf/gsgf.h>
 
 int
 main(int argc, char *argv[])
 {
         GFile *file;
         GError *error = NULL;
-        GInputStream *stream;
         GSGFCollection *collection;
 
         if (argc != 2) {
@@ -44,10 +43,13 @@ main(int argc, char *argv[])
         collection = gsgf_collection_parse_file (file, NULL, &error);
 
         if (error) {
-                fprintf (stderr, "%s: %s\n", argv[1], error->message);
+                fprintf (stderr, "%s: %s.\n", argv[1], error->message);
                 g_error_free (error);
                 return 1;
         }
+
+        g_object_unref (file);
+        g_object_unref (collection);
 
         return 0;
 }

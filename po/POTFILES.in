@@ -23,6 +23,7 @@ data/gibbon.desktop.in
 data/gibbon.desktop.in.in
 data/gibbon.schemas.in
 data/gibbon.xml
+libgsgf/gsgf-collection.c
 src/gibbon-cairoboard.c
 src/gibbon-connection.c
 src/gibbon-connector.c

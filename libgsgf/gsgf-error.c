@@ -17,10 +17,24 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GSGF_H
-# define _GSGF_H
+/**
+ * SECTION:gsgf-error
+ * @short_description: Error helper functions
+ * @include: libgsgf/gsgf.h
+ *
+ * Currently contains only the #GQuark for GSGF errors.
+ **/
 
 #include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-collection.h>
 
-#endif
+/**
+ * gsgf_error_quark:
+ *
+ * Gets The GSGF Error Quark.
+ *
+ * Returns: a #GQuark.
+ **/
+GQuark gsgf_error_quark (void)
+{
+        return g_quark_from_static_string ("gsgf-error-quark");
+}

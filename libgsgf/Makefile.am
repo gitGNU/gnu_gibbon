@@ -29,9 +29,12 @@ AM_CPPFLAGS =				\
 	$(GIBBON_CFLAGS)
 
 libgsgf_a_SOURCES = 			\
+	gsgf-error.c			\
 	gsgf-collection.c
 
 noinst_HEADERS =			\
+	gsgf.h				\
+	gsgf-error.h			\
 	gsgf-collection.h
 
 libgsgftest_SOURCES = libgsgftest.c

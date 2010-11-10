@@ -32,6 +32,12 @@ G_BEGIN_DECLS
 #define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COLLECTION))
 #define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
 
+/**
+ * GSGFCollection:
+ *
+ * Class representing a collection of games resp. game trees in a
+ * Simple Game Format (SGF) file.
+ **/
 typedef struct _GSGFCollectionClass   GSGFCollectionClass;
 typedef struct _GSGFCollection        GSGFCollection;
 typedef struct _GSGFCollectionPrivate GSGFCollectionPrivate;
@@ -46,13 +52,16 @@ GType gsgf_collection_get_type(void) G_GNUC_CONST;
 struct _GSGFCollection
 {
         GObject parent_instance;
+
+        /*< private >*/
         GSGFCollectionPrivate *priv;
 };
 
 GSGFCollection *gsgf_collection_new();
 GSGFCollection *gsgf_collection_parse_stream (GInputStream *stream,
+                                              GCancellable *cancellable,
                                               GError **error);
-GSGFCollection *gsgf_collection_parse_file (const GFile *file,
+GSGFCollection *gsgf_collection_parse_file (GFile *file,
                                             GCancellable *cancellable,
                                             GError **error);
 
