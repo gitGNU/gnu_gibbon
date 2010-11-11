@@ -2,6 +2,7 @@
 *.o
 *.a
 *.bak
+*.orig
 /po/stamp-it
 autom4te.cache
 aclocal.m4
