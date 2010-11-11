@@ -1,6 +1,7 @@
 *~
 *.o
 *.a
+*.bak
 /po/stamp-it
 autom4te.cache
 aclocal.m4
