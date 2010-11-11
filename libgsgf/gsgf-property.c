@@ -18,10 +18,10 @@
  */
 
 /**
- * SECTION:gsgf-property
- * @short_description: An SGF property.
+ * SECTION:gsgf-game-tree
+ * @short_description: An SGF game tree.
  *
- * A #GSGFProperty has a name (its identifier) and an associated list of values.
+ * A #GSGFGameTree has a name (its identifier) and an associated list of values.
  */
 
 #include <glib.h>
@@ -29,92 +29,52 @@
 
 #include <libgsgf/gsgf.h>
 
-enum gsgf_property_type {
-        GSGF_PROPERTY_TEXT,
-        GSGF_PROPERTY_NUMBER,
-        GSGF_PROPERTY_REAL,
+struct _GSGFGameTreePrivate {
+        gint dummy;
 };
 
-struct _GSGFPropertyValue {
-        enum gsgf_property_type type;
-        union gsgf_property_union {
-               gdouble real;
-               gint number;
-               gchar *text;
-        } value;
-};
+#define GSGF_GAME_TREE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
+                                      GSGF_TYPE_GAME_TREE,           \
+                                      GSGFGameTreePrivate))
+G_DEFINE_TYPE (GSGFGameTree, gsgf_game_tree, G_TYPE_OBJECT)
 
-struct _GSGFPropertyPrivate {
-        gchar *id;
-        GList *values;
-};
-
-#define GSGF_PROPERTY_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                      GSGF_TYPE_PROPERTY,           \
-                                      GSGFPropertyPrivate))
-G_DEFINE_TYPE (GSGFProperty, gsgf_property, G_TYPE_OBJECT)
-
-static void gsgf_property_value_free(struct _GSGFPropertyValue *value);
+static void gsgf_game_tree_value_free(struct _GSGFGameTreeValue *value);
 
 static void
-gsgf_property_init(GSGFProperty *self)
+gsgf_game_tree_init(GSGFGameTree *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                        GSGF_TYPE_PROPERTY,
-                        GSGFPropertyPrivate);
-
-        self->priv->id = NULL;
-        self->priv->values = NULL;
+                        GSGF_TYPE_GAME_TREE,
+                        GSGFGameTreePrivate);
 }
 
 static void
-gsgf_property_finalize(GObject *object)
+gsgf_game_tree_finalize(GObject *object)
 {
-        GSGFProperty *property = GSGF_PROPERTY (object);
-
-        if (property->priv->id)
-                g_free(property->priv->id);
-        property->priv->id = NULL;
-
-        if (property->priv->values) {
-                g_list_foreach(property->priv->values, (GFunc) gsgf_property_value_free,
-                               NULL);
-                g_list_free(property->priv->values);
-        }
-
-        G_OBJECT_CLASS (gsgf_property_parent_class)->finalize(object);
+        G_OBJECT_CLASS (gsgf_game_tree_parent_class)->finalize(object);
 }
 
 static void
-gsgf_property_class_init(GSGFPropertyClass *klass)
+gsgf_game_tree_class_init(GSGFGameTreeClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFPropertyPrivate));
+        g_type_class_add_private(klass, sizeof(GSGFGameTreePrivate));
 
-        object_class->finalize = gsgf_property_finalize;
+        object_class->finalize = gsgf_game_tree_finalize;
 }
 
 /**
- * gsgf_property_new:
+ * gsgf_game_tree_new:
  *
- * Build an empty #GSGFProperty in memory.  The function cannot fail.
+ * Build an empty #GSGFGameTree in memory.  The function cannot fail.
  *
- * Returns: An empty #GSGFProperty.
+ * Returns: An empty #GSGFGameTree.
  */
-GSGFProperty *
-gsgf_property_new(const gchar *id)
+GSGFGameTree *
+gsgf_game_tree_new(const gchar *id)
 {
-        GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
-
-        self->priv->id = g_strdup(id);
+        GSGFGameTree *self = g_object_new(GSGF_TYPE_GAME_TREE, NULL);
 
         return self;
-}
-
-static void
-gsgf_property_value_free(struct _GSGFPropertyValue *value)
-{
-        if (value->type == GSGF_PROPERTY_TEXT)
-                g_free(value->value.text);
 }

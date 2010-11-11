@@ -31,12 +31,14 @@ AM_CPPFLAGS =				\
 libgsgf_a_SOURCES = 			\
 	gsgf-error.c			\
 	gsgf-collection.c		\
+	gsgf-game-tree.c		\
 	gsgf-property.c
 
 noinst_HEADERS =			\
 	gsgf.h				\
 	gsgf-error.h			\
 	gsgf-collection.h		\
+	gsgf-game-tree.h		\
 	gsgf-property.h
 
 libgsgftest_SOURCES = libgsgftest.c
