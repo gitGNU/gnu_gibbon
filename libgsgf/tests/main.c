@@ -36,18 +36,24 @@ static char *path;
 int
 main(int argc, char *argv[])
 {
-        GFile *file;
+        GFile *file = NULL;
         GError *error = NULL;
-        GSGFCollection *collection;
+        GSGFCollection *collection = NULL;
         int status;
 
         g_type_init ();
 
         program_name = argv[0];
-        path = g_build_filename(TEST_DIR, filename, NULL);
 
-        file = g_file_new_for_commandline_arg (filename);
-        collection = gsgf_collection_parse_file (file, NULL, &error);
+        if (filename) {
+                path = g_build_filename(TEST_DIR, filename, NULL);
+
+                file = g_file_new_for_commandline_arg(path);
+                collection = gsgf_collection_parse_file(file, NULL, &error);
+        }
+
+        if (!path)
+                path = "";
 
         status = test_collection(collection, error);
 
@@ -105,4 +111,17 @@ expect_error(GError *error, GError *expect)
         }
 
         return 0;
+}
+
+int
+expect_error_conditional(gboolean condition, const gchar *msg,
+                         GError *error, GError *expect)
+{
+        if (!condition) {
+                fprintf(stderr, "%s: %s.\n", path, msg);
+                if (expect) g_error_free(expect);
+                return -1;
+        }
+
+        return expect_error(error, expect);
 }

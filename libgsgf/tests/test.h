@@ -28,5 +28,7 @@ extern char *filename;
 extern int test_collection(GSGFCollection *collection, GError *error);
 
 extern int expect_error(GError *error, GError *expect);
+extern int expect_error_conditional(gboolean condition, const gchar *msg,
+                                    GError *error, GError *expect);
 
 #endif
