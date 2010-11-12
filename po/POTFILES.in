@@ -24,6 +24,13 @@ data/gibbon.desktop.in.in
 data/gibbon.schemas.in
 data/gibbon.xml
 libgsgf/gsgf-collection.c
+libgsgf/tests/main.c
+libgsgf/tests/test-empty.c
+libgsgf/tests/test-minimal.c
+libgsgf/tests/test-multi-game-tree.c
+libgsgf/tests/test-nested-game-tree.c
+libgsgf/tests/test-really-empty.c
+libgsgf/tests/test-write-empty-collection.c
 src/gibbon-cairoboard.c
 src/gibbon-connection.c
 src/gibbon-connector.c
@@ -34,6 +41,4 @@ src/gibbon.c
 src/gtkconnectiondialog.c
 src/gtkmainwindow.c
 src/gui.c
-src/sgf_l.c
-src/sgf_y.c
 src/svg-util.c
