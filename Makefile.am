@@ -24,4 +24,6 @@ DISTCLEANFILES =		\
 	intltool-merge		\
 	intltool-update
 
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath
