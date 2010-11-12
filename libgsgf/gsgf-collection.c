@@ -86,6 +86,14 @@ static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
 
 static GRegex *double_pattern = NULL;
 
+/**
+ * The SGF specification stipulates that a collection has one ore more game trees,
+ * and that a game tree has one or more nodes.  For practical purposes we allow
+ * empty collections and empty node lists (sequences).  When implementing the
+ * serialization code we have to accomodate that.  Either we throw an error
+ * or we spit out the smallest collections conforming to the SGF specification
+ * which would be the string "(;)".
+ */
 static void gsgf_collection_init(GSGFCollection *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
@@ -193,7 +201,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                 if (token == -1) {
                         if (value)
                                 g_string_free(value, TRUE);
-                        return self;
+                        break;
                 }
 
                 switch (ctx.state) {
@@ -328,6 +336,11 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         g_string_free(value, TRUE);
 
         } while (token != GSGF_TOKEN_EOF);
+
+        if (!game_tree) {
+                g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_SYNTAX,
+                            _("Empty SGF collections are not allowed"));
+        } /* else if (!game_tree->first_node ..), actually just else. */
 
         return self;
 }
