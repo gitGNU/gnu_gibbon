@@ -69,6 +69,11 @@ GSGFCollection *gsgf_collection_parse_file(GFile *file,
 
 struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *collection);
 
+gssize gsgf_collection_write_stream(const GSGFCollection *collection, 
+                                    GOutputStream *out, 
+                                    GCancellable *cancellable,
+                                    GError **error);
+
 G_END_DECLS
 
 #endif

@@ -617,3 +617,32 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
 
         return game_tree;
 }
+
+/**
+ * gsgf_collection_write_stream
+ * @self: the #GSGFCollection.
+ * @out: a #GOutputStream to write to.
+ * @cancellable: optional #GCancellable object, %NULL to ignore.
+ * @error: a #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Serializes a #GSGFCollection and writes the serialized data into
+ * a #GOuputStream.
+ *
+ * See also gsgf_collection_write_file().
+ *
+ * Returns: Number of bytes written or a a negative number in case of
+ * failure.
+ */
+gssize
+gsgf_collection_write_stream(const GSGFCollection *self,
+                             GOutputStream *out, GCancellable *cancellable,
+                             GError **error)
+{
+        if (!self->priv->game_trees) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
+                            _("Attempt to write an empty collection"));
+                return -1;
+        }
+
+        return -1;
+}
