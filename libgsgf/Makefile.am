@@ -18,7 +18,6 @@
 SUBDIRS = tests
 
 noinst_LIBRARIES = libgsgf.a
-noinst_PROGRAMS = libgsgftest
 
 platform_libadd =
 
@@ -39,11 +38,9 @@ libgsgf_a_SOURCES = 			\
 
 noinst_HEADERS =			\
 	gsgf.h				\
+	gsgf-internal.h			\
 	gsgf-error.h			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\
 	gsgf-node-list.h		\
 	gsgf-property.h
-
-libgsgftest_SOURCES = libgsgftest.c
-libgsgftest_LDADD = $(GIBBON_LIBS) $(srcdir)/libgsgf.a $(platform_libadd)
