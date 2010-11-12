@@ -57,13 +57,17 @@ struct _GSGFCollection
         GSGFCollectionPrivate *priv;
 };
 
+struct _GSGFGameTree;
+
 GSGFCollection *gsgf_collection_new();
-GSGFCollection *gsgf_collection_parse_stream (GInputStream *stream,
-                                              GCancellable *cancellable,
-                                              GError **error);
-GSGFCollection *gsgf_collection_parse_file (GFile *file,
-                                            GCancellable *cancellable,
-                                            GError **error);
+GSGFCollection *gsgf_collection_parse_stream(GInputStream *stream,
+                                             GCancellable *cancellable,
+                                             GError **error);
+GSGFCollection *gsgf_collection_parse_file(GFile *file,
+                                           GCancellable *cancellable,
+                                           GError **error);
+
+struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *collection);
 
 G_END_DECLS
 

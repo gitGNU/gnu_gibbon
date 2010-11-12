@@ -17,47 +17,47 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBGSGF_GAME_TREE_H
-# define _LIBGSGF_GAME_TREE_H
+#ifndef _LIBGSGF_PROPERTY_H
+# define _LIBGSGF_PROPERTY_H
 
 #include <glib.h>
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_GAME_TREE             (gsgf_game_tree_get_type ())
-#define GSGF_GAME_TREE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTree))
-#define GSGF_GAME_TREE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
-#define GSGF_IS_GAME_TREE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_GAME_TREE))
-#define GSGF_IS_GAME_TREE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_GAME_TREE))
-#define GSGF_GAME_TREE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
+#define GSGF_TYPE_PROPERTY             (gsgf_property_get_type ())
+#define GSGF_PROPERTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_PROPERTY, GSGFProperty))
+#define GSGF_PROPERTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_PROPERTY, GSGFPropertyClass))
+#define GSGF_IS_PROPERTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_PROPERTY))
+#define GSGF_IS_PROPERTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_PROPERTY))
+#define GSGF_PROPERTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_PROPERTY, GSGFPropertyClass))
 
 /**
- * GSGFGameTree:
+ * GSGFProperty:
  *
- * Class representing a game_tree of games resp. game trees in a
+ * Class representing a property of games resp. game trees in a
  * Simple Game Format (SGF) file.
  **/
-typedef struct _GSGFGameTreeClass   GSGFGameTreeClass;
-typedef struct _GSGFGameTree        GSGFGameTree;
-typedef struct _GSGFGameTreePrivate GSGFGameTreePrivate;
+typedef struct _GSGFPropertyClass   GSGFPropertyClass;
+typedef struct _GSGFProperty        GSGFProperty;
+typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 
-struct _GSGFGameTreeClass
+struct _GSGFPropertyClass
 {
         GObjectClass parent_class;
 };
 
-GType gsgf_game_tree_get_type(void) G_GNUC_CONST;
+GType gsgf_property_get_type(void) G_GNUC_CONST;
 
-struct _GSGFGameTree
+struct _GSGFProperty
 {
         GObject parent_instance;
 
         /*< private >*/
-        GSGFGameTreePrivate *priv;
+        GSGFPropertyPrivate *priv;
 };
 
-GSGFGameTree *gsgf_game_tree_new();
+GSGFProperty *gsgf_property_new();
 
 G_END_DECLS
 

@@ -60,7 +60,7 @@ typedef struct {
 } GSGFParserContext;
 
 struct _GSGFCollectionPrivate {
-        guint dummy;
+        GList* game_trees;
 };
 
 #define GSGF_COLLECTION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -92,14 +92,18 @@ static void gsgf_collection_init(GSGFCollection *self)
                         GSGF_TYPE_COLLECTION,
                         GSGFCollectionPrivate);
 
-        /* self->priv->... = NULL */
+        self->priv->game_trees = NULL;
 }
 
 static void gsgf_collection_finalize(GObject *object)
 {
-//        GSGFCollection *collection = GSGF_COLLECTION (object);
+        GSGFCollection *self = GSGF_COLLECTION (object);
 
-        /* g_free (...) */
+        if (self->priv->game_trees) {
+                g_list_foreach(self->priv->game_trees, (GFunc) g_object_unref, NULL);
+                g_list_free(self->priv->game_trees);
+        }
+        self->priv->game_trees = NULL;
 
         G_OBJECT_CLASS (gsgf_collection_parent_class)->finalize(object);
 }
@@ -156,6 +160,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
         GString *value;
         GSGFParserContext ctx;
 
+        GSGFGameTree *game_tree = NULL;
+
         ctx.stream = stream;
         ctx.cancellable = cancellable;
         ctx.error = error;
@@ -194,6 +200,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         case GSGF_PARSER_STATE_INIT:
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
+                                        game_tree = gsgf_collection_add_game_tree(self);
                                 } else {
                                         gsgf_yyerror(&ctx, _("'('"), token, error);
                                         return self;
@@ -303,6 +310,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         case GSGF_PARSER_STATE_GAME_TREES:
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
+                                        game_tree = gsgf_game_tree_add_child(game_tree);
                                 } else if (token == GSGF_TOKEN_EOF) {
                                         if (value)
                                                 g_string_free(value, TRUE);
@@ -577,4 +585,14 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
                                 _("%d:%d: Expected %s"),
                                 ctx->start_lineno,
                                 ctx->start_colno + 1, expect);
+}
+
+GSGFGameTree *
+gsgf_collection_add_game_tree(GSGFCollection *self)
+{
+        GSGFGameTree *game_tree = gsgf_game_tree_new();
+
+        g_list_append(self->priv->game_trees, game_tree);
+
+        return game_tree;
 }
