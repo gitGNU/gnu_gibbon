@@ -17,39 +17,16 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#ifndef _GSGF_TEST_H
+# define _GSGF_TEST_H
 
-#include <stdio.h>
-
+#include <glib.h>
 #include <libgsgf/gsgf.h>
 
-int
-main(int argc, char *argv[])
-{
-        GFile *file;
-        GError *error = NULL;
-        GSGFCollection *collection;
+extern char *filename;
 
-        if (argc != 2) {
-                fprintf (stderr, "Usage: %s INPUT_FILE\n", argv[0]);
-                return 1;
-        }
+extern int test_collection(GSGFCollection *collection, GError *error);
 
-        g_type_init ();
+extern int expect_error(GError *error, GError *expect);
 
-        file = g_file_new_for_commandline_arg (argv[1]);
-        collection = gsgf_collection_parse_file (file, NULL, &error);
-
-        if (error) {
-                fprintf (stderr, "%s: %s.\n", argv[1], error->message);
-                g_error_free (error);
-                return 1;
-        }
-
-        g_object_unref (file);
-        g_object_unref (collection);
-
-        return 0;
-}
+#endif

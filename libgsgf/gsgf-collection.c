@@ -186,8 +186,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                 else
                         token = gsgf_yylex(&ctx, &value);
 
-                /* FIXME! Free value! */
 
+#if (0)
                 if (value) {
                         g_print("%d:%d: Token: %d \"%s\"\n",
                                 ctx.start_lineno, ctx.start_colno + 1, token, value->str);
@@ -197,6 +197,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                 else
                         g_print("%d:%d: Token: %d NONE\n",
                                 ctx.start_lineno, ctx.start_colno + 1, token);
+#endif
 
                 if (token == -1) {
                         if (value)
@@ -231,6 +232,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
+                                        game_tree = gsgf_game_tree_add_child(game_tree);
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
                                 } else {
@@ -276,6 +278,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
+                                        game_tree = gsgf_game_tree_add_child(game_tree);
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
                                 } else {
@@ -303,6 +306,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
+                                        game_tree = gsgf_game_tree_add_child(game_tree);
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
                                 } else if (token == GSGF_TOKEN_PROP_IDENT) {
@@ -319,6 +323,14 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                         game_tree = gsgf_game_tree_add_child(game_tree);
+                                } else if (token == ')') {
+                                        /* State does not change! */
+                                        if (!game_tree) {
+                                                gsgf_yyerror(&ctx,
+                                                             _("Trailing garbage"), 
+                                                             token, error);
+                                        }
+                                        game_tree = gsgf_game_tree_get_parent(game_tree);
                                 } else if (token == GSGF_TOKEN_EOF) {
                                         if (value)
                                                 g_string_free(value, TRUE);
@@ -338,7 +350,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
         } while (token != GSGF_TOKEN_EOF);
 
         if (!game_tree) {
-                g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_SYNTAX,
+                g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Empty SGF collections are not allowed"));
         } /* else if (!game_tree->first_node ..), actually just else. */
 
@@ -383,7 +395,6 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
 
         while (1) {
                 if (ctx->bufsize == 0 || ctx->bufpos >= ctx->bufsize) {
-                        g_print("must read\n");
                         if (0 >= gsgf_yyread(ctx))
                                 return -1;
                 }
@@ -445,7 +456,6 @@ static gssize gsgf_yyread(GSGFParserContext *ctx)
                                                 sizeof ctx->buffer, ctx->cancellable,
                                                 ctx->error);
 
-        g_print("Got %d bytes\n", read_bytes);
         if (read_bytes <= 0)
                 return read_bytes;
 
@@ -466,7 +476,6 @@ static gint gsgf_yyread_prop_ident(GSGFParserContext *ctx, gchar c,
 
         while (1) {
                 if (ctx->bufsize == 0 || ctx->bufpos >= ctx->bufsize) {
-                        g_print("must read\n");
                         if (0 >= gsgf_yyread(ctx)) {
                                 g_string_free(*value, TRUE);
                                 *value = NULL;
@@ -505,7 +514,6 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
 
         while (1) {
                 if (ctx->bufsize == 0 || ctx->bufpos >= ctx->bufsize) {
-                        g_print("must read\n");
                         if (0 >= gsgf_yyread(ctx)) {
                                 g_string_free(*value, TRUE);
                                 *value = NULL;

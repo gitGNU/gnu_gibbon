@@ -120,6 +120,7 @@ GTK_DOC_CHECK([1.15])
 AC_CONFIG_FILES([ 
     Makefile
     libgsgf/Makefile
+    libgsgf/tests/Makefile
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
+SUBDIRS = tests
+
 noinst_LIBRARIES = libgsgf.a
 noinst_PROGRAMS = libgsgftest
 
@@ -32,6 +34,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-error.c			\
 	gsgf-collection.c		\
 	gsgf-game-tree.c		\
+	gsgf-node-list.c		\
 	gsgf-property.c
 
 noinst_HEADERS =			\
@@ -39,6 +42,7 @@ noinst_HEADERS =			\
 	gsgf-error.h			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\
+	gsgf-node-list.h		\
 	gsgf-property.h
 
 libgsgftest_SOURCES = libgsgftest.c
