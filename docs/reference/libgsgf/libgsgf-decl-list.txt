@@ -1,4 +1,22 @@
 <SECTION>
+<FILE>gsgf-node-list</FILE>
+<TITLE>GSGFNodeList</TITLE>
+GSGFNodeListClass
+GSGFNodeList
+GSGFNodeListPrivate
+gsgf_node_list_new
+gsgf_node_list_add_child
+<SUBSECTION Standard>
+GSGF_NODE_LIST
+GSGF_IS_NODE_LIST
+GSGF_TYPE_NODE_LIST
+gsgf_node_list_get_type
+GSGF_NODE_LIST_CLASS
+GSGF_IS_NODE_LIST_CLASS
+GSGF_NODE_LIST_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-property</FILE>
 <TITLE>GSGFProperty</TITLE>
 GSGFPropertyClass
@@ -24,6 +42,8 @@ GSGFCollectionPrivate
 gsgf_collection_new
 gsgf_collection_parse_stream
 gsgf_collection_parse_file
+gsgf_collection_add_game_tree
+gsgf_collection_write_stream
 <SUBSECTION Standard>
 GSGF_COLLECTION
 GSGF_IS_COLLECTION
@@ -35,9 +55,36 @@ GSGF_COLLECTION_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-game-tree</FILE>
+<TITLE>GSGFGameTree</TITLE>
+GSGFGameTreeClass
+GSGFGameTree
+GSGFGameTreePrivate
+gsgf_game_tree_new
+gsgf_game_tree_add_child
+gsgf_game_tree_get_parent
+<SUBSECTION Standard>
+GSGF_GAME_TREE
+GSGF_IS_GAME_TREE
+GSGF_TYPE_GAME_TREE
+gsgf_game_tree_get_type
+GSGF_GAME_TREE_CLASS
+GSGF_IS_GAME_TREE_CLASS
+GSGF_GAME_TREE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-error</FILE>
 GSGF_ERROR
 GSGFError
 gsgf_error_quark
+</SECTION>
+
+<SECTION>
+<FILE>test</FILE>
+filename
+test_collection
+expect_error
+expect_error_conditional
 </SECTION>
 

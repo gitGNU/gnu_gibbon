@@ -6,13 +6,79 @@
 <NAME>GSGFError</NAME>
 typedef enum {
         GSGF_ERROR_NONE = 0,
-        GSGF_ERROR_SYNTAX = 1
+        GSGF_ERROR_SYNTAX = 1,
+        GSGF_ERROR_EMPTY_COLLECTION = 2
 } GSGFError;
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
 <RETURNS>GQuark </RETURNS>
 void 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_NODE_LIST</NAME>
+#define GSGF_TYPE_NODE_LIST             (gsgf_node_list_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE_LIST</NAME>
+#define GSGF_NODE_LIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NODE_LIST, GSGFNodeList))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE_LIST_CLASS</NAME>
+#define GSGF_NODE_LIST_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NODE_LIST, GSGFNodeListClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NODE_LIST</NAME>
+#define GSGF_IS_NODE_LIST(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NODE_LIST))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NODE_LIST_CLASS</NAME>
+#define GSGF_IS_NODE_LIST_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NODE_LIST))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE_LIST_GET_CLASS</NAME>
+#define GSGF_NODE_LIST_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NODE_LIST, GSGFNodeListClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFNodeListClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNodeList</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNodeListPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNodeListClass</NAME>
+struct _GSGFNodeListClass
+{
+        GObjectClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_node_list_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFNodeList</NAME>
+struct _GSGFNodeList
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        GSGFNodeListPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_node_list_new</NAME>
+<RETURNS>GSGFNodeList *</RETURNS>
+ 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_list_add_child</NAME>
+<RETURNS>GSGFNodeList *</RETURNS>
+GSGFNodeList *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -143,4 +209,103 @@ GInputStream *stream, GCancellable *cancellable, GError **error
 <NAME>gsgf_collection_parse_file</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
 GFile *file, GCancellable *cancellable, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_collection_add_game_tree</NAME>
+<RETURNS>struct _GSGFGameTree *</RETURNS>
+GSGFCollection *collection 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_collection_write_stream</NAME>
+<RETURNS>gssize </RETURNS>
+const GSGFCollection *collection, GOutputStream *out, GCancellable *cancellable, GError **error 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_GAME_TREE</NAME>
+#define GSGF_TYPE_GAME_TREE             (gsgf_game_tree_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_GAME_TREE</NAME>
+#define GSGF_GAME_TREE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTree))
+</MACRO>
+<MACRO>
+<NAME>GSGF_GAME_TREE_CLASS</NAME>
+#define GSGF_GAME_TREE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_GAME_TREE</NAME>
+#define GSGF_IS_GAME_TREE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_GAME_TREE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_GAME_TREE_CLASS</NAME>
+#define GSGF_IS_GAME_TREE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_GAME_TREE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_GAME_TREE_GET_CLASS</NAME>
+#define GSGF_GAME_TREE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFGameTreeClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGameTree</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGameTreePrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGameTreeClass</NAME>
+struct _GSGFGameTreeClass
+{
+        GObjectClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_game_tree_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFGameTree</NAME>
+struct _GSGFGameTree
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        GSGFGameTreePrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_game_tree_new</NAME>
+<RETURNS>GSGFGameTree *</RETURNS>
+ 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_add_child</NAME>
+<RETURNS>GSGFGameTree *</RETURNS>
+GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_get_parent</NAME>
+<RETURNS>GSGFGameTree *</RETURNS>
+const GSGFGameTree *self 
+</FUNCTION>
+<VARIABLE>
+<NAME>filename</NAME>
+extern char *filename;
+</VARIABLE>
+<FUNCTION>
+<NAME>test_collection</NAME>
+<RETURNS>int </RETURNS>
+GSGFCollection *collection, GError *error 
+</FUNCTION>
+<FUNCTION>
+<NAME>expect_error</NAME>
+<RETURNS>int </RETURNS>
+GError *error, GError *expect 
+</FUNCTION>
+<FUNCTION>
+<NAME>expect_error_conditional</NAME>
+<RETURNS>int </RETURNS>
+gboolean condition, const gchar *msg, GError *error, GError *expect 
 </FUNCTION>
