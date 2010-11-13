@@ -24,7 +24,12 @@
 
 G_BEGIN_DECLS
 
-struct _GSGFCollection;
+struct _GSGFGameTree;
+
+gssize _gsgf_collection_write_stream(const GSGFCollection *collection,
+                                     GOutputStream *out,
+                                     GCancellable *cancellable,
+                                     GError **error);
 
 G_END_DECLS
 

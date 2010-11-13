@@ -118,3 +118,24 @@ gsgf_game_tree_get_parent(const GSGFGameTree *self)
 {
         return self->priv->parent;
 }
+
+gssize
+_gsgf_game_tree_write_stream(const GSGFCollection *self,
+                             GOutputStream *out, GCancellable *cancellable,
+                             GError **error)
+{
+        gssize written = 0;
+        gssize written_here;
+
+        if (!g_output_stream_write_all(out, "(", 1, &written_here,
+                                       cancellable, error))
+                return -1;
+        written += written_here;
+
+        if (!g_output_stream_write_all(out, ")", 1, &written_here,
+                                       cancellable, error))
+                return -1;
+        written += written_here;
+
+        return written;
+}

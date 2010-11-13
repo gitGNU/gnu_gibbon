@@ -613,7 +613,8 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
 {
         GSGFGameTree *game_tree = gsgf_game_tree_new();
 
-        g_list_append(self->priv->game_trees, game_tree);
+        self->priv->game_trees = 
+                g_list_append(self->priv->game_trees, game_tree);
 
         return game_tree;
 }
@@ -638,11 +639,28 @@ gsgf_collection_write_stream(const GSGFCollection *self,
                              GOutputStream *out, GCancellable *cancellable,
                              GError **error)
 {
-        if (!self->priv->game_trees) {
+        gssize written = 0;
+        gssize written_here;
+        GList *iter = self->priv->game_trees;
+
+        if (!iter) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Attempt to write an empty collection"));
                 return -1;
         }
 
-        return -1;
+        while (iter) {
+                written_here = 
+                        _gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
+                                                     out, cancellable,
+                                                     error);
+                if (written_here < 0)
+                        return -1;
+
+                written += written_here;
+
+                iter = iter->next;
+        }
+
+        return written;
 }

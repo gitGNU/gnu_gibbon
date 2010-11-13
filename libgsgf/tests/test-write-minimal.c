@@ -32,7 +32,8 @@ char *filename = "minimal.sgf";
 int 
 test_collection(GSGFCollection *collection, GError *error)
 {
-        GOutputStream *out = g_memory_output_stream_new(NULL, 0, NULL, NULL);
+        GOutputStream *out = g_memory_output_stream_new(NULL, 0, 
+                                                        g_realloc, g_free);
         gssize written = gsgf_collection_write_stream(collection, out, NULL, &error);
         gchar *expect = "(;)";
         gchar *got;
@@ -41,7 +42,7 @@ test_collection(GSGFCollection *collection, GError *error)
 
         got = (gchar*) g_memory_output_stream_get_data(out);
         if (strcmp(got, expect)) {
-                fprintf(stderr, "Expected '(;'), got '%s'.\n", got);
+                fprintf(stderr, "Expected '%s', got '%s'.\n", expect, got);
                 return -1;
         }
 
