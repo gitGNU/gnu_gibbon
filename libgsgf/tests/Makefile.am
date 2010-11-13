@@ -22,7 +22,8 @@ TESTS = test-empty 			\
 	test-multi-game-tree		\
 	test-nested-game-tree		\
 	test-really-empty		\
-	test-write-empty-collection
+	test-write-empty		\
+	test-write-minimal
 
 AM_CPPFLAGS = 				\
     -I$(top_srcdir)			\
@@ -38,7 +39,8 @@ test_minimal_SOURCES = main.c test-minimal.c
 test_multi_game_tree_SOURCES = main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = main.c test-nested-game-tree.c
 test_really_empty_SOURCES = main.c test-really-empty.c
-test_write_empty_collection_SOURCES = main.c test-write-empty-collection.c
+test_write_empty_SOURCES = main.c test-write-empty.c
+test_write_minimal_SOURCES = main.c test-write-minimal.c
 
 noinst_HEADERS = test.h
 
