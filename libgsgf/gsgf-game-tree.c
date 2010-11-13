@@ -120,17 +120,35 @@ gsgf_game_tree_get_parent(const GSGFGameTree *self)
 }
 
 gssize
-_gsgf_game_tree_write_stream(const GSGFCollection *self,
+_gsgf_game_tree_write_stream(const GSGFGameTree *self,
                              GOutputStream *out, GCancellable *cancellable,
                              GError **error)
 {
         gssize written = 0;
         gssize written_here;
+        GList *iter;
 
+        /* FIXME! The warning about the sign of the pointer &written_here is
+         * important! We have to change our interface to match that of
+         * g_output_stream_write_all().
+         */
         if (!g_output_stream_write_all(out, "(", 1, &written_here,
                                        cancellable, error))
                 return -1;
         written += written_here;
+
+        iter = self->priv->children;
+        while (iter) {
+                written_here = _gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
+                                                            out, cancellable,
+                                                            error);
+                if (written_here < 0)
+                        return -1;
+
+                written += written_here;
+
+                iter = iter->next;
+        }
 
         if (!g_output_stream_write_all(out, ")", 1, &written_here,
                                        cancellable, error))
