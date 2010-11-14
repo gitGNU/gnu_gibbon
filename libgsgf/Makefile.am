@@ -33,7 +33,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-error.c			\
 	gsgf-collection.c		\
 	gsgf-game-tree.c		\
-	gsgf-node-list.c		\
+	gsgf-node.c			\
 	gsgf-property.c
 
 noinst_HEADERS =			\
@@ -42,5 +42,5 @@ noinst_HEADERS =			\
 	gsgf-error.h			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\
-	gsgf-node-list.h		\
+	gsgf-node.h			\
 	gsgf-property.h

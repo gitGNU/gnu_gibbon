@@ -33,6 +33,8 @@
 
 struct _GSGFGameTreePrivate {
         GSGFGameTree *parent;
+
+        GList *nodes;
         GList *children;
 };
 
@@ -48,6 +50,7 @@ gsgf_game_tree_init(GSGFGameTree *self)
                                                  GSGFGameTreePrivate);
 
         self->priv->parent = NULL;
+        self->priv->nodes = NULL;
         self->priv->children = NULL;
 }
 
@@ -55,6 +58,12 @@ static void
 gsgf_game_tree_finalize(GObject *object)
 {
         GSGFGameTree *self = GSGF_GAME_TREE(object);
+
+        if (self->priv->nodes) {
+                g_list_foreach(self->priv->nodes, (GFunc) g_object_unref, NULL);
+                g_list_free(self->priv->nodes);
+        }
+        self->priv->nodes = NULL;
 
         if (self->priv->children) {
                 g_list_foreach(self->priv->children, (GFunc) g_object_unref, NULL);
@@ -105,6 +114,23 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
         self->priv->children = g_list_append(self->priv->children, child);
 
         child->priv->parent = self;
+
+        return child;
+}
+
+/**
+ * gsgf_game_tree_add_node:
+ *
+ * Add an empty #GSGFNode as a child.  The function cannot fail.
+ *
+ * Returns the freshly added child.
+ */
+GSGFNode *
+gsgf_game_tree_add_node(GSGFGameTree *self)
+{
+        GSGFGameTree *child = gsgf_game_tree_new();
+
+        self->priv->nodes = g_list_append(self->priv->nodes, child);
 
         return child;
 }

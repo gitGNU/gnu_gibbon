@@ -171,6 +171,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
         GSGFParserContext ctx;
 
         GSGFGameTree *game_tree = NULL;
+        GSGFNode *node = NULL;
 
         ctx.stream = stream;
         ctx.cancellable = cancellable;
@@ -207,6 +208,10 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         break;
                 }
 
+                /* FIXME! We need a test case that checks that ((;);) is illegal.
+                 * A NodeList cannot follow a (sub-)GameTree.
+                 */
+
                 switch (ctx.state) {
                         case GSGF_PARSER_STATE_INIT:
                                 if (token == '(') {
@@ -220,6 +225,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         case GSGF_PARSER_STATE_NODE:
                                 if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                        node = gsgf_game_tree_add_node(game_tree);
                                 } else {
                                         gsgf_yyerror(&ctx, _("';'"), token, error);
                                         if (value)

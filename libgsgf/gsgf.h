@@ -23,7 +23,7 @@
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-error.h>
 #include <libgsgf/gsgf-game-tree.h>
-#include <libgsgf/gsgf-node-list.h>
+#include <libgsgf/gsgf-node.h>
 #include <libgsgf/gsgf-property.h>
 
 #endif
