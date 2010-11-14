@@ -32,6 +32,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gsgf-internal.h"
+
 enum gsgf_parser_state {
         GSGF_PARSER_STATE_INIT,
         GSGF_PARSER_STATE_NODE,
@@ -623,44 +625,56 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
  * gsgf_collection_write_stream
  * @self: the #GSGFCollection.
  * @out: a #GOutputStream to write to.
+ * @bytes_written: number of bytes written to the stream.
+ * @close_stream: %TRUE if stream should be losed, %FALSE otherwise.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
  * Serializes a #GSGFCollection and writes the serialized data into
  * a #GOuputStream.
  *
+ * If there is an error during the operation FALSE is returned and @error
+ * is set to indicate the error status, @bytes_written is updated to contain
+ * the number of bytes written into the stream before the error occurred.
+ *
  * See also gsgf_collection_write_file().
  *
- * Returns: Number of bytes written or a a negative number in case of
- * failure.
- */
-gssize
+ * Returns: %TRUE on success.  %FALSE if there was an error.
+ **/
+gboolean
 gsgf_collection_write_stream(const GSGFCollection *self,
-                             GOutputStream *out, GCancellable *cancellable,
+                             GOutputStream *out,
+                             gsize *bytes_written, gboolean close_stream,
+                             GCancellable *cancellable,
                              GError **error)
 {
-        gssize written = 0;
-        gssize written_here;
+        gsize written_here;
         GList *iter = self->priv->game_trees;
+
+        *bytes_written = 0;
 
         if (!iter) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Attempt to write an empty collection"));
-                return -1;
+                return FALSE;
         }
 
         while (iter) {
-                written_here = 
-                        _gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
-                                                     out, cancellable,
-                                                     error);
-                if (written_here < 0)
-                        return -1;
+                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
+                                                  out, &written_here,
+                                                  cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
 
-                written += written_here;
+                *bytes_written += written_here;
 
                 iter = iter->next;
         }
 
-        return written;
+        if (close_stream && !g_output_stream_close(out, cancellable, error))
+                return FALSE;
+
+        return TRUE;
 }
+

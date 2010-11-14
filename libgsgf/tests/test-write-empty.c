@@ -22,6 +22,7 @@
 #endif
 
 #include <glib/gi18n.h>
+#include <stdio.h>
 
 #include "test.h"
 
@@ -33,12 +34,17 @@ test_collection(GSGFCollection *collection, GError *error)
         GSGFCollection *empty = gsgf_collection_new();
         GError *expect = NULL;
         GOutputStream *out = g_memory_output_stream_new(NULL, 0, NULL, NULL);
-        gssize written = gsgf_collection_write_stream(empty, out, NULL, &error);
+        gsize written = 12345;
+
+        if (gsgf_collection_write_stream(empty, out, &written, FALSE, NULL, &error)) {
+                fprintf(stderr, "Writing empty collection did not fail.\n");
+                return -1;
+        }
 
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                     _("Attempt to write an empty collection"));
 
-        return expect_error_conditional(written == -1,
-                                        "Expected written size to be -1",
+        return expect_error_conditional(written == 0,
+                                        "Expected written size to be 0",
                                         error, expect);
 }

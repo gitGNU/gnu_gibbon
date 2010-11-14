@@ -26,10 +26,11 @@ G_BEGIN_DECLS
 
 struct _GSGFGameTree;
 
-gssize _gsgf_collection_write_stream(const GSGFCollection *collection,
-                                     GOutputStream *out,
-                                     GCancellable *cancellable,
-                                     GError **error);
+gssize _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
+                                    GOutputStream *out,
+                                    gsize *bytes_written,
+                                    GCancellable *cancellable,
+                                    GError **error);
 
 G_END_DECLS
 

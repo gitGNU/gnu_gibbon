@@ -29,6 +29,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gsgf-internal.h"
+
 struct _GSGFGameTreePrivate {
         GSGFGameTree *parent;
         GList *children;
@@ -119,41 +121,45 @@ gsgf_game_tree_get_parent(const GSGFGameTree *self)
         return self->priv->parent;
 }
 
-gssize
+gboolean
 _gsgf_game_tree_write_stream(const GSGFGameTree *self,
-                             GOutputStream *out, GCancellable *cancellable,
-                             GError **error)
+                             GOutputStream *out, gsize *bytes_written,
+                             GCancellable *cancellable, GError **error)
 {
-        gssize written = 0;
-        gssize written_here;
+        gsize written_here;
         GList *iter;
 
-        /* FIXME! The warning about the sign of the pointer &written_here is
-         * important! We have to change our interface to match that of
-         * g_output_stream_write_all().
-         */
+        *bytes_written = 0;
+
         if (!g_output_stream_write_all(out, "(", 1, &written_here,
-                                       cancellable, error))
-                return -1;
-        written += written_here;
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+
+        *bytes_written += written_here;
 
         iter = self->priv->children;
         while (iter) {
-                written_here = _gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
-                                                            out, cancellable,
-                                                            error);
-                if (written_here < 0)
-                        return -1;
+                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data), out,
+                                                  &written_here, cancellable,
+                                                  error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
 
-                written += written_here;
+                *bytes_written += written_here;
 
                 iter = iter->next;
         }
 
-        if (!g_output_stream_write_all(out, ")", 1, &written_here,
-                                       cancellable, error))
-                return -1;
-        written += written_here;
+        if (!g_output_stream_write_all(out, "(", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
 
-        return written;
+        *bytes_written += written_here;
+
+        return FALSE;
 }

@@ -34,7 +34,9 @@ test_collection(GSGFCollection *collection, GError *error)
 {
         GOutputStream *out = g_memory_output_stream_new(NULL, 0, 
                                                         g_realloc, g_free);
-        gssize written = gsgf_collection_write_stream(collection, out, NULL, &error);
+        gsize written;
+        gboolean success = gsgf_collection_write_stream(collection, out, &written,
+                                                        FALSE, NULL, &error);
         gchar *expect = "(;)";
         gchar *got;
 
