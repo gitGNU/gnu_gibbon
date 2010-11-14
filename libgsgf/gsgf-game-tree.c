@@ -153,7 +153,7 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
                 iter = iter->next;
         }
 
-        if (!g_output_stream_write_all(out, "(", 1, &written_here,
+        if (!g_output_stream_write_all(out, ")", 1, &written_here,
                                        cancellable, error)) {
                 *bytes_written += written_here;
                 return FALSE;
