@@ -73,9 +73,7 @@ G_DEFINE_TYPE (GSGFCollection, gsgf_collection, G_TYPE_OBJECT)
 
 #define GSGF_TOKEN_EOF 256
 #define GSGF_TOKEN_PROP_IDENT 257
-#define GSGF_TOKEN_VALUE_TEXT 258
-#define GSGF_TOKEN_VALUE_NUMBER 259
-#define GSGF_TOKEN_VALUE_REAL 260
+#define GSGF_TOKEN_VALUE 258
 
 static gint gsgf_yylex(GSGFParserContext *ctx, GString **value);
 static gint gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value);
@@ -172,6 +170,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
 
         GSGFGameTree *game_tree = NULL;
         GSGFNode *node = NULL;
+        GSGFProperty *property = NULL;
 
         ctx.stream = stream;
         ctx.cancellable = cancellable;
@@ -217,6 +216,8 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                         game_tree = gsgf_collection_add_game_tree(self);
+                                        node = NULL;
+                                        property = NULL;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'('"), token, error);
                                         return self;
@@ -226,6 +227,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
                                         node = gsgf_game_tree_add_node(game_tree);
+                                        property = NULL;
                                 } else {
                                         gsgf_yyerror(&ctx, _("';'"), token, error);
                                         if (value)
@@ -236,13 +238,27 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         case GSGF_PARSER_STATE_PROPERTY:
                                 if (token == GSGF_TOKEN_PROP_IDENT) {
                                         ctx.state = GSGF_PARSER_STATE_PROP_VALUE;
+                                        property = gsgf_node_add_property(node,
+                                                                          value->str,
+                                                                          error);
+                                        if (!property) {
+                                                g_prefix_error(error, "%d:%d:",
+                                                               ctx.lineno, ctx.colno);
+                                                g_string_free(value, TRUE);
+                                                return self;
+                                        }
                                 } else if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                        node = gsgf_game_tree_add_node(game_tree);
+                                        property = NULL;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                         game_tree = gsgf_game_tree_add_child(game_tree);
+                                        node = NULL;
+                                        property = NULL;
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                        game_tree = gsgf_game_tree_get_parent(game_tree);
                                 } else {
                                         gsgf_yyerror(&ctx, _("property, ';', or '('"),
                                                      token, error);
@@ -262,15 +278,19 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                 }
                                 break;
                         case GSGF_PARSER_STATE_VALUE:
-                                if (token == ']')
+                                if (token == ']') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTIES;
-                                else if (token == GSGF_TOKEN_VALUE_TEXT)
+                                } else if (token == GSGF_TOKEN_VALUE) {
                                         ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
-                                else if (token == GSGF_TOKEN_VALUE_NUMBER)
-                                        ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
-                                else if (token == GSGF_TOKEN_VALUE_REAL)
-                                        ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
-                                else {
+                                        if (!gsgf_property_add_value(property,
+                                                                    value->str,
+                                                                    error)) {
+                                                g_prefix_error(error, "%d:%d:",
+                                                               ctx.lineno, ctx.colno);
+                                                g_string_free(value, TRUE);
+                                                return self;
+                                        }
+                                } else {
                                         gsgf_yyerror(&ctx, _("value or ']'"),
                                                      token, error);
                                         if (value)
@@ -284,11 +304,18 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_VALUE;
                                 } else if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                        node = gsgf_game_tree_add_node(game_tree);
+                                        property = NULL;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                         game_tree = gsgf_game_tree_add_child(game_tree);
+                                        node = NULL;
+                                        property = NULL;
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                        game_tree = gsgf_game_tree_get_parent(game_tree);
+                                        node = NULL;
+                                        property = NULL;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'[', ';', or '('"),
                                                      token, error);
@@ -312,13 +339,29 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                                         ctx.state = GSGF_PARSER_STATE_VALUE;
                                 } else if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
+                                        node = gsgf_game_tree_add_node(game_tree);
+                                        property = NULL;
                                 } else if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
                                         game_tree = gsgf_game_tree_add_child(game_tree);
+                                        node = NULL;
+                                        property = NULL;
                                 } else if (token == ')') {
                                         ctx.state = GSGF_PARSER_STATE_GAME_TREES;
+                                        game_tree = gsgf_game_tree_get_parent(game_tree);
+                                        node = NULL;
+                                        property = NULL;
                                 } else if (token == GSGF_TOKEN_PROP_IDENT) {
                                         ctx.state = GSGF_PARSER_STATE_PROP_VALUE;
+                                        property = gsgf_node_add_property(node,
+                                                                          value->str,
+                                                                          error);
+                                        if (!property) {
+                                                g_prefix_error(error, "%d:%d:",
+                                                               ctx.lineno, ctx.colno);
+                                                g_string_free(value, TRUE);
+                                                return self;
+                                        }
                                 } else {
                                         gsgf_yyerror(&ctx, _("'[', ';', '(', ')', or property"),
                                                      token, error);
@@ -330,7 +373,11 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
                         case GSGF_PARSER_STATE_GAME_TREES:
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
-                                        game_tree = gsgf_game_tree_add_child(game_tree);
+                                        if (game_tree) {
+                                                game_tree = gsgf_game_tree_add_child(game_tree);
+                                        } else {
+                                                game_tree = gsgf_collection_add_game_tree(self);
+                                        }
                                 } else if (token == ')') {
                                         /* State does not change! */
                                         if (!game_tree) {
@@ -357,7 +404,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
 
         } while (token != GSGF_TOKEN_EOF);
 
-        if (!game_tree) {
+        if (!self->priv->game_trees) {
                 g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Empty SGF collections are not allowed"));
         } /* else if (!game_tree->first_node ..), actually just else. */
@@ -512,8 +559,7 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
 {
         gchar c;
         gboolean escaped = FALSE;
-        gint token = GSGF_TOKEN_VALUE_TEXT;
-        gchar *str;
+        gint token = GSGF_TOKEN_VALUE;
 
         *value = g_string_new("");
 
@@ -532,7 +578,6 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
                 ++ctx->colno;
                 c = ctx->buffer[ctx->bufpos++];
 
-                /* FIXME! Read all kinds of line endings!  */
                 if (c == '\n' || c == '\r') {
                         gsgf_yyread_linebreak(ctx, c);
                         c = '\n';
@@ -557,28 +602,6 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
 
                 if (!escaped) {
                         *value = g_string_append_c(*value, c);
-                }
-        }
-
-        /* Now guess the token type.  Some of the types mentioned by the SGF specs
-         * are not used because they cannot be distinguished from other types:
-         *
-         * - Compose is Text
-         * - SimpleText is Text
-         * - Double is a number
-         * - Color is Text
-         * - Point is whatever it looks like
-         * - Stone is whatever it looks like
-         * - Move is whatever it looks like
-         */
-        str = (*value)->str;
-
-        if (str[0] == '+' || str[0] == '-' || (str[0] >= '0' && str[0] <= '9')) {
-                if (g_regex_match(double_pattern, str, 0, NULL)) {
-                        if (index (str, '.'))
-                                token = GSGF_TOKEN_VALUE_REAL;
-                        else
-                                token = GSGF_TOKEN_VALUE_NUMBER;
                 }
         }
 
@@ -672,7 +695,13 @@ gsgf_collection_write_stream(const GSGFCollection *self,
                         *bytes_written += written_here;
                         return FALSE;
                 }
+                *bytes_written += written_here;
 
+                if (!g_output_stream_write_all(out, "\n", 1, &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
                 *bytes_written += written_here;
 
                 iter = iter->next;

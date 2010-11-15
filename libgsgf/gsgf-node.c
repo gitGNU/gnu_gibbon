@@ -32,9 +32,7 @@
 #include "gsgf-internal.h"
 
 struct _GSGFNodePrivate {
-        GSGFNode *parent;
-
-        GList *properties;
+        GHashTable *properties;
 };
 
 #define GSGF_NODE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -48,7 +46,8 @@ gsgf_node_init(GSGFNode *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,  GSGF_TYPE_NODE,
                                                  GSGFNodePrivate);
 
-        self->priv->parent = NULL;
+        self->priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                                       g_free, g_object_unref);
 }
 
 static void
@@ -56,10 +55,8 @@ gsgf_node_finalize(GObject *object)
 {
         GSGFNode *self = GSGF_NODE(object);
 
-        if (self->priv->properties) {
-                g_list_foreach(self->priv->properties, (GFunc) g_object_unref, NULL);
-                g_free(self->priv->properties);
-        }
+        if (self->priv->properties)
+                g_hash_table_destroy(self->priv->properties);
         self->priv->properties = NULL;
 
         G_OBJECT_CLASS (gsgf_node_parent_class)->finalize(object);
@@ -95,6 +92,9 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
                         gsize *bytes_written, GCancellable *cancellable, GError **error)
 {
         gsize written_here;
+        GList *keys;
+        GList *iter;
+        GList *property;
 
         *bytes_written = 0;
 
@@ -106,21 +106,74 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
 
         *bytes_written += written_here;
 
-/*
-        iter = self->priv->children;
-        while (iter) {
-                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data), out,
-                                                  &written_here, cancellable,
-                                                  error)) {
+        /* Sorting is actually not needed.  We trade performance for easier
+         * testing here.
+         */
+        if (self->priv->properties) {
+                keys = g_hash_table_get_keys(self->priv->properties);
+
+                iter = g_list_sort(keys, g_strcmp0);
+
+                while (iter) {
+                        if (!g_output_stream_write_all(out, iter->data,
+                                                       strlen(iter->data), &written_here,
+                                                       cancellable, error)) {
+                                *bytes_written += written_here;
+                                g_list_free(keys);
+                                return FALSE;
+                        }
+
+                        property = g_hash_table_lookup(self->priv->properties, iter->data);
+                        if (!_gsgf_property_write_stream(GSGF_PROPERTY(property), out,
+                                                         &written_here, cancellable,
+                                                         error)) {
+                                *bytes_written += written_here;
+                                g_list_free(keys);
+                                return FALSE;
+                        }
+
                         *bytes_written += written_here;
-                        return FALSE;
+                        iter = iter->next;
                 }
-
-                *bytes_written += written_here;
-
-                iter = iter->next;
+                g_list_free(keys);
         }
-*/
 
         return TRUE;
+}
+
+/**
+ * gsgf_node_add_property:
+ * @self: a #GSGFNode to add the property to.
+ * @id: identifier of the property.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Add an empty #GSGFProperty as a child. A copy of the %id is used internally;
+ * you can safely free resources related to the %id.
+ *
+ * It is illegal to add a property with an already existing identifier to a node.
+ *
+ * Returns: The freshly added #GSGFProperty or %NULL in case of failure.
+ */
+GSGFProperty *
+gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
+{
+        GSGFProperty *property;
+        gchar *ptr = id;
+
+        *error = NULL;
+
+        while (*ptr) {
+                if (*ptr < 'A' || *ptr > 'Z') {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SYNTAX,
+                                    _("Only upper case letters are allowed for property identifiers"));
+                        return NULL;
+                }
+                ++ptr;
+        }
+
+        property = gsgf_property_new();
+
+        g_hash_table_insert(self->priv->properties, g_strdup(id), property);
+
+        return property;
 }

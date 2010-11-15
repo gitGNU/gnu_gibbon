@@ -32,6 +32,9 @@ gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
 gboolean _gsgf_node_write_stream(const struct _GSGFNode *node,
                                  GOutputStream *out, gsize *bytes_written,
                                  GCancellable *cancellable, GError **error);
+gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
+                                     GOutputStream *out, gsize *bytes_written,
+                                     GCancellable *cancellable, GError **error);
 
 G_END_DECLS
 

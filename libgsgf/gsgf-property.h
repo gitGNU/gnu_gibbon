@@ -42,6 +42,12 @@ typedef struct _GSGFPropertyClass   GSGFPropertyClass;
 typedef struct _GSGFProperty        GSGFProperty;
 typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 
+typedef enum gsgf_property_type {
+        GSGF_PROPERTY_TEXT,
+        GSGF_PROPERTY_NUMBER,
+        GSGF_PROPERTY_REAL
+} GSGFPropertyType;
+
 struct _GSGFPropertyClass
 {
         GObjectClass parent_class;
@@ -58,6 +64,9 @@ struct _GSGFProperty
 };
 
 GSGFProperty *gsgf_property_new();
+
+gboolean gsgf_property_add_value(GSGFProperty *property, const gchar *text, GError **error);
+GList *gsgf_property_get_values(GSGFProperty *property);
 
 G_END_DECLS
 

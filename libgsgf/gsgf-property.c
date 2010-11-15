@@ -29,23 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
-enum gsgf_property_type {
-        GSGF_PROPERTY_TEXT,
-        GSGF_PROPERTY_NUMBER,
-        GSGF_PROPERTY_REAL,
-};
-
-struct _GSGFPropertyValue {
-        enum gsgf_property_type type;
-        union gsgf_property_union {
-               gdouble real;
-               gint number;
-               gchar *text;
-        } value;
-};
-
 struct _GSGFPropertyPrivate {
-        gchar *id;
         GList *values;
 };
 
@@ -54,8 +38,6 @@ struct _GSGFPropertyPrivate {
                                       GSGFPropertyPrivate))
 G_DEFINE_TYPE (GSGFProperty, gsgf_property, G_TYPE_OBJECT)
 
-static void gsgf_property_value_free(struct _GSGFPropertyValue *value);
-
 static void
 gsgf_property_init(GSGFProperty *self)
 {
@@ -63,7 +45,6 @@ gsgf_property_init(GSGFProperty *self)
                         GSGF_TYPE_PROPERTY,
                         GSGFPropertyPrivate);
 
-        self->priv->id = NULL;
         self->priv->values = NULL;
 }
 
@@ -72,12 +53,8 @@ gsgf_property_finalize(GObject *object)
 {
         GSGFProperty *property = GSGF_PROPERTY (object);
 
-        if (property->priv->id)
-                g_free(property->priv->id);
-        property->priv->id = NULL;
-
         if (property->priv->values) {
-                g_list_foreach(property->priv->values, (GFunc) gsgf_property_value_free,
+                g_list_foreach(property->priv->values, (GFunc) g_free,
                                NULL);
                 g_list_free(property->priv->values);
         }
@@ -103,18 +80,73 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
  * Returns: An empty #GSGFProperty.
  */
 GSGFProperty *
-gsgf_property_new(const gchar *id)
+gsgf_property_new()
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
-
-        self->priv->id = g_strdup(id);
 
         return self;
 }
 
-static void
-gsgf_property_value_free(struct _GSGFPropertyValue *value)
+gboolean
+_gsgf_property_write_stream(const GSGFProperty *self,
+                            GOutputStream *out, gsize *bytes_written,
+                            GCancellable *cancellable, GError **error)
 {
-        if (value->type == GSGF_PROPERTY_TEXT)
-                g_free(value->value.text);
+        gsize written_here;
+        GList *iter;
+
+        *bytes_written = 0;
+
+        iter = self->priv->values;
+
+        while (iter) {
+                if (!g_output_stream_write_all(out, "[", 1, &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+
+                *bytes_written += written_here;
+
+                if (!g_output_stream_write_all(out, iter->data, strlen(iter->data),
+                                               &written_here, cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+
+                *bytes_written += written_here;
+
+                iter = iter->next;
+
+                if (!g_output_stream_write_all(out, "]", 1, &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+
+                *bytes_written += written_here;
+        }
+
+        return TRUE;
+}
+
+/**
+ * gsgf_property_add_value:
+ *
+ * @property: The property that the value is added to.
+ * @text: The value itself.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Add an (textual!) value to a #GSGFProperty.
+ *
+ * Possible errors depend on the particular flavor of SGF you expect.
+ *
+ * Returns: %TRUE on success, %FALSE on failure.
+ */
+gboolean
+gsgf_property_add_value(GSGFProperty *property, const gchar *value, GError **error)
+{
+        *error = NULL;
+
+        property->priv->values = g_list_append(property->priv->values, g_strdup(value));
 }

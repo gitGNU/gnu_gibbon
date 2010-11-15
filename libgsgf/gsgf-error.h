@@ -38,11 +38,13 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_NONE: No error.
  * @GSGF_ERROR_SYNTAX: Syntax error.
  * @GSGF_ERROR_EMPTY_COLLECTION: Collection is empty.
+ * @GSGF_ERROR_PROPERTY_EXISTS: Attempt to insert a property with an already existing name.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
         GSGF_ERROR_SYNTAX = 1,
-        GSGF_ERROR_EMPTY_COLLECTION = 2
+        GSGF_ERROR_EMPTY_COLLECTION = 2,
+        GSGF_ERROR_PROPERTY_EXISTS = 3
 } GSGFError;
 
 extern GQuark gsgf_error_quark (void);

@@ -37,7 +37,7 @@ test_collection(GSGFCollection *collection, GError *error)
         gsize written;
         gboolean success = gsgf_collection_write_stream(collection, out, &written,
                                                         FALSE, NULL, &error);
-        gchar *expect = "(;)";
+        gchar *expect = "(;)\n";
         gchar *got;
 
         if (error) return expect_error(error, NULL);
