@@ -1,4 +1,69 @@
 <MACRO>
+<NAME>GSGF_TYPE_NODE</NAME>
+#define GSGF_TYPE_NODE                  (gsgf_node_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE</NAME>
+#define GSGF_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NODE, GSGFNode))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE_CLASS</NAME>
+#define GSGF_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NODE, GSGFNodeClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NODE</NAME>
+#define GSGF_IS_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NODE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NODE_CLASS</NAME>
+#define GSGF_IS_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NODE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NODE_GET_CLASS</NAME>
+#define GSGF_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NODE, GSGFNodeClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFNodeClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNode</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNodePrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNodeClass</NAME>
+struct _GSGFNodeClass
+{
+        GObjectClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_node_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFNode</NAME>
+struct _GSGFNode
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        GSGFNodePrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_node_new</NAME>
+<RETURNS>GSGFNode *</RETURNS>
+ 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_add_property</NAME>
+<RETURNS>struct _GSGFProperty *</RETURNS>
+GSGFNode *self, const gchar *id, GError **error 
+</FUNCTION>
+<MACRO>
 <NAME>GSGF_ERROR</NAME>
 #define GSGF_ERROR gsgf_error_quark ()
 </MACRO>
@@ -7,78 +72,14 @@
 typedef enum {
         GSGF_ERROR_NONE = 0,
         GSGF_ERROR_SYNTAX = 1,
-        GSGF_ERROR_EMPTY_COLLECTION = 2
+        GSGF_ERROR_EMPTY_COLLECTION = 2,
+        GSGF_ERROR_PROPERTY_EXISTS = 3
 } GSGFError;
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
 <RETURNS>GQuark </RETURNS>
 void 
-</FUNCTION>
-<MACRO>
-<NAME>GSGF_TYPE_NODE_LIST</NAME>
-#define GSGF_TYPE_NODE_LIST             (gsgf_node_list_get_type ())
-</MACRO>
-<MACRO>
-<NAME>GSGF_NODE_LIST</NAME>
-#define GSGF_NODE_LIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NODE_LIST, GSGFNodeList))
-</MACRO>
-<MACRO>
-<NAME>GSGF_NODE_LIST_CLASS</NAME>
-#define GSGF_NODE_LIST_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NODE_LIST, GSGFNodeListClass))
-</MACRO>
-<MACRO>
-<NAME>GSGF_IS_NODE_LIST</NAME>
-#define GSGF_IS_NODE_LIST(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NODE_LIST))
-</MACRO>
-<MACRO>
-<NAME>GSGF_IS_NODE_LIST_CLASS</NAME>
-#define GSGF_IS_NODE_LIST_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NODE_LIST))
-</MACRO>
-<MACRO>
-<NAME>GSGF_NODE_LIST_GET_CLASS</NAME>
-#define GSGF_NODE_LIST_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NODE_LIST, GSGFNodeListClass))
-</MACRO>
-<STRUCT>
-<NAME>GSGFNodeListClass</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNodeList</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNodeListPrivate</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNodeListClass</NAME>
-struct _GSGFNodeListClass
-{
-        GObjectClass parent_class;
-};
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_node_list_get_type</NAME>
-<RETURNS>GType </RETURNS>
-void 
-</FUNCTION>
-<STRUCT>
-<NAME>GSGFNodeList</NAME>
-struct _GSGFNodeList
-{
-        GObject parent_instance;
-
-        /*< private >*/
-        GSGFNodeListPrivate *priv;
-};
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_node_list_new</NAME>
-<RETURNS>GSGFNodeList *</RETURNS>
- 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_node_list_add_child</NAME>
-<RETURNS>GSGFNodeList *</RETURNS>
-GSGFNodeList *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -113,6 +114,14 @@ GSGFNodeList *self
 <STRUCT>
 <NAME>GSGFPropertyPrivate</NAME>
 </STRUCT>
+<ENUM>
+<NAME>GSGFPropertyType</NAME>
+typedef enum gsgf_property_type {
+        GSGF_PROPERTY_TEXT,
+        GSGF_PROPERTY_NUMBER,
+        GSGF_PROPERTY_REAL
+} GSGFPropertyType;
+</ENUM>
 <STRUCT>
 <NAME>GSGFPropertyClass</NAME>
 struct _GSGFPropertyClass
@@ -139,6 +148,16 @@ struct _GSGFProperty
 <NAME>gsgf_property_new</NAME>
 <RETURNS>GSGFProperty *</RETURNS>
  
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_add_value</NAME>
+<RETURNS>gboolean </RETURNS>
+GSGFProperty *property, const gchar *text, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_get_values</NAME>
+<RETURNS>GList *</RETURNS>
+GSGFProperty *property 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLLECTION</NAME>
@@ -217,8 +236,8 @@ GSGFCollection *collection
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_write_stream</NAME>
-<RETURNS>gssize </RETURNS>
-const GSGFCollection *collection, GOutputStream *out, GCancellable *cancellable, GError **error 
+<RETURNS>gboolean </RETURNS>
+const GSGFCollection *collection, GOutputStream *out, gsize *bytes_written, gboolean close_stream, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_GAME_TREE</NAME>
@@ -290,9 +309,23 @@ GSGFGameTree *self
 <RETURNS>GSGFGameTree *</RETURNS>
 const GSGFGameTree *self 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_add_node</NAME>
+<RETURNS>struct _GSGFNode *</RETURNS>
+GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_write_stream</NAME>
+<RETURNS>gssize </RETURNS>
+const GSGFCollection *collection, GOutputStream *out, GCancellable *cancellable, GError **error 
+</FUNCTION>
 <VARIABLE>
 <NAME>filename</NAME>
 extern char *filename;
+</VARIABLE>
+<VARIABLE>
+<NAME>path</NAME>
+extern char *path;
 </VARIABLE>
 <FUNCTION>
 <NAME>test_collection</NAME>

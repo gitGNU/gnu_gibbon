@@ -1,19 +1,19 @@
 <SECTION>
-<FILE>gsgf-node-list</FILE>
-<TITLE>GSGFNodeList</TITLE>
-GSGFNodeListClass
-GSGFNodeList
-GSGFNodeListPrivate
-gsgf_node_list_new
-gsgf_node_list_add_child
+<FILE>gsgf-node</FILE>
+<TITLE>GSGFNode</TITLE>
+GSGFNodeClass
+GSGFNode
+GSGFNodePrivate
+gsgf_node_new
+gsgf_node_add_property
 <SUBSECTION Standard>
-GSGF_NODE_LIST
-GSGF_IS_NODE_LIST
-GSGF_TYPE_NODE_LIST
-gsgf_node_list_get_type
-GSGF_NODE_LIST_CLASS
-GSGF_IS_NODE_LIST_CLASS
-GSGF_NODE_LIST_GET_CLASS
+GSGF_NODE
+GSGF_IS_NODE
+GSGF_TYPE_NODE
+gsgf_node_get_type
+GSGF_NODE_CLASS
+GSGF_IS_NODE_CLASS
+GSGF_NODE_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -22,7 +22,10 @@ GSGF_NODE_LIST_GET_CLASS
 GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
+GSGFPropertyType
 gsgf_property_new
+gsgf_property_add_value
+gsgf_property_get_values
 <SUBSECTION Standard>
 GSGF_PROPERTY
 GSGF_IS_PROPERTY
@@ -63,6 +66,8 @@ GSGFGameTreePrivate
 gsgf_game_tree_new
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
+gsgf_game_tree_add_node
+gsgf_game_tree_write_stream
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
@@ -83,6 +88,7 @@ gsgf_error_quark
 <SECTION>
 <FILE>test</FILE>
 filename
+path
 test_collection
 expect_error
 expect_error_conditional
