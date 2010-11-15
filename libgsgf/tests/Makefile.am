@@ -18,6 +18,7 @@
 AUTOMAKE_OPTIONS = color-tests
 
 TESTS = test-empty 			\
+	test-full			\
 	test-minimal			\
 	test-multi-game-tree		\
 	test-nested-game-tree		\
@@ -35,6 +36,7 @@ check_PROGRAMS = $(TESTS)
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
 test_empty_SOURCES = main.c test-empty.c
+test_full_SOURCES = main.c test-full.c
 test_minimal_SOURCES = main.c test-minimal.c
 test_multi_game_tree_SOURCES = main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = main.c test-nested-game-tree.c
@@ -45,6 +47,7 @@ test_write_minimal_SOURCES = main.c test-write-minimal.c
 noinst_HEADERS = test.h
 
 SGF_FILES = empty.sgf 			\
+	    full.sgf			\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
