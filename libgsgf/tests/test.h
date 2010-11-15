@@ -24,6 +24,7 @@
 #include <libgsgf/gsgf.h>
 
 extern char *filename;
+extern char *path;
 
 extern int test_collection(GSGFCollection *collection, GError *error);
 

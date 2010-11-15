@@ -31,7 +31,7 @@
 #include "test.h"
 
 static char *program_name;
-static char *path;
+char *path;
 
 int
 main(int argc, char *argv[])
