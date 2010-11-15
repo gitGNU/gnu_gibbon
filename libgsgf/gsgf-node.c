@@ -29,6 +29,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gsgf-internal.h"
+
 struct _GSGFNodePrivate {
         GSGFNode *parent;
 
@@ -55,7 +57,7 @@ gsgf_node_finalize(GObject *object)
         GSGFNode *self = GSGF_NODE(object);
 
         if (self->priv->properties) {
-                g_foreach(self->priv->properties, (GFunc) g_object_unref, NULL);
+                g_list_foreach(self->priv->properties, (GFunc) g_object_unref, NULL);
                 g_free(self->priv->properties);
         }
         self->priv->properties = NULL;
@@ -86,4 +88,39 @@ gsgf_node_new()
         GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
 
         return self;
+}
+
+gboolean
+_gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
+                        gsize *bytes_written, GCancellable *cancellable, GError **error)
+{
+        gsize written_here;
+
+        *bytes_written = 0;
+
+        if (!g_output_stream_write_all(out, ";", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+
+        *bytes_written += written_here;
+
+/*
+        iter = self->priv->children;
+        while (iter) {
+                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data), out,
+                                                  &written_here, cancellable,
+                                                  error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+
+                *bytes_written += written_here;
+
+                iter = iter->next;
+        }
+*/
+
+        return TRUE;
 }

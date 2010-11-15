@@ -128,11 +128,11 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GSGFGameTree *child = gsgf_game_tree_new();
+        GSGFNode *node = gsgf_node_new();
 
-        self->priv->nodes = g_list_append(self->priv->nodes, child);
+        self->priv->nodes = g_list_append(self->priv->nodes, node);
 
-        return child;
+        return node;
 }
 
 /**
@@ -165,11 +165,23 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
 
         *bytes_written += written_here;
 
+        iter = self->priv->nodes;
+        while (iter) {
+                if (!_gsgf_node_write_stream(GSGF_NODE(iter->data), out, &written_here,
+                                             cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+
+                *bytes_written += written_here;
+
+                iter = iter->next;
+        }
+
         iter = self->priv->children;
         while (iter) {
                 if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data), out,
-                                                  &written_here, cancellable,
-                                                  error)) {
+                                                  &written_here, cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
@@ -187,5 +199,5 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
 
         *bytes_written += written_here;
 
-        return FALSE;
+        return TRUE;
 }
