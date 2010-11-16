@@ -74,15 +74,8 @@ gsgf_node_class_init(GSGFNodeClass *klass)
         object_class->finalize = gsgf_node_finalize;
 }
 
-/**
- * gsgf_node_new:
- *
- * Build an empty #GSGFNode in memory.  The function cannot fail.
- *
- * Returns: An empty #GSGFNode.
- */
 GSGFNode *
-gsgf_node_new(const gchar *flavor, GError **error)
+_gsgf_node_new(const gchar *flavor, GError **error)
 {
         GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
 
@@ -114,7 +107,7 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
         if (self->priv->properties) {
                 keys = g_hash_table_get_keys(self->priv->properties);
 
-                iter = g_list_sort(keys, g_strcmp0);
+                iter = g_list_sort(keys, (GCompareFunc) g_strcmp0);
 
                 while (iter) {
                         if (!g_output_stream_write_all(out, iter->data,
@@ -160,7 +153,7 @@ GSGFProperty *
 gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
 {
         GSGFProperty *property;
-        gchar *ptr = id;
+        const gchar *ptr = id;
 
         *error = NULL;
 
@@ -173,7 +166,7 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
                 ++ptr;
         }
 
-        property = gsgf_property_new(self->priv->flavor, error);
+        property = _gsgf_property_new(self->priv->flavor, error);
         if (*error)
                 return NULL;
 

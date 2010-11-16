@@ -58,8 +58,6 @@ struct _GSGFNode
 
 struct _GSGFProperty;
 
-GSGFNode *gsgf_node_new(const gchar *flavor, GError **error);
-
 struct _GSGFProperty *gsgf_node_add_property(GSGFNode *self, const gchar *id,
                                              GError **error);
 

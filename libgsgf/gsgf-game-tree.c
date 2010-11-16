@@ -87,7 +87,7 @@ gsgf_game_tree_class_init(GSGFGameTreeClass *klass)
 }
 
 GSGFGameTree *
-gsgf_game_tree_new(const gchar *flavor, GError **error)
+_gsgf_game_tree_new(const gchar *flavor, GError **error)
 {
         GSGFGameTree *self = g_object_new(GSGF_TYPE_GAME_TREE, NULL);
 
@@ -106,7 +106,7 @@ gsgf_game_tree_new(const gchar *flavor, GError **error)
 GSGFGameTree *
 gsgf_game_tree_add_child(GSGFGameTree *self)
 {
-        GSGFGameTree *child = gsgf_game_tree_new(self->priv->flavor, NULL);
+        GSGFGameTree *child = _gsgf_game_tree_new(self->priv->flavor, NULL);
 
         self->priv->children = g_list_append(self->priv->children, child);
 
@@ -125,7 +125,7 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GSGFNode *node = gsgf_node_new(self->priv->flavor, NULL);
+        GSGFNode *node = _gsgf_node_new(self->priv->flavor, NULL);
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 

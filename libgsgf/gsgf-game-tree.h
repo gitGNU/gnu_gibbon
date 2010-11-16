@@ -57,8 +57,6 @@ struct _GSGFGameTree
         GSGFGameTreePrivate *priv;
 };
 
-GSGFGameTree *gsgf_game_tree_new(const gchar *flavor, GError **error);
-
 struct _GSGFNode;
 
 GSGFGameTree *gsgf_game_tree_add_child(GSGFGameTree *self);

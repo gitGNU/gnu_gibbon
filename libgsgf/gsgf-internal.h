@@ -26,6 +26,10 @@ G_BEGIN_DECLS
 
 struct _GSGFGameTree;
 
+GSGFGameTree *_gsgf_game_tree_new(const gchar *flavor, GError **error);
+GSGFNode *_gsgf_node_new(const gchar *flavor, GError **error);
+GSGFProperty *_gsgf_property_new(const gchar *flavor, GError **error);
+
 gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
                                       GOutputStream *out, gsize *bytes_written,
                                       GCancellable *cancellable, GError **error);

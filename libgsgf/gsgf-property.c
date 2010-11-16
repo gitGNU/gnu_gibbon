@@ -82,7 +82,7 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
  * Returns: An empty #GSGFProperty.
  */
 GSGFProperty *
-gsgf_property_new(const gchar *flavor, GError **error)
+_gsgf_property_new(const gchar *flavor, GError **error)
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
@@ -159,4 +159,6 @@ gsgf_property_add_value(GSGFProperty *property, const gchar *value, GError **err
         *error = NULL;
 
         property->priv->values = g_list_append(property->priv->values, g_strdup(value));
+
+        return TRUE;
 }

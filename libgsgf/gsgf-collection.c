@@ -650,7 +650,7 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
 GSGFGameTree *
 gsgf_collection_add_game_tree(GSGFCollection *self)
 {
-        GSGFGameTree *game_tree = gsgf_game_tree_new(self->priv->flavor, NULL);
+        GSGFGameTree *game_tree = _gsgf_game_tree_new(self->priv->flavor, NULL);
 
         self->priv->game_trees = 
                 g_list_append(self->priv->game_trees, game_tree);
