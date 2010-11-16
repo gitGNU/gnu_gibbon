@@ -21,7 +21,3 @@
 - Glib 2.2 now has the GResolver API.  Use it!
 - Review documentation for libgsgf.
 - Add assertions to libgsgf.
-- Tests for several special illegal SGF constructs:
-  o empty game tree: "()" (done)
-  o properties without values: "(;AB)"
-  o sequences after sub game trees: "(;BEFORE[](;INSIDE[]);AFTER[])"
