@@ -30,6 +30,8 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFPropertyPrivate {
+        const gchar *flavor;
+
         GList *values;
 };
 
@@ -80,9 +82,11 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
  * Returns: An empty #GSGFProperty.
  */
 GSGFProperty *
-gsgf_property_new()
+gsgf_property_new(const gchar *flavor, GError **error)
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
+
+        self->priv->flavor = flavor;
 
         return self;
 }

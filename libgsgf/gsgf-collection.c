@@ -62,6 +62,7 @@ typedef struct {
 } GSGFParserContext;
 
 struct _GSGFCollectionPrivate {
+        const gchar *flavor;
         GList* game_trees;
 };
 
@@ -129,13 +130,15 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
 
 /**
  * gsgf_collection_new:
+ * @flavor: The particular flavor of SGF or %NULL for generic.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Build an empty #GSGFCollection in memory.  The function cannot fail.
  *
  * Returns: An empty #GSGFCollection.
  */
 GSGFCollection *
-gsgf_collection_new()
+gsgf_collection_new(const gchar *flavor, GError **error)
 {
         GSGFCollection *self = g_object_new(GSGF_TYPE_COLLECTION, NULL);
 
@@ -147,6 +150,7 @@ gsgf_collection_new()
 /**
  * gsgf_collection_parse_stream:
  * @stream: a #GInputStream to parse.
+ * @flavor: the SGF flavor to expect.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
@@ -160,13 +164,16 @@ gsgf_collection_new()
  * Returns: A #GSGFCollection or %NULL on error.
  */
 GSGFCollection *
-gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
-                             GError **error)
+gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
+                             GCancellable *cancellable, GError **error)
 {
-        GSGFCollection *self = gsgf_collection_new();
+        GSGFCollection *self = gsgf_collection_new(flavor, error);
         gint token = 0;
         GString *value;
         GSGFParserContext ctx;
+
+        if (!self)
+                return NULL;
 
         GSGFGameTree *game_tree = NULL;
         GSGFNode *node = NULL;
@@ -415,6 +422,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
 /**
  * gsgf_collection_parse_file:
  * @file: a #GFile to parse.
+ * @flavor: the particular flavor of SGF to expect.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
@@ -428,7 +436,7 @@ gsgf_collection_parse_stream(GInputStream *stream, GCancellable *cancellable,
  * Returns: A #GSGFCollection or %NULL on error.
  */
 GSGFCollection *
-gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
+gsgf_collection_parse_file(GFile *file, const gchar*flavor, GCancellable *cancellable,
                            GError **error)
 {
         GInputStream *stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
@@ -436,7 +444,7 @@ gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
         if (!stream)
                 return NULL;
 
-        return gsgf_collection_parse_stream(stream, cancellable, error);
+        return gsgf_collection_parse_stream(stream, flavor, cancellable, error);
 }
 
 static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
@@ -642,7 +650,7 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
 GSGFGameTree *
 gsgf_collection_add_game_tree(GSGFCollection *self)
 {
-        GSGFGameTree *game_tree = gsgf_game_tree_new();
+        GSGFGameTree *game_tree = gsgf_game_tree_new(self->priv->flavor, NULL);
 
         self->priv->game_trees = 
                 g_list_append(self->priv->game_trees, game_tree);

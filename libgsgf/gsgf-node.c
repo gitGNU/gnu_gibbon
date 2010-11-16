@@ -32,6 +32,8 @@
 #include "gsgf-internal.h"
 
 struct _GSGFNodePrivate {
+        const gchar *flavor;
+
         GHashTable *properties;
 };
 
@@ -80,7 +82,7 @@ gsgf_node_class_init(GSGFNodeClass *klass)
  * Returns: An empty #GSGFNode.
  */
 GSGFNode *
-gsgf_node_new()
+gsgf_node_new(const gchar *flavor, GError **error)
 {
         GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
 
@@ -171,7 +173,9 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
                 ++ptr;
         }
 
-        property = gsgf_property_new();
+        property = gsgf_property_new(self->priv->flavor, error);
+        if (*error)
+                return NULL;
 
         g_hash_table_insert(self->priv->properties, g_strdup(id), property);
 

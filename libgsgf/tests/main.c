@@ -49,7 +49,7 @@ main(int argc, char *argv[])
                 path = g_build_filename(TEST_DIR, filename, NULL);
 
                 file = g_file_new_for_commandline_arg(path);
-                collection = gsgf_collection_parse_file(file, NULL, &error);
+                collection = gsgf_collection_parse_file(file, NULL, NULL, &error);
         }
 
         if (!path)

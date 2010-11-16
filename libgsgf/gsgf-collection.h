@@ -59,11 +59,11 @@ struct _GSGFCollection
 
 struct _GSGFGameTree;
 
-GSGFCollection *gsgf_collection_new();
-GSGFCollection *gsgf_collection_parse_stream(GInputStream *stream,
+GSGFCollection *gsgf_collection_new(const gchar *flavor, GError **error);
+GSGFCollection *gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
                                              GCancellable *cancellable,
                                              GError **error);
-GSGFCollection *gsgf_collection_parse_file(GFile *file,
+GSGFCollection *gsgf_collection_parse_file(GFile *file, const gchar *flavor,
                                            GCancellable *cancellable,
                                            GError **error);
 

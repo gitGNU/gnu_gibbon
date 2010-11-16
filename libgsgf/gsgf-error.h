@@ -36,16 +36,20 @@ G_BEGIN_DECLS
 /**
  * GSGFError:
  * @GSGF_ERROR_NONE: No error.
+ * @GSGF_ERROR_FLAVOR_UNSUPPORTED: Unknown SGF flavor.
+ * @GSGF_ERROR_FLAVOR_MISMATCH: Attempt to insert a child of different flavor than the parent.
  * @GSGF_ERROR_SYNTAX: Syntax error.
  * @GSGF_ERROR_EMPTY_COLLECTION: Collection is empty.
  * @GSGF_ERROR_PROPERTY_EXISTS: Attempt to insert a property with an already existing name.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
-        GSGF_ERROR_SYNTAX = 1,
-        GSGF_ERROR_EMPTY_COLLECTION = 2,
-        GSGF_ERROR_PROPERTY_EXISTS = 3,
-        GSGF_ERROR_EMPTY_PROPERTY = 4
+        GSGF_ERROR_FLAVOR_UNSUPPORTED = 1,
+        GSGF_ERROR_FLAVOR_MISMATCH = 2,
+        GSGF_ERROR_SYNTAX = 3,
+        GSGF_ERROR_EMPTY_COLLECTION = 4,
+        GSGF_ERROR_PROPERTY_EXISTS = 5,
+        GSGF_ERROR_EMPTY_PROPERTY = 6
 } GSGFError;
 
 extern GQuark gsgf_error_quark (void);

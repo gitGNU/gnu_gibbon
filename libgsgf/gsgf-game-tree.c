@@ -32,6 +32,8 @@
 #include "gsgf-internal.h"
 
 struct _GSGFGameTreePrivate {
+        const gchar *flavor;
+
         GSGFGameTree *parent;
 
         GList *nodes;
@@ -84,17 +86,12 @@ gsgf_game_tree_class_init(GSGFGameTreeClass *klass)
         object_class->finalize = gsgf_game_tree_finalize;
 }
 
-/**
- * gsgf_game_tree_new:
- *
- * Build an empty #GSGFGameTree in memory.  The function cannot fail.
- *
- * Returns: An empty #GSGFGameTree.
- */
 GSGFGameTree *
-gsgf_game_tree_new()
+gsgf_game_tree_new(const gchar *flavor, GError **error)
 {
         GSGFGameTree *self = g_object_new(GSGF_TYPE_GAME_TREE, NULL);
+
+        self->priv->flavor = flavor;
 
         return self;
 }
@@ -109,7 +106,7 @@ gsgf_game_tree_new()
 GSGFGameTree *
 gsgf_game_tree_add_child(GSGFGameTree *self)
 {
-        GSGFGameTree *child = gsgf_game_tree_new();
+        GSGFGameTree *child = gsgf_game_tree_new(self->priv->flavor, NULL);
 
         self->priv->children = g_list_append(self->priv->children, child);
 
@@ -128,7 +125,7 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GSGFNode *node = gsgf_node_new();
+        GSGFNode *node = gsgf_node_new(self->priv->flavor, NULL);
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 
