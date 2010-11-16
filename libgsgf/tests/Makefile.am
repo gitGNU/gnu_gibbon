@@ -24,6 +24,7 @@ TESTS = test-empty 			\
 	test-nested-game-tree		\
 	test-really-empty		\
 	test-write-empty		\
+	test-write-empty-property	\
 	test-write-full			\
 	test-write-minimal
 
@@ -43,6 +44,7 @@ test_multi_game_tree_SOURCES = main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = main.c test-nested-game-tree.c
 test_really_empty_SOURCES = main.c test-really-empty.c
 test_write_empty_SOURCES = main.c test-write-empty.c
+test_write_empty_property_SOURCES = main.c test-write-empty-property.c
 test_write_full_SOURCES = main.c test-write-full.c
 test_write_minimal_SOURCES = main.c test-write-minimal.c
 

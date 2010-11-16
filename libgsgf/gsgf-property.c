@@ -99,6 +99,12 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 
         iter = self->priv->values;
 
+        if (!iter) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
+                            _("Attempt to write empty property"));
+                return FALSE;
+        }
+
         while (iter) {
                 if (!g_output_stream_write_all(out, "[", 1, &written_here,
                                                cancellable, error)) {

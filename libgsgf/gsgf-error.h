@@ -44,7 +44,8 @@ typedef enum {
         GSGF_ERROR_NONE = 0,
         GSGF_ERROR_SYNTAX = 1,
         GSGF_ERROR_EMPTY_COLLECTION = 2,
-        GSGF_ERROR_PROPERTY_EXISTS = 3
+        GSGF_ERROR_PROPERTY_EXISTS = 3,
+        GSGF_ERROR_EMPTY_PROPERTY = 4
 } GSGFError;
 
 extern GQuark gsgf_error_quark (void);
