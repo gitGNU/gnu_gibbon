@@ -32,7 +32,7 @@
 
 #include <libgsgf/gsgf.h>
 
-#include "gsgf-internal.h"
+#include "gsgf-private.h"
 
 enum gsgf_parser_state {
         GSGF_PARSER_STATE_INIT,

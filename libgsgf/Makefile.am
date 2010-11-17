@@ -38,7 +38,7 @@ libgsgf_a_SOURCES = 			\
 
 noinst_HEADERS =			\
 	gsgf.h				\
-	gsgf-internal.h			\
+	gsgf-private.h			\
 	gsgf-error.h			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\

@@ -29,7 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
-#include "gsgf-internal.h"
+#include "gsgf-private.h"
 
 struct _GSGFGameTreePrivate {
         const gchar *flavor;

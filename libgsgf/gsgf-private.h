@@ -17,8 +17,8 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBGSGF_INTERNAL_H
-# define _LIBGSGF_INTERNAL_H
+#ifndef _LIBGSGF_PRIVATE_H
+# define _LIBGSGF_PRIVATE_H
 
 #include <gsgf.h>
 
