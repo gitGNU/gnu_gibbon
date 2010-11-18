@@ -23,11 +23,13 @@
 
 #include <string.h>
 #include <math.h>
+
 #ifdef M_PI
 # undef M_PI
 #endif
 #define M_PI 3.14159265358979323846
 
+#include <locale.h>
 #include <glib/gi18n.h>
 
 #include <svg.h>
@@ -175,10 +177,6 @@ static void bezier_boundings (gdouble x0, gdouble y0,
                               gdouble *width, gdouble *height);
 static void bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
                                 gdouble *x, gdouble *width);
-static void arc_boundings (gdouble cx, gdouble cy, gdouble radius,
-                           gdouble arc0, gdouble arc1,
-                           gdouble *x, gdouble *y,
-                           gdouble *width, gdouble *height);
 static void update_boundings (struct svg_util_render_context *ctx,
                               gdouble x, gdouble y, 
                               gdouble width, gdouble height);
@@ -931,84 +929,6 @@ static struct svg_util_render_state
 }
 
 static void 
-arc_boundings (gdouble cx, gdouble cy, gdouble radius, 
-               gdouble arc0, gdouble arc1,
-               gdouble *x, gdouble *y,
-               gdouble *width, gdouble *height)
-{
-        gdouble min_x, min_y, max_x, max_y;
-        gdouble x0, x1, y0, y1;
-        gint i;
-
-        i = arc0 / (2 * M_PI);
-        arc0 -= i * 2 * M_PI;
-        arc1 -= i * 2 * M_PI;
-
-        while (arc1 < arc0)
-                arc1 += 2 * M_PI;
-        
-        if (arc1 - arc0 >= 2 * M_PI) {
-                *x = cx - radius;
-                *y = cy - radius;
-                *width = 2 * radius;
-                *height = 2 * radius;
-                return;
-        }
-
-        while (arc1 > 2 * M_PI) {
-                arc0 -= 2 * M_PI;
-                arc1 -= 2 * M_PI;
-        }
-        while (arc0 < -2 * M_PI) {
-                arc0 += 2 * M_PI;
-                arc1 += 2 * M_PI;
-        }
-
-        /* We now have an arc with a minimum start angle of -2pi, and
-         * a maximum end angle of +2pi, and we also know that the
-         * maximum difference is 2pi.
-         */
-        x0 = radius * cos (arc0);
-        y0 = radius * sin (arc0);
-        x1 = radius * cos (arc1);
-        y1 = radius * sin (arc1);
-
-        if (x0 < x1) {
-                min_x = x0;
-                max_x = x1;
-        } else {
-                min_x = x1;
-                max_x = x0;
-        }
-
-        if (y0 < y1) {
-                min_y = y0;
-                max_y = y1;
-        } else {
-                min_y = y1;
-                max_y = y0;
-        }
-
-        if (arc0 <= 0 && arc1 >= 0)
-                max_x = radius;
-        if ((arc0 <= M_PI / 2 && arc1 >= M_PI / 2)
-            || (arc0 <= -3 * M_PI / 2 && arc1 >= -3 * M_PI / 2))
-                max_y = radius;
-        if ((arc0 <= M_PI && arc1 >= M_PI)
-            || (arc0 <= -M_PI && arc1 >= -M_PI))
-                min_x = -radius;
-        if ((arc0 <= -M_PI / 2 && arc1 >= -M_PI / 2)
-            || (arc0 <= 3 * M_PI / 2 && arc1 >= 3 * M_PI / 2))
-                min_y = -radius;
-
-        *x = cx + min_x;
-        *y = cx + min_y;
-
-        *width = max_x - min_x;
-        *height = max_y - min_y;
-}
-
-static void 
 update_boundings (struct svg_util_render_context *ctx,
                   gdouble x, gdouble y, gdouble width, gdouble height)
 {
@@ -1050,7 +970,6 @@ struct svg_component *
 svg_util_create_component (gboolean render)
 {
         struct svg_component *svg;
-        svg_cairo_status_t status;
                 
         return svg;        
 }
