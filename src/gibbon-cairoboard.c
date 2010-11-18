@@ -94,11 +94,10 @@ static void gibbon_cairoboard_draw_svg_component (GibbonCairoboard *board,
                                                   cairo_t *cr,
                                                   struct svg_component *svg,
                                                   gdouble x, gdouble y);
-#if (0)
 static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
                                const gchar *text,
                                gdouble x, gdouble y, gdouble ext);
-#endif
+
 #if (0)
 static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
                              guint value, gint side,
@@ -210,11 +209,9 @@ GibbonCairoboard *
 gibbon_cairoboard_new (const gchar *filename)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
-        svg_cairo_status_t status;
         gchar *data;
         GError *error;
         xmlDoc *doc;
-        xmlNode *node;
         int i;
         char id_str[8];
                         
@@ -557,7 +554,6 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
         }
 }
 
-#if (0)
 static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
                                const gchar *text,
                                gdouble x, gdouble y, gdouble ext)
@@ -573,7 +569,6 @@ static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
                        y + te.height / 2);
         cairo_show_text (cr, text);
 }
-#endif
 
 static void
 gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
