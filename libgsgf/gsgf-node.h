@@ -60,6 +60,7 @@ struct _GSGFProperty;
 
 struct _GSGFProperty *gsgf_node_add_property(GSGFNode *self, const gchar *id,
                                              GError **error);
+struct _GSGFProperty *gsgf_node_get_property(GSGFNode *self, const gchar *id);
 
 G_END_DECLS
 
