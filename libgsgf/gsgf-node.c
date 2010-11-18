@@ -32,8 +32,6 @@
 #include "gsgf-private.h"
 
 struct _GSGFNodePrivate {
-        const gchar *flavor;
-
         GHashTable *properties;
 };
 
@@ -75,7 +73,7 @@ gsgf_node_class_init(GSGFNodeClass *klass)
 }
 
 GSGFNode *
-_gsgf_node_new(const gchar *flavor, GError **error)
+_gsgf_node_new()
 {
         GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
 
@@ -145,7 +143,8 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
  * Add an empty #GSGFProperty as a child. A copy of the %id is used internally;
  * you can safely free resources related to the %id.
  *
- * It is illegal to add a property with an already existing identifier to a node.
+ * It is illegal to add a property with an already existing identifier to a 
+ * node.
  *
  * Returns: The freshly added #GSGFProperty or %NULL in case of failure.
  */
@@ -166,9 +165,7 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
                 ++ptr;
         }
 
-        property = _gsgf_property_new(self->priv->flavor, error);
-        if (*error)
-                return NULL;
+        property = _gsgf_property_new();
 
         g_hash_table_insert(self->priv->properties, g_strdup(id), property);
 
