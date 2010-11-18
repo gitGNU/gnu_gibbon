@@ -29,15 +29,13 @@
 
 #include <libgsgf/gsgf.h>
 
-struct _GSGFPropertyValue {
-        const gchar *raw;
+typedef struct _GSGFPropertyValue {
+        gchar *raw;
         gpointer cooked;
-        GDestroyNotify *cooked_destructor;
-};
+        GFunc cooked_destructor;
+} _GSGFPropertyValue;
 
 struct _GSGFPropertyPrivate {
-        const gchar *flavor;
-
         GList *values;
 };
 
@@ -45,6 +43,8 @@ struct _GSGFPropertyPrivate {
                                       GSGF_TYPE_PROPERTY,           \
                                       GSGFPropertyPrivate))
 G_DEFINE_TYPE (GSGFProperty, gsgf_property, G_TYPE_OBJECT)
+
+static void _gsgf_property_value_free(gpointer value, gpointer user_data);
 
 static void
 gsgf_property_init(GSGFProperty *self)
@@ -62,8 +62,8 @@ gsgf_property_finalize(GObject *object)
         GSGFProperty *property = GSGF_PROPERTY (object);
 
         if (property->priv->values) {
-                g_list_foreach(property->priv->values, (GFunc) g_free,
-                               NULL);
+                g_list_foreach(property->priv->values, 
+                              _gsgf_property_value_free, NULL);
                 g_list_free(property->priv->values);
         }
 
@@ -92,8 +92,6 @@ _gsgf_property_new(const gchar *flavor, GError **error)
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
-        self->priv->flavor = flavor;
-
         return self;
 }
 
@@ -104,6 +102,7 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 {
         gsize written_here;
         GList *iter;
+        _GSGFPropertyValue *value;
 
         *bytes_written = 0;
 
@@ -116,6 +115,8 @@ _gsgf_property_write_stream(const GSGFProperty *self,
         }
 
         while (iter) {
+                value = (_GSGFPropertyValue *) iter->data;
+
                 if (!g_output_stream_write_all(out, "[", 1, &written_here,
                                                cancellable, error)) {
                         *bytes_written += written_here;
@@ -124,7 +125,8 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 
                 *bytes_written += written_here;
 
-                if (!g_output_stream_write_all(out, iter->data, strlen(iter->data),
+                if (!g_output_stream_write_all(out, 
+                                               value->raw, strlen(value->raw),
                                                &written_here, cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
@@ -147,7 +149,7 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 }
 
 /**
- * gsgf_property_add_value:
+ * _gsgf_property_add_value:
  *
  * @property: The property that the value is added to.
  * @text: The value itself.
@@ -160,11 +162,32 @@ _gsgf_property_write_stream(const GSGFProperty *self,
  * Returns: %TRUE on success, %FALSE on failure.
  */
 gboolean
-gsgf_property_add_value(GSGFProperty *property, const gchar *value, GError **error)
+_gsgf_property_add_value(GSGFProperty *property, const gchar *_value, 
+                         GError **error)
 {
+        _GSGFPropertyValue* value = g_malloc(sizeof (_GSGFPropertyValue));
+
+        value->raw = g_strdup(_value);
+        value->cooked = NULL;
+        value->cooked_destructor = NULL;
+
         *error = NULL;
 
-        property->priv->values = g_list_append(property->priv->values, g_strdup(value));
+        property->priv->values = g_list_append(property->priv->values, value);
 
         return TRUE;
+}
+
+static void
+_gsgf_property_value_free(gpointer _value, gpointer user_data)
+{
+        _GSGFPropertyValue *value = (_GSGFPropertyValue *) _value;
+
+        if (value) {
+                if (value->raw) g_free(value->raw);
+                if (value->cooked && value->cooked_destructor)
+                        value->cooked_destructor(value->cooked, user_data);
+
+                g_free(value);
+        }
 }
