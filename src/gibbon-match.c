@@ -43,10 +43,6 @@ gibbon_match_init (GibbonMatch *self)
 static void
 gibbon_match_finalize (GObject *object)
 {
-        GibbonMatch *match = GIBBON_MATCH (object);
-
-        /* g_free (...) */
-
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize (object);
 }
 

@@ -43,10 +43,6 @@ gibbon_game_init (GibbonGame *self)
 static void
 gibbon_game_finalize (GObject *object)
 {
-        GibbonGame *game = GIBBON_GAME (object);
-
-        /* g_free (...) */
-
         G_OBJECT_CLASS (gibbon_game_parent_class)->finalize (object);
 }
 
