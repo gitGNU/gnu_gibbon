@@ -162,14 +162,12 @@ gibbon_connector_connect_worker (GibbonConnector *self)
         s = getaddrinfo (self->priv->hostname, service, &hints, &results);
         g_free (service);
 #else
-g_print ("Starting resolve\n");
 	resolve_status = DnsQuery_A (self->priv->hostname, 
 				     DNS_TYPE_A,
 			             DNS_QUERY_STANDARD,
 				     NULL,
                                      &results,
                                      NULL);
-g_print ("Resolve done\n");
 #endif
         
         g_mutex_lock (self->priv->mutex);
