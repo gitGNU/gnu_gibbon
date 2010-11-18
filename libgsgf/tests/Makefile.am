@@ -17,16 +17,19 @@
 
 AUTOMAKE_OPTIONS = color-tests
 
-TESTS = test-empty 			\
+TESTS = test-convert			\
+	test-empty 			\
 	test-full			\
 	test-minimal			\
 	test-multi-game-tree		\
 	test-nested-game-tree		\
 	test-really-empty		\
 	test-util-read-simpletext	\
+	test-util-read-text		\
 	test-write-empty		\
 	test-write-empty-property	\
 	test-write-full			\
+	test-write-linefeeds		\
 	test-write-minimal
 
 AM_CPPFLAGS = 				\
@@ -38,25 +41,31 @@ check_PROGRAMS = $(TESTS)
 
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
-test_empty_SOURCES = main.c test-empty.c
-test_full_SOURCES = main.c test-full.c
-test_minimal_SOURCES = main.c test-minimal.c
-test_multi_game_tree_SOURCES = main.c test-multi-game-tree.c
-test_nested_game_tree_SOURCES = main.c test-nested-game-tree.c
-test_really_empty_SOURCES = main.c test-really-empty.c
-test_util_read_simpletext_SOURCES = test-util-read-simpletext.c
-test_write_empty_SOURCES = main.c test-write-empty.c
-test_write_empty_property_SOURCES = main.c test-write-empty-property.c
-test_write_full_SOURCES = main.c test-write-full.c
-test_write_minimal_SOURCES = main.c test-write-minimal.c
+test_convert_SOURCES = lib.c main.c test-convert.c
+test_empty_SOURCES = lib.c main.c test-empty.c
+test_full_SOURCES = lib.c main.c test-full.c
+test_minimal_SOURCES = lib.c main.c test-minimal.c
+test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
+test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
+test_really_empty_SOURCES = lib.c main.c test-really-empty.c
+test_util_read_simpletext_SOURCES = lib.c test-util-read-simpletext.c
+test_util_read_text_SOURCES = lib.c test-util-read-text.c
+test_write_empty_SOURCES = lib.c main.c test-write-empty.c
+test_write_empty_property_SOURCES = lib.c main.c test-write-empty-property.c
+test_write_full_SOURCES = lib.c main.c test-write-full.c
+test_write_linefeeds_SOURCES = lib.c main.c test-write-linefeeds.c
+test_write_minimal_SOURCES = lib.c main.c test-write-minimal.c
 
 noinst_HEADERS = test.h
 
-SGF_FILES = empty.sgf 			\
+SGF_FILES = cp1251.sgf			\
+	    empty.sgf 			\
 	    full.sgf			\
+	    linefeeds.sgf		\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
-	    really-empty.sgf
+	    really-empty.sgf		\
+	    utf-8.sgf
 
 EXTRA_DIST = $(SGF_FILES)
