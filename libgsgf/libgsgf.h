@@ -17,17 +17,18 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GSGF_H
-# define _GSGF_H
+#ifndef _LIBGSGF_H
+# define _LIBGSGF_H
 
-#include <libgsgf/gsgf-collection.h>
-#include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-flavor.h>
-#include <libgsgf/gsgf-game-tree.h>
-#include <libgsgf/gsgf-node.h>
-#include <libgsgf/gsgf-property.h>
-#include <libgsgf/gsgf-property-handler.h>
+#include <glib.h>
 
-#include <libgsgf/libgsgf.h>
+G_BEGIN_DECLS
+
+void libgsgf_init();
+
+gchar *gsgf_util_read_simpletext(const gchar *raw, const gchar **end, 
+                                 gchar delim);
+
+G_END_DECLS
 
 #endif

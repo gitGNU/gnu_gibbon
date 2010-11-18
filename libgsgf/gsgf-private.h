@@ -22,9 +22,12 @@
 
 #include <gsgf.h>
 
-G_BEGIN_DECLS
+extern GHashTable *_libgsgf_flavors;
 
 struct _GSGFGameTree;
+struct _GSGFFlavor;
+
+G_BEGIN_DECLS
 
 GSGFGameTree *_gsgf_game_tree_new(const gchar *flavor, GError **error);
 GSGFNode *_gsgf_node_new(const gchar *flavor, GError **error);
@@ -39,6 +42,12 @@ gboolean _gsgf_node_write_stream(const struct _GSGFNode *node,
 gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
                                      GOutputStream *out, gsize *bytes_written,
                                      GCancellable *cancellable, GError **error);
+
+GSGFPropertyHandler *_gsgf_flavor_get_handler(const struct _GSGFFlavor *,
+                                              const gchar *id);
+void _gsgf_flavor_cook_value(struct _GSGFFlavor *flavor,
+                             gpointer cooked, 
+                             GDestroyNotify cooked_destructor);
 
 G_END_DECLS
 

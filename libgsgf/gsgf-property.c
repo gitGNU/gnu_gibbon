@@ -29,6 +29,12 @@
 
 #include <libgsgf/gsgf.h>
 
+struct _GSGFPropertyValue {
+        const gchar *raw;
+        gpointer cooked;
+        GDestroyNotify *cooked_destructor;
+};
+
 struct _GSGFPropertyPrivate {
         const gchar *flavor;
 

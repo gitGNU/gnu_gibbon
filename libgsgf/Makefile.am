@@ -30,17 +30,24 @@ AM_CPPFLAGS =				\
 	$(GIBBON_CFLAGS)
 
 libgsgf_a_SOURCES = 			\
-	gsgf-error.c			\
 	gsgf-collection.c		\
+	gsgf-error.c			\
+	gsgf-flavor.c			\
 	gsgf-game-tree.c		\
 	gsgf-node.c			\
-	gsgf-property.c
+	gsgf-property.c			\
+	gsgf-property-handler.c		\
+	libgsgf.c			\
+	libgsgf-util.c
 
 noinst_HEADERS =			\
 	gsgf.h				\
-	gsgf-private.h			\
 	gsgf-error.h			\
+	gsgf-flavor.h			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\
 	gsgf-node.h			\
-	gsgf-property.h
+	gsgf-private.h			\
+	gsgf-property.h			\
+	gsgf-property-handler.h		\
+	libgsgf.h

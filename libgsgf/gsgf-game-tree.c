@@ -101,7 +101,7 @@ _gsgf_game_tree_new(const gchar *flavor, GError **error)
  *
  * Add an empty #GSGFGameTree as a child.  The function cannot fail.
  *
- * Returns the freshly added child.
+ * Returns: the freshly added child #GSGFGameTree.
  */
 GSGFGameTree *
 gsgf_game_tree_add_child(GSGFGameTree *self)
@@ -120,7 +120,7 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
  *
  * Add an empty #GSGFNode as a child.  The function cannot fail.
  *
- * Returns the freshly added child.
+ * Returns: the freshly added child #GSGFNode.
  */
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)

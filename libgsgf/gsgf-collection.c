@@ -70,7 +70,6 @@ struct _GSGFCollectionPrivate {
                                       GSGF_TYPE_COLLECTION,           \
                                       GSGFCollectionPrivate))
 G_DEFINE_TYPE (GSGFCollection, gsgf_collection, G_TYPE_OBJECT)
-;
 
 #define GSGF_TOKEN_EOF 256
 #define GSGF_TOKEN_PROP_IDENT 257
@@ -88,12 +87,11 @@ static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
 static GRegex *double_pattern = NULL;
 
 /**
- * The SGF specification stipulates that a collection has one ore more game trees,
- * and that a game tree has one or more nodes.  For practical purposes we allow
- * empty collections and empty node lists (sequences).  When implementing the
- * serialization code we have to accomodate that.  Either we throw an error
- * or we spit out the smallest collections conforming to the SGF specification
- * which would be the string "(;)".
+ * The SGF specification stipulates that a collection must have one ore more 
+ * game trees, * and that a game tree has one or more nodes.  For practical 
+ * purposes we allow empty collections and empty node lists (sequences).
+ * But if you try to serialize such an object into a stream, you will
+ * get an error.
  */
 static void gsgf_collection_init(GSGFCollection *self)
 {
@@ -124,6 +122,8 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
         g_type_class_add_private(klass, sizeof(GSGFCollectionPrivate));
 
         double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
+
+        libgsgf_init();
 
         object_class->finalize = gsgf_collection_finalize;
 }
@@ -595,8 +595,6 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
 
                 if (escaped) {
                         escaped = FALSE;
-                        if (c == '\n')
-                                c  = ' ';
                 } else if (c == ']') {
                         --ctx->colno;
                         /* Cannot be zero because we just read a character.  */
@@ -604,13 +602,9 @@ gsgf_yylex_c_value_type(GSGFParserContext *ctx, GString **value)
                         break;
                 } else if (c == '\\') {
                         escaped = TRUE;
-                } else if (c == '\f' || c == '\v' || c == '\t') {
-                        c = ' ';
                 }
 
-                if (!escaped) {
-                        *value = g_string_append_c(*value, c);
-                }
+                *value = g_string_append_c(*value, c);
         }
 
         return token;
@@ -720,4 +714,3 @@ gsgf_collection_write_stream(const GSGFCollection *self,
 
         return TRUE;
 }
-
