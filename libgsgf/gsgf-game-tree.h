@@ -63,11 +63,6 @@ GSGFGameTree *gsgf_game_tree_add_child(GSGFGameTree *self);
 GSGFGameTree *gsgf_game_tree_get_parent(const GSGFGameTree *self);
 struct _GSGFNode *gsgf_game_tree_add_node(GSGFGameTree *self);
 
-gssize gsgf_game_tree_write_stream(const GSGFCollection *collection,
-                                   GOutputStream *out,
-                                   GCancellable *cancellable,
-                                   GError **error);
-
 G_END_DECLS
 
 #endif
