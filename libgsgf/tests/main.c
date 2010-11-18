@@ -31,7 +31,6 @@
 #include "test.h"
 
 static char *program_name;
-char *path;
 
 int
 main(int argc, char *argv[])
@@ -49,7 +48,7 @@ main(int argc, char *argv[])
                 path = g_build_filename(TEST_DIR, filename, NULL);
 
                 file = g_file_new_for_commandline_arg(path);
-                collection = gsgf_collection_parse_file(file, NULL, NULL, &error);
+                collection = gsgf_collection_parse_file(file, NULL, &error);
         }
 
         if (!path)
@@ -62,66 +61,4 @@ main(int argc, char *argv[])
         if (error) g_error_free(error);
 
         return status;
-}
-
-int
-expect_error(GError *error, GError *expect)
-{
-        if (!error && !expect)
-                return 0;
-
-        if (!error && expect) {
-                fprintf(stderr, "%s: Expected error '%s' but got none.\n",
-                        path, expect->message);
-                g_error_free(expect);
-                return -1;
-        }
-
-        if (error && !expect) {
-                fprintf(stderr, "%s: %s\n", path, error->message);
-                return -1;
-        }
-
-        if (error && expect) {
-                if (strcmp (error->message, expect->message)) {
-                        fprintf(stderr, 
-                                "%s: Expected error '%s' but got '%s'\n",
-                                path, expect->message, error->message);
-                        g_error_free(expect);
-                        return -1;
-                }
-                if (error->domain != expect->domain) {
-                        fprintf(stderr, 
-                                "%s: Expected error domain '%s' but got '%s'\n",
-                                path,
-                                g_quark_to_string(expect->domain),
-                                g_quark_to_string(error->domain));
-                        g_error_free(expect);
-                        return -1;
-                }
-                if (error->code != expect->code) {
-                        fprintf(stderr, 
-                                "%s: Expected error code %d but got %d.\n",
-                                path, expect->code, error->code);
-                        g_error_free(expect);
-                        return -1;
-                }
-
-                g_error_free(expect);
-        }
-
-        return 0;
-}
-
-int
-expect_error_conditional(gboolean condition, const gchar *msg,
-                         GError *error, GError *expect)
-{
-        if (!condition) {
-                fprintf(stderr, "%s: %s.\n", path, msg);
-                if (expect) g_error_free(expect);
-                return -1;
-        }
-
-        return expect_error(error, expect);
 }
