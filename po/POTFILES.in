@@ -38,6 +38,7 @@ libgsgf/gsgf-error.c
 libgsgf/gsgf-property.c
 libgsgf/gsgf-collection.c
 libgsgf/gsgf-game-tree.c
+libgsgf/libgsgf.c
 src/gibbon-cairoboard.c
 src/gibbon-connection.c
 src/gibbon-connector.c
