@@ -29,9 +29,9 @@ struct _GSGFFlavor;
 
 G_BEGIN_DECLS
 
-GSGFGameTree *_gsgf_game_tree_new(const gchar *flavor, GError **error);
-GSGFNode *_gsgf_node_new(const gchar *flavor, GError **error);
-GSGFProperty *_gsgf_property_new(const gchar *flavor, GError **error);
+GSGFGameTree *_gsgf_game_tree_new(void);
+GSGFNode *_gsgf_node_new(void);
+GSGFProperty *_gsgf_property_new(void);
 
 gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
                                       GOutputStream *out, gsize *bytes_written,
@@ -43,11 +43,14 @@ gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
                                      GOutputStream *out, gsize *bytes_written,
                                      GCancellable *cancellable, GError **error);
 
+gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text,
+                                  GError **error);
+
+
 GSGFPropertyHandler *_gsgf_flavor_get_handler(const struct _GSGFFlavor *,
                                               const gchar *id);
-void _gsgf_flavor_cook_value(struct _GSGFFlavor *flavor,
-                             gpointer cooked, 
-                             GDestroyNotify cooked_destructor);
+
+gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
 
 G_END_DECLS
 
