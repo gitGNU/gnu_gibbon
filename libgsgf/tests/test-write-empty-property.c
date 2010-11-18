@@ -39,7 +39,7 @@ test_collection(GSGFCollection *collection, GError *error)
         GOutputStream *out = g_memory_output_stream_new(NULL, 0,
                                                         g_realloc, g_free);
         gsize written = 12345;
-        GSGFCollection *empty = gsgf_collection_new(NULL, &error);
+        GSGFCollection *empty = gsgf_collection_new(&error);
 
         game_tree = gsgf_collection_add_game_tree(empty);
         node = gsgf_game_tree_add_node(game_tree);

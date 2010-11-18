@@ -31,7 +31,7 @@ char *filename = NULL;
 int 
 test_collection(GSGFCollection *collection, GError *error)
 {
-        GSGFCollection *empty = gsgf_collection_new(NULL, &error);
+        GSGFCollection *empty = gsgf_collection_new(&error);
         GError *expect = NULL;
         GOutputStream *out = g_memory_output_stream_new(NULL, 0, NULL, NULL);
         gsize written = 12345;
