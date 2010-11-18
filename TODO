@@ -21,3 +21,4 @@
 - Glib 2.2 now has the GResolver API.  Use it!
 - Review documentation for libgsgf.
 - Add assertions to libgsgf.
+- Are esacped in SGF files passed through?
