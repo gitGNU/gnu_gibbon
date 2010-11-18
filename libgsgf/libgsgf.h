@@ -28,6 +28,7 @@ void libgsgf_init();
 
 gchar *gsgf_util_read_simpletext(const gchar *raw, const gchar **end, 
                                  gchar delim);
+gchar *gsgf_util_read_text(const gchar *raw, const gchar **end, gchar delim);
 
 G_END_DECLS
 
