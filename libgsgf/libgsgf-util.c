@@ -60,3 +60,45 @@ gsgf_util_read_simpletext (const gchar *raw, const gchar **end,
 
         return result;
 }
+
+/* FIXME: This function should be optimized.  It currently copies (and
+ * allocates the memory for it) byte by byte.
+ */
+gchar *
+gsgf_util_read_text (const gchar *raw, const gchar **end, 
+                     gchar delim)
+{
+        GString *string = g_string_new("");
+        const gchar *ptr = raw;
+        gchar *result;
+        gboolean escaped = FALSE;
+        gboolean softbreak;
+        gchar c;
+
+        while ((escaped || (*ptr != delim)) && *ptr) {
+                c = *ptr;
+
+                softbreak = FALSE;
+
+                if (c == '\t' || c == '\v' || c == '\f')
+                        c = ' ';
+
+                if (escaped) {
+                        escaped = FALSE;
+                        if (c == '\n') softbreak = TRUE;
+                } else if (c == '\\') {
+                        escaped = TRUE;
+                }
+
+                if (!escaped && !softbreak) g_string_append_c(string, c);
+
+                ++ptr;
+        }
+
+        *end = ptr;
+        result = string->str;
+
+        g_string_free(string, FALSE);
+
+        return result;
+}
