@@ -63,9 +63,6 @@ struct _GSGFProperty
         GSGFPropertyPrivate *priv;
 };
 
-gboolean gsgf_property_add_value(GSGFProperty *property, const gchar *text, GError **error);
-GList *gsgf_property_get_values(GSGFProperty *property);
-
 G_END_DECLS
 
 #endif
