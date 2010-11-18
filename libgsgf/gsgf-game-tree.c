@@ -32,8 +32,6 @@
 #include "gsgf-private.h"
 
 struct _GSGFGameTreePrivate {
-        const gchar *flavor;
-
         GSGFGameTree *parent;
 
         GList *nodes;
@@ -87,11 +85,9 @@ gsgf_game_tree_class_init(GSGFGameTreeClass *klass)
 }
 
 GSGFGameTree *
-_gsgf_game_tree_new(const gchar *flavor, GError **error)
+_gsgf_game_tree_new()
 {
         GSGFGameTree *self = g_object_new(GSGF_TYPE_GAME_TREE, NULL);
-
-        self->priv->flavor = flavor;
 
         return self;
 }
@@ -106,7 +102,7 @@ _gsgf_game_tree_new(const gchar *flavor, GError **error)
 GSGFGameTree *
 gsgf_game_tree_add_child(GSGFGameTree *self)
 {
-        GSGFGameTree *child = _gsgf_game_tree_new(self->priv->flavor, NULL);
+        GSGFGameTree *child = _gsgf_game_tree_new();
 
         self->priv->children = g_list_append(self->priv->children, child);
 
@@ -125,7 +121,7 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GSGFNode *node = _gsgf_node_new(self->priv->flavor, NULL);
+        GSGFNode *node = _gsgf_node_new();
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 
@@ -195,6 +191,25 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
         }
 
         *bytes_written += written_here;
+
+        return TRUE;
+}
+
+gboolean
+_gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
+{
+        GSGFNode *root;
+
+        *error = NULL;
+
+        /* It is debatable, whether this should be an error.  But when
+         * there are no nodes, there's nothing to convert.  We leave
+         * complaints about that to the serializer.
+         */
+        if (!self->priv->nodes)
+                return TRUE;
+
+        root = GSGF_NODE(self->priv->nodes->data);
 
         return TRUE;
 }

@@ -62,7 +62,6 @@ typedef struct {
 } GSGFParserContext;
 
 struct _GSGFCollectionPrivate {
-        const gchar *flavor;
         GList* game_trees;
 };
 
@@ -83,7 +82,8 @@ static gint gsgf_yyread_prop_ident(GSGFParserContext *ctx, gchar c,
 static void gsgf_yyread_linebreak(GSGFParserContext *ctx, gchar c);
 static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
                          gint token, GError **error);
-
+static gboolean gsgf_collection_convert(GSGFCollection *collection,
+                                        GError **error);
 static GRegex *double_pattern = NULL;
 
 /**
@@ -130,7 +130,6 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
 
 /**
  * gsgf_collection_new:
- * @flavor: The particular flavor of SGF or %NULL for generic.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Build an empty #GSGFCollection in memory.  The function cannot fail.
@@ -138,7 +137,7 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
  * Returns: An empty #GSGFCollection.
  */
 GSGFCollection *
-gsgf_collection_new(const gchar *flavor, GError **error)
+gsgf_collection_new(GError **error)
 {
         GSGFCollection *self = g_object_new(GSGF_TYPE_COLLECTION, NULL);
 
@@ -150,7 +149,6 @@ gsgf_collection_new(const gchar *flavor, GError **error)
 /**
  * gsgf_collection_parse_stream:
  * @stream: a #GInputStream to parse.
- * @flavor: the SGF flavor to expect.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
@@ -164,10 +162,10 @@ gsgf_collection_new(const gchar *flavor, GError **error)
  * Returns: A #GSGFCollection or %NULL on error.
  */
 GSGFCollection *
-gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
+gsgf_collection_parse_stream(GInputStream *stream,
                              GCancellable *cancellable, GError **error)
 {
-        GSGFCollection *self = gsgf_collection_new(flavor, error);
+        GSGFCollection *self = gsgf_collection_new(error);
         gint token = 0;
         GString *value;
         GSGFParserContext ctx;
@@ -289,9 +287,9 @@ gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTIES;
                                 } else if (token == GSGF_TOKEN_VALUE) {
                                         ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
-                                        if (!gsgf_property_add_value(property,
-                                                                    value->str,
-                                                                    error)) {
+                                        if (!_gsgf_property_add_value(property,
+                                                                      value->str,
+                                                                      error)) {
                                                 g_prefix_error(error, "%d:%d:",
                                                                ctx.lineno, ctx.colno);
                                                 g_string_free(value, TRUE);
@@ -414,7 +412,11 @@ gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
         if (!self->priv->game_trees) {
                 g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Empty SGF collections are not allowed"));
+                return self;
         } /* else if (!game_tree->first_node ..), actually just else. */
+
+        if (!gsgf_collection_convert(self, ctx.error))
+                return self;
 
         return self;
 }
@@ -422,7 +424,6 @@ gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
 /**
  * gsgf_collection_parse_file:
  * @file: a #GFile to parse.
- * @flavor: the particular flavor of SGF to expect.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
@@ -436,7 +437,7 @@ gsgf_collection_parse_stream(GInputStream *stream, const gchar *flavor,
  * Returns: A #GSGFCollection or %NULL on error.
  */
 GSGFCollection *
-gsgf_collection_parse_file(GFile *file, const gchar*flavor, GCancellable *cancellable,
+gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
                            GError **error)
 {
         GInputStream *stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
@@ -444,7 +445,7 @@ gsgf_collection_parse_file(GFile *file, const gchar*flavor, GCancellable *cancel
         if (!stream)
                 return NULL;
 
-        return gsgf_collection_parse_stream(stream, flavor, cancellable, error);
+        return gsgf_collection_parse_stream(stream, cancellable, error);
 }
 
 static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
@@ -644,7 +645,7 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
 GSGFGameTree *
 gsgf_collection_add_game_tree(GSGFCollection *self)
 {
-        GSGFGameTree *game_tree = _gsgf_game_tree_new(self->priv->flavor, NULL);
+        GSGFGameTree *game_tree = _gsgf_game_tree_new();
 
         self->priv->game_trees = 
                 g_list_append(self->priv->game_trees, game_tree);
@@ -672,6 +673,7 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
  *
  * Returns: %TRUE on success.  %FALSE if there was an error.
  **/
+ #include <stdio.h>
 gboolean
 gsgf_collection_write_stream(const GSGFCollection *self,
                              GOutputStream *out,
@@ -711,6 +713,24 @@ gsgf_collection_write_stream(const GSGFCollection *self,
 
         if (close_stream && !g_output_stream_close(out, cancellable, error))
                 return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+gsgf_collection_convert(GSGFCollection *self, GError **error)
+{
+        GList *iter = self->priv->game_trees;
+
+        *error = NULL;
+
+        while (iter) {
+                if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(iter->data),
+                                             error)) {
+                        return FALSE;
+                }
+                iter = iter->next;
+        }
 
         return TRUE;
 }
