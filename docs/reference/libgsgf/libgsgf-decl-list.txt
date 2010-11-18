@@ -4,7 +4,6 @@
 GSGFNodeClass
 GSGFNode
 GSGFNodePrivate
-gsgf_node_new
 gsgf_node_add_property
 <SUBSECTION Standard>
 GSGF_NODE
@@ -17,13 +16,29 @@ GSGF_NODE_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-flavor</FILE>
+<TITLE>GSGFFlavor</TITLE>
+GSGFFlavorClass
+GSGFFlavor
+GSGFFlavorPrivate
+gsgf_flavor_new
+<SUBSECTION Standard>
+GSGF_FLAVOR
+GSGF_IS_FLAVOR
+GSGF_TYPE_FLAVOR
+gsgf_flavor_get_type
+GSGF_FLAVOR_CLASS
+GSGF_IS_FLAVOR_CLASS
+GSGF_FLAVOR_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-property</FILE>
 <TITLE>GSGFProperty</TITLE>
 GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
 GSGFPropertyType
-gsgf_property_new
 gsgf_property_add_value
 gsgf_property_get_values
 <SUBSECTION Standard>
@@ -63,7 +78,6 @@ GSGF_COLLECTION_GET_CLASS
 GSGFGameTreeClass
 GSGFGameTree
 GSGFGameTreePrivate
-gsgf_game_tree_new
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
@@ -79,10 +93,27 @@ GSGF_GAME_TREE_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>libgsgf</FILE>
+libgsgf_init
+gsgf_util_read_simpletext
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-error</FILE>
 GSGF_ERROR
 GSGFError
 gsgf_error_quark
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-property-handler</FILE>
+GSGFPropertyTextUpdater
+GSGFPropertyHandler
+gsgf_property_handler_get_type
+GSGF_TYPE_PROPERTY_HANDLER
+gsgf_property_handler_new
+gsgf_property_handler_copy
+gsgf_property_handler_destroy
 </SECTION>
 
 <SECTION>

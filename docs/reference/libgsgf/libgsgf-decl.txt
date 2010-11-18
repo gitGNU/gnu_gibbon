@@ -1,3 +1,13 @@
+<FUNCTION>
+<NAME>libgsgf_init</NAME>
+<RETURNS>void </RETURNS>
+ 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_util_read_simpletext</NAME>
+<RETURNS>gchar *</RETURNS>
+const gchar *raw, const gchar **end, gchar delim 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_NODE</NAME>
 #define GSGF_TYPE_NODE                  (gsgf_node_get_type ())
@@ -54,11 +64,6 @@ struct _GSGFNode
 };
 </STRUCT>
 <FUNCTION>
-<NAME>gsgf_node_new</NAME>
-<RETURNS>GSGFNode *</RETURNS>
- 
-</FUNCTION>
-<FUNCTION>
 <NAME>gsgf_node_add_property</NAME>
 <RETURNS>struct _GSGFProperty *</RETURNS>
 GSGFNode *self, const gchar *id, GError **error 
@@ -71,15 +76,78 @@ GSGFNode *self, const gchar *id, GError **error
 <NAME>GSGFError</NAME>
 typedef enum {
         GSGF_ERROR_NONE = 0,
-        GSGF_ERROR_SYNTAX = 1,
-        GSGF_ERROR_EMPTY_COLLECTION = 2,
-        GSGF_ERROR_PROPERTY_EXISTS = 3
+        GSGF_ERROR_FLAVOR_UNSUPPORTED = 1,
+        GSGF_ERROR_FLAVOR_MISMATCH = 2,
+        GSGF_ERROR_SYNTAX = 3,
+        GSGF_ERROR_EMPTY_COLLECTION = 4,
+        GSGF_ERROR_PROPERTY_EXISTS = 5,
+        GSGF_ERROR_EMPTY_PROPERTY = 6
 } GSGFError;
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
 <RETURNS>GQuark </RETURNS>
 void 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_FLAVOR</NAME>
+#define GSGF_TYPE_FLAVOR             (gsgf_flavor_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_FLAVOR</NAME>
+#define GSGF_FLAVOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_FLAVOR, GSGFFlavor))
+</MACRO>
+<MACRO>
+<NAME>GSGF_FLAVOR_CLASS</NAME>
+#define GSGF_FLAVOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_FLAVOR, GSGFFlavorClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_FLAVOR</NAME>
+#define GSGF_IS_FLAVOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_FLAVOR))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_FLAVOR_CLASS</NAME>
+#define GSGF_IS_FLAVOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_FLAVOR))
+</MACRO>
+<MACRO>
+<NAME>GSGF_FLAVOR_GET_CLASS</NAME>
+#define GSGF_FLAVOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_FLAVOR, GSGFFlavorClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFFlavorClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFFlavor</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFFlavorPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFFlavorClass</NAME>
+struct _GSGFFlavorClass
+{
+        GObjectClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_flavor_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFFlavor</NAME>
+struct _GSGFFlavor
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        GSGFFlavorPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_flavor_new</NAME>
+<RETURNS>GSGFFlavor*</RETURNS>
+const gchar *id, const gchar *name 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -145,11 +213,6 @@ struct _GSGFProperty
 };
 </STRUCT>
 <FUNCTION>
-<NAME>gsgf_property_new</NAME>
-<RETURNS>GSGFProperty *</RETURNS>
- 
-</FUNCTION>
-<FUNCTION>
 <NAME>gsgf_property_add_value</NAME>
 <RETURNS>gboolean </RETURNS>
 GSGFProperty *property, const gchar *text, GError **error 
@@ -158,6 +221,45 @@ GSGFProperty *property, const gchar *text, GError **error
 <NAME>gsgf_property_get_values</NAME>
 <RETURNS>GList *</RETURNS>
 GSGFProperty *property 
+</FUNCTION>
+<USER_FUNCTION>
+<NAME>GSGFPropertyTextUpdater</NAME>
+<RETURNS>gboolean </RETURNS>
+GSGFProperty *property,
+                                             const gchar *text, GError **error
+</USER_FUNCTION>
+<STRUCT>
+<NAME>GSGFPropertyHandler</NAME>
+struct _GSGFPropertyHandler {
+        GSGFPropertyTextUpdater text_updater;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFPropertyHandler</NAME>
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_property_handler_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_PROPERTY_HANDLER</NAME>
+#define GSGF_TYPE_PROPERTY_HANDLER (gsgf_property_handler_get_type())
+</MACRO>
+<FUNCTION>
+<NAME>gsgf_property_handler_new</NAME>
+<RETURNS>GSGFPropertyHandler*</RETURNS>
+const gchar *id, const gchar *name 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_handler_copy</NAME>
+<RETURNS>GSGFPropertyHandler*</RETURNS>
+const GSGFPropertyHandler * 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_handler_destroy</NAME>
+<RETURNS>void </RETURNS>
+GSGFPropertyHandler * 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLLECTION</NAME>
@@ -217,17 +319,17 @@ struct _GSGFCollection
 <FUNCTION>
 <NAME>gsgf_collection_new</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
- 
+const gchar *flavor, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_stream</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
-GInputStream *stream, GCancellable *cancellable, GError **error 
+GInputStream *stream, const gchar *flavor, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_file</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
-GFile *file, GCancellable *cancellable, GError **error 
+GFile *file, const gchar *flavor, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_add_game_tree</NAME>
@@ -294,11 +396,6 @@ struct _GSGFGameTree
         GSGFGameTreePrivate *priv;
 };
 </STRUCT>
-<FUNCTION>
-<NAME>gsgf_game_tree_new</NAME>
-<RETURNS>GSGFGameTree *</RETURNS>
- 
-</FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_add_child</NAME>
 <RETURNS>GSGFGameTree *</RETURNS>
