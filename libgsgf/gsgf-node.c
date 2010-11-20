@@ -171,3 +171,21 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
 
         return property;
 }
+
+/**
+ * gsgf_node_get_property:
+ * @self: a #GSGFNode.
+ * @id: identifier of the property.
+ *
+ * Get a #GSGFProperty identified by %id or %NULL.
+ *
+ * Returns: The #GSGFProperty identified by %id or %NULL.
+ */
+GSGFProperty *
+gsgf_node_get_property(GSGFNode *self, const gchar *id)
+{
+        if (!self->priv->properties)
+                return NULL;
+
+        return g_hash_table_lookup(self->priv->properties, id);
+}
