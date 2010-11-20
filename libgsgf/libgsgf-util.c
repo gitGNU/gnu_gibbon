@@ -53,7 +53,8 @@ gsgf_util_read_simpletext (const gchar *raw, const gchar **end,
                 ++ptr;
         }
 
-        *end = ptr;
+        if (end)
+                *end = ptr;
         result = string->str;
 
         g_string_free(string, FALSE);
@@ -95,7 +96,8 @@ gsgf_util_read_text (const gchar *raw, const gchar **end,
                 ++ptr;
         }
 
-        *end = ptr;
+        if (end)
+                *end = ptr;
         result = string->str;
 
         g_string_free(string, FALSE);
