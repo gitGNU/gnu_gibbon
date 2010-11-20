@@ -199,6 +199,8 @@ gboolean
 _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 {
         GSGFNode *root;
+        GSGFProperty *ca_property;
+        gchar *charset = "ISO-8859-1";
 
         *error = NULL;
 
@@ -210,6 +212,17 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                 return TRUE;
 
         root = GSGF_NODE(self->priv->nodes->data);
+        ca_property = gsgf_node_get_property(root, "CA");
+        if (ca_property)
+                charset = gsgf_util_read_simpletext (gsgf_property_get_raw(ca_property, 0),
+                                                     NULL, 0);
+
+        if (g_ascii_strcasecmp(charset, "UTF-8")) {
+                g_print("Must convert game tree from %s to UTF-8!\n", charset);
+        }
+
+        if (ca_property)
+                g_free(charset);
 
         return TRUE;
 }
