@@ -191,3 +191,27 @@ _gsgf_property_value_free(gpointer _value, gpointer user_data)
                 g_free(value);
         }
 }
+
+/**
+ * gsgf_property_get_raw:
+ *
+ * @property: the #GSGFProperty.
+ * @index: Index of the element.
+ *
+ * Retrieve the raw value of a property.  The returned string is the original,
+ * not a copy.  Don't mess with it! You should run the string through
+ * gsgf_read_text() or gsgf_read_simple_text() before you work with it.
+ *
+ * Returns: Returns the string or %NULL f %index is out of range.
+ */
+const gchar *
+gsgf_property_get_raw(const GSGFProperty* property, gsize i)
+{
+        _GSGFPropertyValue *value =
+                        (_GSGFPropertyValue *) g_list_nth_data(property->priv->values, i);
+
+        if (!value)
+                return NULL;
+
+        return value->raw;
+}
