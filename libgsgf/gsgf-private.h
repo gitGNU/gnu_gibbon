@@ -51,6 +51,8 @@ GSGFPropertyHandler *_gsgf_flavor_get_handler(const struct _GSGFFlavor *,
                                               const gchar *id);
 
 gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
+gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
+                                GError **error);
 
 G_END_DECLS
 

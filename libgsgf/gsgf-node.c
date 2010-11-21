@@ -192,17 +192,19 @@ gsgf_node_get_property(const GSGFNode *self, const gchar *id)
 }
 
 /**
- * gsgf_node_get_properties:
+ * gsgf_node_get_property_ids:
  * @self: a #GSGFNode.
  *
- * Return all #GSGFProperty children.  The returned list must be freed with
- * %g_list_free().  The returned list becomes invalid, when you add or remove
- * properties to the #GSGFNode.
+ * Return all #GSGFProperty ids stored in this node.  The returned list must be
+ * freed with %g_list_free().  The returned list becomes invalid, when you add
+ * or properties to the #GSGFNode or remove nodes from it.
  *
- * Returns: The list of #GSGFProperty children.
+ * The data portion of each #GList item points to a #gchar.
+ *
+ * Returns: The list of #gchar ids.
  */
 const GList *
-gsgf_node_get_properties(const GSGFNode *self)
+gsgf_node_get_property_ids(const GSGFNode *self)
 {
         if (!self->priv->properties)
                 return NULL;

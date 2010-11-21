@@ -201,11 +201,14 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GSGFNode *root;
         GSGFProperty *ca_property;
         gchar *charset = "ISO-8859-1";
-        GList *properties;
+        GList *ids;
+        GList *id_item;
+        gchar *id;
         GList *nodes;
         GSGFNode *node;
         GSGFProperty *property;
         gboolean free_charset = FALSE;
+        GList *child;
 
         if (error)
                 *error = NULL;
@@ -234,12 +237,29 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 
                 for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
                         node = GSGF_NODE(nodes->data);
-                        properties = gsgf_node_get_properties(node);
+                        ids = gsgf_node_get_property_ids(node);
+                        for (id_item = ids; id_item; id_item = id_item->next) {
+                                id = (gchar *) id_item->data;
+                                property = gsgf_node_get_property(node, id);
+                                if (!_gsgf_property_convert(property, charset, error)) {
+                                        if (free_charset)
+                                                g_free(charset);
+                                        return FALSE;
+                                }
+                        }
+                        g_list_free(ids);
                 }
                 /* The SGF specification is a little ambiguous here? Do child
                  * game trees inherit the CA property?  Short of any hint in the
                  * specs we assume they do not.
                  */
+                for (child = self->priv->children; child; child = child->next) {
+                        if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(child->data),
+                                                     error)) {
+                                if (free_charset)
+                                        g_free(charset);
+                        }
+                }
         }
 
         if (free_charset)

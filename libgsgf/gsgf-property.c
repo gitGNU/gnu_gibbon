@@ -206,7 +206,7 @@ _gsgf_property_value_free(gpointer _value, gpointer user_data)
  * Returns: Returns the string or %NULL f %index is out of range.
  */
 const gchar *
-gsgf_property_get_raw(const GSGFProperty* property, gsize i)
+gsgf_property_get_raw(const GSGFProperty *property, gsize i)
 {
         _GSGFPropertyValue *value =
                         (_GSGFPropertyValue *) g_list_nth_data(property->priv->values, i);
@@ -215,4 +215,33 @@ gsgf_property_get_raw(const GSGFProperty* property, gsize i)
                 return NULL;
 
         return value->raw;
+}
+
+gboolean
+_gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
+{
+        gchar *converted;
+        gsize bytes_written;
+        GList *iter;
+        _GSGFPropertyValue *value;
+
+        if (error)
+                *error = NULL;
+
+        iter = self->priv->values;
+
+        while (iter) {
+                value = (_GSGFPropertyValue *) iter->data;
+
+                converted = g_convert(value->raw, -1, "UTF-8", charset,
+                                      NULL, &bytes_written, NULL);
+                if (!converted)
+                        return FALSE;
+
+                g_free(value->raw);
+                value->raw = converted;
+                iter = iter->next;
+        }
+
+        return TRUE;
 }

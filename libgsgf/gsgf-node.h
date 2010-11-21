@@ -61,7 +61,7 @@ struct _GSGFProperty;
 struct _GSGFProperty *gsgf_node_add_property(GSGFNode *self, const gchar *id,
                                              GError **error);
 struct _GSGFProperty *gsgf_node_get_property(const GSGFNode *self, const gchar *id);
-const GList *gsgf_node_get_properties(const GSGFNode *self);
+const GList *gsgf_node_get_property_ids(const GSGFNode *self);
 void gsgf_node_remove_property(GSGFNode *self, const gchar *id);
 
 G_END_DECLS
