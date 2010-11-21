@@ -206,7 +206,8 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GSGFNode *node;
         GSGFProperty *property;
 
-        *error = NULL;
+        if (error)
+                *error = NULL;
 
         /* It is debatable, whether this should be an error.  But when
          * there are no nodes, there's nothing to convert.  We leave

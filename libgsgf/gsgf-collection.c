@@ -722,7 +722,8 @@ gsgf_collection_convert(GSGFCollection *self, GError **error)
 {
         GList *iter = self->priv->game_trees;
 
-        *error = NULL;
+        if (error)
+                *error = NULL;
 
         while (iter) {
                 if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(iter->data),

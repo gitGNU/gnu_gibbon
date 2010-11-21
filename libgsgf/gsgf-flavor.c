@@ -156,7 +156,8 @@ static gboolean
 gsgf_flavor_text_updater(GSGFProperty *property, const gchar *raw,
                          GError **error)
 {
-        *error = NULL;
+        if (error)
+                *error = NULL;
 
         return TRUE;
 }

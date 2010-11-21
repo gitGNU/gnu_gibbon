@@ -171,7 +171,8 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *_value,
         value->cooked = NULL;
         value->cooked_destructor = NULL;
 
-        *error = NULL;
+        if (error)
+                *error = NULL;
 
         property->priv->values = g_list_append(property->priv->values, value);
 
