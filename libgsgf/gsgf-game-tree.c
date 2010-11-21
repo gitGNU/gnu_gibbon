@@ -201,6 +201,10 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GSGFNode *root;
         GSGFProperty *ca_property;
         gchar *charset = "ISO-8859-1";
+        GList *properties;
+        GList *nodes;
+        GSGFNode *node;
+        GSGFProperty *property;
 
         *error = NULL;
 
@@ -218,7 +222,20 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                                                      NULL, 0);
 
         if (g_ascii_strcasecmp(charset, "UTF-8")) {
-                g_print("Must convert game tree from %s to UTF-8!\n", charset);
+                if (ca_property) {
+                        gsgf_node_remove_property(root, "CA");
+                        ca_property = gsgf_node_add_property(root, "CA", NULL);
+                        _gsgf_property_add_value(ca_property, "UTF-8", NULL);
+                }
+
+                for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
+                        node = GSGF_NODE(nodes->data);
+                        properties = gsgf_node_get_properties(node);
+                }
+                /* The SGF specification is a little ambiguous here? Do child
+                 * game trees inherit the CA property?  Short of any hint in the
+                 * specs we assume they do not.
+                 */
         }
 
         if (ca_property)

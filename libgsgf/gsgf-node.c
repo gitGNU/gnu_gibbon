@@ -154,7 +154,8 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
         GSGFProperty *property;
         const gchar *ptr = id;
 
-        *error = NULL;
+        if (error)
+                *error = NULL;
 
         while (*ptr) {
                 if (*ptr < 'A' || *ptr > 'Z') {
@@ -177,15 +178,51 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
  * @self: a #GSGFNode.
  * @id: identifier of the property.
  *
- * Get a #GSGFProperty identified by %id or %NULL.
+ * Get a #GSGFProperty identified by %id.
  *
  * Returns: The #GSGFProperty identified by %id or %NULL.
  */
 GSGFProperty *
-gsgf_node_get_property(GSGFNode *self, const gchar *id)
+gsgf_node_get_property(const GSGFNode *self, const gchar *id)
 {
         if (!self->priv->properties)
                 return NULL;
 
         return g_hash_table_lookup(self->priv->properties, id);
+}
+
+/**
+ * gsgf_node_get_properties:
+ * @self: a #GSGFNode.
+ *
+ * Return all #GSGFProperty children.  The returned list must be freed with
+ * %g_list_free().  The returned list becomes invalid, when you add or remove
+ * properties to the #GSGFNode.
+ *
+ * Returns: The list of #GSGFProperty children.
+ */
+const GList *
+gsgf_node_get_properties(const GSGFNode *self)
+{
+        if (!self->priv->properties)
+                return NULL;
+
+        return g_hash_table_get_keys(self->priv->properties);
+}
+
+/**
+ * gsgf_node_remove_property:
+ * @self: a #GSGFNode.
+ * @id: identifier of the property.
+ *
+ * Remove a #GSGFProperty identified by %id and free all resources occupied by it.
+ * If there is no such property the function silently returns without error.
+ */
+void
+gsgf_node_remove_property(GSGFNode *self, const gchar *id)
+{
+        if (!self->priv->properties)
+                return NULL;
+
+        return g_hash_table_remove(self->priv->properties, id);
 }
