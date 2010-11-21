@@ -38,7 +38,7 @@ test_collection(GSGFCollection *collection, GError *error)
         gboolean success = gsgf_collection_write_stream(collection, out, &written,
                                                         FALSE, NULL, &error);
         /* All types of line endings should be converted to \n.  */
-        gchar *expect = "(;CR[\n\n]CRLF[\n\n]LF[\n\n]LFCR[\n\n])\n";
+        gchar *expect = "(;CA[UTF-8]CR[\n\n]CRLF[\n\n]LF[\n\n]LFCR[\n\n])\n";
         gchar *got;
 
         if (error) return expect_error(error, NULL);

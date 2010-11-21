@@ -205,6 +205,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GList *nodes;
         GSGFNode *node;
         GSGFProperty *property;
+        gboolean free_charset = FALSE;
 
         if (error)
                 *error = NULL;
@@ -218,16 +219,18 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 
         root = GSGF_NODE(self->priv->nodes->data);
         ca_property = gsgf_node_get_property(root, "CA");
-        if (ca_property)
+        if (ca_property) {
                 charset = gsgf_util_read_simpletext (gsgf_property_get_raw(ca_property, 0),
                                                      NULL, 0);
+                free_charset = TRUE;
+        }
 
         if (g_ascii_strcasecmp(charset, "UTF-8")) {
-                if (ca_property) {
+                if (ca_property)
                         gsgf_node_remove_property(root, "CA");
-                        ca_property = gsgf_node_add_property(root, "CA", NULL);
-                        _gsgf_property_add_value(ca_property, "UTF-8", NULL);
-                }
+
+                ca_property = gsgf_node_add_property(root, "CA", NULL);
+                _gsgf_property_add_value(ca_property, "UTF-8", NULL);
 
                 for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
                         node = GSGF_NODE(nodes->data);
@@ -239,7 +242,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                  */
         }
 
-        if (ca_property)
+        if (free_charset)
                 g_free(charset);
 
         return TRUE;
