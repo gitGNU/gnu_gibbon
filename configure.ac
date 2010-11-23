@@ -121,6 +121,8 @@ AC_CONFIG_FILES([
     Makefile
     libgsgf/Makefile
     libgsgf/tests/Makefile
+    libgsgf/tests/full.sgf
+    libgsgf/tests/utf-8.sgf
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile

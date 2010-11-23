@@ -39,6 +39,8 @@ test_collection(GSGFCollection *collection, GError *error)
         GOutputStream *out = g_memory_output_stream_new(NULL, 0,
                                                         g_realloc, g_free);
         gsize written = 12345;
+        gsize expect_written;
+        gchar *version_string = "AP[libgsgf:" VERSION "]";
         GSGFCollection *empty = gsgf_collection_new(&error);
 
         game_tree = gsgf_collection_add_game_tree(empty);
@@ -56,7 +58,8 @@ test_collection(GSGFCollection *collection, GError *error)
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
                     ("Attempt to write empty property"));
 
-        return expect_error_conditional(written == 2,
-                                        "Expected written size to be 2",
+        return expect_error_conditional(strlen(version_string),
+                                        "Expected written size to be"
+                                        " length of version string",
                                         error, expect);
 }

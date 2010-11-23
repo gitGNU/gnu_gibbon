@@ -27,6 +27,7 @@ endif
 
 AM_CPPFLAGS =				\
 	-I$(top_srcdir)			\
+	-DVERSION=\"@VERSION@\"		\
 	$(GIBBON_CFLAGS)
 
 libgsgf_a_SOURCES = 			\

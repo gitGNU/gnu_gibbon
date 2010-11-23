@@ -60,12 +60,15 @@ noinst_HEADERS = test.h
 
 SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\
-	    full.sgf			\
+	    full.sgf.in			\
 	    linefeeds.sgf		\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
 	    really-empty.sgf		\
-	    utf-8.sgf
+	    utf-8.sgf.in
 
 EXTRA_DIST = $(SGF_FILES)
+
+clean-local:
+	-rm -f full.sgf.in

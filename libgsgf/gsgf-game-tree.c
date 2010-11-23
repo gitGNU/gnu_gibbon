@@ -147,6 +147,17 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
 {
         gsize written_here;
         GList *iter;
+        GSGFNode *root;
+        GSGFProperty *ap_property;
+        gchar *version_string;
+
+        /* Force our version.  */
+        version_string = g_strdup_printf("libgsgf:%s", VERSION);
+        root = GSGF_NODE(self->priv->nodes->data);
+        gsgf_node_remove_property(root, "AP");
+        ap_property = gsgf_node_add_property(root, "AP", NULL);
+        _gsgf_property_add_value(ap_property, version_string, NULL);
+        g_free(version_string);
 
         *bytes_written = 0;
 
