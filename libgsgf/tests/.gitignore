@@ -1,2 +1,4 @@
 test-*
 !test-*.c
+full.sgf
+utf-8.sgf
