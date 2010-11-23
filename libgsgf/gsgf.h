@@ -25,8 +25,12 @@
 #include <libgsgf/gsgf-flavor.h>
 #include <libgsgf/gsgf-game-tree.h>
 #include <libgsgf/gsgf-node.h>
+#include <libgsgf/gsgf-number.h>
 #include <libgsgf/gsgf-property.h>
 #include <libgsgf/gsgf-property-handler.h>
+#include <libgsgf/gsgf-real.h>
+#include <libgsgf/gsgf-simple-text.h>
+#include <libgsgf/gsgf-text.h>
 
 #include <libgsgf/libgsgf.h>
 

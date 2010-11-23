@@ -36,8 +36,12 @@ libgsgf_a_SOURCES = 			\
 	gsgf-flavor.c			\
 	gsgf-game-tree.c		\
 	gsgf-node.c			\
+	gsgf-number.c			\
 	gsgf-property.c			\
 	gsgf-property-handler.c		\
+	gsgf-real.c			\
+	gsgf-simple-text.c		\
+	gsgf-text.c			\
 	libgsgf.c			\
 	libgsgf-util.c
 
@@ -48,7 +52,11 @@ noinst_HEADERS =			\
 	gsgf-collection.h		\
 	gsgf-game-tree.h		\
 	gsgf-node.h			\
+	gsgf-number.h			\
 	gsgf-private.h			\
 	gsgf-property.h			\
 	gsgf-property-handler.h		\
+	gsgf-real.h			\
+	gsgf-simple-text.h		\
+	gsgf-text.h			\
 	libgsgf.h

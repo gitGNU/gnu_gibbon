@@ -64,6 +64,8 @@ struct _GSGFProperty *gsgf_node_get_property(const GSGFNode *self, const gchar *
 const GList *gsgf_node_get_property_ids(const GSGFNode *self);
 void gsgf_node_remove_property(GSGFNode *self, const gchar *id);
 
+gpointer gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id);
+
 G_END_DECLS
 
 #endif
