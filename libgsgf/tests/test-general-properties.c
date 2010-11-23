@@ -31,18 +31,24 @@ char *filename = "root-properties.sgf";
 int 
 test_collection(GSGFCollection *collection, GError *error)
 {
+        GList *game_trees;
         GSGFGameTree *game_tree;
+        GList *nodes;
         GSGFNode *root_node;
 
-        game_tree = GSGF_GAME_TREE(
-                g_list_first(gsgf_collection_get_game_trees(collection)));
-        if (!game_tree) {
+        game_trees = gsgf_collection_get_game_trees(collection);
+        if (!game_trees) {
                 fprintf(stderr, "No game trees found.\n");
                 return -1;
         }
+        game_tree = GSGF_GAME_TREE(game_trees->data);
 
-        root_node = GSGF_NODE(
-                g_list_first(gsgf_game_tree_get_nodes(game_tree)));
+        nodes = gsgf_game_tree_get_nodes(game_tree);
+        if (!nodes) {
+                fprintf(stderr, "No nodes found.\n");
+                return -1;
+        }
+        root_node = GSGF_NODE(nodes->data);
 
         return expect_error(error, NULL);
 }
