@@ -84,6 +84,8 @@ static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
                          gint token, GError **error);
 static gboolean gsgf_collection_convert(GSGFCollection *collection,
                                         GError **error);
+static gboolean gsgf_collection_apply_flavor(GSGFCollection *collection,
+                                             GError **error);
 static GRegex *double_pattern = NULL;
 
 /**
@@ -413,9 +415,12 @@ gsgf_collection_parse_stream(GInputStream *stream,
                 g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Empty SGF collections are not allowed"));
                 return self;
-        } /* else if (!game_tree->first_node ..), actually just else. */
+        }
 
         if (!gsgf_collection_convert(self, ctx.error))
+                return self;
+
+        if (!gsgf_collection_apply_flavor(self, ctx.error))
                 return self;
 
         return self;
@@ -728,6 +733,25 @@ gsgf_collection_convert(GSGFCollection *self, GError **error)
         while (iter) {
                 if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(iter->data),
                                              error)) {
+                        return FALSE;
+                }
+                iter = iter->next;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gsgf_collection_apply_flavor(GSGFCollection *self, GError **error)
+{
+        GList *iter = self->priv->game_trees;
+
+        if (error)
+                *error = NULL;
+
+        while (iter) {
+                if (!_gsgf_game_tree_apply_flavor(GSGF_GAME_TREE(iter->data),
+                                                  error)) {
                         return FALSE;
                 }
                 iter = iter->next;

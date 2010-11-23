@@ -267,3 +267,9 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 
         return TRUE;
 }
+
+gboolean
+_gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
+{
+        return TRUE;
+}
