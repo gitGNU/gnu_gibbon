@@ -73,5 +73,3 @@ SGF_FILES = cp1251.sgf			\
 
 EXTRA_DIST = $(SGF_FILES)
 
-clean-local:
-	-rm -f full.sgf.in
