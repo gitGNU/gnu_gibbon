@@ -26,7 +26,7 @@
 
 #include "test.h"
 
-char *filename = "root-properties.sgf";
+char *filename = "general-properties.sgf";
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
