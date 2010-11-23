@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <gio/gio.h>
 
+#include <libgsgf/gsgf-cooked-value.h>
+
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_NUMBER             (gsgf_number_get_type ())
@@ -50,7 +52,7 @@ GType gsgf_number_get_type(void) G_GNUC_CONST;
 
 struct _GSGFNumber
 {
-        GObject parent_instance;
+        GSGFCookedValue parent_instance;
 
         /*< private >*/
         GSGFNumberPrivate *priv;

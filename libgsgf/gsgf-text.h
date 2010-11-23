@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <gio/gio.h>
 
+#include <libgsgf/gsgf-cooked-value.h>
+
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_TEXT             (gsgf_text_get_type ())
@@ -50,14 +52,14 @@ GType gsgf_text_get_type(void) G_GNUC_CONST;
 
 struct _GSGFText
 {
-        GObject parent_instance;
+        GSGFCookedValue parent_instance;
 
         /*< private >*/
         GSGFTextPrivate *priv;
 };
 
 GSGFText* gsgf_text_new(const gchar *value);
-void gsgf_text_set_value(GSGFText *self, const gchar *value);
+void gsgf_text_set_value(GSGFText *self, const gchar *value, gboolean copy);
 gchar *gsgf_text_get_value(const GSGFText *self);
 
 G_END_DECLS

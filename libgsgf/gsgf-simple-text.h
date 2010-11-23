@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <gio/gio.h>
 
+#include <libgsgf/gsgf-text.h>
+
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_SIMPLE_TEXT             (gsgf_simple_text_get_type ())
@@ -50,14 +52,15 @@ GType gsgf_simple_text_get_type(void) G_GNUC_CONST;
 
 struct _GSGFSimpleText
 {
-        GObject parent_instance;
+        GSGFText parent_instance;
 
         /*< private >*/
         GSGFSimpleTextPrivate *priv;
 };
 
 GSGFSimpleText* gsgf_simple_text_new(const gchar *value);
-void gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value);
+void gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
+                                gboolean copy);
 gchar *gsgf_simple_text_get_value(const GSGFSimpleText *self);
 
 G_END_DECLS

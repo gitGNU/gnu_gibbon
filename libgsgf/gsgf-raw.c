@@ -18,11 +18,13 @@
  */
 
 /**
- * SECTION:gsgf-text
- * @short_description: Strong primitive type for SGF simple texts.
+ * SECTION:gsgf-raw
+ * @short_description: Raw, unqualified data in SGF files.
  *
- * A #GSGFText encapsulates an SGF simple text.  Its main purpose is 
- * to allow for type checking when retrieving or setting SGF properties.
+ * A #GSGFRaw is the only #GSGFCookedValue that is not a cooked value;
+ * the name sort of suggests that.  You should never use a #GSGFRaw
+ * directly.  It is internally used, when parsing data before it
+ * gets cooked.
  */
 
 #include <glib.h>
@@ -30,60 +32,60 @@
 
 #include <libgsgf/gsgf.h>
 
-struct _GSGFTextPrivate {
+struct _GSGFRawPrivate {
         gchar *value;
 };
 
-#define GSGF_TEXT_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                      GSGF_TYPE_TEXT,           \
-                                      GSGFTextPrivate))
+#define GSGF_RAW_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
+                                      GSGF_TYPE_RAW,           \
+                                      GSGFRawPrivate))
 
-G_DEFINE_TYPE (GSGFText, gsgf_text, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GSGFRaw, gsgf_raw, G_TYPE_OBJECT)
 
 static void
-gsgf_text_init(GSGFText *self)
+gsgf_raw_init(GSGFRaw *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                        GSGF_TYPE_TEXT,
-                        GSGFTextPrivate);
+                        GSGF_TYPE_RAW,
+                        GSGFRawPrivate);
 
         self->priv->value = NULL;
 }
 
 static void
-gsgf_text_finalize(GObject *object)
+gsgf_raw_finalize(GObject *object)
 {
-        GSGFText *self = GSGF_TEXT(object);
+        GSGFRaw *self = GSGF_RAW(object);
 
         if (self->priv->value)
                 g_free(self->priv->value);
         self->priv->value = NULL;
 
-        G_OBJECT_CLASS (gsgf_text_parent_class)->finalize(object);
+        G_OBJECT_CLASS (gsgf_raw_parent_class)->finalize(object);
 }
 
 static void
-gsgf_text_class_init(GSGFTextClass *klass)
+gsgf_raw_class_init(GSGFRawClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFTextPrivate));
+        g_type_class_add_private(klass, sizeof(GSGFRawPrivate));
 
-        object_class->finalize = gsgf_text_finalize;
+        object_class->finalize = gsgf_raw_finalize;
 }
 
 /**
- * gsgf_text_new:
+ * gsgf_raw_new:
  * @value: The value to store.
  *
- * Creates a new #GSGFText and stores a copy of @value.
+ * Creates a new #GSGFRaw and stores a copy of @value.
  *
- * Returns: The new #GSGFText.
+ * Returns: The new #GSGFRaw.
  */
-GSGFText *
-gsgf_text_new (const gchar *value)
+GSGFRaw *
+gsgf_raw_new (const gchar *value)
 {
-        GSGFText *self = g_object_new(GSGF_TYPE_TEXT, NULL);
+        GSGFRaw *self = g_object_new(GSGF_TYPE_RAW, NULL);
 
         self->priv->value = g_strdup(value);
 
@@ -91,17 +93,16 @@ gsgf_text_new (const gchar *value)
 }
 
 /**
- * gsgf_text_set_value:
- * @self: The #GSGFText.
- * @value: The new alue to store.
+ * gsgf_raw_set_value:
+ * @self: The #GSGFRaw.
+ * @value: The new value to store.
  * @copy: Flag that indicates whether to create a copy of the data.
  *
- * Stores a new value in a #GSGFText.  If @copy is %TRUE, a copy is
+ * Stores a new value in a #GSGFRaw.  If @copy is %TRUE, a copy is
  * stored.  If it is %FALSE the @value is stored directly.
  */
 void
-gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
-                           gboolean copy)
+gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gboolean copy)
 {
         if (self->priv->value)
                 g_free(self->priv->value);
@@ -113,15 +114,15 @@ gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
 }
 
 /**
- * gsgf_text_get_value:
- * @self: The #GSGFText.
+ * gsgf_raw_get_value:
+ * @self: The #GSGFRaw.
  *
- * Retrieve the value stored in a #GSGFText.
+ * Retrieve the value stored in a #GSGFRaw.
  *
  * Returns: the value stored.
  */
 gchar *
-gsgf_text_get_value(const GSGFText *self)
+gsgf_raw_get_value(const GSGFRaw *self)
 {
         return self->priv->value;
 }

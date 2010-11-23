@@ -32,6 +32,7 @@ AM_CPPFLAGS =				\
 
 libgsgf_a_SOURCES = 			\
 	gsgf-collection.c		\
+	gsgf-cooked-value.c		\
 	gsgf-error.c			\
 	gsgf-flavor.c			\
 	gsgf-game-tree.c		\
@@ -39,6 +40,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-number.c			\
 	gsgf-property.c			\
 	gsgf-property-handler.c		\
+	gsgf-raw.c			\
 	gsgf-real.c			\
 	gsgf-simple-text.c		\
 	gsgf-text.c			\
@@ -47,15 +49,17 @@ libgsgf_a_SOURCES = 			\
 
 noinst_HEADERS =			\
 	gsgf.h				\
+	gsgf-collection.h		\
+	gsgf-cooked-value.h		\
 	gsgf-error.h			\
 	gsgf-flavor.h			\
-	gsgf-collection.h		\
 	gsgf-game-tree.h		\
 	gsgf-node.h			\
 	gsgf-number.h			\
 	gsgf-private.h			\
 	gsgf-property.h			\
 	gsgf-property-handler.h		\
+	gsgf-raw.h			\
 	gsgf-real.h			\
 	gsgf-simple-text.h		\
 	gsgf-text.h			\

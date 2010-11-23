@@ -57,7 +57,7 @@ gsgf_simple_text_finalize(GObject *object)
 
         if (self->priv->value)
                 g_free(self->priv->value);
-        return NULL;
+        self->priv->value = NULL;
 
         G_OBJECT_CLASS (gsgf_simple_text_parent_class)->finalize(object);
 }
@@ -94,16 +94,22 @@ gsgf_simple_text_new (const gchar *value)
  * gsgf_simple_text_set_value:
  * @self: The #GSGFSimpleText.
  * @value: The new value to store.
+ * @copy: Flag that indicates whether to create a copy of the data.
  *
- * Stores a new value in a #GSGFSimpleText.  The value is copied first.
+ * Stores a new value in a #GSGFSimpleText.  If @copy is %TRUE, a copy is
+ * stored.  If it is %FALSE the @value is stored directly.
  */
 void
-gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value)
+gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
+                           gboolean copy)
 {
         if (self->priv->value)
                 g_free(self->priv->value);
 
-        self->priv->value = g_strdup(value);
+        if (copy)
+                self->priv->value = g_strdup(value);
+        else
+                self->priv->value = value;
 }
 
 /**

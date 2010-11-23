@@ -17,8 +17,8 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBGSGF_REAL_H
-# define _LIBGSGF_REAL_H
+#ifndef _LIBGSGF_RAW_H
+# define _LIBGSGF_RAW_H
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -27,40 +27,40 @@
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_REAL             (gsgf_real_get_type ())
-#define GSGF_REAL(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_REAL, GSGFReal))
-#define GSGF_REAL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_REAL, GSGFRealClass))
-#define GSGF_IS_REAL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_REAL))
-#define GSGF_IS_REAL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_REAL))
-#define GSGF_REAL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_REAL, GSGFRealClass))
+#define GSGF_TYPE_RAW             (gsgf_raw_get_type ())
+#define GSGF_RAW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_RAW, GSGFRaw))
+#define GSGF_RAW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_RAW, GSGFRawClass))
+#define GSGF_IS_RAW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_RAW))
+#define GSGF_IS_RAW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_RAW))
+#define GSGF_RAW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_RAW, GSGFRawClass))
 
 /**
- * GSGFReal:
+ * GSGFRaw:
  *
- * Class representing a real of SGF.
+ * Class representing a raw of SGF.
  **/
-typedef struct _GSGFRealClass   GSGFRealClass;
-typedef struct _GSGFReal        GSGFReal;
-typedef struct _GSGFRealPrivate GSGFRealPrivate;
+typedef struct _GSGFRawClass   GSGFRawClass;
+typedef struct _GSGFRaw        GSGFRaw;
+typedef struct _GSGFRawPrivate GSGFRawPrivate;
 
-struct _GSGFRealClass
+struct _GSGFRawClass
 {
         GObjectClass parent_class;
 };
 
-GType gsgf_real_get_type(void) G_GNUC_CONST;
+GType gsgf_raw_get_type(void) G_GNUC_CONST;
 
-struct _GSGFReal
+struct _GSGFRaw
 {
         GSGFCookedValue parent_instance;
 
         /*< private >*/
-        GSGFRealPrivate *priv;
+        GSGFRawPrivate *priv;
 };
 
-GSGFReal* gsgf_real_new(gdouble value);
-void gsgf_real_set_value(GSGFReal *self, gdouble value);
-gdouble gsgf_real_get_value(const GSGFReal *self);
+GSGFRaw* gsgf_raw_new(const gchar *value);
+void gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gboolean copy);
+gchar *gsgf_raw_get_value(const GSGFRaw *self);
 
 G_END_DECLS
 
