@@ -282,5 +282,28 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 gboolean
 _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
 {
+        GSGFNode *root;
+        GSGFProperty *gm_property;
+
+        root = GSGF_NODE(self->priv->nodes->data);
+        gm_property = gsgf_node_get_property(root, "GM");
+
         return TRUE;
+}
+
+/**
+ * gsgf_game_tree_get_nodes
+ * @self: the #GSGFGameTree.
+ *
+ * Get the list of #GSGFNode objects stored in a #GSGFGameTree.
+ *
+ * This list is not a copy.  You should not free it.  The list becomes invalid,
+ * when you add or remove nodes.
+ *
+ * Returns: Returns a #GList of #GSGFNode objects..
+ **/
+GList *
+gsgf_game_tree_get_nodes(const GSGFGameTree *self)
+{
+        return self->priv->nodes;
 }
