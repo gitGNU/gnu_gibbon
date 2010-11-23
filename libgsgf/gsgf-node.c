@@ -203,7 +203,7 @@ gsgf_node_get_property(const GSGFNode *self, const gchar *id)
  *
  * Returns: The list of #gchar ids.
  */
-const GList *
+GList *
 gsgf_node_get_property_ids(const GSGFNode *self)
 {
         if (!self->priv->properties)
@@ -224,7 +224,7 @@ void
 gsgf_node_remove_property(GSGFNode *self, const gchar *id)
 {
         if (!self->priv->properties)
-                return NULL;
+                return;
 
-        return g_hash_table_remove(self->priv->properties, id);
+        (void) g_hash_table_remove(self->priv->properties, id);
 }

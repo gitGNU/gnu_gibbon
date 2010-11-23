@@ -51,5 +51,41 @@ gsgf_cooked_value_class_init(GSGFCookedValueClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
+        klass->write_stream = NULL;
+
         object_class->finalize = gsgf_cooked_value_finalize;
+}
+
+/**
+ * gsgf_cooked_value_write_stream:
+ * @self: The #GSGFCookedValue
+ * @out: The #GOutputStream to write to.
+ * @bytes_written: Location to store the number of bytes written or %NULL.
+ * @cancellable: Optional #GCancellable object or %NULL.
+ * @error: Optional #GError location or %NULL to ignore.
+ *
+ * Serialize a #GSGFCookedValue into a #GOutputStream.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
+gboolean
+gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
+                               GOutputStream *out, gsize *bytes_written,
+                               GCancellable *cancellable, GError **error)
+{
+        if (!GSGF_IS_COOKED_VALUE(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Invalid cast to GSGFCookedValue"));
+                return FALSE;
+        }
+
+        if (!GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Method write_stream not implemented"));
+                return FALSE;
+        }
+
+        return GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream(self,
+                                                               out, bytes_written,
+                                                               cancellable, error);
 }

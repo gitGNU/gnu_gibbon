@@ -19,9 +19,9 @@
 
 /**
  * SECTION:gsgf-text
- * @short_description: Strong primitive type for SGF simple texts.
+ * @short_description: Strong primitive type for SGF texts.
  *
- * A #GSGFText encapsulates an SGF simple text.  Its main purpose is 
+ * A #GSGFText encapsulates an SGF text.  Its main purpose is
  * to allow for type checking when retrieving or setting SGF properties.
  */
 
@@ -38,7 +38,7 @@ struct _GSGFTextPrivate {
                                       GSGF_TYPE_TEXT,           \
                                       GSGFTextPrivate))
 
-G_DEFINE_TYPE (GSGFText, gsgf_text, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GSGFText, gsgf_text, GSGF_TYPE_COOKED_VALUE)
 
 static void
 gsgf_text_init(GSGFText *self)
@@ -93,15 +93,15 @@ gsgf_text_new (const gchar *value)
 /**
  * gsgf_text_set_value:
  * @self: The #GSGFText.
- * @value: The new alue to store.
+ * @value: The new value to store.
  * @copy: Flag that indicates whether to create a copy of the data.
  *
  * Stores a new value in a #GSGFText.  If @copy is %TRUE, a copy is
  * stored.  If it is %FALSE the @value is stored directly.
  */
 void
-gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
-                           gboolean copy)
+gsgf_text_set_value(GSGFText *self, const gchar *value,
+                    gboolean copy)
 {
         if (self->priv->value)
                 g_free(self->priv->value);
@@ -109,7 +109,7 @@ gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
         if (copy)
                 self->priv->value = g_strdup(value);
         else
-                self->priv->value = value;
+                self->priv->value = (gchar *) value;
 }
 
 /**

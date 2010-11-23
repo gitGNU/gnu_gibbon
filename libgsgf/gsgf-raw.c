@@ -40,7 +40,11 @@ struct _GSGFRawPrivate {
                                       GSGF_TYPE_RAW,           \
                                       GSGFRawPrivate))
 
-G_DEFINE_TYPE (GSGFRaw, gsgf_raw, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GSGFRaw, gsgf_raw, GSGF_TYPE_COOKED_VALUE)
+
+static gboolean gsgf_raw_write_stream(const GSGFCookedValue *self,
+                                      GOutputStream *out, gsize *bytes_written,
+                                      GCancellable *cancellable, GError **error);
 
 static void
 gsgf_raw_init(GSGFRaw *self)
@@ -67,9 +71,12 @@ gsgf_raw_finalize(GObject *object)
 static void
 gsgf_raw_class_init(GSGFRawClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GObjectClass* object_class = G_OBJECT_CLASS(klass);
+        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
 
         g_type_class_add_private(klass, sizeof(GSGFRawPrivate));
+
+        gsgf_cooked_value_class->write_stream = gsgf_raw_write_stream;
 
         object_class->finalize = gsgf_raw_finalize;
 }
@@ -110,7 +117,7 @@ gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gboolean copy)
         if (copy)
                 self->priv->value = g_strdup(value);
         else
-                self->priv->value = value;
+                self->priv->value = (gchar *) value;
 }
 
 /**
@@ -125,4 +132,16 @@ gchar *
 gsgf_raw_get_value(const GSGFRaw *self)
 {
         return self->priv->value;
+}
+
+/* FIXME! Raw values must not implement the serialization method! */
+static gboolean
+gsgf_raw_write_stream(const GSGFCookedValue *self,
+                      GOutputStream *out, gsize *bytes_written,
+                      GCancellable *cancellable, GError **error)
+{
+        return g_output_stream_write_all(out, GSGF_RAW(self)->priv->value,
+                                         strlen(GSGF_RAW(self)->priv->value),
+                                         bytes_written,
+                                         cancellable, error);
 }

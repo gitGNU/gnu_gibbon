@@ -29,12 +29,6 @@
 
 #include <libgsgf/gsgf.h>
 
-typedef struct _GSGFPropertyValue {
-        gchar *raw;
-        gpointer cooked;
-        GFunc cooked_destructor;
-} _GSGFPropertyValue;
-
 struct _GSGFPropertyPrivate {
         GList *values;
 };
@@ -43,8 +37,6 @@ struct _GSGFPropertyPrivate {
                                       GSGF_TYPE_PROPERTY,           \
                                       GSGFPropertyPrivate))
 G_DEFINE_TYPE (GSGFProperty, gsgf_property, G_TYPE_OBJECT)
-
-static void _gsgf_property_value_free(gpointer value, gpointer user_data);
 
 static void
 gsgf_property_init(GSGFProperty *self)
@@ -63,7 +55,7 @@ gsgf_property_finalize(GObject *object)
 
         if (property->priv->values) {
                 g_list_foreach(property->priv->values, 
-                              _gsgf_property_value_free, NULL);
+                              (GFunc) g_object_unref, NULL);
                 g_list_free(property->priv->values);
         }
 
@@ -102,7 +94,7 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 {
         gsize written_here;
         GList *iter;
-        _GSGFPropertyValue *value;
+        GSGFCookedValue *value;
 
         *bytes_written = 0;
 
@@ -115,34 +107,30 @@ _gsgf_property_write_stream(const GSGFProperty *self,
         }
 
         while (iter) {
-                value = (_GSGFPropertyValue *) iter->data;
-
                 if (!g_output_stream_write_all(out, "[", 1, &written_here,
                                                cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
-
                 *bytes_written += written_here;
 
-                if (!g_output_stream_write_all(out, 
-                                               value->raw, strlen(value->raw),
-                                               &written_here, cancellable, error)) {
+                value = GSGF_COOKED_VALUE(iter->data);
+                if (!gsgf_cooked_value_write_stream(GSGF_COOKED_VALUE(iter->data),
+                                                    out, &written_here,
+                                                    cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
-
                 *bytes_written += written_here;
-
-                iter = iter->next;
 
                 if (!g_output_stream_write_all(out, "]", 1, &written_here,
                                                cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
-
                 *bytes_written += written_here;
+
+                iter = iter->next;
         }
 
         return TRUE;
@@ -153,7 +141,6 @@ _gsgf_property_write_stream(const GSGFProperty *self,
  *
  * @property: The property that the value is added to.
  * @text: The value itself.
- * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Add an (textual!) value to a #GSGFProperty.
  *
@@ -162,35 +149,13 @@ _gsgf_property_write_stream(const GSGFProperty *self,
  * Returns: %TRUE on success, %FALSE on failure.
  */
 gboolean
-_gsgf_property_add_value(GSGFProperty *property, const gchar *_value, 
-                         GError **error)
+_gsgf_property_add_value(GSGFProperty *property, const gchar *_value)
 {
-        _GSGFPropertyValue* value = g_malloc(sizeof (_GSGFPropertyValue));
-
-        value->raw = g_strdup(_value);
-        value->cooked = NULL;
-        value->cooked_destructor = NULL;
-
-        if (error)
-                *error = NULL;
+        GSGFRaw* value = gsgf_raw_new(_value);
 
         property->priv->values = g_list_append(property->priv->values, value);
 
         return TRUE;
-}
-
-static void
-_gsgf_property_value_free(gpointer _value, gpointer user_data)
-{
-        _GSGFPropertyValue *value = (_GSGFPropertyValue *) _value;
-
-        if (value) {
-                if (value->raw) g_free(value->raw);
-                if (value->cooked && value->cooked_destructor)
-                        value->cooked_destructor(value->cooked, user_data);
-
-                g_free(value);
-        }
 }
 
 /**
@@ -199,22 +164,19 @@ _gsgf_property_value_free(gpointer _value, gpointer user_data)
  * @property: the #GSGFProperty.
  * @index: Index of the element.
  *
- * Retrieve the raw value of a property.  The returned string is the original,
- * not a copy.  Don't mess with it! You should run the string through
- * gsgf_read_text() or gsgf_read_simple_text() before you work with it.
+ * Retrieve the value of a property.
  *
- * Returns: Returns the string or %NULL f %index is out of range.
+ * Returns: Returns the value as a #GSGFCookedValue or %NULL f %index is out of range.
  */
-const gchar *
-gsgf_property_get_raw(const GSGFProperty *property, gsize i)
+GSGFCookedValue *
+gsgf_property_get_value(const GSGFProperty *property, gsize i)
 {
-        _GSGFPropertyValue *value =
-                        (_GSGFPropertyValue *) g_list_nth_data(property->priv->values, i);
+        gpointer value = g_list_nth_data(property->priv->values, i);
 
         if (!value)
                 return NULL;
 
-        return value->raw;
+        return GSGF_COOKED_VALUE(value);
 }
 
 gboolean
@@ -223,7 +185,7 @@ _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
         gchar *converted;
         gsize bytes_written;
         GList *iter;
-        _GSGFPropertyValue *value;
+        GSGFRaw *value;
 
         if (error)
                 *error = NULL;
@@ -231,15 +193,15 @@ _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
         iter = self->priv->values;
 
         while (iter) {
-                value = (_GSGFPropertyValue *) iter->data;
+                value = GSGF_RAW(iter->data);
 
-                converted = g_convert(value->raw, -1, "UTF-8", charset,
+                converted = g_convert(gsgf_raw_get_value(value), -1, "UTF-8", charset,
                                       NULL, &bytes_written, NULL);
                 if (!converted)
                         return FALSE;
 
-                g_free(value->raw);
-                value->raw = converted;
+                gsgf_raw_set_value(value, converted, FALSE);
+
                 iter = iter->next;
         }
 

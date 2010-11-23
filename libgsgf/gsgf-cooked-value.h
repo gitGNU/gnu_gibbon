@@ -39,6 +39,10 @@ typedef struct _GSGFCookedValuePrivate GSGFCookedValuePrivate;
 struct _GSGFCookedValueClass
 {
         GObjectClass parent_class;
+
+        gboolean (*write_stream) (const GSGFCookedValue *self, GOutputStream *out,
+                                  gsize *bytes_written,
+                                  GCancellable *cancellable, GError **error);
 };
 
 GType gsgf_cooked_value_get_type(void) G_GNUC_CONST;
@@ -47,6 +51,12 @@ struct _GSGFCookedValue
 {
         GObject parent_instance;
 };
+
+gboolean gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
+                                        GOutputStream *out, 
+                                        gsize *bytes_written,
+                                        GCancellable *cancellable, 
+                                        GError **error);
 
 G_END_DECLS
 

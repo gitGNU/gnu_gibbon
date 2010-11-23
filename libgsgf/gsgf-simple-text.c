@@ -38,7 +38,7 @@ struct _GSGFSimpleTextPrivate {
                                       GSGF_TYPE_SIMPLE_TEXT,           \
                                       GSGFSimpleTextPrivate))
 
-G_DEFINE_TYPE (GSGFSimpleText, gsgf_simple_text, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GSGFSimpleText, gsgf_simple_text, GSGF_TYPE_TEXT)
 
 static void
 gsgf_simple_text_init(GSGFSimpleText *self)
@@ -109,7 +109,7 @@ gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
         if (copy)
                 self->priv->value = g_strdup(value);
         else
-                self->priv->value = value;
+                self->priv->value = (gchar *) value;
 }
 
 /**

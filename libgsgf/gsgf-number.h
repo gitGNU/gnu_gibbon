@@ -45,7 +45,7 @@ typedef struct _GSGFNumberPrivate GSGFNumberPrivate;
 
 struct _GSGFNumberClass
 {
-        GObjectClass parent_class;
+        GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_number_get_type(void) G_GNUC_CONST;

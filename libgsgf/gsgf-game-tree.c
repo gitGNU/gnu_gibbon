@@ -211,6 +211,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 {
         GSGFNode *root;
         GSGFProperty *ca_property;
+        GSGFRaw *value;
         gchar *charset = "ISO-8859-1";
         GList *ids;
         GList *id_item;
@@ -234,8 +235,9 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         root = GSGF_NODE(self->priv->nodes->data);
         ca_property = gsgf_node_get_property(root, "CA");
         if (ca_property) {
-                charset = gsgf_util_read_simpletext (gsgf_property_get_raw(ca_property, 0),
-                                                     NULL, 0);
+                value = GSGF_RAW(gsgf_property_get_value(ca_property, 0));
+                charset = gsgf_util_read_simpletext(gsgf_raw_get_value(value),
+                                                    NULL, 0);
                 free_charset = TRUE;
         }
 

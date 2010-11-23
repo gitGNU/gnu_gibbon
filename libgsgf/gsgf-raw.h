@@ -45,7 +45,7 @@ typedef struct _GSGFRawPrivate GSGFRawPrivate;
 
 struct _GSGFRawClass
 {
-        GObjectClass parent_class;
+        GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_raw_get_type(void) G_GNUC_CONST;

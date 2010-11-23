@@ -38,7 +38,7 @@ struct _GSGFNumberPrivate {
                                       GSGF_TYPE_NUMBER,           \
                                       GSGFNumberPrivate))
 
-G_DEFINE_TYPE (GSGFNumber, gsgf_number, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GSGFNumber, gsgf_number, GSGF_TYPE_COOKED_VALUE)
 
 static void
 gsgf_number_init(GSGFNumber *self)

@@ -38,7 +38,7 @@ struct _GSGFRealPrivate {
                                       GSGF_TYPE_REAL,           \
                                       GSGFRealPrivate))
 
-G_DEFINE_TYPE (GSGFReal, gsgf_real, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GSGFReal, gsgf_real, GSGF_TYPE_COOKED_VALUE)
 
 static void
 gsgf_real_init(GSGFReal *self)

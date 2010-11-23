@@ -45,7 +45,7 @@ typedef struct _GSGFRealPrivate GSGFRealPrivate;
 
 struct _GSGFRealClass
 {
-        GObjectClass parent_class;
+        GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_real_get_type(void) G_GNUC_CONST;

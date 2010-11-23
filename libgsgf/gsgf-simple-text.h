@@ -45,7 +45,7 @@ typedef struct _GSGFSimpleTextPrivate GSGFSimpleTextPrivate;
 
 struct _GSGFSimpleTextClass
 {
-        GObjectClass parent_class;
+        GSGFTextClass parent_class;
 };
 
 GType gsgf_simple_text_get_type(void) G_GNUC_CONST;
