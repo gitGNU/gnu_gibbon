@@ -759,3 +759,20 @@ gsgf_collection_apply_flavor(GSGFCollection *self, GError **error)
 
         return TRUE;
 }
+
+/**
+ * gsgf_collection_get_game_trees
+ * @self: the #GSGFCollection.
+ *
+ * Get the list of #GSGFGameTree objects stored in a #GSGFCollection.
+ *
+ * This list is not a copy.  You should not free it.  The list becomes invalid,
+ * when you add or remove game trees.
+ *
+ * Returns: Returns a #GList of #GSGFGameTree objects..
+ **/
+GList *
+gsgf_collection_get_game_trees(const GSGFCollection *self)
+{
+        return self->priv->game_trees;
+}

@@ -76,6 +76,8 @@ gboolean gsgf_collection_write_stream(const GSGFCollection *collection,
                                       GCancellable *cancellable,
                                       GError **error);
 
+GList *gsgf_collection_get_game_trees(const GSGFCollection *collection);
+
 G_END_DECLS
 
 #endif
