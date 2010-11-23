@@ -8,6 +8,11 @@
 <RETURNS>gchar *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_util_read_text</NAME>
+<RETURNS>gchar *</RETURNS>
+const gchar *raw, const gchar **end, gchar delim 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_NODE</NAME>
 #define GSGF_TYPE_NODE                  (gsgf_node_get_type ())
@@ -67,6 +72,11 @@ struct _GSGFNode
 <NAME>gsgf_node_add_property</NAME>
 <RETURNS>struct _GSGFProperty *</RETURNS>
 GSGFNode *self, const gchar *id, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_property</NAME>
+<RETURNS>struct _GSGFProperty *</RETURNS>
+GSGFNode *self, const gchar *id 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_ERROR</NAME>
@@ -213,14 +223,9 @@ struct _GSGFProperty
 };
 </STRUCT>
 <FUNCTION>
-<NAME>gsgf_property_add_value</NAME>
-<RETURNS>gboolean </RETURNS>
-GSGFProperty *property, const gchar *text, GError **error 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_property_get_values</NAME>
-<RETURNS>GList *</RETURNS>
-GSGFProperty *property 
+<NAME>gsgf_property_get_raw</NAME>
+<RETURNS>const gchar *</RETURNS>
+const GSGFProperty* property, gsize i 
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>GSGFPropertyTextUpdater</NAME>
@@ -319,17 +324,17 @@ struct _GSGFCollection
 <FUNCTION>
 <NAME>gsgf_collection_new</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
-const gchar *flavor, GError **error 
+ 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_stream</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
-GInputStream *stream, const gchar *flavor, GCancellable *cancellable, GError **error 
+GInputStream *stream, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_file</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
-GFile *file, const gchar *flavor, GCancellable *cancellable, GError **error 
+GFile *file, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_add_game_tree</NAME>
@@ -411,11 +416,6 @@ const GSGFGameTree *self
 <RETURNS>struct _GSGFNode *</RETURNS>
 GSGFGameTree *self 
 </FUNCTION>
-<FUNCTION>
-<NAME>gsgf_game_tree_write_stream</NAME>
-<RETURNS>gssize </RETURNS>
-const GSGFCollection *collection, GOutputStream *out, GCancellable *cancellable, GError **error 
-</FUNCTION>
 <VARIABLE>
 <NAME>filename</NAME>
 extern char *filename;
@@ -438,4 +438,9 @@ GError *error, GError *expect
 <NAME>expect_error_conditional</NAME>
 <RETURNS>int </RETURNS>
 gboolean condition, const gchar *msg, GError *error, GError *expect 
+</FUNCTION>
+<FUNCTION>
+<NAME>g_memory_stream_get_string</NAME>
+<RETURNS>gchar *</RETURNS>
+const GMemoryOutputStream *stream 
 </FUNCTION>

@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2010 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by

@@ -5,6 +5,7 @@ GSGFNodeClass
 GSGFNode
 GSGFNodePrivate
 gsgf_node_add_property
+gsgf_node_get_property
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -39,8 +40,7 @@ GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
 GSGFPropertyType
-gsgf_property_add_value
-gsgf_property_get_values
+gsgf_property_get_raw
 <SUBSECTION Standard>
 GSGF_PROPERTY
 GSGF_IS_PROPERTY
@@ -81,7 +81,6 @@ GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
-gsgf_game_tree_write_stream
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
@@ -96,6 +95,7 @@ GSGF_GAME_TREE_GET_CLASS
 <FILE>libgsgf</FILE>
 libgsgf_init
 gsgf_util_read_simpletext
+gsgf_util_read_text
 </SECTION>
 
 <SECTION>
@@ -123,5 +123,6 @@ path
 test_collection
 expect_error
 expect_error_conditional
+g_memory_stream_get_string
 </SECTION>
 

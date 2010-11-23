@@ -1,7 +1,7 @@
 /* libsvg-cairo - Render SVG documents using the cairo library
  *
  * Copyright (C) 2002 USC/Information Sciences Institute
- * Copyright (C) 2009 Guido Flohr
+ * Copyright (C) 2009-2010 Guido Flohr
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -728,9 +728,9 @@ _svg_style_parse_nv_pair (svg_style_t	*style,
 
 /* This next function is:
 
-   Copyright © 2000 Eazel, Inc.
-   Copyright © 2002 Dom Lachowicz <cinamod@hotmail.com>
-   Copyright © 2002 USC/Information Sciences Institute
+   Copyright ï¿½ 2000 Eazel, Inc.
+   Copyright ï¿½ 2002 Dom Lachowicz <cinamod@hotmail.com>
+   Copyright ï¿½ 2002 USC/Information Sciences Institute
   
    Author: Raph Levien <raph@artofcode.com>
 */
