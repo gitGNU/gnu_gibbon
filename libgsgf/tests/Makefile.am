@@ -24,6 +24,7 @@ TESTS = test-convert			\
 	test-multi-game-tree		\
 	test-nested-game-tree		\
 	test-really-empty		\
+	test-general-properties		\
 	test-util-read-simpletext	\
 	test-util-read-text		\
 	test-write-empty		\
@@ -44,6 +45,7 @@ LDADD = $(GIBBON_LIBS) ../libgsgf.a
 test_convert_SOURCES = lib.c main.c test-convert.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
+test_general_properties_SOURCES = lib.c main.c test-general-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
@@ -61,6 +63,7 @@ noinst_HEADERS = test.h
 SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\
 	    full.sgf.in			\
+	    general-properties.sgf	\
 	    linefeeds.sgf		\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
