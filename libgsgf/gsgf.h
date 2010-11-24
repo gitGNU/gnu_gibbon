@@ -28,7 +28,6 @@
 #include <libgsgf/gsgf-node.h>
 #include <libgsgf/gsgf-number.h>
 #include <libgsgf/gsgf-property.h>
-#include <libgsgf/gsgf-property-handler.h>
 #include <libgsgf/gsgf-raw.h>
 #include <libgsgf/gsgf-real.h>
 #include <libgsgf/gsgf-simple-text.h>

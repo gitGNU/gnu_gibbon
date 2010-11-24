@@ -39,7 +39,6 @@ libgsgf_a_SOURCES = 			\
 	gsgf-node.c			\
 	gsgf-number.c			\
 	gsgf-property.c			\
-	gsgf-property-handler.c		\
 	gsgf-raw.c			\
 	gsgf-real.c			\
 	gsgf-simple-text.c		\
@@ -58,7 +57,6 @@ noinst_HEADERS =			\
 	gsgf-number.h			\
 	gsgf-private.h			\
 	gsgf-property.h			\
-	gsgf-property-handler.h		\
 	gsgf-raw.h			\
 	gsgf-real.h			\
 	gsgf-simple-text.h		\

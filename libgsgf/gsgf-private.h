@@ -46,10 +46,6 @@ gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
 gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text,
                                   GError **error);
 
-
-GSGFPropertyHandler *_gsgf_flavor_get_handler(const struct _GSGFFlavor *,
-                                              const gchar *id);
-
 gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
 gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
                                 GError **error);

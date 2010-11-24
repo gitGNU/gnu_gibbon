@@ -79,10 +79,6 @@ static gboolean gsgf_flavor_text_updater(GSGFProperty *property,
                                          const gchar *raw,
                                          GError **error);
 
-static GSGFPropertyHandler default_handler = {
-                gsgf_flavor_text_updater,
-};
-
 static void
 gsgf_flavor_init(GSGFFlavor *self)
 {
@@ -142,20 +138,4 @@ gsgf_flavor_new (const gchar *id, const gchar *name, const GSGFFlavor *parent)
         self->priv->parent = parent;
 
         return self;
-}
-
-const GSGFPropertyHandler *
-_gsgf_flavor_get_handler(GSGFFlavor *flavor, const gchar *id)
-{
-        return &default_handler;
-}
-
-static gboolean
-gsgf_flavor_text_updater(GSGFProperty *property, const gchar *raw,
-                         GError **error)
-{
-        if (error)
-                *error = NULL;
-
-        return TRUE;
 }
