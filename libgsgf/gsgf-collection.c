@@ -125,7 +125,7 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
 
         double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
 
-        libgsgf_init();
+        _libgsgf_init();
 
         object_class->finalize = gsgf_collection_finalize;
 }

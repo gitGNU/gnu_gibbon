@@ -41,19 +41,10 @@ typedef struct _GSGFFlavorInfo {
 
 static _GSGFFlavorInfo builtin_flavors[] = {
                 { "0", N_("Base Definitions and Types") },
-                { "6", N_("Backgammon") },
 };
 
-/**
- * libgsgf_init:
- *
- * Initializes the library.  Normally you don't have to bother about
- * calling this function.  The first time you instantiate a
- * #GSGFCollection or register a new flavor, this function gets called for 
- * you automatically.
- **/
 void
-libgsgf_init()
+_libgsgf_init()
 {
         gsize i;
         _GSGFFlavorInfo *info;
@@ -69,7 +60,8 @@ libgsgf_init()
                         info = &builtin_flavors[i];
                         flavor = gsgf_flavor_new(info->id, info->name, parent);
 
-                        g_hash_table_insert(_libgsgf_flavors, info->id, flavor);
+                        g_hash_table_insert(_libgsgf_flavors, (const gchar *) info->id,
+                                            flavor);
 
                         if (!parent)
                                 parent = flavor;
@@ -77,4 +69,18 @@ libgsgf_init()
 
                 g_once_init_leave(&libgsgf_flavors_init, 1303);
         }
+}
+
+GSGFFlavor *
+_libgsgf_get_flavor(const gchar *id)
+{
+        GSGFFlavor *flavor;
+
+        _libgsgf_init();
+
+        flavor = g_hash_table_lookup(_libgsgf_flavors, id);
+        if (!flavor)
+                flavor = g_hash_table_lookup(_libgsgf_flavors, "0");
+
+        return flavor;
 }

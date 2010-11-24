@@ -51,6 +51,8 @@ gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
                                 GError **error);
 gboolean _gsgf_game_tree_apply_flavor(GSGFGameTree *game_tree, GError **error);
 
+void _libgsgf_init();
+
 G_END_DECLS
 
 #endif
