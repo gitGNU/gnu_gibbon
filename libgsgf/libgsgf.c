@@ -40,8 +40,8 @@ typedef struct _GSGFFlavorInfo {
 } _GSGFFlavorInfo;
 
 static _GSGFFlavorInfo builtin_flavors[] = {
-                { "", N_("Base Definitions and Types") },
-                { "BACKGAMMON", N_("Backgammon") },
+                { "0", N_("Base Definitions and Types") },
+                { "6", N_("Backgammon") },
 };
 
 /**
