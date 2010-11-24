@@ -62,8 +62,9 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFFlavorPrivate {
-        gchar *id;
-        gchar *name;
+        const gchar *id;
+        const gchar *name;
+        const GSGFFlavor *parent;
 
         GHashTable *handlers;
 };
@@ -99,12 +100,8 @@ gsgf_flavor_finalize(GObject *object)
 {
         GSGFFlavor *self = GSGF_FLAVOR (object);
 
-        if (self->priv->id)
-                g_free(self->priv->id);
         self->priv->id = NULL;
 
-        if (self->priv->name)
-                g_free(self->priv->name);
         self->priv->name = NULL;
 
         if (self->priv->handlers)
@@ -134,14 +131,15 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
  * Returns: The new #GSGFFlavor.
  */
 GSGFFlavor *
-gsgf_flavor_new (const gchar *id, const gchar *name)
+gsgf_flavor_new (const gchar *id, const gchar *name, const GSGFFlavor *parent)
 {
         GSGFFlavor *self = g_object_new(GSGF_TYPE_FLAVOR, NULL);
 
-        self->priv->id = g_strdup(id);
-        self->priv->name = g_strdup(name);
+        self->priv->id = id;
+        self->priv->name = name;
         self->priv->handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                      g_free, g_object_unref);
+        self->priv->parent = parent;
 
         return self;
 }

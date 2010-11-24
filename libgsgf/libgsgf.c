@@ -58,17 +58,21 @@ libgsgf_init()
         gsize i;
         _GSGFFlavorInfo *info;
         GSGFFlavor *flavor;
+        GSGFFlavor *parent = NULL;
 
         if (g_once_init_enter(&libgsgf_flavors_init)) {
                 _libgsgf_flavors = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                g_free,
-                                (GDestroyNotify) g_hash_table_destroy);
+                                                         NULL,
+                                                        (GDestroyNotify) g_hash_table_destroy);
 
                 for (i = 0; i < sizeof builtin_flavors / sizeof builtin_flavors[0]; ++i) {
                         info = &builtin_flavors[i];
-                        flavor = gsgf_flavor_new(info->id, info->name);
+                        flavor = gsgf_flavor_new(info->id, info->name, parent);
 
-                        g_hash_table_insert(_libgsgf_flavors, g_strdup(info->id), flavor);
+                        g_hash_table_insert(_libgsgf_flavors, info->id, flavor);
+
+                        if (!parent)
+                                parent = flavor;
                 }
 
                 g_once_init_leave(&libgsgf_flavors_init, 1303);
