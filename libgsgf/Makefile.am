@@ -36,6 +36,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-error.c			\
 	gsgf-flavor.c			\
 	gsgf-game-tree.c		\
+	gsgf-general-flavor.c		\
 	gsgf-node.c			\
 	gsgf-number.c			\
 	gsgf-property.c			\
@@ -53,6 +54,7 @@ noinst_HEADERS =			\
 	gsgf-error.h			\
 	gsgf-flavor.h			\
 	gsgf-game-tree.h		\
+	gsgf-general-flavor.h		\
 	gsgf-node.h			\
 	gsgf-number.h			\
 	gsgf-private.h			\
