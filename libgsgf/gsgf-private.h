@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 GSGFGameTree *_gsgf_game_tree_new(void);
 GSGFNode *_gsgf_node_new(void);
-GSGFProperty *_gsgf_property_new(void);
+GSGFProperty *_gsgf_property_new(const gchar *id);
 
 gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
                                       GOutputStream *out, gsize *bytes_written,
@@ -50,8 +50,13 @@ gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
 gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
                                 GError **error);
 gboolean _gsgf_game_tree_apply_flavor(GSGFGameTree *game_tree, GError **error);
+gboolean _gsgf_node_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor, GError **error);
+gboolean _gsgf_property_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor,
+                                     GError **error);
 
 void _libgsgf_init();
+
+struct _GSGFFlavor *_libgsgf_get_flavor(const gchar *id);
 
 G_END_DECLS
 

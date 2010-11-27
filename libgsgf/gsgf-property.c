@@ -30,6 +30,8 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFPropertyPrivate {
+        gchar *id;
+
         GList *values;
 };
 
@@ -45,6 +47,7 @@ gsgf_property_init(GSGFProperty *self)
                         GSGF_TYPE_PROPERTY,
                         GSGFPropertyPrivate);
 
+        self->priv->id = NULL;
         self->priv->values = NULL;
 }
 
@@ -52,6 +55,10 @@ static void
 gsgf_property_finalize(GObject *object)
 {
         GSGFProperty *property = GSGF_PROPERTY (object);
+
+        if (property->priv->id)
+                g_free(property->priv->id);
+        property->priv->id = NULL;
 
         if (property->priv->values) {
                 g_list_foreach(property->priv->values, 
@@ -80,9 +87,11 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
  * Returns: An empty #GSGFProperty.
  */
 GSGFProperty *
-_gsgf_property_new(const gchar *flavor, GError **error)
+_gsgf_property_new(const gchar *id)
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
+
+        self->priv->id = g_strdup(id);
 
         return self;
 }
@@ -206,4 +215,13 @@ _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
         }
 
         return TRUE;
+}
+
+gboolean
+_gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError **error)
+{
+        if (error)
+                *error = NULL;
+
+        return NULL;
 }

@@ -75,10 +75,6 @@ struct _GSGFFlavorPrivate {
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
-static gboolean gsgf_flavor_text_updater(GSGFProperty *property, 
-                                         const gchar *raw,
-                                         GError **error);
-
 static void
 gsgf_flavor_init(GSGFFlavor *self)
 {

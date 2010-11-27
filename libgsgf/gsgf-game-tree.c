@@ -284,11 +284,28 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
 gboolean
 _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
 {
-        GSGFNode *root;
+        GSGFNode *node;
         GSGFProperty *gm_property;
+        GSGFRaw *raw;
+        const gchar *flavor_id = "1";
+        GSGFFlavor *flavor;
+        GList *iter;
 
-        root = GSGF_NODE(self->priv->nodes->data);
-        gm_property = gsgf_node_get_property(root, "GM");
+        if (error)
+                error = NULL;
+
+        node = GSGF_NODE(self->priv->nodes->data);
+        gm_property = gsgf_node_get_property(node, "GM");
+        if (gm_property) {
+                raw = GSGF_RAW(gsgf_property_get_value(gm_property, 0));
+                flavor_id = gsgf_raw_get_value(raw);
+        }
+
+        flavor = _libgsgf_get_flavor(flavor_id);
+
+        for (iter = self->priv->nodes; iter; iter = iter->next)
+                if (!_gsgf_node_apply_flavor(GSGF_NODE(iter->data), flavor, error))
+                        return FALSE;
 
         return TRUE;
 }

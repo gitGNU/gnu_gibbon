@@ -20,10 +20,12 @@
 #ifndef _GSGF_H
 # define _GSGF_H
 
+#include <libgsgf/gsgf-flavor.h>
+#include <libgsgf/gsgf-general-flavor.h>
+
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-cooked-value.h>
 #include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-flavor.h>
 #include <libgsgf/gsgf-game-tree.h>
 #include <libgsgf/gsgf-node.h>
 #include <libgsgf/gsgf-number.h>

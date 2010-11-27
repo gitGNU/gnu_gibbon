@@ -166,7 +166,7 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
                 ++ptr;
         }
 
-        property = _gsgf_property_new();
+        property = _gsgf_property_new(id);
 
         g_hash_table_insert(self->priv->properties, g_strdup(id), property);
 
@@ -227,4 +227,22 @@ gsgf_node_remove_property(GSGFNode *self, const gchar *id)
                 return;
 
         (void) g_hash_table_remove(self->priv->properties, id);
+}
+
+gboolean
+_gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error)
+{
+        GHashTableIter iter;
+        gpointer key, value;
+
+        if (error)
+                error = NULL;
+
+        g_hash_table_iter_init(&iter, self->priv->properties);
+        while (g_hash_table_iter_next(&iter, &key, &value)) {
+                if (!_gsgf_property_apply_flavor(GSGF_PROPERTY(value), flavor, error))
+                        return FALSE;
+        }
+
+        return TRUE;
 }
