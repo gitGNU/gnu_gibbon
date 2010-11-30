@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <errno.h>
 
 #include <libgsgf/gsgf.h>
 
@@ -82,6 +83,42 @@ gsgf_number_new (gint64 value)
         self->priv->value = value;
 
         return self;
+}
+
+GSGFNumber *
+_gsgf_number_new(const gchar *string, GError **error)
+{
+        GSGFNumber *self;
+        gchar *endptr;
+        gint64 value;
+
+        if (error)
+                *error = NULL;
+
+        /* _gsgf_real_new implicitely resets errno.  We do the same explicitely.  */
+        errno = 0;
+
+        value = g_ascii_strtoll(string, &endptr, 012);
+
+        if (errno) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s': %s"), string, strerror(errno));
+                return NULL;
+        }
+
+        if (endptr == string) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s'"), string);
+                return NULL;
+        }
+
+        if (*endptr) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Trailing garbage after number in '%s'"), string);
+                return NULL;
+        }
+
+        return gsgf_number_new(value);
 }
 
 /**

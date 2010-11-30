@@ -55,7 +55,9 @@ gboolean _gsgf_property_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor,
                                      GError **error);
 GSGFCookedValue *_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id);
 
+/* Private constructors.  */
 GSGFReal *_gsgf_real_new(gchar *value, GError **error);
+GSGFNumber *_gsgf_number_new(gchar *value, GError **error);
 
 void _libgsgf_init();
 
