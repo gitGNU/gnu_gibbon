@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <errno.h>
 
 #include <libgsgf/gsgf.h>
 
@@ -108,6 +109,12 @@ _gsgf_real_new(const gchar *string, GError **error)
         }
 
         value = g_ascii_strtod(string, &endptr);
+
+        if (errno) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s': %s"), string, strerror(errno));
+                return NULL;
+        }
 
         return gsgf_real_new(value);
 }
