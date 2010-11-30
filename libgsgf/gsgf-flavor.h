@@ -56,7 +56,7 @@ struct _GSGFFlavor
         GSGFFlavorPrivate *priv;
 };
 
-GSGFFlavor* gsgf_flavor_new(const gchar *id, const gchar *name, const GSGFFlavor *parent);
+GSGFFlavor *gsgf_flavor_new(const gchar *id, const gchar *name, const GSGFFlavor *parent);
 
 G_END_DECLS
 
