@@ -29,6 +29,7 @@
 
 static int test_success();
 static int test_garbage();
+static int test_trailing_garbage();
 
 int
 main(int argc, char *argv[])
@@ -42,6 +43,10 @@ main(int argc, char *argv[])
                 return status;
 
         status = test_garbage();
+        if (status)
+                return status;
+
+        status = test_trailing_garbage();
         if (status)
                 return status;
 
@@ -95,6 +100,24 @@ test_garbage(void)
         r = _gsgf_number_new(value, &error);
 
         return expect_error_conditional(r == NULL,
-                                        "Invalid double returns a value",
+                                        "Invalid number returns a value",
+                                        error, expect);
+}
+
+static int
+test_trailing_garbage(void)
+{
+        GSGFNumber *r;
+        GError *error;
+        GError *expect = NULL;
+        const gchar *value = "2503garbage";
+
+        g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                    _("Trailing garbage after number in '%s'"), value);
+
+        r = _gsgf_number_new(value, &error);
+
+        return expect_error_conditional(r == NULL,
+                                        "Number with trailing garbage returns a value",
                                         error, expect);
 }
