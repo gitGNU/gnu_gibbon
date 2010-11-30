@@ -93,7 +93,6 @@ GSGFReal *
 _gsgf_real_new(const gchar *string, GError **error)
 {
         GSGFReal *self;
-        gchar *endptr;
         gdouble value;
 
         if (error)
@@ -108,7 +107,7 @@ _gsgf_real_new(const gchar *string, GError **error)
                 return NULL;
         }
 
-        value = g_ascii_strtod(string, &endptr);
+        value = g_ascii_strtod(string, NULL);
 
         if (errno) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
