@@ -43,6 +43,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_PROPERTY_EXISTS: Attempt to insert a property with an already existing name.
  * @GSGF_ERROR_EMPTY_PROPERTY: Attempt to write a property without a value.
  * @GSGF_ERROR_INTERNAL_ERROR: Internal error.
+ * @GSGF_ERROR_INVALID_NUMBER: Invalid number format.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
@@ -52,7 +53,8 @@ typedef enum {
         GSGF_ERROR_EMPTY_COLLECTION = 4,
         GSGF_ERROR_PROPERTY_EXISTS = 5,
         GSGF_ERROR_EMPTY_PROPERTY = 6,
-        GSGF_ERROR_INTERNAL_ERROR = 7
+        GSGF_ERROR_INTERNAL_ERROR = 7,
+        GSGF_ERROR_INVALID_NUMBER = 8
 } GSGFError;
 
 extern GQuark gsgf_error_quark (void);

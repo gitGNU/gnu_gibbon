@@ -86,7 +86,6 @@ static gboolean gsgf_collection_convert(GSGFCollection *collection,
                                         GError **error);
 static gboolean gsgf_collection_apply_flavor(GSGFCollection *collection,
                                              GError **error);
-static GRegex *double_pattern = NULL;
 
 /**
  * The SGF specification stipulates that a collection must have one ore more 
@@ -122,8 +121,6 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
         g_type_class_add_private(klass, sizeof(GSGFCollectionPrivate));
-
-        double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
 
         _libgsgf_init();
 

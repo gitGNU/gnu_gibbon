@@ -40,6 +40,8 @@ struct _GSGFRealPrivate {
 
 G_DEFINE_TYPE (GSGFReal, gsgf_real, GSGF_TYPE_COOKED_VALUE)
 
+static GRegex *double_pattern = NULL;
+
 static void
 gsgf_real_init(GSGFReal *self)
 {
@@ -63,25 +65,51 @@ gsgf_real_class_init(GSGFRealClass *klass)
 
         g_type_class_add_private(klass, sizeof(GSGFRealPrivate));
 
+        double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
+
         object_class->finalize = gsgf_real_finalize;
 }
 
 /**
  * gsgf_real_new:
- * @value: The value to store.
+ * @value: The value to store as a string or %NULL.
  *
  * Creates a new #GSGFReal.
  *
  * Returns: The new #GSGFReal.
  */
 GSGFReal *
-gsgf_real_new (gdouble value)
+gsgf_real_new(gdouble value)
 {
         GSGFReal *self = g_object_new(GSGF_TYPE_REAL, NULL);
 
         self->priv->value = value;
 
         return self;
+}
+
+GSGFReal *
+_gsgf_real_new(const gchar *string, GError **error)
+{
+        GSGFReal *self;
+        gchar *endptr;
+        gdouble value;
+
+        if (error)
+                *error = NULL;
+
+        if (!double_pattern)
+                double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
+
+        if (!g_regex_match(double_pattern, string, 0, NULL)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s'"), string);
+                return NULL;
+        }
+
+        value = g_ascii_strtod(string, &endptr);
+
+        return gsgf_real_new(value);
 }
 
 /**

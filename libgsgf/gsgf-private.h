@@ -53,6 +53,9 @@ gboolean _gsgf_game_tree_apply_flavor(GSGFGameTree *game_tree, GError **error);
 gboolean _gsgf_node_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor, GError **error);
 gboolean _gsgf_property_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor,
                                      GError **error);
+GSGFCookedValue *_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id);
+
+GSGFReal *_gsgf_real_new(gchar *value, GError **error);
 
 void _libgsgf_init();
 

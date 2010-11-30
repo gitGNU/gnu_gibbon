@@ -23,6 +23,7 @@ TESTS = test-convert			\
 	test-minimal			\
 	test-multi-game-tree		\
 	test-nested-game-tree		\
+	test-real			\
 	test-really-empty		\
 	test-general-properties		\
 	test-util-read-simpletext	\
@@ -49,6 +50,7 @@ test_general_properties_SOURCES = lib.c main.c test-general-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
+test_real_SOURCES = lib.c test-real.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
 test_util_read_simpletext_SOURCES = lib.c test-util-read-simpletext.c
 test_util_read_text_SOURCES = lib.c test-util-read-text.c
