@@ -29,6 +29,7 @@
 
 static int test_success();
 static int test_garbage();
+static int test_trailing_garbage();
 
 int
 main(int argc, char *argv[])
@@ -42,6 +43,10 @@ main(int argc, char *argv[])
                 return status;
 
         status = test_garbage();
+        if (status)
+                return status;
+
+        status = test_trailing_garbage();
         if (status)
                 return status;
 
@@ -88,6 +93,24 @@ test_garbage(void)
         GError *error;
         GError *expect = NULL;
         const gchar *value = "garbage";
+
+        g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                    _("Invalid number '%s'"), value);
+
+        r = _gsgf_real_new(value, &error);
+
+        return expect_error_conditional(r == NULL,
+                                        "Invalid double returns a value",
+                                        error, expect);
+}
+
+static int
+test_trailing_garbage(void)
+{
+        GSGFReal *r;
+        GError *error;
+        GError *expect = NULL;
+        const gchar *value = "1.0garbage";
 
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
                     _("Invalid number '%s'"), value);
