@@ -47,7 +47,12 @@ test_collection(GSGFCollection *collection, GError *error)
                 return -1;
         }
 
+#if defined (TEST_BUILDDIR)
+        expect_path = g_build_filename(TEST_BUILDDIR, "utf-8.sgf", NULL);
+#else
         expect_path = g_build_filename(TEST_DIR, "utf-8.sgf", NULL);
+#endif
+g_print("expect_path: %s\n", expect_path);
         if (!g_file_get_contents(expect_path, &expect, NULL, &error))
                 return expect_error(error, NULL);
 
