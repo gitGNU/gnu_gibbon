@@ -1,9 +1,4 @@
 <FUNCTION>
-<NAME>libgsgf_init</NAME>
-<RETURNS>void </RETURNS>
- 
-</FUNCTION>
-<FUNCTION>
 <NAME>gsgf_util_read_simpletext</NAME>
 <RETURNS>gchar *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
@@ -76,7 +71,162 @@ GSGFNode *self, const gchar *id, GError **error
 <FUNCTION>
 <NAME>gsgf_node_get_property</NAME>
 <RETURNS>struct _GSGFProperty *</RETURNS>
+const GSGFNode *self, const gchar *id 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_property_ids</NAME>
+<RETURNS>GList *</RETURNS>
+const GSGFNode *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_remove_property</NAME>
+<RETURNS>void </RETURNS>
 GSGFNode *self, const gchar *id 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_property_cooked</NAME>
+<RETURNS>gpointer </RETURNS>
+const GSGFNode *self, const gchar *id 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_REAL</NAME>
+#define GSGF_TYPE_REAL             (gsgf_real_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_REAL</NAME>
+#define GSGF_REAL(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_REAL, GSGFReal))
+</MACRO>
+<MACRO>
+<NAME>GSGF_REAL_CLASS</NAME>
+#define GSGF_REAL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_REAL, GSGFRealClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_REAL</NAME>
+#define GSGF_IS_REAL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_REAL))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_REAL_CLASS</NAME>
+#define GSGF_IS_REAL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_REAL))
+</MACRO>
+<MACRO>
+<NAME>GSGF_REAL_GET_CLASS</NAME>
+#define GSGF_REAL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_REAL, GSGFRealClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFRealClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFReal</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFRealPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFRealClass</NAME>
+struct _GSGFRealClass
+{
+        GSGFCookedValueClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_real_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFReal</NAME>
+struct _GSGFReal
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        GSGFRealPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_real_new</NAME>
+<RETURNS>GSGFReal*</RETURNS>
+gdouble value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_real_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFReal *self, gdouble value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_real_get_value</NAME>
+<RETURNS>gdouble </RETURNS>
+const GSGFReal *self 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_TEXT</NAME>
+#define GSGF_TYPE_TEXT             (gsgf_text_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_TEXT</NAME>
+#define GSGF_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_TEXT, GSGFText))
+</MACRO>
+<MACRO>
+<NAME>GSGF_TEXT_CLASS</NAME>
+#define GSGF_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_TEXT, GSGFTextClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_TEXT</NAME>
+#define GSGF_IS_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_TEXT))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_TEXT_CLASS</NAME>
+#define GSGF_IS_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_TEXT))
+</MACRO>
+<MACRO>
+<NAME>GSGF_TEXT_GET_CLASS</NAME>
+#define GSGF_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_TEXT, GSGFTextClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFTextClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFText</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFTextPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFTextClass</NAME>
+struct _GSGFTextClass
+{
+        GSGFCookedValueClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_text_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFText</NAME>
+struct _GSGFText
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        GSGFTextPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_text_new</NAME>
+<RETURNS>GSGFText*</RETURNS>
+const gchar *value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_text_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFText *self, const gchar *value, gboolean copy 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_text_get_value</NAME>
+<RETURNS>gchar *</RETURNS>
+const GSGFText *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_ERROR</NAME>
@@ -91,13 +241,85 @@ typedef enum {
         GSGF_ERROR_SYNTAX = 3,
         GSGF_ERROR_EMPTY_COLLECTION = 4,
         GSGF_ERROR_PROPERTY_EXISTS = 5,
-        GSGF_ERROR_EMPTY_PROPERTY = 6
+        GSGF_ERROR_EMPTY_PROPERTY = 6,
+        GSGF_ERROR_INTERNAL_ERROR = 7,
+        GSGF_ERROR_INVALID_NUMBER = 8
 } GSGFError;
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
 <RETURNS>GQuark </RETURNS>
 void 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_SIMPLE_TEXT</NAME>
+#define GSGF_TYPE_SIMPLE_TEXT             (gsgf_simple_text_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_SIMPLE_TEXT</NAME>
+#define GSGF_SIMPLE_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleText))
+</MACRO>
+<MACRO>
+<NAME>GSGF_SIMPLE_TEXT_CLASS</NAME>
+#define GSGF_SIMPLE_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_SIMPLE_TEXT</NAME>
+#define GSGF_IS_SIMPLE_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_SIMPLE_TEXT))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_SIMPLE_TEXT_CLASS</NAME>
+#define GSGF_IS_SIMPLE_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_SIMPLE_TEXT))
+</MACRO>
+<MACRO>
+<NAME>GSGF_SIMPLE_TEXT_GET_CLASS</NAME>
+#define GSGF_SIMPLE_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFSimpleTextClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFSimpleText</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFSimpleTextPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFSimpleTextClass</NAME>
+struct _GSGFSimpleTextClass
+{
+        GSGFTextClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_simple_text_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFSimpleText</NAME>
+struct _GSGFSimpleText
+{
+        GSGFText parent_instance;
+
+        /*< private >*/
+        GSGFSimpleTextPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_simple_text_new</NAME>
+<RETURNS>GSGFSimpleText*</RETURNS>
+const gchar *value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_simple_text_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFSimpleText *self, const gchar *value, gboolean copy 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_simple_text_get_value</NAME>
+<RETURNS>gchar *</RETURNS>
+const GSGFSimpleText *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_FLAVOR</NAME>
@@ -156,8 +378,8 @@ struct _GSGFFlavor
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_flavor_new</NAME>
-<RETURNS>GSGFFlavor*</RETURNS>
-const gchar *id, const gchar *name 
+<RETURNS>GSGFFlavor *</RETURNS>
+const gchar *id, const gchar *name, const GSGFFlavor *parent 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -223,48 +445,9 @@ struct _GSGFProperty
 };
 </STRUCT>
 <FUNCTION>
-<NAME>gsgf_property_get_raw</NAME>
-<RETURNS>const gchar *</RETURNS>
+<NAME>gsgf_property_get_value</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
 const GSGFProperty* property, gsize i 
-</FUNCTION>
-<USER_FUNCTION>
-<NAME>GSGFPropertyTextUpdater</NAME>
-<RETURNS>gboolean </RETURNS>
-GSGFProperty *property,
-                                             const gchar *text, GError **error
-</USER_FUNCTION>
-<STRUCT>
-<NAME>GSGFPropertyHandler</NAME>
-struct _GSGFPropertyHandler {
-        GSGFPropertyTextUpdater text_updater;
-};
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPropertyHandler</NAME>
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_property_handler_get_type</NAME>
-<RETURNS>GType </RETURNS>
-void 
-</FUNCTION>
-<MACRO>
-<NAME>GSGF_TYPE_PROPERTY_HANDLER</NAME>
-#define GSGF_TYPE_PROPERTY_HANDLER (gsgf_property_handler_get_type())
-</MACRO>
-<FUNCTION>
-<NAME>gsgf_property_handler_new</NAME>
-<RETURNS>GSGFPropertyHandler*</RETURNS>
-const gchar *id, const gchar *name 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_property_handler_copy</NAME>
-<RETURNS>GSGFPropertyHandler*</RETURNS>
-const GSGFPropertyHandler * 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_property_handler_destroy</NAME>
-<RETURNS>void </RETURNS>
-GSGFPropertyHandler * 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLLECTION</NAME>
@@ -345,6 +528,272 @@ GSGFCollection *collection
 <NAME>gsgf_collection_write_stream</NAME>
 <RETURNS>gboolean </RETURNS>
 const GSGFCollection *collection, GOutputStream *out, gsize *bytes_written, gboolean close_stream, GCancellable *cancellable, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_collection_get_game_trees</NAME>
+<RETURNS>GList *</RETURNS>
+const GSGFCollection *collection 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_GENERAL_FLAVOR</NAME>
+#define GSGF_TYPE_GENERAL_FLAVOR             (gsgf_general_flavor_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_GENERAL_FLAVOR</NAME>
+#define GSGF_GENERAL_FLAVOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavor))
+</MACRO>
+<MACRO>
+<NAME>GSGF_GENERAL_FLAVOR_CLASS</NAME>
+#define GSGF_GENERAL_FLAVOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavorClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_GENERAL_FLAVOR</NAME>
+#define GSGF_IS_GENERAL_FLAVOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_GENERAL_FLAVOR))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_GENERAL_FLAVOR_CLASS</NAME>
+#define GSGF_IS_GENERAL_FLAVOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_GENERAL_FLAVOR))
+</MACRO>
+<MACRO>
+<NAME>GSGF_GENERAL_FLAVOR_GET_CLASS</NAME>
+#define GSGF_GENERAL_FLAVOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavorClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFGeneralFlavorClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGeneralFlavor</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGeneralFlavorPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFGeneralFlavorClass</NAME>
+struct _GSGFGeneralFlavorClass
+{
+        GSGFFlavorClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_general_flavor_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFGeneralFlavor</NAME>
+struct _GSGFGeneralFlavor
+{
+        GSGFFlavor parent_instance;
+
+        /*< private >*/
+        GSGFGeneralFlavorPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_general_flavor_new</NAME>
+<RETURNS>GSGFGeneralFlavor*</RETURNS>
+const gchar *id, const gchar *name, const GSGFGeneralFlavor *parent 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_RAW</NAME>
+#define GSGF_TYPE_RAW             (gsgf_raw_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_RAW</NAME>
+#define GSGF_RAW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_RAW, GSGFRaw))
+</MACRO>
+<MACRO>
+<NAME>GSGF_RAW_CLASS</NAME>
+#define GSGF_RAW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_RAW, GSGFRawClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_RAW</NAME>
+#define GSGF_IS_RAW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_RAW))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_RAW_CLASS</NAME>
+#define GSGF_IS_RAW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_RAW))
+</MACRO>
+<MACRO>
+<NAME>GSGF_RAW_GET_CLASS</NAME>
+#define GSGF_RAW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_RAW, GSGFRawClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFRawClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFRaw</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFRawPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFRawClass</NAME>
+struct _GSGFRawClass
+{
+        GSGFCookedValueClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_raw_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFRaw</NAME>
+struct _GSGFRaw
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        GSGFRawPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_raw_new</NAME>
+<RETURNS>GSGFRaw*</RETURNS>
+const gchar *value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_raw_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFRaw *self, const gchar *value, gboolean copy 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_raw_get_value</NAME>
+<RETURNS>gchar *</RETURNS>
+const GSGFRaw *self 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_NUMBER</NAME>
+#define GSGF_TYPE_NUMBER             (gsgf_number_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_NUMBER</NAME>
+#define GSGF_NUMBER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NUMBER, GSGFNumber))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NUMBER_CLASS</NAME>
+#define GSGF_NUMBER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NUMBER, GSGFNumberClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NUMBER</NAME>
+#define GSGF_IS_NUMBER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NUMBER))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_NUMBER_CLASS</NAME>
+#define GSGF_IS_NUMBER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NUMBER))
+</MACRO>
+<MACRO>
+<NAME>GSGF_NUMBER_GET_CLASS</NAME>
+#define GSGF_NUMBER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NUMBER, GSGFNumberClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFNumberClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNumber</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNumberPrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFNumberClass</NAME>
+struct _GSGFNumberClass
+{
+        GSGFCookedValueClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_number_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFNumber</NAME>
+struct _GSGFNumber
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        GSGFNumberPrivate *priv;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_number_new</NAME>
+<RETURNS>GSGFNumber*</RETURNS>
+gint64 value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_number_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFNumber *self, gint64 value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_number_get_value</NAME>
+<RETURNS>gint64 </RETURNS>
+const GSGFNumber *self 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_COOKED_VALUE</NAME>
+#define GSGF_TYPE_COOKED_VALUE             (gsgf_cooked_value_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_COOKED_VALUE</NAME>
+#define GSGF_COOKED_VALUE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValue))
+</MACRO>
+<MACRO>
+<NAME>GSGF_COOKED_VALUE_CLASS</NAME>
+#define GSGF_COOKED_VALUE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_COOKED_VALUE</NAME>
+#define GSGF_IS_COOKED_VALUE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COOKED_VALUE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_COOKED_VALUE_CLASS</NAME>
+#define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COOKED_VALUE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_COOKED_VALUE_GET_CLASS</NAME>
+#define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFCookedValueClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCookedValue</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCookedValuePrivate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCookedValueClass</NAME>
+struct _GSGFCookedValueClass
+{
+        GObjectClass parent_class;
+
+        gboolean (*write_stream) (const GSGFCookedValue *self, GOutputStream *out,
+                                  gsize *bytes_written,
+                                  GCancellable *cancellable, GError **error);
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_cooked_value_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<STRUCT>
+<NAME>GSGFCookedValue</NAME>
+struct _GSGFCookedValue
+{
+        GObject parent_instance;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_cooked_value_write_stream</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFCookedValue *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_GAME_TREE</NAME>
