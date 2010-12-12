@@ -61,16 +61,16 @@ test_collection(GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_xyz(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "xyz");
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "XY");
         const gchar *value;
 
         if (!cooked_value) {
-                fprintf(stderr, "No root property 'xyz'!\n");
+                fprintf(stderr, "No root property 'XY'!\n");
                 return FALSE;
         }
 
         if (!GSGF_IS_TEXT(cooked_value)) {
-                fprintf(stderr, "Root propery 'xyz' is not a GSGFText!\n");
+                fprintf(stderr, "Root property 'XY' is not a GSGFText!\n");
                 return FALSE;
         }
 
