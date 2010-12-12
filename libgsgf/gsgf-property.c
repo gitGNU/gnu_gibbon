@@ -29,10 +29,14 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gsgf-private.h"
+
 struct _GSGFPropertyPrivate {
         gchar *id;
-        GList *values;
+
         GSGFCookedValue (*value_constructor) (const gchar *value);
+
+        GSGFCookedValue *value;
 };
 
 #define GSGF_PROPERTY_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -48,7 +52,8 @@ gsgf_property_init(GSGFProperty *self)
                         GSGFPropertyPrivate);
 
         self->priv->id = NULL;
-        self->priv->values = NULL;
+        self->priv->value_constructor = NULL;
+        self->priv->value = NULL;
 }
 
 static void
@@ -60,10 +65,9 @@ gsgf_property_finalize(GObject *object)
                 g_free(property->priv->id);
         property->priv->id = NULL;
 
-        if (property->priv->values) {
-                g_list_foreach(property->priv->values, 
-                              (GFunc) g_object_unref, NULL);
-                g_list_free(property->priv->values);
+        if (property->priv->value) {
+                g_object_unref(property->priv->value);
+                property->priv->value = NULL;
         }
 
         G_OBJECT_CLASS (gsgf_property_parent_class)->finalize(object);
@@ -92,6 +96,7 @@ _gsgf_property_new(const gchar *id)
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
         self->priv->id = g_strdup(id);
+        self->priv->value = gsgf_raw_new(NULL);
 
         return self;
 }
@@ -101,74 +106,21 @@ _gsgf_property_write_stream(const GSGFProperty *self,
                             GOutputStream *out, gsize *bytes_written,
                             GCancellable *cancellable, GError **error)
 {
-        gsize written_here;
-        GList *iter;
-        GSGFCookedValue *value;
-
-        *bytes_written = 0;
-
-        iter = self->priv->values;
-
-        if (!iter) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
-                            _("Attempt to write empty property"));
-                return FALSE;
-        }
-
-        while (iter) {
-                if (!g_output_stream_write_all(out, "[", 1, &written_here,
-                                               cancellable, error)) {
-                        *bytes_written += written_here;
-                        return FALSE;
-                }
-                *bytes_written += written_here;
-
-                value = GSGF_COOKED_VALUE(iter->data);
-                if (!gsgf_cooked_value_write_stream(GSGF_COOKED_VALUE(iter->data),
-                                                    out, &written_here,
-                                                    cancellable, error)) {
-                        *bytes_written += written_here;
-                        return FALSE;
-                }
-                *bytes_written += written_here;
-
-                if (!g_output_stream_write_all(out, "]", 1, &written_here,
-                                               cancellable, error)) {
-                        *bytes_written += written_here;
-                        return FALSE;
-                }
-                *bytes_written += written_here;
-
-                iter = iter->next;
-        }
-
-        return TRUE;
+        return gsgf_cooked_value_write_stream(self->priv->value,
+                                              out, bytes_written,
+                                              cancellable, error);
 }
 
-/**
- * _gsgf_property_add_value:
- *
- * @property: The property that the value is added to.
- * @text: The value itself.
- *
- * Add an (textual!) value to a #GSGFProperty.
- *
- * Possible errors depend on the particular flavor of SGF you expect.
- *
- * Returns: %TRUE on success, %FALSE on failure.
- */
 gboolean
-_gsgf_property_add_value(GSGFProperty *property, const gchar *_value)
+_gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 {
-        GSGFRaw* value = gsgf_raw_new(_value);
-
-        property->priv->values = g_list_append(property->priv->values, value);
+        _gsgf_raw_add_value(GSGF_RAW(property->priv->value), value);
 
         return TRUE;
 }
 
 /**
- * gsgf_property_get_raw:
+ * gsgf_property_get_value:
  *
  * @property: the #GSGFProperty.
  * @index: Index of the element.
@@ -178,43 +130,15 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *_value)
  * Returns: Returns the value as a #GSGFCookedValue or %NULL f %index is out of range.
  */
 GSGFCookedValue *
-gsgf_property_get_value(const GSGFProperty *property, gsize i)
+gsgf_property_get_value(const GSGFProperty *property)
 {
-        gpointer value = g_list_nth_data(property->priv->values, i);
-
-        if (!value)
-                return NULL;
-
-        return GSGF_COOKED_VALUE(value);
+        return property->priv->value;
 }
 
 gboolean
 _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
 {
-        gchar *converted;
-        gsize bytes_written;
-        GList *iter;
-        GSGFRaw *value;
-
-        if (error)
-                *error = NULL;
-
-        iter = self->priv->values;
-
-        while (iter) {
-                value = GSGF_RAW(iter->data);
-
-                converted = g_convert(gsgf_raw_get_value(value), -1, "UTF-8", charset,
-                                      NULL, &bytes_written, NULL);
-                if (!converted)
-                        return FALSE;
-
-                gsgf_raw_set_value(value, converted, FALSE);
-
-                iter = iter->next;
-        }
-
-        return TRUE;
+        return _gsgf_raw_convert(GSGF_RAW(self->priv->value), charset, error);
 }
 
 gboolean

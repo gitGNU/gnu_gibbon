@@ -156,7 +156,7 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
         root = GSGF_NODE(self->priv->nodes->data);
         gsgf_node_remove_property(root, "AP");
         ap_property = gsgf_node_add_property(root, "AP", NULL);
-        _gsgf_property_add_value(ap_property, version_string, NULL);
+        _gsgf_property_add_value(ap_property, version_string);
         g_free(version_string);
 
         *bytes_written = 0;
@@ -235,8 +235,8 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         root = GSGF_NODE(self->priv->nodes->data);
         ca_property = gsgf_node_get_property(root, "CA");
         if (ca_property) {
-                value = GSGF_RAW(gsgf_property_get_value(ca_property, 0));
-                charset = gsgf_util_read_simpletext(gsgf_raw_get_value(value),
+                value = GSGF_RAW(gsgf_property_get_value(ca_property));
+                charset = gsgf_util_read_simpletext(_gsgf_raw_get_value(value, 0),
                                                     NULL, 0);
                 free_charset = TRUE;
         }
@@ -246,7 +246,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                         gsgf_node_remove_property(root, "CA");
 
                 ca_property = gsgf_node_add_property(root, "CA", NULL);
-                _gsgf_property_add_value(ca_property, "UTF-8", NULL);
+                _gsgf_property_add_value(ca_property, "UTF-8");
 
                 for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
                         node = GSGF_NODE(nodes->data);
@@ -297,8 +297,8 @@ _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
         node = GSGF_NODE(self->priv->nodes->data);
         gm_property = gsgf_node_get_property(node, "GM");
         if (gm_property) {
-                raw = GSGF_RAW(gsgf_property_get_value(gm_property, 0));
-                flavor_id = gsgf_raw_get_value(raw);
+                raw = GSGF_RAW(gsgf_property_get_value(gm_property));
+                flavor_id = _gsgf_raw_get_value(raw, 0);
         }
 
         flavor = _libgsgf_get_flavor(flavor_id);

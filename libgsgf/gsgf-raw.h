@@ -59,8 +59,6 @@ struct _GSGFRaw
 };
 
 GSGFRaw* gsgf_raw_new(const gchar *value);
-void gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gboolean copy);
-gchar *gsgf_raw_get_value(const GSGFRaw *self);
 
 G_END_DECLS
 

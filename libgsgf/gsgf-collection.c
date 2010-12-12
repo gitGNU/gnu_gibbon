@@ -286,14 +286,7 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         ctx.state = GSGF_PARSER_STATE_PROPERTIES;
                                 } else if (token == GSGF_TOKEN_VALUE) {
                                         ctx.state = GSGF_PARSER_STATE_PROP_CLOSE;
-                                        if (!_gsgf_property_add_value(property,
-                                                                      value->str,
-                                                                      error)) {
-                                                g_prefix_error(error, "%d:%d:",
-                                                               ctx.lineno, ctx.colno);
-                                                g_string_free(value, TRUE);
-                                                return self;
-                                        }
+                                        _gsgf_property_add_value(property, value->str);
                                 } else {
                                         gsgf_yyerror(&ctx, _("value or ']'"),
                                                      token, error);

@@ -33,7 +33,7 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFRawPrivate {
-        gchar *value;
+        GList *values;
 };
 
 #define GSGF_RAW_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -53,7 +53,7 @@ gsgf_raw_init(GSGFRaw *self)
                         GSGF_TYPE_RAW,
                         GSGFRawPrivate);
 
-        self->priv->value = NULL;
+        self->priv->values = NULL;
 }
 
 static void
@@ -61,9 +61,10 @@ gsgf_raw_finalize(GObject *object)
 {
         GSGFRaw *self = GSGF_RAW(object);
 
-        if (self->priv->value)
-                g_free(self->priv->value);
-        self->priv->value = NULL;
+        if (self->priv->values) {
+                g_list_foreach(self->priv->values, g_free, NULL);
+                g_list_free(self->priv->values);
+        }
 
         G_OBJECT_CLASS (gsgf_raw_parent_class)->finalize(object);
 }
@@ -94,54 +95,101 @@ gsgf_raw_new (const gchar *value)
 {
         GSGFRaw *self = g_object_new(GSGF_TYPE_RAW, NULL);
 
-        self->priv->value = g_strdup(value);
+        if (value)
+                self->priv->values = g_list_append(self->priv->values, g_strdup(value));
 
         return self;
 }
 
-/**
- * gsgf_raw_set_value:
- * @self: The #GSGFRaw.
- * @value: The new value to store.
- * @copy: Flag that indicates whether to create a copy of the data.
- *
- * Stores a new value in a #GSGFRaw.  If @copy is %TRUE, a copy is
- * stored.  If it is %FALSE the @value is stored directly.
- */
-void
-gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gboolean copy)
-{
-        if (self->priv->value)
-                g_free(self->priv->value);
-
-        if (copy)
-                self->priv->value = g_strdup(value);
-        else
-                self->priv->value = (gchar *) value;
-}
-
-/**
- * gsgf_raw_get_value:
- * @self: The #GSGFRaw.
- *
- * Retrieve the value stored in a #GSGFRaw.
- *
- * Returns: the value stored.
- */
 gchar *
-gsgf_raw_get_value(const GSGFRaw *self)
+_gsgf_raw_get_value(const GSGFRaw *self, gsize i)
 {
-        return self->priv->value;
+        return (gchar *) g_list_nth_data(self->priv->values, i);
 }
 
 /* FIXME! Raw values must not implement the serialization method! */
 static gboolean
-gsgf_raw_write_stream(const GSGFCookedValue *self,
+gsgf_raw_write_stream(const GSGFCookedValue *_self,
                       GOutputStream *out, gsize *bytes_written,
                       GCancellable *cancellable, GError **error)
 {
-        return g_output_stream_write_all(out, GSGF_RAW(self)->priv->value,
-                                         strlen(GSGF_RAW(self)->priv->value),
-                                         bytes_written,
-                                         cancellable, error);
+        gsize written_here;
+        GList *iter;
+        gchar *value;
+        GSGFRaw *self = GSGF_RAW(_self);
+
+        *bytes_written = 0;
+
+        iter = self->priv->values;
+
+        if (!iter) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
+                            _("Attempt to write empty property"));
+                return FALSE;
+        }
+
+        while (iter) {
+                if (!g_output_stream_write_all(out, "[", 1, &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+                *bytes_written += written_here;
+
+                value = (gchar *) iter->data;
+                if (!g_output_stream_write_all(out, value, strlen(value),
+                                               bytes_written,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+                *bytes_written += written_here;
+
+                if (!g_output_stream_write_all(out, "]", 1, &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+                *bytes_written += written_here;
+
+                iter = iter->next;
+        }
+
+        return TRUE;
+}
+
+gboolean
+_gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
+{
+        gchar *converted;
+        gsize bytes_written;
+        GList *iter;
+        gchar *value;
+
+        if (error)
+                *error = NULL;
+
+        iter = self->priv->values;
+
+        while (iter) {
+                value = (gchar *) iter->data;
+
+                converted = g_convert(value, -1, "UTF-8", charset,
+                                      NULL, &bytes_written, NULL);
+                if (!converted)
+                        return FALSE;
+
+                iter->data = (gpointer) converted;
+
+                iter = iter->next;
+        }
+
+        return TRUE;
+}
+
+void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
+{
+        GSGFRaw *self = GSGF_RAW(_self);
+
+        self->priv->values = g_list_append(self->priv->values, g_strdup(value));
 }

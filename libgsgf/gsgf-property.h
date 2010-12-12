@@ -63,7 +63,7 @@ struct _GSGFProperty
         GSGFPropertyPrivate *priv;
 };
 
-GSGFCookedValue *gsgf_property_get_value(const GSGFProperty* property, gsize i);
+GSGFCookedValue *gsgf_property_get_value(const GSGFProperty* property);
 
 G_END_DECLS
 

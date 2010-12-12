@@ -43,17 +43,22 @@ gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
                                      GOutputStream *out, gsize *bytes_written,
                                      GCancellable *cancellable, GError **error);
 
-gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text,
-                                  GError **error);
+gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text);
 
 gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
 gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
                                 GError **error);
+gboolean _gsgf_raw_convert(GSGFRaw *raw, const gchar *charset,
+                           GError **error);
 gboolean _gsgf_game_tree_apply_flavor(GSGFGameTree *game_tree, GError **error);
 gboolean _gsgf_node_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor, GError **error);
-gboolean _gsgf_property_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor,
+gboolean _gsgf_property_apply_flavor(GSGFProperty *property, const GSGFFlavor *flavor,
                                      GError **error);
 GSGFCookedValue *_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id);
+GSGFCookedValue *_gsgf_property_get_raw(const GSGFProperty* property);
+void _gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gsize i, gboolean copy);
+gchar *_gsgf_raw_get_value(const GSGFRaw *self, gsize i);
+void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 
 /* Private constructors.  */
 GSGFReal *_gsgf_real_new(gchar *value, GError **error);
