@@ -88,7 +88,6 @@ gsgf_number_new (gint64 value)
 GSGFNumber *
 _gsgf_number_new(const gchar *string, GError **error)
 {
-        GSGFNumber *self;
         gchar *endptr;
         gint64 value;
 

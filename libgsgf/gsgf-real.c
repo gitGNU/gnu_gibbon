@@ -92,7 +92,6 @@ gsgf_real_new(gdouble value)
 GSGFReal *
 _gsgf_real_new(const gchar *string, GError **error)
 {
-        GSGFReal *self;
         gdouble value;
 
         if (error)
