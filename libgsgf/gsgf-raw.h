@@ -59,6 +59,8 @@ struct _GSGFRaw
 };
 
 GSGFRaw* gsgf_raw_new(const gchar *value);
+gsize gsgf_raw_get_number_of_values(const GSGFRaw *raw);
+gchar *gsgf_raw_get_value(const GSGFRaw *self, gsize i);
 
 G_END_DECLS
 
