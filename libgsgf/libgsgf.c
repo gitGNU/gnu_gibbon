@@ -35,7 +35,7 @@ GHashTable *_libgsgf_flavors = NULL;
 static volatile gsize libgsgf_flavors_init = 0;
 
 typedef struct _GSGFFlavorInfo {
-        const char *id;
+        gchar *id;
         const char *name;
 } _GSGFFlavorInfo;
 
@@ -60,8 +60,7 @@ _libgsgf_init()
                         info = &builtin_flavors[i];
                         flavor = gsgf_flavor_new(info->id, info->name, parent);
 
-                        g_hash_table_insert(_libgsgf_flavors, (const gchar *) info->id,
-                                            flavor);
+                        g_hash_table_insert(_libgsgf_flavors, info->id, flavor);
 
                         if (!parent)
                                 parent = flavor;
