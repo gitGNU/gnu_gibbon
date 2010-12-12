@@ -40,6 +40,10 @@ struct _GSGFTextPrivate {
 
 G_DEFINE_TYPE(GSGFText, gsgf_text, GSGF_TYPE_COOKED_VALUE)
 
+static gboolean gsgf_text_write_stream(const GSGFCookedValue *self,
+                                       GOutputStream *out, gsize *bytes_written,
+                                       GCancellable *cancellable, GError **error);
+
 static void
 gsgf_text_init(GSGFText *self)
 {
@@ -65,9 +69,14 @@ gsgf_text_finalize(GObject *object)
 static void
 gsgf_text_class_init(GSGFTextClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GObjectClass* object_class = G_OBJECT_CLASS(klass);
+        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+
+        gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
 
         g_type_class_add_private(klass, sizeof(GSGFTextPrivate));
+
+        gsgf_cooked_value_class->write_stream = gsgf_text_write_stream;
 
         object_class->finalize = gsgf_text_finalize;
 }
@@ -88,6 +97,38 @@ gsgf_text_new (const gchar *value)
         self->priv->value = g_strdup(value);
 
         return self;
+}
+
+/**
+ * gsgf_text_new_from_raw:
+ * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFText from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * Returns: The new #GSGFText or %NULL in case of an error.
+ */
+GSGFCookedValue *
+gsgf_text_new_from_raw (const GSGFRaw *raw, GError **error)
+{
+        gsize list_length = gsgf_raw_get_number_of_values(raw);
+        gchar *value;
+
+        if (!list_length) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
+                            _("Property without a value!"));
+                return NULL;
+        } else if (list_length != 1) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                            _("A text property may only have one value, not %u!"),
+                            list_length);
+                return NULL;
+        }
+
+        value = gsgf_raw_get_value(raw, 0);
+
+        return GSGF_COOKED_VALUE(gsgf_text_new(value));
 }
 
 /**
@@ -124,4 +165,40 @@ gchar *
 gsgf_text_get_value(const GSGFText *self)
 {
         return self->priv->value;
+}
+
+static gboolean
+gsgf_text_write_stream(const GSGFCookedValue *_self,
+                       GOutputStream *out, gsize *bytes_written,
+                       GCancellable *cancellable, GError **error)
+{
+        gsize written_here;
+        GSGFText *self = GSGF_TEXT(_self);
+
+        *bytes_written = 0;
+
+        if (!g_output_stream_write_all(out, "[", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
+
+        if (!g_output_stream_write_all(out, self->priv->value,
+                                       strlen(self->priv->value),
+                                       bytes_written,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
+
+        if (!g_output_stream_write_all(out, "]", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
+
+        return TRUE;
 }
