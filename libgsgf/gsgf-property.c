@@ -31,8 +31,8 @@
 
 struct _GSGFPropertyPrivate {
         gchar *id;
-
         GList *values;
+        GSGFCookedValue (*value_constructor) (const gchar *value);
 };
 
 #define GSGF_PROPERTY_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
