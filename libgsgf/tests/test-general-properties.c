@@ -28,6 +28,8 @@
 
 char *filename = "general-properties.sgf";
 
+static gboolean test_prop_xyz(const GSGFNode *node);
+
 int 
 test_collection(GSGFCollection *collection, GError *error)
 {
@@ -50,5 +52,34 @@ test_collection(GSGFCollection *collection, GError *error)
         }
         root_node = GSGF_NODE(nodes->data);
 
+        if (!test_prop_xyz(root_node))
+                return -1;
+
         return expect_error(error, NULL);
+}
+
+static gboolean
+test_prop_xyz(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "xyz");
+        const gchar *value;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'xyz'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_TEXT(cooked_value)) {
+                fprintf(stderr, "Root propery 'xyz' is not a GSGFText!\n");
+                return FALSE;
+        }
+
+        value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
+        if (strcmp("Propietary property", value)) {
+                fprintf(stderr, "Expected 'Proprietary property, got '%s'!\n",
+                        value);
+                return FALSE;
+        }
+
+        return TRUE;
 }
