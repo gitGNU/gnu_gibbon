@@ -38,16 +38,15 @@ TESTS = test-convert			\
 AM_CPPFLAGS = 				\
     -I$(top_srcdir)			\
     -DTEST_DIR=\"$(abs_srcdir)\"	\
+    -DTEST_BUILDDIR=\"$(abs_builddir)\"	\
     $(GIBBON_CFLAGS)
 
 check_PROGRAMS = $(TESTS) 
 
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
-test_convert_CFLAGS = $(AM_CPPFLAGS) -DTEST_BUILDDIR=\"$(abs_builddir)\"
 test_convert_SOURCES = lib.c main.c test-convert.c
 test_empty_SOURCES = lib.c main.c test-empty.c
-test_full_CFLAGS = $(AM_CPPFLAGS) -DTEST_BUILDDIR=\"$(abs_builddir)\"
 test_full_SOURCES = lib.c main.c test-full.c
 test_general_properties_SOURCES = lib.c main.c test-general-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c

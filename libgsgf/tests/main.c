@@ -45,11 +45,7 @@ main(int argc, char *argv[])
         program_name = argv[0];
 
         if (filename) {
-#if defined(TEST_BUILDDIR)
-                path = g_build_filename(TEST_BUILDDIR, filename, NULL);
-#else
-                path = g_build_filename(TEST_DIR, filename, NULL);
-#endif
+                path = build_filename(filename);
 
                 file = g_file_new_for_commandline_arg(path);
                 collection = gsgf_collection_parse_file(file, NULL, &error);

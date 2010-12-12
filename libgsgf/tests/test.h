@@ -34,4 +34,6 @@ extern int expect_error_conditional(gboolean condition, const gchar *msg,
 
 gchar *g_memory_stream_get_string(const GMemoryOutputStream *stream);
 
+gchar *build_filename(const gchar *filename);
+
 #endif

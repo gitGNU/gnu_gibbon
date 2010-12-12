@@ -95,3 +95,22 @@ g_memory_output_stream_get_string(const GMemoryOutputStream *stream)
         return g_strndup(g_memory_output_stream_get_data(stream),
                          g_memory_output_stream_get_data_size(stream));
 }
+
+gchar *
+build_filename(const gchar *filename)
+{
+        gchar *real_name;
+        size_t length = strlen(filename);
+        gchar *retval;
+
+        if ('.' == filename[length - 3]
+            && 'i' == filename[length - 2]
+            && 'n' == filename[length - 1]) {
+                real_name = g_strndup(filename, length - 3);
+                retval = g_build_filename(TEST_BUILDDIR, real_name, NULL);
+                free (real_name);
+                return retval;
+        }
+
+        return g_build_filename(TEST_DIR, filename, NULL);
+}

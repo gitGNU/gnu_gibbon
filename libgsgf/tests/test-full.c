@@ -25,7 +25,7 @@
 
 #include "test.h"
 
-char *filename = "full.sgf";
+char *filename = "full.sgf.in";
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
