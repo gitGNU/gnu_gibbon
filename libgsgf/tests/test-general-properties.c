@@ -75,8 +75,8 @@ test_prop_xyz(const GSGFNode *node)
         }
 
         value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
-        if (strcmp("Propietary property", value)) {
-                fprintf(stderr, "Expected 'Proprietary property, got '%s'!\n",
+        if (strcmp("Proprietary property", value)) {
+                fprintf(stderr, "Expected 'Proprietary property', got '%s'!\n",
                         value);
                 return FALSE;
         }
