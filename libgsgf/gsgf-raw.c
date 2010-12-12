@@ -62,7 +62,7 @@ gsgf_raw_finalize(GObject *object)
         GSGFRaw *self = GSGF_RAW(object);
 
         if (self->priv->values) {
-                g_list_foreach(self->priv->values, g_free, NULL);
+                g_list_foreach(self->priv->values, (GFunc) g_free, NULL);
                 g_list_free(self->priv->values);
         }
 
@@ -101,8 +101,18 @@ gsgf_raw_new (const gchar *value)
         return self;
 }
 
+/**
+ * gsgf_raw_get_value:
+ * @self: The #GSGFRaw object.
+ * @i: Position in the property list.
+ *
+ * Retrieve a certain raw value.  This function is onl interesting for people
+ * implementing their own #GSGFFlavor.
+ *
+ * Returns: The value stored at position @i or %NULL.
+ */
 gchar *
-_gsgf_raw_get_value(const GSGFRaw *self, gsize i)
+gsgf_raw_get_value(const GSGFRaw *self, gsize i)
 {
         return (gchar *) g_list_nth_data(self->priv->values, i);
 }
@@ -192,4 +202,18 @@ void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
         GSGFRaw *self = GSGF_RAW(_self);
 
         self->priv->values = g_list_append(self->priv->values, g_strdup(value));
+}
+
+/**
+ * gsgf_raw_get_number_of_values:
+ * @self: The #GSGFRaw object.
+ *
+ * Get the length of the property list.
+ *
+ * Returns: The number of values stored.
+ */
+gsize
+gsgf_raw_get_number_of_values (const GSGFRaw *raw)
+{
+        return g_list_length(raw->priv->values);
 }
