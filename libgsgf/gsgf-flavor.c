@@ -66,6 +66,7 @@ struct _GSGFFlavorPrivate {
         const gchar *name;
         const GSGFFlavor *parent;
 
+        /* GSGFCookedValue (*value_constructor) (const GSGFRaw *raw, GError **error); */
         GHashTable *handlers;
 };
 
@@ -134,4 +135,19 @@ gsgf_flavor_new (const gchar *id, const gchar *name, const GSGFFlavor *parent)
         self->priv->parent = parent;
 
         return self;
+}
+
+gboolean
+_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
+                              const GSGFRaw *raw, GSGFCookedValue **cooked,
+                              GError **error)
+{
+        *cooked = gsgf_text_new_from_raw(raw, error);
+
+        if (!*cooked) {
+                g_prefix_error(error, _("Property '%s':"), id);
+                return FALSE;
+        }
+
+        return TRUE;
 }
