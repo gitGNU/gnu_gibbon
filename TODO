@@ -23,4 +23,3 @@
 - Add assertions to libgsgf.
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
-- GSGFRaw implements write_stream but it should not.
