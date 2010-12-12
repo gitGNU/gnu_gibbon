@@ -236,7 +236,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         ca_property = gsgf_node_get_property(root, "CA");
         if (ca_property) {
                 value = GSGF_RAW(gsgf_property_get_value(ca_property));
-                charset = gsgf_util_read_simpletext(_gsgf_raw_get_value(value, 0),
+                charset = gsgf_util_read_simpletext(gsgf_raw_get_value(value, 0),
                                                     NULL, 0);
                 free_charset = TRUE;
         }
@@ -298,7 +298,7 @@ _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
         gm_property = gsgf_node_get_property(node, "GM");
         if (gm_property) {
                 raw = GSGF_RAW(gsgf_property_get_value(gm_property));
-                flavor_id = _gsgf_raw_get_value(raw, 0);
+                flavor_id = gsgf_raw_get_value(raw, 0);
         }
 
         flavor = _libgsgf_get_flavor(flavor_id);
