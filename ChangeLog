@@ -1,3 +1,828 @@
+commit 2e3ddd792340415d98f1fae123c1fff46241e178
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 09:43:06 2010 +0200
+
+    Fixed typo.
+
+commit a1ca5fc64337b648f028d56f53988713940f36c1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 09:42:20 2010 +0200
+
+    Default property type is now raw.
+
+commit ff8dd6f3769bd807adc9e46731ce96c4b1024f6c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 09:41:07 2010 +0200
+
+    Generic properties are now raw.
+
+commit 8249356b3ca0ce4f5edb1657e28a1b46414ea8b2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 09:40:23 2010 +0200
+
+    Updated.
+
+commit 1a81806ed33879f3b22901c25cacc66bfd6daeaf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 08:48:57 2010 +0200
+
+    Fixed syntax error in test sgf.
+
+commit 4ffa82bff35a82c56d18e30463e6a8e001fbb7f3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 13 08:35:21 2010 +0200
+
+    Try multiple values for generic properties.
+
+commit cabd322a447079fcd5394fe7797638525c459c10
+Merge: 040f3fb 38b769c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:44:43 2010 +0200
+
+    Merge branch 'master' of ssh://guido-flohr.net/var/git/c/gibbon
+
+commit 040f3fbc983d372c2a66e932503d7dd90244972f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:43:32 2010 +0200
+
+    GSGFText first prototype for GSGFCookedValue.
+
+commit 8634ebfabd1ac876bcefcc4c4bda22a478f648f8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:41:29 2010 +0200
+
+    Moved functionality from #GSGFProperty to #GSGFRaw.
+
+commit 38b769cc2100329caf74cfd39bcbcb924db0375e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:41:29 2010 +0200
+
+    Moved functionality from #GSGFProperty to #GSGFRaw.
+
+commit 5c02aded8a21b89e50a93089c1b783236bcb8f1e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:38:27 2010 +0200
+
+    Moved functionality from #GSGFProperty to #GSGFRaw.
+
+commit f9fb1b133b5306421c964bee3f506fbcc84b051f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:36:52 2010 +0200
+
+    Private/public changes.
+
+commit 1b2ec5b5149625d49a1ec5312144d70680c5cd14
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:35:35 2010 +0200
+
+    Make #GSGFRaw public.
+
+commit 4e53c0e724fd6c79896d4aed33d762e0a7c31344
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 23:34:41 2010 +0200
+
+    Prefix error.
+
+commit d281aaaf352fad34d9b6e5e6a3912904ad16cfad
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 18:31:24 2010 +0200
+
+    Hash keys are not const.
+
+commit 3759dddc6945c768042a542aa2b96cf753445241
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 18:30:26 2010 +0200
+
+    Cleaned up constructor.
+
+commit 49d8176379729f5683495069abb2a99aa464f092
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 18:29:36 2010 +0200
+
+    New errors GSGF_ERROR_LIST_TOO_LONG and GSGF_ERROR_SEMANTIC_ERROR.
+
+commit 30f6675b3c3d8252f6069b1a493c65359cc0d159
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 18:00:30 2010 +0200
+
+    Updated.
+
+commit d2d1d1184da74aeca5ccb136f65f436ebc114ea4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 17:57:41 2010 +0200
+
+    Fixed typos.
+
+commit 93ddb8e41f3fe905765234991145c677115260c9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 16:40:49 2010 +0200
+
+    User uppercase property.
+
+commit 136cff70e99d6ea3112638eda9e955210936b6e4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 16:33:25 2010 +0200
+
+    Refactoring: GSGFProperty is now a wrapper around GSGFRaw.
+
+commit d6601949b241c29b60e07ceb9e217a09e4bd5d14
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 16:33:11 2010 +0200
+
+    Test skeleton for cooked values.
+
+commit bf527795e70483353eb05e34b37d0b3a15bd8057
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 14:53:54 2010 +0200
+
+    Strong typing.
+
+commit 09ff8a0816deb4755a75f8d2f052e81fbcb77426
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 14:44:11 2010 +0200
+
+    Store value constructor internally.
+
+commit a5a860321fdd8ca5aafaabed2d102c7695744ef3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 12 14:15:33 2010 +0200
+
+    Make tests succeed in vpath environment.
+
+commit e51b6fe7d30a95a3f5974c51c2c2b1dd11afa8b6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 1 09:49:45 2010 +0100
+
+    Make tests work in vpath builds.
+
+commit 0cab241e02ab923eadf6a8a0da4f4ddd0973f2e4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 1 09:44:40 2010 +0100
+
+    Updated.
+
+commit 6a1b9c072e1dc1807244b01e5e8252b55a745bab
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 1 00:09:41 2010 +0100
+
+    Parsing of SGF numbers.
+
+commit 7d6ba680d2353063dcbd76031487cd4c15cc23cc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 1 00:08:52 2010 +0100
+
+    Test for trailing garbage after SGF numbers.
+
+commit 5632616cd37f43f6fa2606237a508621e935e883
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 23:53:36 2010 +0100
+
+    We do a regex match on reals, no need for endptr.
+
+commit f00304cd7bffe472715a76c784bff9bce8814090
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 23:52:23 2010 +0100
+
+    Test for trailing garbage in SGF reals.
+
+commit c81ac93b3e5e75059eefc7324669d68d8a25cfb9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 23:28:02 2010 +0100
+
+    Test for parsing SGF integers.
+
+commit c4f9f2b06517d170ab407deb34fe2af3d1c0967a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 22:37:29 2010 +0100
+
+    Pass strtod() errors through.
+
+commit a12b006555cf1cbeca8224eb26aeb5a6b7e2620c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 22:17:37 2010 +0100
+
+    Parse real values in SGF files.
+
+commit d1844ab0e315bb3b7a39d41c697c84d1d8964aff
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 30 22:15:38 2010 +0100
+
+    Formatting.
+
+commit bbedca6da844a2d6086a8fab5ab1a162f44bd943
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 27 11:47:45 2010 +0100
+
+    Iterate over SGF tree for applying SGF flavor.
+
+commit b510eb12557fc0cd19a77b83106cb7d64943efd7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 27 11:46:53 2010 +0100
+
+    Skeleton for general SGF flavor.
+
+commit 696129c431a08a155589c0044713176470618d61
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 24 21:45:56 2010 +0100
+
+    Hide libgsgf initialization.
+
+commit bc8e6d143241d3b95d301a0ce1079c74a36f6db8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 24 20:36:46 2010 +0100
+
+    Obsolete GSGFPropertyHandler.
+
+commit a91710f10285c94aba9e3052a5223de0d7bce5c6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 24 08:38:13 2010 +0100
+
+    Use stringified numbers as flavor identifiers.
+
+commit cbd61f5a756c50c6e57166d78aa8278f317e9160
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 24 08:28:57 2010 +0100
+
+    - Make flavor ids const, and don't free them.
+    - GSGFFlavors now have parent flavors.
+
+commit de5999db9b52f425e111e45e820bc235b7e44171
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 22:47:03 2010 +0100
+
+    Renamed root-properties to general-properties.
+
+commit 40a51914c3c2700443e34f3afcad8e20a0abf780
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 22:07:46 2010 +0100
+
+    Updated TODO.
+
+commit cec0d6fec7b803a7d6035ce217af3e7ae3f86f64
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 22:04:50 2010 +0100
+
+    Refactoring: Use new GSGF type system.
+
+commit 86121bcf204408fa53e690f23b7f9e9995664b03
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 19:03:28 2010 +0100
+
+    Base types for SGF data.
+
+commit 24226435491bc1e6aed9db5144daaaf3e131abc7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 10:31:00 2010 +0200
+
+    Encapsulation for SGF primitives.
+
+commit f98657315b8a4de75f56d07a3d493a74bb1d516e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 10:18:10 2010 +0200
+
+    Generated SGF files should not be removed after make clean.
+
+commit c686d81154747802ff21ad0529d83a497fdd46d0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 09:50:55 2010 +0200
+
+    Getter for SGF game tree lists.
+
+commit 23af6e529aa150f55eec80fe6b1f56be579fccbf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 09:48:59 2010 +0200
+
+    - Getter for SGF nodes.
+    - Apply SGF flavor to tree.
+
+commit 7cc588dc31aa45f41fbe543b769d21edb00c15e7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 09:48:07 2010 +0200
+
+    Fixed indirections.
+
+commit 0fc8ca8d500af55288dba00a10c9cce62cfbd3b6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 09:35:21 2010 +0200
+
+    Added generated SGF files.
+
+commit 153c5e5b7a145555be021ccfae13d3bfb5ed1ec8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 09:34:50 2010 +0200
+
+    Tests skeleton for general SGF properties.
+
+commit 2cb3585367030fbc373e86cc6abacc49fa222953
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 08:49:35 2010 +0200
+
+    Write libgsgf version string into SGF files.
+
+commit 28d3caf0e7584c93cf3fec09d7a35058077cbbdd
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 08:10:24 2010 +0200
+
+    Skeleton for applying SGF flavor.
+
+commit 4a281c411e608764db45294264085740c6cb9d23
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 23 08:02:29 2010 +0200
+
+    Changed copyright date.
+
+commit bfc39bb05e910e2da3e9e3617cb694e406b2fd62
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 21 12:58:14 2010 +0200
+
+    Automatic charset conversion for SGF trees.
+
+commit 402a0a82ee76b1e518b11e497575d8866b290d12
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 21 12:57:41 2010 +0200
+
+    Automatically write CA property in SGF sub trees.
+
+commit b50305090f0e4120b9478074ab55f984cf3b8af5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 21 12:07:58 2010 +0200
+
+    Always write CA property on output.
+
+commit ed6d9c2ce08e95d5b657b131b862025df70a87b7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 21 12:00:46 2010 +0200
+
+    Only reset error if error location given.
+
+commit a0f871d4fb14259ce795f8ec5848054ae3393cf5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 21 11:58:03 2010 +0200
+
+    Automatic conversion to utf-8 (work in progress).
+
+commit 7ef1d18805f572bc7290117b8cd5594313f7225f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 20 12:24:33 2010 +0200
+
+    Determine charset of SGF game tree.
+
+commit f7477cda1f7cb90536aacc5e404d8ac1f37bcd2b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 20 12:24:05 2010 +0200
+
+    Getter for SGF property.
+
+commit de3ec8ae1f6bc500fd70aa56aeeed847353473cc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 20 12:23:38 2010 +0200
+
+    Getter for raw property values.
+
+commit fc51ffa1c0951e9027a848b323a81ae1ab7c5057
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 20 12:23:03 2010 +0200
+
+    Only store end pointer if requested.
+
+commit 700be873ace7e36cab74e7d63d5653a2b6beab4b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:09:34 2010 +0200
+
+    - Prototypes without error checking and passng of flavors.
+    - Base for charset conversions.
+
+commit f5ff0fdf43ca770095532ce710b4ab397113ae05
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:08:15 2010 +0200
+
+    Removed prototype for internal serialization.
+
+commit 61cdd0e9f7f450d23a0eafda8459ef3f34fc9665
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:06:01 2010 +0200
+
+    No more error checking in private constructors.
+
+commit e0bc6ec29422a858b38217d0798df8ab629fb17b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:04:31 2010 +0200
+
+    Updated.
+
+commit fed5c664d73cefcdc107abb0706967e80b6fced6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:03:17 2010 +0200
+
+    Declaration for SGF property getter.
+
+commit f0b00d2d9c4a5f4aa819a5484d48c4f59a994c8e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 19 00:01:16 2010 +0200
+
+    No error checking for private constructors.
+
+commit 951cfd80a7703fcd4757020ef84962adfd8c5b7a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:59:26 2010 +0200
+
+    Methods for setting raw values made private.
+
+commit c1aa40cd7598eadaa600cb7cdba508fb91c88022
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:53:56 2010 +0200
+
+    Compound values for SGF properties.
+
+commit 63d72e74c03668cdfb0638914bc3c7470c2fb7dd
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:51:41 2010 +0200
+
+    Read formatted text in SGF properties.
+
+commit aeba1c5f01df7a1193718171c8803b7f5e547d54
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:38:01 2010 +0200
+
+    New tests.
+
+commit defbeac7290650671557cd7924e57ace00445470
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:36:01 2010 +0200
+
+    - Null-terminate data written to stream.
+    - No more need for error checking on libgsgf constructors.
+
+commit e7c24aba8404282ec226adf861621f330ccd2095
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:34:59 2010 +0200
+
+    Null-terminate data written to stream.
+
+commit e535e8145f13d910a56a8a5d411bbad463c53a6f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:34:19 2010 +0200
+
+    Tests for charset conversion.
+
+commit c89b6fcb9e2a0402078ab76ec11be06600681311
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:29:06 2010 +0200
+
+    Test for formatted text in SGF properties.
+
+commit fdb889a72d17e94bac0721793235fd21a2cedbfa
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:27:42 2010 +0200
+
+    Split up test library code.
+
+commit 888a2d07e9f652d1f2ebe86d64978310c99fda7e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 23:26:04 2010 +0200
+
+    Read/write formatted text in SGF properties.
+
+commit 927e6fb62cba6838b0374bef117005163fc3836b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:14:58 2010 +0200
+
+    Base for SGF flavors and property handlers.
+
+commit edba0f6d2aee12f97ffc2dab52f2e8a5c7a8e637
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:12:57 2010 +0200
+
+    - Test correct error handling.
+    - Fixed cast warning.
+
+commit da41966c53043286904f7cc2163bedad6e62a5f6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:11:52 2010 +0200
+
+    Updated.
+
+commit 2a378a1f97f0b1b730b32e44fe56e42d9c952b1b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:11:10 2010 +0200
+
+    Removed old code for writing text.
+
+commit 60bda80c2ac6e6b004a6d852c99b5de186f305ea
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:07:02 2010 +0200
+
+    Removed debugging output.
+
+commit 682b6c7da78c57b26617566642477cc892be08be
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:05:07 2010 +0200
+
+    Fixed warning about unused variable.
+
+commit 0c35bb4d1b163bc46d224e50126f1062eeed6823
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:04:09 2010 +0200
+
+    arc_boundings() no longer needed.
+
+commit 732d5e31be47773c29d0cb09ed40821c83aedd25
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 18 09:02:52 2010 +0200
+
+    Updated.
+
+commit 6bea8f868bfa90d1782b7293bfc5fa16941f52b5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 17 09:29:03 2010 +0200
+
+    Renamed gsgf-internal.h to gsgf-private.h.
+
+commit 897d0230dada4130792252f24cfabb2e1550d2a3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 16 23:00:21 2010 +0200
+
+    Refactoring: SGF sub constructors are now private.
+
+commit 7d380c19be6eb98ee88d3cc85e983ef80e5e615a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 16 22:44:29 2010 +0200
+
+    Refactoring: Introduce SGF flavors.
+
+commit 33c45ded5261af52828c624d3d34353abaafa3d0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 16 20:11:44 2010 +0200
+
+    Prevent writing empty properties.
+
+commit cc192cdc8b7618e94fe5cf1d0f63df8fe3dbaec1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 16 09:40:39 2010 +0200
+
+    Updated TODO.
+
+commit bb9da0cb1c6364380bbebbc50b77d8194327739f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 23:46:22 2010 +0200
+
+    Re-generated.
+
+commit b7a89ba3a1f7a6a602476d543b2378674d35c08f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 23:46:10 2010 +0200
+
+    Updated.
+
+commit 1c2c13fc56a6a1ebdc0c4bf75a270a76b403252f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 23:45:49 2010 +0200
+
+    Obsolete.
+
+commit cec4ba1756aca49d9de9d5fc2bb06fd4f9be7e8d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 23:45:03 2010 +0200
+
+    Updated TODO file.
+
+commit 2319f5a214a9642fd1515ca873a80924430fd02a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 23:44:21 2010 +0200
+
+    Read/write of legal SGF files now round-trip-safe.
+
+commit 079e596f322a26152e2dbdca65d0a2c849e173d1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 10:36:43 2010 +0200
+
+    Test for round-trip writing for SGF files.
+
+commit 6e78bf95ff2837b6e889cc984d7060a7cae9c09c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 10:21:15 2010 +0200
+
+    Test for parsing multiple, nested SGF game trees.
+
+commit 37c147e2238ce50774bbedb7311d3c1011ea0d0a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 10:00:54 2010 +0200
+
+    Write minimal SGF nodes.
+
+commit acce542002f2ac69435006defd563e23a15bd19e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 15 00:20:36 2010 +0200
+
+    Refactored GSGFNodeList to GList of GSGFNodes.
+
+commit 91c9f2bd32fd07c6356831fb3331d211f1c4a353
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 14 21:57:09 2010 +0200
+
+    Close game trees with ')' not '('.
+
+commit 3970451c52b16fdac1f624fe53ffa2ce9c847d28
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 14 21:53:49 2010 +0200
+
+    Refactoring of SGF writing:
+    The interfaces for SGF writing and wrting to gio streams are
+    now synchronized.
+
+commit ffa99075917d449124f3f7c91caa84c781dfbbb5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 13 09:14:54 2010 +0200
+
+    Write nested game trees.
+
+commit 77d0f6f95df774c8a66439056bb9e60c1d1627da
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 13 08:40:16 2010 +0200
+
+    Basic writing routine for SGF collections.
+
+commit d86d49a8591dce5665d3dfc6b3e446cccfb9d3cc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 13 08:18:00 2010 +0200
+
+    Renamed test-write-empty-collection to test-write-empty.
+
+commit 3928bac2fe0288395a890f4e1a5afcd5d71ad4b0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 13 08:15:25 2010 +0200
+
+    Round-trip test for mininimal.sgf.
+
+commit e1fc21fc142633676a500167bd4ff5c696b0e33c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:10:51 2010 +0200
+
+    Re-generated.
+
+commit ae20851322d4be6fd43bca8d476e6006cd95e4a3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:10:34 2010 +0200
+
+    Updated.
+
+commit 8c6a4c1fe024066873655ec7e7f6cdffa35add93
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:10:11 2010 +0200
+
+    Conditional error checking.
+
+commit 8bd54b304aafbbaa1e1a2480b8f338591ef09cbe
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:09:42 2010 +0200
+
+    Tweaks for separate build directory.
+
+commit 65a9195a45186f813df87c29d0c0633e75515095
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:08:47 2010 +0200
+
+    Needed for distcheck make target.
+
+commit ce3591ecc69a4f82d8e53e1aca8c707a50e555e4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:08:15 2010 +0200
+
+    Inhibit writing empty collections.
+
+commit 16e1979c02e90ab9de9767b6cf24520dd8ba1a57
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:07:12 2010 +0200
+
+    Yacc and lex output removed.
+
+commit 8fd2d9b2a5fb92250f3478410a3b3c085d8ce446
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:06:33 2010 +0200
+
+    - Separate test suite.
+    - Internal declarations.
+
+commit 11de0eda4d2952b39ae5701d386d538c05a68189
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 23:05:29 2010 +0200
+
+    Internal declarations.
+
+commit 5c597c846579425bde464e76c976271d25ee3dc8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 16:06:02 2010 +0200
+
+    Added SGF tests and fixed a number of bugs.
+
+commit 4b1f098a1214ecec9cdef5aed61a2364597d9e4c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 11:59:10 2010 +0200
+
+    Do not parse empty SGF collections.
+
+commit 82d6e6318fb458e376c91f0967787d4f89236996
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 12 10:31:30 2010 +0200
+
+    Create game tree objects in SGF syntax tree.
+
+commit 0106be9af51ef21cd1cf5a91e42f5411798aad17
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 11 22:44:05 2010 +0200
+
+    Skeleton for SGF game trees.
+
+commit 79e3fea72eeecebbb7f141e15dd5bf011f26a59c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 11 10:11:59 2010 +0200
+
+    Also omit .orig files.
+
+commit e1da2760c560e7ffcb8449ffba705da01a7d2ea9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 11 10:11:20 2010 +0200
+
+    Exclude backup files.
+
+commit 7cde7adf5d285197b2760a079d0d6808194b0aec
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 11 00:01:16 2010 +0200
+
+    Re-generated.
+
+commit 4544b9615481545c9224c9c0f861997bb567c8a2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 11 00:00:58 2010 +0200
+
+    Free parsed values.
+
+commit 49c30a530b7ef336bd893af808bec428875b8f6c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 23:50:24 2010 +0200
+
+    Abstraction for SGF properties.
+
+commit 9246e44cdff80eced0ae2d13d0c879a7211be3e1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 23:49:18 2010 +0200
+
+    FIXME for memory leak.
+
+commit 25457b0a8bed090179271a4dc20d4a4f3dabfac0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 22:31:40 2010 +0200
+
+    SGF parser running.
+
+commit ca6104f42ce93cbf1b370b68536aa3304c325bba
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 22:30:46 2010 +0200
+
+    Removed from source control management.
+
+commit cc256cfd4bd3e5f5ba8f639ae274a9ac61ff7743
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 19:19:12 2010 +0200
+
+    Ignore files updated.
+
+commit cfcef58066958a2596057726bb7cf29473e94faf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 19:17:17 2010 +0200
+
+    Documentation for libgsgf.
+
+commit e3cb12e4c34a7823c64eccc526c57c544ada8dab
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 10 19:14:58 2010 +0200
+
+    Tokenizer for SGF files finished.
+
+commit ddfe64ca8dc8904355f81e621eee43ef768bbc09
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 15 10:00:43 2010 +0200
+
+    Documentation.
+
+commit 48be9910a200569d840858ce2f475e1c55105774
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Oct 15 10:00:15 2010 +0200
+
+    Removed Makefile.in from version control.
+
+commit 7b735c7c280107357cc486bb131f8f61ede3f51b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Oct 14 10:43:35 2010 +0200
+
+    Added libgsgf/gsgf.h.
+
+commit e96e81fef896995de32fe4267e9c79b6ab0a2f8b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Oct 13 18:52:58 2010 +0200
+
+    Re-generated ChangeLog.
+
 commit 4b06ea067897788f2fbb4d02b235f3cc1901f5b5
 Author: Guido Flohr <guido@imperia.net>
 Date:   Wed Oct 13 18:50:53 2010 +0200
