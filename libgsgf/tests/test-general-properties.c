@@ -63,20 +63,27 @@ test_prop_xyz(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "XY");
         const gchar *value;
+        gsize length;
 
         if (!cooked_value) {
                 fprintf(stderr, "No root property 'XY'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_TEXT(cooked_value)) {
-                fprintf(stderr, "Root property 'XY' is not a GSGFText!\n");
+        if (!GSGF_IS_RAW(cooked_value)) {
+                fprintf(stderr, "Root property 'XY' is not a GSGFRaw!\n");
                 return FALSE;
         }
 
-        value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
-        if (strcmp("Proprietary property", value)) {
-                fprintf(stderr, "Expected 'Proprietary property', got '%s'!\n",
+        length = gsgf_raw_get_number_of_values(GSGF_RAW(cooked_value));
+        if (length != 2) {
+                fprintf(stderr, "Expected 2 values for 'XY', got %u.\n", length);
+                return FALSE;
+        }
+
+        value = gsgf_raw_get_value(GSGF_RAW(cooked_value), 0);
+        if (strcmp("Proprietary property #1", value)) {
+                fprintf(stderr, "Expected 'Proprietary property #1', got '%s'!\n",
                         value);
                 return FALSE;
         }
