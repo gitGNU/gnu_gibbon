@@ -142,6 +142,10 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
+        /* FIXME! */
+
+        return NULL;
+
         *cooked = gsgf_text_new_from_raw(raw, error);
 
         if (!*cooked) {
