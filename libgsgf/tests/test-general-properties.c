@@ -28,7 +28,8 @@
 
 char *filename = "general-properties.sgf";
 
-static gboolean test_prop_xyz(const GSGFNode *node);
+static gboolean test_prop_XY(const GSGFNode *node);
+static gboolean test_prop_GM(const GSGFNode *node);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -52,14 +53,17 @@ test_collection(GSGFCollection *collection, GError *error)
         }
         root_node = GSGF_NODE(nodes->data);
 
-        if (!test_prop_xyz(root_node))
+        if (!test_prop_XY(root_node))
+                return -1;
+
+        if (!test_prop_GM(root_node))
                 return -1;
 
         return expect_error(error, NULL);
 }
 
 static gboolean
-test_prop_xyz(const GSGFNode *node)
+test_prop_XY(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "XY");
         const gchar *value;
@@ -85,6 +89,32 @@ test_prop_xyz(const GSGFNode *node)
         if (strcmp("Proprietary property #1", value)) {
                 fprintf(stderr, "Expected 'Proprietary property #1', got '%s'!\n",
                         value);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_GM(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "GM");
+        gint value;
+        gsize length;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'GM'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_NUMBER(cooked_value)) {
+                fprintf(stderr, "Root property 'GM' is not a GSGFNumber!\n");
+                return FALSE;
+        }
+
+        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
+        if (6 != value) {
+                fprintf(stderr, "GM: Expected 6, got %d!\n", value);
                 return FALSE;
         }
 
