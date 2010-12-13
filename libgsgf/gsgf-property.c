@@ -111,8 +111,6 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 gboolean
 _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 {
-g_print("Property %p (%s) add value %s.\n",
-property, property->priv->id, value);
         _gsgf_raw_add_value(GSGF_RAW(property->priv->value), value);
 
         return TRUE;
@@ -148,9 +146,9 @@ _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError
         if (error)
                 *error = NULL;
 
-        if (!_gsgf_flavor_get_cooked_value(flavor, self->priv->id,
-                                           GSGF_RAW(self->priv->value),
-                                           &cooked, error)) {
+        if (_gsgf_flavor_get_cooked_value(flavor, self->priv->id,
+                                          GSGF_RAW(self->priv->value),
+                                          &cooked, error)) {
                 g_object_unref(self->priv->value);
                 self->priv->value = cooked;
         }
