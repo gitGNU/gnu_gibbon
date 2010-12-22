@@ -39,7 +39,6 @@ G_BEGIN_DECLS
  **/
 typedef struct _GSGFFlavorClass   GSGFFlavorClass;
 typedef struct _GSGFFlavor        GSGFFlavor;
-typedef struct _GSGFFlavorPrivate GSGFFlavorPrivate;
 
 struct _GSGFFlavorClass
 {
