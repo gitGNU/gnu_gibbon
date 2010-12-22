@@ -19,11 +19,14 @@
 
 /**
  * SECTION:gsgf-flavor
- * @short_description: A particular flavor of SGF.
+ * @short_description: General SGF properties.
  *
  * A #GSGFFlavor defines how to handle properties for a particular kind
  * of SGF.  Different games have different sets of properties.  In SGF
  * files, the flavor is defined by the GM property.
+ *
+ * It is the base class for other flavors, and defines properties that are
+ * common to all specialized SGF flavors.
  *
  * This #GSFFlavor class is actually internal to libgsgf.  You only have to bother
  * about these details if you want to implement your own flavors of SGF.
