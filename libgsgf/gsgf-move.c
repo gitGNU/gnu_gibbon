@@ -17,27 +17,37 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GSGF_H
-# define _GSGF_H
+/**
+ * SECTION:gsgf-move
+ * @short_description: Abstract base class for an SGF move.
+ *
+ * The <link linkend="http://www.red-bean.com/sgf/sgf4.html">http://www.red-bean.com/sgf/sgf4.html</link>
+ * specification does not define the details for a move.  The specific
+ * move incarnations should inherit from this class.
+ */
 
-#include <libgsgf/gsgf-flavor.h>
-#include <libgsgf/gsgf-flavor-backgammon.h>
+#include <glib.h>
+#include <glib/gi18n.h>
 
-#include <libgsgf/gsgf-move.h>
+#include <libgsgf/gsgf.h>
 
-#include <libgsgf/gsgf-cooked-value.h>
-#include <libgsgf/gsgf-raw.h>
-#include <libgsgf/gsgf-number.h>
-#include <libgsgf/gsgf-real.h>
-#include <libgsgf/gsgf-simple-text.h>
-#include <libgsgf/gsgf-text.h>
+G_DEFINE_TYPE (GSGFMove, gsgf_move, G_TYPE_OBJECT)
 
-#include <libgsgf/gsgf-collection.h>
-#include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-game-tree.h>
-#include <libgsgf/gsgf-node.h>
-#include <libgsgf/gsgf-property.h>
+static void
+gsgf_move_init(GSGFMove *self)
+{
+}
 
-#include <libgsgf/libgsgf.h>
+static void
+gsgf_move_finalize(GObject *object)
+{
+        G_OBJECT_CLASS (gsgf_move_parent_class)->finalize(object);
+}
 
-#endif
+static void
+gsgf_move_class_init(GSGFMoveClass *klass)
+{
+        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+
+        object_class->finalize = gsgf_move_finalize;
+}
