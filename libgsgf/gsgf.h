@@ -21,7 +21,6 @@
 # define _GSGF_H
 
 #include <libgsgf/gsgf-flavor.h>
-#include <libgsgf/gsgf-general-flavor.h>
 
 #include <libgsgf/gsgf-cooked-value.h>
 #include <libgsgf/gsgf-raw.h>
