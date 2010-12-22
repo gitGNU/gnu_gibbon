@@ -146,9 +146,9 @@ _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError
         if (error && *error)
                 return FALSE;
 
-        if (_gsgf_flavor_get_cooked_value(flavor, self->priv->id,
-                                          GSGF_RAW(self->priv->value),
-                                          &cooked, error)) {
+        if (gsgf_flavor_get_cooked_value(flavor, self->priv->id,
+                                         GSGF_RAW(self->priv->value),
+                                         &cooked, error)) {
                 g_object_unref(self->priv->value);
                 self->priv->value = cooked;
         }

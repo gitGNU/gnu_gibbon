@@ -40,9 +40,17 @@ G_BEGIN_DECLS
 typedef struct _GSGFFlavorClass   GSGFFlavorClass;
 typedef struct _GSGFFlavor        GSGFFlavor;
 
+struct _GSGFRaw;
+struct _GSGFCookedValue;
+
 struct _GSGFFlavorClass
 {
         GObjectClass parent_class;
+
+        gboolean (*get_cooked_value) (const GSGFFlavor *flavor,
+                                      const gchar *id, struct _GSGFRaw *raw,
+                                      struct _GSGFCookedValue **cooked,
+                                      GError **error);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;
@@ -53,6 +61,10 @@ struct _GSGFFlavor
 };
 
 GSGFFlavor *gsgf_flavor_new(void);
+gboolean gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, 
+                                      const gchar *id, const struct _GSGFRaw *raw,
+                                      struct _GSGFCookedValue **cooked,
+                                      GError **error);
 
 G_END_DECLS
 

@@ -74,6 +74,11 @@ struct _GSGFFlavorPrivate {
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
+static gboolean
+_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
+                              const GSGFRaw *raw, GSGFCookedValue **cooked,
+                              GError **error);
+
 typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
 
 static gsgf_cooked_constructor gsgf_c_handlers[26] = {
@@ -138,7 +143,7 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFFlavorPrivate));
+        klass->get_cooked_value = _gsgf_flavor_get_cooked_value;
 
         object_class->finalize = gsgf_flavor_finalize;
 }
@@ -158,7 +163,45 @@ gsgf_flavor_new (void)
         return self;
 }
 
+/**
+ * gsgf_flavor_get_cooked_value:
+ * @self: The #GSGFFlavor
+ * @id: The property id
+ * @raw: The #GSGFRaw to cook.
+ * @cooked: Location to store the cooked value
+ * @error: Optional #GError location or %NULL to ignore.
+ *
+ * Cook a #GSGFRaw into a #GSGFCooked.
+ *
+ * This function is internal and only interesting for implementors of new
+ * flavors.  A return value of %FALSE does not necessarily mean failure,
+ * but can also signify that the specific property id is not defined for
+ * the particular flavor.  Check @error for details.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
 gboolean
+gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const gchar *id,
+                             const GSGFRaw *raw, GSGFCookedValue **cooked,
+                             GError **error)
+{
+        if (!GSGF_IS_FLAVOR(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Invalid cast to GSGFFlavor"));
+                return FALSE;
+        }
+
+        if (!GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Method get_cooked_value not implemented"));
+                return FALSE;
+        }
+
+        return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, id, raw,
+                                                             cooked, error);
+}
+
+static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
