@@ -25,10 +25,13 @@ data/gibbon.schemas.in
 data/gibbon.xml
 libgsgf/gsgf-collection.c
 libgsgf/gsgf-cooked-value.c
+libgsgf/gsgf-flavor.c
 libgsgf/gsgf-node.c
 libgsgf/gsgf-number.c
 libgsgf/gsgf-property.c
+libgsgf/gsgf-raw.c
 libgsgf/gsgf-real.c
+libgsgf/gsgf-text.c
 libgsgf/libgsgf.c
 libgsgf/tests/test-empty.c
 libgsgf/tests/test-number.c
