@@ -23,17 +23,18 @@
 #include <libgsgf/gsgf-flavor.h>
 #include <libgsgf/gsgf-general-flavor.h>
 
-#include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-cooked-value.h>
-#include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-game-tree.h>
-#include <libgsgf/gsgf-node.h>
-#include <libgsgf/gsgf-number.h>
-#include <libgsgf/gsgf-property.h>
 #include <libgsgf/gsgf-raw.h>
+#include <libgsgf/gsgf-number.h>
 #include <libgsgf/gsgf-real.h>
 #include <libgsgf/gsgf-simple-text.h>
 #include <libgsgf/gsgf-text.h>
+
+#include <libgsgf/gsgf-collection.h>
+#include <libgsgf/gsgf-error.h>
+#include <libgsgf/gsgf-game-tree.h>
+#include <libgsgf/gsgf-node.h>
+#include <libgsgf/gsgf-property.h>
 
 #include <libgsgf/libgsgf.h>
 
