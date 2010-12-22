@@ -36,10 +36,11 @@ static volatile gsize libgsgf_flavors_init = 0;
 
 typedef struct _GSGFFlavorInfo {
         gchar *id;
+        GSGFFlavor * (*flavor_constructor) (void);
 } _GSGFFlavorInfo;
 
 static _GSGFFlavorInfo builtin_flavors[] = {
-                { "0" },
+                { "0", gsgf_flavor_new },
 };
 
 void
@@ -56,7 +57,7 @@ _libgsgf_init()
 
                 for (i = 0; i < sizeof builtin_flavors / sizeof builtin_flavors[0]; ++i) {
                         info = &builtin_flavors[i];
-                        flavor = gsgf_flavor_new();
+                        flavor = info->flavor_constructor();
 
                         g_hash_table_insert(_libgsgf_flavors, info->id, flavor);
                 }
