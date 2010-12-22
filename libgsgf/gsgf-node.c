@@ -259,8 +259,8 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
         GHashTableIter iter;
         gpointer key, value;
 
-        if (error)
-                error = NULL;
+        if (error && *error)
+                return FALSE;
 
         g_hash_table_iter_init(&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
