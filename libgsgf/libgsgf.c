@@ -36,11 +36,10 @@ static volatile gsize libgsgf_flavors_init = 0;
 
 typedef struct _GSGFFlavorInfo {
         gchar *id;
-        const char *name;
 } _GSGFFlavorInfo;
 
 static _GSGFFlavorInfo builtin_flavors[] = {
-                { "0", N_("Base Definitions and Types") },
+                { "0" },
 };
 
 void
@@ -49,7 +48,6 @@ _libgsgf_init()
         gsize i;
         _GSGFFlavorInfo *info;
         GSGFFlavor *flavor;
-        GSGFFlavor *parent = NULL;
 
         if (g_once_init_enter(&libgsgf_flavors_init)) {
                 _libgsgf_flavors = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -58,12 +56,9 @@ _libgsgf_init()
 
                 for (i = 0; i < sizeof builtin_flavors / sizeof builtin_flavors[0]; ++i) {
                         info = &builtin_flavors[i];
-                        flavor = gsgf_flavor_new(info->id, info->name, parent);
+                        flavor = gsgf_flavor_new();
 
                         g_hash_table_insert(_libgsgf_flavors, info->id, flavor);
-
-                        if (!parent)
-                                parent = flavor;
                 }
 
                 g_once_init_leave(&libgsgf_flavors_init, 1303);

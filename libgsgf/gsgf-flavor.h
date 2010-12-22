@@ -51,12 +51,9 @@ GType gsgf_flavor_get_type(void) G_GNUC_CONST;
 struct _GSGFFlavor
 {
         GObject parent_instance;
-
-        /*< private >*/
-        GSGFFlavorPrivate *priv;
 };
 
-GSGFFlavor *gsgf_flavor_new(const gchar *id, const gchar *name, const GSGFFlavor *parent);
+GSGFFlavor *gsgf_flavor_new(void);
 
 G_END_DECLS
 

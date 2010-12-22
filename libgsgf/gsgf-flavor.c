@@ -65,12 +65,7 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFFlavorPrivate {
-        const gchar *id;
-        const gchar *name;
-        const GSGFFlavor *parent;
-
-        /* GSGFCookedValue (*value_constructor) (const GSGFRaw *raw, GError **error); */
-        GHashTable *handlers;
+        gint dummy;
 };
 
 #define GSGF_FLAVOR_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -130,28 +125,11 @@ static gsgf_cooked_constructor * gsgf_handlers[26] = {
 static void
 gsgf_flavor_init(GSGFFlavor *self)
 {
-        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                        GSGF_TYPE_FLAVOR,
-                        GSGFFlavorPrivate);
-
-        self->priv->id = NULL;
-        self->priv->name = NULL;
-        self->priv->handlers = NULL;
 }
 
 static void
 gsgf_flavor_finalize(GObject *object)
 {
-        GSGFFlavor *self = GSGF_FLAVOR (object);
-
-        self->priv->id = NULL;
-
-        self->priv->name = NULL;
-
-        if (self->priv->handlers)
-                g_hash_table_destroy(self->priv->handlers);
-        self->priv->handlers = NULL;
-
         G_OBJECT_CLASS (gsgf_flavor_parent_class)->finalize(object);
 }
 
@@ -167,23 +145,15 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
 
 /**
  * gsgf_flavor_new:
- * @id: ID for the flavor.
- * @name: Human-readable name.
  *
  * Creates an empty #GSGFFlavor.
  *
  * Returns: The new #GSGFFlavor.
  */
 GSGFFlavor *
-gsgf_flavor_new (const gchar *id, const gchar *name, const GSGFFlavor *parent)
+gsgf_flavor_new (void)
 {
         GSGFFlavor *self = g_object_new(GSGF_TYPE_FLAVOR, NULL);
-
-        self->priv->id = id;
-        self->priv->name = name;
-        self->priv->handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                                     g_free, g_object_unref);
-        self->priv->parent = parent;
 
         return self;
 }
