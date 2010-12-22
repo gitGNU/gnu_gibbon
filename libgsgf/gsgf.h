@@ -24,6 +24,7 @@
 #include <libgsgf/gsgf-flavor-backgammon.h>
 
 #include <libgsgf/gsgf-move.h>
+#include <libgsgf/gsgf-move-backgammon.h>
 
 #include <libgsgf/gsgf-cooked-value.h>
 #include <libgsgf/gsgf-raw.h>
