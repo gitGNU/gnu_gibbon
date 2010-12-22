@@ -76,6 +76,54 @@ struct _GSGFFlavorPrivate {
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
+typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
+
+static gsgf_cooked_constructor gsgf_c_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
+static GSGFCookedValue *gsgf_flavor_gm_new(const GSGFRaw *raw, GError **error);
+static gsgf_cooked_constructor gsgf_g_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                gsgf_flavor_gm_new, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
+static gsgf_cooked_constructor * gsgf_handlers[26] = {
+                NULL,
+                NULL,
+                gsgf_c_handlers,
+                NULL,
+                NULL,
+                NULL,
+                gsgf_g_handlers,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+};
+
 static void
 gsgf_flavor_init(GSGFFlavor *self)
 {
@@ -142,16 +190,46 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
-        /* FIXME! */
+        gsgf_cooked_constructor constructor;
 
-        return NULL;
+        if (id[0] < 'A' || id[0] > 'Z' || id[1] < 'A' || id[1] > 'Z' || id[2] != 0)
+                return FALSE;
 
-        *cooked = gsgf_text_new_from_raw(raw, error);
+        if (!gsgf_handlers[id[0] - 'A'])
+                return FALSE;
+
+        constructor = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
+
+        if (!constructor)
+                return FALSE;
+
+        *cooked = constructor(raw, error);
 
         if (!*cooked) {
-                g_prefix_error(error, _("Property '%s':"), id);
+                g_prefix_error(error, _("Property '%s': "), id);
                 return FALSE;
         }
 
         return TRUE;
+}
+
+static
+GSGFCookedValue *gsgf_flavor_gm_new(const GSGFRaw *raw, GError **error)
+{
+        GSGFCookedValue *retval = gsgf_number_new_from_raw(raw, error);
+        GSGFNumber *number;
+
+        if (!retval)
+                return NULL;
+
+        number = GSGF_NUMBER(retval);
+        if (gsgf_number_get_value(number) < 1) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Value must be greater than 0 but is %lld"),
+                            gsgf_number_get_value(number));
+                g_object_unref(retval);
+                return NULL;
+        }
+
+        return retval;
 }
