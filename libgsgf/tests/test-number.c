@@ -58,19 +58,19 @@ test_success(void)
 {
         GSGFNumber *r;
         GError *error;
-        const gchar *value = "2503";
+        GSGFRaw *value = gsgf_raw_new("2503");
         gint64 expect = 2503;
         gint64 got;
 
-        r = _gsgf_number_new(value, &error);
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
         if (!r) {
                 if (error) {
                         fprintf(stderr, "Could not parse '%s': %s.\n",
-                                value, error->message);
+                                gsgf_raw_get_value(value, 0), error->message);
                         return -1;
                 }
                 fprintf(stderr, "Could not parse '%s': No error.\n",
-                        value);
+                        gsgf_raw_get_value(value, 0));
                 return -1;
         }
 
@@ -92,12 +92,12 @@ test_garbage(void)
         GSGFNumber *r;
         GError *error;
         GError *expect = NULL;
-        const gchar *value = "garbage";
+        GSGFRaw *value = gsgf_raw_new("garbage");
 
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
-                    _("Invalid number '%s'"), value);
+                    _("Invalid number '%s'"), gsgf_raw_get_value(value, 0));
 
-        r = _gsgf_number_new(value, &error);
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
 
         return expect_error_conditional(r == NULL,
                                         "Invalid number returns a value",
@@ -110,12 +110,13 @@ test_trailing_garbage(void)
         GSGFNumber *r;
         GError *error;
         GError *expect = NULL;
-        const gchar *value = "2503garbage";
+        GSGFRaw *value = gsgf_raw_new("2503garbage");
 
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
-                    _("Trailing garbage after number in '%s'"), value);
+                    _("Trailing garbage after number in '%s'"),
+                    gsgf_raw_get_value(value, 0));
 
-        r = _gsgf_number_new(value, &error);
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
 
         return expect_error_conditional(r == NULL,
                                         "Number with trailing garbage returns a value",

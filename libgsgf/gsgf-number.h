@@ -58,7 +58,8 @@ struct _GSGFNumber
         GSGFNumberPrivate *priv;
 };
 
-GSGFNumber* gsgf_number_new(gint64 value);
+GSGFNumber *gsgf_number_new(gint64 value);
+GSGFCookedValue *gsgf_number_new_from_raw(const GSGFRaw* raw, GError **error);
 void gsgf_number_set_value(GSGFNumber *self, gint64 value);
 gint64 gsgf_number_get_value(const GSGFNumber *self);
 

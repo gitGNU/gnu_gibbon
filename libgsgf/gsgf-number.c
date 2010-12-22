@@ -85,14 +85,32 @@ gsgf_number_new (gint64 value)
         return self;
 }
 
-GSGFNumber *
-_gsgf_number_new(const gchar *string, GError **error)
+/**
+ * gsgf_number_new_from_raw:
+ * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFNumber from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * Returns: The new #GSGFNumber or %NULL in case of an error.
+ */
+GSGFCookedValue *
+gsgf_number_new_from_raw(const GSGFRaw *raw, GError **error)
 {
         gchar *endptr;
         gint64 value;
+        const gchar *string;
 
         if (error)
                 *error = NULL;
+
+        if (1 != gsgf_raw_get_number_of_values(raw)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                            _("Only one value allowed for property"));
+                return NULL;
+        }
+        string = gsgf_raw_get_value(raw, 0);
 
         /* _gsgf_real_new implicitely resets errno.  We do the same explicitely.  */
         errno = 0;
@@ -117,7 +135,7 @@ _gsgf_number_new(const gchar *string, GError **error)
                 return NULL;
         }
 
-        return gsgf_number_new(value);
+        return GSGF_COOKED_VALUE(gsgf_number_new(value));
 }
 
 /**
@@ -146,3 +164,4 @@ gsgf_number_get_value(const GSGFNumber *self)
 {
         return self->priv->value;
 }
+

@@ -63,7 +63,6 @@ void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 
 /* Private constructors.  */
 GSGFReal *_gsgf_real_new(gchar *value, GError **error);
-GSGFNumber *_gsgf_number_new(gchar *value, GError **error);
 
 void _libgsgf_init();
 
