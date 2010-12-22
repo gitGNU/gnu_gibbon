@@ -39,6 +39,11 @@ test_collection(GSGFCollection *collection, GError *error)
         GList *nodes;
         GSGFNode *root_node;
 
+        if (error) {
+                fprintf(stderr, "%s: %s\n", filename, error->message);
+                return -1;
+        }
+
         game_trees = gsgf_collection_get_game_trees(collection);
         if (!game_trees) {
                 fprintf(stderr, "No game trees found.\n");
