@@ -85,7 +85,7 @@ GSGFNode *self, const gchar *id
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_property_cooked</NAME>
-<RETURNS>gpointer </RETURNS>
+<RETURNS>GSGFCookedValue *</RETURNS>
 const GSGFNode *self, const gchar *id 
 </FUNCTION>
 <MACRO>
@@ -219,6 +219,11 @@ struct _GSGFText
 const gchar *value 
 </FUNCTION>
 <FUNCTION>
+<NAME>gsgf_text_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue*</RETURNS>
+const GSGFRaw *raw, GError **error 
+</FUNCTION>
+<FUNCTION>
 <NAME>gsgf_text_set_value</NAME>
 <RETURNS>void </RETURNS>
 GSGFText *self, const gchar *value, gboolean copy 
@@ -243,7 +248,9 @@ typedef enum {
         GSGF_ERROR_PROPERTY_EXISTS = 5,
         GSGF_ERROR_EMPTY_PROPERTY = 6,
         GSGF_ERROR_INTERNAL_ERROR = 7,
-        GSGF_ERROR_INVALID_NUMBER = 8
+        GSGF_ERROR_INVALID_NUMBER = 8,
+        GSGF_ERROR_LIST_TOO_LONG = 9,
+        GSGF_ERROR_SEMANTIC_ERROR = 10
 } GSGFError;
 </ENUM>
 <FUNCTION>
@@ -447,7 +454,7 @@ struct _GSGFProperty
 <FUNCTION>
 <NAME>gsgf_property_get_value</NAME>
 <RETURNS>GSGFCookedValue *</RETURNS>
-const GSGFProperty* property, gsize i 
+const GSGFProperty* property 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLLECTION</NAME>
@@ -535,66 +542,6 @@ const GSGFCollection *collection, GOutputStream *out, gsize *bytes_written, gboo
 const GSGFCollection *collection 
 </FUNCTION>
 <MACRO>
-<NAME>GSGF_TYPE_GENERAL_FLAVOR</NAME>
-#define GSGF_TYPE_GENERAL_FLAVOR             (gsgf_general_flavor_get_type ())
-</MACRO>
-<MACRO>
-<NAME>GSGF_GENERAL_FLAVOR</NAME>
-#define GSGF_GENERAL_FLAVOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavor))
-</MACRO>
-<MACRO>
-<NAME>GSGF_GENERAL_FLAVOR_CLASS</NAME>
-#define GSGF_GENERAL_FLAVOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavorClass))
-</MACRO>
-<MACRO>
-<NAME>GSGF_IS_GENERAL_FLAVOR</NAME>
-#define GSGF_IS_GENERAL_FLAVOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_GENERAL_FLAVOR))
-</MACRO>
-<MACRO>
-<NAME>GSGF_IS_GENERAL_FLAVOR_CLASS</NAME>
-#define GSGF_IS_GENERAL_FLAVOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_GENERAL_FLAVOR))
-</MACRO>
-<MACRO>
-<NAME>GSGF_GENERAL_FLAVOR_GET_CLASS</NAME>
-#define GSGF_GENERAL_FLAVOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GENERAL_FLAVOR, GSGFGeneralFlavorClass))
-</MACRO>
-<STRUCT>
-<NAME>GSGFGeneralFlavorClass</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFGeneralFlavor</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFGeneralFlavorPrivate</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFGeneralFlavorClass</NAME>
-struct _GSGFGeneralFlavorClass
-{
-        GSGFFlavorClass parent_class;
-};
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_general_flavor_get_type</NAME>
-<RETURNS>GType </RETURNS>
-void 
-</FUNCTION>
-<STRUCT>
-<NAME>GSGFGeneralFlavor</NAME>
-struct _GSGFGeneralFlavor
-{
-        GSGFFlavor parent_instance;
-
-        /*< private >*/
-        GSGFGeneralFlavorPrivate *priv;
-};
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_general_flavor_new</NAME>
-<RETURNS>GSGFGeneralFlavor*</RETURNS>
-const gchar *id, const gchar *name, const GSGFGeneralFlavor *parent 
-</FUNCTION>
-<MACRO>
 <NAME>GSGF_TYPE_RAW</NAME>
 #define GSGF_TYPE_RAW             (gsgf_raw_get_type ())
 </MACRO>
@@ -655,14 +602,14 @@ struct _GSGFRaw
 const gchar *value 
 </FUNCTION>
 <FUNCTION>
-<NAME>gsgf_raw_set_value</NAME>
-<RETURNS>void </RETURNS>
-GSGFRaw *self, const gchar *value, gboolean copy 
+<NAME>gsgf_raw_get_number_of_values</NAME>
+<RETURNS>gsize </RETURNS>
+const GSGFRaw *raw 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_raw_get_value</NAME>
 <RETURNS>gchar *</RETURNS>
-const GSGFRaw *self 
+const GSGFRaw *self, gsize i 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_NUMBER</NAME>
@@ -721,8 +668,13 @@ struct _GSGFNumber
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_number_new</NAME>
-<RETURNS>GSGFNumber*</RETURNS>
+<RETURNS>GSGFNumber *</RETURNS>
 gint64 value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_number_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw* raw, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_number_set_value</NAME>
@@ -892,4 +844,9 @@ gboolean condition, const gchar *msg, GError *error, GError *expect
 <NAME>g_memory_stream_get_string</NAME>
 <RETURNS>gchar *</RETURNS>
 const GMemoryOutputStream *stream 
+</FUNCTION>
+<FUNCTION>
+<NAME>build_filename</NAME>
+<RETURNS>gchar *</RETURNS>
+const gchar *filename 
 </FUNCTION>

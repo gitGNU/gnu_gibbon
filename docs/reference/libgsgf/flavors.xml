@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE part PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+]>
+<part>
+  <title>SGF Flavors</title>
+  <para>
+    Both 
+    <link linkend="gsgf-node-get-property-cooked">gsgf_node_get_property_cooked()</link>
+    and
+    <link linkend="gsgf-property-get-value">gsgf_property_get_value()</link>
+    return a <link linkend="GSGFCookedValue">GSGFCookedValue</link>.  This is
+    not very useful unless you know the exact subtype.  The following sections
+    give an overview about the exact types returned by these functions, depending
+    on the particular flavor of SGF you use.      
+  </para>
+  <xi:include href="flavor-general.xml"/>
+</part>

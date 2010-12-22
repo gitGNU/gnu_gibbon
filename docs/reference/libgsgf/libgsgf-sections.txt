@@ -5,6 +5,10 @@ GSGFNodeClass
 GSGFNode
 GSGFNodePrivate
 gsgf_node_add_property
+gsgf_node_get_property
+gsgf_node_get_property_ids
+gsgf_node_remove_property
+gsgf_node_get_property_cooked
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -16,11 +20,70 @@ GSGF_NODE_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-real</FILE>
+<TITLE>GSGFReal</TITLE>
+GSGFRealClass
+GSGFReal
+GSGFRealPrivate
+gsgf_real_new
+gsgf_real_set_value
+gsgf_real_get_value
+<SUBSECTION Standard>
+GSGF_REAL
+GSGF_IS_REAL
+GSGF_TYPE_REAL
+gsgf_real_get_type
+GSGF_REAL_CLASS
+GSGF_IS_REAL_CLASS
+GSGF_REAL_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-text</FILE>
+<TITLE>GSGFText</TITLE>
+GSGFTextClass
+GSGFText
+GSGFTextPrivate
+gsgf_text_new
+gsgf_text_new_from_raw
+gsgf_text_set_value
+gsgf_text_get_value
+<SUBSECTION Standard>
+GSGF_TEXT
+GSGF_IS_TEXT
+GSGF_TYPE_TEXT
+gsgf_text_get_type
+GSGF_TEXT_CLASS
+GSGF_IS_TEXT_CLASS
+GSGF_TEXT_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-simple-text</FILE>
+<TITLE>GSGFSimpleText</TITLE>
+GSGFSimpleTextClass
+GSGFSimpleText
+GSGFSimpleTextPrivate
+gsgf_simple_text_new
+gsgf_simple_text_set_value
+gsgf_simple_text_get_value
+<SUBSECTION Standard>
+GSGF_SIMPLE_TEXT
+GSGF_IS_SIMPLE_TEXT
+GSGF_TYPE_SIMPLE_TEXT
+gsgf_simple_text_get_type
+GSGF_SIMPLE_TEXT_CLASS
+GSGF_IS_SIMPLE_TEXT_CLASS
+GSGF_SIMPLE_TEXT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-flavor</FILE>
 <TITLE>GSGFFlavor</TITLE>
 GSGFFlavorClass
 GSGFFlavor
 GSGFFlavorPrivate
+gsgf_flavor_new
 <SUBSECTION Standard>
 GSGF_FLAVOR
 GSGF_IS_FLAVOR
@@ -38,8 +101,7 @@ GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
 GSGFPropertyType
-gsgf_property_add_value
-gsgf_property_get_values
+gsgf_property_get_value
 <SUBSECTION Standard>
 GSGF_PROPERTY
 GSGF_IS_PROPERTY
@@ -61,6 +123,7 @@ gsgf_collection_parse_stream
 gsgf_collection_parse_file
 gsgf_collection_add_game_tree
 gsgf_collection_write_stream
+gsgf_collection_get_game_trees
 <SUBSECTION Standard>
 GSGF_COLLECTION
 GSGF_IS_COLLECTION
@@ -72,6 +135,62 @@ GSGF_COLLECTION_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-raw</FILE>
+<TITLE>GSGFRaw</TITLE>
+GSGFRawClass
+GSGFRaw
+GSGFRawPrivate
+gsgf_raw_new
+gsgf_raw_get_number_of_values
+gsgf_raw_get_value
+<SUBSECTION Standard>
+GSGF_RAW
+GSGF_IS_RAW
+GSGF_TYPE_RAW
+gsgf_raw_get_type
+GSGF_RAW_CLASS
+GSGF_IS_RAW_CLASS
+GSGF_RAW_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-number</FILE>
+<TITLE>GSGFNumber</TITLE>
+GSGFNumberClass
+GSGFNumber
+GSGFNumberPrivate
+gsgf_number_new
+gsgf_number_new_from_raw
+gsgf_number_set_value
+gsgf_number_get_value
+<SUBSECTION Standard>
+GSGF_NUMBER
+GSGF_IS_NUMBER
+GSGF_TYPE_NUMBER
+gsgf_number_get_type
+GSGF_NUMBER_CLASS
+GSGF_IS_NUMBER_CLASS
+GSGF_NUMBER_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-cooked-value</FILE>
+<TITLE>GSGFCookedValue</TITLE>
+GSGFCookedValueClass
+GSGFCookedValue
+GSGFCookedValuePrivate
+gsgf_cooked_value_write_stream
+<SUBSECTION Standard>
+GSGF_COOKED_VALUE
+GSGF_IS_COOKED_VALUE
+GSGF_TYPE_COOKED_VALUE
+gsgf_cooked_value_get_type
+GSGF_COOKED_VALUE_CLASS
+GSGF_IS_COOKED_VALUE_CLASS
+GSGF_COOKED_VALUE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-game-tree</FILE>
 <TITLE>GSGFGameTree</TITLE>
 GSGFGameTreeClass
@@ -80,7 +199,6 @@ GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
-gsgf_game_tree_write_stream
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
@@ -93,7 +211,8 @@ GSGF_GAME_TREE_GET_CLASS
 
 <SECTION>
 <FILE>libgsgf</FILE>
-libgsgf_init_library
+gsgf_util_read_simpletext
+gsgf_util_read_text
 </SECTION>
 
 <SECTION>
@@ -110,5 +229,7 @@ path
 test_collection
 expect_error
 expect_error_conditional
+g_memory_stream_get_string
+build_filename
 </SECTION>
 

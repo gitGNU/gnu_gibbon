@@ -25,8 +25,10 @@
     <xi:include href="xml/gsgf-game-tree.xml"/>
     <xi:include href="xml/gsgf-node.xml"/>
     <xi:include href="xml/gsgf-property.xml"/>
-    <xi:include href="xml/gsgf-flavor.xml"/>
     <xi:include href="xml/gsgf-error.xml"/>
     <xi:include href="xml/libgsgf.xml"/>
+    <xi:include href="xml/gsgf-flavor.xml"/>
   </part>
+ 
+  <xi:include href="flavors.xml"/>
 </book>

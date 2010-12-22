@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+]>
+<chapter>
+  <title>General SGF Properties</title>
+  <sect1>
+    <title>Root Properties</title>
+    <para>
+      Root properties are only allowed in the first node of a 
+      <link linkend="GSGFGameTree">GSGFGameTree</link>.
+    </para>
+
+    <sect2>
+      <title>GM (Game Type)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>.
+      </para>
+      <para>
+        The number must be a positive number greater than zero.  You can
+        get a list of well-known game types from
+        <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#GM</link>.
+      </para>
+    </sect2>
+  </sect1>
+</chapter>

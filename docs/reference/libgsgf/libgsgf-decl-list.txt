@@ -45,6 +45,7 @@ GSGFTextClass
 GSGFText
 GSGFTextPrivate
 gsgf_text_new
+gsgf_text_new_from_raw
 gsgf_text_set_value
 gsgf_text_get_value
 <SUBSECTION Standard>
@@ -134,30 +135,13 @@ GSGF_COLLECTION_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gsgf-general-flavor</FILE>
-<TITLE>GSGFGeneralFlavor</TITLE>
-GSGFGeneralFlavorClass
-GSGFGeneralFlavor
-GSGFGeneralFlavorPrivate
-gsgf_general_flavor_new
-<SUBSECTION Standard>
-GSGF_GENERAL_FLAVOR
-GSGF_IS_GENERAL_FLAVOR
-GSGF_TYPE_GENERAL_FLAVOR
-gsgf_general_flavor_get_type
-GSGF_GENERAL_FLAVOR_CLASS
-GSGF_IS_GENERAL_FLAVOR_CLASS
-GSGF_GENERAL_FLAVOR_GET_CLASS
-</SECTION>
-
-<SECTION>
 <FILE>gsgf-raw</FILE>
 <TITLE>GSGFRaw</TITLE>
 GSGFRawClass
 GSGFRaw
 GSGFRawPrivate
 gsgf_raw_new
-gsgf_raw_set_value
+gsgf_raw_get_number_of_values
 gsgf_raw_get_value
 <SUBSECTION Standard>
 GSGF_RAW
@@ -176,6 +160,7 @@ GSGFNumberClass
 GSGFNumber
 GSGFNumberPrivate
 gsgf_number_new
+gsgf_number_new_from_raw
 gsgf_number_set_value
 gsgf_number_get_value
 <SUBSECTION Standard>
@@ -245,5 +230,6 @@ test_collection
 expect_error
 expect_error_conditional
 g_memory_stream_get_string
+build_filename
 </SECTION>
 
