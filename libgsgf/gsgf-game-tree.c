@@ -291,8 +291,8 @@ _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
         GSGFFlavor *flavor;
         GList *iter;
 
-        if (error)
-                error = NULL;
+        if (error && *error)
+                return FALSE;
 
         node = GSGF_NODE(self->priv->nodes->data);
         gm_property = gsgf_node_get_property(node, "GM");
