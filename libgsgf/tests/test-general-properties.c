@@ -29,6 +29,7 @@
 char *filename = "general-properties.sgf";
 
 static gboolean test_prop_XY(const GSGFNode *node);
+static gboolean test_prop_CA(const GSGFNode *node);
 static gboolean test_prop_GM(const GSGFNode *node);
 
 int 
@@ -58,10 +59,13 @@ test_collection(GSGFCollection *collection, GError *error)
         }
         root_node = GSGF_NODE(nodes->data);
 
-        if (!test_prop_XY(root_node))
+        if (!test_prop_CA(root_node))
                 return -1;
 
         if (!test_prop_GM(root_node))
+                return -1;
+
+        if (!test_prop_XY(root_node))
                 return -1;
 
         return expect_error(error, NULL);
@@ -94,6 +98,32 @@ test_prop_XY(const GSGFNode *node)
         if (strcmp("Proprietary property #1", value)) {
                 fprintf(stderr, "Expected 'Proprietary property #1', got '%s'!\n",
                         value);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_CA(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "CA");
+        gchar *value;
+        gsize length;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'CA'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_SIMPLE_TEXT(cooked_value)) {
+                fprintf(stderr, "Root property 'CA' is not a GSGFSimpleText!\n");
+                return FALSE;
+        }
+
+        value = gsgf_simple_text_get_value(GSGF_SIMPLE_TEXT(cooked_value));
+        if (strcmp ('UTF-8', value)) {
+                fprintf(stderr, "CA: Expected 'UTF-8', got '%s'!\n", value);
                 return FALSE;
         }
 
