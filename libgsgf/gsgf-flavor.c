@@ -74,12 +74,15 @@ struct _GSGFFlavorPrivate {
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
+typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
+
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error);
 
-typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
+static GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw,
+                                                        GError **error);
 
 static gsgf_cooked_constructor gsgf_c_handlers[26] = {
                 gsgf_simple_text_new_from_raw, NULL, NULL, NULL, NULL, NULL,
@@ -89,11 +92,18 @@ static gsgf_cooked_constructor gsgf_c_handlers[26] = {
                 NULL, NULL,
 };
 
-static GSGFCookedValue *gsgf_flavor_gm_new(const GSGFRaw *raw, GError **error);
+static gsgf_cooked_constructor gsgf_f_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, gsgf_flavor_positive_number_new,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static gsgf_cooked_constructor gsgf_g_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                gsgf_flavor_gm_new, NULL, NULL, NULL, NULL, NULL,
+                gsgf_flavor_positive_number_new, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
@@ -104,7 +114,7 @@ static gsgf_cooked_constructor * gsgf_handlers[26] = {
                 gsgf_c_handlers,
                 NULL,
                 NULL,
-                NULL,
+                gsgf_f_handlers,
                 gsgf_g_handlers,
                 NULL,
                 NULL,
@@ -230,7 +240,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
 }
 
 static
-GSGFCookedValue *gsgf_flavor_gm_new(const GSGFRaw *raw, GError **error)
+GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw, GError **error)
 {
         GSGFCookedValue *retval = gsgf_number_new_from_raw(raw, error);
         GSGFNumber *number;

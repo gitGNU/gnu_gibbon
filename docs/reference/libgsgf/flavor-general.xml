@@ -13,18 +13,6 @@
     </para>
 
     <sect2>
-      <title>GM (Game Type)</title>
-      <para>
-        Type: <link linkend="GSGFNumber">GSGFNumber</link>.
-      </para>
-      <para>
-        The number must be a positive number greater than zero.  You can
-        get a list of well-known game types from
-        <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#GM</link>.
-      </para>
-    </sect2>
-
-    <sect2>
       <title>CA (Charset)</title>
       <para>
         Type: <link linken="GSGFSimpleText">GSGFSimpleText</link>
@@ -38,5 +26,30 @@
         See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#CA</link>.
       </para>
     </sect2>
+
+    <sect2>
+      <title>FF (File Format)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>.
+      </para>
+      <para>
+        The number must be a positive number greater than zero.  When
+        writing, this number will always be 4.  When reading, the
+        number is ignored.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>GM (Game Type)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>.
+      </para>
+      <para>
+        The number must be a positive number greater than zero.  You can
+        get a list of well-known game types from
+        <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#GM</link>.
+      </para>
+    </sect2>
+
   </sect1>
 </chapter>
