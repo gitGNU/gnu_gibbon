@@ -103,9 +103,30 @@ _gsgf_property_write_stream(const GSGFProperty *self,
                             GOutputStream *out, gsize *bytes_written,
                             GCancellable *cancellable, GError **error)
 {
-        return gsgf_cooked_value_write_stream(self->priv->value,
-                                              out, bytes_written,
-                                              cancellable, error);
+        gsize written_here;
+
+        *bytes_written = 0;
+
+        if (!g_output_stream_write_all(out, "[", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
+
+        if (!gsgf_cooked_value_write_stream(self->priv->value,
+                                            out, &written_here,
+                                            cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+
+        if (!g_output_stream_write_all(out, "]", 1, &written_here,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
 }
 
 gboolean

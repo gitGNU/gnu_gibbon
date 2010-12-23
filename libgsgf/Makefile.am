@@ -32,6 +32,7 @@ AM_CPPFLAGS =				\
 
 libgsgf_a_SOURCES = 			\
 	gsgf-collection.c		\
+	gsgf-compose.c			\
 	gsgf-cooked-value.c		\
 	gsgf-error.c			\
 	gsgf-flavor.c			\
@@ -52,6 +53,7 @@ libgsgf_a_SOURCES = 			\
 noinst_HEADERS =			\
 	gsgf.h				\
 	gsgf-collection.h		\
+	gsgf-compose.h			\
 	gsgf-cooked-value.h		\
 	gsgf-error.h			\
 	gsgf-flavor.h			\

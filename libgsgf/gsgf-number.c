@@ -41,6 +41,10 @@ struct _GSGFNumberPrivate {
 
 G_DEFINE_TYPE(GSGFNumber, gsgf_number, GSGF_TYPE_COOKED_VALUE)
 
+static gboolean gsgf_number_write_stream(const GSGFCookedValue *self,
+                                         GOutputStream *out, gsize *bytes_written,
+                                         GCancellable *cancellable, GError **error);
+
 static void
 gsgf_number_init(GSGFNumber *self)
 {
@@ -61,8 +65,11 @@ static void
 gsgf_number_class_init(GSGFNumberClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFCookedValueClass *cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
 
         g_type_class_add_private(klass, sizeof(GSGFNumberPrivate));
+
+        cooked_value_class->write_stream = gsgf_number_write_stream;
 
         object_class->finalize = gsgf_number_finalize;
 }
@@ -165,3 +172,25 @@ gsgf_number_get_value(const GSGFNumber *self)
         return self->priv->value;
 }
 
+static gboolean
+gsgf_number_write_stream(const GSGFCookedValue *_self,
+                         GOutputStream *out, gsize *bytes_written,
+                         GCancellable *cancellable, GError **error)
+{
+        gsize written_here;
+        GSGFNumber *self = GSGF_NUMBER(_self);
+        gchar *value;
+
+        *bytes_written = 0;
+
+        value = g_strdup_printf("%lld", gsgf_number_get_value(self));
+        if (!g_output_stream_write_all(out, value, strlen(value),
+                                       bytes_written,
+                                       cancellable, error)) {
+                *bytes_written += written_here;
+                return FALSE;
+        }
+        *bytes_written += written_here;
+
+        return TRUE;
+}

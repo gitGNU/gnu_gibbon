@@ -191,23 +191,9 @@ gsgf_text_write_stream(const GSGFCookedValue *_self,
 
         *bytes_written = 0;
 
-        if (!g_output_stream_write_all(out, "[", 1, &written_here,
-                                       cancellable, error)) {
-                *bytes_written += written_here;
-                return FALSE;
-        }
-        *bytes_written += written_here;
-
         value = gsgf_text_get_value(self);
         if (!g_output_stream_write_all(out, value, strlen(value),
                                        bytes_written,
-                                       cancellable, error)) {
-                *bytes_written += written_here;
-                return FALSE;
-        }
-        *bytes_written += written_here;
-
-        if (!g_output_stream_write_all(out, "]", 1, &written_here,
                                        cancellable, error)) {
                 *bytes_written += written_here;
                 return FALSE;

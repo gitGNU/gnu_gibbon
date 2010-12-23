@@ -117,7 +117,6 @@ gsgf_raw_get_value(const GSGFRaw *self, gsize i)
         return (gchar *) g_list_nth_data(self->priv->values, i);
 }
 
-/* FIXME! Raw values must not implement the serialization method! */
 static gboolean
 gsgf_raw_write_stream(const GSGFCookedValue *_self,
                       GOutputStream *out, gsize *bytes_written,
@@ -139,13 +138,6 @@ gsgf_raw_write_stream(const GSGFCookedValue *_self,
         }
 
         while (iter) {
-                if (!g_output_stream_write_all(out, "[", 1, &written_here,
-                                               cancellable, error)) {
-                        *bytes_written += written_here;
-                        return FALSE;
-                }
-                *bytes_written += written_here;
-
                 value = (gchar *) iter->data;
                 if (!g_output_stream_write_all(out, value, strlen(value),
                                                bytes_written,
@@ -155,14 +147,16 @@ gsgf_raw_write_stream(const GSGFCookedValue *_self,
                 }
                 *bytes_written += written_here;
 
-                if (!g_output_stream_write_all(out, "]", 1, &written_here,
-                                               cancellable, error)) {
-                        *bytes_written += written_here;
-                        return FALSE;
-                }
-                *bytes_written += written_here;
-
                 iter = iter->next;
+
+                if (iter) {
+                        if (!g_output_stream_write_all(out, "][", 2, &written_here,
+                                        cancellable, error)) {
+                                *bytes_written += written_here;
+                                return FALSE;
+                        }
+                        *bytes_written += written_here;
+                }
         }
 
         return TRUE;
