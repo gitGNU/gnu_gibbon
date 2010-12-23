@@ -18,6 +18,7 @@
 AUTOMAKE_OPTIONS = color-tests
 
 TESTS = test-convert			\
+	test-compose			\
 	test-empty 			\
 	test-full			\
 	test-minimal			\
@@ -46,6 +47,7 @@ check_PROGRAMS = $(TESTS)
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
 test_convert_SOURCES = lib.c main.c test-convert.c
+test_compose_SOURCES = lib.c test-compose.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
 test_general_properties_SOURCES = lib.c main.c test-general-properties.c
