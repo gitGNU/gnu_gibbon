@@ -82,7 +82,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
 typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
 
 static gsgf_cooked_constructor gsgf_c_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                gsgf_simple_text_new_from_raw, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,

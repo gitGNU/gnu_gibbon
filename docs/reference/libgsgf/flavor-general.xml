@@ -23,5 +23,20 @@
         <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#GM</link>.
       </para>
     </sect2>
+
+    <sect2>
+      <title>CA (Charset)</title>
+      <para>
+        Type: <link linken="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        The charset of the SGF file.  Note that this will always be the
+        string "UTF-8" because all SGF files are converted to UTF-8
+        by this library.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#CA</link>.
+      </para>
+    </sect2>
   </sect1>
 </chapter>
