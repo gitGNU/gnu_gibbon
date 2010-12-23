@@ -72,8 +72,6 @@ gsgf_text_class_init(GSGFTextClass *klass)
         GObjectClass* object_class = G_OBJECT_CLASS(klass);
         GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
 
-        gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
-
         g_type_class_add_private(klass, sizeof(GSGFTextPrivate));
 
         gsgf_cooked_value_class->write_stream = gsgf_text_write_stream;
