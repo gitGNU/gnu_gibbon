@@ -120,6 +120,7 @@ _gsgf_property_write_stream(const GSGFProperty *self,
                 *bytes_written += written_here;
                 return FALSE;
         }
+        *bytes_written += written_here;
 
         if (!g_output_stream_write_all(out, "]", 1, &written_here,
                                        cancellable, error)) {
@@ -127,6 +128,8 @@ _gsgf_property_write_stream(const GSGFProperty *self,
                 return FALSE;
         }
         *bytes_written += written_here;
+
+        return TRUE;
 }
 
 gboolean
