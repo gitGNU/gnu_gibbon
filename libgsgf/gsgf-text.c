@@ -181,24 +181,17 @@ gsgf_text_get_value(const GSGFText *self)
 }
 
 static gboolean
-gsgf_text_write_stream(const GSGFCookedValue *_self,
+gsgf_text_write_stream(const GSGFCookedValue *self,
                        GOutputStream *out, gsize *bytes_written,
                        GCancellable *cancellable, GError **error)
 {
-        gsize written_here;
-        GSGFText *self = GSGF_TEXT(_self);
         gchar *value;
 
         *bytes_written = 0;
 
-        value = gsgf_text_get_value(self);
-        if (!g_output_stream_write_all(out, value, strlen(value),
-                                       bytes_written,
-                                       cancellable, error)) {
-                *bytes_written += written_here;
-                return FALSE;
-        }
-        *bytes_written += written_here;
+        value = gsgf_text_get_value(GSGF_TEXT(self));
 
-        return TRUE;
+        return g_output_stream_write_all(out, value, strlen(value),
+                                         bytes_written,
+                                         cancellable, error);
 }
