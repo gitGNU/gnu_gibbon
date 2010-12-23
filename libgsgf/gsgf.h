@@ -32,6 +32,7 @@
 #include <libgsgf/gsgf-real.h>
 #include <libgsgf/gsgf-simple-text.h>
 #include <libgsgf/gsgf-text.h>
+#include <libgsgf/gsgf-compose.h>
 
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-error.h>
