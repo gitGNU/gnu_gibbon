@@ -76,6 +76,9 @@ gsgf_text_class_init(GSGFTextClass *klass)
 
         gsgf_cooked_value_class->write_stream = gsgf_text_write_stream;
 
+        klass->get_value = NULL;
+        klass->set_value = NULL;
+
         object_class->finalize = gsgf_text_finalize;
 }
 
@@ -92,7 +95,8 @@ gsgf_text_new (const gchar *value)
 {
         GSGFText *self = g_object_new(GSGF_TYPE_TEXT, NULL);
 
-        self->priv->value = g_strdup(value);
+        if (value)
+                self->priv->value = g_strdup(value);
 
         return self;
 }
@@ -142,13 +146,19 @@ void
 gsgf_text_set_value(GSGFText *self, const gchar *value,
                     gboolean copy)
 {
-        if (self->priv->value)
-                g_free(self->priv->value);
+        g_return_if_fail(GSGF_IS_TEXT(self));
 
-        if (copy)
-                self->priv->value = g_strdup(value);
-        else
-                self->priv->value = (gchar *) value;
+        if (GSGF_TEXT_GET_CLASS(self)->set_value) {
+                GSGF_TEXT_GET_CLASS(self)->set_value(self, value, copy);
+        } else {
+                if (self->priv->value)
+                        g_free(self->priv->value);
+
+                if (copy)
+                        self->priv->value = g_strdup(value);
+                else
+                        self->priv->value = (gchar *) value;
+        }
 }
 
 /**
@@ -162,6 +172,11 @@ gsgf_text_set_value(GSGFText *self, const gchar *value,
 gchar *
 gsgf_text_get_value(const GSGFText *self)
 {
+        g_return_val_if_fail(GSGF_IS_TEXT(self), NULL);
+
+        if (GSGF_TEXT_GET_CLASS(self)->get_value)
+                return GSGF_TEXT_GET_CLASS(self)->get_value(self);
+
         return self->priv->value;
 }
 
@@ -172,6 +187,7 @@ gsgf_text_write_stream(const GSGFCookedValue *_self,
 {
         gsize written_here;
         GSGFText *self = GSGF_TEXT(_self);
+        gchar *value;
 
         *bytes_written = 0;
 
@@ -182,8 +198,8 @@ gsgf_text_write_stream(const GSGFCookedValue *_self,
         }
         *bytes_written += written_here;
 
-        if (!g_output_stream_write_all(out, self->priv->value,
-                                       strlen(self->priv->value),
+        value = gsgf_text_get_value(self);
+        if (!g_output_stream_write_all(out, value, strlen(value),
                                        bytes_written,
                                        cancellable, error)) {
                 *bytes_written += written_here;

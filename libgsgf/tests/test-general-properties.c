@@ -121,7 +121,7 @@ test_prop_CA(const GSGFNode *node)
                 return FALSE;
         }
 
-        value = gsgf_simple_text_get_value(GSGF_SIMPLE_TEXT(cooked_value));
+        value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
         if (strcmp ("UTF-8", value)) {
                 fprintf(stderr, "CA: Expected 'UTF-8', got '%s'!\n", value);
                 return FALSE;

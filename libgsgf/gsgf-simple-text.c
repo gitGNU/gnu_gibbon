@@ -30,34 +30,17 @@
 
 #include <libgsgf/gsgf.h>
 
-struct _GSGFSimpleTextPrivate {
-        gchar *value;
-};
-
-#define GSGF_SIMPLE_TEXT_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                      GSGF_TYPE_SIMPLE_TEXT,           \
-                                      GSGFSimpleTextPrivate))
-
 G_DEFINE_TYPE(GSGFSimpleText, gsgf_simple_text, GSGF_TYPE_TEXT)
 
 static void
 gsgf_simple_text_init(GSGFSimpleText *self)
 {
-        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                        GSGF_TYPE_SIMPLE_TEXT,
-                        GSGFSimpleTextPrivate);
-
-        self->priv->value = NULL;
 }
 
 static void
 gsgf_simple_text_finalize(GObject *object)
 {
         GSGFSimpleText *self = GSGF_SIMPLE_TEXT(object);
-
-        if (self->priv->value)
-                g_free(self->priv->value);
-        self->priv->value = NULL;
 
         G_OBJECT_CLASS (gsgf_simple_text_parent_class)->finalize(object);
 }
@@ -66,8 +49,6 @@ static void
 gsgf_simple_text_class_init(GSGFSimpleTextClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
-
-        g_type_class_add_private(klass, sizeof(GSGFSimpleTextPrivate));
 
         object_class->finalize = gsgf_simple_text_finalize;
 }
@@ -85,43 +66,39 @@ gsgf_simple_text_new (const gchar *value)
 {
         GSGFSimpleText *self = g_object_new(GSGF_TYPE_SIMPLE_TEXT, NULL);
 
-        self->priv->value = g_strdup(value);
+        gsgf_text_set_value(GSGF_TEXT(self), value, TRUE);
 
         return self;
 }
 
 /**
- * gsgf_simple_text_set_value:
- * @self: The #GSGFSimpleText.
- * @value: The new value to store.
- * @copy: Flag that indicates whether to create a copy of the data.
+ * gsgf_simple_text_new_from_raw:
+ * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Stores a new value in a #GSGFSimpleText.  If @copy is %TRUE, a copy is
- * stored.  If it is %FALSE the @value is stored directly.
+ * Creates a new #GSGFSimpleText from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * Returns: The new #GSGFSimpleText or %NULL in case of an error.
  */
-void
-gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
-                           gboolean copy)
+GSGFCookedValue *
+gsgf_simple_text_new_from_raw (const GSGFRaw *raw, GError **error)
 {
-        if (self->priv->value)
-                g_free(self->priv->value);
+        gsize list_length = gsgf_raw_get_number_of_values(raw);
+        gchar *value;
 
-        if (copy)
-                self->priv->value = g_strdup(value);
-        else
-                self->priv->value = (gchar *) value;
-}
+        if (!list_length) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
+                            _("Property without a value!"));
+                return NULL;
+        } else if (list_length != 1) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                            _("A simple text property may only have one value, not %u!"),
+                            list_length);
+                return NULL;
+        }
 
-/**
- * gsgf_simple_text_get_value:
- * @self: The #GSGFSimpleText.
- *
- * Retrieve the value stored in a #GSGFSimpleText.
- *
- * Returns: the value stored.
- */
-gchar *
-gsgf_simple_text_get_value(const GSGFSimpleText *self)
-{
-        return self->priv->value;
+        value = gsgf_raw_get_value(raw, 0);
+
+        return GSGF_COOKED_VALUE(gsgf_simple_text_new(value));
 }

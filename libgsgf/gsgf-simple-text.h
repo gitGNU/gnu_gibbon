@@ -53,15 +53,10 @@ GType gsgf_simple_text_get_type(void) G_GNUC_CONST;
 struct _GSGFSimpleText
 {
         GSGFText parent_instance;
-
-        /*< private >*/
-        GSGFSimpleTextPrivate *priv;
 };
 
 GSGFSimpleText* gsgf_simple_text_new(const gchar *value);
-void gsgf_simple_text_set_value(GSGFSimpleText *self, const gchar *value,
-                                gboolean copy);
-gchar *gsgf_simple_text_get_value(const GSGFSimpleText *self);
+GSGFCookedValue* gsgf_simple_text_new_from_raw(const GSGFRaw *raw, GError **error);
 
 G_END_DECLS
 

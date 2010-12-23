@@ -46,6 +46,9 @@ typedef struct _GSGFTextPrivate GSGFTextPrivate;
 struct _GSGFTextClass
 {
         GSGFCookedValueClass parent_class;
+
+        void (*set_value) (GSGFText *self, const gchar *value, gboolean copy);
+        gchar * (*get_value) (const GSGFText *self);
 };
 
 GType gsgf_text_get_type(void) G_GNUC_CONST;

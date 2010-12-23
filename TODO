@@ -24,4 +24,3 @@
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
 - Check that a node cannot contain the same property twice.
-- Make GSGFSimpleText really inherit from GSGFText.
