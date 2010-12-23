@@ -30,6 +30,7 @@ char *filename = "general-properties.sgf";
 
 static gboolean test_prop_XY(const GSGFNode *node);
 static gboolean test_prop_CA(const GSGFNode *node);
+static gboolean test_prop_FF(const GSGFNode *node);
 static gboolean test_prop_GM(const GSGFNode *node);
 
 int 
@@ -60,6 +61,9 @@ test_collection(GSGFCollection *collection, GError *error)
         root_node = GSGF_NODE(nodes->data);
 
         if (!test_prop_CA(root_node))
+                return -1;
+
+        if (!test_prop_FF(root_node))
                 return -1;
 
         if (!test_prop_GM(root_node))
@@ -124,6 +128,32 @@ test_prop_CA(const GSGFNode *node)
         value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
         if (strcmp ("UTF-8", value)) {
                 fprintf(stderr, "CA: Expected 'UTF-8', got '%s'!\n", value);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_FF(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "FF");
+        gint value;
+        gsize length;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'FF'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_NUMBER(cooked_value)) {
+                fprintf(stderr, "Root property 'FF' is not a GSGFNumber!\n");
+                return FALSE;
+        }
+
+        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
+        if (4 != value) {
+                fprintf(stderr, "FF: Expected 4, got %d!\n", value);
                 return FALSE;
         }
 
