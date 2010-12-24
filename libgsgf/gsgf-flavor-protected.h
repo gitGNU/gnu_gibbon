@@ -36,6 +36,8 @@ struct _GSGFFlavorTypeDef {
 
 typedef struct _GSGFFlavorTypeDef GSGFFlavorTypeDef;
 
+gboolean gsgf_flavor_is_positive_number(const GSGFCookedValue *cooked, GError **error);
+
 G_END_DECLS
 
 #endif

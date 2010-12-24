@@ -75,17 +75,16 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
 
 static GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw,
                                                         GError **error);
-
 GSGFFlavorTypeDef gsgf_flavor_CA = {
                 gsgf_simple_text_new_from_raw, NULL
 };
 
 GSGFFlavorTypeDef gsgf_flavor_FF = {
-                gsgf_flavor_positive_number_new, NULL
+                gsgf_number_new_from_raw, gsgf_flavor_is_positive_number,
 };
 
 GSGFFlavorTypeDef gsgf_flavor_GM = {
-                gsgf_flavor_positive_number_new, NULL
+                gsgf_number_new_from_raw, gsgf_flavor_is_positive_number,
 };
 
 static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
@@ -240,26 +239,26 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                 return FALSE;
         }
 
+        if (def->constraint && !def->constraint(*cooked, error)) {
+                g_prefix_error(error, _("Property '%s': "), id);
+                g_object_unref(*cooked);
+                return FALSE;
+        }
+
         return TRUE;
 }
 
-static
-GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw, GError **error)
+gboolean
+gsgf_flavor_is_positive_number(const GSGFCookedValue *value, GError **error)
 {
-        GSGFCookedValue *retval = gsgf_number_new_from_raw(raw, error);
-        GSGFNumber *number;
+        GSGFNumber *number = GSGF_NUMBER(value);
 
-        if (!retval)
-                return NULL;
-
-        number = GSGF_NUMBER(retval);
         if (gsgf_number_get_value(number) < 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Value must be greater than 0 but is %lld"),
                             gsgf_number_get_value(number));
-                g_object_unref(retval);
-                return NULL;
+                return FALSE;
         }
 
-        return retval;
+        return TRUE;
 }
