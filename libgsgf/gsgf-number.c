@@ -177,7 +177,6 @@ gsgf_number_write_stream(const GSGFCookedValue *_self,
                          GOutputStream *out, gsize *bytes_written,
                          GCancellable *cancellable, GError **error)
 {
-        gsize written_here;
         GSGFNumber *self = GSGF_NUMBER(_self);
         gchar *value;
 
@@ -186,11 +185,8 @@ gsgf_number_write_stream(const GSGFCookedValue *_self,
         value = g_strdup_printf("%lld", gsgf_number_get_value(self));
         if (!g_output_stream_write_all(out, value, strlen(value),
                                        bytes_written,
-                                       cancellable, error)) {
-                *bytes_written += written_here;
+                                       cancellable, error))
                 return FALSE;
-        }
-        *bytes_written += written_here;
 
         return TRUE;
 }
