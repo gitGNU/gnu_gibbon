@@ -64,17 +64,9 @@
 
 #include <libgsgf/gsgf.h>
 
-struct _GSGFFlavorPrivate {
-        gint dummy;
-};
-
-#define GSGF_FLAVOR_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                      GSGF_TYPE_FLAVOR,           \
-                                      GSGFFlavorPrivate))
+#include "gsgf-flavor-protected.h"
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
-
-typedef GSGFCookedValue * (*gsgf_cooked_constructor) (const GSGFRaw *raw, GError **error);
 
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
@@ -84,31 +76,43 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
 static GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw,
                                                         GError **error);
 
-static gsgf_cooked_constructor gsgf_c_handlers[26] = {
-                gsgf_simple_text_new_from_raw, NULL, NULL, NULL, NULL, NULL,
+GSGFFlavorTypeDef gsgf_flavor_CA = {
+                gsgf_simple_text_new_from_raw, NULL
+};
+
+GSGFFlavorTypeDef gsgf_flavor_FF = {
+                gsgf_flavor_positive_number_new, NULL
+};
+
+GSGFFlavorTypeDef gsgf_flavor_GM = {
+                gsgf_flavor_positive_number_new, NULL
+};
+
+static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
+                &gsgf_flavor_CA, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
 
-static gsgf_cooked_constructor gsgf_f_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, gsgf_flavor_positive_number_new,
+static GSGFFlavorTypeDef *gsgf_f_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_FF,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
 
-static gsgf_cooked_constructor gsgf_g_handlers[26] = {
+static GSGFFlavorTypeDef *gsgf_g_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                gsgf_flavor_positive_number_new, NULL, NULL, NULL, NULL, NULL,
+                &gsgf_flavor_GM, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
 
-static gsgf_cooked_constructor * gsgf_handlers[26] = {
+static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 NULL,
                 NULL,
                 gsgf_c_handlers,
@@ -216,7 +220,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
-        gsgf_cooked_constructor constructor;
+        GSGFFlavorTypeDef* def;
 
         if (id[0] < 'A' || id[0] > 'Z' || id[1] < 'A' || id[1] > 'Z' || id[2] != 0)
                 return FALSE;
@@ -224,12 +228,12 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
         if (!gsgf_handlers[id[0] - 'A'])
                 return FALSE;
 
-        constructor = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
+        def = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
 
-        if (!constructor)
+        if (!def)
                 return FALSE;
 
-        *cooked = constructor(raw, error);
+        *cooked = def->constructor(raw, error);
 
         if (!*cooked) {
                 g_prefix_error(error, _("Property '%s': "), id);

@@ -58,6 +58,7 @@ noinst_HEADERS =			\
 	gsgf-error.h			\
 	gsgf-flavor.h			\
 	gsgf-flavor-backgammon.h	\
+	gsgf-flavor-protected.h		\
 	gsgf-game-tree.h		\
 	gsgf-move.h			\
 	gsgf-move-backgammon.h		\

@@ -48,7 +48,7 @@ struct _GSGFFlavorClass
         GObjectClass parent_class;
 
         gboolean (*get_cooked_value) (const GSGFFlavor *flavor,
-                                      const gchar *id, struct _GSGFRaw *raw,
+                                      const gchar *id, const struct _GSGFRaw *raw,
                                       struct _GSGFCookedValue **cooked,
                                       GError **error);
 };

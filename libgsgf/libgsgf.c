@@ -30,6 +30,7 @@
 #include <gsgf.h>
 
 #include "gsgf-private.h"
+#include "gsgf-flavor-protected.h"
 
 GHashTable *_libgsgf_flavors = NULL;
 static volatile gsize libgsgf_flavors_init = 0;
