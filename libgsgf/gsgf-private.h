@@ -30,7 +30,7 @@ struct _GSGFFlavor;
 G_BEGIN_DECLS
 
 GSGFGameTree *_gsgf_game_tree_new(void);
-GSGFNode *_gsgf_node_new(void);
+GSGFNode *_gsgf_node_new(GSGFNode *previous);
 GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);
 
 gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,

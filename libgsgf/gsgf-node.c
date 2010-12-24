@@ -33,6 +33,7 @@
 
 struct _GSGFNodePrivate {
         GHashTable *properties;
+        GSGFNode *previous;
 };
 
 #define GSGF_NODE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -48,6 +49,7 @@ gsgf_node_init(GSGFNode *self)
 
         self->priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                        g_free, g_object_unref);
+        self->priv->previous = NULL;
 }
 
 static void
@@ -73,9 +75,11 @@ gsgf_node_class_init(GSGFNodeClass *klass)
 }
 
 GSGFNode *
-_gsgf_node_new()
+_gsgf_node_new(GSGFNode *previous)
 {
         GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
+
+        self->priv->previous = previous;
 
         return self;
 }
@@ -269,4 +273,18 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
         }
 
         return TRUE;
+}
+
+/**
+ * gsgf_node_get_previous_node:
+ * @self: a #GSGFNode.
+ *
+ * Get the previous #GSGFNode sibling of this #GSGFNode.
+ *
+ * Returns: The previous sibling as a #GSGFNode or %NULL.
+ */
+GSGFNode *
+gsgf_node_get_previous_node(const GSGFNode *self)
+{
+        return self->priv->previous;
 }
