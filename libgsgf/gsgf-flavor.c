@@ -76,15 +76,21 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
 static GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw,
                                                         GError **error);
 GSGFFlavorTypeDef gsgf_flavor_CA = {
-                gsgf_simple_text_new_from_raw, NULL
+                gsgf_simple_text_new_from_raw, {NULL}
 };
 
 GSGFFlavorTypeDef gsgf_flavor_FF = {
-                gsgf_number_new_from_raw, gsgf_flavor_is_positive_number,
+                gsgf_number_new_from_raw, {
+                                gsgf_flavor_is_positive_number,
+                                NULL
+                }
 };
 
 GSGFFlavorTypeDef gsgf_flavor_GM = {
-                gsgf_number_new_from_raw, gsgf_flavor_is_positive_number,
+                gsgf_number_new_from_raw, {
+                                gsgf_flavor_is_positive_number,
+                                NULL
+                }
 };
 
 static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
@@ -219,7 +225,9 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
-        GSGFFlavorTypeDef* def;
+        GSGFFlavorTypeDef *def;
+        GSGFCookedConstraint *constraint;
+        gsize i;
 
         if (id[0] < 'A' || id[0] > 'Z' || id[1] < 'A' || id[1] > 'Z' || id[2] != 0)
                 return FALSE;
@@ -239,12 +247,16 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
                 return FALSE;
         }
 
-        if (def->constraint && !def->constraint(*cooked, error)) {
-                g_prefix_error(error, _("Property '%s': "), id);
-                g_object_unref(*cooked);
-                return FALSE;
-        }
+        constraint = def->constraints;
 
+        while (*constraint) {
+                if (!(*constraint)(*cooked, error)) {
+                        g_prefix_error(error, _("Property '%s': "), id);
+                        g_object_unref(*cooked);
+                        return FALSE;
+                }
+                ++constraint;
+        }
         return TRUE;
 }
 
