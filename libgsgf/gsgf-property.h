@@ -63,6 +63,8 @@ struct _GSGFProperty
         GSGFPropertyPrivate *priv;
 };
 
+const gchar *gsgf_property_get_id(const GSGFProperty *property);
+GSGFNode *gsgf_property_get_node(const GSGFProperty *property);
 GSGFCookedValue *gsgf_property_get_value(const GSGFProperty* property);
 
 G_END_DECLS

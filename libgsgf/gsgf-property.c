@@ -156,6 +156,21 @@ gsgf_property_get_value(const GSGFProperty *property)
         return property->priv->value;
 }
 
+/**
+ * gsgf_property_get_id:
+ *
+ * @property: the #GSGFProperty.
+ *
+ * Retrieve the id of a property.
+ *
+ * Returns: Returns the id of the property.
+ */
+const gchar *
+gsgf_property_get_id(const GSGFProperty *property)
+{
+        return property->priv->id;
+}
+
 gboolean
 _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
 {
@@ -170,7 +185,7 @@ _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError
         if (error && *error)
                 return FALSE;
 
-        if (gsgf_flavor_get_cooked_value(flavor, self->priv->id,
+        if (gsgf_flavor_get_cooked_value(flavor, self,
                                          GSGF_RAW(self->priv->value),
                                          &cooked, error)) {
                 g_object_unref(self->priv->value);

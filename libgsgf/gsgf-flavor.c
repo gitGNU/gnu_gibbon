@@ -69,7 +69,7 @@
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
 static gboolean
-_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
+_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error);
 
@@ -200,7 +200,7 @@ gsgf_flavor_new (void)
  * Returns: %TRUE for success, %FALSE for failure.
  */
 gboolean
-gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const gchar *id,
+gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const GSGFProperty *property,
                              const GSGFRaw *raw, GSGFCookedValue **cooked,
                              GError **error)
 {
@@ -216,19 +216,21 @@ gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const gchar *id,
                 return FALSE;
         }
 
-        return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, id, raw,
+        return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, property, raw,
                                                              cooked, error);
 }
 
 static gboolean
-_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const gchar *id,
+_gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
         GSGFFlavorTypeDef *def;
         GSGFCookedConstraint *constraint;
         gsize i;
+        const gchar *id;
 
+        id = gsgf_property_get_id(property);
         if (id[0] < 'A' || id[0] > 'Z' || id[1] < 'A' || id[1] > 'Z' || id[2] != 0)
                 return FALSE;
 
