@@ -73,22 +73,25 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error);
 
-static GSGFCookedValue *gsgf_flavor_positive_number_new(const GSGFRaw *raw,
-                                                        GError **error);
 GSGFFlavorTypeDef gsgf_flavor_CA = {
-                gsgf_simple_text_new_from_raw, {NULL}
+                gsgf_simple_text_new_from_raw, {
+                                gsgf_constraint_is_root_property,
+                                NULL
+                }
 };
 
 GSGFFlavorTypeDef gsgf_flavor_FF = {
                 gsgf_number_new_from_raw, {
-                                gsgf_flavor_is_positive_number,
+                                gsgf_constraint_is_positive_number,
+                                gsgf_constraint_is_root_property,
                                 NULL
                 }
 };
 
 GSGFFlavorTypeDef gsgf_flavor_GM = {
                 gsgf_number_new_from_raw, {
-                                gsgf_flavor_is_positive_number,
+                                gsgf_constraint_is_positive_number,
+                                gsgf_constraint_is_root_property,
                                 NULL
                 }
 };
@@ -252,7 +255,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         constraint = def->constraints;
 
         while (*constraint) {
-                if (!(*constraint)(*cooked, error)) {
+                if (!(*constraint)(*cooked, property, error)) {
                         g_prefix_error(error, _("Property '%s': "), id);
                         g_object_unref(*cooked);
                         return FALSE;
@@ -263,7 +266,8 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
 }
 
 gboolean
-gsgf_flavor_is_positive_number(const GSGFCookedValue *value, GError **error)
+gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
+                                   const GSGFProperty *property, GError **error)
 {
         GSGFNumber *number = GSGF_NUMBER(value);
 
@@ -271,6 +275,22 @@ gsgf_flavor_is_positive_number(const GSGFCookedValue *value, GError **error)
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Value must be greater than 0 but is %lld"),
                             gsgf_number_get_value(number));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+gsgf_constraint_is_root_property(const GSGFCookedValue *value,
+                                 const GSGFProperty *property, GError **error)
+{
+        GSGFNode *node = gsgf_property_get_node(property);
+        GSGFNode *previous = gsgf_node_get_previous_node(node);
+
+        if (previous) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Property only allowed in root node"));
                 return FALSE;
         }
 

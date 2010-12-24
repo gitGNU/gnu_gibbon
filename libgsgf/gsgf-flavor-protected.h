@@ -27,7 +27,9 @@ extern GHashTable *_libgsgf_flavors;
 G_BEGIN_DECLS
 
 typedef GSGFCookedValue * (*GSGFCookedConstructor) (const GSGFRaw *raw, GError **error);
-typedef gboolean (*GSGFCookedConstraint) (const GSGFCookedValue *cooked, GError **error);
+typedef gboolean (*GSGFCookedConstraint) (const GSGFCookedValue *cooked,
+                                          const GSGFProperty *property,
+                                          GError **error);
 
 struct _GSGFFlavorTypeDef {
         GSGFCookedConstructor constructor;
@@ -36,7 +38,10 @@ struct _GSGFFlavorTypeDef {
 
 typedef struct _GSGFFlavorTypeDef GSGFFlavorTypeDef;
 
-gboolean gsgf_flavor_is_positive_number(const GSGFCookedValue *cooked, GError **error);
+gboolean gsgf_constraint_is_positive_number(const GSGFCookedValue *cooked,
+                                            const GSGFProperty *property, GError **error);
+gboolean gsgf_constraint_is_root_property(const GSGFCookedValue *cooked,
+                                          const GSGFProperty *property, GError **error);
 
 G_END_DECLS
 

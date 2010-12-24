@@ -281,7 +281,7 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
  *
  * Get the previous #GSGFNode sibling of this #GSGFNode.
  *
- * Returns: The previous sibling as a #GSGFNode or %NULL.
+ * Returns: The previous sibling as a #GSGFNode or %NULL for the root node.
  */
 GSGFNode *
 gsgf_node_get_previous_node(const GSGFNode *self)

@@ -121,7 +121,9 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GSGFNode *node = _gsgf_node_new(self);
+        GList *last = g_list_last(self->priv->nodes);
+        GSGFNode *previous_node = last ? GSGF_NODE(last->data) : NULL;
+        GSGFNode *node = _gsgf_node_new(previous_node);
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 

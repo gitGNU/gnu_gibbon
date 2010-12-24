@@ -148,7 +148,6 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 
 /**
  * gsgf_property_get_value:
- *
  * @property: the #GSGFProperty.
  * @index: Index of the element.
  *
@@ -164,7 +163,6 @@ gsgf_property_get_value(const GSGFProperty *property)
 
 /**
  * gsgf_property_get_id:
- *
  * @property: the #GSGFProperty.
  *
  * Retrieve the id of a property.
@@ -175,6 +173,20 @@ const gchar *
 gsgf_property_get_id(const GSGFProperty *property)
 {
         return property->priv->id;
+}
+
+/**
+ * gsgf_property_get_node:
+ * @property: the #GSGFProperty.
+ *
+ * Retrieve the #GSGFNode that this #GSGFProperty belongs to.
+ *
+ * Returns: Returns the #GSGFNode.
+ */
+GSGFNode *
+gsgf_property_get_node(const GSGFProperty *property)
+{
+        return property->priv->node;
 }
 
 gboolean
