@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 GSGFGameTree *_gsgf_game_tree_new(void);
 GSGFNode *_gsgf_node_new(void);
-GSGFProperty *_gsgf_property_new(const gchar *id);
+GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);
 
 gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
                                       GOutputStream *out, gsize *bytes_written,

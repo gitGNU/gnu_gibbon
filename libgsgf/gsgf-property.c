@@ -35,6 +35,8 @@ struct _GSGFPropertyPrivate {
         gchar *id;
 
         GSGFCookedValue *value;
+
+        GSGFNode *node;
 };
 
 #define GSGF_PROPERTY_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -51,6 +53,7 @@ gsgf_property_init(GSGFProperty *self)
 
         self->priv->id = NULL;
         self->priv->value = NULL;
+        self->priv->node = NULL;
 }
 
 static void
@@ -81,19 +84,22 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
 }
 
 /**
- * gsgf_property_new:
+ * _gsgf_property_new:
+ * @id: The id of the property.
+ * @node: The node containing this property.
  *
  * Build an empty #GSGFProperty in memory.  The function cannot fail.
  *
  * Returns: An empty #GSGFProperty.
  */
 GSGFProperty *
-_gsgf_property_new(const gchar *id)
+_gsgf_property_new(const gchar *id, GSGFNode *node)
 {
         GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
         self->priv->id = g_strdup(id);
         self->priv->value = GSGF_COOKED_VALUE(gsgf_raw_new(NULL));
+        self->priv->node = node;
 
         return self;
 }

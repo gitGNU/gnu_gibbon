@@ -166,7 +166,7 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
                 ++ptr;
         }
 
-        property = _gsgf_property_new(id);
+        property = _gsgf_property_new(id, self);
 
         g_hash_table_insert(self->priv->properties, g_strdup(id), property);
 
