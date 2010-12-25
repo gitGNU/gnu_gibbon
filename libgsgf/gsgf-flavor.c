@@ -78,6 +78,7 @@ static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error)
 GSGFFlavorTypeDef gsgf_flavor_AP = {
                 gsgf_AP_new_from_raw, {
                                 gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
                                 NULL
                 }
 };
@@ -85,6 +86,7 @@ GSGFFlavorTypeDef gsgf_flavor_AP = {
 GSGFFlavorTypeDef gsgf_flavor_CA = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
                                 NULL
                 }
 };
@@ -93,6 +95,7 @@ GSGFFlavorTypeDef gsgf_flavor_FF = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
                                 NULL
                 }
 };
@@ -101,6 +104,7 @@ GSGFFlavorTypeDef gsgf_flavor_GM = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
                                 NULL
                 }
 };
@@ -247,7 +251,6 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
 {
         GSGFFlavorTypeDef *def;
         GSGFCookedConstraint *constraint;
-        gsize i;
         const gchar *id;
 
         id = gsgf_property_get_id(property);
@@ -272,7 +275,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         constraint = def->constraints;
 
         while (*constraint) {
-                if (!(*constraint)(*cooked, property, error)) {
+                if (!(*constraint)(*cooked, raw, property, error)) {
                         g_prefix_error(error, _("Property '%s': "), id);
                         g_object_unref(*cooked);
                         return FALSE;
@@ -284,6 +287,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
 
 gboolean
 gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
+                                   const GSGFRaw *raw,
                                    const GSGFProperty *property, GError **error)
 {
         GSGFNumber *number = GSGF_NUMBER(value);
@@ -300,6 +304,7 @@ gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
 
 gboolean
 gsgf_constraint_is_root_property(const GSGFCookedValue *value,
+                                 const GSGFRaw *raw,
                                  const GSGFProperty *property, GError **error)
 {
         GSGFNode *node = gsgf_property_get_node(property);
@@ -308,6 +313,20 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
         if (previous) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Property only allowed in root node"));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+gsgf_constraint_is_single_value(const GSGFCookedValue *value,
+                                const GSGFRaw *raw,
+                                const GSGFProperty *property, GError **error)
+{
+        if (1 != gsgf_raw_get_number_of_values(raw)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Exactly one value required for property"));
                 return FALSE;
         }
 
@@ -337,8 +356,8 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error)
                 return FALSE;
         }
 
-        retval = gsgf_compose_new(gsgf_simple_text_new(ap),
-                                  gsgf_simple_text_new(version + 1),
+        retval = gsgf_compose_new(GSGF_COOKED_VALUE(gsgf_simple_text_new(ap)),
+                                  GSGF_COOKED_VALUE(gsgf_simple_text_new(version + 1)),
                                   NULL);
         g_free(ap);
 

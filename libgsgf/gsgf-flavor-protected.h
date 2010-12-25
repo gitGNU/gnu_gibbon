@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 
 typedef GSGFCookedValue * (*GSGFCookedConstructor) (const GSGFRaw *raw, GError **error);
 typedef gboolean (*GSGFCookedConstraint) (const GSGFCookedValue *cooked,
+                                          const GSGFRaw *raw,
                                           const GSGFProperty *property,
                                           GError **error);
 
@@ -39,9 +40,14 @@ struct _GSGFFlavorTypeDef {
 typedef struct _GSGFFlavorTypeDef GSGFFlavorTypeDef;
 
 gboolean gsgf_constraint_is_positive_number(const GSGFCookedValue *cooked,
+                                            const GSGFRaw *raw,
                                             const GSGFProperty *property, GError **error);
 gboolean gsgf_constraint_is_root_property(const GSGFCookedValue *cooked,
+                                          const GSGFRaw *raw,
                                           const GSGFProperty *property, GError **error);
+gboolean gsgf_constraint_is_single_value(const GSGFCookedValue *cooked,
+                                         const GSGFRaw *raw,
+                                         const GSGFProperty *property, GError **error);
 
 G_END_DECLS
 
