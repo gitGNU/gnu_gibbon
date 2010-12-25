@@ -53,7 +53,7 @@ main(int argc, char *argv[])
 
         for (i = 0; i < sizeof tests / sizeof tests[0]; ++i) {
                 current = tests + i;
-                result = gsgf_util_read_simpletext(current->raw,
+                result = gsgf_util_read_simple_text(current->raw,
                                                    &end, current->delim);
                 if (!result) {
                         fprintf(stderr, "Test %d: got NULL.\n", i + 1);

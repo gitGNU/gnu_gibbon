@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-gchar *gsgf_util_read_simpletext(const gchar *raw, const gchar **end, 
+gchar *gsgf_util_read_simple_text(const gchar *raw, const gchar **end, 
                                  gchar delim);
 gchar *gsgf_util_read_text(const gchar *raw, const gchar **end, gchar delim);
 

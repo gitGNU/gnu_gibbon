@@ -238,7 +238,7 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         ca_property = gsgf_node_get_property(root, "CA");
         if (ca_property) {
                 value = GSGF_RAW(gsgf_property_get_value(ca_property));
-                charset = gsgf_util_read_simpletext(gsgf_raw_get_value(value, 0),
+                charset = gsgf_util_read_simple_text(gsgf_raw_get_value(value, 0),
                                                     NULL, 0);
                 free_charset = TRUE;
         }

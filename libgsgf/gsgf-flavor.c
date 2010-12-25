@@ -322,7 +322,7 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error)
         const gchar *version = NULL;
         GSGFCompose *retval;
 
-        ap = gsgf_util_read_simpletext(raw_string, &version, ':');
+        ap = gsgf_util_read_simple_text(raw_string, &version, ':');
         if (!ap || !*ap) {
                 if (ap) g_free(ap);
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
