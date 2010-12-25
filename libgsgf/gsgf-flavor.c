@@ -73,6 +73,15 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error);
 
+static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error);
+
+GSGFFlavorTypeDef gsgf_flavor_AP = {
+                gsgf_AP_new_from_raw, {
+                                gsgf_constraint_is_root_property,
+                                NULL
+                }
+};
+
 GSGFFlavorTypeDef gsgf_flavor_CA = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_root_property,
@@ -94,6 +103,14 @@ GSGFFlavorTypeDef gsgf_flavor_GM = {
                                 gsgf_constraint_is_root_property,
                                 NULL
                 }
+};
+
+static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, &gsgf_flavor_AP, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
 };
 
 static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
@@ -121,7 +138,7 @@ static GSGFFlavorTypeDef *gsgf_g_handlers[26] = {
 };
 
 static GSGFFlavorTypeDef **gsgf_handlers[26] = {
-                NULL,
+                gsgf_a_handlers,
                 NULL,
                 gsgf_c_handlers,
                 NULL,
@@ -295,4 +312,35 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
         }
 
         return TRUE;
+}
+
+static GSGFCookedValue *
+gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error)
+{
+        gchar *raw_string = gsgf_raw_get_value(raw, 0);
+        gchar *ap = NULL;
+        const gchar *version = NULL;
+        GSGFCompose *retval;
+
+        ap = gsgf_util_read_simpletext(raw_string, &version, ':');
+        if (!ap || !*ap) {
+                if (ap) g_free(ap);
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Empty property"));
+                return FALSE;
+        }
+
+        if (!version || !version[0] || !version[1] || version == ap) {
+                g_free(ap);
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Empty version information"));
+                return FALSE;
+        }
+
+        retval = gsgf_compose_new(gsgf_simple_text_new(ap),
+                                  gsgf_simple_text_new(version + 1),
+                                  NULL);
+        g_free(ap);
+
+        return retval;
 }
