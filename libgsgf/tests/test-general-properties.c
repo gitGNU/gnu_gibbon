@@ -106,31 +106,31 @@ test_prop_AP(const GSGFNode *node)
         subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 0);
         if (!subvalue) {
                 fprintf(stderr, "No first 'AP' subvalue!\n");
-                return -1;
+                return FALSE;
         }
         if (!GSGF_IS_SIMPLE_TEXT(subvalue)) {
                 fprintf(stderr, "First 'AP' subvalue is not a GSGFSimpleText!\n");
-                return -1;
+                return FALSE;
         }
         value = gsgf_text_get_value(GSGF_TEXT(subvalue));
         if (strcmp("foobar", value)) {
                 fprintf(stderr, "Expected 'foobar', not '%s'!\n", value);
-                return -1;
+                return FALSE;
         }
 
         subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 1);
         if (!subvalue) {
                 fprintf(stderr, "No second 'AP' subvalue!\n");
-                return -1;
+                return FALSE;
         }
         if (!GSGF_IS_SIMPLE_TEXT(subvalue)) {
                 fprintf(stderr, "Second 'AP' subvalue is not a GSGFSimpleText!\n");
-                return -1;
+                return FALSE;
         }
         value = gsgf_text_get_value(GSGF_TEXT(subvalue));
         if (strcmp("1.2.3", value)) {
                 fprintf(stderr, "Expected '1.2.3', not '%s'!\n", value);
-                return -1;
+                return FALSE;
         }
 
         return TRUE;
