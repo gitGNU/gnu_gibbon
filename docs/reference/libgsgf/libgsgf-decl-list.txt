@@ -25,6 +25,7 @@ gsgf_node_get_property
 gsgf_node_get_property_ids
 gsgf_node_remove_property
 gsgf_node_get_property_cooked
+gsgf_node_get_previous_node
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -136,6 +137,8 @@ GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
 GSGFPropertyType
+gsgf_property_get_id
+gsgf_property_get_node
 gsgf_property_get_value
 <SUBSECTION Standard>
 GSGF_PROPERTY
@@ -278,7 +281,7 @@ GSGF_MOVE_BACKGAMMON_GET_CLASS
 
 <SECTION>
 <FILE>libgsgf</FILE>
-gsgf_util_read_simpletext
+gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>
 
@@ -287,6 +290,16 @@ gsgf_util_read_text
 GSGF_ERROR
 GSGFError
 gsgf_error_quark
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-flavor-protected</FILE>
+GSGFCookedConstructor
+GSGFCookedConstraint
+GSGFFlavorTypeDef
+gsgf_constraint_is_positive_number
+gsgf_constraint_is_root_property
+gsgf_constraint_is_single_value
 </SECTION>
 
 <SECTION>

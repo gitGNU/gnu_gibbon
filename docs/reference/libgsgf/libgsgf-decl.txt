@@ -1,5 +1,5 @@
 <FUNCTION>
-<NAME>gsgf_util_read_simpletext</NAME>
+<NAME>gsgf_util_read_simple_text</NAME>
 <RETURNS>gchar *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
@@ -141,6 +141,11 @@ GSGFNode *self, const gchar *id
 <NAME>gsgf_node_get_property_cooked</NAME>
 <RETURNS>GSGFCookedValue *</RETURNS>
 const GSGFNode *self, const gchar *id 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_previous_node</NAME>
+<RETURNS>GSGFNode *</RETURNS>
+const GSGFNode *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_REAL</NAME>
@@ -489,7 +494,8 @@ struct _GSGFFlavorClass
         GObjectClass parent_class;
 
         gboolean (*get_cooked_value) (const GSGFFlavor *flavor,
-                                      const gchar *id, struct _GSGFRaw *raw,
+                                      const struct _GSGFProperty *property,
+                                      const struct _GSGFRaw *raw,
                                       struct _GSGFCookedValue **cooked,
                                       GError **error);
 };
@@ -514,7 +520,7 @@ void
 <FUNCTION>
 <NAME>gsgf_flavor_get_cooked_value</NAME>
 <RETURNS>gboolean </RETURNS>
-const GSGFFlavor *flavor, const gchar *id, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
+const GSGFFlavor *flavor, const struct _GSGFProperty *property, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -579,6 +585,16 @@ struct _GSGFProperty
         GSGFPropertyPrivate *priv;
 };
 </STRUCT>
+<FUNCTION>
+<NAME>gsgf_property_get_id</NAME>
+<RETURNS>const gchar *</RETURNS>
+const GSGFProperty *property 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_get_node</NAME>
+<RETURNS>GSGFNode *</RETURNS>
+const GSGFProperty *property 
+</FUNCTION>
 <FUNCTION>
 <NAME>gsgf_property_get_value</NAME>
 <RETURNS>GSGFCookedValue *</RETURNS>
@@ -722,6 +738,44 @@ struct _GSGFFlavorBackgammon
 <NAME>gsgf_flavor_backgammon_new</NAME>
 <RETURNS>GSGFFlavorBackgammon *</RETURNS>
 void 
+</FUNCTION>
+<USER_FUNCTION>
+<NAME>GSGFCookedConstructor</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw *raw, GError **error
+</USER_FUNCTION>
+<USER_FUNCTION>
+<NAME>GSGFCookedConstraint</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFCookedValue *cooked,
+                                          const GSGFRaw *raw,
+                                          const GSGFProperty *property,
+                                          GError **error
+</USER_FUNCTION>
+<STRUCT>
+<NAME>GSGFFlavorTypeDef</NAME>
+struct _GSGFFlavorTypeDef {
+        GSGFCookedConstructor constructor;
+        GSGFCookedConstraint constraints[];
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFFlavorTypeDef</NAME>
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_constraint_is_positive_number</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_constraint_is_root_property</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_constraint_is_single_value</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_RAW</NAME>
