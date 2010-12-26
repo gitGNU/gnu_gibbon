@@ -117,6 +117,8 @@ gsgf_text_new_from_raw (const GSGFRaw *raw, GError **error)
         gsize list_length = gsgf_raw_get_number_of_values(raw);
         gchar *value;
 
+        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+
         if (!list_length) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
                             _("Property without a value!"));
@@ -147,6 +149,7 @@ gsgf_text_set_value(GSGFText *self, const gchar *value,
                     gboolean copy)
 {
         g_return_if_fail(GSGF_IS_TEXT(self));
+        g_return_if_fail(value != NULL);
 
         if (GSGF_TEXT_GET_CLASS(self)->set_value) {
                 GSGF_TEXT_GET_CLASS(self)->set_value(self, value, copy);

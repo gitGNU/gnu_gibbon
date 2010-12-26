@@ -74,6 +74,8 @@ _libgsgf_get_flavor(const gchar *id)
 
         _libgsgf_init();
 
+        g_return_val_if_fail(id != NULL, NULL);
+
         flavor = g_hash_table_lookup(_libgsgf_flavors, id);
         if (!flavor)
                 flavor = g_hash_table_lookup(_libgsgf_flavors, "0");

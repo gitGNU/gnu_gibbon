@@ -77,7 +77,11 @@ gsgf_node_class_init(GSGFNodeClass *klass)
 GSGFNode *
 _gsgf_node_new(GSGFNode *previous)
 {
-        GSGFNode *self = g_object_new(GSGF_TYPE_NODE, NULL);
+        GSGFNode *self;
+
+        g_return_val_if_fail(previous == NULL || GSGF_IS_NODE(previous), NULL);
+
+        self = g_object_new(GSGF_TYPE_NODE, NULL);
 
         self->priv->previous = previous;
 
@@ -92,6 +96,9 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
         GList *keys;
         GList *iter;
         GList *property;
+
+        g_return_val_if_fail(GSGF_IS_NODE(self), FALSE);
+        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
 
         *bytes_written = 0;
 
@@ -158,6 +165,9 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
         GSGFProperty *property;
         const gchar *ptr = id;
 
+        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
+        g_return_val_if_fail(id != NULL, NULL);
+
         if (error)
                 *error = NULL;
 
@@ -189,6 +199,9 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
 GSGFProperty *
 gsgf_node_get_property(const GSGFNode *self, const gchar *id)
 {
+        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
+        g_return_val_if_fail(id != NULL, NULL);
+
         if (!self->priv->properties)
                 return NULL;
 
@@ -211,7 +224,12 @@ gsgf_node_get_property(const GSGFNode *self, const gchar *id)
 GSGFCookedValue *
 gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id)
 {
-        GSGFProperty *property = gsgf_node_get_property(self, id);
+        GSGFProperty *property;
+
+        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
+        g_return_val_if_fail(id != NULL, NULL);
+
+        property = gsgf_node_get_property(self, id);
 
         if (!property)
                 return NULL;
@@ -234,6 +252,8 @@ gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id)
 GList *
 gsgf_node_get_property_ids(const GSGFNode *self)
 {
+        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
+
         if (!self->priv->properties)
                 return NULL;
 
@@ -251,6 +271,9 @@ gsgf_node_get_property_ids(const GSGFNode *self)
 void
 gsgf_node_remove_property(GSGFNode *self, const gchar *id)
 {
+        g_return_if_fail(GSGF_IS_NODE(self));
+        g_return_if_fail(id != NULL);
+
         if (!self->priv->properties)
                 return;
 
@@ -262,6 +285,9 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
 {
         GHashTableIter iter;
         gpointer key, value;
+
+        g_return_val_if_fail(GSGF_IS_NODE(self), FALSE);
+        g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
 
         if (error && *error)
                 return FALSE;
@@ -286,5 +312,7 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
 GSGFNode *
 gsgf_node_get_previous_node(const GSGFNode *self)
 {
+        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
+
         return self->priv->previous;
 }

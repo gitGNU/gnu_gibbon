@@ -28,11 +28,17 @@ gchar *
 gsgf_util_read_simple_text (const gchar *raw, const gchar **end, 
                            gchar delim)
 {
-        GString *string = g_string_new("");
+        GString *string;
         const gchar *ptr = raw;
         gchar *result;
         gboolean escaped = FALSE;
         gchar c;
+
+        if (end)
+                *end = raw;
+        g_return_val_if_fail(raw != NULL, NULL);
+
+        string = g_string_new("");
 
         while ((escaped || (*ptr != delim)) && *ptr) {
                 c = *ptr;
@@ -75,6 +81,12 @@ gsgf_util_read_text (const gchar *raw, const gchar **end,
         gboolean escaped = FALSE;
         gboolean softbreak;
         gchar c;
+
+        if (end)
+                *end = raw;
+        g_return_val_if_fail(raw != NULL, NULL);
+
+        string = g_string_new("");
 
         while ((escaped || (*ptr != delim)) && *ptr) {
                 c = *ptr;

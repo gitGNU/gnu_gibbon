@@ -231,13 +231,16 @@ gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const GSGFProperty *propert
         if (!GSGF_IS_FLAVOR(self)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
                             _("Invalid cast to GSGFFlavor"));
-                return FALSE;
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
         }
 
         if (!GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
                             _("Method get_cooked_value not implemented"));
-                return FALSE;
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value,
+                                     FALSE);
         }
 
         return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, property, raw,
@@ -292,6 +295,10 @@ gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
 {
         GSGFNumber *number = GSGF_NUMBER(value);
 
+        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
+        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+
         if (gsgf_number_get_value(number) < 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Value must be greater than 0 but is %lld"),
@@ -307,8 +314,15 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
                                  const GSGFRaw *raw,
                                  const GSGFProperty *property, GError **error)
 {
-        GSGFNode *node = gsgf_property_get_node(property);
-        GSGFNode *previous = gsgf_node_get_previous_node(node);
+        GSGFNode *node;
+        GSGFNode *previous;
+
+        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
+        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+
+        node = gsgf_property_get_node(property);
+        previous = gsgf_node_get_previous_node(node);
 
         if (previous) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
@@ -324,6 +338,10 @@ gsgf_constraint_is_single_value(const GSGFCookedValue *value,
                                 const GSGFRaw *raw,
                                 const GSGFProperty *property, GError **error)
 {
+        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
+        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Exactly one value required for property"));

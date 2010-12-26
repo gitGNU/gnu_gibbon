@@ -102,7 +102,11 @@ _gsgf_game_tree_new()
 GSGFGameTree *
 gsgf_game_tree_add_child(GSGFGameTree *self)
 {
-        GSGFGameTree *child = _gsgf_game_tree_new();
+        GSGFGameTree *child;
+
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+
+        child = _gsgf_game_tree_new();
 
         self->priv->children = g_list_append(self->priv->children, child);
 
@@ -121,9 +125,15 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GList *last = g_list_last(self->priv->nodes);
-        GSGFNode *previous_node = last ? GSGF_NODE(last->data) : NULL;
-        GSGFNode *node = _gsgf_node_new(previous_node);
+        GList *last;
+        GSGFNode *previous_node;
+        GSGFNode *node;
+
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+
+        last = g_list_last(self->priv->nodes);
+        previous_node = last ? GSGF_NODE(last->data) : NULL;
+        node = _gsgf_node_new(previous_node);
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 
@@ -139,6 +149,8 @@ gsgf_game_tree_add_node(GSGFGameTree *self)
 GSGFGameTree *
 gsgf_game_tree_get_parent(const GSGFGameTree *self)
 {
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+
         return self->priv->parent;
 }
 
@@ -152,6 +164,9 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
         GSGFNode *root;
         GSGFProperty *ap_property;
         gchar *version_string;
+
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), FALSE);
+        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
 
         /* Force our version.  */
         version_string = g_strdup_printf("libgsgf:%s", VERSION);
@@ -223,6 +238,8 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GSGFProperty *property;
         gboolean free_charset = FALSE;
         GList *child;
+
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), FALSE);
 
         if (error)
                 *error = NULL;
@@ -326,5 +343,7 @@ _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
 GList *
 gsgf_game_tree_get_nodes(const GSGFGameTree *self)
 {
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+
         return self->priv->nodes;
 }

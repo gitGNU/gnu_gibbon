@@ -109,6 +109,8 @@ gsgf_number_new_from_raw(const GSGFRaw *raw, GError **error)
         gint64 value;
         const gchar *string;
 
+        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+
         if (error)
                 *error = NULL;
 
@@ -155,6 +157,8 @@ gsgf_number_new_from_raw(const GSGFRaw *raw, GError **error)
 void
 gsgf_number_set_value(GSGFNumber *self, gint64 value)
 {
+        g_return_if_fail(GSGF_IS_NUMBER(self));
+
         self->priv->value = value;
 }
 
@@ -169,6 +173,8 @@ gsgf_number_set_value(GSGFNumber *self, gint64 value)
 gint64
 gsgf_number_get_value(const GSGFNumber *self)
 {
+        g_return_val_if_fail(GSGF_IS_NUMBER(self), 0);
+
         return self->priv->value;
 }
 

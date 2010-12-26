@@ -95,7 +95,12 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
 GSGFProperty *
 _gsgf_property_new(const gchar *id, GSGFNode *node)
 {
-        GSGFProperty *self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
+        GSGFProperty *self;
+
+        g_return_val_if_fail(id != NULL, NULL);
+        g_return_val_if_fail(GSGF_IS_NODE(node), NULL);
+
+        self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
         self->priv->id = g_strdup(id);
         self->priv->value = GSGF_COOKED_VALUE(gsgf_raw_new(NULL));
@@ -110,6 +115,9 @@ _gsgf_property_write_stream(const GSGFProperty *self,
                             GCancellable *cancellable, GError **error)
 {
         gsize written_here;
+
+        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
+        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
 
         *bytes_written = 0;
 
@@ -141,6 +149,9 @@ _gsgf_property_write_stream(const GSGFProperty *self,
 gboolean
 _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 {
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+        g_return_val_if_fail(value != NULL, FALSE);
+
         _gsgf_raw_add_value(GSGF_RAW(property->priv->value), value);
 
         return TRUE;
@@ -149,15 +160,16 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 /**
  * gsgf_property_get_value:
  * @property: the #GSGFProperty.
- * @index: Index of the element.
  *
  * Retrieve the value of a property.
  *
- * Returns: Returns the value as a #GSGFCookedValue or %NULL f %index is out of range.
+ * Returns: Returns the value as a #GSGFCookedValue.
  */
 GSGFCookedValue *
 gsgf_property_get_value(const GSGFProperty *property)
 {
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+
         return property->priv->value;
 }
 
@@ -172,6 +184,8 @@ gsgf_property_get_value(const GSGFProperty *property)
 const gchar *
 gsgf_property_get_id(const GSGFProperty *property)
 {
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+
         return property->priv->id;
 }
 
@@ -186,12 +200,17 @@ gsgf_property_get_id(const GSGFProperty *property)
 GSGFNode *
 gsgf_property_get_node(const GSGFProperty *property)
 {
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+
         return property->priv->node;
 }
 
 gboolean
 _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
 {
+        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
+        g_return_val_if_fail(charset != NULL, NULL);
+
         return _gsgf_raw_convert(GSGF_RAW(self->priv->value), charset, error);
 }
 
@@ -199,6 +218,9 @@ gboolean
 _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError **error)
 {
         GSGFCookedValue *cooked;
+
+        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
+        g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
 
         if (error && *error)
                 return FALSE;

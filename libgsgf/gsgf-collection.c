@@ -140,8 +140,6 @@ gsgf_collection_new(GError **error)
 {
         GSGFCollection *self = g_object_new(GSGF_TYPE_COLLECTION, NULL);
 
-        /* self->priv->move_number = 0; */
-
         return self;
 }
 
@@ -164,11 +162,14 @@ GSGFCollection *
 gsgf_collection_parse_stream(GInputStream *stream,
                              GCancellable *cancellable, GError **error)
 {
-        GSGFCollection *self = gsgf_collection_new(error);
+        GSGFCollection *self;
         gint token = 0;
         GString *value;
         GSGFParserContext ctx;
 
+        g_return_val_if_fail(G_IS_INPUT_STREAM(stream), NULL);
+
+        self = gsgf_collection_new(error);
         if (!self)
                 return NULL;
 
@@ -435,8 +436,10 @@ GSGFCollection *
 gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
                            GError **error)
 {
-        GInputStream *stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
+        GInputStream *stream;
 
+        g_return_val_if_fail(G_IS_FILE(file), NULL);
+        stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
         if (!stream)
                 return NULL;
 
@@ -640,7 +643,11 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
 GSGFGameTree *
 gsgf_collection_add_game_tree(GSGFCollection *self)
 {
-        GSGFGameTree *game_tree = _gsgf_game_tree_new();
+        GSGFGameTree *game_tree;
+
+        g_return_val_if_fail(GSGF_IS_COLLECTION(self), NULL);
+
+        game_tree = _gsgf_game_tree_new();
 
         self->priv->game_trees = 
                 g_list_append(self->priv->game_trees, game_tree);
@@ -668,7 +675,6 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
  *
  * Returns: %TRUE on success.  %FALSE if there was an error.
  **/
- #include <stdio.h>
 gboolean
 gsgf_collection_write_stream(const GSGFCollection *self,
                              GOutputStream *out,
@@ -678,6 +684,9 @@ gsgf_collection_write_stream(const GSGFCollection *self,
 {
         gsize written_here;
         GList *iter = self->priv->game_trees;
+
+        g_return_val_if_fail(GSGF_IS_COLLECTION(self), FALSE);
+        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
 
         *bytes_written = 0;
 
@@ -764,5 +773,7 @@ gsgf_collection_apply_flavor(GSGFCollection *self, GError **error)
 GList *
 gsgf_collection_get_game_trees(const GSGFCollection *self)
 {
+        g_return_val_if_fail(GSGF_IS_COLLECTION(self), NULL);
+
         return self->priv->game_trees;
 }

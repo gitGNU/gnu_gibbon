@@ -76,13 +76,15 @@ gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
         if (!GSGF_IS_COOKED_VALUE(self)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
                             _("Invalid cast to GSGFCookedValue"));
-                return FALSE;
+                /* Print standard error message on error return.  */
+                g_return_val_if_fail(GSGF_IS_COOKED_VALUE(self), FALSE);
         }
 
         if (!GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
                             _("Method write_stream not implemented"));
-                return FALSE;
+                g_return_val_if_fail(GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream,
+                                     FALSE);
         }
 
         return GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream(self,

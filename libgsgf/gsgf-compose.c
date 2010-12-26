@@ -108,6 +108,9 @@ gsgf_compose_new (GSGFCookedValue *value, ...)
                         break;
                 if (!GSGF_IS_COOKED_VALUE(value)) {
                         g_list_free(values);
+                        /* This will always fail on purpose.  We just want the
+                         * error message to be printed in a consistent way.
+                         */
                         g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), NULL);
                 }
                 values = g_list_append(values, value);
@@ -134,6 +137,8 @@ gsgf_compose_new (GSGFCookedValue *value, ...)
 GSGFCookedValue *
 gsgf_compose_get_value(const GSGFCompose *self, gsize i)
 {
+        g_return_val_if_fail(GSGF_IS_COMPOSE(self), NULL);
+
         return GSGF_COOKED_VALUE(g_list_nth_data(self->priv->values, i));
 }
 
@@ -190,7 +195,9 @@ gsgf_compose_write_stream(const GSGFCookedValue *_self,
  * Returns: The number of values stored.
  */
 gsize
-gsgf_compose_get_number_of_values (const GSGFCompose *compose)
+gsgf_compose_get_number_of_values (const GSGFCompose *self)
 {
-        return g_list_length(compose->priv->values);
+        g_return_val_if_fail(GSGF_IS_COMPOSE(self), 0);
+
+        return g_list_length(self->priv->values);
 }

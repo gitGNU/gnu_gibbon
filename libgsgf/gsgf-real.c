@@ -94,6 +94,8 @@ _gsgf_real_new(const gchar *string, GError **error)
 {
         gdouble value;
 
+        g_return_val_if_fail(string != NULL, NULL);
+
         if (error)
                 *error = NULL;
 
@@ -127,6 +129,8 @@ _gsgf_real_new(const gchar *string, GError **error)
 void
 gsgf_real_set_value(GSGFReal *self, gdouble value)
 {
+        g_return_val_if_fail(GSGF_IS_REAL(self), NULL);
+
         self->priv->value = value;
 }
 
@@ -141,5 +145,7 @@ gsgf_real_set_value(GSGFReal *self, gdouble value)
 gdouble
 gsgf_real_get_value(const GSGFReal *self)
 {
+        g_return_val_if_fail(GSGF_IS_REAL(self), 0);
+
         return self->priv->value;
 }

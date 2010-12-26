@@ -114,6 +114,8 @@ gsgf_raw_new (const gchar *value)
 gchar *
 gsgf_raw_get_value(const GSGFRaw *self, gsize i)
 {
+        g_return_val_if_fail(GSGF_IS_RAW(self), NULL);
+
         return (gchar *) g_list_nth_data(self->priv->values, i);
 }
 
@@ -170,6 +172,9 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         GList *iter;
         gchar *value;
 
+        g_return_val_if_fail(GSGF_IS_RAW(self), FALSE);
+        g_return_val_if_fail(charset != NULL, FALSE);
+
         if (error)
                 *error = NULL;
 
@@ -193,7 +198,12 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
 
 void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
 {
-        GSGFRaw *self = GSGF_RAW(_self);
+        GSGFRaw *self;
+
+        g_return_val_if_fail(GSGF_IS_RAW(_self), FALSE);
+        g_return_val_if_fail(value != NULL, FALSE);
+
+        self = GSGF_RAW(_self);
 
         self->priv->values = g_list_append(self->priv->values, g_strdup(value));
 }
@@ -209,5 +219,7 @@ void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
 gsize
 gsgf_raw_get_number_of_values (const GSGFRaw *raw)
 {
+        g_return_val_if_fail(GSGF_IS_RAW(raw), 0);
+
         return g_list_length(raw->priv->values);
 }

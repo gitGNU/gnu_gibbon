@@ -40,8 +40,6 @@ gsgf_simple_text_init(GSGFSimpleText *self)
 static void
 gsgf_simple_text_finalize(GObject *object)
 {
-        GSGFSimpleText *self = GSGF_SIMPLE_TEXT(object);
-
         G_OBJECT_CLASS (gsgf_simple_text_parent_class)->finalize(object);
 }
 
@@ -66,7 +64,8 @@ gsgf_simple_text_new (const gchar *value)
 {
         GSGFSimpleText *self = g_object_new(GSGF_TYPE_SIMPLE_TEXT, NULL);
 
-        gsgf_text_set_value(GSGF_TEXT(self), value, TRUE);
+        if (value)
+                gsgf_text_set_value(GSGF_TEXT(self), value, TRUE);
 
         return self;
 }
@@ -84,8 +83,12 @@ gsgf_simple_text_new (const gchar *value)
 GSGFCookedValue *
 gsgf_simple_text_new_from_raw (const GSGFRaw *raw, GError **error)
 {
-        gsize list_length = gsgf_raw_get_number_of_values(raw);
+        gsize list_length;
         gchar *value;
+
+        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+
+        list_length = gsgf_raw_get_number_of_values(raw);
 
         if (!list_length) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
