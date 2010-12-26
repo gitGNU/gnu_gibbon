@@ -32,6 +32,8 @@ static gboolean test_prop_AP(const GSGFNode *node);
 static gboolean test_prop_CA(const GSGFNode *node);
 static gboolean test_prop_FF(const GSGFNode *node);
 static gboolean test_prop_GM(const GSGFNode *node);
+static gboolean test_prop_ST(const GSGFNode *node);
+static gboolean test_prop_SZ(const GSGFNode *node);
 static gboolean test_prop_XY(const GSGFNode *node);
 
 int 
@@ -71,6 +73,12 @@ test_collection(GSGFCollection *collection, GError *error)
                 return -1;
 
         if (!test_prop_GM(root_node))
+                return -1;
+
+        if (!test_prop_ST(root_node))
+                return -1;
+
+        if (!test_prop_SZ(root_node))
                 return -1;
 
         if (!test_prop_XY(root_node))
@@ -212,6 +220,88 @@ test_prop_GM(const GSGFNode *node)
 }
 
 static gboolean
+test_prop_ST(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "ST");
+        gint value;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'ST'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_NUMBER(cooked_value)) {
+                fprintf(stderr, "Root property 'ST' is not a GSGFNumber!\n");
+                return FALSE;
+        }
+
+        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
+        if (3 != value) {
+                fprintf(stderr, "GM: Expected 3, got %d!\n", value);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_SZ(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "SZ");
+        gint64 value;
+        gsize length;
+        const GSGFCookedValue *subvalue;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No root property 'SZ'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_COMPOSE(cooked_value)) {
+                fprintf(stderr, "Root property 'SZ' is not a GSGFCompose!\n");
+                return FALSE;
+        }
+
+        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(cooked_value));
+        if (length != 2) {
+                fprintf(stderr, "Property 'SZ': Expected 2 subvalues, got %u.\n", length);
+                return FALSE;
+        }
+
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 0);
+        if (!subvalue) {
+                fprintf(stderr, "No first 'SZ' subvalue!\n");
+                return FALSE;
+        }
+        if (!GSGF_IS_NUMBER(subvalue)) {
+                fprintf(stderr, "First 'SZ' subvalue is not a GSGFNumber!\n");
+                return FALSE;
+        }
+        value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
+        if (24 != value) {
+                fprintf(stderr, "Expected 24, not %lld!\n", value);
+                return FALSE;
+        }
+
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 1);
+        if (!subvalue) {
+                fprintf(stderr, "No second 'SZ' subvalue!\n");
+                return FALSE;
+        }
+        if (!GSGF_IS_NUMBER(subvalue)) {
+                fprintf(stderr, "Second 'SZ' subvalue is not a GSGFNumber!\n");
+                return FALSE;
+        }
+        value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
+        if (1 != value) {
+                fprintf(stderr, "Expected 1, not %lld!\n", value);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
 test_prop_XY(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "XY");
@@ -243,3 +333,4 @@ test_prop_XY(const GSGFNode *node)
 
         return TRUE;
 }
+

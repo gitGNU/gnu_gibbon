@@ -13,6 +13,21 @@
     </para>
 
     <sect2>
+      <title>AP (Application)</title>
+      <para>
+        Type: <link linkend="GSGFComposed">GSGFComposed</link>:
+        (<link linkend="GSGFSimpleText">GSGFSimpleText</link>:<link linkend="GSGFSimpleText">GSGFSimpleText</link>)
+      </para>
+      <para>
+        The first value denotes the application, the second one the
+        version.  Both values are treated as opaque.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#AP</link>.
+      </para>
+    </sect2>
+
+    <sect2>
       <title>CA (Charset)</title>
       <para>
         Type: <link linken="GSGFSimpleText">GSGFSimpleText</link>
@@ -48,6 +63,40 @@
         The number must be a positive number greater than zero.  You can
         get a list of well-known game types from
         <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#GM</link>.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>ST (Variation Style)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>
+      </para>
+      <para>
+        Bit mask that determines how variations are shown.  Valid
+        values are in the range 0-3.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#ST</link>.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>SZ (Board size)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>
+        or <link linkend="GSGFComposed">GSGFComposed</link>:
+        (<link linkend="GSGFNumber">GSGFNumber</link>:<link linkend="GSGFNumber">GSGFNumber</link>)
+      </para>
+      <para>
+        Number of columns (first value) and rows (second value) of
+        the board.  Contrary to the SGF specification, the same value
+        for columns and rows is allowed.  In this case a
+        single <link linkend="GSGFNumber">GSGFNumber</link> is 
+        used instead of a 
+        <link linkend="GSGFComposed">GSGFComposed</link>.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#SZ</link>.
       </para>
     </sect2>
 

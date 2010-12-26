@@ -74,7 +74,6 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                               GError **error);
 
 static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error);
-
 GSGFFlavorTypeDef gsgf_flavor_AP = {
                 gsgf_AP_new_from_raw, {
                                 gsgf_constraint_is_root_property,
@@ -103,6 +102,28 @@ GSGFFlavorTypeDef gsgf_flavor_FF = {
 GSGFFlavorTypeDef gsgf_flavor_GM = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
+                                gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static gboolean gsgf_constraint_is_ST_number(const GSGFCookedValue *cooked,
+                                             const GSGFRaw *raw,
+                                             const GSGFProperty *property,
+                                             GError **error);
+GSGFFlavorTypeDef gsgf_flavor_ST = {
+                gsgf_number_new_from_raw, {
+                                gsgf_constraint_is_ST_number,
+                                gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFCookedValue *gsgf_SZ_new_from_raw(const GSGFRaw* raw, GError **error);
+GSGFFlavorTypeDef gsgf_flavor_SZ = {
+                gsgf_SZ_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
                                 NULL
@@ -141,6 +162,14 @@ static GSGFFlavorTypeDef *gsgf_g_handlers[26] = {
                 NULL, NULL,
 };
 
+static GSGFFlavorTypeDef *gsgf_s_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_ST, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_SZ,
+};
+
 static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 gsgf_a_handlers,
                 NULL,
@@ -160,7 +189,7 @@ static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 NULL,
                 NULL,
                 NULL,
-                NULL,
+                gsgf_s_handlers,
                 NULL,
                 NULL,
                 NULL,
@@ -293,11 +322,13 @@ gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
                                    const GSGFRaw *raw,
                                    const GSGFProperty *property, GError **error)
 {
-        GSGFNumber *number = GSGF_NUMBER(value);
+        GSGFNumber *number;
 
         g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
         g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
         g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+
+        number = GSGF_NUMBER(value);
 
         if (gsgf_number_get_value(number) < 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
@@ -378,6 +409,89 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, GError **error)
                                   GSGF_COOKED_VALUE(gsgf_simple_text_new(version + 1)),
                                   NULL);
         g_free(ap);
+
+        return GSGF_COOKED_VALUE(retval);
+}
+
+static gboolean
+gsgf_constraint_is_ST_number(const GSGFCookedValue *value,
+                             const GSGFRaw *raw,
+                             const GSGFProperty *property, GError **error)
+{
+        GSGFNumber *number;
+
+        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
+        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+
+        number = GSGF_NUMBER(value);
+
+        if (gsgf_number_get_value(number) < 1) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Value must be greater than 0 but is %lld"),
+                            gsgf_number_get_value(number));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static GSGFCookedValue *
+gsgf_SZ_new_from_raw(const GSGFRaw* raw, GError **error)
+{
+        gchar *raw_string = gsgf_raw_get_value(raw, 0);
+        gchar *columns_as_string = NULL;
+        const gchar *rows_as_string = NULL;
+        GSGFRaw *dummy;
+        GSGFNumber *columns = NULL;
+        GSGFNumber *rows = NULL;
+        GSGFCookedValue *retval;
+
+        columns_as_string = gsgf_util_read_simple_text(raw_string, &rows_as_string, ':');
+        if (!columns_as_string || !*columns_as_string) {
+                if (columns_as_string) g_free(columns_as_string);
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Empty property"));
+                return FALSE;
+        }
+
+        dummy = gsgf_raw_new(columns_as_string);
+        columns = gsgf_number_new_from_raw(dummy, error);
+        g_free(columns_as_string);
+        g_object_unref(dummy);
+
+        if (!columns)
+                return FALSE;
+
+        if (rows_as_string && rows_as_string[0]
+            && rows_as_string[1] && rows_as_string != columns_as_string) {
+                dummy = gsgf_raw_new(rows_as_string + 1);
+                rows = gsgf_number_new_from_raw(dummy, error);
+                g_object_unref(dummy);
+
+                if (!rows) {
+                        g_object_unref(columns);
+                        return FALSE;
+                }
+        }
+
+        if (rows) {
+                /*
+                 * Be graceful when reading, strict when writing.  Two equal values
+                 * are not allowed by the SGF specification.  We convert them to
+                 * one number.
+                 */
+                if (gsgf_number_get_value(columns) == gsgf_number_get_value(rows)) {
+                        g_object_unref(rows);
+                        rows = NULL;
+                }
+        }
+
+        if (rows) {
+                retval = GSGF_COOKED_VALUE(gsgf_compose_new(columns, rows, NULL));
+        } else {
+                retval = GSGF_COOKED_VALUE(columns);
+        }
 
         return retval;
 }
