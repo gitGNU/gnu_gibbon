@@ -26,7 +26,7 @@
 
 #include "test.h"
 
-char *filename = "general-properties.sgf";
+char *filename = "root-properties.sgf";
 
 static gboolean test_prop_AP(const GSGFNode *node);
 static gboolean test_prop_CA(const GSGFNode *node);

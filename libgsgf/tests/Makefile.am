@@ -27,7 +27,7 @@ TESTS = test-convert			\
 	test-number			\
 	test-real			\
 	test-really-empty		\
-	test-general-properties		\
+	test-root-properties		\
 	test-util-read-simpletext	\
 	test-util-read-text		\
 	test-write-empty		\
@@ -50,18 +50,17 @@ test_convert_SOURCES = lib.c main.c test-convert.c
 test_compose_SOURCES = lib.c test-compose.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
-test_general_properties_SOURCES = lib.c main.c test-general-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
 test_number_SOURCES = lib.c test-number.c
 test_real_SOURCES = lib.c test-real.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
+test_root_properties_SOURCES = lib.c main.c test-root-properties.c
 test_util_read_simpletext_SOURCES = lib.c test-util-read-simpletext.c
 test_util_read_text_SOURCES = lib.c test-util-read-text.c
 test_write_empty_SOURCES = lib.c main.c test-write-empty.c
 test_write_empty_property_SOURCES = lib.c main.c test-write-empty-property.c
-test_write_full_CFLAGS = $(AM_CPPFLAGS) -DTEST_BUILDDIR=\"$(abs_builddir)\"
 test_write_full_SOURCES = lib.c main.c test-write-full.c
 test_write_linefeeds_SOURCES = lib.c main.c test-write-linefeeds.c
 test_write_minimal_SOURCES = lib.c main.c test-write-minimal.c
