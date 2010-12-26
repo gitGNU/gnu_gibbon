@@ -28,6 +28,9 @@
     <xi:include href="xml/gsgf-error.xml"/>
     <xi:include href="xml/libgsgf.xml"/>
     <xi:include href="xml/gsgf-flavor.xml"/>
+    <xi:include href="xml/gsgf-cooked-value.xml"/>
+    <xi:include href="xml/gsgf-text.xml"/>
+    <xi:include href="xml/gsgf-simple-text.xml"/>
   </part>
  
   <xi:include href="flavors.xml"/>
