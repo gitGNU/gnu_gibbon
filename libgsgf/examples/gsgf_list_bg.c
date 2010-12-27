@@ -22,6 +22,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 /* Centralized include file.  */
 #include <libgsgf/gsgf.h>
@@ -136,6 +137,8 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         GSGFCompose *AP;
         GSGFSimpleText *application;
         GSGFSimpleText *version;
+        GList *ids;
+        GList *iter;
 
         /* The nodes of this game, again as a standard glib
          * list (GList).
@@ -193,9 +196,41 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
                        gsgf_text_get_value(GSGF_TEXT(version)));
         }
 
-        /* The other root properties are even less interesting than
-         * AP and GM.  See the documentation for details.
+        /* The only things you should do with node properties that your
+         * application does not know is leave them alone or delete
+         * them.  As an example, we iterate over all properties of
+         * the root node, and delete everything that we don't know.
+         *
+         * The list of property ids is returned as a standard glib
+         * list object (GList).  The returned object is owned by
+         * libgsgf and should not be manipulated.  Especially, if
+         * you insert or delete properties of a node, you invalidate
+         * the list.  We therefore need a shallow copy of it.
          */
+        ids = g_list_copy(gsgf_node_get_property_ids(root));
+
+        /* Iterate over all properties.  */
+        iter = ids;
+        while (iter) {
+                if (strcmp("GM", (gchar *) iter->data)
+                    && strcmp("AP", (gchar *) iter->data)) {
+                        cooked = gsgf_node_get_property_cooked(root,
+                                                               (gchar *) iter->data);
+
+                        /* Print the type of this object.  If the
+                         * object in question is not known to
+                         * libgsgf, you will get a GSGFRaw here.
+                         */
+                        printf("Property %s: %s\n",
+                               (gchar *) iter->data,
+                               G_OBJECT_TYPE_NAME(G_OBJECT(cooked)));
+                }
+
+                /* And remove the property.  */
+                gsgf_node_remove_property(root, (gchar *) iter->data);
+                iter = iter->next;
+        }
+        g_list_free(ids);
 
         return TRUE;
 }
