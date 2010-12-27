@@ -347,3 +347,25 @@ gsgf_game_tree_get_nodes(const GSGFGameTree *self)
 
         return self->priv->nodes;
 }
+
+/**
+ * gsgf_game_tree_get_children
+ * @self: the #GSGFGameTree.
+ *
+ * Get the list of #GSGFGameTree objects stored in a #GSGFGameTree.
+ *
+ * A #GSGFGameTree can have other #GSGFGameTree instances as children.
+ * This is seldom useful.
+ *
+ * This list is not a copy.  You should not free it.  The list becomes invalid,
+ * when you add or remove nodes.
+ *
+ * Returns: Returns a #GList of #GSGFGameTree objects..
+ **/
+GList *
+gsgf_game_tree_get_children(const GSGFGameTree *self)
+{
+        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+
+        return self->priv->children;
+}
