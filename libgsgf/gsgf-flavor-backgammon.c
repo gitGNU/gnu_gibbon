@@ -31,6 +31,10 @@
 
 G_DEFINE_TYPE(GSGFFlavorBackgammon, gsgf_flavor_backgammon, GSGF_TYPE_FLAVOR)
 
+static GSGFMove *gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
+                                                     const struct _GSGFRaw *raw,
+                                                     GError **error);
+
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
 {
@@ -46,6 +50,9 @@ static void
 gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFFlavorClass *flavor_class = GSGF_FLAVOR_CLASS(klass);
+
+        flavor_class->create_move = gsgf_flavor_backgammon_create_move;
 
         object_class->finalize = gsgf_flavor_backgammon_finalize;
 }
@@ -65,3 +72,10 @@ gsgf_flavor_backgammon_new (void)
         return self;
 }
 
+static GSGFMove *
+gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
+                                    const GSGFRaw *raw,
+                                    GError **error)
+{
+        return gsgf_move_backgammon_new();
+}
