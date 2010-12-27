@@ -62,7 +62,7 @@ test_success(void)
         gint64 expect = 2503;
         gint64 got;
 
-        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, NULL, &error));
         if (!r) {
                 if (error) {
                         fprintf(stderr, "Could not parse '%s': %s.\n",
@@ -97,7 +97,7 @@ test_garbage(void)
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
                     _("Invalid number '%s'"), gsgf_raw_get_value(value, 0));
 
-        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, NULL, &error));
 
         return expect_error_conditional(r == NULL,
                                         "Invalid number returns a value",
@@ -116,7 +116,7 @@ test_trailing_garbage(void)
                     _("Trailing garbage after number in '%s'"),
                     gsgf_raw_get_value(value, 0));
 
-        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, &error));
+        r = GSGF_NUMBER(gsgf_number_new_from_raw(value, NULL, &error));
 
         return expect_error_conditional(r == NULL,
                                         "Number with trailing garbage returns a value",

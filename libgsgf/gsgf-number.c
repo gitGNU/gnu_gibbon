@@ -95,6 +95,7 @@ gsgf_number_new (gint64 value)
 /**
  * gsgf_number_new_from_raw:
  * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @flavor: The #GSGFFlavor of the current #GSGFGameTree.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Creates a new #GSGFNumber from a #GSGFRaw.  This constructor is only
@@ -103,7 +104,8 @@ gsgf_number_new (gint64 value)
  * Returns: The new #GSGFNumber or %NULL in case of an error.
  */
 GSGFCookedValue *
-gsgf_number_new_from_raw(const GSGFRaw *raw, GError **error)
+gsgf_number_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
+                         GError **error)
 {
         gchar *endptr;
         gint64 value;

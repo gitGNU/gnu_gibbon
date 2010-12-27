@@ -56,7 +56,9 @@ struct _GSGFSimpleText
 };
 
 GSGFSimpleText* gsgf_simple_text_new(const gchar *value);
-GSGFCookedValue* gsgf_simple_text_new_from_raw(const GSGFRaw *raw, GError **error);
+GSGFCookedValue* gsgf_simple_text_new_from_raw(const GSGFRaw *raw,
+                                               const GSGFFlavor *flavor,
+                                               GError **error);
 
 G_END_DECLS
 

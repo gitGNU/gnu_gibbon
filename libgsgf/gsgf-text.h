@@ -62,7 +62,9 @@ struct _GSGFText
 };
 
 GSGFText* gsgf_text_new(const gchar *value);
-GSGFCookedValue* gsgf_text_new_from_raw(const GSGFRaw *raw, GError **error);
+GSGFCookedValue* gsgf_text_new_from_raw(const GSGFRaw *raw,
+                                        const GSGFFlavor *flavor,
+                                        GError **error);
 
 void gsgf_text_set_value(GSGFText *self, const gchar *value, gboolean copy);
 gchar *gsgf_text_get_value(const GSGFText *self);

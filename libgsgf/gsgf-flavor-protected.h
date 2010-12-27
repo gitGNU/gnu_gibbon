@@ -26,7 +26,9 @@ extern GHashTable *_libgsgf_flavors;
 
 G_BEGIN_DECLS
 
-typedef GSGFCookedValue * (*GSGFCookedConstructor) (const GSGFRaw *raw, GError **error);
+typedef GSGFCookedValue * (*GSGFCookedConstructor) (const GSGFRaw *raw,
+                                                    const GSGFFlavor *flavor,
+                                                    GError **error);
 typedef gboolean (*GSGFCookedConstraint) (const GSGFCookedValue *cooked,
                                           const GSGFRaw *raw,
                                           const GSGFProperty *property,

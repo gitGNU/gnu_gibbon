@@ -104,6 +104,7 @@ gsgf_text_new (const gchar *value)
 /**
  * gsgf_text_new_from_raw:
  * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @flavor: The #GSGFFlavor of the current #GSGFGameTree.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Creates a new #GSGFText from a #GSGFRaw.  This constructor is only
@@ -112,7 +113,8 @@ gsgf_text_new (const gchar *value)
  * Returns: The new #GSGFText or %NULL in case of an error.
  */
 GSGFCookedValue *
-gsgf_text_new_from_raw (const GSGFRaw *raw, GError **error)
+gsgf_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
+                        GError **error)
 {
         gsize list_length = gsgf_raw_get_number_of_values(raw);
         gchar *value;
