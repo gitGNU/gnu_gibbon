@@ -23,6 +23,7 @@ TESTS = test-convert			\
 	test-full			\
 	test-minimal			\
 	test-multi-game-tree		\
+	test-move-properties		\
 	test-nested-game-tree		\
 	test-number			\
 	test-real			\
@@ -51,6 +52,7 @@ test_compose_SOURCES = lib.c test-compose.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
+test_move_properties_SOURCES = lib.c main.c test-move-properties.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
 test_number_SOURCES = lib.c test-number.c
@@ -71,6 +73,7 @@ SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\
 	    full.sgf.in			\
 	    root-properties.sgf		\
+	    move-properties.sgf		\
 	    linefeeds.sgf		\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
