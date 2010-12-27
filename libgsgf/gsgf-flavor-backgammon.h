@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_FLAVOR_BACKGAMMON  (gsgf_flavor_get_type ())
+#define GSGF_TYPE_FLAVOR_BACKGAMMON  (gsgf_flavor_backgammon_get_type ())
 #define GSGF_FLAVOR_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammon))
 #define GSGF_FLAVOR_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammonClass))
 #define GSGF_IS_FLAVOR_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON))
