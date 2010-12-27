@@ -20,6 +20,8 @@
 #ifndef _GSGF_H
 # define _GSGF_H
 
+#include <glib.h>
+
 #include <libgsgf/gsgf-flavor.h>
 #include <libgsgf/gsgf-flavor-backgammon.h>
 
