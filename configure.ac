@@ -120,6 +120,7 @@ GTK_DOC_CHECK([1.15])
 AC_CONFIG_FILES([ 
     Makefile
     libgsgf/Makefile
+    libgsgf/examples/Makefile
     libgsgf/tests/Makefile
     libgsgf/tests/full.sgf
     libgsgf/tests/utf-8.sgf
