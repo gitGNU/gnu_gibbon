@@ -264,14 +264,6 @@ gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const GSGFProperty *propert
                 g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
         }
 
-        if (!GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method get_cooked_value not implemented"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value,
-                                     FALSE);
-        }
-
         return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, property, raw,
                                                              cooked, error);
 }
