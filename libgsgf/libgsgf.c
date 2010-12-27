@@ -34,6 +34,7 @@ typedef struct _GSGFFlavorInfo {
 
 static _GSGFFlavorInfo builtin_flavors[] = {
                 { "0", gsgf_flavor_new },
+                { "6", gsgf_flavor_backgammon_new },
 };
 
 void
