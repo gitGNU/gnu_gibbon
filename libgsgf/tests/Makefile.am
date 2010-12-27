@@ -70,7 +70,7 @@ noinst_HEADERS = test.h
 SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\
 	    full.sgf.in			\
-	    general-properties.sgf	\
+	    root-properties.sgf		\
 	    linefeeds.sgf		\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
