@@ -557,6 +557,11 @@ static GSGFCookedValue *
 gsgf_KO_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                      GError **error)
 {
+        GSGFMove *move;
 
-        return NULL;
+        move = gsgf_flavor_create_move(flavor, raw, error);
+        if (!move)
+                return NULL;
+
+        return GSGF_COOKED_VALUE(move);
 }
