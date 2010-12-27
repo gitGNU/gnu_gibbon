@@ -58,7 +58,7 @@ struct _GSGFCompose
         GSGFComposePrivate *priv;
 };
 
-GSGFCompose *gsgf_compose_new(GSGFCookedValue *val1, ...);
+GSGFCompose *gsgf_compose_new(GSGFCookedValue *value, ...);
 
 gsize gsgf_compose_get_number_of_values(const GSGFCompose *self);
 void gsgf_compose_set_value(GSGFCompose *self, GSGFCookedValue *value, gsize i);

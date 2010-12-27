@@ -17,14 +17,6 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SECTION:libgsgf
- * @short_description: Other functions
- * @include: libgsgf/libgsgf.h
- *
- * Initialize the library and register your own flavors.
- **/
-
 #include <glib/gi18n.h>
 
 #include <gsgf.h>

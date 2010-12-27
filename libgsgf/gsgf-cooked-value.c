@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:gsgf-cooked_value
+ * SECTION:gsgf-cooked-value
  * @short_description: Abstract base class for values stored in SGF files.
  *
  * A #GSGFCookedValue encapsulates qualified data read from an SGF file.

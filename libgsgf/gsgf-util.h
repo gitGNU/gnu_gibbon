@@ -17,8 +17,8 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBGSGF_H
-# define _LIBGSGF_H
+#ifndef _LIBGSGF_UTIL_H
+# define _LIBGSGF_UTIL_H
 
 #include <glib.h>
 

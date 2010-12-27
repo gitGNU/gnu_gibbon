@@ -36,8 +36,8 @@
 
 enum gsgf_parser_state {
         GSGF_PARSER_STATE_INIT,
-        GSGF_PARSER_STATE_NODE,
         GSGF_PARSER_STATE_PROPERTY,
+        GSGF_PARSER_STATE_NODE,
         GSGF_PARSER_STATE_PROP_VALUE,
         GSGF_PARSER_STATE_VALUE,
         GSGF_PARSER_STATE_PROP_CLOSE,
@@ -87,9 +87,9 @@ static gboolean gsgf_collection_convert(GSGFCollection *collection,
 static gboolean gsgf_collection_apply_flavor(GSGFCollection *collection,
                                              GError **error);
 
-/**
+/*
  * The SGF specification stipulates that a collection must have one ore more 
- * game trees, * and that a game tree has one or more nodes.  For practical 
+ * game trees, and that a game tree has one or more nodes.  For practical
  * purposes we allow empty collections and empty node lists (sequences).
  * But if you try to serialize such an object into a stream, you will
  * get an error.
@@ -665,7 +665,7 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
  * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
  * Serializes a #GSGFCollection and writes the serialized data into
- * a #GOuputStream.
+ * a #GOutputStream.
  *
  * If there is an error during the operation FALSE is returned and @error
  * is set to indicate the error status, @bytes_written is updated to contain

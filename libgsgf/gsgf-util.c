@@ -21,6 +21,14 @@
 
 #include "gsgf-private.h"
 
+/**
+ * SECTION:gsgf-util
+ * @short_description: Utility Functions
+ * @title: Utility Functions
+ *
+ * Some utility functions for libgsgf.
+ */
+
 /* FIXME: This function should be optimized.  It currently copies (and
  * allocates the memory for it) byte by byte.
  */

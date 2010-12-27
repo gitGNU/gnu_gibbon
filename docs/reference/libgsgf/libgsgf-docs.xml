@@ -21,17 +21,41 @@
 
   <part>
     <title>API Reference</title>
-    <xi:include href="xml/gsgf-collection.xml"/>
-    <xi:include href="xml/gsgf-game-tree.xml"/>
-    <xi:include href="xml/gsgf-node.xml"/>
-    <xi:include href="xml/gsgf-property.xml"/>
-    <xi:include href="xml/gsgf-error.xml"/>
-    <xi:include href="xml/libgsgf.xml"/>
-    <xi:include href="xml/gsgf-flavor.xml"/>
-    <xi:include href="xml/gsgf-cooked-value.xml"/>
-    <xi:include href="xml/gsgf-text.xml"/>
-    <xi:include href="xml/gsgf-simple-text.xml"/>
+    <chapter id="components">
+      <title>Components</title>
+      <xi:include href="xml/gsgf-collection.xml"/>
+      <xi:include href="xml/gsgf-game-tree.xml"/>
+      <xi:include href="xml/gsgf-node.xml"/>
+      <xi:include href="xml/gsgf-property.xml"/>
+    </chapter>
+    <chapter id="value_types">
+      <title>Value Types</title>
+      <xi:include href="xml/gsgf-cooked-value.xml"/>
+      <xi:include href="xml/gsgf-number.xml"/>
+      <xi:include href="xml/gsgf-real.xml"/>
+      <xi:include href="xml/gsgf-text.xml"/>
+      <xi:include href="xml/gsgf-simple-text.xml"/>
+      <xi:include href="xml/gsgf-compose.xml"/>
+      <xi:include href="xml/gsgf-raw.xml"/>
+    </chapter>
+    <chapter>
+      <title>SGF Flavor API</title>
+      <xi:include href="xml/gsgf-flavor.xml"/>
+      <xi:include href="xml/gsgf-flavor-backgammon.xml"/>
+      <xi:include href="xml/gsgf-move.xml"/>
+      <xi:include href="xml/gsgf-move-backgammon.xml"/>
+    </chapter>
+    <chapter id="miscallaneous">
+      <title>Miscellaneous</title>
+      <xi:include href="xml/gsgf-error.xml"/>
+      <xi:include href="xml/gsgf-util.xml"/>
+    </chapter>
   </part>
  
   <xi:include href="flavors.xml"/>
+
+  <index id="api-index-full">
+    <title id="index-all">Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
 </book>

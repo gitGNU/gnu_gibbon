@@ -25,16 +25,19 @@ DOC_MODULE = libgsgf
 DOC_MAIN_SGML_FILE = libgsgf-docs.xml
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS =
+SCAN_OPTIONS = --rebuild-types --rebuild-sections
 
-# The directory containing the souce code. Relative to $(srcdir)
+# The directory containing the source code. Relative to $(srcdir)
 DOC_SOURCE_DIR = $(top_srcdir)/libgsgf
 
 HFILE_GLOB = $(top_srcdir)/libgsgf/*.h
 CFILE_GLOB = $(top_srcdir)/libgsgf/*.c
 
 # Headers to ignore.
-IGNORE_HFILES =
+IGNORE_HFILES =				\
+	gsgf-private.h			\
+	gsgf-flavor-protected.h		\
+	test.h
 
 # CFLAGS and LDFLAGS needed for compiling scan program.  Only needed
 # if $(DOC_MODULE).types is non-empty.
@@ -56,4 +59,6 @@ extra_files = version.xml.in
 
 include $(top_srcdir)/gtk-doc.make
 
-EXTRA_DIST += version.xml.in
+EXTRA_DIST += version.xml.in 		\
+	flavor-general.xml		\
+	flavors.xml

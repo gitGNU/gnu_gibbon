@@ -1,4 +1,20 @@
 <SECTION>
+<FILE>gsgf-move</FILE>
+<TITLE>GSGFMove</TITLE>
+GSGFMoveClass
+GSGFMove
+gsgf_move_new
+<SUBSECTION Standard>
+GSGF_MOVE
+GSGF_IS_MOVE
+GSGF_TYPE_MOVE
+gsgf_move_get_type
+GSGF_MOVE_CLASS
+GSGF_IS_MOVE_CLASS
+GSGF_MOVE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-node</FILE>
 <TITLE>GSGFNode</TITLE>
 GSGFNodeClass
@@ -9,6 +25,7 @@ gsgf_node_get_property
 gsgf_node_get_property_ids
 gsgf_node_remove_property
 gsgf_node_get_property_cooked
+gsgf_node_get_previous_node
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -59,14 +76,33 @@ GSGF_TEXT_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-compose</FILE>
+<TITLE>GSGFCompose</TITLE>
+GSGFComposeClass
+GSGFCompose
+GSGFComposePrivate
+gsgf_compose_new
+gsgf_compose_get_number_of_values
+gsgf_compose_set_value
+gsgf_compose_get_value
+<SUBSECTION Standard>
+GSGF_COMPOSE
+GSGF_IS_COMPOSE
+GSGF_TYPE_COMPOSE
+gsgf_compose_get_type
+GSGF_COMPOSE_CLASS
+GSGF_IS_COMPOSE_CLASS
+GSGF_COMPOSE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-simple-text</FILE>
 <TITLE>GSGFSimpleText</TITLE>
 GSGFSimpleTextClass
 GSGFSimpleText
 GSGFSimpleTextPrivate
 gsgf_simple_text_new
-gsgf_simple_text_set_value
-gsgf_simple_text_get_value
+gsgf_simple_text_new_from_raw
 <SUBSECTION Standard>
 GSGF_SIMPLE_TEXT
 GSGF_IS_SIMPLE_TEXT
@@ -82,8 +118,8 @@ GSGF_SIMPLE_TEXT_GET_CLASS
 <TITLE>GSGFFlavor</TITLE>
 GSGFFlavorClass
 GSGFFlavor
-GSGFFlavorPrivate
 gsgf_flavor_new
+gsgf_flavor_get_cooked_value
 <SUBSECTION Standard>
 GSGF_FLAVOR
 GSGF_IS_FLAVOR
@@ -100,7 +136,8 @@ GSGF_FLAVOR_GET_CLASS
 GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
-GSGFPropertyType
+gsgf_property_get_id
+gsgf_property_get_node
 gsgf_property_get_value
 <SUBSECTION Standard>
 GSGF_PROPERTY
@@ -132,6 +169,22 @@ gsgf_collection_get_type
 GSGF_COLLECTION_CLASS
 GSGF_IS_COLLECTION_CLASS
 GSGF_COLLECTION_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-flavor-backgammon</FILE>
+<TITLE>GSGFFlavorBackgammon</TITLE>
+GSGFFlavorBackgammonClass
+GSGFFlavorBackgammon
+gsgf_flavor_backgammon_new
+<SUBSECTION Standard>
+GSGF_FLAVOR_BACKGAMMON
+GSGF_IS_FLAVOR_BACKGAMMON
+GSGF_TYPE_FLAVOR_BACKGAMMON
+gsgf_flavor_backgammon_get_type
+GSGF_FLAVOR_BACKGAMMON_CLASS
+GSGF_IS_FLAVOR_BACKGAMMON_CLASS
+GSGF_FLAVOR_BACKGAMMON_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -199,6 +252,8 @@ GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
+gsgf_game_tree_get_nodes
+gsgf_game_tree_get_children
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
@@ -210,26 +265,31 @@ GSGF_GAME_TREE_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>libgsgf</FILE>
-gsgf_util_read_simpletext
+<FILE>gsgf-move-backgammon</FILE>
+<TITLE>GSGFMoveBackgammon</TITLE>
+GSGFMoveBackgammonClass
+GSGFMoveBackgammon
+gsgf_move_backgammon_new
+<SUBSECTION Standard>
+GSGF_MOVE_BACKGAMMON
+GSGF_IS_MOVE_BACKGAMMON
+GSGF_TYPE_MOVE_BACKGAMMON
+gsgf_move_backgammon_get_type
+GSGF_MOVE_BACKGAMMON_CLASS
+GSGF_IS_MOVE_BACKGAMMON_CLASS
+GSGF_MOVE_BACKGAMMON_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-util</FILE>
+gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>
 
 <SECTION>
 <FILE>gsgf-error</FILE>
-GSGF_ERROR
 GSGFError
+GSGF_ERROR
 gsgf_error_quark
-</SECTION>
-
-<SECTION>
-<FILE>test</FILE>
-filename
-path
-test_collection
-expect_error
-expect_error_conditional
-g_memory_stream_get_string
-build_filename
 </SECTION>
 

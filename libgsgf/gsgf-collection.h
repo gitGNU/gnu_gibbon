@@ -40,6 +40,7 @@ G_BEGIN_DECLS
  **/
 typedef struct _GSGFCollectionClass   GSGFCollectionClass;
 typedef struct _GSGFCollection        GSGFCollection;
+/*< private >*/
 typedef struct _GSGFCollectionPrivate GSGFCollectionPrivate;
 
 struct _GSGFCollectionClass
@@ -69,14 +70,14 @@ GSGFCollection *gsgf_collection_parse_file(GFile *file,
 
 struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *collection);
 
-gboolean gsgf_collection_write_stream(const GSGFCollection *collection, 
+gboolean gsgf_collection_write_stream(const GSGFCollection *self,
                                       GOutputStream *out, 
                                       gsize *bytes_written,
                                       gboolean close_stream,
                                       GCancellable *cancellable,
                                       GError **error);
 
-GList *gsgf_collection_get_game_trees(const GSGFCollection *collection);
+GList *gsgf_collection_get_game_trees(const GSGFCollection *self);
 
 G_END_DECLS
 

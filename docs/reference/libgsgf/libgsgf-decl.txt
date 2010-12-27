@@ -1,13 +1,3 @@
-<FUNCTION>
-<NAME>gsgf_util_read_simple_text</NAME>
-<RETURNS>gchar *</RETURNS>
-const gchar *raw, const gchar **end, gchar delim 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_util_read_text</NAME>
-<RETURNS>gchar *</RETURNS>
-const gchar *raw, const gchar **end, gchar delim 
-</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_MOVE</NAME>
 #define GSGF_TYPE_MOVE             (gsgf_move_get_type ())
@@ -295,10 +285,16 @@ GSGFText *self, const gchar *value, gboolean copy
 <RETURNS>gchar *</RETURNS>
 const GSGFText *self 
 </FUNCTION>
-<MACRO>
-<NAME>GSGF_ERROR</NAME>
-#define GSGF_ERROR gsgf_error_quark ()
-</MACRO>
+<FUNCTION>
+<NAME>gsgf_util_read_simple_text</NAME>
+<RETURNS>gchar *</RETURNS>
+const gchar *raw, const gchar **end, gchar delim 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_util_read_text</NAME>
+<RETURNS>gchar *</RETURNS>
+const gchar *raw, const gchar **end, gchar delim 
+</FUNCTION>
 <ENUM>
 <NAME>GSGFError</NAME>
 typedef enum {
@@ -315,6 +311,10 @@ typedef enum {
         GSGF_ERROR_SEMANTIC_ERROR = 10
 } GSGFError;
 </ENUM>
+<MACRO>
+<NAME>GSGF_ERROR</NAME>
+#define GSGF_ERROR gsgf_error_quark ()
+</MACRO>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
 <RETURNS>GQuark </RETURNS>
@@ -378,7 +378,7 @@ struct _GSGFCompose
 <FUNCTION>
 <NAME>gsgf_compose_new</NAME>
 <RETURNS>GSGFCompose *</RETURNS>
-GSGFCookedValue *val1, ... 
+GSGFCookedValue *value, ... 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_compose_get_number_of_values</NAME>
@@ -520,7 +520,7 @@ void
 <FUNCTION>
 <NAME>gsgf_flavor_get_cooked_value</NAME>
 <RETURNS>gboolean </RETURNS>
-const GSGFFlavor *flavor, const struct _GSGFProperty *property, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
+const GSGFFlavor *self, const struct _GSGFProperty *property, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
@@ -555,14 +555,6 @@ const GSGFFlavor *flavor, const struct _GSGFProperty *property, const struct _GS
 <STRUCT>
 <NAME>GSGFPropertyPrivate</NAME>
 </STRUCT>
-<ENUM>
-<NAME>GSGFPropertyType</NAME>
-typedef enum gsgf_property_type {
-        GSGF_PROPERTY_TEXT,
-        GSGF_PROPERTY_NUMBER,
-        GSGF_PROPERTY_REAL
-} GSGFPropertyType;
-</ENUM>
 <STRUCT>
 <NAME>GSGFPropertyClass</NAME>
 struct _GSGFPropertyClass
@@ -678,12 +670,12 @@ GSGFCollection *collection
 <FUNCTION>
 <NAME>gsgf_collection_write_stream</NAME>
 <RETURNS>gboolean </RETURNS>
-const GSGFCollection *collection, GOutputStream *out, gsize *bytes_written, gboolean close_stream, GCancellable *cancellable, GError **error 
+const GSGFCollection *self, GOutputStream *out, gsize *bytes_written, gboolean close_stream, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_get_game_trees</NAME>
 <RETURNS>GList *</RETURNS>
-const GSGFCollection *collection 
+const GSGFCollection *self 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_FLAVOR_BACKGAMMON</NAME>
@@ -738,44 +730,6 @@ struct _GSGFFlavorBackgammon
 <NAME>gsgf_flavor_backgammon_new</NAME>
 <RETURNS>GSGFFlavorBackgammon *</RETURNS>
 void 
-</FUNCTION>
-<USER_FUNCTION>
-<NAME>GSGFCookedConstructor</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
-const GSGFRaw *raw, GError **error
-</USER_FUNCTION>
-<USER_FUNCTION>
-<NAME>GSGFCookedConstraint</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCookedValue *cooked,
-                                          const GSGFRaw *raw,
-                                          const GSGFProperty *property,
-                                          GError **error
-</USER_FUNCTION>
-<STRUCT>
-<NAME>GSGFFlavorTypeDef</NAME>
-struct _GSGFFlavorTypeDef {
-        GSGFCookedConstructor constructor;
-        GSGFCookedConstraint constraints[];
-};
-</STRUCT>
-<STRUCT>
-<NAME>GSGFFlavorTypeDef</NAME>
-</STRUCT>
-<FUNCTION>
-<NAME>gsgf_constraint_is_positive_number</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_constraint_is_root_property</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_constraint_is_single_value</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCookedValue *cooked, const GSGFRaw *raw, const GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_RAW</NAME>
@@ -840,7 +794,7 @@ const gchar *value
 <FUNCTION>
 <NAME>gsgf_raw_get_number_of_values</NAME>
 <RETURNS>gsize </RETURNS>
-const GSGFRaw *raw 
+const GSGFRaw *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_raw_get_value</NAME>
@@ -1053,6 +1007,16 @@ const GSGFGameTree *self
 <RETURNS>struct _GSGFNode *</RETURNS>
 GSGFGameTree *self 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_get_nodes</NAME>
+<RETURNS>GList *</RETURNS>
+const GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_get_children</NAME>
+<RETURNS>GList *</RETURNS>
+const GSGFGameTree *self 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_MOVE_BACKGAMMON</NAME>
 #define GSGF_TYPE_MOVE_BACKGAMMON  (gsgf_move_get_type ())
@@ -1106,37 +1070,4 @@ struct _GSGFMoveBackgammon
 <NAME>gsgf_move_backgammon_new</NAME>
 <RETURNS>GSGFMoveBackgammon *</RETURNS>
 void 
-</FUNCTION>
-<VARIABLE>
-<NAME>filename</NAME>
-extern char *filename;
-</VARIABLE>
-<VARIABLE>
-<NAME>path</NAME>
-extern char *path;
-</VARIABLE>
-<FUNCTION>
-<NAME>test_collection</NAME>
-<RETURNS>int </RETURNS>
-GSGFCollection *collection, GError *error 
-</FUNCTION>
-<FUNCTION>
-<NAME>expect_error</NAME>
-<RETURNS>int </RETURNS>
-GError *error, GError *expect 
-</FUNCTION>
-<FUNCTION>
-<NAME>expect_error_conditional</NAME>
-<RETURNS>int </RETURNS>
-gboolean condition, const gchar *msg, GError *error, GError *expect 
-</FUNCTION>
-<FUNCTION>
-<NAME>g_memory_stream_get_string</NAME>
-<RETURNS>gchar *</RETURNS>
-const GMemoryOutputStream *stream 
-</FUNCTION>
-<FUNCTION>
-<NAME>build_filename</NAME>
-<RETURNS>gchar *</RETURNS>
-const gchar *filename 
 </FUNCTION>

@@ -42,6 +42,6 @@
 #include <libgsgf/gsgf-node.h>
 #include <libgsgf/gsgf-property.h>
 
-#include <libgsgf/libgsgf.h>
+#include <libgsgf/gsgf-util.h>
 
 #endif

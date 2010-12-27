@@ -25,15 +25,6 @@
 G_BEGIN_DECLS
 
 /**
- * GSGF_ERROR:
- *
- * Error domain for GSGF.  Errors in this domain will be from the
- * #GSGFError enumeration.
- * See #GError for more information on error domains.
- **/
-#define GSGF_ERROR gsgf_error_quark ()
-
-/**
  * GSGFError:
  * @GSGF_ERROR_NONE: No error.
  * @GSGF_ERROR_FLAVOR_UNSUPPORTED: Unknown SGF flavor.
@@ -45,7 +36,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_EMPTY_PROPERTY: Attempt to write a property without a value.
  * @GSGF_ERROR_INTERNAL_ERROR: Internal error.
  * @GSGF_ERROR_INVALID_NUMBER: Invalid number format.
- * @SGGF_ERROR_LIST_TOO_LONG: A list of value was to long for the semantics of a particular
+ * @GSGF_ERROR_LIST_TOO_LONG: A list of value was to long for the semantics of a particular
  *                            property.
  * @GSGF_ERROR_SEMANTIC_ERROR: Semantic error i.e. the data did not match the expectations.
  */
@@ -62,6 +53,15 @@ typedef enum {
         GSGF_ERROR_LIST_TOO_LONG = 9,
         GSGF_ERROR_SEMANTIC_ERROR = 10
 } GSGFError;
+
+/**
+ * GSGF_ERROR:
+ *
+ * Error domain for GSGF.  Errors in this domain will be from the
+ * #GSGFError enumeration.
+ * See #GError for more information on error domains.
+ **/
+#define GSGF_ERROR gsgf_error_quark ()
 
 extern GQuark gsgf_error_quark (void);
 

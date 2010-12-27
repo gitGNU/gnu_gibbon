@@ -237,10 +237,10 @@ gsgf_flavor_new (void)
 
 /**
  * gsgf_flavor_get_cooked_value:
- * @self: The #GSGFFlavor
- * @id: The property id
+ * @self: The #GSGFFlavor.
+ * @property: The #GSGFProperty where the @raw comes from.
  * @raw: The #GSGFRaw to cook.
- * @cooked: Location to store the cooked value
+ * @cooked: Location to store the cooked value.
  * @error: Optional #GError location or %NULL to ignore.
  *
  * Cook a #GSGFRaw into a #GSGFCooked.

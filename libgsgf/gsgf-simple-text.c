@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:gsgf-simple_text
+ * SECTION:gsgf-simple-text
  * @short_description: Strong primitive type for SGF simple texts.
  *
  * A #GSGFSimpleText encapsulates an SGF simple text.  Its main purpose is 

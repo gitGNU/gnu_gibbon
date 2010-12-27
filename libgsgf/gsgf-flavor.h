@@ -63,7 +63,7 @@ struct _GSGFFlavor
 };
 
 GSGFFlavor *gsgf_flavor_new(void);
-gboolean gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, 
+gboolean gsgf_flavor_get_cooked_value(const GSGFFlavor *self, 
                                       const struct _GSGFProperty *property,
                                       const struct _GSGFRaw *raw,
                                       struct _GSGFCookedValue **cooked,

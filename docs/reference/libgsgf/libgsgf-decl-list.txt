@@ -136,7 +136,6 @@ GSGF_FLAVOR_GET_CLASS
 GSGFPropertyClass
 GSGFProperty
 GSGFPropertyPrivate
-GSGFPropertyType
 gsgf_property_get_id
 gsgf_property_get_node
 gsgf_property_get_value
@@ -253,6 +252,8 @@ GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
+gsgf_game_tree_get_nodes
+gsgf_game_tree_get_children
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
@@ -280,36 +281,15 @@ GSGF_MOVE_BACKGAMMON_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>libgsgf</FILE>
+<FILE>gsgf-util</FILE>
 gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>
 
 <SECTION>
 <FILE>gsgf-error</FILE>
-GSGF_ERROR
 GSGFError
+GSGF_ERROR
 gsgf_error_quark
-</SECTION>
-
-<SECTION>
-<FILE>gsgf-flavor-protected</FILE>
-GSGFCookedConstructor
-GSGFCookedConstraint
-GSGFFlavorTypeDef
-gsgf_constraint_is_positive_number
-gsgf_constraint_is_root_property
-gsgf_constraint_is_single_value
-</SECTION>
-
-<SECTION>
-<FILE>test</FILE>
-filename
-path
-test_collection
-expect_error
-expect_error_conditional
-g_memory_stream_get_string
-build_filename
 </SECTION>
 

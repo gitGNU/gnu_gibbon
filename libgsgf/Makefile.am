@@ -47,8 +47,8 @@ libgsgf_a_SOURCES = 			\
 	gsgf-real.c			\
 	gsgf-simple-text.c		\
 	gsgf-text.c			\
-	libgsgf.c			\
-	libgsgf-util.c
+	gsgf-util.c			\
+	libgsgf.c
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -70,4 +70,4 @@ noinst_HEADERS =			\
 	gsgf-real.h			\
 	gsgf-simple-text.h		\
 	gsgf-text.h			\
-	libgsgf.h
+	gsgf-util.h

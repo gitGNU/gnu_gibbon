@@ -115,7 +115,7 @@ AC_SUBST(GIBBON_CFLAGS)
 
 AM_GCONF_SOURCE_2
 
-GTK_DOC_CHECK([1.15])
+GTK_DOC_CHECK([1.15],[--flavour no-tmpl])
 
 AC_CONFIG_FILES([ 
     Makefile

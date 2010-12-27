@@ -19,8 +19,8 @@
 
 /**
  * SECTION:gsgf-error
- * @short_description: Error helper functions
- * @include: libgsgf/gsgf.h
+ * @short_description: GSGF Errors
+ * @title: GSGFError
  *
  * Currently contains only the #GQuark for GSGF errors.
  **/

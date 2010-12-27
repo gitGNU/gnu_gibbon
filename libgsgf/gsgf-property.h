@@ -42,12 +42,6 @@ typedef struct _GSGFPropertyClass   GSGFPropertyClass;
 typedef struct _GSGFProperty        GSGFProperty;
 typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 
-typedef enum gsgf_property_type {
-        GSGF_PROPERTY_TEXT,
-        GSGF_PROPERTY_NUMBER,
-        GSGF_PROPERTY_REAL
-} GSGFPropertyType;
-
 struct _GSGFPropertyClass
 {
         GObjectClass parent_class;

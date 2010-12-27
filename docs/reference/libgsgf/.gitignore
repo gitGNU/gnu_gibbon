@@ -1,7 +1,6 @@
 html/
-tmpl/
-version.xml
 xml/
+version.xml
 *.stamp
 libgsgf-undeclared.txt
 libgsgf-undocumented.txt
@@ -11,3 +10,4 @@ libgsgf.hierarchy
 libgsgf.interfaces
 libgsgf.prerequisites
 libgsgf.signals
+libgsgf.types

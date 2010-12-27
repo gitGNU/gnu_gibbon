@@ -19,7 +19,7 @@
 
 /**
  * SECTION:gsgf-text
- * @short_description: Strong primitive type for SGF texts.
+ * @short_description: Strong primitive type for SGF text.
  *
  * A #GSGFText encapsulates an SGF text.  Its main purpose is
  * to allow for type checking when retrieving or setting SGF properties.
