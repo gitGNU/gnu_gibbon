@@ -6,6 +6,7 @@
 /po/stamp-it
 autom4te.cache
 aclocal.m4
+core
 .*
 !.gitignore
 Makefile
