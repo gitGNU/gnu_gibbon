@@ -73,6 +73,15 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error);
 
+static GSGFCookedValue *gsgf_B_new_from_raw(const GSGFRaw* raw,
+                                             const GSGFFlavor *flavor,
+                                             GError **error);
+GSGFFlavorTypeDef gsgf_flavor_B = {
+                gsgf_B_new_from_raw, {
+                                NULL
+                }
+};
+
 static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw,
                                              const GSGFFlavor *flavor,
                                              GError **error);
@@ -110,15 +119,6 @@ GSGFFlavorTypeDef gsgf_flavor_GM = {
                 }
 };
 
-static GSGFCookedValue *gsgf_KO_new_from_raw(const GSGFRaw* raw,
-                                             const GSGFFlavor *flavor,
-                                             GError **error);
-GSGFFlavorTypeDef gsgf_flavor_KO = {
-                gsgf_KO_new_from_raw, {
-                                NULL
-                }
-};
-
 static gboolean gsgf_constraint_is_ST_number(const GSGFCookedValue *cooked,
                                              const GSGFRaw *raw,
                                              const GSGFProperty *property,
@@ -144,7 +144,7 @@ GSGFFlavorTypeDef gsgf_flavor_SZ = {
 };
 
 static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_B, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -186,7 +186,7 @@ static GSGFFlavorTypeDef *gsgf_g_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_k_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, &gsgf_flavor_KO, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
@@ -567,7 +567,7 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 }
 
 static GSGFCookedValue *
-gsgf_KO_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
+gsgf_B_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                      GError **error)
 {
         GSGFMove *move;
