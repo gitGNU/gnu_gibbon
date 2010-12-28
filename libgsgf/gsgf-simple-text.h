@@ -55,9 +55,12 @@ struct _GSGFSimpleText
         GSGFText parent_instance;
 };
 
+struct _GSGFProperty;
+
 GSGFSimpleText* gsgf_simple_text_new(const gchar *value);
 GSGFCookedValue* gsgf_simple_text_new_from_raw(const GSGFRaw *raw,
                                                const GSGFFlavor *flavor,
+                                               const struct _GSGFProperty *property,
                                                GError **error);
 
 G_END_DECLS

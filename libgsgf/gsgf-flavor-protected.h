@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 
 typedef GSGFCookedValue * (*GSGFCookedConstructor) (const GSGFRaw *raw,
                                                     const GSGFFlavor *flavor,
+                                                    const GSGFProperty *property,
                                                     GError **error);
 typedef gboolean (*GSGFCookedConstraint) (const GSGFCookedValue *cooked,
                                           const GSGFRaw *raw,
