@@ -28,7 +28,7 @@
 
 char *filename = "move-properties.sgf";
 
-static gboolean test_prop_KO(const GSGFNode *node);
+static gboolean test_prop_B(const GSGFNode *node);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -63,24 +63,24 @@ test_collection(GSGFCollection *collection, GError *error)
                 return -1;
         }
         node = GSGF_NODE(item);
-        if (!test_prop_KO(node))
+        if (!test_prop_B(node))
                 return -1;
 
         return expect_error(error, NULL);
 }
 
 static gboolean
-test_prop_KO(const GSGFNode *node)
+test_prop_B(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "KO");
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "B");
 
         if (!cooked_value) {
-                fprintf(stderr, "No property 'KO'!\n");
+                fprintf(stderr, "No property 'B'!\n");
                 return FALSE;
         }
 
         if (!GSGF_IS_MOVE(cooked_value)) {
-                fprintf(stderr, "Property 'KO' is not a GSGFMove!\n");
+                fprintf(stderr, "Property 'B' is not a GSGFMove!\n");
                 return FALSE;
         }
 
