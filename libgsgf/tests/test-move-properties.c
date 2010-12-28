@@ -72,15 +72,15 @@ test_collection(GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_B(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "B");
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
 
         if (!cooked_value) {
-                fprintf(stderr, "No property 'B'!\n");
+                fprintf(stderr, "No property 'W'!\n");
                 return FALSE;
         }
 
         if (!GSGF_IS_MOVE(cooked_value)) {
-                fprintf(stderr, "Property 'B' is not a GSGFMove!\n");
+                fprintf(stderr, "Property 'W' is not a GSGFMove!\n");
                 return FALSE;
         }
 

@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_MOVE_BACKGAMMON  (gsgf_move_get_type ())
+#define GSGF_TYPE_MOVE_BACKGAMMON  (gsgf_move_backgammon_get_type ())
 #define GSGF_MOVE_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammon))
 #define GSGF_MOVE_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
 #define GSGF_IS_MOVE_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE_BACKGAMMON))
@@ -37,10 +37,11 @@ G_BEGIN_DECLS
 /**
  * GSGFMoveBackgammon:
  *
- * Class implementing the backgammo move of SGF.
+ * Class implementing the backgammon move of SGF.
  **/
-typedef struct _GSGFMoveBackgammonClass  GSGFMoveBackgammonClass;
-typedef struct _GSGFMoveBackgammon       GSGFMoveBackgammon;
+typedef struct _GSGFMoveBackgammonClass   GSGFMoveBackgammonClass;
+typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
+typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
 
 struct _GSGFMoveBackgammonClass
 {
@@ -52,9 +53,14 @@ GType gsgf_move_backgammon_get_type(void) G_GNUC_CONST;
 struct _GSGFMoveBackgammon
 {
         GSGFMove parent_instance;
+
+        /*< private >*/
+        GSGFMoveBackgammonPrivate *priv;
 };
 
 GSGFMoveBackgammon *gsgf_move_backgammon_new(void);
+GSGFMoveBackgammon *gsgf_move_backgammon_new_from_raw(const GSGFRaw *raw,
+                                                      GError **error);
 
 G_END_DECLS
 

@@ -39,6 +39,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_LIST_TOO_LONG: A list of value was to long for the semantics of a particular
  *                            property.
  * @GSGF_ERROR_SEMANTIC_ERROR: Semantic error i.e. the data did not match the expectations.
+ * @GSGF_ERROR_INVALID_MOVE: Invalid syntax for a move.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
@@ -51,7 +52,8 @@ typedef enum {
         GSGF_ERROR_INTERNAL_ERROR = 7,
         GSGF_ERROR_INVALID_NUMBER = 8,
         GSGF_ERROR_LIST_TOO_LONG = 9,
-        GSGF_ERROR_SEMANTIC_ERROR = 10
+        GSGF_ERROR_SEMANTIC_ERROR = 10,
+        GSGF_ERROR_INVALID_MOVE = 11
 } GSGFError;
 
 /**

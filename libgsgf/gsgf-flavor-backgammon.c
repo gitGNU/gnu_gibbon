@@ -77,5 +77,8 @@ gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
                                     const GSGFRaw *raw,
                                     GError **error)
 {
-        return gsgf_move_backgammon_new();
+        /* FIXME! We need the GSGFProperty so that we can check that our
+         * move is a single-value property.
+         */
+        return gsgf_move_backgammon_new_from_raw(raw, error);
 }
