@@ -143,6 +143,14 @@ GSGFFlavorTypeDef gsgf_flavor_SZ = {
                 }
 };
 
+static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -330,18 +338,23 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
                               GError **error)
 {
-        GSGFFlavorTypeDef *def;
+        GSGFFlavorTypeDef *def = NULL;
         GSGFCookedConstraint *constraint;
         const gchar *id;
 
         id = gsgf_property_get_id(property);
-        if (id[0] < 'A' || id[0] > 'Z' || id[1] < 'A' || id[1] > 'Z' || id[2] != 0)
+        if (id[0] >= 'A' && id[0] <= 'Z' && id[1] == 0) {
+                def = gsgf_single_char_handlers[id[0] - 'A'];
+        } else {
+                if (id[0] < 'A' || id[0] > 'Z'
+                    || id[1] < 'A' || id[1] > 'Z'
+                    || id[2] != 0)
                 return FALSE;
 
-        if (!gsgf_handlers[id[0] - 'A'])
-                return FALSE;
-
-        def = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
+                if (!gsgf_handlers[id[0] - 'A'])
+                        return FALSE;
+                def = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
+        }
 
         if (!def)
                 return FALSE;
