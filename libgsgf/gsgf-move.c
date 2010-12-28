@@ -31,7 +31,7 @@
 
 #include <libgsgf/gsgf.h>
 
-G_DEFINE_TYPE (GSGFMove, gsgf_move, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GSGFMove, gsgf_move, GSGF_TYPE_COOKED_VALUE)
 
 static void
 gsgf_move_init(GSGFMove *self)

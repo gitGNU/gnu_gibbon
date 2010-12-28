@@ -42,14 +42,14 @@ typedef struct _GSGFMove        GSGFMove;
 
 struct _GSGFMoveClass
 {
-        GObjectClass parent_class;
+        GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_move_get_type(void) G_GNUC_CONST;
 
 struct _GSGFMove
 {
-        GObject parent_instance;
+        GSGFCookedValue parent_instance;
 };
 
 GSGFMove *gsgf_move_new(void);

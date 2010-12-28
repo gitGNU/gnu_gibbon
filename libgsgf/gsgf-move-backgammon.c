@@ -47,6 +47,8 @@ gsgf_move_backgammon_class_init(GSGFMoveBackgammonClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
+        /* FIXME: write_stream() must be implemented! */
+
         object_class->finalize = gsgf_move_backgammon_finalize;
 }
 
@@ -64,4 +66,3 @@ gsgf_move_backgammon_new (void)
 
         return self;
 }
-
