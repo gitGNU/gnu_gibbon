@@ -574,6 +574,25 @@ gsgf_B_or_W_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                          const GSGFProperty *property, GError **error)
 {
         GSGFMove *move;
+        GSGFNode *node;
+        gchar *id;
+
+        id = gsgf_property_get_id(property);
+        node = gsgf_property_get_node(property);
+
+        if (id[0] == 'B') {
+                if (gsgf_node_get_property(node, "W")) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("Only one move property (B or W) in node allowed"));
+                        return FALSE;
+                }
+        } else if (id[0] == 'W') {
+                if (gsgf_node_get_property(node, "B")) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("Only one move property (B or W) in node allowed"));
+                        return FALSE;
+                }
+        }
 
         move = gsgf_flavor_create_move(flavor, raw, error);
         if (!move)
