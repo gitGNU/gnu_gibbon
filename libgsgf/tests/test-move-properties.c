@@ -84,5 +84,10 @@ test_prop_B(const GSGFNode *node)
                 return FALSE;
         }
 
+        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+                fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
+                return FALSE;
+        }
+
         return TRUE;
 }
