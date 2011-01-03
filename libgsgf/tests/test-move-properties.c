@@ -96,5 +96,35 @@ test_prop_B(const GSGFNode *node)
                 return FALSE;
         }
 
+        if (1 != gsgf_move_backgammon_get_num_moves(move)) {
+                fprintf(stderr, "Expected one checker move, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        if (7 != gsgf_move_backgammon_get_from(move, 0)) {
+                fprintf(stderr, "Expected one checker move, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        if (4 != gsgf_move_backgammon_get_to(move, 0)) {
+                fprintf(stderr, "Expected one checker move, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        if (5 != gsgf_move_backgammon_get_from(move, 1)) {
+                fprintf(stderr, "Expected one checker move, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        if (4 != gsgf_move_backgammon_get_to(move, 1)) {
+                fprintf(stderr, "Expected one checker move, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
         return TRUE;
 }
