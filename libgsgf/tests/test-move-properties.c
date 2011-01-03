@@ -73,6 +73,7 @@ static gboolean
 test_prop_B(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
+        const GSGFMoveBackgammon *move;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'W'!\n");
@@ -86,6 +87,12 @@ test_prop_B(const GSGFNode *node)
 
         if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
+                return FALSE;
+        }
+        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+
+        if (!gsgf_move_backgammon_is_regular(move)) {
+                fprintf(stderr, "Property 'W' is not a regular backgammon move!\n");
                 return FALSE;
         }
 

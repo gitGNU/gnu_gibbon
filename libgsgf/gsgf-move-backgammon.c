@@ -30,9 +30,9 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFMoveBackgammonPrivate {
-        guint num_moves;
-        guint dice[2];
-        guint moves[4][2];
+        gint num_moves;
+        gint dice[2];
+        gint moves[4][2];
 };
 
 #define GSGF_MOVE_BACKGAMMON_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -41,7 +41,7 @@ struct _GSGFMoveBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFMoveBackgammon, gsgf_move_backgammon, GSGF_TYPE_MOVE)
 
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_normal(const gchar *string,
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
                                                            GError **error);
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_double();
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_take();
@@ -54,6 +54,8 @@ gsgf_move_backgammon_init(GSGFMoveBackgammon *self)
                                                   GSGFMoveBackgammonPrivate);
 
         (void) memset(self->priv, 0, sizeof (GSGFMoveBackgammonPrivate));
+
+        self->priv->num_moves = -1;
 }
 
 static void
@@ -113,7 +115,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
         }
 
         if (string[0] >= '1' && string[1] <= '6') {
-                return gsgf_move_backgammon_new_normal(string, error);
+                return gsgf_move_backgammon_new_regular(string, error);
         } else if (!strcmp(string, "double")) {
                 return gsgf_move_backgammon_new_double();
         } else if (!strcmp(string, "take")) {
@@ -127,7 +129,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
 }
 
 static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_normal (const gchar *string, GError **error)
+gsgf_move_backgammon_new_regular (const gchar *string, GError **error)
 {
         GSGFMoveBackgammon *self;
         GSGFMoveBackgammonPrivate *priv;
@@ -137,22 +139,22 @@ gsgf_move_backgammon_new_normal (const gchar *string, GError **error)
 
         priv = self->priv;
 
-        priv->dice[0] = 1 + string[0] - '1';
+        priv->dice[0] = 1 + (gint64) string[0] - '1';
         if (string[1] < '1' || string[1] > '6') {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
                                 _("Invalid move syntax '%s'"), string);
 
                 return NULL;
         }
-        priv->dice[1] = 1 + string[0] - '1';
+        priv->dice[1] = 1 + (gint64) string[0] - '1';
 
         for (i = 2; i < 10; i += 2) {
                 if (string[i] < 'a' || string[i] > 'z')
                         break;
                 if (string[i + 1] < 'a' || string[i + 1] > 'z')
                         break;
-                priv->moves[(i - 2) >> 1][0] = string[i] - 'a';
-                priv->moves[(i - 2) >> 1][1] = string[i] - 'a';
+                priv->moves[(i - 2) >> 1][0] = (gint64) string[i] - 'a';
+                priv->moves[(i - 2) >> 1][1] = (gint64) string[i] - 'a';
         }
 
         if (string[i]) {
@@ -190,4 +192,12 @@ gsgf_move_backgammon_new_take ()
         self->priv->dice[0] = 2;
 
         return self;
+}
+
+gboolean
+gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return self->priv->num_moves > 0;
 }
