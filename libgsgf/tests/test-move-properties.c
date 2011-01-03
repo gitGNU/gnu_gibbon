@@ -74,6 +74,7 @@ test_prop_B(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
         const GSGFMoveBackgammon *move;
+        gint point;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'W'!\n");
@@ -96,33 +97,33 @@ test_prop_B(const GSGFNode *node)
                 return FALSE;
         }
 
-        if (1 != gsgf_move_backgammon_get_num_moves(move)) {
-                fprintf(stderr, "Expected one checker move, got %d!\n",
+        if (2 != gsgf_move_backgammon_get_num_moves(move)) {
+                fprintf(stderr, "Expected two checker moves, got %d!\n",
                                 gsgf_move_backgammon_get_num_moves(move));
                 return FALSE;
         }
 
-        if (7 != gsgf_move_backgammon_get_from(move, 0)) {
-                fprintf(stderr, "Expected one checker move, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+        point = gsgf_move_backgammon_get_from(move, 0);
+        if (7 != point) {
+                fprintf(stderr, "Expected 7, got %d!\n", point);
                 return FALSE;
         }
 
-        if (4 != gsgf_move_backgammon_get_to(move, 0)) {
-                fprintf(stderr, "Expected one checker move, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+        point = gsgf_move_backgammon_get_to(move, 0);
+        if (4 != point) {
+                fprintf(stderr, "Expected 4, gt %d!\n", point);
                 return FALSE;
         }
 
-        if (5 != gsgf_move_backgammon_get_from(move, 1)) {
-                fprintf(stderr, "Expected one checker move, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+        point = gsgf_move_backgammon_get_from(move, 1);
+        if (5 != point) {
+                fprintf(stderr, "Expected 5, got %d!\n", point);
                 return FALSE;
         }
 
-        if (4 != gsgf_move_backgammon_get_to(move, 1)) {
-                fprintf(stderr, "Expected one checker move, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+        point = gsgf_move_backgammon_get_to(move, 1);
+        if (4 != point) {
+                fprintf(stderr, "Expected 4, go %d!\n", point);
                 return FALSE;
         }
 

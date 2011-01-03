@@ -63,6 +63,9 @@ GSGFMoveBackgammon *gsgf_move_backgammon_new_from_raw(const GSGFRaw *raw,
                                                       GError **error);
 
 gboolean gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self);
+gint gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self);
+gint gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i);
+gint gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i);
 
 G_END_DECLS
 

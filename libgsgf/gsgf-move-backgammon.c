@@ -139,22 +139,22 @@ gsgf_move_backgammon_new_regular (const gchar *string, GError **error)
 
         priv = self->priv;
 
-        priv->dice[0] = 1 + (gint64) string[0] - '1';
+        priv->dice[0] = 1 + (gint) string[0] - '1';
         if (string[1] < '1' || string[1] > '6') {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
                                 _("Invalid move syntax '%s'"), string);
 
                 return NULL;
         }
-        priv->dice[1] = 1 + (gint64) string[0] - '1';
+        priv->dice[1] = 1 + (gint) string[0] - '1';
 
         for (i = 2; i < 10; i += 2) {
                 if (string[i] < 'a' || string[i] > 'z')
                         break;
                 if (string[i + 1] < 'a' || string[i + 1] > 'z')
                         break;
-                priv->moves[(i - 2) >> 1][0] = (gint64) string[i] - 'a';
-                priv->moves[(i - 2) >> 1][1] = (gint64) string[i] - 'a';
+                priv->moves[(i - 2) >> 1][0] = (gint) string[i] - 'a';
+                priv->moves[(i - 2) >> 1][1] = (gint) string[i + 1] - 'a';
         }
 
         if (string[i]) {
@@ -200,4 +200,32 @@ gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
         return self->priv->num_moves > 0;
+}
+
+gboolean
+gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return (gsize) self->priv->num_moves;
+}
+
+gint
+gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), 0);
+        g_return_val_if_fail(self->priv->num_moves > i, 0);
+        g_assert(self->priv->num_moves < 4);
+
+        return (gsize) self->priv->moves[i][0];
+}
+
+gint
+gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), 0);
+        g_return_val_if_fail(self->priv->num_moves > i, 0);
+        g_assert(self->priv->num_moves < 4);
+
+        return (gsize) self->priv->moves[i][1];
 }
