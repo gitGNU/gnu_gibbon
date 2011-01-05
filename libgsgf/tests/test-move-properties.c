@@ -74,7 +74,7 @@ test_prop_B(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
         const GSGFMoveBackgammon *move;
-        gint point;
+        gint point, die;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'W'!\n");
@@ -100,6 +100,18 @@ test_prop_B(const GSGFNode *node)
         if (2 != gsgf_move_backgammon_get_num_moves(move)) {
                 fprintf(stderr, "Expected two checker moves, got %d!\n",
                                 gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        die = gsgf_move_backgammon_get_die(move, 0);
+        if (3 != die) {
+                fprintf(stderr, "Expected 3, got %d!\n", die);
+                return FALSE;
+        }
+
+        die = gsgf_move_backgammon_get_die(move, 1);
+        if (1 != die) {
+                fprintf(stderr, "Expected 1, got %d!\n", die);
                 return FALSE;
         }
 

@@ -120,6 +120,8 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
                 return gsgf_move_backgammon_new_double();
         } else if (!strcmp(string, "take")) {
                 return gsgf_move_backgammon_new_take();
+        } else if (!strcmp(string, "drop")) {
+                return gsgf_move_backgammon_new_take();
         }
 
         g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
@@ -146,7 +148,7 @@ gsgf_move_backgammon_new_regular (const gchar *string, GError **error)
 
                 return NULL;
         }
-        priv->dice[1] = 1 + (gint) string[0] - '1';
+        priv->dice[1] = 1 + (gint) string[1] - '1';
 
         for (i = 2; i < 10; i += 2) {
                 if (string[i] < 'a' || string[i] > 'z')
@@ -194,15 +196,51 @@ gsgf_move_backgammon_new_take ()
         return self;
 }
 
+static GSGFMoveBackgammon *
+gsgf_move_backgammon_new_drop ()
+{
+        GSGFMoveBackgammon *self;
+
+        self = g_object_new(GSGF_TYPE_MOVE_BACKGAMMON, NULL);
+
+        self->priv->dice[0] = 3;
+
+        return self;
+}
+
 gboolean
 gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
-        return self->priv->num_moves > 0;
+        return self->priv->num_moves >= 0;
 }
 
 gboolean
+gsgf_move_backgammon_is_double(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return self->priv->num_moves == -1 && self->priv->dice[0] == 1;
+}
+
+gboolean
+gsgf_move_backgammon_is_take(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return self->priv->num_moves == -1 && self->priv->dice[0] == 2;
+}
+
+gboolean
+gsgf_move_backgammon_is_drop(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return self->priv->num_moves == -1 && self->priv->dice[0] == 3;
+}
+
+gsize
 gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
@@ -210,22 +248,32 @@ gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self)
         return (gsize) self->priv->num_moves;
 }
 
-gint
+guint
+gsgf_move_backgammon_get_die(const GSGFMoveBackgammon *self, gsize i)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), 0);
+        g_return_val_if_fail(self->priv->num_moves >= 0, 0);
+        g_return_val_if_fail(i == 0 || i == 1, 0);
+
+        return (gsize) self->priv->dice[i];
+}
+
+guint
 gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), 0);
         g_return_val_if_fail(self->priv->num_moves > i, 0);
-        g_assert(self->priv->num_moves < 4);
+        g_assert(self->priv->num_moves <= 4);
 
         return (gsize) self->priv->moves[i][0];
 }
 
-gint
+guint
 gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), 0);
         g_return_val_if_fail(self->priv->num_moves > i, 0);
-        g_assert(self->priv->num_moves < 4);
+        g_assert(self->priv->num_moves <= 4);
 
         return (gsize) self->priv->moves[i][1];
 }

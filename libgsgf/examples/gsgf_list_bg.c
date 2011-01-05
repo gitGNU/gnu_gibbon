@@ -34,6 +34,8 @@ static gboolean list_collection(const gchar *path,
                                 const GSGFCollection *collection);
 static gboolean list_game_tree(const gchar *path,
                                const GSGFGameTree *game_tree);
+static gboolean list_bg_move(const gchar *path, const GSGFNode *node);
+static void print_point(guint point);
 
 int
 main (int argc, char *argv[])
@@ -232,5 +234,96 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         }
         g_list_free(ids);
 
+        nodes = gsgf_game_tree_get_nodes(game_tree);
+        iter = nodes;
+
+        /* The first node was the root node.  Proceed to the next.  */
+        if (iter)
+                iter = iter->next;
+
+        while (iter) {
+                /* Display the move.  */
+                if (!list_bg_move(path, GSGF_NODE(iter->data)))
+                        return FALSE;
+
+                /* Proceed to next node.  */
+                iter = iter->next;
+        }
+
+        g_print("\n");
+
         return TRUE;
+}
+
+static gboolean
+list_bg_move (const gchar *path, const GSGFNode *node)
+{
+        char prop_id[2] = { 'W', 0 };
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node,
+                                                                            prop_id);
+        const GSGFMoveBackgammon *move;
+        gint i;
+
+        if (!cooked_value) {
+                /* Not a W property, try B.  */
+                prop_id[0] = 'B';
+                cooked_value = gsgf_node_get_property_cooked(node, prop_id);
+        }
+
+        if (!cooked_value) {
+                fprintf(stderr, "%s: Non-root node does not have a move property.\n",
+                                path);
+                return FALSE;
+        }
+
+        /* Type-check and cast.  */
+        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+                fprintf(stderr, "%s: property '%s' is not a backgammon move but a '%s'.\n",
+                                path, prop_id,
+                                G_OBJECT_TYPE_NAME(G_OBJECT(cooked_value)));
+                return FALSE;
+        }
+        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+
+        if (gsgf_move_backgammon_is_regular(move)) {
+                g_print("%d%d: ",
+                                gsgf_move_backgammon_get_die(move, 0),
+                                gsgf_move_backgammon_get_die(move, 1)
+                        );
+
+                for (i = 0; i < gsgf_move_backgammon_get_num_moves(move); ++i) {
+                        print_point(gsgf_move_backgammon_get_from(move, i));
+                        g_print("/");
+                        print_point(gsgf_move_backgammon_get_to(move, i));
+                        g_print(" ");
+                }
+        } else if (gsgf_move_backgammon_is_double(move)) {
+                g_print("Double ");
+        } else if (gsgf_move_backgammon_is_take(move)) {
+                g_print("Take ");
+        } else if (gsgf_move_backgammon_is_drop(move)) {
+                g_print("Drop ");
+        } else {
+                g_print("???????? ");
+        }
+
+        if ('B' == prop_id[0])
+                g_print("\n");
+        else
+                g_print("| ");
+
+        return TRUE;
+}
+
+static void
+print_point(guint point)
+{
+        if (point < 24)
+                g_print("%d", point + 1);
+        else if (point == 24)
+                g_print("bar");
+        else if (point == 25)
+                g_print("off", point);
+        else
+                g_print("??");
 }

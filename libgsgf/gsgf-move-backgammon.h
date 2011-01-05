@@ -63,9 +63,13 @@ GSGFMoveBackgammon *gsgf_move_backgammon_new_from_raw(const GSGFRaw *raw,
                                                       GError **error);
 
 gboolean gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self);
-gint gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self);
-gint gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i);
-gint gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i);
+gboolean gsgf_move_backgammon_is_double(const GSGFMoveBackgammon *self);
+gboolean gsgf_move_backgammon_is_take(const GSGFMoveBackgammon *self);
+gboolean gsgf_move_backgammon_is_drop(const GSGFMoveBackgammon *self);
+gsize gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self);
+guint gsgf_move_backgammon_get_die(const GSGFMoveBackgammon *self, gsize i);
+guint gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i);
+guint gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i);
 
 G_END_DECLS
 
