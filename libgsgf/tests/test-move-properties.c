@@ -384,7 +384,7 @@ test_prop_MN(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "MN");
         const GSGFNumber *move_number;
-        gdouble num;
+        gint64 num;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'W'!\n");
@@ -399,7 +399,7 @@ test_prop_MN(const GSGFNode *node)
         move_number = GSGF_NUMBER(cooked_value);
         num = gsgf_number_get_value(move_number);
         if (123 != num) {
-                fprintf(stderr, "Property 'MN': expected 123, got %f\n", num);
+                fprintf(stderr, "Property 'MN': expected 123, got %lld\n", num);
                 return FALSE;
         }
 
