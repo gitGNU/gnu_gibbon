@@ -97,6 +97,15 @@ test_collection(GSGFCollection *collection, GError *error)
         if (!test_take(node))
                 return -1;
 
+        item = g_list_nth_data(nodes, 7);
+        if (!item) {
+                fprintf(stderr, "Property #7 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_drop(node))
+                return -1;
+
         return expect_error(error, NULL);
 }
 
@@ -324,6 +333,36 @@ test_take(const GSGFNode *node)
 
         if (!gsgf_move_backgammon_is_take(move)) {
                 fprintf(stderr, "Property 'B' is not a backgammon take!\n");
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_drop(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
+        const GSGFMoveBackgammon *move;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No property 'W'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_MOVE(cooked_value)) {
+                fprintf(stderr, "Property 'W' is not a GSGFMove!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+                fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
+                return FALSE;
+        }
+        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+
+        if (!gsgf_move_backgammon_is_drop(move)) {
+                fprintf(stderr, "Property 'W' is not a backgammon drop!\n");
                 return FALSE;
         }
 
