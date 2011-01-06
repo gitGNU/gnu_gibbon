@@ -34,6 +34,7 @@ static gboolean test_double(const GSGFNode *node);
 static gboolean test_take(const GSGFNode *node);
 static gboolean test_drop(const GSGFNode *node);
 static gboolean test_prop_MN(const GSGFNode *node);
+static gboolean test_prop_KO(const GSGFNode *node);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -105,6 +106,15 @@ test_collection(GSGFCollection *collection, GError *error)
         }
         node = GSGF_NODE(item);
         if (!test_prop_MN(node))
+                return -1;
+
+        item = g_list_nth_data(nodes, 6);
+        if (!item) {
+                fprintf(stderr, "Property #6 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_KO(node))
                 return -1;
 
         item = g_list_nth_data(nodes, 7);
@@ -400,6 +410,21 @@ test_prop_MN(const GSGFNode *node)
         num = gsgf_number_get_value(move_number);
         if (123 != num) {
                 fprintf(stderr, "Property 'MN': expected 123, got %lld\n", num);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_KO(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "KO");
+        const GSGFNumber *move_number;
+        gint64 num;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No property 'KO'!\n");
                 return FALSE;
         }
 
