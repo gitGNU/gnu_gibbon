@@ -33,6 +33,7 @@ static gboolean test_regular_black_move(const GSGFNode *node);
 static gboolean test_double(const GSGFNode *node);
 static gboolean test_take(const GSGFNode *node);
 static gboolean test_drop(const GSGFNode *node);
+static gboolean test_prop_MN(const GSGFNode *node);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -95,6 +96,15 @@ test_collection(GSGFCollection *collection, GError *error)
         }
         node = GSGF_NODE(item);
         if (!test_take(node))
+                return -1;
+
+        item = g_list_nth_data(nodes, 5);
+        if (!item) {
+                fprintf(stderr, "Property #5 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_MN(node))
                 return -1;
 
         item = g_list_nth_data(nodes, 7);
@@ -363,6 +373,33 @@ test_drop(const GSGFNode *node)
 
         if (!gsgf_move_backgammon_is_drop(move)) {
                 fprintf(stderr, "Property 'W' is not a backgammon drop!\n");
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_MN(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "MN");
+        const GSGFNumber *move_number;
+        gdouble num;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No property 'W'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_NUMBER(cooked_value)) {
+                fprintf(stderr, "Property 'MN' is not a GSGFNumber!\n");
+                return FALSE;
+        }
+
+        move_number = GSGF_NUMBER(cooked_value);
+        num = gsgf_number_get_value(move_number);
+        if (123 != num) {
+                fprintf(stderr, "Property 'MN': expected 123, got %f\n", num);
                 return FALSE;
         }
 
