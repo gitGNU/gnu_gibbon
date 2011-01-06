@@ -28,7 +28,8 @@
 
 char *filename = "move-properties.sgf";
 
-static gboolean test_prop_B(const GSGFNode *node);
+static gboolean test_regular_white_move(const GSGFNode *node);
+static gboolean test_regular_black_move(const GSGFNode *node);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -63,14 +64,23 @@ test_collection(GSGFCollection *collection, GError *error)
                 return -1;
         }
         node = GSGF_NODE(item);
-        if (!test_prop_B(node))
+        if (!test_regular_white_move(node))
+                return -1;
+
+        item = g_list_nth_data(nodes, 2);
+        if (!item) {
+                fprintf(stderr, "Property #2 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_regular_black_move(node))
                 return -1;
 
         return expect_error(error, NULL);
 }
 
 static gboolean
-test_prop_B(const GSGFNode *node)
+test_regular_white_move(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
         const GSGFMoveBackgammon *move;
@@ -123,7 +133,7 @@ test_prop_B(const GSGFNode *node)
 
         point = gsgf_move_backgammon_get_to(move, 0);
         if (4 != point) {
-                fprintf(stderr, "Expected 4, gt %d!\n", point);
+                fprintf(stderr, "Expected 4, got %d!\n", point);
                 return FALSE;
         }
 
@@ -136,6 +146,103 @@ test_prop_B(const GSGFNode *node)
         point = gsgf_move_backgammon_get_to(move, 1);
         if (4 != point) {
                 fprintf(stderr, "Expected 4, go %d!\n", point);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_regular_black_move(const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "B");
+        const GSGFMoveBackgammon *move;
+        gint point, die;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No property 'B'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_MOVE(cooked_value)) {
+                fprintf(stderr, "Property 'B' is not a GSGFMove!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+                fprintf(stderr, "Property 'B' is not a GSGFBackgammonMove!\n");
+                return FALSE;
+        }
+        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+
+        if (!gsgf_move_backgammon_is_regular(move)) {
+                fprintf(stderr, "Property 'B' is not a regular backgammon move!\n");
+                return FALSE;
+        }
+
+        if (4 != gsgf_move_backgammon_get_num_moves(move)) {
+                fprintf(stderr, "Expected four checker moves, got %d!\n",
+                                gsgf_move_backgammon_get_num_moves(move));
+                return FALSE;
+        }
+
+        die = gsgf_move_backgammon_get_die(move, 0);
+        if (6 != die) {
+                fprintf(stderr, "Expected 6, got %d!\n", die);
+                return FALSE;
+        }
+
+        die = gsgf_move_backgammon_get_die(move, 1);
+        if (6 != die) {
+                fprintf(stderr, "Expected 6, got %d!\n", die);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_from(move, 0);
+        if (0 != point) {
+                fprintf(stderr, "Expected 0, got %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_to(move, 0);
+        if (6 != point) {
+                fprintf(stderr, "Expected 6, got %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_from(move, 1);
+        if (0 != point) {
+                fprintf(stderr, "Expected 0, got %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_to(move, 1);
+        if (6 != point) {
+                fprintf(stderr, "Expected 6, go %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_from(move, 2);
+        if (11 != point) {
+                fprintf(stderr, "Expected 11, got %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_to(move, 2);
+        if (17 != point) {
+                fprintf(stderr, "Expected 17, go %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_from(move, 3);
+        if (11 != point) {
+                fprintf(stderr, "Expected 11, got %d!\n", point);
+                return FALSE;
+        }
+
+        point = gsgf_move_backgammon_get_to(move, 3);
+        if (17 != point) {
+                fprintf(stderr, "Expected 17, go %d!\n", point);
                 return FALSE;
         }
 
