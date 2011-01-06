@@ -45,6 +45,7 @@ static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
                                                            GError **error);
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_double();
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_take();
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_drop();
 
 static void
 gsgf_move_backgammon_init(GSGFMoveBackgammon *self)
@@ -121,7 +122,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
         } else if (!strcmp(string, "take")) {
                 return gsgf_move_backgammon_new_take();
         } else if (!strcmp(string, "drop")) {
-                return gsgf_move_backgammon_new_take();
+                return gsgf_move_backgammon_new_drop();
         }
 
         g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
