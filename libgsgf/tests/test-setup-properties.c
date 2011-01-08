@@ -77,6 +77,7 @@ test_prop_AB(const GSGFNode *node)
         GType type;
         GSGFCookedValue *cooked_point;
         gsize num_points;
+        guint point;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AB'!\n");
@@ -97,9 +98,34 @@ test_prop_AB(const GSGFNode *node)
         }
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 3) {
-                fprintf(stderr, "Expected three points, got %u!\n", num_points);
+        if (num_points != 2) {
+                fprintf(stderr, "Expected two points, got %u!\n", num_points);
                 return FALSE;
         }
+
+        cooked_point = gsgf_list_of_get_nth_item(list_of, 0);
+        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
+                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+                return FALSE;
+        }
+        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
+        if (point != 16) {
+                fprintf(stderr, "Item #0 is not a 16 point but a %u point!\n",
+                                point);
+                return FALSE;
+        }
+
+        cooked_point = gsgf_list_of_get_nth_item(list_of, 1);
+        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
+                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+                return FALSE;
+        }
+        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
+        if (point != 16) {
+                fprintf(stderr, "Item #0 is not a 16 point but a %u point!\n",
+                                point);
+                return FALSE;
+        }
+
         return TRUE;
 }
