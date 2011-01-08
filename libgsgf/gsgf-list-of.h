@@ -61,7 +61,7 @@ struct _GSGFListOf
 GSGFListOf *gsgf_list_of_new(GType type);
 
 GType gsgf_list_of_get_item_type(const GSGFListOf *self);
-gsize gsgf_list_of_get_number_of_values(const GSGFListOf *self);
+gsize gsgf_list_of_get_number_of_items(const GSGFListOf *self);
 gboolean gsgf_list_of_append_value(GSGFListOf *self, GSGFCookedValue *value,
                                    GError **error);
 GSGFCookedValue *gsgf_list_of_get_value(const GSGFListOf *self, gsize i);

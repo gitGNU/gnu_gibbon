@@ -32,7 +32,7 @@
 struct _GSGFListOfPrivate {
         GType type;
 
-        GList *values;
+        GList *items;
 };
 
 #define GSGF_LIST_OF_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -53,7 +53,7 @@ gsgf_list_of_init(GSGFListOf *self)
                         GSGFListOfPrivate);
 
         self->priv->type = G_TYPE_INVALID;
-        self->priv->values = NULL;
+        self->priv->items = NULL;
 }
 
 static void
@@ -61,9 +61,9 @@ gsgf_list_of_finalize(GObject *object)
 {
         GSGFListOf *self = GSGF_LIST_OF(object);
 
-        if (self->priv->values) {
-                g_list_foreach(self->priv->values, (GFunc) g_object_unref, NULL);
-                g_list_free(self->priv->values);
+        if (self->priv->items) {
+                g_list_foreach(self->priv->items, (GFunc) g_object_unref, NULL);
+                g_list_free(self->priv->items);
         }
 
         G_OBJECT_CLASS (gsgf_list_of_parent_class)->finalize(object);
@@ -118,7 +118,7 @@ gsgf_list_of_get_value(const GSGFListOf *self, gsize i)
 {
         g_return_val_if_fail(GSGF_IS_LIST_OF(self), NULL);
 
-        return GSGF_COOKED_VALUE(g_list_nth_data(self->priv->values, i));
+        return GSGF_COOKED_VALUE(g_list_nth_data(self->priv->items, i));
 }
 
 static gboolean
@@ -133,7 +133,7 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
 
         *bytes_written = 0;
 
-        iter = self->priv->values;
+        iter = self->priv->items;
 
         if (!iter) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
@@ -166,7 +166,7 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
 }
 
 /**
- * gsgf_list_of_get_number_of_values:
+ * gsgf_list_of_get_number_of_items:
  * @self: The #GSGFListOf object.
  *
  * Get the number of items.
@@ -174,11 +174,11 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
  * Returns: The number of values stored.
  */
 gsize
-gsgf_list_of_get_number_of_values (const GSGFListOf *self)
+gsgf_list_of_get_number_of_items(const GSGFListOf *self)
 {
         g_return_val_if_fail(GSGF_IS_LIST_OF(self), 0);
 
-        return g_list_length(self->priv->values);
+        return g_list_length(self->priv->items);
 }
 
 /**

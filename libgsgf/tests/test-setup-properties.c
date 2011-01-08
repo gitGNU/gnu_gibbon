@@ -75,6 +75,8 @@ test_prop_AB(const GSGFNode *node)
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AB");
         const GSGFListOf *list_of;
         GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AB'!\n");
@@ -94,5 +96,10 @@ test_prop_AB(const GSGFNode *node)
                 return FALSE;
         }
 
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        if (num_points != 3) {
+                fprintf(stderr, "Expected three points, got %u!\n", num_points);
+                return FALSE;
+        }
         return TRUE;
 }
