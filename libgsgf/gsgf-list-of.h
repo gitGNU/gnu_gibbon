@@ -64,7 +64,7 @@ GType gsgf_list_of_get_item_type(const GSGFListOf *self);
 gsize gsgf_list_of_get_number_of_items(const GSGFListOf *self);
 gboolean gsgf_list_of_append(GSGFListOf *self, GSGFCookedValue *value,
                              GError **error);
-GSGFCookedValue *gsgf_list_of_get_value(const GSGFListOf *self, gsize i);
+GSGFCookedValue *gsgf_list_of_get_nth_item(const GSGFListOf *self, gsize i);
 
 G_END_DECLS
 

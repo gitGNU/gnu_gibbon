@@ -105,7 +105,7 @@ gsgf_list_of_new (GType type)
 }
 
 /**
- * gsgf_list_of_get_value:
+ * gsgf_list_of_get_nth_item:
  * @self: The #GSGFListOf object.
  * @i: Position in the property list.
  *
@@ -114,7 +114,7 @@ gsgf_list_of_new (GType type)
  * Returns: The value stored at position @i or %NULL.
  */
 GSGFCookedValue *
-gsgf_list_of_get_value(const GSGFListOf *self, gsize i)
+gsgf_list_of_get_nth_item(const GSGFListOf *self, gsize i)
 {
         g_return_val_if_fail(GSGF_IS_LIST_OF(self), NULL);
 
