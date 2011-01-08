@@ -121,6 +121,13 @@ GSGFFlavorTypeDef gsgf_flavor_GM = {
                 }
 };
 
+GSGFFlavorTypeDef gsgf_flavor_KO = {
+                gsgf_empty_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 GSGFFlavorTypeDef gsgf_flavor_MN = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
@@ -197,7 +204,7 @@ static GSGFFlavorTypeDef *gsgf_g_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_k_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, &gsgf_flavor_KO, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
