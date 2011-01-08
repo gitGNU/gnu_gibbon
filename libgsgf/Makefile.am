@@ -34,6 +34,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-collection.c		\
 	gsgf-compose.c			\
 	gsgf-cooked-value.c		\
+	gsgf-empty.c			\
 	gsgf-error.c			\
 	gsgf-flavor.c			\
 	gsgf-flavor-backgammon.c	\
@@ -55,6 +56,7 @@ noinst_HEADERS =			\
 	gsgf-collection.h		\
 	gsgf-compose.h			\
 	gsgf-cooked-value.h		\
+	gsgf-empty.h			\
 	gsgf-error.h			\
 	gsgf-flavor.h			\
 	gsgf-flavor-backgammon.h	\

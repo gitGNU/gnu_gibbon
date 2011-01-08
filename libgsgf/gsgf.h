@@ -27,6 +27,7 @@
 
 #include <libgsgf/gsgf-cooked-value.h>
 #include <libgsgf/gsgf-raw.h>
+#include <libgsgf/gsgf-empty.h>
 #include <libgsgf/gsgf-number.h>
 #include <libgsgf/gsgf-real.h>
 #include <libgsgf/gsgf-simple-text.h>
