@@ -83,6 +83,16 @@ GSGFFlavorTypeDef gsgf_flavor_B_or_W = {
                 }
 };
 
+static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
+                                                         const GSGFFlavor *flavor,
+                                                         const GSGFProperty *property,
+                                                         GError **error);
+GSGFFlavorTypeDef gsgf_flavor_AB = {
+                gsgf_list_of_points_new_from_raw, {
+                                NULL
+                }
+};
+
 static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw,
                                              const GSGFFlavor *flavor,
                                              const GSGFProperty *property,
@@ -170,7 +180,7 @@ static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
 };
 
 static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_AB, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, &gsgf_flavor_AP, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -622,4 +632,14 @@ gsgf_B_or_W_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                 return NULL;
 
         return GSGF_COOKED_VALUE(move);
+}
+
+static GSGFCookedValue *
+gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
+                                 const GSGFProperty *property, GError **error)
+{
+        GType type = gsgf_number_get_type();
+        GSGFListOf *list_of = gsgf_list_of_new(type);
+
+        return list_of;
 }
