@@ -676,6 +676,10 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                         g_object_unref(list_of);
                         return NULL;
                 }
+                if (!gsgf_list_of_append(list_of, point, error)) {
+                        g_object_unref(list_of);
+                        return NULL;
+                }
         }
 
         return list_of;

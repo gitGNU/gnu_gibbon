@@ -186,7 +186,7 @@ gsgf_list_of_get_number_of_items(const GSGFListOf *self)
  * @self: The #GSGFListOf object.
  *
  * Get the type of items stored in the list.  This is the type that is expected
- * when you add items with gsgs_list_of_append().
+ * when you add items with gsgf_list_of_append().
  *
  * Returns: The #GType of the items stored.
  */
@@ -196,4 +196,34 @@ gsgf_list_of_get_item_type(const GSGFListOf *self)
         g_return_val_if_fail(GSGF_IS_LIST_OF(self), G_TYPE_INVALID);
 
         return self->priv->type;
+}
+
+/**
+ * gsgf_list_of_append
+ * @self: The #GSGFListOf object.
+ * @item: The item to store.
+ * @error: Optional #GError location or %NULL to ignore.
+ */
+gboolean
+gsgf_list_of_append(GSGFListOf *self, GSGFCookedValue *item,
+                    GError **error)
+{
+        if (!GSGF_IS_LIST_OF(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                            _("Invalid cast to GSGFListOf"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_IS_LIST_OF(self), FALSE);
+        }
+
+        if (G_OBJECT_TYPE(G_OBJECT(item)) != self->priv->type) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                            _("Invalid cast to GSGFListOf"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(G_OBJECT_TYPE(G_OBJECT(item))
+                                     == self->priv->type, FALSE);
+        }
+
+        self->priv->items = g_list_append(self->priv->items, item);
+
+        return TRUE;
 }
