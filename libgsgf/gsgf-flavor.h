@@ -44,6 +44,8 @@ struct _GSGFRaw;
 struct _GSGFCookedValue;
 struct _GSGFProperty;
 struct _GSGFMove;
+struct _GSGFPoint;
+
 struct _GSGFFlavorClass
 {
         GObjectClass parent_class;
@@ -57,6 +59,9 @@ struct _GSGFFlavorClass
         struct _GSGFMove *(*create_move) (const GSGFFlavor *flavor,
                                           const struct _GSGFRaw *raw,
                                           GError **error);
+        struct _GSGFMove *(*create_point) (const GSGFFlavor *flavor,
+                                           const struct _GSGFRaw *raw,
+                                           GError **error);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;

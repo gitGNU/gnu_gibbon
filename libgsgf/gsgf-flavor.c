@@ -68,6 +68,13 @@
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
+static GSGFMove *gsgf_flavor_create_move(const GSGFFlavor *self,
+                                         const GSGFRaw *raw,
+                                         GError **error);
+static GSGFPoint *gsgf_flavor_create_point(const GSGFFlavor *self,
+                                           const GSGFRaw *raw,
+                                           GError **error);
+
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,
@@ -282,6 +289,7 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
 
         klass->get_cooked_value = _gsgf_flavor_get_cooked_value;
         klass->create_move = NULL;
+        klass->create_point = NULL;
 
         object_class->finalize = gsgf_flavor_finalize;
 }
@@ -334,19 +342,7 @@ gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const GSGFProperty *propert
                                                              cooked, error);
 }
 
-/**
- * gsgf_flavor_create_move:
- * @self: The #GSGFFlavor.
- * @raw: The #GSGFRaw containing the encoded move.
- * @error: Optional #GError location or %NULL to ignore.
- *
- * This function is internal and only interesting for implementors of new
- * flavors.  It is a factor method that creates a #GSGFMove from a
- * #GSGFRaw.
- *
- * Returns: a #GSGFMove for success, %NULL for failure.
- */
-GSGFMove *
+static GSGFMove *
 gsgf_flavor_create_move(const GSGFFlavor *self,
                         const GSGFRaw *raw,
                         GError **error)
@@ -367,6 +363,29 @@ gsgf_flavor_create_move(const GSGFFlavor *self,
         }
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_move(self, raw, error);
+}
+
+static GSGFPoint *
+gsgf_flavor_create_point(const GSGFFlavor *self,
+                         const GSGFRaw *raw,
+                         GError **error)
+{
+        if (!GSGF_IS_FLAVOR(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Invalid cast to GSGFFlavor"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
+        }
+
+        if (!GSGF_FLAVOR_GET_CLASS(self)->create_point) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Method create_point is not implemented"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_point,
+                                     FALSE);
+        }
+
+        return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, error);
 }
 
 static gboolean
