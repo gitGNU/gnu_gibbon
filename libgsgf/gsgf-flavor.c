@@ -638,7 +638,7 @@ static GSGFCookedValue *
 gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                  const GSGFProperty *property, GError **error)
 {
-        GType type = gsgf_number_get_type();
+        GType type = gsgf_point_get_type();
         GSGFListOf *list_of = gsgf_list_of_new(type);
 
         return list_of;
