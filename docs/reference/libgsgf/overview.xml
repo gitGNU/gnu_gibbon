@@ -5,7 +5,7 @@
     <title>Introduction</title>
 
     <para>
-      The Simple Game Format (SGF) is a file format used by several
+      The Smart Game Format (SGF) is a file format used by several
       board game applications for string matches, games, and positions,
       see <ulink url="http://www.red-bean.com/sgf/">http://www.red-bean.com/sgf/</ulink>.
       The library libgsgf can be used to read and write such files,
@@ -20,5 +20,81 @@
       Alternatively, you can simply ask, and the library can be turned
       into a project of its own, and distributed as a shared library.
     </para>
+  </chapter>
+
+  <chapter>
+    <title>Basic Structure of SGF and SGF Flavors</title>
+    <para>
+      SGF is a collection of <firstterm>game trees</firstterm>.  A game
+      tree is usually the representation of one single game or round.
+      Each game tree is a sequence of <firstterm>nodes</firstterm>.
+      The first node of a game tree is the root node, and can contain
+      some meta information about the game tree.  The following nodes
+      usually contain information about the moves that make up the game.
+    </para>
+    <para>
+      SGF is intended to be used for arbitrary board games with two
+      players.  The game specific extensions (or concretions) are
+      called <firstterm>flavors</firstterm> throughout this library.
+    </para>
+    <para>
+      The library has an extension mechanism that allows you to define
+      new flavors of SGF.  In order to do so, you should look at the
+      implementation of an existing flavor.  And you should consider
+      contributing your code to libgsgf so that others can share
+      your results.
+    </para>
+  </chapter>
+
+  <chapter>
+    <title>SGF Limitations and Shortcomings</title>
+
+    <para>
+      SGF as a file format has a number of inherent problems that you
+      should be aware of.
+    </para>
+    <para>
+      Most games are organized in matches, where each match consists
+      of a number of rounds (or games).  It is pretty straightforward
+      to represent such a match in SGF.  But you need additional,
+      not explicitely defined conventions for going the other way round,
+      i.e. for retrieve all information about a match from SGF.
+    </para>
+    <para>
+      The convention for a match would be: The SGF file as a whole
+      represents the match.  Each game tree in this match represents
+      a game (round).  Within each game tree, the first node is the 
+      root node used only for meta information, and all subsequent
+      nodes represent all moves in this round.
+    </para>
+
+    <para>
+      Another problem is the character set encoding.  As a matter of
+      fact, you can only encode SGF in character sets that are supersets
+      of US-ASCII.  This library therefore enforces UTF-8 for the
+      character set, and automatically converts the file for you.
+    </para>
+    <para>
+      For example wide character sets like UCS-2 or UCS-4 are simply
+      impossible to code safely.  First of all, the
+      <ulink url="http://www.red-bean.com/sgf/">SGF specification</ulink>
+      explicitely states that US-ASCII must be used for property
+      identifiers.  But UCS-2, or UCS-4 are not supersets of US-ASCII.
+    </para>
+    <para>
+      Another problem arises from the fact that an SGF file can mix
+      game trees encoded in different character sets.  However, the
+      specs allow whitespace between game trees, and the encoding
+      of such whitespace is undefined, because the character set
+      used is specified inside of the game tree.
+    </para>
+    
+    <para>
+      On the other hand, SGF is usable as a portable exchange format
+      for a multitude of board games.  But before using it, you should
+      inform yourself about the conventions used for that game.  Otherwise
+      you can easily run into compatibility issues.
+    </para>
+
   </chapter>
 </part>
