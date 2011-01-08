@@ -30,6 +30,8 @@
 #include <libgsgf/gsgf.h>
 
 struct _GSGFListOfPrivate {
+        GType type;
+
         GList *values;
 };
 
@@ -50,6 +52,7 @@ gsgf_list_of_init(GSGFListOf *self)
                         GSGF_TYPE_LIST_OF,
                         GSGFListOfPrivate);
 
+        self->priv->type = NULL;
         self->priv->values = NULL;
 }
 
@@ -81,6 +84,7 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
 
 /**
  * gsgf_list_of_new:
+ * @type: Type of items.
  * @value: The first value to store.
  * @Varargs: Other optional values, terminated by %NULL.
  *
@@ -91,7 +95,7 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
  * Returns: The new #GSGFListOf.
  */
 GSGFListOf *
-gsgf_list_of_new (GSGFCookedValue *value, ...)
+gsgf_list_of_new (GType type, GSGFCookedValue *value, ...)
 {
         GSGFListOf *self;
         GList *values;
