@@ -59,9 +59,10 @@ struct _GSGFFlavorClass
         struct _GSGFMove *(*create_move) (const GSGFFlavor *flavor,
                                           const struct _GSGFRaw *raw,
                                           GError **error);
-        struct _GSGFMove *(*create_point) (const GSGFFlavor *flavor,
-                                           const struct _GSGFRaw *raw,
-                                           GError **error);
+        GType point_type;
+        struct _GSGFPoint *(*create_point) (const GSGFFlavor *flavor,
+                                            const struct _GSGFRaw *raw,
+                                            GError **error);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;

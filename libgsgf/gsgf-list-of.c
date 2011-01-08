@@ -52,7 +52,7 @@ gsgf_list_of_init(GSGFListOf *self)
                         GSGF_TYPE_LIST_OF,
                         GSGFListOfPrivate);
 
-        self->priv->type = NULL;
+        self->priv->type = G_TYPE_INVALID;
         self->priv->values = NULL;
 }
 
@@ -98,6 +98,8 @@ gsgf_list_of_new (GType type)
         GSGFListOf *self;
 
         self = g_object_new(GSGF_TYPE_LIST_OF, NULL);
+
+        self->priv->type = type;
 
         return self;
 }
@@ -177,4 +179,21 @@ gsgf_list_of_get_number_of_values (const GSGFListOf *self)
         g_return_val_if_fail(GSGF_IS_LIST_OF(self), 0);
 
         return g_list_length(self->priv->values);
+}
+
+/**
+ * gsgf_list_of_get_item_type
+ * @self: The #GSGFListOf object.
+ *
+ * Get the type of items stored in the list.  This is the type that is expected
+ * when you add items with gsgs_list_of_append().
+ *
+ * Returns: The #GType of the items stored.
+ */
+GType
+gsgf_list_of_get_item_type(const GSGFListOf *self)
+{
+        g_return_val_if_fail(GSGF_IS_LIST_OF(self), G_TYPE_INVALID);
+
+        return self->priv->type;
 }

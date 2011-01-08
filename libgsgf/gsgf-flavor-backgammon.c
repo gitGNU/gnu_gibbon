@@ -56,6 +56,7 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
         GSGFFlavorClass *flavor_class = GSGF_FLAVOR_CLASS(klass);
 
         flavor_class->create_move = gsgf_flavor_backgammon_create_move;
+        flavor_class->point_type = GSGF_TYPE_POINT_BACKGAMMON;
 
         object_class->finalize = gsgf_flavor_backgammon_finalize;
 }

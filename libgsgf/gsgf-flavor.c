@@ -289,6 +289,7 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
 
         klass->get_cooked_value = _gsgf_flavor_get_cooked_value;
         klass->create_move = NULL;
+        klass->point_type = G_TYPE_INVALID;
         klass->create_point = NULL;
 
         object_class->finalize = gsgf_flavor_finalize;
@@ -657,7 +658,7 @@ static GSGFCookedValue *
 gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                  const GSGFProperty *property, GError **error)
 {
-        GType type = gsgf_point_get_type();
+        GType type = GSGF_FLAVOR_GET_CLASS(flavor)->point_type;
         GSGFListOf *list_of = gsgf_list_of_new(type);
 
         return list_of;

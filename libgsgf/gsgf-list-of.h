@@ -60,8 +60,10 @@ struct _GSGFListOf
 
 GSGFListOf *gsgf_list_of_new(GType type);
 
+GType gsgf_list_of_get_item_type(const GSGFListOf *self);
 gsize gsgf_list_of_get_number_of_values(const GSGFListOf *self);
-void gsgf_list_of_set_value(GSGFListOf *self, GSGFCookedValue *value, gsize i);
+gboolean gsgf_list_of_append_value(GSGFListOf *self, GSGFCookedValue *value,
+                                   GError **error);
 GSGFCookedValue *gsgf_list_of_get_value(const GSGFListOf *self, gsize i);
 
 G_END_DECLS
