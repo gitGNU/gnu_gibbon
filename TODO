@@ -27,3 +27,4 @@
 - Turn the higher level write_stream() functions into methods of a new
   interface.
 - Dito for convert().
+- Remove all traces of backgammon from gsgf.h.
