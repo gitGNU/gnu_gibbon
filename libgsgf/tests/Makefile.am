@@ -29,6 +29,7 @@ TESTS = test-convert			\
 	test-real			\
 	test-really-empty		\
 	test-root-properties		\
+	test-setup-properties		\
 	test-util-read-simpletext	\
 	test-util-read-text		\
 	test-write-empty		\
@@ -59,6 +60,7 @@ test_number_SOURCES = lib.c test-number.c
 test_real_SOURCES = lib.c test-real.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
 test_root_properties_SOURCES = lib.c main.c test-root-properties.c
+test_setup_properties_SOURCES = lib.c main.c test-setup-properties.c
 test_util_read_simpletext_SOURCES = lib.c test-util-read-simpletext.c
 test_util_read_text_SOURCES = lib.c test-util-read-text.c
 test_write_empty_SOURCES = lib.c main.c test-write-empty.c
