@@ -17,36 +17,37 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GSGF_H
-# define _GSGF_H
+/**
+ * SECTION:gsgf-point
+ * @short_description: Abstract base class for an SGF point.
+ *
+ * The <link linkend="http://www.red-bean.com/sgf/sgf4.html">http://www.red-bean.com/sgf/sgf4.html</link>
+ * specification does not define the details for a point.  The specific
+ * point incarnations should inherit from this class.
+ */
 
 #include <glib.h>
+#include <glib/gi18n.h>
 
-#include <libgsgf/gsgf-flavor.h>
-#include <libgsgf/gsgf-flavor-backgammon.h>
+#include <libgsgf/gsgf.h>
 
-#include <libgsgf/gsgf-cooked-value.h>
-#include <libgsgf/gsgf-raw.h>
-#include <libgsgf/gsgf-empty.h>
-#include <libgsgf/gsgf-number.h>
-#include <libgsgf/gsgf-real.h>
-#include <libgsgf/gsgf-simple-text.h>
-#include <libgsgf/gsgf-text.h>
-#include <libgsgf/gsgf-compose.h>
+G_DEFINE_TYPE (GSGFPoint, gsgf_point, GSGF_TYPE_COOKED_VALUE)
 
-#include <libgsgf/gsgf-move.h>
-#include <libgsgf/gsgf-move-backgammon.h>
+static void
+gsgf_point_init(GSGFPoint *self)
+{
+}
 
-#include <libgsgf/gsgf-point.h>
+static void
+gsgf_point_finalize(GObject *object)
+{
+        G_OBJECT_CLASS (gsgf_point_parent_class)->finalize(object);
+}
 
-#include <libgsgf/gsgf-list-of.h>
+static void
+gsgf_point_class_init(GSGFPointClass *klass)
+{
+        GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
-#include <libgsgf/gsgf-collection.h>
-#include <libgsgf/gsgf-error.h>
-#include <libgsgf/gsgf-game-tree.h>
-#include <libgsgf/gsgf-node.h>
-#include <libgsgf/gsgf-property.h>
-
-#include <libgsgf/gsgf-util.h>
-
-#endif
+        object_class->finalize = gsgf_point_finalize;
+}
