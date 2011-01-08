@@ -85,8 +85,6 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
 /**
  * gsgf_list_of_new:
  * @type: Type of items.
- * @value: The first value to store.
- * @Varargs: Other optional values, terminated by %NULL.
  *
  * Creates a new #GSGFListOf from a list of #GSGFCookedValue objects.  The
  * stored items are "hijacked" and are now considered property of the list_ofd
@@ -95,36 +93,11 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
  * Returns: The new #GSGFListOf.
  */
 GSGFListOf *
-gsgf_list_of_new (GType type, GSGFCookedValue *value, ...)
+gsgf_list_of_new (GType type)
 {
         GSGFListOf *self;
-        GList *values;
-        va_list args;
-
-        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), NULL);
-
-        values = g_list_append(NULL, value);
-        va_start(args, value);
-
-        while (1) {
-                value = va_arg(args, GSGFListOf *);
-                if (!value)
-                        break;
-                if (!GSGF_IS_COOKED_VALUE(value)) {
-                        g_list_free(values);
-                        /* This will always fail on purpose.  We just want the
-                         * error message to be printed in a consistent way.
-                         */
-                        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), NULL);
-                }
-                values = g_list_append(values, value);
-        }
-
-        va_end(args);
 
         self = g_object_new(GSGF_TYPE_LIST_OF, NULL);
-
-        self->priv->values = values;
 
         return self;
 }

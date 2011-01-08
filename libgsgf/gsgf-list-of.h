@@ -58,7 +58,7 @@ struct _GSGFListOf
         GSGFListOfPrivate *priv;
 };
 
-GSGFListOf *gsgf_list_of_new(GType type, GSGFCookedValue *value, ...);
+GSGFListOf *gsgf_list_of_new(GType type);
 
 gsize gsgf_list_of_get_number_of_values(const GSGFListOf *self);
 void gsgf_list_of_set_value(GSGFListOf *self, GSGFCookedValue *value, gsize i);
