@@ -45,6 +45,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-node.c			\
 	gsgf-number.c			\
 	gsgf-point.c			\
+	gsgf-point-backgammon.c		\
 	gsgf-property.c			\
 	gsgf-raw.c			\
 	gsgf-real.c			\
@@ -70,6 +71,7 @@ noinst_HEADERS =			\
 	gsgf-node.h			\
 	gsgf-number.h			\
 	gsgf-point.h			\
+	gsgf-point-backgammon.h		\
 	gsgf-private.h			\
 	gsgf-property.h			\
 	gsgf-raw.h			\

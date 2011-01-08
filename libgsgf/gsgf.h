@@ -38,6 +38,7 @@
 #include <libgsgf/gsgf-move-backgammon.h>
 
 #include <libgsgf/gsgf-point.h>
+#include <libgsgf/gsgf-point-backgammon.h>
 
 #include <libgsgf/gsgf-list-of.h>
 
