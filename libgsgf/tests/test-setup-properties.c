@@ -73,27 +73,22 @@ static gboolean
 test_prop_AB(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AB");
-        /* const GSGFListOf *list_of; */
+        const GSGFListOf *list_of;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AB'!\n");
                 return FALSE;
         }
 
-        /*
+        void *pointer = gsgf_list_of_get_type();
+
         if (!GSGF_IS_LIST_OF(cooked_value)) {
                 fprintf(stderr, "Property 'AB' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF_BACKGAMMON(cooked_value)) {
-                fprintf(stderr, "Property 'AB' is not a GSGFListOfBackgammon!\n");
-                return FALSE;
-        }
-        */
-
         /* TODO: Check every single point.  */
-        /* list_of = GSGF_LIST_OF_BACKGAMMON(cooked_value); */
+        /* list_of = GSGF_LIST_OF(cooked_value); */
 
         return TRUE;
 }
