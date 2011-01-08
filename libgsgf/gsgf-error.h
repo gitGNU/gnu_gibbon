@@ -43,6 +43,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_INVALID_MOVE: Invalid syntax for a move.
  * @GSGF_ERROR_INVALID_POINT: Invalid syntax for a point.
  * @GSGF_ERROR_INVALID_STONE: Invalid syntax for a stone.
+ * @GSGF_ERROR_USAGE_ERROR: Invalid library usage.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
@@ -59,7 +60,8 @@ typedef enum {
         GSGF_ERROR_SEMANTIC_ERROR = 11,
         GSGF_ERROR_INVALID_MOVE = 12,
         GSGF_ERROR_INVALID_POINT = 14,
-        GSGF_ERROR_INVALID_STONE = 15
+        GSGF_ERROR_INVALID_STONE = 15,
+        GSGF_ERROR_USAGE_ERROR = 16
 } GSGFError;
 
 /**
