@@ -36,8 +36,9 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_EMPTY_PROPERTY: Attempt to write a property without a value.
  * @GSGF_ERROR_INTERNAL_ERROR: Internal error.
  * @GSGF_ERROR_INVALID_NUMBER: Invalid number format.
- * @GSGF_ERROR_LIST_TOO_LONG: A list of value was to long for the semantics of a particular
+ * @GSGF_ERROR_LIST_TOO_LONG: A list of values was to long for the semantics of a particular
  *                            property.
+ * @GSGF_ERROR_LIST_EMPTY: A "list of" was empty.
  * @GSGF_ERROR_SEMANTIC_ERROR: Semantic error i.e. the data did not match the expectations.
  * @GSGF_ERROR_INVALID_MOVE: Invalid syntax for a move.
  * @GSGF_ERROR_INVALID_POINT: Invalid syntax for a point.
@@ -54,10 +55,11 @@ typedef enum {
         GSGF_ERROR_INTERNAL_ERROR = 7,
         GSGF_ERROR_INVALID_NUMBER = 8,
         GSGF_ERROR_LIST_TOO_LONG = 9,
-        GSGF_ERROR_SEMANTIC_ERROR = 10,
-        GSGF_ERROR_INVALID_MOVE = 11,
-        GSGF_ERROR_INVALID_POINT = 12,
-        GSGF_ERROR_INVALID_STONE = 14
+        GSGF_ERROR_LIST_EMPTY = 10,
+        GSGF_ERROR_SEMANTIC_ERROR = 11,
+        GSGF_ERROR_INVALID_MOVE = 12,
+        GSGF_ERROR_INVALID_POINT = 14,
+        GSGF_ERROR_INVALID_STONE = 15
 } GSGFError;
 
 /**

@@ -660,6 +660,23 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 {
         GType type = GSGF_FLAVOR_GET_CLASS(flavor)->point_type;
         GSGFListOf *list_of = gsgf_list_of_new(type);
+        GSGFPoint *point;
+        gsize i, num_points;
+
+        num_points = gsgf_raw_get_number_of_values(raw);
+        if (!num_points) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_EMPTY,
+                                _("List of points must not be empty"));
+                g_object_unref(list_of);
+                return NULL;
+        }
+        for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
+                point = gsgf_flavor_create_point(flavor, raw, error);
+                if (!point) {
+                        g_object_unref(list_of);
+                        return NULL;
+                }
+        }
 
         return list_of;
 }
