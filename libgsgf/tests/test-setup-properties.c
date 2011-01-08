@@ -74,21 +74,25 @@ test_prop_AB(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AB");
         const GSGFListOf *list_of;
+        GType type;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AB'!\n");
                 return FALSE;
         }
 
-        void *pointer = gsgf_list_of_get_type();
-
         if (!GSGF_IS_LIST_OF(cooked_value)) {
                 fprintf(stderr, "Property 'AB' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        /* TODO: Check every single point.  */
-        /* list_of = GSGF_LIST_OF(cooked_value); */
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
+                        g_type_name(type));
+                return FALSE;
+        }
 
         return TRUE;
 }
