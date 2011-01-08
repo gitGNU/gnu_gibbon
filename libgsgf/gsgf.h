@@ -37,6 +37,8 @@
 #include <libgsgf/gsgf-move.h>
 #include <libgsgf/gsgf-move-backgammon.h>
 
+#include <libgsgf/gsgf-list-of.h>
+
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-error.h>
 #include <libgsgf/gsgf-game-tree.h>

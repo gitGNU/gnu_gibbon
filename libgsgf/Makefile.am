@@ -39,6 +39,7 @@ libgsgf_a_SOURCES = 			\
 	gsgf-flavor.c			\
 	gsgf-flavor-backgammon.c	\
 	gsgf-game-tree.c		\
+	gsgf-list-of.c			\
 	gsgf-move.c			\
 	gsgf-move-backgammon.c		\
 	gsgf-node.c			\
@@ -62,6 +63,7 @@ noinst_HEADERS =			\
 	gsgf-flavor-backgammon.h	\
 	gsgf-flavor-protected.h		\
 	gsgf-game-tree.h		\
+	gsgf-list-of.h			\
 	gsgf-move.h			\
 	gsgf-move-backgammon.h		\
 	gsgf-node.h			\
