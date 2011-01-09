@@ -85,7 +85,7 @@ static GSGFCookedValue *gsgf_B_or_W_new_from_raw(const GSGFRaw* raw,
                                                  const GSGFFlavor *flavor,
                                                  const GSGFProperty *property,
                                                  GError **error);
-GSGFFlavorTypeDef gsgf_flavor_B_or_W = {
+static GSGFFlavorTypeDef gsgf_flavor_B_or_W = {
                 gsgf_B_or_W_new_from_raw, {
                                 NULL
                 }
@@ -95,7 +95,7 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
-GSGFFlavorTypeDef gsgf_flavor_AB = {
+static GSGFFlavorTypeDef gsgf_flavor_AB = {
                 gsgf_list_of_points_new_from_raw, {
                                 NULL
                 }
@@ -105,7 +105,7 @@ static GSGFCookedValue *gsgf_AP_new_from_raw(const GSGFRaw* raw,
                                              const GSGFFlavor *flavor,
                                              const GSGFProperty *property,
                                              GError **error);
-GSGFFlavorTypeDef gsgf_flavor_AP = {
+static GSGFFlavorTypeDef gsgf_flavor_AP = {
                 gsgf_AP_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
@@ -113,13 +113,13 @@ GSGFFlavorTypeDef gsgf_flavor_AP = {
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_AW = {
+static GSGFFlavorTypeDef gsgf_flavor_AW = {
                 gsgf_list_of_points_new_from_raw, {
                                 NULL
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_CA = {
+static GSGFFlavorTypeDef gsgf_flavor_CA = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
@@ -127,7 +127,7 @@ GSGFFlavorTypeDef gsgf_flavor_CA = {
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_FF = {
+static GSGFFlavorTypeDef gsgf_flavor_FF = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_root_property,
@@ -136,7 +136,7 @@ GSGFFlavorTypeDef gsgf_flavor_FF = {
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_GM = {
+static GSGFFlavorTypeDef gsgf_flavor_GM = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_root_property,
@@ -145,14 +145,14 @@ GSGFFlavorTypeDef gsgf_flavor_GM = {
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_KO = {
+static GSGFFlavorTypeDef gsgf_flavor_KO = {
                 gsgf_empty_new_from_raw, {
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }
 };
 
-GSGFFlavorTypeDef gsgf_flavor_MN = {
+static GSGFFlavorTypeDef gsgf_flavor_MN = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_single_value,
@@ -164,7 +164,7 @@ static gboolean gsgf_constraint_is_ST_number(const GSGFCookedValue *cooked,
                                              const GSGFRaw *raw,
                                              const GSGFProperty *property,
                                              GError **error);
-GSGFFlavorTypeDef gsgf_flavor_ST = {
+static GSGFFlavorTypeDef gsgf_flavor_ST = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_ST_number,
                                 gsgf_constraint_is_root_property,
@@ -177,7 +177,7 @@ static GSGFCookedValue *gsgf_SZ_new_from_raw(const GSGFRaw* raw,
                                              const GSGFFlavor *flavor,
                                              const GSGFProperty *property,
                                              GError **error);
-GSGFFlavorTypeDef gsgf_flavor_SZ = {
+static GSGFFlavorTypeDef gsgf_flavor_SZ = {
                 gsgf_SZ_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
