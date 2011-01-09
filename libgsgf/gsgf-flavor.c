@@ -73,6 +73,7 @@ static GSGFMove *gsgf_flavor_create_move(const GSGFFlavor *self,
                                          GError **error);
 static GSGFPoint *gsgf_flavor_create_point(const GSGFFlavor *self,
                                            const GSGFRaw *raw,
+                                           gsize i,
                                            GError **error);
 
 static gboolean
@@ -108,6 +109,12 @@ GSGFFlavorTypeDef gsgf_flavor_AP = {
                 gsgf_AP_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+GSGFFlavorTypeDef gsgf_flavor_AW = {
+                gsgf_list_of_points_new_from_raw, {
                                 NULL
                 }
 };
@@ -190,7 +197,7 @@ static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
                 NULL, &gsgf_flavor_AB, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, &gsgf_flavor_AP, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, &gsgf_flavor_AW, NULL,
                 NULL, NULL,
 };
 
@@ -369,6 +376,7 @@ gsgf_flavor_create_move(const GSGFFlavor *self,
 static GSGFPoint *
 gsgf_flavor_create_point(const GSGFFlavor *self,
                          const GSGFRaw *raw,
+                         gsize i,
                          GError **error)
 {
         if (!GSGF_IS_FLAVOR(self)) {
@@ -386,7 +394,7 @@ gsgf_flavor_create_point(const GSGFFlavor *self,
                                      FALSE);
         }
 
-        return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, error);
+        return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, i, error);
 }
 
 static gboolean
@@ -671,7 +679,7 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                 return NULL;
         }
         for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
-                point = gsgf_flavor_create_point(flavor, raw, error);
+                point = gsgf_flavor_create_point(flavor, raw, i, error);
                 if (!point) {
                         g_object_unref(list_of);
                         return NULL;

@@ -60,6 +60,7 @@ struct _GSGFPointBackgammon
 
 GSGFPointBackgammon *gsgf_point_backgammon_new(gint point);
 GSGFPointBackgammon *gsgf_point_backgammon_new_from_raw(const GSGFRaw *raw,
+                                                        gsize i,
                                                         GError **error);
 
 gint gsgf_point_backgammon_get_point(const GSGFPointBackgammon *self);

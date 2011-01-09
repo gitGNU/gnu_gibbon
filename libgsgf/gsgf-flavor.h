@@ -62,6 +62,7 @@ struct _GSGFFlavorClass
         GType point_type;
         struct _GSGFPoint *(*create_point) (const GSGFFlavor *flavor,
                                             const struct _GSGFRaw *raw,
+                                            gsize i,
                                             GError **error);
 };
 

@@ -94,13 +94,13 @@ gsgf_point_backgammon_new (gint point)
  * Returns: The new #GSGFPointBackgammon.
  */
 GSGFPointBackgammon *
-gsgf_point_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
+gsgf_point_backgammon_new_from_raw (const GSGFRaw *raw, gsize i, GError **error)
 {
         const gchar* string;
 
         g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
 
-        string = gsgf_raw_get_value(raw, 0);
+        string = gsgf_raw_get_value(raw, i);
         if (!string) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_POINT,
                             _("Empty point"));

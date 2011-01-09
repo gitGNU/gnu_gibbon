@@ -113,19 +113,19 @@ test_prop_AB(const GSGFNode *node)
         }
         point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
         if (point != 16) {
-                fprintf(stderr, "Item #0 is not a 16 point but a %u point!\n",
+                fprintf(stderr, "Item #0 is not a 16 point but a %d point!\n",
                                 point);
                 return FALSE;
         }
 
         cooked_point = gsgf_list_of_get_nth_item(list_of, 1);
         if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+                fprintf(stderr, "Item #1 is not a GSGFPointBackgammon!\n");
                 return FALSE;
         }
         point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 16) {
-                fprintf(stderr, "Item #0 is not a 16 point but a %u point!\n",
+        if (point != 11) {
+                fprintf(stderr, "Item #1 is not a 16 point but a %d point!\n",
                                 point);
                 return FALSE;
         }
@@ -173,32 +173,32 @@ test_prop_AW(const GSGFNode *node)
                 return FALSE;
         }
         point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 6) {
-                fprintf(stderr, "Item #0 is not a 6 point but a %u point!\n",
+        if (point != 7) {
+                fprintf(stderr, "Item #0 is not a 7 point but a %d point!\n",
                                 point);
                 return FALSE;
         }
 
         cooked_point = gsgf_list_of_get_nth_item(list_of, 1);
         if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+                fprintf(stderr, "Item #1 is not a GSGFPointBackgammon!\n");
                 return FALSE;
         }
         point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 6) {
-                fprintf(stderr, "Item #0 is not a 6 point but a %u point!\n",
+        if (point != 7) {
+                fprintf(stderr, "Item #1 is not a 7 point but a %d point!\n",
                                 point);
                 return FALSE;
         }
 
         cooked_point = gsgf_list_of_get_nth_item(list_of, 2);
         if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+                fprintf(stderr, "Item #2 is not a GSGFPointBackgammon!\n");
                 return FALSE;
         }
         point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 11) {
-                fprintf(stderr, "Item #0 is not a 11 point but a %u point!\n",
+        if (point != 12) {
+                fprintf(stderr, "Item #2 is not a 12 point but a %d point!\n",
                                 point);
                 return FALSE;
         }
