@@ -59,8 +59,8 @@ struct _GSGFFlavorClass
         struct _GSGFMove *(*create_move) (const GSGFFlavor *flavor,
                                           const struct _GSGFRaw *raw,
                                           GError **error);
-        GType point_type;
-        struct _GSGFPoint *(*create_point) (const GSGFFlavor *flavor,
+        GType stone_type;
+        struct _GSGFStone *(*create_stone) (const GSGFFlavor *flavor,
                                             const struct _GSGFRaw *raw,
                                             gsize i,
                                             GError **error);

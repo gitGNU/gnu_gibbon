@@ -71,7 +71,7 @@ G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 static GSGFMove *gsgf_flavor_create_move(const GSGFFlavor *self,
                                          const GSGFRaw *raw,
                                          GError **error);
-static GSGFPoint *gsgf_flavor_create_point(const GSGFFlavor *self,
+static GSGFStone *gsgf_flavor_create_stone(const GSGFFlavor *self,
                                            const GSGFRaw *raw,
                                            gsize i,
                                            GError **error);
@@ -91,12 +91,12 @@ static GSGFFlavorTypeDef gsgf_flavor_B_or_W = {
                 }
 };
 
-static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
+static GSGFCookedValue *gsgf_list_of_stones_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
 static GSGFFlavorTypeDef gsgf_flavor_AB = {
-                gsgf_list_of_points_new_from_raw, {
+                gsgf_list_of_stones_new_from_raw, {
                                 NULL
                 }
 };
@@ -114,7 +114,7 @@ static GSGFFlavorTypeDef gsgf_flavor_AP = {
 };
 
 static GSGFFlavorTypeDef gsgf_flavor_AW = {
-                gsgf_list_of_points_new_from_raw, {
+                gsgf_list_of_stones_new_from_raw, {
                                 NULL
                 }
 };
@@ -296,8 +296,8 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
 
         klass->get_cooked_value = _gsgf_flavor_get_cooked_value;
         klass->create_move = NULL;
-        klass->point_type = G_TYPE_INVALID;
-        klass->create_point = NULL;
+        klass->stone_type = G_TYPE_INVALID;
+        klass->create_stone = NULL;
 
         object_class->finalize = gsgf_flavor_finalize;
 }
@@ -373,8 +373,8 @@ gsgf_flavor_create_move(const GSGFFlavor *self,
         return GSGF_FLAVOR_GET_CLASS(self)->create_move(self, raw, error);
 }
 
-static GSGFPoint *
-gsgf_flavor_create_point(const GSGFFlavor *self,
+static GSGFStone *
+gsgf_flavor_create_stone(const GSGFFlavor *self,
                          const GSGFRaw *raw,
                          gsize i,
                          GError **error)
@@ -386,15 +386,15 @@ gsgf_flavor_create_point(const GSGFFlavor *self,
                 g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
         }
 
-        if (!GSGF_FLAVOR_GET_CLASS(self)->create_point) {
+        if (!GSGF_FLAVOR_GET_CLASS(self)->create_stone) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method create_point is not implemented"));
+                            _("Method create_stone is not implemented"));
                 /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_point,
+                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_stone,
                                      FALSE);
         }
 
-        return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, i, error);
+        return GSGF_FLAVOR_GET_CLASS(self)->create_stone(self, raw, i, error);
 }
 
 static gboolean
@@ -663,28 +663,28 @@ gsgf_B_or_W_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 }
 
 static GSGFCookedValue *
-gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
+gsgf_list_of_stones_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                  const GSGFProperty *property, GError **error)
 {
-        GType type = GSGF_FLAVOR_GET_CLASS(flavor)->point_type;
+        GType type = GSGF_FLAVOR_GET_CLASS(flavor)->stone_type;
         GSGFListOf *list_of = gsgf_list_of_new(type);
-        GSGFPoint *point;
-        gsize i, num_points;
+        GSGFStone *stone;
+        gsize i, num_stones;
 
-        num_points = gsgf_raw_get_number_of_values(raw);
-        if (!num_points) {
+        num_stones = gsgf_raw_get_number_of_values(raw);
+        if (!num_stones) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_EMPTY,
-                                _("List of points must not be empty"));
+                                _("List of stones must not be empty"));
                 g_object_unref(list_of);
                 return NULL;
         }
         for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
-                point = gsgf_flavor_create_point(flavor, raw, i, error);
-                if (!point) {
+                stone = gsgf_flavor_create_stone(flavor, raw, i, error);
+                if (!stone) {
                         g_object_unref(list_of);
                         return NULL;
                 }
-                if (!gsgf_list_of_append(list_of, point, error)) {
+                if (!gsgf_list_of_append(list_of, stone, error)) {
                         g_object_unref(list_of);
                         return NULL;
                 }

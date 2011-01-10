@@ -50,6 +50,8 @@ libgsgf_a_SOURCES = 			\
 	gsgf-raw.c			\
 	gsgf-real.c			\
 	gsgf-simple-text.c		\
+	gsgf-stone.c			\
+	gsgf-stone-backgammon.c		\
 	gsgf-text.c			\
 	gsgf-util.c			\
 	libgsgf.c
@@ -77,5 +79,7 @@ noinst_HEADERS =			\
 	gsgf-raw.h			\
 	gsgf-real.h			\
 	gsgf-simple-text.h		\
+	gsgf-stone.h			\
+	gsgf-stone-backgammon.h		\
 	gsgf-text.h			\
 	gsgf-util.h

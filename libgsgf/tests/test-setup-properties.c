@@ -78,9 +78,9 @@ test_prop_AB(const GSGFNode *node)
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AB");
         const GSGFListOf *list_of;
         GType type;
-        GSGFCookedValue *cooked_point;
-        gsize num_points;
-        guint point;
+        GSGFCookedValue *cooked_stone;
+        gsize num_stones;
+        guint stone;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AB'!\n");
@@ -94,39 +94,39 @@ test_prop_AB(const GSGFNode *node)
 
         list_of = GSGF_LIST_OF(cooked_value);
         type = gsgf_list_of_get_item_type(list_of);
-        if (type != gsgf_point_backgammon_get_type ()) {
-                fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
+        if (type != gsgf_stone_backgammon_get_type ()) {
+                fprintf(stderr, "Expected GSGFStoneBackgammon, not %s!\n",
                         g_type_name(type));
                 return FALSE;
         }
 
-        num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 2) {
-                fprintf(stderr, "Expected two points, got %u!\n", num_points);
+        num_stones = gsgf_list_of_get_number_of_items(list_of);
+        if (num_stones != 2) {
+                fprintf(stderr, "Expected two stones, got %u!\n", num_stones);
                 return FALSE;
         }
 
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 0);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+        cooked_stone = gsgf_list_of_get_nth_item(list_of, 0);
+        if (!GSGF_IS_STONE_BACKGAMMON(cooked_stone)) {
+                fprintf(stderr, "Item #0 is not a GSGFStoneBackgammon!\n");
                 return FALSE;
         }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 16) {
-                fprintf(stderr, "Item #0 is not a 16 point but a %d point!\n",
-                                point);
+        stone = gsgf_stone_backgammon_get_stone(GSGF_STONE_BACKGAMMON(cooked_stone));
+        if (stone != 16) {
+                fprintf(stderr, "Item #0 is not a 16 stone but a %d stone!\n",
+                                stone);
                 return FALSE;
         }
 
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 1);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #1 is not a GSGFPointBackgammon!\n");
+        cooked_stone = gsgf_list_of_get_nth_item(list_of, 1);
+        if (!GSGF_IS_STONE_BACKGAMMON(cooked_stone)) {
+                fprintf(stderr, "Item #1 is not a GSGFStoneBackgammon!\n");
                 return FALSE;
         }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 11) {
-                fprintf(stderr, "Item #1 is not a 16 point but a %d point!\n",
-                                point);
+        stone = gsgf_stone_backgammon_get_stone(GSGF_STONE_BACKGAMMON(cooked_stone));
+        if (stone != 11) {
+                fprintf(stderr, "Item #1 is not a 16 stone but a %d stone!\n",
+                                stone);
                 return FALSE;
         }
 
@@ -139,9 +139,9 @@ test_prop_AW(const GSGFNode *node)
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AW");
         const GSGFListOf *list_of;
         GType type;
-        GSGFCookedValue *cooked_point;
-        gsize num_points;
-        guint point;
+        GSGFCookedValue *cooked_stone;
+        gsize num_stones;
+        guint stone;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AW'!\n");
@@ -155,51 +155,51 @@ test_prop_AW(const GSGFNode *node)
 
         list_of = GSGF_LIST_OF(cooked_value);
         type = gsgf_list_of_get_item_type(list_of);
-        if (type != gsgf_point_backgammon_get_type ()) {
-                fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
+        if (type != gsgf_stone_backgammon_get_type ()) {
+                fprintf(stderr, "Expected GSGFStoneBackgammon, not %s!\n",
                         g_type_name(type));
                 return FALSE;
         }
 
-        num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 3) {
-                fprintf(stderr, "Expected three points, got %u!\n", num_points);
+        num_stones = gsgf_list_of_get_number_of_items(list_of);
+        if (num_stones != 3) {
+                fprintf(stderr, "Expected three stones, got %u!\n", num_stones);
                 return FALSE;
         }
 
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 0);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFPointBackgammon!\n");
+        cooked_stone = gsgf_list_of_get_nth_item(list_of, 0);
+        if (!GSGF_IS_STONE_BACKGAMMON(cooked_stone)) {
+                fprintf(stderr, "Item #0 is not a GSGFStoneBackgammon!\n");
                 return FALSE;
         }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 7) {
-                fprintf(stderr, "Item #0 is not a 7 point but a %d point!\n",
-                                point);
-                return FALSE;
-        }
-
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 1);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #1 is not a GSGFPointBackgammon!\n");
-                return FALSE;
-        }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 7) {
-                fprintf(stderr, "Item #1 is not a 7 point but a %d point!\n",
-                                point);
+        stone = gsgf_stone_backgammon_get_stone(GSGF_STONE_BACKGAMMON(cooked_stone));
+        if (stone != 7) {
+                fprintf(stderr, "Item #0 is not a 7 stone but a %d stone!\n",
+                                stone);
                 return FALSE;
         }
 
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 2);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #2 is not a GSGFPointBackgammon!\n");
+        cooked_stone = gsgf_list_of_get_nth_item(list_of, 1);
+        if (!GSGF_IS_STONE_BACKGAMMON(cooked_stone)) {
+                fprintf(stderr, "Item #1 is not a GSGFStoneBackgammon!\n");
                 return FALSE;
         }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 12) {
-                fprintf(stderr, "Item #2 is not a 12 point but a %d point!\n",
-                                point);
+        stone = gsgf_stone_backgammon_get_stone(GSGF_STONE_BACKGAMMON(cooked_stone));
+        if (stone != 7) {
+                fprintf(stderr, "Item #1 is not a 7 stone but a %d stone!\n",
+                                stone);
+                return FALSE;
+        }
+
+        cooked_stone = gsgf_list_of_get_nth_item(list_of, 2);
+        if (!GSGF_IS_STONE_BACKGAMMON(cooked_stone)) {
+                fprintf(stderr, "Item #2 is not a GSGFStoneBackgammon!\n");
+                return FALSE;
+        }
+        stone = gsgf_stone_backgammon_get_stone(GSGF_STONE_BACKGAMMON(cooked_stone));
+        if (stone != 12) {
+                fprintf(stderr, "Item #2 is not a 12 stone but a %d stone!\n",
+                                stone);
                 return FALSE;
         }
 

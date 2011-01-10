@@ -40,6 +40,9 @@
 #include <libgsgf/gsgf-point.h>
 #include <libgsgf/gsgf-point-backgammon.h>
 
+#include <libgsgf/gsgf-stone.h>
+#include <libgsgf/gsgf-stone-backgammon.h>
+
 #include <libgsgf/gsgf-list-of.h>
 
 #include <libgsgf/gsgf-collection.h>

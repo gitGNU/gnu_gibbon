@@ -34,7 +34,7 @@ G_DEFINE_TYPE(GSGFFlavorBackgammon, gsgf_flavor_backgammon, GSGF_TYPE_FLAVOR)
 static GSGFMove *gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
                                                      const struct _GSGFRaw *raw,
                                                      GError **error);
-static GSGFPoint *gsgf_flavor_backgammon_create_point (const GSGFFlavor *flavor,
+static GSGFPoint *gsgf_flavor_backgammon_create_stone (const GSGFFlavor *flavor,
                                                        const struct _GSGFRaw *raw,
                                                        gsize i,
                                                        GError **error);
@@ -57,8 +57,8 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
         GSGFFlavorClass *flavor_class = GSGF_FLAVOR_CLASS(klass);
 
         flavor_class->create_move = gsgf_flavor_backgammon_create_move;
-        flavor_class->point_type = GSGF_TYPE_POINT_BACKGAMMON;
-        flavor_class->create_point = gsgf_flavor_backgammon_create_point;
+        flavor_class->stone_type = GSGF_TYPE_STONE_BACKGAMMON;
+        flavor_class->create_stone = gsgf_flavor_backgammon_create_stone;
 
         object_class->finalize = gsgf_flavor_backgammon_finalize;
 }
@@ -87,10 +87,10 @@ gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
 }
 
 static GSGFPoint *
-gsgf_flavor_backgammon_create_point (const GSGFFlavor *flavor,
+gsgf_flavor_backgammon_create_stone (const GSGFFlavor *flavor,
                                      const GSGFRaw *raw,
                                      gsize i,
                                      GError **error)
 {
-        return gsgf_point_backgammon_new_from_raw(raw, i, error);
+        return gsgf_stone_backgammon_new_from_raw(raw, i, error);
 }
