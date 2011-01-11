@@ -135,6 +135,16 @@ AC_CONFIG_FILES([
     docs/reference/Makefile
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
+    share/Makefile
+    share/icons/Makefile
+    share/icons/application/Makefile
+    share/icons/application/16x16/Makefile
+    share/icons/application/22x22/Makefile
+    share/icons/application/24x24/Makefile
+    share/icons/application/32x32/Makefile
+    share/icons/application/48x48/Makefile
+    share/icons/application/128x128/Makefile
+    share/icons/application/256x256/Makefile
 ])
 AC_OUTPUT
 

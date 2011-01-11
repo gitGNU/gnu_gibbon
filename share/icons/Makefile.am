@@ -15,15 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
-
-SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po docs share
-
-DISTCLEANFILES =		\
-	intltool-extract	\
-	intltool-merge		\
-	intltool-update
-
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
-
-EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath
+SUBDIRS = application

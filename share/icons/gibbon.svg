@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+<!ENTITY board_color       "#664000">
+]>
+<svg viewBox="0 0 480 480" height="480" width="480" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+
+    <path d="M25,85
+             A 290,290 0 0 1 435,85
+             L 355,470
+             L 105,470
+             Z
+            "
+          fill="#643800" stroke="white" stroke-width="5"/>
+    <path d="M95,135 
+             A 200,200 0 0 1 365,135
+             L 385,135
+             L 330,250
+             L 330,400
+             L 130,400
+             L 130,250
+             L 75,135
+             Z
+             "
+          stroke="black" fill="white" stroke-width="3"/>
+
+    <g id="left_eye">
+      <polygon points="125,125 225,125 175,225" fill="#444444"/>
+      <circle stroke="black" fill="black" r="20" cx="175" cy="150"/>
+    </g>
+
+    <g id="right_eye">
+      <polygon points="235,125 335,125 285,225" fill="#444444"/>
+      <circle stroke="black" fill="black" r="20" cx="285" cy="150"/>
+    </g>
+
+    <g id="nose">
+      <polygon points="230,125 305,275 305,350, 155,350 155,275" fill="#777777"/>
+    </g>
+
+    <g id="die_left" transform="translate(0,50)">
+      <rect stroke="#444444" stroke-width="1" fill="#111111" ry="3" rx="3" height="20" width="20" y="180" x="200"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="195" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="195" cx="215"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="190" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="190" cx="215"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="215"/>
+    </g>
+
+    <g id="die_right" transform="translate(30,50)">
+      <rect stroke="#444444" stroke-width="1" fill="#111111" ry="3" rx="3" height="20" width="20" y="180" x="200"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="195" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="195" cx="215"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="190" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="190" cx="215"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="205"/>
+      <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="215"/>
+    </g>
+
+</svg>
