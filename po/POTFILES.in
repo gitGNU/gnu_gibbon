@@ -1,6 +1,6 @@
 # This file is part of Gibbon, a graphical frontend to the First Internet 
 # Backgammon Server FIBS.
-# Copyright (C) 2009-2010 Guido Flohr, http://guido-flohr.net/.
+# Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 #
 # Gibbon is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,12 +28,15 @@ libgsgf/gsgf-compose.c
 libgsgf/gsgf-cooked-value.c
 libgsgf/gsgf-empty.c
 libgsgf/gsgf-flavor.c
+libgsgf/gsgf-list-of.c
 libgsgf/gsgf-move-backgammon.c
 libgsgf/gsgf-node.c
 libgsgf/gsgf-number.c
+libgsgf/gsgf-point-backgammon.c
 libgsgf/gsgf-raw.c
 libgsgf/gsgf-real.c
 libgsgf/gsgf-simple-text.c
+libgsgf/gsgf-stone-backgammon.c
 libgsgf/gsgf-text.c
 libgsgf/tests/test-empty.c
 libgsgf/tests/test-number.c

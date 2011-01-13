@@ -1,6 +1,6 @@
 dnl This file is part of Gibbon, a graphical frontend to the First Internet 
 dnl Backgammon Server FIBS.
-dnl Copyright (C) 2009-2010 Guido Flohr, http://guido-flohr.net/.
+dnl Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 dnl
 dnl Gibbon is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
