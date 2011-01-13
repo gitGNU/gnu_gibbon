@@ -44,6 +44,8 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_INVALID_POINT: Invalid syntax for a point.
  * @GSGF_ERROR_INVALID_STONE: Invalid syntax for a stone.
  * @GSGF_ERROR_USAGE_ERROR: Invalid library usage.
+ * @GSGF_ERROR_NON_UNIQUE_POINT: Non-unique points in list.
+ * @GSGF_ERROR_NON_UNIQUE_STONE: Non-unique stones in list.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
@@ -61,7 +63,9 @@ typedef enum {
         GSGF_ERROR_INVALID_MOVE = 12,
         GSGF_ERROR_INVALID_POINT = 14,
         GSGF_ERROR_INVALID_STONE = 15,
-        GSGF_ERROR_USAGE_ERROR = 16
+        GSGF_ERROR_USAGE_ERROR = 16,
+        GSGF_ERROR_NON_UNIQUE_POINT = 17,
+        GSGF_ERROR_NON_UNIQUE_STONE = 18
 } GSGFError;
 
 /**

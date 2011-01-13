@@ -25,6 +25,7 @@ TESTS = test-convert			\
 	test-multi-game-tree		\
 	test-move-properties		\
 	test-nested-game-tree		\
+	test-non-unique-points		\
 	test-number			\
 	test-real			\
 	test-really-empty		\
@@ -56,6 +57,7 @@ test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_move_properties_SOURCES = lib.c main.c test-move-properties.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
+test_non_unique_points_SOURCES = lib.c main.c test-non-unique-points.c
 test_number_SOURCES = lib.c test-number.c
 test_real_SOURCES = lib.c test-real.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
