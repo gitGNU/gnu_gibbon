@@ -89,6 +89,10 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
+static gboolean gsgf_list_of_points_check_unique(const GSGFListOf *list_of,
+                                                 GError **error);
+
+static int compare_gint(const gint *a, const gint *b);
 
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
@@ -757,5 +761,43 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                 }
         }
 
+        if (!gsgf_list_of_points_check_unique(list_of, error)) {
+                g_object_unref(list_of);
+                return NULL;
+        }
+
         return GSGF_COOKED_VALUE(list_of);
+}
+
+static gboolean
+gsgf_list_of_points_check_unique(const GSGFListOf *list_of,
+                                 GError **error)
+{
+        gsize num_items = gsgf_list_of_get_number_of_items(list_of);
+        gint *normalized = g_alloca(num_items * sizeof (gint));
+        gsize i;
+        GSGFCookedValue *point;
+
+        for (i = 0; i < num_items; ++i) {
+                point = gsgf_list_of_get_nth_item(list_of, i);
+                normalized[i] = gsgf_point_get_normalized_value(GSGF_POINT(point));
+        }
+
+        qsort(normalized, num_items, sizeof (gint), compare_gint);
+
+        for (i = 1; i < num_items; ++i) {
+                if (normalized[i] == normalized[i - 1]) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_NON_UNIQUE_POINT,
+                                    _("Points in list must be unique"));
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static int
+compare_gint(const gint *a, const gint *b)
+{
+        return *a - *b;
 }

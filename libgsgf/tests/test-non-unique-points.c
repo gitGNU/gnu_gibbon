@@ -35,6 +35,7 @@ test_collection(GSGFCollection *collection, GError *error)
 
         g_set_error(&expect, GSGF_ERROR, GSGF_ERROR_NON_UNIQUE_POINT,
                     _("Points in list must be unique"));
+        g_prefix_error(&expect, _("Property '%s': "), "AE");
 
         return expect_error(error, expect);
 }

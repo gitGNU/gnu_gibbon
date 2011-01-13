@@ -49,5 +49,16 @@ gsgf_point_class_init(GSGFPointClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
+        klass->get_normalized_value = NULL;
+
         object_class->finalize = gsgf_point_finalize;
+}
+
+gint
+gsgf_point_get_normalized_value(const GSGFPoint *self)
+{
+        g_return_val_if_fail(GSGF_IS_POINT(self), -1);
+        g_return_val_if_fail(GSGF_POINT_GET_CLASS(self)->get_normalized_value, -1);
+
+        return GSGF_POINT_GET_CLASS(self)->get_normalized_value(self);
 }

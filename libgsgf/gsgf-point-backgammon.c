@@ -58,9 +58,12 @@ gsgf_point_backgammon_finalize(GObject *object)
 static void
 gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GSGFPointClass *point_class = GSGF_POINT_CLASS (klass);
 
         g_type_class_add_private(klass, sizeof(GSGFPointBackgammonPrivate));
+
+        point_class->get_normalized_value = gsgf_point_backgammon_get_point;
 
         /* FIXME: write_stream() must be implemented! */
 

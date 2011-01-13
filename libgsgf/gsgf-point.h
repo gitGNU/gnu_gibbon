@@ -44,7 +44,7 @@ struct _GSGFPointClass
 {
         GSGFCookedValueClass parent_class;
 
-        gchar * (*get_normalized_value) (struct _GSGFPointClass);
+        gint (*get_normalized_value) (struct _GSGFPoint *self);
 };
 
 GType gsgf_point_get_type(void) G_GNUC_CONST;
@@ -55,6 +55,7 @@ struct _GSGFPoint
 };
 
 GSGFPoint *gsgf_point_new(void);
+gint gsgf_point_get_normalized_value(const GSGFPoint *self);
 
 G_END_DECLS
 
