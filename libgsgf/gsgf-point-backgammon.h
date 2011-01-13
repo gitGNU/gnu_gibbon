@@ -58,10 +58,12 @@ struct _GSGFPointBackgammon
         GSGFPointBackgammonPrivate *priv;
 };
 
+struct _GSGFListOf;
+
 GSGFPointBackgammon *gsgf_point_backgammon_new(gint point);
-GSGFPointBackgammon *gsgf_point_backgammon_new_from_raw(const GSGFRaw *raw,
-                                                        gsize i,
-                                                        GError **error);
+gboolean gsgf_point_backgammon_append_to_list_of(struct _GSGFListOf *list_of,
+                                                 const GSGFRaw *raw,
+                                                 gsize i, GError **error);
 
 gint gsgf_point_backgammon_get_point(const GSGFPointBackgammon *self);
 

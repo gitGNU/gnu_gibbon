@@ -43,6 +43,8 @@ typedef struct _GSGFPoint        GSGFPoint;
 struct _GSGFPointClass
 {
         GSGFCookedValueClass parent_class;
+
+        gchar * (*get_normalized_value) (struct _GSGFPointClass);
 };
 
 GType gsgf_point_get_type(void) G_GNUC_CONST;

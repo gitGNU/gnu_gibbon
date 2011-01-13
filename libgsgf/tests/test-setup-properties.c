@@ -238,8 +238,8 @@ test_prop_AE(const GSGFNode *node)
         }
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 24) {
-                fprintf(stderr, "Expected 24 points, got %u!\n", num_points);
+        if (num_points != 23) {
+                fprintf(stderr, "Expected 23 points, got %u!\n", num_points);
                 return FALSE;
         }
 

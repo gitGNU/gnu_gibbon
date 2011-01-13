@@ -75,6 +75,20 @@ static GSGFStone *gsgf_flavor_create_stone(const GSGFFlavor *self,
                                            const GSGFRaw *raw,
                                            gsize i,
                                            GError **error);
+static gboolean gsgf_flavor_append_points(const GSGFFlavor *self,
+                                          GSGFListOf *list_of,
+                                          const GSGFRaw *raw,
+                                          gsize i,
+                                          GError **error);
+
+static GSGFCookedValue *gsgf_list_of_stones_new_from_raw(const GSGFRaw *raw,
+                                                         const GSGFFlavor *flavor,
+                                                         const GSGFProperty *property,
+                                                         GError **error);
+static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
+                                                         const GSGFFlavor *flavor,
+                                                         const GSGFProperty *property,
+                                                         GError **error);
 
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
@@ -91,12 +105,14 @@ static GSGFFlavorTypeDef gsgf_flavor_B_or_W = {
                 }
 };
 
-static GSGFCookedValue *gsgf_list_of_stones_new_from_raw(const GSGFRaw *raw,
-                                                         const GSGFFlavor *flavor,
-                                                         const GSGFProperty *property,
-                                                         GError **error);
 static GSGFFlavorTypeDef gsgf_flavor_AB = {
                 gsgf_list_of_stones_new_from_raw, {
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_AE = {
+                gsgf_list_of_points_new_from_raw, {
                                 NULL
                 }
 };
@@ -194,7 +210,7 @@ static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
 };
 
 static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
-                NULL, &gsgf_flavor_AB, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_AB, NULL, NULL, &gsgf_flavor_AE, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, &gsgf_flavor_AP, NULL, NULL,
                 NULL, NULL, NULL, NULL, &gsgf_flavor_AW, NULL,
@@ -395,6 +411,32 @@ gsgf_flavor_create_stone(const GSGFFlavor *self,
         }
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_stone(self, raw, i, error);
+}
+
+static gboolean
+gsgf_flavor_append_points(const GSGFFlavor *self,
+                          GSGFListOf *list_of,
+                          const GSGFRaw *raw,
+                          gsize i,
+                          GError **error)
+{
+        if (!GSGF_IS_FLAVOR(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Invalid cast to GSGFFlavor"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
+        }
+
+        if (!GSGF_FLAVOR_GET_CLASS(self)->append_points) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Method append_points is not implemented"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->append_points,
+                                     FALSE);
+        }
+
+        return GSGF_FLAVOR_GET_CLASS(self)->append_points(self, list_of,
+                                                          raw, i, error);
 }
 
 static gboolean
@@ -636,7 +678,7 @@ gsgf_B_or_W_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 {
         GSGFMove *move;
         GSGFNode *node;
-        gchar *id;
+        const gchar *id;
 
         id = gsgf_property_get_id(property);
         node = gsgf_property_get_node(property);
@@ -684,11 +726,36 @@ gsgf_list_of_stones_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                         g_object_unref(list_of);
                         return NULL;
                 }
-                if (!gsgf_list_of_append(list_of, stone, error)) {
+                if (!gsgf_list_of_append(list_of, GSGF_COOKED_VALUE(stone), error)) {
                         g_object_unref(list_of);
                         return NULL;
                 }
         }
 
-        return list_of;
+        return GSGF_COOKED_VALUE(list_of);
+}
+
+static GSGFCookedValue *
+gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
+                                 const GSGFProperty *property, GError **error)
+{
+        GType type = GSGF_FLAVOR_GET_CLASS(flavor)->point_type;
+        GSGFListOf *list_of = gsgf_list_of_new(type);
+        gsize i, num_points;
+
+        num_points = gsgf_raw_get_number_of_values(raw);
+        if (!num_points) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_EMPTY,
+                                _("List of points must not be empty"));
+                g_object_unref(list_of);
+                return NULL;
+        }
+        for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
+                if (!gsgf_flavor_append_points(flavor, list_of, raw, i, error)) {
+                        g_object_unref(list_of);
+                        return NULL;
+                }
+        }
+
+        return GSGF_COOKED_VALUE(list_of);
 }

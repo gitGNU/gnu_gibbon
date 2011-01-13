@@ -45,6 +45,8 @@ struct _GSGFCookedValue;
 struct _GSGFProperty;
 struct _GSGFMove;
 struct _GSGFPoint;
+struct _GSGFStone;
+struct _GSGFListOf;
 
 struct _GSGFFlavorClass
 {
@@ -64,6 +66,13 @@ struct _GSGFFlavorClass
                                             const struct _GSGFRaw *raw,
                                             gsize i,
                                             GError **error);
+
+        GType point_type;
+        gboolean (*append_points) (const GSGFFlavor *flavor,
+                                   struct _GSGFListOf *list_of,
+                                   const struct _GSGFRaw *raw,
+                                   gsize i,
+                                   GError **error);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;

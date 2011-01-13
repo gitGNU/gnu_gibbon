@@ -85,35 +85,71 @@ gsgf_point_backgammon_new (gint point)
 }
 
 /**
- * gsgf_point_backgammon_new_from_raw:
+ * gsgf_point_backgammon_append_to_list_of:
+ * @list_of: The #GSGFListOf to append to.
  * @raw: The #GSGFRaw to parse.
+ * @i: Parse the ith value in @raw.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Creates a new #GSGFPointBackgammon from a #GSGFRaw.
  *
- * Returns: The new #GSGFPointBackgammon.
+ * Returns: %TRUE for success, %FALSE for failure.
  */
-GSGFPointBackgammon *
-gsgf_point_backgammon_new_from_raw (const GSGFRaw *raw, gsize i, GError **error)
+gboolean
+gsgf_point_backgammon_append_to_list_of (GSGFListOf *list_of, const GSGFRaw *raw,
+                                         gsize i, GError **error)
 {
         const gchar* string;
+        gint from;
+        gint to;
+        gint tmp;
+        gint p;
+        GSGFPointBackgammon *point;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
 
         string = gsgf_raw_get_value(raw, i);
         if (!string) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_POINT,
                             _("Empty point"));
-                return NULL;
+                return FALSE;
         }
 
-        if (string[0] < 'a' || string[0] > 'z' || string[1]) {
+        if (string[0] < 'a' || string[0] > 'z') {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_POINT,
                                 _("Invalid point syntax"));
-                return NULL;
+                return FALSE;
         }
 
-        return gsgf_point_backgammon_new((gint) string[0] - 'a');
+        from = (gint) (string[0] - 'a');
+        if (string[1]) {
+                if (':' != string[1]
+                    || string[2] < 'a' || string[2] > 'z') {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_POINT,
+                                    _("Invalid point syntax '%s'"), string);
+                        return FALSE;
+                }
+
+                to = (gint) (string[2] - 'a');
+
+                if (to < from) {
+                        tmp = from;
+                        from = to;
+                        to = tmp;
+                }
+        } else {
+                to = from;
+        }
+
+        for (p = from; p <= to; ++p) {
+                point = gsgf_point_backgammon_new(p);
+                if (!gsgf_list_of_append(list_of, GSGF_COOKED_VALUE(point), error)) {
+                        g_object_unref(point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
 }
 
 gint
