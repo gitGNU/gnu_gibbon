@@ -76,6 +76,40 @@ GSGF_TEXT_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-empty</FILE>
+<TITLE>GSGFEmpty</TITLE>
+GSGFEmptyClass
+GSGFEmpty
+GSGFEmptyPrivate
+gsgf_empty_new
+gsgf_empty_new_from_raw
+<SUBSECTION Standard>
+GSGF_EMPTY
+GSGF_IS_EMPTY
+GSGF_TYPE_EMPTY
+gsgf_empty_get_type
+GSGF_EMPTY_CLASS
+GSGF_IS_EMPTY_CLASS
+GSGF_EMPTY_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-stone</FILE>
+<TITLE>GSGFStone</TITLE>
+GSGFStoneClass
+GSGFStone
+gsgf_stone_new
+<SUBSECTION Standard>
+GSGF_STONE
+GSGF_IS_STONE
+GSGF_TYPE_STONE
+gsgf_stone_get_type
+GSGF_STONE_CLASS
+GSGF_IS_STONE_CLASS
+GSGF_STONE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-compose</FILE>
 <TITLE>GSGFCompose</TITLE>
 GSGFComposeClass
@@ -150,6 +184,25 @@ GSGF_PROPERTY_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-point-backgammon</FILE>
+<TITLE>GSGFPointBackgammon</TITLE>
+GSGFPointBackgammonClass
+GSGFPointBackgammon
+GSGFPointBackgammonPrivate
+gsgf_point_backgammon_new
+gsgf_point_backgammon_append_to_list_of
+gsgf_point_backgammon_get_point
+<SUBSECTION Standard>
+GSGF_POINT_BACKGAMMON
+GSGF_IS_POINT_BACKGAMMON
+GSGF_TYPE_POINT_BACKGAMMON
+gsgf_point_backgammon_get_type
+GSGF_POINT_BACKGAMMON_CLASS
+GSGF_IS_POINT_BACKGAMMON_CLASS
+GSGF_POINT_BACKGAMMON_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-collection</FILE>
 <TITLE>GSGFCollection</TITLE>
 GSGFCollectionClass
@@ -185,6 +238,27 @@ gsgf_flavor_backgammon_get_type
 GSGF_FLAVOR_BACKGAMMON_CLASS
 GSGF_IS_FLAVOR_BACKGAMMON_CLASS
 GSGF_FLAVOR_BACKGAMMON_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-list-of</FILE>
+<TITLE>GSGFListOf</TITLE>
+GSGFListOfClass
+GSGFListOf
+GSGFListOfPrivate
+gsgf_list_of_new
+gsgf_list_of_get_item_type
+gsgf_list_of_get_number_of_items
+gsgf_list_of_append
+gsgf_list_of_get_nth_item
+<SUBSECTION Standard>
+GSGF_LIST_OF
+GSGF_IS_LIST_OF
+GSGF_TYPE_LIST_OF
+gsgf_list_of_get_type
+GSGF_LIST_OF_CLASS
+GSGF_IS_LIST_OF_CLASS
+GSGF_LIST_OF_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -227,6 +301,22 @@ GSGF_NUMBER_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-point</FILE>
+<TITLE>GSGFPoint</TITLE>
+GSGFPointClass
+GSGFPoint
+gsgf_point_new
+<SUBSECTION Standard>
+GSGF_POINT
+GSGF_IS_POINT
+GSGF_TYPE_POINT
+gsgf_point_get_type
+GSGF_POINT_CLASS
+GSGF_IS_POINT_CLASS
+GSGF_POINT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-cooked-value</FILE>
 <TITLE>GSGFCookedValue</TITLE>
 GSGFCookedValueClass
@@ -241,6 +331,25 @@ gsgf_cooked_value_get_type
 GSGF_COOKED_VALUE_CLASS
 GSGF_IS_COOKED_VALUE_CLASS
 GSGF_COOKED_VALUE_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-stone-backgammon</FILE>
+<TITLE>GSGFStoneBackgammon</TITLE>
+GSGFStoneBackgammonClass
+GSGFStoneBackgammon
+GSGFStoneBackgammonPrivate
+gsgf_stone_backgammon_new
+gsgf_stone_backgammon_new_from_raw
+gsgf_stone_backgammon_get_stone
+<SUBSECTION Standard>
+GSGF_STONE_BACKGAMMON
+GSGF_IS_STONE_BACKGAMMON
+GSGF_TYPE_STONE_BACKGAMMON
+gsgf_stone_backgammon_get_type
+GSGF_STONE_BACKGAMMON_CLASS
+GSGF_IS_STONE_BACKGAMMON_CLASS
+GSGF_STONE_BACKGAMMON_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -269,7 +378,17 @@ GSGF_GAME_TREE_GET_CLASS
 <TITLE>GSGFMoveBackgammon</TITLE>
 GSGFMoveBackgammonClass
 GSGFMoveBackgammon
+GSGFMoveBackgammonPrivate
 gsgf_move_backgammon_new
+gsgf_move_backgammon_new_from_raw
+gsgf_move_backgammon_is_regular
+gsgf_move_backgammon_is_double
+gsgf_move_backgammon_is_take
+gsgf_move_backgammon_is_drop
+gsgf_move_backgammon_get_num_moves
+gsgf_move_backgammon_get_die
+gsgf_move_backgammon_get_from
+gsgf_move_backgammon_get_to
 <SUBSECTION Standard>
 GSGF_MOVE_BACKGAMMON
 GSGF_IS_MOVE_BACKGAMMON
