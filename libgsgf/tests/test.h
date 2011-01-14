@@ -32,7 +32,7 @@ extern int expect_error(GError *error, GError *expect);
 extern int expect_error_conditional(gboolean condition, const gchar *msg,
                                     GError *error, GError *expect);
 
-gchar *g_memory_stream_get_string(const GMemoryOutputStream *stream);
+gchar *g_memory_output_stream_get_string(const GMemoryOutputStream *stream);
 
 gchar *build_filename(const gchar *filename);
 
