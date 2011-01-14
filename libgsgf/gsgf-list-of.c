@@ -182,7 +182,7 @@ gsgf_list_of_get_number_of_items(const GSGFListOf *self)
 }
 
 /**
- * gsgf_list_of_get_item_type
+ * gsgf_list_of_get_item_type:
  * @self: The #GSGFListOf object.
  *
  * Get the type of items stored in the list.  This is the type that is expected

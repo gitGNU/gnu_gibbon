@@ -35,13 +35,11 @@ G_BEGIN_DECLS
 #define GSGF_MOVE_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
 
 /**
- * GSGFMoveBackgammon:
+ * GSGFMoveBackgammonClass:
  *
  * Class implementing the backgammon move of SGF.
  **/
 typedef struct _GSGFMoveBackgammonClass   GSGFMoveBackgammonClass;
-typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
-typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
 
 struct _GSGFMoveBackgammonClass
 {
@@ -49,6 +47,14 @@ struct _GSGFMoveBackgammonClass
 };
 
 GType gsgf_move_backgammon_get_type(void) G_GNUC_CONST;
+
+/**
+ * GSGFMoveBackgammon:
+ *
+ * A #GSGFMoveBackgammonClass instance.
+ **/
+typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
+typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
 
 struct _GSGFMoveBackgammon
 {
