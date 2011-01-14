@@ -20,7 +20,7 @@
 #ifndef _LIBGSGF_PRIVATE_H
 # define _LIBGSGF_PRIVATE_H
 
-#include <gsgf.h>
+#include <libgsgf/gsgf.h>
 
 extern GHashTable *_libgsgf_flavors;
 
@@ -59,7 +59,7 @@ void _gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gsize i, gboolean co
 void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 
 /* Private constructors.  */
-GSGFReal *_gsgf_real_new(gchar *value, GError **error);
+GSGFReal *_gsgf_real_new(const gchar *value, GError **error);
 
 void _libgsgf_init();
 
