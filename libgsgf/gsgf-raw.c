@@ -200,8 +200,8 @@ void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
 {
         GSGFRaw *self;
 
-        g_return_val_if_fail(GSGF_IS_RAW(_self), FALSE);
-        g_return_val_if_fail(value != NULL, FALSE);
+        g_return_if_fail(GSGF_IS_RAW(_self));
+        g_return_if_fail(value != NULL);
 
         self = GSGF_RAW(_self);
 
