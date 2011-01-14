@@ -90,7 +90,6 @@ GSGFCookedValue *
 gsgf_empty_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
                          const GSGFProperty *property, GError **error)
 {
-        gchar *endptr;
         const gchar *string;
 
         g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);

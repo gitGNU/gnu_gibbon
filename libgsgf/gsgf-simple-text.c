@@ -99,8 +99,9 @@ gsgf_simple_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
                 return NULL;
         } else if (list_length != 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
-                            _("A simple text property may only have one value, not %u!"),
-                            list_length);
+                            _("A simple text property may only have one"
+                            		" value, not %u!"),
+                            (unsigned) list_length);
                 return NULL;
         }
 

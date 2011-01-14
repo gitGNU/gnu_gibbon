@@ -75,14 +75,14 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
  *
  * Creates a new #GSGFFlavorBackgammon.
  *
- * Returns: The new #GSGFFlavorBackgammon.
+ * Returns: The new #GSGFFlavorBackgammon as a #GSGFFlavor.
  */
-GSGFFlavorBackgammon *
+GSGFFlavor *
 gsgf_flavor_backgammon_new (void)
 {
         GSGFFlavorBackgammon *self = g_object_new(GSGF_TYPE_FLAVOR_BACKGAMMON, NULL);
 
-        return self;
+        return GSGF_FLAVOR(self);
 }
 
 static GSGFMove *

@@ -966,14 +966,6 @@ update_boundings (struct svg_util_render_context *ctx,
                 ctx->max_y = max_y;
 }
 
-struct svg_component *
-svg_util_create_component (gboolean render)
-{
-        struct svg_component *svg;
-                
-        return svg;        
-}
-
 void 
 svg_util_free_component (struct svg_component *svg)
 {

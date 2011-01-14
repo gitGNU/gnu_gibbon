@@ -64,6 +64,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include <stdlib.h>
+
 #include "gsgf-flavor-protected.h"
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
@@ -505,7 +507,7 @@ gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
         if (gsgf_number_get_value(number) < 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Value must be greater than 0 but is %lld"),
-                            gsgf_number_get_value(number));
+                            (long long int) gsgf_number_get_value(number));
                 return FALSE;
         }
 
@@ -602,7 +604,7 @@ gsgf_constraint_is_ST_number(const GSGFCookedValue *value,
         if (gsgf_number_get_value(number) < 1) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Value must be greater than 0 but is %lld"),
-                            gsgf_number_get_value(number));
+                            (long long int) gsgf_number_get_value(number));
                 return FALSE;
         }
 

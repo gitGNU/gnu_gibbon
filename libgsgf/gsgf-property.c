@@ -209,7 +209,7 @@ gboolean
 _gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
 {
         g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
-        g_return_val_if_fail(charset != NULL, NULL);
+        g_return_val_if_fail(charset != NULL, FALSE);
 
         return _gsgf_raw_convert(GSGF_RAW(self->priv->value), charset, error);
 }

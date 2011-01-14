@@ -39,6 +39,8 @@ struct _GSGFPointBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFPointBackgammon, gsgf_point_backgammon, GSGF_TYPE_POINT)
 
+static gint _gsgf_point_backgammon_get_point(const GSGFPoint* point);
+
 static void
 gsgf_point_backgammon_init(GSGFPointBackgammon *self)
 {
@@ -63,7 +65,7 @@ gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
 
         g_type_class_add_private(klass, sizeof(GSGFPointBackgammonPrivate));
 
-        point_class->get_normalized_value = gsgf_point_backgammon_get_point;
+        point_class->get_normalized_value = _gsgf_point_backgammon_get_point;
 
         /* FIXME: write_stream() must be implemented! */
 
@@ -161,4 +163,12 @@ gsgf_point_backgammon_get_point(const GSGFPointBackgammon *self)
         g_return_val_if_fail(GSGF_IS_POINT_BACKGAMMON(self), 0);
 
         return (guint) self->priv->point;
+}
+
+gint
+_gsgf_point_backgammon_get_point(const GSGFPoint *self)
+{
+        g_return_val_if_fail(GSGF_IS_POINT_BACKGAMMON(self), 0);
+
+        return (guint) GSGF_POINT_BACKGAMMON(self)->priv->point;
 }

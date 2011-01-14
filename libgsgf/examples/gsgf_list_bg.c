@@ -167,7 +167,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         number = GSGF_NUMBER(gsgf_node_get_property_cooked(root, "GM"));
         if (6 != gsgf_number_get_value(number)) {
                printf("%s: not backgammon but type %lld!\n",
-                      path, gsgf_number_get_value(number));
+                      path, (long long int) gsgf_number_get_value(number));
                return TRUE;
         }
 
@@ -323,7 +323,7 @@ print_point(guint point)
         else if (point == 24)
                 g_print("bar");
         else if (point == 25)
-                g_print("off", point);
+                g_print("off");
         else
                 g_print("??");
 }

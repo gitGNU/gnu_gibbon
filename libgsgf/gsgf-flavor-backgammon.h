@@ -54,7 +54,7 @@ struct _GSGFFlavorBackgammon
         GSGFFlavor parent_instance;
 };
 
-GSGFFlavorBackgammon *gsgf_flavor_backgammon_new(void);
+GSGFFlavor *gsgf_flavor_backgammon_new(void);
 
 G_END_DECLS
 

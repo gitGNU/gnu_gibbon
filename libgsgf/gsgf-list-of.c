@@ -18,8 +18,8 @@
  */
 
 /**
- * SECTION:gsgf-list_of
- * @short_description: ListOfd data in SGF files.
+ * SECTION:gsgf-list-of
+ * @short_description: ListOf data in SGF files.
  *
  * A #GSGFListOf is a list of #GSGFCookedValue objects.
  */

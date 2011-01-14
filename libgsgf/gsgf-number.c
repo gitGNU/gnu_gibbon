@@ -191,7 +191,8 @@ gsgf_number_write_stream(const GSGFCookedValue *_self,
 
         *bytes_written = 0;
 
-        value = g_strdup_printf("%lld", gsgf_number_get_value(self));
+        value = g_strdup_printf("%lld",
+        		                (long long int) gsgf_number_get_value(self));
         if (!g_output_stream_write_all(out, value, strlen(value),
                                        bytes_written,
                                        cancellable, error))

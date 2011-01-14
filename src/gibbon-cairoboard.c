@@ -479,7 +479,7 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         gdouble checker_width = 30;
         gdouble bar_width = 30;
         gdouble point_width = 30;
-        int side;
+        int side = 0;
         
         gint direction;
         gint i;
