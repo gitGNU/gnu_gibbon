@@ -103,7 +103,7 @@ gsgf_compose_new (GSGFCookedValue *value, ...)
         va_start(args, value);
 
         while (1) {
-                value = va_arg(args, GSGFCompose *);
+                value = va_arg(args, GSGFCookedValue *);
                 if (!value)
                         break;
                 if (!GSGF_IS_COOKED_VALUE(value)) {
