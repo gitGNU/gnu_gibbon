@@ -199,10 +199,14 @@ gsgf_list_of_get_item_type(const GSGFListOf *self)
 }
 
 /**
- * gsgf_list_of_append
+ * gsgf_list_of_append:
  * @self: The #GSGFListOf object.
  * @item: The item to store.
  * @error: Optional #GError location or %NULL to ignore.
+ *
+ * Append a #GSGFCookedValue to a #GSGFListOf.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
  */
 gboolean
 gsgf_list_of_append(GSGFListOf *self, GSGFCookedValue *item,

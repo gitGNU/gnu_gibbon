@@ -74,6 +74,7 @@ gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
 
 /**
  * gsgf_point_backgammon_new:
+ * @point: The point as a number between 0 and 25.
  *
  * Creates a new #GSGFPointBackgammon.
  *
@@ -82,8 +83,11 @@ gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
 GSGFPointBackgammon *
 gsgf_point_backgammon_new (gint point)
 {
-        GSGFPointBackgammon *self = g_object_new(GSGF_TYPE_POINT_BACKGAMMON, NULL);
+        GSGFPointBackgammon *self;
 
+        g_return_val_if_fail(point >= 0 && point <= 25, NULL);
+
+        self = g_object_new(GSGF_TYPE_POINT_BACKGAMMON, NULL);
         self->priv->point = point;
 
         return self;

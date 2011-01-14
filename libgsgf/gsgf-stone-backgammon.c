@@ -69,6 +69,7 @@ gsgf_stone_backgammon_class_init(GSGFStoneBackgammonClass *klass)
 
 /**
  * gsgf_stone_backgammon_new:
+ * @stone: The point as a number between 0 and 25.
  *
  * Creates a new #GSGFStoneBackgammon.
  *
@@ -77,8 +78,11 @@ gsgf_stone_backgammon_class_init(GSGFStoneBackgammonClass *klass)
 GSGFStoneBackgammon *
 gsgf_stone_backgammon_new (gint stone)
 {
-        GSGFStoneBackgammon *self = g_object_new(GSGF_TYPE_STONE_BACKGAMMON, NULL);
+        GSGFStoneBackgammon *self;
 
+        g_return_val_if_fail(stone >= 0 && stone <= 25, NULL);
+
+        self = g_object_new(GSGF_TYPE_STONE_BACKGAMMON, NULL);
         self->priv->stone = stone;
 
         return self;
@@ -87,6 +91,7 @@ gsgf_stone_backgammon_new (gint stone)
 /**
  * gsgf_stone_backgammon_new_from_raw:
  * @raw: The #GSGFRaw to parse.
+ * @i: The index into @raw.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
  * Creates a new #GSGFStoneBackgammon from a #GSGFRaw.

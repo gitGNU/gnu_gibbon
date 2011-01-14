@@ -117,6 +117,7 @@ gsgf_game_tree_add_child(GSGFGameTree *self)
 
 /**
  * gsgf_game_tree_add_node:
+ * @self: The #GSGFNode.
  *
  * Add an empty #GSGFNode as a child.  The function cannot fail.
  *
@@ -142,9 +143,12 @@ gsgf_game_tree_add_node(GSGFGameTree *self)
 
 /**
  * gsgf_game_tree_get_parent:
+ * @self: The #GSGFGameTree.
  *
- * Return the parent #GSGFGameTree of this #GSGFGameTree or NULL if it
+ * Get the parent #GSGFGameTree of this #GSGFGameTree or NULL if it
  * is the root of the collection.
+ *
+ * Returns: The parent #GSGFGameTree or %NULL if there is none.
  */
 GSGFGameTree *
 gsgf_game_tree_get_parent(const GSGFGameTree *self)
