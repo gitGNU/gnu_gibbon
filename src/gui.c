@@ -558,7 +558,7 @@ static void print2digits (GtkTreeViewColumn *tree_column,
         gdouble d;
 
         g_free(cell_text->text);
-        gtk_tree_model_get(tree_model, iter, (gint) data, &d, -1);
+        gtk_tree_model_get(tree_model, iter, GPOINTER_TO_INT(data), &d, -1);
         cell_text->text = g_strdup_printf("%.2f", d);
 }
 
