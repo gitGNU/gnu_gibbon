@@ -27,6 +27,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "test.h"
+
 static int test_compose();
 
 int
