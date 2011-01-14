@@ -214,7 +214,7 @@ compare_utf8_string (GtkTreeModel *model,
         
         gint result;
         
-        gint col = (gint) user_data;
+        gint col = GPOINTER_TO_INT(user_data);
 
         gtk_tree_model_get (model, a, col, &str_a, -1);
         key_a = g_utf8_collate_key (str_a, -1);
