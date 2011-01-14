@@ -4,6 +4,7 @@
 *.bak
 *.orig
 /po/stamp-it
+/Debug
 autom4te.cache
 aclocal.m4
 core
