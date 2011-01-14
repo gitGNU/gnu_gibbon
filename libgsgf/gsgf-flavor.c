@@ -94,7 +94,7 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
 static gboolean gsgf_list_of_points_check_unique(const GSGFListOf *list_of,
                                                  GError **error);
 
-static int compare_gint(const gint *a, const gint *b);
+static int compare_gint(const void *a, const void *b);
 
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
@@ -799,7 +799,7 @@ gsgf_list_of_points_check_unique(const GSGFListOf *list_of,
 }
 
 static int
-compare_gint(const gint *a, const gint *b)
+compare_gint(const void *a, const void *b)
 {
-        return *a - *b;
+        return *(gint *)a - *(gint *)b;
 }
