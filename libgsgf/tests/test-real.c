@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include <libgsgf/gsgf-private.h>
 
 static int test_success();
 static int test_garbage();
