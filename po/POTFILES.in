@@ -39,6 +39,7 @@ libgsgf/gsgf-simple-text.c
 libgsgf/gsgf-stone-backgammon.c
 libgsgf/gsgf-text.c
 libgsgf/tests/test-empty.c
+libgsgf/tests/test-non-unique-points.c
 libgsgf/tests/test-number.c
 libgsgf/tests/test-real.c
 libgsgf/tests/test-really-empty.c
