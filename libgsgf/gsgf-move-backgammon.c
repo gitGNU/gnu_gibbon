@@ -29,6 +29,8 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
+
 struct _GSGFMoveBackgammonPrivate {
         gint num_moves;
         gint dice[2];

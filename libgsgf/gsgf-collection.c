@@ -61,6 +61,7 @@ typedef struct {
         enum gsgf_parser_state state;
 } GSGFParserContext;
 
+typedef struct _GSGFCollectionPrivate GSGFCollectionPrivate;
 struct _GSGFCollectionPrivate {
         GList* game_trees;
 };

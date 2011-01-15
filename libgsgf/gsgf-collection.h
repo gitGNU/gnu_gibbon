@@ -25,40 +25,50 @@
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_COLLECTION             (gsgf_collection_get_type ())
-#define GSGF_COLLECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, GSGFCollection))
-#define GSGF_COLLECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
-#define GSGF_IS_COLLECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COLLECTION))
-#define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COLLECTION))
-#define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
+#define GSGF_TYPE_COLLECTION             \
+	(gsgf_collection_get_type ())
+#define GSGF_COLLECTION(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, GSGFCollection))
+#define GSGF_COLLECTION_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, \
+			GSGFCollectionClass))
+#define GSGF_IS_COLLECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_COLLECTION))
+#define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_COLLECTION))
+#define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_COLLECTION, GSGFCollectionClass))
 
 /**
  * GSGFCollection:
+ *
+ * Instance of a #GSGFCollectionClass.  All properties are private.
+ **/
+struct _GSGFCollection
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        struct _GSGFCollectionPrivate *priv;
+};
+
+/**
+ * GSGFCollectionClass:
  *
  * Class representing a collection of games resp. game trees in a
  * Simple Game Format (SGF) file.
  **/
 typedef struct _GSGFCollectionClass   GSGFCollectionClass;
 typedef struct _GSGFCollection        GSGFCollection;
-/*< private >*/
-typedef struct _GSGFCollectionPrivate GSGFCollectionPrivate;
 
 struct _GSGFCollectionClass
 {
         GObjectClass parent_class;
 };
 
-GType gsgf_collection_get_type(void) G_GNUC_CONST;
-
-struct _GSGFCollection
-{
-        GObject parent_instance;
-
-        /*< private >*/
-        GSGFCollectionPrivate *priv;
-};
-
 struct _GSGFGameTree;
+
+GType gsgf_collection_get_type(void) G_GNUC_CONST;
 
 GSGFCollection *gsgf_collection_new();
 GSGFCollection *gsgf_collection_parse_stream(GInputStream *stream,

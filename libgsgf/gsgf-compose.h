@@ -35,28 +35,31 @@ G_BEGIN_DECLS
 #define GSGF_COMPOSE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COMPOSE, GSGFComposeClass))
 
 /**
+ * GSGFCollection:
+ *
+ * Instance of a #GSGFComposeClass.  All properties are private.
+ **/
+typedef struct _GSGFCompose        GSGFCompose;
+struct _GSGFCompose
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFComposePrivate *priv;
+};
+
+/**
  * GSGFCompose:
  *
- * Class representing a compose of SGF.
+ * Class representing a composed value in SGF.
  **/
 typedef struct _GSGFComposeClass   GSGFComposeClass;
-typedef struct _GSGFCompose        GSGFCompose;
-typedef struct _GSGFComposePrivate GSGFComposePrivate;
-
 struct _GSGFComposeClass
 {
         GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_compose_get_type(void) G_GNUC_CONST;
-
-struct _GSGFCompose
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFComposePrivate *priv;
-};
 
 GSGFCompose *gsgf_compose_new(GSGFCookedValue *value, ...);
 

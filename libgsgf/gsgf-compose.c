@@ -29,6 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFComposePrivate GSGFComposePrivate;
 struct _GSGFComposePrivate {
         GList *values;
 };

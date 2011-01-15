@@ -8,7 +8,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Gibbon is distributed in the hope that it will be useful,
+ * Gibbon is distributed in the hope üthat it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -27,36 +27,51 @@
 
 G_BEGIN_DECLS
 
-#define GSGF_TYPE_MOVE_BACKGAMMON  (gsgf_move_backgammon_get_type ())
-#define GSGF_MOVE_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammon))
-#define GSGF_MOVE_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
-#define GSGF_IS_MOVE_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE_BACKGAMMON))
-#define GSGF_IS_MOVE_BACKGAMMON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_MOVE_BACKGAMMON))
-#define GSGF_MOVE_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
+#define GSGF_TYPE_MOVE_BACKGAMMON  			  \
+	(gsgf_move_backgammon_get_type ())
+#define GSGF_MOVE_BACKGAMMON(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammon))
+#define GSGF_MOVE_BACKGAMMON_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammonClass))
+#define GSGF_IS_MOVE_BACKGAMMON(obj)          \
+	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE_BACKGAMMON))
+#define GSGF_IS_MOVE_BACKGAMMON_CLASS(klass)  \
+	(G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_MOVE_BACKGAMMON))
+#define GSGF_MOVE_BACKGAMMON_GET_CLASS(obj)   \
+	(G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammonClass))
 
 /**
  * GSGFMoveBackgammon:
  *
+ * Instance of #GSGFMoveBackgammonClass.  All properties are private.
+ **/
+struct _GSGFMoveBackgammon
+{
+        GSGFMove parent_instance;
+
+        /*< private >*/
+        struct _GSGFMoveBackgammonPrivate *priv;
+};
+typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
+
+
+/**
+ * GSGFMoveBackgammonClass:
+ *
  * Class implementing the backgammon move of SGF.
  **/
 typedef struct _GSGFMoveBackgammonClass   GSGFMoveBackgammonClass;
-typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
-typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
 
 struct _GSGFMoveBackgammonClass
 {
         GSGFMoveClass parent_class;
 };
 
+
 GType gsgf_move_backgammon_get_type(void) G_GNUC_CONST;
-
-struct _GSGFMoveBackgammon
-{
-        GSGFMove parent_instance;
-
-        /*< private >*/
-        GSGFMoveBackgammonPrivate *priv;
-};
 
 GSGFMoveBackgammon *gsgf_move_backgammon_new(void);
 GSGFMoveBackgammon *gsgf_move_backgammon_new_from_raw(const GSGFRaw *raw,

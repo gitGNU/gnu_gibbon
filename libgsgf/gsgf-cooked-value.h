@@ -32,10 +32,25 @@ G_BEGIN_DECLS
 #define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COOKED_VALUE))
 #define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
 
-typedef struct _GSGFCookedValueClass   GSGFCookedValueClass;
+/**
+ * GSGFCookedValue:
+ *
+ * Instance of a #GSGFCookedValueClass.  All properties are private.
+ **/
 typedef struct _GSGFCookedValue        GSGFCookedValue;
-typedef struct _GSGFCookedValuePrivate GSGFCookedValuePrivate;
+struct _GSGFCookedValue
+{
+        GObject parent_instance;
+};
 
+/**
+ * GSGFCookedValueClass:
+ *
+ * A class representing a cooked value of a #GSGFProperty.
+ *
+ * It is the common base class of all other qualified SGF data types.
+ */
+typedef struct _GSGFCookedValueClass   GSGFCookedValueClass;
 struct _GSGFCookedValueClass
 {
         GObjectClass parent_class;
@@ -46,11 +61,6 @@ struct _GSGFCookedValueClass
 };
 
 GType gsgf_cooked_value_get_type(void) G_GNUC_CONST;
-
-struct _GSGFCookedValue
-{
-        GObject parent_instance;
-};
 
 gboolean gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
                                         GOutputStream *out, 

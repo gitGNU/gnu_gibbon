@@ -37,23 +37,29 @@ G_BEGIN_DECLS
 /**
  * GSGFEmpty:
  *
- * Class representing an empty, single-valued property.
+ * Instance of a #GSGFEmptyClass.  All properties are private.
+ *
+ * Cooked values contain structured data, whereas a #GSGFRaw holds
+ * raw unqualified data.
+ **/
+typedef struct _GSGFEmpty        GSGFEmpty;
+struct _GSGFEmpty
+{
+        GSGFCookedValue parent_instance;
+};
+
+/**
+ * GSGFEmpty:
+ *
+ * Class representing an empty, single-valued SGF property.
  **/
 typedef struct _GSGFEmptyClass   GSGFEmptyClass;
-typedef struct _GSGFEmpty        GSGFEmpty;
-typedef struct _GSGFEmptyPrivate GSGFEmptyPrivate;
-
 struct _GSGFEmptyClass
 {
         GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_empty_get_type(void) G_GNUC_CONST;
-
-struct _GSGFEmpty
-{
-        GSGFCookedValue parent_instance;
-};
 
 struct _GSGFProperty;
 
