@@ -28,18 +28,20 @@ G_BEGIN_DECLS
  * GSGFError:
  * @GSGF_ERROR_NONE: No error.
  * @GSGF_ERROR_FLAVOR_UNSUPPORTED: Unknown SGF flavor.
- * @GSGF_ERROR_FLAVOR_MISMATCH: Attempt to insert a child of different flavor than the
- *                              parent.
+ * @GSGF_ERROR_FLAVOR_MISMATCH: Attempt to insert a child of different flavor
+ *                              than the parent.
  * @GSGF_ERROR_SYNTAX: Syntax error.
  * @GSGF_ERROR_EMPTY_COLLECTION: Collection is empty.
- * @GSGF_ERROR_PROPERTY_EXISTS: Attempt to insert a property with an already existing name.
+ * @GSGF_ERROR_PROPERTY_EXISTS: Attempt to insert a property with an already
+ *                              existing name.
  * @GSGF_ERROR_EMPTY_PROPERTY: Attempt to write a property without a value.
  * @GSGF_ERROR_INTERNAL_ERROR: Internal error.
  * @GSGF_ERROR_INVALID_NUMBER: Invalid number format.
- * @GSGF_ERROR_LIST_TOO_LONG: A list of values was to long for the semantics of a particular
- *                            property.
+ * @GSGF_ERROR_LIST_TOO_LONG: A list of values was to long for the semantics
+ *                            of a particular property.
  * @GSGF_ERROR_LIST_EMPTY: A "list of" was empty.
- * @GSGF_ERROR_SEMANTIC_ERROR: Semantic error i.e. the data did not match the expectations.
+ * @GSGF_ERROR_SEMANTIC_ERROR: Semantic error i.e. the data did not match the
+ *                             expectations.
  * @GSGF_ERROR_INVALID_MOVE: Invalid syntax for a move.
  * @GSGF_ERROR_INVALID_POINT: Invalid syntax for a point.
  * @GSGF_ERROR_INVALID_STONE: Invalid syntax for a stone.

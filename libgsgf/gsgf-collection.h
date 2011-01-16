@@ -28,7 +28,8 @@ G_BEGIN_DECLS
 #define GSGF_TYPE_COLLECTION             \
 	(gsgf_collection_get_type ())
 #define GSGF_COLLECTION(obj)             \
-	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, GSGFCollection))
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, \
+	                GSGFCollection))
 #define GSGF_COLLECTION_CLASS(klass)     \
 	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, \
 			GSGFCollectionClass))

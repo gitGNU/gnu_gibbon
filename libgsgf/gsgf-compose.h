@@ -28,11 +28,16 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_COMPOSE             (gsgf_compose_get_type ())
-#define GSGF_COMPOSE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COMPOSE, GSGFCompose))
-#define GSGF_COMPOSE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COMPOSE, GSGFComposeClass))
-#define GSGF_IS_COMPOSE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COMPOSE))
-#define GSGF_IS_COMPOSE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COMPOSE))
-#define GSGF_COMPOSE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COMPOSE, GSGFComposeClass))
+#define GSGF_COMPOSE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_COMPOSE, GSGFCompose))
+#define GSGF_COMPOSE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_COMPOSE, GSGFComposeClass))
+#define GSGF_IS_COMPOSE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_COMPOSE))
+#define GSGF_IS_COMPOSE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_COMPOSE))
+#define GSGF_COMPOSE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_COMPOSE, GSGFComposeClass))
 
 /**
  * GSGFCollection:

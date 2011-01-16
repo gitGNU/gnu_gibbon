@@ -28,11 +28,16 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_EMPTY             (gsgf_empty_get_type ())
-#define GSGF_EMPTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_EMPTY, GSGFEmpty))
-#define GSGF_EMPTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_EMPTY, GSGFEmptyClass))
-#define GSGF_IS_EMPTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_EMPTY))
-#define GSGF_IS_EMPTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_EMPTY))
-#define GSGF_EMPTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_EMPTY, GSGFEmptyClass))
+#define GSGF_EMPTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_EMPTY, GSGFEmpty))
+#define GSGF_EMPTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_EMPTY, GSGFEmptyClass))
+#define GSGF_IS_EMPTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_EMPTY))
+#define GSGF_IS_EMPTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_EMPTY))
+#define GSGF_EMPTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_EMPTY, GSGFEmptyClass))
 
 /**
  * GSGFEmpty:

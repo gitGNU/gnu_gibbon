@@ -26,11 +26,16 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_COOKED_VALUE             (gsgf_cooked_value_get_type ())
-#define GSGF_COOKED_VALUE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValue))
-#define GSGF_COOKED_VALUE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
-#define GSGF_IS_COOKED_VALUE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COOKED_VALUE))
-#define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COOKED_VALUE))
-#define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+#define GSGF_COOKED_VALUE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValue))
+#define GSGF_COOKED_VALUE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+#define GSGF_IS_COOKED_VALUE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_COOKED_VALUE))
+#define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_COOKED_VALUE))
+#define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
 
 /**
  * GSGFCookedValue:
@@ -55,8 +60,8 @@ struct _GSGFCookedValueClass
 {
         GObjectClass parent_class;
 
-        gboolean (*write_stream) (const GSGFCookedValue *self, GOutputStream *out,
-                                  gsize *bytes_written,
+        gboolean (*write_stream) (const GSGFCookedValue *self,
+                                  GOutputStream *out, gsize *bytes_written,
                                   GCancellable *cancellable, GError **error);
 };
 
