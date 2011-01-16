@@ -107,7 +107,7 @@ if test $gibbon_native_msdos = no; then
   )
 fi
 
-AC_CHECK_FUNCS ([index])
+AC_CHECK_FUNC([index])
 
 GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)

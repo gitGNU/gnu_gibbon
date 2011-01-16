@@ -38,8 +38,8 @@ G_BEGIN_DECLS
  * Class representing a game_tree of games resp. game trees in a
  * Simple Game Format (SGF) file.
  **/
-typedef struct _GSGFGameTreeClass   GSGFGameTreeClass;
 typedef struct _GSGFGameTree        GSGFGameTree;
+typedef struct _GSGFGameTreeClass   GSGFGameTreeClass;
 typedef struct _GSGFGameTreePrivate GSGFGameTreePrivate;
 
 struct _GSGFGameTreeClass

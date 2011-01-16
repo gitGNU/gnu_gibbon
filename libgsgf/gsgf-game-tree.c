@@ -94,6 +94,7 @@ _gsgf_game_tree_new()
 
 /**
  * gsgf_game_tree_add_child:
+ * @self: The #GSGFGameTree to add.
  *
  * Add an empty #GSGFGameTree as a child.  The function cannot fail.
  *

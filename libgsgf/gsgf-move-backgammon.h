@@ -44,10 +44,11 @@ G_BEGIN_DECLS
 			GSGFMoveBackgammonClass))
 
 /**
- * GSGFMoveBackgammon:
+ * GSGFMoveBackgammonClass:
  *
  * Instance of #GSGFMoveBackgammonClass.  All properties are private.
  **/
+typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
 struct _GSGFMoveBackgammon
 {
         GSGFMove parent_instance;
@@ -55,7 +56,6 @@ struct _GSGFMoveBackgammon
         /*< private >*/
         struct _GSGFMoveBackgammonPrivate *priv;
 };
-typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
 
 
 /**
@@ -64,12 +64,10 @@ typedef struct _GSGFMoveBackgammon        GSGFMoveBackgammon;
  * Class implementing the backgammon move of SGF.
  **/
 typedef struct _GSGFMoveBackgammonClass   GSGFMoveBackgammonClass;
-
 struct _GSGFMoveBackgammonClass
 {
         GSGFMoveClass parent_class;
 };
-
 
 GType gsgf_move_backgammon_get_type(void) G_GNUC_CONST;
 

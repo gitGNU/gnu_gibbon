@@ -37,8 +37,8 @@ G_BEGIN_DECLS
  *
  * Class representing a move of SGF.
  **/
-typedef struct _GSGFMoveClass   GSGFMoveClass;
 typedef struct _GSGFMove        GSGFMove;
+typedef struct _GSGFMoveClass   GSGFMoveClass;
 
 struct _GSGFMoveClass
 {
