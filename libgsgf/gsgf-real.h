@@ -28,11 +28,30 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_REAL             (gsgf_real_get_type ())
-#define GSGF_REAL(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_REAL, GSGFReal))
-#define GSGF_REAL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_REAL, GSGFRealClass))
-#define GSGF_IS_REAL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_REAL))
-#define GSGF_IS_REAL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_REAL))
-#define GSGF_REAL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_REAL, GSGFRealClass))
+#define GSGF_REAL(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_REAL, GSGFReal))
+#define GSGF_REAL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_REAL, GSGFRealClass))
+#define GSGF_IS_REAL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_REAL))
+#define GSGF_IS_REAL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_REAL))
+#define GSGF_REAL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_REAL, GSGFRealClass))
+
+/**
+ * GSGFReal:
+ *
+ * One instance of a #GSGFRealClass.  All properties are private.
+ **/
+typedef struct _GSGFReal        GSGFReal;
+struct _GSGFReal
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFRealPrivate *priv;
+};
 
 /**
  * GSGFReal:
@@ -40,23 +59,12 @@ G_BEGIN_DECLS
  * Class representing a real of SGF.
  **/
 typedef struct _GSGFRealClass   GSGFRealClass;
-typedef struct _GSGFReal        GSGFReal;
-typedef struct _GSGFRealPrivate GSGFRealPrivate;
-
 struct _GSGFRealClass
 {
         GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_real_get_type(void) G_GNUC_CONST;
-
-struct _GSGFReal
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFRealPrivate *priv;
-};
 
 GSGFReal* gsgf_real_new(gdouble value);
 void gsgf_real_set_value(GSGFReal *self, gdouble value);

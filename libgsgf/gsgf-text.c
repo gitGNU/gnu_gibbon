@@ -30,6 +30,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFTextPrivate GSGFTextPrivate;
 struct _GSGFTextPrivate {
         gchar *value;
 };

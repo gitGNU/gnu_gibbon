@@ -31,6 +31,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFNumberPrivate GSGFNumberPrivate;
 struct _GSGFNumberPrivate {
         gint64 value;
 };

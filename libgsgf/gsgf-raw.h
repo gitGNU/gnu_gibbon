@@ -28,11 +28,30 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_RAW             (gsgf_raw_get_type ())
-#define GSGF_RAW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_RAW, GSGFRaw))
-#define GSGF_RAW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_RAW, GSGFRawClass))
-#define GSGF_IS_RAW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_RAW))
-#define GSGF_IS_RAW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_RAW))
-#define GSGF_RAW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_RAW, GSGFRawClass))
+#define GSGF_RAW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_RAW, GSGFRaw))
+#define GSGF_RAW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_RAW, GSGFRawClass))
+#define GSGF_IS_RAW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_RAW))
+#define GSGF_IS_RAW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_RAW))
+#define GSGF_RAW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_RAW, GSGFRawClass))
+
+/**
+ * GSGFRaw:
+ *
+ * One instance of a #GSGFRawClass.  All properties are private.
+ **/
+typedef struct _GSGFRaw        GSGFRaw;
+struct _GSGFRaw
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFRawPrivate *priv;
+};
 
 /**
  * GSGFRaw:
@@ -40,23 +59,12 @@ G_BEGIN_DECLS
  * Class representing a raw of SGF.
  **/
 typedef struct _GSGFRawClass   GSGFRawClass;
-typedef struct _GSGFRaw        GSGFRaw;
-typedef struct _GSGFRawPrivate GSGFRawPrivate;
-
 struct _GSGFRawClass
 {
         GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_raw_get_type(void) G_GNUC_CONST;
-
-struct _GSGFRaw
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFRawPrivate *priv;
-};
 
 GSGFRaw* gsgf_raw_new(const gchar *value);
 gsize gsgf_raw_get_number_of_values(const GSGFRaw *self);

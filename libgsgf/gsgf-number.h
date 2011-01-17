@@ -28,20 +28,37 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_NUMBER             (gsgf_number_get_type ())
-#define GSGF_NUMBER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NUMBER, GSGFNumber))
-#define GSGF_NUMBER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NUMBER, GSGFNumberClass))
-#define GSGF_IS_NUMBER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NUMBER))
-#define GSGF_IS_NUMBER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NUMBER))
-#define GSGF_NUMBER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NUMBER, GSGFNumberClass))
+#define GSGF_NUMBER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_NUMBER, GSGFNumber))
+#define GSGF_NUMBER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_NUMBER, GSGFNumberClass))
+#define GSGF_IS_NUMBER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_NUMBER))
+#define GSGF_IS_NUMBER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_NUMBER))
+#define GSGF_NUMBER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_NUMBER, GSGFNumberClass))
 
 /**
  * GSGFNumber:
  *
- * Class representing a number of SGF.
+ * One instance of a #GSGFNumberClass.  All properties are private.
+ **/
+typedef struct _GSGFNumber        GSGFNumber;
+struct _GSGFNumber
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFNumberPrivate *priv;
+};
+
+/**
+ * GSGFNumberClass:
+ *
+ * Class representing an SGF number.
  **/
 typedef struct _GSGFNumberClass   GSGFNumberClass;
-typedef struct _GSGFNumber        GSGFNumber;
-typedef struct _GSGFNumberPrivate GSGFNumberPrivate;
 
 struct _GSGFNumberClass
 {
@@ -49,14 +66,6 @@ struct _GSGFNumberClass
 };
 
 GType gsgf_number_get_type(void) G_GNUC_CONST;
-
-struct _GSGFNumber
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFNumberPrivate *priv;
-};
 
 struct _GSGFProperty;
 

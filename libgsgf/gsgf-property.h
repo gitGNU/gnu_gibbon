@@ -26,21 +26,38 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_PROPERTY             (gsgf_property_get_type ())
-#define GSGF_PROPERTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_PROPERTY, GSGFProperty))
-#define GSGF_PROPERTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_PROPERTY, GSGFPropertyClass))
-#define GSGF_IS_PROPERTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_PROPERTY))
-#define GSGF_IS_PROPERTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_PROPERTY))
-#define GSGF_PROPERTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_PROPERTY, GSGFPropertyClass))
+#define GSGF_PROPERTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_PROPERTY, GSGFProperty))
+#define GSGF_PROPERTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_PROPERTY, GSGFPropertyClass))
+#define GSGF_IS_PROPERTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_PROPERTY))
+#define GSGF_IS_PROPERTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_PROPERTY))
+#define GSGF_PROPERTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_PROPERTY, GSGFPropertyClass))
 
 /**
  * GSGFProperty:
+ *
+ * One instance of a #GSGFPropertyClass.  All properties are private.
+ **/
+typedef struct _GSGFProperty        GSGFProperty;
+struct _GSGFProperty
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        struct _GSGFPropertyPrivate *priv;
+};
+
+/**
+ * GSGFPropertyClass:
  *
  * Class representing a property of games resp. game trees in a
  * Simple Game Format (SGF) file.
  **/
 typedef struct _GSGFPropertyClass   GSGFPropertyClass;
-typedef struct _GSGFProperty        GSGFProperty;
-typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 
 struct _GSGFPropertyClass
 {
@@ -48,14 +65,6 @@ struct _GSGFPropertyClass
 };
 
 GType gsgf_property_get_type(void) G_GNUC_CONST;
-
-struct _GSGFProperty
-{
-        GObject parent_instance;
-
-        /*< private >*/
-        GSGFPropertyPrivate *priv;
-};
 
 const gchar *gsgf_property_get_id(const GSGFProperty *property);
 GSGFNode *gsgf_property_get_node(const GSGFProperty *property);

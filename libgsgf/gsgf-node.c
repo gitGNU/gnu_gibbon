@@ -31,6 +31,7 @@
 
 #include "gsgf-private.h"
 
+typedef struct _GSGFNodePrivate GSGFNodePrivate;
 struct _GSGFNodePrivate {
         GHashTable *properties;
         GSGFNode *previous;

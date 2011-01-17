@@ -28,35 +28,44 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_STONE_BACKGAMMON  (gsgf_stone_backgammon_get_type ())
-#define GSGF_STONE_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammon))
-#define GSGF_STONE_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammonClass))
-#define GSGF_IS_STONE_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_STONE_BACKGAMMON))
-#define GSGF_IS_STONE_BACKGAMMON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_STONE_BACKGAMMON))
-#define GSGF_STONE_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammonClass))
+#define GSGF_STONE_BACKGAMMON(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammon))
+#define GSGF_STONE_BACKGAMMON_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammonClass))
+#define GSGF_IS_STONE_BACKGAMMON(obj)         \
+	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_STONE_BACKGAMMON))
+#define GSGF_IS_STONE_BACKGAMMON_CLASS(klass)  \
+	(G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_STONE_BACKGAMMON))
+#define GSGF_STONE_BACKGAMMON_GET_CLASS(obj)   \
+	(G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_STONE_BACKGAMMON, \
+			GSGFStoneBackgammonClass))
 
 /**
  * GSGFStoneBackgammon:
  *
+ * One instance of a #GSGFStoneBackgammonClass.  All properties are private.
+ **/
+typedef struct _GSGFStoneBackgammon        GSGFStoneBackgammon;
+struct _GSGFStoneBackgammon
+{
+        GSGFStone parent_instance;
+
+        /*< private >*/
+        struct _GSGFStoneBackgammonPrivate *priv;
+};
+
+/**
+ * GSGFStoneBackgammonClass:
+ *
  * Class implementing the backgammon stone of SGF.
  **/
 typedef struct _GSGFStoneBackgammonClass   GSGFStoneBackgammonClass;
-typedef struct _GSGFStoneBackgammon        GSGFStoneBackgammon;
-typedef struct _GSGFStoneBackgammonPrivate GSGFStoneBackgammonPrivate;
-
 struct _GSGFStoneBackgammonClass
 {
         GSGFStoneClass parent_class;
 };
 
 GType gsgf_stone_backgammon_get_type(void) G_GNUC_CONST;
-
-struct _GSGFStoneBackgammon
-{
-        GSGFStone parent_instance;
-
-        /*< private >*/
-        GSGFStoneBackgammonPrivate *priv;
-};
 
 GSGFStoneBackgammon *gsgf_stone_backgammon_new(gint stone);
 GSGFStoneBackgammon *gsgf_stone_backgammon_new_from_raw(const GSGFRaw *raw,

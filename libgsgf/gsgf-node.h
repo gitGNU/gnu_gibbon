@@ -26,35 +26,43 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_NODE                  (gsgf_node_get_type ())
-#define GSGF_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_NODE, GSGFNode))
-#define GSGF_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_NODE, GSGFNodeClass))
-#define GSGF_IS_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_NODE))
-#define GSGF_IS_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_NODE))
-#define GSGF_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_NODE, GSGFNodeClass))
+#define GSGF_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_NODE, GSGFNode))
+#define GSGF_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_NODE, GSGFNodeClass))
+#define GSGF_IS_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_NODE))
+#define GSGF_IS_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_NODE))
+#define GSGF_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_NODE, GSGFNodeClass))
 
 /**
  * GSGFNode:
  *
+ * One instance of a #GSGFNodeClass.  All properties are private.
+ **/
+typedef struct _GSGFNode        GSGFNode;
+struct _GSGFNode
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        struct _GSGFNodePrivate *priv;
+};
+
+/**
+ * GSGFNodeClass:
+ *
  * Class representing a node of a game in a Simple Game Format (SGF) file.
  **/
 typedef struct _GSGFNodeClass   GSGFNodeClass;
-typedef struct _GSGFNode        GSGFNode;
-typedef struct _GSGFNodePrivate GSGFNodePrivate;
-
 struct _GSGFNodeClass
 {
         GObjectClass parent_class;
 };
 
 GType gsgf_node_get_type(void) G_GNUC_CONST;
-
-struct _GSGFNode
-{
-        GObject parent_instance;
-
-        /*< private >*/
-        GSGFNodePrivate *priv;
-};
 
 struct _GSGFProperty;
 

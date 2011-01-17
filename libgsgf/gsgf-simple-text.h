@@ -28,11 +28,27 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_SIMPLE_TEXT             (gsgf_simple_text_get_type ())
-#define GSGF_SIMPLE_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleText))
-#define GSGF_SIMPLE_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
-#define GSGF_IS_SIMPLE_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_SIMPLE_TEXT))
-#define GSGF_IS_SIMPLE_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_SIMPLE_TEXT))
-#define GSGF_SIMPLE_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
+#define GSGF_SIMPLE_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleText))
+#define GSGF_SIMPLE_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
+#define GSGF_IS_SIMPLE_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_SIMPLE_TEXT))
+#define GSGF_IS_SIMPLE_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_SIMPLE_TEXT))
+#define GSGF_SIMPLE_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
+
+/**
+ * GSGFSimpleText:
+ *
+ * One instance of a #GSGFSimpleClass.  All properties are private.
+ **/
+typedef struct _GSGFSimpleText        GSGFSimpleText;
+struct _GSGFSimpleText
+{
+        GSGFText parent_instance;
+};
 
 /**
  * GSGFSimpleText:
@@ -40,20 +56,12 @@ G_BEGIN_DECLS
  * Class representing a simple_text of SGF.
  **/
 typedef struct _GSGFSimpleTextClass   GSGFSimpleTextClass;
-typedef struct _GSGFSimpleText        GSGFSimpleText;
-typedef struct _GSGFSimpleTextPrivate GSGFSimpleTextPrivate;
-
 struct _GSGFSimpleTextClass
 {
         GSGFTextClass parent_class;
 };
 
 GType gsgf_simple_text_get_type(void) G_GNUC_CONST;
-
-struct _GSGFSimpleText
-{
-        GSGFText parent_instance;
-};
 
 struct _GSGFProperty;
 

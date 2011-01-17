@@ -28,35 +28,46 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_POINT_BACKGAMMON  (gsgf_point_backgammon_get_type ())
-#define GSGF_POINT_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_POINT_BACKGAMMON, GSGFPointBackgammon))
-#define GSGF_POINT_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_POINT_BACKGAMMON, GSGFPointBackgammonClass))
-#define GSGF_IS_POINT_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_POINT_BACKGAMMON))
-#define GSGF_IS_POINT_BACKGAMMON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_POINT_BACKGAMMON))
-#define GSGF_POINT_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_POINT_BACKGAMMON, GSGFPointBackgammonClass))
+#define GSGF_POINT_BACKGAMMON(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_POINT_BACKGAMMON, \
+			GSGFPointBackgammon))
+#define GSGF_POINT_BACKGAMMON_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_POINT_BACKGAMMON, \
+			GSGFPointBackgammonClass))
+#define GSGF_IS_POINT_BACKGAMMON(obj)          \
+	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_POINT_BACKGAMMON))
+#define GSGF_IS_POINT_BACKGAMMON_CLASS(klass)  \
+	(G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_POINT_BACKGAMMON))
+#define GSGF_POINT_BACKGAMMON_GET_CLASS(obj)   \
+	(G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_POINT_BACKGAMMON, \
+			GSGFPointBackgammonClass))
 
 /**
  * GSGFPointBackgammon:
  *
- * Class implementing the backgammon point of SGF.
+ * One instance of a #GSGFBackgammonPointClass.  All properties are private.
  **/
-typedef struct _GSGFPointBackgammonClass   GSGFPointBackgammonClass;
-typedef struct _GSGFPointBackgammon        GSGFPointBackgammon;
-typedef struct _GSGFPointBackgammonPrivate GSGFPointBackgammonPrivate;
+typedef struct _GSGFPointBackgammon GSGFPointBackgammon;
+struct _GSGFPointBackgammon
+{
+        GSGFPoint parent_instance;
 
+        /*< private >*/
+        struct _GSGFPointBackgammonPrivate *priv;
+};
+
+/**
+ * GSGFPointBackgammon:
+ *
+ * Class implementing an SGF backgammon point.
+ **/
+typedef struct _GSGFPointBackgammonClass GSGFPointBackgammonClass;
 struct _GSGFPointBackgammonClass
 {
         GSGFPointClass parent_class;
 };
 
 GType gsgf_point_backgammon_get_type(void) G_GNUC_CONST;
-
-struct _GSGFPointBackgammon
-{
-        GSGFPoint parent_instance;
-
-        /*< private >*/
-        GSGFPointBackgammonPrivate *priv;
-};
 
 struct _GSGFListOf;
 

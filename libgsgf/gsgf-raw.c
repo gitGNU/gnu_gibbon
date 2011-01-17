@@ -32,6 +32,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFRawPrivate GSGFRawPrivate;
 struct _GSGFRawPrivate {
         GList *values;
 };

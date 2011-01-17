@@ -35,14 +35,25 @@ G_BEGIN_DECLS
 #define GSGF_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_TEXT, GSGFTextClass))
 
 /**
- * GSGFText:
+ * GSGFProperty:
+ *
+ * One instance of a #GSGFPropertyClass.  All properties are private.
+ **/
+typedef struct _GSGFText        GSGFText;
+struct _GSGFText
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFTextPrivate *priv;
+};
+
+/**
+ * GSGFTextClass:
  *
  * Class representing a text of SGF.
  **/
 typedef struct _GSGFTextClass   GSGFTextClass;
-typedef struct _GSGFText        GSGFText;
-typedef struct _GSGFTextPrivate GSGFTextPrivate;
-
 struct _GSGFTextClass
 {
         GSGFCookedValueClass parent_class;
@@ -52,14 +63,6 @@ struct _GSGFTextClass
 };
 
 GType gsgf_text_get_type(void) G_GNUC_CONST;
-
-struct _GSGFText
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFTextPrivate *priv;
-};
 
 GSGFText* gsgf_text_new(const gchar *value);
 GSGFCookedValue* gsgf_text_new_from_raw(const GSGFRaw *raw,
