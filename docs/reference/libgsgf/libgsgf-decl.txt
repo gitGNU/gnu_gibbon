@@ -23,10 +23,10 @@
 #define GSGF_MOVE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE, GSGFMoveClass))
 </MACRO>
 <STRUCT>
-<NAME>GSGFMoveClass</NAME>
+<NAME>GSGFMove</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFMove</NAME>
+<NAME>GSGFMoveClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFMoveClass</NAME>
@@ -301,32 +301,41 @@ const gchar *raw, const gchar **end, gchar delim
 </MACRO>
 <MACRO>
 <NAME>GSGF_EMPTY</NAME>
-#define GSGF_EMPTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_EMPTY, GSGFEmpty))
+#define GSGF_EMPTY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_EMPTY, GSGFEmpty))
 </MACRO>
 <MACRO>
 <NAME>GSGF_EMPTY_CLASS</NAME>
-#define GSGF_EMPTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_EMPTY, GSGFEmptyClass))
+#define GSGF_EMPTY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_EMPTY, GSGFEmptyClass))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_EMPTY</NAME>
-#define GSGF_IS_EMPTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_EMPTY))
+#define GSGF_IS_EMPTY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_EMPTY))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_EMPTY_CLASS</NAME>
-#define GSGF_IS_EMPTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_EMPTY))
+#define GSGF_IS_EMPTY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_EMPTY))
 </MACRO>
 <MACRO>
 <NAME>GSGF_EMPTY_GET_CLASS</NAME>
-#define GSGF_EMPTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_EMPTY, GSGFEmptyClass))
+#define GSGF_EMPTY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_EMPTY, GSGFEmptyClass))
 </MACRO>
-<STRUCT>
-<NAME>GSGFEmptyClass</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>GSGFEmpty</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFEmptyPrivate</NAME>
+<NAME>GSGFEmpty</NAME>
+struct _GSGFEmpty
+{
+        GSGFCookedValue parent_instance;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFEmptyClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFEmptyClass</NAME>
@@ -340,13 +349,6 @@ struct _GSGFEmptyClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
-<STRUCT>
-<NAME>GSGFEmpty</NAME>
-struct _GSGFEmpty
-{
-        GSGFCookedValue parent_instance;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_empty_new</NAME>
 <RETURNS>GSGFEmpty *</RETURNS>
@@ -375,7 +377,9 @@ typedef enum {
         GSGF_ERROR_INVALID_MOVE = 12,
         GSGF_ERROR_INVALID_POINT = 14,
         GSGF_ERROR_INVALID_STONE = 15,
-        GSGF_ERROR_USAGE_ERROR = 16
+        GSGF_ERROR_USAGE_ERROR = 16,
+        GSGF_ERROR_NON_UNIQUE_POINT = 17,
+        GSGF_ERROR_NON_UNIQUE_STONE = 18
 } GSGFError;
 </ENUM>
 <MACRO>
@@ -447,32 +451,44 @@ void
 </MACRO>
 <MACRO>
 <NAME>GSGF_COMPOSE</NAME>
-#define GSGF_COMPOSE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COMPOSE, GSGFCompose))
+#define GSGF_COMPOSE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_COMPOSE, GSGFCompose))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COMPOSE_CLASS</NAME>
-#define GSGF_COMPOSE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COMPOSE, GSGFComposeClass))
+#define GSGF_COMPOSE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_COMPOSE, GSGFComposeClass))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COMPOSE</NAME>
-#define GSGF_IS_COMPOSE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COMPOSE))
+#define GSGF_IS_COMPOSE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_COMPOSE))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COMPOSE_CLASS</NAME>
-#define GSGF_IS_COMPOSE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COMPOSE))
+#define GSGF_IS_COMPOSE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_COMPOSE))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COMPOSE_GET_CLASS</NAME>
-#define GSGF_COMPOSE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COMPOSE, GSGFComposeClass))
+#define GSGF_COMPOSE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_COMPOSE, GSGFComposeClass))
 </MACRO>
-<STRUCT>
-<NAME>GSGFComposeClass</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>GSGFCompose</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFComposePrivate</NAME>
+<NAME>GSGFCompose</NAME>
+struct _GSGFCompose
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFComposePrivate *priv;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFComposeClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFComposeClass</NAME>
@@ -486,16 +502,6 @@ struct _GSGFComposeClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
-<STRUCT>
-<NAME>GSGFCompose</NAME>
-struct _GSGFCompose
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFComposePrivate *priv;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_compose_new</NAME>
 <RETURNS>GSGFCompose *</RETURNS>
@@ -801,36 +807,51 @@ const GSGFPointBackgammon *self
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLLECTION</NAME>
-#define GSGF_TYPE_COLLECTION             (gsgf_collection_get_type ())
+#define GSGF_TYPE_COLLECTION             \
+	(gsgf_collection_get_type ())
 </MACRO>
 <MACRO>
 <NAME>GSGF_COLLECTION</NAME>
-#define GSGF_COLLECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, GSGFCollection))
+#define GSGF_COLLECTION(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COLLECTION, \
+	                GSGFCollection))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COLLECTION_CLASS</NAME>
-#define GSGF_COLLECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
+#define GSGF_COLLECTION_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COLLECTION, \
+			GSGFCollectionClass))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COLLECTION</NAME>
-#define GSGF_IS_COLLECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COLLECTION))
+#define GSGF_IS_COLLECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_COLLECTION))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COLLECTION_CLASS</NAME>
-#define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COLLECTION))
+#define GSGF_IS_COLLECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_COLLECTION))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COLLECTION_GET_CLASS</NAME>
-#define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COLLECTION, GSGFCollectionClass))
+#define GSGF_COLLECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_COLLECTION, GSGFCollectionClass))
 </MACRO>
+<STRUCT>
+<NAME>GSGFCollection</NAME>
+struct _GSGFCollection
+{
+        GObject parent_instance;
+
+        /*< private >*/
+        struct _GSGFCollectionPrivate *priv;
+};
+</STRUCT>
 <STRUCT>
 <NAME>GSGFCollectionClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFCollection</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCollectionPrivate</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFCollectionClass</NAME>
@@ -844,16 +865,6 @@ struct _GSGFCollectionClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
-<STRUCT>
-<NAME>GSGFCollection</NAME>
-struct _GSGFCollection
-{
-        GObject parent_instance;
-
-        /*< private >*/
-        GSGFCollectionPrivate *priv;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_collection_new</NAME>
 <RETURNS>GSGFCollection *</RETURNS>
@@ -935,7 +946,7 @@ struct _GSGFFlavorBackgammon
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_flavor_backgammon_new</NAME>
-<RETURNS>GSGFFlavorBackgammon *</RETURNS>
+<RETURNS>GSGFFlavor *</RETURNS>
 void 
 </FUNCTION>
 <MACRO>
@@ -1199,7 +1210,7 @@ struct _GSGFPointClass
 {
         GSGFCookedValueClass parent_class;
 
-        gchar * (*get_normalized_value) (struct _GSGFPointClass);
+        gint (*get_normalized_value) (const struct _GSGFPoint *self);
 };
 </STRUCT>
 <FUNCTION>
@@ -1219,38 +1230,52 @@ struct _GSGFPoint
 <RETURNS>GSGFPoint *</RETURNS>
 void 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_point_get_normalized_value</NAME>
+<RETURNS>gint </RETURNS>
+const GSGFPoint *self 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COOKED_VALUE</NAME>
 #define GSGF_TYPE_COOKED_VALUE             (gsgf_cooked_value_get_type ())
 </MACRO>
 <MACRO>
 <NAME>GSGF_COOKED_VALUE</NAME>
-#define GSGF_COOKED_VALUE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValue))
+#define GSGF_COOKED_VALUE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValue))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COOKED_VALUE_CLASS</NAME>
-#define GSGF_COOKED_VALUE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+#define GSGF_COOKED_VALUE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COOKED_VALUE</NAME>
-#define GSGF_IS_COOKED_VALUE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_COOKED_VALUE))
+#define GSGF_IS_COOKED_VALUE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_COOKED_VALUE))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_COOKED_VALUE_CLASS</NAME>
-#define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_COOKED_VALUE))
+#define GSGF_IS_COOKED_VALUE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_COOKED_VALUE))
 </MACRO>
 <MACRO>
 <NAME>GSGF_COOKED_VALUE_GET_CLASS</NAME>
-#define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
+#define GSGF_COOKED_VALUE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_COOKED_VALUE, GSGFCookedValueClass))
 </MACRO>
-<STRUCT>
-<NAME>GSGFCookedValueClass</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>GSGFCookedValue</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFCookedValuePrivate</NAME>
+<NAME>GSGFCookedValue</NAME>
+struct _GSGFCookedValue
+{
+        GObject parent_instance;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFCookedValueClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFCookedValueClass</NAME>
@@ -1258,8 +1283,8 @@ struct _GSGFCookedValueClass
 {
         GObjectClass parent_class;
 
-        gboolean (*write_stream) (const GSGFCookedValue *self, GOutputStream *out,
-                                  gsize *bytes_written,
+        gboolean (*write_stream) (const GSGFCookedValue *self,
+                                  GOutputStream *out, gsize *bytes_written,
                                   GCancellable *cancellable, GError **error);
 };
 </STRUCT>
@@ -1268,13 +1293,6 @@ struct _GSGFCookedValueClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
-<STRUCT>
-<NAME>GSGFCookedValue</NAME>
-struct _GSGFCookedValue
-{
-        GObject parent_instance;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_cooked_value_write_stream</NAME>
 <RETURNS>gboolean </RETURNS>
@@ -1375,10 +1393,10 @@ const GSGFStoneBackgammon *self
 #define GSGF_GAME_TREE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
 </MACRO>
 <STRUCT>
-<NAME>GSGFGameTreeClass</NAME>
+<NAME>GSGFGameTree</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFGameTree</NAME>
+<NAME>GSGFGameTreeClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFGameTreePrivate</NAME>
@@ -1432,36 +1450,52 @@ const GSGFGameTree *self
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_MOVE_BACKGAMMON</NAME>
-#define GSGF_TYPE_MOVE_BACKGAMMON  (gsgf_move_backgammon_get_type ())
+#define GSGF_TYPE_MOVE_BACKGAMMON  			  \
+	(gsgf_move_backgammon_get_type ())
 </MACRO>
 <MACRO>
 <NAME>GSGF_MOVE_BACKGAMMON</NAME>
-#define GSGF_MOVE_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammon))
+#define GSGF_MOVE_BACKGAMMON(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammon))
 </MACRO>
 <MACRO>
 <NAME>GSGF_MOVE_BACKGAMMON_CLASS</NAME>
-#define GSGF_MOVE_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
+#define GSGF_MOVE_BACKGAMMON_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammonClass))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_MOVE_BACKGAMMON</NAME>
-#define GSGF_IS_MOVE_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE_BACKGAMMON))
+#define GSGF_IS_MOVE_BACKGAMMON(obj)          \
+	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE_BACKGAMMON))
 </MACRO>
 <MACRO>
 <NAME>GSGF_IS_MOVE_BACKGAMMON_CLASS</NAME>
-#define GSGF_IS_MOVE_BACKGAMMON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_MOVE_BACKGAMMON))
+#define GSGF_IS_MOVE_BACKGAMMON_CLASS(klass)  \
+	(G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_MOVE_BACKGAMMON))
 </MACRO>
 <MACRO>
 <NAME>GSGF_MOVE_BACKGAMMON_GET_CLASS</NAME>
-#define GSGF_MOVE_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE_BACKGAMMON, GSGFMoveBackgammonClass))
+#define GSGF_MOVE_BACKGAMMON_GET_CLASS(obj)   \
+	(G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE_BACKGAMMON, \
+			GSGFMoveBackgammonClass))
 </MACRO>
-<STRUCT>
-<NAME>GSGFMoveBackgammonClass</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>GSGFMoveBackgammon</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>GSGFMoveBackgammonPrivate</NAME>
+<NAME>GSGFMoveBackgammon</NAME>
+struct _GSGFMoveBackgammon
+{
+        GSGFMove parent_instance;
+
+        /*< private >*/
+        struct _GSGFMoveBackgammonPrivate *priv;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFMoveBackgammonClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFMoveBackgammonClass</NAME>
@@ -1475,16 +1509,6 @@ struct _GSGFMoveBackgammonClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
-<STRUCT>
-<NAME>GSGFMoveBackgammon</NAME>
-struct _GSGFMoveBackgammon
-{
-        GSGFMove parent_instance;
-
-        /*< private >*/
-        GSGFMoveBackgammonPrivate *priv;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_new</NAME>
 <RETURNS>GSGFMoveBackgammon *</RETURNS>

@@ -1,8 +1,8 @@
 <SECTION>
 <FILE>gsgf-move</FILE>
 <TITLE>GSGFMove</TITLE>
-GSGFMoveClass
 GSGFMove
+GSGFMoveClass
 gsgf_move_new
 <SUBSECTION Standard>
 GSGF_MOVE
@@ -78,9 +78,8 @@ GSGF_TEXT_GET_CLASS
 <SECTION>
 <FILE>gsgf-empty</FILE>
 <TITLE>GSGFEmpty</TITLE>
-GSGFEmptyClass
 GSGFEmpty
-GSGFEmptyPrivate
+GSGFEmptyClass
 gsgf_empty_new
 gsgf_empty_new_from_raw
 <SUBSECTION Standard>
@@ -112,9 +111,8 @@ GSGF_STONE_GET_CLASS
 <SECTION>
 <FILE>gsgf-compose</FILE>
 <TITLE>GSGFCompose</TITLE>
-GSGFComposeClass
 GSGFCompose
-GSGFComposePrivate
+GSGFComposeClass
 gsgf_compose_new
 gsgf_compose_get_number_of_values
 gsgf_compose_set_value
@@ -205,9 +203,8 @@ GSGF_POINT_BACKGAMMON_GET_CLASS
 <SECTION>
 <FILE>gsgf-collection</FILE>
 <TITLE>GSGFCollection</TITLE>
-GSGFCollectionClass
 GSGFCollection
-GSGFCollectionPrivate
+GSGFCollectionClass
 gsgf_collection_new
 gsgf_collection_parse_stream
 gsgf_collection_parse_file
@@ -306,6 +303,7 @@ GSGF_NUMBER_GET_CLASS
 GSGFPointClass
 GSGFPoint
 gsgf_point_new
+gsgf_point_get_normalized_value
 <SUBSECTION Standard>
 GSGF_POINT
 GSGF_IS_POINT
@@ -319,9 +317,8 @@ GSGF_POINT_GET_CLASS
 <SECTION>
 <FILE>gsgf-cooked-value</FILE>
 <TITLE>GSGFCookedValue</TITLE>
-GSGFCookedValueClass
 GSGFCookedValue
-GSGFCookedValuePrivate
+GSGFCookedValueClass
 gsgf_cooked_value_write_stream
 <SUBSECTION Standard>
 GSGF_COOKED_VALUE
@@ -355,8 +352,8 @@ GSGF_STONE_BACKGAMMON_GET_CLASS
 <SECTION>
 <FILE>gsgf-game-tree</FILE>
 <TITLE>GSGFGameTree</TITLE>
-GSGFGameTreeClass
 GSGFGameTree
+GSGFGameTreeClass
 GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
@@ -376,9 +373,8 @@ GSGF_GAME_TREE_GET_CLASS
 <SECTION>
 <FILE>gsgf-move-backgammon</FILE>
 <TITLE>GSGFMoveBackgammon</TITLE>
-GSGFMoveBackgammonClass
 GSGFMoveBackgammon
-GSGFMoveBackgammonPrivate
+GSGFMoveBackgammonClass
 gsgf_move_backgammon_new
 gsgf_move_backgammon_new_from_raw
 gsgf_move_backgammon_is_regular
