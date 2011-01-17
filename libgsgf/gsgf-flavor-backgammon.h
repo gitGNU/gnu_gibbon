@@ -28,11 +28,19 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_FLAVOR_BACKGAMMON  (gsgf_flavor_backgammon_get_type ())
-#define GSGF_FLAVOR_BACKGAMMON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammon))
-#define GSGF_FLAVOR_BACKGAMMON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammonClass))
-#define GSGF_IS_FLAVOR_BACKGAMMON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON))
-#define GSGF_IS_FLAVOR_BACKGAMMON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_FLAVOR_BACKGAMMON))
-#define GSGF_FLAVOR_BACKGAMMON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammonClass))
+#define GSGF_FLAVOR_BACKGAMMON(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+			GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammon))
+#define GSGF_FLAVOR_BACKGAMMON_CLASS(klass)     \
+	(G_TYPE_CHECK_CLASS_CAST ((klass), \
+			GSGF_TYPE_FLAVOR_BACKGAMMON, GSGFFlavorBackgammonClass))
+#define GSGF_IS_FLAVOR_BACKGAMMON(obj)          \
+	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON))
+#define GSGF_IS_FLAVOR_BACKGAMMON_CLASS(klass)  \
+	(G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_FLAVOR_BACKGAMMON))
+#define GSGF_FLAVOR_BACKGAMMON_GET_CLASS(obj)   \
+	(G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_FLAVOR_BACKGAMMON, \
+			GSGFFlavorBackgammonClass))
 
 /**
  * GSGFFlavorBackgammon:
@@ -40,19 +48,23 @@ G_BEGIN_DECLS
  * Class implementing the backgammo flavor of SGF.
  **/
 typedef struct _GSGFFlavorBackgammonClass  GSGFFlavorBackgammonClass;
-typedef struct _GSGFFlavorBackgammon       GSGFFlavorBackgammon;
-
 struct _GSGFFlavorBackgammonClass
 {
         GSGFFlavorClass parent_class;
 };
 
-GType gsgf_flavor_backgammon_get_type(void) G_GNUC_CONST;
-
+/**
+ * GSGFFlavor:
+ *
+ * One instance of a #GSGFFlavorClass.
+ **/
+typedef struct _GSGFFlavorBackgammon       GSGFFlavorBackgammon;
 struct _GSGFFlavorBackgammon
 {
         GSGFFlavor parent_instance;
 };
+
+GType gsgf_flavor_backgammon_get_type(void) G_GNUC_CONST;
 
 GSGFFlavor *gsgf_flavor_backgammon_new(void);
 

@@ -29,6 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFListOfPrivate GSGFListOfPrivate;
 struct _GSGFListOfPrivate {
         GType type;
 

@@ -49,6 +49,11 @@ struct _GSGFGameTreeClass
 
 GType gsgf_game_tree_get_type(void) G_GNUC_CONST;
 
+/**
+ * GSGFGameTree:
+ *
+ * One instance of a #GSGFGameTreeClass.
+ **/
 struct _GSGFGameTree
 {
         GObject parent_instance;

@@ -26,19 +26,27 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_FLAVOR             (gsgf_flavor_get_type ())
-#define GSGF_FLAVOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_FLAVOR, GSGFFlavor))
-#define GSGF_FLAVOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_FLAVOR, GSGFFlavorClass))
-#define GSGF_IS_FLAVOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_FLAVOR))
-#define GSGF_IS_FLAVOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_FLAVOR))
-#define GSGF_FLAVOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_FLAVOR, GSGFFlavorClass))
+#define GSGF_FLAVOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_FLAVOR, GSGFFlavor))
+#define GSGF_FLAVOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_FLAVOR, GSGFFlavorClass))
+#define GSGF_IS_FLAVOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_FLAVOR))
+#define GSGF_IS_FLAVOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_FLAVOR))
+#define GSGF_FLAVOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_FLAVOR, GSGFFlavorClass))
 
 /**
  * GSGFFlavor:
  *
- * Class representing a flavor of SGF.
+ * One instance of a #GSGFFlavorClass.
  **/
-typedef struct _GSGFFlavorClass   GSGFFlavorClass;
 typedef struct _GSGFFlavor        GSGFFlavor;
+struct _GSGFFlavor
+{
+        GObject parent_instance;
+};
 
 struct _GSGFRaw;
 struct _GSGFCookedValue;
@@ -48,6 +56,12 @@ struct _GSGFPoint;
 struct _GSGFStone;
 struct _GSGFListOf;
 
+/**
+ * GSGFFlavorClass:
+ *
+ * Class representing a flavor of SGF.
+ **/
+typedef struct _GSGFFlavorClass   GSGFFlavorClass;
 struct _GSGFFlavorClass
 {
         GObjectClass parent_class;
@@ -76,11 +90,6 @@ struct _GSGFFlavorClass
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;
-
-struct _GSGFFlavor
-{
-        GObject parent_instance;
-};
 
 GSGFFlavor *gsgf_flavor_new(void);
 gboolean gsgf_flavor_get_cooked_value(const GSGFFlavor *self, 

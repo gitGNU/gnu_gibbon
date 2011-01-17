@@ -28,11 +28,30 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_LIST_OF             (gsgf_list_of_get_type ())
-#define GSGF_LIST_OF(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_LIST_OF, GSGFListOf))
-#define GSGF_LIST_OF_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_LIST_OF, GSGFListOfClass))
-#define GSGF_IS_LIST_OF(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_LIST_OF))
-#define GSGF_IS_LIST_OF_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_LIST_OF))
-#define GSGF_LIST_OF_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_LIST_OF, GSGFListOfClass))
+#define GSGF_LIST_OF(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_LIST_OF, GSGFListOf))
+#define GSGF_LIST_OF_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_LIST_OF, GSGFListOfClass))
+#define GSGF_IS_LIST_OF(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_LIST_OF))
+#define GSGF_IS_LIST_OF_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_LIST_OF))
+#define GSGF_LIST_OF_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_LIST_OF, GSGFListOfClass))
+
+/**
+ * GSGFListOf:
+ *
+ * One instance of a #GSGFListOfClass.
+ **/
+typedef struct _GSGFListOf        GSGFListOf;
+struct _GSGFListOf
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFListOfPrivate *priv;
+};
 
 /**
  * GSGFListOf:
@@ -40,23 +59,12 @@ G_BEGIN_DECLS
  * Class representing a list_of of SGF.
  **/
 typedef struct _GSGFListOfClass   GSGFListOfClass;
-typedef struct _GSGFListOf        GSGFListOf;
-typedef struct _GSGFListOfPrivate GSGFListOfPrivate;
-
 struct _GSGFListOfClass
 {
         GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_list_of_get_type(void) G_GNUC_CONST;
-
-struct _GSGFListOf
-{
-        GSGFCookedValue parent_instance;
-
-        /*< private >*/
-        GSGFListOfPrivate *priv;
-};
 
 GSGFListOf *gsgf_list_of_new(GType type);
 
