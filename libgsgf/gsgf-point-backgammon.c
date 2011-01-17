@@ -29,6 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFPointBackgammonPrivate GSGFPointBackgammonPrivate;
 struct _GSGFPointBackgammonPrivate {
         gint point;
 };

@@ -31,6 +31,7 @@
 
 #include "gsgf-private.h"
 
+typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 struct _GSGFPropertyPrivate {
         gchar *id;
 

@@ -26,20 +26,34 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_POINT             (gsgf_point_get_type ())
-#define GSGF_POINT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_POINT, GSGFPoint))
-#define GSGF_POINT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_POINT, GSGFPointClass))
-#define GSGF_IS_POINT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_POINT))
-#define GSGF_IS_POINT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_POINT))
-#define GSGF_POINT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_POINT, GSGFPointClass))
+#define GSGF_POINT(obj)             \
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_POINT, GSGFPoint))
+#define GSGF_POINT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_POINT, GSGFPointClass))
+#define GSGF_IS_POINT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_POINT))
+#define GSGF_IS_POINT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_POINT))
+#define GSGF_POINT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_POINT, GSGFPointClass))
 
 /**
  * GSGFPoint:
  *
+ * One instance of a #GSGFPointClass.  All properties are private.
+ **/
+typedef struct _GSGFPoint        GSGFPoint;
+struct _GSGFPoint
+{
+        GSGFCookedValue parent_instance;
+};
+
+/**
+ * GSGFPointClass:
+ *
  * Class representing a point of SGF.
  **/
 typedef struct _GSGFPointClass   GSGFPointClass;
-typedef struct _GSGFPoint        GSGFPoint;
-
 struct _GSGFPointClass
 {
         GSGFCookedValueClass parent_class;
@@ -48,11 +62,6 @@ struct _GSGFPointClass
 };
 
 GType gsgf_point_get_type(void) G_GNUC_CONST;
-
-struct _GSGFPoint
-{
-        GSGFCookedValue parent_instance;
-};
 
 GSGFPoint *gsgf_point_new(void);
 gint gsgf_point_get_normalized_value(const GSGFPoint *self);

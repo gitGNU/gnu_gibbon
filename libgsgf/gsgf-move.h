@@ -26,31 +26,40 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_MOVE             (gsgf_move_get_type ())
-#define GSGF_MOVE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_MOVE, GSGFMove))
-#define GSGF_MOVE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_MOVE, GSGFMoveClass))
-#define GSGF_IS_MOVE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_MOVE))
-#define GSGF_IS_MOVE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_MOVE))
-#define GSGF_MOVE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_MOVE, GSGFMoveClass))
+#define GSGF_MOVE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_MOVE, GSGFMove))
+#define GSGF_MOVE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_MOVE, GSGFMoveClass))
+#define GSGF_IS_MOVE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_MOVE))
+#define GSGF_IS_MOVE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_MOVE))
+#define GSGF_MOVE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_MOVE, GSGFMoveClass))
 
 /**
  * GSGFMove:
  *
  * Class representing a move of SGF.
  **/
-typedef struct _GSGFMove        GSGFMove;
 typedef struct _GSGFMoveClass   GSGFMoveClass;
-
 struct _GSGFMoveClass
 {
         GSGFCookedValueClass parent_class;
 };
 
-GType gsgf_move_get_type(void) G_GNUC_CONST;
-
+/**
+ * GSGFMove:
+ *
+ * One instance of a #GSGFMoveClass.
+ **/
+typedef struct _GSGFMove        GSGFMove;
 struct _GSGFMove
 {
         GSGFCookedValue parent_instance;
 };
+
+GType gsgf_move_get_type(void) G_GNUC_CONST;
 
 GSGFMove *gsgf_move_new(void);
 

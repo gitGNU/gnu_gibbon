@@ -26,11 +26,16 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_GAME_TREE             (gsgf_game_tree_get_type ())
-#define GSGF_GAME_TREE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTree))
-#define GSGF_GAME_TREE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
-#define GSGF_IS_GAME_TREE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_GAME_TREE))
-#define GSGF_IS_GAME_TREE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_GAME_TREE))
-#define GSGF_GAME_TREE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
+#define GSGF_GAME_TREE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+		GSGF_TYPE_GAME_TREE, GSGFGameTree))
+#define GSGF_GAME_TREE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+		GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
+#define GSGF_IS_GAME_TREE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+		GSGF_TYPE_GAME_TREE))
+#define GSGF_IS_GAME_TREE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+		GSGF_TYPE_GAME_TREE))
+#define GSGF_GAME_TREE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+		GSGF_TYPE_GAME_TREE, GSGFGameTreeClass))
 
 /**
  * GSGFGameTree:
