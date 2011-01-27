@@ -42,9 +42,11 @@ G_BEGIN_DECLS
 
 /**
  * GSGFCollection:
+ * @parent_instance: The parent #GObject instance.
  *
  * Instance of a #GSGFCollectionClass.  All properties are private.
  **/
+typedef struct _GSGFCollection        GSGFCollection;
 struct _GSGFCollection
 {
         GObject parent_instance;
@@ -55,15 +57,17 @@ struct _GSGFCollection
 
 /**
  * GSGFCollectionClass:
+ * @parent_class: the parent #GObjectClass.
  *
  * Class representing a collection of games resp. game trees in a
  * Simple Game Format (SGF) file.
+ *
+ * All other properties and methods are private.
  **/
 typedef struct _GSGFCollectionClass   GSGFCollectionClass;
-typedef struct _GSGFCollection        GSGFCollection;
-
 struct _GSGFCollectionClass
 {
+        /*< private >*/
         GObjectClass parent_class;
 };
 
