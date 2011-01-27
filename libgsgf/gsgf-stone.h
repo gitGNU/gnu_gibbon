@@ -26,31 +26,41 @@
 G_BEGIN_DECLS
 
 #define GSGF_TYPE_STONE             (gsgf_stone_get_type ())
-#define GSGF_STONE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_STONE, GSGFStone))
-#define GSGF_STONE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_STONE, GSGFStoneClass))
-#define GSGF_IS_STONE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_STONE))
-#define GSGF_IS_STONE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GSGF_TYPE_STONE))
-#define GSGF_STONE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GSGF_TYPE_STONE, GSGFStoneClass))
+#define GSGF_STONE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                GSGF_TYPE_STONE, GSGFStone))
+#define GSGF_STONE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                GSGF_TYPE_STONE, GSGFStoneClass))
+#define GSGF_IS_STONE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_STONE))
+#define GSGF_IS_STONE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_STONE))
+#define GSGF_STONE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_STONE, GSGFStoneClass))
 
 /**
  * GSGFStone:
  *
- * Class representing a stone of SGF.
+ * One instance of a #GSGFStoneClass.  All properties are private.
  **/
-typedef struct _GSGFStoneClass   GSGFStoneClass;
 typedef struct _GSGFStone        GSGFStone;
-
-struct _GSGFStoneClass
-{
-        GSGFCookedValueClass parent_class;
-};
-
-GType gsgf_stone_get_type(void) G_GNUC_CONST;
-
 struct _GSGFStone
 {
         GSGFCookedValue parent_instance;
 };
+
+/**
+ * GSGFStoneClass:
+ *
+ * Class representing a stone of SGF.
+ **/
+typedef struct _GSGFStoneClass   GSGFStoneClass;
+struct _GSGFStoneClass
+{
+        /*< private >*/
+        GSGFCookedValueClass parent_class;
+};
+
+GType gsgf_stone_get_type(void) G_GNUC_CONST;
 
 GSGFStone *gsgf_stone_new(void);
 

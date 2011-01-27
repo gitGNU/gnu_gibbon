@@ -44,7 +44,7 @@ G_BEGIN_DECLS
 			GSGFMoveBackgammonClass))
 
 /**
- * GSGFMoveBackgammonClass:
+ * GSGFMoveBackgammon:
  *
  * Instance of #GSGFMoveBackgammonClass.  All properties are private.
  **/
@@ -66,6 +66,7 @@ struct _GSGFMoveBackgammon
 typedef struct _GSGFMoveBackgammonClass   GSGFMoveBackgammonClass;
 struct _GSGFMoveBackgammonClass
 {
+        /*< private >*/
         GSGFMoveClass parent_class;
 };
 

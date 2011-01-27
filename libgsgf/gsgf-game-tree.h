@@ -40,32 +40,31 @@ G_BEGIN_DECLS
 /**
  * GSGFGameTree:
  *
- * Class representing a game_tree of games resp. game trees in a
- * Simple Game Format (SGF) file.
- **/
-typedef struct _GSGFGameTree        GSGFGameTree;
-typedef struct _GSGFGameTreeClass   GSGFGameTreeClass;
-typedef struct _GSGFGameTreePrivate GSGFGameTreePrivate;
-
-struct _GSGFGameTreeClass
-{
-        GObjectClass parent_class;
-};
-
-GType gsgf_game_tree_get_type(void) G_GNUC_CONST;
-
-/**
- * GSGFGameTree:
- *
  * One instance of a #GSGFGameTreeClass.
  **/
+typedef struct _GSGFGameTree        GSGFGameTree;
 struct _GSGFGameTree
 {
         GObject parent_instance;
 
         /*< private >*/
-        GSGFGameTreePrivate *priv;
+        struct _GSGFGameTreePrivate *priv;
 };
+
+/**
+ * GSGFGameTreeClass:
+ *
+ * Class representing a game_tree of games resp. game trees in a
+ * Simple Game Format (SGF) file.
+ **/
+typedef struct _GSGFGameTreeClass   GSGFGameTreeClass;
+struct _GSGFGameTreeClass
+{
+        /*< private >*/
+        GObjectClass parent_class;
+};
+
+GType gsgf_game_tree_get_type(void) G_GNUC_CONST;
 
 struct _GSGFNode;
 

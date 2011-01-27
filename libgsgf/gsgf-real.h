@@ -37,26 +37,30 @@ G_BEGIN_DECLS
 /**
  * GSGFReal:
  *
- * Class representing a real of SGF.
+ * One instance of a #GSGFRealClass.  All properties are private.
  **/
-typedef struct _GSGFRealClass   GSGFRealClass;
 typedef struct _GSGFReal        GSGFReal;
-typedef struct _GSGFRealPrivate GSGFRealPrivate;
-
-struct _GSGFRealClass
-{
-        GSGFCookedValueClass parent_class;
-};
-
-GType gsgf_real_get_type(void) G_GNUC_CONST;
-
 struct _GSGFReal
 {
         GSGFCookedValue parent_instance;
 
         /*< private >*/
-        GSGFRealPrivate *priv;
+        struct _GSGFRealPrivate *priv;
 };
+
+/**
+ * GSGFRealClass:
+ *
+ * Class representing a real in SGF.
+ **/
+typedef struct _GSGFRealClass   GSGFRealClass;
+struct _GSGFRealClass
+{
+        /*< private >*/
+        GSGFCookedValueClass parent_class;
+};
+
+GType gsgf_real_get_type(void) G_GNUC_CONST;
 
 GSGFReal* gsgf_real_new(gdouble value);
 void gsgf_real_set_value(GSGFReal *self, gdouble value);

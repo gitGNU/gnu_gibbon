@@ -40,23 +40,25 @@ G_BEGIN_DECLS
 /**
  * GSGFMove:
  *
- * Class representing a move of SGF.
- **/
-typedef struct _GSGFMoveClass   GSGFMoveClass;
-struct _GSGFMoveClass
-{
-        GSGFCookedValueClass parent_class;
-};
-
-/**
- * GSGFMove:
- *
  * One instance of a #GSGFMoveClass.
  **/
 typedef struct _GSGFMove        GSGFMove;
 struct _GSGFMove
 {
+        /*< private >*/
         GSGFCookedValue parent_instance;
+};
+
+/**
+ * GSGFMoveClass:
+ *
+ * Class representing a move of SGF.
+ **/
+typedef struct _GSGFMoveClass   GSGFMoveClass;
+struct _GSGFMoveClass
+{
+        /*< private >*/
+        GSGFCookedValueClass parent_class;
 };
 
 GType gsgf_move_get_type(void) G_GNUC_CONST;

@@ -54,13 +54,14 @@ struct _GSGFListOf
 };
 
 /**
- * GSGFListOf:
+ * GSGFListOfClass:
  *
  * Class representing a list_of of SGF.
  **/
 typedef struct _GSGFListOfClass   GSGFListOfClass;
 struct _GSGFListOfClass
 {
+        /*< private >*/
         GSGFCookedValueClass parent_class;
 };
 

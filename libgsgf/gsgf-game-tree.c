@@ -31,6 +31,7 @@
 
 #include "gsgf-private.h"
 
+typedef struct _GSGFGameTreePrivate GSGFGameTreePrivate;
 struct _GSGFGameTreePrivate {
         GSGFGameTree *parent;
 

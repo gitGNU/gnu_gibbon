@@ -61,6 +61,7 @@ typedef struct _GSGFPropertyClass   GSGFPropertyClass;
 
 struct _GSGFPropertyClass
 {
+        /*< private >*/
         GObjectClass parent_class;
 };
 

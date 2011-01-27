@@ -57,13 +57,14 @@ struct _GSGFPointBackgammon
 };
 
 /**
- * GSGFPointBackgammon:
+ * GSGFPointBackgammonClass:
  *
  * Class implementing an SGF backgammon point.
  **/
 typedef struct _GSGFPointBackgammonClass GSGFPointBackgammonClass;
 struct _GSGFPointBackgammonClass
 {
+        /*< private >*/
         GSGFPointClass parent_class;
 };
 

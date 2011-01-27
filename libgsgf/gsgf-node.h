@@ -59,6 +59,7 @@ struct _GSGFNode
 typedef struct _GSGFNodeClass   GSGFNodeClass;
 struct _GSGFNodeClass
 {
+        /*< private >*/
         GObjectClass parent_class;
 };
 

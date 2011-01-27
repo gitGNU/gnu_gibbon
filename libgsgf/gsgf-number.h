@@ -62,6 +62,7 @@ typedef struct _GSGFNumberClass   GSGFNumberClass;
 
 struct _GSGFNumberClass
 {
+        /*< private >*/
         GSGFCookedValueClass parent_class;
 };
 

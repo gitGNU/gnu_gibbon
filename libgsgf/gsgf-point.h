@@ -45,6 +45,7 @@ G_BEGIN_DECLS
 typedef struct _GSGFPoint        GSGFPoint;
 struct _GSGFPoint
 {
+        /*< private >*/
         GSGFCookedValue parent_instance;
 };
 
@@ -56,6 +57,7 @@ struct _GSGFPoint
 typedef struct _GSGFPointClass   GSGFPointClass;
 struct _GSGFPointClass
 {
+        /*< private >*/
         GSGFCookedValueClass parent_class;
 
         gint (*get_normalized_value) (const struct _GSGFPoint *self);

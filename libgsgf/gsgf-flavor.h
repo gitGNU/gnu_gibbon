@@ -64,6 +64,7 @@ struct _GSGFListOf;
 typedef struct _GSGFFlavorClass   GSGFFlavorClass;
 struct _GSGFFlavorClass
 {
+        /*< private >*/
         GObjectClass parent_class;
 
         gboolean (*get_cooked_value) (const GSGFFlavor *flavor,

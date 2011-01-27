@@ -54,13 +54,14 @@ struct _GSGFRaw
 };
 
 /**
- * GSGFRaw:
+ * GSGFRawClass:
  *
  * Class representing a raw of SGF.
  **/
 typedef struct _GSGFRawClass   GSGFRawClass;
 struct _GSGFRawClass
 {
+        /*< private >*/
         GSGFCookedValueClass parent_class;
 };
 

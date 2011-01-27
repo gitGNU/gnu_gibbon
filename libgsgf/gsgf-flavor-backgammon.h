@@ -43,13 +43,14 @@ G_BEGIN_DECLS
 			GSGFFlavorBackgammonClass))
 
 /**
- * GSGFFlavorBackgammon:
+ * GSGFFlavorBackgammonClass:
  *
  * Class implementing the backgammo flavor of SGF.
  **/
 typedef struct _GSGFFlavorBackgammonClass  GSGFFlavorBackgammonClass;
 struct _GSGFFlavorBackgammonClass
 {
+        /*< private >*/
         GSGFFlavorClass parent_class;
 };
 

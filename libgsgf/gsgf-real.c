@@ -31,6 +31,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFRealPrivate GSGFRealPrivate;
 struct _GSGFRealPrivate {
         gdouble value;
 };

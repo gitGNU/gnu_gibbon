@@ -54,13 +54,14 @@ struct _GSGFEmpty
 };
 
 /**
- * GSGFEmpty:
+ * GSGFEmptyClass:
  *
  * Class representing an empty, single-valued SGF property.
  **/
 typedef struct _GSGFEmptyClass   GSGFEmptyClass;
 struct _GSGFEmptyClass
 {
+        /*< private >*/
         GSGFCookedValueClass parent_class;
 };
 
