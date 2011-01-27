@@ -17,9 +17,8 @@ GSGF_MOVE_GET_CLASS
 <SECTION>
 <FILE>gsgf-node</FILE>
 <TITLE>GSGFNode</TITLE>
-GSGFNodeClass
 GSGFNode
-GSGFNodePrivate
+GSGFNodeClass
 gsgf_node_add_property
 gsgf_node_get_property
 gsgf_node_get_property_ids
@@ -39,9 +38,8 @@ GSGF_NODE_GET_CLASS
 <SECTION>
 <FILE>gsgf-real</FILE>
 <TITLE>GSGFReal</TITLE>
-GSGFRealClass
 GSGFReal
-GSGFRealPrivate
+GSGFRealClass
 gsgf_real_new
 gsgf_real_set_value
 gsgf_real_get_value
@@ -58,9 +56,8 @@ GSGF_REAL_GET_CLASS
 <SECTION>
 <FILE>gsgf-text</FILE>
 <TITLE>GSGFText</TITLE>
-GSGFTextClass
 GSGFText
-GSGFTextPrivate
+GSGFTextClass
 gsgf_text_new
 gsgf_text_new_from_raw
 gsgf_text_set_value
@@ -95,8 +92,8 @@ GSGF_EMPTY_GET_CLASS
 <SECTION>
 <FILE>gsgf-stone</FILE>
 <TITLE>GSGFStone</TITLE>
-GSGFStoneClass
 GSGFStone
+GSGFStoneClass
 gsgf_stone_new
 <SUBSECTION Standard>
 GSGF_STONE
@@ -130,9 +127,8 @@ GSGF_COMPOSE_GET_CLASS
 <SECTION>
 <FILE>gsgf-simple-text</FILE>
 <TITLE>GSGFSimpleText</TITLE>
-GSGFSimpleTextClass
 GSGFSimpleText
-GSGFSimpleTextPrivate
+GSGFSimpleTextClass
 gsgf_simple_text_new
 gsgf_simple_text_new_from_raw
 <SUBSECTION Standard>
@@ -148,8 +144,8 @@ GSGF_SIMPLE_TEXT_GET_CLASS
 <SECTION>
 <FILE>gsgf-flavor</FILE>
 <TITLE>GSGFFlavor</TITLE>
-GSGFFlavorClass
 GSGFFlavor
+GSGFFlavorClass
 gsgf_flavor_new
 gsgf_flavor_get_cooked_value
 <SUBSECTION Standard>
@@ -165,9 +161,8 @@ GSGF_FLAVOR_GET_CLASS
 <SECTION>
 <FILE>gsgf-property</FILE>
 <TITLE>GSGFProperty</TITLE>
-GSGFPropertyClass
 GSGFProperty
-GSGFPropertyPrivate
+GSGFPropertyClass
 gsgf_property_get_id
 gsgf_property_get_node
 gsgf_property_get_value
@@ -184,9 +179,8 @@ GSGF_PROPERTY_GET_CLASS
 <SECTION>
 <FILE>gsgf-point-backgammon</FILE>
 <TITLE>GSGFPointBackgammon</TITLE>
-GSGFPointBackgammonClass
 GSGFPointBackgammon
-GSGFPointBackgammonPrivate
+GSGFPointBackgammonClass
 gsgf_point_backgammon_new
 gsgf_point_backgammon_append_to_list_of
 gsgf_point_backgammon_get_point
@@ -225,7 +219,6 @@ GSGF_COLLECTION_GET_CLASS
 <FILE>gsgf-flavor-backgammon</FILE>
 <TITLE>GSGFFlavorBackgammon</TITLE>
 GSGFFlavorBackgammonClass
-GSGFFlavorBackgammon
 gsgf_flavor_backgammon_new
 <SUBSECTION Standard>
 GSGF_FLAVOR_BACKGAMMON
@@ -240,9 +233,8 @@ GSGF_FLAVOR_BACKGAMMON_GET_CLASS
 <SECTION>
 <FILE>gsgf-list-of</FILE>
 <TITLE>GSGFListOf</TITLE>
-GSGFListOfClass
 GSGFListOf
-GSGFListOfPrivate
+GSGFListOfClass
 gsgf_list_of_new
 gsgf_list_of_get_item_type
 gsgf_list_of_get_number_of_items
@@ -261,9 +253,8 @@ GSGF_LIST_OF_GET_CLASS
 <SECTION>
 <FILE>gsgf-raw</FILE>
 <TITLE>GSGFRaw</TITLE>
-GSGFRawClass
 GSGFRaw
-GSGFRawPrivate
+GSGFRawClass
 gsgf_raw_new
 gsgf_raw_get_number_of_values
 gsgf_raw_get_value
@@ -280,9 +271,8 @@ GSGF_RAW_GET_CLASS
 <SECTION>
 <FILE>gsgf-number</FILE>
 <TITLE>GSGFNumber</TITLE>
-GSGFNumberClass
 GSGFNumber
-GSGFNumberPrivate
+GSGFNumberClass
 gsgf_number_new
 gsgf_number_new_from_raw
 gsgf_number_set_value
@@ -300,8 +290,8 @@ GSGF_NUMBER_GET_CLASS
 <SECTION>
 <FILE>gsgf-point</FILE>
 <TITLE>GSGFPoint</TITLE>
-GSGFPointClass
 GSGFPoint
+GSGFPointClass
 gsgf_point_new
 gsgf_point_get_normalized_value
 <SUBSECTION Standard>
@@ -333,9 +323,8 @@ GSGF_COOKED_VALUE_GET_CLASS
 <SECTION>
 <FILE>gsgf-stone-backgammon</FILE>
 <TITLE>GSGFStoneBackgammon</TITLE>
-GSGFStoneBackgammonClass
 GSGFStoneBackgammon
-GSGFStoneBackgammonPrivate
+GSGFStoneBackgammonClass
 gsgf_stone_backgammon_new
 gsgf_stone_backgammon_new_from_raw
 gsgf_stone_backgammon_get_stone
@@ -354,7 +343,6 @@ GSGF_STONE_BACKGAMMON_GET_CLASS
 <TITLE>GSGFGameTree</TITLE>
 GSGFGameTree
 GSGFGameTreeClass
-GSGFGameTreePrivate
 gsgf_game_tree_add_child
 gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
