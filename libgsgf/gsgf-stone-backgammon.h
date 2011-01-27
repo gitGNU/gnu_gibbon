@@ -29,9 +29,11 @@ G_BEGIN_DECLS
 
 #define GSGF_TYPE_STONE_BACKGAMMON  (gsgf_stone_backgammon_get_type ())
 #define GSGF_STONE_BACKGAMMON(obj)             \
-	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammon))
+	(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_STONE_BACKGAMMON, \
+	                GSGFStoneBackgammon))
 #define GSGF_STONE_BACKGAMMON_CLASS(klass)     \
-	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_STONE_BACKGAMMON, GSGFStoneBackgammonClass))
+	(G_TYPE_CHECK_CLASS_CAST ((klass), GSGF_TYPE_STONE_BACKGAMMON, \
+	                GSGFStoneBackgammonClass))
 #define GSGF_IS_STONE_BACKGAMMON(obj)         \
 	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GSGF_TYPE_STONE_BACKGAMMON))
 #define GSGF_IS_STONE_BACKGAMMON_CLASS(klass)  \
@@ -62,6 +64,7 @@ struct _GSGFStoneBackgammon
 typedef struct _GSGFStoneBackgammonClass   GSGFStoneBackgammonClass;
 struct _GSGFStoneBackgammonClass
 {
+        /*< private >*/
         GSGFStoneClass parent_class;
 };
 
