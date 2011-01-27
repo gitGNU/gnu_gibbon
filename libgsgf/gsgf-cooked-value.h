@@ -50,14 +50,18 @@ struct _GSGFCookedValue
 
 /**
  * GSGFCookedValueClass:
+ * @write_stream: Serialization method, see gsgf_cooked_value_write_stream().
+ *                All derived classes must implement this method.
  *
- * A class representing a cooked value of a #GSGFProperty.
+ * A class representing a cooked value of a #GSGFProperty.  All other
+ * properties and methods are private.
  *
  * It is the common base class of all other qualified SGF data types.
  */
 typedef struct _GSGFCookedValueClass   GSGFCookedValueClass;
 struct _GSGFCookedValueClass
 {
+        /*< private >*/
         GObjectClass parent_class;
 
         gboolean (*write_stream) (const GSGFCookedValue *self,

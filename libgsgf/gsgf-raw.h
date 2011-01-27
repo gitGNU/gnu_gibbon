@@ -50,7 +50,7 @@ struct _GSGFRaw
         GSGFCookedValue parent_instance;
 
         /*< private >*/
-        GSGFRawPrivate *priv;
+        struct _GSGFRawPrivate *priv;
 };
 
 /**
