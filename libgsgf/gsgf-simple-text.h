@@ -39,7 +39,6 @@ G_BEGIN_DECLS
 #define GSGF_SIMPLE_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GSGF_TYPE_SIMPLE_TEXT, GSGFSimpleTextClass))
 
-
 /**
  * GSGFSimpleText:
  *
@@ -48,7 +47,6 @@ G_BEGIN_DECLS
 typedef struct _GSGFSimpleText        GSGFSimpleText;
 struct _GSGFSimpleText
 {
-        /*< private >*/
         GSGFText parent_instance;
 };
 

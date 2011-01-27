@@ -29,6 +29,7 @@
 
 #include <libgsgf/gsgf.h>
 
+typedef struct _GSGFStoneBackgammonPrivate GSGFStoneBackgammonPrivate;
 struct _GSGFStoneBackgammonPrivate {
         gint stone;
 };
