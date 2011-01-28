@@ -211,6 +211,17 @@ gsgf_move_backgammon_new_drop ()
         return self;
 }
 
+/**
+ * gsgf_move_backgammon_is_regular:
+ * @self: The #GSGFMoveBackgammon to check.
+ *
+ * Checks whether @self is a regular backgammon move.  Other options are
+ * a double, a take, or a drop (see gsgf_move_backgammon_is_double(),
+ * gsgf_move_backgammon_is_take(), or gsgf_move_backgammon_is_drop()
+ * respectively).
+ *
+ * Returns: #TRUE if @self is a regular backgammon move, #FALSE otherwise.
+ */
 gboolean
 gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
 {
@@ -219,6 +230,17 @@ gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
         return self->priv->num_moves >= 0;
 }
 
+/**
+ * gsgf_move_backgammon_is_double:
+ * @self: The #GSGFMoveBackgammon to check.
+ *
+ * Checks whether @self is a double in backgammon.  Other options are
+ * a regular move, a take, or a drop (see gsgf_move_backgammon_is_regular(),
+ * gsgf_move_backgammon_is_take(), or gsgf_move_backgammon_is_drop()
+ * respectively).
+ *
+ * Returns: #TRUE if @self is a regular backgammon move, #FALSE otherwise.
+ */
 gboolean
 gsgf_move_backgammon_is_double(const GSGFMoveBackgammon *self)
 {
@@ -227,6 +249,17 @@ gsgf_move_backgammon_is_double(const GSGFMoveBackgammon *self)
         return self->priv->num_moves == -1 && self->priv->dice[0] == 1;
 }
 
+/**
+ * gsgf_move_backgammon_is_take:
+ * @self: The #GSGFMoveBackgammon to check.
+ *
+ * Checks whether @self is a backgammon take (the affirmative reply to
+ * a double.  Other options are a regular move, a take, or a drop (see
+ * gsgf_move_backgammon_is_regular(), gsgf_move_backgammon_is_double(), or
+ * gsgf_move_backgammon_is_drop() respectively).
+ *
+ * Returns: #TRUE if @self is a backgammon take, #FALSE otherwise.
+ */
 gboolean
 gsgf_move_backgammon_is_take(const GSGFMoveBackgammon *self)
 {
@@ -235,6 +268,17 @@ gsgf_move_backgammon_is_take(const GSGFMoveBackgammon *self)
         return self->priv->num_moves == -1 && self->priv->dice[0] == 2;
 }
 
+/**
+ * gsgf_move_backgammon_is_drop:
+ * @self: The #GSGFMoveBackgammon to check.
+ *
+ * Checks whether @self is a backgammon drop (the negative reply to
+ * a double.  Other options are a regular move, a double, or a take (see
+ * gsgf_move_backgammon_is_regular(), gsgf_move_backgammon_is_double(), or
+ * gsgf_move_backgammon_is_take() respectively).
+ *
+ * Returns: #TRUE if @self is a backgammon drop, #FALSE otherwise.
+ */
 gboolean
 gsgf_move_backgammon_is_drop(const GSGFMoveBackgammon *self)
 {
@@ -243,14 +287,16 @@ gsgf_move_backgammon_is_drop(const GSGFMoveBackgammon *self)
         return self->priv->num_moves == -1 && self->priv->dice[0] == 3;
 }
 
-gsize
-gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self)
-{
-        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
-
-        return (gsize) self->priv->num_moves;
-}
-
+/**
+ * gsgf_move_backgammon_get_die:
+ * @self: The #GSGFMoveBackgammon to query.
+ * @i: The dice number @i.
+ *
+ * Get the number shown on the first or second die.  That means that @i must
+ * be either 0 or 1.
+ *
+ * Returns: The number on die @i.
+ */
 guint
 gsgf_move_backgammon_get_die(const GSGFMoveBackgammon *self, gsize i)
 {
@@ -261,6 +307,42 @@ gsgf_move_backgammon_get_die(const GSGFMoveBackgammon *self, gsize i)
         return (gsize) self->priv->dice[i];
 }
 
+/**
+ * gsgf_move_backgammon_get_num_moves:
+ * @self: The #GSGFMoveBackgammon to query.
+ *
+ * Get the number of (sub) moves in a #GSGFMoveBackgammon.  This value
+ * can range from 0 (cannot move for example because of the opponent's
+ * closed home board) to 4 (after a double).
+ *
+ * TODO: Rename to gsgf_move_backgammon_get_sub_move?
+ * TODO: Compress moves, i. e. turn 65: 24/18/13 into 65: 24/13.
+ *
+ * Returns: The number of sub moves executed after a dice roll.
+ */
+gsize
+gsgf_move_backgammon_get_num_moves(const GSGFMoveBackgammon *self)
+{
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+
+        return (gsize) self->priv->num_moves;
+}
+
+/**
+ * gsgf_move_backgammon_get_from:
+ * @self: The #GSGFMoveBackgammon to query.
+ * @i: The sub move @i.
+ *
+ * Get the starting point of a move.
+ *
+ * TODO: Compress moves, i. e. turn 65: 24/18/13 into 65: 24/13.
+ *
+ * Points are counted with base 0, or 0 is the ace point for white (and the 24
+ * point for black), through to 23 which is the 24 point for white (and the ace
+ * point for black). 24 is the bar, and 25 is the bearoff tray.
+ *
+ * Returns: The number associated to the starting point.
+ */
 guint
 gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i)
 {
@@ -271,6 +353,21 @@ gsgf_move_backgammon_get_from(const GSGFMoveBackgammon *self, gsize i)
         return (gsize) self->priv->moves[i][0];
 }
 
+/**
+ * gsgf_move_backgammon_get_to:
+ * @self: The #GSGFMoveBackgammon to query.
+ * @i: The sub move @i.
+ *
+ * Get the end point of a move.
+ *
+ * TODO: Compress moves, i. e. turn 65: 24/18/13 into 65: 24/13.
+ *
+ * Points are counted with base 0, or 0 is the ace point for white (and the 24
+ * point for black), through to 23 which is the 24 point for white (and the ace
+ * point for black). 24 is the bar, and 25 is the bearoff tray.
+ *
+ * Returns: The number associated to the end point.
+ */
 guint
 gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i)
 {

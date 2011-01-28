@@ -73,7 +73,6 @@ GType gsgf_compose_get_type(void) G_GNUC_CONST;
 GSGFCompose *gsgf_compose_new(GSGFCookedValue *value, ...);
 
 gsize gsgf_compose_get_number_of_values(const GSGFCompose *self);
-void gsgf_compose_set_value(GSGFCompose *self, GSGFCookedValue *value, gsize i);
 GSGFCookedValue *gsgf_compose_get_value(const GSGFCompose *self, gsize i);
 
 G_END_DECLS

@@ -52,7 +52,7 @@ struct _GSGFMove
 /**
  * GSGFMoveClass:
  *
- * Class representing a move of SGF.
+ * Abstract base class representing a move of SGF.
  **/
 typedef struct _GSGFMoveClass   GSGFMoveClass;
 struct _GSGFMoveClass
@@ -62,8 +62,6 @@ struct _GSGFMoveClass
 };
 
 GType gsgf_move_get_type(void) G_GNUC_CONST;
-
-GSGFMove *gsgf_move_new(void);
 
 G_END_DECLS
 

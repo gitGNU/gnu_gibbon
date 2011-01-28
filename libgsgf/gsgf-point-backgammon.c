@@ -21,7 +21,9 @@
  * SECTION:gsgf-point-backgammon
  * @short_description: Definitions for a point in Backgammon
  *
- * Representation of one single point in Backgammon
+ * Representation of one single point in Backgammon.
+ *
+ * The class is actually internal.  You will never have to use it yourself.
  */
 
 #include <glib.h>
@@ -79,6 +81,10 @@ gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
  *
  * Creates a new #GSGFPointBackgammon.
  *
+ * Points are counted with base 0, or 0 is the ace point for white (and the 24
+ * point for black), through to 23 which is the 24 point for white (and the ace
+ * point for black). 24 is the bar, and 25 is the bearoff tray.
+ *
  * Returns: The new #GSGFPointBackgammon.
  */
 GSGFPointBackgammon *
@@ -99,9 +105,12 @@ gsgf_point_backgammon_new (gint point)
  * @list_of: The #GSGFListOf to append to.
  * @raw: The #GSGFRaw to parse.
  * @i: Parse the ith value in @raw.
- * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
  * Creates a new #GSGFPointBackgammon from a #GSGFRaw.
+ *
+ * The weird interface to this function is owed to internals of the library.
+ * Normally, you will not have to move this function.
  *
  * Returns: %TRUE for success, %FALSE for failure.
  */
@@ -162,6 +171,14 @@ gsgf_point_backgammon_append_to_list_of (GSGFListOf *list_of, const GSGFRaw *raw
         return TRUE;
 }
 
+/**
+ * gsgf_point_backgammon_get_point:
+ * @self: The #GSGFPointBackgammon to query.
+ *
+ * Get the number (0-25) associated with a #GSGFPointBackgammon.
+ *
+ * Returns: The number (0-25) associated with @self.
+ */
 gint
 gsgf_point_backgammon_get_point(const GSGFPointBackgammon *self)
 {

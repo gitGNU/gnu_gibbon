@@ -641,6 +641,14 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
                                 ctx->start_colno + 1, expect);
 }
 
+/**
+ * gsgf_collection_add_game_tree:
+ * @self: The #GSGFCollection to extend.
+ *
+ * Adds a fresh, empty #GSGFGameTree instance to a #GSGFCollection.
+ *
+ * Returns: The freshly created #GSGFGameTree.
+ */
 GSGFGameTree *
 gsgf_collection_add_game_tree(GSGFCollection *self)
 {
