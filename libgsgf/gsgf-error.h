@@ -48,6 +48,8 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_USAGE_ERROR: Invalid library usage.
  * @GSGF_ERROR_NON_UNIQUE_POINT: Non-unique points in list.
  * @GSGF_ERROR_NON_UNIQUE_STONE: Non-unique stones in list.
+ *
+ * Error codes for the domain #GSGF_ERROR.
  */
 typedef enum {
         GSGF_ERROR_NONE = 0,
