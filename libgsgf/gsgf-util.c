@@ -29,6 +29,25 @@
  * Some utility functions for libgsgf.
  */
 
+/**
+ * gsgf_util_read_simple_text:
+ * @raw: The string to read from.
+ * @end: Optional location to store an end pointer.
+ * @delim: Stop reading, when encountering this #gchar.
+ *
+ * Extracts a SGF simple text from a string.  The function unescapes everything
+ * according to the SGF specification.  It stops reading at the first
+ * occurence of the unescaped delimiter @delim or a null byte, whichever
+ * comes first.
+ *
+ * If you want to just unescape a string without a delimiter, simply pass
+ * 0 for @delim.
+ *
+ * The string returned must be freed with g_free().  The function cannot
+ * fail unless you pass a #NULL pointer in @raw.
+ *
+ * Returns: The extracted string copied to a newly allocated buffer.
+ */
 /* FIXME: This function should be optimized.  It currently copies (and
  * allocates the memory for it) byte by byte.
  */
@@ -76,6 +95,25 @@ gsgf_util_read_simple_text (const gchar *raw, const gchar **end,
         return result;
 }
 
+/**
+ * gsgf_util_read_text:
+ * @raw: The string to read from.
+ * @end: Optional location to store an end pointer.
+ * @delim: Stop reading, when encountering this #gchar.
+ *
+ * Extracts a SGF text value from a string.  The function unescapes everything
+ * according to the SGF specification.  It stops reading at the first
+ * occurence of the unescaped delimiter @delim or a null byte, whichever
+ * comes first.
+ *
+ * If you want to just unescape a string without a delimiter, simply pass
+ * 0 for @delim.
+ *
+ * The string returned must be freed with g_free().  The function cannot
+ * fail unless you pass a #NULL pointer in @raw.
+ *
+ * Returns: The extracted string copied to a newly allocated buffer.
+ */
 /* FIXME: This function should be optimized.  It currently copies (and
  * allocates the memory for it) byte by byte.
  */

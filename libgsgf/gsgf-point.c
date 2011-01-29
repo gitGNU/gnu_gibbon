@@ -54,6 +54,17 @@ gsgf_point_class_init(GSGFPointClass *klass)
         object_class->finalize = gsgf_point_finalize;
 }
 
+/**
+ * gsgf_point_get_normalized_value:
+ * @self: The #GSGFPoint to query.
+ *
+ * Get a unique #gint identifying the point.  This method must be
+ * implemented by every #GSGFFlavor.  It is used to compare points for
+ * equality.  This is needed in order to make sure that lists of points
+ * do not contain duplicate points.
+ *
+ * Returns: A unique integer identifying the point.
+ */
 gint
 gsgf_point_get_normalized_value(const GSGFPoint *self)
 {

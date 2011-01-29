@@ -62,8 +62,6 @@ struct _GSGFStoneClass
 
 GType gsgf_stone_get_type(void) G_GNUC_CONST;
 
-GSGFStone *gsgf_stone_new(void);
-
 G_END_DECLS
 
 #endif

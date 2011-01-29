@@ -21,7 +21,8 @@
  * SECTION:gsgf-stone-backgammon
  * @short_description: Definitions for a stone in Backgammon
  *
- * Representation of one single stone in Backgammon
+ * Representation of one single stone in Backgammon.  The class is mostly
+ * internal.  You will not have to use it yourself.
  */
 
 #include <glib.h>
@@ -122,6 +123,14 @@ gsgf_stone_backgammon_new_from_raw (const GSGFRaw *raw, gsize i, GError **error)
         return gsgf_stone_backgammon_new((gint) string[0] - 'a');
 }
 
+/**
+ * gsgf_stone_backgammon_get_stone:
+ * @self: The #GSGFStoneBackgammon to query.
+ *
+ * Get the number (0-25) associated with a #GSGFStoneBackgammon.
+ *
+ * Returns: The number (0-25) associated with @self.
+ */
 gint
 gsgf_stone_backgammon_get_stone(const GSGFStoneBackgammon *self)
 {

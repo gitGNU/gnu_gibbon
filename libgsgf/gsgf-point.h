@@ -65,7 +65,6 @@ struct _GSGFPointClass
 
 GType gsgf_point_get_type(void) G_GNUC_CONST;
 
-GSGFPoint *gsgf_point_new(void);
 gint gsgf_point_get_normalized_value(const GSGFPoint *self);
 
 G_END_DECLS
