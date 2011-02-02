@@ -121,7 +121,7 @@ GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon 
 
 AC_CONFIG_FILES([ 
     Makefile
-    gcreate_class
+    gcreate_class.pl
     libgsgf/Makefile
     libgsgf/examples/Makefile
     libgsgf/tests/Makefile

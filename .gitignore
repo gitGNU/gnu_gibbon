@@ -26,4 +26,4 @@ missing
 mkinstalldirs
 ylwrap
 gtk-doc.make
-gcreate_class
+gcreate_class.pl

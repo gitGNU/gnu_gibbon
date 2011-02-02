@@ -27,6 +27,3 @@ DISTCLEANFILES =		\
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath
-
-all-local: gcreate_class
-	@cd $(top_builddir) && @GCREATE_CLASS_CHMOD@ +x gcreate_class
