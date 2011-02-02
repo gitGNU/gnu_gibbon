@@ -1,7 +1,7 @@
 #! @PERL@ -w
-# This file is part of @PACKAGE@
-# @GCREATE_DESCRIPTION@
-# Copyright (C) @GCREATE_COPYRIGHT@
+# This file is part of Gibbon.
+# Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
+# Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 #
 # @PACKAGE@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ my $macro_space = ' ';
 
 # The copyright to use:
 use constant GPL => '/*
- * This file is part of @PACKAGE@
- * @GCREATE_DESCRIPTION@
- * Copyright (C) @GCREATE_COPYRIGHT@
+ * This file is part of @PACKAGE@.
+ * @GCREATE_CLASS_DESCRIPTION@
+ * Copyright (C) @GCREATE_CLASS_COPYRIGHT@.
  *
  * @PACKAGE@ is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -57,9 +57,9 @@ use constant GPL => '/*
  */';
 
 use constant LGPL => '/*
- * This file is part of @PACKAGE@
- * @GCREATE_DESCRIPTION@
- * Copyright (C) @GCREATE_COPYRIGHT@
+ * This file is part of @PACKAGE@.
+ * @GCREATE_CLASS_DESCRIPTION@
+ * Copyright (C) @GCREATE_CLASS_COPYRIGHT@.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
