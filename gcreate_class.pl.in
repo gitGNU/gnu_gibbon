@@ -201,16 +201,17 @@ if ($option_private) {
 
 
         /*< private >*/
-        struct _${class}Private priv;
+        struct _${class}Private *priv;
 EOF
         chop $private_header;
 
         $private_implementation = <<EOF;
+
 typedef struct _${class}Private ${class}Private;
-struct _${class} {
+struct _${class}Private {
         /* $fm! Replace with the real structure of the private data! */
         gchar *dummy;
-}
+};
 
 #define ${macro_stem}_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE$macro_space((obj), \\
         $macro_type, ${class}Private))
@@ -282,9 +283,9 @@ $copyright
 #define $macro_type \\
         (${symbol_stem}_get_type$func_space())
 #define $macro_stem(obj) \\
-        (G_TYPE_CHECK_INSTANCE_CAST$macro_space((obj, $macro_type, \\
+        (G_TYPE_CHECK_INSTANCE_CAST$macro_space((obj), $macro_type, \\
                 $class))
-#define $macro_class(G_TYPE_CHECK_CLASS_CAST$macro_space(klass), \\
+#define $macro_class(klass) (G_TYPE_CHECK_CLASS_CAST$macro_space((klass), \\
         $macro_type, ${class}Class))
 #define $macro_type_check(obj) \\
         (G_TYPE_CHECK_INSTANCE_TYPE$macro_space((obj), \\
@@ -413,6 +414,8 @@ my $sources_variable;
 my $headers_variable;
 my $sources_found;
 my $headers_found;
+my $sources_ready;
+my $headers_ready;
 if (-e "$option_output_directory/Makefile.am") {
         my $makefile_am = "$option_output_directory/Makefile.am";
         print "Trying to patch $makefile_am.\n" if $option_verbose;
@@ -427,27 +430,35 @@ if (-e "$option_output_directory/Makefile.am") {
         while (my $line = <MAKEFILE_AM>) {
                 last unless defined $line;
                 if ($in_sources) {
-                        if ($line !~ /\\\n$/) {
+                        my $qf = quotemeta "$file_stem.c";
+                        if ($line =~  /(?:\A|=|[ \t]+)$qf(?:\Z|\\|[ \t]+)/) {
+                                undef $in_sources;
+                                $sources_ready = 1;
+                        } elsif ($line !~ /\\\n$/) {
                                 chomp $line;
                                 $line .= "\t\t\t\\\n\t$file_stem.c\t\n";
                                 undef $in_sources;
                                 $sources_found = 1;
                         }
                 } elsif ($in_headers) {
-                        if ($line !~ /\\\n$/) {
+                        my $qf = quotemeta "$file_stem.h";
+                        if ($line =~  /(?:\A|=|[ \t]+)$qf(?:\Z|\\|[ \t]+)/) {
+                                undef $in_headers;
+                                $headers_ready = 1;
+                        } elsif ($line !~ /\\\n$/) {
                                 chomp $line;
                                 $line .= "\t\t\t\\\n\t$file_stem.h\n";
                                 undef $in_headers;
                                 $headers_found = 1;
                         }
                 } else {
-                        if (!$sources_found) {
+                        if (!$sources_found && !$sources_ready) {
                                 if ($line =~ /^([_a-zA-Z][_a-zA-Z0-9]*_SOURCES)[ \t]*=/) {
                                         $in_sources = 1;
                                         $sources_variable = $1;
                                         redo;
                                 }
-                        } elsif (!$headers_found) {
+                        } elsif (!$headers_found && !$headers_ready) {
                                 if ($line =~ /^([_a-zA-Z][_a-zA-Z0-9]*_HEADERS)[ \t]*=/) {
                                         $in_headers = 1;
                                         $headers_variable = $1;
@@ -460,9 +471,9 @@ if (-e "$option_output_directory/Makefile.am") {
 
         unless ($option_quiet) {
                 warn "No _SOURCES variable found in '$makefile_am'.\n"
-                        unless $sources_found;
+                        unless $sources_found || $sources_ready;
                 warn "No _HEADERS variable found in '$makefile_am'.\n"
-                        unless $headers_found;
+                        unless $headers_found || $headers_ready;
         }
         if ($sources_found || $headers_found) {
                 if ($option_dry_run) {
@@ -505,6 +516,13 @@ if ($option_dry_run) {
                                 . " variable\n"
                                 . "#     $sources_variable in automake file"
                                 . " '$option_output_directory/Makefile.am'.";
+        } elsif ($sources_ready) {
+                $sources_line = "C source file"
+                                . " '$option_output_directory/$file_stem.c" 
+                                . " was already added to"
+                                . " variable\n"
+                                . "#     $sources_variable in automake file"
+                                . " '$option_output_directory/Makefile.am'.";
         } else {
                 $sources_line = "No _SOURCES variable found in"
                                 . " '$option_output_directory/Makefile.am'.";
@@ -515,6 +533,13 @@ if ($option_dry_run) {
                 $headers_line = "C header file"
                                 . " '$option_output_directory/$file_stem.h" 
                                 . " will be added to"
+                                . " variable\n"
+                                . "#     $headers_variable in automake file"
+                                . " '$option_output_directory/Makefile.am'.";
+        } elsif ($headers_ready) {
+                $headers_line = "C header file"
+                                . " '$option_output_directory/$file_stem.h" 
+                                . " was already added to"
                                 . " variable\n"
                                 . "#     $headers_variable in automake file"
                                 . " '$option_output_directory/Makefile.am'.";
