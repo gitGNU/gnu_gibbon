@@ -36,7 +36,13 @@
       <xi:include href="xml/gsgf-text.xml"/>
       <xi:include href="xml/gsgf-simple-text.xml"/>
       <xi:include href="xml/gsgf-compose.xml"/>
+      <xi:include href="xml/gsgf-empty.xml"/>
+      <xi:include href="xml/gsgf-list-of.xml"/>
       <xi:include href="xml/gsgf-raw.xml"/>
+    </chapter>
+    <chapter id="sgf_high_level_types">
+      <title>SGF High Level Types</title>
+      <xi:include href="xml/gsgf-color.xml"/>
     </chapter>
     <chapter>
       <title>SGF Flavor API</title>
