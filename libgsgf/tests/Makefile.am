@@ -17,27 +17,31 @@
 
 AUTOMAKE_OPTIONS = color-tests
 
-TESTS = test-convert			\
-	test-compose			\
-	test-empty 			\
-	test-full			\
-	test-minimal			\
-	test-multi-game-tree		\
-	test-move-properties		\
-	test-nested-game-tree		\
-	test-non-unique-points		\
-	test-number			\
-	test-real			\
-	test-really-empty		\
-	test-root-properties		\
-	test-setup-properties		\
-	test-util-read-simpletext	\
-	test-util-read-text		\
-	test-write-empty		\
-	test-write-empty-property	\
-	test-write-full			\
-	test-write-linefeeds		\
-	test-write-minimal
+TESTS_C = test-convert			\
+	  test-compose			\
+	  test-empty 			\
+	  test-full			\
+	  test-minimal			\
+	  test-multi-game-tree		\
+	  test-move-properties		\
+	  test-nested-game-tree		\
+	  test-non-unique-points	\
+	  test-number			\
+	  test-real			\
+	  test-really-empty		\
+	  test-root-properties		\
+	  test-setup-properties		\
+	  test-util-read-simpletext	\
+	  test-util-read-text		\
+	  test-write-empty		\
+	  test-write-empty-property	\
+	  test-write-full			\
+	  test-write-linefeeds		\
+	  test-write-minimal
+
+TESTS_SH = test-write-stream
+
+TESTS = $(TESTS_C) $(TESTS_SH)
 
 AM_CPPFLAGS = 				\
     -I$(top_srcdir)			\
@@ -45,7 +49,7 @@ AM_CPPFLAGS = 				\
     -DTEST_BUILDDIR=\"$(abs_builddir)\"	\
     $(GIBBON_CFLAGS)
 
-check_PROGRAMS = $(TESTS) 
+check_PROGRAMS = $(TESTS_C)
 
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
@@ -82,8 +86,14 @@ SGF_FILES = cp1251.sgf			\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
+	    non-unique-points.sgf	\
 	    really-empty.sgf		\
+	    setup-properties.sgf	\
 	    utf-8.sgf.in
 
-EXTRA_DIST = $(SGF_FILES)
+TESTS_ENVIRONMENT = builddir=$(builddir) \
+                    top_srcdir=$(top_srcdir) \
+                    top_builddir=$(top_builddir) \
+                    SGF_FILES="$(SGF_FILES)"
 
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH)
