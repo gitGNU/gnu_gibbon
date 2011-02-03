@@ -1,4 +1,5 @@
 test-*
 !test-*.c
+!test-write-stream
 full.sgf
 utf-8.sgf

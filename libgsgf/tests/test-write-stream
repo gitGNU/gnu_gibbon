@@ -1,0 +1,22 @@
+#! /bin/sh
+
+cleanup() {
+        rm -f $builddir/tmp-1.sgf $builddir/tmp-2.sgf
+}
+
+die() {
+        cleanup
+        exit 1
+}
+
+trap 'die' 1 2 3 15
+
+for file_in in $SGF_FILES; do
+        file=`echo $file_in | sed -e 's/\.in$//'`
+        if test $file != $file_in; then
+                sgf_file=$builddir/$file
+        else
+                sgf_file=$srcdir/$file
+        fi
+        cleanup
+done
