@@ -322,7 +322,7 @@ struct _${class}Class
 
 GType ${symbol_stem}_get_type$func_space(void) G_GNUC_CONST;
 
-$class* ${symbol_stem}_new$func_space(/* $fm! Argument list! */ const gchar *dummy);
+$class *${symbol_stem}_new$func_space(/* $fm! Argument list! */ const gchar *dummy);
 
 #endif
 EOF
@@ -396,7 +396,7 @@ $parent_class_init$private_class_init
 $class *
 ${symbol_stem}_new$func_space(/* $fm! Argument list! */ const gchar *dummy)
 {
-        $class *self = g_object_new($macro_type, NULL);
+        $class *self = g_object_new$func_space($macro_type, NULL);
 $private_new
         return self;
 }
