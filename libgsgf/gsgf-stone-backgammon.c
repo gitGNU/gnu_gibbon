@@ -67,7 +67,8 @@ static void
 gsgf_stone_backgammon_class_init(GSGFStoneBackgammonClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class = GSGF_COOKED_VALUE (klass);
+        GSGFCookedValueClass *cooked_value_class =
+                        GSGF_COOKED_VALUE_CLASS (klass);
 
         cooked_value_class->write_stream = gsgf_stone_backgammon_write_stream;
 
