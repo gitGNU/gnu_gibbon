@@ -69,14 +69,14 @@ GType gsgf_color_get_type (void) G_GNUC_CONST;
 
 /**
  * GSGFColorEnum:
- * @GSGF_COLOR_BLACK: Black.
  * @GSGF_COLOR_WHITE: White.
+ * @GSGF_COLOR_BLACK: Black.
  *
  * Constants for black and white.
  */
 enum GSGFColorEnum {
-        GSGF_COLOR_BLACK = 0,
-        GSGF_COLOR_WHITE = 1
+        GSGF_COLOR_WHITE = 1,
+        GSGF_COLOR_BLACK = 0
 };
 
 GSGFColor *gsgf_color_new (enum GSGFColorEnum color);
