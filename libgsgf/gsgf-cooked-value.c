@@ -82,7 +82,8 @@ gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
 
         if (!GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method write_stream not implemented"));
+                            _("%s does not implement method write_stream"),
+                            G_OBJECT_TYPE_NAME(self));
                 g_return_val_if_fail(GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream,
                                      FALSE);
         }
