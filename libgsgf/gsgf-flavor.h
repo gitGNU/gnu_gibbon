@@ -88,6 +88,13 @@ struct _GSGFFlavorClass
                                    const struct _GSGFRaw *raw,
                                    gsize i,
                                    GError **error);
+
+        gboolean (*write_compressed_list) (const GSGFFlavor *flavor,
+                                           const struct _GSGFListOf *list_of,
+                                           GOutputStream *out,
+                                           gsize *bytes_written,
+                                           GCancellable *cancellable,
+                                           GError **error);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;

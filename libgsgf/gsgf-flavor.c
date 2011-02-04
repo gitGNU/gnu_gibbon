@@ -320,6 +320,7 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
         klass->create_move = NULL;
         klass->stone_type = G_TYPE_INVALID;
         klass->create_stone = NULL;
+        klass->write_compressed_list = NULL;
 
         object_class->finalize = gsgf_flavor_finalize;
 }
@@ -715,7 +716,7 @@ gsgf_list_of_stones_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                  const GSGFProperty *property, GError **error)
 {
         GType type = GSGF_FLAVOR_GET_CLASS(flavor)->stone_type;
-        GSGFListOf *list_of = gsgf_list_of_new(type);
+        GSGFListOf *list_of = gsgf_list_of_new(type, flavor);
         GSGFStone *stone;
         gsize i, num_stones;
 
@@ -746,7 +747,7 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                  const GSGFProperty *property, GError **error)
 {
         GType type = GSGF_FLAVOR_GET_CLASS(flavor)->point_type;
-        GSGFListOf *list_of = gsgf_list_of_new(type);
+        GSGFListOf *list_of = gsgf_list_of_new(type, flavor);
         gsize i, num_points;
 
         num_points = gsgf_raw_get_number_of_values(raw);

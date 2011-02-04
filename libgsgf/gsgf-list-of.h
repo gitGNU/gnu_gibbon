@@ -65,9 +65,9 @@ struct _GSGFListOfClass
         GSGFCookedValueClass parent_class;
 };
 
-GType gsgf_list_of_get_type(void) G_GNUC_CONST;
+GType gsgf_list_of_get_type (void) G_GNUC_CONST;
 
-GSGFListOf *gsgf_list_of_new(GType type);
+GSGFListOf *gsgf_list_of_new(GType type, const GSGFFlavor *flavor);
 
 GType gsgf_list_of_get_item_type(const GSGFListOf *self);
 gsize gsgf_list_of_get_number_of_items(const GSGFListOf *self);

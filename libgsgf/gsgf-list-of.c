@@ -31,6 +31,7 @@
 
 typedef struct _GSGFListOfPrivate GSGFListOfPrivate;
 struct _GSGFListOfPrivate {
+        const GSGFFlavor *flavor;
         GType type;
 
         GList *items;
@@ -53,6 +54,7 @@ gsgf_list_of_init(GSGFListOf *self)
                         GSGF_TYPE_LIST_OF,
                         GSGFListOfPrivate);
 
+        self->priv->flavor = NULL;
         self->priv->type = G_TYPE_INVALID;
         self->priv->items = NULL;
 }
@@ -66,6 +68,8 @@ gsgf_list_of_finalize(GObject *object)
                 g_list_foreach(self->priv->items, (GFunc) g_object_unref, NULL);
                 g_list_free(self->priv->items);
         }
+        self->priv->flavor = NULL;
+        self->priv->type = G_TYPE_INVALID;
 
         G_OBJECT_CLASS (gsgf_list_of_parent_class)->finalize(object);
 }
@@ -86,6 +90,7 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
 /**
  * gsgf_list_of_new:
  * @type: Type of items.
+ * @flavor: #GSGFFlavor that this list belongs to.
  *
  * Creates a new #GSGFListOf from a list of #GSGFCookedValue objects.  The
  * stored items are "hijacked" and are now considered property of the list_of
@@ -94,13 +99,14 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
  * Returns: The new #GSGFListOf.
  */
 GSGFListOf *
-gsgf_list_of_new (GType type)
+gsgf_list_of_new (GType type, const GSGFFlavor *flavor)
 {
         GSGFListOf *self;
 
         self = g_object_new(GSGF_TYPE_LIST_OF, NULL);
 
         self->priv->type = type;
+        self->priv->flavor = flavor;
 
         return self;
 }
@@ -131,6 +137,7 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
         GList *iter;
         GSGFCookedValue *value;
         GSGFListOf *self = GSGF_LIST_OF(_self);
+        const GSGFFlavor *flavor = self->priv->flavor;
 
         *bytes_written = 0;
 
@@ -140,6 +147,13 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
                             _("Attempt to write empty property"));
                 return FALSE;
+        }
+
+        if (iter && GSGF_IS_POINT(iter->data)
+            && GSGF_FLAVOR_GET_CLASS(flavor)->write_compressed_list) {
+                return GSGF_FLAVOR_GET_CLASS(flavor)->write_compressed_list (
+                                self->priv->flavor, self,
+                                out, bytes_written, cancellable, error);
         }
 
         while (iter) {

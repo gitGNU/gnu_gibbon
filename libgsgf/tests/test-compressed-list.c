@@ -53,7 +53,7 @@ test_collection(GSGFCollection *collection, GError *error)
 
         got = (gchar*) g_memory_output_stream_get_string(G_MEMORY_OUTPUT_STREAM(out));
         if (strcmp(got, expect)) {
-                fprintf(stderr, "Expected '%s', got '%s'.\n", expect, got);
+                fprintf(stderr, "Expected '%s', got   '%s'.\n", expect, got);
                 return -1;
         }
 
