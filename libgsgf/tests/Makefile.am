@@ -50,6 +50,7 @@ AM_CPPFLAGS = 				\
     $(GIBBON_CFLAGS)
 
 check_PROGRAMS = $(TESTS_C)
+noinst_PROGRAMS = gsgf-write-back
 
 LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
@@ -74,6 +75,7 @@ test_write_empty_property_SOURCES = lib.c main.c test-write-empty-property.c
 test_write_full_SOURCES = lib.c main.c test-write-full.c
 test_write_linefeeds_SOURCES = lib.c main.c test-write-linefeeds.c
 test_write_minimal_SOURCES = lib.c main.c test-write-minimal.c
+gsgf_write_back_SOURCES = gsgf-write-back.c
 
 noinst_HEADERS = test.h
 

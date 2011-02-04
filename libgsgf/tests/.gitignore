@@ -3,3 +3,4 @@ test-*
 !test-write-stream
 full.sgf
 utf-8.sgf
+gsgf-write-back
