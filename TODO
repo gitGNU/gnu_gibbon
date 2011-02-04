@@ -29,3 +29,4 @@
 - Remove all traces of backgammon from gsgf.h.
 - Let flavors give hints for compressing list of stones.
 - Give ids to all documentation nodes so that file names are unique.
+- Better formatting of libgsgf output.
