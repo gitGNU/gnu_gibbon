@@ -154,7 +154,8 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
                 iter = iter->next;
 
                 if (iter) {
-                        if (!g_output_stream_write_all(out, ":", 1, &written_here,
+                        if (!g_output_stream_write_all(out, "][", 2,
+                                                       &written_here,
                                                        cancellable, error)) {
                                 *bytes_written += written_here;
                                 return FALSE;
