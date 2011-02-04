@@ -19,6 +19,7 @@ AUTOMAKE_OPTIONS = color-tests
 
 TESTS_C = test-convert			\
 	  test-compose			\
+	  test-compressed-list		\
 	  test-empty 			\
 	  test-full			\
 	  test-minimal			\
@@ -56,6 +57,7 @@ LDADD = $(GIBBON_LIBS) ../libgsgf.a
 
 test_convert_SOURCES = lib.c main.c test-convert.c
 test_compose_SOURCES = lib.c test-compose.c
+test_compressed_list_SOURCES = lib.c main.c test-compressed-list.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
@@ -80,9 +82,9 @@ gsgf_write_back_SOURCES = gsgf-write-back.c
 noinst_HEADERS = test.h
 
 SGF_FILES = cp1251.sgf			\
+	    compressed-list.sgf.in	\
 	    empty.sgf 			\
 	    full.sgf.in			\
-	    root-properties.sgf		\
 	    move-properties.sgf		\
 	    linefeeds.sgf		\
 	    minimal.sgf			\
@@ -90,6 +92,7 @@ SGF_FILES = cp1251.sgf			\
 	    nested-game-tree.sgf	\
 	    non-unique-points.sgf	\
 	    really-empty.sgf		\
+	    root-properties.sgf		\
 	    setup-properties.sgf	\
 	    utf-8.sgf.in
 
