@@ -41,6 +41,12 @@ struct _GSGFStoneBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFStoneBackgammon, gsgf_stone_backgammon, GSGF_TYPE_STONE)
 
+static gboolean gsgf_stone_backgammon_write_stream(const GSGFCookedValue *self,
+                                                   GOutputStream *out,
+                                                   gsize *bytes_written,
+                                                   GCancellable *cancellable,
+                                                   GError **error);
+
 static void
 gsgf_stone_backgammon_init(GSGFStoneBackgammon *self)
 {
@@ -60,11 +66,12 @@ gsgf_stone_backgammon_finalize(GObject *object)
 static void
 gsgf_stone_backgammon_class_init(GSGFStoneBackgammonClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GSGFCookedValueClass *cooked_value_class = GSGF_COOKED_VALUE (klass);
+
+        cooked_value_class->write_stream = gsgf_stone_backgammon_write_stream;
 
         g_type_class_add_private(klass, sizeof(GSGFStoneBackgammonPrivate));
-
-        /* FIXME: write_stream() must be implemented! */
 
         object_class->finalize = gsgf_stone_backgammon_finalize;
 }
@@ -137,4 +144,23 @@ gsgf_stone_backgammon_get_stone(const GSGFStoneBackgammon *self)
         g_return_val_if_fail(GSGF_IS_STONE_BACKGAMMON(self), 0);
 
         return (guint) self->priv->stone;
+}
+
+static gboolean
+gsgf_stone_backgammon_write_stream(const GSGFCookedValue *_self,
+                                   GOutputStream *out, gsize *bytes_written,
+                                   GCancellable *cancellable, GError **error)
+{
+        GSGFStoneBackgammon *self = GSGF_STONE_BACKGAMMON (_self);
+        gchar buf;
+
+        *bytes_written = 0;
+
+        buf = self->priv->stone + 'a';
+        if (!g_output_stream_write_all(out, &buf, 1,
+                                       bytes_written,
+                                       cancellable, error))
+                return FALSE;
+
+        return TRUE;
 }

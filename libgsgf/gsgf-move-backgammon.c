@@ -43,6 +43,12 @@ struct _GSGFMoveBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFMoveBackgammon, gsgf_move_backgammon, GSGF_TYPE_MOVE)
 
+static gboolean gsgf_move_backgammon_write_stream(const GSGFCookedValue *self,
+                                                  GOutputStream *out,
+                                                  gsize *bytes_written,
+                                                  GCancellable *cancellable,
+                                                  GError **error);
+
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
                                                            GError **error);
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_double();
@@ -71,10 +77,12 @@ static void
 gsgf_move_backgammon_class_init(GSGFMoveBackgammonClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFCookedValueClass *cooked_value_class =
+                        GSGF_COOKED_VALUE_CLASS (klass);
+
+        cooked_value_class->write_stream = gsgf_move_backgammon_write_stream;
 
         g_type_class_add_private(klass, sizeof(GSGFMoveBackgammonPrivate));
-
-        /* FIXME: write_stream() must be implemented! */
 
         object_class->finalize = gsgf_move_backgammon_finalize;
 }
@@ -376,4 +384,55 @@ gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i)
         g_assert(self->priv->num_moves <= 4);
 
         return (gsize) self->priv->moves[i][1];
+}
+
+static gboolean
+gsgf_move_backgammon_write_stream(const GSGFCookedValue *_self,
+                                  GOutputStream *out, gsize *bytes_written,
+                                  GCancellable *cancellable, GError **error)
+{
+        GSGFMoveBackgammon *self = GSGF_MOVE_BACKGAMMON (_self);
+        gchar buffer[2];
+        gsize written_here;
+        gint i;
+
+        *bytes_written = 0;
+
+        if (gsgf_move_backgammon_is_regular (self)) {
+                buffer[0] = '0' + self->priv->dice[0];
+                buffer[1] = '0' + self->priv->dice[1];
+                if (!g_output_stream_write_all(out, buffer, 2,
+                                               &written_here,
+                                               cancellable, error)) {
+                        *bytes_written += written_here;
+                        return FALSE;
+                }
+                for (i = 0; i < self->priv->num_moves; ++i) {
+                        buffer[0] = self->priv->moves[i][0] + 'a';
+                        buffer[1] = self->priv->moves[i][1] + 'a';
+                        if (!g_output_stream_write_all(out, buffer, 2,
+                                                       &written_here,
+                                                       cancellable, error)) {
+                                *bytes_written += written_here;
+                                return FALSE;
+                        }
+                }
+        } else if (gsgf_move_backgammon_is_double (self)) {
+                if (!g_output_stream_write_all(out, "double", 6,
+                                               bytes_written,
+                                               cancellable, error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_take (self)) {
+                if (!g_output_stream_write_all(out, "take", 4,
+                                               bytes_written,
+                                               cancellable, error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_drop (self)) {
+                if (!g_output_stream_write_all(out, "drop", 4,
+                                               bytes_written,
+                                               cancellable, error))
+                        return FALSE;
+        }
+
+        return TRUE;
 }
