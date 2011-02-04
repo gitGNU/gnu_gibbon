@@ -3,16 +3,141 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
 ]>
-<chapter>
+<chapter id="general-properties">
+  <para>
+    The following properties can be used in all flavors of SGF.  You should
+    note that some of them are bound to abstract classes in libgsgf.  When
+    parsing SGF data, the values are cooked into the corresponding derived
+    classes of the particular <link linkend="GSGFFlavor">GSGFFlavor</link>
+    in use.
+  </para>
+  <para>
+    For example, for backgammon, whenever a 
+    <link linkend="GSGFMove">GSGFMove</link> is specified as the type,
+    you will really get a 
+    <link linkend="GSGFMoveBackgammon">GSGFMoveBackgammon</link>.
+    The same applies to <link linkend="GSGFPoint">GSGFPoint</link>
+    (cast to <link linkend="GSGFPointBackgammon">GSGFPointBackgammon</link>,
+    and
+    to <link linkend="GSGFStone">GSGFStone</link>
+    (cast to <link linkend="GSGFStoneBackgammon">GSGFStoneBackgammon</link>,
+  </para>
   <title>General SGF Properties</title>
-  <sect1>
+  <sect1 id="move-properties">
+    <title>Move Properties</title>
+    <sect2 id="property-B">
+      <title>B (Black move)</title>
+      <para>
+        Type: <link linkend="GSGFMove">GSGFMove</link>:
+      </para>
+      <para>
+        A move for player Black.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#B">http://www.red-bean.com/sgf/properties.html#B</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-KO">
+      <title>KO (Illegal move)</title>
+      <para>
+        Type: <link linkend="GSGFEmpty">GSGFEmpty</link>:
+      </para>
+      <para>
+        Mark a move node as illegal.  This property is a no-op for
+        applications based on libgsgf.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#KO">http://www.red-bean.com/sgf/properties.html#KO</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-MN">
+      <title>MN (Move number)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>:
+      </para>
+      <para>
+        Set move number.  This property is only interesting for
+        incomplete games.  Otherwise you should just rely on
+        chronological move numbers.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#MN">http://www.red-bean.com/sgf/properties.html#MN</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-W">
+      <title>W (White move)</title>
+      <para>
+        Type: <link linkend="GSGFMove">GSGFMove</link>:
+      </para>
+      <para>
+        A move for player White.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#W">http://www.red-bean.com/sgf/properties.html#W</link>.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="setup-properties">
+    <title>Setup Properties</title>
+    <sect2 id="property-AB">
+      <title>AB (Add black stone)</title>
+      <para>
+        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        <link linkend="GSGFStone">GSGFStone</link>:
+      </para>
+      <para>
+        Set a black stone.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#AB">http://www.red-bean.com/sgf/properties.html#AB</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-AE">
+      <title>AE (Add empty stone, or clear point)</title>
+      <para>
+        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        <link linkend="GSGFPoint">GSGFPoint</link>:
+      </para>
+      <para>
+        Clear a point.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#AE">http://www.red-bean.com/sgf/properties.html#AE</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-AW">
+      <title>AW (Add white stone)</title>
+      <para>
+        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        <link linkend="GSGFStone">GSGFStone</link>:
+      </para>
+      <para>
+        Set a white stone.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#AW">http://www.red-bean.com/sgf/properties.html#AW</link>.
+      </para>
+    </sect2>
+    <sect2 id="property-PL">
+      <title>PL (Player on turn)</title>
+      <para>
+        Type: <link linkend="GSGFColor">GSGFColor</link>:
+      </para>
+      <para>
+        Tells whose turn it is.  Not needed for complete games.
+      </para>
+      <para>
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#PL">http://www.red-bean.com/sgf/properties.html#PL</link>.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="root-properties">
     <title>Root Properties</title>
     <para>
       Root properties are only allowed in the first node of a 
       <link linkend="GSGFGameTree">GSGFGameTree</link>.
     </para>
-
-    <sect2>
+    <sect2 id="property-AP">
       <title>AP (Application)</title>
       <para>
         Type: <link linkend="GSGFComposed">GSGFComposed</link>:
@@ -23,7 +148,7 @@
         version.  Both values are treated as opaque.
       </para>
       <para>
-        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#AP</link>.
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#AP">http://www.red-bean.com/sgf/properties.html#AP</link>.
       </para>
     </sect2>
 
@@ -38,7 +163,7 @@
         by this library.
       </para>
       <para>
-        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#CA</link>.
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#CA">http://www.red-bean.com/sgf/properties.html#CA</link>.
       </para>
     </sect2>
 
@@ -76,7 +201,7 @@
         values are in the range 0-3.
       </para>
       <para>
-        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#ST</link>.
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#ST">http://www.red-bean.com/sgf/properties.html#ST</link>.
       </para>
     </sect2>
 
@@ -96,9 +221,8 @@
         <link linkend="GSGFComposed">GSGFComposed</link>.
       </para>
       <para>
-        See <link linkend="http://www.red-bean.com/sgf/properties.html#GM">http://www.red-bean.com/sgf/properties.html#SZ</link>.
+        See <link linkend="http://www.red-bean.com/sgf/properties.html#SZ">http://www.red-bean.com/sgf/properties.html#SZ</link>.
       </para>
     </sect2>
-
   </sect1>
 </chapter>
