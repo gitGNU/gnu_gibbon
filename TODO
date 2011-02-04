@@ -20,7 +20,6 @@
 - Rewrite libsvg so that we can get the dimensions of every element.
 - Glib 2.2 now has the GResolver API.  Use it!
 - Review documentation for libgsgf.
-- Add assertions to libgsgf.
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
 - Check that a node cannot contain the same property twice.
@@ -28,3 +27,4 @@
   interface.
 - Dito for convert().
 - Remove all traces of backgammon from gsgf.h.
+- Let flavors give hints for compressing list of stones.
