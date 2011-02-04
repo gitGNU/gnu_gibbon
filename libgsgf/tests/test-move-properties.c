@@ -420,8 +420,6 @@ static gboolean
 test_prop_KO(const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "KO");
-        const GSGFNumber *move_number;
-        gint64 num;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'KO'!\n");
