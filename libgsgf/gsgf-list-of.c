@@ -88,7 +88,7 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
  * @type: Type of items.
  *
  * Creates a new #GSGFListOf from a list of #GSGFCookedValue objects.  The
- * stored items are "hijacked" and are now considered property of the list_ofd
+ * stored items are "hijacked" and are now considered property of the list_of
  * object, and you must not g_object_unref() them yourself.
  *
  * Returns: The new #GSGFListOf.
