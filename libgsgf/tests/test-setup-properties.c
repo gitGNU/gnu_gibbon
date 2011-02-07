@@ -31,6 +31,8 @@ char *filename = "setup-properties.sgf";
 static gboolean test_prop_AB(const GSGFNode *node);
 static gboolean test_prop_AW(const GSGFNode *node);
 static gboolean test_prop_AE(const GSGFNode *node);
+static gboolean test_prop_PL(const GSGFNode *node, GSGFColorEnum expect,
+                             const gchar *name);
 
 int 
 test_collection(GSGFCollection *collection, GError *error)
@@ -70,6 +72,54 @@ test_collection(GSGFCollection *collection, GError *error)
         if (!test_prop_AW(node))
                 return -1;
         if (!test_prop_AE(node))
+                return -1;
+
+        if (!test_prop_PL(node, GSGF_COLOR_BLACK, "black"))
+                return -1;
+
+        item = g_list_nth_data(nodes, 2);
+        if (!item) {
+                fprintf(stderr, "Node #2 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_PL(node, GSGF_COLOR_BLACK, "black"))
+                return -1;
+
+        item = g_list_nth_data(nodes, 3);
+        if (!item) {
+                fprintf(stderr, "Node #3 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_PL(node, GSGF_COLOR_BLACK, "black"))
+                return -1;
+
+        item = g_list_nth_data(nodes, 4);
+        if (!item) {
+                fprintf(stderr, "Node #4 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_PL(node, GSGF_COLOR_WHITE, "white"))
+                return -1;
+
+        item = g_list_nth_data(nodes,5);
+        if (!item) {
+                fprintf(stderr, "Node #5 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_PL(node, GSGF_COLOR_WHITE, "white"))
+                return -1;
+
+        item = g_list_nth_data(nodes,6);
+        if (!item) {
+                fprintf(stderr, "Node #6 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE(item);
+        if (!test_prop_PL(node, GSGF_COLOR_WHITE, "white"))
                 return -1;
 
         return expect_error(error, NULL);
@@ -253,6 +303,32 @@ test_prop_AE(const GSGFNode *node)
         if (point != 0) {
                 fprintf(stderr, "Item #0 is not a 0 point but a %d point!\n",
                                 point);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_PL (const GSGFNode *node, GSGFColorEnum expect, const gchar *name)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked(node, "PL");
+        GSGFColor *color;
+
+        if (!cooked_value) {
+                fprintf (stderr, "No property 'PL'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_COLOR (cooked_value)) {
+                fprintf (stderr, "Property 'PL' is not a GSGFColor!\n");
+                return FALSE;
+        }
+
+        color = GSGF_COLOR (cooked_value);
+        if (expect != gsgf_color_get_color (color)) {
+                fprintf (stderr, "Property 'PL' is not %s!\n", name);
                 return FALSE;
         }
 
