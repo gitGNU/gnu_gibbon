@@ -377,7 +377,7 @@ ${symbol_stem}_init$func_space($class *self)
 {$private_init}
 
 static void
-${symbol_stem}_$destructor$func_space($class *object)
+${symbol_stem}_$destructor$func_space(GObject *object)
 {$private_finalize
         G_OBJECT_CLASS$macro_space(${symbol_stem}_parent_class)->$destructor(object);
 }
