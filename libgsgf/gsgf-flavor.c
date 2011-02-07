@@ -182,6 +182,13 @@ static GSGFFlavorTypeDef gsgf_flavor_MN = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_PL = {
+                gsgf_color_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static gboolean gsgf_constraint_is_ST_number(const GSGFCookedValue *cooked,
                                              const GSGFRaw *raw,
                                              const GSGFProperty *property,
@@ -263,6 +270,14 @@ static GSGFFlavorTypeDef *gsgf_m_handlers[26] = {
                 NULL, NULL,
 };
 
+static GSGFFlavorTypeDef *gsgf_p_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_PL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_s_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -287,7 +302,7 @@ static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 gsgf_m_handlers,
                 NULL,
                 NULL,
-                NULL,
+                gsgf_p_handlers,
                 NULL,
                 NULL,
                 gsgf_s_handlers,

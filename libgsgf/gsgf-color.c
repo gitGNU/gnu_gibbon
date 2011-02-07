@@ -33,7 +33,7 @@
 
 typedef struct _GSGFColorPrivate GSGFColorPrivate;
 struct _GSGFColorPrivate {
-        enum GSGFColorEnum color;
+        GSGFColorEnum color;
 };
 
 #define GSGF_COLOR_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -50,10 +50,8 @@ gsgf_color_init (GSGFColor *self)
 }
 
 static void
-gsgf_color_finalize (GSGFColor *object)
+gsgf_color_finalize (GObject *object)
 {
-        GSGFColor *self = GSGF_COLOR (object);
-
         G_OBJECT_CLASS (gsgf_color_parent_class)->finalize(object);
 }
 
@@ -72,11 +70,85 @@ gsgf_color_class_init (GSGFColorClass *klass)
 }
 
 GSGFColor *
-gsgf_color_new (enum GSGFColorEnum color)
+gsgf_color_new (GSGFColorEnum color)
 {
         GSGFColor *self = g_object_new (GSGF_TYPE_COLOR, NULL);
 
         self->priv->color = color;
 
         return self;
+}
+
+GSGFColorEnum
+gsgf_color_get_color (const GSGFColor *self)
+{
+        if (!GSGF_IS_COLOR (self))
+                g_return_val_if_fail (GSGF_IS_COLOR (self), GSGF_COLOR_WHITE);
+
+        return self->priv->color;
+}
+
+/**
+ * gsgf_color_new_from_raw:
+ * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @flavor: The #GSGFFlavor of the current #GSGFGameTree.
+ * @property: The #GSGFProperty @raw came from.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFColor from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * The @raw parameter should contain the color as a string.  Both abbreviated
+ * ("B" or "W") and spelled out ("black" or "white") colors are accepted.
+ * Case does not matter.
+ *
+ * Returns: The new #GSGFColor or %NULL in case of an error.
+ */
+GSGFCookedValue *
+gsgf_color_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
+                        const GSGFProperty *property, GError **error)
+{
+        const gchar *string;
+        GSGFColorEnum color;
+
+        g_return_val_if_fail (GSGF_IS_RAW (raw), NULL);
+        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), NULL);
+        g_return_val_if_fail (GSGF_IS_PROPERTY (property), NULL);
+
+        if (error)
+                *error = NULL;
+
+        if (1 != gsgf_raw_get_number_of_values(raw)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                             _("Only one value allowed for property"));
+                return NULL;
+        }
+        string = gsgf_raw_get_value(raw, 0);
+
+        if ((string[0] == 'B' || string[0] == 'b') && !string[1]) {
+                color = GSGF_COLOR_BLACK;
+        } else if ((string[0] == 'W' || string[0] == 'w') && !string[1]) {
+                   color = GSGF_COLOR_WHITE;
+        } else if ((string[0] == 'B' || string[0] == 'b')
+                   && (string[1] == 'L' || string[1] == 'l')
+                   && (string[2] == 'A' || string[2] == 'a')
+                   && (string[3] == 'C' || string[3] == 'c')
+                   && (string[4] == 'K' || string[4] == 'k')
+                   && !string[5]) {
+                        color = GSGF_COLOR_BLACK;
+        } else if ((string[0] == 'W' || string[0] == 'w')
+                   && (string[1] == 'H' || string[1] == 'h')
+                   && (string[2] == 'I' || string[2] == 'i')
+                   && (string[3] == 'T' || string[3] == 't')
+                   && (string[4] == 'E' || string[4] == 'e')
+                   && !string[5]) {
+                        color = GSGF_COLOR_WHITE;
+        } else {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Unrecognized color identifier '%s'"),
+                             string);
+                return NULL;
+        }
+
+        return GSGF_COOKED_VALUE (gsgf_color_new (color));
 }

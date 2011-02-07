@@ -74,11 +74,17 @@ GType gsgf_color_get_type (void) G_GNUC_CONST;
  *
  * Constants for black and white.
  */
-enum GSGFColorEnum {
+typedef enum {
         GSGF_COLOR_WHITE = 1,
         GSGF_COLOR_BLACK = 0
-};
+} GSGFColorEnum;
 
-GSGFColor *gsgf_color_new (enum GSGFColorEnum color);
+GSGFColor *gsgf_color_new (GSGFColorEnum color);
+
+GSGFColorEnum gsgf_color_get_color (const GSGFColor *self);
+GSGFCookedValue *gsgf_color_new_from_raw(const GSGFRaw* raw,
+                                         const GSGFFlavor *flavor,
+                                         const struct _GSGFProperty *property,
+                                         GError **error);
 
 #endif
