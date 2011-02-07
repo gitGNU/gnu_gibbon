@@ -41,6 +41,12 @@ struct _GSGFColorPrivate {
 
 G_DEFINE_TYPE (GSGFColor, gsgf_color, GSGF_TYPE_COOKED_VALUE)
 
+static gboolean gsgf_color_write_stream (const GSGFCookedValue *self,
+                                         GOutputStream *out,
+                                         gsize *bytes_written,
+                                         GCancellable *cancellable,
+                                         GError **error);
+
 static void 
 gsgf_color_init (GSGFColor *self)
 {        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
@@ -61,8 +67,7 @@ gsgf_color_class_init (GSGFColorClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods from parent class! */
-        /* gsgf_cooked_value_class->do_this = gsgf_color_do_this; */
+        gsgf_cooked_value_class->write_stream = gsgf_color_write_stream;
         
         g_type_class_add_private(klass, sizeof (GSGFColorPrivate));
 
@@ -151,4 +156,28 @@ gsgf_color_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
         }
 
         return GSGF_COOKED_VALUE (gsgf_color_new (color));
+}
+
+static gboolean
+gsgf_color_write_stream (const GSGFCookedValue *_self,
+                         GOutputStream *out, gsize *bytes_written,
+                         GCancellable *cancellable, GError **error)
+{
+        GSGFColor *self = GSGF_COLOR (_self);
+        gchar buffer[2];
+
+        *bytes_written = 0;
+
+        if (self->priv->color == GSGF_COLOR_BLACK)
+                buffer[0] = 'B';
+        else
+                buffer[0] = 'W';
+        buffer[1] = 0;
+
+        if (!g_output_stream_write_all(out, buffer, 1,
+                                       bytes_written,
+                                       cancellable, error))
+                return FALSE;
+
+        return TRUE;
 }
