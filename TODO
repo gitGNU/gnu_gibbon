@@ -30,3 +30,5 @@
 - Let flavors give hints for compressing list of stones.
 - Give ids to all documentation nodes so that file names are unique.
 - Better formatting of libgsgf output.
+- Check that write_stream methods do not leak memory (pointer to
+  temporary buffer must be freed, or alloca() must be used).
