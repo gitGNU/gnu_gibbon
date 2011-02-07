@@ -199,5 +199,7 @@ gsgf_number_write_stream(const GSGFCookedValue *_self,
                                        cancellable, error))
                 return FALSE;
 
+        g_free(value);
+
         return TRUE;
 }
