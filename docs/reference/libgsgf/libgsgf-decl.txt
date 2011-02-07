@@ -661,6 +661,13 @@ struct _GSGFFlavorClass
                                    const struct _GSGFRaw *raw,
                                    gsize i,
                                    GError **error);
+
+        gboolean (*write_compressed_list) (const GSGFFlavor *flavor,
+                                           const struct _GSGFListOf *list_of,
+                                           GOutputStream *out,
+                                           gsize *bytes_written,
+                                           GCancellable *cancellable,
+                                           GError **error);
 };
 </STRUCT>
 <FUNCTION>
@@ -1042,7 +1049,7 @@ void
 <FUNCTION>
 <NAME>gsgf_list_of_new</NAME>
 <RETURNS>GSGFListOf *</RETURNS>
-GType type 
+GType type, const GSGFFlavor *flavor 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_get_item_type</NAME>
