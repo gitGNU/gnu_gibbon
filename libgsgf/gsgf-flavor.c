@@ -124,6 +124,13 @@ static GSGFFlavorTypeDef gsgf_flavor_C = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_N = {
+                gsgf_simple_text_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_AB = {
                 gsgf_list_of_stones_new_from_raw, {
                                 NULL
@@ -269,7 +276,7 @@ static GSGFFlavorTypeDef gsgf_flavor_UC = {
 static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
                 NULL, &gsgf_flavor_B_or_W, &gsgf_flavor_C, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_N, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, &gsgf_flavor_B_or_W, NULL,
                 NULL, NULL,
 };
