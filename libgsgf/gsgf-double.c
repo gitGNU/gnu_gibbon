@@ -91,7 +91,17 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
 
         number = GSGF_NUMBER (cooked);
 
+        /* FIXME! Error checking! */
+        return NULL;
 }
 
-void gsgf_double_set_value(GSGFDouble *self, GSGFDoubleEnum value);
-gint64 gsgf_double_get_value(const GSGFDouble *self);
+void
+gsgf_double_set_value (GSGFDouble *self, GSGFDoubleEnum value)
+{
+}
+
+GSGFDoubleEnum
+gsgf_double_get_value (const GSGFDouble *self)
+{
+        return GSGF_DOUBLE_NORMAL;
+}

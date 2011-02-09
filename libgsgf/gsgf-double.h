@@ -83,11 +83,11 @@ typedef enum {
 } GSGFDoubleEnum;
 
 GSGFDouble *gsgf_double_new (GSGFDoubleEnum grade);
-GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
-                                          const GSGFFlavor *flavor,
-                                          const struct _GSGFProperty *property,
-                                          GError **error);
-void gsgf_double_set_value(GSGFDouble *self, GSGFDoubleEnum value);
-gint64 gsgf_double_get_value(const GSGFDouble *self);
+GSGFCookedValue *gsgf_double_new_from_raw (const GSGFRaw* raw,
+                                           const GSGFFlavor *flavor,
+                                           const struct _GSGFProperty *property,
+                                           GError **error);
+void gsgf_double_set_value (GSGFDouble *self, GSGFDoubleEnum value);
+GSGFDoubleEnum gsgf_double_get_value(const GSGFDouble *self);
 
 #endif

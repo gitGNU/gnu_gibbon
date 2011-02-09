@@ -26,6 +26,7 @@ TESTS_C = test-convert			\
 	  test-multi-game-tree		\
 	  test-move-properties		\
 	  test-nested-game-tree		\
+	  test-node-annotation		\
 	  test-non-unique-points	\
 	  test-number			\
 	  test-real			\
@@ -64,6 +65,7 @@ test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_move_properties_SOURCES = lib.c main.c test-move-properties.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
 test_nested_game_tree_SOURCES = lib.c main.c test-nested-game-tree.c
+test_node_annotation_SOURCES = lib.c main.c test-node-annotation.c
 test_non_unique_points_SOURCES = lib.c main.c test-non-unique-points.c
 test_number_SOURCES = lib.c test-number.c
 test_real_SOURCES = lib.c test-real.c
@@ -90,6 +92,7 @@ SGF_FILES = cp1251.sgf			\
 	    minimal.sgf			\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
+	    node-annotation.sgf		\
 	    non-unique-points.sgf	\
 	    really-empty.sgf		\
 	    root-properties.sgf		\
