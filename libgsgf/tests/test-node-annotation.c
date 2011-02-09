@@ -50,6 +50,7 @@ test_collection (GSGFCollection *collection, GError *error)
         gpointer item;
         GSGFNode *node;
 
+/*
         if (!test_unique_position_DM ())
                 return -1;
         if (!test_unique_position_GB ())
@@ -58,6 +59,7 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         if (!test_unique_position_UC ())
                 return -1;
+*/
 
         if (error) {
                 fprintf(stderr, "%s: %s\n", filename, error->message);
@@ -77,13 +79,22 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         }
 
+        item = g_list_nth_data (nodes, 0);
+        if (!item) {
+                fprintf(stderr, "Property #0 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_C (node))
+                return -1;
+
         item = g_list_nth_data (nodes, 1);
         if (!item) {
                 fprintf(stderr, "Property #1 not found.\n");
                 return -1;
         }
         node = GSGF_NODE (item);
-        if (!test_prop_C (node))
+        if (!test_prop_DM (node))
                 return -1;
 
         item = g_list_nth_data (nodes, 2);
@@ -92,7 +103,7 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         }
         node = GSGF_NODE (item);
-        if (!test_prop_DM (node))
+        if (!test_prop_GB (node))
                 return -1;
 
         item = g_list_nth_data (nodes, 3);
@@ -101,7 +112,7 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         }
         node = GSGF_NODE (item);
-        if (!test_prop_GB (node))
+        if (!test_prop_GW (node))
                 return -1;
 
         item = g_list_nth_data (nodes, 4);
@@ -110,23 +121,14 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         }
         node = GSGF_NODE (item);
-        if (!test_prop_GW (node))
-                return -1;
-
-        item = g_list_nth_data (nodes, 5);
-        if (!item) {
-                fprintf(stderr, "Property #5 not found.\n");
-                return -1;
-        }
-        node = GSGF_NODE (item);
         if (!test_prop_HO (node))
                 return -1;
         if (!test_prop_N (node))
                 return -1;
 
-        item = g_list_nth_data (nodes, 6);
+        item = g_list_nth_data (nodes, 5);
         if (!item) {
-                fprintf(stderr, "Property #6 not found.\n");
+                fprintf(stderr, "Property #5 not found.\n");
                 return -1;
         }
         node = GSGF_NODE (item);
@@ -298,7 +300,7 @@ test_prop_DM (const GSGFNode *node)
 
         value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
         if (expect != value) {
-                fprintf(stderr, "DM: Expected %d', not '%d'!\n", expect, value);
+                fprintf(stderr, "DM: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
@@ -325,7 +327,7 @@ test_prop_GB (const GSGFNode *node)
 
         value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
         if (expect != value) {
-                fprintf(stderr, "GB: Expected %d', not '%d'!\n", expect, value);
+                fprintf(stderr, "GB: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
@@ -352,7 +354,7 @@ test_prop_GW (const GSGFNode *node)
 
         value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
         if (expect != value) {
-                fprintf(stderr, "GW: Expected %d', not '%d'!\n", expect, value);
+                fprintf(stderr, "GW: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
@@ -379,7 +381,7 @@ test_prop_HO (const GSGFNode *node)
 
         value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
         if (expect != value) {
-                fprintf(stderr, "HO: Expected %d', not '%d'!\n", expect, value);
+                fprintf(stderr, "HO: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
@@ -433,7 +435,7 @@ test_prop_UC (const GSGFNode *node)
 
         value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
         if (expect != value) {
-                fprintf(stderr, "UC: Expected %d', not '%d'!\n", expect, value);
+                fprintf(stderr, "UC: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
