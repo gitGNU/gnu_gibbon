@@ -121,6 +121,64 @@ _gsgf_real_new(const gchar *string, GError **error)
 }
 
 /**
+ * gsgf_real_new_from_raw:
+ * @raw: A #GSGFRaw containing exactly one value that should be stored.
+ * @flavor: The #GSGFFlavor of the current #GSGFGameTree.
+ * @property: The #GSGFProperty @raw came from.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFReal from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * Returns: The new #GSGFReal or %NULL in case of an error.
+ */
+GSGFCookedValue *
+gsgf_real_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
+                       const GSGFProperty *property, GError **error)
+{
+        gchar *endptr;
+        gdouble value;
+        const gchar *string;
+
+        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+
+        if (error)
+                *error = NULL;
+
+        if (1 != gsgf_raw_get_number_of_values(raw)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                            _("Only one value allowed for property"));
+                return NULL;
+        }
+        string = gsgf_raw_get_value(raw, 0);
+
+        /* _gsgf_real_new implicitely resets errno.  We do the same explicitely.  */
+        errno = 0;
+
+        value = g_ascii_strtod(string, &endptr);
+
+        if (errno) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s': %s"), string, strerror(errno));
+                return NULL;
+        }
+
+        if (endptr == string) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Invalid number '%s'"), string);
+                return NULL;
+        }
+
+        if (*endptr) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                            _("Trailing garbage after number in '%s'"), string);
+                return NULL;
+        }
+
+        return GSGF_COOKED_VALUE(gsgf_real_new(value));
+}
+
+/**
  * gsgf_real_set_value:
  * @self: The #GSGFReal.
  * @value: The new value to store.

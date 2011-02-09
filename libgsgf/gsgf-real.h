@@ -68,6 +68,10 @@ struct _GSGFRealClass
 GType gsgf_real_get_type(void) G_GNUC_CONST;
 
 GSGFReal* gsgf_real_new(gdouble value);
+GSGFCookedValue *gsgf_real_new_from_raw(const GSGFRaw* raw,
+                                        const GSGFFlavor *flavor,
+                                        const struct _GSGFProperty *property,
+                                        GError **error);
 void gsgf_real_set_value(GSGFReal *self, gdouble value);
 gdouble gsgf_real_get_value(const GSGFReal *self);
 
