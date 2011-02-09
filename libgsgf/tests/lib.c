@@ -119,14 +119,13 @@ gboolean
 expect_error_from_sgf (const gchar *sgf,  GError *expect)
 {
         GMemoryInputStream *stream =
-                        g_memory_input_stream_new_from_data (sgf,
-                                                             strlen (sgf),
-                                                             NULL);
+                        g_memory_input_stream_new_from_data (sgf, -1, NULL);
         GError *error = NULL;
-        GSGFCollection *collection = gsgf_collection_parse_stream (stream,
-                                                                   NULL,
-                                                                   error);
+        GSGFCollection *collection =
+                        gsgf_collection_parse_stream (stream, NULL, error);
 
-        if (!expect_error (error, expect))
+        if (0 != expect_error (error, expect))
                 return FALSE;
+
+        return TRUE;
 }
