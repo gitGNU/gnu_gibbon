@@ -1,0 +1,97 @@
+/*
+ * This file is part of gibbon.
+ * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
+ *
+ * gibbon is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * gibbon is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * SECTION:gsgf-double
+ * @short_description: An integer number that is either one or two.
+ *
+ * Since: 0.1.1
+ *
+ * Emphasizable properties.
+ **/
+
+#include <glib.h>
+#include <glib/gi18n.h>
+
+#include <libgsgf/gsgf.h>
+
+G_DEFINE_TYPE (GSGFDouble, gsgf_double, GSGF_TYPE_NUMBER)
+
+static void 
+gsgf_double_init (GSGFDouble *self)
+{
+}
+
+static void
+gsgf_double_finalize (GObject *object)
+{
+        G_OBJECT_CLASS (gsgf_double_parent_class)->finalize(object);
+}
+
+static void
+gsgf_double_class_init (GSGFDoubleClass *klass)
+{
+        GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+        object_class->finalize = gsgf_double_finalize;
+}
+
+GSGFDouble *
+gsgf_double_new (GSGFDoubleEnum grade)
+{
+        GSGFDouble *self = g_object_new (GSGF_TYPE_DOUBLE, NULL);
+
+        if (grade == GSGF_DOUBLE_VERY)
+                gsgf_number_set_value (GSGF_NUMBER (self), 2);
+        else
+                gsgf_number_set_value (GSGF_NUMBER (self), 1);
+
+        return self;
+}
+
+/**
+ * gsgf_double_new_from_raw:
+ * @raw: A #GSGFRaw containing the value that should be stored.
+ * @flavor: The #GSGFFlavor of the current #GSGFGameTree.
+ * @property: The #GSGFProperty @raw came from.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFDouble from a #GSGFRaw.  This constructor is only
+ * interesting for people that write their own #GSGFFlavor.
+ *
+ * Returns: The new #GSGFDouble or %NULL in case of an error.
+ */
+GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
+                                          const GSGFFlavor *flavor,
+                                          const struct _GSGFProperty *property,
+                                          GError **error)
+{
+        GSGFCookedValue *cooked = gsgf_number_new_from_raw (raw, flavor,
+                                                            property, error);
+        GSGFNumber *number;
+
+        if (!cooked)
+                return NULL;
+
+        number = GSGF_NUMBER (cooked);
+
+}
+
+void gsgf_double_set_value(GSGFDouble *self, GSGFDoubleEnum value);
+gint64 gsgf_double_get_value(const GSGFDouble *self);

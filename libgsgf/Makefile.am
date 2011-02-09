@@ -55,7 +55,8 @@ libgsgf_a_SOURCES = 			\
 	gsgf-text.c			\
 	gsgf-util.c			\
 	libgsgf.c			\
-	gsgf-color.c	
+	gsgf-color.c				\
+	gsgf-double.c	
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -84,4 +85,5 @@ noinst_HEADERS =			\
 	gsgf-stone-backgammon.h		\
 	gsgf-text.h			\
 	gsgf-util.h			\
-	gsgf-color.h
+	gsgf-color.h			\
+	gsgf-double.h

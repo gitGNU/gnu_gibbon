@@ -48,6 +48,8 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_USAGE_ERROR: Invalid library usage.
  * @GSGF_ERROR_NON_UNIQUE_POINT: Non-unique points in list.
  * @GSGF_ERROR_NON_UNIQUE_STONE: Non-unique stones in list.
+ * @GSGF_ERROR_DOUBLE_OUT_OF_RANGE: A #GSGFDouble was set to something out of
+ *                                  the range of a #GSGFDoubleEnum.
  *
  * Error codes for the domain #GSGF_ERROR.
  */
@@ -69,7 +71,8 @@ typedef enum {
         GSGF_ERROR_INVALID_STONE = 15,
         GSGF_ERROR_USAGE_ERROR = 16,
         GSGF_ERROR_NON_UNIQUE_POINT = 17,
-        GSGF_ERROR_NON_UNIQUE_STONE = 18
+        GSGF_ERROR_NON_UNIQUE_STONE = 18,
+        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 19
 } GSGFError;
 
 /**

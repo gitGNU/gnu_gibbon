@@ -34,6 +34,7 @@
 #include <libgsgf/gsgf-text.h>
 #include <libgsgf/gsgf-compose.h>
 #include <libgsgf/gsgf-color.h>
+#include <libgsgf/gsgf-double.h>
 
 #include <libgsgf/gsgf-move.h>
 #include <libgsgf/gsgf-move-backgammon.h>
