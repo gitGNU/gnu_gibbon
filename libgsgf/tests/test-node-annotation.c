@@ -28,6 +28,10 @@
 
 char *filename = "node-annotation.sgf";
 
+static gboolean test_unique_position_DM (void);
+static gboolean test_unique_position_GB (void);
+static gboolean test_unique_position_GW (void);
+static gboolean test_unique_position_UC (void);
 static gboolean test_prop_C (const GSGFNode *node);
 static gboolean test_prop_DM (const GSGFNode *node);
 static gboolean test_prop_GB (const GSGFNode *node);
@@ -45,6 +49,15 @@ test_collection (GSGFCollection *collection, GError *error)
         GList *nodes;
         gpointer item;
         GSGFNode *node;
+
+        if (!test_unique_position_DM ())
+                return -1;
+        if (!test_unique_position_GB ())
+                return -1;
+        if (!test_unique_position_GW ())
+                return -1;
+        if (!test_unique_position_UC ())
+                return -1;
 
         if (error) {
                 fprintf(stderr, "%s: %s\n", filename, error->message);
@@ -123,6 +136,82 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
 
         return expect_error (error, NULL);
+}
+
+static gboolean
+test_unique_position_DM (void)
+{
+        GError *expect = NULL;
+
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     _("Property 'DM' must not be mixed with"
+                       "'UC', 'GB', or 'GW' within a node"));
+
+        if (!expect_error_from_sgf ("(;DM[1]UC[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;DM[1]GB[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;DM[1]GW[2])", expect))
+                return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_position_GB (void)
+{
+        GError *expect = NULL;
+
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     _("Property 'GB' must not be mixed with"
+                       "'DM', 'UC', or 'GW' within a node"));
+
+        if (!expect_error_from_sgf ("(;GB[1]UC[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;GB[1]DM[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;GB[1]GW[2])", expect))
+                return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_position_GW (void)
+{
+        GError *expect = NULL;
+
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     _("Property 'GW' must not be mixed with"
+                       "'DM', 'UC', or 'GB' within a node"));
+
+        if (!expect_error_from_sgf ("(;GW[1]UC[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;GW[1]DM[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;GW[1]GB[2])", expect))
+                return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_position_UC (void)
+{
+        GError *expect = NULL;
+
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     _("Property 'UC' must not be mixed with"
+                       "'DM', 'GB', or 'GW' within a node"));
+
+        if (!expect_error_from_sgf ("(;UC[1]DM[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;UC[1]GB[2])", expect))
+                return FALSE;
+        if (!expect_error_from_sgf ("(;UC[1]GW[2])", expect))
+                return FALSE;
+
+        return TRUE;
 }
 
 static gboolean
