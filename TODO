@@ -33,3 +33,4 @@
 - Check that write_stream methods do not leak memory (pointer to
   temporary buffer must be freed, or alloca() must be used).
 - Fix test test-node-annotations: The order of collisions is arbitrary!
+- Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
