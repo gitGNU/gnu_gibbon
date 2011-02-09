@@ -122,7 +122,7 @@ expect_error_from_sgf (const gchar *sgf,  GError *expect)
                         g_memory_input_stream_new_from_data (sgf, -1, NULL);
         GError *error = NULL;
         GSGFCollection *collection =
-                        gsgf_collection_parse_stream (stream, NULL, error);
+                        gsgf_collection_parse_stream (stream, NULL, &error);
 
         if (0 != expect_error (error, expect))
                 return FALSE;
