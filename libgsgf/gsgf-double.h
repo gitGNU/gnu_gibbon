@@ -78,8 +78,8 @@ GType gsgf_double_get_type (void) G_GNUC_CONST;
  * A binary value that is not yes or no but yes or very much.
  */
 typedef enum {
-        GSGF_DOUBLE_NORMAL,
-        GSGF_DOUBLE_VERY
+        GSGF_DOUBLE_NORMAL = 1,
+        GSGF_DOUBLE_VERY = 2
 } GSGFDoubleEnum;
 
 GSGFDouble *gsgf_double_new (GSGFDoubleEnum grade);

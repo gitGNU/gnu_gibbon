@@ -82,26 +82,50 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
                                           const struct _GSGFProperty *property,
                                           GError **error)
 {
-        GSGFCookedValue *cooked = gsgf_number_new_from_raw (raw, flavor,
-                                                            property, error);
+        GSGFDouble *self;
         GSGFNumber *number;
+        const gchar *string;
 
-        if (!cooked)
+        g_return_val_if_fail (GSGF_IS_RAW(raw), NULL);
+
+        if (error)
+                *error = NULL;
+
+        if (1 != gsgf_raw_get_number_of_values(raw)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
+                            _("Only one value allowed for property"));
                 return NULL;
+        }
 
-        number = GSGF_NUMBER (cooked);
+        string = gsgf_raw_get_value(raw, 0);
+        if (string[0] < '1' || string[0] > '2' || string[1]) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_DOUBLE_OUT_OF_RANGE,
+                            _("SGF double must be 1 or 2, not '%s'"),
+                            string);
+                return NULL;
+        }
 
-        /* FIXME! Error checking! */
-        return NULL;
+        self = gsgf_double_new (string[0] == '1' ?
+                                GSGF_DOUBLE_NORMAL : GSGF_DOUBLE_VERY);
+
+        return GSGF_COOKED_VALUE (self);
 }
 
 void
 gsgf_double_set_value (GSGFDouble *self, GSGFDoubleEnum value)
 {
+        g_return_if_fail (GSGF_IS_DOUBLE (self));
+
+        gsgf_number_set_value (GSGF_NUMBER (self), value);
 }
 
 GSGFDoubleEnum
 gsgf_double_get_value (const GSGFDouble *self)
 {
-        return GSGF_DOUBLE_NORMAL;
+        g_return_val_if_fail (GSGF_IS_DOUBLE (self), GSGF_DOUBLE_NORMAL);
+
+        if (2 == gsgf_number_get_value (GSGF_NUMBER (self)))
+                return GSGF_DOUBLE_VERY;
+        else
+                return GSGF_DOUBLE_NORMAL;
 }
