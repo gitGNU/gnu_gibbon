@@ -406,7 +406,7 @@ test_prop_N (const GSGFNode *node)
         }
 
         value = gsgf_text_get_value (GSGF_SIMPLE_TEXT (cooked_value));
-#define EXPECT "This is the test for node annotation properties."
+#define EXPECT "Node annotation properties"
         if (strcmp (EXPECT, value)) {
                 fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT, value);
                 return FALSE;
