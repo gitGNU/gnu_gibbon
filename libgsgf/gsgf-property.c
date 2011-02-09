@@ -231,6 +231,8 @@ _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError
                                          &cooked, error)) {
                 g_object_unref(self->priv->value);
                 self->priv->value = cooked;
+        } else {
+                return FALSE;
         }
 
         return TRUE;
