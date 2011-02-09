@@ -50,7 +50,6 @@ test_collection (GSGFCollection *collection, GError *error)
         gpointer item;
         GSGFNode *node;
 
-/*
         if (!test_unique_position_DM ())
                 return -1;
         if (!test_unique_position_GB ())
@@ -59,7 +58,6 @@ test_collection (GSGFCollection *collection, GError *error)
                 return -1;
         if (!test_unique_position_UC ())
                 return -1;
-*/
 
         if (error) {
                 fprintf(stderr, "%s: %s\n", filename, error->message);
