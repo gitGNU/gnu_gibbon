@@ -35,5 +35,6 @@ extern int expect_error_conditional(gboolean condition, const gchar *msg,
 gchar *g_memory_output_stream_get_string(const GMemoryOutputStream *stream);
 
 gchar *build_filename(const gchar *filename);
+gboolean expect_error_from_sgf (const gchar *sgf, GError *expect);
 
 #endif

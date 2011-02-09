@@ -114,3 +114,19 @@ build_filename(const gchar *filename)
 
         return g_build_filename(TEST_DIR, filename, NULL);
 }
+
+gboolean
+expect_error_from_sgf (const gchar *sgf,  GError *expect)
+{
+        GMemoryInputStream *stream =
+                        g_memory_input_stream_new_from_data (sgf,
+                                                             strlen (sgf),
+                                                             NULL);
+        GError *error = NULL;
+        GSGFCollection *collection = gsgf_collection_parse_stream (stream,
+                                                                   NULL,
+                                                                   error);
+
+        if (!expect_error (error, expect))
+                return FALSE;
+}
