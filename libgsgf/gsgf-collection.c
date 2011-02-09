@@ -759,9 +759,9 @@ gsgf_collection_apply_flavor(GSGFCollection *self, GError **error)
 
         while (iter) {
                 if (!_gsgf_game_tree_apply_flavor(GSGF_GAME_TREE(iter->data),
-                                                  error)) {
+                                                  error))
                         return FALSE;
-                }
+
                 iter = iter->next;
         }
 

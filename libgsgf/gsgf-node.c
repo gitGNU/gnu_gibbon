@@ -295,7 +295,8 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
 
         g_hash_table_iter_init(&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
-                if (!_gsgf_property_apply_flavor(GSGF_PROPERTY(value), flavor, error))
+                if (!_gsgf_property_apply_flavor (GSGF_PROPERTY(value),
+                                                  flavor, error))
                         return FALSE;
         }
 
