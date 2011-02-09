@@ -772,7 +772,7 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
                 if (columns_as_string) g_free(columns_as_string);
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Empty property"));
-                return FALSE;
+                return NULL;
         }
 
         dummy = gsgf_raw_new(columns_as_string);
@@ -781,7 +781,7 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
         g_object_unref(dummy);
 
         if (!cooked)
-                return FALSE;
+                return NULL;
         columns = GSGF_NUMBER(cooked);
 
         if (rows_as_string && rows_as_string[0]
@@ -792,7 +792,7 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 
                 if (!cooked) {
                         g_object_unref(columns);
-                        return FALSE;
+                        return NULL;
                 }
                 rows = GSGF_NUMBER(cooked);
         }
