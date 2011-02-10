@@ -143,6 +143,93 @@ const GSGFNode *self, const gchar *id
 const GSGFNode *self 
 </FUNCTION>
 <MACRO>
+<NAME>GSGF_TYPE_DOUBLE</NAME>
+#define GSGF_TYPE_DOUBLE \
+        (gsgf_double_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_DOUBLE</NAME>
+#define GSGF_DOUBLE(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_DOUBLE, \
+                GSGFDouble))
+</MACRO>
+<MACRO>
+<NAME>GSGF_DOUBLE_CLASS</NAME>
+#define GSGF_DOUBLE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
+        GSGF_TYPE_DOUBLE, GSGFDoubleClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_DOUBLE</NAME>
+#define GSGF_IS_DOUBLE(obj) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_DOUBLE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_DOUBLE_CLASS</NAME>
+#define GSGF_IS_DOUBLE_CLASS(klass) \
+        (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_DOUBLE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_DOUBLE_GET_CLASS</NAME>
+#define GSGF_DOUBLE_GET_CLASS(obj) \
+        (G_TYPE_INSTANCE_GET_CLASS (obj), \
+                GSGF_TYPE_DOUBLE, GSGFDoubleClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFDouble</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDouble</NAME>
+struct _GSGFDouble
+{
+        GSGFNumber parent_instance;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDoubleClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDoubleClass</NAME>
+struct _GSGFDoubleClass
+{
+        /* <private >*/
+        GSGFNumberClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_double_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<ENUM>
+<NAME>GSGFDoubleEnum</NAME>
+typedef enum {
+        GSGF_DOUBLE_NORMAL = 1,
+        GSGF_DOUBLE_VERY = 2
+} GSGFDoubleEnum;
+</ENUM>
+<FUNCTION>
+<NAME>gsgf_double_new</NAME>
+<RETURNS>GSGFDouble *</RETURNS>
+GSGFDoubleEnum grade 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_double_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_double_set_value</NAME>
+<RETURNS>void </RETURNS>
+GSGFDouble *self, GSGFDoubleEnum value 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_double_get_value</NAME>
+<RETURNS>GSGFDoubleEnum </RETURNS>
+const GSGFDouble *self 
+</FUNCTION>
+<MACRO>
 <NAME>GSGF_TYPE_REAL</NAME>
 #define GSGF_TYPE_REAL             (gsgf_real_get_type ())
 </MACRO>
@@ -206,6 +293,11 @@ void
 gdouble value 
 </FUNCTION>
 <FUNCTION>
+<NAME>gsgf_real_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
+</FUNCTION>
+<FUNCTION>
 <NAME>gsgf_real_set_value</NAME>
 <RETURNS>void </RETURNS>
 GSGFReal *self, gdouble value 
@@ -213,6 +305,11 @@ GSGFReal *self, gdouble value
 <FUNCTION>
 <NAME>gsgf_real_get_value</NAME>
 <RETURNS>gdouble </RETURNS>
+const GSGFReal *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_real_to_string</NAME>
+<RETURNS>gchar *</RETURNS>
 const GSGFReal *self 
 </FUNCTION>
 <MACRO>
@@ -378,15 +475,17 @@ typedef enum {
         GSGF_ERROR_EMPTY_PROPERTY = 6,
         GSGF_ERROR_INTERNAL_ERROR = 7,
         GSGF_ERROR_INVALID_NUMBER = 8,
-        GSGF_ERROR_LIST_TOO_LONG = 9,
-        GSGF_ERROR_LIST_EMPTY = 10,
-        GSGF_ERROR_SEMANTIC_ERROR = 11,
-        GSGF_ERROR_INVALID_MOVE = 12,
-        GSGF_ERROR_INVALID_POINT = 14,
-        GSGF_ERROR_INVALID_STONE = 15,
-        GSGF_ERROR_USAGE_ERROR = 16,
-        GSGF_ERROR_NON_UNIQUE_POINT = 17,
-        GSGF_ERROR_NON_UNIQUE_STONE = 18
+        GSGF_ERROR_NAN = 9,
+        GSGF_ERROR_LIST_TOO_LONG = 10,
+        GSGF_ERROR_LIST_EMPTY = 11,
+        GSGF_ERROR_SEMANTIC_ERROR = 12,
+        GSGF_ERROR_INVALID_MOVE = 14,
+        GSGF_ERROR_INVALID_POINT = 15,
+        GSGF_ERROR_INVALID_STONE = 16,
+        GSGF_ERROR_USAGE_ERROR = 17,
+        GSGF_ERROR_NON_UNIQUE_POINT = 18,
+        GSGF_ERROR_NON_UNIQUE_STONE = 19,
+        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 20
 } GSGFError;
 </ENUM>
 <MACRO>
@@ -1348,10 +1447,27 @@ struct _GSGFColorClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
+<ENUM>
+<NAME>GSGFColorEnum</NAME>
+typedef enum {
+        GSGF_COLOR_WHITE = 1,
+        GSGF_COLOR_BLACK = 0
+} GSGFColorEnum;
+</ENUM>
 <FUNCTION>
 <NAME>gsgf_color_new</NAME>
 <RETURNS>GSGFColor *</RETURNS>
-enum GSGFColorEnum color 
+GSGFColorEnum color 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_color_get_color</NAME>
+<RETURNS>GSGFColorEnum </RETURNS>
+const GSGFColor *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_color_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COOKED_VALUE</NAME>

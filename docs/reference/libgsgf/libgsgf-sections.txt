@@ -35,13 +35,35 @@ GSGF_NODE_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-double</FILE>
+<TITLE>GSGFDouble</TITLE>
+GSGFDouble
+GSGFDoubleClass
+GSGFDoubleEnum
+gsgf_double_new
+gsgf_double_new_from_raw
+gsgf_double_set_value
+gsgf_double_get_value
+<SUBSECTION Standard>
+GSGF_DOUBLE
+GSGF_IS_DOUBLE
+GSGF_TYPE_DOUBLE
+gsgf_double_get_type
+GSGF_DOUBLE_CLASS
+GSGF_IS_DOUBLE_CLASS
+GSGF_DOUBLE_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-real</FILE>
 <TITLE>GSGFReal</TITLE>
 GSGFReal
 GSGFRealClass
 gsgf_real_new
+gsgf_real_new_from_raw
 gsgf_real_set_value
 gsgf_real_get_value
+gsgf_real_to_string
 <SUBSECTION Standard>
 GSGF_REAL
 GSGF_IS_REAL
@@ -305,7 +327,10 @@ GSGF_POINT_GET_CLASS
 <TITLE>GSGFColor</TITLE>
 GSGFColor
 GSGFColorClass
+GSGFColorEnum
 gsgf_color_new
+gsgf_color_get_color
+gsgf_color_new_from_raw
 <SUBSECTION Standard>
 GSGF_COLOR
 GSGF_IS_COLOR

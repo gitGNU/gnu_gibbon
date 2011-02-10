@@ -43,6 +43,7 @@
     <chapter id="sgf_high_level_types">
       <title>SGF High Level Types</title>
       <xi:include href="xml/gsgf-color.xml"/>
+      <xi:include href="xml/gsgf-double.xml"/>
     </chapter>
     <chapter>
       <title>SGF Flavor API</title>
