@@ -196,8 +196,10 @@ gsgf_number_write_stream(const GSGFCookedValue *_self,
         		                (long long int) gsgf_number_get_value(self));
         if (!g_output_stream_write_all(out, value, strlen(value),
                                        bytes_written,
-                                       cancellable, error))
+                                       cancellable, error)) {
+                g_free (value);
                 return FALSE;
+        }
 
         g_free(value);
 
