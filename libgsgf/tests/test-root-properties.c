@@ -258,7 +258,8 @@ test_prop_SZ(const GSGFNode *node)
         }
 
         if (!GSGF_IS_COMPOSE(cooked_value)) {
-                fprintf(stderr, "Root property 'SZ' is not a GSGFCompose!\n");
+                fprintf(stderr, "Root property 'SZ' is not a GSGFCompose ");
+                fprintf(stderr, "but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
                 return FALSE;
         }
 
