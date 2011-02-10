@@ -34,3 +34,5 @@
   temporary buffer must be freed, or alloca() must be used).
 - Fix test test-node-annotations: The order of collisions is arbitrary!
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
+- Fix test-real-to-string: It currently relies on the FP architecture.
+  Make it match loosely instead.
