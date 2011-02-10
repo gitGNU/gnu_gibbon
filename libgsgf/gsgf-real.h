@@ -74,6 +74,7 @@ GSGFCookedValue *gsgf_real_new_from_raw(const GSGFRaw* raw,
                                         GError **error);
 void gsgf_real_set_value(GSGFReal *self, gdouble value);
 gdouble gsgf_real_get_value(const GSGFReal *self);
+gchar *gsgf_real_to_string(const GSGFReal *self);
 
 G_END_DECLS
 

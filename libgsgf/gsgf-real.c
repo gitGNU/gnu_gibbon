@@ -31,6 +31,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include <math.h>
+
 typedef struct _GSGFRealPrivate GSGFRealPrivate;
 struct _GSGFRealPrivate {
         gdouble value;
@@ -41,6 +43,11 @@ struct _GSGFRealPrivate {
                                       GSGFRealPrivate))
 
 G_DEFINE_TYPE (GSGFReal, gsgf_real, GSGF_TYPE_COOKED_VALUE)
+
+static gboolean gsgf_real_write_stream(const GSGFCookedValue *self,
+                                       GOutputStream *out, gsize *bytes_written,
+                                       GCancellable *cancellable,
+                                       GError **error);
 
 static GRegex *double_pattern = NULL;
 
@@ -64,10 +71,14 @@ static void
 gsgf_real_class_init(GSGFRealClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFCookedValueClass *cooked_value_class =
+                        GSGF_COOKED_VALUE_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFRealPrivate));
+        cooked_value_class->write_stream = gsgf_real_write_stream;
 
         double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
+
+        g_type_class_add_private(klass, sizeof(GSGFRealPrivate));
 
         object_class->finalize = gsgf_real_finalize;
 }
@@ -207,4 +218,131 @@ gsgf_real_get_value(const GSGFReal *self)
         g_return_val_if_fail(GSGF_IS_REAL(self), 0);
 
         return self->priv->value;
+}
+
+/**
+ * gsgf_real_to_string:
+ * @self: The #GSGFReal.
+ *
+ * Converts a #GSGFReal into a textual representation.  This representation
+ * meets the specification of the SGF real data type.
+ *
+ * In SGF, a real number is at least one decimal digit, optionally followed
+ * by a decimal point and at least one decimal digit for the fractional
+ * part.  There are no locale-specific group separators, no exponentional
+ * notation, and the decimal point is always a period.  In other words,
+ * this function is kind of a counterpart to g_ascii_strtod().
+ *
+ * Positive or negative infinity values are handled gracefully and converted
+ * to the maximum resp. minimum possible values.
+ *
+ * If the @self stores NaN, or ir @self is not a #GSGFReal,
+ * %NULL is returned.
+ *
+ * Returns: The string (which has to be freed with g_free()) or %NULL.
+ */
+gchar *
+gsgf_real_to_string (const GSGFReal *self)
+{
+        GString *string;
+        gchar *result;
+        gdouble integer;
+        gdouble fraction;
+        gint exp10;
+        gdouble divisor;
+        gchar digit;
+        gsize valid_length;
+        gdouble value;
+
+        g_return_val_if_fail (GSGF_IS_REAL (self), NULL);
+
+        if (isnan (self->priv->value)) {
+                return NULL;
+        } else if (isinf (self->priv->value) > 0) {
+                value = +G_MAXDOUBLE;
+        } else if (isinf (self->priv->value) < 0) {
+                value = -G_MAXDOUBLE;
+        } else {
+                value = self->priv->value;
+        }
+
+        string = g_string_new ("");
+
+        fraction = modf (value, &integer);
+
+        if (integer < 0) {
+                integer = -integer;
+                fraction = -fraction;
+                g_string_assign (string, "-");
+        }
+
+        if (!integer) {
+                g_string_assign (string, "0");
+        } else {
+                for (exp10 = (gint) floor (log10 (integer));
+                     exp10 >= 0;
+                     --exp10) {
+                        divisor = pow (10, exp10);
+                        digit = floor (integer / divisor);
+
+                        g_string_append_c (string, '0' + digit);
+                        integer -= divisor * digit;
+                }
+        }
+
+        g_string_append_c (string, '.');
+
+        while (fraction > 0.0000000001) {
+                fraction *= 10;
+                digit = floor (fraction);
+                g_string_append_c (string, digit + '0');
+                fraction -= digit;
+        }
+
+        for (valid_length = string->len; ; --valid_length) {
+                if (string->str[valid_length - 1] == '.') {
+                        --valid_length;
+                        break;
+                }
+                if (string->str[valid_length - 1] != '0')
+                        break;
+        }
+        if (valid_length != string->len)
+                g_string_truncate (string, valid_length);
+
+        result = string->str;
+
+        g_string_free (string, FALSE);
+
+        return result;
+}
+
+static gboolean
+gsgf_real_write_stream(const GSGFCookedValue *_self,
+                       GOutputStream *out, gsize *bytes_written,
+                       GCancellable *cancellable, GError **error)
+{
+        GSGFNumber *self = GSGF_REAL (_self);
+        gchar *value;
+
+        *bytes_written = 0;
+
+        value = gsgf_real_to_string (self);
+        if (!value) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_NAN,
+                             _("Not a number"));
+                g_free (value);
+                return NULL;
+        }
+
+        if (!g_output_stream_write_all (out, value, strlen(value),
+                                        bytes_written,
+                                        cancellable, error)) {
+                g_free (value);
+                return FALSE;
+        }
+
+        g_free(value);
+
+        return TRUE;
 }
