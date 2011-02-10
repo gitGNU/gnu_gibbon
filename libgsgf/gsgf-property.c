@@ -223,16 +223,11 @@ _gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError
         g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
         g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
 
-        if (error && *error)
-                return FALSE;
-
-        if (gsgf_flavor_get_cooked_value(flavor, self,
-                                         GSGF_RAW(self->priv->value),
-                                         &cooked, error)) {
+        if (gsgf_flavor_get_cooked_value (flavor, self,
+                                          GSGF_RAW(self->priv->value),
+                                          &cooked, error)) {
                 g_object_unref(self->priv->value);
                 self->priv->value = cooked;
-        } else {
-                return FALSE;
         }
 
         return TRUE;
