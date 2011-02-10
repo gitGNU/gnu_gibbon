@@ -24,8 +24,10 @@ data/gibbon.desktop.in.in
 data/gibbon.schemas.in
 data/gibbon.xml
 libgsgf/gsgf-collection.c
+libgsgf/gsgf-color.c
 libgsgf/gsgf-compose.c
 libgsgf/gsgf-cooked-value.c
+libgsgf/gsgf-double.c
 libgsgf/gsgf-empty.c
 libgsgf/gsgf-flavor.c
 libgsgf/gsgf-list-of.c
