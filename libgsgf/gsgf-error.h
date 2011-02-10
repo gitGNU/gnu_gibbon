@@ -37,6 +37,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_EMPTY_PROPERTY: Attempt to write a property without a value.
  * @GSGF_ERROR_INTERNAL_ERROR: Internal error.
  * @GSGF_ERROR_INVALID_NUMBER: Invalid number format.
+ * @GSGF_ERROR_NAN: Not a number.
  * @GSGF_ERROR_LIST_TOO_LONG: A list of values was to long for the semantics
  *                            of a particular property.
  * @GSGF_ERROR_LIST_EMPTY: A "list of" was empty.
@@ -63,16 +64,17 @@ typedef enum {
         GSGF_ERROR_EMPTY_PROPERTY = 6,
         GSGF_ERROR_INTERNAL_ERROR = 7,
         GSGF_ERROR_INVALID_NUMBER = 8,
-        GSGF_ERROR_LIST_TOO_LONG = 9,
-        GSGF_ERROR_LIST_EMPTY = 10,
-        GSGF_ERROR_SEMANTIC_ERROR = 11,
-        GSGF_ERROR_INVALID_MOVE = 12,
-        GSGF_ERROR_INVALID_POINT = 14,
-        GSGF_ERROR_INVALID_STONE = 15,
-        GSGF_ERROR_USAGE_ERROR = 16,
-        GSGF_ERROR_NON_UNIQUE_POINT = 17,
-        GSGF_ERROR_NON_UNIQUE_STONE = 18,
-        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 19
+        GSGF_ERROR_NAN = 9,
+        GSGF_ERROR_LIST_TOO_LONG = 10,
+        GSGF_ERROR_LIST_EMPTY = 11,
+        GSGF_ERROR_SEMANTIC_ERROR = 12,
+        GSGF_ERROR_INVALID_MOVE = 14,
+        GSGF_ERROR_INVALID_POINT = 15,
+        GSGF_ERROR_INVALID_STONE = 16,
+        GSGF_ERROR_USAGE_ERROR = 17,
+        GSGF_ERROR_NON_UNIQUE_POINT = 18,
+        GSGF_ERROR_NON_UNIQUE_STONE = 19,
+        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 20
 } GSGFError;
 
 /**
