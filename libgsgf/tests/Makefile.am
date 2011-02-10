@@ -30,6 +30,7 @@ TESTS_C = test-convert			\
 	  test-non-unique-points	\
 	  test-number			\
 	  test-real			\
+	  test-real-to-string		\
 	  test-really-empty		\
 	  test-root-properties		\
 	  test-setup-properties		\
@@ -69,6 +70,7 @@ test_node_annotation_SOURCES = lib.c main.c test-node-annotation.c
 test_non_unique_points_SOURCES = lib.c main.c test-non-unique-points.c
 test_number_SOURCES = lib.c test-number.c
 test_real_SOURCES = lib.c test-real.c
+test_real_to_string_SOURCES = test-real-to-string.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
 test_root_properties_SOURCES = lib.c main.c test-root-properties.c
 test_setup_properties_SOURCES = lib.c main.c test-setup-properties.c
