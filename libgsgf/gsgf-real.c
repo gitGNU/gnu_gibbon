@@ -31,7 +31,9 @@
 
 #include <libgsgf/gsgf.h>
 
+#include <locale.h>
 #include <math.h>
+#include <string.h>
 
 typedef struct _GSGFRealPrivate GSGFRealPrivate;
 struct _GSGFRealPrivate {
@@ -244,15 +246,17 @@ gsgf_real_get_value(const GSGFReal *self)
 gchar *
 gsgf_real_to_string (const GSGFReal *self)
 {
-        GString *string;
-        gchar *result;
-        gdouble integer;
-        gdouble fraction;
-        gint exp10;
-        gdouble divisor;
-        gchar digit;
-        gsize valid_length;
         gdouble value;
+        gchar *lc_string;
+        GString *string;
+        gsize significant_length;
+        gchar *result;
+        gsize i;
+        gchar *thousands_sep;
+        gchar *decimal_point;
+        gsize thousands_sep_length;
+        gsize decimal_point_length;
+        struct lconv* lconv;
 
         g_return_val_if_fail (GSGF_IS_REAL (self), NULL);
 
@@ -266,49 +270,46 @@ gsgf_real_to_string (const GSGFReal *self)
                 value = self->priv->value;
         }
 
+        lc_string = g_strdup_printf ("%.12f", value);
         string = g_string_new ("");
 
-        fraction = modf (value, &integer);
+        /* Copy the output of printf into our result string.  A locale-specific
+         * decimal point will be replaced by a point.  Thousands separators
+         * are discarded.  The latter probably never happends because all
+         * known printf implementations do not use thousands separators
+         * unless told by the apostrophe (') flag passed to printf().
+         */
+        lconv = localeconv ();
+        thousands_sep = lconv->thousands_sep;
+        thousands_sep_length = strlen (thousands_sep);
+        decimal_point = lconv->decimal_point;
+        decimal_point_length = strlen (decimal_point);
 
-        if (integer < 0) {
-                integer = -integer;
-                fraction = -fraction;
-                g_string_assign (string, "-");
-        }
-
-        if (!integer) {
-                g_string_assign (string, "0");
-        } else {
-                for (exp10 = (gint) floor (log10 (integer));
-                     exp10 >= 0;
-                     --exp10) {
-                        divisor = pow (10, exp10);
-                        digit = floor (integer / divisor);
-
-                        g_string_append_c (string, '0' + digit);
-                        integer -= divisor * digit;
+        for (i = 0; i < strlen (lc_string); ++i) {
+                if (!strncmp (lc_string + i, decimal_point,
+                              decimal_point_length)) {
+                        i += decimal_point_length - 1;
+                        g_string_append_c (string, '.');
+                } else if (thousands_sep_length
+                           && !strncmp (lc_string + i, thousands_sep,
+                                        thousands_sep_length)) {
+                                i += thousands_sep_length - 1;
+                } else {
+                        g_string_append_c (string, lc_string[i]);
                 }
         }
+        g_free (lc_string);
 
-        g_string_append_c (string, '.');
-
-        while (fraction > 0.0000000001) {
-                fraction *= 10;
-                digit = floor (fraction);
-                g_string_append_c (string, digit + '0');
-                fraction -= digit;
-        }
-
-        for (valid_length = string->len; ; --valid_length) {
-                if (string->str[valid_length - 1] == '.') {
-                        --valid_length;
+        for (significant_length = string->len; ; --significant_length) {
+                if (string->str[significant_length - 1] == '.') {
+                        --significant_length;
                         break;
                 }
-                if (string->str[valid_length - 1] != '0')
+                if (string->str[significant_length - 1] != '0')
                         break;
         }
-        if (valid_length != string->len)
-                g_string_truncate (string, valid_length);
+        if (significant_length != string->len)
+                g_string_truncate (string, significant_length);
 
         result = string->str;
 

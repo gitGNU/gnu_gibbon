@@ -29,20 +29,22 @@
 #include <libgsgf/gsgf.h>
 
 #include <math.h>
+#include <locale.h>
 
 struct test_case {
         gdouble input;
         const gchar *expect;
 };
 
-struct test_case test_cases[] = {
-                { 123.000, "123" },
-                { -123, "-123" },
-                { 3.14, "3.14" },
-                { -45.6, "-45.6" },
+gdouble test_cases[] = {
+                123.000,
+                -123456789,
+                3.1415927,
+                -12345.6789,
+                1e-24
 };
 
-static gboolean test_it (struct test_case *test_case);
+static gboolean test_it (gdouble num);
 static gboolean test_nan (void);
 static gboolean test_positive_infinity (void);
 static gboolean test_negative_infinity (void);
@@ -54,10 +56,12 @@ main (int argc, char *argv[])
         gsize i;
         int status = 0;
 
+        setlocale (LC_ALL, "");
+
         g_type_init ();
 
         for (i = 0; i < num_cases; ++i) {
-                if (!test_it (test_cases + i))
+                if (!test_it (test_cases[i]))
                         status = -1;
         }
 
@@ -73,19 +77,34 @@ main (int argc, char *argv[])
 }
 
 static gboolean
-test_it (struct test_case *test_case)
+test_it (gdouble num)
 {
-        GSGFReal *real = gsgf_real_new (test_case->input);
+        GSGFReal *real = gsgf_real_new (num);
         const gchar *got = gsgf_real_to_string (real);
         gboolean result;
+        gdouble expect;
+        gdouble diff;
 
-        if (g_strcmp0 (test_case->expect, got)) {
+        g_object_unref (real);
+
+        if (!got) {
                 result = FALSE;
-                g_printerr ("Expected '%s', got '%s' for %g.\n",
-                            test_case->expect, got, test_case->input);
+                g_printerr ("%g triggered NULL pointer!\n", num);
+        }
+
+        expect = g_ascii_strtod (got, NULL);
+        diff = num - expect;
+        if (diff < 0)
+                diff = -diff;
+
+        if (diff != 0 && diff > 0.000000000001) {
+                result = FALSE;
+                g_printerr ("Expected '%g', got '%s' (difference: %g).\n",
+                            num, got, diff);
         } else {
                 result = TRUE;
         }
+
         if (got)
                 g_free (got);
 
@@ -127,6 +146,13 @@ test_positive_infinity (void)
         } else {
                 result = TRUE;
         }
+
+        if (max_str && '-' == max_str[0]) {
+                result = FALSE;
+                g_printerr ("G_MAXDOUBLE starts with a minus: %s\n",
+                            max_str);
+        }
+
         if (max_str)
                 g_free (max_str);
         if (infinity_str)
@@ -151,6 +177,13 @@ test_negative_infinity (void)
         } else {
                 result = TRUE;
         }
+
+        if (min_str && '-' != min_str[0]) {
+                result = FALSE;
+                g_printerr ("-G_MAXDOUBLE does not start with a minus: %s\n",
+                            min_str);
+        }
+
         if (min_str)
                 g_free (min_str);
         if (infinity_str)
