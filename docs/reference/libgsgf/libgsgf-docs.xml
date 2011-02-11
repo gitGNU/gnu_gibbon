@@ -19,7 +19,7 @@
 
   <xi:include href="xml/overview.xml"/>
 
-  <part>
+  <part id="api-reference">
     <title>API Reference</title>
     <chapter id="components">
       <title>Components</title>
@@ -28,7 +28,7 @@
       <xi:include href="xml/gsgf-node.xml"/>
       <xi:include href="xml/gsgf-property.xml"/>
     </chapter>
-    <chapter id="sgf_primitives">
+    <chapter id="sgf-primitives">
       <title>SGF Primitives</title>
       <xi:include href="xml/gsgf-cooked-value.xml"/>
       <xi:include href="xml/gsgf-number.xml"/>
@@ -40,19 +40,19 @@
       <xi:include href="xml/gsgf-list-of.xml"/>
       <xi:include href="xml/gsgf-raw.xml"/>
     </chapter>
-    <chapter id="sgf_high_level_types">
+    <chapter id="sgf-high-level-types">
       <title>SGF High Level Types</title>
       <xi:include href="xml/gsgf-color.xml"/>
       <xi:include href="xml/gsgf-double.xml"/>
     </chapter>
-    <chapter>
+    <chapter id="sgf-flavor-api">
       <title>SGF Flavor API</title>
       <xi:include href="xml/gsgf-flavor.xml"/>
       <xi:include href="xml/gsgf-move.xml"/>
       <xi:include href="xml/gsgf-point.xml"/>
       <xi:include href="xml/gsgf-stone.xml"/>
     </chapter>
-    <chapter>
+    <chapter id="backgammon-flavor">
       <title>Backgammon Flavor</title>
       <xi:include href="xml/gsgf-flavor-backgammon.xml"></xi:include>
       <xi:include href="xml/gsgf-move-backgammon.xml"/>
