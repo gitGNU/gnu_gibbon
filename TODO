@@ -16,13 +16,9 @@
 - Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
 - Do not return NULL from constructor of GibbonCairoboard in case the 
   constructor fails.
-- Rewrite libsvg so that we can move and clone elements.
-- Rewrite libsvg so that we can get the dimensions of every element.
 - Glib 2.2 now has the GResolver API.  Use it!
-- Review documentation for libgsgf.
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
-- Check that a node cannot contain the same property twice.
 - Turn the higher level write_stream() functions into methods of a new
   interface.
 - Dito for convert().
@@ -34,5 +30,5 @@
   temporary buffer must be freed, or alloca() must be used).
 - Fix test test-node-annotations: The order of collisions is arbitrary!
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
-- Fix test-real-to-string: It currently relies on the FP architecture.
-  Make it match loosely instead.
+- When applying flavors to properties, it should be possible to
+  delete properties that are in the way (for example BM, TE, DO, or IT).
