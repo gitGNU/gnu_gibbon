@@ -232,8 +232,10 @@ gsgf_real_get_value(const GSGFReal *self)
  * In SGF, a real number is at least one decimal digit, optionally followed
  * by a decimal point and at least one decimal digit for the fractional
  * part.  There are no locale-specific group separators, no exponentional
- * notation, and the decimal point is always a period.  In other words,
- * this function is kind of a counterpart to g_ascii_strtod().
+ * notation, and the decimal point is always a period.
+ *
+ * Its main difference to g_ascii_dtostr() is that it does not use a fixed
+ * size buffer.
  *
  * Positive or negative infinity values are handled gracefully and converted
  * to the maximum resp. minimum possible values.
@@ -270,7 +272,7 @@ gsgf_real_to_string (const GSGFReal *self)
                 value = self->priv->value;
         }
 
-        lc_string = g_strdup_printf ("%.12f", value);
+        lc_string = g_strdup_printf ("%.17f", value);
         string = g_string_new ("");
 
         /* Copy the output of printf into our result string.  A locale-specific
