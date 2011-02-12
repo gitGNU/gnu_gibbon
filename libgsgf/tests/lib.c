@@ -22,6 +22,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 #include "test.h"
 
@@ -90,10 +91,10 @@ expect_error_conditional(gboolean condition, const gchar *msg,
 }
 
 gchar *
-g_memory_output_stream_get_string(const GMemoryOutputStream *stream)
+g_memory_output_stream_get_string (GMemoryOutputStream *stream)
 {
-        return g_strndup(g_memory_output_stream_get_data(stream),
-                         g_memory_output_stream_get_data_size(stream));
+        return g_strndup (g_memory_output_stream_get_data (stream),
+                          g_memory_output_stream_get_data_size (stream));
 }
 
 gchar *
@@ -108,7 +109,7 @@ build_filename(const gchar *filename)
             && 'n' == filename[length - 1]) {
                 real_name = g_strndup(filename, length - 3);
                 retval = g_build_filename(TEST_BUILDDIR, real_name, NULL);
-                free (real_name);
+                g_free (real_name);
                 return retval;
         }
 
@@ -118,13 +119,64 @@ build_filename(const gchar *filename)
 gboolean
 expect_error_from_sgf (const gchar *sgf,  GError *expect)
 {
-        GMemoryInputStream *stream =
-                        g_memory_input_stream_new_from_data (sgf, -1, NULL);
+        GInputStream *stream = g_memory_input_stream_new_from_data (sgf, -1,
+                                                                    NULL);
         GError *error = NULL;
-        GSGFCollection *collection =
-                        gsgf_collection_parse_stream (stream, NULL, &error);
+
+        gsgf_collection_parse_stream (stream, NULL, &error);
 
         if (0 != expect_error (error, expect))
+                return FALSE;
+
+        return TRUE;
+}
+
+static int
+expect_error_silent (GError *error, GError *expect)
+{
+        if (!error && !expect)
+                return 0;
+
+        if (!error && expect) {
+                g_error_free(expect);
+                return -1;
+        }
+
+        if (error && !expect) {
+                return -1;
+        }
+
+        if (error && expect) {
+                if (strcmp (error->message, expect->message)) {
+                        g_error_free(expect);
+                        return -1;
+                }
+                if (error->domain != expect->domain) {
+                        g_error_free(expect);
+                        return -1;
+                }
+                if (error->code != expect->code) {
+                        g_error_free(expect);
+                        return -1;
+                }
+
+                g_error_free(expect);
+        }
+
+        return 0;
+}
+
+gboolean
+expect_errors_from_sgf (const gchar *sgf,  GError *expect1, GError *expect2)
+{
+        GInputStream *stream =
+                        g_memory_input_stream_new_from_data (sgf, -1, NULL);
+        GError *error = NULL;
+
+        (void) gsgf_collection_parse_stream (stream, NULL, &error);
+
+        if (0 != expect_error_silent (error, expect1)
+            && 0 != expect_error (error, expect2))
                 return FALSE;
 
         return TRUE;
@@ -133,10 +185,10 @@ expect_error_from_sgf (const gchar *sgf,  GError *expect)
 GSGFCollection *
 parse_memory (const gchar *sgf, GError **error)
 {
-        GMemoryInputStream *stream =
-                        g_memory_input_stream_new_from_data (sgf, -1, NULL);
+        GInputStream *stream = g_memory_input_stream_new_from_data (sgf, -1,
+                                                                    NULL);
 
         *error = NULL;
 
-        return gsgf_collection_parse_stream (stream, NULL, &error);
+        return gsgf_collection_parse_stream (stream, NULL, error);
 }

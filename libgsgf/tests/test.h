@@ -32,10 +32,13 @@ extern int expect_error(GError *error, GError *expect);
 extern int expect_error_conditional(gboolean condition, const gchar *msg,
                                     GError *error, GError *expect);
 
-gchar *g_memory_output_stream_get_string(const GMemoryOutputStream *stream);
+gchar *g_memory_output_stream_get_string (GMemoryOutputStream *stream);
 
 gchar *build_filename(const gchar *filename);
 gboolean expect_error_from_sgf (const gchar *sgf, GError *expect);
+gboolean expect_errors_from_sgf (const gchar *sgf,
+                                 GError *expect1,
+                                 GError *expect2);
 GSGFCollection *parse_memory (const gchar *sgf, GError **error);
 
 #endif
