@@ -52,8 +52,7 @@
  * allocates the memory for it) byte by byte.
  */
 gchar *
-gsgf_util_read_simple_text (const gchar *raw, const gchar **end, 
-                           gchar delim)
+gsgf_util_read_simple_text (const gchar *raw, gchar **end, gchar delim)
 {
         GString *string;
         const gchar *ptr = raw;
@@ -118,8 +117,7 @@ gsgf_util_read_simple_text (const gchar *raw, const gchar **end,
  * allocates the memory for it) byte by byte.
  */
 gchar *
-gsgf_util_read_text (const gchar *raw, const gchar **end, 
-                     gchar delim)
+gsgf_util_read_text (const gchar *raw, gchar **end, gchar delim)
 {
         GString *string = g_string_new("");
         const gchar *ptr = raw;
