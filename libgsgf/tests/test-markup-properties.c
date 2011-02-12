@@ -77,6 +77,7 @@ test_prop_AR (const GSGFNode *node)
                         gsgf_node_get_property_cooked (node, "AR");
         GSGFListOf *list_of;
         GType type;
+        gsize num_arrows;
 
         if (!cooked_value) {
                 g_printerr ("No property 'AR'!\n");
@@ -93,6 +94,12 @@ test_prop_AR (const GSGFNode *node)
         if (type != GSGF_TYPE_COMPOSE) {
                 g_printerr ("Expected item type 'GSGFCompose', not '%s'.\n",
                             g_type_name (type));
+                return FALSE;
+        }
+
+        num_arrows = gsgf_list_of_get_number_of_items (list_of);
+        if (num_arrows != 3) {
+                g_printerr ("Expected 3 arrows, got %u.\n", num_arrows);
                 return FALSE;
         }
 
