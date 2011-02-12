@@ -315,7 +315,6 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
         loser = self->priv->losers;
         while (loser) {
                 gsgf_node_remove_property (self, loser->data);
-                g_free (loser->data);
                 loser = loser->next;
         }
 
@@ -334,7 +333,7 @@ _gsgf_node_mark_loser_property (GSGFNode *self, const gchar *id)
 {
         g_return_if_fail (GSGF_IS_NODE (self));
 
-        g_list_append (self->priv->losers, g_strdup (id));
+        self->priv->losers = g_list_append (self->priv->losers, g_strdup (id));
 }
 
 /**
