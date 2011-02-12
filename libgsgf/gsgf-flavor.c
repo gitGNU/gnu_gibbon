@@ -106,6 +106,16 @@ gsgf_constraint_node_annotation_unique (const GSGFCookedValue *value,
                                         const GSGFRaw *raw,
                                         const GSGFProperty *property,
                                         GError **error);
+static gboolean
+gsgf_constraint_move_annotation_unique (const GSGFCookedValue *value,
+                                        const GSGFRaw *raw,
+                                        const GSGFProperty *property,
+                                        GError **error);
+static gboolean
+gsgf_constraint_move_annotation_with_move (const GSGFCookedValue *value,
+                                           const GSGFRaw *raw,
+                                           const GSGFProperty *property,
+                                           GError **error);
 
 static GSGFCookedValue *gsgf_B_or_W_new_from_raw(const GSGFRaw* raw,
                                                  const GSGFFlavor *flavor,
@@ -168,6 +178,15 @@ static GSGFFlavorTypeDef gsgf_flavor_AW = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_BM = {
+                gsgf_double_new_from_raw, {
+                                gsgf_constraint_move_annotation_with_move,
+                                gsgf_constraint_move_annotation_unique,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_CA = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_root_property,
@@ -179,6 +198,15 @@ static GSGFFlavorTypeDef gsgf_flavor_CA = {
 static GSGFFlavorTypeDef gsgf_flavor_DM = {
                 gsgf_double_new_from_raw, {
                                 gsgf_constraint_node_annotation_unique,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_DO = {
+                gsgf_double_new_from_raw, {
+                                gsgf_constraint_move_annotation_with_move,
+                                gsgf_constraint_move_annotation_unique,
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }
@@ -220,6 +248,15 @@ static GSGFFlavorTypeDef gsgf_flavor_GW = {
 
 static GSGFFlavorTypeDef gsgf_flavor_HO = {
                 gsgf_double_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_IT = {
+                gsgf_double_new_from_raw, {
+                                gsgf_constraint_move_annotation_with_move,
+                                gsgf_constraint_move_annotation_unique,
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }
@@ -280,6 +317,15 @@ static GSGFFlavorTypeDef gsgf_flavor_UC = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_TE = {
+                gsgf_double_new_from_raw, {
+                                gsgf_constraint_move_annotation_with_move,
+                                gsgf_constraint_move_annotation_unique,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
                 NULL, &gsgf_flavor_B_or_W, &gsgf_flavor_C, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -296,6 +342,14 @@ static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
                 NULL, NULL,
 };
 
+static GSGFFlavorTypeDef *gsgf_b_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                &gsgf_flavor_BM, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
                 &gsgf_flavor_CA, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -307,7 +361,7 @@ static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_d_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                &gsgf_flavor_DM, NULL, NULL, NULL, NULL, NULL,
+                &gsgf_flavor_DM, NULL, &gsgf_flavor_DO, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
@@ -333,6 +387,14 @@ static GSGFFlavorTypeDef *gsgf_h_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, &gsgf_flavor_HO, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
+static GSGFFlavorTypeDef *gsgf_i_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_IT, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
 
@@ -368,6 +430,14 @@ static GSGFFlavorTypeDef *gsgf_s_handlers[26] = {
                 NULL, &gsgf_flavor_SZ,
 };
 
+static GSGFFlavorTypeDef *gsgf_t_handlers[26] = {
+                NULL, NULL, NULL, NULL, &gsgf_flavor_TE, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_u_handlers[26] = {
                 NULL, NULL, &gsgf_flavor_UC, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -378,14 +448,14 @@ static GSGFFlavorTypeDef *gsgf_u_handlers[26] = {
 
 static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 gsgf_a_handlers,
-                NULL,
+                gsgf_b_handlers,
                 gsgf_c_handlers,
                 gsgf_d_handlers,
                 NULL,
                 gsgf_f_handlers,
                 gsgf_g_handlers,
                 gsgf_h_handlers,
-                NULL,
+                gsgf_i_handlers,
                 NULL,
                 gsgf_k_handlers,
                 NULL,
@@ -396,7 +466,7 @@ static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 NULL,
                 NULL,
                 gsgf_s_handlers,
-                NULL,
+                gsgf_t_handlers,
                 gsgf_u_handlers,
                 NULL,
                 NULL,
@@ -653,7 +723,7 @@ gsgf_constraint_node_annotation_unique (const GSGFCookedValue *value,
                                         GError **error)
 {
         GSGFNode *node;
-        gchar *id;
+        const gchar *id;
         const gchar *ids[4] = { "DM", "GB", "GW", "UC" };
         int i;
 
@@ -677,6 +747,64 @@ gsgf_constraint_node_annotation_unique (const GSGFCookedValue *value,
                         }
                 }
         }
+
+        return TRUE;
+}
+
+/* This function is too special to export it to individual flavors.  */
+static gboolean
+gsgf_constraint_move_annotation_unique (const GSGFCookedValue *value,
+                                        const GSGFRaw *raw,
+                                        const GSGFProperty *property,
+                                        GError **error)
+{
+        GSGFNode *node;
+        const gchar *id;
+        const gchar *ids[4] = { "BM", "DO", "IT", "TE" };
+        int i;
+
+        g_return_val_if_fail (GSGF_IS_COOKED_VALUE(value), FALSE);
+        g_return_val_if_fail (GSGF_IS_RAW(raw), FALSE);
+        g_return_val_if_fail (GSGF_IS_PROPERTY(property), FALSE);
+
+        id = gsgf_property_get_id (property);
+        node = gsgf_property_get_node(property);
+
+        for (i = 0; i < 4; ++i) {
+                if (strcmp (id, ids[i])) {
+                        if (gsgf_node_get_property (node, ids[i])) {
+                                g_set_error (error, GSGF_ERROR,
+                                             GSGF_ERROR_SEMANTIC_ERROR,
+                                             _("The properties 'BM', 'DO',"
+                                               " 'IT', and 'TE' are mutually"
+                                               " exclusive within one node"));
+                                return FALSE;
+                        }
+                }
+        }
+
+        return TRUE;
+}
+
+/* This function is too special to export it to individual flavors.  */
+static gboolean
+gsgf_constraint_move_annotation_with_move (const GSGFCookedValue *value,
+                                           const GSGFRaw *raw,
+                                           const GSGFProperty *property,
+                                           GError **error)
+{
+        GSGFNode *node;
+
+        g_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE);
+        g_return_val_if_fail (GSGF_IS_RAW (raw), FALSE);
+        g_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE);
+
+        node = gsgf_property_get_node(property);
+
+        if (!gsgf_node_get_property (node, "B")
+            && !gsgf_node_get_property (node, "W"))
+                _gsgf_node_mark_loser_property (node,
+                                                gsgf_property_get_id (property));
 
         return TRUE;
 }
