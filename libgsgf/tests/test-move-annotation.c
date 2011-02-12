@@ -86,27 +86,27 @@ test_collection (GSGFCollection *collection, GError *error)
         if (!test_prop_BM (node))
                 return -1;
 
-        item = g_list_nth_data (nodes, 1);
-        if (!item) {
-                g_printerr ("Property #1 not found.\n");
-                return -1;
-        }
-        node = GSGF_NODE (item);
-        if (!test_prop_DO (node))
-                return -1;
-
         item = g_list_nth_data (nodes, 2);
         if (!item) {
                 g_printerr ("Property #2 not found.\n");
                 return -1;
         }
         node = GSGF_NODE (item);
-        if (!test_prop_IT (node))
+        if (!test_prop_DO (node))
                 return -1;
 
         item = g_list_nth_data (nodes, 3);
         if (!item) {
                 g_printerr ("Property #3 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_IT (node))
+                return -1;
+
+        item = g_list_nth_data (nodes, 4);
+        if (!item) {
+                g_printerr ("Property #4 not found.\n");
                 return -1;
         }
         node = GSGF_NODE (item);
@@ -119,26 +119,41 @@ test_collection (GSGFCollection *collection, GError *error)
 static gboolean
 test_unique_position_BM (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]BM[1]DO[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]BM[1]DO[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]BM[1]IT[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]BM[1]IT[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]BM[1]TE[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]BM[1]TE[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -147,26 +162,41 @@ test_unique_position_BM (void)
 static gboolean
 test_unique_position_DO (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]DO[1]BM[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]BM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]DO[1]IT[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]IT[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]DO[1]TE[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]TE[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -175,26 +205,41 @@ test_unique_position_DO (void)
 static gboolean
 test_unique_position_IT (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]IT[1]BM[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]IT[1]BM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]IT[1]DO[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]IT[1]DO[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]IT[1]TE[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]IT[1]TE[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -203,26 +248,41 @@ test_unique_position_IT (void)
 static gboolean
 test_unique_position_TE (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]TE[1]BM[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]TE[1]BM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]TE[1]DO[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]TE[1]DO[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_error_from_sgf ("(;GM[6];B[31hefe]TE[1]IT[2])", expect))
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]TE[1]IT[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
