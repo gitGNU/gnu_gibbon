@@ -91,6 +91,10 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
+static GSGFCookedValue *gsgf_list_of_arrows_new_from_raw(const GSGFRaw *raw,
+                                                         const GSGFFlavor *flavor,
+                                                         const GSGFProperty *property,
+                                                         GError **error);
 static gboolean gsgf_list_of_points_check_unique(const GSGFListOf *list_of,
                                                  GError **error);
 
@@ -168,6 +172,12 @@ static GSGFFlavorTypeDef gsgf_flavor_AP = {
                 gsgf_AP_new_from_raw, {
                                 gsgf_constraint_is_root_property,
                                 gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_AR = {
+                gsgf_list_of_arrows_new_from_raw, {
                                 NULL
                 }
 };
@@ -337,7 +347,7 @@ static GSGFFlavorTypeDef *gsgf_single_char_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
                 NULL, &gsgf_flavor_AB, NULL, NULL, &gsgf_flavor_AE, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, &gsgf_flavor_AP, NULL, NULL,
+                NULL, NULL, NULL, &gsgf_flavor_AP, NULL, &gsgf_flavor_AR,
                 NULL, NULL, NULL, NULL, &gsgf_flavor_AW, NULL,
                 NULL, NULL,
 };
@@ -1039,6 +1049,42 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
         }
 
         return GSGF_COOKED_VALUE(list_of);
+}
+
+static GSGFCookedValue *
+gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
+                                 const GSGFFlavor *flavor,
+                                 const GSGFProperty *property,
+                                 GError **error)
+{
+        GType type = GSGF_TYPE_COMPOSE;
+        GSGFListOf *list_of = gsgf_list_of_new (type, flavor);
+        GSGFCompose *compose;
+        gsize i, num_pairs;
+
+        num_pairs = gsgf_raw_get_number_of_values (raw);
+        if (!num_pairs) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_EMPTY,
+                                _("List of point pairs must not be empty"));
+                g_object_unref(list_of);
+                return NULL;
+        }
+
+        for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
+                /*
+                stone = gsgf_flavor_create_stone(flavor, raw, i, error);
+                if (!stone) {
+                        g_object_unref(list_of);
+                        return NULL;
+                }
+                if (!gsgf_list_of_append(list_of, GSGF_COOKED_VALUE(stone), error)) {
+                        g_object_unref(list_of);
+                        return NULL;
+                }
+                */
+        }
+
+        return GSGF_COOKED_VALUE (list_of);
 }
 
 static gboolean
