@@ -131,6 +131,168 @@
       </para>
     </sect2>
   </sect1>
+  <sect1 id="node-annotation-properties">
+    <title>Node Annotation Properties</title>
+    <sect2 id="property-C">
+      <title>C (comment)</title>
+      <para>
+        Type: <link linkend="GSGFText">GSGFText</link>
+      </para>
+      <para>
+        A comment for a node.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#C">http://www.red-bean.com/sgf/properties.html#C</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-DM">
+      <title>DM (even position)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        Marks a position as even.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#DM">http://www.red-bean.com/sgf/properties.html#DM</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-GB">
+      <title>GB (good for black)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        Marks a position as good for black.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#GB">http://www.red-bean.com/sgf/properties.html#GB</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-GW">
+      <title>GB (good for white)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        Marks a position as good for white.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#GW">http://www.red-bean.com/sgf/properties.html#GW</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-HO">
+      <title>HO (hotspot)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        Marks a position as "hotspot".
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#HO">http://www.red-bean.com/sgf/properties.html#HO</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-N">
+      <title>N (name)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Gives a name to a position.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#N">http://www.red-bean.com/sgf/properties.html#N</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-UC">
+      <title>UC (unclear)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        Marks a position as unclear.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#UC">http://www.red-bean.com/sgf/properties.html#UC</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-V">
+      <title>V (value)</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        Value of the position.  Positive values are given to positions
+        with an advantage for black, negative values given to positions
+        with an advantage for white.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#V">http://www.red-bean.com/sgf/properties.html#V</ulink>.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="move-annotation-properties">
+    <title>Move Annotation Properties</title>
+    <para>
+      If libgsgf encounters one of the following four properties without
+      a move in the same node (<link linkend="property-B">B</link> or
+      <link linkend="property-W">W</link> the annotation property is
+      silently discarded .
+    </para>
+    <para>
+      Having more than one move annotation property in one and the same
+      node is an error.
+    </para>
+    <sect2 id="property-BM">
+      <title>BM (bad move)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        The played move is bad.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#BM">http://www.red-bean.com/sgf/properties.html#BM</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-DM">
+      <title>DM (doubtful move)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        The played move is doubtful.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#DM">http://www.red-bean.com/sgf/properties.html#DM</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-IT">
+      <title>IT (interesting move)</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        The played move is interesting.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#IT">http://www.red-bean.com/sgf/properties.html#IT</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-TE">
+      <title>TE (good move or "tesuji")</title>
+      <para>
+        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+      </para>
+      <para>
+        The played move is good.  In Go this is called a "tesuji".
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#TE">http://www.red-bean.com/sgf/properties.html#TE</ulink>.
+      </para>
+    </sect2>
+  </sect1>
   <sect1 id="root-properties">
     <title>Root Properties</title>
     <para>
