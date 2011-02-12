@@ -22,6 +22,7 @@ TESTS_C = test-convert			\
 	  test-compressed-list		\
 	  test-empty 			\
 	  test-full			\
+	  test-markup-properties	\
 	  test-minimal			\
 	  test-multi-game-tree		\
 	  test-move-annotation		\
@@ -63,6 +64,7 @@ test_compose_SOURCES = lib.c test-compose.c
 test_compressed_list_SOURCES = lib.c main.c test-compressed-list.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
+test_markup_properties_SOURCES = lib.c main.c test-markup-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
 test_move_properties_SOURCES = lib.c main.c test-move-properties.c
 test_move_annotation_SOURCES = lib.c main.c test-move-annotation.c
@@ -91,10 +93,11 @@ SGF_FILES = cp1251.sgf			\
 	    compressed-list.sgf.in	\
 	    empty.sgf 			\
 	    full.sgf.in			\
-	    move-properties.sgf		\
 	    linefeeds.sgf		\
+	    markup-properties.sgf	\
 	    minimal.sgf			\
 	    move-annotation.sgf		\
+	    move-properties.sgf		\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
 	    node-annotation.sgf		\
