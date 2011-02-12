@@ -141,26 +141,41 @@ test_collection (GSGFCollection *collection, GError *error)
 static gboolean
 test_unique_position_DM (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'DM': Property 'DM' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;DM[1]UC[2])", expect))
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;DM[1]GB[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GB': Property 'GB' and 'DM' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;DM[1]GB[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;DM[1]GW[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GW': Property 'GW' and 'DM' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;DM[1]GW[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;DM[1]UC[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -169,26 +184,41 @@ test_unique_position_DM (void)
 static gboolean
 test_unique_position_GB (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GB': Property 'GB' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GB[1]UC[2])", expect))
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GB[1]DM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GB': Property 'GB' and 'DM' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GB[1]DM[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GB[1]GW[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GW': Property 'GW' and 'GB' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GB[1]GW[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GB[1]UC[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -197,26 +227,41 @@ test_unique_position_GB (void)
 static gboolean
 test_unique_position_GW (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GW': Property 'GW' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GW[1]UC[2])", expect))
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GW[1]DM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GW': Property 'GW' and 'DM' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GW[1]DM[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GW[1]GB[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GB': Property 'GB' and 'GW' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;GW[1]GB[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;GW[1]UC[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -225,26 +270,41 @@ test_unique_position_GW (void)
 static gboolean
 test_unique_position_UC (void)
 {
-        GError *expect = NULL;
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
 
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'DM': Property 'DM' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;UC[1]DM[2])", expect))
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'DM': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;UC[1]DM[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GB': Property 'GB' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;UC[1]GB[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GB': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;UC[1]GB[2])",
+                                     expect1, expect2))
                 return FALSE;
 
-        expect = NULL;
-        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'GW': Property 'GW' and 'UC' are not allowed"
-                     " in one and the same node");
-        if (!expect_error_from_sgf ("(;UC[1]GW[2])", expect))
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'UC': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'GW': The properties 'DM', 'GB', 'GW', and 'UC'"
+                     " are mutually exclusive within one node");
+        if (!expect_errors_from_sgf ("(;UC[1]GW[2])",
+                                     expect1, expect2))
                 return FALSE;
 
         return TRUE;
@@ -268,9 +328,9 @@ test_prop_C (const GSGFNode *node)
         }
 
         value = gsgf_text_get_value (GSGF_TEXT (cooked_value));
-#define EXPECT "This is the test for node annotation properties."
-        if (strcmp (EXPECT, value)) {
-                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT, value);
+#define EXPECT1 "This is the test for node annotation properties."
+        if (strcmp (EXPECT1, value)) {
+                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT1, value);
                 return FALSE;
         }
 
@@ -403,9 +463,9 @@ test_prop_N (const GSGFNode *node)
         }
 
         value = gsgf_text_get_value (GSGF_SIMPLE_TEXT (cooked_value));
-#define EXPECT "Node annotation properties"
-        if (strcmp (EXPECT, value)) {
-                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT, value);
+#define EXPECT2 "Node annotation properties"
+        if (strcmp (EXPECT2, value)) {
+                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT2, value);
                 return FALSE;
         }
 

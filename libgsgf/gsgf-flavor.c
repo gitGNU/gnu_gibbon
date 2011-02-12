@@ -739,10 +739,9 @@ gsgf_constraint_node_annotation_unique (const GSGFCookedValue *value,
                         if (gsgf_node_get_property (node, ids[i])) {
                                 g_set_error (error, GSGF_ERROR,
                                              GSGF_ERROR_SEMANTIC_ERROR,
-                                             _("Property '%s' and '%s' are"
-                                               " not allowed in one and the"
-                                               " same node"),
-                                             id, ids[i]);
+                                             _("The properties 'DM', 'GB',"
+                                               " 'GW', and 'UC' are mutually"
+                                               " exclusive within one node"));
                                 return FALSE;
                         }
                 }
