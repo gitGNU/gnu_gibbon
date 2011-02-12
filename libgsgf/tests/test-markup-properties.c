@@ -78,6 +78,7 @@ test_prop_AR (const GSGFNode *node)
         GSGFListOf *list_of;
         GType type;
         gsize num_arrows;
+        GError *expect;
 
         if (!cooked_value) {
                 g_printerr ("No property 'AR'!\n");
@@ -102,6 +103,18 @@ test_prop_AR (const GSGFNode *node)
                 g_printerr ("Expected 3 arrows, got %u.\n", num_arrows);
                 return FALSE;
         }
+
+        expect = NULL;
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'AR': Start and end point must differ");
+        if (!expect_error_from_sgf ("(;GM[6];AR[a:b][c:c][c:d])", expect))
+                return FALSE;
+
+        expect = NULL;
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'AR': Arrows must be unique");
+        if (!expect_error_from_sgf ("(;GM[6];AR[a:b][c:d][a:b])", expect))
+                return FALSE;
 
         return TRUE;
 }
