@@ -75,6 +75,8 @@ test_prop_AR (const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value =
                         gsgf_node_get_property_cooked (node, "AR");
+        GSGFListOf *list_of;
+        GType type;
 
         if (!cooked_value) {
                 g_printerr ("No property 'AR'!\n");
@@ -83,6 +85,14 @@ test_prop_AR (const GSGFNode *node)
 
         if (!GSGF_IS_LIST_OF (cooked_value)) {
                 g_printerr ("Property 'AR' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+        list_of = GSGF_LIST_OF (cooked_value);
+
+        type = gsgf_list_of_get_item_type (list_of);
+        if (type != GSGF_TYPE_COMPOSE) {
+                g_printerr ("Expected item type 'GSGFCompose', not '%s'.\n",
+                            g_type_name (type));
                 return FALSE;
         }
 
