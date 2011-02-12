@@ -35,6 +35,7 @@ typedef struct _GSGFNodePrivate GSGFNodePrivate;
 struct _GSGFNodePrivate {
         GHashTable *properties;
         GSGFNode *previous;
+        GList *losers;
 };
 
 #define GSGF_NODE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -51,6 +52,7 @@ gsgf_node_init(GSGFNode *self)
         self->priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                        g_free, g_object_unref);
         self->priv->previous = NULL;
+        self->priv->losers = NULL;
 }
 
 static void
@@ -61,6 +63,12 @@ gsgf_node_finalize(GObject *object)
         if (self->priv->properties)
                 g_hash_table_destroy(self->priv->properties);
         self->priv->properties = NULL;
+
+        if (self->priv->losers) {
+                g_list_foreach (self->priv->losers, (GFunc) g_free, NULL);
+                g_list_free (self->priv->losers);
+        }
+        self->priv->losers = NULL;
 
         G_OBJECT_CLASS (gsgf_node_parent_class)->finalize(object);
 }
@@ -286,6 +294,7 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
 {
         GHashTableIter iter;
         gpointer key, value;
+        GList *loser;
 
         g_return_val_if_fail(GSGF_IS_NODE(self), FALSE);
         g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
@@ -300,7 +309,32 @@ _gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error
                         return FALSE;
         }
 
+        /* Properties cannot be removed while iterating over the hash
+         * table since this would invalidate the iterator.
+         */
+        loser = self->priv->losers;
+        while (loser) {
+                gsgf_node_remove_property (self, loser->data);
+                g_free (loser->data);
+                loser = loser->next;
+        }
+
+        if (self->priv->losers) {
+                g_list_foreach (self->priv->losers, (GFunc) g_free, NULL);
+                g_list_free (self->priv->losers);
+        }
+        self->priv->losers = NULL;
+
         return TRUE;
+}
+
+/*< private >*/
+void
+_gsgf_node_mark_loser_property (GSGFNode *self, const gchar *id)
+{
+        g_return_if_fail (GSGF_IS_NODE (self));
+
+        g_list_append (self->priv->losers, g_strdup (id));
 }
 
 /**
