@@ -83,6 +83,10 @@ struct _GSGFFlavorClass
                                             GError **error);
 
         GType point_type;
+        struct _GSGFPoint *(*create_point) (const GSGFFlavor *flavor,
+                                            const struct _GSGFRaw *raw,
+                                            gsize i,
+                                            GError **error);
         gboolean (*append_points) (const GSGFFlavor *flavor,
                                    struct _GSGFListOf *list_of,
                                    const struct _GSGFRaw *raw,

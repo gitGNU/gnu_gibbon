@@ -180,6 +180,39 @@ gsgf_point_backgammon_append_to_list_of (GSGFListOf *list_of, const GSGFRaw *raw
 }
 
 /**
+ * gsgf_point_backgammon_new_from_raw:
+ * @raw: The #GSGFRaw to parse.
+ * @i: The index into @raw.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFPointBackgammon from a #GSGFRaw.
+ *
+ * Returns: The new #GSGFPointBackgammon.
+ */
+GSGFPointBackgammon *
+gsgf_point_backgammon_new_from_raw (const GSGFRaw *raw, gsize i, GError **error)
+{
+        const gchar* string;
+
+        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+
+        string = gsgf_raw_get_value(raw, i);
+        if (!string) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_STONE,
+                            _("Empty stone"));
+                return NULL;
+        }
+
+        if (string[0] < 'a' || string[0] > 'z' || string[1]) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_STONE,
+                                _("Invalid stone syntax"));
+                return NULL;
+        }
+
+        return gsgf_point_backgammon_new((gint) string[0] - 'a');
+}
+
+/**
  * gsgf_point_backgammon_get_point:
  * @self: The #GSGFPointBackgammon to query.
  *
