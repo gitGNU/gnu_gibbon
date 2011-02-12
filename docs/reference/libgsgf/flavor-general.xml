@@ -256,8 +256,8 @@
         See <ulink url="http://www.red-bean.com/sgf/properties.html#BM">http://www.red-bean.com/sgf/properties.html#BM</ulink>.
       </para>
     </sect2>
-    <sect2 id="property-DM">
-      <title>DM (doubtful move)</title>
+    <sect2 id="property-DO">
+      <title>DO (doubtful move)</title>
       <para>
         Type: <link linkend="GSGFDouble">GSGFDouble</link>
       </para>
@@ -265,7 +265,7 @@
         The played move is doubtful.
       </para>
       <para>
-        See <ulink url="http://www.red-bean.com/sgf/properties.html#DM">http://www.red-bean.com/sgf/properties.html#DM</ulink>.
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#DO">http://www.red-bean.com/sgf/properties.html#DO</ulink>.
       </para>
     </sect2>
     <sect2 id="property-IT">
