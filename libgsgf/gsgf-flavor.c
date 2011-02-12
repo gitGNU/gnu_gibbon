@@ -67,6 +67,7 @@
 #include <stdlib.h>
 
 #include "gsgf-flavor-protected.h"
+#include "gsgf-private.h"
 
 G_DEFINE_TYPE (GSGFFlavor, gsgf_flavor, G_TYPE_OBJECT)
 
@@ -74,6 +75,10 @@ static GSGFMove *gsgf_flavor_create_move(const GSGFFlavor *self,
                                          const GSGFRaw *raw,
                                          GError **error);
 static GSGFStone *gsgf_flavor_create_stone(const GSGFFlavor *self,
+                                           const GSGFRaw *raw,
+                                           gsize i,
+                                           GError **error);
+static GSGFPoint *gsgf_flavor_create_point(const GSGFFlavor *self,
                                            const GSGFRaw *raw,
                                            gsize i,
                                            GError **error);
@@ -505,6 +510,8 @@ gsgf_flavor_class_init(GSGFFlavorClass *klass)
         klass->create_move = NULL;
         klass->stone_type = G_TYPE_INVALID;
         klass->create_stone = NULL;
+        klass->create_point = NULL;
+        klass->append_points = NULL;
         klass->write_compressed_list = NULL;
 
         object_class->finalize = gsgf_flavor_finalize;
@@ -603,6 +610,30 @@ gsgf_flavor_create_stone(const GSGFFlavor *self,
         }
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_stone(self, raw, i, error);
+}
+
+static GSGFPoint *
+gsgf_flavor_create_point(const GSGFFlavor *self,
+                         const GSGFRaw *raw,
+                         gsize i,
+                         GError **error)
+{
+        if (!GSGF_IS_FLAVOR(self)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Invalid cast to GSGFFlavor"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
+        }
+
+        if (!GSGF_FLAVOR_GET_CLASS(self)->create_point) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                            _("Method create_point is not implemented"));
+                /* Print standard error message and return.  */
+                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_point,
+                                     FALSE);
+        }
+
+        return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, i, error);
 }
 
 static gboolean
@@ -842,7 +873,7 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 {
         gchar *raw_string = gsgf_raw_get_value(raw, 0);
         gchar *ap = NULL;
-        const gchar *version = NULL;
+        gchar *version = NULL;
         GSGFCompose *retval;
 
         ap = gsgf_util_read_simple_text(raw_string, &version, ':');
@@ -897,7 +928,7 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 {
         gchar *raw_string = gsgf_raw_get_value(raw, 0);
         gchar *columns_as_string = NULL;
-        const gchar *rows_as_string = NULL;
+        gchar *rows_as_string = NULL;
         GSGFRaw *dummy;
         GSGFCookedValue *cooked;
         GSGFNumber *columns = NULL;
@@ -1061,6 +1092,14 @@ gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
         GSGFListOf *list_of = gsgf_list_of_new (type, flavor);
         GSGFCompose *compose;
         gsize i, num_pairs;
+        gchar *raw_string;
+        gchar *start_string;
+        gchar *end_string;
+        GSGFPoint *start_point;
+        GSGFPoint *end_point;
+        gint start_normalized, end_normalized;
+        GSGFRaw *point_raw;
+        GList *prev_points = NULL;
 
         num_pairs = gsgf_raw_get_number_of_values (raw);
         if (!num_pairs) {
@@ -1070,19 +1109,85 @@ gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
                 return NULL;
         }
 
-        for (i = 0; i < gsgf_raw_get_number_of_values(raw); ++i) {
-                /*
-                stone = gsgf_flavor_create_stone(flavor, raw, i, error);
-                if (!stone) {
-                        g_object_unref(list_of);
-                        return NULL;
+        for (i = 0; i < gsgf_raw_get_number_of_values (raw); ++i) {
+                raw_string = gsgf_raw_get_value (raw, i);
+                start_string = gsgf_util_read_simple_text (raw_string,
+                                                           &end_string, ':');
+                if (!start_string || !*start_string) {
+                        if (start_string) g_free(start_string);
+                        g_object_unref (list_of);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("Empty property"));
+                        return FALSE;
                 }
-                if (!gsgf_list_of_append(list_of, GSGF_COOKED_VALUE(stone), error)) {
-                        g_object_unref(list_of);
-                        return NULL;
+
+                if (!end_string || !end_string[0] || !end_string[1]
+                    || end_string == start_string) {
+                        g_free (start_string);
+                        g_object_unref (list_of);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("No end point"));
+                        return FALSE;
                 }
-                */
+                ++end_string;
+
+                /* We cannot create a point from a string.  We therefore need
+                 * a temporary GSGFRaw.
+                 */
+                point_raw = gsgf_raw_new (start_string);
+                g_free (start_string);
+                start_point = gsgf_flavor_create_point (flavor, point_raw,
+                                                        0, error);
+                g_object_unref (point_raw);
+                if (!start_point) {
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                point_raw = gsgf_raw_new (end_string);
+                end_point = gsgf_flavor_create_point (flavor, point_raw,
+                                                      0, error);
+                g_object_unref (point_raw);
+                if (!end_point) {
+                        g_object_unref (start_point);
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                start_normalized = gsgf_point_get_normalized_value (start_point);
+                end_normalized = gsgf_point_get_normalized_value (end_point);
+
+                if (start_normalized == end_normalized) {
+                        g_object_unref (start_point);
+                        g_object_unref (end_point);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("Start and end point must differ"));
+                        return FALSE;
+                }
+
+                /* Check collisions! */
+
+                prev_points = g_list_append (prev_points, &start_normalized);
+                prev_points = g_list_append (prev_points, &end_normalized);
+
+                compose = gsgf_compose_new (GSGF_COOKED_VALUE (start_point),
+                                            GSGF_COOKED_VALUE (end_point),
+                                            NULL);
+                if (!compose) {
+                        g_object_unref (start_point);
+                        g_object_unref (end_point);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                                    _("Invalid points in AR property"));
+                        return FALSE;
+                }
+                if (!gsgf_list_of_append (list_of, GSGF_COOKED_VALUE (compose),
+                                          error)) {
+                        g_object_unref (compose);
+                        return FALSE;
+                }
         }
+
+        g_list_free (prev_points);
 
         return GSGF_COOKED_VALUE (list_of);
 }
