@@ -129,3 +129,14 @@ expect_error_from_sgf (const gchar *sgf,  GError *expect)
 
         return TRUE;
 }
+
+GSGFCollection *
+parse_memory (const gchar *sgf, GError **error)
+{
+        GMemoryInputStream *stream =
+                        g_memory_input_stream_new_from_data (sgf, -1, NULL);
+
+        *error = NULL;
+
+        return gsgf_collection_parse_stream (stream, NULL, &error);
+}

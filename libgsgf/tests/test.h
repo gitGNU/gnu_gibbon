@@ -36,5 +36,6 @@ gchar *g_memory_output_stream_get_string(const GMemoryOutputStream *stream);
 
 gchar *build_filename(const gchar *filename);
 gboolean expect_error_from_sgf (const gchar *sgf, GError *expect);
+GSGFCollection *parse_memory (const gchar *sgf, GError **error);
 
 #endif
