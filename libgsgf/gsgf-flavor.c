@@ -1083,10 +1083,10 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 }
 
 static GSGFCookedValue *
-gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
-                                 const GSGFFlavor *flavor,
-                                 const GSGFProperty *property,
-                                 GError **error)
+gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
+                                  const GSGFFlavor *flavor,
+                                  const GSGFProperty *property,
+                                  GError **error)
 {
         GType type = GSGF_TYPE_COMPOSE;
         GSGFListOf *list_of = gsgf_list_of_new (type, flavor);
@@ -1100,6 +1100,8 @@ gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
         gint start_normalized, end_normalized;
         GSGFRaw *point_raw;
         GList *prev_points = NULL;
+        GList *prev;
+        gint start_prev, end_prev;
 
         num_pairs = gsgf_raw_get_number_of_values (raw);
         if (!num_pairs) {
@@ -1165,6 +1167,21 @@ gsgf_list_of_arrows_new_from_raw(const GSGFRaw* raw,
                         return FALSE;
                 }
 
+                prev = prev_points;
+                while (prev) {
+                		start_prev = prev->data;
+                		prev = prev->next;
+                		end_prev = prev->data;
+                		if (start_normalized == start_prev
+                		    && end_normalized == end_prev) {
+                				g_object_unref (start_point);
+                				g_object_unref (end_point);
+                				g_set_error(error, GSGF_ERROR,
+                						    GSGF_ERROR_SEMANTIC_ERROR,
+                							_("Arrows must be unique"));
+                				return FALSE;
+                		}
+                }
                 /* Check collisions! */
 
                 prev_points = g_list_append (prev_points, &start_normalized);
