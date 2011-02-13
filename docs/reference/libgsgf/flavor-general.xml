@@ -299,7 +299,7 @@
       <title>AR (arrow)</title>
       <para>
         Type: <link linkend="GSGFListOf">GSGFListOf</link>,
-        item type:<link linkend="GSGFComposed">GSGFComposed</link>
+        item type: <link linkend="GSGFComposed">GSGFComposed</link>
         (<link linkend="GSGFPoint">GSGFPoint</link>:<link linkend="GSGFPoint">GSGFPoint</link>)
       </para>
       <para>
@@ -309,7 +309,19 @@
         See <ulink url="http://www.red-bean.com/sgf/properties.html#AR">http://www.red-bean.com/sgf/properties.html#AR</ulink>.
       </para>
     </sect2>
-    <sect2>
+    <sect2 id="property-CR">
+      <title>CR (circle)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Mark points with a circle.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#CR">http://www.red-bean.com/sgf/properties.html#CR</ulink>.
+      </para>
+    </sect2>
   </sect1>
   <sect1 id="root-properties">
     <title>Root Properties</title>
