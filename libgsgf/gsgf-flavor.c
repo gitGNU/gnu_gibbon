@@ -1100,7 +1100,7 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
         gint start_normalized, end_normalized;
         GSGFRaw *point_raw;
         GList *prev_points = NULL;
-        GList *prev;
+        GList *iter;
         gint start_prev, end_prev;
 
         num_pairs = gsgf_raw_get_number_of_values (raw);
@@ -1167,25 +1167,28 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
                         return FALSE;
                 }
 
-                prev = prev_points;
-                while (prev) {
-                		start_prev = prev->data;
-                		prev = prev->next;
-                		end_prev = prev->data;
+                iter = prev_points;
+                while (iter) {
+                		start_prev = (gint) iter->data;
+                		iter = iter->next;
+                		end_prev = (gint) iter->data;
+                		iter = iter->next;
                 		if (start_normalized == start_prev
                 		    && end_normalized == end_prev) {
                 				g_object_unref (start_point);
                 				g_object_unref (end_point);
                 				g_set_error(error, GSGF_ERROR,
-                						    GSGF_ERROR_SEMANTIC_ERROR,
-                							_("Arrows must be unique"));
+                					    GSGF_ERROR_SEMANTIC_ERROR,
+                					    _("Arrows must be unique"));
                 				return FALSE;
                 		}
                 }
                 /* Check collisions! */
 
-                prev_points = g_list_append (prev_points, &start_normalized);
-                prev_points = g_list_append (prev_points, &end_normalized);
+                prev_points = g_list_append (prev_points,
+                                             (gpointer) start_normalized);
+                prev_points = g_list_append (prev_points,
+                                             (gpointer) end_normalized);
 
                 compose = gsgf_compose_new (GSGF_COOKED_VALUE (start_point),
                                             GSGF_COOKED_VALUE (end_point),
