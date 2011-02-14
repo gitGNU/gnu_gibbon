@@ -29,6 +29,7 @@
 char *filename = "markup-properties.sgf";
 
 static gboolean test_prop_AR (const GSGFNode *node);
+static gboolean test_prop_CR (const GSGFNode *node);
 
 int 
 test_collection (GSGFCollection *collection, GError *error)
@@ -65,7 +66,9 @@ test_collection (GSGFCollection *collection, GError *error)
         }
         node = GSGF_NODE (item);
         if (!test_prop_AR (node))
-                return -1;
+                retval = -1;
+        if (!test_prop_CR (node))
+                retval = -1;
 
         return retval;
 }
@@ -115,6 +118,65 @@ test_prop_AR (const GSGFNode *node)
                      "Property 'AR': Arrows must be unique");
         if (!expect_error_from_sgf ("(;GM[6];AR[a:b][c:d][a:b])", expect))
                 return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_CR (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "CR");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 5, 6, 7, 9, 11, 12 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                fprintf(stderr, "No property 'CR'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF(cooked_value)) {
+                fprintf(stderr, "Property 'CR' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
+                        g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                fprintf(stderr, "Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ( "Item #%u is not a %d"
+                                     " point but a %d point!\n",
+                                     i, values[i], point);
+                        return FALSE;
+                }
+        }
 
         return TRUE;
 }
