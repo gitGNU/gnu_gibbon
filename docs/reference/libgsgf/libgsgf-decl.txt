@@ -391,12 +391,12 @@ const GSGFText *self
 <FUNCTION>
 <NAME>gsgf_util_read_simple_text</NAME>
 <RETURNS>gchar *</RETURNS>
-const gchar *raw, const gchar **end, gchar delim 
+const gchar *raw, gchar **end, gchar delim 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_util_read_text</NAME>
 <RETURNS>gchar *</RETURNS>
-const gchar *raw, const gchar **end, gchar delim 
+const gchar *raw, gchar **end, gchar delim 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_EMPTY</NAME>
@@ -755,6 +755,10 @@ struct _GSGFFlavorClass
                                             GError **error);
 
         GType point_type;
+        struct _GSGFPoint *(*create_point) (const GSGFFlavor *flavor,
+                                            const struct _GSGFRaw *raw,
+                                            gsize i,
+                                            GError **error);
         gboolean (*append_points) (const GSGFFlavor *flavor,
                                    struct _GSGFListOf *list_of,
                                    const struct _GSGFRaw *raw,
@@ -922,6 +926,11 @@ void
 <NAME>gsgf_point_backgammon_new</NAME>
 <RETURNS>GSGFPointBackgammon *</RETURNS>
 gint point 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_point_backgammon_new_from_raw</NAME>
+<RETURNS>GSGFPointBackgammon *</RETURNS>
+const GSGFRaw *raw, gsize i, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_append_to_list_of</NAME>

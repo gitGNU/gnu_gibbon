@@ -201,6 +201,7 @@ GSGF_PROPERTY_GET_CLASS
 GSGFPointBackgammon
 GSGFPointBackgammonClass
 gsgf_point_backgammon_new
+gsgf_point_backgammon_new_from_raw
 gsgf_point_backgammon_append_to_list_of
 gsgf_point_backgammon_get_point
 <SUBSECTION Standard>
