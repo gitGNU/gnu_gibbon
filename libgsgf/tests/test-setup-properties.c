@@ -268,6 +268,9 @@ test_prop_AE(const GSGFNode *node)
         GSGFCookedValue *cooked_point;
         gsize num_points;
         guint point;
+        gint values[] = { 0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14,
+                          15, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+        gsize expect_num_points, i;
 
         if (!cooked_value) {
                 fprintf(stderr, "No property 'AE'!\n");
@@ -288,22 +291,28 @@ test_prop_AE(const GSGFNode *node)
         }
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 23) {
-                fprintf(stderr, "Expected 23 points, got %u!\n", num_points);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                fprintf(stderr, "Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
                 return FALSE;
         }
 
-        /* Turn this into a for loop.  */
-        cooked_point = gsgf_list_of_get_nth_item(list_of, 0);
-        if (!GSGF_IS_POINT_BACKGAMMON(cooked_point)) {
-                fprintf(stderr, "Item #0 is not a GSGFSPointBackgammon!\n");
-                return FALSE;
-        }
-        point = gsgf_point_backgammon_get_point(GSGF_POINT_BACKGAMMON(cooked_point));
-        if (point != 0) {
-                fprintf(stderr, "Item #0 is not a 0 point but a %d point!\n",
-                                point);
-                return FALSE;
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ( "Item #%u is not a %d"
+                                     " point but a %d point!\n",
+                                     i, values[i], point);
+                        return FALSE;
+                }
         }
 
         return TRUE;
