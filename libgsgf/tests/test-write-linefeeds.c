@@ -39,7 +39,7 @@ test_collection(GSGFCollection *collection, GError *error)
                                                         FALSE, NULL, &error);
         /* All types of line endings should be converted to \n.  */
         gchar *expect = "(;AP[libgsgf:" VERSION
-                        "]CA[UTF-8]CR[\n\n]CRLF[\n\n]LF[\n\n]LFCR[\n\n])\n";
+                        "]CA[UTF-8]XY[\n\n]XYYZ[\n\n]YZ[\n\n]YZXY[\n\n])\n";
         gchar *got;
 
         if (error) return expect_error(error, NULL);
