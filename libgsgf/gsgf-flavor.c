@@ -210,6 +210,13 @@ static GSGFFlavorTypeDef gsgf_flavor_CA = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_CR = {
+                gsgf_list_of_points_new_from_raw, {
+                                /* FIXME! Check uniquneness! */
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_DM = {
                 gsgf_double_new_from_raw, {
                                 gsgf_constraint_node_annotation_unique,
@@ -368,7 +375,7 @@ static GSGFFlavorTypeDef *gsgf_b_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
                 &gsgf_flavor_CA, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_CR,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
