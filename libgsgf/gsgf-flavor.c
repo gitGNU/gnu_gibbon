@@ -659,7 +659,8 @@ gsgf_flavor_append_points(const GSGFFlavor *self,
 
         if (!GSGF_FLAVOR_GET_CLASS(self)->append_points) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method append_points is not implemented"));
+                            _("%s does not implement method append_points()"),
+                            G_OBJECT_TYPE_NAME (self));
                 /* Print standard error message and return.  */
                 g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->append_points,
                                      FALSE);
