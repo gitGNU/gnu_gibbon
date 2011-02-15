@@ -148,7 +148,7 @@ test_prop_AR (const GSGFNode *node)
                         gsgf_node_get_property_cooked (node, "AR");
         GSGFListOf *list_of;
         GType type;
-        gsize num_arrows;
+        gsize num_lines;
         gint expect[3][2] = {{ 0, 1}, { 2, 3 }, { 3, 4 }};
         gint got;
         GSGFCompose *compose;
@@ -173,9 +173,9 @@ test_prop_AR (const GSGFNode *node)
                 return FALSE;
         }
 
-        num_arrows = gsgf_list_of_get_number_of_items (list_of);
-        if (num_arrows != 3) {
-                g_printerr ("Expected 3 arrows, got %u.\n", num_arrows);
+        num_lines = gsgf_list_of_get_number_of_items (list_of);
+        if (num_lines != 3) {
+                g_printerr ("Expected 3 lines, got %u.\n", num_lines);
                 return FALSE;
         }
 

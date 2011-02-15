@@ -103,7 +103,7 @@ static GSGFCookedValue *gsgf_elist_of_points_new_from_raw(const GSGFRaw *raw,
                                                           const GSGFFlavor *flavor,
                                                           const GSGFProperty *property,
                                                           GError **error);
-static GSGFCookedValue *gsgf_list_of_arrows_new_from_raw(const GSGFRaw *raw,
+static GSGFCookedValue *gsgf_list_of_lines_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
@@ -195,7 +195,7 @@ static GSGFFlavorTypeDef gsgf_flavor_AP = {
 };
 
 static GSGFFlavorTypeDef gsgf_flavor_AR = {
-                gsgf_list_of_arrows_new_from_raw, {
+                gsgf_list_of_lines_new_from_raw, {
                                 NULL
                 }
 };
@@ -1246,7 +1246,7 @@ gsgf_elist_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 }
 
 static GSGFCookedValue *
-gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
+gsgf_list_of_lines_new_from_raw (const GSGFRaw* raw,
                                   const GSGFFlavor *flavor,
                                   const GSGFProperty *property,
                                   GError **error)
