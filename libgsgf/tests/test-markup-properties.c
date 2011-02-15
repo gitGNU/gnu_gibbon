@@ -30,6 +30,7 @@ char *filename = "markup-properties.sgf";
 
 static gboolean test_prop_AR (const GSGFNode *node);
 static gboolean test_prop_CR (const GSGFNode *node);
+static gboolean test_unique_points_CR (void);
 
 int 
 test_collection (GSGFCollection *collection, GError *error)
@@ -68,6 +69,8 @@ test_collection (GSGFCollection *collection, GError *error)
         if (!test_prop_AR (node))
                 retval = -1;
         if (!test_prop_CR (node))
+                retval = -1;
+        if (!test_unique_points_CR ())
                 retval = -1;
 
         return retval;
@@ -132,7 +135,7 @@ test_prop_CR (const GSGFNode *node)
         GSGFCookedValue *cooked_point;
         gsize num_points;
         guint point;
-        gint values[] = { 5, 6, 7, 9, 11, 12 };
+        gint values[] = { 0, 1, 2, 3 };
         gsize expect_num_points, i;
 
         if (!cooked_value) {
@@ -179,4 +182,60 @@ test_prop_CR (const GSGFNode *node)
         }
 
         return TRUE;
+}
+
+static gboolean
+test_unique_points_CR (void)
+{
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
+        gboolean retval = TRUE;
+
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'MA' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'CR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]MA[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'SL' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'CR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'CR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'TR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'CR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        return retval;
 }
