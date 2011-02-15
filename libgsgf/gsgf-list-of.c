@@ -27,6 +27,10 @@
  * possibly be empty.  In libgsgf, there is no corresponding type for this.
  * Whether a list can be empty or not is considered to be part of the
  * semantics.
+ *
+ * You can detect empty lists by checking the item type with
+ * gsgf_list_of_get_item_type().  If it is  #GSGF_TYPE_EMPTY the list is
+ * empty.
  */
 
 #include <glib.h>
