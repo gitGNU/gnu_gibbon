@@ -96,6 +96,9 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
+static GSGFCookedValue *gsgf_list_of_point_labels_new_from_raw
+        (const GSGFRaw *raw, const GSGFFlavor *flavor,
+         const GSGFProperty *property, GError **error);
 static GSGFCookedValue *gsgf_elist_of_points_new_from_raw(const GSGFRaw *raw,
                                                           const GSGFFlavor *flavor,
                                                           const GSGFProperty *property,
@@ -308,6 +311,12 @@ static GSGFFlavorTypeDef gsgf_flavor_KO = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_LB = {
+                gsgf_list_of_point_labels_new_from_raw, {
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_MA = {
                 gsgf_list_of_points_new_from_raw, {
                                 gsgf_constraint_markup_unique,
@@ -473,6 +482,14 @@ static GSGFFlavorTypeDef *gsgf_k_handlers[26] = {
                 NULL, NULL,
 };
 
+static GSGFFlavorTypeDef *gsgf_l_handlers[26] = {
+                NULL, &gsgf_flavor_LB, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_m_handlers[26] = {
                 &gsgf_flavor_MA, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -525,7 +542,7 @@ static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 gsgf_i_handlers,
                 NULL,
                 gsgf_k_handlers,
-                NULL,
+                gsgf_l_handlers,
                 gsgf_m_handlers,
                 NULL,
                 NULL,
@@ -1246,9 +1263,10 @@ gsgf_elist_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
         }
 
         list_of = gsgf_list_of_new (gsgf_empty_get_type (), flavor);
-        gsgf_list_of_append (list_of, gsgf_empty_new (), NULL);
+        gsgf_list_of_append (list_of, GSGF_COOKED_VALUE (gsgf_empty_new ()),
+                             NULL);
 
-        return list_of;
+        return GSGF_COOKED_VALUE (list_of);
 }
 
 static GSGFCookedValue *
@@ -1267,7 +1285,7 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
         GSGFPoint *start_point;
         GSGFPoint *end_point;
         gint start_normalized, end_normalized;
-        GSGFRaw *point_raw;
+        GSGFRaw *tmp_raw;
         GList *prev_points = NULL;
         GList *iter;
         gint start_prev, end_prev;
@@ -1305,20 +1323,20 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
                 /* We cannot create a point from a string.  We therefore need
                  * a temporary GSGFRaw.
                  */
-                point_raw = gsgf_raw_new (start_string);
+                tmp_raw = gsgf_raw_new (start_string);
                 g_free (start_string);
-                start_point = gsgf_flavor_create_point (flavor, point_raw,
+                start_point = gsgf_flavor_create_point (flavor, tmp_raw,
                                                         0, error);
-                g_object_unref (point_raw);
+                g_object_unref (tmp_raw);
                 if (!start_point) {
                         g_object_unref (list_of);
                         return FALSE;
                 }
 
-                point_raw = gsgf_raw_new (end_string);
-                end_point = gsgf_flavor_create_point (flavor, point_raw,
+                tmp_raw = gsgf_raw_new (end_string);
+                end_point = gsgf_flavor_create_point (flavor, tmp_raw,
                                                       0, error);
-                g_object_unref (point_raw);
+                g_object_unref (tmp_raw);
                 if (!end_point) {
                         g_object_unref (start_point);
                         g_object_unref (list_of);
@@ -1352,7 +1370,6 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
                 				return FALSE;
                 		}
                 }
-                /* Check collisions! */
 
                 prev_points = g_list_append (prev_points,
                                              (gpointer) start_normalized);
@@ -1366,7 +1383,122 @@ gsgf_list_of_arrows_new_from_raw (const GSGFRaw* raw,
                         g_object_unref (start_point);
                         g_object_unref (end_point);
                         g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                                    _("Invalid points in AR property"));
+                                    _("Invalid points in property"));
+                        return FALSE;
+                }
+                if (!gsgf_list_of_append (list_of, GSGF_COOKED_VALUE (compose),
+                                          error)) {
+                        g_object_unref (compose);
+                        return FALSE;
+                }
+        }
+
+        g_list_free (prev_points);
+
+        return GSGF_COOKED_VALUE (list_of);
+}
+
+static GSGFCookedValue *
+gsgf_list_of_point_labels_new_from_raw (const GSGFRaw* raw,
+                                        const GSGFFlavor *flavor,
+                                        const GSGFProperty *property,
+                                        GError **error)
+{
+        GType type = GSGF_TYPE_COMPOSE;
+        GSGFListOf *list_of = gsgf_list_of_new (type, flavor);
+        GSGFCompose *compose;
+        gsize i, num_pairs;
+        gchar *raw_string;
+        gchar *start_string;
+        gchar *end_string;
+        GSGFPoint *start_point;
+        GSGFSimpleText *end_label;
+        gint start_normalized;
+        GSGFRaw *tmp_raw;
+        GList *prev_points = NULL;
+        GList *iter;
+        gint start_prev;
+
+        num_pairs = gsgf_raw_get_number_of_values (raw);
+        if (!num_pairs) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_EMPTY,
+                                _("List of point labels must not be empty"));
+                g_object_unref(list_of);
+                return NULL;
+        }
+
+        for (i = 0; i < gsgf_raw_get_number_of_values (raw); ++i) {
+                raw_string = gsgf_raw_get_value (raw, i);
+                start_string = gsgf_util_read_simple_text (raw_string,
+                                                           &end_string, ':');
+                if (!start_string || !*start_string) {
+                        if (start_string) g_free(start_string);
+                        g_object_unref (list_of);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("Empty property"));
+                        return FALSE;
+                }
+
+                if (!end_string || !end_string[0] || !end_string[1]
+                    || end_string == start_string) {
+                        g_free (start_string);
+                        g_object_unref (list_of);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                                    _("No end point"));
+                        return FALSE;
+                }
+                ++end_string;
+
+                /* We cannot create a point from a string.  We therefore need
+                 * a temporary GSGFRaw.
+                 */
+                tmp_raw = gsgf_raw_new (start_string);
+                g_free (start_string);
+                start_point = gsgf_flavor_create_point (flavor, tmp_raw,
+                                                        0, error);
+                g_object_unref (tmp_raw);
+                if (!start_point) {
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                tmp_raw = gsgf_raw_new (end_string);
+                end_label = gsgf_simple_text_new_from_raw (tmp_raw, flavor,
+                                                           property, error);
+                g_object_unref (tmp_raw);
+                if (!end_label) {
+                        g_object_unref (start_point);
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                start_normalized = gsgf_point_get_normalized_value (start_point);
+
+                iter = prev_points;
+                while (iter) {
+                                start_prev = (gint) iter->data;
+                                iter = iter->next;
+                                if (start_normalized == start_prev) {
+                                                g_object_unref (start_point);
+                                                g_object_unref (end_label);
+                                                g_set_error(error, GSGF_ERROR,
+                                                            GSGF_ERROR_SEMANTIC_ERROR,
+                                                            _("Points must be unique"));
+                                                return FALSE;
+                                }
+                }
+
+                prev_points = g_list_append (prev_points,
+                                             (gpointer) start_normalized);
+
+                compose = gsgf_compose_new (GSGF_COOKED_VALUE (start_point),
+                                            GSGF_COOKED_VALUE (end_label),
+                                            NULL);
+                if (!compose) {
+                        g_object_unref (start_point);
+                        g_object_unref (end_label);
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
+                                    _("Invalid point labels in property"));
                         return FALSE;
                 }
                 if (!gsgf_list_of_append (list_of, GSGF_COOKED_VALUE (compose),
