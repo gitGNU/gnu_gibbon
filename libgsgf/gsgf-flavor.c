@@ -96,6 +96,10 @@ static GSGFCookedValue *gsgf_list_of_points_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
                                                          GError **error);
+static GSGFCookedValue *gsgf_elist_of_points_new_from_raw(const GSGFRaw *raw,
+                                                          const GSGFFlavor *flavor,
+                                                          const GSGFProperty *property,
+                                                          GError **error);
 static GSGFCookedValue *gsgf_list_of_arrows_new_from_raw(const GSGFRaw *raw,
                                                          const GSGFFlavor *flavor,
                                                          const GSGFProperty *property,
@@ -220,6 +224,12 @@ static GSGFFlavorTypeDef gsgf_flavor_CR = {
                 gsgf_list_of_points_new_from_raw, {
                                 gsgf_constraint_is_not_empty_list,
                                 gsgf_constraint_markup_unique,
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_DD = {
+                gsgf_elist_of_points_new_from_raw, {
                                 NULL
                 }
 };
@@ -416,7 +426,7 @@ static GSGFFlavorTypeDef *gsgf_c_handlers[26] = {
 };
 
 static GSGFFlavorTypeDef *gsgf_d_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, &gsgf_flavor_DD, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 &gsgf_flavor_DM, NULL, &gsgf_flavor_DO, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -1217,6 +1227,28 @@ gsgf_list_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
         }
 
         return GSGF_COOKED_VALUE(list_of);
+}
+
+static GSGFCookedValue *
+gsgf_elist_of_points_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
+                                  const GSGFProperty *property, GError **error)
+{
+        GSGFListOf *list_of;
+        gsize num_values = gsgf_raw_get_number_of_values (raw);
+        gsize i;
+
+        num_values = gsgf_raw_get_number_of_values(raw);
+        for (i = 0; i < num_values; ++i) {
+                if (*(gsgf_raw_get_value (raw, i)))
+                        return gsgf_list_of_points_new_from_raw (raw, flavor,
+                                                                 property,
+                                                                 error);
+        }
+
+        list_of = gsgf_list_of_new (gsgf_empty_get_type (), flavor);
+        gsgf_list_of_append (list_of, gsgf_empty_new (), NULL);
+
+        return list_of;
 }
 
 static GSGFCookedValue *
