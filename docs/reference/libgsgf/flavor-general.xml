@@ -323,6 +323,19 @@
         See <ulink url="http://www.red-bean.com/sgf/properties.html#CR">http://www.red-bean.com/sgf/properties.html#CR</ulink>.
       </para>
     </sect2>
+    <sect2 id="property-DD">
+      <title>DD (dim point)</title>
+      <para>
+        Type: Possibly empty <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Dim out points.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#DD">http://www.red-bean.com/sgf/properties.html#DD</ulink>.
+      </para>
+    </sect2>
     <sect2 id="property-MA">
       <title>MA (mark point with an X)</title>
       <para>
