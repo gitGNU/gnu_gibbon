@@ -336,6 +336,20 @@
         See <ulink url="http://www.red-bean.com/sgf/properties.html#DD">http://www.red-bean.com/sgf/properties.html#DD</ulink>.
       </para>
     </sect2>
+    <sect2 id="property-LB">
+      <title>LB (text on point)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFComposed">GSGFComposed</link>
+        (<link linkend="GSGFPoint">GSGFPoint</link>:<link linkend="GSGFSimpleText">GSGFSimpleText</link>)
+      </para>
+      <para>
+        A list of pairs of points combined with a text label.  Points must be unique.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#LB">http://www.red-bean.com/sgf/properties.html#LB</ulink>.
+      </para>
+    </sect2>
     <sect2 id="property-MA">
       <title>MA (mark point with an X)</title>
       <para>
