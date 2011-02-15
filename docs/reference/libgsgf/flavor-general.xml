@@ -518,4 +518,247 @@
       </para>
     </sect2>
   </sect1>
+  <sect1 id="game-info-properties">
+    <title>Game Info Properties</title>
+    <sect2 id="property-AN">
+      <title>AN (annotator)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the person who annotated the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#AN">http://www.red-bean.com/sgf/properties.html#AN</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-BR">
+      <title>BR (black rank)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Rank of the black player.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#BR">http://www.red-bean.com/sgf/properties.html#BR</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-CP">
+      <title>CP (copyright)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Copyright information.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#CP">http://www.red-bean.com/sgf/properties.html#CP</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-DT">
+      <title>DT (date)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Date of the event.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#DT">http://www.red-bean.com/sgf/properties.html#DT</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-EV">
+      <title>EV (event)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the event.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#EV">http://www.red-bean.com/sgf/properties.html#EV</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-GC">
+      <title>GC (game context)</title>
+      <para>
+        Type: <link linkend="GSGFText">GSGFText</link>
+      </para>
+      <para>
+        Background information for the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#GC">http://www.red-bean.com/sgf/properties.html#GC</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-GN">
+      <title>GN (game name)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#GN">http://www.red-bean.com/sgf/properties.html#GN</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-ON">
+      <title>ON (opening played)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the opening.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#ON">http://www.red-bean.com/sgf/properties.html#ON</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-OT">
+      <title>OT (overtime rule)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Description of the overtime rule.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#OT">http://www.red-bean.com/sgf/properties.html#OT</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-PB">
+      <title>PB (black player)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the black player.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#PB">http://www.red-bean.com/sgf/properties.html#PB</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-PC">
+      <title>PC (place)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Location of the event.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#PC">http://www.red-bean.com/sgf/properties.html#PC</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-PB">
+      <title>PB (white player)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the white player.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#PW">http://www.red-bean.com/sgf/properties.html#PW</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-RE">
+      <title>RE (result)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Result of the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#RE">http://www.red-bean.com/sgf/properties.html#RE</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-RO">
+      <title>RO (round)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Round name and type.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#RO">http://www.red-bean.com/sgf/properties.html#RO</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-RU">
+      <title>RU (rules)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Rules used in this game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#RU">http://www.red-bean.com/sgf/properties.html#RU</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-SO">
+      <title>SO (source)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Source (journal, internet, ...) of the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#SO">http://www.red-bean.com/sgf/properties.html#SO</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-TM">
+      <title>TM (time limits)</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        Time limits of the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#TM">http://www.red-bean.com/sgf/properties.html#TM</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-US">
+      <title>US (user)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the user who entered the game.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#US">http://www.red-bean.com/sgf/properties.html#US</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-WR">
+      <title>WR (white rank)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Rank of the white player.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#WR">http://www.red-bean.com/sgf/properties.html#WR</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-WT">
+      <title>WR (white team)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        Name of the white team.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#WT">http://www.red-bean.com/sgf/properties.html#WT</ulink>.
+      </para>
+    </sect2>
+  </sect1>
 </chapter>
