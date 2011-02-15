@@ -32,6 +32,8 @@ static gboolean test_prop_AR (const GSGFNode *node);
 static gboolean test_prop_CR (const GSGFNode *node);
 static gboolean test_unique_points_CR (void);
 static gboolean test_prop_MA (const GSGFNode *node);
+static gboolean test_prop_DD (const GSGFNode *node);
+static gboolean test_prop_DD_empty (const GSGFNode *node);
 static gboolean test_unique_points_MA (void);
 static gboolean test_prop_SL (const GSGFNode *node);
 static gboolean test_unique_points_SL (void);
@@ -100,6 +102,24 @@ test_collection (GSGFCollection *collection, GError *error)
         if (!test_prop_TR (node))
                 retval = -1;
         if (!test_unique_points_TR ())
+                retval = -1;
+
+        item = g_list_nth_data (nodes, 2);
+        if (!item) {
+                g_printerr ("Property #2 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_DD (node))
+                retval = -1;
+
+        item = g_list_nth_data (nodes, 3);
+        if (!item) {
+                g_printerr ("Property #3 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_DD_empty (node))
                 retval = -1;
 
         return retval;
@@ -267,6 +287,106 @@ test_unique_points_CR (void)
                 retval = FALSE;
 
         return retval;
+}
+
+static gboolean
+test_prop_DD (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "DD");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 0, 1, 2, 3 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'DD'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF (cooked_value)) {
+                g_printerr ("Property 'DD' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF (cooked_value);
+        type = gsgf_list_of_get_item_type (list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Property 'DD': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                g_printerr ("Property 'DD': Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Property 'DD': Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ("Property 'DD': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_DD_empty (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "DD");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 0, 1, 2, 3 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No empty property 'DD'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF (cooked_value)) {
+                g_printerr ("Empty property 'DD' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF (cooked_value);
+        type = gsgf_list_of_get_item_type (list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Empty property 'DD': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        if (num_points != 0) {
+                g_printerr ("Property 'DD': Expected 0 points, got %u!\n",
+                            num_points);
+                return FALSE;
+        }
+
+        return TRUE;
 }
 
 static gboolean
