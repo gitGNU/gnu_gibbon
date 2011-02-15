@@ -316,10 +316,67 @@
         item type: <link linkend="GSGFPoint">GSGFPoint</link>.
       </para>
       <para>
-        Mark points with a circle.
+        Mark points with a circle.  The properties CR, MA, SL, SQ, and TR must not
+        be used to mark the same point within one node.
       </para>
       <para>
         See <ulink url="http://www.red-bean.com/sgf/properties.html#CR">http://www.red-bean.com/sgf/properties.html#CR</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-MA">
+      <title>MA (mark point with an X)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Mark points with an X.  The properties CR, MA, SL, SQ, and TR must not
+        be used to mark the same point within one node.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#MA">http://www.red-bean.com/sgf/properties.html#MA</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-SL">
+      <title>SL (selected)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Mark points as selected.  The properties CR, MA, SL, SQ, and TR must not
+        be used to mark the same point within one node.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#SL">http://www.red-bean.com/sgf/properties.html#SL</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-SQ">
+      <title>MA (mark point with a square)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Mark points with a square.  The properties CR, MA, SL, SQ, and TR must not
+        be used to mark the same point within one node.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#SQ">http://www.red-bean.com/sgf/properties.html#SQ</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-TR">
+      <title>MA (mark point with a triangle)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        Mark points with a triangle.  The properties CR, MA, SL, SQ, and TR must not
+        be used to mark the same point within one node.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#TR">http://www.red-bean.com/sgf/properties.html#TR</ulink>.
       </para>
     </sect2>
   </sect1>
