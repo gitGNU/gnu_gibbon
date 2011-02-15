@@ -175,8 +175,8 @@ expect_errors_from_sgf (const gchar *sgf,  GError *expect1, GError *expect2)
 
         (void) gsgf_collection_parse_stream (stream, NULL, &error);
 
-        if (0 != expect_error_silent (error, expect1)
-            && 0 != expect_error (error, expect2))
+        if (0 != expect_error_silent (error, expect2)
+            && 0 != expect_error (error, expect1))
                 return FALSE;
 
         return TRUE;
