@@ -447,6 +447,11 @@ test_prop_DD_empty (const GSGFNode *node)
         return TRUE;
 }
 
+struct point_simpletext {
+        gint point;
+        const gchar *label;
+};
+
 static gboolean
 test_prop_LB (const GSGFNode *node)
 {
@@ -454,8 +459,15 @@ test_prop_LB (const GSGFNode *node)
                         gsgf_node_get_property_cooked (node, "LB");
         GSGFListOf *list_of;
         GType type;
-        gsize num_pairs;
-        GError *expect;
+        gsize num_pairs, i;
+        GSGFCompose *compose;
+        GSGFCookedValue *item;
+        struct point_simpletext expect[2] = {
+                        { 0, "This is point aa" },
+                        { 25, "And this is point zz" },
+        };
+        gint got_point;
+        const gchar *got_label;
 
         if (!cooked_value) {
                 g_printerr ("No property 'LB'!\n");
@@ -479,6 +491,40 @@ test_prop_LB (const GSGFNode *node)
         if (num_pairs != 2) {
                 g_printerr ("Expected 2 pairs, got %u.\n", num_pairs);
                 return FALSE;
+        }
+
+        for (i = 0; i < 2; ++i) {
+                compose = GSGF_COMPOSE (gsgf_list_of_get_nth_item (list_of, i));
+
+                item = gsgf_compose_get_value (compose, 0);
+                if (!GSGF_IS_POINT_BACKGAMMON (item)) {
+                        g_printerr ("Expected GSGFPointBackgammon for"
+                                    " item #0 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+                got_point = gsgf_point_get_normalized_value (GSGF_POINT (item));
+
+                if (expect[i].point != got_point) {
+                        g_printerr ("Expected %d not %d for"
+                                    " item #0 of pair #%d.\n",
+                                    expect[i].point, got_point, i);
+                }
+
+                item = gsgf_compose_get_value (compose, 1);
+                if (!GSGF_IS_SIMPLE_TEXT (item)) {
+                        g_printerr ("Expected GSGFSimpleText for"
+                                    " item #1 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+
+                got_label = gsgf_text_get_value (GSGF_TEXT (item));
+                if (strcmp (expect[i].label, got_label)) {
+                        g_printerr ("Expected '%s' not '%s' for"
+                                    " item #1 of pair #%d.\n",
+                                    expect[i].label, got_label, i);
+                }
         }
 
         return TRUE;
