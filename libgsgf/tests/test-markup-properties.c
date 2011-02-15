@@ -37,6 +37,8 @@ static gboolean test_prop_DD (const GSGFNode *node);
 static gboolean test_prop_DD_empty (const GSGFNode *node);
 static gboolean test_prop_LB (const GSGFNode *node);
 static gboolean test_unique_points_LB (void);
+static gboolean test_prop_LN (const GSGFNode *node);
+static gboolean test_constraints_LN (void);
 static gboolean test_unique_points_MA (void);
 static gboolean test_prop_SL (const GSGFNode *node);
 static gboolean test_unique_points_SL (void);
@@ -138,6 +140,17 @@ test_collection (GSGFCollection *collection, GError *error)
         if (!test_unique_points_LB ())
                 retval = -1;
 
+        item = g_list_nth_data (nodes, 5);
+        if (!item) {
+                g_printerr ("Property #5 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_LN (node))
+                retval = -1;
+        if (!test_constraints_LN ())
+                retval = -1;
+
         return retval;
 }
 
@@ -231,7 +244,7 @@ test_constraints_AR (void)
 
         expect = NULL;
         g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "Property 'AR': Arrows must be unique");
+                     "Property 'AR': Lines and arrows must be unique");
         if (!expect_error_from_sgf ("(;GM[6];AR[a:b][c:d][a:b])", expect))
                 return FALSE;
 
@@ -543,6 +556,103 @@ test_unique_points_LB (void)
         g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'LB': Points must be unique");
         if (!expect_error_from_sgf ("(;GM[6];LB[a:foo][a:bar])", expect))
+                return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_LN (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "LN");
+        GSGFListOf *list_of;
+        GType type;
+        gsize num_lines;
+        gint expect[3][2] = {{ 0, 1}, { 2, 3 }, { 3, 4 }};
+        gint got;
+        GSGFCompose *compose;
+        GSGFCookedValue *item;
+        gsize i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'LN'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF (cooked_value)) {
+                g_printerr ("Property 'LN' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+        list_of = GSGF_LIST_OF (cooked_value);
+
+        type = gsgf_list_of_get_item_type (list_of);
+        if (type != GSGF_TYPE_COMPOSE) {
+                g_printerr ("Expected item type 'GSGFCompose', not '%s'.\n",
+                            g_type_name (type));
+                return FALSE;
+        }
+
+        num_lines = gsgf_list_of_get_number_of_items (list_of);
+        if (num_lines != 3) {
+                g_printerr ("Expected 3 lines, got %u.\n", num_lines);
+                return FALSE;
+        }
+
+        for (i = 0; i < 3; ++i) {
+                compose = GSGF_COMPOSE (gsgf_list_of_get_nth_item (list_of, i));
+
+                item = gsgf_compose_get_value (compose, 0);
+                if (!GSGF_IS_POINT_BACKGAMMON (item)) {
+                        g_printerr ("Expected GSGFPointBackgammon for"
+                                    " item #0 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+                got = gsgf_point_get_normalized_value (GSGF_POINT (item));
+
+                if (expect[i][0] != got) {
+                        g_printerr ("Expected %d not %d for"
+                                    " item #0 of pair #%d.\n",
+                                    expect[i][0], got, i);
+                        return FALSE;
+                }
+
+                item = gsgf_compose_get_value (compose, 1);
+                if (!GSGF_IS_POINT_BACKGAMMON (item)) {
+                        g_printerr ("Expected GSGFPointBackgammon for"
+                                    " item #1 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+                got = gsgf_point_get_normalized_value (GSGF_POINT (item));
+
+                if (expect[i][1] != got) {
+                        g_printerr ("Expected %d not %d for"
+                                    " item #1 of pair #%d.\n",
+                                    expect[i][1], got, i);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_constraints_LN (void)
+{
+        GError *expect;
+
+        expect = NULL;
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'LN': Start and end point must differ");
+        if (!expect_error_from_sgf ("(;GM[6];LN[a:b][c:c][c:d])", expect))
+                return FALSE;
+
+        expect = NULL;
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'LN': Lines and arrows must be unique");
+        if (!expect_error_from_sgf ("(;GM[6];LN[a:b][c:d][a:b])", expect))
                 return FALSE;
 
         return TRUE;

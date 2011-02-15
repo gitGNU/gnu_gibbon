@@ -316,6 +316,12 @@ static GSGFFlavorTypeDef gsgf_flavor_LB = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_LN = {
+                gsgf_list_of_lines_new_from_raw, {
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_MA = {
                 gsgf_list_of_points_new_from_raw, {
                                 gsgf_constraint_markup_unique,
@@ -484,7 +490,7 @@ static GSGFFlavorTypeDef *gsgf_k_handlers[26] = {
 static GSGFFlavorTypeDef *gsgf_l_handlers[26] = {
                 NULL, &gsgf_flavor_LB, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_LN, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
 };
@@ -1342,7 +1348,8 @@ gsgf_list_of_lines_new_from_raw (const GSGFRaw* raw,
                 				g_object_unref (end_point);
                 				g_set_error(error, GSGF_ERROR,
                 					    GSGF_ERROR_SEMANTIC_ERROR,
-                					    _("Arrows must be unique"));
+                					    _("Lines and arrows"
+                					      " must be unique"));
                 				return FALSE;
                 		}
                 }

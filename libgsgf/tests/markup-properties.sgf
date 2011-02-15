@@ -4,4 +4,5 @@
  ;DD[a:b][c][d]
  ;DD[]
  ;LB[a:This is point a][z:And this is point z]
+ ;LN[a:b][c:d][d:e]
  )
