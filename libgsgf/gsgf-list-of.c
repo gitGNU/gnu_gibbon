@@ -22,6 +22,11 @@
  * @short_description: ListOf data in SGF files.
  *
  * A #GSGFListOf is a list of #GSGFCookedValue objects.
+ *
+ * The SGF specification has another type elist.  This is a list that can
+ * possibly be empty.  In libgsgf, there is no corresponding type for this.
+ * Whether a list can be empty or not is considered to be part of the
+ * semantics.
  */
 
 #include <glib.h>
