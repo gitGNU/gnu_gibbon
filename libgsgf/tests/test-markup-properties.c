@@ -195,6 +195,7 @@ test_prop_AR (const GSGFNode *node)
                         g_printerr ("Expected %d not %d for"
                                     " item #0 of pair #%d.\n",
                                     expect[i][0], got, i);
+                        return FALSE;
                 }
 
                 item = gsgf_compose_get_value (compose, 1);
@@ -210,6 +211,7 @@ test_prop_AR (const GSGFNode *node)
                         g_printerr ("Expected %d not %d for"
                                     " item #1 of pair #%d.\n",
                                     expect[i][1], got, i);
+                        return FALSE;
                 }
         }
 
@@ -509,6 +511,7 @@ test_prop_LB (const GSGFNode *node)
                         g_printerr ("Expected %d not %d for"
                                     " item #0 of pair #%d.\n",
                                     expect[i].point, got_point, i);
+                        return FALSE;
                 }
 
                 item = gsgf_compose_get_value (compose, 1);
@@ -524,6 +527,7 @@ test_prop_LB (const GSGFNode *node)
                         g_printerr ("Expected '%s' not '%s' for"
                                     " item #1 of pair #%d.\n",
                                     expect[i].label, got_label, i);
+                        return FALSE;
                 }
         }
 
