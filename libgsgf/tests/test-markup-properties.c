@@ -29,11 +29,14 @@
 char *filename = "markup-properties.sgf";
 
 static gboolean test_prop_AR (const GSGFNode *node);
+static gboolean test_constraints_AR (void);
 static gboolean test_prop_CR (const GSGFNode *node);
 static gboolean test_unique_points_CR (void);
 static gboolean test_prop_MA (const GSGFNode *node);
 static gboolean test_prop_DD (const GSGFNode *node);
 static gboolean test_prop_DD_empty (const GSGFNode *node);
+static gboolean test_prop_LB (const GSGFNode *node);
+static gboolean test_unique_points_LB (void);
 static gboolean test_unique_points_MA (void);
 static gboolean test_prop_SL (const GSGFNode *node);
 static gboolean test_unique_points_SL (void);
@@ -77,6 +80,8 @@ test_collection (GSGFCollection *collection, GError *error)
         }
         node = GSGF_NODE (item);
         if (!test_prop_AR (node))
+                retval = -1;
+        if (!test_constraints_AR ())
                 retval = -1;
 
         if (!test_prop_CR (node))
@@ -122,6 +127,17 @@ test_collection (GSGFCollection *collection, GError *error)
         if (!test_prop_DD_empty (node))
                 retval = -1;
 
+        item = g_list_nth_data (nodes, 4);
+        if (!item) {
+                g_printerr ("Property #4 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_LB (node))
+                retval = -1;
+        if (!test_unique_points_LB ())
+                retval = -1;
+
         return retval;
 }
 
@@ -133,7 +149,8 @@ test_prop_AR (const GSGFNode *node)
         GSGFListOf *list_of;
         GType type;
         gsize num_arrows;
-        GError *expect;
+        gint expect[3][2] = {{ 0, 1}, { 2, 3 }, { 3, 4 }};
+        gsize i;
 
         if (!cooked_value) {
                 g_printerr ("No property 'AR'!\n");
@@ -158,6 +175,14 @@ test_prop_AR (const GSGFNode *node)
                 g_printerr ("Expected 3 arrows, got %u.\n", num_arrows);
                 return FALSE;
         }
+
+        return TRUE;
+}
+
+static gboolean
+test_constraints_AR (void)
+{
+        GError *expect;
 
         expect = NULL;
         g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
@@ -355,11 +380,7 @@ test_prop_DD_empty (const GSGFNode *node)
                         gsgf_node_get_property_cooked (node, "DD");
         const GSGFListOf *list_of;
         GType type;
-        GSGFCookedValue *cooked_point;
         gsize num_points;
-        guint point;
-        gint values[] = { 0, 1, 2, 3 };
-        gsize expect_num_points, i;
 
         if (!cooked_value) {
                 g_printerr ("No empty property 'DD'!\n");
@@ -385,6 +406,57 @@ test_prop_DD_empty (const GSGFNode *node)
                             num_points);
                 return FALSE;
         }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_LB (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "LB");
+        GSGFListOf *list_of;
+        GType type;
+        gsize num_pairs;
+        GError *expect;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'LB'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF (cooked_value)) {
+                g_printerr ("Property 'LB' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+        list_of = GSGF_LIST_OF (cooked_value);
+
+        type = gsgf_list_of_get_item_type (list_of);
+        if (type != GSGF_TYPE_COMPOSE) {
+                g_printerr ("Expected item type 'GSGFCompose', not '%s'.\n",
+                            g_type_name (type));
+                return FALSE;
+        }
+
+        num_pairs = gsgf_list_of_get_number_of_items (list_of);
+        if (num_pairs != 2) {
+                g_printerr ("Expected 2 pairs, got %u.\n", num_pairs);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_points_LB (void)
+{
+        GError *expect;
+
+        expect = NULL;
+        g_set_error (&expect, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'LB': Points must be unique");
+        if (!expect_error_from_sgf ("(;GM[6];LB[a:foo][a:bar])", expect))
+                return FALSE;
 
         return TRUE;
 }
