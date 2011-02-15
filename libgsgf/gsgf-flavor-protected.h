@@ -51,10 +51,7 @@ gboolean gsgf_constraint_is_root_property(const GSGFCookedValue *cooked,
 gboolean gsgf_constraint_is_single_value(const GSGFCookedValue *cooked,
                                          const GSGFRaw *raw,
                                          const GSGFProperty *property, GError **error);
-gboolean gsgf_constraint_is_not_empty_list(const GSGFCookedValue *cooked,
-                                           const GSGFRaw *raw,
-                                           const GSGFProperty *property,
-                                           GError **error);
+
 G_END_DECLS
 
 #endif
