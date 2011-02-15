@@ -150,6 +150,9 @@ test_prop_AR (const GSGFNode *node)
         GType type;
         gsize num_arrows;
         gint expect[3][2] = {{ 0, 1}, { 2, 3 }, { 3, 4 }};
+        gint got;
+        GSGFCompose *compose;
+        GSGFCookedValue *item;
         gsize i;
 
         if (!cooked_value) {
@@ -174,6 +177,40 @@ test_prop_AR (const GSGFNode *node)
         if (num_arrows != 3) {
                 g_printerr ("Expected 3 arrows, got %u.\n", num_arrows);
                 return FALSE;
+        }
+
+        for (i = 0; i < 3; ++i) {
+                compose = GSGF_COMPOSE (gsgf_list_of_get_nth_item (list_of, i));
+
+                item = gsgf_compose_get_value (compose, 0);
+                if (!GSGF_IS_POINT_BACKGAMMON (item)) {
+                        g_printerr ("Expected GSGFPointBackgammon for"
+                                    " item #0 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+                got = gsgf_point_get_normalized_value (GSGF_POINT (item));
+
+                if (expect[i][0] != got) {
+                        g_printerr ("Expected %d not %d for"
+                                    " item #0 of pair #%d.\n",
+                                    expect[i][0], got, i);
+                }
+
+                item = gsgf_compose_get_value (compose, 1);
+                if (!GSGF_IS_POINT_BACKGAMMON (item)) {
+                        g_printerr ("Expected GSGFPointBackgammon for"
+                                    " item #1 of pair #%d, not '%s':\n",
+                                    i, G_OBJECT_TYPE_NAME (item));
+                        return FALSE;
+                }
+                got = gsgf_point_get_normalized_value (GSGF_POINT (item));
+
+                if (expect[i][1] != got) {
+                        g_printerr ("Expected %d not %d for"
+                                    " item #1 of pair #%d.\n",
+                                    expect[i][1], got, i);
+                }
         }
 
         return TRUE;
