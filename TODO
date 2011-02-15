@@ -31,3 +31,5 @@
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
 - When applying flavors to properties, it should be possible to
   delete properties that are in the way (for example BM, TE, DO, or IT).
+- Refactor libgsgf interface: Parsing and cooking the collection should
+  be separated so that errors can be repaired.
