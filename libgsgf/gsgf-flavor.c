@@ -218,6 +218,7 @@ static GSGFFlavorTypeDef gsgf_flavor_CA = {
 
 static GSGFFlavorTypeDef gsgf_flavor_CR = {
                 gsgf_list_of_points_new_from_raw, {
+                                gsgf_constraint_is_not_empty_list,
                                 gsgf_constraint_markup_unique,
                                 NULL
                 }
@@ -792,6 +793,29 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
         if (previous) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                             _("Property only allowed in root node"));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+gsgf_constraint_is_not_empty_list (const GSGFCookedValue *value,
+                                   const GSGFRaw *raw,
+                                   const GSGFProperty *property, GError **error)
+{
+        GSGFNode *node;
+        GSGFNode *previous;
+
+        g_return_val_if_fail(GSGF_IS_LIST_OF (value), FALSE);
+        g_return_val_if_fail(GSGF_IS_RAW (raw), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY (property), FALSE);
+
+        node = gsgf_property_get_node (property);
+
+        if (!gsgf_list_of_get_number_of_items (GSGF_LIST_OF (value))) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             "List is not allowed to be empty here");
                 return FALSE;
         }
 
