@@ -465,8 +465,8 @@ test_prop_LB (const GSGFNode *node)
         GSGFCompose *compose;
         GSGFCookedValue *item;
         struct point_simpletext expect[2] = {
-                        { 0, "This is point aa" },
-                        { 25, "And this is point zz" },
+                        { 0, "This is point a" },
+                        { 25, "And this is point z" },
         };
         gint got_point;
         const gchar *got_label;
