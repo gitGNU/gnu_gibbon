@@ -373,15 +373,15 @@ test_prop_DD_empty (const GSGFNode *node)
 
         list_of = GSGF_LIST_OF (cooked_value);
         type = gsgf_list_of_get_item_type (list_of);
-        if (type != gsgf_point_backgammon_get_type ()) {
-                g_printerr ("Empty property 'DD': Expected GSGFPointBackgammon, not %s!\n",
+        if (type != gsgf_empty_get_type ()) {
+                g_printerr ("Empty property 'DD': Expected GSGFEmpty, not %s!\n",
                             g_type_name(type));
                 return FALSE;
         }
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
-        if (num_points != 0) {
-                g_printerr ("Property 'DD': Expected 0 points, got %u!\n",
+        if (num_points != 1) {
+                g_printerr ("Property 'DD': Expected one point, got %u!\n",
                             num_points);
                 return FALSE;
         }
