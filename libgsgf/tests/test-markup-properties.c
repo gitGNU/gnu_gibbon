@@ -31,6 +31,14 @@ char *filename = "markup-properties.sgf";
 static gboolean test_prop_AR (const GSGFNode *node);
 static gboolean test_prop_CR (const GSGFNode *node);
 static gboolean test_unique_points_CR (void);
+static gboolean test_prop_MA (const GSGFNode *node);
+static gboolean test_unique_points_MA (void);
+static gboolean test_prop_SL (const GSGFNode *node);
+static gboolean test_unique_points_SL (void);
+static gboolean test_prop_SQ (const GSGFNode *node);
+static gboolean test_unique_points_SQ (void);
+static gboolean test_prop_TR (const GSGFNode *node);
+static gboolean test_unique_points_TR (void);
 
 int 
 test_collection (GSGFCollection *collection, GError *error)
@@ -68,9 +76,30 @@ test_collection (GSGFCollection *collection, GError *error)
         node = GSGF_NODE (item);
         if (!test_prop_AR (node))
                 retval = -1;
+
         if (!test_prop_CR (node))
                 retval = -1;
         if (!test_unique_points_CR ())
+                retval = -1;
+
+        if (!test_prop_MA (node))
+                retval = -1;
+        if (!test_unique_points_MA ())
+                retval = -1;
+
+        if (!test_prop_SL (node))
+                retval = -1;
+        if (!test_unique_points_SL ())
+                retval = -1;
+
+        if (!test_prop_SQ (node))
+                retval = -1;
+        if (!test_unique_points_SQ ())
+                retval = -1;
+
+        if (!test_prop_TR (node))
+                retval = -1;
+        if (!test_unique_points_TR ())
                 retval = -1;
 
         return retval;
@@ -139,27 +168,27 @@ test_prop_CR (const GSGFNode *node)
         gsize expect_num_points, i;
 
         if (!cooked_value) {
-                fprintf(stderr, "No property 'CR'!\n");
+                g_printerr ("No property 'CR'!\n");
                 return FALSE;
         }
 
         if (!GSGF_IS_LIST_OF(cooked_value)) {
-                fprintf(stderr, "Property 'CR' is not a GSGFListOf!\n");
+                g_printerr ("Property 'CR' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
         list_of = GSGF_LIST_OF(cooked_value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
-                fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
-                        g_type_name(type));
+                g_printerr ("Property 'CR': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
                 return FALSE;
         }
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                fprintf(stderr, "Expected %u points, got %u!\n",
+                g_printerr ("Property 'CR': Expected %u points, got %u!\n",
                                 expect_num_points, num_points);
                 return FALSE;
         }
@@ -167,16 +196,16 @@ test_prop_CR (const GSGFNode *node)
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Item #%u is not a GSGFSPointBackgammon!\n",
+                        g_printerr ("Property 'CR': Item #%u is not a GSGFSPointBackgammon!\n",
                                     i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ( "Item #%u is not a %d"
-                                     " point but a %d point!\n",
-                                     i, values[i], point);
+                        g_printerr ("Property 'CR': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
                         return FALSE;
                 }
         }
@@ -221,7 +250,7 @@ test_unique_points_CR (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'SQ': The properties 'SQ' and 'CR' are not"
                      " allowed on the same point within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SL[h:m])",
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SQ[h:m])",
                                      expect1, expect2))
                 retval = FALSE;
 
@@ -233,7 +262,468 @@ test_unique_points_CR (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'TR': The properties 'TR' and 'CR' are not"
                      " allowed on the same point within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]SL[h:m])",
+        if (!expect_errors_from_sgf ("(;GM[6];CR[a:h]TR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        return retval;
+}
+
+static gboolean
+test_prop_MA (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "MA");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 4, 5, 6, 7 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'MA'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF(cooked_value)) {
+                g_printerr ("Property 'MA' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Property 'MA': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                g_printerr ("Property 'MA': Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Property 'MA': Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ("Property 'MA': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_points_MA (void)
+{
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
+        gboolean retval = TRUE;
+
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'CR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'MA' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];MA[a:h]CR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'SL' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'MA' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];MA[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'MA' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];MA[a:h]SQ[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'TR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'MA' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];MA[a:h]TR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        return retval;
+}
+
+static gboolean
+test_prop_SL (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "SL");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 8, 9, 10, 11 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'SL'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF(cooked_value)) {
+                g_printerr ("Property 'SL' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Property 'SL': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                g_printerr ("Property 'SL': Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Property 'SL': Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ("Property 'SL': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_points_SL (void)
+{
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
+        gboolean retval = TRUE;
+
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'CR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'SL' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SL[a:h]CR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'MA' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'SL' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SL[a:h]MA[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'SL' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SL[a:h]SQ[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'TR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'SL' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SL[a:h]TR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        return retval;
+}
+
+static gboolean
+test_prop_SQ (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "SQ");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 12, 13, 14, 15 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'SQ'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF(cooked_value)) {
+                g_printerr ("Property 'SQ' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Property 'SQ': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                g_printerr ("Property 'SQ': Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Property 'SQ': Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ("Property 'SQ': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_points_SQ (void)
+{
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
+        gboolean retval = TRUE;
+
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'CR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SQ[a:h]CR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'MA' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SQ[a:h]MA[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'SL' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SQ[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'TR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];SQ[a:h]TR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        return retval;
+}
+
+
+static gboolean
+test_prop_TR (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "TR");
+        const GSGFListOf *list_of;
+        GType type;
+        GSGFCookedValue *cooked_point;
+        gsize num_points;
+        guint point;
+        gint values[] = { 16, 17, 18, 19 };
+        gsize expect_num_points, i;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'TR'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_LIST_OF(cooked_value)) {
+                g_printerr ("Property 'TR' is not a GSGFListOf!\n");
+                return FALSE;
+        }
+
+        list_of = GSGF_LIST_OF(cooked_value);
+        type = gsgf_list_of_get_item_type(list_of);
+        if (type != gsgf_point_backgammon_get_type ()) {
+                g_printerr ("Property 'TR': Expected GSGFPointBackgammon, not %s!\n",
+                            g_type_name(type));
+                return FALSE;
+        }
+
+        num_points = gsgf_list_of_get_number_of_items(list_of);
+        expect_num_points = (sizeof values) / (sizeof *values);
+        if (num_points != expect_num_points) {
+                g_printerr ("Property 'TR': Expected %u points, got %u!\n",
+                                expect_num_points, num_points);
+                return FALSE;
+        }
+
+        for (i = 0; i < expect_num_points; ++i) {
+                cooked_point = gsgf_list_of_get_nth_item(list_of, i);
+                if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
+                        g_printerr ("Property 'TR': Item #%u is not a GSGFSPointBackgammon!\n",
+                                    i);
+                        return FALSE;
+                }
+                point = gsgf_point_backgammon_get_point
+                                (GSGF_POINT_BACKGAMMON (cooked_point));
+                if (point != values[i]) {
+                        g_printerr ("Property 'TR': Item #%u is not a %d"
+                                    " point but a %d point!\n",
+                                    i, values[i], point);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_unique_points_TR (void)
+{
+        GError *expect1 = NULL;
+        GError *expect2 = NULL;
+        gboolean retval = TRUE;
+
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'CR' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'CR': The properties 'CR' and 'TR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];TR[a:h]CR[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'MA' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'MA': The properties 'MA' and 'TR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];TR[a:h]MA[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'SL' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SL': The properties 'SL' and 'TR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];TR[a:h]SL[h:m])",
+                                     expect1, expect2))
+                retval = FALSE;
+
+        expect1 = NULL;
+        expect2 = NULL;
+        g_set_error (&expect1, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'TR': The properties 'TR' and 'SQ' are not"
+                     " allowed on the same point within one node");
+        g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "Property 'SQ': The properties 'SQ' and 'TR' are not"
+                     " allowed on the same point within one node");
+        if (!expect_errors_from_sgf ("(;GM[6];TR[a:h]SQ[h:m])",
                                      expect1, expect2))
                 retval = FALSE;
 
