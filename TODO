@@ -34,3 +34,6 @@
 - Refactor libgsgf interface: Parsing and cooking the collection should
   be separated so that errors can be repaired.
 - Further qualify RE and DT into GSGFResult and GSGFDate respectively.
+- No need to check for single value in the new_from_raw constructors
+  of libgsgf.  This is already done by the constraints.  Alternatively,
+  gratuitous values could be discarded.
