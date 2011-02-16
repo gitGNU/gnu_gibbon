@@ -56,7 +56,7 @@ struct _GSGFDates
 /**
  * GSGFDatesClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * A #GSGFDateClass is used for the representation of a date in an SGF file.
  **/
 typedef struct _GSGFDatesClass GSGFDatesClass;
 struct _GSGFDatesClass
@@ -67,6 +67,6 @@ struct _GSGFDatesClass
 
 GType gsgf_dates_get_type (void) G_GNUC_CONST;
 
-GSGFDates *gsgf_dates_new (/* FIXME! Argument list! */ const gchar *dummy);
+GSGFDates *gsgf_dates_new (gint year, gint month, gint mday);
 
 #endif

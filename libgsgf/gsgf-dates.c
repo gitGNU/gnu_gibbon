@@ -19,11 +19,21 @@
 
 /**
  * SECTION:gsgf-dates
- * @short_description: FIXME! Short description missing!
+ * @short_description: Representation of a date in SGF.
  *
  * Since: 0.1.1
  *
- * FIXME! Long description missing!
+ * The <link linkend="property-DT">DT</link> property contains a standardized
+ * date format.  The representation for this in libgsgf is a #GSGFDates.
+ * Note that dates in SGF do not contain information about the time of the day.
+ * If you need information about the hour, minutes, and seconds you have to
+ * store that externally.  Gibbon codes the time of the day into the filenames.
+ *
+ * It is <emphasis>dates</dates> (plural!) and not date because dates in SGF
+ * can span over multiple days.
+ *
+ * Hint: Unless you are interested in analyzing the exact date you can simply
+ * treat a #GSGFDates as a #GSGFSimpleText.
  **/
 
 #include <glib.h>
@@ -33,8 +43,7 @@
 
 typedef struct _GSGFDatesPrivate GSGFDatesPrivate;
 struct _GSGFDatesPrivate {
-        /* FIXME! Replace with the real structure of the private data! */
-        gchar *dummy;
+        GList *dates;
 };
 
 #define GSGF_DATES_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -47,8 +56,7 @@ gsgf_dates_init (GSGFDates *self)
 {        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GSGF_TYPE_DATES, GSGFDatesPrivate);
 
-        /* FIXME! Initialize private data! */
-        self->priv->dummy = NULL;
+        self->priv->dates = NULL;
 }
 
 static void
@@ -56,10 +64,11 @@ gsgf_dates_finalize (GObject *object)
 {
         GSGFDates *self = GSGF_DATES (object);
 
-        /* FIXME! Free private data! */
-        if (self->priv->dummy)
-                g_free (self->priv->dummy);
-        self->priv->dummy = NULL;
+        if (self->priv->dates) {
+                g_list_foreach (self->priv->dates, (GFunc) g_free, NULL);
+                g_list_free (self->priv->dates);
+        }
+        self->priv->dates = NULL;
 
         G_OBJECT_CLASS (gsgf_dates_parent_class)->finalize(object);
 }
@@ -82,12 +91,9 @@ gsgf_dates_class_init (GSGFDatesClass *klass)
 }
 
 GSGFDates *
-gsgf_dates_new (/* FIXME! Argument list! */ const gchar *dummy)
+gsgf_dates_new (gint year, gint month, gint day)
 {
         GSGFDates *self = g_object_new (GSGF_TYPE_DATES, NULL);
-
-        /* FIXME! Initialize private data! */
-        /* self->priv->dummy = g_strdup(dummy); */
 
         return self;
 }
