@@ -68,5 +68,9 @@ struct _GSGFDatesClass
 GType gsgf_dates_get_type (void) G_GNUC_CONST;
 
 GSGFDates *gsgf_dates_new (gint year, gint month, gint mday);
+GSGFCookedValue *gsgf_dates_new_from_raw (const GSGFRaw* raw,
+                                          const GSGFFlavor *flavor,
+                                          const struct _GSGFProperty *property,
+                                          GError **error);
 
 #endif
