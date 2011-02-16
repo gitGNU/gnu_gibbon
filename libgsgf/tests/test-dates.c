@@ -74,23 +74,14 @@ test_single_ymd (const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value =
                         gsgf_node_get_property_cooked (node, "DT");
-        const gchar *expect = "2011-02-16";
-        const gchar *got;
 
         if (!cooked_value) {
                 g_printerr ("No property 'DT'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_SIMPLE_TEXT (cooked_value)) {
-                g_printerr ("Property 'DT' is not a GSGFSimpleText!\n");
-                return FALSE;
-        }
-
-        got = gsgf_text_get_value (GSGF_TEXT (cooked_value));
-        if (g_strcmp0 (expect, got)) {
-                g_printerr ("Property 'DT': Expected '%s', got '%s'!\n",
-                             expect, got);
+        if (!GSGF_IS_DATES (cooked_value)) {
+                g_printerr ("Property 'DT' is not a GSGFDates!\n");
                 return FALSE;
         }
 
