@@ -37,3 +37,5 @@
 - No need to check for single value in the new_from_raw constructors
   of libgsgf.  This is already done by the constraints.  Alternatively,
   gratuitous values could be discarded.
+- Refactor set_value() method of GSGFText.  It must be possible to
+  return an error.
