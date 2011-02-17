@@ -20,7 +20,6 @@ AUTOMAKE_OPTIONS = color-tests
 TESTS_C = test-convert			\
 	  test-compose			\
 	  test-compressed-list		\
-	  test-dates			\
 	  test-empty 			\
 	  test-full			\
 	  test-game-info-properties	\
@@ -64,7 +63,6 @@ LDADD = $(GIBBON_LIBS) ../libgsgf.a
 test_convert_SOURCES = lib.c main.c test-convert.c
 test_compose_SOURCES = lib.c test-compose.c
 test_compressed_list_SOURCES = lib.c main.c test-compressed-list.c
-test_dates_SOURCES = lib.c main.c test-dates.c
 test_empty_SOURCES = lib.c main.c test-empty.c
 test_full_SOURCES = lib.c main.c test-full.c
 test_markup_properties_SOURCES = lib.c main.c test-markup-properties.c
@@ -95,7 +93,6 @@ noinst_HEADERS = test.h
 
 SGF_FILES = cp1251.sgf			\
 	    compressed-list.sgf.in	\
-	    dates.sgf			\
 	    empty.sgf 			\
 	    full.sgf.in			\
 	    game-info-properties.sgf	\

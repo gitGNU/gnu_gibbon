@@ -282,7 +282,7 @@ static GSGFFlavorTypeDef gsgf_flavor_DO = {
 };
 
 static GSGFFlavorTypeDef gsgf_flavor_DT = {
-                gsgf_dates_new_from_raw, {
+                gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }

@@ -51,6 +51,7 @@ G_BEGIN_DECLS
  * @GSGF_ERROR_NON_UNIQUE_STONE: Non-unique stones in list.
  * @GSGF_ERROR_DOUBLE_OUT_OF_RANGE: A #GSGFDouble was set to something out of
  *                                  the range of a #GSGFDoubleEnum.
+ * @GSGF_ERROR_INVALID_DATE_FORMAT: A #GSGFDates could not be parsed.
  *
  * Error codes for the domain #GSGF_ERROR.
  */
@@ -74,7 +75,8 @@ typedef enum {
         GSGF_ERROR_USAGE_ERROR = 17,
         GSGF_ERROR_NON_UNIQUE_POINT = 18,
         GSGF_ERROR_NON_UNIQUE_STONE = 19,
-        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 20
+        GSGF_ERROR_DOUBLE_OUT_OF_RANGE = 20,
+        GSGF_ERROR_INVALID_DATE_FORMAT = 21
 } GSGFError;
 
 /**

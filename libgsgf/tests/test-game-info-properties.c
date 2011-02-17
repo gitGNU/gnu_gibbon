@@ -255,8 +255,8 @@ test_prop_DT (const GSGFNode *node)
                 return FALSE;
         }
 
-        if (!GSGF_IS_DATES (cooked_value)) {
-                g_printerr ("Property 'DT' is not a GSGFDates!\n");
+        if (!GSGF_IS_SIMPLE_TEXT (cooked_value)) {
+                g_printerr ("Property 'DT' is not a GSGFSimpleText!\n");
                 return FALSE;
         }
 

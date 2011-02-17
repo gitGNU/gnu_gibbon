@@ -46,7 +46,6 @@
 #include <libgsgf/gsgf-stone-backgammon.h>
 
 #include <libgsgf/gsgf-list-of.h>
-#include <libgsgf/gsgf-dates.h>
 
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-error.h>
