@@ -177,7 +177,7 @@ gsgf_date_sync_text (GSGFDate *self)
         GSGFTextClass* text_class;
         gchar *text;
 
-        text = g_strdup ("TODO");
+        text = g_strdup ("2010-01-30,31,02-01");
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
         text_class->set_value (GSGF_TEXT (self), text, TRUE, NULL);
