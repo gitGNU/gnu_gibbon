@@ -559,7 +559,7 @@
     <sect2 id="property-DT">
       <title>DT (date)</title>
       <para>
-        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+        Type: <link linkend="GSGFDate">GSGFDate</link>
       </para>
       <para>
         Date of the event.
@@ -667,7 +667,7 @@
     <sect2 id="property-RE">
       <title>RE (result)</title>
       <para>
-        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+        Type: <link linkend="GSGFResult">GSGFResult</link>
       </para>
       <para>
         Result of the game.
