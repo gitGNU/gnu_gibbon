@@ -117,7 +117,9 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
         if (error)
                 *error = NULL;
 
-        dates = g_list_append (dates, g_date_new_dmy (25, 3, 1976));
+        dates = g_list_append (dates, g_date_new_dmy (30, 1, 2010));
+        dates = g_list_append (dates, g_date_new_dmy (31, 1, 2010));
+        dates = g_list_append (dates, g_date_new_dmy (1, 2, 2010));
 
         if (self->priv->dates) {
                 g_list_foreach (self->priv->dates, (GFunc) self->priv->dates,
@@ -175,12 +177,15 @@ static void
 gsgf_date_sync_text (GSGFDate *self)
 {
         GSGFTextClass* text_class;
-        gchar *text;
+        GDateDay last_day = G_DATE_BAD_DAY;
+        GDateMonth last_month = G_DATE_BAD_MONTH;
+        GDateYear last_year = G_DATE_BAD_YEAR;
+        GString *string;
 
-        text = g_strdup ("2010-01-30,31,02-01");
+        string = g_string_new("2010-01-30,31,02-01");
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
-        text_class->set_value (GSGF_TEXT (self), text, TRUE, NULL);
+        text_class->set_value (GSGF_TEXT (self), string->str, FALSE, NULL);
 
-        g_free (text);
+        g_string_free (string, FALSE);
 }
