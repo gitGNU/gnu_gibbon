@@ -265,7 +265,7 @@ gsgf_result_sync_text (GSGFResult *self)
  * Creates a new #GSGFResult from a #GSGFRaw.  This constructor is only
  * interesting for people that write their own #GSGFFlavor.
  *
- * Returns: The new #GSGFNumber or %NULL in case of an error.
+ * Returns: The new #GSGFResult or %NULL in case of an error.
  */
 GSGFCookedValue *
 gsgf_result_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
