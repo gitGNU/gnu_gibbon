@@ -507,8 +507,8 @@ test_prop_RE (const GSGFNode *node)
                 return FALSE;
         }
 
-        if (!GSGF_IS_SIMPLE_TEXT (cooked_value)) {
-                g_printerr ("Property 'RE' is not a GSGFSimpleText!\n");
+        if (!GSGF_IS_RESULT (cooked_value)) {
+                g_printerr ("Property 'RE' is not a GSGFResult!\n");
                 return FALSE;
         }
 
