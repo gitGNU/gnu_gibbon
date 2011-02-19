@@ -294,7 +294,7 @@ $copyright
         (G_TYPE_CHECK_CLASS_TYPE$macro_space((klass), \\
                 $macro_type))
 #define ${macro_stem}_GET_CLASS(obj) \\
-        (G_TYPE_INSTANCE_GET_CLASS$macro_space(obj), \\
+        (G_TYPE_INSTANCE_GET_CLASS$macro_space((obj), \\
                 $macro_type, ${class}Class))
 
 /**
