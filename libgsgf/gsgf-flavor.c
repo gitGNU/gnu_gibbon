@@ -436,7 +436,7 @@ static GSGFFlavorTypeDef gsgf_flavor_PW = {
 };
 
 static GSGFFlavorTypeDef gsgf_flavor_RE = {
-                gsgf_simple_text_new_from_raw, {
+                gsgf_result_new_from_raw, {
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }

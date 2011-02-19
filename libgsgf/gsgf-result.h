@@ -36,7 +36,7 @@
         (G_TYPE_CHECK_CLASS_TYPE ((klass), \
                 GSGF_TYPE_RESULT))
 #define GSGF_RESULT_GET_CLASS(obj) \
-        (G_TYPE_INSTANCE_GET_CLASS (obj), \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GSGF_TYPE_RESULT, GSGFResultClass))
 
 /**
@@ -56,7 +56,7 @@ struct _GSGFResult
 /**
  * GSGFResultClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Representation of a game result!
  **/
 typedef struct _GSGFResultClass GSGFResultClass;
 struct _GSGFResultClass
@@ -67,6 +67,49 @@ struct _GSGFResultClass
 
 GType gsgf_result_get_type (void) G_GNUC_CONST;
 
-GSGFResult *gsgf_result_new (/* FIXME! Argument list! */ const gchar *dummy);
+/**
+ * GSGFResultWinner:
+ * @GSGF_RESULT_BLACK: Black.
+ * @GSGF_RESULT_WHITE: White.
+ * @GSGF_RESULT_DRAW: A draw.
+ * @GSGF_RESULT_VOID: No result of suspended play.
+ * @GSGF_RESULT_UNKNOWN: An unknown result.
+ *
+ * Constants for the winner of a game.  Note that #GSGFColorEnum is a
+ * compatible subset of this enumeration and it is safe to cast from a
+ * #GSGFColorEnum to a #GSGFResultWinner but not the other way round.
+ */
+typedef enum {
+        GSGF_RESULT_BLACK = 0,
+        GSGF_RESULT_WHITE = 1,
+        GSGF_RESULT_DRAW = 2,
+        GSGF_RESULT_VOID = 3,
+        GSGF_RESULT_UNKNOWN = 32767
+} GSGFResultWinner;
+
+/**
+ * GSGFResultCause:
+ * @GSGF_RESULT_NORMAL: Normal end.
+ * @GSGF_RESULT_RESIGNATION: Resignation.
+ * @GSGF_RESULT_TIME: Win on time.
+ * @GSGF_RESULT_FORFEIT: Forfeit.
+ * @GSGF_RESULT_OTHER: Other.
+ *
+ * Cause for the end of a game.
+ */
+typedef enum {
+        GSGF_RESULT_NORMAL = 0,
+        GSGF_RESULT_RESIGNATION = 1,
+        GSGF_RESULT_TIME = 2,
+        GSGF_RESULT_FORFEIT = 3,
+        GSGF_RESULT_OTHER = 32767
+} GSGFResultCause;
+
+GSGFResult *gsgf_result_new (GSGFResultWinner winner, gdouble score,
+                             GSGFResultCause cause);
+GSGFCookedValue *gsgf_result_new_from_raw (const GSGFRaw* raw,
+                                           const GSGFFlavor *flavor,
+                                           const struct _GSGFProperty *property,
+                                           GError **error);
 
 #endif
