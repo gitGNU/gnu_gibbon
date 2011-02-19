@@ -112,20 +112,23 @@ gsgf_date_new (GDate* date)
 /**
  * gsgf_date_append:
  * @date: A #GDate to append.
+ * @error: An optional error location or #NULL.
  *
  * Append another #GDate.
  *
- * Returns: The new #GSGFDate.
+ * Returns: #TRUE for success, #FALSE for failure.
  */
-void
-gsgf_date_append (GSGFDate *self, GDate* date)
+gboolean
+gsgf_date_append (GSGFDate *self, GDate* date, GError **error)
 {
-        g_return_if_fail (GSGF_IS_DATE (self));
-        g_return_if_fail (date);
+        g_return_val_if_fail (GSGF_IS_DATE (self), FALSE);
+        g_return_val_if_fail (date, FALSE);
 
         self->priv->dates = g_list_append (self->priv->dates, date);
 
         gsgf_date_sync_text (self);
+
+        return TRUE;
 }
 
 static gboolean
