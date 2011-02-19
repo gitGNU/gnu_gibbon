@@ -37,6 +37,7 @@ libgsgf/gsgf-number.c
 libgsgf/gsgf-point-backgammon.c
 libgsgf/gsgf-raw.c
 libgsgf/gsgf-real.c
+libgsgf/gsgf-result.c
 libgsgf/gsgf-simple-text.c
 libgsgf/gsgf-stone-backgammon.c
 libgsgf/gsgf-text.c
