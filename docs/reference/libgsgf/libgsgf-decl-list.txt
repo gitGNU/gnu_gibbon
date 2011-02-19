@@ -79,7 +79,10 @@ GSGF_REAL_GET_CLASS
 <TITLE>GSGFResult</TITLE>
 GSGFResult
 GSGFResultClass
+GSGFResultWinner
+GSGFResultCause
 gsgf_result_new
+gsgf_result_new_from_raw
 <SUBSECTION Standard>
 GSGF_RESULT
 GSGF_IS_RESULT
@@ -337,6 +340,22 @@ gsgf_point_get_type
 GSGF_POINT_CLASS
 GSGF_IS_POINT_CLASS
 GSGF_POINT_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-date</FILE>
+<TITLE>GSGFDate</TITLE>
+GSGFDate
+GSGFDateClass
+gsgf_date_new
+<SUBSECTION Standard>
+GSGF_DATE
+GSGF_IS_DATE
+GSGF_TYPE_DATE
+gsgf_date_get_type
+GSGF_DATE_CLASS
+GSGF_IS_DATE_CLASS
+GSGF_DATE_GET_CLASS
 </SECTION>
 
 <SECTION>

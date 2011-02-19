@@ -343,7 +343,7 @@ const GSGFReal *self
 <MACRO>
 <NAME>GSGF_RESULT_GET_CLASS</NAME>
 #define GSGF_RESULT_GET_CLASS(obj) \
-        (G_TYPE_INSTANCE_GET_CLASS (obj), \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GSGF_TYPE_RESULT, GSGFResultClass))
 </MACRO>
 <STRUCT>
@@ -375,10 +375,35 @@ struct _GSGFResultClass
 <RETURNS>GType </RETURNS>
 void 
 </FUNCTION>
+<ENUM>
+<NAME>GSGFResultWinner</NAME>
+typedef enum {
+        GSGF_RESULT_BLACK = 0,
+        GSGF_RESULT_WHITE = 1,
+        GSGF_RESULT_DRAW = 2,
+        GSGF_RESULT_VOID = 3,
+        GSGF_RESULT_UNKNOWN = 32767
+} GSGFResultWinner;
+</ENUM>
+<ENUM>
+<NAME>GSGFResultCause</NAME>
+typedef enum {
+        GSGF_RESULT_NORMAL = 0,
+        GSGF_RESULT_RESIGNATION = 1,
+        GSGF_RESULT_TIME = 2,
+        GSGF_RESULT_FORFEIT = 3,
+        GSGF_RESULT_OTHER = 32767
+} GSGFResultCause;
+</ENUM>
 <FUNCTION>
 <NAME>gsgf_result_new</NAME>
 <RETURNS>GSGFResult *</RETURNS>
- const gchar *dummy 
+GSGFResultWinner winner, gdouble score, GSGFResultCause cause 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_result_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_TEXT</NAME>
@@ -427,7 +452,8 @@ struct _GSGFTextClass
         /*< private >*/
         GSGFCookedValueClass parent_class;
 
-        void (*set_value) (GSGFText *self, const gchar *value, gboolean copy);
+        gboolean (*set_value) (GSGFText *self, const gchar *value,
+                               gboolean copy, GError **error);
         gchar * (*get_value) (const GSGFText *self);
 };
 </STRUCT>
@@ -448,8 +474,8 @@ const GSGFRaw *raw, const GSGFFlavor *flavor, GError **error
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_set_value</NAME>
-<RETURNS>void </RETURNS>
-GSGFText *self, const gchar *value, gboolean copy 
+<RETURNS>gboolean </RETURNS>
+GSGFText *self, const gchar *value, gboolean copy, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_get_value</NAME>
@@ -1461,6 +1487,74 @@ void
 <NAME>gsgf_point_get_normalized_value</NAME>
 <RETURNS>gint </RETURNS>
 const GSGFPoint *self 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_DATE</NAME>
+#define GSGF_TYPE_DATE \
+        (gsgf_date_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_DATE</NAME>
+#define GSGF_DATE(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_DATE, \
+                GSGFDate))
+</MACRO>
+<MACRO>
+<NAME>GSGF_DATE_CLASS</NAME>
+#define GSGF_DATE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
+        GSGF_TYPE_DATE, GSGFDateClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_DATE</NAME>
+#define GSGF_IS_DATE(obj) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_DATE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_DATE_CLASS</NAME>
+#define GSGF_IS_DATE_CLASS(klass) \
+        (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_DATE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_DATE_GET_CLASS</NAME>
+#define GSGF_DATE_GET_CLASS(obj) \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_DATE, GSGFDateClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFDate</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDate</NAME>
+struct _GSGFDate
+{
+        GSGFSimpleText parent_instance;
+
+        /*< private >*/
+        struct _GSGFDatePrivate *priv;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDateClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDateClass</NAME>
+struct _GSGFDateClass
+{
+        /* <private >*/
+        GSGFSimpleTextClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_date_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_date_new</NAME>
+<RETURNS>GSGFDate *</RETURNS>
+ const gchar *dummy 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLOR</NAME>
