@@ -56,7 +56,7 @@ struct _GSGFDate
 /**
  * GSGFDateClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Representation of a date (or dates!) in SGF!
  **/
 typedef struct _GSGFDateClass GSGFDateClass;
 struct _GSGFDateClass
@@ -67,6 +67,10 @@ struct _GSGFDateClass
 
 GType gsgf_date_get_type (void) G_GNUC_CONST;
 
-GSGFDate *gsgf_date_new (/* FIXME! Argument list! */ const gchar *dummy);
+GSGFDate *gsgf_date_new (GDate *date);
+GSGFCookedValue *gsgf_date_new_from_raw (const GSGFRaw *raw,
+                                         const GSGFFlavor *flavor,
+                                         const struct _GSGFProperty *property,
+                                         GError **error);
 
 #endif
