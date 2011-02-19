@@ -72,5 +72,6 @@ GSGFCookedValue *gsgf_date_new_from_raw (const GSGFRaw *raw,
                                          const GSGFFlavor *flavor,
                                          const struct _GSGFProperty *property,
                                          GError **error);
+void gsgf_date_append (GSGFDate *self, GDate *date);
 
 #endif

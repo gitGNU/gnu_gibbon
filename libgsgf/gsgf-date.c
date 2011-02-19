@@ -109,6 +109,25 @@ gsgf_date_new (GDate* date)
         return self;
 }
 
+/**
+ * gsgf_date_append:
+ * @date: A #GDate to append.
+ *
+ * Append another #GDate.
+ *
+ * Returns: The new #GSGFDate.
+ */
+void
+gsgf_date_append (GSGFDate *self, GDate* date)
+{
+        g_return_if_fail (GSGF_IS_DATE (self));
+        g_return_if_fail (date);
+
+        self->priv->dates = g_list_append (self->priv->dates, date);
+
+        gsgf_date_sync_text (self);
+}
+
 static gboolean
 gsgf_date_set_value (GSGFText *_self, const gchar *value,
                      gboolean copy, GError **error)
@@ -189,6 +208,8 @@ gsgf_date_sync_text (GSGFDate *self)
         string = g_string_sized_new (10);
 
         while (iter) {
+                if (iter != self->priv->dates)
+                        g_string_append_c (string, ',');
                 date = iter->data;
                 g_string_append_printf (string, "%04d-%02d-%02d",
                                         g_date_get_year (date),

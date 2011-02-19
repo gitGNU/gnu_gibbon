@@ -50,19 +50,27 @@ static gboolean
 test_creation (void)
 {
         GSGFDate *gsgf_date;
-        GDate *g_date;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
 
-        g_date = g_date_new_dmy (26, 4, 1977);
-        gsgf_date = gsgf_date_new (g_date);
+        gsgf_date = gsgf_date_new (g_date_new_dmy (26, 4, 1977));
         expect = "1977-04-26";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
                 g_printerr ("Expected %s, got %s\n", expect, got);
                 retval = FALSE;
         }
+
+        gsgf_date_append (gsgf_date, g_date_new_dmy (26, 5, 1977));
+
+        expect = "1977-04-26,1977-05-26";
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
         g_object_unref(gsgf_date);
 
         return retval;
