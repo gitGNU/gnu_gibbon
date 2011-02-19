@@ -104,6 +104,8 @@ gsgf_date_new (GDate* date)
         if (date)
                 self->priv->dates = g_list_append (self->priv->dates, date);
 
+        gsgf_date_sync_text (self);
+
         return self;
 }
 
@@ -181,8 +183,19 @@ gsgf_date_sync_text (GSGFDate *self)
         GDateMonth last_month = G_DATE_BAD_MONTH;
         GDateYear last_year = G_DATE_BAD_YEAR;
         GString *string;
+        GList *iter = self->priv->dates;
+        GDate *date;
 
-        string = g_string_new("2010-01-30,31,02-01");
+        string = g_string_sized_new (10);
+
+        while (iter) {
+                date = iter->data;
+                g_string_append_printf (string, "%04d-%02d-%02d",
+                                        g_date_get_year (date),
+                                        g_date_get_month (date),
+                                        g_date_get_day (date));
+                iter = iter->next;
+        }
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
         text_class->set_value (GSGF_TEXT (self), string->str, FALSE, NULL);
