@@ -44,6 +44,9 @@ G_DEFINE_TYPE(GSGFText, gsgf_text, GSGF_TYPE_COOKED_VALUE)
 static gboolean gsgf_text_write_stream(const GSGFCookedValue *self,
                                        GOutputStream *out, gsize *bytes_written,
                                        GCancellable *cancellable, GError **error);
+static void _gsgf_text_set_value (GSGFText *self, const gchar *value,
+                                  gboolean copy);
+static gchar *_gsgf_text_get_value (const GSGFText *self);
 
 static void
 gsgf_text_init(GSGFText *self)
@@ -77,8 +80,8 @@ gsgf_text_class_init(GSGFTextClass *klass)
 
         gsgf_cooked_value_class->write_stream = gsgf_text_write_stream;
 
-        klass->get_value = NULL;
-        klass->set_value = NULL;
+        klass->get_value = _gsgf_text_get_value;
+        klass->set_value = _gsgf_text_set_value;
 
         object_class->finalize = gsgf_text_finalize;
 }
@@ -149,23 +152,30 @@ gsgf_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
  * stored.  If it is %FALSE the @value is stored directly.
  */
 void
-gsgf_text_set_value(GSGFText *self, const gchar *value,
-                    gboolean copy)
+gsgf_text_set_value (GSGFText *self, const gchar *value,
+                     gboolean copy)
 {
-        g_return_if_fail(GSGF_IS_TEXT(self));
-        g_return_if_fail(value != NULL);
+        g_return_if_fail (GSGF_IS_TEXT(self));
+        g_return_if_fail (value != NULL);
+        g_return_if_fail (GSGF_TEXT_GET_CLASS (self)->set_value);
 
-        if (GSGF_TEXT_GET_CLASS(self)->set_value) {
-                GSGF_TEXT_GET_CLASS(self)->set_value(self, value, copy);
-        } else {
-                if (self->priv->value)
-                        g_free(self->priv->value);
+        GSGF_TEXT_GET_CLASS(self)->set_value(self, value, copy);
+}
 
-                if (copy)
-                        self->priv->value = g_strdup(value);
-                else
-                        self->priv->value = (gchar *) value;
-        }
+static void
+_gsgf_text_set_value (GSGFText *self, const gchar *value,
+                      gboolean copy)
+{
+        g_return_if_fail (GSGF_IS_TEXT(self));
+        g_return_if_fail (value != NULL);
+
+        if (self->priv->value)
+            g_free(self->priv->value);
+
+        if (copy)
+                self->priv->value = g_strdup(value);
+        else
+                self->priv->value = (gchar *) value;
 }
 
 /**
@@ -177,12 +187,20 @@ gsgf_text_set_value(GSGFText *self, const gchar *value,
  * Returns: the value stored.
  */
 gchar *
-gsgf_text_get_value(const GSGFText *self)
+gsgf_text_get_value (const GSGFText *self)
 {
-        g_return_val_if_fail(GSGF_IS_TEXT(self), NULL);
+        g_return_val_if_fail (GSGF_IS_TEXT (self), NULL);
+        g_return_val_if_fail (GSGF_TEXT_GET_CLASS (self)->get_value, NULL);
 
-        if (GSGF_TEXT_GET_CLASS(self)->get_value)
-                return GSGF_TEXT_GET_CLASS(self)->get_value(self);
+        return GSGF_TEXT_GET_CLASS(self)->get_value(self);
+
+        return self->priv->value;
+}
+
+static gchar *
+_gsgf_text_get_value (const GSGFText *self)
+{
+        g_return_val_if_fail (GSGF_IS_TEXT (self), NULL);
 
         return self->priv->value;
 }
