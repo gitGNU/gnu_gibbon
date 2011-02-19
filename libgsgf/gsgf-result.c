@@ -46,8 +46,8 @@ struct _GSGFResultPrivate {
 
 G_DEFINE_TYPE (GSGFResult, gsgf_result, GSGF_TYPE_SIMPLE_TEXT)
 
-static void gsgf_result_set_value (GSGFText *self, const gchar *value,
-                                   gboolean copy);
+static gboolean gsgf_result_set_value (GSGFText *self, const gchar *value,
+                                       gboolean copy, GError **error);
 static void gsgf_result_sync_text (GSGFResult *self);
 
 static void 
@@ -131,13 +131,16 @@ gsgf_result_new (GSGFResultWinner winner, gdouble score, GSGFResultCause cause)
         return self;
 }
 
-static void
+static gboolean
 gsgf_result_set_value (GSGFText *_self, const gchar *value,
-                       gboolean copy)
+                       gboolean copy, GError **error)
 {
         GSGFResult *self = GSGF_RESULT (_self);
         gchar *endptr;
         gboolean stop = FALSE;
+
+        if  (error)
+                *error = NULL;
 
         self->priv->winner = GSGF_RESULT_UNKNOWN;
         self->priv->cause = GSGF_RESULT_OTHER;
@@ -189,6 +192,8 @@ gsgf_result_set_value (GSGFText *_self, const gchar *value,
         }
 
         gsgf_result_sync_text (self);
+
+        return TRUE;
 }
 
 static void
@@ -245,7 +250,7 @@ gsgf_result_sync_text (GSGFResult *self)
                 text = g_strdup_printf ("%s", Winner);
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
-        text_class->set_value (GSGF_TEXT (self), text, TRUE);
+        text_class->set_value (GSGF_TEXT (self), text, TRUE, NULL);
 
         g_free (text);
 }
@@ -282,7 +287,10 @@ gsgf_result_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
         string = gsgf_raw_get_value(raw, 0);
 
         self = g_object_new (GSGF_TYPE_RESULT, NULL);
-        gsgf_text_set_value (GSGF_TEXT (self), string, TRUE);
+        if (!gsgf_text_set_value (GSGF_TEXT (self), string, TRUE, error)) {
+                g_object_unref (self);
+                return NULL;
+        }
 
         return GSGF_COOKED_VALUE (self);
 }

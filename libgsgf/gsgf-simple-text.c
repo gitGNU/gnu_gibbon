@@ -62,10 +62,9 @@ gsgf_simple_text_class_init(GSGFSimpleTextClass *klass)
 GSGFSimpleText *
 gsgf_simple_text_new (const gchar *value)
 {
-        GSGFSimpleText *self = g_object_new(GSGF_TYPE_SIMPLE_TEXT, NULL);
+        GSGFSimpleText *self = g_object_new (GSGF_TYPE_SIMPLE_TEXT, NULL);
 
-        if (value)
-                gsgf_text_set_value(GSGF_TEXT(self), value, TRUE);
+        gsgf_text_set_value (GSGF_TEXT (self), value, TRUE, NULL);
 
         return self;
 }

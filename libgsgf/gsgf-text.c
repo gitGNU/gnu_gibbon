@@ -44,8 +44,8 @@ G_DEFINE_TYPE(GSGFText, gsgf_text, GSGF_TYPE_COOKED_VALUE)
 static gboolean gsgf_text_write_stream(const GSGFCookedValue *self,
                                        GOutputStream *out, gsize *bytes_written,
                                        GCancellable *cancellable, GError **error);
-static void _gsgf_text_set_value (GSGFText *self, const gchar *value,
-                                  gboolean copy);
+static gboolean _gsgf_text_set_value (GSGFText *self, const gchar *value,
+                                      gboolean copy, GError **error);
 static gchar *_gsgf_text_get_value (const GSGFText *self);
 
 static void
@@ -147,27 +147,49 @@ gsgf_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
  * @self: The #GSGFText.
  * @value: The new value to store.
  * @copy: Flag that indicates whether to create a copy of the data.
+ * @error: Optional location to store an error.
  *
  * Stores a new value in a #GSGFText.  If @copy is %TRUE, a copy is
  * stored.  If it is %FALSE the @value is stored directly.
  */
-void
+gboolean
 gsgf_text_set_value (GSGFText *self, const gchar *value,
-                     gboolean copy)
+                     gboolean copy, GError **error)
 {
-        g_return_if_fail (GSGF_IS_TEXT(self));
-        g_return_if_fail (value != NULL);
-        g_return_if_fail (GSGF_TEXT_GET_CLASS (self)->set_value);
+        if (error)
+                *error = NULL;
 
-        GSGF_TEXT_GET_CLASS(self)->set_value(self, value, copy);
+        if (!GSGF_IS_TEXT (self)) {
+                g_set_error_literal (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                                     _("gsgf_text_set_value() called on wrong"
+                                       " object type"));
+                g_return_val_if_fail (GSGF_IS_TEXT(self), FALSE);
+        }
+
+        if (!value) {
+                g_set_error_literal (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                                     _("gsgf_text_set_value() called with"
+                                       " NULL pointer"));
+                g_return_val_if_fail (value != NULL, FALSE);
+        }
+
+        if (!GSGF_TEXT_GET_CLASS (self)->set_value) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                             _("Class %s does not implemented set_value()."),
+                             G_OBJECT_TYPE_NAME (self));
+                g_return_val_if_fail (GSGF_TEXT_GET_CLASS (self)->set_value,
+                                      FALSE);
+        }
+
+        return GSGF_TEXT_GET_CLASS(self)->set_value (self, value, copy, error);
 }
 
-static void
+static gboolean
 _gsgf_text_set_value (GSGFText *self, const gchar *value,
-                      gboolean copy)
+                      gboolean copy, GError **error)
 {
-        g_return_if_fail (GSGF_IS_TEXT(self));
-        g_return_if_fail (value != NULL);
+        if (error)
+                *error = NULL;
 
         if (self->priv->value)
             g_free(self->priv->value);
@@ -176,6 +198,8 @@ _gsgf_text_set_value (GSGFText *self, const gchar *value,
                 self->priv->value = g_strdup(value);
         else
                 self->priv->value = (gchar *) value;
+
+        return TRUE;
 }
 
 /**

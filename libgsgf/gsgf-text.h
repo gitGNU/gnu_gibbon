@@ -59,18 +59,20 @@ struct _GSGFTextClass
         /*< private >*/
         GSGFCookedValueClass parent_class;
 
-        void (*set_value) (GSGFText *self, const gchar *value, gboolean copy);
+        gboolean (*set_value) (GSGFText *self, const gchar *value,
+                               gboolean copy, GError **error);
         gchar * (*get_value) (const GSGFText *self);
 };
 
 GType gsgf_text_get_type(void) G_GNUC_CONST;
 
-GSGFText* gsgf_text_new(const gchar *value);
+GSGFText* gsgf_text_new (const gchar *value);
 GSGFCookedValue* gsgf_text_new_from_raw(const GSGFRaw *raw,
                                         const GSGFFlavor *flavor,
                                         GError **error);
 
-void gsgf_text_set_value(GSGFText *self, const gchar *value, gboolean copy);
+gboolean gsgf_text_set_value (GSGFText *self, const gchar *value,
+                              gboolean copy, GError **error);
 gchar *gsgf_text_get_value(const GSGFText *self);
 
 G_END_DECLS
