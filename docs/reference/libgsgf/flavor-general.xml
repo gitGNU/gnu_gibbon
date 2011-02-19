@@ -652,8 +652,8 @@
         See <ulink url="http://www.red-bean.com/sgf/properties.html#PC">http://www.red-bean.com/sgf/properties.html#PC</ulink>.
       </para>
     </sect2>
-    <sect2 id="property-PB">
-      <title>PB (white player)</title>
+    <sect2 id="property-PW">
+      <title>PW (white player)</title>
       <para>
         Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
       </para>
