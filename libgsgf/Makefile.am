@@ -57,7 +57,8 @@ libgsgf_a_SOURCES = 			\
 	libgsgf.c			\
 	gsgf-color.c			\
 	gsgf-double.c			\
-	gsgf-result.c	
+	gsgf-result.c				\
+	gsgf-date.c	
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -88,4 +89,5 @@ noinst_HEADERS =			\
 	gsgf-util.h			\
 	gsgf-color.h			\
 	gsgf-double.h			\
-	gsgf-result.h
+	gsgf-result.h			\
+	gsgf-date.h

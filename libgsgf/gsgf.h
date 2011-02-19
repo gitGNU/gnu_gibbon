@@ -47,6 +47,7 @@
 
 #include <libgsgf/gsgf-list-of.h>
 #include <libgsgf/gsgf-result.h>
+#include <libgsgf/gsgf-date.h>
 
 #include <libgsgf/gsgf-collection.h>
 #include <libgsgf/gsgf-error.h>
