@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-24 00:29+0200\n"
-"PO-Revision-Date: 2011-02-24 00:59+0200\n"
+"PO-Revision-Date: 2011-02-24 01:02+0200\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: Guido Flohr <guido@imperia.net>\n"
 "Language: de\n"
@@ -118,7 +118,7 @@ msgstr ""
 #: ../libgsgf/gsgf-collection.c:498
 #, c-format
 msgid "%d:%d:Illegal binary character '#%d'"
-msgstr ""
+msgstr "%d:%d:Illegalaler binärer Buchstabe '#%d'"
 
 #: ../libgsgf/gsgf-collection.c:506
 #, c-format
