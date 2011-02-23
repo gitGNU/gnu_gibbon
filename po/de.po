@@ -118,7 +118,7 @@ msgstr ""
 #: ../libgsgf/gsgf-collection.c:498
 #, c-format
 msgid "%d:%d:Illegal binary character '#%d'"
-msgstr "%d:%d:Illegalaler binärer Buchstabe '#%d'"
+msgstr "%d:%d: Unzulässiges binäres Zeichen '#%d'"
 
 #: ../libgsgf/gsgf-collection.c:506
 #, c-format
