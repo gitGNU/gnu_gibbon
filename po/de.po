@@ -92,7 +92,7 @@ msgstr ""
 
 #: ../data/gibbon.glade.h:18
 msgid "fibs.com"
-msgstr ""
+msgstr "fibs.com"
 
 #: ../data/gibbon.glade.h:19
 msgid "gtk-about"
