@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-25 12:02+0300\n"
+"POT-Creation-Date: 2011-02-24 00:43+0200\n"
 "PO-Revision-Date: 2009-09-25 12:01+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Guido Flohr <guido@imperia.net>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,139 +25,456 @@ msgstr "Gtk+-Frontend für den First Internet Backgammon Server FIBS"
 msgid "Play backgammon online on FIBS."
 msgstr "Backgammon online auf FIBS spielen."
 
-#: ../data/gibbon.glade.h:1
-msgid "4321"
+#: ../data/gibbon.schemas.in.h:1
+msgid "E-mail address"
 msgstr ""
 
-#: ../data/gibbon.glade.h:2
-msgid "Connect"
-msgstr "Verbinden"
-
-#: ../data/gibbon.glade.h:3
-msgid "Connection Data"
-msgstr "Verbindungsdaten"
-
-#: ../data/gibbon.glade.h:4
-msgid "Get new account on fibs.com"
-msgstr "Neues Konto auf fibs.com einrichten"
-
-#: ../data/gibbon.glade.h:5
-msgid ""
-"Kibitz\n"
-"Say\n"
-"Whisper"
+#: ../data/gibbon.schemas.in.h:2
+msgid "E-mail address to display on the server"
 msgstr ""
-"Kibitzen\n"
-"Sagen\n"
-"Flüstern"
 
-#: ../data/gibbon.glade.h:8 ../data/gibbon.schemas.in.h:1
+#: ../data/gibbon.schemas.in.h:3
 msgid "Login"
 msgstr "Login"
 
-#: ../data/gibbon.glade.h:9
-msgid "Opp"
-msgstr ""
-
-#: ../data/gibbon.glade.h:10 ../data/gibbon.schemas.in.h:2
+#: ../data/gibbon.schemas.in.h:4
 msgid "Password"
 msgstr "Passwort"
 
-#: ../data/gibbon.glade.h:11 ../data/gibbon.schemas.in.h:3
+#: ../data/gibbon.schemas.in.h:5
 msgid "Port"
 msgstr ""
 
-#: ../data/gibbon.glade.h:12
-msgid "Remember password"
-msgstr "Passwort speichern"
-
-#: ../data/gibbon.glade.h:13 ../data/gibbon.schemas.in.h:5
-msgid "Server"
-msgstr "Server"
-
-#: ../data/gibbon.glade.h:14
-msgid "Wat"
-msgstr ""
-
-#: ../data/gibbon.glade.h:15
-msgid "_Connect"
-msgstr "_Verbinden"
-
-#: ../data/gibbon.glade.h:16
-msgid "_File"
-msgstr "_Datei"
-
-#: ../data/gibbon.glade.h:17
-msgid "_Help"
-msgstr ""
-
-#: ../data/gibbon.glade.h:18
-msgid "fibs.com"
-msgstr "fibs.com"
-
-#: ../data/gibbon.glade.h:19
-msgid "gtk-about"
-msgstr ""
-
-#: ../data/gibbon.glade.h:20
-msgid "gtk-cancel"
-msgstr ""
-
-#: ../data/gibbon.glade.h:21
-msgid "gtk-connect"
-msgstr ""
-
-#: ../data/gibbon.glade.h:22
-msgid "gtk-disconnect"
-msgstr ""
-
-#: ../data/gibbon.glade.h:23
-msgid "gtk-quit"
-msgstr ""
-
-#: ../data/gibbon.schemas.in.h:4
+#: ../data/gibbon.schemas.in.h:6
 msgid "Remember password?"
 msgstr "Passwort speichern?"
 
-#: ../data/gibbon.schemas.in.h:6
+#: ../data/gibbon.schemas.in.h:7
+msgid "Server"
+msgstr "Server"
+
+#: ../data/gibbon.schemas.in.h:8
 msgid "Should your password be stored on your hard disk?"
 msgstr "Soll das Passwort auf der lokalen Festplatte gespeichert werden?"
 
-#: ../data/gibbon.schemas.in.h:7
+#: ../data/gibbon.schemas.in.h:9
 msgid "The port number of the server, normally 4321."
 msgstr "Portnummer auf dem Server, normalerweise 4321."
 
-#: ../data/gibbon.schemas.in.h:8
+#: ../data/gibbon.schemas.in.h:10
 msgid "The server that you want to connect to, usually fibs.com."
 msgstr "Server, mit dem verbunden werden soll, normalerweise fibs.com."
 
-#: ../data/gibbon.schemas.in.h:9
+#: ../data/gibbon.schemas.in.h:11
 msgid "Your password on that server."
 msgstr "Passwort auf diesem Server."
 
-#: ../data/gibbon.schemas.in.h:10
+#: ../data/gibbon.schemas.in.h:12
 msgid "Your username on that server."
 msgstr "Benutzername auf diesem Server."
 
-#: ../src/gibbon-connection.c:311
+#: ../libgsgf/gsgf-collection.c:228 ../libgsgf/gsgf-collection.c:393
+msgid "'('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:238
+msgid "';'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:269
+msgid "property, ';', or '('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:280
+msgid "'['"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:293
+msgid "value or ']'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:319
+msgid "'[', ';', or '('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:330
+msgid "']'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:365
+msgid "'[', ';', '(', ')', or property"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:384
+msgid "Trailing garbage"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:408 ../libgsgf/tests/test-empty.c:36
+#: ../libgsgf/tests/test-really-empty.c:36
 #, c-format
-msgid "Error receiving data from server: %s.\n"
+msgid "Empty SGF collections are not allowed"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:498
+#, c-format
+msgid "%d:%d:Illegal binary character '#%d'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:506
+#, c-format
+msgid "%d:%d:Illegal character '%c'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:633
+#, c-format
+msgid "%d:%d: Unexpected end of file"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:639
+#, c-format
+msgid "%d:%d: Expected %s"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:704 ../libgsgf/tests/test-write-empty.c:45
+#, c-format
+msgid "Attempt to write an empty collection"
+msgstr ""
+
+#: ../libgsgf/gsgf-color.c:128 ../libgsgf/gsgf-double.c:96
+#: ../libgsgf/gsgf-empty.c:102 ../libgsgf/gsgf-number.c:123
+#: ../libgsgf/gsgf-real.c:163 ../libgsgf/gsgf-result.c:284
+#, c-format
+msgid "Only one value allowed for property"
+msgstr ""
+
+#: ../libgsgf/gsgf-color.c:153
+#, c-format
+msgid "Unrecognized color identifier '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-compose.c:162 ../libgsgf/gsgf-list-of.c:157
+#: ../libgsgf/gsgf-raw.c:139
+#, c-format
+msgid "Attempt to write empty property"
+msgstr ""
+
+#: ../libgsgf/gsgf-cooked-value.c:78
+#, c-format
+msgid "Invalid cast to GSGFCookedValue"
+msgstr ""
+
+#: ../libgsgf/gsgf-cooked-value.c:85
+#, c-format
+msgid "%s does not implement method write_stream"
+msgstr ""
+
+#: ../libgsgf/gsgf-double.c:103
+#, c-format
+msgid "SGF double must be 1 or 2, not '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-empty.c:108
+#, c-format
+msgid "Empty value required"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:812 ../libgsgf/gsgf-flavor.c:828
+#: ../libgsgf/gsgf-flavor.c:852 ../libgsgf/gsgf-flavor.c:876
+#: ../libgsgf/gsgf-flavor.c:901
+#, c-format
+msgid "Invalid cast to GSGFFlavor"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:835
+#, c-format
+msgid "Method create_move is not implemented"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:859
+#, c-format
+msgid "Method create_stone is not implemented"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:883
+#, c-format
+msgid "Method create_point is not implemented"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:908
+#, c-format
+msgid "%s does not implement method append_points()"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:948 ../libgsgf/gsgf-flavor.c:956
+#: ../libgsgf/tests/test-non-unique-points.c:38
+#, c-format
+msgid "Property '%s': "
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:981 ../libgsgf/gsgf-flavor.c:1242
+#, c-format
+msgid "Value must be greater than 0 but is %lld"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1006
+#, c-format
+msgid "Property only allowed in root node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1037
+#, c-format
+msgid ""
+"The properties 'DM', 'GB', 'GW', and 'UC' are mutually exclusive within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1072
+#, c-format
+msgid ""
+"The properties 'BM', 'DO', 'IT', and 'TE' are mutually exclusive within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1138
+#, c-format
+msgid ""
+"The properties '%s' and '%s' are not allowed on the same point within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1188
+#, c-format
+msgid "Exactly one value required for property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1208 ../libgsgf/gsgf-flavor.c:1267
+#: ../libgsgf/gsgf-flavor.c:1470 ../libgsgf/gsgf-flavor.c:1600
+#, c-format
+msgid "Empty property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1215
+#, c-format
+msgid "Empty version information"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1331 ../libgsgf/gsgf-flavor.c:1337
+#, c-format
+msgid "Only one move property (B or W) in node allowed"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1361
+#, c-format
+msgid "List of stones must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1391
+#, c-format
+msgid "List of points must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1457
+#, c-format
+msgid "List of point pairs must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1479 ../libgsgf/gsgf-flavor.c:1609
+#, c-format
+msgid "No end point"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1514
+#, c-format
+msgid "Start and end point must differ"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1530
+#, c-format
+msgid "Lines and arrows must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1548
+#, c-format
+msgid "Invalid points in property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1587
+#, c-format
+msgid "List of point labels must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1648
+#, c-format
+msgid "Points must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1663
+#, c-format
+msgid "Invalid point labels in property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1697 ../libgsgf/tests/test-non-unique-points.c:37
+#, c-format
+msgid "Points in list must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-list-of.c:242 ../libgsgf/gsgf-list-of.c:249
+#, c-format
+msgid "Invalid cast to GSGFListOf"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:124
+#, c-format
+msgid "Empty move"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
+#, fuzzy, c-format
+msgid "Invalid move syntax '%s'"
+msgstr "Ungültige Portnummer »%s«."
+
+#: ../libgsgf/gsgf-move-backgammon.c:176
+#, c-format
+msgid "Invalid move syntax"
+msgstr ""
+
+#: ../libgsgf/gsgf-node.c:186
+#, c-format
+msgid "Only upper case letters are allowed for property identifiers"
+msgstr ""
+
+#: ../libgsgf/gsgf-number.c:135 ../libgsgf/gsgf-real.c:129
+#: ../libgsgf/gsgf-real.c:175
+#, fuzzy, c-format
+msgid "Invalid number '%s': %s"
+msgstr "Ungültige Portnummer »%s«."
+
+#: ../libgsgf/gsgf-number.c:141 ../libgsgf/gsgf-real.c:121
+#: ../libgsgf/gsgf-real.c:181 ../libgsgf/tests/test-number.c:98
+#: ../libgsgf/tests/test-real.c:99 ../libgsgf/tests/test-real.c:117
+#, fuzzy, c-format
+msgid "Invalid number '%s'"
+msgstr "Ungültige Portnummer »%s«."
+
+#: ../libgsgf/gsgf-number.c:147 ../libgsgf/gsgf-real.c:187
+#: ../libgsgf/tests/test-number.c:116
+#, c-format
+msgid "Trailing garbage after number in '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:140
+#, c-format
+msgid "Empty point"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:146
+#, fuzzy, c-format
+msgid "Invalid point syntax"
+msgstr "Ungültiger Port »%s«: %s."
+
+#: ../libgsgf/gsgf-point-backgammon.c:155
+#, fuzzy, c-format
+msgid "Invalid point syntax '%s'"
+msgstr "Ungültige Portnummer »%s«."
+
+#: ../libgsgf/gsgf-point-backgammon.c:202
+#: ../libgsgf/gsgf-stone-backgammon.c:121
+#, c-format
+msgid "Empty stone"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:208
+#: ../libgsgf/gsgf-stone-backgammon.c:127
+#, c-format
+msgid "Invalid stone syntax"
+msgstr ""
+
+#: ../libgsgf/gsgf-real.c:336
+#, c-format
+msgid "Not a number"
+msgstr ""
+
+#: ../libgsgf/gsgf-simple-text.c:97 ../libgsgf/gsgf-text.c:130
+#, c-format
+msgid "Property without a value!"
+msgstr ""
+
+#: ../libgsgf/gsgf-simple-text.c:101
+#, c-format
+msgid "A simple text property may only have one value, not %u!"
+msgstr ""
+
+#: ../libgsgf/gsgf-text.c:134
+#, c-format
+msgid "A text property may only have one value, not %u!"
+msgstr ""
+
+#: ../libgsgf/gsgf-text.c:164
+msgid "gsgf_text_set_value() called on wrong object type"
+msgstr ""
+
+#: ../libgsgf/gsgf-text.c:171
+msgid "gsgf_text_set_value() called with NULL pointer"
+msgstr ""
+
+#: ../libgsgf/gsgf-text.c:178
+#, c-format
+msgid "Class %s does not implemented set_value()."
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:219
+#, fuzzy, c-format
+msgid "Error reading board definition `%s': %s\n"
+msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+
+#: ../src/gibbon-cairoboard.c:228
+#, fuzzy, c-format
+msgid "Error parsing board definition `%s'.\n"
+msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+
+#: ../src/gibbon-cairoboard.c:664
+#, c-format
+msgid "Board definition `%s' does not have an element `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-connection.c:380
+#, fuzzy, c-format
+msgid "Error receiving data from server: %s."
 msgstr "Fehler beim Empfangen von Daten vom Server: %s.\n"
 
-#: ../src/gibbon-connection.c:394
+#: ../src/gibbon-connection.c:390
+#, fuzzy
+msgid "End-of-file while receiving data from server."
+msgstr "Fehler beim Empfangen von Daten vom Server: %s.\n"
+
+#: ../src/gibbon-connection.c:478
+msgid "Authentication failed!"
+msgstr ""
+
+#: ../src/gibbon-connection.c:520
 #, c-format
 msgid "Error while sending data to server: %s.\n"
 msgstr "Fehler beim Senden von Daten zum Server: %s.\n"
 
-#: ../src/gibbon-connector.c:149
+#: ../src/gibbon-connector.c:183 ../src/gibbon-connector.c:195
 #, c-format
 msgid "Error resolving address for %s: %s.\n"
 msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
 
-#: ../src/gibbon-connector.c:216
+#: ../src/gibbon-connector.c:290
 #, c-format
 msgid "Failed to create connector thread: %s."
 msgstr "Verbindungsthread konnte nicht erzeugt werden: %s."
+
+#: ../src/gibbon-connector.c:370
+#, c-format
+msgid "Windows error %u."
+msgstr ""
+
+#: ../src/gibbon-session.c:243
+#, c-format
+msgid "Last login on %s from %s."
+msgstr ""
 
 #: ../src/gibbon.c:39
 msgid "Use alternatve UI definition (developers only)"
@@ -166,57 +484,193 @@ msgstr "Alternative Benutzerschnittstellendatei verwenden (nur für Entwickler)"
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: ../src/gibbon.c:106
+#: ../src/gibbon.c:111
 msgid "- Gtk+ frontend for FIBS"
 msgstr "- Gtk+-Frontend für FIBS"
 
-#: ../src/gibbon.c:114
+#: ../src/gibbon.c:121
 #, c-format
 msgid "Run `%s --help' for more information!"
 msgstr "»%s --help« bietet mehr Informationen!"
 
-#: ../src/gtkconnectiondialog.c:50
+#: ../src/gtkconnectiondialog.c:53
 #, c-format
 msgid "Invalid port `%s': %s."
 msgstr "Ungültiger Port »%s«: %s."
 
-#: ../src/gtkconnectiondialog.c:58
+#: ../src/gtkconnectiondialog.c:61
 #, c-format
 msgid "Invalid port number '%s'."
 msgstr "Ungültige Portnummer »%s«."
 
-#: ../src/gtkconnectiondialog.c:65
+#: ../src/gtkconnectiondialog.c:68
 msgid "You have to specify your user name (login)."
 msgstr "Kein Benutzername (Login) angegeben."
 
-#: ../src/gtkconnectiondialog.c:72
+#: ../src/gtkconnectiondialog.c:75
 msgid "Guest login is not supported."
 msgstr "Gastlogin wird nicht unterstützt."
 
-#: ../src/gtkconnectiondialog.c:78
+#: ../src/gtkconnectiondialog.c:81
 msgid "You have to specify a password."
 msgstr "Kein Passwort angegeben."
 
-#: ../src/gui.c:68 ../src/gui.c:271
+#: ../src/gui.c:112 ../src/gui.c:418
 msgid "Disconnected"
 msgstr "Nicht verbunden"
 
-#: ../src/gui.c:154
+#: ../src/gui.c:271
 #, c-format
 msgid "Internal error: Cannot find widget `%s'!\n"
 msgstr "Interner Fehler: Widget »%s« nicht gefunden!\n"
 
-#: ../src/gui.c:198
+#: ../src/gui.c:315
 #, c-format
 msgid "Do you need to pass the option `--ui-file'?\n"
 msgstr "Vielleicht muss die Option »--ui-file« verwendet werden?\n"
 
-#: ../src/gui.c:246
+#: ../src/gui.c:363
 #, c-format
 msgid "Resolving address for %s."
 msgstr "Adresse für %s wird aufgelöst."
 
-#: ../src/gui.c:257
+#: ../src/gui.c:374
 #, c-format
 msgid "Connecting as %s to port %u on %s."
 msgstr "Verbinde als %s mit Port %u auf %s."
+
+#: ../src/gui.c:388
+#, fuzzy, c-format
+msgid "Log in as %s on %s, port %u."
+msgstr "Verbinde als %s mit Port %u auf %s."
+
+#: ../src/gui.c:402
+#, fuzzy, c-format
+msgid "Logged in as %s on %s, port %u."
+msgstr "Verbinde als %s mit Port %u auf %s."
+
+#: ../src/gui.c:466
+msgid "Name"
+msgstr ""
+
+#: ../src/gui.c:478
+msgid "Available"
+msgstr ""
+
+#: ../src/gui.c:489
+msgid "Rating"
+msgstr ""
+
+#: ../src/gui.c:501
+msgid "Exp."
+msgstr ""
+
+#: ../src/gui.c:511
+msgid "Opponent"
+msgstr ""
+
+#: ../src/gui.c:518
+msgid "Watching"
+msgstr ""
+
+#: ../src/gui.c:538
+msgid "Watch"
+msgstr ""
+
+#: ../src/gui.c:544
+msgid "Look"
+msgstr ""
+
+#: ../src/svg-util.c:229 ../src/svg-util.c:982
+msgid "No error (this should not happen)!"
+msgstr ""
+
+#: ../src/svg-util.c:231 ../src/svg-util.c:984
+msgid "Out of memory!"
+msgstr ""
+
+#: ../src/svg-util.c:233 ../src/svg-util.c:986
+msgid "Input/output error!"
+msgstr ""
+
+#: ../src/svg-util.c:235 ../src/svg-util.c:988
+msgid "File not found!"
+msgstr ""
+
+#: ../src/svg-util.c:237 ../src/svg-util.c:990
+msgid "Invalid value!"
+msgstr ""
+
+#: ../src/svg-util.c:239 ../src/svg-util.c:992
+msgid "Invalid call!"
+msgstr ""
+
+#: ../src/svg-util.c:241 ../src/svg-util.c:994
+msgid "Parse error!"
+msgstr ""
+
+#: ../src/svg-util.c:244 ../src/svg-util.c:997
+msgid "Unknown error!"
+msgstr ""
+
+#: ../src/svg-util.c:269
+#, c-format
+msgid "Error creating libsvg-cairo context: %s\n"
+msgstr ""
+
+#: ../src/svg-util.c:278
+#, c-format
+msgid "Error initializing SVG parser: %s\n"
+msgstr ""
+
+#: ../src/svg-util.c:285
+msgid "Error copying SVG structure!\n"
+msgstr ""
+
+#: ../src/svg-util.c:292
+msgid "Error copying SVG root element!\n"
+msgstr ""
+
+#: ../src/svg-util.c:300
+msgid "Error copying SVG node!\n"
+msgstr ""
+
+#: ../src/svg-util.c:315 ../src/svg-util.c:372
+#, fuzzy, c-format
+msgid "Error parsing SVG file `%s': %s\n"
+msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+
+#: ../src/svg-util.c:341
+#, fuzzy, c-format
+msgid "Error getting SVG dimensions of `%s': %s.\n"
+msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+
+#~ msgid "Connect"
+#~ msgstr "Verbinden"
+
+#~ msgid "Connection Data"
+#~ msgstr "Verbindungsdaten"
+
+#~ msgid "Get new account on fibs.com"
+#~ msgstr "Neues Konto auf fibs.com einrichten"
+
+#~ msgid ""
+#~ "Kibitz\n"
+#~ "Say\n"
+#~ "Whisper"
+#~ msgstr ""
+#~ "Kibitzen\n"
+#~ "Sagen\n"
+#~ "Flüstern"
+
+#~ msgid "Remember password"
+#~ msgstr "Passwort speichern"
+
+#~ msgid "_Connect"
+#~ msgstr "_Verbinden"
+
+#~ msgid "_File"
+#~ msgstr "_Datei"
+
+#~ msgid "fibs.com"
+#~ msgstr "fibs.com"
