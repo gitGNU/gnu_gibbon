@@ -2,20 +2,20 @@
 # Copyright (C) 2009-2011 Guido Flohr
 # This file is distributed under the same license as the Gibbon package.
 # Guido Flohr <guido@imperia.net>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-24 00:43+0200\n"
-"PO-Revision-Date: 2009-09-25 12:01+0300\n"
-"Last-Translator: Guido Flohr <guido@imperia.net>\n"
+"POT-Creation-Date: 2011-02-24 00:29+0200\n"
+"PO-Revision-Date: 2011-02-24 00:48+0200\n"
+"Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: Guido Flohr <guido@imperia.net>\n"
-"Language: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.1.5\n"
 
 #: ../data/gibbon.desktop.in.h:1 ../data/gibbon.desktop.in.in.h:1
 msgid "Gtk+ frontend for the First Internet Backgammon Server FIBS"
@@ -27,11 +27,11 @@ msgstr "Backgammon online auf FIBS spielen."
 
 #: ../data/gibbon.schemas.in.h:1
 msgid "E-mail address"
-msgstr ""
+msgstr "E-Mail-Adresse"
 
 #: ../data/gibbon.schemas.in.h:2
 msgid "E-mail address to display on the server"
-msgstr ""
+msgstr "E-Mail-Adresse, die auf dem Server angezeigt werden soll"
 
 #: ../data/gibbon.schemas.in.h:3
 msgid "Login"
@@ -43,7 +43,7 @@ msgstr "Passwort"
 
 #: ../data/gibbon.schemas.in.h:5
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: ../data/gibbon.schemas.in.h:6
 msgid "Remember password?"
@@ -329,14 +329,16 @@ msgid "Empty move"
 msgstr ""
 
 #: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
+#, c-format
 #, fuzzy, c-format
 msgid "Invalid move syntax '%s'"
 msgstr "Ungültige Portnummer »%s«."
 
+# 80%
 #: ../libgsgf/gsgf-move-backgammon.c:176
-#, c-format
+#, c-format, fuzzy
 msgid "Invalid move syntax"
-msgstr ""
+msgstr "Ungültiger Port »%s«: %s."
 
 #: ../libgsgf/gsgf-node.c:186
 #, c-format
@@ -345,6 +347,7 @@ msgstr ""
 
 #: ../libgsgf/gsgf-number.c:135 ../libgsgf/gsgf-real.c:129
 #: ../libgsgf/gsgf-real.c:175
+#, c-format
 #, fuzzy, c-format
 msgid "Invalid number '%s': %s"
 msgstr "Ungültige Portnummer »%s«."
@@ -352,6 +355,7 @@ msgstr "Ungültige Portnummer »%s«."
 #: ../libgsgf/gsgf-number.c:141 ../libgsgf/gsgf-real.c:121
 #: ../libgsgf/gsgf-real.c:181 ../libgsgf/tests/test-number.c:98
 #: ../libgsgf/tests/test-real.c:99 ../libgsgf/tests/test-real.c:117
+#, c-format
 #, fuzzy, c-format
 msgid "Invalid number '%s'"
 msgstr "Ungültige Portnummer »%s«."
@@ -368,11 +372,13 @@ msgid "Empty point"
 msgstr ""
 
 #: ../libgsgf/gsgf-point-backgammon.c:146
+#, c-format
 #, fuzzy, c-format
 msgid "Invalid point syntax"
 msgstr "Ungültiger Port »%s«: %s."
 
 #: ../libgsgf/gsgf-point-backgammon.c:155
+#, c-format
 #, fuzzy, c-format
 msgid "Invalid point syntax '%s'"
 msgstr "Ungültige Portnummer »%s«."
@@ -383,11 +389,12 @@ msgstr "Ungültige Portnummer »%s«."
 msgid "Empty stone"
 msgstr ""
 
+# 80%
 #: ../libgsgf/gsgf-point-backgammon.c:208
 #: ../libgsgf/gsgf-stone-backgammon.c:127
-#, c-format
+#, c-format, fuzzy
 msgid "Invalid stone syntax"
-msgstr ""
+msgstr "Ungültiger Port »%s«: %s."
 
 #: ../libgsgf/gsgf-real.c:336
 #, c-format
@@ -423,11 +430,13 @@ msgid "Class %s does not implemented set_value()."
 msgstr ""
 
 #: ../src/gibbon-cairoboard.c:219
+#, c-format
 #, fuzzy, c-format
 msgid "Error reading board definition `%s': %s\n"
 msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
 
 #: ../src/gibbon-cairoboard.c:228
+#, c-format
 #, fuzzy, c-format
 msgid "Error parsing board definition `%s'.\n"
 msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
@@ -438,6 +447,7 @@ msgid "Board definition `%s' does not have an element `%s'.\n"
 msgstr ""
 
 #: ../src/gibbon-connection.c:380
+#, c-format
 #, fuzzy, c-format
 msgid "Error receiving data from server: %s."
 msgstr "Fehler beim Empfangen von Daten vom Server: %s.\n"
@@ -540,11 +550,13 @@ msgid "Connecting as %s to port %u on %s."
 msgstr "Verbinde als %s mit Port %u auf %s."
 
 #: ../src/gui.c:388
+#, c-format
 #, fuzzy, c-format
 msgid "Log in as %s on %s, port %u."
 msgstr "Verbinde als %s mit Port %u auf %s."
 
 #: ../src/gui.c:402
+#, c-format
 #, fuzzy, c-format
 msgid "Logged in as %s on %s, port %u."
 msgstr "Verbinde als %s mit Port %u auf %s."
@@ -636,11 +648,13 @@ msgid "Error copying SVG node!\n"
 msgstr ""
 
 #: ../src/svg-util.c:315 ../src/svg-util.c:372
+#, c-format
 #, fuzzy, c-format
 msgid "Error parsing SVG file `%s': %s\n"
 msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
 
 #: ../src/svg-util.c:341
+#, c-format
 #, fuzzy, c-format
 msgid "Error getting SVG dimensions of `%s': %s.\n"
 msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
