@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-24 00:29+0200\n"
-"PO-Revision-Date: 2011-02-24 01:02+0200\n"
+"PO-Revision-Date: 2011-02-24 01:11+0200\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: Guido Flohr <guido@imperia.net>\n"
 "Language: de\n"
@@ -75,19 +75,19 @@ msgstr "Benutzername auf diesem Server."
 
 #: ../libgsgf/gsgf-collection.c:228 ../libgsgf/gsgf-collection.c:393
 msgid "'('"
-msgstr ""
+msgstr "»(«"
 
 #: ../libgsgf/gsgf-collection.c:238
 msgid "';'"
-msgstr ""
+msgstr "»;«"
 
 #: ../libgsgf/gsgf-collection.c:269
 msgid "property, ';', or '('"
-msgstr ""
+msgstr "Eigenschaft (property), »;« oder »(«"
 
 #: ../libgsgf/gsgf-collection.c:280
 msgid "'['"
-msgstr ""
+msgstr "»[«"
 
 #: ../libgsgf/gsgf-collection.c:293
 msgid "value or ']'"
@@ -95,45 +95,45 @@ msgstr "Wert oder »]«"
 
 #: ../libgsgf/gsgf-collection.c:319
 msgid "'[', ';', or '('"
-msgstr ""
+msgstr "»[«, »;« oder »(«"
 
 #: ../libgsgf/gsgf-collection.c:330
 msgid "']'"
-msgstr ""
+msgstr "»]«"
 
 #: ../libgsgf/gsgf-collection.c:365
 msgid "'[', ';', '(', ')', or property"
-msgstr ""
+msgstr "»[«, »;«, »(«, »)« oder Eigenschaft (property)"
 
 #: ../libgsgf/gsgf-collection.c:384
 msgid "Trailing garbage"
-msgstr ""
+msgstr "Müll am Ende"
 
 #: ../libgsgf/gsgf-collection.c:408 ../libgsgf/tests/test-empty.c:36
 #: ../libgsgf/tests/test-really-empty.c:36
 #, c-format
 msgid "Empty SGF collections are not allowed"
-msgstr ""
+msgstr "Leere SGF-Collections sind nicht erlaubt"
 
 #: ../libgsgf/gsgf-collection.c:498
 #, c-format
 msgid "%d:%d:Illegal binary character '#%d'"
-msgstr "%d:%d: Unzulässiges binäres Zeichen '#%d'"
+msgstr "%d:%d:Illegalaler binärer Buchstabe '#%d'"
 
 #: ../libgsgf/gsgf-collection.c:506
 #, c-format
 msgid "%d:%d:Illegal character '%c'"
-msgstr ""
+msgstr "%d:%d:Illegales Zeichen »%c«"
 
 #: ../libgsgf/gsgf-collection.c:633
 #, c-format
 msgid "%d:%d: Unexpected end of file"
-msgstr ""
+msgstr "%d:%d: Unerwartetes Dateiende"
 
 #: ../libgsgf/gsgf-collection.c:639
 #, c-format
 msgid "%d:%d: Expected %s"
-msgstr ""
+msgstr "%d:%d: Erwartete %s"
 
 #: ../libgsgf/gsgf-collection.c:704 ../libgsgf/tests/test-write-empty.c:45
 #, c-format
