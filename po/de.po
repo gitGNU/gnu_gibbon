@@ -138,7 +138,7 @@ msgstr ""
 #: ../libgsgf/gsgf-collection.c:704 ../libgsgf/tests/test-write-empty.c:45
 #, c-format
 msgid "Attempt to write an empty collection"
-msgstr ""
+msgstr "Versuch eine leere Collection zu schreiben"
 
 #: ../libgsgf/gsgf-color.c:128 ../libgsgf/gsgf-double.c:96
 #: ../libgsgf/gsgf-empty.c:102 ../libgsgf/gsgf-number.c:123
