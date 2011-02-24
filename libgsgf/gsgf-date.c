@@ -27,6 +27,18 @@
  *
  * The maximum accuracy is one day.  If you need more you have to store this
  * externally, for example in the file name.
+ *
+ * The class uses #GDate for its internal date representation and uses
+ * the values #G_DATE_BAD_MONTH or #G_DATE_BAD_DAY for month or day of the
+ * month values not available.  You should be aware that such #GDate objects
+ * are invalid and will throw a lot of errors, when accessed with the
+ * regular #GDate methods.
+ *
+ * In order to avoid these errors, libgsgf does not use g_date_get_year(),
+ * g_date_get_month(), or g_date_get_day() in order to access the broken
+ * down date values but access the members of the structure directly.  This
+ * is discouraged by the #GDate documentation.  On the other hand, the
+ * members are fully visible, and we therefore ignore that advice.
  **/
 
 #include <glib.h>
@@ -86,7 +98,7 @@ gsgf_date_class_init (GSGFDateClass *klass)
 
 /**
  * gsgf_date_new:
- * @date: An initial #GDate to store or %NULL.
+ * @date: An initial #GDate to store.
  * @error: An optional location to store an error or %NULL.
  *
  * Create a new #GSGFDate.  You can initialize a #GSGFDate only with one
@@ -100,11 +112,28 @@ gsgf_date_class_init (GSGFDateClass *klass)
 GSGFDate *
 gsgf_date_new (GDate* date, GError **error)
 {
-        GSGFDate *self = g_object_new (GSGF_TYPE_DATE, NULL);
+        GSGFDate *self;
 
         if (error)
                 *error = NULL;
 
+        if (!date) {
+                g_set_error (error, GSGF_ERROR,
+                             GSGF_ERROR_USAGE_ERROR,
+                             _("No date passed"));
+                g_return_val_if_fail (date, NULL);
+        }
+
+        if (date) {
+                if (!g_date_valid_year (date->year)) {
+                        g_set_error (error, GSGF_ERROR,
+                                     GSGF_ERROR_SEMANTIC_ERROR,
+                                     _("Invalid year in date specification"));
+                        return NULL;
+                }
+        }
+
+        self = g_object_new (GSGF_TYPE_DATE, NULL);
         if (date)
                 self->priv->dates = g_list_append (self->priv->dates, date);
 
@@ -145,13 +174,8 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
         if (error)
                 *error = NULL;
 
-        dates = g_list_append (dates, g_date_new_dmy (30, 1, 2010));
-        dates = g_list_append (dates, g_date_new_dmy (31, 1, 2010));
-        dates = g_list_append (dates, g_date_new_dmy (1, 2, 2010));
-
         if (self->priv->dates) {
-                g_list_foreach (self->priv->dates, (GFunc) self->priv->dates,
-                                NULL);
+                g_list_foreach (self->priv->dates, (GFunc) g_date_free, NULL);
                 g_list_free (self->priv->dates);
         }
         self->priv->dates = dates;
@@ -221,9 +245,9 @@ gsgf_date_sync_text (GSGFDate *self)
                 if (iter != self->priv->dates)
                         g_string_append_c (string, ',');
                 date = iter->data;
-                this_day = g_date_get_day (date);
-                this_month = g_date_get_month (date);
-                this_year = g_date_get_year (date);
+                this_day = date->day;
+                this_month = date->month;
+                this_year = date->year;
 
                 if (this_year == last_year) {
                         if (this_month == last_month) {

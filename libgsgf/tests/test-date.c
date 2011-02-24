@@ -175,6 +175,7 @@ test_partial (void)
 
         error = NULL;
         date = g_date_new ();
+        g_date_clear (date, 1);
         g_date_set_year (date, 2011);
         g_date_set_month (date, 3);
         gsgf_date = gsgf_date_new (date, &error);
@@ -193,6 +194,7 @@ test_partial (void)
 
         error = NULL;
         date = g_date_new ();
+        g_date_clear (date, 1);
         g_date_set_year (date, 2011);
         gsgf_date = gsgf_date_new (date, &error);
         if (!gsgf_date) {
@@ -200,7 +202,7 @@ test_partial (void)
                             error->message);
                 retval = FALSE;
         } else {
-                expect = "2011-03";
+                expect = "2011";
                 got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
                 if (g_strcmp0 (expect, got)) {
                         g_printerr ("Expected %s, got %s\n", expect, got);
@@ -211,8 +213,9 @@ test_partial (void)
         error = NULL;
         expect_error = NULL;
         g_set_error (&expect_error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                     "GSGFDate requires at least a valid year");
+                     "Invalid year in date specification");
         date = g_date_new ();
+        g_date_clear (date, 1);
         gsgf_date = gsgf_date_new (date, &error);
         if (!expect_error_conditional (!gsgf_date,
                                        "GSGFDate without year is creatable",
