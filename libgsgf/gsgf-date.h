@@ -67,7 +67,7 @@ struct _GSGFDateClass
 
 GType gsgf_date_get_type (void) G_GNUC_CONST;
 
-GSGFDate *gsgf_date_new (GDate *date);
+GSGFDate *gsgf_date_new (GDate *date, GError **error);
 GSGFCookedValue *gsgf_date_new_from_raw (const GSGFRaw *raw,
                                          const GSGFFlavor *flavor,
                                          const struct _GSGFProperty *property,

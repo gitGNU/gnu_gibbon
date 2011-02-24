@@ -87,6 +87,7 @@ gsgf_date_class_init (GSGFDateClass *klass)
 /**
  * gsgf_date_new:
  * @date: An initial #GDate to store or %NULL.
+ * @error: An optional location to store an error or %NULL.
  *
  * Create a new #GSGFDate.  You can initialize a #GSGFDate only with one
  * value.  Use gsgf_date_append() for events that span over multiple days.
@@ -97,9 +98,12 @@ gsgf_date_class_init (GSGFDateClass *klass)
  * Returns: The new #GSGFDate.
  */
 GSGFDate *
-gsgf_date_new (GDate* date)
+gsgf_date_new (GDate* date, GError **error)
 {
         GSGFDate *self = g_object_new (GSGF_TYPE_DATE, NULL);
+
+        if (error)
+                *error = NULL;
 
         if (date)
                 self->priv->dates = g_list_append (self->priv->dates, date);
@@ -204,6 +208,9 @@ gsgf_date_sync_text (GSGFDate *self)
         GDateDay last_day = G_DATE_BAD_DAY;
         GDateMonth last_month = G_DATE_BAD_MONTH;
         GDateYear last_year = G_DATE_BAD_YEAR;
+        GDateDay this_day;
+        GDateMonth this_month;
+        GDateYear this_year;
         GString *string;
         GList *iter = self->priv->dates;
         GDate *date;
@@ -214,10 +221,26 @@ gsgf_date_sync_text (GSGFDate *self)
                 if (iter != self->priv->dates)
                         g_string_append_c (string, ',');
                 date = iter->data;
-                g_string_append_printf (string, "%04d-%02d-%02d",
-                                        g_date_get_year (date),
-                                        g_date_get_month (date),
-                                        g_date_get_day (date));
+                this_day = g_date_get_day (date);
+                this_month = g_date_get_month (date);
+                this_year = g_date_get_year (date);
+
+                if (this_year == last_year) {
+                        if (this_month == last_month) {
+                                g_string_append_printf (string, "%02d",
+                                                        this_day);
+                        } else {
+                                g_string_append_printf (string, "%02d-%02d",
+                                                        this_month, this_day);
+                        }
+                } else {
+                        g_string_append_printf (string, "%04d-%02d-%02d",
+                                                this_year, this_month,
+                                                this_day);
+                }
+                last_day = this_day;
+                last_month = this_month;
+                last_year = this_year;
                 iter = iter->next;
         }
 
