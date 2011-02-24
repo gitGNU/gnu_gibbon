@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-24 00:29+0200\n"
-"PO-Revision-Date: 2011-02-24 01:11+0200\n"
+"PO-Revision-Date: 2011-02-24 12:30+0200\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: Guido Flohr <guido@imperia.net>\n"
 "Language: de\n"
@@ -245,7 +245,7 @@ msgstr ""
 #: ../libgsgf/gsgf-flavor.c:1188
 #, c-format
 msgid "Exactly one value required for property"
-msgstr ""
+msgstr "Genau ein Wert für diese Eigenschaft (property) erforderlich"
 
 #: ../libgsgf/gsgf-flavor.c:1208 ../libgsgf/gsgf-flavor.c:1267
 #: ../libgsgf/gsgf-flavor.c:1470 ../libgsgf/gsgf-flavor.c:1600
