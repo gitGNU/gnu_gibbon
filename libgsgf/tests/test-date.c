@@ -28,9 +28,12 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "test.h"
+
 static gboolean test_simple (void);
 static gboolean test_shortcut_MM_DD (void);
 static gboolean test_shortcut_DD (void);
+static gboolean test_partial (void);
 
 int
 main(int argc, char *argv[])
@@ -39,7 +42,11 @@ main(int argc, char *argv[])
 
         g_type_init ();
 
+        path = "[in memory]";
+
         if (!test_simple ())
+                status = -1;
+        if (!test_partial ())
                 status = -1;
         if (!test_shortcut_MM_DD ())
                 status = -1;
@@ -152,6 +159,65 @@ test_shortcut_DD (void)
         }
 
         g_object_unref(gsgf_date);
+
+        return retval;
+}
+
+static gboolean
+test_partial (void)
+{
+        GSGFDate *gsgf_date;
+        GDate *date;
+        gchar *got;
+        gchar *expect;
+        gboolean retval = TRUE;
+        GError *error, *expect_error;
+
+        error = NULL;
+        date = g_date_new ();
+        g_date_set_year (date, 2011);
+        g_date_set_month (date, 3);
+        gsgf_date = gsgf_date_new (date, &error);
+        if (!gsgf_date) {
+                g_printerr ("Cannot create GSGFDate with YYYY-MM: %s\n",
+                            error->message);
+                retval = FALSE;
+        } else {
+                expect = "2011-03";
+                got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+                if (g_strcmp0 (expect, got)) {
+                        g_printerr ("Expected %s, got %s\n", expect, got);
+                        retval = FALSE;
+                }
+        }
+
+        error = NULL;
+        date = g_date_new ();
+        g_date_set_year (date, 2011);
+        gsgf_date = gsgf_date_new (date, &error);
+        if (!gsgf_date) {
+                g_printerr ("Cannot create GSGFDate with YYYY: %s\n",
+                            error->message);
+                retval = FALSE;
+        } else {
+                expect = "2011-03";
+                got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+                if (g_strcmp0 (expect, got)) {
+                        g_printerr ("Expected %s, got %s\n", expect, got);
+                        retval = FALSE;
+                }
+        }
+
+        error = NULL;
+        expect_error = NULL;
+        g_set_error (&expect_error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                     "GSGFDate requires at least a valid year");
+        date = g_date_new ();
+        gsgf_date = gsgf_date_new (date, &error);
+        if (!expect_error_conditional (!gsgf_date,
+                                       "GSGFDate without year is creatable",
+                                       error, expect_error))
+                retval = FALSE;
 
         return retval;
 }
