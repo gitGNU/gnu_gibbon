@@ -27,6 +27,7 @@ libgsgf/gsgf-collection.c
 libgsgf/gsgf-color.c
 libgsgf/gsgf-compose.c
 libgsgf/gsgf-cooked-value.c
+libgsgf/gsgf-date.c
 libgsgf/gsgf-double.c
 libgsgf/gsgf-empty.c
 libgsgf/gsgf-flavor.c

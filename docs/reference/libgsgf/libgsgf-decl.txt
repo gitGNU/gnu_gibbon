@@ -1546,6 +1546,17 @@ struct _GSGFDateClass
         GSGFSimpleTextClass parent_class;
 };
 </STRUCT>
+<STRUCT>
+<NAME>GSGFDateDMY</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFDateDMY</NAME>
+struct _GSGFDateDMY {
+        guint day: 6;
+        guint month: 4;
+        guint year: 16;
+};
+</STRUCT>
 <FUNCTION>
 <NAME>gsgf_date_get_type</NAME>
 <RETURNS>GType </RETURNS>
@@ -1554,7 +1565,7 @@ void
 <FUNCTION>
 <NAME>gsgf_date_new</NAME>
 <RETURNS>GSGFDate *</RETURNS>
-GDate *date, GError **error 
+GSGFDateDMY *dmy, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_date_new_from_raw</NAME>
@@ -1564,7 +1575,7 @@ const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 <FUNCTION>
 <NAME>gsgf_date_append</NAME>
 <RETURNS>gboolean </RETURNS>
-GSGFDate *self, GDate *date, GError **error 
+GSGFDate *self, GSGFDateDMY *dmy, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLOR</NAME>
