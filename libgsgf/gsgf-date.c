@@ -297,6 +297,14 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 date->year = this_year;
                 date->month = this_month;
                 date->day = this_day;
+
+                if (',' == *ptr) {
+                        ++ptr;
+                        if (!*ptr) {
+                                has_error = 1;
+                                break;
+                        }
+                }
         }
 
         if (*ptr)
