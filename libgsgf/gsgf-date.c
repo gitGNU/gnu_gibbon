@@ -491,9 +491,9 @@ gsgf_date_valid_dmy (GSGFDateDMY *dmy)
 
         g_date_clear (g_date, 1);
 
-        g_date_set_year (g_date, dmy->year ? dmy->year : 0);
-        g_date_set_month (g_date, dmy->month ? dmy->month : 0);
-        g_date_set_day (g_date, dmy->day ? dmy->day : 0);
+        g_date_set_year (g_date, dmy->year);
+        g_date_set_month (g_date, dmy->month ? dmy->month : 1);
+        g_date_set_day (g_date, dmy->day ? dmy->day : 1);
 
         retval = g_date_valid (g_date);
         g_date_free (g_date);
