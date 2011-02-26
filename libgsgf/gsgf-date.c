@@ -184,6 +184,7 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
         guint number;
         GDate *date;
         gboolean has_error = FALSE;
+        gint digit_pair1, digit_pair2;
 
         if (error)
                 *error = NULL;
@@ -203,21 +204,75 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 this_month = G_DATE_BAD_MONTH;
                 this_day = G_DATE_BAD_DAY;
 
+                digit_pair1 = digit_pair2 = 0;
+
                 digits = gsgf_date_consume_digits (ptr, &number);
                 if (digits == 4) {
-                        if (!g_date_valid_year (number)) {
+                        if (!number || !g_date_valid_year (number)) {
                                 has_error = TRUE;
                                 break;
                         }
                         this_year = number;
-                } else {
+                } else if (digits == 2) {
+                        if (!number) {
+                                has_error = TRUE;
+                                break;
+                        }
                         this_year = last_year;
+                        digit_pair1 = number;
+                } else {
                         has_error = TRUE;
                         break;
                 }
 
+                ptr += digits;
+
+                if (*ptr && ',' != *ptr) {
+                        if ('-' != *ptr++) {
+                                has_error = TRUE;
+                                break;
+                        }
+
+                        digits = gsgf_date_consume_digits (ptr, &number);
+                        if (digits != 2|| !number) {
+                                has_error = TRUE;
+                                break;
+                        }
+
+                        ptr += 2;
+                        if (digit_pair1)
+                                digit_pair2 = number;
+                        else
+                                digit_pair1 = number;
+                }
+
+                if (!digit_pair2 && *ptr && ',' != *ptr) {
+                        if ('-' != *ptr++) {
+                                has_error = TRUE;
+                                break;
+                        }
+                        digits = gsgf_date_consume_digits (ptr, &number);
+                        if (digits != 2|| !number) {
+                                has_error = TRUE;
+                                break;
+                        }
+                        ptr += 2;
+                        digit_pair2 = number;
+                }
+
+                if (digit_pair1 && digit_pair2) {
+                        this_month = digit_pair1;
+                        this_day = digit_pair2;
+                } else if (digit_pair1) {
+                        /* FIXME! The first digit pair is a day if the last
+                         * date parsed had a valid day.
+                         */
+                        this_month = digit_pair1;
+                }
+
                 if (has_error)
                         break;
+
 
                 /* Check validity of date, replacing possibly omitted data with
                  * safe choices.
@@ -227,10 +282,10 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 g_date_clear (date, 1);
 
                 g_date_set_year (date, this_year);
-                g_date_set_month (date, this_month == G_DATE_BAD_MONTH ?
-                                  1 : this_month);
-                g_date_set_day (date, this_day == G_DATE_BAD_DAY ?
-                                  1 : this_day);
+                g_date_set_month (date, this_month ?
+                                  this_month : 1);
+                g_date_set_day (date, this_day ?
+                                  this_day : 1);
                 if (!g_date_valid (date)) {
                         has_error = 1;
                         break;
@@ -242,10 +297,6 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 date->year = this_year;
                 date->month = this_month;
                 date->day = this_day;
-
-                ptr += digits;
-
-
         }
 
         if (*ptr)
