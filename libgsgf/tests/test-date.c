@@ -34,7 +34,7 @@ static gboolean test_simple (void);
 static gboolean test_shortcut_MM_DD (void);
 static gboolean test_shortcut_DD (void);
 static gboolean test_partial (void);
-static gboolean test_parse_year (void);
+static gboolean test_parse_YYYY (void);
 
 int
 main(int argc, char *argv[])
@@ -53,7 +53,7 @@ main(int argc, char *argv[])
                 status = -1;
         if (!test_shortcut_DD ())
                 status = -1;
-        if (!test_parse_year ())
+        if (!test_parse_YYYY ())
                 status = -1;
 
         return status;
@@ -229,7 +229,7 @@ test_partial (void)
 }
 
 static gboolean
-test_parse_year (void)
+test_parse_YYYY (void)
 {
         GSGFDate *gsgf_date;
         GDate *date;
@@ -264,7 +264,8 @@ test_parse_year (void)
         expected_error = NULL;
         g_set_error (&expected_error,
                      GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
-                     _("Invalid date or out of range: %s"), expect);
+                     "Invalid date specification '%s' or out of range",
+                     expect);
         if (expect_error (error, expected_error)) {
                 g_printerr ("  (failed string was: %s)\n", expect);
                 retval = FALSE;
@@ -277,7 +278,7 @@ test_parse_year (void)
         expected_error = NULL;
         g_set_error (&expected_error,
                      GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
-                     _("Invalid date or out of range: %s"), expect);
+                     "Empty dates are not allowed");
         if (expect_error (error, expected_error)) {
                 g_printerr ("  (failed string was empty)\n");
                 retval = FALSE;
@@ -287,4 +288,3 @@ test_parse_year (void)
 
         return retval;
 }
-
