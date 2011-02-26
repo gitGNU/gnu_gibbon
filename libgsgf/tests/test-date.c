@@ -84,8 +84,12 @@ test_simple (void)
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
+        GSGFDateDMY date;
 
-        gsgf_date = gsgf_date_new (g_date_new_dmy (26, 4, 2007), NULL);
+        date.day = 26;
+        date.month = 4;
+        date.year = 2007;
+        gsgf_date = gsgf_date_new (&date, NULL);
         expect = "2007-04-26";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -93,7 +97,10 @@ test_simple (void)
                 retval = FALSE;
         }
 
-        gsgf_date_append (gsgf_date, g_date_new_dmy (26, 5, 2008), NULL);
+        date.day = 26;
+        date.month = 5;
+        date.year = 2008;
+        gsgf_date_append (gsgf_date, &date, NULL);
 
         expect = "2007-04-26,2008-05-26";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
@@ -113,9 +120,16 @@ test_shortcut_MM_DD (void)
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
+        GSGFDateDMY dmy;
 
-        gsgf_date = gsgf_date_new (g_date_new_dmy (19, 2, 2011), NULL);
-        gsgf_date_append (gsgf_date, g_date_new_dmy (20, 3, 2011), NULL);
+        dmy.day = 19;
+        dmy.month = 2;
+        dmy.year = 2011;
+        gsgf_date = gsgf_date_new (&dmy, NULL);
+        dmy.day = 20;
+        dmy.month = 3;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,03-20";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -123,7 +137,10 @@ test_shortcut_MM_DD (void)
                 retval = FALSE;
         }
 
-        gsgf_date_append (gsgf_date, g_date_new_dmy (21, 4, 2011), NULL);
+        dmy.day = 21;
+        dmy.month = 4;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,03-20,04-21";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -131,8 +148,14 @@ test_shortcut_MM_DD (void)
                 retval = FALSE;
         }
 
-        gsgf_date_append (gsgf_date, g_date_new_dmy (22, 4, 2011), NULL);
-        gsgf_date_append (gsgf_date, g_date_new_dmy (23, 5, 2011), NULL);
+        dmy.day = 22;
+        dmy.month = 4;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
+        dmy.day = 23;
+        dmy.month = 5;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,03-20,04-21,22,05-23";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -152,9 +175,16 @@ test_shortcut_DD (void)
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
+        GSGFDateDMY dmy;
 
-        gsgf_date = gsgf_date_new (g_date_new_dmy (19, 2, 2011), NULL);
-        gsgf_date_append (gsgf_date, g_date_new_dmy (20, 2, 2011), NULL);
+        dmy.day = 19;
+        dmy.month = 2;
+        dmy.year = 2011;
+        gsgf_date = gsgf_date_new (&dmy, NULL);
+        dmy.day = 20;
+        dmy.month = 2;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,20";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -162,7 +192,10 @@ test_shortcut_DD (void)
                 retval = FALSE;
         }
 
-        gsgf_date_append (gsgf_date, g_date_new_dmy (21, 2, 2011), NULL);
+        dmy.day = 21;
+        dmy.month = 2;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,20,21";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -170,8 +203,14 @@ test_shortcut_DD (void)
                 retval = FALSE;
         }
 
-        gsgf_date_append (gsgf_date, g_date_new_dmy (22, 3, 2011), NULL);
-        gsgf_date_append (gsgf_date, g_date_new_dmy (23, 3, 2011), NULL);
+        dmy.day = 22;
+        dmy.month = 3;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
+        dmy.day = 23;
+        dmy.month = 3;
+        dmy.year = 2011;
+        gsgf_date_append (gsgf_date, &dmy, NULL);
         expect = "2011-02-19,20,21,03-22,23";
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (g_strcmp0 (expect, got)) {
@@ -188,18 +227,17 @@ static gboolean
 test_partial (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error, *expect_error;
 
         error = NULL;
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 2011);
-        g_date_set_month (date, 3);
-        gsgf_date = gsgf_date_new (date, &error);
+        dmy.year = 2011;
+        dmy.month = 3;
+        dmy.day = 0;
+        gsgf_date = gsgf_date_new (&dmy, &error);
         if (!gsgf_date) {
                 g_printerr ("Cannot create GSGFDate with YYYY-MM: %s\n",
                             error->message);
@@ -214,10 +252,10 @@ test_partial (void)
         }
 
         error = NULL;
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 2011);
-        gsgf_date = gsgf_date_new (date, &error);
+        dmy.year = 2011;
+        dmy.month = 0;
+        dmy.day = 0;
+        gsgf_date = gsgf_date_new (&dmy, &error);
         if (!gsgf_date) {
                 g_printerr ("Cannot create GSGFDate with YYYY: %s\n",
                             error->message);
@@ -235,9 +273,9 @@ test_partial (void)
         expect_error = NULL;
         g_set_error (&expect_error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Invalid year in date specification");
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        gsgf_date = gsgf_date_new (date, &error);
+
+        dmy.year = dmy.month = dmy.day = 0;
+        gsgf_date = gsgf_date_new (&dmy, &error);
         if (0 != expect_error_conditional (!gsgf_date,
                                            "GSGFDate without year is creatable",
                                            error, expect_error))
@@ -250,18 +288,18 @@ static gboolean
 test_parse_YYYY (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
         GError *expected_error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         error = NULL;
         expect = "2011";
@@ -311,18 +349,18 @@ static gboolean
 test_parse_YYYY_MM (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
         GError *expected_error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         error = NULL;
         expect = "2011-03";
@@ -376,18 +414,17 @@ static gboolean
 test_parse_YYYY_MM_DD (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
         GError *expected_error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
-
-        gsgf_date = gsgf_date_new (date, NULL);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         error = NULL;
         expect = "2011-03-13";
@@ -441,18 +478,18 @@ static gboolean
 test_parse_multiple (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
         GError *expected_error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         error = NULL;
         expect = "2011-03-13,2012-03-13";
@@ -490,17 +527,17 @@ static gboolean
 test_parse_MM_DD (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         /* MM-DD is valid after YYYY-MM-DD.  */
         error = NULL;
@@ -576,17 +613,17 @@ static gboolean
 test_parse_MM (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         /* MM is valid after YYYY-MM.  */
         error = NULL;
@@ -623,17 +660,17 @@ static gboolean
 test_parse_DD (void)
 {
         GSGFDate *gsgf_date;
-        GDate *date;
+        GSGFDateDMY dmy;
         gchar *got;
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
 
-        date = g_date_new ();
-        g_date_clear (date, 1);
-        g_date_set_year (date, 1976);
+        dmy.day = 0;
+        dmy.month = 0;
+        dmy.year = 1976;
 
-        gsgf_date = gsgf_date_new (date, NULL);
+        gsgf_date = gsgf_date_new (&dmy, NULL);
 
         /* DD is valid after YYYY-MM-DD.  */
         error = NULL;
