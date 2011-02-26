@@ -457,6 +457,21 @@ test_parse_multiple (void)
                 retval = FALSE;
         }
 
+        /* Test for trailing comma.  */
+        error = NULL;
+        expect = "2011-03-13,2012-03-13,";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        expected_error = NULL;
+        g_set_error (&expected_error,
+                     GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                     "Invalid date specification '%s' or out of range",
+                     expect);
+        if (expect_error (error, expected_error)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        }
+
         g_object_unref(gsgf_date);
 
         return retval;
