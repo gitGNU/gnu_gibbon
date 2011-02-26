@@ -157,6 +157,8 @@ gsgf_date_new (GSGFDateDMY* date, GError **error)
 gboolean
 gsgf_date_append (GSGFDate *self, GSGFDateDMY* date, GError **error)
 {
+        GSGFDateDMY *date_copy;
+
         g_return_val_if_fail (GSGF_IS_DATE (self), FALSE);
         g_return_val_if_fail (date, FALSE);
 
@@ -168,7 +170,9 @@ gsgf_date_append (GSGFDate *self, GSGFDateDMY* date, GError **error)
                 return FALSE;
         }
 
-        self->priv->dates = g_list_append (self->priv->dates, date);
+        date_copy = g_malloc (sizeof *date_copy);
+        *date_copy = *date;
+        self->priv->dates = g_list_append (self->priv->dates, date_copy);
 
         gsgf_date_sync_text (self);
 
