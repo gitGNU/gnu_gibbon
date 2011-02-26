@@ -263,10 +263,10 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 if (digit_pair1 && digit_pair2) {
                         this_month = digit_pair1;
                         this_day = digit_pair2;
+                } else if (digit_pair1 && last_day) {
+                        this_day = digit_pair1;
+                        this_month = last_month;
                 } else if (digit_pair1) {
-                        /* FIXME! The first digit pair is a day if the last
-                         * date parsed had a valid day.
-                         */
                         this_month = digit_pair1;
                 }
 
