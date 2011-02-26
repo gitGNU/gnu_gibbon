@@ -34,6 +34,7 @@ static gboolean test_simple (void);
 static gboolean test_shortcut_MM_DD (void);
 static gboolean test_shortcut_DD (void);
 static gboolean test_partial (void);
+static gboolean test_parse_year (void);
 
 int
 main(int argc, char *argv[])
@@ -51,6 +52,8 @@ main(int argc, char *argv[])
         if (!test_shortcut_MM_DD ())
                 status = -1;
         if (!test_shortcut_DD ())
+                status = -1;
+        if (!test_parse_year ())
                 status = -1;
 
         return status;
@@ -224,3 +227,51 @@ test_partial (void)
 
         return retval;
 }
+
+static gboolean
+test_parse_year (void)
+{
+        GSGFDate *gsgf_date;
+        GDate *date;
+        gchar *got;
+        gchar *expect;
+        gboolean retval = TRUE;
+        GError *error;
+        GError *expected_error;
+
+        date = g_date_new ();
+        g_date_clear (date, 1);
+        g_date_set_year (date, 1976);
+
+        gsgf_date = gsgf_date_new (date, NULL);
+
+        error = NULL;
+        expect = "2011";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        error = NULL;
+        expect = "0";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        expected_error = NULL;
+        g_set_error (&expected_error,
+                     GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                     _("Invalid date or out of range: %s"), expect);
+        if (expect_error (error, expected_error)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        }
+
+        g_object_unref(gsgf_date);
+
+        return retval;
+}
+
