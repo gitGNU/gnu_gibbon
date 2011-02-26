@@ -65,13 +65,20 @@ struct _GSGFDateClass
         GSGFSimpleTextClass parent_class;
 };
 
+typedef struct _GSGFDateDMY GSGFDateDMY;
+struct _GSGFDateDMY {
+        guint day: 6;
+        guint month: 4;
+        guint year: 16;
+};
+
 GType gsgf_date_get_type (void) G_GNUC_CONST;
 
-GSGFDate *gsgf_date_new (GDate *date, GError **error);
+GSGFDate *gsgf_date_new (GSGFDateDMY *dmy, GError **error);
 GSGFCookedValue *gsgf_date_new_from_raw (const GSGFRaw *raw,
                                          const GSGFFlavor *flavor,
                                          const struct _GSGFProperty *property,
                                          GError **error);
-gboolean gsgf_date_append (GSGFDate *self, GDate *date, GError **error);
+gboolean gsgf_date_append (GSGFDate *self, GSGFDateDMY *dmy, GError **error);
 
 #endif

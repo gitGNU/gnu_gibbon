@@ -28,17 +28,9 @@
  * The maximum accuracy is one day.  If you need more you have to store this
  * externally, for example in the file name.
  *
- * The class uses #GDate for its internal date representation and uses
+ * The class uses #GSGFDateDay for its internal date representation and uses
  * the values #G_DATE_BAD_MONTH or #G_DATE_BAD_DAY for month or day of the
- * month values not available.  You should be aware that such #GDate objects
- * are invalid and will throw a lot of errors, when accessed with the
- * regular #GDate methods.
- *
- * In order to avoid these errors, libgsgf does not use g_date_get_year(),
- * g_date_get_month(), or g_date_get_day() in order to access the broken
- * down date values but access the members of the structure directly.  This
- * is discouraged by the #GDate documentation.  On the other hand, the
- * members are fully visible, and we therefore ignore that advice.
+ * month values not available.
  **/
 
 #include <glib.h>
@@ -56,11 +48,10 @@ struct _GSGFDatePrivate {
 
 G_DEFINE_TYPE (GSGFDate, gsgf_date, GSGF_TYPE_SIMPLE_TEXT)
 
-static gboolean
-gsgf_date_set_value (GSGFText *self, const gchar *value,
-                     gboolean copy, GError **error);
+static gboolean gsgf_date_set_value (GSGFText *self, const gchar *value,
+                                     gboolean copy, GError **error);
 static void gsgf_date_sync_text (GSGFDate *self);
-
+static gboolean gsgf_date_valid_dmy (GSGFDateDMY *dmy);
 static gint gsgf_date_consume_digits (const gchar *string, guint *number);
 
 static void 
@@ -78,7 +69,7 @@ gsgf_date_finalize (GObject *object)
         GSGFDate *self = GSGF_DATE (object);
 
         if (self->priv->dates) {
-                g_list_foreach (self->priv->dates, (GFunc) g_date_free, NULL);
+                g_list_foreach (self->priv->dates, (GFunc) g_free, NULL);
                 g_list_free (self->priv->dates);
         }
         self->priv->dates = NULL;
@@ -101,21 +92,21 @@ gsgf_date_class_init (GSGFDateClass *klass)
 
 /**
  * gsgf_date_new:
- * @date: An initial #GDate to store.
+ * @date: An initial #GSGFDateDMY to store.
  * @error: An optional location to store an error or %NULL.
  *
  * Create a new #GSGFDate.  You can initialize a #GSGFDate only with one
  * value.  Use gsgf_date_append() for events that span over multiple days.
  *
- * The #GDate you pass is <emphasis>not</emphasis> copied.  You should not
- * free it yourself!
+ * The #GSGFDate you pass is copied.  You are responsible for freeing it.
  *
  * Returns: The new #GSGFDate.
  */
 GSGFDate *
-gsgf_date_new (GDate* date, GError **error)
+gsgf_date_new (GSGFDateDMY* date, GError **error)
 {
         GSGFDate *self;
+        GSGFDateDMY *copy;
 
         if (error)
                 *error = NULL;
@@ -136,9 +127,18 @@ gsgf_date_new (GDate* date, GError **error)
                 }
         }
 
+        if (!gsgf_date_valid_dmy (date)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                             _("Invalid date specification '%04d-%02d-%02d'"
+                               " or out of range"),
+                               date->year, date->month, date->day);
+                return NULL;
+        }
+
         self = g_object_new (GSGF_TYPE_DATE, NULL);
-        if (date)
-                self->priv->dates = g_list_append (self->priv->dates, date);
+        copy = g_malloc (sizeof *date);
+        *copy = *date;
+        self->priv->dates = g_list_append (self->priv->dates, date);
 
         gsgf_date_sync_text (self);
 
@@ -147,18 +147,26 @@ gsgf_date_new (GDate* date, GError **error)
 
 /**
  * gsgf_date_append:
- * @date: A #GDate to append.
+ * @date: A #GSGFDateDMY to append.
  * @error: An optional error location or #NULL.
  *
- * Append another #GDate.
+ * Append another #GSGFDateDMY.
  *
  * Returns: #TRUE for success, #FALSE for failure.
  */
 gboolean
-gsgf_date_append (GSGFDate *self, GDate* date, GError **error)
+gsgf_date_append (GSGFDate *self, GSGFDateDMY* date, GError **error)
 {
         g_return_val_if_fail (GSGF_IS_DATE (self), FALSE);
         g_return_val_if_fail (date, FALSE);
+
+        if (!gsgf_date_valid_dmy (date)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                             _("Invalid date specification '%04d-%02d-%02d'"
+                               " or out of range"),
+                               date->year, date->month, date->day);
+                return FALSE;
+        }
 
         self->priv->dates = g_list_append (self->priv->dates, date);
 
@@ -174,28 +182,28 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
         GSGFDate *self = GSGF_DATE (_self);
         GList *dates = NULL;
         const gchar *ptr = value;
-        GDateYear last_year = G_DATE_BAD_YEAR;
-        GDateMonth last_month = G_DATE_BAD_MONTH;
-        GDateDay last_day = G_DATE_BAD_DAY;
-        GDateYear this_year;
-        GDateMonth this_month;
-        GDateDay this_day;
+        guint last_year = 0;
+        guint last_month = 0;
+        guint last_day = 0;
+        guint this_year;
+        guint this_month;
+        guint this_day;
         gint digits;
         guint number;
-        GDate *date;
         gboolean has_error = FALSE;
         gint digit_pair1, digit_pair2;
+        GSGFDateDMY *date;
 
         if (error)
                 *error = NULL;
 
         if (self->priv->dates) {
-                g_list_foreach (self->priv->dates, (GFunc) g_date_free, NULL);
+                g_list_foreach (self->priv->dates, (GFunc) g_free, NULL);
                 g_list_free (self->priv->dates);
         }
 
         if (!copy) {
-                g_critical ("Possible emory leak: GSGFDate::set_value()"
+                g_critical ("Possible memory leak: GSGFDate::set_value()"
                             " called, and copy is FALSE!");
         }
 
@@ -280,26 +288,17 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 /* Check validity of date, replacing possibly omitted data with
                  * safe choices.
                  */
-                date = g_date_new ();
+                date = g_malloc (sizeof *date);
                 dates = g_list_append (dates, date);
-                g_date_clear (date, 1);
 
-                g_date_set_year (date, this_year);
-                g_date_set_month (date, this_month ?
-                                  this_month : 1);
-                g_date_set_day (date, this_day ?
-                                  this_day : 1);
-                if (!g_date_valid (date)) {
-                        has_error = 1;
-                        break;
-                }
-
-                /* Now override the internal structure, so that we can deal
-                 * with partial dates.
-                 */
                 date->year = last_year = this_year;
                 date->month = last_month = this_month;
                 date->day = last_day = this_day;
+
+                if (!gsgf_date_valid_dmy (date)) {
+                        has_error = 1;
+                        break;
+                }
 
                 if (',' == *ptr) {
                         ++ptr;
@@ -314,7 +313,7 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 has_error = TRUE;
 
         if (has_error) {
-                g_list_foreach (dates, (GFunc) g_date_free, NULL);
+                g_list_foreach (dates, (GFunc) g_free, NULL);
                 g_list_free (dates);
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
                              _("Invalid date specification '%s'"
@@ -379,12 +378,12 @@ static void
 gsgf_date_sync_text (GSGFDate *self)
 {
         GSGFTextClass* text_class;
-        GDateDay last_day = G_DATE_BAD_DAY;
-        GDateMonth last_month = G_DATE_BAD_MONTH;
-        GDateYear last_year = G_DATE_BAD_YEAR;
+        guint last_day = 0;
+        guint last_month = 0;
+        guint last_year = 0;
         GString *string;
         GList *iter = self->priv->dates;
-        GDate *date;
+        GSGFDateDMY *date;
         gint mask;
 
         string = g_string_sized_new (10);
@@ -478,4 +477,22 @@ gsgf_date_consume_digits (const gchar *string, guint *number)
                 return -1;
 
         return digits;
+}
+
+static gboolean
+gsgf_date_valid_dmy (GSGFDateDMY *dmy)
+{
+        GDate *g_date = g_date_new ();
+        gboolean retval;
+
+        g_date_clear (g_date, 1);
+
+        g_date_set_year (g_date, dmy->year ? dmy->year : 0);
+        g_date_set_month (g_date, dmy->month ? dmy->month : 0);
+        g_date_set_day (g_date, dmy->day ? dmy->day : 0);
+
+        retval = g_date_valid (g_date);
+        g_date_free (g_date);
+
+        return retval;
 }

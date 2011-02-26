@@ -40,5 +40,3 @@
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
-- Use GDate only for validity checking.  Otherwise just use a simple
-  structure.
