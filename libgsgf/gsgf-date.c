@@ -270,9 +270,12 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                         this_month = digit_pair1;
                 }
 
-                if (has_error)
-                        break;
-
+                if (!this_year)
+                        this_year = last_year;
+                if (!this_month)
+                        this_month = last_month;
+                if (!this_day)
+                        this_day = last_day;
 
                 /* Check validity of date, replacing possibly omitted data with
                  * safe choices.
@@ -294,9 +297,9 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 /* Now override the internal structure, so that we can deal
                  * with partial dates.
                  */
-                date->year = this_year;
-                date->month = this_month;
-                date->day = this_day;
+                date->year = last_year = this_year;
+                date->month = last_month = this_month;
+                date->day = last_day = this_day;
 
                 if (',' == *ptr) {
                         ++ptr;
