@@ -497,6 +497,7 @@ test_parse_MM_DD (void)
 
         gsgf_date = gsgf_date_new (date, NULL);
 
+        /* MM-DD is valid after YYYY-MM-DD.  */
         error = NULL;
         expect = "2011-03-13,04-14";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
@@ -509,6 +510,7 @@ test_parse_MM_DD (void)
                 retval = FALSE;
         }
 
+        /* MM-DD is valid after YYYY-MM.  */
         error = NULL;
         expect = "2011-03,04-14";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
@@ -521,6 +523,7 @@ test_parse_MM_DD (void)
                 retval = FALSE;
         }
 
+        /* MM-DD is valid after MM-DD.  */
         error = NULL;
         expect = "2011-03,04-14,05-14";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
@@ -533,6 +536,7 @@ test_parse_MM_DD (void)
                 retval = FALSE;
         }
 
+        /* MM-DD is valid after MM.  */
         error = NULL;
         expect = "2011-03,04,05-14";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
@@ -545,8 +549,9 @@ test_parse_MM_DD (void)
                 retval = FALSE;
         }
 
+        /* MM-DD is valid after DD.  */
         error = NULL;
-        expect = "2011-03,13,14,05-14";
+        expect = "2011-03-13,14,04-14";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (expect_error (error, NULL)) {
