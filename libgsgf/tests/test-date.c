@@ -39,6 +39,8 @@ static gboolean test_parse_YYYY_MM (void);
 static gboolean test_parse_YYYY_MM_DD (void);
 static gboolean test_parse_multiple (void);
 static gboolean test_parse_MM_DD (void);
+static gboolean test_parse_MM (void);
+static gboolean test_parse_DD (void);
 
 int
 main(int argc, char *argv[])
@@ -66,6 +68,10 @@ main(int argc, char *argv[])
         if (!test_parse_multiple ())
                 status = -1;
         if (!test_parse_MM_DD ())
+                status = -1;
+        if (!test_parse_MM ())
+                status = -1;
+        if (!test_parse_DD ())
                 status = -1;
 
         return status;
@@ -489,7 +495,6 @@ test_parse_MM_DD (void)
         gchar *expect;
         gboolean retval = TRUE;
         GError *error;
-        GError *expected_error;
 
         date = g_date_new ();
         g_date_clear (date, 1);
@@ -552,6 +557,113 @@ test_parse_MM_DD (void)
         /* MM-DD is valid after DD.  */
         error = NULL;
         expect = "2011-03-13,14,04-14";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        g_object_unref(gsgf_date);
+
+        return retval;
+}
+
+static gboolean
+test_parse_MM (void)
+{
+        GSGFDate *gsgf_date;
+        GDate *date;
+        gchar *got;
+        gchar *expect;
+        gboolean retval = TRUE;
+        GError *error;
+
+        date = g_date_new ();
+        g_date_clear (date, 1);
+        g_date_set_year (date, 1976);
+
+        gsgf_date = gsgf_date_new (date, NULL);
+
+        /* MM is valid after YYYY-MM.  */
+        error = NULL;
+        expect = "2011-03,04";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        /* MM is valid after MM.  */
+        error = NULL;
+        expect = "2011-03,04,06";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        g_object_unref(gsgf_date);
+
+        return retval;
+}
+
+static gboolean
+test_parse_DD (void)
+{
+        GSGFDate *gsgf_date;
+        GDate *date;
+        gchar *got;
+        gchar *expect;
+        gboolean retval = TRUE;
+        GError *error;
+
+        date = g_date_new ();
+        g_date_clear (date, 1);
+        g_date_set_year (date, 1976);
+
+        gsgf_date = gsgf_date_new (date, NULL);
+
+        /* DD is valid after YYYY-MM-DD.  */
+        error = NULL;
+        expect = "2011-03-13,14";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        /* DD is valid after MM-DD.  */
+        error = NULL;
+        expect = "2011-03,04-14,15";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        if (expect_error (error, NULL)) {
+                g_printerr ("  (failed string was: %s)\n", expect);
+                retval = FALSE;
+        } else if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected %s, got %s\n", expect, got);
+                retval = FALSE;
+        }
+
+        /* DD is valid after DD.  */
+        error = NULL;
+        expect = "2011-03-13,14,15";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
         got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
         if (expect_error (error, NULL)) {
