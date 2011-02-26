@@ -335,6 +335,8 @@ test_parse_YYYY_MM (void)
                 retval = FALSE;
         }
 
+#if (0)
+        /* This test causes glib to print ugly output.  */
         error = NULL;
         expect = "2011-13";
         gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
@@ -348,6 +350,7 @@ test_parse_YYYY_MM (void)
                 g_printerr ("  (failed string was: %s)\n", expect);
                 retval = FALSE;
         }
+#endif
 
         g_object_unref(gsgf_date);
 
