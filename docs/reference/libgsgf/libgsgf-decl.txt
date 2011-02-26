@@ -1554,7 +1554,17 @@ void
 <FUNCTION>
 <NAME>gsgf_date_new</NAME>
 <RETURNS>GSGFDate *</RETURNS>
- const gchar *dummy 
+GDate *date, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_date_new_from_raw</NAME>
+<RETURNS>GSGFCookedValue *</RETURNS>
+const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_date_append</NAME>
+<RETURNS>gboolean </RETURNS>
+GSGFDate *self, GDate *date, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLOR</NAME>

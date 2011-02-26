@@ -348,6 +348,8 @@ GSGF_POINT_GET_CLASS
 GSGFDate
 GSGFDateClass
 gsgf_date_new
+gsgf_date_new_from_raw
+gsgf_date_append
 <SUBSECTION Standard>
 GSGF_DATE
 GSGF_IS_DATE
