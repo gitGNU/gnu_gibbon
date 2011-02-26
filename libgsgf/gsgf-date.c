@@ -138,7 +138,7 @@ gsgf_date_new (GSGFDateDMY* date, GError **error)
         self = g_object_new (GSGF_TYPE_DATE, NULL);
         copy = g_malloc (sizeof *date);
         *copy = *date;
-        self->priv->dates = g_list_append (self->priv->dates, date);
+        self->priv->dates = g_list_append (self->priv->dates, copy);
 
         gsgf_date_sync_text (self);
 
