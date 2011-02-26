@@ -83,7 +83,6 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
                                           GError **error)
 {
         GSGFDouble *self;
-        GSGFNumber *number;
         const gchar *string;
 
         g_return_val_if_fail (GSGF_IS_RAW(raw), NULL);

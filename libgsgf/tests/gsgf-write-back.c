@@ -48,11 +48,10 @@ static char *program_name;
  * method.  Second, we check that files created by libgsgf are round-trip-safe.
  */
 int
-main(int argc, char *argv[])
+main (int argc, char *argv[])
 {
         GError *error = NULL;
         GSGFCollection *collection = NULL;
-        int status;
         gchar *sgf_filename;
         GFile *sgf_file;
         gchar *tmp1_filename;
