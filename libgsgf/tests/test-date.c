@@ -217,9 +217,9 @@ test_partial (void)
         date = g_date_new ();
         g_date_clear (date, 1);
         gsgf_date = gsgf_date_new (date, &error);
-        if (!expect_error_conditional (!gsgf_date,
-                                       "GSGFDate without year is creatable",
-                                       error, expect_error))
+        if (0 != expect_error_conditional (!gsgf_date,
+                                           "GSGFDate without year is creatable",
+                                           error, expect_error))
                 retval = FALSE;
 
         return retval;
