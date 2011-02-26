@@ -232,55 +232,73 @@ gsgf_date_sync_text (GSGFDate *self)
         GDateDay last_day = G_DATE_BAD_DAY;
         GDateMonth last_month = G_DATE_BAD_MONTH;
         GDateYear last_year = G_DATE_BAD_YEAR;
-        GDateDay this_day;
-        GDateMonth this_month;
-        GDateYear this_year;
         GString *string;
         GList *iter = self->priv->dates;
         GDate *date;
-        gchar *day_string, *month_string;
+        gint mask;
 
         string = g_string_sized_new (10);
 
         while (iter) {
                 if (iter != self->priv->dates)
                         g_string_append_c (string, ',');
+
                 date = iter->data;
-                this_day = date->day;
-                this_month = date->month;
-                this_year = date->year;
 
-                day_string = this_day == G_DATE_BAD_DAY ?
-                                "" : g_strdup_printf ("-%02d",
-                                                        this_day);
-                month_string = this_month == G_DATE_BAD_MONTH ?
-                                "" : g_strdup_printf ("-%02d",
-                                                        this_month);
+                /* We use a bit mask to specify which part of a date can be
+                 * suppressed.
+                 */
+                mask = 0;
 
-                if (this_year == last_year) {
-                        if (this_month == last_month) {
-                                g_string_append_printf (string, "%s",
-                                                        day_string);
-                        } else {
-                                g_string_append_printf (string, "%s%s",
-                                                        month_string,
-                                                        day_string);
-                        }
-                } else {
-                        g_string_append_printf (string, "%04d%s%s",
-                                                this_year,
-                                                month_string, day_string);
+                if (date->year != last_year)
+                        mask += 4;
+
+                if ((date->year != last_year || date->month != last_month)
+                    && date->month != G_DATE_BAD_MONTH)
+                        mask += 2;
+
+                if ((date->year != last_year || date->month != last_month
+                                || date->day != last_day)
+                    && date->day != G_DATE_BAD_DAY)
+                        ++mask;
+
+                switch (mask) {
+                        case 6:
+                                g_string_append_printf (string, "%04d-%02d",
+                                                        date->year,
+                                                        date->month);
+                                break;
+                        case 4:
+                                g_string_append_printf (string, "%04d",
+                                                        date->year);
+                                break;
+                        case 3:
+                                g_string_append_printf (string, "%02d-%02d",
+                                                        date->month, date->day);
+                                break;
+                        case 2:
+                                g_string_append_printf (string, "%02d",
+                                                        date->month);
+                                break;
+                        case 1:
+                                g_string_append_printf (string, "%02d",
+                                                        date->day);
+                                break;
+                        case 5:
+                                g_critical ("Combination of year and month"
+                                            "a in a GSGFDate encountered");
+                        default:
+                                g_string_append_printf (string,
+                                                        "%04d-%02d-%02d",
+                                                        date->year,
+                                                        date->month,
+                                                        date->day);
                 }
 
-                last_day = this_day;
-                last_month = this_month;
-                last_year = this_year;
+                last_day = date->day;
+                last_month = date->month;
+                last_year = date->year;
                 iter = iter->next;
-
-                if (*day_string)
-                        g_free (day_string);
-                if (*month_string)
-                        g_free (month_string);
         }
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
