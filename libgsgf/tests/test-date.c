@@ -270,6 +270,19 @@ test_parse_year (void)
                 retval = FALSE;
         }
 
+        error = NULL;
+        expect = "";
+        gsgf_text_set_value (GSGF_TEXT (gsgf_date), expect, TRUE, &error);
+        got = gsgf_text_get_value (GSGF_TEXT (gsgf_date));
+        expected_error = NULL;
+        g_set_error (&expected_error,
+                     GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                     _("Invalid date or out of range: %s"), expect);
+        if (expect_error (error, expected_error)) {
+                g_printerr ("  (failed string was empty)\n");
+                retval = FALSE;
+        }
+
         g_object_unref(gsgf_date);
 
         return retval;
