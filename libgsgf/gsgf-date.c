@@ -61,10 +61,13 @@ gsgf_date_set_value (GSGFText *self, const gchar *value,
                      gboolean copy, GError **error);
 static void gsgf_date_sync_text (GSGFDate *self);
 
+static gint gsgf_date_consume_digits (const gchar *string, guint *number);
+
 static void 
 gsgf_date_init (GSGFDate *self)
-{        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                GSGF_TYPE_DATE, GSGFDatePrivate);
+{
+        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, GSGF_TYPE_DATE,
+                                                  GSGFDatePrivate);
 
         self->priv->dates = NULL;
 }
@@ -170,6 +173,17 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
 {
         GSGFDate *self = GSGF_DATE (_self);
         GList *dates = NULL;
+        const gchar *ptr = value;
+        GDateYear last_year = G_DATE_BAD_YEAR;
+        GDateMonth last_month = G_DATE_BAD_MONTH;
+        GDateDay last_day = G_DATE_BAD_DAY;
+        GDateYear this_year;
+        GDateMonth this_month;
+        GDateDay this_day;
+        gint digits;
+        guint number;
+        GDate *date;
+        gboolean has_error = FALSE;
 
         if (error)
                 *error = NULL;
@@ -178,9 +192,83 @@ gsgf_date_set_value (GSGFText *_self, const gchar *value,
                 g_list_foreach (self->priv->dates, (GFunc) g_date_free, NULL);
                 g_list_free (self->priv->dates);
         }
-        self->priv->dates = dates;
 
+        if (!copy) {
+                g_critical ("Possible emory leak: GSGFDate::set_value()"
+                            " called, and copy is FALSE!");
+        }
+
+        while (*ptr) {
+                this_year = G_DATE_BAD_YEAR;
+                this_month = G_DATE_BAD_MONTH;
+                this_day = G_DATE_BAD_DAY;
+
+                digits = gsgf_date_consume_digits (ptr, &number);
+                if (digits == 4) {
+                        if (!g_date_valid_year (number)) {
+                                has_error = TRUE;
+                                break;
+                        }
+                        this_year = number;
+                } else {
+                        this_year = last_year;
+                        has_error = TRUE;
+                        break;
+                }
+
+                if (has_error)
+                        break;
+
+                /* Check validity of date, replacing possibly omitted data with
+                 * safe choices.
+                 */
+                date = g_date_new ();
+                dates = g_list_append (dates, date);
+                g_date_clear (date, 1);
+
+                g_date_set_year (date, this_year);
+                g_date_set_month (date, this_month == G_DATE_BAD_MONTH ?
+                                  1 : this_month);
+                g_date_set_day (date, this_day == G_DATE_BAD_DAY ?
+                                  1 : this_day);
+                if (!g_date_valid (date)) {
+                        has_error = 1;
+                        break;
+                }
+
+                /* Now override the internal structure, so that we can deal
+                 * with partial dates.
+                 */
+                date->year = this_year;
+                date->month = this_month;
+                date->day = this_day;
+
+                ptr += digits;
+
+
+        }
+
+        if (*ptr)
+                has_error = TRUE;
+
+        if (has_error) {
+                g_list_foreach (dates, (GFunc) g_date_free, NULL);
+                g_list_free (dates);
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                             _("Invalid date specification '%s'"
+                               " or out of range"),
+                               value);
+                dates = NULL;
+        }
+
+        self->priv->dates = dates;
         gsgf_date_sync_text (self);
+
+        if (!has_error && !dates) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
+                             _("Empty dates are not allowed"));
+                return FALSE;
+        }
 
         return TRUE;
 }
@@ -305,4 +393,27 @@ gsgf_date_sync_text (GSGFDate *self)
         text_class->set_value (GSGF_TEXT (self), string->str, FALSE, NULL);
 
         g_string_free (string, FALSE);
+}
+
+static gint
+gsgf_date_consume_digits (const gchar *string, guint *number)
+{
+        gint digits = 0;
+        *number = 0;
+
+        while (*string) {
+                if (*string >= '0' && *string <= '9') {
+                        *number *= 10;
+                        *number += *string - '0';
+                        ++digits;
+                        ++string;
+                } else {
+                        break;
+                }
+        }
+
+        if (digits > 4)
+                return -1;
+
+        return digits;
 }
