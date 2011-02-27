@@ -1271,7 +1271,7 @@ gsgf_FG_new_from_raw (const GSGFRaw* raw, const GSGFFlavor *flavor,
 {
         gchar *raw_string = gsgf_raw_get_value (raw, 0);
         GSGFCompose *retval;
-        guint64 value;
+        gint64 value;
         gchar *name;
 
         if (!*raw_string)
@@ -1283,6 +1283,13 @@ gsgf_FG_new_from_raw (const GSGFRaw* raw, const GSGFFlavor *flavor,
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
                              _("Invalid number '%s': %s"),
                              raw_string, strerror (errno));
+                return FALSE;
+        }
+
+        if (value < 0) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Negativ number not allowed: %lld"),
+                             value);
                 return FALSE;
         }
 
