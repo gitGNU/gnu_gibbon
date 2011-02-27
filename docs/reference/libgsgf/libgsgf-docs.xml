@@ -23,6 +23,8 @@
     <title>API Reference</title>
     <chapter id="components">
       <title>Components</title>
+      <xi:include href="xml/gsgf-component.xml"/>
+
       <xi:include href="xml/gsgf-collection.xml"/>
       <xi:include href="xml/gsgf-game-tree.xml"/>
       <xi:include href="xml/gsgf-node.xml"/>

@@ -1129,6 +1129,49 @@ const GSGFCollection *self, GOutputStream *out, gsize *bytes_written, gboolean c
 const GSGFCollection *self 
 </FUNCTION>
 <MACRO>
+<NAME>GSGF_TYPE_COMPONENT</NAME>
+#define GSGF_TYPE_COMPONENT \
+        (gsgf_component_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_COMPONENT</NAME>
+#define GSGF_COMPONENT(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_COMPONENT, \
+                GSGFComponent))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_COMPONENT</NAME>
+#define GSGF_IS_COMPONENT(obj) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_COMPONENT))
+</MACRO>
+<MACRO>
+<NAME>GSGF_COMPONENT_GET_IFACE</NAME>
+#define GSGF_COMPONENT_GET_IFACE(obj) \
+        (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
+                GSGF_TYPE_COMPONENT, GSGFComponentIface))
+</MACRO>
+<STRUCT>
+<NAME>GSGFComponentIface</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFComponentIface</NAME>
+struct _GSGFComponentIface
+{
+        GTypeInterface g_iface;
+
+        /* Virtual table.  */
+        GSGFComponentIface * (*cook) (GSGFComponentIface *component,
+                                      GSGFComponentIface **culprit,
+                                      GError **error);
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_component_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<MACRO>
 <NAME>GSGF_TYPE_FLAVOR_BACKGAMMON</NAME>
 #define GSGF_TYPE_FLAVOR_BACKGAMMON  (gsgf_flavor_backgammon_get_type ())
 </MACRO>

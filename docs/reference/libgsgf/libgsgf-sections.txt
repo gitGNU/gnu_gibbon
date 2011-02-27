@@ -255,6 +255,18 @@ GSGF_COLLECTION_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-component</FILE>
+<TITLE>GSGFComponent</TITLE>
+GSGFComponentIface
+<SUBSECTION Standard>
+GSGF_COMPONENT
+GSGF_IS_COMPONENT
+GSGF_TYPE_COMPONENT
+gsgf_component_get_type
+GSGF_COMPONENT_GET_IFACE
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-flavor-backgammon</FILE>
 <TITLE>GSGFFlavorBackgammon</TITLE>
 GSGFFlavorBackgammonClass

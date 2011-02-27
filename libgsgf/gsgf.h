@@ -25,6 +25,8 @@
 #include <libgsgf/gsgf-flavor.h>
 #include <libgsgf/gsgf-flavor-backgammon.h>
 
+#include <libgsgf/gsgf-component.h>
+
 #include <libgsgf/gsgf-cooked-value.h>
 #include <libgsgf/gsgf-raw.h>
 #include <libgsgf/gsgf-empty.h>

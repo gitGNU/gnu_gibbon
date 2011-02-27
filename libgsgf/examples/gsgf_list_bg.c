@@ -272,9 +272,8 @@ list_bg_move (const gchar *path, const GSGFNode *node)
         }
 
         if (!cooked_value) {
-                g_printerr ("%s: Non-root node does not have a move property.\n",
-                                path);
-                return FALSE;
+                /* Some other node, for example result.  */
+                return TRUE;
         }
 
         /* Type-check and cast.  */
