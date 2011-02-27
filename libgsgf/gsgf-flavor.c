@@ -282,7 +282,7 @@ static GSGFFlavorTypeDef gsgf_flavor_DM = {
 };
 
 static GSGFFlavorTypeDef gsgf_flavor_DO = {
-                gsgf_double_new_from_raw, {
+                gsgf_empty_new_from_raw, {
                                 gsgf_constraint_move_annotation_with_move,
                                 gsgf_constraint_move_annotation_unique,
                                 gsgf_constraint_is_single_value,

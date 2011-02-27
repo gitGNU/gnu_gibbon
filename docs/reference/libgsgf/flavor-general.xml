@@ -259,7 +259,7 @@
     <sect2 id="property-DO">
       <title>DO (doubtful move)</title>
       <para>
-        Type: <link linkend="GSGFDouble">GSGFDouble</link>
+        Type: <link linkend="GSGFEmpty">GSGFEmpty</link>
       </para>
       <para>
         The played move is doubtful.

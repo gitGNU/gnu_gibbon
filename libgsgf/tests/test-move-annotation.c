@@ -128,7 +128,7 @@ test_unique_position_BM (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]BM[1]DO[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]BM[1]DO[])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -171,7 +171,7 @@ test_unique_position_DO (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'BM': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]BM[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[]BM[2])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -183,7 +183,7 @@ test_unique_position_DO (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'IT': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]IT[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[]IT[2])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -195,7 +195,7 @@ test_unique_position_DO (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'TE': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[1]TE[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]DO[]TE[2])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -226,7 +226,7 @@ test_unique_position_IT (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]IT[1]DO[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]IT[1]DO[])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -269,7 +269,7 @@ test_unique_position_TE (void)
         g_set_error (&expect2, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                      "Property 'DO': The properties 'BM', 'DO', 'IT', and 'TE'"
                      " are mutually exclusive within one node");
-        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]TE[1]DO[2])",
+        if (!expect_errors_from_sgf ("(;GM[6];B[31hefe]TE[1]DO[])",
                                      expect1, expect2))
                 return FALSE;
 
@@ -342,7 +342,7 @@ test_discard_properties (void)
 
         if (!test_discard_property ("(;GM[6];N[Nonsense]BM[1])", "BM"))
                 retval = FALSE;
-        if (!test_discard_property ("(;GM[6];N[Nonsense]DO[1])", "DO"))
+        if (!test_discard_property ("(;GM[6];N[Nonsense]DO[])", "DO"))
                 retval = FALSE;
         if (!test_discard_property ("(;GM[6];N[Nonsense]IT[1])", "IT"))
                 retval = FALSE;
@@ -384,22 +384,14 @@ test_prop_DO (const GSGFNode *node)
 {
         const GSGFCookedValue *cooked_value =
                         gsgf_node_get_property_cooked (node, "DO");
-        GSGFDoubleEnum value;
-        GSGFDoubleEnum expect = 2;
 
         if (!cooked_value) {
                 g_printerr ("No property 'DO'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_EMPTY (cooked_value)) {
                 g_printerr ("Property 'DO' is not a GSGFDouble!\n");
-                return FALSE;
-        }
-
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                g_printerr ("DO: Expected %d, not %d!\n", expect, value);
                 return FALSE;
         }
 
