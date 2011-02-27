@@ -425,6 +425,9 @@ test_prop_KO(const GSGFNode *node)
                 fprintf(stderr, "No property 'KO'!\n");
                 return FALSE;
         }
-
+        if (!GSGF_IS_EMPTY (cooked_value)) {
+                fprintf(stderr, "KO property is not a GSGFEmpty!\n");
+                return FALSE;
+        }
         return TRUE;
 }
