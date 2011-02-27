@@ -470,7 +470,7 @@ const gchar *value
 <FUNCTION>
 <NAME>gsgf_text_new_from_raw</NAME>
 <RETURNS>GSGFCookedValue*</RETURNS>
-const GSGFRaw *raw, const GSGFFlavor *flavor, GError **error 
+const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_set_value</NAME>
@@ -485,12 +485,12 @@ const GSGFText *self
 <FUNCTION>
 <NAME>gsgf_util_read_simple_text</NAME>
 <RETURNS>gchar *</RETURNS>
-const gchar *raw, gchar **end, gchar delim 
+const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_util_read_text</NAME>
 <RETURNS>gchar *</RETURNS>
-const gchar *raw, gchar **end, gchar delim 
+const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_EMPTY</NAME>
