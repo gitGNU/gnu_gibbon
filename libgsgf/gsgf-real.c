@@ -325,7 +325,7 @@ gsgf_real_write_stream(const GSGFCookedValue *_self,
                        GOutputStream *out, gsize *bytes_written,
                        GCancellable *cancellable, GError **error)
 {
-        GSGFNumber *self = GSGF_REAL (_self);
+        GSGFReal *self = GSGF_REAL (_self);
         gchar *value;
 
         *bytes_written = 0;
@@ -335,7 +335,7 @@ gsgf_real_write_stream(const GSGFCookedValue *_self,
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_NAN,
                              _("Not a number"));
                 g_free (value);
-                return NULL;
+                return FALSE;
         }
 
         if (!g_output_stream_write_all (out, value, strlen(value),
