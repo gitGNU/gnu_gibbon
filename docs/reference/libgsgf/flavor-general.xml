@@ -806,4 +806,46 @@
       </para>
     </sect2>
   </sect1>
+  <sect1 id="misc-properties">
+    <title>Miscellaneous Properties</title>
+    <sect2 id="property-FG">
+      <title>FG (figure)</title>
+      <para>
+        Type: <link linkend="GSGFEmpty">GSGFEmpty</link>
+              or <link linkend="GSGFCompose">GSGFCompose</link>
+                 (of <link linkend="GSGFNumber">GSGFNumber</link>:<link linkend="GSGFSimpleText">GSGFSimpleText</link>)
+      </para>
+      <para>
+        Time left for white in seconds after the move was made.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#FG">http://www.red-bean.com/sgf/properties.html#FG</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-PM">
+      <title>PM (print move numbers)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>
+      </para>
+      <para>
+        Specifies how move numbers should be printed.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#PM">http://www.red-bean.com/sgf/properties.html#PM</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-VW">
+      <title>VW (view part)</title>
+      <para>
+        Type: Possibly empty <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFPoint">GSGFPoint</link>.
+      </para>
+      <para>
+        View only part of the board.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#VW">http://www.red-bean.com/sgf/properties.html#VW</ulink>.
+      </para>
+    </sect2>
+  </sect1>
 </chapter>
