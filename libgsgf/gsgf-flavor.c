@@ -213,6 +213,13 @@ static GSGFFlavorTypeDef gsgf_flavor_AW = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_BL = {
+                gsgf_real_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_BM = {
                 gsgf_double_new_from_raw, {
                                 gsgf_constraint_move_annotation_with_move,
@@ -393,6 +400,13 @@ static GSGFFlavorTypeDef gsgf_flavor_MN = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_OB = {
+                gsgf_real_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_ON = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_single_value,
@@ -402,6 +416,13 @@ static GSGFFlavorTypeDef gsgf_flavor_ON = {
 
 static GSGFFlavorTypeDef gsgf_flavor_OT = {
                 gsgf_simple_text_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFFlavorTypeDef gsgf_flavor_OW = {
+                gsgf_real_new_from_raw, {
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }
@@ -540,6 +561,13 @@ static GSGFFlavorTypeDef gsgf_flavor_US = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_WL = {
+                gsgf_real_new_from_raw, {
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_WR = {
                 gsgf_simple_text_new_from_raw, {
                                 gsgf_constraint_is_single_value,
@@ -572,7 +600,7 @@ static GSGFFlavorTypeDef *gsgf_a_handlers[26] = {
 
 static GSGFFlavorTypeDef *gsgf_b_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_BL,
                 &gsgf_flavor_BM, NULL, NULL, NULL, NULL, &gsgf_flavor_BR,
                 NULL, &gsgf_flavor_BT, NULL, NULL, NULL, NULL,
                 NULL, NULL,
@@ -659,10 +687,10 @@ static GSGFFlavorTypeDef *gsgf_m_handlers[26] = {
 };
 
 static GSGFFlavorTypeDef *gsgf_o_handlers[26] = {
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_OB, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, &gsgf_flavor_ON, NULL, NULL, NULL, NULL,
-                NULL, &gsgf_flavor_OT, NULL, NULL, NULL, NULL,
+                NULL, &gsgf_flavor_OT, NULL, NULL, &gsgf_flavor_OW, NULL,
                 NULL, NULL,
 };
 
@@ -708,7 +736,7 @@ static GSGFFlavorTypeDef *gsgf_u_handlers[26] = {
 
 static GSGFFlavorTypeDef *gsgf_w_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_WL,
                 NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_WR,
                 NULL, &gsgf_flavor_WT, NULL, NULL, NULL, NULL,
                 NULL, NULL,
