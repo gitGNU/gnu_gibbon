@@ -38,6 +38,7 @@ TESTS_C = test-convert			\
 	  test-really-empty		\
 	  test-root-properties		\
 	  test-setup-properties		\
+	  test-timing-properties	\
 	  test-util-read-simpletext	\
 	  test-util-read-text		\
 	  test-write-empty		\
@@ -82,6 +83,7 @@ test_real_to_string_SOURCES = test-real-to-string.c
 test_really_empty_SOURCES = lib.c main.c test-really-empty.c
 test_root_properties_SOURCES = lib.c main.c test-root-properties.c
 test_setup_properties_SOURCES = lib.c main.c test-setup-properties.c
+test_timing_properties_SOURCES = lib.c main.c test-timing-properties.c
 test_util_read_simpletext_SOURCES = lib.c test-util-read-simpletext.c
 test_util_read_text_SOURCES = lib.c test-util-read-text.c
 test_write_empty_SOURCES = lib.c main.c test-write-empty.c
@@ -110,6 +112,7 @@ SGF_FILES = cp1251.sgf			\
 	    really-empty.sgf		\
 	    root-properties.sgf		\
 	    setup-properties.sgf	\
+	    timing-properties.sgf	\
 	    utf-8.sgf.in
 
 TESTS_ENVIRONMENT = builddir=$(builddir) \
