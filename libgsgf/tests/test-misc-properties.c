@@ -99,13 +99,13 @@ test_prop_FG (const GSGFNode *node)
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 0);
+        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 1);
         if (!subvalue) {
                 g_printerr ("No first 'FG' subvalue!\n");
                 return FALSE;
         }
         if (!GSGF_IS_SIMPLE_TEXT (subvalue)) {
-                g_printerr ("First 'FG' subvalue is not a GSGFSimpleText!\n");
+                g_printerr ("Second 'FG' subvalue is not a GSGFSimpleText!\n");
                 return FALSE;
         }
         simple_text_value = gsgf_text_get_value (GSGF_TEXT (subvalue));
@@ -115,14 +115,14 @@ test_prop_FG (const GSGFNode *node)
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 1);
+        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 0);
         if (!subvalue) {
-                g_printerr ("No second 'FG' subvalue!\n");
+                g_printerr ("No first 'FG' subvalue!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER(subvalue)) {
-                g_printerr ("Second 'FG' subvalue is not a GSGFNumber!\n");
+        if (!GSGF_IS_NUMBER (subvalue)) {
+                g_printerr ("First 'FG' subvalue is not a GSGFNumber!\n");
                 return FALSE;
         }
         number_value = gsgf_number_get_value (GSGF_NUMBER (subvalue));
