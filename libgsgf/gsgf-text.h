@@ -69,6 +69,7 @@ GType gsgf_text_get_type(void) G_GNUC_CONST;
 GSGFText* gsgf_text_new (const gchar *value);
 GSGFCookedValue* gsgf_text_new_from_raw(const GSGFRaw *raw,
                                         const GSGFFlavor *flavor,
+                                        const struct _GSGFProperty *property,
                                         GError **error);
 
 gboolean gsgf_text_set_value (GSGFText *self, const gchar *value,

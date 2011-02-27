@@ -118,7 +118,7 @@ gsgf_text_new (const gchar *value)
  */
 GSGFCookedValue *
 gsgf_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
-                        GError **error)
+                        const GSGFProperty *property, GError **error)
 {
         gsize list_length = gsgf_raw_get_number_of_values(raw);
         gchar *value;
