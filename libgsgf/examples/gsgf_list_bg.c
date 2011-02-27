@@ -46,7 +46,7 @@ main (int argc, char *argv[])
         program_name = argv[0];
 
         if (argc < 2) {
-                fprintf(stderr, "Usage: %s SGF-FILES...\n", argv[0]);
+                g_printerr ("Usage: %s SGF-FILES...\n", argv[0]);
                 return -1;
         }
 
@@ -69,10 +69,10 @@ list_sgf(const gchar *path)
         GError *error;
         gboolean retval = TRUE;
 
-        printf("\nSGF File: %s\n", path);
+        printf ("\nSGF File: %s\n", path);
 
         /* We need a GFile for parsing.  */
-        file = g_file_new_for_commandline_arg(path);
+        file = g_file_new_for_commandline_arg (path);
 
         /* Parse it.  The second and third arguments are optional.
          * While you can mostly live without passing a GCancellable as
@@ -80,13 +80,13 @@ list_sgf(const gchar *path)
          * as the third argument, so that you can print out reasonable
          * error messages.
          */
-        collection = gsgf_collection_parse_file(file, NULL, &error);
+        collection = gsgf_collection_parse_file (file, NULL, &error);
 
         /* Free the GFile resources.  */
         g_object_unref(file);
 
-        if (!collection) {
-                fprintf(stderr, "%s: %s\n", path, error->message);
+        if (!collection || error) {
+                g_printerr ("%s: %s\n", path, error->message);
                 return FALSE;
         }
 
@@ -259,28 +259,29 @@ static gboolean
 list_bg_move (const gchar *path, const GSGFNode *node)
 {
         char prop_id[2] = { 'W', 0 };
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node,
-                                                                            prop_id);
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node,
+                                                       prop_id);
         const GSGFMoveBackgammon *move;
         gint i;
 
         if (!cooked_value) {
                 /* Not a W property, try B.  */
                 prop_id[0] = 'B';
-                cooked_value = gsgf_node_get_property_cooked(node, prop_id);
+                cooked_value = gsgf_node_get_property_cooked (node, prop_id);
         }
 
         if (!cooked_value) {
-                fprintf(stderr, "%s: Non-root node does not have a move property.\n",
+                g_printerr ("%s: Non-root node does not have a move property.\n",
                                 path);
                 return FALSE;
         }
 
         /* Type-check and cast.  */
         if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
-                fprintf(stderr, "%s: property '%s' is not a backgammon move but a '%s'.\n",
-                                path, prop_id,
-                                G_OBJECT_TYPE_NAME(G_OBJECT(cooked_value)));
+                g_printerr ("%s: property '%s' is not a backgammon move but a '%s'.\n",
+                            path, prop_id,
+                            G_OBJECT_TYPE_NAME(G_OBJECT(cooked_value)));
                 return FALSE;
         }
         move = GSGF_MOVE_BACKGAMMON(cooked_value);
