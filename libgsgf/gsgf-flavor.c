@@ -1261,7 +1261,7 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
 {
         gchar *raw_string = gsgf_raw_get_value(raw, 0);
         gchar *ap = NULL;
-        gchar *version = NULL;
+        const gchar *version = NULL;
         GSGFCompose *retval;
 
         ap = gsgf_util_read_simple_text(raw_string, &version, ':');
@@ -1358,14 +1358,15 @@ gsgf_SZ_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 {
         gchar *raw_string = gsgf_raw_get_value(raw, 0);
         gchar *columns_as_string = NULL;
-        gchar *rows_as_string = NULL;
+        const gchar *rows_as_string = NULL;
         GSGFRaw *dummy;
         GSGFCookedValue *cooked;
         GSGFNumber *columns = NULL;
         GSGFNumber *rows = NULL;
         GSGFCookedValue *retval;
 
-        columns_as_string = gsgf_util_read_simple_text(raw_string, &rows_as_string, ':');
+        columns_as_string = gsgf_util_read_simple_text (raw_string,
+                                                        &rows_as_string, ':');
         if (!columns_as_string || !*columns_as_string) {
                 if (columns_as_string) g_free(columns_as_string);
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
@@ -1547,7 +1548,7 @@ gsgf_list_of_lines_new_from_raw (const GSGFRaw* raw,
         gsize i, num_pairs;
         gchar *raw_string;
         gchar *start_string;
-        gchar *end_string;
+        const gchar *end_string;
         GSGFPoint *start_point;
         GSGFPoint *end_point;
         gint start_normalized, end_normalized;
@@ -1677,7 +1678,7 @@ gsgf_list_of_point_labels_new_from_raw (const GSGFRaw* raw,
         gsize i, num_pairs;
         gchar *raw_string;
         gchar *start_string;
-        gchar *end_string;
+        const gchar *end_string;
         GSGFPoint *start_point;
         GSGFSimpleText *end_label;
         gint start_normalized;
