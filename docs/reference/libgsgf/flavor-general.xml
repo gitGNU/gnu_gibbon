@@ -761,4 +761,49 @@
       </para>
     </sect2>
   </sect1>
+  <sect1 id="timing-properties">
+    <title>Timing Properties</title>
+    <sect2 id="property-BL">
+      <title>BL (time left for black)</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        Time left for black in seconds after the move was made.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#BL">http://www.red-bean.com/sgf/properties.html#BL</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-OB">
+      <title>OB</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#OB">http://www.red-bean.com/sgf/properties.html#OB</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-OW">
+      <title>OW</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#OW">http://www.red-bean.com/sgf/properties.html#OW</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="property-WL">
+      <title>WL (time left for white)</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>
+      </para>
+      <para>
+        Time left for white in seconds after the move was made.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/properties.html#WL">http://www.red-bean.com/sgf/properties.html#WL</ulink>.
+      </para>
+    </sect2>
+  </sect1>
 </chapter>
