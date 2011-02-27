@@ -1730,8 +1730,10 @@ gsgf_list_of_point_labels_new_from_raw (const GSGFRaw* raw,
                 }
 
                 tmp_raw = gsgf_raw_new (end_string);
-                end_label = gsgf_simple_text_new_from_raw (tmp_raw, flavor,
-                                                           property, error);
+                end_label = GSGF_SIMPLE_TEXT (
+                                gsgf_simple_text_new_from_raw (tmp_raw, flavor,
+                                                               property,
+                                                               error));
                 g_object_unref (tmp_raw);
                 if (!end_label) {
                         g_object_unref (start_point);
