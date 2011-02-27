@@ -40,3 +40,4 @@
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
+- GSGFRaw should not inherit from GSGFCookedValue.
