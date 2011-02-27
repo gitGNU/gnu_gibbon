@@ -582,6 +582,12 @@ static GSGFFlavorTypeDef gsgf_flavor_US = {
                 }
 };
 
+static GSGFFlavorTypeDef gsgf_flavor_VW = {
+                gsgf_elist_of_points_new_from_raw, {
+                                NULL
+                }
+};
+
 static GSGFFlavorTypeDef gsgf_flavor_WL = {
                 gsgf_real_new_from_raw, {
                                 gsgf_constraint_is_single_value,
@@ -755,6 +761,14 @@ static GSGFFlavorTypeDef *gsgf_u_handlers[26] = {
                 NULL, NULL,
 };
 
+static GSGFFlavorTypeDef *gsgf_v_handlers[26] = {
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, NULL, NULL,
+                NULL, NULL, NULL, NULL, &gsgf_flavor_VW, NULL,
+                NULL, NULL,
+};
+
 static GSGFFlavorTypeDef *gsgf_w_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_WL,
@@ -785,7 +799,7 @@ static GSGFFlavorTypeDef **gsgf_handlers[26] = {
                 gsgf_s_handlers,
                 gsgf_t_handlers,
                 gsgf_u_handlers,
-                NULL,
+                gsgf_v_handlers,
                 gsgf_w_handlers,
                 NULL,
                 NULL,
