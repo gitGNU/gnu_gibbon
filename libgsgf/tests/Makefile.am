@@ -26,6 +26,7 @@ TESTS_C = test-convert			\
 	  test-game-info-properties	\
 	  test-markup-properties	\
 	  test-minimal			\
+	  test-misc-properties		\
 	  test-multi-game-tree		\
 	  test-move-annotation		\
 	  test-move-properties		\
@@ -71,6 +72,7 @@ test_full_SOURCES = lib.c main.c test-full.c
 test_markup_properties_SOURCES = lib.c main.c test-markup-properties.c
 test_game_info_properties_SOURCES = lib.c main.c test-game-info-properties.c
 test_minimal_SOURCES = lib.c main.c test-minimal.c
+test_misc_properties_SOURCES = lib.c main.c test-misc-properties.c
 test_move_properties_SOURCES = lib.c main.c test-move-properties.c
 test_move_annotation_SOURCES = lib.c main.c test-move-annotation.c
 test_multi_game_tree_SOURCES = lib.c main.c test-multi-game-tree.c
@@ -105,6 +107,7 @@ SGF_FILES = cp1251.sgf			\
 	    minimal.sgf			\
 	    move-annotation.sgf		\
 	    move-properties.sgf		\
+	    misc-properties.sgf		\
 	    multi-game-tree.sgf		\
 	    nested-game-tree.sgf	\
 	    node-annotation.sgf		\
