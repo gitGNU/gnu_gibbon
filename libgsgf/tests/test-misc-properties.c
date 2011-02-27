@@ -30,6 +30,7 @@ char *filename = "misc-properties.sgf";
 
 static gboolean test_prop_FG (const GSGFNode *node);
 static gboolean test_prop_empty_FG (const GSGFNode *node);
+static gboolean test_prop_PM (const GSGFNode *node);
 
 int 
 test_collection (GSGFCollection *collection, GError *error)
@@ -75,6 +76,15 @@ test_collection (GSGFCollection *collection, GError *error)
         }
         node = GSGF_NODE (item);
         if (!test_prop_empty_FG (node))
+                retval = -1;
+
+        item = g_list_nth_data (nodes, 3);
+        if (!item) {
+                g_printerr ("Property #3 not found.\n");
+                return -1;
+        }
+        node = GSGF_NODE (item);
+        if (!test_prop_PM (node))
                 retval = -1;
 
         return retval;
@@ -157,6 +167,34 @@ test_prop_empty_FG (const GSGFNode *node)
         if (!GSGF_IS_EMPTY (cooked_value)) {
                 g_printerr ("Property 'FG' is not a GSGFEmpty ");
                 g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+test_prop_PM (const GSGFNode *node)
+{
+        const GSGFCookedValue *cooked_value =
+                        gsgf_node_get_property_cooked (node, "PM");
+        GSGFNumber *number;
+
+        if (!cooked_value) {
+                g_printerr ("No property 'PM'!\n");
+                return FALSE;
+        }
+
+        if (!GSGF_IS_NUMBER (cooked_value)) {
+                g_printerr ("Property 'PM' is not a GSGFNumber ");
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                return FALSE;
+        }
+
+        number = GSGF_NUMBER (cooked_value);
+        if (1 != gsgf_number_get_value (number)) {
+                g_printerr ("Property 'PM': expected 1, got %lld\n",
+                            gsgf_number_get_value (number));
                 return FALSE;
         }
 
