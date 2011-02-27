@@ -65,6 +65,8 @@
 #include <libgsgf/gsgf.h>
 
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 #include "gsgf-flavor-protected.h"
 #include "gsgf-private.h"
@@ -306,6 +308,17 @@ static GSGFFlavorTypeDef gsgf_flavor_FF = {
                 gsgf_number_new_from_raw, {
                                 gsgf_constraint_is_positive_number,
                                 gsgf_constraint_is_root_property,
+                                gsgf_constraint_is_single_value,
+                                NULL
+                }
+};
+
+static GSGFCookedValue *gsgf_FG_new_from_raw (const GSGFRaw* raw,
+                                              const GSGFFlavor *flavor,
+                                              const GSGFProperty *property,
+                                              GError **error);
+static GSGFFlavorTypeDef gsgf_flavor_FG = {
+                gsgf_FG_new_from_raw, {
                                 gsgf_constraint_is_single_value,
                                 NULL
                 }
@@ -632,7 +645,7 @@ static GSGFFlavorTypeDef *gsgf_e_handlers[26] = {
 
 static GSGFFlavorTypeDef *gsgf_f_handlers[26] = {
                 NULL, NULL, NULL, NULL, NULL, &gsgf_flavor_FF,
-                NULL, NULL, NULL, NULL, NULL, NULL,
+                &gsgf_flavor_FG, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL, NULL, NULL, NULL, NULL,
                 NULL, NULL,
@@ -1248,6 +1261,41 @@ gsgf_AP_new_from_raw(const GSGFRaw* raw, const GSGFFlavor *flavor,
                                   GSGF_COOKED_VALUE(gsgf_simple_text_new(version + 1)),
                                   NULL);
         g_free(ap);
+
+        return GSGF_COOKED_VALUE(retval);
+}
+
+static GSGFCookedValue *
+gsgf_FG_new_from_raw (const GSGFRaw* raw, const GSGFFlavor *flavor,
+                      const GSGFProperty *property, GError **error)
+{
+        gchar *raw_string = gsgf_raw_get_value (raw, 0);
+        GSGFCompose *retval;
+        guint64 value;
+        gchar *name;
+
+        if (!*raw_string)
+                return GSGF_COOKED_VALUE (gsgf_empty_new ());
+
+        errno = 0;
+        value = g_ascii_strtoll (raw_string, &name, 10);
+        if (errno) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_NUMBER,
+                             _("Invalid number '%s': %s"),
+                             raw_string, strerror (errno));
+                return FALSE;
+        }
+
+        if (!name || !*name ||  ':' != *name++) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Expected colon after number in '%s'"),
+                             raw_string);
+                return FALSE;
+        }
+
+        retval = gsgf_compose_new(GSGF_COOKED_VALUE (gsgf_number_new (value)),
+                                  GSGF_COOKED_VALUE (gsgf_simple_text_new (name)),
+                                  NULL);
 
         return GSGF_COOKED_VALUE(retval);
 }
