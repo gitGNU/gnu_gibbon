@@ -100,9 +100,14 @@ main (int argc, char *argv[])
                 return 1;
         }
         if (!gsgf_collection_write_stream(collection, tmp1_out, &bytes_written,
-                                          FALSE, NULL, &error)) {
+                                          NULL, &error)) {
                 fprintf(stderr, "%s: Cannot write to stream: %s!\n",
                         tmp1_filename, error->message);
+                return 1;
+        }
+        if (!g_output_stream_close (tmp1_out, NULL, &error)) {
+                g_printerr ("%s: Cannot close stream: %s!\n",
+                            tmp1_filename, error->message);
                 return 1;
         }
         g_object_unref (tmp1_out);
@@ -135,7 +140,7 @@ main (int argc, char *argv[])
                 return 1;
         }
         if (!gsgf_collection_write_stream(collection, tmp2_out, &bytes_written,
-                                          FALSE, NULL, &error)) {
+                                          NULL, &error)) {
                 fprintf(stderr, "%s: Cannot write to stream: %s!\n",
                         tmp2_filename, error->message);
                 return 1;

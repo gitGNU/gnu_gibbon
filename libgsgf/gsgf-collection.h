@@ -88,7 +88,6 @@ struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *self);
 gboolean gsgf_collection_write_stream(const GSGFCollection *self,
                                       GOutputStream *out, 
                                       gsize *bytes_written,
-                                      gboolean close_stream,
                                       GCancellable *cancellable,
                                       GError **error);
 

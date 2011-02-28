@@ -669,7 +669,6 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
  * @self: the #GSGFCollection.
  * @out: a #GOutputStream to write to.
  * @bytes_written: number of bytes written to the stream.
- * @close_stream: %TRUE if stream should be losed, %FALSE otherwise.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occurring, or %NULL to ignore.
  *
@@ -687,7 +686,7 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
 gboolean
 gsgf_collection_write_stream(const GSGFCollection *self,
                              GOutputStream *out,
-                             gsize *bytes_written, gboolean close_stream,
+                             gsize *bytes_written,
                              GCancellable *cancellable,
                              GError **error)
 {
@@ -723,9 +722,6 @@ gsgf_collection_write_stream(const GSGFCollection *self,
 
                 iter = iter->next;
         }
-
-        if (close_stream && !g_output_stream_close(out, cancellable, error))
-                return FALSE;
 
         return TRUE;
 }

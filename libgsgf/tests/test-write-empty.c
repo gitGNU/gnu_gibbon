@@ -36,7 +36,7 @@ test_collection(GSGFCollection *collection, GError *error)
         GOutputStream *out = g_memory_output_stream_new(NULL, 0, NULL, NULL);
         gsize written = 12345;
 
-        if (gsgf_collection_write_stream(empty, out, &written, FALSE, NULL, &error)) {
+        if (gsgf_collection_write_stream(empty, out, &written, NULL, &error)) {
                 fprintf(stderr, "Writing empty collection did not fail.\n");
                 return -1;
         }

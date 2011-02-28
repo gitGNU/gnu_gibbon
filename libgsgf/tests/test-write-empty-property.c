@@ -39,7 +39,6 @@ test_collection(GSGFCollection *collection, GError *error)
         GOutputStream *out = g_memory_output_stream_new(NULL, 0,
                                                         g_realloc, g_free);
         gsize written = 12345;
-        gsize expect_written;
         gchar *version_string = "AP[libgsgf:" VERSION "]";
         GSGFCollection *empty = gsgf_collection_new(&error);
 
@@ -50,7 +49,7 @@ test_collection(GSGFCollection *collection, GError *error)
         if (error)
                 return expect_error(error, NULL);
 
-        if (gsgf_collection_write_stream(empty, out, &written, FALSE, NULL, &error)) {
+        if (gsgf_collection_write_stream(empty, out, &written, NULL, &error)) {
                 fprintf(stderr, "Writing empty properties did not fail.\n");
                 return -1;
         }

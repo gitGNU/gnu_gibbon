@@ -35,8 +35,8 @@ test_collection(GSGFCollection *collection, GError *error)
         GOutputStream *out = g_memory_output_stream_new(NULL, 0, 
                                                         g_realloc, g_free);
         gsize written;
-        gboolean success = gsgf_collection_write_stream(collection, out, &written,
-                                                        FALSE, NULL, &error);
+        gboolean success = gsgf_collection_write_stream(collection, out,
+                                                        &written, NULL, &error);
         gchar *expect = "(;AP[libgsgf:" VERSION "]CA[UTF-8])\n";
         gchar *got;
 
