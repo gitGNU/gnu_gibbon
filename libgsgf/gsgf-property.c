@@ -43,7 +43,16 @@ struct _GSGFPropertyPrivate {
 #define GSGF_PROPERTY_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GSGF_TYPE_PROPERTY,           \
                                       GSGFPropertyPrivate))
-G_DEFINE_TYPE (GSGFProperty, gsgf_property, G_TYPE_OBJECT)
+
+static void gsgf_component_iface_init (GSGFComponentIface *iface);
+G_DEFINE_TYPE_WITH_CODE (GSGFProperty, gsgf_property, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GSGF_TYPE_COMPONENT,
+                                                gsgf_component_iface_init))
+static gboolean gsgf_property_write_stream (const GSGFComponent *self,
+                                            GOutputStream *out,
+                                            gsize *bytes_written,
+                                            GCancellable *cancellable,
+                                            GError **error);
 
 static void
 gsgf_property_init(GSGFProperty *self)
@@ -84,6 +93,12 @@ gsgf_property_class_init(GSGFPropertyClass *klass)
         object_class->finalize = gsgf_property_finalize;
 }
 
+static void
+gsgf_component_iface_init (GSGFComponentIface *iface)
+{
+        iface->write_stream = gsgf_property_write_stream;
+}
+
 /**
  * _gsgf_property_new:
  * @id: The id of the property.
@@ -110,15 +125,18 @@ _gsgf_property_new(const gchar *id, GSGFNode *node)
         return self;
 }
 
-gboolean
-_gsgf_property_write_stream(const GSGFProperty *self,
+static gboolean
+gsgf_property_write_stream (const GSGFComponent *_self,
                             GOutputStream *out, gsize *bytes_written,
                             GCancellable *cancellable, GError **error)
 {
+        GSGFProperty *self;
         gsize written_here;
 
-        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(_self), FALSE);
         g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+
+        self = GSGF_PROPERTY (_self);
 
         *bytes_written = 0;
 

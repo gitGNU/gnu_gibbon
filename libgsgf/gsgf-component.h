@@ -34,10 +34,15 @@
         (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
                 GSGF_TYPE_COMPONENT, GSGFComponentIface))
 
+typedef struct _GSGFComponent GSGFComponent;
+
 /**
  * GSGFComponentIFace:
+ * @g_iface: The parent interface.
+ * @cook: Cook unqualified raw data into structured date.
+ * @write_stream: Serialize component into an output stream.
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Common methods to all hierarchy levels of an SGF stream.
  **/
 typedef struct _GSGFComponentIface GSGFComponentIface;
 struct _GSGFComponentIface
@@ -45,10 +50,22 @@ struct _GSGFComponentIface
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        GSGFComponentIface * (*cook) (GSGFComponentIface *component,
-                                      GSGFComponentIface **culprit,
-                                      GError **error);
+        GSGFComponent * (*cook) (GSGFComponent *component,
+                                 GSGFComponent **culprit,
+                                 GError **error);
+
+        gboolean (*write_stream) (const GSGFComponent *self,
+                                  GOutputStream *out,
+                                  gsize *bytes_written,
+                                  GCancellable *cancellable,
+                                  GError **error);
 };
+
+gboolean gsgf_component_write_stream (const GSGFComponent *self,
+                                      GOutputStream *out,
+                                      gsize *bytes_written,
+                                      GCancellable *cancellable,
+                                      GError **error);
 
 GType gsgf_component_get_type (void) G_GNUC_CONST;
 

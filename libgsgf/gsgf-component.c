@@ -87,14 +87,56 @@ gsgf_component_cook (GSGFComponentIface *component,
 {
         GSGFComponentIface *iface;
 
-        if (!G_IS_VOLUME (component)) {
+        if (!GSGF_IS_COMPONENT (component)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                             _("Method gsgf_component_cook() called on something"
-                               " that is not a GSGFComponent!"));
+                             _("Method gsgf_component_cook() called on"
+                               " something that is not a GSGFComponent!"));
                 g_return_val_if_fail (GSGF_IS_COMPONENT (component), NULL);
         }
 
         iface = GSGF_COMPONENT_GET_IFACE (component);
 
         return (*iface->cook) (component, culprit, error);
+}
+
+/**
+ * gsgf_component_write_stream
+ * @component: the #GSGFComponent.
+ * @out: a #GOutputStream to write to.
+ * @bytes_written: number of bytes written to the stream.
+ * @cancellable: optional #GCancellable object, %NULL to ignore.
+ * @error: a #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Serializes a #GSGFCollection and writes the serialized data into
+ * a #GOutputStream.
+ *
+ * If there is an error during the operation FALSE is returned and @error
+ * is set to indicate the error status, @bytes_written is updated to contain
+ * the number of bytes written into the stream before the error occurred.
+ *
+ * See also gsgf_collection_write_file().
+ *
+ * Returns: %TRUE on success.  %FALSE if there was an error.
+ **/
+gboolean
+gsgf_component_write_stream (const GSGFComponent *component,
+                             GOutputStream *out,
+                             gsize *bytes_written,
+                             GCancellable *cancellable,
+                             GError **error)
+{
+        GSGFComponentIface *iface;
+
+        if (!GSGF_IS_COMPONENT (component)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                             _("Method gsgf_component_write_stream()"
+                               " called on something that is not a!"
+                               " GSGFComponent!"));
+                g_return_val_if_fail (GSGF_IS_COMPONENT (component), NULL);
+        }
+
+        iface = GSGF_COMPONENT_GET_IFACE (component);
+
+        return (*iface->write_stream) (component, out, bytes_written,
+                                       cancellable, error);
 }

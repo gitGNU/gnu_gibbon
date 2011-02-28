@@ -1119,11 +1119,6 @@ GFile *file, GCancellable *cancellable, GError **error
 GSGFCollection *self 
 </FUNCTION>
 <FUNCTION>
-<NAME>gsgf_collection_write_stream</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCollection *self, GOutputStream *out, gsize *bytes_written, gboolean close_stream, GCancellable *cancellable, GError **error 
-</FUNCTION>
-<FUNCTION>
 <NAME>gsgf_collection_get_game_trees</NAME>
 <RETURNS>GList *</RETURNS>
 const GSGFCollection *self 
@@ -1152,6 +1147,9 @@ const GSGFCollection *self
                 GSGF_TYPE_COMPONENT, GSGFComponentIface))
 </MACRO>
 <STRUCT>
+<NAME>GSGFComponent</NAME>
+</STRUCT>
+<STRUCT>
 <NAME>GSGFComponentIface</NAME>
 </STRUCT>
 <STRUCT>
@@ -1161,11 +1159,22 @@ struct _GSGFComponentIface
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        GSGFComponentIface * (*cook) (GSGFComponentIface *component,
-                                      GSGFComponentIface **culprit,
-                                      GError **error);
+        GSGFComponent * (*cook) (GSGFComponent *component,
+                                 GSGFComponent **culprit,
+                                 GError **error);
+
+        gboolean (*write_stream) (const GSGFComponent *self,
+                                  GOutputStream *out,
+                                  gsize *bytes_written,
+                                  GCancellable *cancellable,
+                                  GError **error);
 };
 </STRUCT>
+<FUNCTION>
+<NAME>gsgf_component_write_stream</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFComponent *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
+</FUNCTION>
 <FUNCTION>
 <NAME>gsgf_component_get_type</NAME>
 <RETURNS>GType </RETURNS>

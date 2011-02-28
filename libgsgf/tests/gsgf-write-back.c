@@ -99,7 +99,8 @@ main (int argc, char *argv[])
                         tmp1_filename, error->message);
                 return 1;
         }
-        if (!gsgf_collection_write_stream(collection, tmp1_out, &bytes_written,
+        if (!gsgf_component_write_stream (GSGF_COMPONENT (collection),
+                                          tmp1_out, &bytes_written,
                                           NULL, &error)) {
                 fprintf(stderr, "%s: Cannot write to stream: %s!\n",
                         tmp1_filename, error->message);
@@ -139,7 +140,8 @@ main (int argc, char *argv[])
                         tmp2_filename, error->message);
                 return 1;
         }
-        if (!gsgf_collection_write_stream(collection, tmp2_out, &bytes_written,
+        if (!gsgf_component_write_stream (GSGF_COMPONENT (collection),
+                                          tmp2_out, &bytes_written,
                                           NULL, &error)) {
                 fprintf(stderr, "%s: Cannot write to stream: %s!\n",
                         tmp2_filename, error->message);

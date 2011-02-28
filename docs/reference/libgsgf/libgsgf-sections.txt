@@ -242,7 +242,6 @@ gsgf_collection_new
 gsgf_collection_parse_stream
 gsgf_collection_parse_file
 gsgf_collection_add_game_tree
-gsgf_collection_write_stream
 gsgf_collection_get_game_trees
 <SUBSECTION Standard>
 GSGF_COLLECTION
@@ -257,7 +256,9 @@ GSGF_COLLECTION_GET_CLASS
 <SECTION>
 <FILE>gsgf-component</FILE>
 <TITLE>GSGFComponent</TITLE>
+GSGFComponent
 GSGFComponentIface
+gsgf_component_write_stream
 <SUBSECTION Standard>
 GSGF_COMPONENT
 GSGF_IS_COMPONENT

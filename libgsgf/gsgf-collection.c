@@ -69,7 +69,11 @@ struct _GSGFCollectionPrivate {
 #define GSGF_COLLECTION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GSGF_TYPE_COLLECTION,           \
                                       GSGFCollectionPrivate))
-G_DEFINE_TYPE (GSGFCollection, gsgf_collection, G_TYPE_OBJECT)
+
+static void gsgf_component_iface_init (GSGFComponentIface *iface);
+G_DEFINE_TYPE_WITH_CODE (GSGFCollection, gsgf_collection, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GSGF_TYPE_COMPONENT,
+                                                gsgf_component_iface_init))
 
 #define GSGF_TOKEN_EOF 256
 #define GSGF_TOKEN_PROP_IDENT 257
@@ -87,6 +91,11 @@ static gboolean gsgf_collection_convert(GSGFCollection *collection,
                                         GError **error);
 static gboolean gsgf_collection_apply_flavor(GSGFCollection *collection,
                                              GError **error);
+static gboolean gsgf_collection_write_stream (const GSGFComponent *self,
+                                              GOutputStream *out,
+                                              gsize *bytes_written,
+                                              GCancellable *cancellable,
+                                              GError **error);
 
 /*
  * The SGF specification stipulates that a collection must have one ore more 
@@ -126,6 +135,12 @@ static void gsgf_collection_class_init(GSGFCollectionClass *klass)
         _libgsgf_init();
 
         object_class->finalize = gsgf_collection_finalize;
+}
+
+static void
+gsgf_component_iface_init (GSGFComponentIface *iface)
+{
+        iface->write_stream = gsgf_collection_write_stream;
 }
 
 /**
@@ -664,33 +679,15 @@ gsgf_collection_add_game_tree(GSGFCollection *self)
         return game_tree;
 }
 
-/**
- * gsgf_collection_write_stream
- * @self: the #GSGFCollection.
- * @out: a #GOutputStream to write to.
- * @bytes_written: number of bytes written to the stream.
- * @cancellable: optional #GCancellable object, %NULL to ignore.
- * @error: a #GError location to store the error occurring, or %NULL to ignore.
- *
- * Serializes a #GSGFCollection and writes the serialized data into
- * a #GOutputStream.
- *
- * If there is an error during the operation FALSE is returned and @error
- * is set to indicate the error status, @bytes_written is updated to contain
- * the number of bytes written into the stream before the error occurred.
- *
- * See also gsgf_collection_write_file().
- *
- * Returns: %TRUE on success.  %FALSE if there was an error.
- **/
-gboolean
-gsgf_collection_write_stream(const GSGFCollection *self,
-                             GOutputStream *out,
-                             gsize *bytes_written,
-                             GCancellable *cancellable,
-                             GError **error)
+static gboolean
+gsgf_collection_write_stream (const GSGFComponent *_self,
+                              GOutputStream *out,
+                              gsize *bytes_written,
+                              GCancellable *cancellable,
+                              GError **error)
 {
         gsize written_here;
+        GSGFCollection *self = GSGF_COLLECTION (_self);
         GList *iter = self->priv->game_trees;
 
         g_return_val_if_fail(GSGF_IS_COLLECTION(self), FALSE);
@@ -705,9 +702,9 @@ gsgf_collection_write_stream(const GSGFCollection *self,
         }
 
         while (iter) {
-                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data),
-                                                  out, &written_here,
-                                                  cancellable, error)) {
+                if (!gsgf_component_write_stream(GSGF_COMPONENT (iter->data),
+                                                 out, &written_here,
+                                                 cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }

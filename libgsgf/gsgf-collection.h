@@ -85,12 +85,6 @@ GSGFCollection *gsgf_collection_parse_file(GFile *file,
 
 struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *self);
 
-gboolean gsgf_collection_write_stream(const GSGFCollection *self,
-                                      GOutputStream *out, 
-                                      gsize *bytes_written,
-                                      GCancellable *cancellable,
-                                      GError **error);
-
 GList *gsgf_collection_get_game_trees(const GSGFCollection *self);
 
 G_END_DECLS

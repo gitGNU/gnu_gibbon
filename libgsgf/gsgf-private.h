@@ -33,16 +33,6 @@ GSGFGameTree *_gsgf_game_tree_new(void);
 GSGFNode *_gsgf_node_new(GSGFNode *previous);
 GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);
 
-gboolean _gsgf_game_tree_write_stream(const struct _GSGFGameTree *game_tree,
-                                      GOutputStream *out, gsize *bytes_written,
-                                      GCancellable *cancellable, GError **error);
-gboolean _gsgf_node_write_stream(const struct _GSGFNode *node,
-                                 GOutputStream *out, gsize *bytes_written,
-                                 GCancellable *cancellable, GError **error);
-gboolean _gsgf_property_write_stream(const struct _GSGFProperty *node,
-                                     GOutputStream *out, gsize *bytes_written,
-                                     GCancellable *cancellable, GError **error);
-
 gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text);
 
 gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);

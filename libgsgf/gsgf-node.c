@@ -41,7 +41,17 @@ struct _GSGFNodePrivate {
 #define GSGF_NODE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GSGF_TYPE_NODE,           \
                                       GSGFNodePrivate))
-G_DEFINE_TYPE (GSGFNode, gsgf_node, G_TYPE_OBJECT)
+
+static void gsgf_component_iface_init (GSGFComponentIface *iface);
+G_DEFINE_TYPE_WITH_CODE (GSGFNode, gsgf_node, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GSGF_TYPE_COMPONENT,
+                                                gsgf_component_iface_init))
+
+static gboolean gsgf_node_write_stream (const GSGFComponent *self,
+                                        GOutputStream *out,
+                                        gsize *bytes_written,
+                                        GCancellable *cancellable,
+                                        GError **error);
 
 static void
 gsgf_node_init(GSGFNode *self)
@@ -83,6 +93,13 @@ gsgf_node_class_init(GSGFNodeClass *klass)
         object_class->finalize = gsgf_node_finalize;
 }
 
+static void
+gsgf_component_iface_init (GSGFComponentIface *iface)
+{
+        iface->write_stream = gsgf_node_write_stream;
+}
+
+
 GSGFNode *
 _gsgf_node_new(GSGFNode *previous)
 {
@@ -97,17 +114,21 @@ _gsgf_node_new(GSGFNode *previous)
         return self;
 }
 
-gboolean
-_gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
-                        gsize *bytes_written, GCancellable *cancellable, GError **error)
+static gboolean
+gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
+                        gsize *bytes_written, GCancellable *cancellable,
+                        GError **error)
 {
+        GSGFNode *self;
         gsize written_here;
         GList *keys;
         GList *iter;
         GList *property;
 
-        g_return_val_if_fail(GSGF_IS_NODE(self), FALSE);
+        g_return_val_if_fail(GSGF_IS_NODE(_self), FALSE);
         g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+
+        self = GSGF_NODE (_self);
 
         *bytes_written = 0;
 
@@ -137,9 +158,10 @@ _gsgf_node_write_stream(const GSGFNode *self, GOutputStream *out,
                         }
 
                         property = g_hash_table_lookup(self->priv->properties, iter->data);
-                        if (!_gsgf_property_write_stream(GSGF_PROPERTY(property), out,
-                                                         &written_here, cancellable,
-                                                         error)) {
+                        if (!gsgf_component_write_stream (GSGF_COMPONENT (property),
+                                                          out, &written_here,
+                                                          cancellable,
+                                                          error)) {
                                 *bytes_written += written_here;
                                 g_list_free(keys);
                                 return FALSE;

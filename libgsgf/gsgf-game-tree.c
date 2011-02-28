@@ -42,7 +42,17 @@ struct _GSGFGameTreePrivate {
 #define GSGF_GAME_TREE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GSGF_TYPE_GAME_TREE,           \
                                       GSGFGameTreePrivate))
-G_DEFINE_TYPE (GSGFGameTree, gsgf_game_tree, G_TYPE_OBJECT)
+
+static void gsgf_component_iface_init (GSGFComponentIface *iface);
+G_DEFINE_TYPE_WITH_CODE (GSGFGameTree, gsgf_game_tree, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GSGF_TYPE_COMPONENT,
+                                                gsgf_component_iface_init))
+
+static gboolean gsgf_game_tree_write_stream (const GSGFComponent *self,
+                                             GOutputStream *out,
+                                             gsize *bytes_written,
+                                             GCancellable *cancellable,
+                                             GError **error);
 
 static void
 gsgf_game_tree_init(GSGFGameTree *self)
@@ -83,6 +93,12 @@ gsgf_game_tree_class_init(GSGFGameTreeClass *klass)
         g_type_class_add_private(klass, sizeof(GSGFGameTreePrivate));
 
         object_class->finalize = gsgf_game_tree_finalize;
+}
+
+static void
+gsgf_component_iface_init (GSGFComponentIface *iface)
+{
+        iface->write_stream = gsgf_game_tree_write_stream;
 }
 
 GSGFGameTree *
@@ -160,19 +176,22 @@ gsgf_game_tree_get_parent(const GSGFGameTree *self)
         return self->priv->parent;
 }
 
-gboolean
-_gsgf_game_tree_write_stream(const GSGFGameTree *self,
+static gboolean
+gsgf_game_tree_write_stream (const GSGFComponent *_self,
                              GOutputStream *out, gsize *bytes_written,
                              GCancellable *cancellable, GError **error)
 {
+        GSGFGameTree *self;
         gsize written_here;
         GList *iter;
         GSGFNode *root;
         GSGFProperty *ap_property;
         gchar *version_string;
 
-        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), FALSE);
-        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+        g_return_val_if_fail (GSGF_IS_GAME_TREE(_self), FALSE);
+        g_return_val_if_fail (G_IS_OUTPUT_STREAM(out), FALSE);
+
+        self = GSGF_GAME_TREE (_self);
 
         /* Force our version.  */
         version_string = g_strdup_printf("libgsgf:%s", VERSION);
@@ -194,8 +213,9 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
 
         iter = self->priv->nodes;
         while (iter) {
-                if (!_gsgf_node_write_stream(GSGF_NODE(iter->data), out, &written_here,
-                                             cancellable, error)) {
+                if (!gsgf_component_write_stream (GSGF_COMPONENT (iter->data),
+                                                  out, &written_here,
+                                                  cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
@@ -207,8 +227,9 @@ _gsgf_game_tree_write_stream(const GSGFGameTree *self,
 
         iter = self->priv->children;
         while (iter) {
-                if (!_gsgf_game_tree_write_stream(GSGF_GAME_TREE(iter->data), out,
-                                                  &written_here, cancellable, error)) {
+                if (!gsgf_game_tree_write_stream (GSGF_GAME_TREE(iter->data),
+                                                  out, &written_here,
+                                                  cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }

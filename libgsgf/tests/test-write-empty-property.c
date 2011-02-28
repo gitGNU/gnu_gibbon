@@ -49,7 +49,8 @@ test_collection(GSGFCollection *collection, GError *error)
         if (error)
                 return expect_error(error, NULL);
 
-        if (gsgf_collection_write_stream(empty, out, &written, NULL, &error)) {
+        if (gsgf_component_write_stream (GSGF_COMPONENT (empty), out, &written,
+                                         NULL, &error)) {
                 fprintf(stderr, "Writing empty properties did not fail.\n");
                 return -1;
         }
