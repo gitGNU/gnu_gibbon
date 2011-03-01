@@ -25,12 +25,14 @@ data/gibbon.schemas.in
 data/gibbon.xml
 libgsgf/gsgf-collection.c
 libgsgf/gsgf-color.c
+libgsgf/gsgf-component.c
 libgsgf/gsgf-compose.c
 libgsgf/gsgf-cooked-value.c
 libgsgf/gsgf-date.c
 libgsgf/gsgf-double.c
 libgsgf/gsgf-empty.c
 libgsgf/gsgf-flavor.c
+libgsgf/gsgf-game-tree.c
 libgsgf/gsgf-list-of.c
 libgsgf/gsgf-move-backgammon.c
 libgsgf/gsgf-node.c
@@ -42,6 +44,7 @@ libgsgf/gsgf-result.c
 libgsgf/gsgf-simple-text.c
 libgsgf/gsgf-stone-backgammon.c
 libgsgf/gsgf-text.c
+libgsgf/gsgf-value.c
 libgsgf/tests/test-empty.c
 libgsgf/tests/test-non-unique-points.c
 libgsgf/tests/test-number.c
