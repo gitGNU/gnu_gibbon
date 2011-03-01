@@ -142,6 +142,11 @@ const GSGFNode *self, const gchar *id
 <RETURNS>GSGFNode *</RETURNS>
 const GSGFNode *self 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_flavor</NAME>
+<RETURNS>const GSGFFlavor *</RETURNS>
+const GSGFNode *self 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_DOUBLE</NAME>
 #define GSGF_TYPE_DOUBLE \
@@ -721,6 +726,75 @@ const GSGFCompose *self
 const GSGFCompose *self, gsize i 
 </FUNCTION>
 <MACRO>
+<NAME>GSGF_TYPE_VALUE</NAME>
+#define GSGF_TYPE_VALUE \
+        (gsgf_value_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_VALUE</NAME>
+#define GSGF_VALUE(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_VALUE, \
+                GSGFValue))
+</MACRO>
+<MACRO>
+<NAME>GSGF_VALUE_CLASS</NAME>
+#define GSGF_VALUE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
+        GSGF_TYPE_VALUE, GSGFValueClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_VALUE</NAME>
+#define GSGF_IS_VALUE(obj) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_VALUE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_VALUE_CLASS</NAME>
+#define GSGF_IS_VALUE_CLASS(klass) \
+        (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_VALUE))
+</MACRO>
+<MACRO>
+<NAME>GSGF_VALUE_GET_CLASS</NAME>
+#define GSGF_VALUE_GET_CLASS(obj) \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_VALUE, GSGFValueClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFValue</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFValue</NAME>
+struct _GSGFValue
+{
+        GObject parent_instance;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFValueClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>GSGFValueClass</NAME>
+struct _GSGFValueClass
+{
+        /* <private >*/
+        GObjectClass parent_class;
+
+        gboolean (*write_stream) (const GSGFValue *self,
+                                  GOutputStream *out, gsize *bytes_written,
+                                  GCancellable *cancellable, GError **error);
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_value_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_value_write_stream</NAME>
+<RETURNS>gboolean </RETURNS>
+const GSGFValue *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
+</FUNCTION>
+<MACRO>
 <NAME>GSGF_TYPE_SIMPLE_TEXT</NAME>
 #define GSGF_TYPE_SIMPLE_TEXT             (gsgf_simple_text_get_type ())
 </MACRO>
@@ -953,7 +1027,7 @@ const GSGFProperty *property
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_property_get_value</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFValue *</RETURNS>
 const GSGFProperty* property 
 </FUNCTION>
 <MACRO>
@@ -1168,6 +1242,12 @@ struct _GSGFComponentIface
                                   gsize *bytes_written,
                                   GCancellable *cancellable,
                                   GError **error);
+
+        /*< private >*/
+        gboolean (*_convert) (GSGFComponent *component, const gchar *charset,
+                              GError **error);
+        gboolean (*_apply_flavor) (GSGFComponent *component,
+                                   GError **error);
 };
 </STRUCT>
 <FUNCTION>
@@ -1362,7 +1442,7 @@ const GSGFListOf *self, gsize i
 <NAME>GSGFRaw</NAME>
 struct _GSGFRaw
 {
-        GSGFCookedValue parent_instance;
+        GSGFValue parent_instance;
 
         /*< private >*/
         struct _GSGFRawPrivate *priv;
@@ -1750,7 +1830,7 @@ const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 <NAME>GSGFCookedValue</NAME>
 struct _GSGFCookedValue
 {
-        GObject parent_instance;
+        GSGFValue parent_instance;
 };
 </STRUCT>
 <STRUCT>
@@ -1761,22 +1841,13 @@ struct _GSGFCookedValue
 struct _GSGFCookedValueClass
 {
         /*< private >*/
-        GObjectClass parent_class;
-
-        gboolean (*write_stream) (const GSGFCookedValue *self,
-                                  GOutputStream *out, gsize *bytes_written,
-                                  GCancellable *cancellable, GError **error);
+        GSGFValueClass parent_class;
 };
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_cooked_value_get_type</NAME>
 <RETURNS>GType </RETURNS>
 void 
-</FUNCTION>
-<FUNCTION>
-<NAME>gsgf_cooked_value_write_stream</NAME>
-<RETURNS>gboolean </RETURNS>
-const GSGFCookedValue *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_STONE_BACKGAMMON</NAME>
@@ -1935,6 +2006,11 @@ const GSGFGameTree *self
 <FUNCTION>
 <NAME>gsgf_game_tree_get_children</NAME>
 <RETURNS>GList *</RETURNS>
+const GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_get_flavor</NAME>
+<RETURNS>const GSGFFlavor *</RETURNS>
 const GSGFGameTree *self 
 </FUNCTION>
 <MACRO>

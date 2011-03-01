@@ -24,6 +24,7 @@ gsgf_node_get_property_ids
 gsgf_node_remove_property
 gsgf_node_get_property_cooked
 gsgf_node_get_previous_node
+gsgf_node_get_flavor
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -160,6 +161,22 @@ gsgf_compose_get_type
 GSGF_COMPOSE_CLASS
 GSGF_IS_COMPOSE_CLASS
 GSGF_COMPOSE_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gsgf-value</FILE>
+<TITLE>GSGFValue</TITLE>
+GSGFValue
+GSGFValueClass
+gsgf_value_write_stream
+<SUBSECTION Standard>
+GSGF_VALUE
+GSGF_IS_VALUE
+GSGF_TYPE_VALUE
+gsgf_value_get_type
+GSGF_VALUE_CLASS
+GSGF_IS_VALUE_CLASS
+GSGF_VALUE_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -398,7 +415,6 @@ GSGF_COLOR_GET_CLASS
 <TITLE>GSGFCookedValue</TITLE>
 GSGFCookedValue
 GSGFCookedValueClass
-gsgf_cooked_value_write_stream
 <SUBSECTION Standard>
 GSGF_COOKED_VALUE
 GSGF_IS_COOKED_VALUE
@@ -437,6 +453,7 @@ gsgf_game_tree_get_parent
 gsgf_game_tree_add_node
 gsgf_game_tree_get_nodes
 gsgf_game_tree_get_children
+gsgf_game_tree_get_flavor
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
