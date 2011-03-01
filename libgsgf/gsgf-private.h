@@ -30,20 +30,11 @@ struct _GSGFFlavor;
 G_BEGIN_DECLS
 
 GSGFGameTree *_gsgf_game_tree_new(void);
-GSGFNode *_gsgf_node_new(GSGFNode *previous);
+GSGFNode *_gsgf_node_new (GSGFNode *previous, GSGFGameTree *parent);
 GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);
 
 gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text);
 
-gboolean _gsgf_game_tree_convert(GSGFGameTree *game_tree, GError **error);
-gboolean _gsgf_property_convert(GSGFProperty *property, const gchar *charset,
-                                GError **error);
-gboolean _gsgf_raw_convert(GSGFRaw *raw, const gchar *charset,
-                           GError **error);
-gboolean _gsgf_game_tree_apply_flavor(GSGFGameTree *game_tree, GError **error);
-gboolean _gsgf_node_apply_flavor(GSGFNode *node, const GSGFFlavor *flavor, GError **error);
-gboolean _gsgf_property_apply_flavor(GSGFProperty *property, const GSGFFlavor *flavor,
-                                     GError **error);
 GSGFCookedValue *_gsgf_property_get_raw(const GSGFProperty* property);
 void _gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gsize i, gboolean copy);
 void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);

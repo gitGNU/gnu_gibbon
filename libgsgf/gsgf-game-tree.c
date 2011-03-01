@@ -35,6 +35,7 @@ typedef struct _GSGFGameTreePrivate GSGFGameTreePrivate;
 struct _GSGFGameTreePrivate {
         GSGFGameTree *parent;
 
+        const GSGFFlavor *flavor;
         GList *nodes;
         GList *children;
 };
@@ -53,6 +54,10 @@ static gboolean gsgf_game_tree_write_stream (const GSGFComponent *self,
                                              gsize *bytes_written,
                                              GCancellable *cancellable,
                                              GError **error);
+static gboolean gsgf_game_tree_convert (GSGFComponent *self,
+                                        const gchar *charset, GError **error);
+static gboolean gsgf_game_tree_apply_flavor (GSGFComponent *self,
+                                             GError **error);
 
 static void
 gsgf_game_tree_init(GSGFGameTree *self)
@@ -60,6 +65,7 @@ gsgf_game_tree_init(GSGFGameTree *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,  GSGF_TYPE_GAME_TREE,
                                                  GSGFGameTreePrivate);
 
+        self->priv->flavor = NULL;
         self->priv->parent = NULL;
         self->priv->nodes = NULL;
         self->priv->children = NULL;
@@ -82,6 +88,8 @@ gsgf_game_tree_finalize(GObject *object)
         }
         self->priv->children = NULL;
 
+        self->priv->flavor = NULL;
+
         G_OBJECT_CLASS (gsgf_game_tree_parent_class)->finalize(object);
 }
 
@@ -99,6 +107,8 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_game_tree_write_stream;
+        iface->_apply_flavor = gsgf_game_tree_apply_flavor;
+        iface->_convert = gsgf_game_tree_convert;
 }
 
 GSGFGameTree *
@@ -152,7 +162,7 @@ gsgf_game_tree_add_node(GSGFGameTree *self)
 
         last = g_list_last(self->priv->nodes);
         previous_node = last ? GSGF_NODE(last->data) : NULL;
-        node = _gsgf_node_new(previous_node);
+        node = _gsgf_node_new (previous_node, self);
 
         self->priv->nodes = g_list_append(self->priv->nodes, node);
 
@@ -227,7 +237,7 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
 
         iter = self->priv->children;
         while (iter) {
-                if (!gsgf_game_tree_write_stream (GSGF_GAME_TREE(iter->data),
+                if (!gsgf_game_tree_write_stream (GSGF_COMPONENT (iter->data),
                                                   out, &written_here,
                                                   cancellable, error)) {
                         *bytes_written += written_here;
@@ -250,13 +260,13 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
         return TRUE;
 }
 
-gboolean
-_gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
+static gboolean
+gsgf_game_tree_convert (GSGFComponent *_self, const gchar *charset,
+                        GError **error)
 {
         GSGFNode *root;
         GSGFProperty *ca_property;
         GSGFRaw *value;
-        gchar *charset = "ISO-8859-1";
         GList *ids;
         GList *id_item;
         gchar *id;
@@ -265,11 +275,13 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
         GSGFProperty *property;
         gboolean free_charset = FALSE;
         GList *child;
-
-        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), FALSE);
+        GSGFComponentIface *iface;
+        GSGFGameTree *self;
 
         if (error)
                 *error = NULL;
+
+        self = GSGF_GAME_TREE (_self);
 
         /* It is debatable, whether this should be an error.  But when
          * there are no nodes, there's nothing to convert.  We leave
@@ -300,9 +312,11 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                         for (id_item = ids; id_item; id_item = id_item->next) {
                                 id = (gchar *) id_item->data;
                                 property = gsgf_node_get_property(node, id);
-                                if (!_gsgf_property_convert(property, charset, error)) {
+                                iface = GSGF_COMPONENT_GET_IFACE (property);
+                                if (!iface->_convert (GSGF_COMPONENT (property),
+                                                      charset, error)) {
                                         if (free_charset)
-                                                g_free(charset);
+                                                g_free ((gchar *) charset);
                                         return FALSE;
                                 }
                         }
@@ -313,32 +327,41 @@ _gsgf_game_tree_convert(GSGFGameTree *self, GError **error)
                  * specs we assume they do not.
                  */
                 for (child = self->priv->children; child; child = child->next) {
-                        if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(child->data),
-                                                     error)) {
+                        if (!gsgf_game_tree_convert (GSGF_COMPONENT (child
+                                                                     ->data),
+                                                     charset, error)) {
                                 if (free_charset)
-                                        g_free(charset);
+                                        g_free ((gchar *) charset);
                         }
                 }
         }
 
         if (free_charset)
-                g_free(charset);
+                g_free ((gchar *) charset);
 
         return TRUE;
 }
 
-gboolean
-_gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
+static gboolean
+gsgf_game_tree_apply_flavor (GSGFComponent *_self, GError **error)
 {
         GSGFNode *node;
         GSGFProperty *gm_property;
         GSGFRaw *raw;
         const gchar *flavor_id = "1";
-        GSGFFlavor *flavor;
         GList *iter;
+        GSGFGameTree *self = GSGF_GAME_TREE (_self);
+        GSGFComponentIface *iface;
 
         if (error && *error)
                 return FALSE;
+
+        if (!GSGF_IS_GAME_TREE (_self)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                             _("Method cook() called on something that is"
+                               " not a GSGFComponent."));
+                g_return_val_if_fail (GSGF_IS_GAME_TREE (_self), FALSE);
+        }
 
         node = GSGF_NODE(self->priv->nodes->data);
         gm_property = gsgf_node_get_property(node, "GM");
@@ -347,11 +370,14 @@ _gsgf_game_tree_apply_flavor(GSGFGameTree *self, GError **error)
                 flavor_id = gsgf_raw_get_value(raw, 0);
         }
 
-        flavor = _libgsgf_get_flavor(flavor_id);
+        self->priv->flavor = _libgsgf_get_flavor (flavor_id);
 
-        for (iter = self->priv->nodes; iter; iter = iter->next)
-                if (!_gsgf_node_apply_flavor(GSGF_NODE(iter->data), flavor, error))
+        for (iter = self->priv->nodes; iter; iter = iter->next) {
+                iface = GSGF_COMPONENT_GET_IFACE (iter->data);
+                if (!iface->_apply_flavor(GSGF_COMPONENT (iter->data),
+                                          error))
                         return FALSE;
+        }
 
         return TRUE;
 }
@@ -395,4 +421,20 @@ gsgf_game_tree_get_children(const GSGFGameTree *self)
         g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
 
         return self->priv->children;
+}
+
+/**
+ * gsgf_game_tree_get_flavor
+ * @self: The #GSGFGameTree:
+ *
+ * Get the flavor of the #GSGFGameTree.
+ *
+ * Returns: The #GSGFFlavor or %NULL for unknown flavors.
+ */
+const GSGFFlavor *
+gsgf_game_tree_get_flavor (const GSGFGameTree *self)
+{
+        g_return_val_if_fail (GSGF_IS_GAME_TREE (self), NULL);
+
+        return self->priv->flavor;
 }

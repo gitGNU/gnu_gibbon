@@ -75,6 +75,7 @@ void gsgf_node_remove_property(GSGFNode *self, const gchar *id);
 
 GSGFCookedValue *gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id);
 GSGFNode *gsgf_node_get_previous_node(const GSGFNode *self);
+GSGFFlavor *gsgf_node_get_flavor(const GSGFNode *self);
 
 G_END_DECLS
 

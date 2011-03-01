@@ -53,6 +53,10 @@ static gboolean gsgf_property_write_stream (const GSGFComponent *self,
                                             gsize *bytes_written,
                                             GCancellable *cancellable,
                                             GError **error);
+static gboolean gsgf_property_convert (GSGFComponent *self,
+                                       const gchar *charset, GError **error);
+static gboolean gsgf_property_apply_flavor (GSGFComponent *self,
+                                            GError **error);
 
 static void
 gsgf_property_init(GSGFProperty *self)
@@ -97,6 +101,8 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_property_write_stream;
+        iface->_convert = gsgf_property_convert;
+        iface->_apply_flavor = gsgf_property_apply_flavor;
 }
 
 /**
@@ -224,22 +230,33 @@ gsgf_property_get_node(const GSGFProperty *property)
         return property->priv->node;
 }
 
-gboolean
-_gsgf_property_convert(GSGFProperty *self, const gchar *charset, GError **error)
+static gboolean
+gsgf_property_convert (GSGFComponent *_self, const gchar *charset, GError **error)
 {
-        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
-        g_return_val_if_fail(charset != NULL, FALSE);
+        GSGFProperty *self;
 
-        return _gsgf_raw_convert(GSGF_RAW(self->priv->value), charset, error);
+        g_return_val_if_fail (GSGF_IS_PROPERTY(_self), FALSE);
+        g_return_val_if_fail (charset != NULL, FALSE);
+
+        self = GSGF_PROPERTY (_self);
+
+        return _gsgf_raw_convert (GSGF_RAW (self->priv->value), charset, error);
 }
 
-gboolean
-_gsgf_property_apply_flavor(GSGFProperty *self, const GSGFFlavor *flavor, GError **error)
+static gboolean
+gsgf_property_apply_flavor (GSGFComponent *_self, GError **error)
 {
         GSGFCookedValue *cooked;
+        GSGFProperty *self;
+        GSGFNode *node;
+        GSGFFlavor *flavor;
 
-        g_return_val_if_fail(GSGF_IS_PROPERTY(self), FALSE);
-        g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
+        g_return_val_if_fail (GSGF_IS_PROPERTY (_self), FALSE);
+
+        self = GSGF_PROPERTY (_self);
+
+        flavor = gsgf_node_get_flavor (self->priv->node);
+        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE);
 
         if (gsgf_flavor_get_cooked_value (flavor, self,
                                           GSGF_RAW(self->priv->value),

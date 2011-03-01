@@ -87,10 +87,11 @@ static gint gsgf_yyread_prop_ident(GSGFParserContext *ctx, gchar c,
 static void gsgf_yyread_linebreak(GSGFParserContext *ctx, gchar c);
 static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
                          gint token, GError **error);
-static gboolean gsgf_collection_convert(GSGFCollection *collection,
-                                        GError **error);
-static gboolean gsgf_collection_apply_flavor(GSGFCollection *collection,
-                                             GError **error);
+static gboolean gsgf_collection_convert (GSGFComponent *collection,
+                                         const gchar *charset,
+                                         GError **error);
+static gboolean gsgf_collection_apply_flavor (GSGFComponent *collection,
+                                              GError **error);
 static gboolean gsgf_collection_write_stream (const GSGFComponent *self,
                                               GOutputStream *out,
                                               gsize *bytes_written,
@@ -141,6 +142,8 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_collection_write_stream;
+        iface->_convert = gsgf_collection_convert;
+        iface->_apply_flavor = gsgf_collection_apply_flavor;
 }
 
 /**
@@ -424,10 +427,11 @@ gsgf_collection_parse_stream(GInputStream *stream,
                 return self;
         }
 
-        if (!gsgf_collection_convert(self, ctx.error))
+        if (!gsgf_collection_convert (GSGF_COMPONENT (self), "ISO-8859-1",
+                                      ctx.error))
                 return self;
 
-        if (!gsgf_collection_apply_flavor(self, ctx.error))
+        if (!gsgf_collection_apply_flavor (GSGF_COMPONENT (self), ctx.error))
                 return self;
 
         return self;
@@ -724,16 +728,20 @@ gsgf_collection_write_stream (const GSGFComponent *_self,
 }
 
 static gboolean
-gsgf_collection_convert(GSGFCollection *self, GError **error)
+gsgf_collection_convert (GSGFComponent *_self, const gchar *charset,
+                         GError **error)
 {
+        GSGFCollection *self = GSGF_COLLECTION (_self);
         GList *iter = self->priv->game_trees;
+        GSGFComponentIface *iface;
 
         if (error)
                 *error = NULL;
 
         while (iter) {
-                if (!_gsgf_game_tree_convert(GSGF_GAME_TREE(iter->data),
-                                             error)) {
+                iface = GSGF_COMPONENT_GET_IFACE (iter->data);
+                if (!iface->_convert(GSGF_COMPONENT (iter->data),
+                                                     charset, error)) {
                         return FALSE;
                 }
                 iter = iter->next;
@@ -743,16 +751,19 @@ gsgf_collection_convert(GSGFCollection *self, GError **error)
 }
 
 static gboolean
-gsgf_collection_apply_flavor(GSGFCollection *self, GError **error)
+gsgf_collection_apply_flavor (GSGFComponent *_self, GError **error)
 {
+        GSGFCollection *self = GSGF_COLLECTION (_self);
         GList *iter = self->priv->game_trees;
+        GSGFComponentIface *iface;
 
         if (error)
                 *error = NULL;
 
         while (iter) {
-                if (!_gsgf_game_tree_apply_flavor(GSGF_GAME_TREE(iter->data),
-                                                  error))
+                iface = GSGF_COMPONENT_GET_IFACE (iter->data);
+                if (!iface->_apply_flavor (GSGF_COMPONENT (iter->data),
+                                           error))
                         return FALSE;
 
                 iter = iter->next;

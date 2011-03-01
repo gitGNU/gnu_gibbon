@@ -36,6 +36,7 @@ struct _GSGFNodePrivate {
         GHashTable *properties;
         GSGFNode *previous;
         GList *losers;
+        GSGFGameTree *parent;
 };
 
 #define GSGF_NODE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -52,6 +53,8 @@ static gboolean gsgf_node_write_stream (const GSGFComponent *self,
                                         gsize *bytes_written,
                                         GCancellable *cancellable,
                                         GError **error);
+static gboolean gsgf_node_apply_flavor (GSGFComponent *self,
+                                        GError **error);
 
 static void
 gsgf_node_init(GSGFNode *self)
@@ -63,6 +66,7 @@ gsgf_node_init(GSGFNode *self)
                                                        g_free, g_object_unref);
         self->priv->previous = NULL;
         self->priv->losers = NULL;
+        self->priv->parent = NULL;
 }
 
 static void
@@ -79,6 +83,8 @@ gsgf_node_finalize(GObject *object)
                 g_list_free (self->priv->losers);
         }
         self->priv->losers = NULL;
+
+        self->priv->parent = NULL;
 
         G_OBJECT_CLASS (gsgf_node_parent_class)->finalize(object);
 }
@@ -97,11 +103,12 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_node_write_stream;
+        iface->_apply_flavor = gsgf_node_apply_flavor;
 }
 
 
 GSGFNode *
-_gsgf_node_new(GSGFNode *previous)
+_gsgf_node_new (GSGFNode *previous, GSGFGameTree *parent)
 {
         GSGFNode *self;
 
@@ -110,6 +117,7 @@ _gsgf_node_new(GSGFNode *previous)
         self = g_object_new(GSGF_TYPE_NODE, NULL);
 
         self->priv->previous = previous;
+        self->priv->parent = parent;
 
         return self;
 }
@@ -311,23 +319,31 @@ gsgf_node_remove_property(GSGFNode *self, const gchar *id)
         (void) g_hash_table_remove(self->priv->properties, id);
 }
 
-gboolean
-_gsgf_node_apply_flavor(GSGFNode *self, const GSGFFlavor *flavor, GError **error)
+static gboolean
+gsgf_node_apply_flavor (GSGFComponent *_self, GError **error)
 {
         GHashTableIter iter;
         gpointer key, value;
         GList *loser;
+        const GSGFFlavor *flavor;
+        GSGFNode *self;
+        GSGFComponentIface *iface;
 
-        g_return_val_if_fail(GSGF_IS_NODE(self), FALSE);
-        g_return_val_if_fail(GSGF_IS_FLAVOR(flavor), FALSE);
+        g_return_val_if_fail (GSGF_IS_NODE (_self), FALSE);
+
+        self = GSGF_NODE (_self);
 
         if (error && *error)
                 return FALSE;
 
-        g_hash_table_iter_init(&iter, self->priv->properties);
+        flavor = gsgf_game_tree_get_flavor (self->priv->parent);
+        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE);
+
+        g_hash_table_iter_init (&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
-                if (!_gsgf_property_apply_flavor (GSGF_PROPERTY(value),
-                                                  flavor, error))
+                iface = GSGF_COMPONENT_GET_IFACE (value);
+                if (!iface->_apply_flavor (GSGF_COMPONENT (value),
+                                           error))
                         return FALSE;
         }
 
@@ -372,4 +388,20 @@ gsgf_node_get_previous_node(const GSGFNode *self)
         g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
 
         return self->priv->previous;
+}
+
+/**
+ * gsgf_node_get_flavor:
+ * @self: a #GSGFNode.
+ *
+ * Get the #GSGFFlavor of this #GSGFNode.
+ *
+ * Returns: The #GSGFFlavor of @self or %NULL if not yet cooked.
+ */
+GSGFFlavor *
+gsgf_node_get_flavor (const GSGFNode *self)
+{
+        g_return_val_if_fail (GSGF_IS_NODE (self), NULL);
+
+        return gsgf_game_tree_get_flavor (self->priv->parent);
 }

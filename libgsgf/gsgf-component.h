@@ -59,6 +59,12 @@ struct _GSGFComponentIface
                                   gsize *bytes_written,
                                   GCancellable *cancellable,
                                   GError **error);
+
+        /*< private >*/
+        gboolean (*_convert) (GSGFComponent *component, const gchar *charset,
+                              GError **error);
+        gboolean (*_apply_flavor) (GSGFComponent *component,
+                                   GError **error);
 };
 
 gboolean gsgf_component_write_stream (const GSGFComponent *self,
