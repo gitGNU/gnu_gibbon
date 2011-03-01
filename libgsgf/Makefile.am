@@ -59,7 +59,8 @@ libgsgf_a_SOURCES = 			\
 	gsgf-double.c			\
 	gsgf-result.c				\
 	gsgf-date.c				\
-	gsgf-component.c	
+	gsgf-component.c				\
+	gsgf-value.c	
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -92,4 +93,5 @@ noinst_HEADERS =			\
 	gsgf-double.h			\
 	gsgf-result.h			\
 	gsgf-date.h			\
-	gsgf-component.h
+	gsgf-component.h			\
+	gsgf-value.h
