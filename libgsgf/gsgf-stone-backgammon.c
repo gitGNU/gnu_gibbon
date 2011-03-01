@@ -41,11 +41,11 @@ struct _GSGFStoneBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFStoneBackgammon, gsgf_stone_backgammon, GSGF_TYPE_STONE)
 
-static gboolean gsgf_stone_backgammon_write_stream(const GSGFCookedValue *self,
-                                                   GOutputStream *out,
-                                                   gsize *bytes_written,
-                                                   GCancellable *cancellable,
-                                                   GError **error);
+static gboolean gsgf_stone_backgammon_write_stream (const GSGFValue *self,
+                                                    GOutputStream *out,
+                                                    gsize *bytes_written,
+                                                    GCancellable *cancellable,
+                                                    GError **error);
 
 static void
 gsgf_stone_backgammon_init(GSGFStoneBackgammon *self)
@@ -67,10 +67,9 @@ static void
 gsgf_stone_backgammon_class_init(GSGFStoneBackgammonClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class =
-                        GSGF_COOKED_VALUE_CLASS (klass);
+        GSGFValueClass *value_class = GSGF_VALUE_CLASS (klass);
 
-        cooked_value_class->write_stream = gsgf_stone_backgammon_write_stream;
+        value_class->write_stream = gsgf_stone_backgammon_write_stream;
 
         g_type_class_add_private(klass, sizeof(GSGFStoneBackgammonPrivate));
 
@@ -148,9 +147,9 @@ gsgf_stone_backgammon_get_stone(const GSGFStoneBackgammon *self)
 }
 
 static gboolean
-gsgf_stone_backgammon_write_stream(const GSGFCookedValue *_self,
-                                   GOutputStream *out, gsize *bytes_written,
-                                   GCancellable *cancellable, GError **error)
+gsgf_stone_backgammon_write_stream (const GSGFValue *_self,
+                                    GOutputStream *out, gsize *bytes_written,
+                                    GCancellable *cancellable, GError **error)
 {
         GSGFStoneBackgammon *self = GSGF_STONE_BACKGAMMON (_self);
         gchar buf;

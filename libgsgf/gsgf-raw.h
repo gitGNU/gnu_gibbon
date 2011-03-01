@@ -23,7 +23,7 @@
 #include <glib.h>
 #include <gio/gio.h>
 
-#include <libgsgf/gsgf-cooked-value.h>
+#include <libgsgf/gsgf-value.h>
 
 G_BEGIN_DECLS
 
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
 typedef struct _GSGFRaw        GSGFRaw;
 struct _GSGFRaw
 {
-        GSGFCookedValue parent_instance;
+        GSGFValue parent_instance;
 
         /*< private >*/
         struct _GSGFRawPrivate *priv;

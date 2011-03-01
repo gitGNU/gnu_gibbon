@@ -35,7 +35,7 @@ typedef struct _GSGFPropertyPrivate GSGFPropertyPrivate;
 struct _GSGFPropertyPrivate {
         gchar *id;
 
-        GSGFCookedValue *value;
+        GSGFValue *value;
 
         GSGFNode *node;
 };
@@ -125,7 +125,7 @@ _gsgf_property_new(const gchar *id, GSGFNode *node)
         self = g_object_new(GSGF_TYPE_PROPERTY, NULL);
 
         self->priv->id = g_strdup(id);
-        self->priv->value = GSGF_COOKED_VALUE(gsgf_raw_new(NULL));
+        self->priv->value = GSGF_VALUE (gsgf_raw_new (NULL));
         self->priv->node = node;
 
         return self;
@@ -153,9 +153,9 @@ gsgf_property_write_stream (const GSGFComponent *_self,
         }
         *bytes_written += written_here;
 
-        if (!gsgf_cooked_value_write_stream(self->priv->value,
-                                            out, &written_here,
-                                            cancellable, error)) {
+        if (!gsgf_value_write_stream (self->priv->value,
+                                      out, &written_here,
+                                      cancellable, error)) {
                 *bytes_written += written_here;
                 return FALSE;
         }
@@ -188,12 +188,12 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
  *
  * Retrieve the value of a property.
  *
- * Returns: Returns the value as a #GSGFCookedValue.
+ * Returns: Returns the value as a #GSGFValue.
  */
-GSGFCookedValue *
-gsgf_property_get_value(const GSGFProperty *property)
+GSGFValue *
+gsgf_property_get_value (const GSGFProperty *property)
 {
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+        g_return_val_if_fail (GSGF_IS_PROPERTY (property), NULL);
 
         return property->priv->value;
 }
@@ -248,8 +248,7 @@ gsgf_property_apply_flavor (GSGFComponent *_self, GError **error)
 {
         GSGFCookedValue *cooked;
         GSGFProperty *self;
-        GSGFNode *node;
-        GSGFFlavor *flavor;
+        const GSGFFlavor *flavor;
 
         g_return_val_if_fail (GSGF_IS_PROPERTY (_self), FALSE);
 
@@ -262,7 +261,7 @@ gsgf_property_apply_flavor (GSGFComponent *_self, GError **error)
                                           GSGF_RAW(self->priv->value),
                                           &cooked, error)) {
                 g_object_unref(self->priv->value);
-                self->priv->value = cooked;
+                self->priv->value = GSGF_VALUE (cooked);
         }
 
         return TRUE;

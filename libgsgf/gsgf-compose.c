@@ -40,9 +40,11 @@ struct _GSGFComposePrivate {
 
 G_DEFINE_TYPE(GSGFCompose, gsgf_compose, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_compose_write_stream(const GSGFCookedValue *self,
-                                      GOutputStream *out, gsize *bytes_written,
-                                      GCancellable *cancellable, GError **error);
+static gboolean gsgf_compose_write_stream (const GSGFValue *self,
+                                           GOutputStream *out,
+                                           gsize *bytes_written,
+                                           GCancellable *cancellable,
+                                           GError **error);
 
 static void
 gsgf_compose_init(GSGFCompose *self)
@@ -70,12 +72,12 @@ gsgf_compose_finalize(GObject *object)
 static void
 gsgf_compose_class_init(GSGFComposeClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS(klass);
-        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFValueClass *gsgf_value_class = GSGF_VALUE_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFComposePrivate));
+        g_type_class_add_private (klass, sizeof (GSGFComposePrivate));
 
-        gsgf_cooked_value_class->write_stream = gsgf_compose_write_stream;
+        gsgf_value_class->write_stream = gsgf_compose_write_stream;
 
         object_class->finalize = gsgf_compose_finalize;
 }
@@ -88,6 +90,9 @@ gsgf_compose_class_init(GSGFComposeClass *klass)
  * Creates a new #GSGFCompose from a list of #GSGFCookedValue objects.  The
  * stored items are "hijacked" and are now considered property of the composed
  * object, and you must not g_object_unref() them yourself.
+ *
+ * Note that you must pass cooked values!  Passing a #GSGFRaw would not make
+ * sense since a #GSGFRaw can actually be a list of values.
  *
  * Returns: The new #GSGFCompose.
  */
@@ -144,14 +149,14 @@ gsgf_compose_get_value(const GSGFCompose *self, gsize i)
 }
 
 static gboolean
-gsgf_compose_write_stream(const GSGFCookedValue *_self,
-                      GOutputStream *out, gsize *bytes_written,
-                      GCancellable *cancellable, GError **error)
+gsgf_compose_write_stream (const GSGFValue *_self,
+                           GOutputStream *out, gsize *bytes_written,
+                           GCancellable *cancellable, GError **error)
 {
         gsize written_here;
         GList *iter;
-        GSGFCookedValue *value;
-        GSGFCompose *self = GSGF_COMPOSE(_self);
+        GSGFValue *value;
+        GSGFCompose *self = GSGF_COMPOSE (_self);
 
         *bytes_written = 0;
 
@@ -164,9 +169,9 @@ gsgf_compose_write_stream(const GSGFCookedValue *_self,
         }
 
         while (iter) {
-                value = GSGF_COOKED_VALUE(iter->data);
-                if (!gsgf_cooked_value_write_stream(value, out, &written_here,
-                                                    cancellable, error)) {
+                value = GSGF_VALUE(iter->data);
+                if (!gsgf_value_write_stream(value, out, &written_here,
+                                             cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }

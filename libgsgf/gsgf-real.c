@@ -46,10 +46,11 @@ struct _GSGFRealPrivate {
 
 G_DEFINE_TYPE (GSGFReal, gsgf_real, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_real_write_stream(const GSGFCookedValue *self,
-                                       GOutputStream *out, gsize *bytes_written,
-                                       GCancellable *cancellable,
-                                       GError **error);
+static gboolean gsgf_real_write_stream (const GSGFValue *self,
+                                        GOutputStream *out,
+                                        gsize *bytes_written,
+                                        GCancellable *cancellable,
+                                        GError **error);
 
 static GRegex *double_pattern = NULL;
 
@@ -73,10 +74,9 @@ static void
 gsgf_real_class_init(GSGFRealClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class =
-                        GSGF_COOKED_VALUE_CLASS (klass);
+        GSGFValueClass *value_class = GSGF_VALUE_CLASS (klass);
 
-        cooked_value_class->write_stream = gsgf_real_write_stream;
+        value_class->write_stream = gsgf_real_write_stream;
 
         double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
 
@@ -321,9 +321,9 @@ gsgf_real_to_string (const GSGFReal *self)
 }
 
 static gboolean
-gsgf_real_write_stream(const GSGFCookedValue *_self,
-                       GOutputStream *out, gsize *bytes_written,
-                       GCancellable *cancellable, GError **error)
+gsgf_real_write_stream (const GSGFValue *_self,
+                        GOutputStream *out, gsize *bytes_written,
+                        GCancellable *cancellable, GError **error)
 {
         GSGFReal *self = GSGF_REAL (_self);
         gchar *value;

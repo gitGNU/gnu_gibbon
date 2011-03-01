@@ -52,9 +52,11 @@ struct _GSGFListOfPrivate {
 
 G_DEFINE_TYPE(GSGFListOf, gsgf_list_of, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_list_of_write_stream(const GSGFCookedValue *self,
-                                      GOutputStream *out, gsize *bytes_written,
-                                      GCancellable *cancellable, GError **error);
+static gboolean gsgf_list_of_write_stream(const GSGFValue *self,
+                                          GOutputStream *out,
+                                          gsize *bytes_written,
+                                          GCancellable *cancellable,
+                                          GError **error);
 
 static void
 gsgf_list_of_init(GSGFListOf *self)
@@ -87,11 +89,11 @@ static void
 gsgf_list_of_class_init(GSGFListOfClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS(klass);
-        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GSGFValueClass *gsgf_value_class = GSGF_VALUE_CLASS(klass);
 
         g_type_class_add_private(klass, sizeof(GSGFListOfPrivate));
 
-        gsgf_cooked_value_class->write_stream = gsgf_list_of_write_stream;
+        gsgf_value_class->write_stream = gsgf_list_of_write_stream;
 
         object_class->finalize = gsgf_list_of_finalize;
 }
@@ -138,13 +140,13 @@ gsgf_list_of_get_nth_item(const GSGFListOf *self, gsize i)
 }
 
 static gboolean
-gsgf_list_of_write_stream(const GSGFCookedValue *_self,
-                      GOutputStream *out, gsize *bytes_written,
-                      GCancellable *cancellable, GError **error)
+gsgf_list_of_write_stream (const GSGFValue *_self,
+                           GOutputStream *out, gsize *bytes_written,
+                           GCancellable *cancellable, GError **error)
 {
         gsize written_here;
         GList *iter;
-        GSGFCookedValue *value;
+        GSGFValue *value;
         GSGFListOf *self = GSGF_LIST_OF(_self);
         const GSGFFlavor *flavor = self->priv->flavor;
 
@@ -166,9 +168,9 @@ gsgf_list_of_write_stream(const GSGFCookedValue *_self,
         }
 
         while (iter) {
-                value = GSGF_COOKED_VALUE(iter->data);
-                if (!gsgf_cooked_value_write_stream(value, out, &written_here,
-                                                    cancellable, error)) {
+                value = GSGF_VALUE (iter->data);
+                if (!gsgf_value_write_stream(value, out, &written_here,
+                                             cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }

@@ -89,7 +89,7 @@ gsgf_value_write_stream (const GSGFValue *self,
                                       FALSE);
         }
 
-        return GSGF_COOKED_VALUE_GET_CLASS(self)->write_stream(self,
-                                                               out, bytes_written,
-                                                               cancellable, error);
+        return GSGF_VALUE_GET_CLASS(self)->write_stream(self,
+                                                        out, bytes_written,
+                                                        cancellable, error);
 }

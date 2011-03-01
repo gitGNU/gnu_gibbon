@@ -33,9 +33,11 @@
 
 G_DEFINE_TYPE(GSGFEmpty, gsgf_empty, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_empty_write_stream(const GSGFCookedValue *self,
-                                         GOutputStream *out, gsize *bytes_written,
-                                         GCancellable *cancellable, GError **error);
+static gboolean gsgf_empty_write_stream (const GSGFValue *self,
+                                         GOutputStream *out,
+                                         gsize *bytes_written,
+                                         GCancellable *cancellable,
+                                         GError **error);
 
 static void
 gsgf_empty_init(GSGFEmpty *self)
@@ -52,9 +54,9 @@ static void
 gsgf_empty_class_init(GSGFEmptyClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GSGFValueClass *value_class = GSGF_COOKED_VALUE_CLASS(klass);
 
-        cooked_value_class->write_stream = gsgf_empty_write_stream;
+        value_class->write_stream = gsgf_empty_write_stream;
 
         object_class->finalize = gsgf_empty_finalize;
 }
@@ -113,7 +115,7 @@ gsgf_empty_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 }
 
 static gboolean
-gsgf_empty_write_stream(const GSGFCookedValue *_self,
+gsgf_empty_write_stream (const GSGFValue *_self,
                          GOutputStream *out, gsize *bytes_written,
                          GCancellable *cancellable, GError **error)
 {

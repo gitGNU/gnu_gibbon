@@ -43,11 +43,11 @@ struct _GSGFMoveBackgammonPrivate {
 
 G_DEFINE_TYPE(GSGFMoveBackgammon, gsgf_move_backgammon, GSGF_TYPE_MOVE)
 
-static gboolean gsgf_move_backgammon_write_stream(const GSGFCookedValue *self,
-                                                  GOutputStream *out,
-                                                  gsize *bytes_written,
-                                                  GCancellable *cancellable,
-                                                  GError **error);
+static gboolean gsgf_move_backgammon_write_stream (const GSGFValue *self,
+                                                   GOutputStream *out,
+                                                   gsize *bytes_written,
+                                                   GCancellable *cancellable,
+                                                   GError **error);
 
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
                                                            GError **error);
@@ -77,10 +77,9 @@ static void
 gsgf_move_backgammon_class_init(GSGFMoveBackgammonClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class =
-                        GSGF_COOKED_VALUE_CLASS (klass);
+        GSGFValueClass *value_class = GSGF_VALUE_CLASS (klass);
 
-        cooked_value_class->write_stream = gsgf_move_backgammon_write_stream;
+        value_class->write_stream = gsgf_move_backgammon_write_stream;
 
         g_type_class_add_private(klass, sizeof(GSGFMoveBackgammonPrivate));
 
@@ -387,9 +386,9 @@ gsgf_move_backgammon_get_to(const GSGFMoveBackgammon *self, gsize i)
 }
 
 static gboolean
-gsgf_move_backgammon_write_stream(const GSGFCookedValue *_self,
-                                  GOutputStream *out, gsize *bytes_written,
-                                  GCancellable *cancellable, GError **error)
+gsgf_move_backgammon_write_stream (const GSGFValue *_self,
+                                   GOutputStream *out, gsize *bytes_written,
+                                   GCancellable *cancellable, GError **error)
 {
         GSGFMoveBackgammon *self = GSGF_MOVE_BACKGAMMON (_self);
         gchar buffer[2];

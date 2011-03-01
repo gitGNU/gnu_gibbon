@@ -81,9 +81,9 @@ gsgf_component_default_init (GSGFComponentInterface *iface)
  *
  * Returns: The new cooked value or %NULL in case of failure.
  **/
-GSGFComponentIface *
-gsgf_component_cook (GSGFComponentIface *component,
-                     GSGFComponentIface **culprit, GError **error)
+GSGFComponent *
+gsgf_component_cook (GSGFComponent *component,
+                     GSGFComponent **culprit, GError **error)
 {
         GSGFComponentIface *iface;
 
@@ -132,7 +132,7 @@ gsgf_component_write_stream (const GSGFComponent *component,
                              _("Method gsgf_component_write_stream()"
                                " called on something that is not a!"
                                " GSGFComponent!"));
-                g_return_val_if_fail (GSGF_IS_COMPONENT (component), NULL);
+                g_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE);
         }
 
         iface = GSGF_COMPONENT_GET_IFACE (component);

@@ -87,9 +87,9 @@ test_compose(void)
         }
 
         out = g_memory_output_stream_new(NULL, 0, g_realloc, g_free);
-        success = gsgf_cooked_value_write_stream(GSGF_COOKED_VALUE(compose),
-                                                 out, &written,
-                                                 NULL, &error);
+        success = gsgf_value_write_stream (GSGF_VALUE (compose),
+                                           out, &written,
+                                           NULL, &error);
         if (!success) {
                 fprintf(stderr, "write_stream failed: %s\n", error->message);
                 return-1;

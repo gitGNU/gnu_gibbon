@@ -41,7 +41,7 @@ struct _GSGFColorPrivate {
 
 G_DEFINE_TYPE (GSGFColor, gsgf_color, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_color_write_stream (const GSGFCookedValue *self,
+static gboolean gsgf_color_write_stream (const GSGFValue *self,
                                          GOutputStream *out,
                                          gsize *bytes_written,
                                          GCancellable *cancellable,
@@ -49,7 +49,8 @@ static gboolean gsgf_color_write_stream (const GSGFCookedValue *self,
 
 static void 
 gsgf_color_init (GSGFColor *self)
-{        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+{
+        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GSGF_TYPE_COLOR, GSGFColorPrivate);
 
         self->priv->color = GSGF_COLOR_BLACK;
@@ -65,9 +66,9 @@ static void
 gsgf_color_class_init (GSGFColorClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS (klass);
+        GSGFValueClass *gsgf_value_class = GSGF_VALUE_CLASS (klass);
 
-        gsgf_cooked_value_class->write_stream = gsgf_color_write_stream;
+        gsgf_value_class->write_stream = gsgf_color_write_stream;
         
         g_type_class_add_private(klass, sizeof (GSGFColorPrivate));
 
@@ -159,7 +160,7 @@ gsgf_color_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 }
 
 static gboolean
-gsgf_color_write_stream (const GSGFCookedValue *_self,
+gsgf_color_write_stream (const GSGFValue *_self,
                          GOutputStream *out, gsize *bytes_written,
                          GCancellable *cancellable, GError **error)
 {

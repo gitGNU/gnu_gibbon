@@ -21,10 +21,12 @@
  * SECTION:gsgf-raw
  * @short_description: Raw, unqualified data in SGF files.
  *
- * A #GSGFRaw is the only #GSGFCookedValue that is not a cooked value;
- * the name sort of suggests that.  You should never use a #GSGFRaw
- * directly.  It is internally used, when parsing data before it
- * gets cooked.
+ * A #GSGFRaw is the only #GSGFValue that is not a cooked value;
+ * the name sort of suggests that.  If the #GSGFProperty that this #GSGFValue
+ * is known to the current #GSGFFlavor you can cook it into a #GSGFCookedValue
+ * with the cook() method of that #GSGFPropert, although it is almost always
+ * correct to just cook the top-level #GSGFComponent, the #GSGFCollection
+ * instead.  This will cook all lower level components.
  */
 
 #include <glib.h>
@@ -41,11 +43,13 @@ struct _GSGFRawPrivate {
                                       GSGF_TYPE_RAW,           \
                                       GSGFRawPrivate))
 
-G_DEFINE_TYPE(GSGFRaw, gsgf_raw, GSGF_TYPE_COOKED_VALUE)
+G_DEFINE_TYPE(GSGFRaw, gsgf_raw, GSGF_TYPE_VALUE)
 
-static gboolean gsgf_raw_write_stream(const GSGFCookedValue *self,
-                                      GOutputStream *out, gsize *bytes_written,
-                                      GCancellable *cancellable, GError **error);
+static gboolean gsgf_raw_write_stream (const GSGFValue *self,
+                                       GOutputStream *out,
+                                       gsize *bytes_written,
+                                       GCancellable *cancellable,
+                                       GError **error);
 
 static void
 gsgf_raw_init(GSGFRaw *self)
@@ -73,12 +77,12 @@ gsgf_raw_finalize(GObject *object)
 static void
 gsgf_raw_class_init(GSGFRawClass *klass)
 {
-        GObjectClass* object_class = G_OBJECT_CLASS(klass);
-        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GObjectClass* object_class = G_OBJECT_CLASS (klass);
+        GSGFValueClass *gsgf_value_class = GSGF_VALUE_CLASS (klass);
 
-        g_type_class_add_private(klass, sizeof(GSGFRawPrivate));
+        g_type_class_add_private (klass, sizeof (GSGFRawPrivate));
 
-        gsgf_cooked_value_class->write_stream = gsgf_raw_write_stream;
+        gsgf_value_class->write_stream = gsgf_raw_write_stream;
 
         object_class->finalize = gsgf_raw_finalize;
 }
@@ -121,7 +125,7 @@ gsgf_raw_get_value(const GSGFRaw *self, gsize i)
 }
 
 static gboolean
-gsgf_raw_write_stream(const GSGFCookedValue *_self,
+gsgf_raw_write_stream(const GSGFValue *_self,
                       GOutputStream *out, gsize *bytes_written,
                       GCancellable *cancellable, GError **error)
 {
@@ -197,7 +201,7 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         return TRUE;
 }
 
-void _gsgf_raw_add_value(const GSGFCookedValue *_self, const gchar *value)
+void _gsgf_raw_add_value(const GSGFValue *_self, const gchar *value)
 {
         GSGFRaw *self;
 

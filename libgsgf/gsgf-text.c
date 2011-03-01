@@ -41,9 +41,11 @@ struct _GSGFTextPrivate {
 
 G_DEFINE_TYPE(GSGFText, gsgf_text, GSGF_TYPE_COOKED_VALUE)
 
-static gboolean gsgf_text_write_stream(const GSGFCookedValue *self,
-                                       GOutputStream *out, gsize *bytes_written,
-                                       GCancellable *cancellable, GError **error);
+static gboolean gsgf_text_write_stream (const GSGFValue *self,
+                                        GOutputStream *out,
+                                        gsize *bytes_written,
+                                        GCancellable *cancellable,
+                                        GError **error);
 static gboolean _gsgf_text_set_value (GSGFText *self, const gchar *value,
                                       gboolean copy, GError **error);
 static gchar *_gsgf_text_get_value (const GSGFText *self);
@@ -74,11 +76,11 @@ static void
 gsgf_text_class_init(GSGFTextClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS(klass);
-        GSGFCookedValueClass *gsgf_cooked_value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GSGFValueClass *gsgf_value_class = GSGF_VALUE_CLASS(klass);
 
         g_type_class_add_private(klass, sizeof(GSGFTextPrivate));
 
-        gsgf_cooked_value_class->write_stream = gsgf_text_write_stream;
+        gsgf_value_class->write_stream = gsgf_text_write_stream;
 
         klass->get_value = _gsgf_text_get_value;
         klass->set_value = _gsgf_text_set_value;
@@ -230,9 +232,9 @@ _gsgf_text_get_value (const GSGFText *self)
 }
 
 static gboolean
-gsgf_text_write_stream(const GSGFCookedValue *self,
-                       GOutputStream *out, gsize *bytes_written,
-                       GCancellable *cancellable, GError **error)
+gsgf_text_write_stream (const GSGFValue *self,
+                        GOutputStream *out, gsize *bytes_written,
+                        GCancellable *cancellable, GError **error)
 {
         gchar *value;
 

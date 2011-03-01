@@ -45,13 +45,11 @@ G_BEGIN_DECLS
 typedef struct _GSGFCookedValue        GSGFCookedValue;
 struct _GSGFCookedValue
 {
-        GObject parent_instance;
+        GSGFValue parent_instance;
 };
 
 /**
  * GSGFCookedValueClass:
- * @write_stream: Serialization method, see gsgf_cooked_value_write_stream().
- *                All derived classes must implement this method.
  *
  * A class representing a cooked value of a #GSGFProperty.  All other
  * properties and methods are private.
@@ -62,20 +60,10 @@ typedef struct _GSGFCookedValueClass   GSGFCookedValueClass;
 struct _GSGFCookedValueClass
 {
         /*< private >*/
-        GObjectClass parent_class;
-
-        gboolean (*write_stream) (const GSGFCookedValue *self,
-                                  GOutputStream *out, gsize *bytes_written,
-                                  GCancellable *cancellable, GError **error);
+        GSGFValueClass parent_class;
 };
 
 GType gsgf_cooked_value_get_type(void) G_GNUC_CONST;
-
-gboolean gsgf_cooked_value_write_stream(const GSGFCookedValue *self,
-                                        GOutputStream *out, 
-                                        gsize *bytes_written,
-                                        GCancellable *cancellable, 
-                                        GError **error);
 
 G_END_DECLS
 

@@ -44,11 +44,11 @@ G_DEFINE_TYPE(GSGFPointBackgammon, gsgf_point_backgammon, GSGF_TYPE_POINT)
 
 static gint _gsgf_point_backgammon_get_point(const GSGFPoint* point);
 
-static gboolean gsgf_point_backgammon_write_stream(const GSGFCookedValue *self,
-                                                   GOutputStream *out,
-                                                   gsize *bytes_written,
-                                                   GCancellable *cancellable,
-                                                   GError **error);
+static gboolean gsgf_point_backgammon_write_stream (const GSGFValue *self,
+                                                    GOutputStream *out,
+                                                    gsize *bytes_written,
+                                                    GCancellable *cancellable,
+                                                    GError **error);
 
 static void
 gsgf_point_backgammon_init(GSGFPointBackgammon *self)
@@ -70,11 +70,10 @@ static void
 gsgf_point_backgammon_class_init(GSGFPointBackgammonClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GSGFCookedValueClass *cooked_value_class =
-                        GSGF_COOKED_VALUE_CLASS(klass);
+        GSGFValueClass *value_class = GSGF_VALUE_CLASS(klass);
         GSGFPointClass *point_class = GSGF_POINT_CLASS (klass);
 
-        cooked_value_class->write_stream = gsgf_point_backgammon_write_stream;
+        value_class->write_stream = gsgf_point_backgammon_write_stream;
         point_class->get_normalized_value = _gsgf_point_backgammon_get_point;
 
         g_type_class_add_private(klass, sizeof(GSGFPointBackgammonPrivate));
@@ -237,9 +236,9 @@ _gsgf_point_backgammon_get_point(const GSGFPoint *self)
 }
 
 static gboolean
-gsgf_point_backgammon_write_stream(const GSGFCookedValue *_self,
-                                   GOutputStream *out, gsize *bytes_written,
-                                   GCancellable *cancellable, GError **error)
+gsgf_point_backgammon_write_stream (const GSGFValue *_self,
+                                    GOutputStream *out, gsize *bytes_written,
+                                    GCancellable *cancellable, GError **error)
 {
         GSGFPointBackgammon *self = GSGF_POINT_BACKGAMMON (_self);
         gchar buf;
