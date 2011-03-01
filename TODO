@@ -33,3 +33,4 @@
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
+- Replace the GSGFComponent private method apply_flavor() with cook().
