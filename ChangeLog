@@ -1,1748 +1,3640 @@
-commit 2e3ddd792340415d98f1fae123c1fff46241e178
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 09:43:06 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Fixed typo.
+	* libgsgf/gsgf-component.h: Typo.
 
-commit a1ca5fc64337b648f028d56f53988713940f36c1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 09:42:20 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Default property type is now raw.
+	* TODO: Updated.
 
-commit ff8dd6f3769bd807adc9e46731ce96c4b1024f6c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 09:41:07 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Generic properties are now raw.
+	* TODO: Updated.
 
-commit 8249356b3ca0ce4f5edb1657e28a1b46414ea8b2
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 09:40:23 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Re-generated.
 
-commit 1a81806ed33879f3b22901c25cacc66bfd6daeaf
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 08:48:57 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Fixed syntax error in test sgf.
+	* docs/reference/libgsgf/libgsgf-docs.xml: Documentation for new
+	fundamental class GSGFValue.
 
-commit 4ffa82bff35a82c56d18e30463e6a8e001fbb7f3
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Dec 13 08:35:21 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Try multiple values for generic properties.
+	* po/POTFILES.in: Updated.
 
-commit cabd322a447079fcd5394fe7797638525c459c10
-Merge: 040f3fb 38b769c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:44:43 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Merge branch 'master' of ssh://guido-flohr.net/var/git/c/gibbon
+	* libgsgf/gsgf-color.c, libgsgf/gsgf-component.c,
+	libgsgf/gsgf-compose.c, libgsgf/gsgf-cooked-value.c,
+	libgsgf/gsgf-cooked-value.h, libgsgf/gsgf-empty.c,
+	libgsgf/gsgf-list-of.c, libgsgf/gsgf-move-backgammon.c,
+	libgsgf/gsgf-number.c, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h, libgsgf/gsgf-real.c,
+	libgsgf/gsgf-stone-backgammon.c, libgsgf/gsgf-text.c,
+	libgsgf/gsgf-value.c, libgsgf/tests/test-compose.c: Refactoring:
+	GSGFCookedValue now inherits from GSGFValue.
 
-commit 040f3fbc983d372c2a66e932503d7dd90244972f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:43:32 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    GSGFText first prototype for GSGFCookedValue.
+	* libgsgf/Makefile.am, libgsgf/gsgf-value.c, libgsgf/gsgf-value.h,
+	libgsgf/gsgf.h: New abstract base class GSGFValue.
 
-commit 8634ebfabd1ac876bcefcc4c4bda22a478f648f8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:41:29 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Moved functionality from #GSGFProperty to #GSGFRaw.
+	* TODO: Updated.
 
-commit 38b769cc2100329caf74cfd39bcbcb924db0375e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:41:29 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Moved functionality from #GSGFProperty to #GSGFRaw.
+	* TODO, libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-node.h: Refactoring: Move node conversion from
+	GSGFGameTree to GSGFNode.
 
-commit 5c02aded8a21b89e50a93089c1b783236bcb8f1e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:38:27 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Moved functionality from #GSGFProperty to #GSGFRaw.
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-component.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c: Refactoring: Charset conversion and cooking
+	are now methods.
 
-commit f9fb1b133b5306421c964bee3f506fbcc84b051f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:36:52 2010 +0200
+2011-03-01  Guido Flohr <guido@imperia.net>
 
-    Private/public changes.
+	* TODO: Updated.
 
-commit 1b2ec5b5149625d49a1ec5312144d70680c5cd14
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:35:35 2010 +0200
+2011-02-28  Guido Flohr <guido@imperia.net>
 
-    Make #GSGFRaw public.
+	* TODO: Updated.
 
-commit 4e53c0e724fd6c79896d4aed33d762e0a7c31344
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 23:34:41 2010 +0200
+2011-02-28  Guido Flohr <guido@imperia.net>
 
-    Prefix error.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt,
+	libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-component.c, libgsgf/gsgf-component.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-property.c,
+	libgsgf/tests/gsgf-write-back.c,
+	libgsgf/tests/test-compressed-list.c, libgsgf/tests/test-convert.c,
+	libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c: Refactoring: Turned
+	write_stream() into a method.
 
-commit d281aaaf352fad34d9b6e5e6a3912904ad16cfad
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 18:31:24 2010 +0200
+2011-02-28  Guido Flohr <guido@imperia.net>
 
-    Hash keys are not const.
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/tests/gsgf-write-back.c,
+	libgsgf/tests/test-compressed-list.c, libgsgf/tests/test-convert.c,
+	libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c: Refactoring: Never close output
+	streams.
 
-commit 3759dddc6945c768042a542aa2b96cf753445241
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 18:30:26 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Cleaned up constructor.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt, libgsgf/Makefile.am,
+	libgsgf/examples/gsgf_list_bg.c, libgsgf/gsgf-component.c,
+	libgsgf/gsgf-component.h, libgsgf/gsgf.h: Base for the GSGFComponent
+	interface.
 
-commit 49d8176379729f5683495069abb2a99aa464f092
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 18:29:36 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    New errors GSGF_ERROR_LIST_TOO_LONG and GSGF_ERROR_SEMANTIC_ERROR.
+	* TODO: Updated.
 
-commit 30f6675b3c3d8252f6069b1a493c65359cc0d159
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 18:00:30 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* : commit 41226f13ee91dfb7b5a09f244b4a83a7919d8e0d Author: Guido
+	Flohr <guido@imperia.net> Date:   Sun Feb 27 14:58:27 2011 +0200
 
-commit d2d1d1184da74aeca5ccb136f65f436ebc114ea4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 17:57:41 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Fixed typos.
+	* libgsgf/gsgf-flavor.c: Property DO is a GSGFEmpty, not a
+	GSGFDouble.
 
-commit 93ddb8e41f3fe905765234991145c677115260c9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 16:40:49 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    User uppercase property.
+	* libgsgf/examples/gsgf_list_bg.c: Better error checking.
 
-commit 136cff70e99d6ea3112638eda9e955210936b6e4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 16:33:25 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Refactoring: GSGFProperty is now a wrapper around GSGFRaw.
+	* docs/reference/libgsgf/libgsgf-docs.xml: Fixed address of online
+	version.
 
-commit d6601949b241c29b60e07ceb9e217a09e4bd5d14
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 16:33:11 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Test skeleton for cooked values.
+	* docs/reference/libgsgf/libgsgf-decl.txt: Re-generated.
 
-commit bf527795e70483353eb05e34b37d0b3a15bd8057
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 14:53:54 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Strong typing.
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-util.c, libgsgf/gsgf-util.h: 
+	Fixed interface for gsgf_read_text() gsgf_read_simple_text().
 
-commit 09ff8a0816deb4755a75f8d2f052e81fbcb77426
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 14:44:11 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Store value constructor internally.
+	* libgsgf/gsgf-real.c: Fixed warning.
 
-commit a5a860321fdd8ca5aafaabed2d102c7695744ef3
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Dec 12 14:15:33 2010 +0200
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Make tests succeed in vpath environment.
+	* libgsgf/gsgf-flavor.c: Fixed warning.
 
-commit e51b6fe7d30a95a3f5974c51c2c2b1dd11afa8b6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Dec 1 09:49:45 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Make tests work in vpath builds.
+	* libgsgf/gsgf-text.c, libgsgf/gsgf-text.h: Interface for
+	constructor from raw has changed.
 
-commit 0cab241e02ab923eadf6a8a0da4f4ddd0973f2e4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Dec 1 09:44:40 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-flavor.c: Implementation for property VW.
 
-commit 6a1b9c072e1dc1807244b01e5e8252b55a745bab
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Dec 1 00:09:41 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Parsing of SGF numbers.
+	* libgsgf/tests/test-misc-properties.c: Test for property VW.
 
-commit 7d6ba680d2353063dcbd76031487cd4c15cc23cc
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Dec 1 00:08:52 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Test for trailing garbage after SGF numbers.
+	* libgsgf/gsgf-flavor.c: Implementation for property PM.
 
-commit 5632616cd37f43f6fa2606237a508621e935e883
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 23:53:36 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    We do a regex match on reals, no need for endptr.
+	* libgsgf/tests/test-misc-properties.c: Test for property PM.
 
-commit f00304cd7bffe472715a76c784bff9bce8814090
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 23:52:23 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Test for trailing garbage in SGF reals.
+	* libgsgf/gsgf-flavor.c: Test that numbers in FG properties are
+	positive.
 
-commit c81ac93b3e5e75059eefc7324669d68d8a25cfb9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 23:28:02 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Test for parsing SGF integers.
+	* libgsgf/tests/test-misc-properties.c,
+	libgsgf/tests/test-move-properties.c: Test for empty properties.
 
-commit c4f9f2b06517d170ab407deb34fe2af3d1c0967a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 22:37:29 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Pass strtod() errors through.
+	* libgsgf/gsgf-flavor.c: Implementation for FG property.
 
-commit a12b006555cf1cbeca8224eb26aeb5a6b7e2620c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 22:17:37 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Parse real values in SGF files.
+	* libgsgf/tests/test-misc-properties.c: Swapped values in FG
+	property.
 
-commit d1844ab0e315bb3b7a39d41c697c84d1d8964aff
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 30 22:15:38 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Formatting.
+	* libgsgf/tests/Makefile.am, libgsgf/tests/misc-properties.sgf,
+	libgsgf/tests/test-misc-properties.c: Test for FG property.
 
-commit bbedca6da844a2d6086a8fab5ab1a162f44bd943
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 27 11:47:45 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Iterate over SGF tree for applying SGF flavor.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for
+	miscellaneous properties.
 
-commit b510eb12557fc0cd19a77b83106cb7d64943efd7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 27 11:46:53 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Skeleton for general SGF flavor.
+	* libgsgf/gsgf-flavor.c: Implementation for timing properties.
 
-commit 696129c431a08a155589c0044713176470618d61
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 24 21:45:56 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Hide libgsgf initialization.
+	* libgsgf/tests/Makefile.am,
+	libgsgf/tests/test-timing-properties.c,
+	libgsgf/tests/timing-properties.sgf: Test for timing properties.
 
-commit bc8e6d143241d3b95d301a0ce1079c74a36f6db8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 24 20:36:46 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Obsolete GSGFPropertyHandler.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for
+	timing properties.
 
-commit a91710f10285c94aba9e3052a5223de0d7bce5c6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 24 08:38:13 2010 +0100
+2011-02-27  Guido Flohr <guido@imperia.net>
 
-    Use stringified numbers as flavor identifiers.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt, po/POTFILES.in: 
+	Updated.
 
-commit cbd61f5a756c50c6e57166d78aa8278f317e9160
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 24 08:28:57 2010 +0100
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    - Make flavor ids const, and don't free them.
-    - GSGFFlavors now have parent flavors.
+	* libgsgf/gsgf-date.c: Replace missing date components with sane
+	values for check.
 
-commit de5999db9b52f425e111e45e820bc235b7e44171
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 22:47:03 2010 +0100
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Renamed root-properties to general-properties.
+	* libgsgf/gsgf-date.c: Store dynamically allocated date structure.
 
-commit 40a51914c3c2700443e34f3afcad8e20a0abf780
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 22:07:46 2010 +0100
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Updated TODO.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit cec0d6fec7b803a7d6035ce217af3e7ae3f86f64
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 22:04:50 2010 +0100
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Refactoring: Use new GSGF type system.
+	* libgsgf/gsgf-date.c: Copy appended dates.
 
-commit 86121bcf204408fa53e690f23b7f9e9995664b03
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 19:03:28 2010 +0100
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Base types for SGF data.
+	* libgsgf/tests/test-date.c: Refactoring: Get rid of GDate where
+	possible.
 
-commit 24226435491bc1e6aed9db5144daaaf3e131abc7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 10:31:00 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Encapsulation for SGF primitives.
+	* libgsgf/gsgf-double.c, libgsgf/tests/gsgf-write-back.c: Fixed
+	warning.
 
-commit f98657315b8a4de75f56d07a3d493a74bb1d516e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 10:18:10 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Generated SGF files should not be removed after make clean.
+	* TODO, libgsgf/gsgf-date.c, libgsgf/gsgf-date.h: Refactoring: Do
+	not rely on GDate.
 
-commit c686d81154747802ff21ad0529d83a497fdd46d0
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 09:50:55 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Getter for SGF game tree lists.
+	* libgsgf/gsgf-date.c: Parse all valid incomplete (partial) date
+	strings.
 
-commit 23af6e529aa150f55eec80fe6b1f56be579fccbf
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 09:48:59 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    - Getter for SGF nodes.
-    - Apply SGF flavor to tree.
+	* TODO: Remember to get rid of GDate as underlying data structure
+	for GSGFDate.
 
-commit 7cc588dc31aa45f41fbe543b769d21edb00c15e7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 09:48:07 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Fixed indirections.
+	* libgsgf/tests/test-date.c: Test for remaining incomplete date
+	formats.
 
-commit 0fc8ca8d500af55288dba00a10c9cce62cfbd3b6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 09:35:21 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Added generated SGF files.
+	* libgsgf/gsgf-date.c: Fill omitted date specs with previous ones.
 
-commit 153c5e5b7a145555be021ccfae13d3bfb5ed1ec8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 09:34:50 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Tests skeleton for general SGF properties.
+	* libgsgf/tests/test-date.c: Fixed invalid date in test.
 
-commit 2cb3585367030fbc373e86cc6abacc49fa222953
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 08:49:35 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Write libgsgf version string into SGF files.
+	* libgsgf/tests/test-date.c: Test parsing of MM-DD.
 
-commit 28d3caf0e7584c93cf3fec09d7a35058077cbbdd
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 08:10:24 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Skeleton for applying SGF flavor.
+	* libgsgf/gsgf-date.c: Parse multiple dates and date ranges.
 
-commit 4a281c411e608764db45294264085740c6cb9d23
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 23 08:02:29 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Changed copyright date.
+	* libgsgf/tests/test-date.c: Also check for detection of trailing
+	comma.
 
-commit bfc39bb05e910e2da3e9e3617cb694e406b2fd62
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 21 12:58:14 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Automatic charset conversion for SGF trees.
+	* libgsgf/tests/test-date.c: Test for date ranges resp. multiple
+	dates.
 
-commit 402a0a82ee76b1e518b11e497575d8866b290d12
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 21 12:57:41 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Automatically write CA property in SGF sub trees.
+	* libgsgf/tests/test-date.c: Parse YYYY-MM-DD.
 
-commit b50305090f0e4120b9478074ab55f984cf3b8af5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 21 12:07:58 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Always write CA property on output.
+	* libgsgf/gsgf-date.c: Parse YYYY-MM.
 
-commit ed6d9c2ce08e95d5b657b131b862025df70a87b7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 21 12:00:46 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Only reset error if error location given.
+	* libgsgf/tests/test-date.c: Omit test that prints ugly output.
 
-commit a0f871d4fb14259ce795f8ec5848054ae3393cf5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 21 11:58:03 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Automatic conversion to utf-8 (work in progress).
+	* libgsgf/tests/test-date.c: Check for YYYY-MM date specifications.
 
-commit 7ef1d18805f572bc7290117b8cd5594313f7225f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 20 12:24:33 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Determine charset of SGF game tree.
+	* libgsgf/gsgf-date.c: Parse dates with only a year.
 
-commit f7477cda1f7cb90536aacc5e404d8ac1f37bcd2b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 20 12:24:05 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Getter for SGF property.
+	* libgsgf/tests/test-date.c: Fixed expected errorr strings.
 
-commit de3ec8ae1f6bc500fd70aa56aeeed847353473cc
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 20 12:23:38 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Getter for raw property values.
+	* libgsgf/tests/test-date.c: Check for empty date strings.
 
-commit fc51ffa1c0951e9027a848b323a81ae1ab7c5057
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 20 12:23:03 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Only store end pointer if requested.
+	* libgsgf/tests/test-date.c: Test for correct parsing of a single
+	year.
 
-commit 700be873ace7e36cab74e7d63d5653a2b6beab4b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:09:34 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    - Prototypes without error checking and passng of flavors.
-    - Base for charset conversions.
+	* libgsgf/gsgf-date.c: Compress partial dates.
 
-commit f5ff0fdf43ca770095532ce710b4ab397113ae05
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:08:15 2010 +0200
+2011-02-26  Guido Flohr <guido@imperia.net>
 
-    Removed prototype for internal serialization.
+	* libgsgf/tests/test-date.c: expect_error_conditional() return 0 or
+	-1.
 
-commit 61cdd0e9f7f450d23a0eafda8459ef3f34fc9665
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:06:01 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    No more error checking in private constructors.
+	* : commit b523d18092fcff648ea7c3fa001dca507b613276 Author: Guido
+	Flohr <guido@imperia.net> Date:   Thu Feb 24 21:18:07 2011 +0200
 
-commit e0bc6ec29422a858b38217d0798df8ab629fb17b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:04:31 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* : commit 86ca4fd0cb9fd38e90c6c6a6052f71d1734cbb1c Author: guido
+	<guido@imperia.bg> Date:   Thu Feb 24 12:30:55 2011 +0200
 
-commit fed5c664d73cefcdc107abb0706967e80b6fced6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:03:17 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Declaration for SGF property getter.
+	* libgsgf/gsgf-date.c, libgsgf/tests/test-date.c: Partial
+	implementation for partial dates.
 
-commit f0b00d2d9c4a5f4aa819a5484d48c4f59a994c8e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 19 00:01:16 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    No error checking for private constructors.
+	* libgsgf/tests/Makefile.am, libgsgf/tests/test-date.c: Test for
+	partial dates.
 
-commit 951cfd80a7703fcd4757020ef84962adfd8c5b7a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:59:26 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Methods for setting raw values made private.
+	* libgsgf/gsgf-date.c, libgsgf/gsgf-date.h,
+	libgsgf/tests/test-date.c: Shortcuts for complete dates.
 
-commit c1aa40cd7598eadaa600cb7cdba508fb91c88022
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:53:56 2010 +0200
+2011-02-24  guido <guido@imperia.bg>
 
-    Compound values for SGF properties.
+	* po/de.po: Commit from Imperia by user guido.: 46 of 132 messages
+	translated (15 fuzzy).
 
-commit 63d72e74c03668cdfb0638914bc3c7470c2fb7dd
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:51:41 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Read formatted text in SGF properties.
+	* : commit d9ba13888ba16e436539512502c185b52b212964 Author: guido
+	<guido@imperia.bg> Date:   Thu Feb 24 01:02:55 2011 +0200
 
-commit aeba1c5f01df7a1193718171c8803b7f5e547d54
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:38:01 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    New tests.
+	* : commit 4b1fbc3993f3ef57524d34778818bd904b62756d Author: Guido
+	Flohr <guido@imperia.net> Date:   Thu Feb 24 01:01:11 2011 +0200
 
-commit defbeac7290650671557cd7924e57ace00445470
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:36:01 2010 +0200
+2011-02-24  guido <guido@imperia.bg>
 
-    - Null-terminate data written to stream.
-    - No more need for error checking on libgsgf constructors.
+	* po/de.po: Commit from Imperia by user guido.: 33 of 132 messages
+	translated (15 fuzzy).
 
-commit e7c24aba8404282ec226adf861621f330ccd2095
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:34:59 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Null-terminate data written to stream.
+	* po/de.po: Test commit for conflict.
 
-commit e535e8145f13d910a56a8a5d411bbad463c53a6f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:34:19 2010 +0200
+2011-02-24  guido <guido@imperia.bg>
 
-    Tests for charset conversion.
+	* po/de.po: Commit from Imperia by user guido.: 31 of 132 messages
+	translated (15 fuzzy).
 
-commit c89b6fcb9e2a0402078ab76ec11be06600681311
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:29:06 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Test for formatted text in SGF properties.
+	* po/de.po: Updated.
 
-commit fdb889a72d17e94bac0721793235fd21a2cedbfa
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:27:42 2010 +0200
+2011-02-24  Guido Flohr <guido@imperia.net>
 
-    Split up test library code.
+	* po/de.po: Test translation for pootle.
 
-commit 888a2d07e9f652d1f2ebe86d64978310c99fda7e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 23:26:04 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Read/write formatted text in SGF properties.
+	* libgsgf/gsgf-date.c, libgsgf/gsgf-date.h: Prepare for future
+	better error checking.
 
-commit 927e6fb62cba6838b0374bef117005163fc3836b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:14:58 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Base for SGF flavors and property handlers.
+	* libgsgf/gsgf-date.c, libgsgf/gsgf-date.h,
+	libgsgf/tests/test-date.c: Separate dates by a comma.
 
-commit edba0f6d2aee12f97ffc2dab52f2e8a5c7a8e637
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:12:57 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    - Test correct error handling.
-    - Fixed cast warning.
+	* libgsgf/gsgf-date.c: Implementation for single value dates.
 
-commit da41966c53043286904f7cc2163bedad6e62a5f6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:11:52 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/tests/test-date.c: Basic test for date parsing.
 
-commit 2a378a1f97f0b1b730b32e44fe56e42d9c952b1b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:11:10 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Removed old code for writing text.
+	* libgsgf/tests/Makefile.am: Test for very basic GSGFDate
+	functionality.
 
-commit 60bda80c2ac6e6b004a6d852c99b5de186f305ea
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:07:02 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Removed debugging output.
+	* libgsgf/gsgf-date.c: Use GString for text buffer creation.
 
-commit 682b6c7da78c57b26617566642477cc892be08be
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:05:07 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Fixed warning about unused variable.
+	* libgsgf/gsgf-date.c: Mock implementation.
 
-commit 0c35bb4d1b163bc46d224e50126f1062eeed6823
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:04:09 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    arc_boundings() no longer needed.
+	* libgsgf/gsgf-date.c, libgsgf/gsgf-date.h, libgsgf/gsgf-flavor.c: 
+	DT now produces GSGFDate objects.
 
-commit 732d5e31be47773c29d0cb09ed40821c83aedd25
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 18 09:02:52 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-result.c: Fixed typo.
 
-commit 6bea8f868bfa90d1782b7293bfc5fa16941f52b5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 17 09:29:03 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Renamed gsgf-internal.h to gsgf-private.h.
+	* docs/reference/libgsgf/flavor-general.xml: DT and RE now return
+	qualified results.
 
-commit 897d0230dada4130792252f24cfabb2e1550d2a3
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 16 23:00:21 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Refactoring: SGF sub constructors are now private.
+	* libgsgf/tests/test-game-info-properties.c: Check that DT returns a
+	GSGFDate.
 
-commit 7d380c19be6eb98ee88d3cc85e983ef80e5e615a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 16 22:44:29 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Refactoring: Introduce SGF flavors.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit 33c45ded5261af52828c624d3d34353abaafa3d0
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 16 20:11:44 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Prevent writing empty properties.
+	* libgsgf/Makefile.am, libgsgf/gsgf-date.c, libgsgf/gsgf-date.h,
+	libgsgf/gsgf.h: Skeleton for GSGFDate.
 
-commit cc192cdc8b7618e94fe5cf1d0f63df8fe3dbaec1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 16 09:40:39 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Updated TODO.
+	* docs/reference/libgsgf/flavor-general.xml: Typo fixed.
 
-commit bb9da0cb1c6364380bbebbc50b77d8194327739f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 23:46:22 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Re-generated.
+	* po/POTFILES.in: Updated.
 
-commit b7a89ba3a1f7a6a602476d543b2378674d35c08f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 23:46:10 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-result.c, libgsgf/gsgf-simple-text.c,
+	libgsgf/gsgf-text.c, libgsgf/gsgf-text.h: Refactored set_value() to
+	allow failure.
 
-commit 1c2c13fc56a6a1ebdc0c4bf75a270a76b403252f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 23:45:49 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Obsolete.
+	* TODO: Updated.
 
-commit cec4ba1756aca49d9de9d5fc2bb06fd4f9be7e8d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 23:45:03 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Updated TODO file.
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-result.c,
+	libgsgf/gsgf-result.h: Qualify results.
 
-commit 2319f5a214a9642fd1515ca873a80924430fd02a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 23:44:21 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Read/write of legal SGF files now round-trip-safe.
+	* libgsgf/gsgf-text.c: Allow method chaining from child classes.
 
-commit 079e596f322a26152e2dbdca65d0a2c849e173d1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 10:36:43 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Test for round-trip writing for SGF files.
+	* libgsgf/tests/test-game-info-properties.c: Test that RE returns a
+	GSGFResult.
 
-commit 6e78bf95ff2837b6e889cc984d7060a7cae9c09c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 10:21:15 2010 +0200
+2011-02-19  Guido Flohr <guido@imperia.net>
 
-    Test for parsing multiple, nested SGF game trees.
+	* gcreate_class.pl.in: Fixed syntax error.
 
-commit 37c147e2238ce50774bbedb7311d3c1011ea0d0a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 10:00:54 2010 +0200
+2011-02-17  Guido Flohr <guido@imperia.net>
 
-    Write minimal SGF nodes.
+	* TODO: Updated.
 
-commit acce542002f2ac69435006defd563e23a15bd19e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 15 00:20:36 2010 +0200
+2011-02-17  Guido Flohr <guido@imperia.net>
 
-    Refactored GSGFNodeList to GList of GSGFNodes.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt, libgsgf/Makefile.am,
+	libgsgf/gsgf-result.c, libgsgf/gsgf-result.h, libgsgf/gsgf.h: Added
+	type GSGFResult.
 
-commit 91c9f2bd32fd07c6356831fb3331d211f1c4a353
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 14 21:57:09 2010 +0200
+2011-02-17  Guido Flohr <guido@imperia.net>
 
-    Close game trees with ')' not '('.
+	* libgsgf/Makefile.am, libgsgf/gsgf-dates.c, libgsgf/gsgf-dates.h,
+	libgsgf/gsgf-error.h, libgsgf/gsgf-flavor.c, libgsgf/gsgf.h,
+	libgsgf/tests/Makefile.am, libgsgf/tests/dates.sgf,
+	libgsgf/tests/test-dates.c,
+	libgsgf/tests/test-game-info-properties.c: Do not qualify dates for
+	now.
 
-commit 3970451c52b16fdac1f624fe53ffa2ce9c847d28
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 14 21:53:49 2010 +0200
+2011-02-16  Guido Flohr <guido@imperia.net>
 
-    Refactoring of SGF writing:
-    The interfaces for SGF writing and wrting to gio streams are
-    now synchronized.
+	* libgsgf/gsgf-dates.c, libgsgf/gsgf-dates.h, libgsgf/gsgf-flavor.c: 
+	Property DT now gets a #GSGFDates object.
 
-commit ffa99075917d449124f3f7c91caa84c781dfbbb5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 13 09:14:54 2010 +0200
+2011-02-16  Guido Flohr <guido@imperia.net>
 
-    Write nested game trees.
+	* TODO: Updated.
 
-commit 77d0f6f95df774c8a66439056bb9e60c1d1627da
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 13 08:40:16 2010 +0200
+2011-02-16  Guido Flohr <guido@imperia.net>
 
-    Basic writing routine for SGF collections.
+	* libgsgf/tests/test-dates.c,
+	libgsgf/tests/test-game-info-properties.c: Check that DT returns a
+	GSGFDate.
 
-commit d86d49a8591dce5665d3dfc6b3e446cccfb9d3cc
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 13 08:18:00 2010 +0200
+2011-02-16  Guido Flohr <guido@imperia.net>
 
-    Renamed test-write-empty-collection to test-write-empty.
+	* libgsgf/gsgf-dates.c, libgsgf/gsgf-dates.h: Cleanup.
 
-commit 3928bac2fe0288395a890f4e1a5afcd5d71ad4b0
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Nov 13 08:15:25 2010 +0200
+2011-02-16  Guido Flohr <guido@imperia.net>
 
-    Round-trip test for mininimal.sgf.
+	* libgsgf/Makefile.am, libgsgf/gsgf-dates.c, libgsgf/gsgf-dates.h,
+	libgsgf/gsgf.h, libgsgf/tests/Makefile.am, libgsgf/tests/dates.sgf,
+	libgsgf/tests/test-dates.c: Base for GSGFDate type.
 
-commit e1fc21fc142633676a500167bd4ff5c696b0e33c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:10:51 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Re-generated.
+	* : commit 821b4ac0b82095cdd8022befef58f42c61d9406a Author: Guido
+	Flohr <guido@imperia.net> Date:   Tue Feb 15 18:07:48 2011 +0200
 
-commit ae20851322d4be6fd43bca8d476e6006cd95e4a3
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:10:34 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* TODO: Updated.
 
-commit 8c6a4c1fe024066873655ec7e7f6cdffa35add93
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:10:11 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Conditional error checking.
+	* libgsgf/gsgf-flavor.c: Implementation and tests for all game info
+	properties.
 
-commit 8bd54b304aafbbaa1e1a2480b8f338591ef09cbe
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:09:42 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Tweaks for separate build directory.
+	* libgsgf/tests/Makefile.am: Tests for game info properties.
 
-commit 65a9195a45186f813df87c29d0c0633e75515095
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:08:47 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Needed for distcheck make target.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for game
+	info properties.
 
-commit ce3591ecc69a4f82d8e53e1aca8c707a50e555e4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:08:15 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Inhibit writing empty collections.
+	* libgsgf/gsgf-flavor.c, libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Tests and implementation for
+	LN property.
 
-commit 16e1979c02e90ab9de9767b6cf24520dd8ba1a57
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:07:12 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Yacc and lex output removed.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for LN
+	property.
 
-commit 8fd2d9b2a5fb92250f3478410a3b3c085d8ce446
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:06:33 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    - Separate test suite.
-    - Internal declarations.
+	* libgsgf/gsgf-flavor.c, libgsgf/tests/test-markup-properties.c: 
+	Arrows are  just lines for us.
 
-commit 11de0eda4d2952b39ae5701d386d538c05a68189
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 23:05:29 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Internal declarations.
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c: Removed
+	bogus check for empty list.
 
-commit 5c597c846579425bde464e76c976271d25ee3dc8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 16:06:02 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Added SGF tests and fixed a number of bugs.
+	* libgsgf/gsgf-flavor.c: Implementation for property LB.
 
-commit 4b1f098a1214ecec9cdef5aed61a2364597d9e4c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 11:59:10 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Do not parse empty SGF collections.
+	* libgsgf/tests/test-markup-properties.c: Corrected expected labels.
 
-commit 82d6e6318fb458e376c91f0967787d4f89236996
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Nov 12 10:31:30 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Create game tree objects in SGF syntax tree.
+	* libgsgf/tests/test-markup-properties.c: Return FALSE for failed
+	test.
 
-commit 0106be9af51ef21cd1cf5a91e42f5411798aad17
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 11 22:44:05 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Skeleton for SGF game trees.
+	* libgsgf/tests/test-markup-properties.c: Tests for LB property.
 
-commit 79e3fea72eeecebbb7f141e15dd5bf011f26a59c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 11 10:11:59 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Also omit .orig files.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for LB
+	property.
 
-commit e1da2760c560e7ffcb8449ffba705da01a7d2ea9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 11 10:11:20 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Exclude backup files.
+	* libgsgf/tests/test-markup-properties.c: Completed test for AR
+	property.
 
-commit 7cde7adf5d285197b2760a079d0d6808194b0aec
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 11 00:01:16 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Re-generated.
+	* libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Tests for LB property.
 
-commit 4544b9615481545c9224c9c0f861997bb567c8a2
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Nov 11 00:00:58 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Free parsed values.
+	* libgsgf/gsgf-flavor.c: Implementation for DD property.
 
-commit 49c30a530b7ef336bd893af808bec428875b8f6c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 23:50:24 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Abstraction for SGF properties.
+	* libgsgf/tests/test-markup-properties.c: ListOf type for empty DD
+	is GSGFEmpty.
 
-commit 9246e44cdff80eced0ae2d13d0c879a7211be3e1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 23:49:18 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    FIXME for memory leak.
+	* libgsgf/gsgf-list-of.c: Better comment.
 
-commit 25457b0a8bed090179271a4dc20d4a4f3dabfac0
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 22:31:40 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    SGF parser running.
+	* libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Tests for DD property.
 
-commit ca6104f42ce93cbf1b370b68536aa3304c325bba
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 22:30:46 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Removed from source control management.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for DD
+	property.
 
-commit cc256cfd4bd3e5f5ba8f639ae274a9ac61ff7743
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 19:19:12 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Ignore files updated.
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c: Check that
+	list of points are not empty.
 
-commit cfcef58066958a2596057726bb7cf29473e94faf
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 19:17:17 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Documentation for libgsgf.
+	* libgsgf/gsgf-list-of.c: Commented on possible empty lists.
 
-commit e3cb12e4c34a7823c64eccc526c57c544ada8dab
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 10 19:14:58 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Tokenizer for SGF files finished.
+	* libgsgf/gsgf-flavor.c: Implementation for properties MA, SL, SQ,
+	and TR.
 
-commit ddfe64ca8dc8904355f81e621eee43ef768bbc09
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 15 10:00:43 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Documentation.
+	* libgsgf/tests/markup-properties.sgf: Check that reverse compressed
+	points lists are possible.
 
-commit 48be9910a200569d840858ce2f475e1c55105774
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 15 10:00:15 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Removed Makefile.in from version control.
+	* libgsgf/tests/lib.c: Prefer first error message.
 
-commit 7b735c7c280107357cc486bb131f8f61ede3f51b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 14 10:43:35 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Added libgsgf/gsgf.h.
+	* TODO: Updated.
 
-commit e96e81fef896995de32fe4267e9c79b6ab0a2f8b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 13 18:52:58 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Re-generated ChangeLog.
+	* libgsgf/tests/test-markup-properties.c: Tests for properties MA,
+	SQ, SL, and TR.
 
-commit 4b06ea067897788f2fbb4d02b235f3cc1901f5b5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 13 18:50:53 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Removed core dump from repository.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for
+	properties MA, SL, SQ, and TR.
 
-commit 7b787defa29b4e8835670b1c4eb9dcc880b0680f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 13 18:49:19 2010 +0200
+2011-02-15  Guido Flohr <guido@imperia.net>
 
-    Foundations for own SGF parser.
+	* libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Collision check test.
 
-commit b5669f40ee0bdbe227cf9e97901de0d0b264f4b4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 12 10:01:27 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    Tests for SGFParser.
+	* libgsgf/gsgf-flavor.c: Display name of incomplete class in error
+	message.
 
-commit 50b5e8f3dfa231ad7a906ca7f6b7f2a73969a22f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 11 19:58:19 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    Stolen from GNU backgammon.
+	* libgsgf/tests/linefeeds.sgf, libgsgf/tests/test-write-linefeeds.c: 
+	Property CR is reserved.
 
-commit a8dadb266dcc1c761955ae7013fefaaf59e74120
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 11 19:56:47 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    Temporarily need strdup().
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit ca643473e58c12389306811858bdc5bac16c01a6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 11 19:54:31 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    Temporarily stolen from GNU backgammon.
+	* libgsgf/gsgf-flavor.c: Implementation for CR property.
 
-commit 858c43fcd6d04cb349d4d3a68d821ade0d8cff87
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 11 19:52:44 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Implementation for CR
+	property.
 
-commit 05179f45a95bae064cf2e8833f61156b2d585c1c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 11 19:47:10 2010 +0200
+2011-02-14  Guido Flohr <guido@imperia.net>
 
-    C++ compatibility.
+	* libgsgf/tests/test-setup-properties.c: Test entire list if points
+	for property AW.
 
-commit 21c9dea29e7a14cf9c68220ffecbf33b8e5444da
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 8 09:29:56 2010 +0200
+2011-02-13  Guido Flohr <guido@imperia.net>
 
-    Stole SGF parser from GNU backgammon.
+	* libgsgf/tests/markup-properties.sgf: Added example for CR
+	property.
 
-commit 41036a3c973f6d7127a2cd0a3f1c50d8bee3a818
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 7 20:18:29 2010 +0200
+2011-02-13  Guido Flohr <guido@imperia.net>
 
-    Parser-generator tools are required.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for
+	property CR.
 
-commit 488457e5a2524860384eb5bd27b69a58f7279bae
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 7 20:13:38 2010 +0200
+2011-02-13  Guido Flohr <guido@imperia.net>
 
-    Library libsgf.a is too specific to GNU go.
+	* libgsgf/gsgf-flavor.c: Fixed check for duplicates.
 
-commit c62e5649af7613e184156ead325861c1734ce566
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 7 18:49:01 2010 +0200
+2011-02-13  Guido Flohr <guido@imperia.net>
 
-    Stole libsgf from GNU Go.
+	* libgsgf/gsgf-flavor.c: Check for duplicate arrows.
 
-commit 3ec083a63040d5f9ccf419e5b06667fe04e8c6a9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 7 18:11:45 2010 +0200
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Re-generated.
+	* libgsgf/tests/test-markup-properties.c: Test for additional arrow
+	properties.
 
-commit 6520cef80f027d5cb3dec7efbf29f62d9c44455f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 7 18:10:20 2010 +0200
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Require my versions f automake and inttool.
+	* libgsgf/gsgf-flavor.c: Implementation for AR property.
 
-commit f7affd40b205e7a5dac8cfc089c2f0a912b2ddcf
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 09:23:08 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Added.
+	* libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-point-backgammon.c, libgsgf/gsgf-point-backgammon.h: 
+	New constructors for GSGFPoint.
 
-commit e1ef86a1c350f307c67c68c24d5a65d32d3cf353
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 09:07:36 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Issue board command after watch.
+	* libgsgf/gsgf-util.c, libgsgf/gsgf-util.h: End pointer cannot be
+	constant.
 
-commit 415425898a8e9fd614e21fc63a037d821b41c5d8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 08:41:21 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Skeleton for match and game objects.
+	* libgsgf/tests/markup-properties.sgf: Fixed composed syntax.
 
-commit 54160de032b4ca3ead2517378c541c0af0e83a1d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 08:31:32 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Reminder for GResolver API added.
+	* libgsgf/tests/test-markup-properties.c: Test for correct number of
+	arrows.
 
-commit 68fa61d9d4fc02c9a51bdb239ad72b87d95e0b4e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 08:30:52 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Ignore private skeleton file.
+	* libgsgf/tests/test-markup-properties.c: Check that arrow list is a
+	GSGFListOf of GSGFCompose.
 
-commit 5deed1ab124b5770507afea712ac02c69fff1a92
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 08:11:40 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Keep tracking of current opponent and watchee.
+	* libgsgf/gsgf-flavor.c: Return GSGFListOf for AR property.
 
-commit 1e3741475a45d93e7bf19ffce4d7f394ac290270
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 07:42:53 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Glade file replaced by XML builder file data/gibbon.xml.
+	* libgsgf/tests/Makefile.am, libgsgf/tests/markup-properties.sgf,
+	libgsgf/tests/test-markup-properties.c: Base for AR property
+	testing.
 
-commit c38684d6ddf44e8a40cca718fbe16a3522683556
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 5 00:12:48 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Keep track of current user, opponent and watches.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for AR
+	property.
 
-commit d82ca089205f9295b643b11a56679444f318baa7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 18:54:27 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Always set boardstyle to parsable format.
+	* TODO, libgsgf/gsgf-flavor.c, libgsgf/tests/test-node-annotation.c: 
+	Made test independent of property order.
 
-commit dbaa125cea9d661ba3594eb7d38d80d04fbbb14f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 18:53:40 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Do not g_free() session but g_object_unref() it.
+	* libgsgf/gsgf-flavor.c: Implementation for move annotation
+	properties.
 
-commit ecfa82628a25568cb41095d4e8d78e504a4cda4e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 18:53:17 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Only finalize existing connection.
+	* libgsgf/gsgf-node.c: Fixed handling of losers (segfaulted before).
 
-commit f0edd9047034598ad829554e72cf25e56e07c7db
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 18:52:45 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Menu items are now widgets again, not actions.
+	* libgsgf/tests/test-move-annotation.c: Fixed node counting and
+	check for multiple errors.
 
-commit 2f5b6f020863778dccc27d3204976167f82afd97
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 17:56:47 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Store svg components for dice.
+	* libgsgf/tests/move-annotation.sgf: Typo fixed.
 
-commit f960337ff09f868bb2966df46ab66bec611bcd11
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 17:35:19 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Keep svg files with and without internal entities.
+	* libgsgf/tests/lib.c, libgsgf/tests/test.h: Allow multiple errors;
+	fixed various flaws.
 
-commit c43c4b525284cd91c8b591bd5b920b2a7c1b17da
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 17:30:00 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Added dice.
+	* libgsgf/tests/test-move-annotation.c: Prefix error messages.
 
-commit af350c024979f39a47190bb132fdc045df12c52a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 16:00:09 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Display checkers.
+	* libgsgf/tests/Makefile.am, libgsgf/tests/lib.c,
+	libgsgf/tests/move-annotation.sgf,
+	libgsgf/tests/test-move-annotation.c, libgsgf/tests/test.h: Tests
+	for move annotation properties.
 
-commit 0c355e8619700c50d36e3766ca0ac71d23bdbd2e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 14:46:24 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Finalized connection object on exit to make valgrind happy.
+	* docs/reference/libgsgf/flavor-general.xml: Doubtful move is marked
+	with DO, not DM.
 
-commit b82311d9c43f41afa5fe7b73e3f8846b55461ac7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 14:45:50 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Menu items are widgets once again, not actions.
+	* docs/reference/libgsgf/flavor-general.xml: Documentation for move
+	annotation properties.
 
-commit be79524ec00062b40ca68d65528501933d311382
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 13:31:44 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Size allocation for server output window.
+	* docs/reference/libgsgf/flavor-general.xml: Fixed links and section
+	ids.
 
-commit 57fcbddbefc4b833e11bd3fcce92f15f5bec8880
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 4 13:27:10 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Changed hardcoded default dimensions.
+	* libgsgf/gsgf-node.c, libgsgf/gsgf-private.h: Schedule properties
+	for deletion.
 
-commit 84c900d1dea5473c9949d93519b23804665c1756
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Oct 3 13:31:00 2010 +0300
+2011-02-12  Guido Flohr <guido@imperia.net>
 
-    Replaced deprecated function png_set_gray_1_2_4_to_8 with
-    png_set_expand_gray_1_2_4_to_8.
+	* libgsgf/gsgf-real.c: Changed precision for gsgf_real_to_string to
+	17 digits.
 
-commit 7148aaa031799215b76984d106d5a05cbad2a536
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon May 24 12:43:33 2010 +0200
+2011-02-11  Guido Flohr <guido@imperia.net>
 
-    Match actual image size.
+	* libgsgf/gsgf-real.c, libgsgf/tests/test-real-to-string.c: Use
+	printf for number formatting.
 
-commit 4cd664353e45501713e508f83df731eefe5fe7fe
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon May 24 12:42:44 2010 +0200
+2011-02-11  Guido Flohr <guido@imperia.net>
 
-    Glade-3 now supports GtkBuilder natively.  But we need gtk+-2.16.
+	* TODO: Updated.
 
-commit 06217c7d6d3bd31c561c0229a5c91ef8ecf724a6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Dec 8 13:39:25 2009 +0100
+2011-02-11  Guido Flohr <guido@imperia.net>
 
-    Reverted last commit.
+	* docs/reference/libgsgf/libgsgf-docs.xml: Added id attribute to
+	anonymous elements, fruitless. :-(
 
-commit f39c7054c56ff76bcd7c0ff65e1a475ae5fa1409
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Dec 8 13:35:11 2009 +0100
+2011-02-11  Guido Flohr <guido@imperia.net>
 
-    Test.
+	* docs/reference/libgsgf/libgsgf-docs.xml: Fixed online location.
 
-commit 170489f8d2773dadf6498e18d0b7640362f16ddc
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 30 10:32:36 2009 +0100
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Valgrind stuff.
+	* libgsgf/tests/test-node-annotation.c: - No i18n in tests.  - Temporary fix for hashing problem in tests.
 
-commit 963e5f7e245db1b71762427793ef1630d8f15075
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Nov 29 15:13:53 2009 +0100
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Fixed memory leak.
+	* po/POTFILES.in: Updated.
 
-commit 47b9bb75517c62eab48ba8d7c90a05bb5ee226b7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Nov 11 09:52:12 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Foundations for drawing flat checkers.
+	* libgsgf/tests/test-real-to-string.c: Test for real to string
+	conversion.
 
-commit 47cfa1b1b6bf50ba4c49eec6eb276960c7fee5f6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 09:54:34 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Simplified interface for svg_util_get_dimensions.
+	* libgsgf/gsgf-property.c: Applying flavor can fail gracefully.
 
-commit a7d0c725125d7ca1503e82cde6cc9c8fe696c370
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 09:41:35 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Cleaned up constructor.
+	* libgsgf/gsgf-number.c: Temporary string has to be freed in case of
+	error.
 
-commit 1498afed362679df01ab224403f26b6f2fc637ff
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 09:28:13 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Move code from constructor into separate function.
+	* libgsgf/gsgf-real.c, libgsgf/gsgf-real.h: Method write_stream()
+	implemented.
 
-commit 185099ef6e79ba5ac9494712adc6bfb6a277d393
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 09:27:10 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/tests/Makefile.am: Added test for conversion from double
+	to string.
 
-commit 59e5b971305a96fb42df18d050aef54e9837a28f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 09:09:50 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    More refactoring, clean up constructor.
+	* libgsgf/tests/test-root-properties.c: Better diagnostics.
 
-commit f50bc8a367da7527be4e96126f7a37fde58e4519
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 08:57:17 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Cleanup: Cut some spaghettis into digestable pieces.
+	* libgsgf/gsgf-error.h: Added error for NaN.
 
-commit 21334e95aee8e4043d8865fa0a687e5fad088f2b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 08:37:42 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit 375949446f7c7bc554851b85151e745eac59d612
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Nov 10 08:04:18 2009 +0200
+2011-02-10  Guido Flohr <guido@imperia.net>
 
-    Fixed warnings.
+	* TODO: Updated.
 
-commit d08d92a165a73ba3e48341239afb544a7e74ebee
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 15:52:56 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    - Compile libxml2 parser version.
-    - Link against local libsvg and libsvg-cairo.
+	* TODO: Updated.
 
-commit 68fb55f606f58104af806eb414b27f15f7eb4a0a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 15:51:34 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Check for libjpeg.
+	* libgsgf/gsgf-flavor.c: Fixed return value of
+	gsgf_SZ_new_from_raw().
 
-commit 8d3ebd2a8153bb851c9347ba2753bd88c35c8885
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 15:19:39 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Both libsvg and libsvg-cairo are now included.
+	* libgsgf/gsgf-flavor.c: Implementation for V property.
 
-commit e22220d60ffe615af6e66653d42af5c32dc825e3
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 15:16:48 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Relinsed libsvg and libsvg-cairo to LGPL version 3.
+	* TODO: Updated.
 
-commit 3d8ee353500f560783fd24511115fd5c5dbd923c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 15:16:14 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Relinsed libsvg and libsvg-cairo to LGPL version 3.
+	* libgsgf/tests/test-node-annotation.c: Temporary fix for test.
+	Order of colliding properties is actually arbitrary.
 
-commit 40117e6b04f4649e6c1f88d7078c517c4ca051d8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 14:28:06 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Added new source file.
+	* libgsgf/tests/test-node-annotation.c: Re-activated uniqueness
+	checks.
 
-commit f2a5d2a0e49b16dd2ee282bec5ae991960d0e8eb
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 14:25:15 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Do not version control generated files.
+	* libgsgf/gsgf-real.c, libgsgf/gsgf-real.h: Constructor from raw
+	values for GSGFReal.
 
-commit 2b67fc5582b126446c5872634dfa91b9bf7b2461
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 14:24:29 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Integrate libsvg and libsvg-cairo, so that we can fix bugs there.
+	* libgsgf/gsgf-flavor.c: Implementation for N property.
 
-commit 5a4bf409f1f6b29a43ec545423ae6e4c0db178cf
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 12:15:04 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Fixed potential format string problems/vulnerabilities.
+	* libgsgf/tests/test-node-annotation.c: Fixed expected string for N
+	node.
 
-commit 65991b6b97bdcfc3f7c6f0da17369f1883e5268e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Nov 9 12:04:28 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Allow to remove measured components from SVG board.
+	* libgsgf/gsgf-flavor.c: Implementation for properties GB, GW, DM,
+	and UC.
 
-commit ebe48ab763d22e3d537ec020d8fe5746520e2e81
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 27 09:43:17 2009 +0200
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Calculate dimensions of arbitrary SVG elements.
+	* libgsgf/gsgf-double.c, libgsgf/gsgf-double.h: Finished
+	implementation of GSGFDouble.
 
-commit b40b3d8b4b4b1b9cb0defeed00bc376b1fb8ae5a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 23 09:05:34 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Central routine or updating the dimensions.
+	* libgsgf/tests/test-node-annotation.c: - Deactivated error tests.  - Fixed node counting.
 
-commit 9786de5ff7972e6ec0fb780a4a5700fb68995b29
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Oct 20 22:45:14 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Calculate boundings of arcs.
+	* libgsgf/tests/lib.c: Error argument must be a GError**.
 
-commit a64fef1ee20a422b80dbdc671a8c3f928ff495ff
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 19 10:36:53 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Tiny optimization in calculation of bezier boundings.
+	* libgsgf/gsgf-property.c: Return FALSE when applying flavor fails.
 
-commit fab329a1a50d826df9d282fa2b750c7faefbcb0a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 19 10:23:36 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Stack states.
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-node.c: Code formatting.
 
-commit a8ee192c381aaa7c4d0e0a3c601cfcb1b719e169
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Oct 18 17:41:52 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Basic support for a state stack.
+	* libgsgf/tests/test-node-annotation.c: Function
+	expect_error_from_sgf() destroys expected error.
 
-commit 255dc638cea477ca2485899d61cec90598759058
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 22:04:11 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Implement quadratic_curve_to like in libsvg-cairo.
+	* libgsgf/tests/lib.c: expect_error() returns 0 or -1, not TRUE or
+	FALSE.
 
-commit 66e36f53437c1f517047e313b0a4c73d91c76eb9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 21:38:36 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Calculate the bounding rectangle of cubic Bézier curves.
+	* libgsgf/tests/test-node-annotation.c: Test that DM, GB, GW, and UC
+	are unique within a node.
 
-commit 43538273d9c2b811a7a7f1df28ecfcaf0deb5f71
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 21:11:46 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    More dimension tracking.
+	* libgsgf/tests/lib.c, libgsgf/tests/test.h: Check for simple errors
+	in SGF streams.
 
-commit bb62d9eca36cea9f7833100a4c486b4478d6950e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 00:32:08 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Ignore viewport dimensions?
+	* libgsgf/gsgf-double.c, libgsgf/gsgf-double.h,
+	libgsgf/tests/Makefile.am, libgsgf/tests/node-annotation.sgf,
+	libgsgf/tests/test-node-annotation.c: Tests for node annotation
+	properties.
 
-commit c56686f7ae3f1140ae7ad619ce00462a897725c1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 00:14:20 2009 +0300
+2011-02-09  Guido Flohr <guido@imperia.net>
 
-    Fixed typo.
+	* libgsgf/Makefile.am, libgsgf/gsgf-double.c,
+	libgsgf/gsgf-double.h, libgsgf/gsgf-error.h, libgsgf/gsgf.h: Base
+	for GSGFDouble implementation.
 
-commit 29c948b643ea94122e8795d2c786960fc4ac7e66
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 17 00:08:35 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Track lines and movements in svg.
+	* docs/reference/libgsgf/libgsgf-decl.txt: Updated.
 
-commit 4dfb1d578455f5a61ae8d3ab1a316acfa7eb232a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 16 23:44:53 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Get dimensions of linear draw operations.
+	* libgsgf/tests/compressed-list.sgf.in,
+	libgsgf/tests/setup-properties.sgf: Simplified list compression
+	test.
 
-commit 847778e025991613abf17d7b6b4b0e1fbbab0b15
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 16 20:30:16 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Obsolete stuff deleted.
+	* libgsgf/gsgf-color.c: Implemented write_stream() for GSGFColor.
 
-commit 92c4fdfba2abc8041109e52b5459a842791e0a04
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 16 09:50:16 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Identify svg elements, and render them individually.
+	* TODO: Updated.
 
-commit 575eb9e578aee205755ed1d8b22373637dbcf69e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 15 20:53:38 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Fighting my way to the xml hell.
+	* libgsgf/gsgf-number.c: Free temporary buffer.
 
-commit 709de4c6b269abe56655411a9786d87b1b920ddb
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 12 00:40:20 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Design tweaks.
+	* libgsgf/gsgf-color.c, libgsgf/gsgf-color.h, libgsgf/gsgf-flavor.c: 
+	Implementation for PL property.
 
-commit 039c25b4c05b8a35b05c8cd19aef0c30a16a0150
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Oct 11 10:17:24 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    - pile checkers on points
-    - use arrays instead of coding indices into names for position
+	* libgsgf/tests/.gitignore, libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: Test for all kinds of PL
+	properties.
 
-commit f47c0d978731ea2631a3c2fd844971e54b43481b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 9 14:23:23 2009 +0300
+2011-02-07  Guido Flohr <guido@imperia.net>
 
-    Make board expand with window.
+	* gcreate_class.pl.in: Destructor operates on GObject pointers, not
+	on class.
 
-commit 6547dafa2c175512d3096fda430d2d9bfacb3bd4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 9 10:36:03 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    3D effects for checkers.
+	* libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-list-of.h, libgsgf/tests/compressed-list.sgf.in,
+	libgsgf/tests/test-compressed-list.c: Compress lists of points
+	according to SGF specification.
 
-commit c22511d82737a84750fd52642af621fe26c75efa
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 9 09:06:19 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* TODO: Updated.
 
-commit 0b45232bc69e5ad874c78ebb5f811b3dbdbf1d24
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 9 09:05:52 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Renamed.
+	* configure.ac, libgsgf/tests/.gitignore,
+	libgsgf/tests/Makefile.am, libgsgf/tests/compressed-list.sgf.in,
+	libgsgf/tests/test-compressed-list.c: Test for list compression.
 
-commit 6ae3d6f24fbd4321033db0e1ccf594e43c4a33d6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Oct 9 09:03:55 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Draw doubling cube.
+	* docs/reference/libgsgf/flavor-general.xml: Added new properties.
 
-commit 4d0a24b786990b45d3ce3a539ffc854db40a70d8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 21:28:40 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Draw dice.
+	* libgsgf/tests/test-move-properties.c: Removed unused code.
 
-commit 47fc82b6905634d8d9ce39e0d3d6ee1ce144935a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 10:01:58 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-list-of.c: Typo fixed.
 
-commit 8853404fec9dfa1569a10df2aaae62c2ed7f820d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 09:34:40 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Implemented watch command.
+	* TODO: Updated.
 
-commit e85c641448edc15ed69b02afc176796233664e16
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 09:34:31 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-stone-backgammon.c: Typo fixed.
 
-commit a7709a734a615212e6b328d3e5522aba7ee69da4
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 09:23:04 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Look half-way implemented.
+	* share/icons/Makefile.am: Ship SVG version of application icon.
 
-commit 74722f6e63e7ad4804c8a37f8f9b4bd6f4a337b6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Oct 8 09:22:55 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-stone-backgammon.c: Added implementation of
+	write_stream().
 
-commit 49de67dc9b791bdd317949cecc12280ba2466982
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 23:32:24 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-list-of.c: Split all lists into single points/stones.
 
-commit 073e9e63b67a08e7e07d3c38c82ba3893814a3d7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 23:27:38 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* libgsgf/gsgf-cooked-value.c: Display class name in error message.
 
-commit 8abc756cf484f0784c4358580a17c9b1edd6d880
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 23:08:48 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Force redraw after position change.
+	* libgsgf/gsgf-color.h: Swapped values for black and white.
 
-commit 31814581c4ed94143b47ab0ed6b3cf89b236aed6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 23:04:17 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Update position dynamically (wip).
+	* libgsgf/tests/.gitignore, libgsgf/tests/Makefile.am,
+	libgsgf/tests/gsgf-write-back.c, libgsgf/tests/test-write-stream: 
+	Test for implementation of write_stream and round-trip-safety.
 
-commit 3c895c7d2983103207d22045dee9a78ef18d6361
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 21:23:00 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Look command implemented.
+	* TODO: Updated.
 
-commit 432a87f082174b246199a9c07fde610850e74d53
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 19:38:52 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Display player list.
+	* libgsgf/tests/.gitignore, libgsgf/tests/test-write-stream: New
+	test for SGF write back.
 
-commit 860e41dacf4274d70901639c93ff2293513ac217
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 09:03:16 2009 +0300
+2011-02-04  Guido Flohr <guido@imperia.net>
 
-    Get GNU autotools and similar files out of Git.
+	* libgsgf/tests/Makefile.am: Added non-unique-points.sgf.
 
-commit 9968bba4bdc9b3264fd063b1af5e34da6d1203af
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Oct 7 08:40:01 2009 +0300
+2011-02-03  Guido Flohr <guido@imperia.net>
 
-    Skeleton for skinnable design class.
+	* share/icons/application/128x128/Makefile.am,
+	share/icons/application/16x16/Makefile.am,
+	share/icons/application/22x22/Makefile.am,
+	share/icons/application/24x24/Makefile.am,
+	share/icons/application/256x256/Makefile.am,
+	share/icons/application/32x32/Makefile.am,
+	share/icons/application/48x48/Makefile.am: Fixed path to source SVG
+	for separate build directory.
 
-commit 027e4f74a5993131458e37382c9d1da726990831
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 5 18:38:50 2009 +0300
+2011-02-03  Guido Flohr <guido@imperia.net>
 
-    Parse rawwho output.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt: Docs for GSGFColor.
 
-commit 61c9b419b3ee8ec56a81f039a56a7400074f9031
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Oct 5 18:31:48 2009 +0300
+2011-02-03  Guido Flohr <guido@imperia.net>
 
-    Fixed strange problem with Glade (vbox objects were turned 90 degrees).
+	* libgsgf/Makefile.am, libgsgf/gsgf-color.c, libgsgf/gsgf-color.h,
+	libgsgf/gsgf.h: Base for GSGFColor implementation.
 
-commit 778656758e6e1d03df6cbd6762c12e127d57c86c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Oct 4 11:35:40 2009 +0300
+2011-02-03  Guido Flohr <guido@imperia.net>
 
-    Write number of checkers on piles.
+	* gcreate_class.pl.in: Output formatting.
 
-commit 91ffb7187c28abc2fd4ba903211ac54ab7dd264d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sun Oct 4 11:09:47 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Draw dice.
+	* gcreate_class.pl.in: - Do not patch Makefile.am twice.  - Fixed various small errors.
 
-commit bdfe0cef4f42100595639b07b17c266b0823ad61
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 3 21:02:34 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Updated.
+	* .gitignore, Makefile.am, configure.ac, gcreate_class.in,
+	gcreate_class.pl.in: Added Perl extender to file and removed x bit.
 
-commit 06c8fab6355c26e7066caf80deaaf0294ab133ca
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 3 20:16:26 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Show doubling cube.
+	* Makefile.am, m4/gcreate_class.m4: Let configure search for chmod.
 
-commit 78f25392da19d4bf3cb65b970aac0c67c1a7ba37
-Merge: b80fced e185585
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 3 18:43:01 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Merge branch 'master' of ssh://guido-flohr.net/var/git/c/gibbon
+	* gcreate_class.in, m4/gcreate_class.m4: Prefix autoconf variable
+	PERL.
 
-commit b80fced95c6c922a4af29567a58f08f6c936864c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 3 18:42:30 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Draw checkers.
+	* .gitignore, Makefile.am, configure.ac, gcreate_class,
+	gcreate_class.in, m4/gcreate_class.m4: Integrated class creator into
+	autotools.
 
-commit 9c46e2b8ed9234f21d4a29c5b3b0395c2f621d44
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Oct 3 18:41:30 2009 +0300
+2011-02-02  Guido Flohr <guido@imperia.net>
 
-    Handle abnormal conditions on input channel.
+	* configure.ac, gcreate_class.in: Work in progress: GLib class
+	creator.
 
-commit e185585a78d9198505e9f9298f387308cc706218
-Author: unknown <guido@.(none)>
-Date:   Wed Sep 30 18:41:05 2009 +0300
+2011-02-01  Guido Flohr <guido@imperia.net>
 
-    Removed cut and paste garbage.
+	* create_class.pl, gcreate_class, gcreate_class.in, m4/.gitignore,
+	m4/gcreate_class.m4: GLib class creator.
 
-commit c47a87e158f633f8f48aaf3cadf68e7b610272ee
-Author: unknown <guido@.(none)>
-Date:   Wed Sep 30 18:40:43 2009 +0300
+2011-01-31  Guido Flohr <guido@imperia.net>
 
-    Can now connect under MS-DOS.
+	* create_class.pl: Initial commit.
 
-commit 4e61c05735985daa69e241fcf11ae4cb975dfaac
-Author: Guido Flohr <guido@imperia.net>
-Date:   Wed Sep 30 09:49:56 2009 +0300
+2011-01-29  Guido Flohr <guido@imperia.net>
 
-    Diagnose crash (probably on server disconnect).
+	* docs/reference/libgsgf/libgsgf-docs.xml: Restructured.
 
-commit 4025982d5d1abd69cab9c9c6282a899902b5019d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 29 22:50:44 2009 +0300
+2011-01-29  Guido Flohr <guido@imperia.net>
 
-    Updated, fixme: Ungit stuff generated by autogen.sh.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt, libgsgf/gsgf-point.c,
+	libgsgf/gsgf-point.h, libgsgf/gsgf-stone-backgammon.c,
+	libgsgf/gsgf-stone.h, libgsgf/gsgf-util.c: All libgsgf symbols are
+	now documented.
 
-commit 620b9ac639349d4219ab3be3758281d5bace038a
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 29 22:48:36 2009 +0300
+2011-01-28  Guido Flohr <guido@imperia.net>
 
-    Ran autoupdate.
+	* libgsgf/gsgf-error.h: Fixed missing documentation paragraph.
 
-commit dd2cd4b2bcc09c33d6b2b61bbfaca26a24c1092a
-Author: unknown <guido@.(none)>
-Date:   Tue Sep 29 19:33:46 2009 +0300
+2011-01-28  Guido Flohr <guido@imperia.net>
 
-    More MS-DOS modifications.
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-compose.h, libgsgf/gsgf-list-of.h,
+	libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move.h,
+	libgsgf/gsgf-point-backgammon.c: Added documentation.
 
-commit 483524501d73aec0ea438ce3ae02de59086cea3e
-Author: unknown <guido@.(none)>
-Date:   Tue Sep 29 19:29:57 2009 +0300
+2011-01-28  Guido Flohr <guido@imperia.net>
 
-    Include MS-DOS DNS stuff.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Re-generated.
 
-commit 1093c3162a717af821570a91dc84791e14bffd5c
-Author: unknown <guido@.(none)>
-Date:   Tue Sep 29 18:09:50 2009 +0300
+2011-01-28  Guido Flohr <guido@imperia.net>
 
-    Gibbon now compiles and links on MS-DOS 7.0.
+	* libgsgf/gsgf-stone-backgammon.h, libgsgf/gsgf-text.h: Gtk-doc
+	issues.
 
-commit 8ca660aa1d6d8eb1d8eab97eaccf40647fdaefab
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 29 10:44:49 2009 +0300
+2011-01-28  Guido Flohr <guido@imperia.net>
 
-    Make the bar narrower.
+	* : commit e6b931f3a7f817f90d9137c96ea1859a5b33d730 Author: Guido
+	Flohr <guido@imperia.net> Date:   Fri Jan 28 00:28:30 2011 +0200
 
-commit ac199efea11ec5e1acc9050cbd1313236a874732
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 29 10:15:10 2009 +0300
+2011-01-27  Guido Flohr <guido@imperia.net>
 
-    Draw crude board.
+	* : commit 1138e2dee9e139724d5bfe9e9554c1546c49a677 Author: Guido
+	Flohr <guido@imperia.net> Date:   Thu Jan 27 10:50:35 2011 +0200
 
-commit 00d458e7a60f99c57cd370cca85a55438bbdd80d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 28 23:29:33 2009 +0300
+2011-01-17  Guido Flohr <guido@imperia.net>
 
-    Drawing a board, wip.
+	* libgsgf/gsgf-game-tree.h, libgsgf/gsgf-move.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-number.h, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point-backgammon.h, libgsgf/gsgf-point.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h, libgsgf/gsgf-real.c,
+	libgsgf/gsgf-real.h, libgsgf/gsgf-simple-text.h,
+	libgsgf/gsgf-stone-backgammon.c, libgsgf/gsgf-stone-backgammon.h,
+	libgsgf/gsgf-stone.h, libgsgf/gsgf-text.c, libgsgf/gsgf-text.h: 
+	Gtk-doc and formatting.
 
-commit b07d2c2d9ad1ebfed8060d4c6969c6810cf50c08
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 28 10:19:18 2009 +0300
+2011-01-17  Guido Flohr <guido@imperia.net>
 
-    Removed debugging output.
+	* libgsgf/gsgf-game-tree.h, libgsgf/gsgf-move.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-number.h, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point-backgammon.h, libgsgf/gsgf-point.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h: Gtk-doc and formatting.
 
-commit e463579bccd48439b6b86fc48869c6a7f24ce364
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 28 10:16:41 2009 +0300
+2011-01-17  Guido Flohr <guido@imperia.net>
 
-    Base for board display.
+	* libgsgf/gsgf-flavor-backgammon.h, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-game-tree.h, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-list-of.h: Fixed gtk-doc comments.
 
-commit e0441907599f9a24339a098b0b9dc4ac4dd92cfc
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 22:53:03 2009 +0300
+2011-01-17  Guido Flohr <guido@imperia.net>
 
-    Signal connections seem to survive destruction of an object.  Do they?
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit 459d16bb79048a186d2d5607dc2b4a3626c01e88
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 22:34:09 2009 +0300
+2011-01-16  Guido Flohr <guido@imperia.net>
 
-    More changes needed for sending address.
+	* libgsgf/gsgf-collection.h, libgsgf/gsgf-compose.h,
+	libgsgf/gsgf-cooked-value.h, libgsgf/gsgf-empty.h,
+	libgsgf/gsgf-error.h: Formatting.
 
-commit 555ffbc29a768e2212a841da0be3e58d99b3f964
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 22:16:21 2009 +0300
+2011-01-16  Guido Flohr <guido@imperia.net>
 
-    Set mail address after login.
+	* libgsgf/gsgf-move-backgammon.h: Removed illegal character in
+	comment.
 
-commit acf3a5b6cb513d5de475ce057b7ada1961d9b79d
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 17:28:44 2009 +0300
+2011-01-16  Guido Flohr <guido@imperia.net>
 
-    Save user address.
+	* : commit 8ed091cac14da7b71849dc5350b200b11d40a630 Author: Guido
+	Flohr <guido@imperia.net> Date:   Sat Jan 15 14:25:55 2011 +0100
 
-commit 5d8a25f98b7293796baa276b6e13044f306427de
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 16:59:25 2009 +0300
+2011-01-15  Guido Flohr <guido@imperia.net>
 
-    Allow re-connect.
+	* po/POTFILES.in: Updated.
 
-commit 55c598936c61906869c710f031557a1bed68ac24
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 16:40:38 2009 +0300
+2011-01-15  Guido Flohr <guido@imperia.net>
 
-    Fixed core dump on second connect.
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h,
+	libgsgf/gsgf-list-of.c, libgsgf/gsgf-move-backgammon.h,
+	libgsgf/gsgf-move.h: Fixes for gtk-doc.
 
-commit e58ea3351b7dd2d5411c712b92bf45c05b3c8ca6
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 16:11:54 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Scroll server output text view to end of output.
+	* configure.ac: Fixed macro call.
 
-commit bcde292650c777eeb44e3d0b67774add30679ae8
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 15:32:17 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Display login status in status bar.
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-point-backgammon.c, libgsgf/gsgf-stone-backgammon.c: 
+	Fixed gtk-doc.
 
-commit 843e74539ba7485a2833851aa7cc342709794136
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 12:03:52 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    - German translation.
-    - I18N issues.
-    - Packaging.
+	* src/gui.c: Fixed warning.
 
-commit 4f91c964f333c9cbe360580702d7506431a9a241
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 25 09:41:01 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Can now successfully login.
+	* src/gibbon-player-list.c: Fixed warnings about invalid cast.
 
-commit 8bf20fd7c528fbb8cf7df78e68e100a8ba55e24f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Sep 24 23:24:24 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Can not connect.
+	* libgsgf/gsgf-compose.c: Fixed warning.
 
-commit 633750963d4dbb32cd41aabf485c632f13f9fa95
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Sep 24 19:20:17 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Can now connect.
+	* libgsgf/gsgf-flavor.c: Fixed warning.
 
-commit 5354aa6863270b68c2e7ece27bf54f5f08cb3cf1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Sep 24 15:15:36 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Obsolete stuff.
+	* libgsgf/examples/gsgf_list_bg.c, libgsgf/gsgf-empty.c,
+	libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor-backgammon.h,
+	libgsgf/gsgf-flavor.c, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-number.c, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point.h, libgsgf/gsgf-property.c, libgsgf/gsgf-real.c,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-text.c,
+	src/gibbon-cairoboard.c, src/gui.c, src/svg-util.c: Fixed warning.
 
-commit c728f12122127b7aa6563d1f5f6f3abf6567e0f1
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Sep 24 15:15:01 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    More exclude patterns.
+	* .gitignore: Exclude Debug directory for Mac OS X.
 
-commit 57b1d7fc418ecff5557146ec39e37175cfb60d5b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Thu Sep 24 15:14:36 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Thread-safe resolving and connecting.
+	* libgsgf/tests/test-compose.c: Need test.h for prototypes.
 
-commit 1eced2aa313cd8415611685b95589e9fa791070b
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 22 16:55:12 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    A little bit more information.
+	* libgsgf/tests/test-real.c: Need private include for prototypes.
 
-commit c095f14b7ed171853b8c3a30a25bae92ea70c664
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 22 16:54:53 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Save connection settings.
+	* libgsgf/gsgf-private.h: Fixed include path and prototype.
 
-commit ab41298ba6ca890555c8e75d344e4eae581f0cb2
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 22 14:59:57 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Generated.
+	* libgsgf/tests/test.h: Fixed typo (may cause segfault with
+	optimization).
 
-commit 34a958a082f1223a718abbb2de9e0717b78eec63
-Author: Guido Flohr <guido@imperia.net>
-Date:   Tue Sep 22 14:47:38 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Asynchronous hostname resolution now working.
+	* libgsgf/gsgf-raw.c: Do not return with a value.
 
-commit df01d7c0dbe2ad98b138afdaa204146d4e5456e5
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 21 23:50:56 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Made ready for distcheck makefile target.
+	* configure.ac: intltool 0.40.6 is good enough for gibbon.
 
-commit ca1d7a3f70dc755d8cb513aecf950b447bdd6478
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 21 22:17:37 2009 +0300
+2011-01-14  Guido Flohr <guido@imperia.net>
 
-    Do not track configure.
+	* autogen.sh: The mac has glibtoolize, not libtoolize.
 
-commit c06e3bfa65a83865e94ce250b4d5cb17ae9d4312
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 21 22:17:01 2009 +0300
+2011-01-13  Guido Flohr <guido@imperia.net>
 
-    Changed license to GPL v3.
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point.c, libgsgf/gsgf-point.h,
+	libgsgf/tests/test-non-unique-points.c: Return error for non-unique
+	lists of points.
 
-commit 2d18b543d33abdc98d268a871f5219e5c444810c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Mon Sep 21 21:12:57 2009 +0300
+2011-01-13  Guido Flohr <guido@imperia.net>
 
-    Can now connect and disconnect with stubs for DNS.
+	* libgsgf/gsgf-error.h, libgsgf/tests/Makefile.am,
+	libgsgf/tests/non-unique-points.sgf,
+	libgsgf/tests/test-non-unique-points.c: Test for unique points in
+	list of points.
 
-commit 14aebe80e804073c96cc6e33b17e3197762df29c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Sat Sep 19 14:11:49 2009 +0300
+2011-01-13  Guido Flohr <guido@imperia.net>
 
-    Connection dialog.
+	* Makefile.am, autogen.sh, configure.ac, data/Makefile.am,
+	docs/Makefile.am, docs/reference/Makefile.am,
+	docs/reference/libgsgf/Makefile.am, libgsgf/Makefile.am,
+	libgsgf/examples/Makefile.am, libgsgf/examples/gsgf_list_bg.c,
+	libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-compose.c, libgsgf/gsgf-compose.h,
+	libgsgf/gsgf-cooked-value.c, libgsgf/gsgf-cooked-value.h,
+	libgsgf/gsgf-empty.c, libgsgf/gsgf-empty.h, libgsgf/gsgf-error.c,
+	libgsgf/gsgf-error.h, libgsgf/gsgf-flavor-backgammon.c,
+	libgsgf/gsgf-flavor-backgammon.h, libgsgf/gsgf-flavor-protected.h,
+	libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h,
+	libgsgf/gsgf-list-of.c, libgsgf/gsgf-list-of.h,
+	libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move-backgammon.h,
+	libgsgf/gsgf-move.c, libgsgf/gsgf-move.h, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-node.h, libgsgf/gsgf-number.c, libgsgf/gsgf-number.h,
+	libgsgf/gsgf-point-backgammon.c, libgsgf/gsgf-point-backgammon.h,
+	libgsgf/gsgf-point.c, libgsgf/gsgf-point.h, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h, libgsgf/gsgf-real.c,
+	libgsgf/gsgf-real.h, libgsgf/gsgf-simple-text.c,
+	libgsgf/gsgf-simple-text.h, libgsgf/gsgf-stone-backgammon.c,
+	libgsgf/gsgf-stone-backgammon.h, libgsgf/gsgf-stone.c,
+	libgsgf/gsgf-stone.h, libgsgf/gsgf-text.c, libgsgf/gsgf-text.h,
+	libgsgf/gsgf-util.c, libgsgf/gsgf-util.h, libgsgf/gsgf.h,
+	libgsgf/libgsgf.c, libgsgf/tests/Makefile.am, libgsgf/tests/lib.c,
+	libgsgf/tests/main.c, libgsgf/tests/test-compose.c,
+	libgsgf/tests/test-convert.c, libgsgf/tests/test-empty.c,
+	libgsgf/tests/test-full.c, libgsgf/tests/test-minimal.c,
+	libgsgf/tests/test-move-properties.c,
+	libgsgf/tests/test-multi-game-tree.c,
+	libgsgf/tests/test-nested-game-tree.c, libgsgf/tests/test-number.c,
+	libgsgf/tests/test-real.c, libgsgf/tests/test-really-empty.c,
+	libgsgf/tests/test-root-properties.c,
+	libgsgf/tests/test-setup-properties.c,
+	libgsgf/tests/test-util-read-simpletext.c,
+	libgsgf/tests/test-util-read-text.c,
+	libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c, libgsgf/tests/test.h,
+	libsvg-cairo/Makefile.am, libsvg-cairo/svg-cairo-internal.h,
+	libsvg-cairo/svg-cairo.h, libsvg-cairo/svg_cairo.c,
+	libsvg-cairo/svg_cairo_sprintf_alloc.c,
+	libsvg-cairo/svg_cairo_state.c, libsvg/Makefile.am, libsvg/svg.c,
+	libsvg/svg.h, libsvg/svg_ascii.c, libsvg/svg_ascii.h,
+	libsvg/svg_attribute.c, libsvg/svg_color.c, libsvg/svg_element.c,
+	libsvg/svg_gradient.c, libsvg/svg_group.c, libsvg/svg_image.c,
+	libsvg/svg_length.c, libsvg/svg_paint.c, libsvg/svg_parser.c,
+	libsvg/svg_parser_libxml.c, libsvg/svg_path.c,
+	libsvg/svg_pattern.c, libsvg/svg_str.c, libsvg/svg_style.c,
+	libsvg/svg_text.c, libsvg/svg_transform.c, libsvg/svgint.h,
+	pixmaps/Makefile.am, po/LINGUAS, po/POTFILES.in, po/de.po,
+	share/Makefile.am, share/icons/Makefile.am,
+	share/icons/application/128x128/Makefile.am,
+	share/icons/application/16x16/Makefile.am,
+	share/icons/application/22x22/Makefile.am,
+	share/icons/application/24x24/Makefile.am,
+	share/icons/application/256x256/Makefile.am,
+	share/icons/application/32x32/Makefile.am,
+	share/icons/application/48x48/Makefile.am,
+	share/icons/application/Makefile.am, src/Makefile.am, src/game.h,
+	src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gibbon-connection.c, src/gibbon-connection.h,
+	src/gibbon-connector.c, src/gibbon-connector.h, src/gibbon-game.c,
+	src/gibbon-game.h, src/gibbon-match.c, src/gibbon-match.h,
+	src/gibbon-player-list.c, src/gibbon-player-list.h,
+	src/gibbon-session.c, src/gibbon-session.h, src/gibbon.c,
+	src/gibbon.h, src/gtkconnectiondialog.c, src/gtkmainwindow.c,
+	src/gui.c, src/gui.h, src/svg-util.c, src/svg-util.h: Updated
+	copyright date.
 
-commit 6a0c172927faf6a57369ce3fedeaf640d8729e4f
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 19:56:08 2009 +0300
+2011-01-13  Guido Flohr <guido@imperia.net>
 
-    Packing more or less solved.
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
 
-commit 713f0953ff7e2c9c4e6bd82ec6f965abf7200d6c
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 18:07:40 2009 +0300
+2011-01-13  Guido Flohr <guido@imperia.net>
 
-    More packing tweaks.  TODO: lower left pane must fill but not expand.
+	* libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point-backgammon.h, libgsgf/gsgf-point.h,
+	libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: List of points for property
+	AE.
 
-commit a8ac682b3859de26c039e8daeb0ac0370ec28cf7
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 18:03:13 2009 +0300
+2011-01-11  Guido Flohr <guido@imperia.net>
 
-    Packing now basically working.  TODO: Combo should not expand or fill.
+	* Makefile.am, configure.ac, share/Makefile.am,
+	share/icons/Makefile.am,
+	share/icons/application/128x128/Makefile.am,
+	share/icons/application/16x16/Makefile.am,
+	share/icons/application/22x22/Makefile.am,
+	share/icons/application/24x24/Makefile.am,
+	share/icons/application/256x256/Makefile.am,
+	share/icons/application/32x32/Makefile.am,
+	share/icons/application/48x48/Makefile.am,
+	share/icons/application/Makefile.am, share/icons/gibbon.svg: 
+	Application icons.
 
-commit def8418a04cef64b4cf14b57b65f8517585928ce
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 17:54:41 2009 +0300
+2011-01-10  Guido Flohr <guido@imperia.net>
 
-    Packing re-done, wip.
+	* libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: Test for AE property.
 
-commit 92b05b1a340fc75e6f08b8a7082d28639de680cd
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 17:54:20 2009 +0300
+2011-01-10  Guido Flohr <guido@imperia.net>
 
-    Git infrastructure.
+	* libgsgf/Makefile.am, libgsgf/gsgf-flavor-backgammon.c,
+	libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-stone-backgammon.c, libgsgf/gsgf-stone-backgammon.h,
+	libgsgf/gsgf-stone.c, libgsgf/gsgf-stone.h, libgsgf/gsgf.h,
+	libgsgf/tests/test-setup-properties.c: Setup properties in use
+	stones, not points.
 
-commit 65ee037a0ede3ee0e284e72e122a27ffc84fcdc9
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 17:29:51 2009 +0300
+2011-01-09  Guido Flohr <guido@imperia.net>
 
-    Git infrastructure.
+	* libgsgf/gsgf-flavor.c: Handlers can be static.
 
-commit 102abf97633fca5bddb92cf70f81afd09251ef3e
-Author: Guido Flohr <guido@imperia.net>
-Date:   Fri Sep 18 17:29:33 2009 +0300
+2011-01-09  Guido Flohr <guido@imperia.net>
 
-    Skeleton for GUI.
+	* libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point-backgammon.h,
+	libgsgf/tests/test-setup-properties.c: Use correct raw subvalue for
+	setup properties.
 
-commit 299bcb801fc3b82c9577038d2cd89ecead1d4cb5
-Author: guido <guido@localhost.localdomain>
-Date:   Wed Sep 16 18:15:23 2009 +0300
+2011-01-09  Guido Flohr <guido@imperia.net>
 
-    Skeleton for Gtk+ app with glade and GtkBuilder.
+	* libgsgf/tests/test-setup-properties.c: Test for property AW.
 
-commit 939b2894aac8969643d1adc723148d198b8221a7
-Author: guido <guido@localhost.localdomain>
-Date:   Wed Sep 16 14:33:44 2009 +0300
+2011-01-08  Guido Flohr <guido@imperia.net>
 
-    Skeleton for build.
+	* libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: Simplified test.
 
-commit 28f1f0ed23555671ad4cc2f60268b330da37c492
-Author: guido <guido@localhost.localdomain>
-Date:   Wed Sep 16 13:10:23 2009 +0300
+2011-01-08  Guido Flohr <guido@imperia.net>
 
-    New.
+	* libgsgf/gsgf-list-of.c, libgsgf/gsgf-list-of.h: 
+	gsgf_list_of_get_value() -> gsgf_list_of_get_nth_item()
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-list-of.h: Append points to list of points.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-error.h: New error for wrong library usage.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-list-of.c, libgsgf/gsgf-list-of.h,
+	libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: Check for correct number of
+	items.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-error.h, libgsgf/gsgf-flavor-backgammon.c,
+	libgsgf/gsgf-flavor.c: Create points for AB property.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-list-of.h: Type handling for GSGFListOf.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-setup-properties.c: Check correct item type of
+	GSGFListOf.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-error.h,
+	libgsgf/gsgf-flavor-backgammon.c, libgsgf/gsgf-point-backgammon.c,
+	libgsgf/gsgf-point-backgammon.h, libgsgf/gsgf.h: GSGFPointBackgammon
+	implementation.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h: Factory method for
+	point creation.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Use correct type for list of points.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-point.c, libgsgf/gsgf-point.h,
+	libgsgf/gsgf.h: GSGFPoint implementation.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Skeleton for SGF AB property.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-list-of.c, libgsgf/gsgf-list-of.h: Variadic
+	constructor does not make sense for GSGFListOf.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-list-of.c, libgsgf/gsgf-list-of.h: Made GSGFListOf
+	type-safe.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-setup-properties.c: Test that AB property is a
+	GSGFListOf.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-list-of.c,
+	libgsgf/gsgf-list-of.h, libgsgf/gsgf.h: Skeleton for SGF "list of"
+	type.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/setup-properties.sgf,
+	libgsgf/tests/test-setup-properties.c: Test skeleton for setup
+	properties.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Support for KO property.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/overview.xml: Comments on SGF.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-empty.c, libgsgf/gsgf-empty.h,
+	libgsgf/gsgf.h: Empty SGF properties.
+
+2011-01-08  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Test for KO property.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Implementation for MN move property.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: GSGFNumber stores gint64,
+	not gdouble.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Test for MN move property.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-move-backgammon.c: Fixed typo.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: Test for backgammon drop.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: Test for backgammon take.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: Test for backgammon double.
+
+2011-01-06  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Tests for regular backgammon
+	moves.
+
+2011-01-05  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/examples/gsgf_list_bg.c, libgsgf/gsgf-move-backgammon.c,
+	libgsgf/gsgf-move-backgammon.h,
+	libgsgf/tests/test-move-properties.c: Handle doubles, takes, and
+	drops.
+
+2011-01-03  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move-backgammon.h,
+	libgsgf/tests/test-move-properties.c: Getter methods for source and
+	target points in backgammon.
+
+2011-01-03  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: Test source and target
+	points for backgammon moves.
+
+2011-01-03  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move-backgammon.h,
+	libgsgf/tests/test-move-properties.c: Check for regular backgammon
+	moves.
+
+2011-01-02  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-move-properties.c: Test for backgammon moves.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: Ignore core dumps.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-error.h, libgsgf/gsgf-flavor-backgammon.c,
+	libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move-backgammon.h,
+	libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Basic implementation for
+	Backgammon moves.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Check for unique move in node.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-number.c, libgsgf/gsgf-number.h,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-simple-text.h,
+	libgsgf/tests/test-number.c: Raw contructor need a GSGFProperty.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Crude implementation for B and W
+	properties.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Property KO is actually empty.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Allow single char property ids.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-move-backgammon.c, libgsgf/gsgf-move.c,
+	libgsgf/gsgf-move.h, libgsgf/gsgf.h: GSGFMove must inherit from
+	GSGFCookedValue.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-backgammon.c: Work in progress: Game-specific
+	moves.
+
+2010-12-28  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Implementation for KO property.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-number.h, libgsgf/gsgf-simple-text.c,
+	libgsgf/gsgf-simple-text.h, libgsgf/gsgf-text.c,
+	libgsgf/gsgf-text.h, libgsgf/tests/test-number.c: Refactoring: raw
+	constructors need the flavor.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/move-properties.sgf,
+	libgsgf/tests/test-move-properties.c: Test for KO move property.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf.c: Create backgammon flavor.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: get_cooked_value() is always implemented.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-backgammon.h: Fixed typo.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* autogen.sh, configure.ac, docs/reference/libgsgf/.gitignore,
+	docs/reference/libgsgf/Makefile.am,
+	docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt,
+	docs/reference/libgsgf/libgsgf.types, libgsgf/Makefile.am,
+	libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-compose.h, libgsgf/gsgf-cooked-value.c,
+	libgsgf/gsgf-error.c, libgsgf/gsgf-error.h, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-property.h, libgsgf/gsgf-raw.h,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-text.c,
+	libgsgf/gsgf-util.c, libgsgf/gsgf-util.h, libgsgf/gsgf.h,
+	libgsgf/libgsgf-util.c, libgsgf/libgsgf.c, libgsgf/libgsgf.h: 
+	Various changes for documentation generation.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am: Renamed general properties to root
+	properties.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am: Build subdirectories after current directory.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/examples/gsgf_list_bg.c: Example for deleting SGF
+	properties.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, libgsgf/Makefile.am, libgsgf/examples/.gitignore,
+	libgsgf/examples/Makefile.am, libgsgf/examples/gsgf_list_bg.c: 
+	Well-commented example for libgsgf usage.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf.h: libgsgf needs glib header files.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.h: Prototypes for
+	gsgs_game_tree_get_nodes/children.
+
+2010-12-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Public access to children of a
+	GSGFGameTree.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/general-properties.sgf,
+	libgsgf/tests/root-properties.sgf,
+	libgsgf/tests/test-general-properties.c,
+	libgsgf/tests/test-root-properties.c: Renamed general properties to
+	root properties.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/flavor-general.xml, libgsgf/gsgf-flavor.c,
+	libgsgf/tests/test-general-properties.c: Tests and implementation
+	for properties ST and SZ.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-compose.c,
+	libgsgf/gsgf-cooked-value.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-number.c, libgsgf/gsgf-property.c, libgsgf/gsgf-raw.c,
+	libgsgf/gsgf-real.c, libgsgf/gsgf-simple-text.c,
+	libgsgf/gsgf-text.c, libgsgf/libgsgf-util.c, libgsgf/libgsgf.c: 
+	Clean-up and use g_return... macros.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt, po/POTFILES.in: Updated.
+
+2010-12-26  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml: Updated.
+
+2010-12-25  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c: - Constraints need original raw value.  - Check for single values.
+
+2010-12-25  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/libgsgf-util.c, libgsgf/libgsgf.h,
+	libgsgf/tests/test-util-read-simpletext.c: Renamed simpletext to
+	simple_text.
+
+2010-12-25  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Implementation for AP property.
+
+2010-12-25  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Failed subtests must
+	return FALSE, not -1.
+
+2010-12-25  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Test for 'AP' property.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-property.c, libgsgf/tests/general-properties.sgf: Check
+	for root properties.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-node.h, libgsgf/gsgf-private.h: A GSGFNode must know
+	its previouis sibling.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.c, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c: Properties now know the node they are part
+	of.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h: Property handlers
+	need full information.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c: 
+	Refactoring: Allow multiple constraints.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor-protected.h, libgsgf/gsgf-flavor.c: Split up
+	existing property definitions.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-flavor-protected.h,
+	libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h, libgsgf/libgsgf.c: 
+	Refactoring: Property creation must be split into two distinct
+	steps, one for the construction, one for constraint checking.
+
+2010-12-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-number.c: Simplified write_stream() method.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* po/.gitignore: Do not ignore "missing" created by distcheck.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-text.c: Simplified write_stream() method.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c: Return value and update number of written
+	bytes.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-compose.c, libgsgf/gsgf-compose.h, libgsgf/gsgf.h: 
+	Implementation for SGF composite values.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/test-compose.c: Test for
+	composite SGF values.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-raw.c, libgsgf/gsgf-text.c: 
+	Refactoring: GSGFProperty now writes the surrounding [].
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/flavor-general.xml, libgsgf/gsgf-flavor.c: 
+	Implementation of FF property.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Test for FF property.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* TODO, libgsgf/gsgf-simple-text.c, libgsgf/gsgf-simple-text.h,
+	libgsgf/gsgf-text.c, libgsgf/gsgf-text.h,
+	libgsgf/tests/test-general-properties.c: GSGFSimpleText now really
+	inherits from GSGFText.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/flavor-general.xml, libgsgf/gsgf-flavor.c: 
+	CA property.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-text.c: Typo.
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: C is not Perl. ;-)
+
+2010-12-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Test for CA property.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-move-backgammon.c,
+	libgsgf/gsgf-move-backgammon.h, libgsgf/gsgf.h: SGF move
+	representation for Backgammon.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-move.c, libgsgf/gsgf-move.h,
+	libgsgf/gsgf.h: Abstract base class for SGF moves.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-flavor-backgammon.c,
+	libgsgf/gsgf-flavor-backgammon.h, libgsgf/gsgf.h: New specific SGF
+	flavor for Backgammon.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-property.c: Made
+	get_cooked_value() a method.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.h: GSGFFlavor doesn't need private data.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf.c: Indirection for flavor constructor.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h, libgsgf/libgsgf.c: 
+	GSGFFlavor doesn't ned properties.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Document flavor hierarchy.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/flavor-general.xml,
+	docs/reference/libgsgf/flavors.xml,
+	docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt: Document property
+	constraints.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-general-flavor.c,
+	libgsgf/gsgf-general-flavor.h, libgsgf/gsgf.h: General SGF flavor no
+	longer needed.  Instead inheritance will be used.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-property.c: Dispatch property
+	handlers.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Forward errors.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Report errors in SGF
+	input.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.c: Forward errors.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf.h: Reorder includes in order to avoid forward
+	declarations.
+
+2010-12-22  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-number.c, libgsgf/gsgf-number.h,
+	libgsgf/gsgf-private.h, libgsgf/tests/test-number.c: GSGFNumber
+	constructor now  operates on GSGFRaw.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Test for version number.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog: Updated.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c: Fixed typo.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Default property type is now raw.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Generic properties are
+	now raw.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/general-properties.sgf: Fixed syntax error in test
+	sgf.
+
+2010-12-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/general-properties.sgf: Try multiple values for
+	generic properties.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* : commit 040f3fbc983d372c2a66e932503d7dd90244972f Author: Guido
+	Flohr <guido@imperia.net> Date:   Sun Dec 12 23:43:32 2010 +0200
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h: Moved functionality from
+	#GSGFProperty to #GSGFRaw.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-raw.c: Moved functionality from #GSGFProperty to
+	#GSGFRaw.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c: Moved functionality from #GSGFProperty to
+	#GSGFRaw.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-private.h: Private/public changes.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Make #GSGFRaw public.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Prefix error.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf.c: Hash keys are not const.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-number.c, libgsgf/gsgf-real.c: Cleaned up
+	constructor.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-error.h: New errors GSGF_ERROR_LIST_TOO_LONG and
+	GSGF_ERROR_SEMANTIC_ERROR.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Fixed typos.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/general-properties.sgf,
+	libgsgf/tests/test-general-properties.c: User uppercase property.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h: Refactoring: GSGFProperty is
+	now a wrapper around GSGFRaw.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.h, libgsgf/tests/general-properties.sgf,
+	libgsgf/tests/test-general-properties.c: Test skeleton for cooked
+	values.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.h: Strong typing.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c: Store value constructor internally.
+
+2010-12-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/lib.c,
+	libgsgf/tests/main.c, libgsgf/tests/test-convert.c,
+	libgsgf/tests/test-full.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test.h: Make tests succeed in vpath environment.
+
+2010-12-01  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/main.c,
+	libgsgf/tests/test-convert.c: Make tests work in vpath builds.
+
+2010-12-01  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt, po/POTFILES.in: Updated.
+
+2010-12-01  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-number.c, libgsgf/gsgf-private.h: Parsing of SGF
+	numbers.
+
+2010-12-01  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-number.c: Test for trailing garbage after SGF
+	numbers.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-real.c: We do a regex match on reals, no need for
+	endptr.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-real.c: Test for trailing garbage in SGF reals.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/test-number.c: Test for
+	parsing SGF integers.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-real.c: Pass strtod() errors through.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-error.h,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-real.c,
+	libgsgf/tests/Makefile.am, libgsgf/tests/test-real.c: Parse real
+	values in SGF files.
+
+2010-11-30  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.h: Formatting.
+
+2010-11-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf.h: Iterate over SGF tree for
+	applying SGF flavor.
+
+2010-11-27  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-general-flavor.c,
+	libgsgf/gsgf-general-flavor.h: Skeleton for general SGF flavor.
+
+2010-11-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-private.h,
+	libgsgf/libgsgf.c, libgsgf/libgsgf.h: Hide libgsgf initialization.
+
+2010-11-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-property-handler.c,
+	libgsgf/gsgf-property-handler.h, libgsgf/gsgf.h: Obsolete
+	GSGFPropertyHandler.
+
+2010-11-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf.c: Use stringified numbers as flavor identifiers.
+
+2010-11-24  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h, libgsgf/libgsgf.c: - Make flavor ids const, and don't free them.  - GSGFFlavors now have parent flavors.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/general-properties.sgf,
+	libgsgf/tests/root-properties.sgf,
+	libgsgf/tests/test-general-properties.c: Renamed root-properties to
+	general-properties.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated TODO.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-cooked-value.c, libgsgf/gsgf-cooked-value.h,
+	libgsgf/gsgf-error.h, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-number.h, libgsgf/gsgf-property.c,
+	libgsgf/gsgf-property.h, libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h,
+	libgsgf/gsgf-real.c, libgsgf/gsgf-real.h,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-simple-text.h,
+	libgsgf/gsgf-text.c, libgsgf/gsgf-text.h: Refactoring: Use new GSGF
+	type system.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-cooked-value.c,
+	libgsgf/gsgf-cooked-value.h, libgsgf/gsgf-number.h,
+	libgsgf/gsgf-raw.c, libgsgf/gsgf-raw.h, libgsgf/gsgf-real.h,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-simple-text.h,
+	libgsgf/gsgf-text.c, libgsgf/gsgf-text.h, libgsgf/gsgf.h: Base types
+	for SGF data.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-node.h, libgsgf/gsgf-number.c,
+	libgsgf/gsgf-number.h, libgsgf/gsgf-real.c, libgsgf/gsgf-real.h,
+	libgsgf/gsgf-simple-text.c, libgsgf/gsgf-simple-text.h,
+	libgsgf/gsgf-text.c, libgsgf/gsgf-text.h, libgsgf/gsgf.h: 
+	Encapsulation for SGF primitives.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am: Generated SGF files should not be
+	removed after make clean.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h: Getter for
+	SGF game tree lists.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: - Getter for SGF nodes.  - Apply SGF flavor to tree.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-general-properties.c: Fixed indirections.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/.gitignore: Added generated SGF files.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/root-properties.sgf,
+	libgsgf/tests/test-general-properties.c: Tests skeleton for general
+	SGF properties.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, libgsgf/Makefile.am, libgsgf/gsgf-game-tree.c,
+	libgsgf/tests/Makefile.am, libgsgf/tests/full.sgf,
+	libgsgf/tests/full.sgf.in,
+	libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c, libgsgf/tests/utf-8.sgf,
+	libgsgf/tests/utf-8.sgf.in: Write libgsgf version string into SGF
+	files.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-private.h: Skeleton for applying SGF flavor.
+
+2010-11-23  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, autogen.sh, configure.ac, data/Makefile.am,
+	docs/Makefile.am, docs/reference/Makefile.am,
+	docs/reference/libgsgf/Makefile.am,
+	docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt, libgsgf/Makefile.am,
+	libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-error.c, libgsgf/gsgf-error.h, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-flavor.h, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-game-tree.h, libgsgf/gsgf-node.c, libgsgf/gsgf-node.h,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-property-handler.c,
+	libgsgf/gsgf-property-handler.h, libgsgf/gsgf-property.c,
+	libgsgf/gsgf-property.h, libgsgf/gsgf.h, libgsgf/libgsgf-util.c,
+	libgsgf/libgsgf.c, libgsgf/libgsgf.h, libgsgf/tests/Makefile.am,
+	libgsgf/tests/lib.c, libgsgf/tests/main.c,
+	libgsgf/tests/test-convert.c, libgsgf/tests/test-empty.c,
+	libgsgf/tests/test-full.c, libgsgf/tests/test-minimal.c,
+	libgsgf/tests/test-multi-game-tree.c,
+	libgsgf/tests/test-nested-game-tree.c,
+	libgsgf/tests/test-really-empty.c,
+	libgsgf/tests/test-util-read-simpletext.c,
+	libgsgf/tests/test-util-read-text.c,
+	libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c, libgsgf/tests/test.h,
+	libsvg-cairo/Makefile.am, libsvg-cairo/svg-cairo-internal.h,
+	libsvg-cairo/svg-cairo.h, libsvg-cairo/svg_cairo.c,
+	libsvg-cairo/svg_cairo_sprintf_alloc.c,
+	libsvg-cairo/svg_cairo_state.c, libsvg/Makefile.am, libsvg/svg.c,
+	libsvg/svg.h, libsvg/svg_ascii.c, libsvg/svg_ascii.h,
+	libsvg/svg_attribute.c, libsvg/svg_color.c, libsvg/svg_element.c,
+	libsvg/svg_gradient.c, libsvg/svg_group.c, libsvg/svg_image.c,
+	libsvg/svg_length.c, libsvg/svg_paint.c, libsvg/svg_parser.c,
+	libsvg/svg_parser_libxml.c, libsvg/svg_path.c,
+	libsvg/svg_pattern.c, libsvg/svg_str.c, libsvg/svg_style.c,
+	libsvg/svg_text.c, libsvg/svg_transform.c, libsvg/svgint.h,
+	pixmaps/Makefile.am, po/LINGUAS, po/POTFILES.in, po/de.po,
+	src/Makefile.am, src/game.h, src/gibbon-cairoboard.c,
+	src/gibbon-cairoboard.h, src/gibbon-connection.c,
+	src/gibbon-connection.h, src/gibbon-connector.c,
+	src/gibbon-connector.h, src/gibbon-game.c, src/gibbon-game.h,
+	src/gibbon-match.c, src/gibbon-match.h, src/gibbon-player-list.c,
+	src/gibbon-player-list.h, src/gibbon-session.c,
+	src/gibbon-session.h, src/gibbon.c, src/gibbon.h,
+	src/gtkconnectiondialog.c, src/gtkmainwindow.c, src/gui.c,
+	src/gui.h, src/svg-util.c, src/svg-util.h: Changed copyright date.
+
+2010-11-21  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-node.h, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property.c: Automatic charset conversion for SGF trees.
+
+2010-11-21  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/cp1251.sgf, libgsgf/tests/utf-8.sgf: Automatically
+	write CA property in SGF sub trees.
+
+2010-11-21  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/tests/full.sgf,
+	libgsgf/tests/test-write-linefeeds.c,
+	libgsgf/tests/test-write-minimal.c: Always write CA property on
+	output.
+
+2010-11-21  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-flavor.c,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-property.c: Only reset error
+	if error location given.
+
+2010-11-21  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-node.h: Automatic conversion to utf-8 (work in
+	progress).
+
+2010-11-20  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Determine charset of SGF game tree.
+
+2010-11-20  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.c: Getter for SGF property.
+
+2010-11-20  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c, libgsgf/gsgf-property.h: Getter for raw
+	property values.
+
+2010-11-20  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf-util.c: Only store end pointer if requested.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-game-tree.c: - Prototypes without error checking and passng of flavors.  - Base for charset conversions.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.h: Removed prototype for internal
+	serialization.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.c: No more error checking in private
+	constructors.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.h: Declaration for SGF property getter.
+
+2010-11-19  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-private.h: No error checking for private
+	constructors.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.h: Methods for setting raw values made
+	private.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c: Compound values for SGF properties.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf.h: Read formatted text in SGF properties.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am: New tests.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c, libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-minimal.c: - Null-terminate data written to stream.  - No more need for error checking on libgsgf constructors.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test.h: Null-terminate data written to stream.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/cp1251.sgf, libgsgf/tests/test-convert.c,
+	libgsgf/tests/utf-8.sgf: Tests for charset conversion.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-util-read-text.c: Test for formatted text in
+	SGF properties.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/lib.c, libgsgf/tests/main.c: Split up test library
+	code.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/libgsgf-util.c, libgsgf/tests/linefeeds.sgf,
+	libgsgf/tests/test-write-linefeeds.c: Read/write formatted text in
+	SGF properties.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-collection.c,
+	libgsgf/gsgf-flavor.c, libgsgf/gsgf-flavor.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-private.h,
+	libgsgf/gsgf-property-handler.c, libgsgf/gsgf-property-handler.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf.h, libgsgf/libgsgf-util.c,
+	libgsgf/libgsgf.c, libgsgf/libgsgf.h, libgsgf/tests/Makefile.am,
+	libgsgf/tests/test-util-read-simpletext.c,
+	libgsgf/tests/test-write-empty.c: Base for SGF flavors and property
+	handlers.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-write-full.c,
+	libgsgf/tests/test-write-minimal.c: - Test correct error handling.  - Fixed cast warning.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Removed old code for writing text.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connector.c: Removed debugging output.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-game.c, src/gibbon-match.c: Fixed warning about unused
+	variable.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: arc_boundings() no longer needed.
+
+2010-11-18  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/libgsgf-sections.txt: Updated.
+
+2010-11-17  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-collection.c,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-internal.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-private.h: Renamed gsgf-internal.h
+	to gsgf-private.h.
+
+2010-11-16  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-game-tree.h, libgsgf/gsgf-internal.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf-property.c,
+	libgsgf/gsgf-property.h: Refactoring: SGF sub constructors are now
+	private.
+
+2010-11-16  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-error.h, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-game-tree.h, libgsgf/gsgf-node.c, libgsgf/gsgf-node.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/tests/main.c, libgsgf/tests/test-write-empty-property.c,
+	libgsgf/tests/test-write-empty.c: Refactoring: Introduce SGF
+	flavors.
+
+2010-11-16  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-error.h, libgsgf/gsgf-property.c,
+	libgsgf/tests/Makefile.am,
+	libgsgf/tests/test-write-empty-property.c: Prevent writing empty
+	properties.
+
+2010-11-16  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated TODO.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt: Re-generated.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node-list.c, libgsgf/gsgf-node-list.h: Obsolete.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated TODO file.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-error.h,
+	libgsgf/gsgf-internal.h, libgsgf/gsgf-node.c, libgsgf/gsgf-node.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h,
+	libgsgf/tests/full.sgf, libgsgf/tests/test-write-minimal.c: 
+	Read/write of legal SGF files now round-trip-safe.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/main.c,
+	libgsgf/tests/test-write-full.c, libgsgf/tests/test.h: Test for
+	round-trip writing for SGF files.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am, libgsgf/tests/full.sgf,
+	libgsgf/tests/test-full.c: Test for parsing multiple, nested SGF
+	game trees.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-internal.h,
+	libgsgf/gsgf-node.c: Write minimal SGF nodes.
+
+2010-11-15  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-collection.c,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h,
+	libgsgf/gsgf-node.c, libgsgf/gsgf-node.h, libgsgf/gsgf.h: Refactored
+	GSGFNodeList to GList of GSGFNodes.
+
+2010-11-14  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Close game trees with ')' not '('.
+
+2010-11-14  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-internal.h,
+	libgsgf/tests/test-write-empty.c,
+	libgsgf/tests/test-write-minimal.c: Refactoring of SGF writing: The
+	interfaces for SGF writing and wrting to gio streams are now
+	synchronized.
+
+2010-11-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c: Write nested game trees.
+
+2010-11-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-game-tree.c,
+	libgsgf/gsgf-game-tree.h, libgsgf/gsgf-internal.h,
+	libgsgf/tests/test-write-minimal.c: Basic writing routine for SGF
+	collections.
+
+2010-11-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am,
+	libgsgf/tests/test-write-empty-collection.c,
+	libgsgf/tests/test-write-empty.c: Renamed
+	test-write-empty-collection to test-write-empty.
+
+2010-11-13  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-write-minimal.c: Round-trip test for
+	mininimal.sgf.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt: Re-generated.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/main.c, libgsgf/tests/test.h: Conditional error
+	checking.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am: Tweaks for separate build directory.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am: Needed for distcheck make target.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/tests/test-write-empty-collection.c: Inhibit writing empty
+	collections.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* src/.gitignore: Yacc and lex output removed.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am: - Separate test suite.  - Internal declarations.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-internal.h: Internal declarations.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, libgsgf/.gitignore, libgsgf/Makefile.am,
+	libgsgf/gsgf-collection.c, libgsgf/gsgf-error.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h,
+	libgsgf/gsgf-node-list.c, libgsgf/gsgf-node-list.h, libgsgf/gsgf.h,
+	libgsgf/libgsgftest.c, libgsgf/tests/.gitignore,
+	libgsgf/tests/Makefile.am, libgsgf/tests/empty.sgf,
+	libgsgf/tests/main.c, libgsgf/tests/minimal.sgf,
+	libgsgf/tests/multi-game-tree.sgf,
+	libgsgf/tests/nested-game-tree.sgf, libgsgf/tests/really-empty.sgf,
+	libgsgf/tests/test-empty.c, libgsgf/tests/test-minimal.c,
+	libgsgf/tests/test-multi-game-tree.c,
+	libgsgf/tests/test-nested-game-tree.c,
+	libgsgf/tests/test-really-empty.c, libgsgf/tests/test.h: Added SGF
+	tests and fixed a number of bugs.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: Do not parse empty SGF collections.
+
+2010-11-12  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-collection.h,
+	libgsgf/gsgf-property.c, libgsgf/gsgf-property.h: Create game tree
+	objects in SGF syntax tree.
+
+2010-11-11  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-property.c,
+	libgsgf/gsgf-property.h, libgsgf/gsgf.h: Skeleton for SGF game
+	trees.
+
+2010-11-11  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: Also omit .orig files.
+
+2010-11-11  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: Exclude backup files.
+
+2010-11-11  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt: Re-generated.
+
+2010-11-11  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: Free parsed values.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-property.c,
+	libgsgf/gsgf-property.h, libgsgf/gsgf.h: Abstraction for SGF
+	properties.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: FIXME for memory leak.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: SGF parser running.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* : Removed from source control management.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, docs/reference/libgsgf/.gitignore: Ignore files
+	updated.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* docs/reference/libgsgf/.gitignore,
+	docs/reference/libgsgf/libgsgf-decl-list.txt,
+	docs/reference/libgsgf/libgsgf-decl.txt,
+	docs/reference/libgsgf/libgsgf-overrides.txt,
+	docs/reference/libgsgf/libgsgf-sections.txt,
+	docs/reference/libgsgf/libgsgf.types: Documentation for libgsgf.
+
+2010-11-10  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/Makefile.am, libgsgf/gsgf-collection.c,
+	libgsgf/gsgf-collection.h, libgsgf/gsgf-error.c,
+	libgsgf/gsgf-error.h, libgsgf/gsgf.h, libgsgf/libgsgftest.c,
+	po/POTFILES.in: Tokenizer for SGF files finished.
+
+2010-10-15  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, autogen.sh, configure.ac, docs/Makefile.am,
+	docs/reference/Makefile.am, docs/reference/libgsgf/Makefile.am,
+	docs/reference/libgsgf/libgsgf-docs.xml,
+	docs/reference/libgsgf/overview.xml,
+	docs/reference/libgsgf/version.xml.in: Documentation.
+
+2010-10-15  Guido Flohr <guido@imperia.net>
+
+	* data/Makefile.in: Removed Makefile.in from version control.
+
+2010-10-14  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf.h: Added libgsgf/gsgf.h.
+
+2010-10-13  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog, data/Makefile.in: Re-generated ChangeLog.
+
+2010-10-13  Guido Flohr <guido@imperia.net>
+
+	* : Removed core dump from repository.
+
+2010-10-13  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, configure.ac, libgsgf/.gitignore,
+	libgsgf/Makefile.am, libgsgf/gsgf-collection.c,
+	libgsgf/gsgf-collection.h, libgsgf/libgsgftest.c, src/Makefile.am,
+	src/list.c, src/list.h, src/sgf_l.l, src/sgf_y.y, src/sgftest.c: 
+	Foundations for own SGF parser.
+
+2010-10-12  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, po/POTFILES.in, src/.gitignore, src/Makefile.am,
+	src/sgftest.c: Tests for SGFParser.
+
+2010-10-11  Guido Flohr <guido@imperia.net>
+
+	* src/sgf.h: Stolen from GNU backgammon.
+
+2010-10-11  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am: Temporarily need strdup().
+
+2010-10-11  Guido Flohr <guido@imperia.net>
+
+	* src/list.c, src/list.h: Temporarily stolen from GNU backgammon.
+
+2010-10-11  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2010-10-11  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.h: C++ compatibility.
+
+2010-10-08  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, src/.gitignore, src/Makefile.am, src/sgf_l.l,
+	src/sgf_y.y: Stole SGF parser from GNU backgammon.
+
+2010-10-07  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, data/Makefile.in: Parser-generator tools are
+	required.
+
+2010-10-07  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, configure.ac, libsgf/.gitignore, libsgf/Makefile.am,
+	libsgf/README, libsgf/gg_utils.c, libsgf/gg_utils.h,
+	libsgf/sgf_extras.def, libsgf/sgf_properties.def,
+	libsgf/sgf_properties.h, libsgf/sgf_utils.c, libsgf/sgfgen.c,
+	libsgf/sgfnode.c, libsgf/sgftree.c, libsgf/sgftree.h,
+	src/Makefile.am: Library libsgf.a is too specific to GNU go.
+
+2010-10-07  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, configure.ac, libsgf/.gitignore, libsgf/Makefile.am,
+	libsgf/README, libsgf/gg_utils.c, libsgf/gg_utils.h,
+	libsgf/sgf_extras.def, libsgf/sgf_properties.def,
+	libsgf/sgf_properties.h, libsgf/sgf_utils.c, libsgf/sgfgen.c,
+	libsgf/sgfnode.c, libsgf/sgftree.c, libsgf/sgftree.h,
+	src/Makefile.am: Stole libsgf from GNU Go.
+
+2010-10-07  Guido Flohr <guido@imperia.net>
+
+	* data/Makefile.in: Re-generated.
+
+2010-10-07  Guido Flohr <guido@imperia.net>
+
+	* configure.ac: Require my versions f automake and inttool.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* ABOUT-NLS: Added.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Issue board command after watch.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in, src/Makefile.am, src/gibbon-game.c,
+	src/gibbon-game.h, src/gibbon-match.c, src/gibbon-match.h: Skeleton
+	for match and game objects.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* TODO: Reminder for GResolver API added.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* src/.gitignore: Ignore private skeleton file.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-session.c: Keep tracking of current opponent and
+	watchee.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Glade file replaced by XML builder file
+	data/gibbon.xml.
+
+2010-10-05  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gibbon-session.c,
+	src/gibbon-session.h: Keep track of current user, opponent and
+	watches.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-session.c: Always set boardstyle to parsable format.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Do not g_free() session but
+	g_object_unref() it.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c: Only finalize existing connection.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Menu items are now widgets again, not actions.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Store svg components for dice.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* pixmaps/default.svg, pixmaps/default.svg.in: Keep svg files with
+	and without internal entities.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* pixmaps/default.svg: Added dice.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Display checkers.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c: Finalized connection object on exit to make valgrind
+	happy.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Menu items are widgets once again, not actions.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Size allocation for server output window.
+
+2010-10-04  Guido Flohr <guido@imperia.net>
+
+	* libsvg-cairo/svg_cairo.c: Changed hardcoded default dimensions.
+
+2010-10-03  Guido Flohr <guido@imperia.net>
+
+	* libsvg/svg_image.c: Replaced deprecated function
+	png_set_gray_1_2_4_to_8 with png_set_expand_gray_1_2_4_to_8.
+
+2010-05-24  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Match actual image size.
+
+2010-05-24  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, data/Makefile.am, data/Makefile.in,
+	data/gibbon.glade, data/gibbon.xml: Glade-3 now supports GtkBuilder
+	natively.  But we need gtk+-2.16.
+
+2009-12-08  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connector.c: Reverted last commit.
+
+2009-12-08  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connector.c: Test.
+
+2009-11-30  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c, src/gibbon.valgrind, src/gui.c, src/gui.h: Valgrind
+	stuff.
+
+2009-11-29  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c: Fixed memory leak.
+
+2009-11-11  Guido Flohr <guido@imperia.net>
+
+	* pixmaps/default.svg, src/gibbon-cairoboard.c: Foundations for
+	drawing flat checkers.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/svg-util.c, src/svg-util.h: 
+	Simplified interface for svg_util_get_dimensions.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Cleaned up constructor.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Move code from constructor into separate
+	function.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: More refactoring, clean up constructor.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/svg-util.c, src/svg-util.h: Cleanup:
+	Cut some spaghettis into digestable pieces.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-11-10  Guido Flohr <guido@imperia.net>
+
+	* libsvg/svg.c: Fixed warnings.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* libsvg/Makefile.am, src/Makefile.am: - Compile libxml2 parser version.  - Link against local libsvg and libsvg-cairo.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* configure.ac: Check for libjpeg.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* configure.ac: Both libsvg and libsvg-cairo are now included.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, libsvg-cairo/Makefile.am,
+	libsvg-cairo/svg-cairo-internal.h, libsvg-cairo/svg-cairo.h,
+	libsvg-cairo/svg_cairo.c, libsvg-cairo/svg_cairo_sprintf_alloc.c,
+	libsvg-cairo/svg_cairo_state.c, libsvg/Makefile.am, libsvg/svg.c,
+	libsvg/svg.h, libsvg/svg_ascii.c, libsvg/svg_ascii.h,
+	libsvg/svg_attribute.c, libsvg/svg_color.c, libsvg/svg_element.c,
+	libsvg/svg_gradient.c, libsvg/svg_group.c, libsvg/svg_image.c,
+	libsvg/svg_length.c, libsvg/svg_paint.c, libsvg/svg_parser.c,
+	libsvg/svg_parser_libxml.c, libsvg/svg_path.c,
+	libsvg/svg_pattern.c, libsvg/svg_str.c, libsvg/svg_style.c,
+	libsvg/svg_text.c, libsvg/svg_transform.c, libsvg/svgint.h: Relinsed
+	libsvg and libsvg-cairo to LGPL version 3.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* COPYING.LESSER, README.libsvg, README.libsvg-cairo: Relinsed
+	libsvg and libsvg-cairo to LGPL version 3.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Added new source file.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, aclocal.m4: Do not version control generated files.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, configure.ac, libsvg-cairo/Makefile.am,
+	libsvg-cairo/svg-cairo-internal.h, libsvg-cairo/svg-cairo.h,
+	libsvg-cairo/svg_cairo.c, libsvg-cairo/svg_cairo_sprintf_alloc.c,
+	libsvg-cairo/svg_cairo_state.c, libsvg/Makefile.am, libsvg/svg.c,
+	libsvg/svg.h, libsvg/svg_ascii.c, libsvg/svg_ascii.h,
+	libsvg/svg_attribute.c, libsvg/svg_color.c, libsvg/svg_element.c,
+	libsvg/svg_gradient.c, libsvg/svg_group.c, libsvg/svg_image.c,
+	libsvg/svg_length.c, libsvg/svg_paint.c, libsvg/svg_parser.c,
+	libsvg/svg_parser_libxml.c, libsvg/svg_path.c,
+	libsvg/svg_pattern.c, libsvg/svg_str.c, libsvg/svg_style.c,
+	libsvg/svg_text.c, libsvg/svg_transform.c, libsvg/svgint.h,
+	src/Makefile.am, src/svg-util.c: Integrate libsvg and libsvg-cairo,
+	so that we can fix bugs there.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gui.c: Fixed potential format string
+	problems/vulnerabilities.
+
+2009-11-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/svg-util.c, src/svg-util.h: Allow to
+	remove measured components from SVG board.
+
+2009-10-27  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/svg-util.c: Calculate dimensions of
+	arbitrary SVG elements.
+
+2009-10-23  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Central routine or updating the dimensions.
+
+2009-10-20  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Calculate boundings of arcs.
+
+2009-10-19  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Tiny optimization in calculation of bezier
+	boundings.
+
+2009-10-19  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Stack states.
+
+2009-10-18  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Basic support for a state stack.
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Implement quadratic_curve_to like in libsvg-cairo.
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Calculate the bounding rectangle of cubic Bézier
+	curves.
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: More dimension tracking.
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Ignore viewport dimensions?
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Fixed typo.
+
+2009-10-17  Guido Flohr <guido@imperia.net>
+
+	* src/svg-util.c: Track lines and movements in svg.
+
+2009-10-16  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/gibbon-cairoboard.c, src/svg-util.c,
+	src/svg-util.h: Get dimensions of linear draw operations.
+
+2009-10-16  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/gibbon-board-editor.c,
+	src/gibbon-board-editor.h, src/gibbon-cairoboard.c,
+	src/gibbon-cairoboard.h, src/gibbon-design.c, src/gibbon-design.h,
+	src/gui.c, src/gui.h: Obsolete stuff deleted.
+
+2009-10-16  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, data/gibbon.glade, data/gibbon.xml,
+	pixmaps/default.svg, src/gibbon-cairoboard.c: Identify svg elements,
+	and render them individually.
+
+2009-10-15  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, TODO, configure.ac, data/gibbon.glade,
+	data/gibbon.xml, pixmaps/Makefile.am, pixmaps/default.svg,
+	po/POTFILES.in, src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gibbon-design.c, src/gui.c, src/gui.h: Fighting my way to the
+	xml hell.
+
+2009-10-12  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml: Design tweaks.
+
+2009-10-11  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, src/Makefile.am, src/game.h,
+	src/gibbon-board-editor.c, src/gibbon-board-editor.h,
+	src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gibbon-design.c, src/gibbon-design.h, src/gibbon-session.c,
+	src/gui.c: - pile checkers on points - use arrays instead of coding indices into names for position
+
+2009-10-09  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, src/gui.c: Make board expand
+	with window.
+
+2009-10-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: 3D effects for checkers.
+
+2009-10-09  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog: Updated.
+
+2009-10-09  Guido Flohr <guido@imperia.net>
+
+	* src/game.h, src/gibbon-cairoboard.c: Renamed.
+
+2009-10-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/gibbon-session.c, src/gui.c: Draw
+	doubling cube.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/gui.c: Draw dice.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Implemented watch command.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* src/game.h, src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gibbon-session.c, src/gui.c, src/gui.h: Look half-way
+	implemented.
+
+2009-10-08  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog: Updated.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Force redraw after position change.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* src/game.h, src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gui.c: Update position dynamically (wip).
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, src/gibbon-connection.c,
+	src/gui.c: Look command implemented.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* TODO, data/gibbon.glade, data/gibbon.xml, src/Makefile.am,
+	src/gibbon-cairoboard.c, src/gibbon-design.c, src/gibbon-design.h,
+	src/gibbon-player-list.c, src/gibbon-player-list.h,
+	src/gibbon-session.c, src/gtkconnectiondialog.c, src/gui.c,
+	src/gui.h: Display player list.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, INSTALL, Makefile.in, config.guess, config.h.in,
+	config.rpath, config.sub, configure.ac, data/.gitignore,
+	data/gibbon.desktop.in, data/gibbon.schemas, depcomp, glibc21.m4,
+	install-sh, intltool-extract.in, intltool-merge.in,
+	intltool-update.in, ltmain.sh, missing, mkinstalldirs,
+	po/.gitignore, po/Makefile.in.in, po/gibbon.pot, src/Makefile.in: 
+	Get GNU autotools and similar files out of Git.
+
+2009-10-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gibbon-design.c, src/gibbon-design.h, src/gibbon.c,
+	src/gibbon.h, src/gui.c: Skeleton for skinnable design class.
+
+2009-10-05  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-session.c: Parse rawwho output.
+
+2009-10-05  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml: Fixed strange problem with
+	Glade (vbox objects were turned 90 degrees).
+
+2009-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Write number of checkers on piles.
+
+2009-10-04  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Draw dice.
+
+2009-10-03  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2009-10-03  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Show doubling cube.
+
+2009-10-03  Guido Flohr <guido@imperia.net>
+
+	* : commit b80fced95c6c922a4af29567a58f08f6c936864c Author: Guido
+	Flohr <guido@imperia.net> Date:   Sat Oct 3 18:42:30 2009 +0300
+
+2009-10-03  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Handle abnormal conditions on input
+	channel.
+
+2009-09-30  unknown <guido@.(none)>
+
+	* src/gibbon-connection.c: Removed cut and paste garbage.
+
+2009-09-30  unknown <guido@.(none)>
+
+	* src/Makefile.am, src/gibbon-connection.c, src/gibbon-connector.c: 
+	Can now connect under MS-DOS.
+
+2009-09-30  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Diagnose crash (probably on server
+	disconnect).
+
+2009-09-29  Guido Flohr <guido@imperia.net>
+
+	* Makefile.in, aclocal.m4, config.h.in, data/Makefile.in,
+	ltmain.sh, src/Makefile.in: Updated, fixme: Ungit stuff generated by
+	autogen.sh.
+
+2009-09-29  Guido Flohr <guido@imperia.net>
+
+	* configure.ac: Ran autoupdate.
+
+2009-09-29  unknown <guido@.(none)>
+
+	* src/Makefile.in, src/gibbon.c: More MS-DOS modifications.
+
+2009-09-29  unknown <guido@.(none)>
+
+	* src/Makefile.am, src/gibbon-connector.c: Include MS-DOS DNS stuff.
+
+2009-09-29  unknown <guido@.(none)>
+
+	* configure.ac, src/gibbon-connection.c, src/gibbon-connector.c,
+	src/gibbon-session.c, src/gtkconnectiondialog.c: Gibbon now compiles
+	and links on MS-DOS 7.0.
+
+2009-09-29  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Make the bar narrower.
+
+2009-09-29  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Draw crude board.
+
+2009-09-28  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/Makefile.in, src/gibbon-cairoboard.c,
+	src/gibbon-design.c, src/gibbon-design.h, src/gibbon.c,
+	src/gibbon.h: Drawing a board, wip.
+
+2009-09-28  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c: Removed debugging output.
+
+2009-09-28  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, src/Makefile.am,
+	src/Makefile.in, src/gibbon-cairoboard.c, src/gibbon-cairoboard.h,
+	src/gui.c: Base for board display.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Signal connections seem to survive
+	destruction of an object.  Do they?
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/Makefile.in, src/gibbon-connection.c,
+	src/gui.c, src/gui.h: More changes needed for sending address.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-session.c, src/gibbon-session.h: Set mail address after
+	login.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.schemas, data/gibbon.schemas.in,
+	data/gibbon.xml, src/gtkconnectiondialog.c, src/gui.c, src/gui.h: 
+	Save user address.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Allow re-connect.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c: Fixed core dump on second connect.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gui.c: Scroll server output text view
+	to end of output.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, src/gibbon-connection.c,
+	src/gui.c: Display login status in status bar.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* data/Makefile.am, data/Makefile.in, data/gibbon.desktop.in,
+	data/gibbon.desktop.in.in, data/gibbon.schemas, po/de.po,
+	po/gibbon.pot, src/gibbon-connection.c, src/gibbon-connector.c,
+	src/gtkconnectiondialog.c: - German translation.  - I18N issues.  - Packaging.
+
+2009-09-25  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gibbon-connection.h: Can now
+	successfully login.
+
+2009-09-24  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gibbon-connector.c: Can not connect.
+
+2009-09-24  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-connection.c, src/gibbon-connector.c,
+	src/gibbon-connector.h: Can now connect.
+
+2009-09-24  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-networker.c, src/gibbon-networker.h,
+	src/gibbon-resolver.c, src/gibbon-resolver.h: Obsolete stuff.
+
+2009-09-24  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: More exclude patterns.
+
+2009-09-24  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml, po/POTFILES.in,
+	po/gibbon.pot, src/Makefile.am, src/Makefile.in,
+	src/gibbon-connection.c, src/gibbon-connection.h,
+	src/gibbon-connector.c, src/gibbon-connector.h,
+	src/gibbon-networker.c, src/gibbon-networker.h, src/gibbon.c,
+	src/gtkconnectiondialog.c, src/gtkmainwindow.c, src/gui.c,
+	src/gui.h: Thread-safe resolving and connecting.
+
+2009-09-22  Guido Flohr <guido@imperia.net>
+
+	* README: A little bit more information.
+
+2009-09-22  Guido Flohr <guido@imperia.net>
+
+	* data/Makefile.am, data/Makefile.in, data/gibbon.glade,
+	data/gibbon.schemas, data/gibbon.schemas.in, data/gibbon.xml,
+	po/POTFILES.in, src/gtkconnectiondialog.c, src/gui.c, src/gui.h: 
+	Save connection settings.
+
+2009-09-22  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog: Generated.
+
+2009-09-22  Guido Flohr <guido@imperia.net>
+
+	* config.h.in, configure.ac, src/gibbon-connection.c,
+	src/gibbon-resolver.c, src/gibbon-resolver.h: Asynchronous hostname
+	resolution now working.
+
+2009-09-21  Guido Flohr <guido@imperia.net>
+
+	* Makefile.in, config.rpath, data/Makefile.am, data/Makefile.in,
+	po/POTFILES.in: Made ready for distcheck makefile target.
+
+2009-09-21  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: Do not track configure.
+
+2009-09-21  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, Makefile.in, autogen.sh, configure, configure.ac,
+	data/Makefile.am, data/Makefile.in, data/gibbon.glade,
+	data/gibbon.xml, po/LINGUAS, po/POTFILES.in, src/Makefile.am,
+	src/Makefile.in, src/game.h, src/gibbon-connection.c,
+	src/gibbon-connection.h, src/gibbon-resolver.c,
+	src/gibbon-resolver.h, src/gibbon.c, src/gibbon.h,
+	src/gtkconnectiondialog.c, src/gtkmainwindow.c, src/gui.c,
+	src/gui.h: Changed license to GPL v3.
+
+2009-09-21  Guido Flohr <guido@imperia.net>
+
+	* TODO, src/gibbon-connection.c, src/gibbon-connection.h,
+	src/gibbon-resolver.c, src/gibbon-resolver.h, src/gibbon.h: Can now
+	connect and disconnect with stubs for DNS.
+
+2009-09-19  Guido Flohr <guido@imperia.net>
+
+	* src/gtkconnectiondialog.c, src/gtkmainwindow.h, src/gui.c,
+	src/gui.h: Connection dialog.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml: Packing more or less solved.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml: More packing tweaks.  TODO:
+	lower left pane must fill but not expand.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade, data/gibbon.xml: Packing now basically working.
+	TODO: Combo should not expand or fill.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.glade: Packing re-done, wip.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* .gitignore, data/.gitignore, data/gibbon.desktop.in,
+	data/gibbon.glade, data/gibbon.xml, po/.gitignore,
+	po/Makefile.in.in: Git infrastructure.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* .gitignore: Git infrastructure.
+
+2009-09-18  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, Makefile.in, aclocal.m4, autogen.sh, config.guess,
+	config.h.in, config.sub, configure, configure.ac, data/Makefile.am,
+	data/gibbon.glade, data/gibbon.xml, po/POTFILES.in,
+	src/Makefile.am, src/Makefile.in, src/gibbon.c,
+	src/gtkmainwindow.c, src/gtkmainwindow.h: Skeleton for GUI.
+
+2009-09-16  guido <guido@localhost.localdomain>
+
+	* data/Makefile.in, data/gibbon.glade, data/gibbon.xml, ltmain.sh: 
+	Skeleton for Gtk+ app with glade and GtkBuilder.
+
+2009-09-16  guido <guido@localhost.localdomain>
+
+	* AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, Makefile.in,
+	NEWS, aclocal.m4, autogen.sh, config.guess, config.h.in,
+	config.sub, configure, configure.ac, data/Makefile.am,
+	data/gibbon.desktop.in.in, depcomp, glibc21.m4, install-sh,
+	intltool-extract.in, intltool-merge.in, intltool-update.in,
+	m4/.cvsignore, m4/.gitignore, missing, mkinstalldirs, po/LINGUAS,
+	po/POTFILES.in, po/de.po, src/Makefile.am, src/Makefile.in,
+	src/game.h, src/gibbon.c: Skeleton for build.
+
+2009-09-16  guido <guido@localhost.localdomain>
+
+	* New.
+
