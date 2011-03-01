@@ -37,7 +37,7 @@
 typedef struct _GSGFComponent GSGFComponent;
 
 /**
- * GSGFComponentIFace:
+ * GSGFComponentIface:
  * @g_iface: The parent interface.
  * @cook: Cook unqualified raw data into structured date.
  * @write_stream: Serialize component into an output stream.
