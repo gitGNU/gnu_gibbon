@@ -19,9 +19,6 @@
 - Glib 2.2 now has the GResolver API.  Use it!
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
-- Turn the higher level write_stream() functions into methods of a new
-  interface.
-- Dito for convert().
 - Remove all traces of backgammon from gsgf.h.
 - Let flavors give hints for compressing list of stones.
 - Give ids to all documentation nodes so that file names are unique.
@@ -41,4 +38,3 @@
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
 - GSGFRaw should not inherit from GSGFCookedValue.
-- GSGFComponent->convert: either always or never free the charset parameter.
