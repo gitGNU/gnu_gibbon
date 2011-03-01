@@ -168,10 +168,7 @@ gsgf_collection_new(GError **error)
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Parses an input stream into a #GSGFCollection in memory.  A return value of
- * non-%NULL does not necessarily mean success.  A parse error normally results
- * in a valid #GSGFCollection object that holds only parts of the information
- * from the stream.  Use @error for error checking instead.
+ * Parses an input stream into a #GSGFCollection in memory
  *
  * See also gsgf_collection_parse_file ().
  *
@@ -244,7 +241,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         property = NULL;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'('"), token, error);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_NODE:
@@ -256,7 +254,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         gsgf_yyerror(&ctx, _("';'"), token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_PROPERTY:
@@ -269,7 +268,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                                 g_prefix_error(error, "%d:%d:",
                                                                ctx.lineno, ctx.colno);
                                                 g_string_free(value, TRUE);
-                                                return self;
+                                                g_object_unref (self);
+                                                return NULL;
                                         }
                                 } else if (token == ';') {
                                         ctx.state = GSGF_PARSER_STATE_PROPERTY;
@@ -288,7 +288,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                                      token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_PROP_VALUE:
@@ -298,7 +299,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         gsgf_yyerror(&ctx, _("'['"), token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_VALUE:
@@ -312,7 +314,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                                      token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
 
                                 break;
@@ -338,7 +341,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                                      token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_PROP_CLOSE:
@@ -348,7 +352,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         gsgf_yyerror(&ctx, _("']'"), token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_PROP_VALUE_READ:
@@ -377,14 +382,16 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                                 g_prefix_error(error, "%d:%d:",
                                                                ctx.lineno, ctx.colno);
                                                 g_string_free(value, TRUE);
-                                                return self;
+                                                g_object_unref (self);
+                                                return NULL;
                                         }
                                 } else {
                                         gsgf_yyerror(&ctx, _("'[', ';', '(', ')', or property"),
                                                      token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                         case GSGF_PARSER_STATE_GAME_TREES:
@@ -406,12 +413,14 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                 } else if (token == GSGF_TOKEN_EOF) {
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 } else {
                                         gsgf_yyerror(&ctx, _("'('"), token, error);
                                         if (value)
                                                 g_string_free(value, TRUE);
-                                        return self;
+                                        g_object_unref (self);
+                                        return NULL;
                                 }
                                 break;
                 }
@@ -424,15 +433,20 @@ gsgf_collection_parse_stream(GInputStream *stream,
         if (!self->priv->game_trees) {
                 g_set_error(ctx.error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
                             _("Empty SGF collections are not allowed"));
-                return self;
+                g_object_unref (self);
+                return NULL;
         }
 
         if (!gsgf_collection_convert (GSGF_COMPONENT (self), "ISO-8859-1",
-                                      ctx.error))
-                return self;
+                                      ctx.error)) {
+                g_object_unref (self);
+                return NULL;
+        }
 
-        if (!gsgf_collection_apply_flavor (GSGF_COMPONENT (self), ctx.error))
-                return self;
+        if (!gsgf_collection_apply_flavor (GSGF_COMPONENT (self), ctx.error)) {
+                g_object_unref (self);
+                return NULL;
+        }
 
         return self;
 }
