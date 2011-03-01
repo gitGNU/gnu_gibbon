@@ -119,6 +119,8 @@ GTK_DOC_CHECK([1.15],[--flavour no-tmpl])
 
 GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2011 Guido Flohr, http://guido-flohr.net/])
 
+AC_CHECK_PROG([GIT2CL],[git2cl],[git2cl],[$MISSING git2cl])
+
 AC_CONFIG_FILES([ 
     Makefile
     gcreate_class.pl
