@@ -32,6 +32,8 @@
     </chapter>
     <chapter id="sgf-primitives">
       <title>SGF Primitives</title>
+      <xi:include href="xml/gsgf-value.xml"/>
+      <xi:include href="xml/gsgf-raw.xml"/>
       <xi:include href="xml/gsgf-cooked-value.xml"/>
       <xi:include href="xml/gsgf-number.xml"/>
       <xi:include href="xml/gsgf-real.xml"/>
@@ -40,7 +42,6 @@
       <xi:include href="xml/gsgf-compose.xml"/>
       <xi:include href="xml/gsgf-empty.xml"/>
       <xi:include href="xml/gsgf-list-of.xml"/>
-      <xi:include href="xml/gsgf-raw.xml"/>
     </chapter>
     <chapter id="sgf-high-level-types">
       <title>SGF High Level Types</title>
