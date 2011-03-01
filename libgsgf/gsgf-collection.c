@@ -90,8 +90,9 @@ static void gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect,
 static gboolean gsgf_collection_convert (GSGFComponent *collection,
                                          const gchar *charset,
                                          GError **error);
-static gboolean gsgf_collection_apply_flavor (GSGFComponent *collection,
-                                              GError **error);
+static gboolean gsgf_collection_cook (GSGFComponent *collection,
+                                      GSGFComponent **culprit,
+                                      GError **error);
 static gboolean gsgf_collection_write_stream (const GSGFComponent *self,
                                               GOutputStream *out,
                                               gsize *bytes_written,
@@ -142,8 +143,8 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_collection_write_stream;
+        iface->cook = gsgf_collection_cook;
         iface->_convert = gsgf_collection_convert;
-        iface->_apply_flavor = gsgf_collection_apply_flavor;
 }
 
 /**
@@ -439,11 +440,6 @@ gsgf_collection_parse_stream(GInputStream *stream,
 
         if (!gsgf_collection_convert (GSGF_COMPONENT (self), "ISO-8859-1",
                                       ctx.error)) {
-                g_object_unref (self);
-                return NULL;
-        }
-
-        if (!gsgf_collection_apply_flavor (GSGF_COMPONENT (self), ctx.error)) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -765,7 +761,8 @@ gsgf_collection_convert (GSGFComponent *_self, const gchar *charset,
 }
 
 static gboolean
-gsgf_collection_apply_flavor (GSGFComponent *_self, GError **error)
+gsgf_collection_cook (GSGFComponent *_self, GSGFComponent **culprit,
+                      GError **error)
 {
         GSGFCollection *self = GSGF_COLLECTION (_self);
         GList *iter = self->priv->game_trees;
@@ -776,8 +773,7 @@ gsgf_collection_apply_flavor (GSGFComponent *_self, GError **error)
 
         while (iter) {
                 iface = GSGF_COMPONENT_GET_IFACE (iter->data);
-                if (!iface->_apply_flavor (GSGF_COMPONENT (iter->data),
-                                           error))
+                if (!iface->cook (GSGF_COMPONENT (iter->data), culprit, error))
                         return FALSE;
 
                 iter = iter->next;

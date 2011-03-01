@@ -55,8 +55,8 @@ static gboolean gsgf_node_write_stream (const GSGFComponent *self,
                                         GError **error);
 static gboolean gsgf_node_convert (GSGFComponent *self,
                                    const gchar *charset, GError **error);
-static gboolean gsgf_node_apply_flavor (GSGFComponent *self,
-                                        GError **error);
+static gboolean gsgf_node_cook (GSGFComponent *self, GSGFComponent **culprit,
+                                GError **error);
 
 static void
 gsgf_node_init(GSGFNode *self)
@@ -105,7 +105,7 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_node_write_stream;
-        iface->_apply_flavor = gsgf_node_apply_flavor;
+        iface->cook = gsgf_node_cook;
         iface->_convert = gsgf_node_convert;
 }
 
@@ -323,7 +323,7 @@ gsgf_node_remove_property(GSGFNode *self, const gchar *id)
 }
 
 static gboolean
-gsgf_node_apply_flavor (GSGFComponent *_self, GError **error)
+gsgf_node_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **error)
 {
         GHashTableIter iter;
         gpointer key, value;
@@ -345,8 +345,7 @@ gsgf_node_apply_flavor (GSGFComponent *_self, GError **error)
         g_hash_table_iter_init (&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
                 iface = GSGF_COMPONENT_GET_IFACE (value);
-                if (!iface->_apply_flavor (GSGF_COMPONENT (value),
-                                           error))
+                if (!iface->cook (GSGF_COMPONENT (value), culprit, error))
                         return FALSE;
         }
 

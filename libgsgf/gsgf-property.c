@@ -55,8 +55,9 @@ static gboolean gsgf_property_write_stream (const GSGFComponent *self,
                                             GError **error);
 static gboolean gsgf_property_convert (GSGFComponent *self,
                                        const gchar *charset, GError **error);
-static gboolean gsgf_property_apply_flavor (GSGFComponent *self,
-                                            GError **error);
+static gboolean gsgf_property_cook (GSGFComponent *self,
+                                    GSGFComponent **culprit,
+                                    GError **error);
 
 static void
 gsgf_property_init(GSGFProperty *self)
@@ -101,8 +102,8 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_property_write_stream;
+        iface->cook = gsgf_property_cook;
         iface->_convert = gsgf_property_convert;
-        iface->_apply_flavor = gsgf_property_apply_flavor;
 }
 
 /**
@@ -244,7 +245,7 @@ gsgf_property_convert (GSGFComponent *_self, const gchar *charset, GError **erro
 }
 
 static gboolean
-gsgf_property_apply_flavor (GSGFComponent *_self, GError **error)
+gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **error)
 {
         GSGFCookedValue *cooked;
         GSGFProperty *self;

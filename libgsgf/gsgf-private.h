@@ -43,7 +43,7 @@ void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 GSGFReal *_gsgf_real_new(const gchar *value, GError **error);
 
 /* Schedule a property for deletion.  This function must only be called
- * from within _gsgf_node-apply_flavor().
+ * from within gsgf_node_cook().
  */
 void _gsgf_node_mark_loser_property (GSGFNode *node, const gchar *id);
 

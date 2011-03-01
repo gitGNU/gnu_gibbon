@@ -56,8 +56,9 @@ static gboolean gsgf_game_tree_write_stream (const GSGFComponent *self,
                                              GError **error);
 static gboolean gsgf_game_tree_convert (GSGFComponent *self,
                                         const gchar *charset, GError **error);
-static gboolean gsgf_game_tree_apply_flavor (GSGFComponent *self,
-                                             GError **error);
+static gboolean gsgf_game_tree_cook (GSGFComponent *self,
+                                     GSGFComponent **culprit,
+                                     GError **error);
 
 static void
 gsgf_game_tree_init(GSGFGameTree *self)
@@ -107,7 +108,7 @@ static void
 gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_game_tree_write_stream;
-        iface->_apply_flavor = gsgf_game_tree_apply_flavor;
+        iface->cook = gsgf_game_tree_cook;
         iface->_convert = gsgf_game_tree_convert;
 }
 
@@ -333,7 +334,8 @@ gsgf_game_tree_convert (GSGFComponent *_self, const gchar *_charset,
 }
 
 static gboolean
-gsgf_game_tree_apply_flavor (GSGFComponent *_self, GError **error)
+gsgf_game_tree_cook (GSGFComponent *_self, GSGFComponent **culprit,
+                     GError **error)
 {
         GSGFNode *node;
         GSGFProperty *gm_property;
@@ -350,6 +352,8 @@ gsgf_game_tree_apply_flavor (GSGFComponent *_self, GError **error)
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
                              _("Method cook() called on something that is"
                                " not a GSGFComponent."));
+                if (culprit)
+                        *culprit = _self;
                 g_return_val_if_fail (GSGF_IS_GAME_TREE (_self), FALSE);
         }
 
@@ -364,8 +368,8 @@ gsgf_game_tree_apply_flavor (GSGFComponent *_self, GError **error)
 
         for (iter = self->priv->nodes; iter; iter = iter->next) {
                 iface = GSGF_COMPONENT_GET_IFACE (iter->data);
-                if (!iface->_apply_flavor(GSGF_COMPONENT (iter->data),
-                                          error))
+                if (!iface->cook (GSGF_COMPONENT (iter->data), culprit,
+                                  error))
                         return FALSE;
         }
 
