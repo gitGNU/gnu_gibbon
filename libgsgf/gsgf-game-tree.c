@@ -261,22 +261,18 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
 }
 
 static gboolean
-gsgf_game_tree_convert (GSGFComponent *_self, const gchar *charset,
+gsgf_game_tree_convert (GSGFComponent *_self, const gchar *_charset,
                         GError **error)
 {
         GSGFNode *root;
         GSGFProperty *ca_property;
         GSGFRaw *value;
-        GList *ids;
-        GList *id_item;
-        gchar *id;
         GList *nodes;
         GSGFNode *node;
-        GSGFProperty *property;
-        gboolean free_charset = FALSE;
         GList *child;
         GSGFComponentIface *iface;
         GSGFGameTree *self;
+        gchar *charset;
 
         if (error)
                 *error = NULL;
@@ -296,7 +292,8 @@ gsgf_game_tree_convert (GSGFComponent *_self, const gchar *charset,
                 value = GSGF_RAW(gsgf_property_get_value(ca_property));
                 charset = gsgf_util_read_simple_text(gsgf_raw_get_value(value, 0),
                                                     NULL, 0);
-                free_charset = TRUE;
+        } else {
+                charset = g_strdup (_charset);
         }
 
         if (g_ascii_strcasecmp(charset, "UTF-8")) {
@@ -307,37 +304,30 @@ gsgf_game_tree_convert (GSGFComponent *_self, const gchar *charset,
                 _gsgf_property_add_value(ca_property, "UTF-8");
 
                 for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
-                        node = GSGF_NODE(nodes->data);
-                        ids = gsgf_node_get_property_ids(node);
-                        for (id_item = ids; id_item; id_item = id_item->next) {
-                                id = (gchar *) id_item->data;
-                                property = gsgf_node_get_property(node, id);
-                                iface = GSGF_COMPONENT_GET_IFACE (property);
-                                if (!iface->_convert (GSGF_COMPONENT (property),
-                                                      charset, error)) {
-                                        if (free_charset)
-                                                g_free ((gchar *) charset);
-                                        return FALSE;
-                                }
+                        node = GSGF_NODE (nodes->data);
+                        iface = GSGF_COMPONENT_GET_IFACE (node);
+                        if (!iface->_convert (GSGF_COMPONENT (node),
+                                              charset, error)) {
+                                g_free (charset);
+                                return FALSE;
                         }
-                        g_list_free(ids);
                 }
+
                 /* The SGF specification is a little ambiguous here? Do child
-                 * game trees inherit the CA property?  Short of any hint in the
-                 * specs we assume they do not.
+                 * game trees inherit the CA property?  Short of any hint in
+                 * the specs we assume they do not.
                  */
                 for (child = self->priv->children; child; child = child->next) {
                         if (!gsgf_game_tree_convert (GSGF_COMPONENT (child
                                                                      ->data),
                                                      charset, error)) {
-                                if (free_charset)
-                                        g_free ((gchar *) charset);
+                                g_free (charset);
+                                return FALSE;
                         }
                 }
         }
 
-        if (free_charset)
-                g_free ((gchar *) charset);
+        g_free (charset);
 
         return TRUE;
 }

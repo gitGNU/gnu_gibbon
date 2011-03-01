@@ -42,4 +42,3 @@
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
 - GSGFRaw should not inherit from GSGFCookedValue.
 - GSGFComponent->convert: either always or never free the charset parameter.
-- GSGFNode must implement the _convert method, and GSGFGameTree must use it.

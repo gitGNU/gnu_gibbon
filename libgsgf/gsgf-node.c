@@ -53,6 +53,8 @@ static gboolean gsgf_node_write_stream (const GSGFComponent *self,
                                         gsize *bytes_written,
                                         GCancellable *cancellable,
                                         GError **error);
+static gboolean gsgf_node_convert (GSGFComponent *self,
+                                   const gchar *charset, GError **error);
 static gboolean gsgf_node_apply_flavor (GSGFComponent *self,
                                         GError **error);
 
@@ -104,6 +106,7 @@ gsgf_component_iface_init (GSGFComponentIface *iface)
 {
         iface->write_stream = gsgf_node_write_stream;
         iface->_apply_flavor = gsgf_node_apply_flavor;
+        iface->_convert = gsgf_node_convert;
 }
 
 
@@ -398,10 +401,41 @@ gsgf_node_get_previous_node(const GSGFNode *self)
  *
  * Returns: The #GSGFFlavor of @self or %NULL if not yet cooked.
  */
-GSGFFlavor *
+const GSGFFlavor *
 gsgf_node_get_flavor (const GSGFNode *self)
 {
         g_return_val_if_fail (GSGF_IS_NODE (self), NULL);
 
         return gsgf_game_tree_get_flavor (self->priv->parent);
+}
+
+static gboolean
+gsgf_node_convert (GSGFComponent *_self, const gchar *charset, GError **error)
+{
+        GSGFNode *self;
+        GList *ids;
+        GList *id_item;
+        gchar *id;
+        GSGFProperty *property;
+        GSGFComponentIface *iface;
+
+        if (error)
+                *error = NULL;
+
+        self = GSGF_NODE (_self);
+
+        ids = g_hash_table_get_keys (self->priv->properties);
+        for (id_item = ids; id_item; id_item = id_item->next) {
+                id = (gchar *) id_item->data;
+                property = g_hash_table_lookup (self->priv->properties, id);
+                iface = GSGF_COMPONENT_GET_IFACE (property);
+                if (!iface->_convert (GSGF_COMPONENT (property),
+                                      charset, error)) {
+                        g_list_free (ids);
+                        return FALSE;
+                }
+        }
+        g_list_free (ids);
+
+        return TRUE;
 }
