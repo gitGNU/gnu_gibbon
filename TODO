@@ -20,21 +20,16 @@
 - Are esacped in SGF files passed through?
 - Prevent virgin GSGFProperty objects being serialized.
 - Remove all traces of backgammon from gsgf.h.
-- Let flavors give hints for compressing list of stones.
 - Give ids to all documentation nodes so that file names are unique.
 - Better formatting of libgsgf output.
 - Check that write_stream methods do not leak memory (pointer to
   temporary buffer must be freed, or alloca() must be used).
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
-- When applying flavors to properties, it should be possible to
-  delete properties that are in the way (for example BM, TE, DO, or IT).
 - Refactor libgsgf interface: Parsing and cooking the collection should
   be separated so that errors can be repaired.
-- Further qualify RE and DT into GSGFResult and GSGFDate respectively.
 - No need to check for single value in the new_from_raw constructors
   of libgsgf.  This is already done by the constraints.  Alternatively,
   gratuitous values could be discarded.
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
-- GSGFRaw should not inherit from GSGFCookedValue.
