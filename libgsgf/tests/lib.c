@@ -122,8 +122,12 @@ expect_error_from_sgf (const gchar *sgf,  GError *expect)
         GInputStream *stream = g_memory_input_stream_new_from_data (sgf, -1,
                                                                     NULL);
         GError *error = NULL;
+        GSGFCollection *collection = NULL;
 
-        gsgf_collection_parse_stream (stream, NULL, &error);
+        collection = gsgf_collection_parse_stream (stream, NULL, &error);
+        if (collection)
+                (void) gsgf_component_cook (GSGF_COMPONENT (collection),
+                                            NULL, &error);
 
         if (0 != expect_error (error, expect))
                 return FALSE;
@@ -172,9 +176,12 @@ expect_errors_from_sgf (const gchar *sgf,  GError *expect1, GError *expect2)
         GInputStream *stream =
                         g_memory_input_stream_new_from_data (sgf, -1, NULL);
         GError *error = NULL;
+        GSGFCollection *collection;
 
-        (void) gsgf_collection_parse_stream (stream, NULL, &error);
-
+        collection = gsgf_collection_parse_stream (stream, NULL, &error);
+        if (collection)
+                (void) gsgf_component_cook (GSGF_COMPONENT (collection), NULL,
+                                            &error);
         if (0 != expect_error_silent (error, expect2)
             && 0 != expect_error (error, expect1))
                 return FALSE;
@@ -187,8 +194,13 @@ parse_memory (const gchar *sgf, GError **error)
 {
         GInputStream *stream = g_memory_input_stream_new_from_data (sgf, -1,
                                                                     NULL);
+        GSGFCollection *collection;
 
         *error = NULL;
 
-        return gsgf_collection_parse_stream (stream, NULL, error);
+        collection = gsgf_collection_parse_stream (stream, NULL, error);
+        if (collection)
+                gsgf_component_cook (GSGF_COMPONENT (collection), NULL, &error);
+
+        return collection;
 }
