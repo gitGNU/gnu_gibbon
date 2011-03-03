@@ -38,6 +38,7 @@ main(int argc, char *argv[])
         GFile *file = NULL;
         GError *error = NULL;
         GSGFCollection *collection = NULL;
+        GSGFComponent *culprit;
         int status;
 
         g_type_init ();
@@ -45,20 +46,23 @@ main(int argc, char *argv[])
         program_name = argv[0];
 
         if (filename) {
-                path = build_filename(filename);
+                path = build_filename (filename);
 
-                file = g_file_new_for_commandline_arg(path);
-                collection = gsgf_collection_parse_file(file, NULL, &error);
+                file = g_file_new_for_commandline_arg (path);
+                collection = gsgf_collection_parse_file (file, NULL, &error);
+                if (collection)
+                        (void) gsgf_component_cook (GSGF_COMPONENT (collection),
+                                                    &culprit, &error);
         }
 
         if (!path)
                 path = "";
 
-        status = test_collection(collection, error);
+        status = test_collection (collection, error);
 
         if (file) g_object_unref (file);
         if (collection) g_object_unref (collection);
-        if (error) g_error_free(error);
+        if (error) g_error_free (error);
 
         return status;
 }
