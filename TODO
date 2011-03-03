@@ -34,3 +34,5 @@
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
 - Major: When cooking values, errors must be distinguished from attempts
   to cook unknown/unsupported properties.
+- Preserve original order of nodes, use a default order when creating
+  missing default nodes.
