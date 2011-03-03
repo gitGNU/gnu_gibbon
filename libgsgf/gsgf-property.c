@@ -261,8 +261,15 @@ gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **erro
         if (gsgf_flavor_get_cooked_value (flavor, self,
                                           GSGF_RAW(self->priv->value),
                                           &cooked, error)) {
-                g_object_unref(self->priv->value);
-                self->priv->value = GSGF_VALUE (cooked);
+                if (cooked) {
+                        g_object_unref(self->priv->value);
+                        self->priv->value = GSGF_VALUE (cooked);
+                }
+        } else {
+                if (culprit)
+                        *culprit = _self;
+
+                return FALSE;
         }
 
         return TRUE;

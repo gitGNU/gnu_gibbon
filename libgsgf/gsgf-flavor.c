@@ -859,9 +859,7 @@ gsgf_flavor_new (void)
  * Cook a #GSGFRaw into a #GSGFCooked.
  *
  * This function is internal and only interesting for implementors of new
- * flavors.  A return value of %FALSE does not necessarily mean failure,
- * but can also signify that the specific property id is not defined for
- * the particular flavor.  Check @error for details.
+ * flavors.
  *
  * Returns: %TRUE for success, %FALSE for failure.
  */
@@ -988,6 +986,10 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         GSGFCookedConstraint *constraint;
         const gchar *id;
 
+        g_return_val_if_fail (cooked, NULL);
+
+        *cooked = NULL;
+
         id = gsgf_property_get_id(property);
         if (id[0] >= 'A' && id[0] <= 'Z' && id[1] == 0) {
                 def = gsgf_single_char_handlers[id[0] - 'A'];
@@ -995,15 +997,15 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                 if (id[0] < 'A' || id[0] > 'Z'
                     || id[1] < 'A' || id[1] > 'Z'
                     || id[2] != 0)
-                return FALSE;
+                return TRUE;
 
                 if (!gsgf_handlers[id[0] - 'A'])
-                        return FALSE;
+                        return TRUE;
                 def = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
         }
 
         if (!def)
-                return FALSE;
+                return TRUE;
 
         *cooked = def->constructor(raw, flavor, property, error);
 
