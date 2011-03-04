@@ -21,10 +21,35 @@
 # include <config.h>
 #endif
 
+#include <glib.h>
+
+#include <string.h>
 #include "html-entities.h"
 
 gchar *
-decode_html_entities (const gchar *string)
+encode_html_entities (const gchar *original)
 {
-        return g_strdup ("This is wrong");
+        GString *string = g_string_sized_new (strlen (original));
+        const gchar *ptr = original;
+        gunichar next_char;
+        gchar *retval;
+
+        while (*ptr) {
+                next_char = g_utf8_get_char_validated (ptr, -1);
+                if (next_char < 0x80) {
+                        string = g_string_append_unichar (string, next_char);
+                        ++ptr;
+                } else {
+                        g_string_append_printf (string, "&#%d;", next_char);
+                        /* A NULL parameter for the output buffer causes
+                         * the function to just compute the length in bytes.
+                         */
+                        ptr += g_unichar_to_utf8 (next_char, NULL);
+                }
+        }
+
+        retval = string->str;
+        g_string_free (string, FALSE);
+
+        return retval;
 }
