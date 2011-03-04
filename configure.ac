@@ -133,6 +133,7 @@ AC_CONFIG_FILES([
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile
+    src/tests/Makefile
     data/Makefile
     data/gibbon.desktop.in
     pixmaps/Makefile
