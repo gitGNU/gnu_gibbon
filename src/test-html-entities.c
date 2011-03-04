@@ -67,7 +67,7 @@ static gboolean
 test_encode_named (void)
 {
         const gchar *original = "Fünf Äpfel für 2 €";
-        const gchar *expect = "Fuenf Aepfel fuer 2 Euro";
+        const gchar *expect = "F&uuml;nf &Auml;pfel f&uuml;r 2 &euro;";
         gchar *got = encode_html_entities (original);
         gboolean retval = TRUE;
 
