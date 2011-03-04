@@ -17,6 +17,8 @@
 
 bin_PROGRAMS = gibbon
 
+AUTOMAKE_OPTIONS = color-tests
+
 platform_libadd =
 
 if MSDOS
@@ -46,6 +48,7 @@ gibbon_SOURCES =		\
 	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c			\
+	html-entities.c		\
 	svg-util.c
 
 noinst_HEADERS =		\
@@ -59,7 +62,20 @@ noinst_HEADERS =		\
 	gibbon-player-list.h	\
 	gibbon-session.h	\
 	gui.h			\
+	html-entities.h		\
 	svg-util.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
+
+TESTS_C = test_html_entities
+TESTS_SH =
+
+TESTS = $(TESTS_C) $(TESTS_SH)
+
+check_PROGRAMS = test_html_entities
+
+test_html_entities_SOURCES = html-entities.c test-html-entities.c
+
+AM_LDFLAGS = -export-dynamic
+LDADD = $(GIBBON_LIBS) $(platform_libadd)

@@ -2,3 +2,4 @@ gobject-skeleton.c
 gobject-skeleton.h
 gibbon
 gibbon.exe
+test_*
