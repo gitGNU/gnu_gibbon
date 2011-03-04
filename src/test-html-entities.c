@@ -43,7 +43,8 @@ main(int argc, char *argv[])
 static gboolean
 test_encode_decimal (void)
 {
-        const gchar *original = "My name is Мечо Пух";
+        const gchar *original = "My name is \xd0\x9c\xd0\xb5\xd1\x87\xd0\xbe"
+                                 " \xd0\x9f\xd1\x83\xd1\x85";
         const gchar *expect =
                 "My name is &#1052;&#1077;&#1095;&#1086; &#1055;&#1091;&#1093;";
         gchar *got = encode_html_entities (original);

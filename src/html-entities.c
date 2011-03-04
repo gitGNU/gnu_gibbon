@@ -40,7 +40,7 @@ encode_html_entities (const gchar *original)
                         string = g_string_append_unichar (string, next_char);
                         ++ptr;
                 } else {
-                        g_string_append_printf (string, "&#%d;", next_char);
+                        g_string_append_printf (string, "&#%u;", next_char);
                         /* A NULL parameter for the output buffer causes
                          * the function to just compute the length in bytes.
                          */
