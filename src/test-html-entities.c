@@ -29,6 +29,7 @@ static gboolean test_encode_hex (void);
 static gboolean test_encode_named (void);
 static gboolean test_decode_hex (void);
 static gboolean test_decode_decimal (void);
+static gboolean test_encode_sparsely (void);
 
 int
 main(int argc, char *argv[])
@@ -44,6 +45,8 @@ main(int argc, char *argv[])
         if (!test_decode_hex ())
                 status = -1;
         if (!test_decode_decimal ())
+                status = -1;
+        if (!test_encode_sparsely ())
                 status = -1;
 
         return status;
@@ -126,3 +129,24 @@ test_decode_decimal (void)
 
         return retval;
 }
+
+static gboolean
+test_encode_sparsely (void)
+{
+        const gchar *original =
+                        "& Co. &Co; &amp; &euro; \"x\" 'y' <b>bold</b>";
+        const gchar *expect =
+                        "& Co. &Co; &amp;amp; &amp;euro; \"x\" 'y' <b>bold</b>";
+        gchar *got = encode_html_entities (original);
+        gboolean retval = TRUE;
+
+        if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected '%s', got '%s'.\n", expect, got);
+                retval = FALSE;
+        }
+
+        g_free (got);
+
+        return retval;
+}
+
