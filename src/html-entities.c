@@ -317,7 +317,7 @@ encode_html_entities (const gchar *original)
                         if (ent)
                                 g_string_append_printf (string, "&%s;", ent);
                         else
-                                g_string_append_printf (string, "&#%u;",
+                                g_string_append_printf (string, "&#x%x;",
                                                         next_char);
                         /* A NULL parameter for the output buffer causes
                          * the function to just compute the length in bytes.
