@@ -28,7 +28,7 @@
 
 struct mapping {
         gunichar c;
-        const gchar *ent;
+        gchar *ent;
 };
 
 /* We prefer named entities over decimal entities because they are less
@@ -40,6 +40,11 @@ struct mapping {
  * would not understand anything at all, either way.
  */
 struct mapping mappings[] = {
+                { 0x22, "quot" },
+                { 0x26, "amp" },
+                { 0x27, "apos" },
+                { 0x3c, "lt" },
+                { 0x3e, "gt" },
                 { 0xa0, "nbsp" },
                 { 0xa1, "iexcl" },
                 { 0xa2, "cent" },
@@ -381,6 +386,10 @@ read_entity (const gchar *string, gsize *length)
 {
         gchar *endptr;
         gunichar retval;
+        const gchar *ptr;
+        gchar *ent;
+        gpointer hash_value;
+        gunichar *retptr;
 
         if ('&' != string[0])
                 return 0;
@@ -391,9 +400,33 @@ read_entity (const gchar *string, gsize *length)
                 } else {
                         retval = g_ascii_strtoull (string + 2, &endptr, 10);
                 }
-                if (retval && ';' == *endptr) {
+                if (retval && ';' == *endptr && g_unichar_validate (retval)) {
                         *length = 1 + endptr - string;
                         return retval;
+                }
+        } else {
+                ptr = string + 1;
+                while (1) {
+                        if (!*ptr)
+                                return 0;
+                        if (*ptr < 'A')
+                                return 0;
+                        if (*ptr > 'z')
+                                return 0;
+                        if (*ptr > 'Z' && *ptr < 'a')
+                                return 0;
+
+                        if (';' == *ptr) {
+                                ent = g_strndup (string + 1, ptr - string);
+                                hash_value = g_hash_table_lookup (name2unichar,
+                                                                 (gpointer) ent);
+                                g_free (ent);
+                                retptr = (gunichar *) hash_value;
+                                if (g_unichar_validate (*retptr))
+                                        return *retptr;
+                                return 0;
+                        }
+                        ++ptr;
                 }
         }
 

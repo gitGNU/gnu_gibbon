@@ -28,6 +28,7 @@
 static gboolean test_encode_hex (void);
 static gboolean test_encode_named (void);
 static gboolean test_decode_hex (void);
+static gboolean test_decode_decimal (void);
 
 int
 main(int argc, char *argv[])
@@ -41,6 +42,8 @@ main(int argc, char *argv[])
         if (!test_encode_named ())
                 status = -1;
         if (!test_decode_hex ())
+                status = -1;
+        if (!test_decode_decimal ())
                 status = -1;
 
         return status;
@@ -89,6 +92,26 @@ test_decode_hex (void)
 {
         const gchar *original =
                 "My name is &#x41c;&#x435;&#x447;&#x43e; &#x41f;&#x443;&#x445;";
+        const gchar *expect = "My name is \xd0\x9c\xd0\xb5\xd1\x87\xd0\xbe"
+                              " \xd0\x9f\xd1\x83\xd1\x85";
+        gchar *got = decode_html_entities (original);
+        gboolean retval = TRUE;
+
+        if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected '%s', got '%s'.\n", expect, got);
+                retval = FALSE;
+        }
+
+        g_free (got);
+
+        return retval;
+}
+
+static gboolean
+test_decode_decimal (void)
+{
+        const gchar *original = "My name is &#1052;&#1077;&#1095;&#1086;"
+                                " &#1055;&#1091;&#1093;";
         const gchar *expect = "My name is \xd0\x9c\xd0\xb5\xd1\x87\xd0\xbe"
                               " \xd0\x9f\xd1\x83\xd1\x85";
         gchar *got = decode_html_entities (original);
