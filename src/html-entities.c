@@ -290,10 +290,9 @@ struct mapping mappings[] = {
                 { 0x2666, "diams" }
 };
 
-static gboolean tables_initialized = FALSE;
 static void init_tables (void);
-static GHash *unichar2name;
-static GHash *name2unichar;
+static GHashTable *unichar2name = NULL;
+static GHashTable *name2unichar = NULL;
 
 gchar *
 encode_html_entities (const gchar *original)
@@ -302,8 +301,9 @@ encode_html_entities (const gchar *original)
         const gchar *ptr = original;
         gunichar next_char;
         gchar *retval;
+        gchar *ent;
 
-        if (!tables_initialized)
+        if (!unichar2name)
                 init_tables ();
 
         while (*ptr) {
@@ -312,7 +312,13 @@ encode_html_entities (const gchar *original)
                         string = g_string_append_unichar (string, next_char);
                         ++ptr;
                 } else {
-                        g_string_append_printf (string, "&#%u;", next_char);
+                        ent = (gchar *) g_hash_table_lookup (unichar2name,
+                                                             &next_char);
+                        if (ent)
+                                g_string_append_printf (string, "&%s;", ent);
+                        else
+                                g_string_append_printf (string, "&#%u;",
+                                                        next_char);
                         /* A NULL parameter for the output buffer causes
                          * the function to just compute the length in bytes.
                          */
@@ -329,10 +335,16 @@ encode_html_entities (const gchar *original)
 static void
 init_tables (void)
 {
-        gsize num_items = 123;
+        gsize num_items = (sizeof mappings) / (sizeof *mappings);
+        gsize i;
+        struct mapping *mapping;
 
-        unichar2name = g_hash_new ();
-        name2unichar = g_hash_new ();
+        unichar2name = g_hash_table_new (g_int_hash, g_int_equal);
+        name2unichar = g_hash_table_new (g_str_hash, g_str_equal);
 
-        g_printerr ("%u items!\n", num_items);
+        for (i = 0; i < num_items; ++i) {
+                mapping = mappings + i;
+                g_hash_table_insert (unichar2name, &mapping->c, mapping->ent);
+                g_hash_table_insert (name2unichar, mapping->ent, &mapping->c);
+        }
 }
