@@ -291,6 +291,7 @@ struct mapping mappings[] = {
 };
 
 static void init_tables (void);
+static gunichar read_entity (const gchar *string, gsize *length);
 static GHashTable *unichar2name = NULL;
 static GHashTable *name2unichar = NULL;
 
@@ -332,6 +333,32 @@ encode_html_entities (const gchar *original)
         return retval;
 }
 
+gchar *
+decode_html_entities (const gchar *original)
+{
+        GString *string = g_string_new ("");
+        const gchar *ptr = original;
+        gchar *retval;
+        gunichar decoded;
+        gsize length;
+
+        while (*ptr) {
+                decoded = read_entity (ptr, &length);
+                if (decoded) {
+                        ptr += length;
+                        string = g_string_append_unichar (string, decoded);
+                } else {
+                        string = g_string_append_c (string, *ptr);
+                        ++ptr;
+                }
+        }
+
+        retval = string->str;
+        g_string_free (string, FALSE);
+
+        return retval;
+}
+
 static void
 init_tables (void)
 {
@@ -347,4 +374,28 @@ init_tables (void)
                 g_hash_table_insert (unichar2name, &mapping->c, mapping->ent);
                 g_hash_table_insert (name2unichar, mapping->ent, &mapping->c);
         }
+}
+
+static gunichar
+read_entity (const gchar *string, gsize *length)
+{
+        gchar *endptr;
+        gunichar retval;
+
+        if ('&' != string[0])
+                return 0;
+
+        if ('#' == string[1]) {
+                if ('x' == string[2]) {
+                        retval = g_ascii_strtoull (string + 3, &endptr, 16);
+                } else {
+                        retval = g_ascii_strtoull (string + 2, &endptr, 10);
+                }
+                if (retval && ';' == *endptr) {
+                        *length = 1 + endptr - string;
+                        return retval;
+                }
+        }
+
+        return 0;
 }

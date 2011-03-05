@@ -27,5 +27,6 @@
 #include <glib.h>
 
 gchar *encode_html_entities (const gchar *string);
+gchar *decode_html_entities (const gchar *string);
 
 #endif
