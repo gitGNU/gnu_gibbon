@@ -313,6 +313,14 @@ encode_html_entities (const gchar *original)
                 init_tables ();
 
         while (*ptr) {
+                if ('&' == *ptr) {
+                        if (read_entity (ptr, NULL)) {
+                                string = g_string_append (string, "&amp;");
+                                ++ptr;
+                                continue;
+                        }
+                }
+
                 next_char = g_utf8_get_char_validated (ptr, -1);
                 if (next_char < 0x80) {
                         string = g_string_append_unichar (string, next_char);
@@ -401,12 +409,28 @@ read_entity (const gchar *string, gsize *length)
                         retval = g_ascii_strtoull (string + 2, &endptr, 10);
                 }
                 if (retval && ';' == *endptr && g_unichar_validate (retval)) {
-                        *length = 1 + endptr - string;
+                        if (length)
+                                *length = 1 + endptr - string;
                         return retval;
                 }
         } else {
                 ptr = string + 1;
                 while (1) {
+                        if (';' == *ptr) {
+                                ent = g_strndup (string + 1, ptr - string - 1);
+                                hash_value = g_hash_table_lookup (name2unichar,
+                                                                 (gpointer) ent);
+                                retptr = (gunichar *) hash_value;
+                                if (retptr && g_unichar_validate (*retptr)) {
+                                        if (length)
+                                                *length = 2 + strlen (ent);
+                                        g_free (ent);
+                                        return *retptr;
+                                }
+                                g_free (ent);
+                                return 0;
+                        }
+
                         if (!*ptr)
                                 return 0;
                         if (*ptr < 'A')
@@ -416,16 +440,6 @@ read_entity (const gchar *string, gsize *length)
                         if (*ptr > 'Z' && *ptr < 'a')
                                 return 0;
 
-                        if (';' == *ptr) {
-                                ent = g_strndup (string + 1, ptr - string);
-                                hash_value = g_hash_table_lookup (name2unichar,
-                                                                 (gpointer) ent);
-                                g_free (ent);
-                                retptr = (gunichar *) hash_value;
-                                if (g_unichar_validate (*retptr))
-                                        return *retptr;
-                                return 0;
-                        }
                         ++ptr;
                 }
         }
