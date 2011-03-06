@@ -396,12 +396,12 @@
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkToolbar" id="toolbar1">
+                      <object class="GtkToolbar" id="game-chat-toolbar">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkToggleToolButton" id="toolbutton-say">
+                          <object class="GtkToggleToolButton" id="game-chat-say-button">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Opponent</property>
+                            <property name="label" translatable="yes">Talk to opponent</property>
                             <property name="use_underline">True</property>
                             <property name="stock_id">gtk-missing-image</property>
                             <property name="active">True</property>
@@ -412,12 +412,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToggleToolButton" id="toolbutton-whisper">
+                          <object class="GtkToggleToolButton" id="game-chat-whisper-button">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Watchers</property>
+                            <property name="label" translatable="yes">Talk to watchers</property>
                             <property name="use_underline">True</property>
                             <property name="stock_id">gtk-missing-image</property>
-                            <property name="active">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -451,7 +450,7 @@
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkComboBox" id="combobox1">
+                          <object class="GtkComboBox" id="combo-game-chat">
                             <property name="visible">True</property>
                           </object>
                           <packing>
