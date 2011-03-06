@@ -668,12 +668,4 @@
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="say-icon">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="whisper-icon">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
 </interface>

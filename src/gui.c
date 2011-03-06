@@ -785,5 +785,10 @@ GtkImage *load_scaled_image (const gchar *path,
                 return NULL;
         }
 
-        return gtk_image_new_from_pixbuf (pixbuf);
+        image = GTK_IMAGE (gtk_image_new ());
+        gtk_image_set_from_pixbuf (image, pixbuf);
+        g_object_unref (pixbuf);
+
+        gtk_widget_show (GTK_WIDGET (image));
+        return image;
 }
