@@ -49,7 +49,8 @@ gibbon_SOURCES =		\
 	gtkconnectiondialog.c	\
 	gui.c			\
 	html-entities.c		\
-	svg-util.c
+	svg-util.c			\
+	gibbon-game-chat.c	
 
 noinst_HEADERS =		\
 	game.h			\
@@ -63,7 +64,8 @@ noinst_HEADERS =		\
 	gibbon-session.h	\
 	gui.h			\
 	html-entities.h		\
-	svg-util.h
+	svg-util.h			\
+	gibbon-game-chat.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)

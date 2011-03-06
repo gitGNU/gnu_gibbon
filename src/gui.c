@@ -30,6 +30,7 @@
 #include "gibbon.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
+#include "gibbon-game-chat.h"
 
 GtkBuilder *builder = NULL;
 
@@ -75,9 +76,6 @@ static void create_player_menu (GtkBuilder *builder);
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
                           GtkTreeIter *iter, gpointer data);
-
-static gboolean fixup_icon_paths (GtkBuilder *builder,
-                                  const gchar *pixmaps_dir);
 
 static struct GibbonPosition initial_position;
 
@@ -240,12 +238,12 @@ init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
         initial_position.may_double[0] = 1;
         initial_position.may_double[1] = 1;
 
-        gibbon_cairoboard_set_position (board, &initial_position);
-
-        if (!fixup_icon_paths (builder, pixmaps_dir)) {
+        if (!gibbon_game_chat_new (builder, pixmaps_dir)) {
                 g_object_unref (builder);
                 return FALSE;
         }
+
+        gibbon_cairoboard_set_position (board, &initial_position);
 
         gtk_widget_show (GTK_WIDGET (board));
         /* FIXME! This should occupy reasonable space by default!  Do
@@ -734,78 +732,58 @@ cleanup_gui ()
 
 }
 
-static gboolean
-fixup_icon_paths (GtkBuilder *builder, const gchar *pixmaps_dir)
+GObject *
+find_object (GtkBuilder *builder, const gchar *id, GType type)
 {
-        GtkImage *say_icon = GTK_IMAGE (gtk_builder_get_object (builder,
-                                                                "say-icon"));
-        GtkToolButton *say_button =
-                GTK_TOOL_BUTTON (gtk_builder_get_object (builder,
-                                                         "toolbutton-say"));
-        GtkImage *whisper_icon = GTK_IMAGE (gtk_builder_get_object (builder,
-                                                                "whisper-icon"));
-        GtkToolButton *whisper_button =
-                GTK_TOOL_BUTTON (gtk_builder_get_object (builder,
-                                                         "toolbutton-whisper"));
-        GtkRequisition requisition;
-        gchar *icon_path;
+        GObject *obj;
+        GType got_type;
+
+        g_return_val_if_fail (GTK_IS_BUILDER (builder), NULL);
+        g_return_val_if_fail (G_TYPE_IS_OBJECT (type), NULL);
+
+        obj = gtk_builder_get_object (builder, id);
+
+        if (!obj) {
+                /* TRANSLATORS: UI means user interface.  */
+                display_error (_("Object `%s' not found in UI definition!"),
+                                id);
+                return NULL;
+        }
+
+        if (!G_IS_OBJECT (obj)) {
+                display_error (_("Object `%s' is not a GObject!"),
+                               id);
+                return NULL;
+        }
+
+        got_type = G_OBJECT_TYPE (obj);
+        if (type != got_type) {
+                display_error (_("Object `%s' is not of type `%s' but `%s'!"),
+                               id, g_type_name (type), g_type_name (got_type));
+                return NULL;
+        }
+
+        return obj;
+}
+
+GtkImage *load_scaled_image (const gchar *path,
+                             gint width, gint height)
+{
+        GError *error = NULL;
         GdkPixbuf *pixbuf;
+        GtkImage *image;
 
-        if (say_icon && say_button) {
-                gtk_widget_size_request (GTK_WIDGET (say_button), &requisition);
-                icon_path = g_build_filename (pixmaps_dir, "icons", "say.svg",
-                                              NULL);
-                pixbuf = gdk_pixbuf_new_from_file_at_scale (icon_path,
-                                                            requisition.width,
-                                                            requisition.height,
-                                                            FALSE,
-                                                            NULL);
-                if (pixbuf) {
-                        gtk_image_set_from_pixbuf (say_icon, pixbuf);
-                        gtk_tool_button_set_icon_widget (say_button,
-                                                         GTK_WIDGET (say_icon));
-                } else {
-                        g_critical (_("Failed to load image `%s'!"),
-                                    icon_path);
-                }
-                g_free (icon_path);
-        } else {
-                if (!say_icon)
-                        g_critical (_("Icon `%s' not found in UI definition!"),
-                                    "say-icon");
-                if (!say_button)
-                        g_critical (_("Button `%s' not found in UI definition!"),
-                                    "toolbutton-say");
+        pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
+                                                    width,
+                                                    height,
+                                                    FALSE,
+                                                    &error);
+
+        if (!pixbuf) {
+                display_error (_("Error loading image `%s': %s!"),
+                               path, error->message);
+                return NULL;
         }
 
-        if (whisper_icon && whisper_button) {
-                gtk_widget_size_request (GTK_WIDGET (whisper_button),
-                                         &requisition);
-                icon_path = g_build_filename (pixmaps_dir, "icons",
-                                              "whisper.svg",
-                                              NULL);
-                pixbuf = gdk_pixbuf_new_from_file_at_scale (icon_path,
-                                                            requisition.width,
-                                                            requisition.height,
-                                                            FALSE,
-                                                            NULL);
-                if (pixbuf) {
-                        gtk_image_set_from_pixbuf (whisper_icon, pixbuf);
-                        gtk_tool_button_set_icon_widget (whisper_button,
-                                                         GTK_WIDGET (whisper_icon));
-                } else {
-                        g_critical (_("Failed to load image `%s'!"),
-                                    icon_path);
-                }
-                g_free (icon_path);
-        } else {
-                if (!whisper_icon)
-                        g_critical (_("Icon `%s' not found in UI definition!"),
-                                    "whisper-icon");
-                if (!whisper_button)
-                        g_critical (_("Button `%s' not found in UI definition!"),
-                                    "toolbutton-whisper");
-        }
-
-        return TRUE;
+        return gtk_image_new_from_pixbuf (pixbuf);
 }
