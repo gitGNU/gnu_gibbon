@@ -80,7 +80,7 @@ main(int argc, char *argv[])
         if (!board_filename)
                 board_filename = board_filename_buf
                         = g_build_filename (GIBBON_DATADIR,
-                                            "pixmaps", PACKAGE,
+                                            "pixmaps", PACKAGE, "boards",
                                             "default.svg", NULL);
         if (!init_gui (builder_filename, board_filename))
                 return 1;

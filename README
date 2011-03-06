@@ -18,7 +18,8 @@ to load the UI definitions and the board definition file in the system
 default location unless you point it to the corresponding ressources
 in the source directory:
 
-    src/gibbon --ui-file=data/gibbon.xml --board-file=pixmaps/default.svg
+    src/gibbon --ui-file=data/gibbon.xml \
+        --board-file=pixmaps/boards/default.svg
 
 Have fun!
 
