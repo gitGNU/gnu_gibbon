@@ -33,6 +33,12 @@
 #include "gui.h"
 #include "gibbon-game-chat.h"
 
+enum GibbonGameChatMode {
+        GIBBON_GAME_CHAT_MODE_SAY = 0,
+        GIBBON_GAME_CHAT_MODE_KIBITZ = 1,
+        GIBBON_GAME_CHAT_MODE_WHISPER = 2,
+};
+
 typedef struct _GibbonGameChatPrivate GibbonGameChatPrivate;
 struct _GibbonGameChatPrivate {
         GtkBuilder *builder;
@@ -42,6 +48,8 @@ struct _GibbonGameChatPrivate {
 
         GtkToggleToolButton *toggle_say;
         GtkToggleToolButton *toggle_whisper;
+
+        enum GibbonGameChatMode mode;
 };
 
 #define GIBBON_GAME_CHAT_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -53,6 +61,8 @@ static GibbonGameChat *singleton = NULL;
 
 static gboolean gibbon_game_chat_fixup_combo (GibbonGameChat *self);
 static gboolean gibbon_game_chat_fixup_toolbar (GibbonGameChat *self);
+static void gibbon_game_chat_synchronize_toolbar (GibbonGameChat *self);
+
 /* Signal handlers. */
 static void gibbon_game_chat_on_combo_change (GibbonGameChat *self,
                                               GtkComboBox *combo);
@@ -69,6 +79,8 @@ gibbon_game_chat_init (GibbonGameChat *self)
         self->priv->combo = NULL;
         self->priv->toggle_say = NULL;
         self->priv->toggle_whisper = NULL;
+
+        self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
 }
 
 static void
@@ -108,6 +120,8 @@ gibbon_game_chat_new (GtkBuilder *builder, const gchar *pixmaps_dir)
                 g_object_unref (self);
                 return NULL;
         }
+
+        gibbon_game_chat_synchronize_toolbar (self);
 
         return self;
 }
@@ -161,11 +175,11 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
 {
         const gchar *pixmaps_dir = self->priv->pixmaps_dir;
         GtkBuilder *builder = self->priv->builder;
-        GtkToggleToolButton *say_button =
+        GtkToggleToolButton *toggle_say =
                         GTK_TOGGLE_TOOL_BUTTON (find_object (builder,
                                                 "game-chat-say-button",
                                                 GTK_TYPE_TOGGLE_TOOL_BUTTON));
-        GtkToggleToolButton *whisper_button =
+        GtkToggleToolButton *toggle_whisper =
                         GTK_TOGGLE_TOOL_BUTTON (find_object (builder,
                                                 "game-chat-whisper-button",
                                                 GTK_TYPE_TOGGLE_TOOL_BUTTON));
@@ -173,12 +187,15 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
         gchar *icon_path;
         GtkImage *image;
 
-        if (!say_button)
+        if (!toggle_say)
                 return FALSE;
-        if (!whisper_button)
+        if (!toggle_whisper)
                 return FALSE;
 
-        gtk_widget_size_request (GTK_WIDGET (say_button), &requisition);
+        self->priv->toggle_say = toggle_say;
+        self->priv->toggle_whisper = toggle_whisper;
+
+        gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
         icon_path = g_build_filename (pixmaps_dir, "icons", "say.svg",
                                       NULL);
         image = load_scaled_image (icon_path,
@@ -187,11 +204,11 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
         if (!image)
                 return FALSE;
 
-        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (say_button),
+        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toggle_say),
                                          GTK_WIDGET (image));
         g_object_unref (image);
 
-        gtk_widget_size_request (GTK_WIDGET (say_button), &requisition);
+        gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
         icon_path = g_build_filename (pixmaps_dir, "icons", "whisper.svg",
                                       NULL);
         image = load_scaled_image (icon_path,
@@ -200,26 +217,94 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
         if (!image)
                 return FALSE;
 
-        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (whisper_button),
+        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toggle_whisper),
                                          GTK_WIDGET (image));
         g_object_unref (image);
 
+        g_signal_connect_swapped (
+                        G_OBJECT (toggle_say), "toggled",
+                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
+                        self);
+        g_signal_connect_swapped (
+                        G_OBJECT (toggle_whisper), "toggled",
+                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
+                        self);
+
         return TRUE;
+}
+
+static void
+gibbon_game_chat_synchronize_toolbar (GibbonGameChat *self)
+{
+        switch (self->priv->mode) {
+                case GIBBON_GAME_CHAT_MODE_WHISPER:
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_say, FALSE);
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_whisper, TRUE);
+                        break;
+                case GIBBON_GAME_CHAT_MODE_KIBITZ:
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_say, TRUE);
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_whisper, TRUE);
+                        break;
+                default:
+                        self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_say, TRUE);
+                        gtk_toggle_tool_button_set_active (
+                                        self->priv->toggle_whisper, FALSE);
+                        break;
+        }
 }
 
 /* Signal handlers.  */
 static void
 gibbon_game_chat_on_combo_change (GibbonGameChat *self, GtkComboBox *combo)
 {
+        gint new_mode;
+
         g_return_if_fail (self == singleton);
         g_return_if_fail (GTK_IS_COMBO_BOX (combo));
+        g_return_if_fail (combo == self->priv->combo);
+
+        new_mode = gtk_combo_box_get_active (combo);
+        if (new_mode == self->priv->mode)
+                return;
+
+        self->priv->mode = new_mode;
+
+        gibbon_game_chat_synchronize_toolbar (self);
 }
 
 static void
 gibbon_game_chat_on_tool_button_toggle (GibbonGameChat *self,
                                         GtkToggleToolButton *button)
 {
+        gboolean say;
+        gboolean whisper;
+        enum GibbonGameChatMode mode;
+
         g_return_if_fail (self == singleton);
         g_return_if_fail (GTK_IS_TOGGLE_TOOL_BUTTON (button));
-}
+        g_return_if_fail (button == self->priv->toggle_say
+                          || button == self->priv->toggle_whisper);
 
+        say = gtk_toggle_tool_button_get_active (self->priv->toggle_say);
+        whisper =
+                gtk_toggle_tool_button_get_active (self->priv->toggle_whisper);
+
+        if (say && whisper)
+                mode = GIBBON_GAME_CHAT_MODE_KIBITZ;
+        else if (!say && whisper)
+                mode = GIBBON_GAME_CHAT_MODE_WHISPER;
+        else
+                mode = GIBBON_GAME_CHAT_MODE_SAY;
+
+        if (mode == self->priv->mode)
+                return;
+
+        self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
+        gtk_combo_box_set_active (self->priv->combo, mode);
+}
