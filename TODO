@@ -34,3 +34,6 @@
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
 - Preserve original order of nodes, use a default order when creating
   missing default nodes.
+- After adding the label and text entry to the server output widget,
+  we get this warning: gtk_scrolled_window_add(): cannot add non scrollable 
+  widget use gtk_scrolled_window_add_with_viewport() instead.
