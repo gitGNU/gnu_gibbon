@@ -309,12 +309,23 @@ get_builder (const gchar *builder_filename)
 {
         GtkBuilder *builder = gtk_builder_new ();
         GError *error = NULL;
+        GtkWidget *error_dialog;
+        gchar *message;
         
         if (!gtk_builder_add_from_file (builder, builder_filename, &error)) {
-                g_print ("%s\n", error->message);
-                g_print (_("Do you need to pass the option `--ui-file'?\n"));
+                message = g_strdup_printf ("%s\n%s",
+                                           error->message,
+                                           _("Do you need to pass the"
+                                             " option `--ui-file'?\n"));
+                error_dialog = gtk_message_dialog_new (NULL,
+                                                       GTK_DIALOG_MODAL,
+                                                       GTK_MESSAGE_ERROR,
+                                                       GTK_BUTTONS_CLOSE,
+                                                       "%s", message);
+                (void) gtk_dialog_run (GTK_DIALOG (error_dialog));
+                g_free (message);
                 g_error_free (error);
-                g_object_unref (G_OBJECT (builder));              
+                g_object_unref (G_OBJECT (builder));
                 return NULL;
         }
         
