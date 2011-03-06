@@ -820,7 +820,6 @@ setup_server_communication (GtkBuilder *builder)
                 GTK_ENTRY (find_object (builder, "server-command-entry",
                                         GTK_TYPE_ENTRY));
 
-        if (!entry) g_printerr ("aua aua\n");
         if (!entry)
                 return FALSE;
 
