@@ -76,6 +76,7 @@ static void create_player_menu (GtkBuilder *builder);
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
                           GtkTreeIter *iter, gpointer data);
+static gboolean setup_server_communication (GtkBuilder *builder);
 
 static struct GibbonPosition initial_position;
 
@@ -239,6 +240,11 @@ init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
         initial_position.may_double[1] = 1;
 
         if (!gibbon_game_chat_new (builder, pixmaps_dir)) {
+                g_object_unref (builder);
+                return FALSE;
+        }
+
+        if (!setup_server_communication (builder)) {
                 g_object_unref (builder);
                 return FALSE;
         }
@@ -791,4 +797,35 @@ GtkImage *load_scaled_image (const gchar *path,
 
         gtk_widget_show (GTK_WIDGET (image));
         return image;
+}
+
+static void
+cb_server_command_fired (gpointer obj, GtkEntry *entry)
+{
+        gchar *trimmed;
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+
+        gibbon_connection_queue_command (connection, "%s", trimmed);
+
+        g_free (trimmed);
+
+        gtk_entry_set_text (entry, "");
+}
+
+static gboolean
+setup_server_communication (GtkBuilder *builder)
+{
+        GtkEntry *entry =
+                GTK_ENTRY (find_object (builder, "server-command-entry",
+                                        GTK_TYPE_ENTRY));
+
+        if (!entry) g_printerr ("aua aua\n");
+        if (!entry)
+                return FALSE;
+
+        g_signal_connect_swapped (entry, "activate",
+                                  cb_server_command_fired, NULL);
+
+        return TRUE;
 }
