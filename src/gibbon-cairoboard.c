@@ -220,7 +220,7 @@ gibbon_cairoboard_new (const gchar *filename)
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
                 message = g_strdup_printf (_("Error reading board definition"
                                              " `%s': %s.\nDo you need to pass"
-                                             " the option `--board-file'?\n"),
+                                             " the option `--pixmaps-dir'?\n"),
                                            filename, error->message);
                 display_error ("%s", message);
                 g_free (message);

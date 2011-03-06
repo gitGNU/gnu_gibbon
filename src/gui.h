@@ -42,7 +42,8 @@ extern GConfClient *conf_client;
 extern GibbonPlayerList *players;
 
 extern gboolean init_gui (const gchar *builder_filename,
-                          const gchar *board_filname);
+                          const gchar *pixmaps_dir,
+                          const gchar *board_name);
 extern void cleanup_gui (void);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);

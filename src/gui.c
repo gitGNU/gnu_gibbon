@@ -79,7 +79,8 @@ static void print2digits (GtkTreeViewColumn *tree_column,
 static struct GibbonPosition initial_position;
 
 gboolean
-init_gui (const gchar *builder_filename, const gchar *board_filename)
+init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
+          const gchar *board_name)
 {
         gchar *default_server;
         gint default_port;
@@ -92,6 +93,7 @@ init_gui (const gchar *builder_filename, const gchar *board_filename)
         GObject *check;
         PangoFontDescription *font_desc;
         GObject *left_vpane;
+        gchar *board_filename = NULL;
         
         builder = get_builder (builder_filename);
         
@@ -202,7 +204,10 @@ init_gui (const gchar *builder_filename, const gchar *board_filename)
 
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
         
+        board_filename = g_build_filename (pixmaps_dir, "boards",
+                                           board_name, NULL);
         board = gibbon_cairoboard_new (board_filename);
+        g_free (board_filename);
         if (!board) {
                 g_object_unref (builder);
                 return FALSE;
@@ -315,7 +320,7 @@ get_builder (const gchar *builder_filename)
                 message = g_strdup_printf ("%s.\n%s",
                                            error->message,
                                            _("Do you need to pass the"
-                                             " option `--ui-file'?\n"));
+                                             " option `--data-dir'?\n"));
                 error_dialog = gtk_message_dialog_new (NULL,
                                                        GTK_DIALOG_MODAL,
                                                        GTK_MESSAGE_ERROR,

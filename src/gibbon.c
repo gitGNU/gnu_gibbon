@@ -31,18 +31,18 @@
 
 GibbonConnection *connection = NULL;
 
-static gchar *builder_filename = NULL;
-static gchar *board_filename = NULL;
+static gchar *data_dir = NULL;
+static gchar *pixmaps_dir = NULL;
 
 static const GOptionEntry options[] =
 {
-                { "ui-file", 'u', 0, G_OPTION_ARG_FILENAME, &builder_filename,
-                  N_("Use alternatve UI definition (developers only)"),
-                  N_("FILENAME")
+                { "data-dir", 'u', 0, G_OPTION_ARG_FILENAME, &data_dir,
+                  N_("Path to data directory (developers only)"),
+                  N_("DIRECTORY")
                 },
-                { "board-file", 'b', 0, G_OPTION_ARG_FILENAME, &board_filename,
-                  N_("Use this SVG for the board (only this time)"),
-                  N_("FILENAME")
+                { "pixmaps-dir", 'b', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
+                  N_("Path to pixmaps directory"),
+                  N_("DIRECTORY")
                 },
 	        { NULL }
 };
@@ -53,9 +53,9 @@ static guint parse_command_line (int argc, char *argv[]);
 int
 main(int argc, char *argv[])
 {	
-        gchar *builder_filename_buf = NULL;
-        gchar *board_filename_buf = NULL;
-        
+        gchar *builder_filename;
+        gchar *pixmaps_dir_buf = NULL;
+
         init_i18n ();
         
         if (!parse_command_line (argc, argv))
@@ -73,20 +73,28 @@ main(int argc, char *argv[])
          * just because there is a data/gibbon.xml file.  Rather require
          * an option!
          */
-        if (!builder_filename)
-                builder_filename = builder_filename_buf 
-                        = g_build_filename (GIBBON_DATADIR, PACKAGE,
-                                           PACKAGE ".xml", NULL);
-        if (!board_filename)
-                board_filename = board_filename_buf
-                        = g_build_filename (GIBBON_DATADIR,
-                                            "pixmaps", PACKAGE, "boards",
-                                            "default.svg", NULL);
-        if (!init_gui (builder_filename, board_filename))
-                return 1;
+        if (data_dir) {
+                builder_filename = g_build_filename (data_dir,
+                                                     PACKAGE ".xml",
+                                                     NULL);
+        } else {
+                builder_filename = g_build_filename (GIBBON_DATADIR, PACKAGE,
+                                                     PACKAGE ".xml",
+                                                     NULL);
+        }
 
-        if (builder_filename_buf)
-                g_free(builder_filename_buf);
+        if (!pixmaps_dir) {
+                pixmaps_dir = pixmaps_dir_buf
+                        = g_build_filename (GIBBON_DATADIR,
+                                            "pixmaps", PACKAGE, NULL);
+        }
+
+        if (!init_gui (builder_filename, pixmaps_dir, "default.svg"))
+                return -1;
+
+        if (pixmaps_dir_buf)
+                g_free (pixmaps_dir_buf);
+        g_free (builder_filename);
         
         gtk_widget_show (window);       
         gtk_main ();
