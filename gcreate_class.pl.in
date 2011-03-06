@@ -101,7 +101,7 @@ my $option_quiet;
 
 Getopt::Long::Configure('bundling');
 GetOptions(
-        'o|output-directory' => \$option_output_directory,
+        'o|output-directory=s' => \$option_output_directory,
         'f|force|overwrite' => \$option_force,
 
         'n|dry-run|just-print' => \$option_dry_run,
