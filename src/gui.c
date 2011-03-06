@@ -78,8 +78,8 @@ static void print2digits (GtkTreeViewColumn *tree_column,
 
 static struct GibbonPosition initial_position;
 
-gint
-init_gui (const gchar *builder_filename)
+gboolean
+init_gui (const gchar *builder_filename, const gchar *board_filename)
 {
         gchar *default_server;
         gint default_port;
@@ -92,12 +92,11 @@ init_gui (const gchar *builder_filename)
         GObject *check;
         PangoFontDescription *font_desc;
         GObject *left_vpane;
-        gchar *board_filename;
         
         builder = get_builder (builder_filename);
         
         if (!builder)
-                return 0;
+                return FALSE;
                 
         window = GTK_WIDGET (gtk_builder_get_object (builder, "window"));
         connection_dialog = 
@@ -203,11 +202,11 @@ init_gui (const gchar *builder_filename)
 
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
         
-        board_filename = g_build_filename (GIBBON_DATADIR, 
-                                           "pixmaps", PACKAGE,
-                                           "default.svg", NULL);                
         board = gibbon_cairoboard_new (board_filename);
-        g_free (board_filename);
+        if (!board) {
+                g_object_unref (builder);
+                return FALSE;
+        }
         
         memset (&initial_position, 0, sizeof initial_position);
         initial_position.checkers[0] = -2; 
@@ -250,7 +249,7 @@ init_gui (const gchar *builder_filename)
         
         create_player_menu (builder);
                 
-       	return 1;
+       	return TRUE;
 }
 
 const gchar *
@@ -313,7 +312,7 @@ get_builder (const gchar *builder_filename)
         gchar *message;
         
         if (!gtk_builder_add_from_file (builder, builder_filename, &error)) {
-                message = g_strdup_printf ("%s\n%s",
+                message = g_strdup_printf ("%s.\n%s",
                                            error->message,
                                            _("Do you need to pass the"
                                              " option `--ui-file'?\n"));

@@ -32,13 +32,19 @@
 GibbonConnection *connection = NULL;
 
 static gchar *builder_filename = NULL;
+static gchar *board_filename = NULL;
 
 static const GOptionEntry options[] =
 {
-	{ "ui-file", 'u', 0, G_OPTION_ARG_FILENAME, &builder_filename,
-	  N_("Use alternatve UI definition (developers only)"),
-	  N_("FILENAME")}, 
-	{ NULL }
+                { "ui-file", 'u', 0, G_OPTION_ARG_FILENAME, &builder_filename,
+                  N_("Use alternatve UI definition (developers only)"),
+                  N_("FILENAME")
+                },
+                { "board-file", 'b', 0, G_OPTION_ARG_FILENAME, &board_filename,
+                  N_("Use this SVG for the board (only this time)"),
+                  N_("FILENAME")
+                },
+	        { NULL }
 };
 
 static void init_i18n (void);
@@ -48,6 +54,7 @@ int
 main(int argc, char *argv[])
 {	
         gchar *builder_filename_buf = NULL;
+        gchar *board_filename_buf = NULL;
         
         init_i18n ();
         
@@ -68,10 +75,14 @@ main(int argc, char *argv[])
          */
         if (!builder_filename)
                 builder_filename = builder_filename_buf 
-                        = g_build_filename(GIBBON_DATADIR, PACKAGE, 
+                        = g_build_filename (GIBBON_DATADIR, PACKAGE,
                                            PACKAGE ".xml", NULL);
-                                           
-        if (!init_gui (builder_filename))               
+        if (!board_filename)
+                board_filename = board_filename_buf
+                        = g_build_filename (GIBBON_DATADIR,
+                                            "pixmaps", PACKAGE,
+                                            "default.svg", NULL);
+        if (!init_gui (builder_filename, board_filename))
                 return 1;
 
         if (builder_filename_buf)

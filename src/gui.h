@@ -41,7 +41,8 @@ extern GtkWidget *connection_dialog;
 extern GConfClient *conf_client;
 extern GibbonPlayerList *players;
 
-extern gint init_gui (const gchar *builder_filename);
+extern gboolean init_gui (const gchar *builder_filename,
+                          const gchar *board_filname);
 extern void cleanup_gui (void);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);
