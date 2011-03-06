@@ -137,6 +137,7 @@ AC_CONFIG_FILES([
     data/gibbon.desktop.in
     pixmaps/Makefile
     pixmaps/boards/Makefile
+    pixmaps/icons/Makefile
     po/Makefile.in
     docs/Makefile
     docs/reference/Makefile
