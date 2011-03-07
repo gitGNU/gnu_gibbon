@@ -59,7 +59,7 @@
             <child>
               <object class="GtkMenuItem" id="menuitem3">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_View</property>
+                <property name="label" translatable="yes">_Extras</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu2">
@@ -67,9 +67,9 @@
                     <child>
                       <object class="GtkMenuItem" id="edit_menu_item">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Edit board ...</property>
+                        <property name="label" translatable="yes">_Import from FIBS ...</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_edit_menu_item_activate"/>
+                        <signal name="activate" handler="on_import_fibs_menu_item_activate"/>
                       </object>
                     </child>
                   </object>
