@@ -30,6 +30,7 @@
 #include "gibbon-session.h"
 #include "gui.h"
 #include "game.h"
+#include "gibbon-prefs.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -245,11 +246,10 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 gibbon_session_send_server_message (self, reply);
                 g_free (reply);
                 
-                mail = gconf_client_get_string (conf_client,
-                                                GIBBON_GCONF_SERVER_PREFS_PREFIX
-                                                "address", NULL);
-
                 gibbon_connection_queue_command (connection, "set boardstyle 3");
+
+                mail = gibbon_prefs_get_string (prefs,
+                                              GIBBON_PREFS_STRING_MAIL_ADDRESS);
                 if (mail) {
                         gibbon_connection_queue_command (connection, 
                                                          "address %s",

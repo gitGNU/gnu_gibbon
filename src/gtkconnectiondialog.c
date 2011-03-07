@@ -32,6 +32,7 @@
 
 #include "gibbon.h"
 #include "gibbon-connection.h"
+#include "gibbon-prefs.h"
 #include "gui.h"
 
 G_MODULE_EXPORT void
@@ -45,6 +46,7 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         GObject *check_button;
         unsigned long portno = 4321;
         char *endptr;
+        gboolean save_password;
         
         if (port[0] != '\000') {
                 errno = 0;
@@ -90,53 +92,24 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         gibbon_connection_set_login (connection, login);
         gibbon_connection_set_password (connection, password);
         
-        gconf_client_set_string (conf_client, 
-                                 GIBBON_GCONF_SERVER_PREFS_PREFIX "host",
-                                 server,
-                                 NULL);
-        gconf_client_set_int (conf_client,
-                              GIBBON_GCONF_SERVER_PREFS_PREFIX "port",
-                              portno,
-                              NULL);
-        gconf_client_set_string (conf_client, 
-                                 GIBBON_GCONF_SERVER_PREFS_PREFIX "login",
-                                 login,
-                                 NULL);
-        if (address && *address) {
-                gconf_client_set_string (conf_client, 
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "address",
-                                         address,
-                                         NULL);
-        } else {
-                gconf_client_unset (conf_client,
-                                    GIBBON_GCONF_SERVER_PREFS_PREFIX "address",
-                                    NULL);
-        }
-        
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_HOST, server);
+        gibbon_prefs_set_int (prefs, GIBBON_PREFS_INT_PORT, portno);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_LOGIN, login);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_MAIL_ADDRESS,
+                                 address);
+
         check_button = gtk_builder_get_object (builder, 
                                                "conn_checkbutton_remember");
-        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_button))) {
-                gconf_client_set_string (conf_client, 
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "password",
-                                         password,
-                                         NULL);
-                gconf_client_set_bool (conf_client,
-                                       GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd",
-                                       TRUE, NULL);
+        if (gibbon_prefs_boolean_read_toggle_button (prefs,
+                                         GTK_TOGGLE_BUTTON (check_button),
+                                         GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD)) {
+                gibbon_prefs_set_string (prefs,
+                                         GIBBON_PREFS_STRING_PASSWORD,
+                                         password);
         } else {
-                /* First overwrite the password, then unset it.  One of the
-                 * two will hopefully succeed.
-                 */
-                gconf_client_set_string (conf_client, 
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "password",
-                                         "",
+                gibbon_prefs_set_string (prefs,
+                                         GIBBON_PREFS_STRING_PASSWORD,
                                          NULL);
-                gconf_client_unset (conf_client, 
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "password",
-                                         NULL);
-                gconf_client_set_bool (conf_client,
-                                       GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd",
-                                       FALSE, NULL);
         }
 
         set_state_connecting ();        

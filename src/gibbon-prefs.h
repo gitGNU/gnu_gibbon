@@ -65,8 +65,51 @@ struct _GibbonPrefsClass
         GObjectClass parent_class;
 };
 
+enum GibbonPrefsString {
+        GIBBON_PREFS_STRING_HOST,
+        GIBBON_PREFS_STRING_LOGIN,
+        GIBBON_PREFS_STRING_PASSWORD,
+        GIBBON_PREFS_STRING_MAIL_ADDRESS,
+};
+
+enum GibbonPrefsInt {
+        GIBBON_PREFS_INT_PORT,
+};
+
+enum GibbonPrefsBoolean {
+        GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD,
+};
+
 GType gibbon_prefs_get_type (void) G_GNUC_CONST;
 
-GibbonPrefs *gibbon_prefs_new (GtkBuilder *builder);
+GibbonPrefs *gibbon_prefs_new (void);
+
+gchar *gibbon_prefs_get_string (const GibbonPrefs *self,
+                                enum GibbonPrefsString key);
+void gibbon_prefs_set_string (const GibbonPrefs *self,
+                              enum GibbonPrefsString key,
+                              const gchar *value);
+void gibbon_prefs_string_update_entry (const GibbonPrefs *self, GtkEntry *entry,
+                                       enum GibbonPrefsString key);
+const gchar *gibbon_prefs_string_read_entry (GibbonPrefs *self,
+                                             GtkEntry *entry,
+                                             enum GibbonPrefsString key,
+                                             gboolean literally);
+
+gint gibbon_prefs_get_int (const GibbonPrefs *self, enum GibbonPrefsInt key);
+void gibbon_prefs_set_int (const GibbonPrefs *self, enum GibbonPrefsInt key,
+                           gint value);
+
+gboolean gibbon_prefs_get_boolean (const GibbonPrefs *self,
+                                   enum GibbonPrefsBoolean key);
+void gibbon_prefs_set_boolean (const GibbonPrefs *self,
+                               enum GibbonPrefsBoolean key,
+                               gboolean value);
+void gibbon_prefs_string_update_toggle_button (const GibbonPrefs *self,
+                                               GtkToggleButton *toggle,
+                                               enum GibbonPrefsBoolean key);
+gboolean gibbon_prefs_boolean_read_toggle_button (GibbonPrefs *self,
+                                                  GtkToggleButton *button,
+                                                  enum GibbonPrefsBoolean key);
 
 #endif

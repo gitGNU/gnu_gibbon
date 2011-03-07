@@ -27,14 +27,15 @@
  * and to intialize the GUI according to these preferences.
  **/
 
-#include <glib.h>
+#include <gtk/gtk.h>
+#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-prefs.h"
 
 typedef struct _GibbonPrefsPrivate GibbonPrefsPrivate;
 struct _GibbonPrefsPrivate {
-        GtkBuilder *builder;
+        GConfClient *client;
 };
 
 #define GIBBON_PREFS_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -42,41 +43,243 @@ struct _GibbonPrefsPrivate {
 
 G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 
-static void 
-gibbon_prefs_init (GibbonPrefs *self)
+#define GIBBON_GCONF_PREFIX "/apps/gibbon/"
+#define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
+#define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
+
+static gboolean gibbon_prefs_init_login (GibbonPrefs *self);
+
+static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
+                                                 enum GibbonPrefsString key);
+static const gchar *gibbon_prefs_get_int_key (const GibbonPrefs *self,
+                                              enum GibbonPrefsInt key);
+static const gchar *gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
+                                                  enum GibbonPrefsBoolean key);
+
+static void gibbon_prefs_init (GibbonPrefs *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                GIBBON_TYPE_PREFS, GibbonPrefsPrivate);
+                        GIBBON_TYPE_PREFS, GibbonPrefsPrivate);
 
-        self->priv->builder = NULL;
+        self->priv->client = NULL;
 }
 
-static void
-gibbon_prefs_finalize (GObject *object)
+static void gibbon_prefs_finalize (GObject *object)
 {
         GibbonPrefs *self = GIBBON_PREFS (object);
 
-        self->priv->builder = NULL;
+        if (self->priv->client)
+                g_object_unref (self->priv->client);
+        self->priv->client = NULL;
 
-        G_OBJECT_CLASS (gibbon_prefs_parent_class)->finalize(object);
+        G_OBJECT_CLASS (gibbon_prefs_parent_class)->finalize (object);
 }
 
-static void
-gibbon_prefs_class_init (GibbonPrefsClass *klass)
+static void gibbon_prefs_class_init (GibbonPrefsClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        
+
         g_type_class_add_private (klass, sizeof (GibbonPrefsPrivate));
 
         object_class->finalize = gibbon_prefs_finalize;
 }
 
 GibbonPrefs *
-gibbon_prefs_new (GtkBuilder *builder)
+gibbon_prefs_new ()
 {
         GibbonPrefs *self = g_object_new (GIBBON_TYPE_PREFS, NULL);
 
-        self->priv->builder = builder;
+        self->priv->client = gconf_client_get_default ();
 
         return self;
+}
+
+static const gchar *
+gibbon_prefs_get_string_key (const GibbonPrefs *self, 
+                             enum GibbonPrefsString key)
+{
+        switch (key) {
+                case GIBBON_PREFS_STRING_HOST:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "host";
+                case GIBBON_PREFS_STRING_LOGIN:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "login";
+                case GIBBON_PREFS_STRING_PASSWORD:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "password";
+                case GIBBON_PREFS_STRING_MAIL_ADDRESS:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "address";
+        }
+
+        g_return_val_if_reached (NULL);
+}
+
+static const gchar *
+gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
+                              enum GibbonPrefsBoolean key)
+{
+        switch (key) {
+                case GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd";
+        }
+
+        g_return_val_if_reached (NULL);
+}
+
+static const gchar *
+gibbon_prefs_get_int_key (const GibbonPrefs *self,
+                          enum GibbonPrefsInt key)
+{
+        switch (key) {
+                case GIBBON_PREFS_INT_PORT:
+                        return GIBBON_GCONF_SERVER_PREFS_PREFIX "port";
+        }
+
+        g_return_val_if_reached (NULL);
+}
+
+gchar *
+gibbon_prefs_get_string (const GibbonPrefs *self, enum GibbonPrefsString key)
+{
+        const gchar *conf_key;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), NULL);
+
+        conf_key = gibbon_prefs_get_string_key (self, key);
+        if (!conf_key)
+                return NULL;
+
+        return gconf_client_get_string (self->priv->client, conf_key, NULL);
+}
+
+void
+gibbon_prefs_set_string (const GibbonPrefs *self,
+                         enum GibbonPrefsString key, const gchar *value)
+{
+        const gchar *conf_key;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+
+        conf_key = gibbon_prefs_get_string_key (self, key);
+        if (!conf_key)
+                return;
+
+        if (value && *value)
+                gconf_client_set_string (self->priv->client, conf_key, value,
+                                         NULL);
+        else
+                gconf_client_unset (self->priv->client, conf_key, NULL);
+}
+
+void
+gibbon_prefs_string_update_entry (const GibbonPrefs *self, GtkEntry *entry,
+                                  enum GibbonPrefsString key)
+{
+        gchar *value;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        value = gibbon_prefs_get_string (self, key);
+        if (value && *value)
+                gtk_entry_set_text (entry, value);
+        else
+                gtk_entry_set_text (entry, "");
+
+        if (value)
+                g_free (value);
+}
+
+const gchar *
+gibbon_prefs_string_read_entry (GibbonPrefs *self, GtkEntry *entry,
+                                enum GibbonPrefsString key,
+                                gboolean literally)
+{
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), "");
+        g_return_val_if_fail (GTK_IS_ENTRY (entry), "");
+        gchar *trimmed;
+        const gchar *value;
+
+        if (!literally) {
+                trimmed = pango_trim_string (gtk_entry_get_text (entry));
+                gtk_entry_set_text (GTK_ENTRY (entry), trimmed);
+                g_free (trimmed);
+        }
+
+        value = gtk_entry_get_text (entry);
+        gibbon_prefs_set_string (self, key, value);
+
+        return value;
+}
+
+gboolean
+gibbon_prefs_get_boolean (const GibbonPrefs *self, enum GibbonPrefsBoolean key)
+{
+        const gchar *conf_key;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), FALSE);
+
+        conf_key = gibbon_prefs_get_boolean_key (self, key);
+        if (!conf_key)
+                return FALSE;
+
+        return gconf_client_get_bool (self->priv->client, conf_key, NULL);
+}
+
+void
+gibbon_prefs_set_boolean (const GibbonPrefs *self,
+                          enum GibbonPrefsBoolean key, gboolean value)
+{
+        const gchar *conf_key;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+
+        conf_key = gibbon_prefs_get_string_key (self, key);
+        if (!conf_key)
+                return;
+
+        gconf_client_set_bool (self->priv->client, conf_key, value, NULL);
+}
+
+void
+gibbon_prefs_boolean_update_toggle_button (const GibbonPrefs *self,
+                                           GtkToggleButton *toggle,
+                                           enum GibbonPrefsString key)
+{
+        gboolean value;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+        g_return_if_fail (GTK_IS_TOGGLE_BUTTON (toggle));
+
+        value = gibbon_prefs_get_boolean (self, key);
+        gtk_toggle_button_set_active (toggle, value);
+}
+
+gboolean
+gibbon_prefs_boolean_read_toggle_button (GibbonPrefs *self,
+                                         GtkToggleButton *button,
+                                         enum GibbonPrefsBoolean key)
+{
+        gboolean retval;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), FALSE);
+        g_return_val_if_fail (GTK_IS_TOGGLE_BUTTON (button), FALSE);
+
+        retval = gtk_toggle_button_get_active (button);
+        gibbon_prefs_set_boolean (self, key, retval);
+
+        return retval;
+}
+
+void
+gibbon_prefs_set_int (const GibbonPrefs *self, enum GibbonPrefsInt key,
+                      gint value)
+{
+        const gchar *conf_key;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+
+        conf_key = gibbon_prefs_get_string_key (self, key);
+        if (!conf_key)
+                return;
+
+        gconf_client_set_int (self->priv->client, conf_key, value, NULL);
 }

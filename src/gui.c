@@ -31,6 +31,7 @@
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
 #include "gibbon-game-chat.h"
+#include "gibbon-prefs.h"
 
 GtkBuilder *builder = NULL;
 
@@ -38,7 +39,7 @@ GtkWidget *window = NULL;
 GtkWidget *connection_dialog = NULL;
 GtkWidget *server_text_view = NULL;
 
-GConfClient *conf_client = NULL;
+GibbonPrefs *prefs = NULL;
 GibbonPlayerList *players = NULL;
 
 static GtkWidget *statusbar = NULL;
@@ -77,6 +78,7 @@ static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
                           GtkTreeIter *iter, gpointer data);
 static gboolean setup_server_communication (GtkBuilder *builder);
+static gboolean init_prefs (void);
 
 static struct GibbonPosition initial_position;
 
@@ -84,13 +86,6 @@ gboolean
 init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
           const gchar *board_name)
 {
-        gchar *default_server;
-        gint default_port;
-        gchar *default_port_str;
-        gchar *default_login;
-        gchar *default_password;
-        gboolean default_save_password;
-        gchar *default_address;
         GObject *entry;
         GObject *check;
         PangoFontDescription *font_desc;
@@ -134,75 +129,10 @@ init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
                           G_CALLBACK (cb_raw_server_output), NULL);
         set_state_disconnected ();
         
-        /* FIXME! All this stuff has to go into a new class
-         * GibbonPreferences.
-         */
-        conf_client = gconf_client_get_default ();
-        
-        default_server = 
-                gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "host",
-                                         NULL);
-        default_port = 
-                gconf_client_get_int (conf_client,
-                                      GIBBON_GCONF_SERVER_PREFS_PREFIX "port",
-                                      NULL);
-        default_login = 
-                gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "login",
-                                         NULL);
-        default_save_password = 
-                gconf_client_get_bool (conf_client,
-                                       GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd",
-                                       NULL);
-        default_password = default_save_password ?
-                gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "password",
-                                         NULL)
-                : NULL;
-        default_address = 
-                gconf_client_get_string (conf_client,
-                                         GIBBON_GCONF_SERVER_PREFS_PREFIX "address",
-                                         NULL);
-        
-        if (default_server) {
-                entry = gtk_builder_get_object (builder, "conn_entry_server");
-                gtk_entry_set_text (GTK_ENTRY (entry), default_server);
-                g_free (default_server);
+        if (!init_prefs ()) {
+                g_object_unref (builder);
+                return FALSE;
         }
-        
-        if (default_port) {
-                entry = gtk_builder_get_object (builder, "conn_entry_port");
-                default_port_str = g_strdup_printf ("%d", default_port);
-                gtk_entry_set_text (GTK_ENTRY (entry), default_port_str); 
-                g_free (default_port_str);
-        }
-        
-        if (default_login) {
-                entry = gtk_builder_get_object (builder, "conn_entry_login");
-                gtk_entry_set_text (GTK_ENTRY (entry), default_login);
-                g_free (default_login);
-        }
-        
-        if (default_address) {
-                entry = gtk_builder_get_object (builder, "conn_entry_address");
-                gtk_entry_set_text (GTK_ENTRY (entry), default_address);
-                g_free (default_address);
-        }
-        
-        check = gtk_builder_get_object (builder, "conn_checkbutton_remember");
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), 
-                                      default_save_password);
-        
-        entry = gtk_builder_get_object (builder, "conn_entry_password");
-        if (default_save_password && default_password) {
-                gtk_entry_set_text (GTK_ENTRY (entry), default_password);
-        } else {
-                gtk_entry_set_text (GTK_ENTRY (entry), "");
-        }
-        
-        if (default_password)
-                g_free (default_password);
 
         left_vpane = gtk_builder_get_object (builder, "left_vpane");
         
@@ -825,6 +755,53 @@ setup_server_communication (GtkBuilder *builder)
 
         g_signal_connect_swapped (entry, "activate",
                                   cb_server_command_fired, NULL);
+
+        return TRUE;
+}
+
+static gboolean
+init_prefs (void)
+{
+        GtkEntry *entry;
+        GtkToggleButton *toggle;
+        gboolean save_password;
+
+        prefs = gibbon_prefs_new ();
+        if (!prefs)
+                return FALSE;
+
+        entry = GTK_ENTRY (find_object (builder, "conn_entry_server",
+                                        GTK_TYPE_ENTRY));
+        gibbon_prefs_string_update_entry (prefs, entry,
+                                          GIBBON_PREFS_STRING_HOST);
+        entry = GTK_ENTRY (find_object (builder, "conn_entry_login",
+                                        GTK_TYPE_ENTRY));
+        gibbon_prefs_string_update_entry (prefs, entry,
+                                          GIBBON_PREFS_STRING_LOGIN);
+        entry = GTK_ENTRY (find_object (builder, "conn_entry_address",
+                                        GTK_TYPE_ENTRY));
+        gibbon_prefs_string_update_entry (prefs, entry,
+                                          GIBBON_PREFS_STRING_MAIL_ADDRESS);
+        toggle = GTK_TOGGLE_BUTTON (find_object (builder,
+                                                 "conn_checkbutton_remember",
+                                                 GTK_TYPE_CHECK_BUTTON));
+        gibbon_prefs_boolean_update_toggle_button (prefs, toggle,
+                                            GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD);
+
+        save_password = gibbon_prefs_get_boolean (prefs,
+                                                  GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD);
+
+        if (!save_password)
+                gibbon_prefs_set_string (prefs,
+                                         GIBBON_PREFS_STRING_PASSWORD,
+                                         NULL);
+
+g_printerr ("Save password: %d\n", save_password);
+        entry = GTK_ENTRY (find_object (builder, "conn_entry_password",
+                                        GTK_TYPE_ENTRY));
+g_printerr ("Entry: %p\n", entry);
+        gibbon_prefs_string_update_entry (prefs, entry,
+                                          GIBBON_PREFS_STRING_PASSWORD);
 
         return TRUE;
 }
