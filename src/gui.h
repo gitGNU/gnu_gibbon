@@ -44,6 +44,7 @@ extern void cleanup_gui (void);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);
 extern void display_error (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
+extern void display_info (const gchar *message, ...) G_GNUC_PRINTF (1, 2);
 extern GObject *find_object (GtkBuilder *builder, const gchar *id,
                              GType type);
 extern GtkImage *load_scaled_image (const gchar *path,

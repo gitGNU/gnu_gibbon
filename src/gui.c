@@ -249,6 +249,30 @@ display_error (const gchar *message_format, ...)
         gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
+void
+display_info (const gchar *message_format, ...)
+{
+        va_list args;
+        gchar *message;
+
+        va_start (args, message_format);
+        message = g_strdup_vprintf (message_format, args);
+        va_end (args);
+
+        GtkWidget *dialog =
+                gtk_message_dialog_new (GTK_WINDOW (window),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_INFO,
+                                        GTK_BUTTONS_CLOSE,
+                                        "%s", message);
+
+        g_free (message);
+
+        gtk_dialog_run (GTK_DIALOG (dialog));
+
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
 static GtkBuilder *
 get_builder (const gchar *builder_filename)
 {
