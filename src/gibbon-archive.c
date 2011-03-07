@@ -94,6 +94,7 @@ gibbon_archive_new (void)
 {
         GibbonArchive *self;
         const gchar *documents_servers_directory;
+        gboolean first_run = FALSE;
 
         g_return_val_if_fail (!singleton, singleton);
 
@@ -112,6 +113,10 @@ gibbon_archive_new (void)
 
         self->priv->servers_directory = g_build_filename (documents_servers_directory,
                                                   PACKAGE, "servers", NULL);
+
+        if (!g_file_test (self->priv->servers_directory, G_FILE_TEST_EXISTS))
+                first_run = TRUE;
+
         /* FIXME! Use constants from sys/stat.h!  */
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, 0755)) {
                 display_error (_("Failed to created servers_directory"
@@ -125,6 +130,12 @@ gibbon_archive_new (void)
         g_signal_connect_swapped (connection, "logged_in",
                                   G_CALLBACK (gibbon_archive_on_login),
                                   self);
+
+        if (first_run)
+                display_info (_("You can import settings and saved"
+                                " games from your old client."
+                                " Check the menu `Extras' to see if"
+                                " your old client software is supported!"));
 
         return self;
 }
