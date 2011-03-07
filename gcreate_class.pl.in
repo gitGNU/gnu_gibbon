@@ -218,6 +218,7 @@ struct _${class}Private {
 EOF
 
         $private_init = <<EOF;
+
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE$macro_space(self,
                 $macro_type, ${class}Private);
 
