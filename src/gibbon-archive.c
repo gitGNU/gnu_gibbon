@@ -50,8 +50,6 @@ struct _GibbonArchivePrivate {
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
 
-static GibbonArchive *singleton = NULL;
-
 static void gibbon_archive_on_login (GibbonArchive *archive, const gchar *host);
 
 static void 
@@ -96,9 +94,7 @@ gibbon_archive_new (void)
         const gchar *documents_servers_directory;
         gboolean first_run = FALSE;
 
-        g_return_val_if_fail (!singleton, singleton);
-
-        self = singleton = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
+        self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
         documents_servers_directory =
                 g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS);
 
@@ -136,6 +132,31 @@ gibbon_archive_new (void)
                                 " games from your old client."
                                 " Check the menu `Extras' to see if"
                                 " your old client software is supported!"));
+
+        return self;
+}
+
+GibbonArchive *
+gibbon_archive_new_from_session_info (const gchar *host, guint port,
+                                      const gchar *login)
+{
+        GibbonArchive *self = gibbon_archive_new ();
+        gchar *session_directory;
+        gchar *buf;
+
+        if (!self)
+                return NULL;
+
+        session_directory = g_build_filename (self->priv->servers_directory,
+                                              host, NULL);
+        if (port != 4321) {
+                buf = g_strdup_printf ("%s_%u", session_directory, port);
+                g_free (session_directory);
+                session_directory = buf;
+        }
+        buf = g_build_filename (session_directory, login);
+        g_free (session_directory);
+        self->priv->session_directory = buf;
 
         return self;
 }

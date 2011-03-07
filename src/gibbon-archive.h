@@ -68,5 +68,8 @@ struct _GibbonArchiveClass
 GType gibbon_archive_get_type (void) G_GNUC_CONST;
 
 GibbonArchive *gibbon_archive_new (void);
+GibbonArchive *gibbon_archive_new_from_session_info (const gchar *host,
+                                                     guint port,
+                                                     const gchar *login);
 
 #endif
