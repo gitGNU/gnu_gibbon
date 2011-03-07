@@ -27,6 +27,7 @@
 #include "gibbon.h"
 #include "gibbon-connection.h"
 #include "gui.h"
+#include "gibbon-java-fibs-importer.h"
 
 G_MODULE_EXPORT void 
 on_window_destroy (GtkObject *object, gpointer user_data)
@@ -48,7 +49,9 @@ on_disconnect_menu_item_activate (GtkObject *object, gpointer user_data)
 }
 
 G_MODULE_EXPORT void
-on_fibs_import_menu_item_activate (GtkObject *object, gpointer user_data)
+on_import_java_fibs_menu_item_activate (GtkObject *object, gpointer user_data)
 {
-
+        GibbonJavaFIBSImporter *importer = gibbon_java_fibs_importer_new ();
+        gibbon_java_fibs_importer_run (importer);
+        g_object_unref (importer);
 }

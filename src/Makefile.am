@@ -52,7 +52,8 @@ gibbon_SOURCES =		\
 	svg-util.c			\
 	gibbon-game-chat.c				\
 	gibbon-prefs.c				\
-	gibbon-archive.c	
+	gibbon-archive.c				\
+	gibbon-java-fibs-importer.c	
 
 noinst_HEADERS =		\
 	game.h			\
@@ -69,7 +70,8 @@ noinst_HEADERS =		\
 	svg-util.h			\
 	gibbon-game-chat.h			\
 	gibbon-prefs.h			\
-	gibbon-archive.h
+	gibbon-archive.h			\
+	gibbon-java-fibs-importer.h
 
 gibbon_LDFLAGS = -export-dynamic
 gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
