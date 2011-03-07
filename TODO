@@ -37,3 +37,4 @@
 - After adding the label and text entry to the server output widget,
   we get this warning: gtk_scrolled_window_add(): cannot add non scrollable 
   widget use gtk_scrolled_window_add_with_viewport() instead.
+- Make archive directory configurable.
