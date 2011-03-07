@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon.h"
+#include "gibbon-connection.h"
 #include "gui.h"
 
 G_MODULE_EXPORT void 
@@ -44,4 +45,10 @@ on_disconnect_menu_item_activate (GtkObject *object, gpointer user_data)
 {
         set_state_disconnected ();
         gibbon_connection_disconnect (connection);
+}
+
+G_MODULE_EXPORT void
+on_fibs_import_menu_item_activate (GtkObject *object, gpointer user_data)
+{
+
 }
