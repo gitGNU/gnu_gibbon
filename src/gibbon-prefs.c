@@ -230,7 +230,7 @@ gibbon_prefs_set_boolean (const GibbonPrefs *self,
 
         g_return_if_fail (GIBBON_IS_PREFS (self));
 
-        conf_key = gibbon_prefs_get_string_key (self, key);
+        conf_key = gibbon_prefs_get_boolean_key (self, key);
         if (!conf_key)
                 return;
 
@@ -275,7 +275,7 @@ gibbon_prefs_set_int (const GibbonPrefs *self, enum GibbonPrefsInt key,
 
         g_return_if_fail (GIBBON_IS_PREFS (self));
 
-        conf_key = gibbon_prefs_get_string_key (self, key);
+        conf_key = gibbon_prefs_get_int_key (self, key);
         if (!conf_key)
                 return;
 
