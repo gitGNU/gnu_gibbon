@@ -46,7 +46,6 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         GObject *check_button;
         unsigned long portno = 4321;
         char *endptr;
-        gboolean save_password;
         
         if (port[0] != '\000') {
                 errno = 0;

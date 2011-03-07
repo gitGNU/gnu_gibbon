@@ -105,9 +105,9 @@ gboolean gibbon_prefs_get_boolean (const GibbonPrefs *self,
 void gibbon_prefs_set_boolean (const GibbonPrefs *self,
                                enum GibbonPrefsBoolean key,
                                gboolean value);
-void gibbon_prefs_string_update_toggle_button (const GibbonPrefs *self,
-                                               GtkToggleButton *toggle,
-                                               enum GibbonPrefsBoolean key);
+void gibbon_prefs_boolean_update_toggle_button (const GibbonPrefs *self,
+                                                GtkToggleButton *toggle,
+                                                enum GibbonPrefsBoolean key);
 gboolean gibbon_prefs_boolean_read_toggle_button (GibbonPrefs *self,
                                                   GtkToggleButton *button,
                                                   enum GibbonPrefsBoolean key);

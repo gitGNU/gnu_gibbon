@@ -86,8 +86,6 @@ gboolean
 init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
           const gchar *board_name)
 {
-        GObject *entry;
-        GObject *check;
         PangoFontDescription *font_desc;
         GObject *left_vpane;
         gchar *board_filename = NULL;
@@ -754,7 +752,7 @@ setup_server_communication (GtkBuilder *builder)
                 return FALSE;
 
         g_signal_connect_swapped (entry, "activate",
-                                  cb_server_command_fired, NULL);
+                                  G_CALLBACK (cb_server_command_fired), NULL);
 
         return TRUE;
 }

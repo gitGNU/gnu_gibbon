@@ -47,8 +47,6 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
 #define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
 
-static gboolean gibbon_prefs_init_login (GibbonPrefs *self);
-
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
 static const gchar *gibbon_prefs_get_int_key (const GibbonPrefs *self,
@@ -242,7 +240,7 @@ gibbon_prefs_set_boolean (const GibbonPrefs *self,
 void
 gibbon_prefs_boolean_update_toggle_button (const GibbonPrefs *self,
                                            GtkToggleButton *toggle,
-                                           enum GibbonPrefsString key)
+                                           enum GibbonPrefsBoolean key)
 {
         gboolean value;
 
