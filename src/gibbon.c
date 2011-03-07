@@ -55,7 +55,7 @@ static void init_i18n (void);
 static guint parse_command_line (int argc, char *argv[]);
 
 int
-main(int argc, char *argv[])
+main (int argc, char *argv[])
 {	
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
