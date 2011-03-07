@@ -31,6 +31,7 @@
 
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
+#include "gui.h"
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
@@ -41,6 +42,15 @@ struct _GibbonJavaFIBSImporterPrivate {
         GIBBON_TYPE_JAVA_FIBS_IMPORTER, GibbonJavaFIBSImporterPrivate))
 
 G_DEFINE_TYPE (GibbonJavaFIBSImporter, gibbon_java_fibs_importer, G_TYPE_OBJECT)
+
+static void gibbon_java_fibs_importer_on_cancel (GibbonJavaFIBSImporter *self,
+                                                 GtkAssistant *assistant);
+static void gibbon_java_fibs_importer_on_close (GibbonJavaFIBSImporter *self,
+                                                GtkAssistant *assistant);
+static void gibbon_java_fibs_importer_on_apply (GibbonJavaFIBSImporter *self,
+                                                GtkAssistant *assistant);
+static void gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
+                                                 GtkAssistant *assistant);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -85,7 +95,61 @@ gibbon_java_fibs_importer_new (void)
 void
 gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 {
+        GtkAssistant *assistant;
+        GtkWidget *widget;
+
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
 
-        g_printerr ("TODO\n");
+        assistant = find_object (builder, "java_fibs_assistant",
+                                 GTK_TYPE_ASSISTANT);
+        if (!assistant)
+                return;
+
+        /* Set the first page to complete.  */
+        widget = gtk_assistant_get_nth_page (assistant, 0);
+        gtk_assistant_set_page_complete (assistant, widget, TRUE);
+
+        g_signal_connect_swapped (G_OBJECT (assistant), "apply",
+                                  G_CALLBACK (gibbon_java_fibs_importer_on_apply),
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (assistant), "close",
+                                  G_CALLBACK (gibbon_java_fibs_importer_on_close),
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (assistant), "cancel",
+                                  G_CALLBACK (gibbon_java_fibs_importer_on_cancel),
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (assistant), "prepare",
+                                  G_CALLBACK (gibbon_java_fibs_importer_on_prepare),
+                                  self);
+
+        gtk_widget_show_all (GTK_WIDGET (assistant));
+}
+
+static void
+gibbon_java_fibs_importer_on_cancel (GibbonJavaFIBSImporter *self,
+                                     GtkAssistant *assistant)
+{
+        gtk_widget_hide (GTK_WIDGET (assistant));
+        g_object_unref (G_OBJECT (self));
+}
+
+static void
+gibbon_java_fibs_importer_on_close (GibbonJavaFIBSImporter *self,
+                                    GtkAssistant *assistant)
+{
+        g_printerr ("Close ...\n");
+}
+
+static void
+gibbon_java_fibs_importer_on_apply (GibbonJavaFIBSImporter *self,
+                                    GtkAssistant *assistant)
+{
+        g_printerr ("Apply ...\n");
+}
+
+static void
+gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
+                                      GtkAssistant *assistant)
+{
+        g_printerr ("Prepare ...\n");
 }

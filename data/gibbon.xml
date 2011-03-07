@@ -710,35 +710,89 @@
   </object>
   <object class="GtkAssistant" id="java_fibs_assistant">
     <property name="border_width">12</property>
+    <property name="title" translatable="yes">Import settings and games from JavaFIBS</property>
+    <property name="window_position">center-always</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Introduction Page</property>
+        <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
         <property name="page_type">intro</property>
+        <property name="title" translatable="yes">Introduction</property>
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="label9">
+      <object class="GtkVBox" id="vbox27">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Inhaltsseite</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel" id="label_java_import_what">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="xpad">10</property>
+            <property name="ypad">12</property>
+            <property name="label" translatable="yes">Select what you want to import from JavaFIBS:</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="cb_user_data">
+            <property name="label" translatable="yes">User name and password</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="cb_ratings">
+            <property name="label" translatable="yes">Rating information</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="cb_played_matches">
+            <property name="label" translatable="yes">Played matches</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
       </object>
-    </child>
-    <child>
-      <object class="GtkLabel" id="label10">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Best&#xE4;tigungsseite</property>
-      </object>
-      <packing>
-        <property name="page_type">confirm</property>
-      </packing>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
     </child>
   </object>
 </interface>

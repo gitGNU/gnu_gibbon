@@ -53,5 +53,4 @@ on_import_java_fibs_menu_item_activate (GtkObject *object, gpointer user_data)
 {
         GibbonJavaFIBSImporter *importer = gibbon_java_fibs_importer_new ();
         gibbon_java_fibs_importer_run (importer);
-        g_object_unref (importer);
 }
