@@ -28,11 +28,15 @@
 
 #include "gui.h"
 #include "gibbon.h"
+#include "gibbon-connection.h"
+#include "gibbon-archive.h"
 
 GibbonConnection *connection = NULL;
 
 static gchar *data_dir = NULL;
 static gchar *pixmaps_dir = NULL;
+
+GibbonArchive *archive = NULL;
 
 static const GOptionEntry options[] =
 {
@@ -95,10 +99,14 @@ main(int argc, char *argv[])
         if (pixmaps_dir_buf)
                 g_free (pixmaps_dir_buf);
         g_free (builder_filename);
-        
-        gtk_widget_show (window);       
-        gtk_main ();
 
+        archive = gibbon_archive_new ();
+
+        if (archive) {
+                gtk_widget_show (window);
+                gtk_main ();
+        }
+        
         if (connection)
                 g_object_unref (connection);
 

@@ -32,6 +32,7 @@
 #include "gibbon-player-list.h"
 #include "gibbon-game-chat.h"
 #include "gibbon-prefs.h"
+#include "gibbon-connection.h"
 
 GtkBuilder *builder = NULL;
 

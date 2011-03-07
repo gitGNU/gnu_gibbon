@@ -24,8 +24,7 @@
 # include <config.h>
 #endif
 
-#include "gibbon-connection.h"
-
-extern GibbonConnection *connection;
+struct _GibbonConnection *connection;
+struct _GibbonArchive *archive;
 
 #endif

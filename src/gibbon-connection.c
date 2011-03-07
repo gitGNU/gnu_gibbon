@@ -91,8 +91,8 @@ static void
 gibbon_connection_init (GibbonConnection *conn)
 {
         conn->priv = G_TYPE_INSTANCE_GET_PRIVATE (conn, 
-                                                        GIBBON_TYPE_CONNECTION, 
-                                                        GibbonConnectionPrivate);
+                                                  GIBBON_TYPE_CONNECTION,
+                                                  GibbonConnectionPrivate);
 
         conn->priv->hostname = NULL;
         conn->priv->port = 0;
@@ -271,20 +271,25 @@ gibbon_connection_new (void)
 void
 gibbon_connection_set_hostname (GibbonConnection *self, const gchar *hostname)
 {
-        const gchar *new_hostname = NULL;
+        gchar *new_hostname = NULL;
+        int i;
         
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
         if (!(hostname && hostname[0])) {
-                new_hostname = GIBBON_CONNECTION_DEFAULT_HOST;
+                new_hostname = g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
         } else {
-                new_hostname = hostname;
+                new_hostname = g_strdup (hostname);
         }
         
         if (self->priv->hostname)
                 g_free (self->priv->hostname);
         
-        self->priv->hostname = g_strdup (new_hostname);
+        /* Make sure that the hostname is basically canonical.  */
+        for (i = 0; i < strlen (new_hostname); ++i)
+                new_hostname[i] = g_ascii_tolower (new_hostname[i]);
+
+        self->priv->hostname = new_hostname;
 }
 
 const gchar *
