@@ -99,8 +99,8 @@ my $option_gpl;
 my $option_force;
 my $option_quiet;
 
-Getopt::Long::Configure('bundling');
-GetOptions(
+Getopt::Long::Configure ('bundling');
+GetOptions (
         'o|output-directory=s' => \$option_output_directory,
         'f|force|overwrite' => \$option_force,
 
@@ -237,13 +237,13 @@ EOF
 
         $private_class_init = <<EOF;
         
-        g_type_class_add_private(klass, sizeof$func_space(${class}Private));
+        g_type_class_add_private$func_space(klass, sizeof$func_space(${class}Private));
 EOF
 
         $private_new = <<EOF;
 
         /* $fm! Initialize private data! */
-        /* self->priv->dummy = g_strdup(dummy); */
+        /* self->priv->dummy = g_strdup$func_space(dummy); */
 EOF
 }
 
