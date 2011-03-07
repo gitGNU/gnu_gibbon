@@ -92,23 +92,23 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         gibbon_connection_set_login (connection, login);
         gibbon_connection_set_password (connection, password);
         
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_HOST, server);
-        gibbon_prefs_set_int (prefs, GIBBON_PREFS_INT_PORT, portno);
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_LOGIN, login);
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_STRING_MAIL_ADDRESS,
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_HOST, server);
+        gibbon_prefs_set_int (prefs, GIBBON_PREFS_PORT, portno);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_LOGIN, login);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_MAIL_ADDRESS,
                                  address);
 
         check_button = gtk_builder_get_object (builder, 
                                                "conn_checkbutton_remember");
         if (gibbon_prefs_boolean_read_toggle_button (prefs,
                                          GTK_TOGGLE_BUTTON (check_button),
-                                         GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD)) {
+                                         GIBBON_PREFS_SAVE_PASSWORD)) {
                 gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_STRING_PASSWORD,
+                                         GIBBON_PREFS_PASSWORD,
                                          password);
         } else {
                 gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_STRING_PASSWORD,
+                                         GIBBON_PREFS_PASSWORD,
                                          NULL);
         }
 

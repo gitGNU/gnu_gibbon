@@ -249,7 +249,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 gibbon_connection_queue_command (connection, "set boardstyle 3");
 
                 mail = gibbon_prefs_get_string (prefs,
-                                              GIBBON_PREFS_STRING_MAIL_ADDRESS);
+                                              GIBBON_PREFS_MAIL_ADDRESS);
                 if (mail) {
                         gibbon_connection_queue_command (connection, 
                                                          "address %s",

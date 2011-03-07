@@ -773,35 +773,33 @@ init_prefs (void)
         entry = GTK_ENTRY (find_object (builder, "conn_entry_server",
                                         GTK_TYPE_ENTRY));
         gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_STRING_HOST);
+                                          GIBBON_PREFS_HOST);
         entry = GTK_ENTRY (find_object (builder, "conn_entry_login",
                                         GTK_TYPE_ENTRY));
         gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_STRING_LOGIN);
+                                          GIBBON_PREFS_LOGIN);
         entry = GTK_ENTRY (find_object (builder, "conn_entry_address",
                                         GTK_TYPE_ENTRY));
         gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_STRING_MAIL_ADDRESS);
+                                          GIBBON_PREFS_MAIL_ADDRESS);
         toggle = GTK_TOGGLE_BUTTON (find_object (builder,
                                                  "conn_checkbutton_remember",
                                                  GTK_TYPE_CHECK_BUTTON));
         gibbon_prefs_boolean_update_toggle_button (prefs, toggle,
-                                            GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD);
+                                            GIBBON_PREFS_SAVE_PASSWORD);
 
         save_password = gibbon_prefs_get_boolean (prefs,
-                                                  GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD);
+                                                  GIBBON_PREFS_SAVE_PASSWORD);
 
         if (!save_password)
                 gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_STRING_PASSWORD,
+                                         GIBBON_PREFS_PASSWORD,
                                          NULL);
 
-g_printerr ("Save password: %d\n", save_password);
         entry = GTK_ENTRY (find_object (builder, "conn_entry_password",
                                         GTK_TYPE_ENTRY));
-g_printerr ("Entry: %p\n", entry);
         gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_STRING_PASSWORD);
+                                          GIBBON_PREFS_PASSWORD);
 
         return TRUE;
 }

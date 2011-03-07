@@ -99,13 +99,13 @@ gibbon_prefs_get_string_key (const GibbonPrefs *self,
                              enum GibbonPrefsString key)
 {
         switch (key) {
-                case GIBBON_PREFS_STRING_HOST:
+                case GIBBON_PREFS_HOST:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "host";
-                case GIBBON_PREFS_STRING_LOGIN:
+                case GIBBON_PREFS_LOGIN:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "login";
-                case GIBBON_PREFS_STRING_PASSWORD:
+                case GIBBON_PREFS_PASSWORD:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "password";
-                case GIBBON_PREFS_STRING_MAIL_ADDRESS:
+                case GIBBON_PREFS_MAIL_ADDRESS:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "address";
         }
 
@@ -117,7 +117,7 @@ gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
                               enum GibbonPrefsBoolean key)
 {
         switch (key) {
-                case GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD:
+                case GIBBON_PREFS_SAVE_PASSWORD:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd";
         }
 
@@ -129,7 +129,7 @@ gibbon_prefs_get_int_key (const GibbonPrefs *self,
                           enum GibbonPrefsInt key)
 {
         switch (key) {
-                case GIBBON_PREFS_INT_PORT:
+                case GIBBON_PREFS_PORT:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "port";
         }
 

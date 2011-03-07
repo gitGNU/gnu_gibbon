@@ -66,18 +66,18 @@ struct _GibbonPrefsClass
 };
 
 enum GibbonPrefsString {
-        GIBBON_PREFS_STRING_HOST,
-        GIBBON_PREFS_STRING_LOGIN,
-        GIBBON_PREFS_STRING_PASSWORD,
-        GIBBON_PREFS_STRING_MAIL_ADDRESS,
+        GIBBON_PREFS_HOST,
+        GIBBON_PREFS_LOGIN,
+        GIBBON_PREFS_PASSWORD,
+        GIBBON_PREFS_MAIL_ADDRESS,
 };
 
 enum GibbonPrefsInt {
-        GIBBON_PREFS_INT_PORT,
+        GIBBON_PREFS_PORT,
 };
 
 enum GibbonPrefsBoolean {
-        GIBBON_PREFS_BOOLEAN_SAVE_PASSWORD,
+        GIBBON_PREFS_SAVE_PASSWORD,
 };
 
 GType gibbon_prefs_get_type (void) G_GNUC_CONST;
