@@ -26,7 +26,7 @@
  * Class that handles data import from JavaFIBS.
  **/
 
-#include <glib.h>
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-java-fibs-importer.h"
@@ -36,6 +36,17 @@
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
         GibbonArchive *archive;
+
+        GtkAssistant *assistant;
+        GtkFileChooserButton *file_chooser_button;
+
+        gulong apply;
+        gulong prepare;
+        gulong cancel;
+        gulong close;
+        gulong directory_selected;
+
+        gboolean signals_connected;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -50,7 +61,9 @@ static void gibbon_java_fibs_importer_on_close (GibbonJavaFIBSImporter *self,
 static void gibbon_java_fibs_importer_on_apply (GibbonJavaFIBSImporter *self,
                                                 GtkAssistant *assistant);
 static void gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
-                                                 GtkAssistant *assistant);
+                                                  GtkAssistant *assistant);
+static void gibbon_java_fibs_importer_on_directory_selected (GtkObject *object,
+                                                  GibbonJavaFIBSImporter *self);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -59,6 +72,8 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
                 GIBBON_TYPE_JAVA_FIBS_IMPORTER, GibbonJavaFIBSImporterPrivate);
 
         self->priv->archive = NULL;
+        self->priv->assistant = NULL;
+        self->priv->file_chooser_button = NULL;
 }
 
 static void
@@ -70,6 +85,24 @@ gibbon_java_fibs_importer_finalize (GObject *object)
                 g_object_unref (self->priv->archive);
         self->priv->archive = NULL;
 
+        if (self->priv->assistant) {
+                g_signal_handler_disconnect (self->priv->assistant,
+                                             self->priv->apply);
+                g_signal_handler_disconnect (self->priv->assistant,
+                                             self->priv->close);
+                g_signal_handler_disconnect (self->priv->assistant,
+                                             self->priv->cancel);
+                g_signal_handler_disconnect (self->priv->assistant,
+                                             self->priv->prepare);
+                g_signal_handler_disconnect (
+                                self->priv->file_chooser_button,
+                                self->priv->directory_selected);
+        }
+
+        if (self->priv->file_chooser_button) {
+                g_signal_handler_disconnect (self->priv->file_chooser_button,
+                                             self->priv->directory_selected);
+        }
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
 
@@ -88,6 +121,60 @@ gibbon_java_fibs_importer_new (void)
 {
         GibbonJavaFIBSImporter *self =
                         g_object_new (GIBBON_TYPE_JAVA_FIBS_IMPORTER, NULL);
+        GtkWidget *widget;
+        gchar *selected_directory;
+
+        GtkAssistant *assistant =
+                GTK_ASSISTANT (find_object (builder, "java_fibs_assistant",
+                                            GTK_TYPE_ASSISTANT));
+
+        if (!assistant) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        self->priv->assistant = assistant;
+
+        self->priv->apply =
+                g_signal_connect_swapped (G_OBJECT (assistant), "apply",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_apply), self);
+        self->priv->close =
+                g_signal_connect_swapped (G_OBJECT (assistant), "close",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_close), self);
+        self->priv->cancel =
+                g_signal_connect_swapped (G_OBJECT (assistant), "cancel",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_cancel), self);
+        self->priv->prepare =
+                g_signal_connect_swapped (G_OBJECT (assistant), "prepare",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_prepare), self);
+
+        widget = GTK_WIDGET (find_object (builder, "java_fibs_file_chooser_button",
+                                          GTK_TYPE_FILE_CHOOSER_BUTTON));
+        self->priv->file_chooser_button = (GTK_FILE_CHOOSER_BUTTON (widget));
+
+        selected_directory =
+            gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget));
+        if (selected_directory) {
+                /* TODO: Write a validation function that checks for
+                 * the required directory structure.
+                 */
+                g_printerr ("Currently selected: %s\n", selected_directory);
+                g_free (selected_directory);
+        } else {
+                g_printerr ("No filename selected????\n");
+        }
+        self->priv->directory_selected =
+                g_signal_connect_swapped (G_OBJECT (widget), "file-set",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_directory_selected),
+                        self);
+
+        /* Set the first page to complete.  */
+        widget = gtk_assistant_get_nth_page (assistant, 0);
+        gtk_assistant_set_page_complete (assistant, widget, TRUE);
+
+        /* Same for the second page.  */
+        widget = gtk_assistant_get_nth_page (assistant, 1);
+        gtk_assistant_set_page_complete (assistant, widget, TRUE);
 
         return self;
 }
@@ -95,34 +182,9 @@ gibbon_java_fibs_importer_new (void)
 void
 gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 {
-        GtkAssistant *assistant;
-        GtkWidget *widget;
-
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
 
-        assistant = find_object (builder, "java_fibs_assistant",
-                                 GTK_TYPE_ASSISTANT);
-        if (!assistant)
-                return;
-
-        /* Set the first page to complete.  */
-        widget = gtk_assistant_get_nth_page (assistant, 0);
-        gtk_assistant_set_page_complete (assistant, widget, TRUE);
-
-        g_signal_connect_swapped (G_OBJECT (assistant), "apply",
-                                  G_CALLBACK (gibbon_java_fibs_importer_on_apply),
-                                  self);
-        g_signal_connect_swapped (G_OBJECT (assistant), "close",
-                                  G_CALLBACK (gibbon_java_fibs_importer_on_close),
-                                  self);
-        g_signal_connect_swapped (G_OBJECT (assistant), "cancel",
-                                  G_CALLBACK (gibbon_java_fibs_importer_on_cancel),
-                                  self);
-        g_signal_connect_swapped (G_OBJECT (assistant), "prepare",
-                                  G_CALLBACK (gibbon_java_fibs_importer_on_prepare),
-                                  self);
-
-        gtk_widget_show_all (GTK_WIDGET (assistant));
+        gtk_widget_show_all (GTK_WIDGET (self->priv->assistant));
 }
 
 static void
@@ -152,4 +214,11 @@ gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
                                       GtkAssistant *assistant)
 {
         g_printerr ("Prepare ...\n");
+}
+
+static void
+gibbon_java_fibs_importer_on_directory_selected (GtkObject *object,
+                                                 GibbonJavaFIBSImporter *self)
+{
+        g_printerr ("Directory selected ...\n");
 }

@@ -718,6 +718,27 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
@@ -793,6 +814,41 @@
           </packing>
         </child>
       </object>
+      <packing>
+        <property name="title" translatable="yes">What to import?</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkVBox" id="vbox72">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel" id="label32">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Please select the path where JavaFIBS is installed.  This directory must contain the subdirectories `matches' and `user'.</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFileChooserButton" id="java_fibs_file_chooser_button">
+            <property name="visible">True</property>
+            <property name="action">select-folder</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="title" translatable="yes">Location of JavaFIBS</property>
+      </packing>
     </child>
   </object>
 </interface>
