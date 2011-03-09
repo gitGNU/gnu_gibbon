@@ -237,7 +237,9 @@ gsgf_collection_parse_stream(GInputStream *stream,
                         case GSGF_PARSER_STATE_INIT:
                                 if (token == '(') {
                                         ctx.state = GSGF_PARSER_STATE_NODE;
-                                        game_tree = gsgf_collection_add_game_tree(self);
+                                        game_tree =
+                                                gsgf_collection_add_game_tree (
+                                                                self, NULL);
                                         node = NULL;
                                         property = NULL;
                                 } else {
@@ -401,7 +403,8 @@ gsgf_collection_parse_stream(GInputStream *stream,
                                         if (game_tree) {
                                                 game_tree = gsgf_game_tree_add_child(game_tree);
                                         } else {
-                                                game_tree = gsgf_collection_add_game_tree(self);
+                                                game_tree = gsgf_collection_add_game_tree(self,
+                                                                                          NULL);
                                         }
                                 } else if (token == ')') {
                                         /* State does not change! */
@@ -673,19 +676,20 @@ gsgf_yyerror(GSGFParserContext *ctx, const gchar *expect, gint token, GError **e
 /**
  * gsgf_collection_add_game_tree:
  * @self: The #GSGFCollection to extend.
+ * @flavor: The #GSGFFlavor to use.
  *
  * Adds a fresh, empty #GSGFGameTree instance to a #GSGFCollection.
  *
  * Returns: The freshly created #GSGFGameTree.
  */
 GSGFGameTree *
-gsgf_collection_add_game_tree(GSGFCollection *self)
+gsgf_collection_add_game_tree (GSGFCollection *self, const GSGFFlavor *flavor)
 {
         GSGFGameTree *game_tree;
 
         g_return_val_if_fail(GSGF_IS_COLLECTION(self), NULL);
 
-        game_tree = _gsgf_game_tree_new();
+        game_tree = _gsgf_game_tree_new (flavor);
 
         self->priv->game_trees = 
                 g_list_append(self->priv->game_trees, game_tree);
@@ -773,8 +777,12 @@ gsgf_collection_cook (GSGFComponent *_self, GSGFComponent **culprit,
 
         while (iter) {
                 iface = GSGF_COMPONENT_GET_IFACE (iter->data);
-                if (!iface->cook (GSGF_COMPONENT (iter->data), culprit, error))
+                if (!iface->cook (GSGF_COMPONENT (iter->data), culprit,
+                                  error)) {
+                        if (culprit && !*culprit)
+                                *culprit = _self;
                         return FALSE;
+                }
 
                 iter = iter->next;
         }
