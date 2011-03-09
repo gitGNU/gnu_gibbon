@@ -97,10 +97,14 @@ gsgf_write_back_SOURCES = gsgf-write-back.c
 
 noinst_HEADERS = test.h
 
+SGF_IN_FILES = compressed-list.sgf.in	\
+	       full.sgf.in		\
+	       utf-8.sgf.in
+
+SGF_FILES_GENERATED = $(SGF_IN_FILES:.in=)
+
 SGF_FILES = cp1251.sgf			\
-	    compressed-list.sgf.in	\
 	    empty.sgf 			\
-	    full.sgf.in			\
 	    game-info-properties.sgf	\
 	    linefeeds.sgf		\
 	    markup-properties.sgf	\
@@ -115,12 +119,11 @@ SGF_FILES = cp1251.sgf			\
 	    really-empty.sgf		\
 	    root-properties.sgf		\
 	    setup-properties.sgf	\
-	    timing-properties.sgf	\
-	    utf-8.sgf.in
+	    timing-properties.sgf
 
 TESTS_ENVIRONMENT = builddir=$(builddir) \
                     top_srcdir=$(top_srcdir) \
                     top_builddir=$(top_builddir) \
-                    SGF_FILES="$(SGF_FILES)"
+                    SGF_FILES="$(SGF_FILES) $(SGF_IN_FILES)"
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH)
+EXTRA_DIST = $(SGF_FILES) $(SGF_IN_FILES) $(TESTS_SH)
