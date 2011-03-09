@@ -83,7 +83,8 @@ GSGFCollection *gsgf_collection_parse_file(GFile *file,
                                            GCancellable *cancellable,
                                            GError **error);
 
-struct _GSGFGameTree *gsgf_collection_add_game_tree(GSGFCollection *self);
+struct _GSGFGameTree *gsgf_collection_add_game_tree (GSGFCollection *self,
+                                                     const GSGFFlavor *flavor);
 
 GList *gsgf_collection_get_game_trees(const GSGFCollection *self);
 
