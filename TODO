@@ -38,3 +38,12 @@
   we get this warning: gtk_scrolled_window_add(): cannot add non scrollable 
   widget use gtk_scrolled_window_add_with_viewport() instead.
 - Make archive directory configurable.
+- gsgf_node_get_property_cooked() must return a GSGFValue and should therefore
+  be renamed.
+- When setting the value of a GSGFProperty, that property must be
+  automatically cooked.
+- Decide on a philosophy for adding components in libgsgf.  Either always
+  increase the reference count and leave the added object to the caller
+  or always hijack the object.
+- Go through gsgf-private.h and remove what is not needed.  Turn the rest
+  into private class methods.
