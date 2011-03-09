@@ -29,17 +29,11 @@
 </MACRO>
 <STRUCT>
 <NAME>GSGFMove</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFMove</NAME>
 struct _GSGFMove
 {
         /*< private >*/
         GSGFCookedValue parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFMoveClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFMoveClass</NAME>
@@ -51,7 +45,7 @@ struct _GSGFMoveClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_move_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <MACRO>
@@ -85,9 +79,6 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFNode</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNode</NAME>
 struct _GSGFNode
 {
         GObject parent_instance;
@@ -95,9 +86,6 @@ struct _GSGFNode
         /*< private >*/
         struct _GSGFNodePrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNodeClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFNodeClass</NAME>
@@ -109,42 +97,47 @@ struct _GSGFNodeClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_node_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_add_property</NAME>
-<RETURNS>struct _GSGFProperty *</RETURNS>
+<RETURNS>struct _GSGFProperty  *</RETURNS>
 GSGFNode *self, const gchar *id, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_property</NAME>
-<RETURNS>struct _GSGFProperty *</RETURNS>
+<RETURNS>struct _GSGFProperty  *</RETURNS>
 const GSGFNode *self, const gchar *id 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_property_ids</NAME>
-<RETURNS>GList *</RETURNS>
+<RETURNS>GList  *</RETURNS>
 const GSGFNode *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_remove_property</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>void  </RETURNS>
 GSGFNode *self, const gchar *id 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_property_cooked</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFNode *self, const gchar *id 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_previous_node</NAME>
-<RETURNS>GSGFNode *</RETURNS>
+<RETURNS>GSGFNode  *</RETURNS>
 const GSGFNode *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_node_get_flavor</NAME>
-<RETURNS>const GSGFFlavor *</RETURNS>
+<RETURNS>const GSGFFlavor  *</RETURNS>
+const GSGFNode *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_get_game_tree</NAME>
+<RETURNS>GSGFGameTree  *</RETURNS>
 const GSGFNode *self 
 </FUNCTION>
 <MACRO>
@@ -183,16 +176,10 @@ const GSGFNode *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFDouble</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFDouble</NAME>
 struct _GSGFDouble
 {
         GSGFNumber parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFDoubleClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFDoubleClass</NAME>
@@ -204,7 +191,7 @@ struct _GSGFDoubleClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_double_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <ENUM>
@@ -216,22 +203,22 @@ typedef enum {
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_double_new</NAME>
-<RETURNS>GSGFDouble *</RETURNS>
+<RETURNS>GSGFDouble  *</RETURNS>
 GSGFDoubleEnum grade 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_double_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_double_set_value</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>void  </RETURNS>
 GSGFDouble *self, GSGFDoubleEnum value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_double_get_value</NAME>
-<RETURNS>GSGFDoubleEnum </RETURNS>
+<RETURNS>GSGFDoubleEnum  </RETURNS>
 const GSGFDouble *self 
 </FUNCTION>
 <MACRO>
@@ -265,9 +252,6 @@ const GSGFDouble *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFReal</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFReal</NAME>
 struct _GSGFReal
 {
         GSGFCookedValue parent_instance;
@@ -275,9 +259,6 @@ struct _GSGFReal
         /*< private >*/
         struct _GSGFRealPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFRealClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFRealClass</NAME>
@@ -289,32 +270,32 @@ struct _GSGFRealClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_real_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_real_new</NAME>
-<RETURNS>GSGFReal*</RETURNS>
+<RETURNS>GSGFReal * </RETURNS>
 gdouble value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_real_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_real_set_value</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>void  </RETURNS>
 GSGFReal *self, gdouble value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_real_get_value</NAME>
-<RETURNS>gdouble </RETURNS>
+<RETURNS>gdouble  </RETURNS>
 const GSGFReal *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_real_to_string</NAME>
-<RETURNS>gchar *</RETURNS>
+<RETURNS>gchar  *</RETURNS>
 const GSGFReal *self 
 </FUNCTION>
 <MACRO>
@@ -353,9 +334,6 @@ const GSGFReal *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFResult</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFResult</NAME>
 struct _GSGFResult
 {
         GSGFSimpleText parent_instance;
@@ -363,9 +341,6 @@ struct _GSGFResult
         /*< private >*/
         struct _GSGFResultPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFResultClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFResultClass</NAME>
@@ -377,7 +352,7 @@ struct _GSGFResultClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_result_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <ENUM>
@@ -402,12 +377,12 @@ typedef enum {
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_result_new</NAME>
-<RETURNS>GSGFResult *</RETURNS>
+<RETURNS>GSGFResult  *</RETURNS>
 GSGFResultWinner winner, gdouble score, GSGFResultCause cause 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_result_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
@@ -436,9 +411,6 @@ const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 </MACRO>
 <STRUCT>
 <NAME>GSGFText</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFText</NAME>
 struct _GSGFText
 {
         GSGFCookedValue parent_instance;
@@ -446,9 +418,6 @@ struct _GSGFText
         /*< private >*/
         struct _GSGFTextPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFTextClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFTextClass</NAME>
@@ -464,37 +433,37 @@ struct _GSGFTextClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_text_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_new</NAME>
-<RETURNS>GSGFText*</RETURNS>
+<RETURNS>GSGFText * </RETURNS>
 const gchar *value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue*</RETURNS>
+<RETURNS>GSGFCookedValue * </RETURNS>
 const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_set_value</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 GSGFText *self, const gchar *value, gboolean copy, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_text_get_value</NAME>
-<RETURNS>gchar *</RETURNS>
+<RETURNS>gchar  *</RETURNS>
 const GSGFText *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_util_read_simple_text</NAME>
-<RETURNS>gchar *</RETURNS>
+<RETURNS>gchar  *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_util_read_text</NAME>
-<RETURNS>gchar *</RETURNS>
+<RETURNS>gchar  *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
 </FUNCTION>
 <MACRO>
@@ -528,16 +497,10 @@ const gchar *raw, const gchar **end, gchar delim
 </MACRO>
 <STRUCT>
 <NAME>GSGFEmpty</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFEmpty</NAME>
 struct _GSGFEmpty
 {
         GSGFCookedValue parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFEmptyClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFEmptyClass</NAME>
@@ -549,17 +512,17 @@ struct _GSGFEmptyClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_empty_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_empty_new</NAME>
-<RETURNS>GSGFEmpty *</RETURNS>
+<RETURNS>GSGFEmpty  *</RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_empty_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <ENUM>
@@ -594,7 +557,7 @@ typedef enum {
 </MACRO>
 <FUNCTION>
 <NAME>gsgf_error_quark</NAME>
-<RETURNS>GQuark </RETURNS>
+<RETURNS>GQuark  </RETURNS>
 void 
 </FUNCTION>
 <MACRO>
@@ -628,16 +591,10 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFStone</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFStone</NAME>
 struct _GSGFStone
 {
         GSGFCookedValue parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFStoneClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFStoneClass</NAME>
@@ -649,7 +606,7 @@ struct _GSGFStoneClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_stone_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <MACRO>
@@ -683,9 +640,6 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFCompose</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCompose</NAME>
 struct _GSGFCompose
 {
         GSGFCookedValue parent_instance;
@@ -693,9 +647,6 @@ struct _GSGFCompose
         /*< private >*/
         struct _GSGFComposePrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFComposeClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFComposeClass</NAME>
@@ -707,22 +658,22 @@ struct _GSGFComposeClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_compose_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_compose_new</NAME>
-<RETURNS>GSGFCompose *</RETURNS>
+<RETURNS>GSGFCompose  *</RETURNS>
 GSGFCookedValue *value, ... 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_compose_get_number_of_values</NAME>
-<RETURNS>gsize </RETURNS>
+<RETURNS>gsize  </RETURNS>
 const GSGFCompose *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_compose_get_value</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFCompose *self, gsize i 
 </FUNCTION>
 <MACRO>
@@ -761,16 +712,10 @@ const GSGFCompose *self, gsize i
 </MACRO>
 <STRUCT>
 <NAME>GSGFValue</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFValue</NAME>
 struct _GSGFValue
 {
         GObject parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFValueClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFValueClass</NAME>
@@ -786,12 +731,12 @@ struct _GSGFValueClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_value_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_value_write_stream</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFValue *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <MACRO>
@@ -825,16 +770,10 @@ const GSGFValue *self, GOutputStream *out, gsize *bytes_written, GCancellable *c
 </MACRO>
 <STRUCT>
 <NAME>GSGFSimpleText</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFSimpleText</NAME>
 struct _GSGFSimpleText
 {
         GSGFText parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFSimpleTextClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFSimpleTextClass</NAME>
@@ -846,17 +785,17 @@ struct _GSGFSimpleTextClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_simple_text_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_simple_text_new</NAME>
-<RETURNS>GSGFSimpleText*</RETURNS>
+<RETURNS>GSGFSimpleText * </RETURNS>
 const gchar *value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_simple_text_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue*</RETURNS>
+<RETURNS>GSGFCookedValue * </RETURNS>
 const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
@@ -890,16 +829,10 @@ const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 </MACRO>
 <STRUCT>
 <NAME>GSGFFlavor</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFFlavor</NAME>
 struct _GSGFFlavor
 {
         GObject parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFFlavorClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFFlavorClass</NAME>
@@ -944,17 +877,17 @@ struct _GSGFFlavorClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_flavor_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_flavor_new</NAME>
-<RETURNS>GSGFFlavor *</RETURNS>
+<RETURNS>GSGFFlavor  *</RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_flavor_get_cooked_value</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFFlavor *self, const struct _GSGFProperty *property, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
 </FUNCTION>
 <MACRO>
@@ -988,9 +921,6 @@ const GSGFFlavor *self, const struct _GSGFProperty *property, const struct _GSGF
 </MACRO>
 <STRUCT>
 <NAME>GSGFProperty</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFProperty</NAME>
 struct _GSGFProperty
 {
         GObject parent_instance;
@@ -998,9 +928,6 @@ struct _GSGFProperty
         /*< private >*/
         struct _GSGFPropertyPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPropertyClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFPropertyClass</NAME>
@@ -1012,23 +939,28 @@ struct _GSGFPropertyClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_property_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_property_get_id</NAME>
-<RETURNS>const gchar *</RETURNS>
+<RETURNS>const gchar  *</RETURNS>
 const GSGFProperty *property 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_property_get_node</NAME>
-<RETURNS>GSGFNode *</RETURNS>
+<RETURNS>GSGFNode  *</RETURNS>
 const GSGFProperty *property 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_property_get_value</NAME>
-<RETURNS>GSGFValue *</RETURNS>
+<RETURNS>GSGFValue  *</RETURNS>
 const GSGFProperty* property 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_property_set_value</NAME>
+<RETURNS>gboolean  </RETURNS>
+GSGFProperty *property, GSGFValue *value, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_POINT_BACKGAMMON</NAME>
@@ -1064,9 +996,6 @@ const GSGFProperty* property
 </MACRO>
 <STRUCT>
 <NAME>GSGFPointBackgammon</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPointBackgammon</NAME>
 struct _GSGFPointBackgammon
 {
         GSGFPoint parent_instance;
@@ -1074,9 +1003,6 @@ struct _GSGFPointBackgammon
         /*< private >*/
         struct _GSGFPointBackgammonPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPointBackgammonClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFPointBackgammonClass</NAME>
@@ -1088,27 +1014,27 @@ struct _GSGFPointBackgammonClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_new</NAME>
-<RETURNS>GSGFPointBackgammon *</RETURNS>
+<RETURNS>GSGFPointBackgammon  *</RETURNS>
 gint point 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_new_from_raw</NAME>
-<RETURNS>GSGFPointBackgammon *</RETURNS>
+<RETURNS>GSGFPointBackgammon  *</RETURNS>
 const GSGFRaw *raw, gsize i, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_append_to_list_of</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 struct _GSGFListOf *list_of, const GSGFRaw *raw, gsize i, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_backgammon_get_point</NAME>
-<RETURNS>gint </RETURNS>
+<RETURNS>gint  </RETURNS>
 const GSGFPointBackgammon *self 
 </FUNCTION>
 <MACRO>
@@ -1145,9 +1071,6 @@ const GSGFPointBackgammon *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFCollection</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCollection</NAME>
 struct _GSGFCollection
 {
         GObject parent_instance;
@@ -1155,9 +1078,6 @@ struct _GSGFCollection
         /*< private >*/
         struct _GSGFCollectionPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCollectionClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFCollectionClass</NAME>
@@ -1169,32 +1089,32 @@ struct _GSGFCollectionClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_collection_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_new</NAME>
-<RETURNS>GSGFCollection *</RETURNS>
+<RETURNS>GSGFCollection  *</RETURNS>
  
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_stream</NAME>
-<RETURNS>GSGFCollection *</RETURNS>
+<RETURNS>GSGFCollection  *</RETURNS>
 GInputStream *stream, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_parse_file</NAME>
-<RETURNS>GSGFCollection *</RETURNS>
+<RETURNS>GSGFCollection  *</RETURNS>
 GFile *file, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_add_game_tree</NAME>
-<RETURNS>struct _GSGFGameTree *</RETURNS>
-GSGFCollection *self 
+<RETURNS>struct _GSGFGameTree  *</RETURNS>
+GSGFCollection *self, const GSGFFlavor *flavor 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_collection_get_game_trees</NAME>
-<RETURNS>GList *</RETURNS>
+<RETURNS>GList  *</RETURNS>
 const GSGFCollection *self 
 </FUNCTION>
 <MACRO>
@@ -1221,21 +1141,15 @@ const GSGFCollection *self
                 GSGF_TYPE_COMPONENT, GSGFComponentIface))
 </MACRO>
 <STRUCT>
-<NAME>GSGFComponent</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFComponentIface</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>GSGFComponentIface</NAME>
 struct _GSGFComponentIface
 {
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        GSGFComponent * (*cook) (GSGFComponent *component,
-                                 GSGFComponent **culprit,
-                                 GError **error);
+        gboolean (*cook) (GSGFComponent *component,
+                          GSGFComponent **culprit,
+                          GError **error);
 
         gboolean (*write_stream) (const GSGFComponent *self,
                                   GOutputStream *out,
@@ -1250,14 +1164,17 @@ struct _GSGFComponentIface
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_component_write_stream</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFComponent *self, GOutputStream *out, gsize *bytes_written, GCancellable *cancellable, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_component_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
+<STRUCT>
+<NAME>GSGFComponent</NAME>
+</STRUCT>
 <MACRO>
 <NAME>GSGF_TYPE_FLAVOR_BACKGAMMON</NAME>
 #define GSGF_TYPE_FLAVOR_BACKGAMMON  (gsgf_flavor_backgammon_get_type ())
@@ -1292,35 +1209,25 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFFlavorBackgammonClass</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFFlavorBackgammonClass</NAME>
 struct _GSGFFlavorBackgammonClass
 {
         /*< private >*/
         GSGFFlavorClass parent_class;
 };
 </STRUCT>
-<STRUCT>
-<NAME>GSGFFlavorBackgammon</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFFlavorBackgammon</NAME>
-struct _GSGFFlavorBackgammon
-{
-        GSGFFlavor parent_instance;
-};
-</STRUCT>
 <FUNCTION>
 <NAME>gsgf_flavor_backgammon_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_flavor_backgammon_new</NAME>
-<RETURNS>GSGFFlavor *</RETURNS>
+<RETURNS>GSGFFlavor  *</RETURNS>
 void 
 </FUNCTION>
+<STRUCT>
+<NAME>GSGFFlavorBackgammon</NAME>
+</STRUCT>
 <MACRO>
 <NAME>GSGF_TYPE_LIST_OF</NAME>
 #define GSGF_TYPE_LIST_OF             (gsgf_list_of_get_type ())
@@ -1352,9 +1259,6 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFListOf</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFListOf</NAME>
 struct _GSGFListOf
 {
         GSGFCookedValue parent_instance;
@@ -1362,9 +1266,6 @@ struct _GSGFListOf
         /*< private >*/
         struct _GSGFListOfPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFListOfClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFListOfClass</NAME>
@@ -1376,32 +1277,32 @@ struct _GSGFListOfClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_list_of_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_new</NAME>
-<RETURNS>GSGFListOf *</RETURNS>
+<RETURNS>GSGFListOf  *</RETURNS>
 GType type, const GSGFFlavor *flavor 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_get_item_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 const GSGFListOf *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_get_number_of_items</NAME>
-<RETURNS>gsize </RETURNS>
+<RETURNS>gsize  </RETURNS>
 const GSGFListOf *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_append</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 GSGFListOf *self, GSGFCookedValue *item, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_list_of_get_nth_item</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFListOf *self, gsize i 
 </FUNCTION>
 <MACRO>
@@ -1435,9 +1336,6 @@ const GSGFListOf *self, gsize i
 </MACRO>
 <STRUCT>
 <NAME>GSGFRaw</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFRaw</NAME>
 struct _GSGFRaw
 {
         GSGFValue parent_instance;
@@ -1445,9 +1343,6 @@ struct _GSGFRaw
         /*< private >*/
         struct _GSGFRawPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFRawClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFRawClass</NAME>
@@ -1459,22 +1354,22 @@ struct _GSGFRawClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_raw_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_raw_new</NAME>
-<RETURNS>GSGFRaw*</RETURNS>
+<RETURNS>GSGFRaw * </RETURNS>
 const gchar *value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_raw_get_number_of_values</NAME>
-<RETURNS>gsize </RETURNS>
+<RETURNS>gsize  </RETURNS>
 const GSGFRaw *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_raw_get_value</NAME>
-<RETURNS>gchar *</RETURNS>
+<RETURNS>gchar  *</RETURNS>
 const GSGFRaw *self, gsize i 
 </FUNCTION>
 <MACRO>
@@ -1508,9 +1403,6 @@ const GSGFRaw *self, gsize i
 </MACRO>
 <STRUCT>
 <NAME>GSGFNumber</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNumber</NAME>
 struct _GSGFNumber
 {
         GSGFCookedValue parent_instance;
@@ -1518,9 +1410,6 @@ struct _GSGFNumber
         /*< private >*/
         struct _GSGFNumberPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFNumberClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFNumberClass</NAME>
@@ -1532,27 +1421,27 @@ struct _GSGFNumberClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_number_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_number_new</NAME>
-<RETURNS>GSGFNumber *</RETURNS>
+<RETURNS>GSGFNumber  *</RETURNS>
 gint64 value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_number_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_number_set_value</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>void  </RETURNS>
 GSGFNumber *self, gint64 value 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_number_get_value</NAME>
-<RETURNS>gint64 </RETURNS>
+<RETURNS>gint64  </RETURNS>
 const GSGFNumber *self 
 </FUNCTION>
 <MACRO>
@@ -1586,17 +1475,11 @@ const GSGFNumber *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFPoint</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPoint</NAME>
 struct _GSGFPoint
 {
         /*< private >*/
         GSGFCookedValue parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFPointClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFPointClass</NAME>
@@ -1610,12 +1493,12 @@ struct _GSGFPointClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_point_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_point_get_normalized_value</NAME>
-<RETURNS>gint </RETURNS>
+<RETURNS>gint  </RETURNS>
 const GSGFPoint *self 
 </FUNCTION>
 <MACRO>
@@ -1654,9 +1537,6 @@ const GSGFPoint *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFDate</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFDate</NAME>
 struct _GSGFDate
 {
         GSGFSimpleText parent_instance;
@@ -1664,9 +1544,6 @@ struct _GSGFDate
         /*< private >*/
         struct _GSGFDatePrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFDateClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFDateClass</NAME>
@@ -1678,9 +1555,6 @@ struct _GSGFDateClass
 </STRUCT>
 <STRUCT>
 <NAME>GSGFDateDMY</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFDateDMY</NAME>
 struct _GSGFDateDMY {
         guint day: 6;
         guint month: 4;
@@ -1689,22 +1563,22 @@ struct _GSGFDateDMY {
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_date_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_date_new</NAME>
-<RETURNS>GSGFDate *</RETURNS>
+<RETURNS>GSGFDate  *</RETURNS>
 GSGFDateDMY *dmy, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_date_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_date_append</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 GSGFDate *self, GSGFDateDMY *dmy, GError **error 
 </FUNCTION>
 <MACRO>
@@ -1743,9 +1617,6 @@ GSGFDate *self, GSGFDateDMY *dmy, GError **error
 </MACRO>
 <STRUCT>
 <NAME>GSGFColor</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFColor</NAME>
 struct _GSGFColor
 {
         GSGFCookedValue parent_instance;
@@ -1753,9 +1624,6 @@ struct _GSGFColor
         /*< private >*/
         struct _GSGFColorPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFColorClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFColorClass</NAME>
@@ -1767,7 +1635,7 @@ struct _GSGFColorClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_color_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <ENUM>
@@ -1779,17 +1647,17 @@ typedef enum {
 </ENUM>
 <FUNCTION>
 <NAME>gsgf_color_new</NAME>
-<RETURNS>GSGFColor *</RETURNS>
+<RETURNS>GSGFColor  *</RETURNS>
 GSGFColorEnum color 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_color_get_color</NAME>
-<RETURNS>GSGFColorEnum </RETURNS>
+<RETURNS>GSGFColorEnum  </RETURNS>
 const GSGFColor *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_color_new_from_raw</NAME>
-<RETURNS>GSGFCookedValue *</RETURNS>
+<RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
@@ -1823,16 +1691,10 @@ const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 </MACRO>
 <STRUCT>
 <NAME>GSGFCookedValue</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCookedValue</NAME>
 struct _GSGFCookedValue
 {
         GSGFValue parent_instance;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFCookedValueClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFCookedValueClass</NAME>
@@ -1844,7 +1706,7 @@ struct _GSGFCookedValueClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_cooked_value_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <MACRO>
@@ -1881,9 +1743,6 @@ void
 </MACRO>
 <STRUCT>
 <NAME>GSGFStoneBackgammon</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFStoneBackgammon</NAME>
 struct _GSGFStoneBackgammon
 {
         GSGFStone parent_instance;
@@ -1891,9 +1750,6 @@ struct _GSGFStoneBackgammon
         /*< private >*/
         struct _GSGFStoneBackgammonPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFStoneBackgammonClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFStoneBackgammonClass</NAME>
@@ -1905,22 +1761,22 @@ struct _GSGFStoneBackgammonClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_stone_backgammon_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_stone_backgammon_new</NAME>
-<RETURNS>GSGFStoneBackgammon *</RETURNS>
+<RETURNS>GSGFStoneBackgammon  *</RETURNS>
 gint stone 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_stone_backgammon_new_from_raw</NAME>
-<RETURNS>GSGFStoneBackgammon *</RETURNS>
+<RETURNS>GSGFStoneBackgammon  *</RETURNS>
 const GSGFRaw *raw, gsize i, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_stone_backgammon_get_stone</NAME>
-<RETURNS>gint </RETURNS>
+<RETURNS>gint  </RETURNS>
 const GSGFStoneBackgammon *self 
 </FUNCTION>
 <MACRO>
@@ -1954,9 +1810,6 @@ const GSGFStoneBackgammon *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFGameTree</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFGameTree</NAME>
 struct _GSGFGameTree
 {
         GObject parent_instance;
@@ -1964,9 +1817,6 @@ struct _GSGFGameTree
         /*< private >*/
         struct _GSGFGameTreePrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFGameTreeClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFGameTreeClass</NAME>
@@ -1978,38 +1828,43 @@ struct _GSGFGameTreeClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_game_tree_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_add_child</NAME>
-<RETURNS>GSGFGameTree *</RETURNS>
+<RETURNS>GSGFGameTree  *</RETURNS>
 GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_get_parent</NAME>
-<RETURNS>GSGFGameTree *</RETURNS>
+<RETURNS>GSGFGameTree  *</RETURNS>
 const GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_add_node</NAME>
-<RETURNS>struct _GSGFNode *</RETURNS>
+<RETURNS>struct _GSGFNode  *</RETURNS>
 GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_get_nodes</NAME>
-<RETURNS>GList *</RETURNS>
+<RETURNS>GList  *</RETURNS>
 const GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_get_children</NAME>
-<RETURNS>GList *</RETURNS>
+<RETURNS>GList  *</RETURNS>
 const GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_game_tree_get_flavor</NAME>
-<RETURNS>const GSGFFlavor *</RETURNS>
+<RETURNS>const GSGFFlavor  *</RETURNS>
 const GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_game_tree_set_application</NAME>
+<RETURNS>gboolean  </RETURNS>
+GSGFGameTree *self, const gchar *app, const gchar *version, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_MOVE_BACKGAMMON</NAME>
@@ -2046,9 +1901,6 @@ const GSGFGameTree *self
 </MACRO>
 <STRUCT>
 <NAME>GSGFMoveBackgammon</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>GSGFMoveBackgammon</NAME>
 struct _GSGFMoveBackgammon
 {
         GSGFMove parent_instance;
@@ -2056,9 +1908,6 @@ struct _GSGFMoveBackgammon
         /*< private >*/
         struct _GSGFMoveBackgammonPrivate *priv;
 };
-</STRUCT>
-<STRUCT>
-<NAME>GSGFMoveBackgammonClass</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>GSGFMoveBackgammonClass</NAME>
@@ -2070,56 +1919,56 @@ struct _GSGFMoveBackgammonClass
 </STRUCT>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_get_type</NAME>
-<RETURNS>GType </RETURNS>
+<RETURNS>GType  </RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_new</NAME>
-<RETURNS>GSGFMoveBackgammon *</RETURNS>
+<RETURNS>GSGFMoveBackgammon  *</RETURNS>
 void 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_new_from_raw</NAME>
-<RETURNS>GSGFMoveBackgammon *</RETURNS>
+<RETURNS>GSGFMoveBackgammon  *</RETURNS>
 const GSGFRaw *raw, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_regular</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_double</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_take</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_drop</NAME>
-<RETURNS>gboolean </RETURNS>
+<RETURNS>gboolean  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_get_num_moves</NAME>
-<RETURNS>gsize </RETURNS>
+<RETURNS>gsize  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_get_die</NAME>
-<RETURNS>guint </RETURNS>
+<RETURNS>guint  </RETURNS>
 const GSGFMoveBackgammon *self, gsize i 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_get_from</NAME>
-<RETURNS>guint </RETURNS>
+<RETURNS>guint  </RETURNS>
 const GSGFMoveBackgammon *self, gsize i 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_get_to</NAME>
-<RETURNS>guint </RETURNS>
+<RETURNS>guint  </RETURNS>
 const GSGFMoveBackgammon *self, gsize i 
 </FUNCTION>
