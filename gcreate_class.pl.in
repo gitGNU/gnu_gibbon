@@ -177,8 +177,14 @@ if ('GtkVBox' eq $option_parent) {
         $parent_type = "GTK_TYPE_HBOX";
 }
 
-my $lib_header = lc $macro_prefix . '.h';
-$lib_header = "$option_library/$lib_header" if $option_library;
+my $lib_header;
+
+if ($option_library) {
+        my $name = lc $macro_prefix . '.h';
+        $lib_header = "<$option_library/$lib_header>";
+} else {
+        $lib_header = qq{"$file_stem.h"};
+}
 
 my $macro_type_check = "${macro_prefix}_IS_$macro_type";
 my $macro_class = "${macro_stem}_CLASS";
@@ -280,6 +286,7 @@ $copyright
 # define _$header_prefix${macro_stem}_H
 
 #include <glib.h>
+#include <glib-object.h>
 
 #define $macro_type \\
         (${symbol_stem}_get_type$func_space())
@@ -369,7 +376,7 @@ $copyright
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <$lib_header>
+#include $lib_header
 $private_implementation
 G_DEFINE_TYPE$macro_space($class, $symbol_stem, $parent_type)
 
@@ -394,6 +401,14 @@ $parent_class_init$private_class_init
         object_class->$destructor = ${symbol_stem}_$destructor;
 }
 
+/**
+ * ${symbol_stem}_new:
+ * \@dummy: The argument.
+ *
+ * Creates a new #$class.
+ *
+ * Returns: The newly created #$class or %NULL in case of failure.
+ */
 $class *
 ${symbol_stem}_new$func_space(/* $fm! Argument list! */ const gchar *dummy)
 {
