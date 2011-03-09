@@ -36,3 +36,6 @@
   or always hijack the object.
 - Go through gsgf-private.h and remove what is not needed.  Turn the rest
   into private class methods.
+- GSGFSimpleText does not allow newlines.  Enforce that restriction.
+  For example, gsgf_game_tree_set_application() must be changed
+  accordingly.
