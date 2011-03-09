@@ -408,6 +408,22 @@ gsgf_node_get_flavor (const GSGFNode *self)
         return gsgf_game_tree_get_flavor (self->priv->parent);
 }
 
+/**
+ * gsgf_node_get_game_tree:
+ * @self: a #GSGFNode.
+ *
+ * Get the #GSGFGameTree that this #GSGFNode belongs to.
+ *
+ * Returns: The parent #GSGFGameTree of @self.
+ */
+GSGFGameTree *
+gsgf_node_get_game_tree (const GSGFNode *self)
+{
+        g_return_val_if_fail (GSGF_IS_NODE (self), NULL);
+
+        return self->priv->parent;
+}
+
 static gboolean
 gsgf_node_convert (GSGFComponent *_self, const gchar *charset, GError **error)
 {
