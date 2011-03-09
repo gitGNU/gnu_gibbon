@@ -274,3 +274,36 @@ gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **erro
 
         return TRUE;
 }
+
+/**
+ * gsgf_game_tree_set_value:
+ * @self: The #GSGFProperty.
+ * @value: The value to set.
+ * @error: a #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Set the value of a property.  An old value will be deleted if present.
+ *
+ * If the value is a #GSGFRaw it will be automatically cooked.  If it is
+ * already cooked it is assumed that you know what you are doing.
+ *
+ * The value is owned by the #GSGFProperty after you added it.  You should
+ * not g_object_unref() it.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
+gboolean
+gsgf_property_set_value (GSGFProperty *self, GSGFValue *value, GError **error)
+{
+        g_return_val_if_fail (GSGF_IS_PROPERTY (self), FALSE);
+        g_return_val_if_fail (GSGF_IS_VALUE (value), FALSE);
+
+        if (self->priv->value)
+                g_object_unref (self->priv->value);
+        self->priv->value = value;
+
+        if (!GSGF_IS_COOKED_VALUE (value)
+            && !gsgf_property_cook (GSGF_COMPONENT (self), NULL, error))
+                return FALSE;
+
+        return TRUE;
+}

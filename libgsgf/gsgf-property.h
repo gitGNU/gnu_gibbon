@@ -65,11 +65,13 @@ struct _GSGFPropertyClass
         GObjectClass parent_class;
 };
 
-GType gsgf_property_get_type(void) G_GNUC_CONST;
+GType gsgf_property_get_type (void) G_GNUC_CONST;
 
-const gchar *gsgf_property_get_id(const GSGFProperty *property);
-GSGFNode *gsgf_property_get_node(const GSGFProperty *property);
-GSGFValue *gsgf_property_get_value(const GSGFProperty* property);
+const gchar *gsgf_property_get_id (const GSGFProperty *property);
+GSGFNode *gsgf_property_get_node (const GSGFProperty *property);
+GSGFValue *gsgf_property_get_value (const GSGFProperty* property);
+gboolean gsgf_property_set_value (GSGFProperty *property, GSGFValue *value,
+                                  GError **error);
 
 G_END_DECLS
 
