@@ -75,6 +75,11 @@ GList *gsgf_game_tree_get_nodes(const GSGFGameTree *self);
 GList *gsgf_game_tree_get_children(const GSGFGameTree *self);
 const GSGFFlavor *gsgf_game_tree_get_flavor (const GSGFGameTree *self);
 
+gboolean gsgf_game_tree_set_application (GSGFGameTree *self,
+                                         const gchar *app,
+                                         const gchar *version,
+                                         GError **error);
+
 G_END_DECLS
 
 #endif

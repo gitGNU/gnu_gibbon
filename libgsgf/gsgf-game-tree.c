@@ -38,6 +38,9 @@ struct _GSGFGameTreePrivate {
         const GSGFFlavor *flavor;
         GList *nodes;
         GList *children;
+
+        gchar *app;
+        gchar *version;
 };
 
 #define GSGF_GAME_TREE_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -70,6 +73,9 @@ gsgf_game_tree_init(GSGFGameTree *self)
         self->priv->parent = NULL;
         self->priv->nodes = NULL;
         self->priv->children = NULL;
+
+        self->priv->app = NULL;
+        self->priv->version = NULL;
 }
 
 static void
@@ -90,6 +96,13 @@ gsgf_game_tree_finalize(GObject *object)
         self->priv->children = NULL;
 
         self->priv->flavor = NULL;
+
+        if (self->priv->app)
+                g_free (self->priv->app);
+        self->priv->app = NULL;
+
+        if (self->priv->version)
+                g_free (self->priv->version);
 
         G_OBJECT_CLASS (gsgf_game_tree_parent_class)->finalize(object);
 }
@@ -113,9 +126,11 @@ gsgf_component_iface_init (GSGFComponentIface *iface)
 }
 
 GSGFGameTree *
-_gsgf_game_tree_new()
+_gsgf_game_tree_new (const GSGFFlavor *flavor)
 {
         GSGFGameTree *self = g_object_new(GSGF_TYPE_GAME_TREE, NULL);
+
+        self->priv->flavor = flavor;
 
         return self;
 }
@@ -129,15 +144,15 @@ _gsgf_game_tree_new()
  * Returns: the freshly added child #GSGFGameTree.
  */
 GSGFGameTree *
-gsgf_game_tree_add_child(GSGFGameTree *self)
+gsgf_game_tree_add_child (GSGFGameTree *self)
 {
         GSGFGameTree *child;
 
-        g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
+        g_return_val_if_fail (GSGF_IS_GAME_TREE (self), NULL);
 
-        child = _gsgf_game_tree_new();
+        child = _gsgf_game_tree_new (self->priv->flavor);
 
-        self->priv->children = g_list_append(self->priv->children, child);
+        self->priv->children = g_list_append (self->priv->children, child);
 
         child->priv->parent = self;
 
@@ -197,22 +212,54 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
         GList *iter;
         GSGFNode *root;
         GSGFProperty *ap_property;
-        gchar *version_string;
+        GSGFValue *ap_value;
+        gchar *app;
+        gchar *version;
+
+        g_return_val_if_fail (bytes_written, FALSE);
+
+        *bytes_written = 0;
 
         g_return_val_if_fail (GSGF_IS_GAME_TREE(_self), FALSE);
         g_return_val_if_fail (G_IS_OUTPUT_STREAM(out), FALSE);
 
         self = GSGF_GAME_TREE (_self);
 
-        /* Force our version.  */
-        version_string = g_strdup_printf("libgsgf:%s", VERSION);
-        root = GSGF_NODE(self->priv->nodes->data);
-        gsgf_node_remove_property(root, "AP");
-        ap_property = gsgf_node_add_property(root, "AP", NULL);
-        _gsgf_property_add_value(ap_property, version_string);
-        g_free(version_string);
+        if (!self->priv->nodes) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
+                            _("Attempt to write an empty collection"));
+                return FALSE;
+        }
 
-        *bytes_written = 0;
+        if (!self->priv->parent) {
+                if (self->priv->app && self->priv->version) {
+                        app = g_strdup_printf ("%s (libgsgf)", self->priv->app);
+                        version = g_strdup_printf ("%s (%s)",
+                                self->priv->version, VERSION);
+                } else {
+                        app = g_strdup ("libgsgf");
+                        version = g_strdup (VERSION);
+                }
+
+                ap_value = GSGF_VALUE (gsgf_compose_new (
+                        GSGF_COOKED_VALUE (gsgf_simple_text_new (app)),
+                        GSGF_COOKED_VALUE (gsgf_simple_text_new (version)),
+                        NULL));
+                g_free (app);
+                g_free (version);
+                root = GSGF_NODE (self->priv->nodes->data);
+                gsgf_node_remove_property (root, "AP");
+                ap_property = gsgf_node_add_property (root, "AP", error);
+                if (!ap_property) {
+                        g_object_unref (ap_value);
+                        return FALSE;
+                }
+
+                if (!gsgf_property_set_value (ap_property, ap_value, error)) {
+                        g_object_unref (ap_value);
+                        return FALSE;
+                }
+        }
 
         if (!g_output_stream_write_all(out, "(", 1, &written_here,
                                        cancellable, error)) {
@@ -431,4 +478,49 @@ gsgf_game_tree_get_flavor (const GSGFGameTree *self)
         g_return_val_if_fail (GSGF_IS_GAME_TREE (self), NULL);
 
         return self->priv->flavor;
+}
+
+/**
+ * gsgf_game_tree_set_application
+ * @self: The #GSGFGameTree.
+ * @app: The name of your application.
+ * @version: The version of your application.
+ * @error: a #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Set the application name and version in the @self.  By default, libgsgf
+ * will use only its own name and version information when writing out SGF
+ * files.  You can override the default values with this method.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
+gboolean
+gsgf_game_tree_set_application (GSGFGameTree *self,
+                                const gchar *app, const gchar *version,
+                                GError **error)
+{
+        g_return_val_if_fail (GSGF_IS_GAME_TREE (self), FALSE);
+
+        if (!app || !version) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                             _("Application name or version info missing."));
+                return FALSE;
+        }
+
+        if (index (app, '\n') || index (version, '\n')
+            || index (app, '\r') || index (version, '\r')) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
+                             _("Application name or version info must not"
+                               " contain linefeeds or carriage returns."));
+                return FALSE;
+        }
+
+        if (self->priv->app)
+                g_free (self->priv->app);
+        self->priv->app = g_strdup (app);
+
+        if (self->priv->version)
+                g_free (self->priv->version);
+        self->priv->version = g_strdup (version);
+
+        return TRUE;
 }
