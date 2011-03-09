@@ -50,9 +50,9 @@ struct _GSGFComponentIface
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        GSGFComponent * (*cook) (GSGFComponent *component,
-                                 GSGFComponent **culprit,
-                                 GError **error);
+        gboolean (*cook) (GSGFComponent *component,
+                          GSGFComponent **culprit,
+                          GError **error);
 
         gboolean (*write_stream) (const GSGFComponent *self,
                                   GOutputStream *out,

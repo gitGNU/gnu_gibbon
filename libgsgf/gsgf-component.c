@@ -79,9 +79,9 @@ gsgf_component_default_init (GSGFComponentInterface *iface)
  * move from a game of backgammon, the resulting SGF tree will most probably
  * be ruined.  Choose your own poison!
  *
- * Returns: The new cooked value or %NULL in case of failure.
+ * Returns: %TRUE for success or %FALSE for failure.
  **/
-GSGFComponent *
+gboolean
 gsgf_component_cook (GSGFComponent *component,
                      GSGFComponent **culprit, GError **error)
 {
@@ -91,7 +91,7 @@ gsgf_component_cook (GSGFComponent *component,
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
                              _("Method gsgf_component_cook() called on"
                                " something that is not a GSGFComponent!"));
-                g_return_val_if_fail (GSGF_IS_COMPONENT (component), NULL);
+                g_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE);
         }
 
         iface = GSGF_COMPONENT_GET_IFACE (component);
