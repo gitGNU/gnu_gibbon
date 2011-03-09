@@ -2,8 +2,6 @@
   DNS, based on libasyncns for Unix and a native implementation for MS-DOS.
   Integrate it as soon as it is widely available.
 - GibbonCairoboard should query a GibbonDesign for the values.
-- Turn GtkBuilder xml file into a string constant instead of loading it
-  at run-time.  Rationale: Too many run-time checks required otherwise.
 - Change structure of match position.
 - Set up a consistent convention for positive and negative checker
   numbers.
@@ -11,21 +9,15 @@
 - Implement a ping function to avoid timeouts.
 - Change the constructor of gibbon_cairoboard to handle failure without
   warnings.
-- Make libsvg work in locales with a decimal comma 
-  (http://bugs.gentoo.org/show_bug.cgi?id=292501)
 - Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
 - Do not return NULL from constructor of GibbonCairoboard in case the 
   constructor fails.
-- Glib 2.2 now has the GResolver API.  Use it!
-- Are esacped in SGF files passed through?
-- Prevent virgin GSGFProperty objects being serialized.
+- Are esacped values in SGF files passed through?
 - Remove all traces of backgammon from gsgf.h.
 - Better formatting of libgsgf output.
 - Check that write_stream methods do not leak memory (pointer to
   temporary buffer must be freed, or alloca() must be used).
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
-- Refactor libgsgf interface: Parsing and cooking the collection should
-  be separated so that errors can be repaired.
 - No need to check for single value in the new_from_raw constructors
   of libgsgf.  This is already done by the constraints.  Alternatively,
   gratuitous values could be discarded.
@@ -34,9 +26,6 @@
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
 - Preserve original order of nodes, use a default order when creating
   missing default nodes.
-- After adding the label and text entry to the server output widget,
-  we get this warning: gtk_scrolled_window_add(): cannot add non scrollable 
-  widget use gtk_scrolled_window_add_with_viewport() instead.
 - Make archive directory configurable.
 - gsgf_node_get_property_cooked() must return a GSGFValue and should therefore
   be renamed.
