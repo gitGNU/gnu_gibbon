@@ -17,61 +17,57 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_MATCH_H
-# define _GIBBON_MATCH_H
+#ifndef _GIBBON_ACTION_H
+# define _GIBBON_ACTION_H
 
 #include <glib.h>
 #include <glib-object.h>
 
-#include <libgsgf/gsgf.h>
-
-#define GIBBON_TYPE_MATCH \
-        (gibbon_match_get_type ())
-#define GIBBON_MATCH(obj) \
-        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIBBON_TYPE_MATCH, \
-                GibbonMatch))
-#define GIBBON_MATCH_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
-        GIBBON_TYPE_MATCH, GibbonMatchClass))
-#define GIBBON_IS_MATCH(obj) \
+#define GIBBON_TYPE_ACTION \
+        (gibbon_action_get_type ())
+#define GIBBON_ACTION(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIBBON_TYPE_ACTION, \
+                GibbonAction))
+#define GIBBON_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
+        GIBBON_TYPE_ACTION, GibbonActionClass))
+#define GIBBON_IS_ACTION(obj) \
         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
-                GIBBON_TYPE_MATCH))
-#define GIBBON_IS_MATCH_CLASS(klass) \
+                GIBBON_TYPE_ACTION))
+#define GIBBON_IS_ACTION_CLASS(klass) \
         (G_TYPE_CHECK_CLASS_TYPE ((klass), \
-                GIBBON_TYPE_MATCH))
-#define GIBBON_MATCH_GET_CLASS(obj) \
+                GIBBON_TYPE_ACTION))
+#define GIBBON_ACTION_GET_CLASS(obj) \
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
-                GIBBON_TYPE_MATCH, GibbonMatchClass))
+                GIBBON_TYPE_ACTION, GibbonActionClass))
 
 /**
- * GibbonMatch:
+ * GibbonAction:
  *
- * One instance of a #GibbonMatch.  All properties are private.
+ * One instance of a #GibbonAction.  All properties are private.
  **/
-typedef struct _GibbonMatch GibbonMatch;
-struct _GibbonMatch
+typedef struct _GibbonAction GibbonAction;
+struct _GibbonAction
 {
         GObject parent_instance;
 
         /*< private >*/
-        struct _GibbonMatchPrivate *priv;
+        struct _GibbonActionPrivate *priv;
 };
 
 /**
- * GibbonMatchClass:
+ * GibbonActionClass:
  *
  * FIXME! The author was negligent enough to not document this class!
  **/
-typedef struct _GibbonMatchClass GibbonMatchClass;
-struct _GibbonMatchClass
+typedef struct _GibbonActionClass GibbonActionClass;
+struct _GibbonActionClass
 {
         /* <private >*/
         GObjectClass parent_class;
 };
 
-GType gibbon_match_get_type (void) G_GNUC_CONST;
+GType gibbon_action_get_type (void) G_GNUC_CONST;
 
-GibbonMatch *gibbon_match_new ();
-
-const GSGFCollection *gibbon_match_get_collection ();
+GibbonAction *gibbon_action_new (/* FIXME! Argument list! */ const gchar *dummy);
 
 #endif
