@@ -1058,12 +1058,20 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
 {
         GSGFNode *node;
         GSGFNode *previous;
+        GSGFGameTree *game_tree;
 
         g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
         g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
         g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
 
         node = gsgf_property_get_node(property);
+        game_tree = gsgf_node_get_game_tree (node);
+        if (gsgf_game_tree_get_parent (game_tree)) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                            _("Property only allowed in root node"));
+                return FALSE;
+        }
+
         previous = gsgf_node_get_previous_node(node);
 
         if (previous) {
