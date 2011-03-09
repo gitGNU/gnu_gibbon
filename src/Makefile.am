@@ -53,7 +53,8 @@ gibbon_SOURCES =		\
 	gibbon-game-chat.c				\
 	gibbon-prefs.c				\
 	gibbon-archive.c				\
-	gibbon-java-fibs-importer.c	
+	gibbon-java-fibs-importer.c				\
+	gibbon-action.c	
 
 noinst_HEADERS =		\
 	game.h			\
@@ -71,19 +72,24 @@ noinst_HEADERS =		\
 	gibbon-game-chat.h			\
 	gibbon-prefs.h			\
 	gibbon-archive.h			\
-	gibbon-java-fibs-importer.h
+	gibbon-java-fibs-importer.h			\
+	gibbon-action.h
 
-gibbon_LDFLAGS = -export-dynamic
-gibbon_LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a $(platform_libadd)
+gibbon_CFLAGS = -DUSE_MAIN
+AM_LDFLAGS = -export-dynamic
+LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
+	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
 
-TESTS_C = test_html_entities
+TESTS_C = test_html_entities test_basic_match
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
-check_PROGRAMS = test_html_entities
+check_PROGRAMS = test_html_entities test_basic_match
 
-test_html_entities_SOURCES = html-entities.c test-html-entities.c
+test_html_entities_SOURCES = $(gibbon_SOURCES) test-html-entities.c
+test_basic_match_SOURCES = $(gibbon_SOURCES) test-basic-match.c
 
-AM_LDFLAGS = -export-dynamic
-LDADD = $(GIBBON_LIBS) $(platform_libadd)
+SGF_FILES =
+
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH)
