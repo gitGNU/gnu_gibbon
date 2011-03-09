@@ -285,6 +285,10 @@ $copyright
 #ifndef _$header_prefix${macro_stem}_H
 # define _$header_prefix${macro_stem}_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <glib.h>
 #include <glib-object.h>
 
