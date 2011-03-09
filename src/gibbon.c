@@ -54,8 +54,13 @@ static const GOptionEntry options[] =
 static void init_i18n (void);
 static guint parse_command_line (int argc, char *argv[]);
 
+#ifdef USE_MAIN
 int
 main (int argc, char *argv[])
+#else
+static int
+hide_main_function_for_tests (int argc, char *argv[])
+#endif
 {	
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
