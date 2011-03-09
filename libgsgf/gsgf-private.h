@@ -29,7 +29,7 @@ struct _GSGFFlavor;
 
 G_BEGIN_DECLS
 
-GSGFGameTree *_gsgf_game_tree_new(void);
+GSGFGameTree *_gsgf_game_tree_new (const GSGFFlavor *flavor);
 GSGFNode *_gsgf_node_new (GSGFNode *previous, GSGFGameTree *parent);
 GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);
 
