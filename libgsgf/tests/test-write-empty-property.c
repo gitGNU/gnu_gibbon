@@ -42,7 +42,7 @@ test_collection(GSGFCollection *collection, GError *error)
         gchar *version_string = "AP[libgsgf:" VERSION "]";
         GSGFCollection *empty = gsgf_collection_new(&error);
 
-        game_tree = gsgf_collection_add_game_tree(empty);
+        game_tree = gsgf_collection_add_game_tree (empty, NULL);
         node = gsgf_game_tree_add_node(game_tree);
         property = gsgf_node_add_property(node, "EMPTY", &error);
 
