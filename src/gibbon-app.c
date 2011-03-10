@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-app.h"
+#include "gibbon-cairoboard.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -37,6 +38,7 @@ struct _GibbonAppPrivate {
         GtkWidget *window;
         GtkWidget *statusbar;
         GtkWidget *server_text_view;
+        GibbonCairoboard *board;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -45,6 +47,11 @@ struct _GibbonAppPrivate {
 G_DEFINE_TYPE (GibbonApp, gibbon_app, G_TYPE_OBJECT)
 
 static GtkBuilder *gibbon_app_get_builder (GibbonApp *self, const gchar *path);
+static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
+                                                const gchar *board_filename);
+
+GibbonApp *singleton = NULL;
+static struct GibbonPosition initial_position;
 
 static void 
 gibbon_app_init (GibbonApp *self)
@@ -53,6 +60,7 @@ gibbon_app_init (GibbonApp *self)
                 GIBBON_TYPE_APP, GibbonAppPrivate);
 
         self->priv->builder = NULL;
+        self->priv->board = NULL;
         self->priv->window = NULL;
         self->priv->statusbar = NULL;
         self->priv->server_text_view = NULL;
@@ -67,6 +75,10 @@ gibbon_app_finalize (GObject *object)
                 g_object_unref (self->priv->builder);
         self->priv->builder = NULL;
 
+        if (self->priv->board)
+                g_object_unref (self->priv->board);
+        self->priv->board = NULL;
+
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
 
@@ -76,6 +88,30 @@ gibbon_app_class_init (GibbonAppClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonAppPrivate));
+
+        memset (&initial_position, 0, sizeof initial_position);
+        initial_position.checkers[0] = -2;
+        initial_position.checkers[5] = 5;
+        initial_position.checkers[7] = 3;
+        initial_position.checkers[11] = -5;
+        initial_position.checkers[12] = 5;
+        initial_position.checkers[16] = -3;
+        initial_position.checkers[18] = -5;
+        initial_position.checkers[23] = 2;
+        initial_position.match_length = 23;
+        initial_position.score[0] = 5;
+        initial_position.score[1] = 7;
+        initial_position.dice[0][0] = 0;
+        initial_position.dice[0][1] = 0;
+        initial_position.dice[1][0] = 0;
+        initial_position.dice[1][1] = 0;
+        initial_position.bar[0] = 0;
+        initial_position.bar[1] = 0;
+        initial_position.home[0] = 0;
+        initial_position.home[1] = 0;
+        initial_position.cube = 1;
+        initial_position.may_double[0] = 1;
+        initial_position.may_double[1] = 1;
 
         object_class->finalize = gibbon_app_finalize;
 }
@@ -94,6 +130,9 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
 {
         GibbonApp *self = g_object_new (GIBBON_TYPE_APP, NULL);
         PangoFontDescription *font_desc;
+        gchar *board_filename;
+
+        g_return_val_if_fail (singleton == NULL, singleton);
 
         self->priv->builder = gibbon_app_get_builder (self, builder_path);
         if (!self->priv->builder) {
@@ -119,11 +158,24 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
                 return NULL;
         }
 
-        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));
+        board_filename = g_build_filename (pixmaps_dir, "boards",
+                                           "default.svg", NULL);
+        self->priv->board = gibbon_app_init_board (self, board_filename);
+        g_free (board_filename);
+        if (!self->priv->board) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        gtk_statusbar_push (GTK_STATUSBAR (self->priv->statusbar),
+                            0, _("Disconnected"));
 
         font_desc = pango_font_description_from_string ("monospace 10");
-        gtk_widget_modify_font (server_text_view, font_desc);
+        gtk_widget_modify_font (self->priv->server_text_view,
+                                font_desc);
         pango_font_description_free (font_desc);
+
+        singleton = self;
 
         return self;
 }
@@ -209,16 +261,15 @@ gibbon_app_find_object (GibbonApp *self, const gchar *id, GType type)
                 /* TRANSLATORS: UI means user interface.  */
                 gibbon_app_display_error (self,
                                           _("Object `%s' not found in UI"
-                                            " definition!"),
-                                            id);
-                return NULL;
+                                            " definition!"), id);
+                exit (-1);
         }
 
         if (!G_IS_OBJECT (obj)) {
                 gibbon_app_display_error (self,
                                           _("Object `%s' is not a GObject!"),
                                           id);
-                return NULL;
+                exit (-1);
         }
 
         got_type = G_OBJECT_TYPE (obj);
@@ -226,10 +277,37 @@ gibbon_app_find_object (GibbonApp *self, const gchar *id, GType type)
                 gibbon_app_display_error (self,
                                           _("Object `%s' is not of type `%s'"
                                             " but `%s'!"),
-                                          id, g_type_name (type),
-                                          g_type_name (got_type));
-                return NULL;
+                                           id, g_type_name (type),
+                                           g_type_name (got_type));
+                exit (-1);
         }
 
         return obj;
+}
+
+static GibbonCairoboard *
+gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
+{
+        GObject *left_vpane;
+        GibbonCairoboard *board = gibbon_cairoboard_new (board_filename);
+
+        if (!board)
+                return NULL;
+
+        gibbon_cairoboard_set_position (board, &initial_position);
+
+        gtk_widget_show (GTK_WIDGET (board));
+        /* FIXME! This should occupy reasonable space by default!  Do
+         * not hardcode the values.
+         */
+        gtk_widget_set_size_request (GTK_WIDGET (board), 490, 380);
+
+        left_vpane = gibbon_app_find_object (self, "left_vpane",
+                                             GTK_TYPE_VPANED);
+
+        gtk_widget_destroy (gtk_paned_get_child1 (GTK_PANED (left_vpane)));
+        gtk_paned_pack1 (GTK_PANED (left_vpane), GTK_WIDGET (board),
+                         TRUE, FALSE);
+
+        return board;
 }
