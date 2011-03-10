@@ -55,7 +55,8 @@ gibbon_SOURCES =		\
 	gibbon-java-fibs-importer.c				\
 	gibbon-action.c				\
 	gibbon-fibs-message.c				\
-	gibbon-app.c	
+	gibbon-app.c				\
+	gibbon-player-list-view.c	
 
 noinst_HEADERS =		\
 	game.h			\
@@ -76,7 +77,8 @@ noinst_HEADERS =		\
 	gibbon-java-fibs-importer.h			\
 	gibbon-action.h			\
 	gibbon-fibs-message.h			\
-	gibbon-app.h
+	gibbon-app.h			\
+	gibbon-player-list-view.h
 
 gibbon_CFLAGS = -DUSE_MAIN
 AM_LDFLAGS = -export-dynamic
