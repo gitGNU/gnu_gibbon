@@ -1,3 +1,397 @@
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-component.c, libgsgf/gsgf-component.h: Cooking
+	returns a boolean value.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.h: Formatting.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-game-tree.c, libgsgf/gsgf-game-tree.h: - Create #GSGFGameTree with a #GSGFFlavor.  - Allow setting the application info for the AP property.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-flavor.c: Check that root properties are not used in
+	sub game trees.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-node.c, libgsgf/gsgf-node.h: New method for getting
+	the #GSGFGameTree of a #GSGFNode.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-private.h: Always create #GSGFGameTree with a
+	#GSGFFlavor.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-property.c, libgsgf/gsgf-property.h: New method for
+	setting property values.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: - Store collection as culprit if not yet set.  - Pass GSGFFlavor to new game trees.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* gcreate_class.pl.in: Also include config.h.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/Makefile.am: List generated sgf files separately.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/test-write-empty-property.c: Pass a GSGFFlavor to
+	new game trees.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/utf-8.sgf.in: Sub game trees must not have root
+	properties.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-action.c, src/gibbon-action.h, src/gibbon-game.c,
+	src/gibbon-game.h, src/gibbon-match.c, src/gibbon-match.h: Internal
+	match representation.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c: Do not compile main() if *.c is used in tests.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am: Added test.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* src/test-basic-match.c: Test for creating complete matches with
+	libgsgf.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* po/POTFILES.in: Updated.
+
+2011-03-09  Guido Flohr <guido@imperia.net>
+
+	* gcreate_class.pl.in: Various fixes.
+
+2011-03-08  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml, src/gibbon-java-fibs-importer.c: Work in
+	progress: JavaFIBS importer.
+
+2011-03-08  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml, src/gibbon-java-fibs-importer.c,
+	src/gtkmainwindow.c: Work in progress: Importer from JavaFIBS.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml, src/Makefile.am,
+	src/gibbon-java-fibs-importer.c, src/gibbon-java-fibs-importer.h,
+	src/gtkmainwindow.c: Base for JavaFIBS importer.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-archive.c, src/gibbon-archive.h: Alternative
+	constructor for importers.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gtkmainwindow.c: Callback for import wizard.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-archive.c: Inform users about import on first run.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon.c: Formatting.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c, src/gui.h: New function for displaying info dialogs.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Removed old view menu.  Added extras.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/gibbon-archive.c, src/gibbon-archive.h,
+	src/gibbon-connection.c, src/gibbon.c, src/gibbon.h, src/gui.c: 
+	Skeleton for game archive class.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-prefs.c: Use correct type.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Text entry and label in hbox moved out of
+	scrollable area.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-prefs.c, src/gibbon-prefs.h,
+	src/gtkconnectiondialog.c, src/gui.c: Fixed warning.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-prefs.c, src/gibbon-prefs.h, src/gibbon-session.c,
+	src/gtkconnectiondialog.c, src/gui.c: Shortened names for
+	enumeration values.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-prefs.c, src/gibbon-prefs.h, src/gibbon-session.c,
+	src/gtkconnectiondialog.c, src/gui.c, src/gui.h: Use new class
+	GibbonPrefs.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/gibbon-prefs.c, src/gibbon-prefs.h: 
+	Boilderplate code for user preferences.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* gcreate_class.pl.in: Inserted newline in output.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-game-chat.c, src/gibbon-game-chat.h: Put files under
+	GPL.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* gcreate_class.pl.in: Spaces before parentheses.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Removed debugging output.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Crude implementation of server communication.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Changed label.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Move main window to the front.
+
+2011-03-07  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Add input field for server commands.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-game-chat.c: Link game chat mode widgets.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* pixmaps/icons/Makefile.am: Typos fixed.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml, src/gibbon-game-chat.c, src/gui.c, src/gui.h: 
+	GtkImage has to be show()n before being used.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* src/Makefile.am, src/gibbon-game-chat.c, src/gibbon-game-chat.h,
+	src/gui.c, src/gui.h: Move chatting into separate class.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* gcreate_class.pl.in: Option --output-directory requires an
+	argument.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Made id attributes more consistent.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Use SVGs for game chat toolbar icons.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, data/gibbon.xml, pixmaps/Makefile.am,
+	pixmaps/icons/Makefile.am, pixmaps/icons/say.svg,
+	pixmaps/icons/whisper.svg: Install and use icons for say and
+	whisper.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* README, src/gibbon-cairoboard.c, src/gibbon.c, src/gui.c,
+	src/gui.h: Pass directories instead of individual files.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* README, configure.ac, pixmaps/Makefile.am,
+	pixmaps/boards/Makefile.am, pixmaps/boards/default.svg,
+	pixmaps/default.svg, pixmaps/default.svg.in, src/gibbon.c: Move
+	board pixmaps into its own subdirectory boards.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Move server window to the end.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Chat area organized in a notebook.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* README: Updated.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* src/gibbon-cairoboard.c, src/gibbon.c, src/gui.c, src/gui.h: Allow
+	use of alternative board definition file.
+
+2011-03-06  Guido Flohr <guido@imperia.net>
+
+	* src/gui.c: Display error message about missing UI file in a
+	dialog.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* data/gibbon.xml: Removed obsolete board editor.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c: Sparse html encoding.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/test-html-entities.c: Test that only the bare minimum is html
+	encoded.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/test-html-entities.c: Decode decimal HTML
+	entities.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/html-entities.h,
+	src/test-html-entities.c: Decode decimal and hexadecimal entities.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/test-html-entities.c: Prefer hex chars
+	for numerical entities.
+
+2011-03-05  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c: Use named entities when possible.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/test-html-entities.c: Named HTML
+	entities: Work in progress.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* src/test-html-entities.c: Test for encoding of named entities.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/test-html-entities.c: Avoid non-US-ASCII
+	characters in sources.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* src/html-entities.c, src/test-html-entities.c: Test regular
+	encoding of 8-bit characters.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* src/.gitignore, src/Makefile.am, src/html-entities.c,
+	src/html-entities.h, src/test-html-entities.c: Test inside src
+	directory.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, src/Makefile.am, src/tests/.gitignore,
+	src/tests/Makefile.am, src/tests/test-html-entities.c: Tests cannot
+	be done like this.
+
+2011-03-04  Guido Flohr <guido@imperia.net>
+
+	* configure.ac, src/Makefile.am, src/tests/.gitignore,
+	src/tests/Makefile.am, src/tests/test-html-entities.c: Tests for
+	main application.
+
+2011-03-03  Guido Flohr <guido@imperia.net>
+
+	* : commit 691c478d8279913290b4bd7ff3ea0ace0664723b Author: Guido
+	Flohr <guido@imperia.net> Date:   Thu Mar 3 14:35:14 2011 +0200
+
+2011-03-03  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/lib.c: Cook parsed collections.
+
+2011-03-03  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-03  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-03  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/tests/main.c: Collections must now be cooked.
+
+2011-03-01  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c, libgsgf/gsgf-component.h,
+	libgsgf/gsgf-game-tree.c, libgsgf/gsgf-node.c,
+	libgsgf/gsgf-private.h, libgsgf/gsgf-property.c: Upgraded
+	apply_flavor() to cook().
+
+2011-03-01  Guido Flohr <guido@imperia.net>
+
+	* TODO: Updated.
+
+2011-03-01  Guido Flohr <guido@imperia.net>
+
+	* libgsgf/gsgf-collection.c: Return NULL on error.
+
+2011-03-01  Guido Flohr <guido@imperia.net>
+
+	* ChangeLog: Re-generated.
+
+2011-03-01  Guido Flohr <guido@imperia.net>
+
+	* Makefile.am, configure.ac: Rule for ChangeLog creation.
+
 2011-03-01  Guido Flohr <guido@imperia.net>
 
 	* libgsgf/gsgf-component.h: Typo.

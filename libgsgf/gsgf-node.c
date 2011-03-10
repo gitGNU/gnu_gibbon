@@ -454,3 +454,38 @@ gsgf_node_convert (GSGFComponent *_self, const gchar *charset, GError **error)
 
         return TRUE;
 }
+
+/**
+ * gsgf_node_set_property:
+ * @self: The #GSGFProperty.
+ * @id: Name of the property.
+ * @value: The value to set.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Set a property.  The property is created if it does not exist.  If the
+ * value is a #GSGFRaw.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
+gboolean
+gsgf_node_set_property (GSGFNode *self,
+                        const gchar *id, GSGFValue *value,
+                        GError **error)
+{
+        GSGFProperty *property;
+
+        g_return_val_if_fail (GSGF_IS_NODE (self), FALSE);
+        g_return_val_if_fail (GSGF_IS_VALUE (value), FALSE);
+
+        property = gsgf_node_get_property (self, id);
+        if (!property) {
+                property = gsgf_node_add_property (self, id, error);
+                if (!property)
+                        return FALSE;
+        }
+
+        if (!gsgf_property_set_value (property, value, error))
+                return FALSE;
+
+        return TRUE;
+}

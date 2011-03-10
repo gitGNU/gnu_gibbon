@@ -52,6 +52,16 @@ static GibbonMatch *
 fill_match (void)
 {
         GibbonMatch *match = gibbon_match_new ();
+        GError *error = NULL;
+
+exit (123);
+        if (!gibbon_match_set_black_player (match, "Joe Black", &error))
+                g_printerr ("Error setting black player: %s.\n",
+                            error->message);
+
+        if (!gibbon_match_set_white_player (match, "Snow White", &error))
+                g_printerr ("Error setting white player: %s.\n",
+                            error->message);
 
         return match;
 }
