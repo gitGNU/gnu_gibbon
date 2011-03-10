@@ -131,6 +131,7 @@ gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
                                GError **error)
 {
         GList *iter;
+        GibbonGame *game;
         GSGFGameTree *game_tree;
         GList* nodes;
         GSGFNode* root;
@@ -140,8 +141,8 @@ gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
         g_return_val_if_fail (name, FALSE);
 
         for (iter = self->priv->games; iter; iter = iter->next) {
-g_printerr ("Setting PW in root node ...\n");
-                game_tree = GSGF_GAME_TREE (iter->data);
+                game = GIBBON_GAME (iter->data);
+                game_tree = gibbon_game_get_game_tree (game);
                 nodes = gsgf_game_tree_get_nodes (game_tree);
                 root = nodes->data;
                 simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
@@ -159,6 +160,7 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                                GError **error)
 {
         GList *iter;
+        GibbonGame *game;
         GSGFGameTree *game_tree;
         GList* nodes;
         GSGFNode* root;
@@ -168,7 +170,8 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
         g_return_val_if_fail (name, FALSE);
 
         for (iter = self->priv->games; iter; iter = iter->next) {
-                game_tree = GSGF_GAME_TREE (iter->data);
+                game = GIBBON_GAME (iter->data);
+                game_tree = gibbon_game_get_game_tree (game);
                 nodes = gsgf_game_tree_get_nodes (game_tree);
                 root = nodes->data;
                 simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
@@ -180,3 +183,4 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
 
         return TRUE;
 }
+
