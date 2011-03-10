@@ -36,3 +36,6 @@
   or always hijack the object.
 - Go through gsgf-private.h and remove what is not needed.  Turn the rest
   into private class methods.
+- Order header functions in libgsgf headers.
+- Write a macro like g_return_val_if_fail that additionally sets a
+  GError.
