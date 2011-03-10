@@ -37,6 +37,7 @@
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
         GtkBuilder *builder;
+        gchar *pixmaps_directory;
         GtkWidget *window;
         GtkWidget *statusbar;
         GtkWidget *server_text_view;
@@ -71,6 +72,8 @@ gibbon_app_init (GibbonApp *self)
         self->priv->window = NULL;
         self->priv->statusbar = NULL;
         self->priv->server_text_view = NULL;
+
+        self->priv->pixmaps_directory = NULL;
 }
 
 static void
@@ -85,6 +88,10 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->board)
                 g_object_unref (self->priv->board);
         self->priv->board = NULL;
+
+        if (self->priv->pixmaps_directory)
+                g_free (self->priv->pixmaps_directory);
+        self->priv->pixmaps_directory = NULL;
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -133,7 +140,7 @@ gibbon_app_class_init (GibbonAppClass *klass)
  * Returns: The newly created #GibbonApp or %NULL in case of failure.
  */
 GibbonApp *
-gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
+gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 {
         GibbonApp *self = g_object_new (GIBBON_TYPE_APP, NULL);
         PangoFontDescription *font_desc;
@@ -146,6 +153,8 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->pixmaps_directory = g_strdup (pixmaps_directory);
 
         self->priv->window =
                 GTK_WIDGET (gibbon_app_find_object (self, "window",
@@ -165,7 +174,7 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
                 return NULL;
         }
 
-        board_filename = g_build_filename (pixmaps_dir, "boards",
+        board_filename = g_build_filename (pixmaps_directory, "boards",
                                            "default.svg", NULL);
         self->priv->board = gibbon_app_init_board (self, board_filename);
         g_free (board_filename);
@@ -330,6 +339,14 @@ gibbon_app_get_window (const GibbonApp *self)
         return self->priv->window;
 }
 
+const gchar *
+gibbon_app_get_pixmaps_directory (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->pixmaps_directory;
+}
+
 static void
 gibbon_app_connect_signals (const GibbonApp *self)
 {
@@ -361,3 +378,4 @@ gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
 {
         gtk_main_quit ();
 }
+

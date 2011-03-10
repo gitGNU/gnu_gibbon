@@ -69,12 +69,13 @@ struct _GibbonAppClass
 GType gibbon_app_get_type (void) G_GNUC_CONST;
 
 GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir);
-void gibbon_app_display_error (const GibbonApp* self,
+void gibbon_app_display_error (const GibbonApp *self,
                                const gchar *message_format, ...);
-void gibbon_app_display_info (const GibbonApp* self,
+void gibbon_app_display_info (const GibbonApp *self,
                               const gchar *message_format, ...);
-GObject *gibbon_app_find_object (const GibbonApp *app, const gchar *id,
+GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,
                                  GType type);
-GtkWidget *gibbon_app_get_window (const GibbonApp *app);
+GtkWidget *gibbon_app_get_window (const GibbonApp *self);
+const gchar *gibbon_app_get_pixmaps_directory (const GibbonApp *app);
 
 #endif
