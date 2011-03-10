@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 G_DEFINE_TYPE (GSGFDouble, gsgf_double, GSGF_TYPE_NUMBER)
 
@@ -85,10 +86,10 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
         GSGFDouble *self;
         const gchar *string;
 
-        g_return_val_if_fail (GSGF_IS_RAW(raw), NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,

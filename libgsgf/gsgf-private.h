@@ -29,6 +29,18 @@ struct _GSGFFlavor;
 
 G_BEGIN_DECLS
 
+#define gsgf_return_val_if_fail(expr, val, error) G_STMT_START{         \
+     if G_LIKELY(expr) { } else                                         \
+       {                                                                \
+         g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,        \
+                      _("In function `%s': assertion `%s' failed."),    \
+                      __PRETTY_FUNCTION__, #expr);                      \
+         g_return_if_fail_warning (G_LOG_DOMAIN,                        \
+                                   __PRETTY_FUNCTION__,                 \
+                                   #expr);                              \
+         return (val);                                                  \
+       };                               }G_STMT_END
+
 GSGFGameTree *_gsgf_game_tree_new (const GSGFFlavor *flavor);
 GSGFNode *_gsgf_node_new (GSGFNode *previous, GSGFGameTree *parent);
 GSGFProperty *_gsgf_property_new(const gchar *id, GSGFNode *node);

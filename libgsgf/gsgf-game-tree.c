@@ -216,12 +216,12 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
         gchar *app;
         gchar *version;
 
-        g_return_val_if_fail (bytes_written, FALSE);
+        gsgf_return_val_if_fail (bytes_written, FALSE, error);
 
         *bytes_written = 0;
 
-        g_return_val_if_fail (GSGF_IS_GAME_TREE(_self), FALSE);
-        g_return_val_if_fail (G_IS_OUTPUT_STREAM(out), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_GAME_TREE (_self), FALSE, error);
+        gsgf_return_val_if_fail (G_IS_OUTPUT_STREAM (out), FALSE, error);
 
         self = GSGF_GAME_TREE (_self);
 
@@ -498,7 +498,7 @@ gsgf_game_tree_set_application (GSGFGameTree *self,
                                 const gchar *app, const gchar *version,
                                 GError **error)
 {
-        g_return_val_if_fail (GSGF_IS_GAME_TREE (self), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_GAME_TREE (self), FALSE, error);
 
         if (!app || !version) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,

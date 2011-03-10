@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFPointBackgammonPrivate GSGFPointBackgammonPrivate;
 struct _GSGFPointBackgammonPrivate {
@@ -131,7 +132,7 @@ gsgf_point_backgammon_append_to_list_of (GSGFListOf *list_of, const GSGFRaw *raw
         gint p;
         GSGFPointBackgammon *point;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
 
         string = gsgf_raw_get_value(raw, i);
         if (!string) {
@@ -193,7 +194,7 @@ gsgf_point_backgammon_new_from_raw (const GSGFRaw *raw, gsize i, GError **error)
 {
         const gchar* string;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         string = gsgf_raw_get_value(raw, i);
         if (!string) {

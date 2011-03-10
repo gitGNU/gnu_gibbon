@@ -136,12 +136,12 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
         GList *iter;
         GList *property;
 
-        g_return_val_if_fail(GSGF_IS_NODE(_self), FALSE);
-        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+        *bytes_written = 0;
+
+        gsgf_return_val_if_fail (GSGF_IS_NODE(_self), FALSE, error);
+        gsgf_return_val_if_fail (G_IS_OUTPUT_STREAM(out), FALSE, error);
 
         self = GSGF_NODE (_self);
-
-        *bytes_written = 0;
 
         if (!g_output_stream_write_all(out, ";", 1, &written_here,
                                        cancellable, error)) {
@@ -207,11 +207,11 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
         GSGFProperty *property;
         const gchar *ptr = id;
 
-        g_return_val_if_fail(GSGF_IS_NODE(self), NULL);
-        g_return_val_if_fail(id != NULL, NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_NODE(self), NULL, error);
+        gsgf_return_val_if_fail (id != NULL, NULL, error);
 
         while (*ptr) {
                 if (*ptr < 'A' || *ptr > 'Z') {
@@ -332,15 +332,14 @@ gsgf_node_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **error)
         GSGFNode *self;
         GSGFComponentIface *iface;
 
-        g_return_val_if_fail (GSGF_IS_NODE (_self), FALSE);
-
-        self = GSGF_NODE (_self);
-
         if (error && *error)
                 return FALSE;
 
+        gsgf_return_val_if_fail (GSGF_IS_NODE (_self), FALSE, error);
+
+        self = GSGF_NODE (_self);
+
         flavor = gsgf_game_tree_get_flavor (self->priv->parent);
-        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE);
 
         g_hash_table_iter_init (&iter, self->priv->properties);
         while (g_hash_table_iter_next(&iter, &key, &value)) {
@@ -474,8 +473,8 @@ gsgf_node_set_property (GSGFNode *self,
 {
         GSGFProperty *property;
 
-        g_return_val_if_fail (GSGF_IS_NODE (self), FALSE);
-        g_return_val_if_fail (GSGF_IS_VALUE (value), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_NODE (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_VALUE (value), FALSE, error);
 
         property = gsgf_node_get_property (self, id);
         if (!property) {

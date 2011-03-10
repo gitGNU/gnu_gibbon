@@ -34,6 +34,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gsgf-private.h"
+
 G_DEFINE_TYPE (GSGFValue, gsgf_value, G_TYPE_OBJECT)
 
 static void 
@@ -74,22 +76,11 @@ gsgf_value_write_stream (const GSGFValue *self,
                          GOutputStream *out, gsize *bytes_written,
                          GCancellable *cancellable, GError **error)
 {
-        if (!GSGF_IS_VALUE (self)) {
-                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                             _("Invalid cast to GSGFValue"));
-                /* Print standard error message on error return.  */
-                g_return_val_if_fail (GSGF_IS_VALUE (self), FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_VALUE (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_VALUE_GET_CLASS (self)->write_stream,
+                                 FALSE, error);
 
-        if (!GSGF_VALUE_GET_CLASS (self)->write_stream) {
-                g_set_error (error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                             _("%s does not implement method write_stream"),
-                             G_OBJECT_TYPE_NAME(self));
-                g_return_val_if_fail (GSGF_VALUE_GET_CLASS (self)->write_stream,
-                                      FALSE);
-        }
-
-        return GSGF_VALUE_GET_CLASS(self)->write_stream(self,
-                                                        out, bytes_written,
-                                                        cancellable, error);
+        return GSGF_VALUE_GET_CLASS(self)->write_stream (self,
+                                                         out, bytes_written,
+                                                         cancellable, error);
 }

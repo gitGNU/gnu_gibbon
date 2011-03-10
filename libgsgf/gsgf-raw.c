@@ -33,6 +33,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFRawPrivate GSGFRawPrivate;
 struct _GSGFRawPrivate {
@@ -177,11 +178,11 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         GList *iter;
         gchar *value;
 
-        g_return_val_if_fail(GSGF_IS_RAW(self), FALSE);
-        g_return_val_if_fail(charset != NULL, FALSE);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (self), FALSE, error);
+        gsgf_return_val_if_fail (charset != NULL, FALSE, error);
 
         iter = self->priv->values;
 
@@ -201,16 +202,15 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         return TRUE;
 }
 
-void _gsgf_raw_add_value(const GSGFValue *_self, const gchar *value)
+void
+_gsgf_raw_add_value (GSGFRaw *self, const gchar *value)
 {
-        GSGFRaw *self;
 
-        g_return_if_fail(GSGF_IS_RAW(_self));
-        g_return_if_fail(value != NULL);
+        g_return_if_fail (GSGF_IS_RAW (self));
+        g_return_if_fail (value != NULL);
 
-        self = GSGF_RAW(_self);
-
-        self->priv->values = g_list_append(self->priv->values, g_strdup(value));
+        self->priv->values = g_list_append (self->priv->values,
+                                            g_strdup (value));
 }
 
 /**

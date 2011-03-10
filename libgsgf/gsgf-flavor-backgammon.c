@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 G_DEFINE_TYPE(GSGFFlavorBackgammon, gsgf_flavor_backgammon, GSGF_TYPE_FLAVOR)
 
@@ -167,10 +168,10 @@ gsgf_flavor_backgammon_write_compressed_list (const GSGFFlavor *flavor,
         gsize pending = 0;
         *bytes_written = 0;
 
-        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE);
-        g_return_val_if_fail (GSGF_IS_LIST_OF (list_of), FALSE);
-        g_return_val_if_fail (GSGF_TYPE_POINT_BACKGAMMON ==
-                        gsgf_list_of_get_item_type (list_of), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_LIST_OF (list_of), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_TYPE_POINT_BACKGAMMON ==
+                        gsgf_list_of_get_item_type (list_of), FALSE, error);
 
         num_items = gsgf_list_of_get_number_of_items (list_of);
         if (!num_items)

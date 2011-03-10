@@ -29,6 +29,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFTextPrivate GSGFTextPrivate;
 struct _GSGFTextPrivate {
@@ -125,7 +126,7 @@ gsgf_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
         gsize list_length = gsgf_raw_get_number_of_values(raw);
         gchar *value;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         if (!list_length) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_PROPERTY,
@@ -161,27 +162,10 @@ gsgf_text_set_value (GSGFText *self, const gchar *value,
         if (error)
                 *error = NULL;
 
-        if (!GSGF_IS_TEXT (self)) {
-                g_set_error_literal (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                                     _("gsgf_text_set_value() called on wrong"
-                                       " object type"));
-                g_return_val_if_fail (GSGF_IS_TEXT(self), FALSE);
-        }
-
-        if (!value) {
-                g_set_error_literal (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                                     _("gsgf_text_set_value() called with"
-                                       " NULL pointer"));
-                g_return_val_if_fail (value != NULL, FALSE);
-        }
-
-        if (!GSGF_TEXT_GET_CLASS (self)->set_value) {
-                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                             _("Class %s does not implemented set_value()."),
-                             G_OBJECT_TYPE_NAME (self));
-                g_return_val_if_fail (GSGF_TEXT_GET_CLASS (self)->set_value,
-                                      FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_TEXT (self), FALSE, error);
+        gsgf_return_val_if_fail (value != NULL, FALSE, error);
+        gsgf_return_val_if_fail (GSGF_TEXT_GET_CLASS (self)->set_value,
+                                 FALSE, error);
 
         return GSGF_TEXT_GET_CLASS(self)->set_value (self, value, copy, error);
 }

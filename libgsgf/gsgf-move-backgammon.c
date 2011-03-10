@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFMoveBackgammonPrivate GSGFMoveBackgammonPrivate;
 
@@ -115,7 +116,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
 {
         const gchar* string;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         string = gsgf_raw_get_value(raw, 0);
         if (!string) {

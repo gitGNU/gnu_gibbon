@@ -32,6 +32,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef GSGFComponentIface GSGFComponentInterface;
 G_DEFINE_INTERFACE (GSGFComponent, gsgf_component, G_TYPE_OBJECT)
@@ -87,12 +88,7 @@ gsgf_component_cook (GSGFComponent *component,
 {
         GSGFComponentIface *iface;
 
-        if (!GSGF_IS_COMPONENT (component)) {
-                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                             _("Method gsgf_component_cook() called on"
-                               " something that is not a GSGFComponent!"));
-                g_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE, error);
 
         iface = GSGF_COMPONENT_GET_IFACE (component);
 
@@ -127,13 +123,11 @@ gsgf_component_write_stream (const GSGFComponent *component,
 {
         GSGFComponentIface *iface;
 
-        if (!GSGF_IS_COMPONENT (component)) {
-                g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,
-                             _("Method gsgf_component_write_stream()"
-                               " called on something that is not a!"
-                               " GSGFComponent!"));
-                g_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE);
-        }
+        gsgf_return_val_if_fail (bytes_written != NULL, FALSE, error);
+
+        *bytes_written = 0;
+
+        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE, error);
 
         iface = GSGF_COMPONENT_GET_IFACE (component);
 

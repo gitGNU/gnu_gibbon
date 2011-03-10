@@ -868,12 +868,7 @@ gsgf_flavor_get_cooked_value(const GSGFFlavor *self, const GSGFProperty *propert
                              const GSGFRaw *raw, GSGFCookedValue **cooked,
                              GError **error)
 {
-        if (!GSGF_IS_FLAVOR(self)) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Invalid cast to GSGFFlavor"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
 
         return GSGF_FLAVOR_GET_CLASS(self)->get_cooked_value(self, property, raw,
                                                              cooked, error);
@@ -884,20 +879,9 @@ gsgf_flavor_create_move(const GSGFFlavor *self,
                         const GSGFRaw *raw,
                         GError **error)
 {
-        if (!GSGF_IS_FLAVOR(self)) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Invalid cast to GSGFFlavor"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
-        }
-
-        if (!GSGF_FLAVOR_GET_CLASS(self)->create_move) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method create_move is not implemented"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_move,
-                                     FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_FLAVOR_GET_CLASS(self)->create_move,
+                                 FALSE, error);
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_move(self, raw, error);
 }
@@ -908,20 +892,9 @@ gsgf_flavor_create_stone(const GSGFFlavor *self,
                          gsize i,
                          GError **error)
 {
-        if (!GSGF_IS_FLAVOR(self)) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Invalid cast to GSGFFlavor"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
-        }
-
-        if (!GSGF_FLAVOR_GET_CLASS(self)->create_stone) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method create_stone is not implemented"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_stone,
-                                     FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_FLAVOR_GET_CLASS(self)->create_stone,
+                                 FALSE, error);
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_stone(self, raw, i, error);
 }
@@ -932,20 +905,9 @@ gsgf_flavor_create_point(const GSGFFlavor *self,
                          gsize i,
                          GError **error)
 {
-        if (!GSGF_IS_FLAVOR(self)) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Invalid cast to GSGFFlavor"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
-        }
-
-        if (!GSGF_FLAVOR_GET_CLASS(self)->create_point) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Method create_point is not implemented"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->create_point,
-                                     FALSE);
-        }
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_FLAVOR_GET_CLASS (self)->create_point,
+                                 FALSE, error);
 
         return GSGF_FLAVOR_GET_CLASS(self)->create_point(self, raw, i, error);
 }
@@ -957,22 +919,9 @@ gsgf_flavor_append_points(const GSGFFlavor *self,
                           gsize i,
                           GError **error)
 {
-        if (!GSGF_IS_FLAVOR(self)) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("Invalid cast to GSGFFlavor"));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_IS_FLAVOR(self), FALSE);
-        }
-
-        if (!GSGF_FLAVOR_GET_CLASS(self)->append_points) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INTERNAL_ERROR,
-                            _("%s does not implement method append_points()"),
-                            G_OBJECT_TYPE_NAME (self));
-                /* Print standard error message and return.  */
-                g_return_val_if_fail(GSGF_FLAVOR_GET_CLASS(self)->append_points,
-                                     FALSE);
-        }
-
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_FLAVOR_GET_CLASS (self)->append_points,
+                                 FALSE, error);
         return GSGF_FLAVOR_GET_CLASS(self)->append_points(self, list_of,
                                                           raw, i, error);
 }
@@ -986,7 +935,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         GSGFCookedConstraint *constraint;
         const gchar *id;
 
-        g_return_val_if_fail (cooked, NULL);
+        gsgf_return_val_if_fail (cooked, NULL, error);
 
         *cooked = NULL;
 
@@ -1035,9 +984,9 @@ gsgf_constraint_is_positive_number(const GSGFCookedValue *value,
 {
         GSGFNumber *number;
 
-        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE, error);
+        gsgf_return_val_if_fail(GSGF_IS_RAW(raw), FALSE, error);
+        gsgf_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE, error);
 
         number = GSGF_NUMBER(value);
 
@@ -1060,9 +1009,9 @@ gsgf_constraint_is_root_property(const GSGFCookedValue *value,
         GSGFNode *previous;
         GSGFGameTree *game_tree;
 
-        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE(value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW(raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY(property), FALSE, error);
 
         node = gsgf_property_get_node(property);
         game_tree = gsgf_node_get_game_tree (node);
@@ -1095,9 +1044,9 @@ gsgf_constraint_node_annotation_unique (const GSGFCookedValue *value,
         const gchar *ids[4] = { "DM", "GB", "GW", "UC" };
         int i;
 
-        g_return_val_if_fail (GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail (GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail (GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE(value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW(raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY(property), FALSE, error);
 
         id = gsgf_property_get_id (property);
         node = gsgf_property_get_node(property);
@@ -1130,9 +1079,9 @@ gsgf_constraint_move_annotation_unique (const GSGFCookedValue *value,
         const gchar *ids[4] = { "BM", "DO", "IT", "TE" };
         int i;
 
-        g_return_val_if_fail (GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail (GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail (GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE, error);
 
         id = gsgf_property_get_id (property);
         node = gsgf_property_get_node(property);
@@ -1174,9 +1123,9 @@ gsgf_constraint_markup_unique (const GSGFCookedValue *value,
         gint *these_points;
         gsize num_these_points;
 
-        g_return_val_if_fail (GSGF_IS_LIST_OF (value), FALSE);
-        g_return_val_if_fail (GSGF_IS_RAW (raw), FALSE);
-        g_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_LIST_OF (value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE, error);
 
         this_list = GSGF_LIST_OF (value);
         num_these_points = gsgf_list_of_get_number_of_items (this_list);
@@ -1233,9 +1182,9 @@ gsgf_constraint_move_annotation_with_move (const GSGFCookedValue *value,
 {
         GSGFNode *node;
 
-        g_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE);
-        g_return_val_if_fail (GSGF_IS_RAW (raw), FALSE);
-        g_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE, error);
 
         node = gsgf_property_get_node(property);
 
@@ -1252,9 +1201,9 @@ gsgf_constraint_is_single_value(const GSGFCookedValue *value,
                                 const GSGFRaw *raw,
                                 const GSGFProperty *property, GError **error)
 {
-        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE, error);
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
@@ -1346,9 +1295,9 @@ gsgf_constraint_is_ST_number(const GSGFCookedValue *value,
 {
         GSGFNumber *number;
 
-        g_return_val_if_fail(GSGF_IS_COOKED_VALUE(value), FALSE);
-        g_return_val_if_fail(GSGF_IS_RAW(raw), FALSE);
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_COOKED_VALUE (value), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), FALSE, error);
 
         number = GSGF_NUMBER(value);
 

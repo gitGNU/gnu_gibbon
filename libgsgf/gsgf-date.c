@@ -37,6 +37,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFDatePrivate GSGFDatePrivate;
 struct _GSGFDatePrivate {
@@ -111,12 +112,7 @@ gsgf_date_new (GSGFDateDMY* date, GError **error)
         if (error)
                 *error = NULL;
 
-        if (!date) {
-                g_set_error (error, GSGF_ERROR,
-                             GSGF_ERROR_USAGE_ERROR,
-                             _("No date passed"));
-                g_return_val_if_fail (date, NULL);
-        }
+        gsgf_return_val_if_fail (date, NULL, error);
 
         if (date) {
                 if (!g_date_valid_year (date->year)) {
@@ -159,8 +155,8 @@ gsgf_date_append (GSGFDate *self, GSGFDateDMY* date, GError **error)
 {
         GSGFDateDMY *date_copy;
 
-        g_return_val_if_fail (GSGF_IS_DATE (self), FALSE);
-        g_return_val_if_fail (date, FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_DATE (self), FALSE, error);
+        gsgf_return_val_if_fail (date, FALSE, error);
 
         if (!gsgf_date_valid_dmy (date)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_INVALID_DATE_FORMAT,
@@ -357,10 +353,10 @@ gsgf_date_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
         const gchar *string;
         GSGFResult *self;
 
-        g_return_val_if_fail (GSGF_IS_RAW (raw), NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         if (1 != gsgf_raw_get_number_of_values (raw)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,

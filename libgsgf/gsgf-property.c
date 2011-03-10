@@ -140,8 +140,8 @@ gsgf_property_write_stream (const GSGFComponent *_self,
         GSGFProperty *self;
         gsize written_here;
 
-        g_return_val_if_fail(GSGF_IS_PROPERTY(_self), FALSE);
-        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (_self), FALSE, error);
+        gsgf_return_val_if_fail (G_IS_OUTPUT_STREAM (out), FALSE, error);
 
         self = GSGF_PROPERTY (_self);
 
@@ -236,8 +236,8 @@ gsgf_property_convert (GSGFComponent *_self, const gchar *charset, GError **erro
 {
         GSGFProperty *self;
 
-        g_return_val_if_fail (GSGF_IS_PROPERTY(_self), FALSE);
-        g_return_val_if_fail (charset != NULL, FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY(_self), FALSE, error);
+        gsgf_return_val_if_fail (charset != NULL, FALSE, error);
 
         self = GSGF_PROPERTY (_self);
 
@@ -251,12 +251,11 @@ gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **erro
         GSGFProperty *self;
         const GSGFFlavor *flavor;
 
-        g_return_val_if_fail (GSGF_IS_PROPERTY (_self), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (_self), FALSE, error);
 
         self = GSGF_PROPERTY (_self);
 
         flavor = gsgf_node_get_flavor (self->priv->node);
-        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), FALSE);
 
         if (gsgf_flavor_get_cooked_value (flavor, self,
                                           GSGF_RAW(self->priv->value),
@@ -294,8 +293,8 @@ gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **erro
 gboolean
 gsgf_property_set_value (GSGFProperty *self, GSGFValue *value, GError **error)
 {
-        g_return_val_if_fail (GSGF_IS_PROPERTY (self), FALSE);
-        g_return_val_if_fail (GSGF_IS_VALUE (value), FALSE);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (self), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_VALUE (value), FALSE, error);
 
         if (self->priv->value)
                 g_object_unref (self->priv->value);

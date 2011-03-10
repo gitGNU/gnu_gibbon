@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFColorPrivate GSGFColorPrivate;
 struct _GSGFColorPrivate {
@@ -117,12 +118,12 @@ gsgf_color_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
         const gchar *string;
         GSGFColorEnum color;
 
-        g_return_val_if_fail (GSGF_IS_RAW (raw), NULL);
-        g_return_val_if_fail (GSGF_IS_FLAVOR (flavor), NULL);
-        g_return_val_if_fail (GSGF_IS_PROPERTY (property), NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (flavor), NULL, error);
+        gsgf_return_val_if_fail (GSGF_IS_PROPERTY (property), NULL, error);
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,

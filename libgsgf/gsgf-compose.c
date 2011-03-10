@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 typedef struct _GSGFComposePrivate GSGFComposePrivate;
 struct _GSGFComposePrivate {

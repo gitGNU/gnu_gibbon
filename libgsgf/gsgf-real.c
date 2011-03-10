@@ -30,6 +30,7 @@
 #include <errno.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 #include <locale.h>
 #include <math.h>
@@ -108,10 +109,10 @@ _gsgf_real_new(const gchar *string, GError **error)
 {
         gdouble value;
 
-        g_return_val_if_fail(string != NULL, NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (string != NULL, NULL, error);
 
         if (!double_pattern)
                 double_pattern = g_regex_new("^[+-]?[0-9]+(?:\\.[0-9]+)?$", 0, 0, NULL);
@@ -153,10 +154,10 @@ gsgf_real_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
         gdouble value;
         const gchar *string;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,

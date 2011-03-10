@@ -29,6 +29,7 @@
 #include <glib/gi18n.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 G_DEFINE_TYPE(GSGFSimpleText, gsgf_simple_text, GSGF_TYPE_TEXT)
 
@@ -88,7 +89,7 @@ gsgf_simple_text_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
         gsize list_length;
         gchar *value;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
+        gsgf_return_val_if_fail (GSGF_IS_RAW(raw), NULL, error);
 
         list_length = gsgf_raw_get_number_of_values(raw);
 

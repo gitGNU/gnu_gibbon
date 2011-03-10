@@ -30,6 +30,7 @@
 #include <errno.h>
 
 #include <libgsgf/gsgf.h>
+#include "gsgf-private.h"
 
 G_DEFINE_TYPE(GSGFEmpty, gsgf_empty, GSGF_TYPE_COOKED_VALUE)
 
@@ -94,10 +95,10 @@ gsgf_empty_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 {
         const gchar *string;
 
-        g_return_val_if_fail(GSGF_IS_RAW(raw), NULL);
-
         if (error)
                 *error = NULL;
+
+        gsgf_return_val_if_fail (GSGF_IS_RAW (raw), NULL, error);
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,

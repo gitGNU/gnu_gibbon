@@ -184,7 +184,7 @@ gsgf_collection_parse_stream(GInputStream *stream,
         GString *value;
         GSGFParserContext ctx;
 
-        g_return_val_if_fail(G_IS_INPUT_STREAM(stream), NULL);
+        gsgf_return_val_if_fail (G_IS_INPUT_STREAM (stream), NULL, error);
 
         self = gsgf_collection_new(error);
         if (!self)
@@ -471,7 +471,7 @@ gsgf_collection_parse_file(GFile *file, GCancellable *cancellable,
 {
         GInputStream *stream;
 
-        g_return_val_if_fail(G_IS_FILE(file), NULL);
+        gsgf_return_val_if_fail (G_IS_FILE (file), NULL, error);
         stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
         if (!stream)
                 return NULL;
@@ -687,7 +687,7 @@ gsgf_collection_add_game_tree (GSGFCollection *self, const GSGFFlavor *flavor)
 {
         GSGFGameTree *game_tree;
 
-        g_return_val_if_fail(GSGF_IS_COLLECTION(self), NULL);
+        g_return_val_if_fail (GSGF_IS_COLLECTION (self), NULL);
 
         game_tree = _gsgf_game_tree_new (flavor);
 
@@ -708,10 +708,12 @@ gsgf_collection_write_stream (const GSGFComponent *_self,
         GSGFCollection *self = GSGF_COLLECTION (_self);
         GList *iter = self->priv->game_trees;
 
-        g_return_val_if_fail(GSGF_IS_COLLECTION(self), FALSE);
-        g_return_val_if_fail(G_IS_OUTPUT_STREAM(out), FALSE);
+        gsgf_return_val_if_fail (bytes_written != NULL, FALSE, error);
 
         *bytes_written = 0;
+
+        gsgf_return_val_if_fail (GSGF_IS_COLLECTION (self), FALSE, error);
+        gsgf_return_val_if_fail (G_IS_OUTPUT_STREAM (out), FALSE, error);
 
         if (!iter) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_EMPTY_COLLECTION,
@@ -802,9 +804,9 @@ gsgf_collection_cook (GSGFComponent *_self, GSGFComponent **culprit,
  * Returns: Returns a #GList of #GSGFGameTree objects..
  **/
 GList *
-gsgf_collection_get_game_trees(const GSGFCollection *self)
+gsgf_collection_get_game_trees (const GSGFCollection *self)
 {
-        g_return_val_if_fail(GSGF_IS_COLLECTION(self), NULL);
+        g_return_val_if_fail (GSGF_IS_COLLECTION(self), NULL);
 
         return self->priv->game_trees;
 }
