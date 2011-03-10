@@ -76,5 +76,6 @@ struct _GibbonGameClass
 GType gibbon_game_get_type (void) G_GNUC_CONST;
 
 GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree);
+GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 
 #endif

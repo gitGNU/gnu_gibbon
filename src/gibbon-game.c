@@ -96,3 +96,11 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree)
 
         return self;
 }
+
+GSGFGameTree *
+gibbon_game_get_game_tree (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        return self->priv->game_tree;
+}
