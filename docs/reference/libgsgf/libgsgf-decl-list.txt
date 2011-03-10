@@ -25,6 +25,7 @@ gsgf_node_remove_property
 gsgf_node_get_property_cooked
 gsgf_node_get_previous_node
 gsgf_node_get_flavor
+gsgf_node_get_game_tree
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -221,6 +222,7 @@ GSGFPropertyClass
 gsgf_property_get_id
 gsgf_property_get_node
 gsgf_property_get_value
+gsgf_property_set_value
 <SUBSECTION Standard>
 GSGF_PROPERTY
 GSGF_IS_PROPERTY
@@ -273,7 +275,6 @@ GSGF_COLLECTION_GET_CLASS
 <SECTION>
 <FILE>gsgf-component</FILE>
 <TITLE>GSGFComponent</TITLE>
-GSGFComponent
 GSGFComponentIface
 gsgf_component_write_stream
 <SUBSECTION Standard>
@@ -454,6 +455,7 @@ gsgf_game_tree_add_node
 gsgf_game_tree_get_nodes
 gsgf_game_tree_get_children
 gsgf_game_tree_get_flavor
+gsgf_game_tree_set_application
 <SUBSECTION Standard>
 GSGF_GAME_TREE
 GSGF_IS_GAME_TREE
