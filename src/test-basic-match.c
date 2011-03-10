@@ -54,7 +54,6 @@ fill_match (void)
         GibbonMatch *match = gibbon_match_new ();
         GError *error = NULL;
 
-exit (123);
         if (!gibbon_match_set_black_player (match, "Joe Black", &error))
                 g_printerr ("Error setting black player: %s.\n",
                             error->message);
