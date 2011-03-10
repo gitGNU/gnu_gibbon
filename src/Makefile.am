@@ -45,7 +45,6 @@ gibbon_SOURCES =		\
 	gibbon-match.c          \
 	gibbon-player-list.c	\
 	gibbon-session.c	\
-	gtkmainwindow.c		\
 	gtkconnectiondialog.c	\
 	gui.c			\
 	html-entities.c		\
