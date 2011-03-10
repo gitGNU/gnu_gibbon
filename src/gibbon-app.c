@@ -33,6 +33,7 @@
 
 #include "gibbon-app.h"
 #include "gibbon-cairoboard.h"
+#include "gibbon-game-chat.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -42,6 +43,7 @@ struct _GibbonAppPrivate {
         GtkWidget *statusbar;
         GtkWidget *server_text_view;
         GibbonCairoboard *board;
+        GibbonGameChat *game_chat;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -58,7 +60,9 @@ static void gibbon_app_connect_signals (const GibbonApp *self);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
 
-GibbonApp *singleton = NULL;
+static GibbonApp *singleton = NULL;
+GibbonApp *app;
+
 static struct GibbonPosition initial_position;
 
 static void 
@@ -68,12 +72,13 @@ gibbon_app_init (GibbonApp *self)
                 GIBBON_TYPE_APP, GibbonAppPrivate);
 
         self->priv->builder = NULL;
+        self->priv->pixmaps_directory = NULL;
+
         self->priv->board = NULL;
         self->priv->window = NULL;
         self->priv->statusbar = NULL;
         self->priv->server_text_view = NULL;
-
-        self->priv->pixmaps_directory = NULL;
+        self->priv->game_chat = NULL;
 }
 
 static void
@@ -92,6 +97,10 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->pixmaps_directory)
                 g_free (self->priv->pixmaps_directory);
         self->priv->pixmaps_directory = NULL;
+
+        if (self->priv->game_chat)
+                g_object_unref (self->priv->game_chat);
+        self->priv->game_chat = NULL;
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -184,6 +193,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
         gtk_widget_modify_font (self->priv->server_text_view,
                                 font_desc);
         pango_font_description_free (font_desc);
+
+        self->priv->game_chat = gibbon_game_chat_new (self);
+        if (!self->priv->game_chat) {
+                g_object_unref (self);
+                return NULL;
+        }
 
         gibbon_app_connect_signals (self);
 

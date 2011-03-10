@@ -41,8 +41,7 @@ enum GibbonGameChatMode {
 
 typedef struct _GibbonGameChatPrivate GibbonGameChatPrivate;
 struct _GibbonGameChatPrivate {
-        GtkBuilder *builder;
-        const gchar *pixmaps_dir;
+        const GibbonApp *app;
 
         GtkComboBox *combo;
 
@@ -74,8 +73,8 @@ gibbon_game_chat_init (GibbonGameChat *self)
 {        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_GAME_CHAT, GibbonGameChatPrivate);
 
-        self->priv->builder = NULL;
-        self->priv->pixmaps_dir = NULL;
+        self->priv->app = NULL;
+
         self->priv->combo = NULL;
         self->priv->toggle_say = NULL;
         self->priv->toggle_whisper = NULL;
@@ -100,7 +99,7 @@ gibbon_game_chat_class_init (GibbonGameChatClass *klass)
 }
 
 GibbonGameChat *
-gibbon_game_chat_new (GtkBuilder *builder, const gchar *pixmaps_dir)
+gibbon_game_chat_new (const GibbonApp *app)
 {
         GibbonGameChat *self;
 
@@ -108,8 +107,7 @@ gibbon_game_chat_new (GtkBuilder *builder, const gchar *pixmaps_dir)
 
         self = singleton = g_object_new (GIBBON_TYPE_GAME_CHAT, NULL);
 
-        self->priv->builder = builder;
-        self->priv->pixmaps_dir = pixmaps_dir;
+        self->priv->app = app;
 
         if (!gibbon_game_chat_fixup_combo (self)) {
                 g_object_unref (self);
@@ -132,12 +130,12 @@ gibbon_game_chat_fixup_combo (GibbonGameChat *self)
         GtkComboBox *combo;
         GtkCellRenderer *cell;
         GtkListStore *store;
-        GtkBuilder *builder;
+        const GibbonApp *app;
 
-        builder = self->priv->builder;
+        app = self->priv->app;
 
-        combo = GTK_COMBO_BOX (find_object (builder, "combo-game-chat",
-                                            GTK_TYPE_COMBO_BOX));
+        combo = GTK_COMBO_BOX (gibbon_app_find_object (app, "combo-game-chat",
+                                                       GTK_TYPE_COMBO_BOX));
         if (!combo)
                 return FALSE;
 
@@ -173,14 +171,14 @@ gibbon_game_chat_fixup_combo (GibbonGameChat *self)
 static gboolean
 gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
 {
-        const gchar *pixmaps_dir = self->priv->pixmaps_dir;
-        GtkBuilder *builder = self->priv->builder;
+        const GibbonApp *app = self->priv->app;
+        const gchar *pixmaps_dir = gibbon_app_get_pixmaps_directory (app);
         GtkToggleToolButton *toggle_say =
-                        GTK_TOGGLE_TOOL_BUTTON (find_object (builder,
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
                                                 "game-chat-say-button",
                                                 GTK_TYPE_TOGGLE_TOOL_BUTTON));
         GtkToggleToolButton *toggle_whisper =
-                        GTK_TOGGLE_TOOL_BUTTON (find_object (builder,
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
                                                 "game-chat-whisper-button",
                                                 GTK_TYPE_TOGGLE_TOOL_BUTTON));
         GtkRequisition requisition;
