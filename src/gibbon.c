@@ -105,12 +105,6 @@ hide_main_function_for_tests (int argc, char *argv[])
         if (!app)
                 return -1;
 
-/*
-        if (!init_gui (builder_filename, pixmaps_dir, "default.svg",
-                       connection))
-                return -1;
-*/
-
         if (pixmaps_dir_buf)
                 g_free (pixmaps_dir_buf);
         g_free (builder_filename);
