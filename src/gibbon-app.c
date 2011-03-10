@@ -167,12 +167,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 GTK_WIDGET (gibbon_app_find_object (self,
                                                     "server_text_view",
                                                     GTK_TYPE_TEXT_VIEW));
-        if (!(self->priv->window
-              && self->priv->statusbar
-              && self->priv->server_text_view)) {
-                g_object_unref (self);
-                return NULL;
-        }
 
         board_filename = g_build_filename (pixmaps_directory, "boards",
                                            "default.svg", NULL);
@@ -354,16 +348,12 @@ gibbon_app_connect_signals (const GibbonApp *self)
 
         obj = gibbon_app_find_object (self, "toolbar_quit_button",
                                       GTK_TYPE_TOOL_BUTTON);
-        if (!obj)
-                return;
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   self);
 
         obj = gibbon_app_find_object (self, "quit_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
-        if (!obj)
-                return;
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   self);
