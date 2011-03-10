@@ -47,6 +47,8 @@ static GtkWidget *statusbar = NULL;
 
 static GibbonCairoboard *board = NULL;
 
+static GibbonConnection *connection = NULL;
+
 /* The converter in Glade 3.4.x converts menus to GtkAction.  Until we
  * upgrade to 3.5.4 or better, construct the menu manually.  */
 static GtkWidget *player_menu = NULL;
@@ -85,12 +87,14 @@ static struct GibbonPosition initial_position;
 
 gboolean
 init_gui (const gchar *builder_filename, const gchar *pixmaps_dir,
-          const gchar *board_name)
+          const gchar *board_name, GibbonConnection *conn)
 {
         PangoFontDescription *font_desc;
         GObject *left_vpane;
         gchar *board_filename = NULL;
         
+        connection = conn;
+
         builder = get_builder (builder_filename);
         
         if (!builder)

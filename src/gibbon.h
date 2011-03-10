@@ -24,7 +24,6 @@
 # include <config.h>
 #endif
 
-struct _GibbonConnection *connection;
 struct _GibbonArchive *archive;
 
 #endif

@@ -45,6 +45,8 @@ G_MODULE_EXPORT void
 on_disconnect_menu_item_activate (GtkObject *object, gpointer user_data)
 {
         set_state_disconnected ();
+        /* FIXME! */
+        extern GibbonConnection *connection;
         gibbon_connection_disconnect (connection);
 }
 

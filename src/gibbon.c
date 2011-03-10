@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 
 #include "gui.h"
+#include "gibbon-app.h"
 #include "gibbon.h"
 #include "gibbon-connection.h"
 #include "gibbon-archive.h"
@@ -62,6 +63,7 @@ static int
 hide_main_function_for_tests (int argc, char *argv[])
 #endif
 {	
+        GibbonApp *app;
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
 
@@ -74,6 +76,7 @@ hide_main_function_for_tests (int argc, char *argv[])
                 g_thread_init (NULL);
 		gdk_threads_init ();
 	}
+
         connection = gibbon_connection_new ();
                 
         gtk_init (&argc, &argv);
@@ -98,14 +101,19 @@ hide_main_function_for_tests (int argc, char *argv[])
                                             "pixmaps", PACKAGE, NULL);
         }
 
-        if (!init_gui (builder_filename, pixmaps_dir, "default.svg"))
+        app = gibbon_app_new (builder_filename, pixmaps_dir);
+        if (!app)
+                return -1;
+
+        if (!init_gui (builder_filename, pixmaps_dir, "default.svg",
+                       connection))
                 return -1;
 
         if (pixmaps_dir_buf)
                 g_free (pixmaps_dir_buf);
         g_free (builder_filename);
 
-        archive = gibbon_archive_new ();
+        archive = gibbon_archive_new (connection);
 
         if (archive) {
                 gtk_widget_show (window);

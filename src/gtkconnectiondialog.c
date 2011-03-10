@@ -86,6 +86,8 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         
         gtk_widget_hide (GTK_WIDGET (connection_dialog));
         
+        /* FIXME! */
+        extern GibbonConnection *connection;
         gibbon_connection_set_hostname (connection, server);
         gibbon_connection_set_port (connection, portno);
         gibbon_connection_set_login (connection, login);

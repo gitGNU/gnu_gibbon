@@ -29,6 +29,7 @@
 
 #include "gibbon-player-list.h"
 #include "game.h"
+#include "gibbon-connection.h"
 
 extern GtkBuilder *builder;
 
@@ -39,7 +40,8 @@ extern GibbonPlayerList *players;
 
 extern gboolean init_gui (const gchar *builder_filename,
                           const gchar *pixmaps_dir,
-                          const gchar *board_name);
+                          const gchar *board_name,
+                          GibbonConnection *connection);
 extern void cleanup_gui (void);
 extern const gchar *get_trimmed_entry_text (const gchar *id);
 extern const gchar *get_entry_text (const gchar *id);

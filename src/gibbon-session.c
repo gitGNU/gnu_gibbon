@@ -62,7 +62,7 @@ static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
 
 struct _GibbonSessionPrivate {
-        gchar *login;
+        GibbonConnection *connection;
 
         gchar *watching;
         gchar *opponent;
@@ -82,7 +82,7 @@ gibbon_session_init (GibbonSession *self)
                                                   GIBBON_TYPE_SESSION, 
                                                   GibbonSessionPrivate);
 
-        self->priv->login = NULL;
+        self->priv->connection = NULL;
         self->priv->watching = NULL;
         self->priv->opponent = NULL;
 }
@@ -94,9 +94,9 @@ gibbon_session_finalize (GObject *object)
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
-        if (self->priv->login)
-                g_free (self->priv->login);
-        self->priv->login = NULL;
+        if (self->priv->connection)
+                g_object_unref (self->priv->connection);
+        self->priv->connection = NULL;
 
         if (self->priv->watching)
                 g_free (self->priv->watching);
@@ -129,11 +129,12 @@ gibbon_session_class_init (GibbonSessionClass *klass)
 }
 
 GibbonSession *
-gibbon_session_new (const gchar *login)
+gibbon_session_new (GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
 
-        self->priv->login = g_strdup (login);
+        self->priv->connection = connection;
+        g_object_ref (connection);
 
         return self;
 }
@@ -204,7 +205,7 @@ static gboolean
 gibbon_session_clip_welcome (GibbonSession *self, 
                              const gchar *message, const gchar *ptr)
 {
-        const gchar* login = gibbon_connection_get_login (connection);
+        const gchar* login;
         gchar **tokens;
         GTimeVal last_login;
         gchar *last_login_str;
@@ -212,6 +213,8 @@ gibbon_session_clip_welcome (GibbonSession *self,
         gchar *mail;
         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        login = gibbon_connection_get_login (self->priv->connection);
 
         tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 4);
         
@@ -246,12 +249,13 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 gibbon_session_send_server_message (self, reply);
                 g_free (reply);
                 
-                gibbon_connection_queue_command (connection, "set boardstyle 3");
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 "set boardstyle 3");
 
                 mail = gibbon_prefs_get_string (prefs,
                                               GIBBON_PREFS_MAIL_ADDRESS);
                 if (mail) {
-                        gibbon_connection_queue_command (connection, 
+                        gibbon_connection_queue_command (self->priv->connection,
                                                          "address %s",
                                                          mail);
                         g_free (mail);
@@ -336,7 +340,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gibbon_player_list_set (players, who, available, rating, experience,
                                 opponent, watching);
 
-        if (!strcmp (who, self->priv->login)) {
+        if (!g_strcmp0 (who,
+                        gibbon_connection_get_login (self->priv->connection))) {
                 if (!opponent[0])
                         opponent = NULL;
                 if (!watching[0])

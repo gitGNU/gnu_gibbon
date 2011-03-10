@@ -226,10 +226,10 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_SIGNAL_RUN_FIRST,
                               0,
                               NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              g_cclosure_marshal_VOID__OBJECT,
                               G_TYPE_NONE,
                               1,
-                              G_TYPE_STRING);
+                              G_TYPE_OBJECT);
         signals[DISCONNECTED] =
                 g_signal_new ("disconnected",
                               G_TYPE_FROM_CLASS (klass),
@@ -432,8 +432,8 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         self->priv->state = WAIT_COMMANDS;
                         signal = COOKED_SERVER_OUTPUT;
                         g_signal_emit (self, signals[LOGGED_IN], 0,
-                                       self->priv->hostname);
-                        self->priv->session = gibbon_session_new (self->priv->login);
+                                       self);
+                        self->priv->session = gibbon_session_new (self);
 
                         /* FIXME! Gtk weirdness.  I thought that connecting
                          * signals happens on a per instance base.
