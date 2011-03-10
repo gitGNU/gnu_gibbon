@@ -105,9 +105,11 @@ hide_main_function_for_tests (int argc, char *argv[])
         if (!app)
                 return -1;
 
+/*
         if (!init_gui (builder_filename, pixmaps_dir, "default.svg",
                        connection))
                 return -1;
+*/
 
         if (pixmaps_dir_buf)
                 g_free (pixmaps_dir_buf);
@@ -116,7 +118,7 @@ hide_main_function_for_tests (int argc, char *argv[])
         archive = gibbon_archive_new (connection);
 
         if (archive) {
-                gtk_widget_show (window);
+                gtk_widget_show (gibbon_app_get_window (app));
                 gtk_main ();
         }
         

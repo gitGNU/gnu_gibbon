@@ -29,6 +29,8 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <stdlib.h>
+
 #include "gibbon-app.h"
 #include "gibbon-cairoboard.h"
 
@@ -49,6 +51,11 @@ G_DEFINE_TYPE (GibbonApp, gibbon_app, G_TYPE_OBJECT)
 static GtkBuilder *gibbon_app_get_builder (GibbonApp *self, const gchar *path);
 static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
                                                 const gchar *board_filename);
+static void gibbon_app_connect_signals (const GibbonApp *self);
+
+/* Signal handlers.  */
+static void gibbon_app_on_quit_request (GibbonApp *self,
+                                        GtkWidget *emitter);
 
 GibbonApp *singleton = NULL;
 static struct GibbonPosition initial_position;
@@ -175,6 +182,8 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_dir)
                                 font_desc);
         pango_font_description_free (font_desc);
 
+        gibbon_app_connect_signals (self);
+
         singleton = self;
 
         return self;
@@ -199,7 +208,8 @@ gibbon_app_get_builder (GibbonApp *self, const gchar *path)
 }
 
 void
-gibbon_app_display_error (GibbonApp* self, const gchar *message_format, ...)
+gibbon_app_display_error (const GibbonApp* self,
+                          const gchar *message_format, ...)
 {
         va_list args;
         gchar *message;
@@ -223,7 +233,7 @@ gibbon_app_display_error (GibbonApp* self, const gchar *message_format, ...)
 }
 
 void
-gibbon_app_display_info (GibbonApp *self, const gchar *message_format, ...)
+gibbon_app_display_info (const GibbonApp *self, const gchar *message_format, ...)
 {
         va_list args;
         gchar *message;
@@ -247,7 +257,7 @@ gibbon_app_display_info (GibbonApp *self, const gchar *message_format, ...)
 }
 
 GObject *
-gibbon_app_find_object (GibbonApp *self, const gchar *id, GType type)
+gibbon_app_find_object (const GibbonApp *self, const gchar *id, GType type)
 {
         GObject *obj;
         GType got_type;
@@ -310,4 +320,44 @@ gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
                          TRUE, FALSE);
 
         return board;
+}
+
+GtkWidget *
+gibbon_app_get_window (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->window;
+}
+
+static void
+gibbon_app_connect_signals (const GibbonApp *self)
+{
+        GObject* obj;
+
+        obj = gibbon_app_find_object (self, "toolbar_quit_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        if (!obj)
+                return;
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_quit_request),
+                                  self);
+
+        obj = gibbon_app_find_object (self, "quit_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        if (!obj)
+                return;
+        g_signal_connect_swapped (obj, "activate",
+                                  G_CALLBACK (gibbon_app_on_quit_request),
+                                  self);
+
+        g_signal_connect_swapped (obj, "destroy",
+                                  G_CALLBACK (gibbon_app_on_quit_request),
+                                  self);
+}
+
+static void
+gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
+{
+        gtk_main_quit ();
 }
