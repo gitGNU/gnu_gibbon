@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include <gtk/gtk.h>
+
 #define GIBBON_TYPE_APP \
         (gibbon_app_get_type ())
 #define GIBBON_APP(obj) \
@@ -77,5 +79,6 @@ GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,
                                  GType type);
 GtkWidget *gibbon_app_get_window (const GibbonApp *self);
 const gchar *gibbon_app_get_pixmaps_directory (const GibbonApp *app);
+struct _GibbonPrefs *gibbon_app_get_prefs (const GibbonApp *app);
 
 #endif

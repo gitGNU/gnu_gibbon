@@ -56,7 +56,8 @@ gibbon_SOURCES =		\
 	gibbon-action.c				\
 	gibbon-fibs-message.c				\
 	gibbon-app.c				\
-	gibbon-player-list-view.c	
+	gibbon-player-list-view.c				\
+	gibbon-connection-dialog.c	
 
 noinst_HEADERS =		\
 	game.h			\
@@ -78,7 +79,8 @@ noinst_HEADERS =		\
 	gibbon-action.h			\
 	gibbon-fibs-message.h			\
 	gibbon-app.h			\
-	gibbon-player-list-view.h
+	gibbon-player-list-view.h			\
+	gibbon-connection-dialog.h
 
 gibbon_CFLAGS = -DUSE_MAIN
 AM_LDFLAGS = -export-dynamic

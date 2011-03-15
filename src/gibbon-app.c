@@ -36,6 +36,8 @@
 #include "gibbon-game-chat.h"
 #include "gibbon-player-list.h"
 #include "gibbon-player-list-view.h"
+#include "gibbon-prefs.h"
+#include "gibbon-connection-dialog.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -47,6 +49,7 @@ struct _GibbonAppPrivate {
         GibbonCairoboard *board;
         GibbonGameChat *game_chat;
         GibbonPlayerListView *players_view;
+        GibbonPrefs *prefs;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -91,6 +94,7 @@ gibbon_app_init (GibbonApp *self)
         self->priv->server_text_view = NULL;
         self->priv->game_chat = NULL;
         self->priv->players_view = NULL;
+        self->priv->prefs = NULL;
 }
 
 static void
@@ -117,6 +121,10 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->players_view)
                 g_object_unref (self->priv->players_view);
         self->priv->players_view = NULL;
+
+        if  (self->priv->prefs)
+                g_object_unref (self->priv->prefs);
+        self->priv->prefs = NULL;
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -225,6 +233,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
         self->priv->players_view =
                 gibbon_player_list_view_new (self, players);
         if (!self->priv->players_view) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        self->priv->prefs = gibbon_prefs_new ();
+        if (!self->priv->prefs) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -396,39 +410,39 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                       GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_quit_request),
-                                  self);
+                                  (gpointer) self);
 
         obj = gibbon_app_find_object (self, "quit_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_quit_request),
-                                  self);
+                                  (gpointer) self);
 
         obj = gibbon_app_find_object (self, "connect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_connect_request),
-                                  self);
+                                  (gpointer) self);
         obj = gibbon_app_find_object (self, "toolbar_connect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_connect_request),
-                                  self);
+                                  (gpointer) self);
 
         obj = gibbon_app_find_object (self, "disconnect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_disconnect_request),
-                                  self);
+                                  (gpointer) self);
         obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_disconnect_request),
-                                  self);
+                                  (gpointer) self);
 
         g_signal_connect_swapped (obj, "destroy",
                                   G_CALLBACK (gibbon_app_on_quit_request),
-                                  self);
+                                  (gpointer) self);
 }
 
 static void
@@ -441,6 +455,8 @@ static void
 gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter)
 {
         gibbon_app_set_connecting (self);
+
+        gibbon_connection_dialog_new (self);
 }
 
 static void
@@ -491,4 +507,12 @@ gibbon_app_set_connecting (GibbonApp *self)
         obj = gibbon_app_find_object (self, "disconnect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+}
+
+GibbonPrefs *
+gibbon_app_get_prefs (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->prefs;
 }
