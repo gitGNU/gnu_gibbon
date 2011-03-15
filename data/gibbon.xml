@@ -499,7 +499,6 @@
     <property name="title" translatable="yes">Connection Data</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -620,7 +619,6 @@
                 <property name="has_tooltip">True</property>
                 <property name="relief">none</property>
                 <property name="uri">http://fibs.com/javafibs/register.html</property>
-                <signal name="clicked" handler="on_register_link_clicked"/>
               </object>
               <packing>
                 <property name="right_attach">2</property>
@@ -669,7 +667,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_conn_button_cancel_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -686,7 +683,6 @@
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_conn_button_connect_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -714,6 +710,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>

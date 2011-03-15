@@ -31,16 +31,22 @@
 
 #include "gibbon-connection-dialog.h"
 #include "gibbon-prefs.h"
+#include "gibbon-signal.h"
 
 typedef struct _GibbonConnectionDialogPrivate GibbonConnectionDialogPrivate;
 struct _GibbonConnectionDialogPrivate {
         const GibbonApp *app;
+        GtkDialog *dialog;
+
+        GibbonSignal *cancel_signal;
 };
 
 #define GIBBON_CONNECTION_DIALOG_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate))
 
 G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, G_TYPE_OBJECT)
+
+static void gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self);
 
 static void 
 gibbon_connection_dialog_init (GibbonConnectionDialog *self)
@@ -49,6 +55,9 @@ gibbon_connection_dialog_init (GibbonConnectionDialog *self)
                 GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate);
 
         self->priv->app = NULL;
+        self->priv->dialog = NULL;
+
+        self->priv->cancel_signal = NULL;
 }
 
 static void
@@ -58,7 +67,13 @@ gibbon_connection_dialog_finalize (GObject *object)
 
         self->priv->app = NULL;
 
-        g_object_unref (self);
+        if (self->priv->dialog)
+                gtk_widget_hide (GTK_WIDGET (self->priv->dialog));
+        self->priv->dialog = NULL;
+
+        if (self->priv->cancel_signal)
+                g_object_unref (self->priv->cancel_signal);
+        self->priv->cancel_signal = NULL;
 
         G_OBJECT_CLASS (gibbon_connection_dialog_parent_class)->finalize(object);
 }
@@ -87,11 +102,11 @@ gibbon_connection_dialog_new (const GibbonApp *app)
 {
         GibbonConnectionDialog *self =
                         g_object_new (GIBBON_TYPE_CONNECTION_DIALOG, NULL);
-        GtkObject *entry;
-        GtkToggleButton *toggle;
+        GObject *entry;
+        GObject *toggle;
         gboolean save_password;
-        GObject *dialog;
         GibbonPrefs *prefs;
+        GObject *emitter;
 
         self->priv->app = app;
 
@@ -125,13 +140,30 @@ gibbon_connection_dialog_new (const GibbonApp *app)
 
         entry = gibbon_app_find_object (app, "conn_entry_password",
                                         GTK_TYPE_ENTRY);
-        gibbon_prefs_string_update_entry (prefs, entry,
+        gibbon_prefs_string_update_entry (prefs, GTK_ENTRY (entry),
                                           GIBBON_PREFS_PASSWORD);
 
-        dialog = gibbon_app_find_object (app, "connection_dialog",
-                                         GTK_TYPE_DIALOG);
+        emitter = gibbon_app_find_object (app, "conn_button_cancel",
+                                          GTK_TYPE_BUTTON);
+        self->priv->cancel_signal =
+                gibbon_signal_new (emitter, "clicked",
+                                G_CALLBACK (gibbon_connection_dialog_on_cancel),
+                                   self);
 
-        gtk_widget_show (GTK_WIDGET (dialog));
+        self->priv->dialog =
+                GTK_DIALOG (gibbon_app_find_object (app,
+                                                    "connection_dialog",
+                                                    GTK_TYPE_DIALOG));
+
+        gtk_widget_show (GTK_WIDGET (self->priv->dialog));
 
         return self;
+}
+
+static void
+gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
+{
+        g_printerr ("Cancel connection ...\n");
+
+        g_object_unref (self);
 }
