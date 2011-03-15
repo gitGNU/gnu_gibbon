@@ -164,42 +164,6 @@ display_info (const gchar *message_format, ...)
         gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
-void
-set_state_connecting ()
-{
-        GObject *connect_button = 
-                gtk_builder_get_object (builder, "toolbar_connect_button");
-        GObject *disconnect_button = 
-                gtk_builder_get_object (builder, "toolbar_disconnect_button");
-        GObject *connect_item = 
-                gtk_builder_get_object (builder, "connect_menu_item");
-        GObject *disconnect_item = 
-                gtk_builder_get_object (builder, "disconnect_menu_item");
-        
-        gtk_widget_set_sensitive (GTK_WIDGET (connect_button), FALSE);
-        gtk_widget_set_sensitive (GTK_WIDGET (connect_item), FALSE);
-        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), TRUE);
-        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_item), TRUE);
-}
-
-void
-set_state_disconnected ()
-{
-        GObject *connect_button = 
-                gtk_builder_get_object (builder, "toolbar_connect_button");
-        GObject *disconnect_button = 
-                gtk_builder_get_object (builder, "toolbar_disconnect_button");
-        GObject *connect_item = 
-                gtk_builder_get_object (builder, "connect_menu_item");
-        GObject *disconnect_item = 
-                gtk_builder_get_object (builder, "disconnect_menu_item");
-        
-        gtk_widget_set_sensitive (GTK_WIDGET (connect_button), TRUE);
-        gtk_widget_set_sensitive (GTK_WIDGET (connect_item), TRUE);
-        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_button), FALSE);
-        gtk_widget_set_sensitive (GTK_WIDGET (disconnect_item), FALSE);
-}
-
 static void
 cb_resolving (GtkWidget *emitter, const gchar *hostname)
 {

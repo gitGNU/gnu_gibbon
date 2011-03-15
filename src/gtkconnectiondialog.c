@@ -113,7 +113,6 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
                                          NULL);
         }
 
-        set_state_connecting ();        
         gibbon_connection_connect (connection);
 }
 

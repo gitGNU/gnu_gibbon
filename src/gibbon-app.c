@@ -60,8 +60,16 @@ static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
 static void gibbon_app_connect_signals (const GibbonApp *self);
 
 /* Signal handlers.  */
+static void gibbon_app_on_connect_request (GibbonApp *self,
+                                           GtkWidget *emitter);
+static void gibbon_app_on_disconnect_request (GibbonApp *self,
+                                           GtkWidget *emitter);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
+
+/* State setters.  */
+static void gibbon_app_set_disconnected (GibbonApp *self);
+static void gibbon_app_set_connecting (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -220,6 +228,8 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 g_object_unref (self);
                 return NULL;
         }
+
+        gibbon_app_set_disconnected (self);
 
         gibbon_app_connect_signals (self);
 
@@ -394,6 +404,28 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   self);
 
+        obj = gibbon_app_find_object (self, "connect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                                  G_CALLBACK (gibbon_app_on_connect_request),
+                                  self);
+        obj = gibbon_app_find_object (self, "toolbar_connect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_connect_request),
+                                  self);
+
+        obj = gibbon_app_find_object (self, "disconnect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                                  G_CALLBACK (gibbon_app_on_disconnect_request),
+                                  self);
+        obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_disconnect_request),
+                                  self);
+
         g_signal_connect_swapped (obj, "destroy",
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   self);
@@ -405,3 +437,58 @@ gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
         gtk_main_quit ();
 }
 
+static void
+gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter)
+{
+        gibbon_app_set_connecting (self);
+}
+
+static void
+gibbon_app_on_disconnect_request (GibbonApp *self, GtkWidget *emitter)
+{
+        gibbon_app_set_disconnected (self);
+}
+
+static void
+gibbon_app_set_disconnected (GibbonApp *self)
+{
+        GObject* obj;
+
+        obj = gibbon_app_find_object (self, "toolbar_connect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "connect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object (self, "disconnect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+}
+
+static void
+gibbon_app_set_connecting (GibbonApp *self)
+{
+        GObject* obj;
+
+        obj = gibbon_app_find_object (self, "toolbar_connect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object (self, "connect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "disconnect_menu_item",
+                                      GTK_TYPE_IMAGE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+}
