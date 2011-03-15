@@ -187,7 +187,7 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
                 g_free (session_directory);
                 session_directory = buf;
         }
-        buf = g_build_filename (session_directory, login);
+        buf = g_build_filename (session_directory, login, NULL);
         g_free (session_directory);
         self->priv->session_directory = buf;
 }
