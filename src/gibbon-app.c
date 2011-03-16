@@ -50,6 +50,7 @@ struct _GibbonAppPrivate {
         GibbonGameChat *game_chat;
         GibbonPlayerListView *players_view;
         GibbonPrefs *prefs;
+        GibbonConnectionDialog *connection_dialog;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -69,10 +70,6 @@ static void gibbon_app_on_disconnect_request (GibbonApp *self,
                                            GtkWidget *emitter);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
-
-/* State setters.  */
-static void gibbon_app_set_disconnected (GibbonApp *self);
-static void gibbon_app_set_connecting (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -95,6 +92,7 @@ gibbon_app_init (GibbonApp *self)
         self->priv->game_chat = NULL;
         self->priv->players_view = NULL;
         self->priv->prefs = NULL;
+        self->priv->connection_dialog = NULL;
 }
 
 static void
@@ -102,17 +100,13 @@ gibbon_app_finalize (GObject *object)
 {
         GibbonApp *self = GIBBON_APP (object);
 
-        if (self->priv->builder)
-                g_object_unref (self->priv->builder);
-        self->priv->builder = NULL;
-
         if (self->priv->board)
                 g_object_unref (self->priv->board);
         self->priv->board = NULL;
 
-        if (self->priv->pixmaps_directory)
-                g_free (self->priv->pixmaps_directory);
-        self->priv->pixmaps_directory = NULL;
+        if (self->priv->connection_dialog)
+                g_object_unref (self->priv->connection_dialog);
+        self->priv->connection_dialog = NULL;
 
         if (self->priv->game_chat)
                 g_object_unref (self->priv->game_chat);
@@ -125,6 +119,14 @@ gibbon_app_finalize (GObject *object)
         if  (self->priv->prefs)
                 g_object_unref (self->priv->prefs);
         self->priv->prefs = NULL;
+
+        if (self->priv->builder)
+                g_object_unref (self->priv->builder);
+        self->priv->builder = NULL;
+
+        if (self->priv->pixmaps_directory)
+                g_free (self->priv->pixmaps_directory);
+        self->priv->pixmaps_directory = NULL;
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -243,7 +245,7 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 return NULL;
         }
 
-        gibbon_app_set_disconnected (self);
+        gibbon_app_set_state_disconnected (self);
 
         gibbon_app_connect_signals (self);
 
@@ -454,19 +456,23 @@ gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
 static void
 gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter)
 {
-        gibbon_app_set_connecting (self);
-
-        gibbon_connection_dialog_new (self);
+        if (!self->priv->connection_dialog)
+                self->priv->connection_dialog =
+                                gibbon_connection_dialog_new (self);
 }
 
 static void
 gibbon_app_on_disconnect_request (GibbonApp *self, GtkWidget *emitter)
 {
-        gibbon_app_set_disconnected (self);
+        if (self->priv->connection_dialog)
+                g_object_unref (self->priv->connection_dialog);
+        self->priv->connection_dialog = NULL;
+
+        gibbon_app_set_state_disconnected (self);
 }
 
-static void
-gibbon_app_set_disconnected (GibbonApp *self)
+void
+gibbon_app_set_state_disconnected (GibbonApp *self)
 {
         GObject* obj;
 
@@ -487,8 +493,8 @@ gibbon_app_set_disconnected (GibbonApp *self)
         gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
 }
 
-static void
-gibbon_app_set_connecting (GibbonApp *self)
+void
+gibbon_app_set_state_connecting (GibbonApp *self)
 {
         GObject* obj;
 

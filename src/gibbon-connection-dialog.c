@@ -110,6 +110,8 @@ gibbon_connection_dialog_new (const GibbonApp *app)
 
         self->priv->app = app;
 
+        gibbon_app_set_state_connecting (app);
+
         prefs = gibbon_app_get_prefs (app);
 
         entry = gibbon_app_find_object (app, "conn_entry_server",
@@ -163,7 +165,7 @@ gibbon_connection_dialog_new (const GibbonApp *app)
 static void
 gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
 {
-        g_printerr ("Cancel connection ...\n");
+        gibbon_app_set_state_disconnected (self->priv->app);
 
         g_object_unref (self);
 }
