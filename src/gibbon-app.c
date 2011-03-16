@@ -522,3 +522,33 @@ gibbon_app_get_prefs (const GibbonApp *self)
 
         return self->priv->prefs;
 }
+
+const gchar *
+gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id)
+{
+        GtkWidget *entry;
+        gchar *trimmed;
+
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        entry = GTK_WIDGET (gibbon_app_find_object (self, id, GTK_TYPE_ENTRY));
+
+        return gtk_entry_get_text (GTK_ENTRY (entry));
+}
+
+const gchar *
+gibbon_app_get_trimmed_entry_text (const GibbonApp *self, const gchar *id)
+{
+        GtkWidget *entry;
+        gchar *trimmed;
+
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        entry = GTK_WIDGET (gibbon_app_find_object (self, id, GTK_TYPE_ENTRY));
+
+        trimmed = pango_trim_string (gtk_entry_get_text (GTK_ENTRY (entry)));
+        gtk_entry_set_text (GTK_ENTRY (entry), trimmed);
+        g_free (trimmed);
+
+        return gtk_entry_get_text (GTK_ENTRY (entry));
+}

@@ -29,6 +29,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <errno.h>
+
 #include "gibbon-connection-dialog.h"
 #include "gibbon-prefs.h"
 #include "gibbon-signal.h"
@@ -39,15 +41,19 @@ struct _GibbonConnectionDialogPrivate {
         GtkDialog *dialog;
 
         GibbonSignal *cancel_signal;
+        GibbonSignal *destroy_signal;
+        GibbonSignal *connect_signal;
         GibbonSignal *register_link_signal;
 };
 
-#define GIBBON_CONNECTION_DIALOG_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+#define GIBBON_CONNECTION_DIALOG_PRIVATE(obj) \
+        (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate))
 
 G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, G_TYPE_OBJECT)
 
 static void gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self);
+static void gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self);
 static void gibbon_connection_dialog_on_register_link (GibbonConnectionDialog
                                                        *self,
                                                        GtkLinkButton *emitter);
@@ -62,6 +68,8 @@ gibbon_connection_dialog_init (GibbonConnectionDialog *self)
         self->priv->dialog = NULL;
 
         self->priv->cancel_signal = NULL;
+        self->priv->destroy_signal = NULL;
+        self->priv->connect_signal = NULL;
         self->priv->register_link_signal = NULL;
 }
 
@@ -79,6 +87,14 @@ gibbon_connection_dialog_finalize (GObject *object)
         if (self->priv->cancel_signal)
                 g_object_unref (self->priv->cancel_signal);
         self->priv->cancel_signal = NULL;
+
+        if (self->priv->connect_signal)
+                g_object_unref (self->priv->connect_signal);
+        self->priv->connect_signal = NULL;
+
+        if (self->priv->destroy_signal)
+                g_object_unref (self->priv->destroy_signal);
+        self->priv->destroy_signal = NULL;
 
         if  (self->priv->register_link_signal)
                 g_object_unref (self->priv->register_link_signal);
@@ -161,6 +177,13 @@ gibbon_connection_dialog_new (GibbonApp *app)
                                 G_CALLBACK (gibbon_connection_dialog_on_cancel),
                                    G_OBJECT (self));
 
+        emitter = gibbon_app_find_object (app, "conn_button_connect",
+                                          GTK_TYPE_BUTTON);
+        self->priv->connect_signal =
+                gibbon_signal_new (emitter, "clicked",
+                               G_CALLBACK (gibbon_connection_dialog_on_connect),
+                                   G_OBJECT (self));
+
         emitter = gibbon_app_find_object (app, "register_link",
                                           GTK_TYPE_LINK_BUTTON);
         self->priv->register_link_signal =
@@ -173,6 +196,12 @@ gibbon_connection_dialog_new (GibbonApp *app)
                                                     "connection_dialog",
                                                     GTK_TYPE_DIALOG));
 
+        self->priv->destroy_signal =
+                gibbon_signal_new (G_OBJECT (self->priv->dialog), "destroy",
+                                G_CALLBACK (gibbon_connection_dialog_on_cancel),
+                                   G_OBJECT (self));
+
+
         gtk_widget_show (GTK_WIDGET (self->priv->dialog));
 
         return self;
@@ -184,6 +213,91 @@ gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
         gibbon_app_set_state_disconnected (self->priv->app);
 
         g_object_unref (self);
+}
+
+static void
+gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self)
+{
+        const gchar *server;
+        const gchar *port;
+        const gchar *login;
+        const gchar *password;
+        const gchar *address;
+        GObject *check_button;
+        guint64 portno = 4321;
+        char *endptr;
+        GibbonApp *app;
+        GibbonPrefs *prefs;
+
+        app = self->priv->app;
+
+        server = gibbon_app_get_trimmed_entry_text (app, "conn_entry_server");
+        port = gibbon_app_get_trimmed_entry_text (app, "conn_entry_port");
+        login = gibbon_app_get_trimmed_entry_text (app, "conn_entry_login");
+        password = gibbon_app_get_entry_text (app, "conn_entry_password");
+        address = gibbon_app_get_entry_text (app, "conn_entry_address");
+
+        if (port[0] != '\000') {
+                errno = 0;
+                portno = g_ascii_strtoull (port, &endptr, 10);
+                if (errno) {
+                        gibbon_app_display_error (app,
+                                                  _("Invalid port `%s': %s."),
+                                                  port, g_strerror (errno));
+
+                        return;
+                }
+
+                if (*endptr != '\000' || portno > 65536) {
+                        gibbon_app_display_error (app,
+                                                  _("Invalid port number `%s'."),
+                                                  port);
+                        return;
+                }
+        }
+
+        if (login[0] == '\000') {
+                gibbon_app_display_error (app,
+                                          _("You have to specify your user "
+                                          "name (login)."));
+                return;
+        }
+
+        if (0 == g_strcmp0 ("guest", login)) {
+                gibbon_app_display_error (app,
+                                          _("Guest login is not supported."));
+                return;
+        }
+
+        if (password[0] == '\000') {
+                gibbon_app_display_error (app,
+                                          _("You have to specify a password."));
+                return;
+        }
+
+        prefs = gibbon_app_get_prefs (app);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_HOST, server);
+        gibbon_prefs_set_int (prefs, GIBBON_PREFS_PORT, portno);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_LOGIN, login);
+        gibbon_prefs_set_string (prefs, GIBBON_PREFS_MAIL_ADDRESS,
+                                 address);
+
+        check_button = gibbon_app_find_object (app,
+                                               "conn_checkbutton_remember",
+                                               GTK_TYPE_CHECK_BUTTON);
+        if (gibbon_prefs_boolean_read_toggle_button (prefs,
+                                         GTK_TOGGLE_BUTTON (check_button),
+                                         GIBBON_PREFS_SAVE_PASSWORD)) {
+                gibbon_prefs_set_string (prefs,
+                                         GIBBON_PREFS_PASSWORD,
+                                         password);
+        } else {
+                gibbon_prefs_set_string (prefs,
+                                         GIBBON_PREFS_PASSWORD,
+                                         NULL);
+        }
+
+        g_printerr ("TODO: Notify application...\n");
 }
 
 static void
