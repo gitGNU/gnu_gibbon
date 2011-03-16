@@ -43,3 +43,5 @@
 - Rewrite most of the old stuff src/*.c from scratch.
 - Check whether the player list context menu can be created with glade.
   Before 3.5.4 it was always converted to a GtkAction.
+- Changing the port number in the connection dialog does not have an
+  effect.
