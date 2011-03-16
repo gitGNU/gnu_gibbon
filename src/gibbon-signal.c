@@ -34,7 +34,7 @@
 typedef struct _GibbonSignalPrivate GibbonSignalPrivate;
 struct _GibbonSignalPrivate {
         gulong handler_id;
-        gpointer *emitter;
+        GObject *emitter;
 };
 
 #define GIBBON_SIGNAL_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -75,13 +75,14 @@ gibbon_signal_class_init (GibbonSignalClass *klass)
 }
 
 GibbonSignal *
-gibbon_signal_new (gpointer *emitter, const gchar *name,
-                   GCallback *callback, GObject *receiver)
+gibbon_signal_new (GObject *emitter, const gchar *name,
+                   GCallback callback, GObject *receiver)
 {
         GibbonSignal *self = g_object_new (GIBBON_TYPE_SIGNAL, NULL);
 
         self->priv->emitter = emitter;
-        self->priv->handler_id = g_signal_connect_swapped (emitter, name,
+        self->priv->handler_id = g_signal_connect_swapped ((gpointer) emitter,
+                                                           name,
                                                            callback,
                                                            (gpointer) receiver);
 

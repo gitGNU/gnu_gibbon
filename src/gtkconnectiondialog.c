@@ -116,26 +116,3 @@ on_conn_button_connect_clicked (GtkObject *object, gpointer user_data)
         gibbon_connection_connect (connection);
 }
 
-G_MODULE_EXPORT void
-on_conn_button_cancel_clicked (GtkObject *object, gpointer user_data)
-{
-        gtk_widget_hide (GTK_WIDGET (connection_dialog));        
-}
-
-G_MODULE_EXPORT void
-on_register_link_clicked (GtkObject *object, gpointer user_data)
-{
-        GdkScreen *screen;
-        GError *error;
-        const gchar *uri = gtk_link_button_get_uri (GTK_LINK_BUTTON (object));
-                                             
-        if (gtk_widget_has_screen (window))
-                screen = gtk_widget_get_screen (window);
-        else
-                screen = gdk_screen_get_default ();
-
-        error = NULL;
-        gtk_show_uri (screen, uri,
-                      gtk_get_current_event_time (),
-                      &error);
-}

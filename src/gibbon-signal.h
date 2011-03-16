@@ -68,7 +68,7 @@ struct _GibbonSignalClass
 
 GType gibbon_signal_get_type (void) G_GNUC_CONST;
 
-GibbonSignal *gibbon_signal_new (gpointer *emitter, const gchar *name,
-                                 GCallback *callback, GObject *receiver);
+GibbonSignal *gibbon_signal_new (GObject *emitter, const gchar *name,
+                                 GCallback callback, GObject *receiver);
 
 #endif

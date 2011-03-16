@@ -35,10 +35,11 @@
 
 typedef struct _GibbonConnectionDialogPrivate GibbonConnectionDialogPrivate;
 struct _GibbonConnectionDialogPrivate {
-        const GibbonApp *app;
+        GibbonApp *app;
         GtkDialog *dialog;
 
         GibbonSignal *cancel_signal;
+        GibbonSignal *register_link_signal;
 };
 
 #define GIBBON_CONNECTION_DIALOG_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -47,6 +48,9 @@ struct _GibbonConnectionDialogPrivate {
 G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, G_TYPE_OBJECT)
 
 static void gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self);
+static void gibbon_connection_dialog_on_register_link (GibbonConnectionDialog
+                                                       *self,
+                                                       GtkLinkButton *emitter);
 
 static void 
 gibbon_connection_dialog_init (GibbonConnectionDialog *self)
@@ -58,6 +62,7 @@ gibbon_connection_dialog_init (GibbonConnectionDialog *self)
         self->priv->dialog = NULL;
 
         self->priv->cancel_signal = NULL;
+        self->priv->register_link_signal = NULL;
 }
 
 static void
@@ -74,6 +79,10 @@ gibbon_connection_dialog_finalize (GObject *object)
         if (self->priv->cancel_signal)
                 g_object_unref (self->priv->cancel_signal);
         self->priv->cancel_signal = NULL;
+
+        if  (self->priv->register_link_signal)
+                g_object_unref (self->priv->register_link_signal);
+        self->priv->register_link_signal = NULL;
 
         G_OBJECT_CLASS (gibbon_connection_dialog_parent_class)->finalize(object);
 }
@@ -98,7 +107,7 @@ gibbon_connection_dialog_class_init (GibbonConnectionDialogClass *klass)
  * failure.
  */
 GibbonConnectionDialog *
-gibbon_connection_dialog_new (const GibbonApp *app)
+gibbon_connection_dialog_new (GibbonApp *app)
 {
         GibbonConnectionDialog *self =
                         g_object_new (GIBBON_TYPE_CONNECTION_DIALOG, NULL);
@@ -150,7 +159,14 @@ gibbon_connection_dialog_new (const GibbonApp *app)
         self->priv->cancel_signal =
                 gibbon_signal_new (emitter, "clicked",
                                 G_CALLBACK (gibbon_connection_dialog_on_cancel),
-                                   self);
+                                   G_OBJECT (self));
+
+        emitter = gibbon_app_find_object (app, "register_link",
+                                          GTK_TYPE_LINK_BUTTON);
+        self->priv->register_link_signal =
+                gibbon_signal_new (emitter, "clicked",
+                         G_CALLBACK (gibbon_connection_dialog_on_register_link),
+                                   G_OBJECT (self));
 
         self->priv->dialog =
                 GTK_DIALOG (gibbon_app_find_object (app,
@@ -168,4 +184,30 @@ gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
         gibbon_app_set_state_disconnected (self->priv->app);
 
         g_object_unref (self);
+}
+
+static void
+gibbon_connection_dialog_on_register_link (GibbonConnectionDialog *self,
+                                           GtkLinkButton *emitter)
+{
+        GdkScreen *screen;
+        GError *error;
+        const gchar *uri = gtk_link_button_get_uri (emitter);
+        GtkWidget *window = gibbon_app_get_window (self->priv->app);
+
+        if (gtk_widget_has_screen (window))
+                screen = gtk_widget_get_screen (window);
+        else
+                screen = gdk_screen_get_default ();
+
+        gibbon_app_display_info (self->priv->app,
+                                 _("Please fill in the register form in"
+                                   " your browser!"));
+        error = NULL;
+        if (!gtk_show_uri (screen, uri,
+                           gtk_get_current_event_time (),
+                           &error)) {
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          error->message);
+        }
 }

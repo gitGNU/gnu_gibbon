@@ -70,6 +70,6 @@ struct _GibbonConnectionDialogClass
 
 GType gibbon_connection_dialog_get_type (void) G_GNUC_CONST;
 
-GibbonConnectionDialog *gibbon_connection_dialog_new (const GibbonApp *app);
+GibbonConnectionDialog *gibbon_connection_dialog_new (GibbonApp *app);
 
 #endif
