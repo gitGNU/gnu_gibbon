@@ -27,7 +27,6 @@
 
 #include "game.h"
 #include "gui.h"
-#include "gibbon.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-player-list.h"
 #include "gibbon-game-chat.h"
@@ -84,85 +83,6 @@ static gboolean setup_server_communication (GtkBuilder *builder);
 static gboolean init_prefs (void);
 
 static struct GibbonPosition initial_position;
-
-const gchar *
-get_entry_text (const gchar *id) 
-{
-        GtkWidget *entry = GTK_WIDGET (gtk_builder_get_object (builder, id));
-        
-        return gtk_entry_get_text (GTK_ENTRY (entry));
-}
-
-const gchar *
-get_trimmed_entry_text (const gchar *id) 
-{
-        GtkWidget *entry = GTK_WIDGET (gtk_builder_get_object (builder, id));
-        gchar *trimmed;
-        
-        if (!entry) {
-                g_print (_("Internal error: Cannot find widget `%s'!\n"),
-                         id);
-                return "";
-        }
-        
-        trimmed = pango_trim_string (gtk_entry_get_text (GTK_ENTRY (entry)));
-        gtk_entry_set_text (GTK_ENTRY (entry), trimmed);
-        g_free (trimmed);
-               
-        return gtk_entry_get_text (GTK_ENTRY (entry));
-}
-
-void
-display_error (const gchar *message_format, ...)
-{
-        va_list args;
-        gchar *message;
-        extern GibbonApp *app;
-        GtkWidget *window = gibbon_app_get_window (app);
-
-        va_start (args, message_format);
-        message = g_strdup_vprintf (message_format, args);        
-        va_end (args);
-        
-        GtkWidget *dialog = 
-                gtk_message_dialog_new (GTK_WINDOW (window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_CLOSE,
-                                        "%s", message);
-        
-        g_free (message);
-        
-        gtk_dialog_run (GTK_DIALOG (dialog));
-
-        gtk_widget_destroy (GTK_WIDGET (dialog));
-}
-
-void
-display_info (const gchar *message_format, ...)
-{
-        va_list args;
-        gchar *message;
-        extern GibbonApp *app;
-        GtkWidget *window = gibbon_app_get_window (app);
-
-        va_start (args, message_format);
-        message = g_strdup_vprintf (message_format, args);
-        va_end (args);
-
-        GtkWidget *dialog =
-                gtk_message_dialog_new (GTK_WINDOW (window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_INFO,
-                                        GTK_BUTTONS_CLOSE,
-                                        "%s", message);
-
-        g_free (message);
-
-        gtk_dialog_run (GTK_DIALOG (dialog));
-
-        gtk_widget_destroy (GTK_WIDGET (dialog));
-}
 
 static void
 cb_resolving (GtkWidget *emitter, const gchar *hostname)
@@ -360,47 +280,6 @@ on_edit_menu_item_activate (GtkObject *object, gpointer user_data)
 {
 }
 
-/* This method is mostly here to make valgrind happy.  */
-void
-cleanup_gui ()
-{
-
-}
-
-GObject *
-find_object (GtkBuilder *builder, const gchar *id, GType type)
-{
-        GObject *obj;
-        GType got_type;
-
-        g_return_val_if_fail (GTK_IS_BUILDER (builder), NULL);
-        g_return_val_if_fail (G_TYPE_IS_OBJECT (type), NULL);
-
-        obj = gtk_builder_get_object (builder, id);
-
-        if (!obj) {
-                /* TRANSLATORS: UI means user interface.  */
-                display_error (_("Object `%s' not found in UI definition!"),
-                                id);
-                return NULL;
-        }
-
-        if (!G_IS_OBJECT (obj)) {
-                display_error (_("Object `%s' is not a GObject!"),
-                               id);
-                return NULL;
-        }
-
-        got_type = G_OBJECT_TYPE (obj);
-        if (type != got_type) {
-                display_error (_("Object `%s' is not of type `%s' but `%s'!"),
-                               id, g_type_name (type), g_type_name (got_type));
-                return NULL;
-        }
-
-        return obj;
-}
-
 GtkImage *load_scaled_image (const gchar *path,
                              gint width, gint height)
 {
@@ -414,8 +293,9 @@ GtkImage *load_scaled_image (const gchar *path,
                                                     FALSE,
                                                     &error);
 
+        /* FIXME! */
         if (!pixbuf) {
-                display_error (_("Error loading image `%s': %s!"),
+                gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
                                path, error->message);
                 return NULL;
         }
