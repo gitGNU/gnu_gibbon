@@ -22,6 +22,8 @@
 #include <math.h>
 #include <string.h>
 
+#include <glib.h>
+
 #include "svgint.h"
 
 static svg_status_t
@@ -298,7 +300,7 @@ _svg_transform_parse_str (svg_transform_t *transform, const char *str)
 
 	for (n_args = 0; ; n_args++) {
 	    char c;
-	    const char *end_ptr;
+	    gchar *end_ptr;
 
 	    /* skip whitespace */
 	    while (_svg_ascii_isspace (str[idx]))
@@ -307,7 +309,7 @@ _svg_transform_parse_str (svg_transform_t *transform, const char *str)
 	    if (_svg_ascii_isdigit (c) || c == '+' || c == '-' || c == '.') {
 		if (n_args == SVG_ARRAY_SIZE (args))
 		    return SVG_STATUS_PARSE_ERROR;
-		args[n_args] = _svg_ascii_strtod (str + idx, &end_ptr);
+		args[n_args] = g_ascii_strtod (str + idx, &end_ptr);
 		idx = end_ptr - str;
 		
 		while (_svg_ascii_isspace (str[idx]))
