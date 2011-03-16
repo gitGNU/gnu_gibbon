@@ -27,6 +27,7 @@
 #include "gibbon-connection.h"
 #include "gibbon-connector.h"
 #include "gibbon-session.h"
+#include "gibbon-prefs.h"
 #include "gui.h"
 
 enum gibbon_connection_signals {
@@ -50,6 +51,8 @@ enum GibbonConnectionState {
 };
 
 struct _GibbonConnectionPrivate {
+        GibbonApp *app;
+
         gchar *hostname;
         guint port;
         gchar *login;
@@ -263,33 +266,29 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
 }
 
 GibbonConnection *
-gibbon_connection_new (void)
+gibbon_connection_new (GibbonApp *app)
 {
-        return g_object_new (GIBBON_TYPE_CONNECTION, NULL);
-}
+        GibbonConnection *self = g_object_new (GIBBON_TYPE_CONNECTION, NULL);
+        gchar *hostname;
+        GibbonPrefs *prefs;
+        gsize i;
 
-void
-gibbon_connection_set_hostname (GibbonConnection *self, const gchar *hostname)
-{
-        gchar *new_hostname = NULL;
-        int i;
-        
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        
-        if (!(hostname && hostname[0])) {
-                new_hostname = g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
-        } else {
-                new_hostname = g_strdup (hostname);
-        }
-        
-        if (self->priv->hostname)
-                g_free (self->priv->hostname);
-        
+        g_return_val_if_fail (GIBBON_IS_APP (app), NULL);
+
+        self->priv->app = app;
+        prefs = gibbon_app_get_prefs (app);
+
+        hostname = gibbon_prefs_get_string (prefs, GIBBON_PREFS_HOST);
+        if (hostname && hostname[0])
+                self->priv->hostname = g_strdup (hostname);
+        else
+                self->priv->hostname =
+                        g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
+
         /* Make sure that the hostname is basically canonical.  */
-        for (i = 0; i < strlen (new_hostname); ++i)
-                new_hostname[i] = g_ascii_tolower (new_hostname[i]);
-
-        self->priv->hostname = new_hostname;
+        for (i = 0; i < strlen (self->priv->hostname); ++i)
+                self->priv->hostname[i] =
+                        g_ascii_tolower (self->priv->hostname[i]);
 }
 
 const gchar *
@@ -382,8 +381,10 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         switch (status) {
                 case G_IO_STATUS_ERROR:
                         gdk_threads_enter ();
-                        display_error (_("Error receiving data from server: %s."),
-                                       error->message);
+                        gibbon_app_display_error (self->priv->app,
+                                                  _("Error receiving data from"
+                                                    " server: %s."),
+                                                  error->message);
                         gdk_threads_leave ();
                         g_error_free (error);
 
@@ -392,8 +393,10 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         
                 case G_IO_STATUS_EOF:
                         gdk_threads_enter ();
-                        display_error (_("End-of-file while receiving data "
-                                         "from server."));
+                        gibbon_app_display_error (self->priv->app,
+                                                  _("End-of-file while"
+                                                    " receiving data from"
+                                                    " server."));
                         gdk_threads_leave ();
                         
                         gibbon_connection_disconnect (self);
@@ -480,7 +483,8 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         } else if (self->priv->state == WAIT_WELCOME
                    && strcmp (self->priv->in_buffer, "login: ") == 0) {
                 gdk_threads_enter ();
-                display_error (_("Authentication failed!"));
+                gibbon_app_display_error (self->priv->app,
+                                          _("Authentication failed!"));
                 gdk_threads_leave ();
                 gibbon_connection_disconnect (self);
                 return FALSE;
@@ -522,8 +526,9 @@ gibbon_connection_on_output (GIOChannel *channel,
                                                             &bytes_written,
                                                             &error)) {
                 gdk_threads_enter ();
-                display_error (_("Error while sending data to server: %s.\n"),
-                               error->message);
+                gibbon_app_display_error (_("Error while sending data to"
+                                            " server: %s.\n"),
+                                           error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
                 gibbon_connection_disconnect (self);
@@ -624,8 +629,8 @@ gibbon_connection_connect (GibbonConnection *self)
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
         if (!gibbon_connector_connect (self->priv->connector)) {
-                display_error ("%s", 
-                               gibbon_connector_error (self->priv->connector));
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          gibbon_connector_error (self->priv->connector));
                 gibbon_connection_disconnect (self);
                 return;
         }
@@ -704,7 +709,7 @@ gibbon_connection_disconnect (GibbonConnection *self)
         
         if (error) {
                 gdk_threads_enter ();
-                display_error ("%s", error);
+                gibbon_app_display_error (self->priv->app, "%s", error);
                 gdk_threads_leave (); 
                 g_free (error);
         }

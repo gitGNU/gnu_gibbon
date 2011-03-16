@@ -38,6 +38,7 @@
 #include "gibbon-player-list-view.h"
 #include "gibbon-prefs.h"
 #include "gibbon-connection-dialog.h"
+#include "gibbon-connection.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -51,6 +52,7 @@ struct _GibbonAppPrivate {
         GibbonPlayerListView *players_view;
         GibbonPrefs *prefs;
         GibbonConnectionDialog *connection_dialog;
+        GibbonConnection *connection;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -93,6 +95,7 @@ gibbon_app_init (GibbonApp *self)
         self->priv->players_view = NULL;
         self->priv->prefs = NULL;
         self->priv->connection_dialog = NULL;
+        self->priv->connection = NULL;
 }
 
 static void
@@ -111,6 +114,10 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->game_chat)
                 g_object_unref (self->priv->game_chat);
         self->priv->game_chat = NULL;
+
+        if (self->priv->connection)
+                g_object_unref (self->priv->connection);
+        self->priv->connection = NULL;
 
         if (self->priv->players_view)
                 g_object_unref (self->priv->players_view);
@@ -364,7 +371,7 @@ static GibbonCairoboard *
 gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
 {
         GObject *left_vpane;
-        GibbonCairoboard *board = gibbon_cairoboard_new (board_filename);
+        GibbonCairoboard *board = gibbon_cairoboard_new (self, board_filename);
 
         if (!board)
                 return NULL;
@@ -527,7 +534,6 @@ const gchar *
 gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id)
 {
         GtkWidget *entry;
-        gchar *trimmed;
 
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
@@ -551,4 +557,23 @@ gibbon_app_get_trimmed_entry_text (const GibbonApp *self, const gchar *id)
         g_free (trimmed);
 
         return gtk_entry_get_text (GTK_ENTRY (entry));
+}
+
+void
+gibbon_app_connect (GibbonApp *self)
+{
+        if (self->priv->connection_dialog)
+                g_object_unref (self->priv->connection_dialog);
+        self->priv->connection_dialog = NULL;
+
+        if (self->priv->connection)
+                g_object_unref (self->priv->connection);
+
+        self->priv->connection = gibbon_connection_new (self);
+        if (!self->priv->connection) {
+              gibbon_app_set_state_disconnected (self);
+              return;
+        }
+
+        g_printerr ("Connect to server ...\n");
 }

@@ -84,6 +84,7 @@ struct _GibbonPrefs *gibbon_app_get_prefs (const GibbonApp *app);
 const gchar *gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id);
 const gchar *gibbon_app_get_trimmed_entry_text (const GibbonApp *self,
                                                 const gchar *id);
+void gibbon_app_connect (GibbonApp *self);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
