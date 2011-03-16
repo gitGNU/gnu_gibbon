@@ -23,10 +23,12 @@
 
 #include "svgint.h"
 
+#include <glib.h>
+
 svgint_status_t
-_svg_attribute_get_double (const char	**attributes,
+_svg_attribute_get_double (const gchar	**attributes,
 			   const char	*name,
-			   double	*value,
+			   gdouble	*value,
 			   double	default_value)
 {
     int i;
@@ -38,7 +40,7 @@ _svg_attribute_get_double (const char	**attributes,
 
     for (i=0; attributes[i]; i += 2) {
 	if (strcmp (attributes[i], name) == 0) {
-	    *value = _svg_ascii_strtod (attributes[i+1], NULL);
+	    *value = g_ascii_strtod (attributes[i+1], NULL);
 	    return SVG_STATUS_SUCCESS;
 	}
     }

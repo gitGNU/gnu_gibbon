@@ -21,6 +21,8 @@
 
 #include "svgint.h"
 
+#include <glib.h>
+
 void
 _svg_str_skip_space (const char **str)
 {
@@ -52,8 +54,8 @@ svgint_status_t
 _svg_str_parse_csv_doubles (const char *str, double *value, int num_values, const char **end)
 {
     int i;
-    double val;
-    const char *fail_pos = str;
+    gdouble val;
+    gchar *fail_pos = str;
     svg_status_t status = SVG_STATUS_SUCCESS;
 
     for (i=0; i < num_values; i++) {
@@ -64,7 +66,7 @@ _svg_str_parse_csv_doubles (const char *str, double *value, int num_values, cons
 	    break;
 	}
 
-	val = _svg_ascii_strtod (str, &fail_pos);
+	val = g_ascii_strtod (str, &fail_pos);
 	if (fail_pos == str) {
 	    status = SVGINT_STATUS_ARGS_EXHAUSTED;
 	    break;

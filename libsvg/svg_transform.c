@@ -260,7 +260,7 @@ _svg_transform_parse_str (svg_transform_t *transform, const char *str)
     int idx;
     svg_status_t status;
     char keyword[32];
-    double args[6];
+    gdouble args[6];
     int n_args;
     unsigned int key_len;
     svg_transform_t tmp_transform;

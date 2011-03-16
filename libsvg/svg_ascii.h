@@ -96,10 +96,6 @@ _svg_ascii_digit_value (char c);
 int
 _svg_ascii_xdigit_value (char c);
 
-double
-_svg_ascii_strtod (const char	*nptr,
-		   const char **endptr);
-
 int
 _svg_ascii_strcasecmp (const char *s1,
 		       const char *s2);

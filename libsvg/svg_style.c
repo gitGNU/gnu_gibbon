@@ -24,6 +24,8 @@
 
 #include "svgint.h"
 
+#include <glib.h>
+
 static svg_status_t
 _svg_style_parse_color (svg_style_t *style, const char *str);
 
@@ -278,10 +280,10 @@ _svg_style_deinit (svg_style_t *style)
 static svg_status_t
 _svg_style_str_to_opacity (const char *str, double *ret)
 {
-    const char *end_ptr;
-    double opacity;
+    gchar *end_ptr;
+    gdouble opacity;
     
-    opacity = _svg_ascii_strtod (str, &end_ptr);
+    opacity = g_ascii_strtod (str, &end_ptr);
 
     if (end_ptr == str)
 	return SVG_STATUS_PARSE_ERROR;
@@ -400,7 +402,7 @@ _svg_style_parse_font_style (svg_style_t *style, const char *str)
 }
 
 static svg_status_t
-_svg_style_parse_font_weight (svg_style_t *style, const char *str)
+_svg_style_parse_font_weight (svg_style_t *style, const gchar *str)
 {
     if (strcmp (str, "normal") == 0)
 	style->font_weight = 400;
@@ -411,7 +413,7 @@ _svg_style_parse_font_weight (svg_style_t *style, const char *str)
     else if (strcmp (str, "bolder") ==0)
 	style->font_weight += 100;
     else
-	style->font_weight = _svg_ascii_strtod(str, NULL);
+	style->font_weight = g_ascii_strtod (str, NULL);
 
     if (style->font_weight < 100)
 	style->font_weight = 100;
@@ -527,9 +529,9 @@ _svg_style_parse_stroke_line_join (svg_style_t *style, const char *str)
 static svg_status_t
 _svg_style_parse_stroke_miter_limit (svg_style_t *style, const char *str)
 {
-    const char *end;
+    gchar *end;
 
-    style->stroke_miter_limit = _svg_ascii_strtod (str, &end);
+    style->stroke_miter_limit = g_ascii_strtod (str, &end);
     if (end == (char *)str)
 	return SVG_STATUS_PARSE_ERROR;
 
