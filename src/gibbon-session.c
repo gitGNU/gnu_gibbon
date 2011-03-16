@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "gibbon.h"
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
 #include "gui.h"

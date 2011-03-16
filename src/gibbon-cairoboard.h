@@ -23,6 +23,7 @@
 #include <glib.h>
 
 #include "game.h"
+#include "gibbon-app.h"
 
 G_BEGIN_DECLS
 
@@ -50,7 +51,7 @@ struct _GibbonCairoboard
         GibbonCairoboardPrivate *priv;
 };
 
-GibbonCairoboard *gibbon_cairoboard_new (const gchar *path);
+GibbonCairoboard *gibbon_cairoboard_new (GibbonApp *app, const gchar *path);
 
 void gibbon_cairoboard_set_position (GibbonCairoboard *self,
                                      const struct GibbonPosition *pos);

@@ -297,7 +297,7 @@ gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self)
                                          NULL);
         }
 
-        g_printerr ("TODO: Notify application...\n");
+        gibbon_app_connect (app);
 }
 
 static void

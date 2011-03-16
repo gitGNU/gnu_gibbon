@@ -275,21 +275,21 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         
         status = svg_create (&svg);
         if (status != SVG_STATUS_SUCCESS) {
-                display_error (_("Error initializing SVG parser: %s\n"),
-                               svg_strerror (status));
+                g_error (_("Error initializing SVG parser: %s\n"),
+                         svg_strerror (status));
                 return FALSE;
         }
 
         doc_copy = xmlCopyDoc (doc, FALSE);
         if (!doc_copy) {
-                display_error (_("Error copying SVG structure!\n"));
+                g_error (_("Error copying SVG structure!\n"));
                 svg_destroy (svg);
                 return FALSE;
         }
 
         root_copy = xmlCopyNode (xmlDocGetRootElement (doc), 0);
         if (!root_copy) {
-                display_error (_("Error copying SVG root element!\n"));
+                g_error (_("Error copying SVG root element!\n"));
                 xmlFreeDoc (doc_copy);
                 return FALSE;
         }
@@ -297,7 +297,7 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
 
         node_copy = xmlCopyNode (node, 1);        
         if (!node_copy) {
-                display_error (_("Error copying SVG node!\n"));
+                g_error (_("Error copying SVG node!\n"));
                 xmlFreeDoc (doc_copy);
                 return FALSE;
         }
@@ -312,7 +312,7 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                                    strlen ((char *) xml_src));
         setlocale (LC_NUMERIC, saved_locale);
         if (status != SVG_STATUS_SUCCESS) {
-                display_error (_("Error parsing SVG file `%s': %s\n"),
+                g_error (_("Error parsing SVG file `%s': %s\n"),
                                filename, svg_strerror (status));
                 (void) svg_destroy (svg);
                 xmlFree (xml_src);
@@ -338,7 +338,7 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 ctx.state = svg_util_pop_state (ctx.state);
 
         if (status != SVG_STATUS_SUCCESS) {
-                display_error (_("Error getting SVG dimensions of `%s': %s.\n"),
+                g_error (_("Error getting SVG dimensions of `%s': %s.\n"),
                                filename, svg_strerror (status));
                 (void) svg_destroy (svg);
                 xmlFree (xml_src);
@@ -363,14 +363,13 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                  * xml parse the source again but the API of libsvg-cairo
                  * doesn't give us another chance.
                  */
-                saved_locale = setlocale (LC_NUMERIC, "POSIX");
                 status = svg_cairo_parse_buffer (component->scr, 
                                                  (char *) xml_src, 
                                                  strlen ((char *) xml_src));
                 setlocale (LC_NUMERIC, saved_locale);
                 if (status != SVG_STATUS_SUCCESS) {
-                        display_error (_("Error parsing SVG file `%s': %s\n"),
-                                       filename, svg_strerror (status));
+                        g_error (_("Error parsing SVG file `%s': %s\n"),
+                                 filename, svg_strerror (status));
                         xmlFree (xml_src);
                 
                         return FALSE;
