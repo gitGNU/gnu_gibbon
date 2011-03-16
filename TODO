@@ -45,3 +45,5 @@
   Before 3.5.4 it was always converted to a GtkAction.
 - Changing the port number in the connection dialog does not have an
   effect.
+- Change svg-util.c to not switch locale.  Instead fix libsvg to
+  use the g_ascii_strto...() functions from glib.
