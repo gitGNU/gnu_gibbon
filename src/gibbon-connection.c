@@ -162,7 +162,6 @@ gibbon_connection_finalize (GObject *object)
 
         if (error) {
                 gdk_threads_enter ();
-g_printerr ("The error was: %s\n", error);
                 gibbon_app_display_error (self->priv->app, "%s", error);
                 gdk_threads_leave ();
                 g_free (error);
