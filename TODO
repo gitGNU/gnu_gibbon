@@ -47,3 +47,5 @@
   effect.
 - Change svg-util.c to not switch locale.  Instead fix libsvg to
   use the g_ascii_strto...() functions from glib.
+- Password gets lost if not saved in preferences.  Use a temporary
+  buffer for it.
