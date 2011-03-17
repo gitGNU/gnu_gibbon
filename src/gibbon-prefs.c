@@ -281,3 +281,18 @@ gibbon_prefs_set_int (const GibbonPrefs *self, enum GibbonPrefsInt key,
 
         gconf_client_set_int (self->priv->client, conf_key, value, NULL);
 }
+
+gboolean
+gibbon_prefs_get_int (const GibbonPrefs *self, enum GibbonPrefsInt key)
+{
+        const gchar *conf_key;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), FALSE);
+
+        conf_key = gibbon_prefs_get_int_key (self, key);
+        if (!conf_key)
+                return FALSE;
+
+        return gconf_client_get_int (self->priv->client, conf_key, NULL);
+}
+
