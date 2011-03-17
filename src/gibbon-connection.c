@@ -125,11 +125,12 @@ static void
 gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *self = GIBBON_CONNECTION (object);
-        gchar *error;
+        gchar *error = NULL;
 
         if (self->priv->connector) {
                 error = g_strdup (gibbon_connector_error (self->priv->connector));
                 gibbon_connector_cancel (self->priv->connector);
+                g_object_unref (self->priv->connector);
         }
         self->priv->connector = NULL;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
@@ -161,6 +162,7 @@ gibbon_connection_finalize (GObject *object)
 
         if (error) {
                 gdk_threads_enter ();
+g_printerr ("The error was: %s\n", error);
                 gibbon_app_display_error (self->priv->app, "%s", error);
                 gdk_threads_leave ();
                 g_free (error);
