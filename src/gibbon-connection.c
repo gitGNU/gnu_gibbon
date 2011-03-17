@@ -36,6 +36,7 @@ enum gibbon_connection_signals {
         CONNECTED,
         LOGIN,
         LOGGED_IN,
+        NETWORK_ERROR,
         DISCONNECTED,
         RAW_SERVER_OUTPUT,
         COOKED_SERVER_OUTPUT,
@@ -125,13 +126,12 @@ static void
 gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *self = GIBBON_CONNECTION (object);
-        gchar *error = NULL;
 
         if (self->priv->connector) {
-                error = g_strdup (gibbon_connector_error (self->priv->connector));
                 gibbon_connector_cancel (self->priv->connector);
                 g_object_unref (self->priv->connector);
         }
+
         self->priv->connector = NULL;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
@@ -141,7 +141,7 @@ gibbon_connection_finalize (GObject *object)
 
         if (self->priv->in_buffer)
                 g_free (self->priv->in_buffer);
-        self->priv->in_buffer = g_strdup ("");
+        self->priv->in_buffer = NULL;
         
         if (self->priv->out_watcher)
                 g_source_remove (self->priv->out_watcher);
@@ -149,23 +149,13 @@ gibbon_connection_finalize (GObject *object)
 
         if (self->priv->out_buffer)
                 g_free (self->priv->out_buffer);
-        self->priv->out_buffer = g_strdup ("");
+        self->priv->out_buffer = NULL;
 
         if (self->priv->io) {
                 g_io_channel_close (self->priv->io);
                 g_io_channel_unref (self->priv->io);
         }
         self->priv->io = NULL;
-
-        g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0,
-                       error);
-
-        if (error) {
-                gdk_threads_enter ();
-                gibbon_app_display_error (self->priv->app, "%s", error);
-                gdk_threads_leave ();
-                g_free (error);
-        }
 
         if (self->priv->hostname)
                 g_free (self->priv->hostname);
@@ -181,34 +171,6 @@ gibbon_connection_finalize (GObject *object)
                 g_free (self->priv->login);
         self->priv->login = NULL;
 
-        if (self->priv->connector)
-                gibbon_connector_cancel (self->priv->connector);
-        self->priv->connector = NULL;
-
-        if (self->priv->error)
-                g_free (self->priv->error);
-        g_free (self->priv->error);
-
-        if (self->priv->in_watcher)
-                g_source_remove (self->priv->in_watcher);
-        self->priv->in_watcher = 0;
-        
-        if (self->priv->out_watcher)
-                g_source_remove (self->priv->out_watcher);
-        self->priv->out_watcher = 0;
-        
-        if (self->priv->io)
-                g_io_channel_shutdown (self->priv->io, FALSE, NULL);
-        self->priv->io = NULL;
-        
-        if (self->priv->in_buffer)
-                g_free (self->priv->in_buffer);
-        self->priv->in_buffer = NULL;
-        
-        if (self->priv->out_buffer)
-                g_free (self->priv->out_buffer);
-        self->priv->out_buffer = NULL;
-        
         if (self->priv->session)
                 g_object_unref (self->priv->session);
         self->priv->session = NULL;
@@ -275,8 +237,8 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_TYPE_NONE,
                               1,
                               G_TYPE_OBJECT);
-        signals[DISCONNECTED] =
-                g_signal_new ("disconnected",
+        signals[NETWORK_ERROR] =
+                g_signal_new ("network-error",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -285,6 +247,15 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_TYPE_NONE,
                               1,
                               G_TYPE_STRING);
+        signals[DISCONNECTED] =
+                g_signal_new ("disconnected",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__VOID,
+                              G_TYPE_NONE,
+                              0);
         signals[RAW_SERVER_OUTPUT] =
                 g_signal_new ("raw-server-output",
                               G_TYPE_FROM_CLASS (klass),
@@ -356,7 +327,7 @@ gibbon_connection_new (GibbonApp *app)
                 return NULL;
         }
 
-        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
+        g_timeout_add (10, (GSourceFunc) gibbon_connection_wait_connect, self);
 
         return self;
 }
@@ -609,7 +580,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
 {
         enum GibbonConnectorState last_state;
         GibbonConnector *connector;
-        
+
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
         connector = self->priv->connector;
@@ -621,7 +592,6 @@ gibbon_connection_wait_connect (GibbonConnection *self)
         last_state = self->priv->connector_state;
         self->priv->connector_state = 
                 gibbon_connector_get_state (connector);
-        
         if (last_state == self->priv->connector_state)
                 return TRUE;
 
@@ -637,8 +607,11 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                                        self->priv->hostname);
                         break;
                 case GIBBON_CONNECTOR_CANCELLED:
-                case GIBBON_CONNECTOR_ERROR:
                         g_object_unref (self);
+                        return FALSE;
+                case GIBBON_CONNECTOR_ERROR:
+                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                                       gibbon_connector_error (connector));
                         return FALSE;
                 case GIBBON_CONNECTOR_CONNECTED:
                         gibbon_connection_establish (self);
