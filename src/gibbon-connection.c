@@ -326,6 +326,10 @@ gibbon_connection_new (GibbonApp *app)
                 self->priv->hostname =
                         g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
 
+        self->priv->port = gibbon_prefs_get_int (prefs, GIBBON_PREFS_PORT);
+        if (!self->priv->port)
+                self->priv->port = GIBBON_CONNECTION_DEFAULT_PORT;
+
         /* Make sure that the hostname is basically canonical.  */
         for (i = 0; i < strlen (self->priv->hostname); ++i)
                 self->priv->hostname[i] =
