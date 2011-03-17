@@ -39,6 +39,7 @@
 #include "gibbon-prefs.h"
 #include "gibbon-connection-dialog.h"
 #include "gibbon-connection.h"
+#include "gibbon-signal.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -53,6 +54,10 @@ struct _GibbonAppPrivate {
         GibbonPrefs *prefs;
         GibbonConnectionDialog *connection_dialog;
         GibbonConnection *connection;
+
+        GibbonSignal *resolving_signal;
+        GibbonSignal *network_error_signal;
+        GibbonSignal *disconnected_signal;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -72,6 +77,11 @@ static void gibbon_app_on_disconnect_request (GibbonApp *self,
                                            GtkWidget *emitter);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
+static void gibbon_app_on_resolving (GibbonApp *self,
+                                     const gchar *hostname);
+static void gibbon_app_on_network_error (GibbonApp *self,
+                                         const gchar *error_msg);
+static void gibbon_app_on_disconnected (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -96,6 +106,10 @@ gibbon_app_init (GibbonApp *self)
         self->priv->prefs = NULL;
         self->priv->connection_dialog = NULL;
         self->priv->connection = NULL;
+
+        self->priv->resolving_signal = NULL;
+        self->priv->network_error_signal = NULL;
+        self->priv->disconnected_signal = NULL;
 }
 
 static void
@@ -114,6 +128,18 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->game_chat)
                 g_object_unref (self->priv->game_chat);
         self->priv->game_chat = NULL;
+
+        if (self->priv->resolving_signal)
+                g_object_unref (self->priv->resolving_signal);
+        self->priv->resolving_signal = NULL;
+
+        if (self->priv->network_error_signal)
+                g_object_unref (self->priv->network_error_signal);
+        self->priv->network_error_signal = NULL;
+
+        if (self->priv->disconnected_signal)
+                g_object_unref (self->priv->disconnected_signal);
+        self->priv->disconnected_signal = NULL;
 
         if (self->priv->connection)
                 g_object_unref (self->priv->connection);
@@ -575,5 +601,57 @@ gibbon_app_connect (GibbonApp *self)
               return;
         }
 
-        g_printerr ("Connect to server ...\n");
+        /* FIXME! Race! We could miss a signal from the new connection.
+         * Instead, we need a separate connect method for the connection.
+         */
+        if (self->priv->resolving_signal)
+                g_object_unref (self->priv->resolving_signal);
+        self->priv->resolving_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "resolving",
+                                   G_CALLBACK (gibbon_app_on_resolving),
+                                   G_OBJECT (self));
+        if (self->priv->network_error_signal)
+                g_object_unref (self->priv->network_error_signal);
+        self->priv->network_error_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "network-error",
+                                   G_CALLBACK (gibbon_app_on_network_error),
+                                   G_OBJECT (self));
+        if (self->priv->disconnected_signal)
+                g_object_unref (self->priv->disconnected_signal);
+        self->priv->disconnected_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "disconnected",
+                                   G_CALLBACK (gibbon_app_on_disconnected),
+                                   G_OBJECT (self));
+}
+
+static void
+gibbon_app_on_resolving (GibbonApp *self, const gchar *hostname)
+{
+        gchar *msg = g_strdup_printf (_("Resolving address for %s."), hostname);
+        GtkStatusbar *statusbar = 
+                GTK_STATUSBAR (gibbon_app_find_object (self, "statusbar",
+                                                       GTK_TYPE_STATUSBAR));
+        
+        gtk_statusbar_pop (statusbar, 0);
+        gtk_statusbar_push (statusbar, 0, msg);
+        g_free (msg);
+}
+
+static void
+gibbon_app_on_network_error (GibbonApp *self, const gchar *message)
+{
+        gibbon_app_display_error (self, "%s", message);
+        gibbon_app_on_disconnected (self);
+}
+
+static void
+gibbon_app_on_disconnected (GibbonApp *self)
+{
+        if (self->priv->connection)
+                g_object_unref (self->priv->connection);
+        self->priv->connection = NULL;
+        gibbon_app_set_state_disconnected (self);
 }
