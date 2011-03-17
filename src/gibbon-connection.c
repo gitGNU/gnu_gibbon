@@ -389,44 +389,6 @@ gibbon_connection_get_password (GibbonConnection *self)
         return self->priv->password;
 }
 
-void
-gibbon_connection_set_port (GibbonConnection *self, guint port)
-{
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        
-        if (!port) {
-                port = GIBBON_CONNECTION_DEFAULT_PORT;
-        }
-        
-        self->priv->port = port;
-}
-
-void
-gibbon_connection_set_login (GibbonConnection *self, const gchar *login)
-{
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        
-        g_assert (login && login[0]);
-        
-        if (self->priv->login)
-                g_free (self->priv->login);
-        
-        self->priv->login = g_strdup (login);
-}
-
-void
-gibbon_connection_set_password (GibbonConnection *self, const gchar *password)
-{
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-        
-        g_assert (password && password[0]);
-        
-        if (self->priv->password)
-                g_free (self->priv->password);
-        
-        self->priv->password = g_strdup (password);
-}
-
 static gboolean
 gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 {
@@ -570,9 +532,8 @@ gibbon_connection_on_input (GIOChannel *channel,
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
 
-        if (G_IO_IN & condition) {
+        if (G_IO_IN & condition)
                 return gibbon_connection_handle_input (self, channel);
-        }
         
         return TRUE;
 }
@@ -596,7 +557,8 @@ gibbon_connection_on_output (GIOChannel *channel,
                                                             &bytes_written,
                                                             &error)) {
                 gdk_threads_enter ();
-                gibbon_app_display_error (_("Error while sending data to"
+                gibbon_app_display_error (self->priv->app,
+                                          _("Error while sending data to"
                                             " server: %s.\n"),
                                            error->message);
                 gdk_threads_leave ();
@@ -651,8 +613,10 @@ gibbon_connection_wait_connect (GibbonConnection *self)
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
         connector = self->priv->connector;
-        if (!connector)
+        if (!connector) {
+                g_object_unref (self);
                 return FALSE;
+        }
                 
         last_state = self->priv->connector_state;
         self->priv->connector_state = 
@@ -673,7 +637,6 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                                        self->priv->hostname);
                         break;
                 case GIBBON_CONNECTOR_CANCELLED:
-                        return FALSE;
                 case GIBBON_CONNECTOR_ERROR:
                         g_object_unref (self);
                         return FALSE;
