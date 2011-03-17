@@ -301,16 +301,10 @@ void
 gibbon_connector_cancel (GibbonConnector *self)
 {
         g_return_if_fail (GIBBON_IS_CONNECTOR (self));
- 
-        if (self->priv->state == GIBBON_CONNECTOR_CONNECTED
-            || self->priv->state == GIBBON_CONNECTOR_ERROR
-            || self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
-                g_object_unref (self);
-        } else {
-                g_mutex_lock (self->priv->mutex);
-                self->priv->state = GIBBON_CONNECTOR_CANCELLED;
-                g_mutex_unlock (self->priv->mutex);
-        }
+
+        g_mutex_lock (self->priv->mutex);
+        self->priv->state = GIBBON_CONNECTOR_CANCELLED;
+        g_mutex_unlock (self->priv->mutex);
 }
 
 enum GibbonConnectorState 
