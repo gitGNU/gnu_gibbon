@@ -51,6 +51,7 @@ struct _GibbonConnection
 };
 
 GibbonConnection *gibbon_connection_new (GibbonApp *app);
+gboolean gibbon_connection_connect (GibbonConnection *self);
 
 const gchar *gibbon_connection_get_hostname (GibbonConnection *connection);
 guint gibbon_connection_get_port (GibbonConnection *connection);

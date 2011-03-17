@@ -601,9 +601,6 @@ gibbon_app_connect (GibbonApp *self)
               return;
         }
 
-        /* FIXME! Race! We could miss a signal from the new connection.
-         * Instead, we need a separate connect method for the connection.
-         */
         if (self->priv->resolving_signal)
                 g_object_unref (self->priv->resolving_signal);
         self->priv->resolving_signal = 
@@ -625,6 +622,9 @@ gibbon_app_connect (GibbonApp *self)
                                    "disconnected",
                                    G_CALLBACK (gibbon_app_on_disconnected),
                                    G_OBJECT (self));
+
+        if (!gibbon_connection_connect (self->priv->connection))
+                gibbon_app_on_disconnected (self);
 }
 
 static void
@@ -650,6 +650,18 @@ gibbon_app_on_network_error (GibbonApp *self, const gchar *message)
 static void
 gibbon_app_on_disconnected (GibbonApp *self)
 {
+        if (self->priv->resolving_signal)
+                g_object_unref (self->priv->resolving_signal);
+        self->priv->resolving_signal = NULL;
+
+        if (self->priv->network_error_signal)
+                g_object_unref (self->priv->network_error_signal);
+        self->priv->network_error_signal = NULL;
+
+        if (self->priv->disconnected_signal)
+                g_object_unref (self->priv->disconnected_signal);
+        self->priv->disconnected_signal = NULL;
+
         if (self->priv->connection)
                 g_object_unref (self->priv->connection);
         self->priv->connection = NULL;

@@ -320,16 +320,23 @@ gibbon_connection_new (GibbonApp *app)
         self->priv->state = WAIT_LOGIN_PROMPT;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
+        return self;
+}
+
+gboolean
+gibbon_connection_connect (GibbonConnection *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+
         if (!gibbon_connector_connect (self->priv->connector)) {
                 gibbon_app_display_error (self->priv->app, "%s",
                                           gibbon_connector_error (self->priv->connector));
-                g_object_unref (self);
-                return NULL;
+                return FALSE;
         }
 
         g_timeout_add (10, (GSourceFunc) gibbon_connection_wait_connect, self);
 
-        return self;
+        return TRUE;
 }
 
 const gchar *
