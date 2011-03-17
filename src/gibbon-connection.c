@@ -87,6 +87,7 @@ static gboolean gibbon_connection_on_input (GIOChannel *channel,
 static gboolean gibbon_connection_on_output (GIOChannel *channel,
                                              GIOCondition condition,
                                              GibbonConnection *self);
+static gboolean gibbon_connection_wait_connect (GibbonConnection *self);
 
 static guint session_connected = 0;
 
@@ -123,53 +124,93 @@ gibbon_connection_init (GibbonConnection *conn)
 static void
 gibbon_connection_finalize (GObject *object)
 {
-        GibbonConnection *conn = GIBBON_CONNECTION (object);
-        
-        if (conn->priv->hostname)
-                g_free (conn->priv->hostname);
-        conn->priv->hostname = NULL;
+        GibbonConnection *self = GIBBON_CONNECTION (object);
+        gchar *error;
 
-        conn->priv->port = 0;
+        if (self->priv->connector) {
+                error = g_strdup (gibbon_connector_error (self->priv->connector));
+                gibbon_connector_cancel (self->priv->connector);
+        }
+        self->priv->connector = NULL;
+        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
-        if (conn->priv->password)
-                g_free (conn->priv->password);
-        conn->priv->password = NULL;
+        if (self->priv->in_watcher)
+                g_source_remove (self->priv->in_watcher);
+        self->priv->in_watcher = 0;
 
-        if (conn->priv->login)
-                g_free (conn->priv->login);
-        conn->priv->login = NULL;
+        if (self->priv->in_buffer)
+                g_free (self->priv->in_buffer);
+        self->priv->in_buffer = g_strdup ("");
+        
+        if (self->priv->out_watcher)
+                g_source_remove (self->priv->out_watcher);
+        self->priv->out_watcher = 0;
 
-        if (conn->priv->connector)
-                gibbon_connector_cancel (conn->priv->connector);
-        conn->priv->connector = NULL;
+        if (self->priv->out_buffer)
+                g_free (self->priv->out_buffer);
+        self->priv->out_buffer = g_strdup ("");
 
-        if (conn->priv->error)
-                g_free (conn->priv->error);
-        g_free (conn->priv->error);
+        if (self->priv->io) {
+                g_io_channel_close (self->priv->io);
+                g_io_channel_unref (self->priv->io);
+        }
+        self->priv->io = NULL;
 
-        if (conn->priv->in_watcher)
-                g_source_remove (conn->priv->in_watcher);
-        conn->priv->in_watcher = 0;
+        g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0,
+                       error);
+
+        if (error) {
+                gdk_threads_enter ();
+                gibbon_app_display_error (self->priv->app, "%s", error);
+                gdk_threads_leave ();
+                g_free (error);
+        }
+
+        if (self->priv->hostname)
+                g_free (self->priv->hostname);
+        self->priv->hostname = NULL;
+
+        self->priv->port = 0;
+
+        if (self->priv->password)
+                g_free (self->priv->password);
+        self->priv->password = NULL;
+
+        if (self->priv->login)
+                g_free (self->priv->login);
+        self->priv->login = NULL;
+
+        if (self->priv->connector)
+                gibbon_connector_cancel (self->priv->connector);
+        self->priv->connector = NULL;
+
+        if (self->priv->error)
+                g_free (self->priv->error);
+        g_free (self->priv->error);
+
+        if (self->priv->in_watcher)
+                g_source_remove (self->priv->in_watcher);
+        self->priv->in_watcher = 0;
         
-        if (conn->priv->out_watcher)
-                g_source_remove (conn->priv->out_watcher);
-        conn->priv->out_watcher = 0;
+        if (self->priv->out_watcher)
+                g_source_remove (self->priv->out_watcher);
+        self->priv->out_watcher = 0;
         
-        if (conn->priv->io)
-                g_io_channel_shutdown (conn->priv->io, FALSE, NULL);
-        conn->priv->io = NULL;
+        if (self->priv->io)
+                g_io_channel_shutdown (self->priv->io, FALSE, NULL);
+        self->priv->io = NULL;
         
-        if (conn->priv->in_buffer)
-                g_free (conn->priv->in_buffer);
-        conn->priv->in_buffer = NULL;
+        if (self->priv->in_buffer)
+                g_free (self->priv->in_buffer);
+        self->priv->in_buffer = NULL;
         
-        if (conn->priv->out_buffer)
-                g_free (conn->priv->out_buffer);
-        conn->priv->out_buffer = NULL;
+        if (self->priv->out_buffer)
+                g_free (self->priv->out_buffer);
+        self->priv->out_buffer = NULL;
         
-        if (conn->priv->session)
-                g_object_unref (conn->priv->session);
-        conn->priv->session = NULL;
+        if (self->priv->session)
+                g_object_unref (self->priv->session);
+        self->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -289,6 +330,22 @@ gibbon_connection_new (GibbonApp *app)
         for (i = 0; i < strlen (self->priv->hostname); ++i)
                 self->priv->hostname[i] =
                         g_ascii_tolower (self->priv->hostname[i]);
+
+        self->priv->connector = gibbon_connector_new (self->priv->hostname,
+                                                      self->priv->port);
+        self->priv->state = WAIT_LOGIN_PROMPT;
+        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
+
+        if (!gibbon_connector_connect (self->priv->connector)) {
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          gibbon_connector_error (self->priv->connector));
+                g_object_unref (self);
+                return NULL;
+        }
+
+        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
+
+        return self;
 }
 
 const gchar *
@@ -388,7 +445,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         gdk_threads_leave ();
                         g_error_free (error);
 
-                        gibbon_connection_disconnect (self);
+                        g_object_unref (self);
                         return FALSE;
                         
                 case G_IO_STATUS_EOF:
@@ -399,7 +456,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                                     " server."));
                         gdk_threads_leave ();
                         
-                        gibbon_connection_disconnect (self);
+                        g_object_unref (self);
                         return FALSE;
                         
                 case G_IO_STATUS_AGAIN:
@@ -486,7 +543,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 gibbon_app_display_error (self->priv->app,
                                           _("Authentication failed!"));
                 gdk_threads_leave ();
-                gibbon_connection_disconnect (self);
+                g_object_unref (self);
                 return FALSE;
         }
         
@@ -531,7 +588,7 @@ gibbon_connection_on_output (GIOChannel *channel,
                                            error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
-                gibbon_connection_disconnect (self);
+                g_object_unref (self);
                 return FALSE;
         }
 
@@ -605,7 +662,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                 case GIBBON_CONNECTOR_CANCELLED:
                         return FALSE;
                 case GIBBON_CONNECTOR_ERROR:
-                        gibbon_connection_disconnect (self);
+                        g_object_unref (self);
                         return FALSE;
                 case GIBBON_CONNECTOR_CONNECTED:
                         gibbon_connection_establish (self);
@@ -613,29 +670,6 @@ gibbon_connection_wait_connect (GibbonConnection *self)
         }
         
         return TRUE;
-}
-
-void
-gibbon_connection_connect (GibbonConnection *self)
-{
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-
-        if (self->priv->connector)
-                g_object_unref (self->priv->connector);
-
-        self->priv->connector = gibbon_connector_new (self->priv->hostname,
-                                                      self->priv->port);
-        self->priv->state = WAIT_LOGIN_PROMPT; 
-        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
-        
-        if (!gibbon_connector_connect (self->priv->connector)) {
-                gibbon_app_display_error (self->priv->app, "%s",
-                                          gibbon_connector_error (self->priv->connector));
-                gibbon_connection_disconnect (self);
-                return;
-        }
-        
-        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
 }
 
 void
@@ -664,53 +698,4 @@ gibbon_connection_queue_command (GibbonConnection *self,
                                         (GIOFunc) gibbon_connection_on_output,
                                         self);
         } 
-}
-
-void
-gibbon_connection_disconnect (GibbonConnection *self)
-{
-        gchar *error= NULL;
-        
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
-
-        self->priv->state = IDLE;
-
-        if (self->priv->connector) {
-                error = g_strdup (gibbon_connector_error (self->priv->connector));
-                gibbon_connector_cancel (self->priv->connector);
-        }
-        self->priv->connector = NULL;
-        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
-        
-        if (self->priv->in_watcher)
-                g_source_remove (self->priv->in_watcher);
-        self->priv->in_watcher = 0;
-        
-        if (self->priv->in_buffer)
-                g_free (self->priv->in_buffer);
-        self->priv->in_buffer = g_strdup ("");
-        
-        if (self->priv->out_watcher)
-                g_source_remove (self->priv->out_watcher);
-        self->priv->out_watcher = 0;
-        
-        if (self->priv->out_buffer)
-                g_free (self->priv->out_buffer);
-        self->priv->out_buffer = g_strdup ("");
-        
-        if (self->priv->io) {
-                g_io_channel_close (self->priv->io);
-                g_io_channel_unref (self->priv->io);
-        }
-        self->priv->io = NULL;
-        
-        g_signal_emit (G_OBJECT (self), signals[DISCONNECTED], 0, 
-                       error);
-        
-        if (error) {
-                gdk_threads_enter ();
-                gibbon_app_display_error (self->priv->app, "%s", error);
-                gdk_threads_leave (); 
-                g_free (error);
-        }
 }
