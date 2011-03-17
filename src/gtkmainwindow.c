@@ -29,27 +29,6 @@
 #include "gui.h"
 #include "gibbon-java-fibs-importer.h"
 
-G_MODULE_EXPORT void 
-on_window_destroy (GtkObject *object, gpointer user_data)
-{
-        gtk_main_quit();
-}
-
-G_MODULE_EXPORT void
-on_connect_menu_item_activate (GtkObject *object, gpointer user_data)
-{
-        gtk_dialog_run (GTK_DIALOG (connection_dialog));
-}
-
-G_MODULE_EXPORT void
-on_disconnect_menu_item_activate (GtkObject *object, gpointer user_data)
-{
-        set_state_disconnected ();
-        /* FIXME! */
-        extern GibbonConnection *connection;
-        gibbon_connection_disconnect (connection);
-}
-
 G_MODULE_EXPORT void
 on_import_java_fibs_menu_item_activate (GtkObject *object, gpointer user_data)
 {
