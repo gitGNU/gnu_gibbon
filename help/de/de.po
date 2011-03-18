@@ -1,0 +1,100 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-03-18 18:16+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/guido/workspace_c/gibbon/help/C/legal.xml:2(para)
+msgid "Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any later version published by the Free Software Foundation with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy of the GFDL at this <ulink type=\"help\" url=\"ghelp:fdl\">link</ulink> or in the file COPYING-DOCS distributed with this manual."
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/legal.xml:12(para)
+msgid "This manual is part of a collection of GNOME manuals distributed under the GFDL. If you want to distribute this manual separately from the collection, you can do so by adding a copy of the license to the manual, as described in section 6 of the license."
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/legal.xml:19(para)
+msgid "Many of the names used by companies to distinguish their products and services are claimed as trademarks. Where those names appear in any GNOME documentation, and the members of the GNOME Documentation Project are made aware of those trademarks, then the names are in capital letters or initial capital letters."
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/legal.xml:35(para)
+msgid "DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES."
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/legal.xml:28(para)
+msgid "DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: <placeholder-1/>"
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:15(title)
+msgid "Gibbon Manual"
+msgstr "Gibbon-Handbuch"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:17(year) /home/guido/workspace_c/gibbon/help/C/gibbon.xml:48(date)
+msgid "2011"
+msgstr "2011"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:18(holder) /home/guido/workspace_c/gibbon/help/C/gibbon.xml:29(publishername)
+msgid "Guido Flohr"
+msgstr "Guido Flohr"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:36(firstname)
+msgid "Guido"
+msgstr "Gudo"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:37(surname)
+msgid "Flohr"
+msgstr "Flohr"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:47(revnumber)
+msgid "gibbon V0.1.1"
+msgstr "gibbon V0.1.1"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:50(para)
+msgid "Guido Flohr <email>guido@imperia.net</email>"
+msgstr "Guido Flohr <email>guido@imperia.net</email>"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:55(releaseinfo)
+msgid "This manual describes version 0.1.1 of gibbon."
+msgstr "Dieses Handbuch beschreibt Version 0.1.1 von Gibbon."
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:58(title)
+msgid "Feedback"
+msgstr "Rückmeldungen"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:59(para)
+msgid "To report a bug or make a suggestion regarding the <application>gibbon</application> application or this manual, follow the directions in the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">Gibbon homepage</ulink>."
+msgstr ""
+"Um einen Fehler zu melden, oder Verbesserungsforschläge für"
+"<application>Gibbon</application> oder dieses Handbuch zu machen, "
+"folgen Sie bitte den Anleitungen auf der "
+"<ulink url=\"ghelp:user-guido?feedback-bugs\" type=\"help\">Gibbon-Homepage</ulink>."
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:64(para)
+msgid "gibbon is a graphical frontend for FIBS, the First Internet Backgammon Server."
+msgstr ""
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:69(primary)
+msgid "gibbon"
+msgstr "Gibbon"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:70(primary)
+msgid "backgammon"
+msgstr "Backgammon"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:75(title)
+msgid "Introduction"
+msgstr "Einleitung"
+
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:77(para)
+msgid "TODO!"
+msgstr ""
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: /home/guido/workspace_c/gibbon/help/C/gibbon.xml:0(None)
+msgid "translator-credits"
+msgstr "Guido Flohr <guido@imperia.net>, 2011"
+

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY appversion "0.1.1">
+<!ENTITY manrevision "0.1.1">
+<!ENTITY date "March 2011">
+<!ENTITY app "gibbon">
+<!ENTITY App "Gibbon">
+]>
+<?db.chunk.max_depth 2?>
+<article id="index" lang="de">
+  <articleinfo>
+    <title>Gibbon-Handbuch</title>
+    <copyright>
+      <year>2011</year>
+      <holder>Guido Flohr</holder> </copyright><copyright><year>2011</year><holder>Guido Flohr (guido@imperia.net)</holder></copyright>	 
+
+      <publisher role="maintainer">
+        <publishername>Guido Flohr</publishername>
+      </publisher>
+
+      <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="legal.xml"/>
+
+      <authorgroup>
+        <author>
+          <firstname>Gudo</firstname>
+          <surname>Flohr</surname>
+        </author>
+      </authorgroup>
+
+      <revhistory>
+        <!-- Remember to remove the &manrevision; entity from the revision 
+             entries other than the current revision. -->
+        <revision>
+          <revnumber>gibbon V0.1.1</revnumber>
+          <date>2011</date>
+          <revdescription>
+	    <para role="author">Guido Flohr <email>guido@imperia.net</email></para>
+	  </revdescription>
+        </revision>
+      </revhistory>
+      <releaseinfo>Dieses Handbuch beschreibt Version 0.1.1 von Gibbon.</releaseinfo>
+      <legalnotice>
+        <title>Rückmeldungen</title>
+        <para>
+          To report a bug or make a suggestion regarding the 
+          <application>gibbon</application> application or this manual, 
+          follow the directions on the 
+          <ulink url="ghelp:user-guide?feedback-bugs" type="help">Gibbon homepage</ulink>.
+        </para>
+      </legalnotice>
+      <abstract role="description">
+        <para>Gibbon is a graphical frontend for 
+              <ulink url="http://www.fibs.com/">FIBS</ulink>, the First Internet
+              Backgammon Server or other compatible servers.
+        </para>
+      </abstract>
+  </articleinfo>
+  <indexterm><primary>Gibbon</primary></indexterm>
+  <indexterm><primary>Backgammon</primary></indexterm>
+
+  <sect1 id="gibbon-introduction">
+    <title>Einleitung</title>
+        <para>
+          Gibbon is a graphical frontend for 
+          <ulink url="http://www.fibs.com/">FIBS</ulink>, the First Internet
+          Backgammon Server or other compatible servers.  You can play online 
+          against other players from all over the world.
+        </para>
+        <para>
+          <indexterm><primary><acronym lang="en">SGF</acronym></primary></indexterm>
+          Gibbon uses the portable 
+          <ulink url="http://www.red-bean.com/sgf/"><acronym>SGF</acronym></ulink> 
+          format for saving files.  This is the same format that
+          <indexterm><primary>GNU Backgammon</primary></indexterm>
+          <ulink url="http://www.gnubg.org/">GNU Backgammon</ulink> uses.  It is
+          therefore easy for you to let GNU Backgammon analyse your matches after
+          playing.
+        </para>
+  </sect1>
+
+  <sect1 id="gibbon-getting-started">
+    <title>Getting Started</title>
+
+    <sect2 id="getting-started-app-menu">
+      <title>Starting gibbon from the application menu</title>
+      <para>
+        <indexterm><primary>Gnome</primary></indexterm>
+        If you use the <ulink url="http://www.gnome.org/">Gnome</ulink>
+        desktop, you can start gibbon from the
+        <term><guimenu>Applications</guimenu> menu</term> by selecting
+        <menuchoice><guisubmenu>Games</guisubmenu><guimenuitem>Gibbon</guimenuitem></menuchoice>.
+        For other systems, gibbon will be installed in a similar location.
+      </para>
+    </sect2>
+  </sect1>
+
+</article>

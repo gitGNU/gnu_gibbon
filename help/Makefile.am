@@ -15,20 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
+# gnome-doc-utils.make is not portable. :-(
+AUTOMAKE_OPTIONS = -Wno-portability
 
-SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs help
+include $(top_srcdir)/gnome-doc-utils.make
+dist-hook: doc-dist-hook
 
-DISTCLEANFILES =		\
-	intltool-extract	\
-	intltool-merge		\
-	intltool-update
+DOC_MODULE = gibbon
+DOC_ENTITIES =
+DOC_INCLUDES = legal.xml
+DOC_FIGURES =
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+DOC_LINGUAS = de
 
-EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath
-
-ChangeLog:
-	$(GIT2CL) >$@.new && mv $@.new $@ || rm -f $@.new
-
-.PHONY: ChangeLog

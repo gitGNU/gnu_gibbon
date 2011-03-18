@@ -22,7 +22,7 @@ m4_define(gibbon_minor_version, 1)
 m4_define(gibbon_micro_version, 1)
 m4_define(gibbon_version, gibbon_major_version.gibbon_minor_version.gibbon_micro_version)
 
-AC_INIT([gibbon],[gibbon_version])
+AC_INIT([gibbon],[gibbon_version],[mailto:guido@imperia.net],[gibbon],[http://guido-flohr.net/projects/gibbon])
 AC_CONFIG_SRCDIR(src/gibbon.c)
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -43,6 +43,18 @@ case "$host" in
 esac
 AC_MSG_RESULT([$gibbon_native_msdos])
 AM_CONDITIONAL(MSDOS, test x$gibbon_native_msdos = xyes)
+
+AC_MSG_CHECKING([for Mac OS X platform])
+case "$host" in
+        *-*-darwin*)
+                platform_osx=yes
+                ;;
+        *)
+                platform_osx=no
+                ;;
+esac
+AC_MSG_RESULT([$platform_osx])
+AM_CONDITIONAL(OSX, test x$platform_osx = xyes)
 
 AC_CONFIG_HEADERS(config.h)
 
@@ -121,6 +133,9 @@ GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon 
 
 AC_CHECK_PROG([GIT2CL],[git2cl],[git2cl],[$MISSING git2cl])
 
+GNOME_DOC_INIT([0.9.0],,
+  [AC_MSG_WARN([[gnome-doc-utils not found: documentation will not be built.]])])
+
 AC_CONFIG_FILES([ 
     Makefile
     gcreate_class.pl
@@ -143,6 +158,7 @@ AC_CONFIG_FILES([
     docs/reference/Makefile
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
+    help/Makefile
     share/Makefile
     share/icons/Makefile
     share/icons/application/Makefile

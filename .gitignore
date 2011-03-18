@@ -27,3 +27,6 @@ mkinstalldirs
 ylwrap
 gtk-doc.make
 gcreate_class.pl
+omf.make
+xmldocs.make
+gnome-doc-utils.make
