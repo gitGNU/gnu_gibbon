@@ -13,6 +13,8 @@ not create a distribution leave alone publish it.
 The files in the fallback directories come from the following versions:
 
 - glib-gettextize (GNU glib) 2.26.1
+- gnome-doc-common (gnome-common) 2.28.0
+- gnome-doc-preparee (GNU gnome-doc-utils) 0.20.4
 - gtkdocize (gtk-doc) 1.16
 - intltoolize (GNU intltool) 0.41.1
 

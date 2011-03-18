@@ -17,11 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-set -x
-
 glib-gettextize --copy --force
 if  test $? != 0; then
-        set +x
         echo The script glib-gettextize was not found in your path
         echo or terminated with an error.  Copying possibly outdated 
         echo versions of the files into the project!
@@ -35,13 +32,11 @@ if  test $? != 0; then
                 echo -n +++++
         done 
         echo
-        set -x
         cp -prd fallback/glib-gettextize/* . || exit 1
 fi
 
 intltoolize --copy --force --automake
 if test $? != 0; then
-        set +x
         echo The script intltoolize was not found in your path
         echo or terminated with an error.  Copying possibly outdated 
         echo versions of the files into the project!
@@ -55,14 +50,12 @@ if test $? != 0; then
                 echo -n +++++
         done 
         echo
-        set -x
         cp -prd fallback/intltoolize/* . || exit 1
 fi
 
 gtkdocize --flavour no-tmpl
 if test $? != 0; then
-        set +x
-        echo The script intltoolize was not found in your path
+        echo The script gtkdocize was not found in your path
         echo or terminated with an error.  Copying possibly outdated 
         echo versions of the files into the project!
         echo
@@ -70,7 +63,7 @@ if test $? != 0; then
         echo the gtk-doc developer package.
         echo
         echo You can prevent this error by installing a recent enough
-        echo version of GNU intltool completely, including developer files.
+        echo version of gtk-doc completely, including developer files.
         echo Press CTRL-C for interrupt or wait otherwise to continue.
         echo -e -n "[-------------------------]\r["
         for i in 1 2 3 4 5; do
@@ -78,24 +71,55 @@ if test $? != 0; then
                 echo -n +++++
         done 
         echo
-        set -x
         cp -prd fallback/gtkdocize/* . || exit 1
+fi
+
+gnome-doc-common
+if test $? != 0; then
+        echo The script gnome-doc-common was not found in your path
+        echo or terminated with an error.  Copying possibly outdated 
+        echo versions of the files into the project!
+        echo
+        echo You can prevent this error by installing a recent enough
+        echo version of gnome-common, including developer files.
+        echo Press CTRL-C for interrupt or wait otherwise to continue.
+        echo -e -n "[-------------------------]\r["
+        for i in 1 2 3 4 5; do
+                sleep 1
+                echo -n +++++
+        done 
+        echo
+        cp -prd fallback/gnome-doc-common/* . || exit 1
+fi
+
+gnome-doc-prepare --automake
+if test $? != 0; then
+        echo The script gnome-doc-common was not found in your path
+        echo or terminated with an error.  Copying possibly outdated 
+        echo versions of the files into the project!
+        echo
+        echo You can prevent this error by installing a recent enough
+        echo version of gnome-doc-utils, including developer files.
+        echo Press CTRL-C for interrupt or wait otherwise to continue.
+        echo -e -n "[-------------------------]\r["
+        for i in 1 2 3 4 5; do
+                sleep 1
+                echo -n +++++
+        done 
+        echo
+        cp -prd fallback/gnome-doc-prepare/* . || exit 1
 fi
 
 # The remaining build tools are considered mandatory.  Only
 # libtoolize is sometimes installed as glibtoolize.
-set -x
 glibtoolize --version >/dev/null 2>&1
 test $? = 0 && libtoolize=glibtoolize || libtoolize=libtoolize
-set +x
 $libtoolize --copy --force --automake || exit 1
 
 aclocal -I m4                         || exit 1
 autoheader                            || exit 1
-automake --gnu --add-missing --force-missing --warnings=all || exit 1
-autoconf --warnings=all                                     || exit 1
-
-set +x
+automake --gnu --add-missing --force-missing || exit 1
+autoconf                                     || exit 1
 
 echo 
 echo You can \(probably\) safely ignore all warnings above.
