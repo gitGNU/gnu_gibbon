@@ -595,7 +595,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
 
         switch (self->priv->connector_state) {
                 case GIBBON_CONNECTOR_INITIAL:
-                        return FALSE;
+                        return TRUE;
                 case GIBBON_CONNECTOR_RESOLVING:
                         g_signal_emit (self, signals[RESOLVING], 0, 
                                        self->priv->hostname);
