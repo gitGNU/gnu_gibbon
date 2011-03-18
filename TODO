@@ -49,3 +49,5 @@
   use the g_ascii_strto...() functions from glib.
 - Password gets lost if not saved in preferences.  Use a temporary
   buffer for it.
+- Check that all instances of GibbonConnection, GibbonConnector, and
+  GibbonSession get disposed.
