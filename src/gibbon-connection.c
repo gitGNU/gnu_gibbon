@@ -334,7 +334,7 @@ gibbon_connection_connect (GibbonConnection *self)
                 return FALSE;
         }
 
-        g_timeout_add (10, (GSourceFunc) gibbon_connection_wait_connect, self);
+        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
 
         return TRUE;
 }
