@@ -203,10 +203,10 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_SIGNAL_RUN_FIRST,
                               0,
                               NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              g_cclosure_marshal_VOID__OBJECT,
                               G_TYPE_NONE,
                               1,
-                              G_TYPE_STRING);
+                              G_TYPE_OBJECT);
         signals[CONNECTED] =
                 g_signal_new ("connected",
                               G_TYPE_FROM_CLASS (klass),
@@ -602,7 +602,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                         break;
                 case GIBBON_CONNECTOR_CONNECTING:
                         g_signal_emit (self, signals[CONNECTING], 0, 
-                                       self->priv->hostname);
+                                       self);
                         break;
                 case GIBBON_CONNECTOR_CANCELLED:
                         g_signal_emit (self, signals[DISCONNECTED], 0,

@@ -85,20 +85,6 @@ static gboolean init_prefs (void);
 static struct GibbonPosition initial_position;
 
 static void
-cb_connecting (GtkWidget *emitter, const gchar *hostname)
-{
-        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
-        gchar *msg = g_strdup_printf (_("Connecting as %s to port %u on %s."),
-                                      gibbon_connection_get_login (connection),
-                                      gibbon_connection_get_port (connection),
-                                      gibbon_connection_get_hostname (connection));
-        
-        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
-        g_free (msg);
-}
-
-static void
 cb_login (GtkWidget *emitter, const gchar *hostname)
 {
         GibbonConnection *connection = GIBBON_CONNECTION (emitter);
