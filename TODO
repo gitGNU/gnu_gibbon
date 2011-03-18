@@ -51,3 +51,6 @@
   buffer for it.
 - Check that all instances of GibbonConnection, GibbonConnector, and
   GibbonSession get disposed.
+- Cancelling a connection attempt probably has a race.  The connector
+  object gets unreffed before it can check its state.  FIX: Temporarily
+  keep a reference.
