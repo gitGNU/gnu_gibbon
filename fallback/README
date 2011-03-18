@@ -1,0 +1,20 @@
+This directory contains fallback files for possibly missing build tools.
+If autogen.sh finds that a certain command is not installed it copies
+the files from the corresponding fallback directory instead.
+
+If this happens, your build is maybe incomplete or even broken.  You have
+to check that yourself!  Sometimes, configuring with the right options
+will heal that problem.  For example if you don't have gtkdocize then
+you should not call configure with --enable-gtk-doc.
+
+As a rule of thumb, if any build tool is missing or failed, you should
+not create a distribution leave alone publish it.
+
+The files in the fallback directories come from the following versions:
+
+- glib-gettextize (GNU glib) 2.26.1
+- gtkdocize (gtk-doc) 1.16
+- intltoolize (GNU intltool) 0.41.1
+
+If one of the above mentioned packages is not recent enough the files
+in here must be updated!
