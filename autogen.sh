@@ -19,12 +19,77 @@
 
 set -x
 
-glib-gettextize --copy --force        || exit 1
-intltoolize --copy --force --automake || exit 1
-glibtoolize --copy --force --automake \
-	|| libtoolize --copy --force --automake \
-	|| exit 1
-gtkdocize --flavour no-tmpl           || exit 1
+glib-gettextize --copy --force
+if  test $? != 0; then
+        set +x
+        echo The script glib-gettextize was not found in your path
+        echo or terminated with an error.  Copying possibly outdated 
+        echo versions of the files into the project!
+        echo
+        echo You can prevent this error by installing a recent enough
+        echo version of glib completely, including developer files.
+        echo Press CTRL-C for interrupt or wait otherwise to continue.
+        echo -e -n "[-------------------------]\r["
+        for i in 1 2 3 4 5; do
+                sleep 1
+                echo -n +++++
+        done 
+        echo
+        set -x
+        cp -prd fallback/glib-gettextize/* . || exit 1
+fi
+
+intltoolize --copy --force --automake
+if test $? != 0; then
+        set +x
+        echo The script intltoolize was not found in your path
+        echo or terminated with an error.  Copying possibly outdated 
+        echo versions of the files into the project!
+        echo
+        echo You can prevent this error by installing a recent enough
+        echo version of GNU intltool completely, including developer files.
+        echo Press CTRL-C for interrupt or wait otherwise to continue.
+        echo -e -n "[-------------------------]\r["
+        for i in 1 2 3 4 5; do
+                sleep 1
+                echo -n +++++
+        done 
+        echo
+        set -x
+        cp -prd fallback/intltoolize/* . || exit 1
+fi
+
+gtkdocize --flavour no-tmpl
+if test $? != 0; then
+        set +x
+        echo The script intltoolize was not found in your path
+        echo or terminated with an error.  Copying possibly outdated 
+        echo versions of the files into the project!
+        echo
+        echo Not that you cannot create a distribution of Gibbon without
+        echo the gtk-doc developer package.
+        echo
+        echo You can prevent this error by installing a recent enough
+        echo version of GNU intltool completely, including developer files.
+        echo Press CTRL-C for interrupt or wait otherwise to continue.
+        echo -e -n "[-------------------------]\r["
+        for i in 1 2 3 4 5; do
+                sleep 1
+                echo -n +++++
+        done 
+        echo
+        set -x
+        cp -prd fallback/gtkdocize/* . || exit 1
+fi
+
+# The remaining build tools are considered mandatory.  Only
+# libtoolize is sometimes installed as glibtoolize.
+set -x
+glibtoolize --version >/dev/null 2>&1
+test $? = 0 && libtoolize=glibtoolize || libtoolize=libtoolize
+set +x
+$libtoolize --copy --force --automake || exit 1
+
 aclocal -I m4                         || exit 1
 autoheader                            || exit 1
 automake --gnu --add-missing --force-missing --warnings=all || exit 1
