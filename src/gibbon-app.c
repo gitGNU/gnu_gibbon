@@ -57,6 +57,7 @@ struct _GibbonAppPrivate {
 
         GibbonSignal *resolving_signal;
         GibbonSignal *connecting_signal;
+        GibbonSignal *connected_signal;
         GibbonSignal *network_error_signal;
         GibbonSignal *disconnected_signal;
 };
@@ -81,6 +82,8 @@ static void gibbon_app_on_quit_request (GibbonApp *self,
 static void gibbon_app_on_resolving (GibbonApp *self,
                                      const gchar *hostname);
 static void gibbon_app_on_connecting (GibbonApp *self,
+                                      GibbonConnection *connection);
+static void gibbon_app_on_connected (GibbonApp *self,
                                       GibbonConnection *connection);
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
@@ -112,6 +115,7 @@ gibbon_app_init (GibbonApp *self)
 
         self->priv->resolving_signal = NULL;
         self->priv->connecting_signal = NULL;
+        self->priv->connected_signal = NULL;
         self->priv->network_error_signal = NULL;
         self->priv->disconnected_signal = NULL;
 }
@@ -139,7 +143,11 @@ gibbon_app_finalize (GObject *object)
 
         if (self->priv->connecting_signal)
                 g_object_unref (self->priv->connecting_signal);
-        self->priv->resolving_signal = NULL;
+        self->priv->connecting_signal = NULL;
+
+        if (self->priv->connected_signal)
+                g_object_unref (self->priv->connected_signal);
+        self->priv->connected_signal = NULL;
 
         if (self->priv->network_error_signal)
                 g_object_unref (self->priv->network_error_signal);
@@ -623,6 +631,13 @@ gibbon_app_connect (GibbonApp *self)
                                    "connecting",
                                    G_CALLBACK (gibbon_app_on_connecting),
                                    G_OBJECT (self));
+        if (self->priv->connected_signal)
+                g_object_unref (self->priv->connected_signal);
+        self->priv->connected_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "connected",
+                                   G_CALLBACK (gibbon_app_on_connected),
+                                   G_OBJECT (self));
         if (self->priv->network_error_signal)
                 g_object_unref (self->priv->network_error_signal);
         self->priv->network_error_signal = 
@@ -661,6 +676,23 @@ gibbon_app_on_connecting (GibbonApp *self, GibbonConnection *conn)
         g_return_if_fail (GIBBON_IS_CONNECTION (conn));
         
         gchar *msg = g_strdup_printf (_("Connecting with %s port %d."), 
+                                      gibbon_connection_get_hostname (conn),
+                                      gibbon_connection_get_port (conn));
+        GtkStatusbar *statusbar = 
+                GTK_STATUSBAR (gibbon_app_find_object (self, "statusbar",
+                                                       GTK_TYPE_STATUSBAR));
+
+        gtk_statusbar_pop (statusbar, 0);
+        gtk_statusbar_push (statusbar, 0, msg);
+        g_free (msg);
+}
+
+static void
+gibbon_app_on_connected (GibbonApp *self, GibbonConnection *conn)
+{
+        g_return_if_fail (GIBBON_IS_CONNECTION (conn));
+        
+        gchar *msg = g_strdup_printf (_("Connected with %s port %d."), 
                                       gibbon_connection_get_hostname (conn),
                                       gibbon_connection_get_port (conn));
         GtkStatusbar *statusbar = 
