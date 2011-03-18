@@ -391,10 +391,8 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         switch (status) {
                 case G_IO_STATUS_ERROR:
                         gdk_threads_enter ();
-                        gibbon_app_display_error (self->priv->app,
-                                                  _("Error receiving data from"
-                                                    " server: %s."),
-                                                  error->message);
+                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                                       error->message);
                         gdk_threads_leave ();
                         g_error_free (error);
 
@@ -403,10 +401,9 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         
                 case G_IO_STATUS_EOF:
                         gdk_threads_enter ();
-                        gibbon_app_display_error (self->priv->app,
-                                                  _("End-of-file while"
-                                                    " receiving data from"
-                                                    " server."));
+                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                                       _("End-of-file while receiving data from"
+                                         " server."));
                         gdk_threads_leave ();
                         
                         g_object_unref (self);
@@ -493,10 +490,9 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         } else if (self->priv->state == WAIT_WELCOME
                    && strcmp (self->priv->in_buffer, "login: ") == 0) {
                 gdk_threads_enter ();
-                gibbon_app_display_error (self->priv->app,
-                                          _("Authentication failed!"));
+                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                                       _("Authentication failed."));
                 gdk_threads_leave ();
-                g_object_unref (self);
                 return FALSE;
         }
         
@@ -535,13 +531,10 @@ gibbon_connection_on_output (GIOChannel *channel,
                                                             &bytes_written,
                                                             &error)) {
                 gdk_threads_enter ();
-                gibbon_app_display_error (self->priv->app,
-                                          _("Error while sending data to"
-                                            " server: %s.\n"),
-                                           error->message);
+                g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                               error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
-                g_object_unref (self);
                 return FALSE;
         }
 
@@ -549,9 +542,6 @@ gibbon_connection_on_output (GIOChannel *channel,
                 g_source_remove (self->priv->out_watcher);
                 self->priv->out_watcher = 0;
                 g_free (self->priv->out_buffer);
-                /* FIXME!  Rather set the buffer to NULL and re-allocate
-                 * on demand.  
-                 */
                 self->priv->out_buffer = g_strdup ("");
                 return FALSE;
         }
@@ -592,7 +582,8 @@ gibbon_connection_wait_connect (GibbonConnection *self)
         
         connector = self->priv->connector;
         if (!connector) {
-                g_object_unref (self);
+                g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                               _("Could not initialize network connector."));
                 return FALSE;
         }
                 
@@ -614,7 +605,8 @@ gibbon_connection_wait_connect (GibbonConnection *self)
                                        self->priv->hostname);
                         break;
                 case GIBBON_CONNECTOR_CANCELLED:
-                        g_object_unref (self);
+                        g_signal_emit (self, signals[DISCONNECTED], 0,
+                                       NULL);
                         return FALSE;
                 case GIBBON_CONNECTOR_ERROR:
                         g_signal_emit (self, signals[NETWORK_ERROR], 0,
