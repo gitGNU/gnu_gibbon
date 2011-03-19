@@ -222,8 +222,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                                                     "statusbar",
                                                     GTK_TYPE_STATUSBAR));
         self->priv->server_console = gibbon_server_console_new (self);
-gibbon_server_console_print_raw (self->priv->server_console,
-                                 "Hello gibbon!!!");
 
         board_filename = g_build_filename (pixmaps_directory, "boards",
                                            "default.svg", NULL);
