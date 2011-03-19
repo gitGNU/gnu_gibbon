@@ -64,5 +64,16 @@
 	<long>E-mail address to display on the server</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/gibbon/preferences/debugging/timestamps</key>
+      <applyto>/apps/gibbon/preferences/debugging/timestamps</applyto>
+      <owner>gibbon</owner>
+      <type>bool</type>
+      <default>FALSE</default>
+      <locale name="C">
+        <short>Show timestamps</short>
+        <long>Prefix all server output with a high-resolution timestamp</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>

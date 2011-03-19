@@ -46,6 +46,8 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 #define GIBBON_GCONF_PREFIX "/apps/gibbon/"
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
 #define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
+#define GIBBON_GCONF_DEBUG_PREFS_PREFIX \
+        "/apps/gibbon/preferences/debug/"
 
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
@@ -117,6 +119,8 @@ gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
         switch (key) {
                 case GIBBON_PREFS_SAVE_PASSWORD:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd";
+                case GIBBON_PREFS_DEBUG_TIMESTAMPS:
+                        return GIBBON_GCONF_DEBUG_PREFS_PREFIX "timestamps";
         }
 
         g_return_val_if_reached (NULL);
