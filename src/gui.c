@@ -231,6 +231,7 @@ cb_server_command_fired (gpointer obj, GtkEntry *entry)
         gtk_entry_set_text (entry, "");
 }
 
+/*
 static gboolean
 setup_server_communication (GtkBuilder *builder)
 {
@@ -246,3 +247,4 @@ setup_server_communication (GtkBuilder *builder)
 
         return TRUE;
 }
+*/
