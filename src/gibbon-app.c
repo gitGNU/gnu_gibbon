@@ -75,8 +75,8 @@ static void gibbon_app_connect_signals (const GibbonApp *self);
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request (GibbonApp *self,
                                            GtkWidget *emitter);
-static void gibbon_app_on_disconnect_request (GibbonApp *self,
-                                           GtkWidget *emitter);
+static void gibbon_app_on_disconnect_request (GibbonApp *self, 
+                                              GtkWidget *emitter);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
 static void gibbon_app_on_resolving (GibbonApp *self,
@@ -730,4 +730,35 @@ gibbon_app_on_disconnected (GibbonApp *self)
                 g_object_unref (self->priv->connection);
         self->priv->connection = NULL;
         gibbon_app_set_state_disconnected (self);
+}
+
+GtkImage *
+gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
+                              gint width, gint height)
+{
+        GError *error = NULL;
+        GdkPixbuf *pixbuf;
+        GtkImage *image;
+
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+        
+        pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
+                                                    width,
+                                                    height,
+                                                    FALSE,
+                                                    &error);
+
+        /* FIXME! */
+        if (!pixbuf) {
+                gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
+                               path, error->message);
+                return NULL;
+        }
+
+        image = GTK_IMAGE (gtk_image_new ());
+        gtk_image_set_from_pixbuf (image, pixbuf);
+        g_object_unref (pixbuf);
+
+        gtk_widget_show (GTK_WIDGET (image));
+        return image;
 }

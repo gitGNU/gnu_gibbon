@@ -30,7 +30,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "gui.h"
+#include "gibbon-app.h"
 #include "gibbon-game-chat.h"
 
 enum GibbonGameChatMode {
@@ -196,9 +196,9 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
         gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
         icon_path = g_build_filename (pixmaps_dir, "icons", "say.svg",
                                       NULL);
-        image = load_scaled_image (icon_path,
-                                   requisition.width,
-                                   requisition.height);
+        image = gibbon_app_load_scaled_image (self->priv->app, icon_path,
+                                              requisition.width,
+                                              requisition.height);
         if (!image)
                 return FALSE;
 
@@ -209,9 +209,9 @@ gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
         gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
         icon_path = g_build_filename (pixmaps_dir, "icons", "whisper.svg",
                                       NULL);
-        image = load_scaled_image (icon_path,
-                                   requisition.width,
-                                   requisition.height);
+        image = gibbon_app_load_scaled_image (self->priv->app, icon_path,
+                                              requisition.width,
+                                              requisition.height);
         if (!image)
                 return FALSE;
 
