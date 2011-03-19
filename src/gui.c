@@ -85,45 +85,6 @@ static gboolean init_prefs (void);
 static struct GibbonPosition initial_position;
 
 static void
-cb_login (GtkWidget *emitter, const gchar *hostname)
-{
-        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
-        gchar *msg = g_strdup_printf (_("Log in as %s on %s, port %u."),
-                                      gibbon_connection_get_login (connection),
-                                      gibbon_connection_get_hostname (connection),
-                                      gibbon_connection_get_port (connection));
-        
-        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
-        g_free (msg);
-}
-
-static void
-cb_logged_in (GtkWidget *emitter, const gchar *hostname)
-{
-        GibbonConnection *connection = GIBBON_CONNECTION (emitter);
-        gchar *msg = g_strdup_printf (_("Logged in as %s on %s, port %u."),
-                                      gibbon_connection_get_login (connection),
-                                      gibbon_connection_get_hostname (connection),
-                                      gibbon_connection_get_port (connection));
-        
-        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, msg);
-        g_free (msg);
-}
-
-static void
-cb_disconnected (GtkWidget *emitter, const gchar *error)
-{
-        gibbon_player_list_clear (players);
-        
-        gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-        gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, _("Disconnected"));
-        
-        set_state_disconnected ();
-}
-
-static void
 cb_raw_server_output (GtkWidget *emitter, const gchar *text)
 {
         GtkTextBuffer *buffer = 
@@ -256,34 +217,6 @@ on_edit_menu_item_activate (GtkObject *object, gpointer user_data)
 {
 }
 
-GtkImage *load_scaled_image (const gchar *path,
-                             gint width, gint height)
-{
-        GError *error = NULL;
-        GdkPixbuf *pixbuf;
-        GtkImage *image;
-
-        pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
-                                                    width,
-                                                    height,
-                                                    FALSE,
-                                                    &error);
-
-        /* FIXME! */
-        if (!pixbuf) {
-                gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
-                               path, error->message);
-                return NULL;
-        }
-
-        image = GTK_IMAGE (gtk_image_new ());
-        gtk_image_set_from_pixbuf (image, pixbuf);
-        g_object_unref (pixbuf);
-
-        gtk_widget_show (GTK_WIDGET (image));
-        return image;
-}
-
 static void
 cb_server_command_fired (gpointer obj, GtkEntry *entry)
 {
@@ -310,51 +243,6 @@ setup_server_communication (GtkBuilder *builder)
 
         g_signal_connect_swapped (entry, "activate",
                                   G_CALLBACK (cb_server_command_fired), NULL);
-
-        return TRUE;
-}
-
-static gboolean
-init_prefs (void)
-{
-        GtkEntry *entry;
-        GtkToggleButton *toggle;
-        gboolean save_password;
-
-        prefs = gibbon_prefs_new ();
-        if (!prefs)
-                return FALSE;
-
-        entry = GTK_ENTRY (find_object (builder, "conn_entry_server",
-                                        GTK_TYPE_ENTRY));
-        gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_HOST);
-        entry = GTK_ENTRY (find_object (builder, "conn_entry_login",
-                                        GTK_TYPE_ENTRY));
-        gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_LOGIN);
-        entry = GTK_ENTRY (find_object (builder, "conn_entry_address",
-                                        GTK_TYPE_ENTRY));
-        gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_MAIL_ADDRESS);
-        toggle = GTK_TOGGLE_BUTTON (find_object (builder,
-                                                 "conn_checkbutton_remember",
-                                                 GTK_TYPE_CHECK_BUTTON));
-        gibbon_prefs_boolean_update_toggle_button (prefs, toggle,
-                                            GIBBON_PREFS_SAVE_PASSWORD);
-
-        save_password = gibbon_prefs_get_boolean (prefs,
-                                                  GIBBON_PREFS_SAVE_PASSWORD);
-
-        if (!save_password)
-                gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_PASSWORD,
-                                         NULL);
-
-        entry = GTK_ENTRY (find_object (builder, "conn_entry_password",
-                                        GTK_TYPE_ENTRY));
-        gibbon_prefs_string_update_entry (prefs, entry,
-                                          GIBBON_PREFS_PASSWORD);
 
         return TRUE;
 }
