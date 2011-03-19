@@ -75,8 +75,6 @@ static void gibbon_app_connect_signals (const GibbonApp *self);
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request (GibbonApp *self,
                                            GtkWidget *emitter);
-static void gibbon_app_on_disconnect_request (GibbonApp *self, 
-                                              GtkWidget *emitter);
 static void gibbon_app_on_quit_request (GibbonApp *self,
                                         GtkWidget *emitter);
 static void gibbon_app_on_resolving (GibbonApp *self,
@@ -87,7 +85,6 @@ static void gibbon_app_on_connected (GibbonApp *self,
                                       GibbonConnection *connection);
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
-static void gibbon_app_on_disconnected (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -457,12 +454,12 @@ gibbon_app_connect_signals (const GibbonApp *self)
         obj = gibbon_app_find_object (self, "disconnect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
-                                  G_CALLBACK (gibbon_app_on_disconnect_request),
+                                  G_CALLBACK (gibbon_app_disconnect),
                                   (gpointer) self);
         obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
-                                  G_CALLBACK (gibbon_app_on_disconnect_request),
+                                  G_CALLBACK (gibbon_app_disconnect),
                                   (gpointer) self);
 
         g_signal_connect_swapped (obj, "destroy",
@@ -482,20 +479,6 @@ gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter)
         if (!self->priv->connection_dialog)
                 self->priv->connection_dialog =
                                 gibbon_connection_dialog_new (self);
-}
-
-static void
-gibbon_app_on_disconnect_request (GibbonApp *self, GtkWidget *emitter)
-{
-        if (self->priv->connection_dialog)
-                g_object_unref (self->priv->connection_dialog);
-        self->priv->connection_dialog = NULL;
-
-        if (self->priv->connection)
-                g_object_unref (self->priv->connection);
-        self->priv->connection = NULL;
-
-        gibbon_app_set_state_disconnected (self);
 }
 
 void
