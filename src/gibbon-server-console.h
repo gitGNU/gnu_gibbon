@@ -78,5 +78,7 @@ GibbonServerConsole *gibbon_server_console_new (GibbonApp *app);
 
 void gibbon_server_console_print_raw (GibbonServerConsole *self,
                                       const gchar *string);
+void gibbon_server_console_print_debug (GibbonServerConsole *self,
+                                        const gchar *string);
 
 #endif
