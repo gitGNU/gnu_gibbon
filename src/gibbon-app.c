@@ -40,6 +40,7 @@
 #include "gibbon-connection-dialog.h"
 #include "gibbon-connection.h"
 #include "gibbon-signal.h"
+#include "gibbon-server-console.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -47,7 +48,7 @@ struct _GibbonAppPrivate {
         gchar *pixmaps_directory;
         GtkWidget *window;
         GtkWidget *statusbar;
-        GtkWidget *server_text_view;
+        GibbonServerConsole *server_console;
         GibbonCairoboard *board;
         GibbonGameChat *game_chat;
         GibbonPlayerListView *players_view;
@@ -103,7 +104,9 @@ gibbon_app_init (GibbonApp *self)
         self->priv->board = NULL;
         self->priv->window = NULL;
         self->priv->statusbar = NULL;
-        self->priv->server_text_view = NULL;
+        if (self->priv->server_console)
+                g_object_unref (self->priv->server_console);
+        self->priv->server_console = NULL;
         self->priv->game_chat = NULL;
         self->priv->players_view = NULL;
         self->priv->prefs = NULL;
@@ -198,7 +201,6 @@ GibbonApp *
 gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 {
         GibbonApp *self = g_object_new (GIBBON_TYPE_APP, NULL);
-        PangoFontDescription *font_desc;
         gchar *board_filename;
         GibbonPlayerList *players;
 
@@ -219,10 +221,9 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 GTK_WIDGET (gibbon_app_find_object (self,
                                                     "statusbar",
                                                     GTK_TYPE_STATUSBAR));
-        self->priv->server_text_view =
-                GTK_WIDGET (gibbon_app_find_object (self,
-                                                    "server_text_view",
-                                                    GTK_TYPE_TEXT_VIEW));
+        self->priv->server_console = gibbon_server_console_new (self);
+gibbon_server_console_print_raw (self->priv->server_console,
+                                 "Hello gibbon!!!");
 
         board_filename = g_build_filename (pixmaps_directory, "boards",
                                            "default.svg", NULL);
@@ -235,11 +236,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 
         gtk_statusbar_push (GTK_STATUSBAR (self->priv->statusbar),
                             0, _("Disconnected"));
-
-        font_desc = pango_font_description_from_string ("monospace 10");
-        gtk_widget_modify_font (self->priv->server_text_view,
-                                font_desc);
-        pango_font_description_free (font_desc);
 
         self->priv->game_chat = gibbon_game_chat_new (self);
         if (!self->priv->game_chat) {
