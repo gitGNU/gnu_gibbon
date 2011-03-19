@@ -57,7 +57,8 @@ static void gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self);
 static void gibbon_connection_dialog_on_register_link (GibbonConnectionDialog
                                                        *self,
                                                        GtkLinkButton *emitter);
-
+static void gibbon_connection_dialog_disconnect_signals (GibbonConnectionDialog
+                                                         *self);
 static void 
 gibbon_connection_dialog_init (GibbonConnectionDialog *self)
 {
@@ -84,23 +85,10 @@ gibbon_connection_dialog_finalize (GObject *object)
                 gtk_widget_hide (GTK_WIDGET (self->priv->dialog));
         self->priv->dialog = NULL;
 
-        if (self->priv->cancel_signal)
-                g_object_unref (self->priv->cancel_signal);
-        self->priv->cancel_signal = NULL;
-
-        if (self->priv->connect_signal)
-                g_object_unref (self->priv->connect_signal);
-        self->priv->connect_signal = NULL;
-
-        if (self->priv->destroy_signal)
-                g_object_unref (self->priv->destroy_signal);
-        self->priv->destroy_signal = NULL;
-
-        if  (self->priv->register_link_signal)
-                g_object_unref (self->priv->register_link_signal);
-        self->priv->register_link_signal = NULL;
+        gibbon_connection_dialog_disconnect_signals (self);
 
         G_OBJECT_CLASS (gibbon_connection_dialog_parent_class)->finalize(object);
+g_printerr ("Destroyed ConnectionDialog\n");
 }
 
 static void
@@ -204,12 +192,15 @@ gibbon_connection_dialog_new (GibbonApp *app)
 
         gtk_widget_show (GTK_WIDGET (self->priv->dialog));
 
+g_printerr ("Created ConnectionDialog\n");
         return self;
 }
 
 static void
 gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
 {
+        gibbon_connection_dialog_disconnect_signals (self);
+
         gibbon_app_disconnect (self->priv->app);
 }
 
@@ -295,6 +286,8 @@ gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self)
                                          NULL);
         }
 
+        gibbon_connection_dialog_disconnect_signals (self);
+
         gibbon_app_connect (app);
 }
 
@@ -322,4 +315,24 @@ gibbon_connection_dialog_on_register_link (GibbonConnectionDialog *self,
                 gibbon_app_display_error (self->priv->app, "%s",
                                           error->message);
         }
+}
+
+static void
+gibbon_connection_dialog_disconnect_signals (GibbonConnectionDialog *self)
+{
+        if (self->priv->cancel_signal)
+                g_object_unref (self->priv->cancel_signal);
+        self->priv->cancel_signal = NULL;
+
+        if (self->priv->connect_signal)
+                g_object_unref (self->priv->connect_signal);
+        self->priv->connect_signal = NULL;
+
+        if (self->priv->destroy_signal)
+                g_object_unref (self->priv->destroy_signal);
+        self->priv->destroy_signal = NULL;
+
+        if  (self->priv->register_link_signal)
+                g_object_unref (self->priv->register_link_signal);
+        self->priv->register_link_signal = NULL;
 }
