@@ -287,6 +287,10 @@ gibbon_connector_connect (GibbonConnector *self)
         
         g_return_val_if_fail (GIBBON_IS_CONNECTOR (self), FALSE);
 
+        /* We have to ref ourselves, so that our child thread still has
+         * a valid object to check for cancellation.
+         */
+        g_object_ref (self);
         self->priv->worker = 
                 g_thread_create ((GThreadFunc) gibbon_connector_connect_worker,
                                  (gpointer) self, FALSE, &error);
@@ -296,6 +300,7 @@ gibbon_connector_connect (GibbonConnector *self)
                                            "thread: %s."),
                                          error->message);
                 g_error_free (error);
+                g_object_unref (self);
                 return FALSE;
         }
         
@@ -305,11 +310,18 @@ gibbon_connector_connect (GibbonConnector *self)
 void
 gibbon_connector_cancel (GibbonConnector *self)
 {
+        gboolean go_away = FALSE;
+
         g_return_if_fail (GIBBON_IS_CONNECTOR (self));
 
         g_mutex_lock (self->priv->mutex);
+        if (self->priv->state == GIBBON_CONNECTOR_CANCELLED)
+                go_away = TRUE;
         self->priv->state = GIBBON_CONNECTOR_CANCELLED;
         g_mutex_unlock (self->priv->mutex);
+
+        if (go_away)
+                g_object_unref (self);
 }
 
 enum GibbonConnectorState 
