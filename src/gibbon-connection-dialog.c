@@ -211,8 +211,6 @@ static void
 gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
 {
         gibbon_app_disconnect (self->priv->app);
-
-        g_object_unref (self);
 }
 
 static void
