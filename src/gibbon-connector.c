@@ -95,6 +95,8 @@ gibbon_connector_finalize (GObject *object)
         connector->priv->mutex = NULL;
 
         G_OBJECT_CLASS (gibbon_connector_parent_class)->finalize (object);
+
+        g_printerr ("Destroyed connector object!\n");
 }
 
 static void
@@ -110,13 +112,14 @@ gibbon_connector_class_init (GibbonConnectorClass *klass)
 GibbonConnector *
 gibbon_connector_new (const gchar *hostname, guint port)
 {
-         GibbonConnector *self = g_object_new (GIBBON_TYPE_CONNECTOR, NULL);
+        GibbonConnector *self = g_object_new (GIBBON_TYPE_CONNECTOR, NULL);
 
-         self->priv->hostname = g_strdup (hostname);
-         self->priv->port = port;
-         self->priv->mutex = g_mutex_new ();
-         
-         return self;
+        self->priv->hostname = g_strdup (hostname);
+        self->priv->port = port;
+        self->priv->mutex = g_mutex_new ();
+        
+        g_printerr ("Created connector object!\n");
+        return self;
 }
 
 /* TODO! When glib 2.22 becomes established, move this code to the more
@@ -141,13 +144,15 @@ gibbon_connector_connect_worker (GibbonConnector *self)
 	struct sockaddr_in sa_in;
 #endif
 
+        sleep (5);
+        
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
                 gibbon_connector_cancel (self);
                 return NULL;
         }
-
+        
 #ifndef G_OS_WIN32
         memset (&hints, 0, sizeof hints);       
         hints.ai_family = AF_UNSPEC;

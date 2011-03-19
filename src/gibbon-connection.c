@@ -176,6 +176,7 @@ gibbon_connection_finalize (GObject *object)
         self->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
+        g_printerr ("Destroyed connection object!\n");
 }
 
 static void
@@ -320,6 +321,7 @@ gibbon_connection_new (GibbonApp *app)
         self->priv->state = WAIT_LOGIN_PROMPT;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
+        g_printerr ("Created connection object!\n");
         return self;
 }
 
