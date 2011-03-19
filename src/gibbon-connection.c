@@ -214,10 +214,10 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               G_SIGNAL_RUN_FIRST,
                               0,
                               NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              g_cclosure_marshal_VOID__OBJECT,
                               G_TYPE_NONE,
                               1,
-                              G_TYPE_STRING);
+                              G_TYPE_OBJECT);
         signals[LOGIN] =
                 g_signal_new ("login",
                               G_TYPE_FROM_CLASS (klass),
@@ -398,7 +398,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         gdk_threads_leave ();
                         g_error_free (error);
 
-                        g_object_unref (self);
                         return FALSE;
                         
                 case G_IO_STATUS_EOF:
@@ -407,8 +406,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                        _("End-of-file while receiving data from"
                                          " server."));
                         gdk_threads_leave ();
-                        
-                        g_object_unref (self);
+
                         return FALSE;
                         
                 case G_IO_STATUS_AGAIN:
