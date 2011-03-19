@@ -210,7 +210,7 @@ gibbon_connection_dialog_new (GibbonApp *app)
 static void
 gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
 {
-        gibbon_app_set_state_disconnected (self->priv->app);
+        gibbon_app_disconnect (self->priv->app);
 
         g_object_unref (self);
 }
