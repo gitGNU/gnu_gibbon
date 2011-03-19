@@ -580,7 +580,12 @@ gibbon_connection_wait_connect (GibbonConnection *self)
         enum GibbonConnectorState last_state;
         GibbonConnector *connector;
 
-        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+        /* FIXME! Instead of silently returning false here, it would would
+         * be cleaner to instead remove the timeout, when finalizing the
+         * object.
+         */
+        if (!GIBBON_IS_CONNECTION (self))
+                return FALSE;
         
         connector = self->priv->connector;
         if (!connector) {
