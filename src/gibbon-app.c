@@ -582,8 +582,15 @@ gibbon_app_get_trimmed_entry_text (const GibbonApp *self, const gchar *id)
 void
 gibbon_app_connect (GibbonApp *self)
 {
+        /* Clean up opened connection dialog and stale connection objects.
+         * The latter should not happen.
+         */
         gibbon_app_disconnect (self);
+        gibbon_app_set_state_connecting (self);
 
+        /* FIXME: Pass the password explicitely, as it might not be saved
+         * in the user preferences!
+         */
         self->priv->connection = gibbon_connection_new (self);
         if (!self->priv->connection) {
               gibbon_app_disconnect (self);
