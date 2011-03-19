@@ -6,6 +6,7 @@
   <!ENTITY date "March 2011">
   <!ENTITY app "gibbon">
   <!ENTITY App "Gibbon">
+  <!ENTITY fibs "<acronym lang='en'>FIBS</acronym>">
 ]>
 
 <?db.chunk.max_depth 2?>
@@ -68,7 +69,7 @@
     <title>Introduction</title>
         <para>
           &App; is a graphical frontend for 
-          <ulink url="http://www.fibs.com/">FIBS</ulink>, the First Internet
+          <ulink url="http://www.fibs.com/">&fibs;</ulink>, the First Internet
           Backgammon Server or other compatible servers.  You can play online 
           against other players from all over the world.
         </para>
@@ -82,6 +83,68 @@
           therefore easy for you to let GNU Backgammon analyse your matches after
           playing.
         </para>
+
+    <sect2 id="gibbon-features">
+      <title>Features</title>
+      <para>
+        TODO!
+      </para>
+    </sect2>
+    <sect2 id="gibbon-on-the-internet">
+      <title>Gibbon on the Internet</title>
+      <para>
+        You can find &app; on various places on the internet:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            <ulink url="http://gibbon.guido-flohr.net/">http://gibbon.guido-flohr.net</ulink> is
+            the official homepage of &app;.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            On its <productname>Facebook</productname> page <ulink url="http://www.facebook.com/pages/Gibbon/201252806558402">http://www.facebook.com/pages/Gibbon/201252806558402</ulink>
+            you can follow &app; and keep informed about new releases or other
+            information.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Its <productname>Ohloh</productname> page <ulink url="http://www.ohloh.net/projects/gibbon2">http://www.ohloh.net/projects/gibbon2</ulink>
+            is targetted at people interested in the development and source code of &app;.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+  </sect1>
+
+  <sect1 id="gibbon-faq">
+    <title>Frequently Asked Questions</title>
+    <sect2 id="gibbon-faq-name">
+      <title>What does the name &App; mean?</title>
+      <para>
+        Nothing.
+      </para>
+      <para>
+        It was one of the first words that came to my mind, when I thought
+        about a name that resembles Guido, &fibs;, backgammon, ...
+      </para>
+    </sect2>
+    <sect2 id="gibbon-faq-fibs-cheat">
+      <title>Does &fibs; Cheat?</title>
+      <para>
+        After some research in various internet forums it is more than obvious
+        that &fibs; cheats.  It discriminates dice whiners! The internet is
+        full of hard-luck stories that definetly prove it.  Dice whiners dance
+        for a dozen rounds on a two-point board, while their opponents get
+        sequences of ridiculously lucky rolls.  Another interesting "feature"
+        of &fibs;&apos; "random" number generator is that it gives significantly
+        better rolls to the strong players, and the weak ones just don't have
+        a chance to improve their game because of the bad numers they roll.  Isn't 
+        that unfair? Yes! But there is nothing that &app; can do about it.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="gibbon-getting-started">
