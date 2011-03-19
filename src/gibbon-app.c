@@ -129,37 +129,11 @@ gibbon_app_finalize (GObject *object)
                 g_object_unref (self->priv->board);
         self->priv->board = NULL;
 
-        if (self->priv->connection_dialog)
-                g_object_unref (self->priv->connection_dialog);
-        self->priv->connection_dialog = NULL;
-
         if (self->priv->game_chat)
                 g_object_unref (self->priv->game_chat);
         self->priv->game_chat = NULL;
 
-        if (self->priv->resolving_signal)
-                g_object_unref (self->priv->resolving_signal);
-        self->priv->resolving_signal = NULL;
-
-        if (self->priv->connecting_signal)
-                g_object_unref (self->priv->connecting_signal);
-        self->priv->connecting_signal = NULL;
-
-        if (self->priv->connected_signal)
-                g_object_unref (self->priv->connected_signal);
-        self->priv->connected_signal = NULL;
-
-        if (self->priv->network_error_signal)
-                g_object_unref (self->priv->network_error_signal);
-        self->priv->network_error_signal = NULL;
-
-        if (self->priv->disconnected_signal)
-                g_object_unref (self->priv->disconnected_signal);
-        self->priv->disconnected_signal = NULL;
-
-        if (self->priv->connection)
-                g_object_unref (self->priv->connection);
-        self->priv->connection = NULL;
+        gibbon_app_disconnect (self);
 
         if (self->priv->players_view)
                 g_object_unref (self->priv->players_view);
@@ -517,6 +491,10 @@ gibbon_app_on_disconnect_request (GibbonApp *self, GtkWidget *emitter)
                 g_object_unref (self->priv->connection_dialog);
         self->priv->connection_dialog = NULL;
 
+        if (self->priv->connection)
+                g_object_unref (self->priv->connection);
+        self->priv->connection = NULL;
+
         gibbon_app_set_state_disconnected (self);
 }
 
@@ -604,57 +582,76 @@ gibbon_app_get_trimmed_entry_text (const GibbonApp *self, const gchar *id)
 void
 gibbon_app_connect (GibbonApp *self)
 {
+        gibbon_app_disconnect (self);
+
+        self->priv->connection = gibbon_connection_new (self);
+        if (!self->priv->connection) {
+              gibbon_app_disconnect (self);
+              return;
+        }
+
+        self->priv->resolving_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "resolving",
+                                   G_CALLBACK (gibbon_app_on_resolving),
+                                   G_OBJECT (self));
+        self->priv->connecting_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "connecting",
+                                   G_CALLBACK (gibbon_app_on_connecting),
+                                   G_OBJECT (self));
+        self->priv->connected_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "connected",
+                                   G_CALLBACK (gibbon_app_on_connected),
+                                   G_OBJECT (self));
+        self->priv->network_error_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "network-error",
+                                   G_CALLBACK (gibbon_app_on_network_error),
+                                   G_OBJECT (self));
+        self->priv->disconnected_signal = 
+                gibbon_signal_new (G_OBJECT (self->priv->connection),
+                                   "disconnected",
+                                   G_CALLBACK (gibbon_app_disconnect),
+                                   G_OBJECT (self));
+
+        if (!gibbon_connection_connect (self->priv->connection))
+                gibbon_app_disconnect (self);
+}
+
+void
+gibbon_app_disconnect (GibbonApp *self)
+{
+        if (self->priv->resolving_signal)
+                g_object_unref (self->priv->resolving_signal);
+        self->priv->resolving_signal = NULL;
+
+        if (self->priv->connecting_signal)
+                g_object_unref (self->priv->connecting_signal);
+        self->priv->connecting_signal = NULL;
+
+        if (self->priv->connected_signal)
+                g_object_unref (self->priv->connected_signal);
+        self->priv->connected_signal = NULL;
+
+        if (self->priv->network_error_signal)
+                g_object_unref (self->priv->network_error_signal);
+        self->priv->network_error_signal = NULL;
+
+        if (self->priv->disconnected_signal)
+                g_object_unref (self->priv->disconnected_signal);
+        self->priv->disconnected_signal = NULL;
+
         if (self->priv->connection_dialog)
                 g_object_unref (self->priv->connection_dialog);
         self->priv->connection_dialog = NULL;
 
         if (self->priv->connection)
                 g_object_unref (self->priv->connection);
+        self->priv->connection = NULL;
 
-        self->priv->connection = gibbon_connection_new (self);
-        if (!self->priv->connection) {
-              gibbon_app_set_state_disconnected (self);
-              return;
-        }
-
-        if (self->priv->resolving_signal)
-                g_object_unref (self->priv->resolving_signal);
-        self->priv->resolving_signal = 
-                gibbon_signal_new (G_OBJECT (self->priv->connection),
-                                   "resolving",
-                                   G_CALLBACK (gibbon_app_on_resolving),
-                                   G_OBJECT (self));
-        if (self->priv->connecting_signal)
-                g_object_unref (self->priv->connecting_signal);
-        self->priv->connecting_signal = 
-                gibbon_signal_new (G_OBJECT (self->priv->connection),
-                                   "connecting",
-                                   G_CALLBACK (gibbon_app_on_connecting),
-                                   G_OBJECT (self));
-        if (self->priv->connected_signal)
-                g_object_unref (self->priv->connected_signal);
-        self->priv->connected_signal = 
-                gibbon_signal_new (G_OBJECT (self->priv->connection),
-                                   "connected",
-                                   G_CALLBACK (gibbon_app_on_connected),
-                                   G_OBJECT (self));
-        if (self->priv->network_error_signal)
-                g_object_unref (self->priv->network_error_signal);
-        self->priv->network_error_signal = 
-                gibbon_signal_new (G_OBJECT (self->priv->connection),
-                                   "network-error",
-                                   G_CALLBACK (gibbon_app_on_network_error),
-                                   G_OBJECT (self));
-        if (self->priv->disconnected_signal)
-                g_object_unref (self->priv->disconnected_signal);
-        self->priv->disconnected_signal = 
-                gibbon_signal_new (G_OBJECT (self->priv->connection),
-                                   "disconnected",
-                                   G_CALLBACK (gibbon_app_on_disconnected),
-                                   G_OBJECT (self));
-
-        if (!gibbon_connection_connect (self->priv->connection))
-                gibbon_app_on_disconnected (self);
+        gibbon_app_set_state_disconnected (self);
 }
 
 static void
@@ -708,28 +705,7 @@ static void
 gibbon_app_on_network_error (GibbonApp *self, const gchar *message)
 {
         gibbon_app_display_error (self, "%s", message);
-        gibbon_app_on_disconnected (self);
-}
-
-static void
-gibbon_app_on_disconnected (GibbonApp *self)
-{
-        if (self->priv->resolving_signal)
-                g_object_unref (self->priv->resolving_signal);
-        self->priv->resolving_signal = NULL;
-
-        if (self->priv->network_error_signal)
-                g_object_unref (self->priv->network_error_signal);
-        self->priv->network_error_signal = NULL;
-
-        if (self->priv->disconnected_signal)
-                g_object_unref (self->priv->disconnected_signal);
-        self->priv->disconnected_signal = NULL;
-
-        if (self->priv->connection)
-                g_object_unref (self->priv->connection);
-        self->priv->connection = NULL;
-        gibbon_app_set_state_disconnected (self);
+        gibbon_app_disconnect (self);
 }
 
 GtkImage *
