@@ -29,6 +29,9 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <time.h>
+
+#include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 
 typedef struct _GibbonServerConsolePrivate GibbonServerConsolePrivate;
@@ -109,7 +112,7 @@ gibbon_server_console_new (GibbonApp *app)
                                                   NULL);
         PangoFontDescription *font_desc;
 
-        self->priv->app = NULL;
+        self->priv->app = app;
         self->priv->text_view =
                 GTK_TEXT_VIEW (gibbon_app_find_object (app,
                                                        "server_text_view",
@@ -120,11 +123,12 @@ gibbon_server_console_new (GibbonApp *app)
 
         self->priv->raw_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#000000",
+                                            "foreground", "black",
                                             NULL);
         self->priv->debug_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#ff0000",
+                                            "style", PANGO_STYLE_ITALIC,
+                                            "foreground", "grey",
                                             NULL);
 
         font_desc = pango_font_description_from_string ("monospace 10");
@@ -145,8 +149,24 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         GtkTextBuffer *buffer = self->priv->buffer;
         gint length;
         GtkTextIter start, end;
+        GibbonPrefs *prefs = prefs;
+        struct tm *now;
+        GTimeVal timeval;
+        gchar *timestamp;
 
         length = gtk_text_buffer_get_char_count (buffer);
+
+        prefs = gibbon_app_get_prefs (self->priv->app);
+        if (1 || gibbon_prefs_get_boolean (prefs, GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
+                g_get_current_time (&timeval);
+                now = gmtime ((time_t *) &timeval.tv_sec);
+                timestamp = g_strdup_printf ("[%02d:%02d.%07ld] ",
+                                             now->tm_hour,
+                                             now->tm_min,
+                                             timeval.tv_usec);
+                gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
+                g_free (timestamp);
+        }
 
         gtk_text_buffer_insert_at_cursor (buffer, string, -1);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
