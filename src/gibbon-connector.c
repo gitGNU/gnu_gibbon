@@ -144,8 +144,6 @@ gibbon_connector_connect_worker (GibbonConnector *self)
 	struct sockaddr_in sa_in;
 #endif
 
-        sleep (5);
-        
         g_mutex_lock (self->priv->mutex);
         if (self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
                 g_mutex_unlock (self->priv->mutex);
