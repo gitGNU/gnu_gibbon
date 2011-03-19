@@ -90,8 +90,6 @@ static gboolean gibbon_connection_on_output (GIOChannel *channel,
                                              GibbonConnection *self);
 static gboolean gibbon_connection_wait_connect (GibbonConnection *self);
 
-static guint session_connected = 0;
-
 static void
 gibbon_connection_init (GibbonConnection *conn)
 {
@@ -321,6 +319,8 @@ gibbon_connection_new (GibbonApp *app)
         self->priv->state = WAIT_LOGIN_PROMPT;
         self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
+        self->priv->session = gibbon_session_new (app, self);
+
         g_printerr ("Created connection object!\n");
         return self;
 }
@@ -420,6 +420,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         /* The input fifo is not exactly efficient.  */
         head = self->priv->in_buffer;
         buf[bytes_read] = 0;
+g_printerr (buf);
 
         self->priv->in_buffer = g_strconcat (head, buf, NULL);
         g_free (head);
@@ -433,36 +434,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 *line_end = 0;
                 if (line_end > ptr && *(line_end - 1) == '\015')
                         *(line_end - 1) = 0;
-                gdk_threads_enter ();
-                if (self->priv->state == WAIT_WELCOME
-                    && '1' == ptr[0]
-                    && ' ' == ptr[1]
-                    && (0 == strncmp (ptr + 2, self->priv->login,
-                                      strlen (self->priv->login)))) {
-                        self->priv->state = WAIT_COMMANDS;
-                        signal = COOKED_SERVER_OUTPUT;
-                        g_signal_emit (self, signals[LOGGED_IN], 0,
-                                       self);
-                        self->priv->session = gibbon_session_new (self);
-
-                        /* FIXME! Gtk weirdness.  I thought that connecting
-                         * signals happens on a per instance base.
-                         */
-                        if (!session_connected++) {
-                                g_signal_connect (G_OBJECT (self->priv->session),
-                                                  "html-server-output",
-                                                  G_CALLBACK (html_server_output_cb),
-                                                  self);
-
-                                g_signal_connect_swapped (
-                                        G_OBJECT (self), 
-                                        "cooked-server-output",
-                                        G_CALLBACK (gibbon_session_server_output_cb), 
-                                        self->priv->session);
-                        }
-                }
-                g_signal_emit (self, signals[signal], 0, ptr);
-                gdk_threads_leave ();
                 ptr = line_end + 1;
         }
         if (ptr != self->priv->in_buffer) {
@@ -474,10 +445,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         /* Only while not logged in: */
         if (self->priv->state == WAIT_LOGIN_PROMPT 
            && strcmp (self->priv->in_buffer, "login: ") == 0) {
-                gdk_threads_enter ();
-                g_signal_emit (self, signals[RAW_SERVER_OUTPUT], 0,
-                               self->priv->in_buffer);
-                gdk_threads_leave ();
                 gibbon_connection_queue_command (self,
                                                  "login %s_%s 9999 %s %s",
                                                  PACKAGE,
@@ -494,6 +461,9 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                        _("Authentication failed."));
                 gdk_threads_leave ();
                 return FALSE;
+        } else {
+                g_printerr ("Don't know how to go on from here.\n");
+                exit (1);
         }
         
         return TRUE;

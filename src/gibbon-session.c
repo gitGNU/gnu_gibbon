@@ -61,6 +61,7 @@ static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
 
 struct _GibbonSessionPrivate {
+        GibbonApp *app;
         GibbonConnection *connection;
 
         gchar *watching;
@@ -93,8 +94,7 @@ gibbon_session_finalize (GObject *object)
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
-        if (self->priv->connection)
-                g_object_unref (self->priv->connection);
+        self->priv->app = NULL;
         self->priv->connection = NULL;
 
         if (self->priv->watching)
@@ -128,12 +128,12 @@ gibbon_session_class_init (GibbonSessionClass *klass)
 }
 
 GibbonSession *
-gibbon_session_new (GibbonConnection *connection)
+gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
 
         self->priv->connection = connection;
-        g_object_ref (connection);
+        self->priv->app = app;
 
         return self;
 }
