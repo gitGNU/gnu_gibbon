@@ -69,12 +69,12 @@ _svg_str_parse_csv_doubles (const char *str, double *value, int num_values,
 	}
 
 	val = g_ascii_strtod (str, &end_ptr);
-	if (end_ptr == str) {
+	fail_pos = end_ptr;
+	if (fail_pos == str) {
 	    status = SVGINT_STATUS_ARGS_EXHAUSTED;
-	    fail_pos = end_ptr;
 	    break;
 	}
-	str = end_ptr;
+	str = fail_pos;
 
 	value[i] = val;
     }
