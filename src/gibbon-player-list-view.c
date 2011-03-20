@@ -30,12 +30,15 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-player-list-view.h"
+#include "gibbon-signal.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
         const GibbonApp *app;
         GibbonPlayerList *players;
         GtkMenu *player_menu;
+
+        GibbonSignal *button_pressed_handler;
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -46,7 +49,6 @@ G_DEFINE_TYPE (GibbonPlayerListView, gibbon_player_list_view, G_TYPE_OBJECT)
 
 static gboolean gibbon_player_list_view_on_button_pressed (GibbonPlayerListView
                                                            *self,
-                                                           GtkTreeView *view,
                                                            GdkEventButton
                                                            *event);
 
@@ -63,6 +65,8 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->app = NULL;
         self->priv->players = NULL;
         self->priv->player_menu = NULL;
+
+        self->priv->button_pressed_handler = NULL;
 }
 
 static void
@@ -110,10 +114,10 @@ gibbon_player_list_view_new (const GibbonApp *app, GibbonPlayerList *players)
         GtkTreeViewColumn *col;
         GtkCellRenderer *renderer;
         GCallback callback;
-        GtkWidget *menu_item;
 
         self->priv->app = app;
         self->priv->players = players;
+        g_object_ref (players);
 
         view = GTK_TREE_VIEW (gibbon_app_find_object (app, "player_view",
                                                       GTK_TYPE_TREE_VIEW));
@@ -180,21 +184,10 @@ gibbon_player_list_view_new (const GibbonApp *app, GibbonPlayerList *players)
 
         gibbon_player_list_connect_view (self->priv->players, view);
         callback = (GCallback) gibbon_player_list_view_on_button_pressed;
-        g_signal_connect_swapped (view, "button-press-event",
-                                  callback, self);
 
-
-        self->priv->player_menu = GTK_MENU (gtk_menu_new ());
-
-        menu_item = gtk_menu_item_new_with_label (_("Watch"));
-        gtk_menu_shell_append (GTK_MENU_SHELL (self->priv->player_menu),
-                               menu_item);
-
-        menu_item = gtk_menu_item_new_with_label (_("Look"));
-        gtk_menu_shell_append (GTK_MENU_SHELL (self->priv->player_menu),
-                               menu_item);
-
-        gtk_widget_show_all (self->priv->player_menu);
+        self->priv->button_pressed_handler =
+                 gibbon_signal_new (G_OBJECT (view), "button-press-event",
+                                    callback, G_OBJECT (self));
 
         return self;
 }
@@ -214,14 +207,19 @@ print2digits (GtkTreeViewColumn *tree_column,
 
 static gboolean
 gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
-                                           GtkTreeView *view,
                                            GdkEventButton *event)
 {
         GtkTreeSelection *selection;
         GtkTreePath *path;
+        GtkTreeView *view;
+        GObject *player_menu;
 
         if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
                 return FALSE;
+
+        view = GTK_TREE_VIEW (gibbon_app_find_object (self->priv->app,
+                                                      "player_view",
+                                                      GTK_TYPE_TREE_VIEW));
 
         selection = gtk_tree_view_get_selection (view);
         if (gtk_tree_selection_count_selected_rows (selection)  <= 1) {
@@ -233,9 +231,11 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
                 }
         }
 
-        gtk_widget_show_all (GTK_WIDGET (self->priv->player_menu));
+        player_menu = gibbon_app_find_object (self->priv->app, "player_menu",
+                                              GTK_TYPE_MENU);
+        gtk_widget_show_all (GTK_WIDGET (player_menu));
 
-        gtk_menu_popup (GTK_MENU (self->priv->player_menu),
+        gtk_menu_popup (GTK_MENU (player_menu),
                         NULL, NULL, NULL, NULL,
                         (event != NULL) ? event->button : 0,
                            gdk_event_get_time ((GdkEvent*) event));
