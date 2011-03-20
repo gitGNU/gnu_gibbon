@@ -348,9 +348,10 @@ gsgf_game_tree_convert (GSGFComponent *_self, const gchar *_charset,
                 if (ca_property)
                         gsgf_node_remove_property(root, "CA");
 
-                ca_property = gsgf_node_add_property(root, "CA", NULL);
-                _gsgf_property_add_value(ca_property, "UTF-8");
-
+                if (!self->priv->parent) {
+                        ca_property = gsgf_node_add_property(root, "CA", NULL);
+                        _gsgf_property_add_value(ca_property, "UTF-8");
+                }
                 for (nodes = self->priv->nodes; nodes; nodes = nodes->next) {
                         node = GSGF_NODE (nodes->data);
                         iface = GSGF_COMPONENT_GET_IFACE (node);
