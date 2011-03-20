@@ -84,5 +84,7 @@ void gibbon_server_console_print_info (GibbonServerConsole *self,
                                        const gchar *string);
 void gibbon_server_console_print_output (GibbonServerConsole *self,
                                          const gchar *string);
+void gibbon_server_console_print_input (GibbonServerConsole *self,
+                                        const gchar *string);
 
 #endif

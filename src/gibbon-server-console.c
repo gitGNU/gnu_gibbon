@@ -41,7 +41,7 @@ struct _GibbonServerConsolePrivate {
         GtkTextBuffer *buffer;
 
         GtkTextTag *raw_tag;
-        GtkTextTag *send_tag;
+        GtkTextTag *sent_tag;
         GtkTextTag *received_tag;
 };
 
@@ -67,7 +67,8 @@ gibbon_server_console_init (GibbonServerConsole *self)
         self->priv->buffer = NULL;
 
         self->priv->raw_tag = NULL;
-        self->priv->send_tag = NULL;
+        self->priv->sent_tag = NULL;
+        self->priv->received_tag = NULL;
 }
 
 static void
@@ -83,9 +84,13 @@ gibbon_server_console_finalize (GObject *object)
                 g_object_unref (self->priv->raw_tag);
         self->priv->raw_tag = NULL;
 
-        if (self->priv->send_tag)
-                g_object_unref (self->priv->send_tag);
-        self->priv->send_tag = NULL;
+        if (self->priv->sent_tag)
+                g_object_unref (self->priv->sent_tag);
+        self->priv->sent_tag = NULL;
+
+        if (self->priv->received_tag)
+                g_object_unref (self->priv->received_tag);
+        self->priv->received_tag = NULL;
 
         G_OBJECT_CLASS (gibbon_server_console_parent_class)->finalize(object);
 }
@@ -128,7 +133,7 @@ gibbon_server_console_new (GibbonApp *app)
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
                                             "foreground", "black",
                                             NULL);
-        self->priv->send_tag =
+        self->priv->sent_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
                                             "foreground", "blue",
                                             "style", PANGO_STYLE_ITALIC,
@@ -219,7 +224,7 @@ void
 gibbon_server_console_print_login (GibbonServerConsole *self,
                                    const gchar *string)
 {
-        _gibbon_server_console_print_raw (self, string, self->priv->send_tag,
+        _gibbon_server_console_print_raw (self, string, self->priv->sent_tag,
                                           NULL, TRUE);
 }
 
@@ -236,5 +241,21 @@ gibbon_server_console_print_output (GibbonServerConsole *self,
                 _gibbon_server_console_print_raw (self, string,
                                 self->priv->received_tag,
                                 "<<< ", TRUE);
+        }
+}
+
+void
+gibbon_server_console_print_input (GibbonServerConsole *self,
+                                   const gchar *string)
+{
+        GibbonPrefs *prefs = prefs;
+
+        prefs = gibbon_app_get_prefs (self->priv->app);
+
+        if (gibbon_prefs_get_boolean (prefs,
+                                      GIBBON_PREFS_DEBUG_SERVER_COMM)) {
+                _gibbon_server_console_print_raw (self, string,
+                                self->priv->sent_tag,
+                                ">>> ", TRUE);
         }
 }
