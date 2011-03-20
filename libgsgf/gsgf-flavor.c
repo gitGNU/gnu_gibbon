@@ -935,7 +935,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         GSGFCookedConstraint *constraint;
         const gchar *id;
 
-        gsgf_return_val_if_fail (cooked, NULL, error);
+        gsgf_return_val_if_fail (cooked, FALSE, error);
 
         *cooked = NULL;
 
@@ -1114,7 +1114,7 @@ gsgf_constraint_markup_unique (const GSGFCookedValue *value,
         const gchar *ids[5] = { "CR", "MA", "SQ", "SL", "TR" };
         int i;
         GSGFProperty *other_prop;
-        GSGFCookedValue *cooked_value;
+        GSGFValue *cooked_value;
         GSGFListOf *list_of = NULL;
         gsize j, k, num_items;
         GSGFPoint *point;

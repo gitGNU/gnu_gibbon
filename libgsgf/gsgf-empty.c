@@ -55,7 +55,7 @@ static void
 gsgf_empty_class_init(GSGFEmptyClass *klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
-        GSGFValueClass *value_class = GSGF_COOKED_VALUE_CLASS(klass);
+        GSGFValueClass *value_class = GSGF_VALUE_CLASS (klass);
 
         value_class->write_stream = gsgf_empty_write_stream;
 

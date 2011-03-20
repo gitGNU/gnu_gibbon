@@ -276,7 +276,7 @@ gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id)
         if (!property)
                 return NULL;
 
-        return gsgf_property_get_value(property);
+        return GSGF_COOKED_VALUE (gsgf_property_get_value (property));
 }
 
 /**
