@@ -35,8 +35,6 @@
 #include "gibbon-app.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-game-chat.h"
-#include "gibbon-player-list.h"
-#include "gibbon-player-list-view.h"
 #include "gibbon-prefs.h"
 #include "gibbon-connection-dialog.h"
 #include "gibbon-connection.h"
@@ -52,7 +50,6 @@ struct _GibbonAppPrivate {
         GibbonServerConsole *server_console;
         GibbonCairoboard *board;
         GibbonGameChat *game_chat;
-        GibbonPlayerListView *players_view;
         GibbonPrefs *prefs;
         GibbonConnectionDialog *connection_dialog;
         GibbonConnection *connection;
@@ -109,7 +106,6 @@ gibbon_app_init (GibbonApp *self)
                 g_object_unref (self->priv->server_console);
         self->priv->server_console = NULL;
         self->priv->game_chat = NULL;
-        self->priv->players_view = NULL;
         self->priv->prefs = NULL;
         self->priv->connection_dialog = NULL;
         self->priv->connection = NULL;
@@ -135,10 +131,6 @@ gibbon_app_finalize (GObject *object)
         self->priv->game_chat = NULL;
 
         gibbon_app_disconnect (self);
-
-        if (self->priv->players_view)
-                g_object_unref (self->priv->players_view);
-        self->priv->players_view = NULL;
 
         if  (self->priv->prefs)
                 g_object_unref (self->priv->prefs);
@@ -203,7 +195,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 {
         GibbonApp *self = g_object_new (GIBBON_TYPE_APP, NULL);
         gchar *board_filename;
-        GibbonPlayerList *players;
 
         g_return_val_if_fail (singleton == NULL, singleton);
 
@@ -238,18 +229,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 
         self->priv->game_chat = gibbon_game_chat_new (self);
         if (!self->priv->game_chat) {
-                g_object_unref (self);
-                return NULL;
-        }
-
-        players = gibbon_player_list_new ();
-        if (!players) {
-                g_object_unref (self);
-                return NULL;
-        }
-        self->priv->players_view =
-                gibbon_player_list_view_new (self, players);
-        if (!self->priv->players_view) {
                 g_object_unref (self);
                 return NULL;
         }
