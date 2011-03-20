@@ -33,7 +33,7 @@
 #include "gibbon-connection.h"
 
 GibbonPrefs *prefs = NULL;
-GibbonPlayerList *players = NULL;
+static GibbonPlayerList *players = NULL;
 
 static GibbonConnection *connection = NULL;
 
