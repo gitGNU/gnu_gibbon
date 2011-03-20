@@ -95,8 +95,6 @@ gibbon_connector_finalize (GObject *object)
         connector->priv->mutex = NULL;
 
         G_OBJECT_CLASS (gibbon_connector_parent_class)->finalize (object);
-
-        g_printerr ("Destroyed connector object!\n");
 }
 
 static void
@@ -118,7 +116,6 @@ gibbon_connector_new (const gchar *hostname, guint port)
         self->priv->port = port;
         self->priv->mutex = g_mutex_new ();
         
-        g_printerr ("Created connector object!\n");
         return self;
 }
 

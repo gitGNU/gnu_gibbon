@@ -57,10 +57,6 @@ gibbon_signal_finalize (GObject *object)
         GibbonSignal *self = GIBBON_SIGNAL (object);
 
         if (self->priv->emitter)
-g_printerr ("Disconnecting signal #%lu from %p:%s.\n",
-            self->priv->handler_id,
-            G_OBJECT_TYPE_NAME (self->priv->emitter));
-        if (self->priv->emitter)
                 g_signal_handler_disconnect (self->priv->emitter,
                                              self->priv->handler_id);
         self->priv->emitter = NULL;
@@ -90,9 +86,5 @@ gibbon_signal_new (GObject *emitter, const gchar *name,
                                                            callback,
                                                            (gpointer) receiver);
 
-g_printerr ("Connected signal %lu (%s) from %p:%s to %s\n",
-            self->priv->handler_id,
-            name, emitter, G_OBJECT_TYPE_NAME (emitter),
-            G_OBJECT_TYPE_NAME (receiver));
         return self;
 }

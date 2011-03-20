@@ -88,7 +88,6 @@ gibbon_connection_dialog_finalize (GObject *object)
         gibbon_connection_dialog_disconnect_signals (self);
 
         G_OBJECT_CLASS (gibbon_connection_dialog_parent_class)->finalize(object);
-g_printerr ("Destroyed ConnectionDialog\n");
 }
 
 static void
@@ -192,7 +191,6 @@ gibbon_connection_dialog_new (GibbonApp *app)
 
         gtk_widget_show (GTK_WIDGET (self->priv->dialog));
 
-g_printerr ("Created ConnectionDialog\n");
         return self;
 }
 

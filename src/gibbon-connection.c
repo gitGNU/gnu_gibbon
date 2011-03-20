@@ -174,7 +174,6 @@ gibbon_connection_finalize (GObject *object)
         self->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
-        g_printerr ("Destroyed connection object!\n");
 }
 
 static void
@@ -321,7 +320,6 @@ gibbon_connection_new (GibbonApp *app)
 
         self->priv->session = gibbon_session_new (app, self);
 
-        g_printerr ("Created connection object!\n");
         return self;
 }
 
@@ -420,7 +418,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         /* The input fifo is not exactly efficient.  */
         head = self->priv->in_buffer;
         buf[bytes_read] = 0;
-g_printerr (buf);
 
         self->priv->in_buffer = g_strconcat (head, buf, NULL);
         g_free (head);
