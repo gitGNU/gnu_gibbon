@@ -60,6 +60,7 @@ struct _GibbonAppPrivate {
         GibbonSignal *logged_in_signal;
         GibbonSignal *network_error_signal;
         GibbonSignal *disconnected_signal;
+        GibbonSignal *server_command_signal;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -87,6 +88,8 @@ static void gibbon_app_on_logged_in (GibbonApp *self,
                                      GibbonConnection *connection);
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
+static void gibbon_app_on_server_command (const GibbonApp *self,
+                                          GtkEntry *entry);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -119,6 +122,7 @@ gibbon_app_init (GibbonApp *self)
         self->priv->logged_in_signal = NULL;
         self->priv->network_error_signal = NULL;
         self->priv->disconnected_signal = NULL;
+        self->priv->server_command_signal = NULL;
 }
 
 static void
@@ -633,6 +637,10 @@ gibbon_app_disconnect (GibbonApp *self)
                 g_object_unref (self->priv->disconnected_signal);
         self->priv->disconnected_signal = NULL;
 
+        if (self->priv->server_command_signal)
+                g_object_unref (self->priv->server_command_signal);
+        self->priv->server_command_signal = NULL;
+
         if (self->priv->connection_dialog)
                 g_object_unref (self->priv->connection_dialog);
         self->priv->connection_dialog = NULL;
@@ -712,6 +720,11 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
         obj = gibbon_app_find_object (self, "server-command-entry",
                                       GTK_TYPE_ENTRY);
         gtk_entry_set_editable (GTK_ENTRY (obj), TRUE);
+        self->priv->server_command_signal =
+                gibbon_signal_new (obj,
+                                   "activate",
+                                   G_CALLBACK (gibbon_app_on_server_command),
+                                   G_OBJECT (self));
 
         obj = gibbon_app_find_object (self, "game-chat-entry",
                                       GTK_TYPE_ENTRY);
@@ -720,6 +733,8 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
         obj = gibbon_app_find_object (self, "shout-entry",
                                       GTK_TYPE_ENTRY);
         gtk_entry_set_editable (GTK_ENTRY (obj), TRUE);
+
+
 }
 
 static void
@@ -781,4 +796,22 @@ gibbon_app_get_connection (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->connection;
+}
+
+static void
+gibbon_app_on_server_command (const GibbonApp *self, GtkEntry *entry)
+{
+        gchar *trimmed;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+
+        gibbon_connection_queue_command (self->priv->connection,
+                                         TRUE, "%s", trimmed);
+
+        g_free (trimmed);
+
+        gtk_entry_set_text (entry, "");
 }
