@@ -495,6 +495,7 @@ gibbon_connection_on_output (GIOChannel *channel,
         gsize pending;
         const gchar *buffer;
         gchar *line;
+        GibbonServerConsole *console;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
         g_return_val_if_fail (G_IO_OUT & condition, TRUE);
@@ -528,12 +529,16 @@ gibbon_connection_on_output (GIOChannel *channel,
         gibbon_fibs_command_write (command, bytes_written);
         pending = gibbon_fibs_command_get_pending (command);
         if (pending <= 0) {
-                if (!gibbon_fibs_command_is_manual (command)) {
-                        line = g_strdup (
-                                        gibbon_fibs_command_get_line (command));
-                        line[strlen (line) - 2] = 0;
-                        g_free (line);
+                console = gibbon_app_get_server_console (self->priv->app);
+                line = g_strdup (
+                                gibbon_fibs_command_get_line (command));
+                line[strlen (line) - 2] = 0;
+                if (gibbon_fibs_command_is_manual (command)) {
+                        gibbon_server_console_print_info (console, line);
+                } else {
+                        gibbon_server_console_print_input (console, line);
                 }
+                g_free (line);
                 g_object_unref (command);
                 self->priv->out_queue = g_list_remove (self->priv->out_queue,
                                                        command);
