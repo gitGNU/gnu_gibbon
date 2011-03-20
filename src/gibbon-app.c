@@ -717,3 +717,11 @@ gibbon_app_get_board (const GibbonApp *self)
 
         return self->priv->board;
 }
+
+GibbonConnection *
+gibbon_app_get_connection (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->connection;
+}
