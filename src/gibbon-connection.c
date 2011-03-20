@@ -29,6 +29,7 @@
 #include "gibbon-session.h"
 #include "gibbon-prefs.h"
 #include "gui.h"
+#include "gibbon-server-console.h"
 
 enum gibbon_connection_signals {
         RESOLVING,
@@ -378,7 +379,9 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         gchar *ptr;
         gchar *line_end;
         guint signal;
-                
+        GibbonServerConsole *console;
+        gchar *pretty_login;
+
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
         if (self->priv->state == WAIT_COMMANDS)
@@ -426,11 +429,17 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 #define index(str, c) memchr (str, c, strlen (str))
 #endif
 
+        console = gibbon_app_get_server_console (self->priv->app);
+
         ptr = self->priv->in_buffer;
         while ((line_end = index (ptr, '\012')) != NULL) {
                 *line_end = 0;
                 if (line_end > ptr && *(line_end - 1) == '\015')
                         *(line_end - 1) = 0;
+                if (self->priv->state == WAIT_COMMANDS)
+                        gibbon_server_console_print_info (console, ptr);
+                else
+                        gibbon_server_console_print_info (console, ptr);
                 ptr = line_end + 1;
         }
         if (ptr != self->priv->in_buffer) {
@@ -439,30 +448,40 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 g_free (head);
         }
 
-        /* Only while not logged in: */
-        if (self->priv->state == WAIT_LOGIN_PROMPT 
-           && strcmp (self->priv->in_buffer, "login: ") == 0) {
-                gibbon_connection_queue_command (self,
-                                                 "login %s_%s 9999 %s %s",
-                                                 PACKAGE,
-                                                 VERSION,
-                                                 self->priv->login,
-                                                 self->priv->password);
-                g_free (self->priv->in_buffer);
-                self->priv->in_buffer = g_strdup ("");
-                self->priv->state = WAIT_WELCOME;
-        } else if (self->priv->state == WAIT_WELCOME
-                   && strcmp (self->priv->in_buffer, "login: ") == 0) {
-                gdk_threads_enter ();
+        if (self->priv->state == WAIT_LOGIN_PROMPT) {
+                if (strcmp (self->priv->in_buffer, "login: ") == 0) {
+                        gibbon_server_console_print_raw (console,
+                                                         self->priv->in_buffer);
+                        gibbon_connection_queue_command (self,
+                                        "login %s_%s 9999 %s %s",
+                                         PACKAGE,
+                                         VERSION,
+                                         self->priv->login,
+                                         self->priv->password);
+                        g_free (self->priv->in_buffer);
+                        self->priv->in_buffer = g_strdup ("");
+                        self->priv->state = WAIT_WELCOME;
+                        pretty_login = g_strdup_printf ("login %s_%s 9999 %s"
+                                                        " ********",
+                                                        PACKAGE, VERSION,
+                                                        self->priv->login);
+                        gibbon_server_console_print_login (console,
+                                                           pretty_login);
+                        g_free (pretty_login);
+                }
+        } else if (self->priv->state == WAIT_WELCOME) {
+                gibbon_server_console_print_raw (console, ptr);
+                if (strcmp (self->priv->in_buffer, "login: ") == 0) {
+                        gibbon_server_console_print_raw (console,
+                                                         self->priv->in_buffer);
+                        gdk_threads_enter ();
                         g_signal_emit (self, signals[NETWORK_ERROR], 0,
                                        _("Authentication failed."));
-                gdk_threads_leave ();
-                return FALSE;
-        } else {
-                g_printerr ("Don't know how to go on from here.\n");
-                exit (1);
+                        gdk_threads_leave ();
+                        return FALSE;
+                }
         }
-        
+
         return TRUE;
 }
 

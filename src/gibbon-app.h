@@ -90,6 +90,9 @@ GtkImage *gibbon_app_load_scaled_image (const GibbonApp *self,
                                         const gchar *path, 
                                         gint width, gint height);
 
+struct _GibbonServerConsole *gibbon_app_get_server_console (const GibbonApp
+                                                            *self);
+
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
 void gibbon_app_set_state_connecting (GibbonApp *self);

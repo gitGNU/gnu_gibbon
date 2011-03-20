@@ -722,3 +722,11 @@ gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
         gtk_widget_show (GTK_WIDGET (image));
         return image;
 }
+
+struct _GibbonServerConsole *
+gibbon_app_get_server_console (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->server_console;
+}

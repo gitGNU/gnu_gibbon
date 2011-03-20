@@ -41,7 +41,7 @@ struct _GibbonServerConsolePrivate {
         GtkTextBuffer *buffer;
 
         GtkTextTag *raw_tag;
-        GtkTextTag *debug_tag;
+        GtkTextTag *send_tag;
 };
 
 #define GIBBON_SERVER_CONSOLE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -51,7 +51,9 @@ G_DEFINE_TYPE (GibbonServerConsole, gibbon_server_console, G_TYPE_OBJECT)
 
 static void _gibbon_server_console_print_raw (GibbonServerConsole *self,
                                               const gchar *string,
-                                              GtkTextTag *tag);
+                                              GtkTextTag *tag,
+                                              const gchar *prefix,
+                                              gboolean linefeed);
 
 static void 
 gibbon_server_console_init (GibbonServerConsole *self)
@@ -64,7 +66,7 @@ gibbon_server_console_init (GibbonServerConsole *self)
         self->priv->buffer = NULL;
 
         self->priv->raw_tag = NULL;
-        self->priv->debug_tag = NULL;
+        self->priv->send_tag = NULL;
 }
 
 static void
@@ -80,9 +82,9 @@ gibbon_server_console_finalize (GObject *object)
                 g_object_unref (self->priv->raw_tag);
         self->priv->raw_tag = NULL;
 
-        if (self->priv->debug_tag)
-                g_object_unref (self->priv->debug_tag);
-        self->priv->debug_tag = NULL;
+        if (self->priv->send_tag)
+                g_object_unref (self->priv->send_tag);
+        self->priv->send_tag = NULL;
 
         G_OBJECT_CLASS (gibbon_server_console_parent_class)->finalize(object);
 }
@@ -125,10 +127,10 @@ gibbon_server_console_new (GibbonApp *app)
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
                                             "foreground", "black",
                                             NULL);
-        self->priv->debug_tag =
+        self->priv->send_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "style", PANGO_STYLE_ITALIC,
                                             "foreground", "grey",
+                                            "style", PANGO_STYLE_ITALIC,
                                             NULL);
 
         font_desc = pango_font_description_from_string ("monospace 10");
@@ -144,7 +146,9 @@ gibbon_server_console_new (GibbonApp *app)
 static void
 _gibbon_server_console_print_raw (GibbonServerConsole *self,
                                   const gchar *string,
-                                  GtkTextTag *tag)
+                                  GtkTextTag *tag,
+                                  const gchar *prefix,
+                                  gboolean linefeed)
 {
         GtkTextBuffer *buffer = self->priv->buffer;
         gint length;
@@ -157,7 +161,14 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         length = gtk_text_buffer_get_char_count (buffer);
 
         prefs = gibbon_app_get_prefs (self->priv->app);
-        if (1 || gibbon_prefs_get_boolean (prefs, GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
+
+        /* We abuse the prefix a little.  If prefix is empty it is ignored.
+         * If it is NULL, we assume that this is the login and in this case
+         * we never print a timestamp.
+         */
+        if (prefix
+            && gibbon_prefs_get_boolean (prefs,
+                                         GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
                 g_get_current_time (&timeval);
                 now = gmtime ((time_t *) &timeval.tv_sec);
                 timestamp = g_strdup_printf ("[%02d:%02d.%07ld] ",
@@ -169,7 +180,8 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         }
 
         gtk_text_buffer_insert_at_cursor (buffer, string, -1);
-        gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
+        if (linefeed)
+                gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
         gtk_text_buffer_get_end_iter (buffer, &end);
         gtk_text_buffer_apply_tag (buffer, tag, &start, &end);
@@ -183,12 +195,22 @@ void
 gibbon_server_console_print_raw (GibbonServerConsole *self,
                                  const gchar *string)
 {
-        _gibbon_server_console_print_raw (self, string, self->priv->raw_tag);
+        _gibbon_server_console_print_raw (self, string, self->priv->raw_tag,
+                                          "", FALSE);
 }
 
 void
-gibbon_server_console_print_debug (GibbonServerConsole *self,
+gibbon_server_console_print_info (GibbonServerConsole *self,
                                  const gchar *string)
 {
-        _gibbon_server_console_print_raw (self, string, self->priv->debug_tag);
+        _gibbon_server_console_print_raw (self, string, self->priv->raw_tag,
+                                          "", TRUE);
+}
+
+void
+gibbon_server_console_print_login (GibbonServerConsole *self,
+                                   const gchar *string)
+{
+        _gibbon_server_console_print_raw (self, string, self->priv->send_tag,
+                                          NULL, TRUE);
 }
