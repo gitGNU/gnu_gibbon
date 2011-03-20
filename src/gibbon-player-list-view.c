@@ -31,14 +31,19 @@
 
 #include "gibbon-player-list-view.h"
 #include "gibbon-signal.h"
+#include "gibbon-connection.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
         const GibbonApp *app;
         GibbonPlayerList *players;
+        GtkTreeView *players_view;
         GtkMenu *player_menu;
 
         GibbonSignal *button_pressed_handler;
+
+        GibbonSignal *look_handler;
+        GibbonSignal *watch_handler;
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -51,6 +56,8 @@ static gboolean gibbon_player_list_view_on_button_pressed (GibbonPlayerListView
                                                            *self,
                                                            GdkEventButton
                                                            *event);
+static void gibbon_player_list_view_on_look (GibbonPlayerListView *self);
+static void gibbon_player_list_view_on_watch (GibbonPlayerListView *self);
 
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
@@ -64,9 +71,12 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
 
         self->priv->app = NULL;
         self->priv->players = NULL;
+        self->priv->players_view = NULL;
         self->priv->player_menu = NULL;
 
         self->priv->button_pressed_handler = NULL;
+        self->priv->look_handler = NULL;
+        self->priv->watch_handler = NULL;
 }
 
 static void
@@ -82,7 +92,20 @@ gibbon_player_list_view_finalize (GObject *object)
                 g_object_unref (self->priv->player_menu);
         self->priv->player_menu = NULL;
 
+        self->priv->players_view = NULL;
         self->priv->app = NULL;
+
+        if (self->priv->button_pressed_handler)
+                g_object_unref (self->priv->button_pressed_handler);
+        self->priv->button_pressed_handler = NULL;
+
+        if (self->priv->look_handler)
+                g_object_unref (self->priv->look_handler);
+        self->priv->look_handler = NULL;
+
+        if (self->priv->watch_handler)
+                g_object_unref (self->priv->watch_handler);
+        self->priv->watch_handler = NULL;
 
         G_OBJECT_CLASS (gibbon_player_list_view_parent_class)->finalize(object);
 }
@@ -114,13 +137,16 @@ gibbon_player_list_view_new (const GibbonApp *app, GibbonPlayerList *players)
         GtkTreeViewColumn *col;
         GtkCellRenderer *renderer;
         GCallback callback;
+        GObject *emitter;
 
         self->priv->app = app;
         self->priv->players = players;
         g_object_ref (players);
 
-        view = GTK_TREE_VIEW (gibbon_app_find_object (app, "player_view",
-                                                      GTK_TYPE_TREE_VIEW));
+        self->priv->players_view = view =
+            GTK_TREE_VIEW (gibbon_app_find_object (app,
+                                                   "player_view",
+                                                   GTK_TYPE_TREE_VIEW));
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -189,6 +215,20 @@ gibbon_player_list_view_new (const GibbonApp *app, GibbonPlayerList *players)
                  gibbon_signal_new (G_OBJECT (view), "button-press-event",
                                     callback, G_OBJECT (self));
 
+        emitter = gibbon_app_find_object (app, "look_player_menu_item",
+                                          GTK_TYPE_MENU_ITEM);
+        callback = (GCallback) gibbon_player_list_view_on_look;
+        self->priv->look_handler =
+                 gibbon_signal_new (emitter, "activate",
+                                    callback, G_OBJECT (self));
+
+        emitter = gibbon_app_find_object (app, "watch_player_menu_item",
+                                          GTK_TYPE_MENU_ITEM);
+        callback = (GCallback) gibbon_player_list_view_on_watch;
+        self->priv->watch_handler =
+                 gibbon_signal_new (emitter, "activate",
+                                    callback, G_OBJECT (self));
+
         return self;
 }
 
@@ -217,9 +257,7 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
         if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
                 return FALSE;
 
-        view = GTK_TREE_VIEW (gibbon_app_find_object (self->priv->app,
-                                                      "player_view",
-                                                      GTK_TYPE_TREE_VIEW));
+        view = self->priv->players_view;
 
         selection = gtk_tree_view_get_selection (view);
         if (gtk_tree_selection_count_selected_rows (selection)  <= 1) {
@@ -241,4 +279,102 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
                            gdk_event_get_time ((GdkEvent*) event));
 
         return TRUE;
+}
+
+static void
+gibbon_player_list_view_on_look (GibbonPlayerListView *self)
+{
+        GtkTreeSelection *selection;
+        gint num_rows;
+        GList *selected_rows;
+        GList *first;
+        GtkTreePath *path;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        gchar *who;
+        GibbonConnection *connection;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
+
+        selection = gtk_tree_view_get_selection (self->priv->players_view);
+        num_rows = gtk_tree_selection_count_selected_rows (selection);
+
+        /* Should actually not happen.  */
+        if (num_rows != 1)
+                return;
+
+        selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+        if (!selected_rows)
+                return;
+
+        first = g_list_first (selected_rows);
+        if (first && first->data) {
+                path = (GtkTreePath *) first->data;
+                model = gtk_tree_view_get_model (self->priv->players_view);
+
+                if (gtk_tree_model_get_iter (model, &iter, path)) {
+                        gtk_tree_model_get (model, &iter,
+                                            GIBBON_PLAYER_LIST_COL_NAME, &who,
+                                            -1);
+                        connection =
+                                gibbon_app_get_connection (self->priv->app);
+                        gibbon_connection_queue_command (connection,
+                                                         FALSE,
+                                                         "look %s", who);
+                }
+        }
+
+        g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected_rows);
+}
+
+static void
+gibbon_player_list_view_on_watch (GibbonPlayerListView *self)
+{
+        GtkTreeSelection *selection;
+        gint num_rows;
+        GList *selected_rows;
+        GList *first;
+        GtkTreePath *path;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        gchar *who;
+        GibbonConnection *connection;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
+
+        selection = gtk_tree_view_get_selection (self->priv->players_view);
+        num_rows = gtk_tree_selection_count_selected_rows (selection);
+
+        /* Should actually not happen.  */
+        if (num_rows != 1)
+                return;
+
+        selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+        if (!selected_rows)
+                return;
+
+        first = g_list_first (selected_rows);
+        if (first && first->data) {
+                path = (GtkTreePath *) first->data;
+                model = gtk_tree_view_get_model (self->priv->players_view);
+
+                if (gtk_tree_model_get_iter (model, &iter, path)) {
+                        gtk_tree_model_get (model, &iter,
+                                            GIBBON_PLAYER_LIST_COL_NAME, &who,
+                                            -1);
+
+                        connection =
+                                gibbon_app_get_connection (self->priv->app);
+                        gibbon_connection_queue_command (connection,
+                                                         FALSE,
+                                                         "watch %s", who);
+                        gibbon_connection_queue_command (connection,
+                                                         FALSE,
+                                                         "board");
+                }
+        }
+
+        g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected_rows);
 }
