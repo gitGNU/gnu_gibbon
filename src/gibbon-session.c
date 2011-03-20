@@ -32,6 +32,7 @@
 #include "gibbon-server-console.h"
 #include "gibbon-player-list.h"
 #include "gibbon-player-list-view.h"
+#include "gibbon-cairoboard.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -496,6 +497,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 {
         gchar **tokens;
         struct GibbonPosition pos;
+        GibbonCairoboard *board;
         gint i;
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
@@ -596,8 +598,8 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 
         g_strfreev (tokens);
         
-        set_position (&pos);
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_cairoboard_set_position (board, &pos);
 
-return FALSE;        
         return TRUE;
 }

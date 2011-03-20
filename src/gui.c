@@ -127,28 +127,3 @@ on_watch_player_menu_item_activate (GtkObject *object, gpointer user_data)
         g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);        
         g_list_free (selected_rows);
 }
-
-static GibbonCairoboard *board = NULL;
-void
-set_position (const struct GibbonPosition *pos)
-{
-        gibbon_cairoboard_set_position (board, pos);
-}
-
-/*
-static gboolean
-setup_server_communication (GtkBuilder *builder)
-{
-        GtkEntry *entry =
-                GTK_ENTRY (find_object (builder, "server-command-entry",
-                                        GTK_TYPE_ENTRY));
-
-        if (!entry)
-                return FALSE;
-
-        g_signal_connect_swapped (entry, "activate",
-                                  G_CALLBACK (cb_server_command_fired), NULL);
-
-        return TRUE;
-}
-*/
