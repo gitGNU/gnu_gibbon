@@ -47,7 +47,7 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
 #define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
 #define GIBBON_GCONF_DEBUG_PREFS_PREFIX \
-        "/apps/gibbon/preferences/debug/"
+        "/apps/gibbon/preferences/debugging/"
 
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
