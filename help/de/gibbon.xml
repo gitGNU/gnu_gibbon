@@ -150,7 +150,7 @@
         <indexterm><primary>Gnome</primary></indexterm>
         If you use the <ulink url="http://www.gnome.org/">Gnome</ulink>
         desktop, you can start gibbon from the
-        <term><guimenu>Applications</guimenu> menu</term> by selecting
+        <guimenu>Applications</guimenu> menu by selecting
         <menuchoice><guisubmenu>Games</guisubmenu><guimenuitem>Gibbon</guimenuitem></menuchoice>.  For other systems, gibbon will be installed in a similar location.
       </para>
     </sect2>
