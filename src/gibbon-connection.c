@@ -30,6 +30,7 @@
 #include "gibbon-prefs.h"
 #include "gui.h"
 #include "gibbon-server-console.h"
+#include "gibbon-fibs-command.h"
 
 enum gibbon_connection_signals {
         RESOLVING,
@@ -67,7 +68,7 @@ struct _GibbonConnectionPrivate {
         guint in_watcher;
         gchar *in_buffer;
         guint out_watcher;
-        gchar *out_buffer;
+        GList *out_queue;
         
         GibbonSession *session;
 };
@@ -113,7 +114,7 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->in_buffer = g_strconcat ("", NULL);
         
         conn->priv->out_watcher = 0;
-        conn->priv->out_buffer = g_strconcat ("", NULL);
+        conn->priv->out_queue = NULL;
         
         conn->priv->session = NULL;
 }
@@ -143,9 +144,12 @@ gibbon_connection_finalize (GObject *object)
                 g_source_remove (self->priv->out_watcher);
         self->priv->out_watcher = 0;
 
-        if (self->priv->out_buffer)
-                g_free (self->priv->out_buffer);
-        self->priv->out_buffer = NULL;
+        if (self->priv->out_queue) {
+                g_list_foreach (self->priv->out_queue, (GFunc) g_object_unref,
+                                NULL);
+                g_list_free (self->priv->out_queue);
+        }
+        self->priv->out_queue = NULL;
 
         if (self->priv->io) {
                 g_io_channel_close (self->priv->io);
@@ -405,7 +409,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         console = gibbon_app_get_server_console (self->priv->app);
 
         ptr = self->priv->in_buffer;
-g_printerr ("Entire buffer: %s\n", ptr);
         while ((line_end = index (ptr, '\012')) != NULL) {
                 *line_end = 0;
                 if (line_end > ptr && *(line_end - 1) == '\015')
@@ -414,7 +417,6 @@ g_printerr ("Entire buffer: %s\n", ptr);
                         session = self->priv->session;
                         clip_code = gibbon_session_process_server_line (session,
                                                                         ptr);
-g_printerr ("LINE(%d):%d: %s\n", self->priv->state, clip_code, ptr);
                         if (clip_code == 1) {
                                 self->priv->state = WAIT_COMMANDS;
                                 g_signal_emit (self,
@@ -446,7 +448,6 @@ g_printerr ("LINE(%d):%d: %s\n", self->priv->state, clip_code, ptr);
                                          self->priv->password);
                         g_free (self->priv->in_buffer);
                         self->priv->in_buffer = g_strdup ("");
-                        g_printerr ("New state is WAIT_WELCOME\n");
                         self->priv->state = WAIT_WELCOME;
                         pretty_login = g_strdup_printf ("login %s_%s 9999 %s"
                                                         " ********",
@@ -488,17 +489,29 @@ gibbon_connection_on_output (GIOChannel *channel,
                              GIOCondition condition,
                              GibbonConnection *self)
 {
-        gchar *buffer;
         gsize bytes_written;
         GError *error = NULL;
+        GibbonFIBSCommand *command;
+        gsize pending;
+        const gchar *buffer;
+        gchar *line;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
         g_return_val_if_fail (G_IO_OUT & condition, TRUE);
+
+        if (!self->priv->out_queue) {
+                g_source_remove (self->priv->out_watcher);
+                self->priv->out_watcher = 0;
+                return FALSE;
+        }
         
-        buffer = self->priv->out_buffer;
+        command = g_list_nth_data (self->priv->out_queue, 0);
+        buffer = gibbon_fibs_command_get_pointer (command);
+        pending = gibbon_fibs_command_get_pending (command);
+
         if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (self->priv->io,
                                                             buffer,
-                                                            strlen (buffer),
+                                                            pending,
                                                             &bytes_written,
                                                             &error)) {
                 gdk_threads_enter ();
@@ -506,19 +519,32 @@ gibbon_connection_on_output (GIOChannel *channel,
                                error->message);
                 gdk_threads_leave ();
                 g_error_free (error);
+                g_object_unref (command);
+                self->priv->out_queue = g_list_remove (self->priv->out_queue,
+                                                       command);
                 return FALSE;
         }
 
-        if (bytes_written >= strlen (buffer)) {
+        gibbon_fibs_command_write (command, bytes_written);
+        pending = gibbon_fibs_command_get_pending (command);
+        if (pending <= 0) {
+                if (!gibbon_fibs_command_is_manual (command)) {
+                        line = g_strdup (
+                                        gibbon_fibs_command_get_line (command));
+                        line[strlen (line) - 2] = 0;
+                        g_free (line);
+                }
+                g_object_unref (command);
+                self->priv->out_queue = g_list_remove (self->priv->out_queue,
+                                                       command);
+        }
+
+        if (!self->priv->out_queue) {
                 g_source_remove (self->priv->out_watcher);
                 self->priv->out_watcher = 0;
-                g_free (self->priv->out_buffer);
-                self->priv->out_buffer = g_strdup ("");
                 return FALSE;
         }
                         
-        strcpy (buffer, buffer + bytes_written);
-
         return TRUE;
 }
 
@@ -602,7 +628,8 @@ gibbon_connection_queue_command (GibbonConnection *self,
 {
         va_list args;
         gchar *formatted;
-        gchar *new_buf;
+        gchar *line;
+        GibbonFIBSCommand *command;
         
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
@@ -610,10 +637,11 @@ gibbon_connection_queue_command (GibbonConnection *self,
         formatted = g_strdup_vprintf (format, args);        
         va_end (args);
 
-        new_buf = g_strconcat (self->priv->out_buffer, formatted, 
-                               "\015\012", NULL);
-        g_free (self->priv->out_buffer);
-        self->priv->out_buffer = new_buf;
+        line = g_strconcat (formatted, "\015\012", NULL);
+        command = gibbon_fibs_command_new (line, is_manual);
+        g_free (line);
+
+        self->priv->out_queue = g_list_append (self->priv->out_queue, command);
 
         if (!self->priv->out_watcher) {
                 self->priv->out_watcher = 
