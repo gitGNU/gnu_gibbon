@@ -430,7 +430,7 @@ _svg_element_parse_view_box (const char	*view_box_str,
 			     gdouble	*height)
 {
     const char *s;
-    const char *end;
+    char *end;
 
     s = view_box_str;
     *x = g_ascii_strtod (s, &end);

@@ -51,11 +51,13 @@ _svg_str_skip_space_or_char (const char **str, char c)
 }
 
 svgint_status_t
-_svg_str_parse_csv_doubles (const char *str, double *value, int num_values, const char **end)
+_svg_str_parse_csv_doubles (const char *str, double *value, int num_values,
+                            const char **end)
 {
     int i;
     gdouble val;
-    gchar *fail_pos = str;
+    const gchar *fail_pos = str;
+    gchar *end_ptr;
     svg_status_t status = SVG_STATUS_SUCCESS;
 
     for (i=0; i < num_values; i++) {
@@ -66,12 +68,13 @@ _svg_str_parse_csv_doubles (const char *str, double *value, int num_values, cons
 	    break;
 	}
 
-	val = g_ascii_strtod (str, &fail_pos);
-	if (fail_pos == str) {
+	val = g_ascii_strtod (str, &end_ptr);
+	if (end_ptr == str) {
 	    status = SVGINT_STATUS_ARGS_EXHAUSTED;
+	    fail_pos = end_ptr;
 	    break;
 	}
-	str = fail_pos;
+	str = end_ptr;
 
 	value[i] = val;
     }
