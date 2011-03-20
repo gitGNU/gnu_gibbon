@@ -50,6 +50,8 @@ gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text);
 GSGFCookedValue *_gsgf_property_get_raw(const GSGFProperty* property);
 void _gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gsize i, gboolean copy);
 void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
+gboolean _gsgf_raw_convert (GSGFRaw *self, const gchar *charset,
+                            GError **error);
 
 /* Private constructors.  */
 GSGFReal *_gsgf_real_new(const gchar *value, GError **error);
