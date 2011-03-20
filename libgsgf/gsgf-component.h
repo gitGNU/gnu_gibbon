@@ -50,7 +50,7 @@ struct _GSGFComponentIface
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        gboolean (*cook) (GSGFComponent *component,
+        gboolean (*cook) (GSGFComponent *self,
                           GSGFComponent **culprit,
                           GError **error);
 
@@ -61,7 +61,7 @@ struct _GSGFComponentIface
                                   GError **error);
 
         /*< private >*/
-        gboolean (*_convert) (GSGFComponent *component, const gchar *charset,
+        gboolean (*_convert) (GSGFComponent *self, const gchar *charset,
                               GError **error);
 };
 
@@ -72,5 +72,7 @@ gboolean gsgf_component_write_stream (const GSGFComponent *self,
                                       GError **error);
 
 GType gsgf_component_get_type (void) G_GNUC_CONST;
+gboolean gsgf_component_cook (GSGFComponent *self,
+                              GSGFComponent **culprit, GError **error);
 
 #endif
