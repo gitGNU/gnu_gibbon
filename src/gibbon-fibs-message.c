@@ -71,8 +71,19 @@ gibbon_fibs_message_new (const gchar *raw)
                 return NULL;
 
         self = g_malloc (sizeof *self);
-        self->sender = tokens[0];
-        self->message = tokens[1];
+        self->sender = g_strdup (tokens[0]);
+        if (!self->sender) {
+                g_free (self);
+                return NULL;
+        }
+        self->message = g_strdup (tokens[1]);
+        if (!self->message) {
+                g_free (self->sender);
+                g_free (self);
+                return NULL;
+        }
+
+        g_strfreev (tokens);
 
         return self;
 }

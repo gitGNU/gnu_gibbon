@@ -33,10 +33,12 @@
 #include "gibbon-player-list.h"
 #include "gibbon-player-list-view.h"
 #include "gibbon-cairoboard.h"
+#include "gibbon-fibs-message.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
+#define CLIP_SHOUTS 13
 
 static gint gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message,
@@ -44,6 +46,9 @@ static gint gibbon_session_clip_welcome (GibbonSession *self,
 static gint gibbon_session_clip_who_info (GibbonSession *self,
                                           const gchar *message,
                                           const gchar *ptr);
+static gint gibbon_session_clip_shouts (GibbonSession *self,
+                                        const gchar *message,
+                                        const gchar *ptr);
 static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
@@ -54,6 +59,12 @@ static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what);
 static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
+
+enum gibbon_session_signals {
+        GIBBON_SESSION_SHOUTS,
+        LAST_SIGNAL
+};
+static guint signals[LAST_SIGNAL] = { 0 };
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -121,6 +132,17 @@ gibbon_session_class_init (GibbonSessionClass *klass)
 
         g_type_class_add_private (klass, sizeof (GibbonSessionPrivate));
 
+        signals[GIBBON_SESSION_SHOUTS] =
+                g_signal_new ("shouts",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__BOXED,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_BOXED);
+
         object_class->finalize = gibbon_session_finalize;
 }
 
@@ -172,6 +194,10 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
                         retval = CLIP_WHO_INFO_END;
+                        break;
+                case CLIP_SHOUTS:
+                        retval = gibbon_session_clip_shouts (self, message,
+                                                             endptr);
                         break;
                 default:
                         retval = -1;
@@ -392,6 +418,28 @@ gibbon_session_clip_who_info (GibbonSession *self,
         g_strfreev (tokens);
 
         return CLIP_WHO_INFO;
+}
+
+static gint
+gibbon_session_clip_shouts (GibbonSession *self,
+                           const gchar *message, const gchar *ptr)
+{
+        const gchar *login;
+        GibbonFIBSMessage *fibs_message;
+        gchar **tokens;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        fibs_message = gibbon_fibs_message_new (message);
+        if (!fibs_message)
+                return -1;
+
+        g_signal_emit (self, signals[GIBBON_SESSION_SHOUTS], 0,
+                       fibs_message);
+
+        g_object_unref (fibs_message);
+
+        return CLIP_SHOUTS;
 }
 
 static gboolean
