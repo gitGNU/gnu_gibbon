@@ -53,12 +53,16 @@ struct _GibbonConnection
 GibbonConnection *gibbon_connection_new (GibbonApp *app);
 gboolean gibbon_connection_connect (GibbonConnection *self);
 
-const gchar *gibbon_connection_get_hostname (GibbonConnection *connection);
-guint gibbon_connection_get_port (GibbonConnection *connection);
-const gchar *gibbon_connection_get_password (GibbonConnection *connection);
-const gchar *gibbon_connection_get_login (GibbonConnection *connection);
+const gchar *gibbon_connection_get_hostname (const GibbonConnection *
+                                             connection);
+guint gibbon_connection_get_port (const GibbonConnection *connection);
+const gchar *gibbon_connection_get_password (const GibbonConnection *connection);
+const gchar *gibbon_connection_get_login (const GibbonConnection *connection);
 
+void gibbon_connection_fatal (GibbonConnection *connection,
+                              const gchar *format, ...);
 void gibbon_connection_queue_command (GibbonConnection *connection,
+                                      gboolean is_manual,
                                       const gchar *command, ...);
 
 G_END_DECLS

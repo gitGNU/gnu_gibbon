@@ -79,6 +79,7 @@ enum GibbonPrefsInt {
 enum GibbonPrefsBoolean {
         GIBBON_PREFS_SAVE_PASSWORD,
         GIBBON_PREFS_DEBUG_TIMESTAMPS,
+        GIBBON_PREFS_DEBUG_SERVER_COMM,
 };
 
 GType gibbon_prefs_get_type (void) G_GNUC_CONST;

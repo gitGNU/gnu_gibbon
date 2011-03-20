@@ -147,6 +147,7 @@ on_look_player_menu_item_activate (GtkObject *object, gpointer user_data)
                                             -1);
                         
                         gibbon_connection_queue_command (connection,
+                                                         FALSE,
                                                          "look %s", who);  
                 }
         }
@@ -190,8 +191,10 @@ on_watch_player_menu_item_activate (GtkObject *object, gpointer user_data)
                                             -1);
                         
                         gibbon_connection_queue_command (connection,
+                                                         FALSE,
                                                          "watch %s", who);  
                         gibbon_connection_queue_command (connection,
+                                                         FALSE,
                                                          "board");
                 }
         }
@@ -224,7 +227,7 @@ cb_server_command_fired (gpointer obj, GtkEntry *entry)
 
         trimmed = pango_trim_string (gtk_entry_get_text (entry));
 
-        gibbon_connection_queue_command (connection, "%s", trimmed);
+        gibbon_connection_queue_command (connection, TRUE, "%s", trimmed);
 
         g_free (trimmed);
 

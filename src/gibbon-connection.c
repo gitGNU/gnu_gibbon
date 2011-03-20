@@ -39,14 +39,11 @@ enum gibbon_connection_signals {
         LOGGED_IN,
         NETWORK_ERROR,
         DISCONNECTED,
-        RAW_SERVER_OUTPUT,
-        COOKED_SERVER_OUTPUT,
         LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
 
 enum GibbonConnectionState {
-        IDLE,
         WAIT_LOGIN_PROMPT,
         WAIT_WELCOME,
         WAIT_COMMANDS
@@ -103,7 +100,7 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->password = NULL;
         conn->priv->login = NULL;
         
-        conn->priv->state = IDLE;
+        conn->priv->state = WAIT_LOGIN_PROMPT;
         
         conn->priv->connector = NULL;
         conn->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
@@ -255,26 +252,6 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
                               g_cclosure_marshal_VOID__VOID,
                               G_TYPE_NONE,
                               0);
-        signals[RAW_SERVER_OUTPUT] =
-                g_signal_new ("raw-server-output",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_STRING);
-        signals[COOKED_SERVER_OUTPUT] =
-                g_signal_new ("cooked-server-output",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_STRING);
 }
 
 GibbonConnection *
@@ -341,28 +318,28 @@ gibbon_connection_connect (GibbonConnection *self)
 }
 
 const gchar *
-gibbon_connection_get_hostname (GibbonConnection *self)
+gibbon_connection_get_hostname (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
         return self->priv->hostname;
 }
 
 guint
-gibbon_connection_get_port (GibbonConnection *self)
+gibbon_connection_get_port (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), 0);
         return self->priv->port;
 }
 
 const gchar *
-gibbon_connection_get_login (GibbonConnection *self)
+gibbon_connection_get_login (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
         return self->priv->login;
 }
 
 const gchar *
-gibbon_connection_get_password (GibbonConnection *self)
+gibbon_connection_get_password (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
         return self->priv->password;
@@ -378,16 +355,12 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         gchar *head;
         gchar *ptr;
         gchar *line_end;
-        guint signal;
         GibbonServerConsole *console;
         gchar *pretty_login;
+        gint clip_code;
+        GibbonSession *session;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
-        
-        if (self->priv->state == WAIT_COMMANDS)
-                signal = COOKED_SERVER_OUTPUT;
-        else
-                signal = RAW_SERVER_OUTPUT; 
         
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
                                           &bytes_read, &error);
@@ -432,14 +405,26 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         console = gibbon_app_get_server_console (self->priv->app);
 
         ptr = self->priv->in_buffer;
+g_printerr ("Entire buffer: %s\n", ptr);
         while ((line_end = index (ptr, '\012')) != NULL) {
                 *line_end = 0;
                 if (line_end > ptr && *(line_end - 1) == '\015')
                         *(line_end - 1) = 0;
-                if (self->priv->state == WAIT_COMMANDS)
+                if (self->priv->state != WAIT_LOGIN_PROMPT) {
+                        session = self->priv->session;
+                        clip_code = gibbon_session_process_server_line (session,
+                                                                        ptr);
+g_printerr ("LINE(%d):%d: %s\n", self->priv->state, clip_code, ptr);
+                        if (clip_code == 1) {
+                                self->priv->state = WAIT_COMMANDS;
+                                g_signal_emit (self,
+                                               signals[LOGGED_IN],
+                                               0, self);
+                        }
+                        gibbon_server_console_print_output (console, ptr);
+                } else {
                         gibbon_server_console_print_info (console, ptr);
-                else
-                        gibbon_server_console_print_info (console, ptr);
+                }
                 ptr = line_end + 1;
         }
         if (ptr != self->priv->in_buffer) {
@@ -453,6 +438,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         gibbon_server_console_print_raw (console,
                                                          self->priv->in_buffer);
                         gibbon_connection_queue_command (self,
+                                        FALSE,
                                         "login %s_%s 9999 %s %s",
                                          PACKAGE,
                                          VERSION,
@@ -460,6 +446,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                          self->priv->password);
                         g_free (self->priv->in_buffer);
                         self->priv->in_buffer = g_strdup ("");
+                        g_printerr ("New state is WAIT_WELCOME\n");
                         self->priv->state = WAIT_WELCOME;
                         pretty_login = g_strdup_printf ("login %s_%s 9999 %s"
                                                         " ********",
@@ -470,10 +457,8 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         g_free (pretty_login);
                 }
         } else if (self->priv->state == WAIT_WELCOME) {
-                gibbon_server_console_print_raw (console, ptr);
                 if (strcmp (self->priv->in_buffer, "login: ") == 0) {
-                        gibbon_server_console_print_raw (console,
-                                                         self->priv->in_buffer);
+                        gibbon_server_console_print_output (console, "login: ");
                         gdk_threads_enter ();
                         g_signal_emit (self, signals[NETWORK_ERROR], 0,
                                        _("Authentication failed."));
@@ -612,6 +597,7 @@ gibbon_connection_wait_connect (GibbonConnection *self)
 
 void
 gibbon_connection_queue_command (GibbonConnection *self, 
+                                 gboolean is_manual,
                                  const gchar *format, ...)
 {
         va_list args;
@@ -636,4 +622,20 @@ gibbon_connection_queue_command (GibbonConnection *self,
                                         (GIOFunc) gibbon_connection_on_output,
                                         self);
         } 
+}
+
+void
+gibbon_connection_fatal (GibbonConnection *self,
+                         const gchar *message_format, ...)
+{
+        va_list args;
+        gchar *message;
+
+        va_start (args, message_format);
+        message = g_strdup_vprintf (message_format, args);
+        va_end (args);
+
+        g_signal_emit (self, signals[NETWORK_ERROR], 0, message);
+
+        g_free (message);
 }

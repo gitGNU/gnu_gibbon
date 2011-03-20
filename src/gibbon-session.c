@@ -30,26 +30,19 @@
 #include "gui.h"
 #include "game.h"
 #include "gibbon-prefs.h"
+#include "gibbon-server-console.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
 
-enum gibbon_connection_signals {
-        HTML_SERVER_OUTPUT,
-        LAST_SIGNAL
-};
-static guint signals[LAST_SIGNAL] = { 0 };
-
-static void gibbon_session_send_server_message (GibbonSession *self, 
-                                                const gchar *output);
-static gboolean gibbon_session_clip_welcome (GibbonSession *self,
-                                             const gchar *message,
-                                             const gchar *ptr);                                                
-static gboolean gibbon_session_clip_who_info (GibbonSession *self,
-                                              const gchar *message,
-                                              const gchar *ptr);                                                
-static void gibbon_session_dispatch_clip_message (GibbonSession *self,
+static gint gibbon_session_clip_welcome (GibbonSession *self,
+                                         const gchar *message,
+                                         const gchar *ptr);
+static gint gibbon_session_clip_who_info (GibbonSession *self,
+                                          const gchar *message,
+                                          const gchar *ptr);
+static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar *board);
@@ -114,17 +107,6 @@ gibbon_session_class_init (GibbonSessionClass *klass)
         g_type_class_add_private (klass, sizeof (GibbonSessionPrivate));
 
         object_class->finalize = gibbon_session_finalize;
-
-        signals[HTML_SERVER_OUTPUT] =
-                g_signal_new ("html-server-output",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_STRING);
 }
 
 GibbonSession *
@@ -138,69 +120,64 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         return self;
 }
 
-static void
+static gint
 gibbon_session_dispatch_clip_message (GibbonSession *self,
                                       const gchar *message)
 {
         unsigned long int code;
         gchar *endptr;
-        gboolean r = FALSE;
-                
-        g_return_if_fail (GIBBON_IS_SESSION (self));
+        gint retval = -1;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
         
         code = strtoul (message, &endptr, 10);
         
         /* Skip whitespace.  */
         while (*endptr == ' ' || *endptr == '\t' || *endptr == '\r'
-               || *endptr == '\f' || *endptr == '\v')
+               || *endptr == '\f' || *endptr == '\v') {
+                retval = 0;
                 endptr++;
+        }
+        if (retval)
+                /* No whitespace following number).  */
+                return retval;
         
         switch (code) {
                 case CLIP_WELCOME:
-                        r = gibbon_session_clip_welcome (self, message, endptr);
+                        retval = gibbon_session_clip_welcome (self, message,
+                                                              endptr);
                         break;
                 case CLIP_WHO_INFO:
-                        r = gibbon_session_clip_who_info (self, message, endptr);
+                        retval = gibbon_session_clip_who_info (self, message,
+                                                               endptr);
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
-                        r = TRUE;
+                        retval = CLIP_WHO_INFO_END;
                         break;
-                default: 
-                        break;
+                default:
+                        retval = -1;
         }
-        if (!r)
-                gibbon_session_send_server_message (self, message);
+
+        return retval;
 }
 
-static void
-gibbon_session_send_server_message (GibbonSession *self,
-                                    const gchar *output)
+gint
+gibbon_session_process_server_line (GibbonSession *self,
+                                    const gchar *line)
 {
-        /* FIXME! HTML escape the message first and embed it
-         * in <em>emphasized</em>.
-         */
-        g_signal_emit (self, signals[HTML_SERVER_OUTPUT], 0, output);
-}
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
-G_MODULE_EXPORT void
-gibbon_session_server_output_cb (GibbonSession *self, 
-                                 const gchar *output,
-                                 GObject *emitter)
-{
-        g_return_if_fail (GIBBON_IS_SESSION (self));
-
-        if (output[0] >= '0' && output[0] <= '9') {
-                gibbon_session_dispatch_clip_message (self, output);
-                return;
-        } else if (0 == strncmp ("board:", output, 6)) {
-                if (gibbon_session_handle_board (self, output + 6))
-                        return;
+        if (line[0] >= '0' && line[0] <= '9') {
+                return gibbon_session_dispatch_clip_message (self, line);
+        } else if (0 == strncmp ("board:", line, 6)) {
+                if (gibbon_session_handle_board (self, line + 6))
+                        return 0;
         }
-        
-        gibbon_session_send_server_message (self, output);
+
+        return -1;
 }
 
-static gboolean
+static gint
 gibbon_session_clip_welcome (GibbonSession *self, 
                              const gchar *message, const gchar *ptr)
 {
@@ -210,6 +187,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
         gchar *last_login_str;
         gchar *reply;
         gchar *mail;
+        GibbonServerConsole *console;
         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -222,51 +200,69 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 last_login.tv_sec = strtol (tokens[1], NULL, 10);
         
         if (!tokens[0] || strcmp (tokens[0], login)) {
-                g_print ("Parser expected `%s' as login: %s\n",
-                         login, message);
-                gibbon_session_send_server_message (self, message);
-        } else if (last_login.tv_usec < 0) {
-                g_print ("Parser expected timestamp after login `%s': %s\n",
-                         login, message);
-                gibbon_session_send_server_message (self, message);
-        } else if (!tokens[2]) {
-                g_print ("Parser expected address after timestamp: %s\n",
-                         message);
-                gibbon_session_send_server_message (self, message);
-        } else if (tokens[3]) {
-                g_print ("Trailing garbage after address: %s\n", message);
-                gibbon_session_send_server_message (self, message);
-        } else {
-                /* FIXME! Isn't there a better way to format a date and time
-                 * in glib?
-                 */
-                last_login_str = ctime (&last_login.tv_sec);
-                last_login_str[strlen (last_login_str) - 1] = 0;
-                
-                reply = g_strdup_printf (_("Last login on %s from %s."),
-                                         last_login_str, tokens[2]);
-                gibbon_session_send_server_message (self, reply);
-                g_free (reply);
-                
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 "set boardstyle 3");
+                gibbon_connection_fatal (self->priv->connection,
+                                         _("Parser expected `%s' as"
+                                           " login: %s\n"),
+                                         login, message);
+                return -1;
+        }
 
-                mail = gibbon_prefs_get_string (prefs,
-                                              GIBBON_PREFS_MAIL_ADDRESS);
-                if (mail) {
-                        gibbon_connection_queue_command (self->priv->connection,
-                                                         "address %s",
-                                                         mail);
-                        g_free (mail);
-                }
+        if (last_login.tv_usec < 0) {
+                gibbon_connection_fatal (self->priv->connection,
+                                         _("Parser expected timestamp after"
+                                           "login `%s': %s\n"),
+                                           login, message);
+                return -1;
+        }
+
+        if (!tokens[2]) {
+                gibbon_connection_fatal (self->priv->connection,
+                                         _("Parser expected address after"
+                                           " timestamp: %s\n"),
+                                           message);
+                return -1;
+        }
+
+        if (tokens[3]) {
+                gibbon_connection_fatal (self->priv->connection,
+                                         _("Trailing garbage after address:"
+                                           " %s\n"), message);
+                return -1;
+        }
+
+
+        /* FIXME! Isn't there a better way to format a date and time
+         * in glib?
+         */
+        last_login_str = ctime (&last_login.tv_sec);
+        last_login_str[strlen (last_login_str) - 1] = 0;
+                
+        reply = g_strdup_printf (_("Last login on %s from %s."),
+                                   last_login_str, tokens[2]);
+        console = gibbon_app_get_server_console (self->priv->app);
+        gibbon_server_console_print_info (console, reply);
+        g_free (reply);
+                
+        gibbon_connection_queue_command (self->priv->connection,
+                                         FALSE,
+                                         "set boardstyle 3");
+
+        mail = gibbon_prefs_get_string (prefs,
+                                        GIBBON_PREFS_MAIL_ADDRESS);
+        if (mail) {
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "address %s",
+                                                 mail);
+                g_free (mail);
         }
         
         g_strfreev (tokens);
         
-        return TRUE;
+        return CLIP_WELCOME;
 }
 
-static gboolean
+static gint
 gibbon_session_clip_who_info (GibbonSession *self, 
                               const gchar *message, const gchar *ptr)
 {
@@ -373,7 +369,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         g_strfreev (tokens);
 
-        return TRUE;
+        return CLIP_WHO_INFO;
 }
 
 static gboolean

@@ -121,6 +121,9 @@ gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd";
                 case GIBBON_PREFS_DEBUG_TIMESTAMPS:
                         return GIBBON_GCONF_DEBUG_PREFS_PREFIX "timestamps";
+                case GIBBON_PREFS_DEBUG_SERVER_COMM:
+                        return GIBBON_GCONF_DEBUG_PREFS_PREFIX
+                               "server_communication";
         }
 
         g_return_val_if_reached (NULL);

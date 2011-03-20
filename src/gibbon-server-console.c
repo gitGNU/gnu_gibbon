@@ -42,6 +42,7 @@ struct _GibbonServerConsolePrivate {
 
         GtkTextTag *raw_tag;
         GtkTextTag *send_tag;
+        GtkTextTag *received_tag;
 };
 
 #define GIBBON_SERVER_CONSOLE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -129,7 +130,12 @@ gibbon_server_console_new (GibbonApp *app)
                                             NULL);
         self->priv->send_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "grey",
+                                            "foreground", "blue",
+                                            "style", PANGO_STYLE_ITALIC,
+                                            NULL);
+        self->priv->received_tag =
+                gtk_text_buffer_create_tag (self->priv->buffer, NULL,
+                                            "foreground", "green",
                                             "style", PANGO_STYLE_ITALIC,
                                             NULL);
 
@@ -179,6 +185,8 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                 g_free (timestamp);
         }
 
+        if (prefix)
+                gtk_text_buffer_insert_at_cursor (buffer, prefix, -1);
         gtk_text_buffer_insert_at_cursor (buffer, string, -1);
         if (linefeed)
                 gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
@@ -201,7 +209,7 @@ gibbon_server_console_print_raw (GibbonServerConsole *self,
 
 void
 gibbon_server_console_print_info (GibbonServerConsole *self,
-                                 const gchar *string)
+                                  const gchar *string)
 {
         _gibbon_server_console_print_raw (self, string, self->priv->raw_tag,
                                           "", TRUE);
@@ -213,4 +221,20 @@ gibbon_server_console_print_login (GibbonServerConsole *self,
 {
         _gibbon_server_console_print_raw (self, string, self->priv->send_tag,
                                           NULL, TRUE);
+}
+
+void
+gibbon_server_console_print_output (GibbonServerConsole *self,
+                                    const gchar *string)
+{
+        GibbonPrefs *prefs = prefs;
+
+        prefs = gibbon_app_get_prefs (self->priv->app);
+
+        if (gibbon_prefs_get_boolean (prefs,
+                                      GIBBON_PREFS_DEBUG_SERVER_COMM)) {
+                _gibbon_server_console_print_raw (self, string,
+                                self->priv->received_tag,
+                                "<<< ", TRUE);
+        }
 }
