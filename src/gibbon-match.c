@@ -31,6 +31,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <libgsgf/gsgf.h>
+
 #include "gibbon-match.h"
 #include "gibbon-game.h"
 
