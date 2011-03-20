@@ -31,6 +31,7 @@
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-player-list.h"
+#include "gibbon-player-list-view.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -59,6 +60,9 @@ struct _GibbonSessionPrivate {
 
         gchar *watching;
         gchar *opponent;
+
+        GibbonPlayerList *player_list;
+        GibbonPlayerListView *player_list_view;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -78,6 +82,8 @@ gibbon_session_init (GibbonSession *self)
         self->priv->connection = NULL;
         self->priv->watching = NULL;
         self->priv->opponent = NULL;
+        self->priv->player_list = NULL;
+        self->priv->player_list_view = NULL;
 }
 
 static void
@@ -97,6 +103,14 @@ gibbon_session_finalize (GObject *object)
         if (self->priv->opponent)
                 g_free (self->priv->opponent);
         self->priv->opponent = NULL;
+
+        if (self->priv->player_list)
+                g_object_unref (self->priv->player_list);
+        self->priv->player_list = NULL;
+
+        if (self->priv->player_list_view)
+                g_object_unref (self->priv->player_list_view);
+        self->priv->player_list_view = NULL;
 }
 
 static void
@@ -116,6 +130,10 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 
         self->priv->connection = connection;
         self->priv->app = app;
+
+        self->priv->player_list = gibbon_player_list_new ();
+        self->priv->player_list_view =
+                gibbon_player_list_view_new (app, self->priv->player_list);
 
         return self;
 }
@@ -334,9 +352,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         available = ready && !away && !opponent[0];
         
-        /* FIXME! */
-        extern GibbonPlayerList *players;
-        gibbon_player_list_set (players, who, available, rating, experience,
+        gibbon_player_list_set (self->priv->player_list,
+                                who, available, rating, experience,
                                 opponent, watching);
 
         if (!g_strcmp0 (who,
