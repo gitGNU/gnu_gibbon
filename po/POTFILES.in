@@ -51,13 +51,14 @@ libgsgf/tests/test-number.c
 libgsgf/tests/test-real.c
 libgsgf/tests/test-really-empty.c
 libgsgf/tests/test-write-empty.c
+src/gibbon-app.c
 src/gibbon-archive.c
 src/gibbon-cairoboard.c
 src/gibbon-connection.c
+src/gibbon-connection-dialog.c
 src/gibbon-connector.c
 src/gibbon-game-chat.c
+src/gibbon-player-list-view.c
 src/gibbon-session.c
 src/gibbon.c
-src/gtkconnectiondialog.c
-src/gui.c
 src/svg-util.c
