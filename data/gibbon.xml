@@ -453,6 +453,7 @@
     <child>
       <object class="GtkMenuItem" id="invite_player_menu_item">
         <property name="visible">True</property>
+        <property name="sensitive">False</property>
         <property name="label" translatable="yes">Invite</property>
         <property name="use_underline">True</property>
       </object>
@@ -479,6 +480,7 @@
     <child>
       <object class="GtkMenuItem" id="tell_player_menu_item">
         <property name="visible">True</property>
+        <property name="sensitive">False</property>
         <property name="label" translatable="yes">Tell</property>
         <property name="use_underline">True</property>
       </object>
@@ -700,6 +702,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
