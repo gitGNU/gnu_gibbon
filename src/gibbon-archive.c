@@ -54,9 +54,6 @@ struct _GibbonArchivePrivate {
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
 
-static void gibbon_archive_on_login (GibbonArchive *archive,
-                                     GibbonConnection *connection);
-
 static void 
 gibbon_archive_init (GibbonArchive *self)
 {
@@ -175,7 +172,7 @@ gibbon_archive_new_from_session_info (const gchar *host, guint port,
         return self;
 }
 
-static void
+void
 gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
 {
         guint port;
@@ -185,6 +182,7 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
         gchar *buf;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (GIBBON_IS_CONNECTION (connection));
 
         login = gibbon_connection_get_login (connection);
         host = gibbon_connection_get_hostname (connection);

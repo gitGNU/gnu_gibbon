@@ -73,5 +73,8 @@ GibbonArchive *gibbon_archive_new (GibbonApp *app);
 GibbonArchive *gibbon_archive_new_from_session_info (const gchar *host,
                                                      guint port,
                                                      const gchar *login);
+void gibbon_archive_on_login (GibbonArchive *archive,
+                              GibbonConnection *connection);
+
 
 #endif
