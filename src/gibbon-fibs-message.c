@@ -45,6 +45,8 @@ gibbon_fibs_message_copy (GibbonFIBSMessage *self)
 
         copy->sender = g_strdup (self->sender);
         copy->message = g_strdup (self->message);
+
+        return copy;
 }
 
 static void
