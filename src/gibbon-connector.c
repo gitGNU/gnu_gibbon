@@ -32,7 +32,6 @@
 #endif
 
 #include "gibbon-connector.h"
-#include "gui.h"
 
 struct _GibbonConnectorPrivate {
         gchar *hostname;

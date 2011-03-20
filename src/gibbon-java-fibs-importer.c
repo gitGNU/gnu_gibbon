@@ -31,7 +31,6 @@
 
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
-#include "gui.h"
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {

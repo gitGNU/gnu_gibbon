@@ -70,7 +70,6 @@ noinst_HEADERS =		\
 	gibbon-match.h          \
 	gibbon-player-list.h	\
 	gibbon-session.h	\
-	gui.h			\
 	html-entities.h		\
 	svg-util.h			\
 	gibbon-game-chat.h			\

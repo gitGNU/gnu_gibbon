@@ -26,7 +26,6 @@
 
 #include "gibbon-cairoboard.h"
 #include "game.h"
-#include "gui.h"
 #include "svg-util.h"
 
 /* This lookup table determines, iff and where to draw a certain checker.

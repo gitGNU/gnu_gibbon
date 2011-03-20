@@ -27,10 +27,10 @@
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
-#include "gui.h"
 #include "game.h"
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
+#include "gibbon-player-list.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -188,6 +188,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
         gchar *reply;
         gchar *mail;
         GibbonServerConsole *console;
+        GibbonPrefs *prefs;
         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -247,6 +248,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
                                          FALSE,
                                          "set boardstyle 3");
 
+        prefs = gibbon_app_get_prefs (self->priv->app);
         mail = gibbon_prefs_get_string (prefs,
                                         GIBBON_PREFS_MAIL_ADDRESS);
         if (mail) {
@@ -332,6 +334,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         available = ready && !away && !opponent[0];
         
+        /* FIXME! */
+        extern GibbonPlayerList *players;
         gibbon_player_list_set (players, who, available, rating, experience,
                                 opponent, watching);
 

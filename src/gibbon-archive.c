@@ -26,6 +26,10 @@
  * Handling of archived games.
  **/
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <errno.h>
 #include <string.h>
 
@@ -34,7 +38,6 @@
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
 
-#include "gui.h"
 #include "gibbon-archive.h"
 #include "gibbon-connection.h"
 

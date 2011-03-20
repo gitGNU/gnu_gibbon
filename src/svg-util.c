@@ -35,7 +35,6 @@
 #include <svg.h>
 
 #include "svg-util.h"
-#include "gui.h"
 
 struct svg_util_render_state {
         cairo_matrix_t transform;

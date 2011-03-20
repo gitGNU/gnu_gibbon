@@ -28,7 +28,6 @@
 #include "gibbon-connector.h"
 #include "gibbon-session.h"
 #include "gibbon-prefs.h"
-#include "gui.h"
 #include "gibbon-server-console.h"
 #include "gibbon-fibs-command.h"
 
