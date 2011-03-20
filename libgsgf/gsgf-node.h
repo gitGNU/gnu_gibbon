@@ -77,6 +77,9 @@ GSGFCookedValue *gsgf_node_get_property_cooked(const GSGFNode *self, const gchar
 GSGFNode *gsgf_node_get_previous_node(const GSGFNode *self);
 const GSGFFlavor *gsgf_node_get_flavor(const GSGFNode *self);
 GSGFGameTree *gsgf_node_get_game_tree (const GSGFNode *self);
+gboolean gsgf_node_set_property (GSGFNode *self,
+                                 const gchar *id, GSGFValue *value,
+                                 GError **error);
 
 G_END_DECLS
 
