@@ -140,6 +140,11 @@ const GSGFNode *self
 <RETURNS>GSGFGameTree  *</RETURNS>
 const GSGFNode *self 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_node_set_property</NAME>
+<RETURNS>gboolean  </RETURNS>
+GSGFNode *self, const gchar *id, GSGFValue *value, GError **error 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_DOUBLE</NAME>
 #define GSGF_TYPE_DOUBLE \
@@ -1147,7 +1152,7 @@ struct _GSGFComponentIface
         GTypeInterface g_iface;
 
         /* Virtual table.  */
-        gboolean (*cook) (GSGFComponent *component,
+        gboolean (*cook) (GSGFComponent *self,
                           GSGFComponent **culprit,
                           GError **error);
 
@@ -1158,7 +1163,7 @@ struct _GSGFComponentIface
                                   GError **error);
 
         /*< private >*/
-        gboolean (*_convert) (GSGFComponent *component, const gchar *charset,
+        gboolean (*_convert) (GSGFComponent *self, const gchar *charset,
                               GError **error);
 };
 </STRUCT>
@@ -1171,6 +1176,11 @@ const GSGFComponent *self, GOutputStream *out, gsize *bytes_written, GCancellabl
 <NAME>gsgf_component_get_type</NAME>
 <RETURNS>GType  </RETURNS>
 void 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_component_cook</NAME>
+<RETURNS>gboolean  </RETURNS>
+GSGFComponent *self, GSGFComponent **culprit, GError **error 
 </FUNCTION>
 <STRUCT>
 <NAME>GSGFComponent</NAME>

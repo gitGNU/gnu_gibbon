@@ -26,6 +26,7 @@ gsgf_node_get_property_cooked
 gsgf_node_get_previous_node
 gsgf_node_get_flavor
 gsgf_node_get_game_tree
+gsgf_node_set_property
 <SUBSECTION Standard>
 GSGF_NODE
 GSGF_IS_NODE
@@ -277,6 +278,7 @@ GSGF_COLLECTION_GET_CLASS
 <TITLE>GSGFComponent</TITLE>
 GSGFComponentIface
 gsgf_component_write_stream
+gsgf_component_cook
 <SUBSECTION Standard>
 GSGF_COMPONENT
 GSGF_IS_COMPONENT
