@@ -200,7 +200,7 @@ parse_memory (const gchar *sgf, GError **error)
 
         collection = gsgf_collection_parse_stream (stream, NULL, error);
         if (collection)
-                gsgf_component_cook (GSGF_COMPONENT (collection), NULL, &error);
+                gsgf_component_cook (GSGF_COMPONENT (collection), NULL, error);
 
         return collection;
 }

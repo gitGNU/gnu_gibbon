@@ -80,7 +80,7 @@ static gboolean
 test_it (gdouble num)
 {
         GSGFReal *real = gsgf_real_new (num);
-        const gchar *got = gsgf_real_to_string (real);
+        gchar *got = gsgf_real_to_string (real);
         gboolean result;
         gdouble expect;
         gdouble diff;
@@ -115,7 +115,7 @@ static gboolean
 test_nan (void)
 {
         GSGFReal *real = gsgf_real_new (NAN);
-        const gchar *got = gsgf_real_to_string (real);
+        gchar *got = gsgf_real_to_string (real);
         gboolean result;
 
         if (got) {

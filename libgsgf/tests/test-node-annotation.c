@@ -462,7 +462,7 @@ test_prop_N (const GSGFNode *node)
                 return FALSE;
         }
 
-        value = gsgf_text_get_value (GSGF_SIMPLE_TEXT (cooked_value));
+        value = gsgf_text_get_value (GSGF_TEXT (cooked_value));
 #define EXPECT2 "Node annotation properties"
         if (strcmp (EXPECT2, value)) {
                 fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT2, value);

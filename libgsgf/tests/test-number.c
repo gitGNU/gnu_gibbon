@@ -27,6 +27,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "test.h"
+
 static int test_success();
 static int test_garbage();
 static int test_trailing_garbage();
