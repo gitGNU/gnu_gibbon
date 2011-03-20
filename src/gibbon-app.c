@@ -28,6 +28,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include <stdlib.h>
 
@@ -697,8 +698,8 @@ gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
                               gint width, gint height)
 {
         GError *error = NULL;
-        GdkPixbuf *pixbuf;
         GtkImage *image;
+        GdkPixbuf *pixbuf;
 
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
         
@@ -708,7 +709,6 @@ gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
                                                     FALSE,
                                                     &error);
 
-        /* FIXME! */
         if (!pixbuf) {
                 gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
                                path, error->message);
