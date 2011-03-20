@@ -22,6 +22,8 @@
 
 #include <glib.h>
 
+#include "gibbon-app.h"
+
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_CONNECTION             (gibbon_connection_get_type ())
@@ -48,24 +50,19 @@ struct _GibbonConnection
         GibbonConnectionPrivate *priv;
 };
 
-GibbonConnection *gibbon_connection_new (void);
+GibbonConnection *gibbon_connection_new (GibbonApp *app);
+gboolean gibbon_connection_connect (GibbonConnection *self);
 
-const gchar *gibbon_connection_get_hostname (GibbonConnection *connection);
-void gibbon_connection_set_hostname (GibbonConnection *connection, 
-                                     const gchar *host);
-guint gibbon_connection_get_port (GibbonConnection *connection);
-void gibbon_connection_set_port (GibbonConnection *connection, guint port);
-const gchar *gibbon_connection_get_password (GibbonConnection *connection);
-void gibbon_connection_set_password (GibbonConnection *connection, 
-                                     const gchar *password);
-const gchar *gibbon_connection_get_login (GibbonConnection *connection);
-void gibbon_connection_set_login (GibbonConnection *connection, 
-                                  const gchar *login);
+const gchar *gibbon_connection_get_hostname (const GibbonConnection *
+                                             connection);
+guint gibbon_connection_get_port (const GibbonConnection *connection);
+const gchar *gibbon_connection_get_password (const GibbonConnection *connection);
+const gchar *gibbon_connection_get_login (const GibbonConnection *connection);
 
-void gibbon_connection_connect (GibbonConnection *connection);
-void gibbon_connection_disconnect (GibbonConnection *connection);
-
+void gibbon_connection_fatal (GibbonConnection *connection,
+                              const gchar *format, ...);
 void gibbon_connection_queue_command (GibbonConnection *connection,
+                                      gboolean is_manual,
                                       const gchar *command, ...);
 
 G_END_DECLS

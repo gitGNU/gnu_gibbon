@@ -23,6 +23,8 @@
 
 #include "svgint.h"
 
+#include <glib.h>
+
 svgint_status_t
 _svg_element_create (svg_element_t	**element,
 		     svg_element_type_t	type,
@@ -422,34 +424,34 @@ _svg_element_parse_aspect_ratio (const char *aspect_ratio_str,
 
 svg_status_t
 _svg_element_parse_view_box (const char	*view_box_str,
-			     double	*x,
-			     double	*y,
-			     double	*width,
-			     double	*height)
+			     gdouble	*x,
+			     gdouble	*y,
+			     gdouble	*width,
+			     gdouble	*height)
 {
     const char *s;
     const char *end;
 
     s = view_box_str;
-    *x = _svg_ascii_strtod (s, &end);
+    *x = g_ascii_strtod (s, &end);
     if (end == s)
 	return SVG_STATUS_PARSE_ERROR;
 
     s = end;
     _svg_str_skip_space_or_char (&s, ',');
-    *y = _svg_ascii_strtod (s, &end);
+    *y = g_ascii_strtod (s, &end);
     if (end == s)
 	return SVG_STATUS_PARSE_ERROR;
 
     s = end;
     _svg_str_skip_space_or_char (&s, ',');
-    *width = _svg_ascii_strtod (s, &end);
+    *width = g_ascii_strtod (s, &end);
     if (end == s)
 	return SVG_STATUS_PARSE_ERROR;
 
     s = end;
     _svg_str_skip_space_or_char (&s, ',');
-    *height = _svg_ascii_strtod (s, &end);
+    *height = g_ascii_strtod (s, &end);
     if (end == s)
 	return SVG_STATUS_PARSE_ERROR;
 

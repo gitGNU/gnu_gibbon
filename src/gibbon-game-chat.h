@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include "gibbon-app.h"
+
 #define GIBBON_TYPE_GAME_CHAT \
         (gibbon_game_chat_get_type ())
 #define GIBBON_GAME_CHAT(obj) \
@@ -68,7 +70,6 @@ struct _GibbonGameChatClass
 
 GType gibbon_game_chat_get_type (void) G_GNUC_CONST;
 
-GibbonGameChat *gibbon_game_chat_new (GtkBuilder *builder,
-                                      const gchar *pixmaps_dir);
+GibbonGameChat *gibbon_game_chat_new (const GibbonApp *app);
 
 #endif

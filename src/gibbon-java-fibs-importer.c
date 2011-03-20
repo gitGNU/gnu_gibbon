@@ -31,10 +31,11 @@
 
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
-#include "gui.h"
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
+        GibbonApp *app;
+
         GibbonArchive *archive;
 
         GtkAssistant *assistant;
@@ -71,6 +72,7 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_JAVA_FIBS_IMPORTER, GibbonJavaFIBSImporterPrivate);
 
+        self->priv->app = NULL;
         self->priv->archive = NULL;
         self->priv->assistant = NULL;
         self->priv->file_chooser_button = NULL;
@@ -103,6 +105,9 @@ gibbon_java_fibs_importer_finalize (GObject *object)
                 g_signal_handler_disconnect (self->priv->file_chooser_button,
                                              self->priv->directory_selected);
         }
+
+        self->priv->app = NULL;
+
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
 
@@ -117,7 +122,7 @@ gibbon_java_fibs_importer_class_init (GibbonJavaFIBSImporterClass *klass)
 }
 
 GibbonJavaFIBSImporter *
-gibbon_java_fibs_importer_new (void)
+gibbon_java_fibs_importer_new (GibbonApp *app)
 {
         GibbonJavaFIBSImporter *self =
                         g_object_new (GIBBON_TYPE_JAVA_FIBS_IMPORTER, NULL);
@@ -125,13 +130,16 @@ gibbon_java_fibs_importer_new (void)
         gchar *selected_directory;
 
         GtkAssistant *assistant =
-                GTK_ASSISTANT (find_object (builder, "java_fibs_assistant",
-                                            GTK_TYPE_ASSISTANT));
+                GTK_ASSISTANT (gibbon_app_find_object (app,
+                                                       "java_fibs_assistant",
+                                                       GTK_TYPE_ASSISTANT));
 
         if (!assistant) {
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->app = app;
 
         self->priv->assistant = assistant;
 
@@ -148,8 +156,9 @@ gibbon_java_fibs_importer_new (void)
                 g_signal_connect_swapped (G_OBJECT (assistant), "prepare",
                         G_CALLBACK (gibbon_java_fibs_importer_on_prepare), self);
 
-        widget = GTK_WIDGET (find_object (builder, "java_fibs_file_chooser_button",
-                                          GTK_TYPE_FILE_CHOOSER_BUTTON));
+        widget = GTK_WIDGET (gibbon_app_find_object (app,
+                                                     "java_fibs_file_chooser_button",
+                                                     GTK_TYPE_FILE_CHOOSER_BUTTON));
         self->priv->file_chooser_button = (GTK_FILE_CHOOSER_BUTTON (widget));
 
         selected_directory =

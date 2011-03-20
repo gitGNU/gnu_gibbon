@@ -48,10 +48,10 @@ struct _GibbonSession
         GibbonSessionPrivate *priv;
 };
 
-GibbonSession *gibbon_session_new (const gchar *login);
-G_MODULE_EXPORT void gibbon_session_server_output_cb (GibbonSession *object, 
-                                                      const gchar *line,
-                                                      GObject *emitter);
+GibbonSession *gibbon_session_new (GibbonApp *app,
+                                   GibbonConnection *connection);
+gint gibbon_session_process_server_line (GibbonSession *self,
+                                         const gchar *line);
 
 G_END_DECLS
 

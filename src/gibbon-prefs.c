@@ -46,6 +46,8 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 #define GIBBON_GCONF_PREFIX "/apps/gibbon/"
 #define GIBBON_GCONF_PREFS_PREFIX "/apps/gibbon/preferences/"
 #define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
+#define GIBBON_GCONF_DEBUG_PREFS_PREFIX \
+        "/apps/gibbon/preferences/debugging/"
 
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
@@ -117,6 +119,11 @@ gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
         switch (key) {
                 case GIBBON_PREFS_SAVE_PASSWORD:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "save_pwd";
+                case GIBBON_PREFS_DEBUG_TIMESTAMPS:
+                        return GIBBON_GCONF_DEBUG_PREFS_PREFIX "timestamps";
+                case GIBBON_PREFS_DEBUG_SERVER_COMM:
+                        return GIBBON_GCONF_DEBUG_PREFS_PREFIX
+                               "server_communication";
         }
 
         g_return_val_if_reached (NULL);
@@ -281,3 +288,18 @@ gibbon_prefs_set_int (const GibbonPrefs *self, enum GibbonPrefsInt key,
 
         gconf_client_set_int (self->priv->client, conf_key, value, NULL);
 }
+
+gboolean
+gibbon_prefs_get_int (const GibbonPrefs *self, enum GibbonPrefsInt key)
+{
+        const gchar *conf_key;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), FALSE);
+
+        conf_key = gibbon_prefs_get_int_key (self, key);
+        if (!conf_key)
+                return FALSE;
+
+        return gconf_client_get_int (self->priv->client, conf_key, NULL);
+}
+

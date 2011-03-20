@@ -3,7 +3,6 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="window">
-    <signal name="destroy" handler="on_window_destroy"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -25,7 +24,6 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_connect_menu_item_activate"/>
                       </object>
                     </child>
                     <child>
@@ -35,7 +33,6 @@
                         <property name="sensitive">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_disconnect_menu_item_activate"/>
                       </object>
                     </child>
                     <child>
@@ -49,7 +46,6 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="gtk_main_quit"/>
                       </object>
                     </child>
                   </object>
@@ -69,7 +65,6 @@
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">_Import from FIBS ...</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_import_java_fibs_menu_item_activate"/>
                       </object>
                     </child>
                   </object>
@@ -111,7 +106,6 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Connect</property>
                 <property name="stock_id">gtk-network</property>
-                <signal name="clicked" handler="on_connect_menu_item_activate"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -122,7 +116,6 @@
               <object class="GtkToolButton" id="toolbar_disconnect_button">
                 <property name="visible">True</property>
                 <property name="stock_id">gtk-disconnect</property>
-                <signal name="clicked" handler="on_disconnect_menu_item_activate"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -142,7 +135,6 @@
               <object class="GtkToolButton" id="toolbar_quit_button">
                 <property name="visible">True</property>
                 <property name="stock_id">gtk-quit</property>
-                <signal name="clicked" handler="on_window_destroy"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -461,9 +453,9 @@
     <child>
       <object class="GtkMenuItem" id="invite_player_menu_item">
         <property name="visible">True</property>
+        <property name="sensitive">False</property>
         <property name="label" translatable="yes">Invite</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="on_invite_player_menu_item_activate" object="player_view"/>
       </object>
     </child>
     <child>
@@ -471,7 +463,6 @@
         <property name="visible">True</property>
         <property name="label" translatable="yes">Look</property>
         <property name="use_underline">True</property>
-        <signal name="activate" handler="on_look_player_menu_item_activate" object="player_view"/>
       </object>
     </child>
     <child>
@@ -489,6 +480,7 @@
     <child>
       <object class="GtkMenuItem" id="tell_player_menu_item">
         <property name="visible">True</property>
+        <property name="sensitive">False</property>
         <property name="label" translatable="yes">Tell</property>
         <property name="use_underline">True</property>
       </object>
@@ -499,7 +491,6 @@
     <property name="title" translatable="yes">Connection Data</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -620,7 +611,6 @@
                 <property name="has_tooltip">True</property>
                 <property name="relief">none</property>
                 <property name="uri">http://fibs.com/javafibs/register.html</property>
-                <signal name="clicked" handler="on_register_link_clicked"/>
               </object>
               <packing>
                 <property name="right_attach">2</property>
@@ -669,7 +659,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_conn_button_cancel_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -686,7 +675,6 @@
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_conn_button_connect_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -714,6 +702,15 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>

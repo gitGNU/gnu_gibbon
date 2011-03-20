@@ -30,3 +30,5 @@ gcreate_class.pl
 omf.make
 xmldocs.make
 gnome-doc-utils.make
+TODO.tasks
+gibbon.anjuta

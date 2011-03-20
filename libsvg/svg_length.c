@@ -21,6 +21,8 @@
 
 #include <string.h>
 
+#include <glib.h>
+
 #include "svgint.h"
 
 svg_status_t
@@ -45,11 +47,11 @@ _svg_length_init_unit (svg_length_t		*length,
 svg_status_t
 _svg_length_init_from_str (svg_length_t *length, const char *str)
 {
-    double value;
+    gdouble value;
     svg_length_unit_t unit;
-    const char *unit_str;
+    gchar *unit_str;
 
-    value = _svg_ascii_strtod (str, &unit_str);
+    value = g_ascii_strtod (str, &unit_str);
 
     if (unit_str == str)
 	return SVG_STATUS_PARSE_ERROR;

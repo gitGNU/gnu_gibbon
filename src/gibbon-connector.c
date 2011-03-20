@@ -32,7 +32,6 @@
 #endif
 
 #include "gibbon-connector.h"
-#include "gui.h"
 
 struct _GibbonConnectorPrivate {
         gchar *hostname;
@@ -110,13 +109,13 @@ gibbon_connector_class_init (GibbonConnectorClass *klass)
 GibbonConnector *
 gibbon_connector_new (const gchar *hostname, guint port)
 {
-         GibbonConnector *self = g_object_new (GIBBON_TYPE_CONNECTOR, NULL);
+        GibbonConnector *self = g_object_new (GIBBON_TYPE_CONNECTOR, NULL);
 
-         self->priv->hostname = g_strdup (hostname);
-         self->priv->port = port;
-         self->priv->mutex = g_mutex_new ();
-         
-         return self;
+        self->priv->hostname = g_strdup (hostname);
+        self->priv->port = port;
+        self->priv->mutex = g_mutex_new ();
+        
+        return self;
 }
 
 /* TODO! When glib 2.22 becomes established, move this code to the more
@@ -147,7 +146,7 @@ gibbon_connector_connect_worker (GibbonConnector *self)
                 gibbon_connector_cancel (self);
                 return NULL;
         }
-
+        
 #ifndef G_OS_WIN32
         memset (&hints, 0, sizeof hints);       
         hints.ai_family = AF_UNSPEC;
@@ -282,6 +281,10 @@ gibbon_connector_connect (GibbonConnector *self)
         
         g_return_val_if_fail (GIBBON_IS_CONNECTOR (self), FALSE);
 
+        /* We have to ref ourselves, so that our child thread still has
+         * a valid object to check for cancellation.
+         */
+        g_object_ref (self);
         self->priv->worker = 
                 g_thread_create ((GThreadFunc) gibbon_connector_connect_worker,
                                  (gpointer) self, FALSE, &error);
@@ -291,6 +294,7 @@ gibbon_connector_connect (GibbonConnector *self)
                                            "thread: %s."),
                                          error->message);
                 g_error_free (error);
+                g_object_unref (self);
                 return FALSE;
         }
         
@@ -300,17 +304,18 @@ gibbon_connector_connect (GibbonConnector *self)
 void
 gibbon_connector_cancel (GibbonConnector *self)
 {
+        gboolean go_away = FALSE;
+
         g_return_if_fail (GIBBON_IS_CONNECTOR (self));
- 
-        if (self->priv->state == GIBBON_CONNECTOR_CONNECTED
-            || self->priv->state == GIBBON_CONNECTOR_ERROR
-            || self->priv->state == GIBBON_CONNECTOR_CANCELLED) {
+
+        g_mutex_lock (self->priv->mutex);
+        if (self->priv->state == GIBBON_CONNECTOR_CANCELLED)
+                go_away = TRUE;
+        self->priv->state = GIBBON_CONNECTOR_CANCELLED;
+        g_mutex_unlock (self->priv->mutex);
+
+        if (go_away)
                 g_object_unref (self);
-        } else {
-                g_mutex_lock (self->priv->mutex);
-                self->priv->state = GIBBON_CONNECTOR_CANCELLED;
-                g_mutex_unlock (self->priv->mutex);
-        }
 }
 
 enum GibbonConnectorState 

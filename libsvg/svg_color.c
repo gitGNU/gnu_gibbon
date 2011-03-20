@@ -24,6 +24,8 @@
 
 #include "svgint.h"
 
+#include <glib.h>
+
 static int
 _svg_color_cmp (const void * a, const void * b);
 
@@ -248,12 +250,13 @@ _svg_color_get_two_hex_digits (const char *str)
 static svg_status_t
 _svg_color_parse_component (const char **str, unsigned int *component)
 {
-    const char *s, *end;
-    double c;
+    const char *s;
+    gchar *end;
+    gdouble c;
 
     s = *str;
 
-    c = _svg_ascii_strtod (s, &end);
+    c = g_ascii_strtod (s, &end);
     if (end == s)
 	return SVG_STATUS_PARSE_ERROR;
     s = end;

@@ -26,7 +26,6 @@
 
 #include "gibbon-cairoboard.h"
 #include "game.h"
-#include "gui.h"
 #include "svg-util.h"
 
 /* This lookup table determines, iff and where to draw a certain checker.
@@ -58,6 +57,8 @@ struct checker_rule checker_lookup[15] = {
 };
 
 struct _GibbonCairoboardPrivate {
+        GibbonApp *app;
+
         struct GibbonPosition pos;
         
         GHashTable *ids;
@@ -124,6 +125,8 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
                                                   GIBBON_TYPE_CAIROBOARD, 
                                                   GibbonCairoboardPrivate);
 
+        self->priv->app = NULL;
+
         self->priv->board = NULL;
         self->priv->white_checker = NULL;
         self->priv->black_checker = NULL;
@@ -186,6 +189,8 @@ gibbon_cairoboard_finalize (GObject *object)
             self->priv->black_dice[i] = NULL;
         }
 
+        self->priv->app = NULL;
+
         G_OBJECT_CLASS (gibbon_cairoboard_parent_class)->finalize (object);
 }
 
@@ -204,9 +209,8 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
                 gibbon_cairoboard_expose;
 }
 
-/* FIXME! How can we return NULL in the constructor?  */
 GibbonCairoboard *
-gibbon_cairoboard_new (const gchar *filename)
+gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
 {
         GibbonCairoboard *self = g_object_new (GIBBON_TYPE_CAIROBOARD, NULL);
         gchar *data;
@@ -214,16 +218,16 @@ gibbon_cairoboard_new (const gchar *filename)
         xmlDoc *doc;
         int i;
         char id_str[8];
-        gchar *message;
+
+        self->priv->app = app;
 
         error = NULL;
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
-                message = g_strdup_printf (_("Error reading board definition"
-                                             " `%s': %s.\nDo you need to pass"
-                                             " the option `--pixmaps-dir'?\n"),
-                                           filename, error->message);
-                display_error ("%s", message);
-                g_free (message);
+                gibbon_app_display_error (app,
+                                          _("Error reading board definition"
+                                            " `%s': %s.\nDo you need to pass"
+                                            " the option `--pixmaps-dir'?\n"),
+                                          filename, error->message);
                 g_error_free (error);
                 g_object_ref_sink (self);
                 return NULL;
@@ -231,8 +235,10 @@ gibbon_cairoboard_new (const gchar *filename)
         
         doc = xmlReadMemory (data, strlen (data), filename, NULL, 0);
         if (doc == NULL) {
-                display_error (_("Error parsing board definition `%s'.\n"),
-                               filename);
+                gibbon_app_display_error (app,
+                                          _("Error parsing board definition"
+                                            " `%s'.\n"),
+                                          filename);
                 g_object_ref_sink (self);
                 return NULL;
         }
@@ -667,9 +673,10 @@ gibbon_cairoboard_get_component (GibbonCairoboard *self,
 
 
         if (!node) {
-                display_error (_("Board definition `%s' does not have an "
-                                 "element `%s'.\n"),
-                               filename, "checker_w_24_1");
+                gibbon_app_display_error (self->priv->app,
+                                          _("Board definition `%s' does not"
+                                            " have an element `%s'.\n"),
+                                          filename, "checker_w_24_1");
                 return NULL;
         }
 

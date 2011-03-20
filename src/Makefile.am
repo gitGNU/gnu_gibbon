@@ -45,9 +45,6 @@ gibbon_SOURCES =		\
 	gibbon-match.c          \
 	gibbon-player-list.c	\
 	gibbon-session.c	\
-	gtkmainwindow.c		\
-	gtkconnectiondialog.c	\
-	gui.c			\
 	html-entities.c		\
 	svg-util.c			\
 	gibbon-game-chat.c				\
@@ -55,11 +52,16 @@ gibbon_SOURCES =		\
 	gibbon-archive.c				\
 	gibbon-java-fibs-importer.c				\
 	gibbon-action.c				\
-	gibbon-fibs-message.c	
+	gibbon-fibs-message.c				\
+	gibbon-app.c				\
+	gibbon-player-list-view.c				\
+	gibbon-connection-dialog.c				\
+	gibbon-signal.c				\
+	gibbon-server-console.c							\
+	gibbon-fibs-command.c	
 
 noinst_HEADERS =		\
 	game.h			\
-	gibbon.h		\
 	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\
@@ -67,7 +69,6 @@ noinst_HEADERS =		\
 	gibbon-match.h          \
 	gibbon-player-list.h	\
 	gibbon-session.h	\
-	gui.h			\
 	html-entities.h		\
 	svg-util.h			\
 	gibbon-game-chat.h			\
@@ -75,7 +76,13 @@ noinst_HEADERS =		\
 	gibbon-archive.h			\
 	gibbon-java-fibs-importer.h			\
 	gibbon-action.h			\
-	gibbon-fibs-message.h
+	gibbon-fibs-message.h			\
+	gibbon-app.h			\
+	gibbon-player-list-view.h			\
+	gibbon-connection-dialog.h			\
+	gibbon-signal.h			\
+	gibbon-server-console.h				\
+	gibbon-fibs-command.h
 
 gibbon_CFLAGS = -DUSE_MAIN
 AM_LDFLAGS = -export-dynamic

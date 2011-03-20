@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include "gibbon-app.h"
+
 #define GIBBON_TYPE_JAVA_FIBS_IMPORTER \
         (gibbon_java_fibs_importer_get_type ())
 #define GIBBON_JAVA_FIBS_IMPORTER(obj) \
@@ -67,7 +69,7 @@ struct _GibbonJavaFIBSImporterClass
 
 GType gibbon_java_fibs_importer_get_type (void) G_GNUC_CONST;
 
-GibbonJavaFIBSImporter *gibbon_java_fibs_importer_new (void);
+GibbonJavaFIBSImporter *gibbon_java_fibs_importer_new (GibbonApp *app);
 void gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self);
 
 #endif

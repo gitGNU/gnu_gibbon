@@ -26,6 +26,10 @@
  * Handling of archived games.
  **/
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <errno.h>
 #include <string.h>
 
@@ -34,13 +38,13 @@
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
 
-#include "gui.h"
-#include "gibbon.h"
 #include "gibbon-archive.h"
 #include "gibbon-connection.h"
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
+        GibbonApp *app;
+
         gchar *servers_directory;
         gchar *session_directory;
 };
@@ -50,7 +54,8 @@ struct _GibbonArchivePrivate {
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
 
-static void gibbon_archive_on_login (GibbonArchive *archive, const gchar *host);
+static void gibbon_archive_on_login (GibbonArchive *archive,
+                                     GibbonConnection *connection);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -58,7 +63,10 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate);
 
+        self->priv->app = NULL;
+
         self->priv->servers_directory = NULL;
+
 }
 
 static void
@@ -74,6 +82,8 @@ gibbon_archive_finalize (GObject *object)
                 g_free (self->priv->session_directory);
         self->priv->session_directory = NULL;
 
+        self->priv->app = NULL;
+
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
 
@@ -88,13 +98,16 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
 }
 
 GibbonArchive *
-gibbon_archive_new (void)
+gibbon_archive_new (GibbonApp *app)
 {
         GibbonArchive *self;
         const gchar *documents_servers_directory;
         gboolean first_run = FALSE;
 
         self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
+
+        self->priv->app = app;
+
         documents_servers_directory =
                 g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS);
 
@@ -102,7 +115,9 @@ gibbon_archive_new (void)
                 documents_servers_directory = g_get_home_dir ();
 
         if (!documents_servers_directory) {
-                display_error (_("Cannot determine documents servers_directory!"));
+                gibbon_app_display_error (app,
+                                          _("Cannot determine documents"
+                                            " servers_directory!"));
                 g_object_unref (self);
                 return NULL;
         }
@@ -115,23 +130,22 @@ gibbon_archive_new (void)
 
         /* FIXME! Use constants from sys/stat.h!  */
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, 0755)) {
-                display_error (_("Failed to created servers_directory"
-                               " `%s': %s!"),
+                gibbon_app_display_error (app,
+                                          _("Failed to create"
+                                            " servers_directory `%s': %s!"),
                                self->priv->servers_directory,
                                strerror (errno));
                 g_object_unref (self);
                 return NULL;
         }
 
-        g_signal_connect_swapped (connection, "logged_in",
-                                  G_CALLBACK (gibbon_archive_on_login),
-                                  self);
-
         if (first_run)
-                display_info (_("You can import settings and saved"
-                                " games from your old client."
-                                " Check the menu `Extras' to see if"
-                                " your old client software is supported!"));
+                gibbon_app_display_info (app,
+                                         _("You can import settings and saved"
+                                           " games from your old client."
+                                           " Check the menu `Extras' to see if"
+                                           " your old client software is"
+                                           " supported!"));
 
         return self;
 }
@@ -140,7 +154,7 @@ GibbonArchive *
 gibbon_archive_new_from_session_info (const gchar *host, guint port,
                                       const gchar *login)
 {
-        GibbonArchive *self = gibbon_archive_new ();
+        GibbonArchive *self = gibbon_archive_new (NULL);
         gchar *session_directory;
         gchar *buf;
 
@@ -154,7 +168,7 @@ gibbon_archive_new_from_session_info (const gchar *host, guint port,
                 g_free (session_directory);
                 session_directory = buf;
         }
-        buf = g_build_filename (session_directory, login);
+        buf = g_build_filename (session_directory, login, NULL);
         g_free (session_directory);
         self->priv->session_directory = buf;
 
@@ -162,16 +176,18 @@ gibbon_archive_new_from_session_info (const gchar *host, guint port,
 }
 
 static void
-gibbon_archive_on_login (GibbonArchive *self, const gchar *host)
+gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
 {
         guint port;
         const gchar *login;
+        const gchar *host;
         gchar *session_directory;
         gchar *buf;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
 
         login = gibbon_connection_get_login (connection);
+        host = gibbon_connection_get_hostname (connection);
         port = gibbon_connection_get_port (connection);
 
         if (self->priv->session_directory)
@@ -184,7 +200,7 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *host)
                 g_free (session_directory);
                 session_directory = buf;
         }
-        buf = g_build_filename (session_directory, login);
+        buf = g_build_filename (session_directory, login, NULL);
         g_free (session_directory);
         self->priv->session_directory = buf;
 }
