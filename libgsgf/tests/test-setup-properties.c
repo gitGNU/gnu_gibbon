@@ -128,24 +128,24 @@ test_collection(GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_AB(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AB");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "AB");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_stone;
         gsize num_stones;
         guint stone;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'AB'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 fprintf(stderr, "Property 'AB' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_stone_backgammon_get_type ()) {
                 fprintf(stderr, "Expected GSGFStoneBackgammon, not %s!\n",
@@ -189,24 +189,24 @@ test_prop_AB(const GSGFNode *node)
 static gboolean
 test_prop_AW(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AW");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "AW");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_stone;
         gsize num_stones;
         guint stone;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'AW'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 fprintf(stderr, "Property 'AW' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_stone_backgammon_get_type ()) {
                 fprintf(stderr, "Expected GSGFStoneBackgammon, not %s!\n",
@@ -262,7 +262,7 @@ test_prop_AW(const GSGFNode *node)
 static gboolean
 test_prop_AE(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AE");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "AE");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -272,17 +272,17 @@ test_prop_AE(const GSGFNode *node)
                           15, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'AE'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 fprintf(stderr, "Property 'AE' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 fprintf(stderr, "Expected GSGFPointBackgammon, not %s!\n",
@@ -321,21 +321,21 @@ test_prop_AE(const GSGFNode *node)
 static gboolean
 test_prop_PL (const GSGFNode *node, GSGFColorEnum expect, const gchar *name)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked(node, "PL");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value(node, "PL");
         GSGFColor *color;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'PL'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_COLOR (cooked_value)) {
+        if (!GSGF_IS_COLOR (value)) {
                 fprintf (stderr, "Property 'PL' is not a GSGFColor!\n");
                 return FALSE;
         }
 
-        color = GSGF_COLOR (cooked_value);
+        color = GSGF_COLOR (value);
         if (expect != gsgf_color_get_color (color)) {
                 fprintf (stderr, "Property 'PL' is not %s!\n", name);
                 return FALSE;

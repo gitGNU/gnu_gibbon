@@ -83,24 +83,26 @@ test_collection (GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_BL (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "BL");
-        gdouble value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "BL");
+        gdouble double_value;
         gdouble expect = 1.1;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'BL'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_REAL (cooked_value)) {
+        if (!GSGF_IS_REAL (value)) {
                 g_printerr ("Property 'BL' is not a GSGFReal!\n");
                 return FALSE;
         }
 
-        value = gsgf_real_get_value (GSGF_REAL (cooked_value));
-        if (((expect - value) < -0.1) || ((expect - value) > 0.1)) {
-                g_printerr ("BL: Expected %f, not %f!\n", expect, value);
+        double_value = gsgf_real_get_value (GSGF_REAL (value));
+        if (((expect - double_value) < -0.1)
+             || ((expect - double_value) > 0.1)) {
+                g_printerr ("BL: Expected %f, not %f!\n",
+                            expect, double_value);
                 return FALSE;
         }
 
@@ -110,24 +112,26 @@ test_prop_BL (const GSGFNode *node)
 static gboolean
 test_prop_OB (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "OB");
-        gdouble value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "OB");
+        gdouble double_value;
         gdouble expect = 2.2;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'OB'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_REAL (cooked_value)) {
+        if (!GSGF_IS_REAL (value)) {
                 g_printerr ("Property 'OB' is not a GSGFReal!\n");
                 return FALSE;
         }
 
-        value = gsgf_real_get_value (GSGF_REAL (cooked_value));
-        if (((expect - value) < -0.1) || ((expect - value) > 0.1)) {
-                g_printerr ("OB: Expected %f, not %f!\n", expect, value);
+        double_value = gsgf_real_get_value (GSGF_REAL (value));
+        if (((expect - double_value) < -0.1)
+             || ((expect - double_value) > 0.1)) {
+                g_printerr ("OB: Expected %f, not %f!\n",
+                            expect, double_value);
                 return FALSE;
         }
 
@@ -137,24 +141,26 @@ test_prop_OB (const GSGFNode *node)
 static gboolean
 test_prop_OW (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "OW");
-        gdouble value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "OW");
+        gdouble double_value;
         gdouble expect = 3.3;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'OW'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_REAL (cooked_value)) {
+        if (!GSGF_IS_REAL (value)) {
                 g_printerr ("Property 'OW' is not a GSGFReal!\n");
                 return FALSE;
         }
 
-        value = gsgf_real_get_value (GSGF_REAL (cooked_value));
-        if (((expect - value) < -0.1) || ((expect - value) > 0.1)) {
-                g_printerr ("OW: Expected %f, not %f!\n", expect, value);
+        double_value = gsgf_real_get_value (GSGF_REAL (value));
+        if (((expect - double_value) < -0.1)
+             || ((expect - double_value) > 0.1)) {
+                g_printerr ("OW: Expected %f, not %f!\n",
+                            expect, double_value);
                 return FALSE;
         }
 
@@ -164,24 +170,26 @@ test_prop_OW (const GSGFNode *node)
 static gboolean
 test_prop_WL (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "WL");
-        gdouble value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "WL");
+        gdouble double_value;
         gdouble expect = 4.4;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'WL'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_REAL (cooked_value)) {
+        if (!GSGF_IS_REAL (value)) {
                 g_printerr ("Property 'WL' is not a GSGFReal!\n");
                 return FALSE;
         }
 
-        value = gsgf_real_get_value (GSGF_REAL (cooked_value));
-        if (((expect - value) < -0.1) || ((expect - value) > 0.1)) {
-                g_printerr ("WL: Expected %f, not %f!\n", expect, value);
+        double_value = gsgf_real_get_value (GSGF_REAL (value));
+        if (((expect - double_value) < -0.1)
+             || ((expect - double_value) > 0.1)) {
+                g_printerr ("WL: Expected %f, not %f!\n",
+                            expect, double_value);
                 return FALSE;
         }
 

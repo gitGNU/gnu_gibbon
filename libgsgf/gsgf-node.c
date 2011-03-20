@@ -251,20 +251,20 @@ gsgf_node_get_property(const GSGFNode *self, const gchar *id)
 }
 
 /**
- * gsgf_node_get_property_cooked:
+ * gsgf_node_get_property_value:
  * @self: a #GSGFNode.
  * @id: identifier of the property.
  *
- * Get a #GSGFCookedValue identified by %id.
+ * Get a #GSGFValue identified by %id.
  *
  * This is equivalent to retrieving the property first with
  * %gsgf_node_get_property(), and then calling %gsgf_property_get_value()
  * on this #GSGFProperty.
  *
- * Returns: The #GSGFCookedValue identified by %id or %NULL.
+ * Returns: The #GSGFValue identified by %id or %NULL.
  */
-GSGFCookedValue *
-gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id)
+GSGFValue *
+gsgf_node_get_property_value (const GSGFNode *self, const gchar *id)
 {
         GSGFProperty *property;
 
@@ -276,7 +276,7 @@ gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id)
         if (!property)
                 return NULL;
 
-        return GSGF_COOKED_VALUE (gsgf_property_get_value (property));
+        return gsgf_property_get_value (property);
 }
 
 /**

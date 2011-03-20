@@ -132,25 +132,25 @@ test_collection(GSGFCollection *collection, GError *error)
 static gboolean
 test_regular_white_move(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "W");
         const GSGFMoveBackgammon *move;
         gint point, die;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'W'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE(cooked_value)) {
+        if (!GSGF_IS_MOVE(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFMove!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+        if (!GSGF_IS_MOVE_BACKGAMMON(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
                 return FALSE;
         }
-        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+        move = GSGF_MOVE_BACKGAMMON(value);
 
         if (!gsgf_move_backgammon_is_regular(move)) {
                 fprintf(stderr, "Property 'W' is not a regular backgammon move!\n");
@@ -205,25 +205,25 @@ test_regular_white_move(const GSGFNode *node)
 static gboolean
 test_regular_black_move(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "B");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "B");
         const GSGFMoveBackgammon *move;
         gint point, die;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'B'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE(cooked_value)) {
+        if (!GSGF_IS_MOVE(value)) {
                 fprintf(stderr, "Property 'B' is not a GSGFMove!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+        if (!GSGF_IS_MOVE_BACKGAMMON(value)) {
                 fprintf(stderr, "Property 'B' is not a GSGFBackgammonMove!\n");
                 return FALSE;
         }
-        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+        move = GSGF_MOVE_BACKGAMMON(value);
 
         if (!gsgf_move_backgammon_is_regular(move)) {
                 fprintf(stderr, "Property 'B' is not a regular backgammon move!\n");
@@ -302,24 +302,24 @@ test_regular_black_move(const GSGFNode *node)
 static gboolean
 test_double(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "W");
         const GSGFMoveBackgammon *move;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'W'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE(cooked_value)) {
+        if (!GSGF_IS_MOVE(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFMove!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+        if (!GSGF_IS_MOVE_BACKGAMMON(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
                 return FALSE;
         }
-        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+        move = GSGF_MOVE_BACKGAMMON(value);
 
         if (!gsgf_move_backgammon_is_double(move)) {
                 fprintf(stderr, "Property 'W' is not a backgammon double!\n");
@@ -332,24 +332,24 @@ test_double(const GSGFNode *node)
 static gboolean
 test_take(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "B");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "B");
         const GSGFMoveBackgammon *move;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'B'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE(cooked_value)) {
+        if (!GSGF_IS_MOVE(value)) {
                 fprintf(stderr, "Property 'B' is not a GSGFMove!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+        if (!GSGF_IS_MOVE_BACKGAMMON(value)) {
                 fprintf(stderr, "Property 'B' is not a GSGFBackgammonMove!\n");
                 return FALSE;
         }
-        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+        move = GSGF_MOVE_BACKGAMMON(value);
 
         if (!gsgf_move_backgammon_is_take(move)) {
                 fprintf(stderr, "Property 'B' is not a backgammon take!\n");
@@ -362,24 +362,24 @@ test_take(const GSGFNode *node)
 static gboolean
 test_drop(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "W");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "W");
         const GSGFMoveBackgammon *move;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'W'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE(cooked_value)) {
+        if (!GSGF_IS_MOVE(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFMove!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_MOVE_BACKGAMMON(cooked_value)) {
+        if (!GSGF_IS_MOVE_BACKGAMMON(value)) {
                 fprintf(stderr, "Property 'W' is not a GSGFBackgammonMove!\n");
                 return FALSE;
         }
-        move = GSGF_MOVE_BACKGAMMON(cooked_value);
+        move = GSGF_MOVE_BACKGAMMON(value);
 
         if (!gsgf_move_backgammon_is_drop(move)) {
                 fprintf(stderr, "Property 'W' is not a backgammon drop!\n");
@@ -392,21 +392,21 @@ test_drop(const GSGFNode *node)
 static gboolean
 test_prop_MN(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "MN");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "MN");
         const GSGFNumber *move_number;
         gint64 num;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'W'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER(cooked_value)) {
+        if (!GSGF_IS_NUMBER(value)) {
                 fprintf(stderr, "Property 'MN' is not a GSGFNumber!\n");
                 return FALSE;
         }
 
-        move_number = GSGF_NUMBER(cooked_value);
+        move_number = GSGF_NUMBER(value);
         num = gsgf_number_get_value(move_number);
         if (123 != num) {
                 fprintf(stderr, "Property 'MN': expected 123, got %lld\n", num);
@@ -419,13 +419,13 @@ test_prop_MN(const GSGFNode *node)
 static gboolean
 test_prop_KO(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "KO");
+        const GSGFValue *value = gsgf_node_get_property_value(node, "KO");
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No property 'KO'!\n");
                 return FALSE;
         }
-        if (!GSGF_IS_EMPTY (cooked_value)) {
+        if (!GSGF_IS_EMPTY (value)) {
                 fprintf(stderr, "KO property is not a GSGFEmpty!\n");
                 return FALSE;
         }

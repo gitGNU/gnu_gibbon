@@ -313,24 +313,25 @@ test_unique_position_UC (void)
 static gboolean
 test_prop_C (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "C");
-        gchar *value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "C");
+        gchar *text_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'C'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_TEXT (cooked_value)) {
+        if (!GSGF_IS_TEXT (value)) {
                 fprintf (stderr, "Property 'C' is not a GSGFText!\n");
                 return FALSE;
         }
 
-        value = gsgf_text_get_value (GSGF_TEXT (cooked_value));
+        text_value = gsgf_text_get_value (GSGF_TEXT (value));
 #define EXPECT1 "This is the test for node annotation properties."
-        if (strcmp (EXPECT1, value)) {
-                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT1, value);
+        if (strcmp (EXPECT1, text_value)) {
+                fprintf(stderr, "C: Expected '%s', not '%s'!\n",
+                        EXPECT1, text_value);
                 return FALSE;
         }
 
@@ -340,24 +341,25 @@ test_prop_C (const GSGFNode *node)
 static gboolean
 test_prop_DM (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "DM");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "DM");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 1;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'DM'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 fprintf (stderr, "Property 'DM' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                fprintf(stderr, "DM: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                fprintf(stderr, "DM: Expected %d, not %d!\n",
+                        expect, double_value);
                 return FALSE;
         }
 
@@ -367,24 +369,25 @@ test_prop_DM (const GSGFNode *node)
 static gboolean
 test_prop_GB (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "GB");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "GB");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 2;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'GB'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 fprintf (stderr, "Property 'GB' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                fprintf(stderr, "GB: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                fprintf(stderr, "GB: Expected %d, not %d!\n",
+                        expect, double_value);
                 return FALSE;
         }
 
@@ -394,24 +397,25 @@ test_prop_GB (const GSGFNode *node)
 static gboolean
 test_prop_GW (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "GW");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "GW");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 1;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'GW'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 fprintf (stderr, "Property 'GW' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                fprintf(stderr, "GW: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                fprintf(stderr, "GW: Expected %d, not %d!\n",
+                        expect, double_value);
                 return FALSE;
         }
 
@@ -421,24 +425,24 @@ test_prop_GW (const GSGFNode *node)
 static gboolean
 test_prop_HO (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "HO");
-        GSGFDoubleEnum value;
+        const GSGFValue *value = gsgf_node_get_property_value (node, "HO");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 2;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'HO'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 fprintf (stderr, "Property 'HO' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                fprintf(stderr, "HO: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                fprintf(stderr, "HO: Expected %d, not %d!\n",
+                        expect, double_value);
                 return FALSE;
         }
 
@@ -448,24 +452,25 @@ test_prop_HO (const GSGFNode *node)
 static gboolean
 test_prop_N (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "N");
-        gchar *value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "N");
+        gchar *text_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'N'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_SIMPLE_TEXT (cooked_value)) {
+        if (!GSGF_IS_SIMPLE_TEXT (value)) {
                 fprintf (stderr, "Property 'N' is not a GSGFSimpleText!\n");
                 return FALSE;
         }
 
-        value = gsgf_text_get_value (GSGF_TEXT (cooked_value));
+        text_value = gsgf_text_get_value (GSGF_TEXT (value));
 #define EXPECT2 "Node annotation properties"
-        if (strcmp (EXPECT2, value)) {
-                fprintf(stderr, "C: Expected '%s', not '%s'!\n", EXPECT2, value);
+        if (strcmp (EXPECT2, text_value)) {
+                fprintf(stderr, "C: Expected '%s', not '%s'!\n",
+                        EXPECT2, text_value);
                 return FALSE;
         }
 
@@ -475,24 +480,25 @@ test_prop_N (const GSGFNode *node)
 static gboolean
 test_prop_UC (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "UC");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "UC");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 1;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'UC'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 fprintf (stderr, "Property 'UC' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                fprintf(stderr, "UC: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                fprintf(stderr, "UC: Expected %d, not %d!\n", expect,
+                        double_value);
                 return FALSE;
         }
 
@@ -502,23 +508,23 @@ test_prop_UC (const GSGFNode *node)
 static gboolean
 test_prop_V (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "V");
-        gdouble value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "V");
+        gdouble double_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf (stderr, "No property 'V'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_REAL (cooked_value)) {
+        if (!GSGF_IS_REAL (value)) {
                 fprintf (stderr, "Property 'V' is not a GSGFReal!\n");
                 return FALSE;
         }
 
-        value = gsgf_real_get_value (GSGF_REAL (cooked_value));
-        if (value < 1.733 || value > 1.735) {
-                fprintf(stderr, "V: Expected 1.734, not '%g'!\n", value);
+        double_value = gsgf_real_get_value (GSGF_REAL (value));
+        if (double_value < 1.733 || double_value > 1.735) {
+                fprintf(stderr, "V: Expected 1.734, not '%g'!\n", double_value);
                 return FALSE;
         }
 

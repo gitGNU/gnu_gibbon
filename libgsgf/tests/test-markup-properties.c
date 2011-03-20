@@ -157,8 +157,8 @@ test_collection (GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_AR (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "AR");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "AR");
         GSGFListOf *list_of;
         GType type;
         gsize num_lines;
@@ -168,16 +168,16 @@ test_prop_AR (const GSGFNode *node)
         GSGFCookedValue *item;
         gsize i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'AR'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Property 'AR' is not a GSGFListOf!\n");
                 return FALSE;
         }
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
 
         type = gsgf_list_of_get_item_type (list_of);
         if (type != GSGF_TYPE_COMPOSE) {
@@ -254,8 +254,8 @@ test_constraints_AR (void)
 static gboolean
 test_prop_CR (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "CR");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "CR");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -264,17 +264,17 @@ test_prop_CR (const GSGFNode *node)
         gint values[] = { 0, 1, 2, 3 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'CR'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 g_printerr ("Property 'CR' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'CR': Expected GSGFPointBackgammon, not %s!\n",
@@ -369,8 +369,8 @@ test_unique_points_CR (void)
 static gboolean
 test_prop_DD (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "DD");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "DD");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -379,17 +379,17 @@ test_prop_DD (const GSGFNode *node)
         gint values[] = { 0, 1, 2, 3 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'DD'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Property 'DD' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
         type = gsgf_list_of_get_item_type (list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'DD': Expected GSGFPointBackgammon, not %s!\n",
@@ -428,23 +428,23 @@ test_prop_DD (const GSGFNode *node)
 static gboolean
 test_prop_DD_empty (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "DD");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "DD");
         const GSGFListOf *list_of;
         GType type;
         gsize num_points;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No empty property 'DD'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Empty property 'DD' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
         type = gsgf_list_of_get_item_type (list_of);
         if (type != gsgf_empty_get_type ()) {
                 g_printerr ("Empty property 'DD': Expected GSGFEmpty, not %s!\n",
@@ -470,8 +470,8 @@ struct point_simpletext {
 static gboolean
 test_prop_LB (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "LB");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "LB");
         GSGFListOf *list_of;
         GType type;
         gsize num_pairs, i;
@@ -484,16 +484,16 @@ test_prop_LB (const GSGFNode *node)
         gint got_point;
         const gchar *got_label;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'LB'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Property 'LB' is not a GSGFListOf!\n");
                 return FALSE;
         }
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
 
         type = gsgf_list_of_get_item_type (list_of);
         if (type != GSGF_TYPE_COMPOSE) {
@@ -564,8 +564,8 @@ test_unique_points_LB (void)
 static gboolean
 test_prop_LN (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "LN");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "LN");
         GSGFListOf *list_of;
         GType type;
         gsize num_lines;
@@ -575,16 +575,16 @@ test_prop_LN (const GSGFNode *node)
         GSGFCookedValue *item;
         gsize i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'LN'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Property 'LN' is not a GSGFListOf!\n");
                 return FALSE;
         }
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
 
         type = gsgf_list_of_get_item_type (list_of);
         if (type != GSGF_TYPE_COMPOSE) {
@@ -661,8 +661,8 @@ test_constraints_LN (void)
 static gboolean
 test_prop_MA (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "MA");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "MA");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -671,17 +671,17 @@ test_prop_MA (const GSGFNode *node)
         gint values[] = { 4, 5, 6, 7 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'MA'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 g_printerr ("Property 'MA' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'MA': Expected GSGFPointBackgammon, not %s!\n",
@@ -776,8 +776,8 @@ test_unique_points_MA (void)
 static gboolean
 test_prop_SL (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "SL");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "SL");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -786,17 +786,17 @@ test_prop_SL (const GSGFNode *node)
         gint values[] = { 8, 9, 10, 11 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'SL'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 g_printerr ("Property 'SL' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'SL': Expected GSGFPointBackgammon, not %s!\n",
@@ -891,8 +891,8 @@ test_unique_points_SL (void)
 static gboolean
 test_prop_SQ (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "SQ");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "SQ");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -901,17 +901,17 @@ test_prop_SQ (const GSGFNode *node)
         gint values[] = { 12, 13, 14, 15 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'SQ'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 g_printerr ("Property 'SQ' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'SQ': Expected GSGFPointBackgammon, not %s!\n",
@@ -1007,8 +1007,8 @@ test_unique_points_SQ (void)
 static gboolean
 test_prop_TR (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "TR");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "TR");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -1017,17 +1017,17 @@ test_prop_TR (const GSGFNode *node)
         gint values[] = { 16, 17, 18, 19 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'TR'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF(cooked_value)) {
+        if (!GSGF_IS_LIST_OF(value)) {
                 g_printerr ("Property 'TR' is not a GSGFListOf!\n");
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF(cooked_value);
+        list_of = GSGF_LIST_OF(value);
         type = gsgf_list_of_get_item_type(list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'TR': Expected GSGFPointBackgammon, not %s!\n",

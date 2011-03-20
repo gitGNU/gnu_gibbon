@@ -73,7 +73,8 @@ struct _GSGFProperty *gsgf_node_get_property(const GSGFNode *self, const gchar *
 GList *gsgf_node_get_property_ids(const GSGFNode *self);
 void gsgf_node_remove_property(GSGFNode *self, const gchar *id);
 
-GSGFCookedValue *gsgf_node_get_property_cooked(const GSGFNode *self, const gchar *id);
+GSGFValue *gsgf_node_get_property_value (const GSGFNode *self,
+                                         const gchar *id);
 GSGFNode *gsgf_node_get_previous_node(const GSGFNode *self);
 const GSGFFlavor *gsgf_node_get_flavor(const GSGFNode *self);
 GSGFGameTree *gsgf_node_get_game_tree (const GSGFNode *self);

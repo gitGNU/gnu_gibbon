@@ -113,32 +113,32 @@ test_collection (GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_FG (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "FG");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "FG");
         gint64 number_value;
         gchar *simple_text_value;
         gsize length;
         const GSGFCookedValue *subvalue;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'FG'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_COMPOSE (cooked_value)) {
+        if (!GSGF_IS_COMPOSE (value)) {
                 g_printerr ("Property 'FG' is not a GSGFCompose ");
-                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
-        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(cooked_value));
+        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(value));
         if (length != 2) {
                 g_printerr ("Property 'FG': Expected 2 subvalues, got %u.\n",
                             length);
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 1);
+        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (value), 1);
         if (!subvalue) {
                 g_printerr ("No first 'FG' subvalue!\n");
                 return FALSE;
@@ -154,7 +154,7 @@ test_prop_FG (const GSGFNode *node)
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (cooked_value), 0);
+        subvalue = gsgf_compose_get_value (GSGF_COMPOSE (value), 0);
         if (!subvalue) {
                 g_printerr ("No first 'FG' subvalue!\n");
                 return FALSE;
@@ -176,17 +176,17 @@ test_prop_FG (const GSGFNode *node)
 static gboolean
 test_prop_empty_FG (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "FG");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "FG");
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'FG'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_EMPTY (cooked_value)) {
+        if (!GSGF_IS_EMPTY (value)) {
                 g_printerr ("Property 'FG' is not a GSGFEmpty ");
-                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
@@ -196,22 +196,22 @@ test_prop_empty_FG (const GSGFNode *node)
 static gboolean
 test_prop_PM (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "PM");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "PM");
         GSGFNumber *number;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'PM'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER (cooked_value)) {
+        if (!GSGF_IS_NUMBER (value)) {
                 g_printerr ("Property 'PM' is not a GSGFNumber ");
-                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
-        number = GSGF_NUMBER (cooked_value);
+        number = GSGF_NUMBER (value);
         if (1 != gsgf_number_get_value (number)) {
                 g_printerr ("Property 'PM': expected 1, got %lld\n",
                             gsgf_number_get_value (number));
@@ -224,8 +224,8 @@ test_prop_PM (const GSGFNode *node)
 static gboolean
 test_prop_VW (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "VW");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "VW");
         const GSGFListOf *list_of;
         GType type;
         GSGFCookedValue *cooked_point;
@@ -234,18 +234,18 @@ test_prop_VW (const GSGFNode *node)
         gint values[] = { 0, 1, 2, 3 };
         gsize expect_num_points, i;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'VW'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Property 'VW' is not a GSGFListOf ");
-                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
         type = gsgf_list_of_get_item_type (list_of);
         if (type != gsgf_point_backgammon_get_type ()) {
                 g_printerr ("Property 'VW': Expected GSGFPointBackgammon, not %s!\n",
@@ -284,24 +284,24 @@ test_prop_VW (const GSGFNode *node)
 static gboolean
 test_prop_empty_VW (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "VW");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "VW");
         const GSGFListOf *list_of;
         GType type;
         gsize num_points;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No empty property 'VW'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_LIST_OF (cooked_value)) {
+        if (!GSGF_IS_LIST_OF (value)) {
                 g_printerr ("Empty property 'VW' is not a GSGFListOf ");
-                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                g_printerr ("but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
-        list_of = GSGF_LIST_OF (cooked_value);
+        list_of = GSGF_LIST_OF (value);
         type = gsgf_list_of_get_item_type (list_of);
         if (type != gsgf_empty_get_type ()) {
                 g_printerr ("Empty property 'VW': Expected GSGFEmpty, not %s!\n",

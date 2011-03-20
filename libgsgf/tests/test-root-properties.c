@@ -90,28 +90,28 @@ test_collection(GSGFCollection *collection, GError *error)
 static gboolean
 test_prop_AP(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "AP");
-        gchar *value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "AP");
+        gchar *text_value;
         gsize length;
         const GSGFCookedValue *subvalue;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'AP'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_COMPOSE(cooked_value)) {
+        if (!GSGF_IS_COMPOSE(value)) {
                 fprintf(stderr, "Root property 'AP' is not a GSGFCompose!\n");
                 return FALSE;
         }
 
-        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(cooked_value));
+        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(value));
         if (length != 2) {
                 fprintf(stderr, "Property 'AP': Expected 2 subvalues, got %u.\n", length);
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 0);
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(value), 0);
         if (!subvalue) {
                 fprintf(stderr, "No first 'AP' subvalue!\n");
                 return FALSE;
@@ -120,13 +120,13 @@ test_prop_AP(const GSGFNode *node)
                 fprintf(stderr, "First 'AP' subvalue is not a GSGFSimpleText!\n");
                 return FALSE;
         }
-        value = gsgf_text_get_value(GSGF_TEXT(subvalue));
-        if (strcmp("foobar", value)) {
-                fprintf(stderr, "Expected 'foobar', not '%s'!\n", value);
+        text_value = gsgf_text_get_value(GSGF_TEXT(subvalue));
+        if (strcmp("foobar", text_value)) {
+                fprintf(stderr, "Expected 'foobar', not '%s'!\n", text_value);
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 1);
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(value), 1);
         if (!subvalue) {
                 fprintf(stderr, "No second 'AP' subvalue!\n");
                 return FALSE;
@@ -135,9 +135,9 @@ test_prop_AP(const GSGFNode *node)
                 fprintf(stderr, "Second 'AP' subvalue is not a GSGFSimpleText!\n");
                 return FALSE;
         }
-        value = gsgf_text_get_value(GSGF_TEXT(subvalue));
-        if (strcmp("1.2.3", value)) {
-                fprintf(stderr, "Expected '1.2.3', not '%s'!\n", value);
+        text_value = gsgf_text_get_value(GSGF_TEXT(subvalue));
+        if (strcmp("1.2.3", text_value)) {
+                fprintf(stderr, "Expected '1.2.3', not '%s'!\n", text_value);
                 return FALSE;
         }
 
@@ -147,22 +147,23 @@ test_prop_AP(const GSGFNode *node)
 static gboolean
 test_prop_CA(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "CA");
-        gchar *value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "CA");
+        gchar *text_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'CA'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_SIMPLE_TEXT(cooked_value)) {
+        if (!GSGF_IS_SIMPLE_TEXT(value)) {
                 fprintf(stderr, "Root property 'CA' is not a GSGFSimpleText!\n");
                 return FALSE;
         }
 
-        value = gsgf_text_get_value(GSGF_TEXT(cooked_value));
-        if (strcmp ("UTF-8", value)) {
-                fprintf(stderr, "CA: Expected 'UTF-8', got '%s'!\n", value);
+        text_value = gsgf_text_get_value(GSGF_TEXT(value));
+        if (strcmp ("UTF-8", text_value)) {
+                fprintf(stderr, "CA: Expected 'UTF-8', got '%s'!\n",
+                        text_value);
                 return FALSE;
         }
 
@@ -172,22 +173,22 @@ test_prop_CA(const GSGFNode *node)
 static gboolean
 test_prop_FF(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "FF");
-        gint value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "FF");
+        gint int_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'FF'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER(cooked_value)) {
+        if (!GSGF_IS_NUMBER(value)) {
                 fprintf(stderr, "Root property 'FF' is not a GSGFNumber!\n");
                 return FALSE;
         }
 
-        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
-        if (4 != value) {
-                fprintf(stderr, "FF: Expected 4, got %d!\n", value);
+        int_value = gsgf_number_get_value(GSGF_NUMBER(value));
+        if (4 != int_value) {
+                fprintf(stderr, "FF: Expected 4, got %d!\n", int_value);
                 return FALSE;
         }
 
@@ -197,22 +198,22 @@ test_prop_FF(const GSGFNode *node)
 static gboolean
 test_prop_GM(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "GM");
-        gint value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "GM");
+        gint int_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'GM'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER(cooked_value)) {
+        if (!GSGF_IS_NUMBER(value)) {
                 fprintf(stderr, "Root property 'GM' is not a GSGFNumber!\n");
                 return FALSE;
         }
 
-        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
-        if (6 != value) {
-                fprintf(stderr, "GM: Expected 6, got %d!\n", value);
+        int_value = gsgf_number_get_value(GSGF_NUMBER(value));
+        if (6 != int_value) {
+                fprintf(stderr, "GM: Expected 6, got %d!\n", int_value);
                 return FALSE;
         }
 
@@ -222,22 +223,22 @@ test_prop_GM(const GSGFNode *node)
 static gboolean
 test_prop_ST(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "ST");
-        gint value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "ST");
+        gint int_value;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'ST'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_NUMBER(cooked_value)) {
+        if (!GSGF_IS_NUMBER(value)) {
                 fprintf(stderr, "Root property 'ST' is not a GSGFNumber!\n");
                 return FALSE;
         }
 
-        value = gsgf_number_get_value(GSGF_NUMBER(cooked_value));
-        if (3 != value) {
-                fprintf(stderr, "GM: Expected 3, got %d!\n", value);
+        int_value = gsgf_number_get_value(GSGF_NUMBER(value));
+        if (3 != int_value) {
+                fprintf(stderr, "GM: Expected 3, got %d!\n", int_value);
                 return FALSE;
         }
 
@@ -247,29 +248,29 @@ test_prop_ST(const GSGFNode *node)
 static gboolean
 test_prop_SZ(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "SZ");
-        gint64 value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "SZ");
+        gint64 int_value;
         gsize length;
         const GSGFCookedValue *subvalue;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'SZ'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_COMPOSE(cooked_value)) {
+        if (!GSGF_IS_COMPOSE(value)) {
                 fprintf(stderr, "Root property 'SZ' is not a GSGFCompose ");
-                fprintf(stderr, "but a '%s'.\n", G_OBJECT_TYPE_NAME (cooked_value));
+                fprintf(stderr, "but a '%s'.\n", G_OBJECT_TYPE_NAME (value));
                 return FALSE;
         }
 
-        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(cooked_value));
+        length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(value));
         if (length != 2) {
                 fprintf(stderr, "Property 'SZ': Expected 2 subvalues, got %u.\n", length);
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 0);
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(value), 0);
         if (!subvalue) {
                 fprintf(stderr, "No first 'SZ' subvalue!\n");
                 return FALSE;
@@ -278,13 +279,13 @@ test_prop_SZ(const GSGFNode *node)
                 fprintf(stderr, "First 'SZ' subvalue is not a GSGFNumber!\n");
                 return FALSE;
         }
-        value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
-        if (24 != value) {
-                fprintf(stderr, "Expected 24, not %lld!\n", value);
+        int_value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
+        if (24 != int_value) {
+                fprintf(stderr, "Expected 24, not %lld!\n", int_value);
                 return FALSE;
         }
 
-        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(cooked_value), 1);
+        subvalue = gsgf_compose_get_value(GSGF_COMPOSE(value), 1);
         if (!subvalue) {
                 fprintf(stderr, "No second 'SZ' subvalue!\n");
                 return FALSE;
@@ -293,9 +294,9 @@ test_prop_SZ(const GSGFNode *node)
                 fprintf(stderr, "Second 'SZ' subvalue is not a GSGFNumber!\n");
                 return FALSE;
         }
-        value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
-        if (1 != value) {
-                fprintf(stderr, "Expected 1, not %lld!\n", value);
+        int_value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
+        if (1 != int_value) {
+                fprintf(stderr, "Expected 1, not %lld!\n", int_value);
                 return FALSE;
         }
 
@@ -305,30 +306,30 @@ test_prop_SZ(const GSGFNode *node)
 static gboolean
 test_prop_XY(const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value = gsgf_node_get_property_cooked(node, "XY");
-        const gchar *value;
+        const GSGFValue *value = gsgf_node_get_property_value(node, "XY");
+        const gchar *raw_value;
         gsize length;
 
-        if (!cooked_value) {
+        if (!value) {
                 fprintf(stderr, "No root property 'XY'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_RAW(cooked_value)) {
+        if (!GSGF_IS_RAW(value)) {
                 fprintf(stderr, "Root property 'XY' is not a GSGFRaw!\n");
                 return FALSE;
         }
 
-        length = gsgf_raw_get_number_of_values(GSGF_RAW(cooked_value));
+        length = gsgf_raw_get_number_of_values(GSGF_RAW(value));
         if (length != 2) {
                 fprintf(stderr, "Expected 2 values for 'XY', got %u.\n", length);
                 return FALSE;
         }
 
-        value = gsgf_raw_get_value(GSGF_RAW(cooked_value), 0);
-        if (strcmp("Proprietary property #1", value)) {
+        raw_value = gsgf_raw_get_value(GSGF_RAW(value), 0);
+        if (strcmp("Proprietary property #1", raw_value)) {
                 fprintf(stderr, "Expected 'Proprietary property #1', got '%s'!\n",
-                        value);
+                        raw_value);
                 return FALSE;
         }
 

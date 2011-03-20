@@ -164,7 +164,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
          * The GM property defines the type of game.  We are only interested
          * in backgammon games (type 6).
          */
-        number = GSGF_NUMBER(gsgf_node_get_property_cooked(root, "GM"));
+        number = GSGF_NUMBER(gsgf_node_get_property_value (root, "GM"));
         if (6 != gsgf_number_get_value(number)) {
                printf("%s: not backgammon but type %lld!\n",
                       path, (long long int) gsgf_number_get_value(number));
@@ -174,7 +174,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         /* The AP property gives information about the application that
          * created the SGF file.  It is not necessarily present.
          */
-        cooked = gsgf_node_get_property_cooked(root, "AP");
+        cooked = GSGF_COOKED_VALUE (gsgf_node_get_property_value (root, "AP"));
         if (cooked) {
                 /* The AP property is a property composed of two
                  * GSGFSimpleText values.
@@ -216,8 +216,10 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         while (iter) {
                 if (strcmp("GM", (gchar *) iter->data)
                     && strcmp("AP", (gchar *) iter->data)) {
-                        cooked = gsgf_node_get_property_cooked(root,
-                                                               (gchar *) iter->data);
+                        cooked = GSGF_COOKED_VALUE (
+                                gsgf_node_get_property_value (root,
+                                                             (gchar *)
+                                                              iter->data));
 
                         /* Print the type of this object.  If the
                          * object in question is not known to
@@ -260,15 +262,17 @@ list_bg_move (const gchar *path, const GSGFNode *node)
 {
         char prop_id[2] = { 'W', 0 };
         const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node,
-                                                       prop_id);
+                GSGF_COOKED_VALUE (gsgf_node_get_property_value (node,
+                                                                 prop_id));
         const GSGFMoveBackgammon *move;
         gint i;
 
         if (!cooked_value) {
                 /* Not a W property, try B.  */
                 prop_id[0] = 'B';
-                cooked_value = gsgf_node_get_property_cooked (node, prop_id);
+                cooked_value =
+                        GSGF_COOKED_VALUE (gsgf_node_get_property_value (node,
+                                                                         prop_id));
         }
 
         if (!cooked_value) {

@@ -355,24 +355,23 @@ test_discard_properties (void)
 static gboolean
 test_prop_BM (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "BM");
-        GSGFDoubleEnum value;
+        const GSGFValue *value = gsgf_node_get_property_value (node, "BM");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 1;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'BM'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 g_printerr ("Property 'BM' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                g_printerr ("BM: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                g_printerr ("BM: Expected %d, not %d!\n", expect, double_value);
                 return FALSE;
         }
 
@@ -382,15 +381,15 @@ test_prop_BM (const GSGFNode *node)
 static gboolean
 test_prop_DO (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "DO");
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "DO");
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'DO'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_EMPTY (cooked_value)) {
+        if (!GSGF_IS_EMPTY (value)) {
                 g_printerr ("Property 'DO' is not a GSGFDouble!\n");
                 return FALSE;
         }
@@ -401,24 +400,24 @@ test_prop_DO (const GSGFNode *node)
 static gboolean
 test_prop_IT (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "IT");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "IT");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 1;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'IT'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 g_printerr ("Property 'IT' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                g_printerr ("IT: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                g_printerr ("IT: Expected %d, not %d!\n", expect, double_value);
                 return FALSE;
         }
 
@@ -428,24 +427,24 @@ test_prop_IT (const GSGFNode *node)
 static gboolean
 test_prop_TE (const GSGFNode *node)
 {
-        const GSGFCookedValue *cooked_value =
-                        gsgf_node_get_property_cooked (node, "TE");
-        GSGFDoubleEnum value;
+        const GSGFValue *value =
+                        gsgf_node_get_property_value (node, "TE");
+        GSGFDoubleEnum double_value;
         GSGFDoubleEnum expect = 2;
 
-        if (!cooked_value) {
+        if (!value) {
                 g_printerr ("No property 'TE'!\n");
                 return FALSE;
         }
 
-        if (!GSGF_IS_DOUBLE (cooked_value)) {
+        if (!GSGF_IS_DOUBLE (value)) {
                 g_printerr ("Property 'TE' is not a GSGFDouble!\n");
                 return FALSE;
         }
 
-        value = gsgf_double_get_value (GSGF_DOUBLE (cooked_value));
-        if (expect != value) {
-                g_printerr ("TE: Expected %d, not %d!\n", expect, value);
+        double_value = gsgf_double_get_value (GSGF_DOUBLE (value));
+        if (expect != double_value) {
+                g_printerr ("TE: Expected %d, not %d!\n", expect, double_value);
                 return FALSE;
         }
 
