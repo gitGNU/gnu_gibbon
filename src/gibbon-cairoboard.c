@@ -27,6 +27,7 @@
 #include "gibbon-cairoboard.h"
 #include "game.h"
 #include "svg-util.h"
+#include "gibbon-board.h"
 
 /* This lookup table determines, iff and where to draw a certain checker.
  * The index is the number of checkers, the first number is the position
@@ -75,7 +76,11 @@ struct _GibbonCairoboardPrivate {
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GIBBON_TYPE_CAIROBOARD,           \
                                       GibbonCairoboardPrivate))
-G_DEFINE_TYPE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_AREA);
+
+static void gibbon_board_iface_init (GibbonBoardIface *iface);
+G_DEFINE_TYPE_WITH_CODE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_AREA,
+                         G_IMPLEMENT_INTERFACE (GIBBON_TYPE_BOARD,
+                                                gibbon_board_iface_init))
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -143,6 +148,12 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         }
 
         return;
+}
+
+static void
+gibbon_board_iface_init (GibbonBoardIface *iface)
+{
+        /* iface->do_this = gibbon_cairoboard_do_this;  */
 }
 
 static void
