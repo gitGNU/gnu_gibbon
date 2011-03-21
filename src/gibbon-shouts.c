@@ -113,15 +113,16 @@ gibbon_shouts_new (GibbonApp *app)
                                      GTK_WRAP_WORD);
         self->priv->buffer = gtk_text_view_get_buffer (self->priv->text_view);
 
+        /* Pidgin uses #cc00000 and #204a87 as the default colors.  */
         self->priv->date_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#a82f2f",
+                                            "foreground", "#cc0000",
                                             "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
         self->priv->sender_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#a82f2f",
+                                            "foreground", "#cc0000",
                                             NULL);
 
         return self;
