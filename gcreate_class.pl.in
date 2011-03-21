@@ -313,7 +313,7 @@ $copyright
  * $class:
  *
  * One instance of a #$class.  All properties are private.
- **/
+ */
 typedef struct _$class $class;
 struct _$class
 {
@@ -324,7 +324,7 @@ struct _$class
  * ${class}Class:
  *
  * $fm! The author was negligent enough to not document this class!
- **/
+ */
 typedef struct _${class}Class ${class}Class;
 struct _${class}Class
 {
@@ -375,7 +375,7 @@ $copyright
  * Since: @VERSION@
  *
  * $fm! Long description missing!
- **/
+ */
 
 #include <glib.h>
 #include <glib/gi18n.h>
