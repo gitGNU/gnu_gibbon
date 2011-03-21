@@ -413,7 +413,7 @@ gibbon_session_clip_shouts (GibbonSession *self,
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
-        fibs_message = gibbon_fibs_message_new (message);
+        fibs_message = gibbon_fibs_message_new (ptr);
         if (!fibs_message)
                 return -1;
 
