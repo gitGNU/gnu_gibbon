@@ -40,6 +40,7 @@
 #include "gibbon-connection.h"
 #include "gibbon-signal.h"
 #include "gibbon-server-console.h"
+#include "gibbon-shouts.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -53,6 +54,7 @@ struct _GibbonAppPrivate {
         GibbonPrefs *prefs;
         GibbonConnectionDialog *connection_dialog;
         GibbonConnection *connection;
+        GibbonShouts *shouts;
 
         GibbonSignal *resolving_signal;
         GibbonSignal *connecting_signal;
@@ -115,6 +117,7 @@ gibbon_app_init (GibbonApp *self)
         self->priv->prefs = NULL;
         self->priv->connection_dialog = NULL;
         self->priv->connection = NULL;
+        self->priv->shouts = NULL;
 
         self->priv->resolving_signal = NULL;
         self->priv->connecting_signal = NULL;
@@ -137,6 +140,10 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->game_chat)
                 g_object_unref (self->priv->game_chat);
         self->priv->game_chat = NULL;
+
+        if (self->priv->shouts)
+                g_object_unref (self->priv->shouts);
+        self->priv->shouts = NULL;
 
         gibbon_app_disconnect (self);
 
@@ -237,6 +244,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 
         self->priv->game_chat = gibbon_game_chat_new (self);
         if (!self->priv->game_chat) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        self->priv->shouts = gibbon_shouts_new (self);
+        if (!self->priv->shouts) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -796,6 +809,14 @@ gibbon_app_get_connection (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->connection;
+}
+
+GibbonShouts *
+gibbon_app_get_shouts (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->shouts;
 }
 
 static void
