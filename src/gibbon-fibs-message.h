@@ -40,5 +40,7 @@ struct _GibbonFIBSMessage
 GType gibbon_fibs_message_get_type (void) G_GNUC_CONST;
 
 GibbonFIBSMessage *gibbon_fibs_message_new (const gchar *raw);
+void gibbon_fibs_message_free (GibbonFIBSMessage *self);
+gchar *gibbon_fibs_message_formatted (const GibbonFIBSMessage *self);
 
 #endif

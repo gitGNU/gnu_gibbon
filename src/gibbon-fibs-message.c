@@ -31,9 +31,9 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-fibs-message.h"
+#include "html-entities.h"
 
 static GibbonFIBSMessage *gibbon_fibs_message_copy (GibbonFIBSMessage *self);
-static void gibbon_fibs_message_free (GibbonFIBSMessage *self);
 
 G_DEFINE_BOXED_TYPE (GibbonFIBSMessage, gibbon_fibs_message,            \
                      gibbon_fibs_message_copy, gibbon_fibs_message_free)
@@ -49,7 +49,7 @@ gibbon_fibs_message_copy (GibbonFIBSMessage *self)
         return copy;
 }
 
-static void
+void
 gibbon_fibs_message_free (GibbonFIBSMessage *self)
 {
         if (self) {
@@ -86,4 +86,10 @@ gibbon_fibs_message_new (const gchar *raw)
         g_strfreev (tokens);
 
         return self;
+}
+
+gchar *
+gibbon_fibs_message_formatted (const GibbonFIBSMessage *self)
+{
+        return decode_html_entities (self->message);
 }
