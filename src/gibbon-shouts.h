@@ -28,6 +28,7 @@
 #include <glib-object.h>
 
 #include "gibbon-app.h"
+#include "gibbon-fibs-message.h"
 
 #define GIBBON_TYPE_SHOUTS \
         (gibbon_shouts_get_type ())
@@ -75,5 +76,7 @@ struct _GibbonShoutsClass
 GType gibbon_shouts_get_type (void) G_GNUC_CONST;
 
 GibbonShouts *gibbon_shouts_new (GibbonApp *app);
+void gibbon_shouts_append_message (const GibbonShouts *self,
+                                   const GibbonFIBSMessage *message);
 
 #endif
