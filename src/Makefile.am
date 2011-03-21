@@ -36,8 +36,7 @@ AM_CPPFLAGS = 				\
 	-D_ISOC99_SOURCE		\
 	-D_SVID_SOURCE
 
-gibbon_SOURCES =		\
-	gibbon.c 		\
+common_SOURCES = 		\
 	gibbon-cairoboard.c	\
 	gibbon-connection.c	\
 	gibbon-connector.c	\
@@ -59,7 +58,10 @@ gibbon_SOURCES =		\
 	gibbon-signal.c				\
 	gibbon-server-console.c							\
 	gibbon-fibs-command.c				\
-	gibbon-shouts.c	
+	gibbon-shouts.c				\
+	gibbon-position.c	
+
+gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
 noinst_HEADERS =		\
 	game.h			\
@@ -84,22 +86,23 @@ noinst_HEADERS =		\
 	gibbon-signal.h			\
 	gibbon-server-console.h				\
 	gibbon-fibs-command.h			\
-	gibbon-shouts.h
+	gibbon-shouts.h			\
+	gibbon-position.h
 
-gibbon_CFLAGS = -DUSE_MAIN
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
 	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
 
-TESTS_C = test_html_entities test_basic_match
+TESTS_C = test_html_entities test_basic_match test_position
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
-check_PROGRAMS = test_html_entities test_basic_match
+check_PROGRAMS = test_html_entities test_basic_match test_position
 
-test_html_entities_SOURCES = $(gibbon_SOURCES) test-html-entities.c
-test_basic_match_SOURCES = $(gibbon_SOURCES) test-basic-match.c
+test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
+test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
+test_position_SOURCES = $(common_SOURCES) test-position.c
 
 SGF_FILES =
 
