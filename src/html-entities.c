@@ -355,6 +355,9 @@ decode_html_entities (const gchar *original)
         gunichar decoded;
         gsize length;
 
+        if (!unichar2name)
+                init_tables ();
+
         while (*ptr) {
                 decoded = read_entity (ptr, &length);
                 if (decoded) {
