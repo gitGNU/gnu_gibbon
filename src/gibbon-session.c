@@ -34,6 +34,7 @@
 #include "gibbon-player-list-view.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-fibs-message.h"
+#include "gibbon-shouts.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -59,12 +60,6 @@ static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what);
 static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
-
-enum gibbon_session_signals {
-        GIBBON_SESSION_SHOUTS,
-        LAST_SIGNAL
-};
-static guint signals[LAST_SIGNAL] = { 0 };
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -131,17 +126,6 @@ gibbon_session_class_init (GibbonSessionClass *klass)
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
         g_type_class_add_private (klass, sizeof (GibbonSessionPrivate));
-
-        signals[GIBBON_SESSION_SHOUTS] =
-                g_signal_new ("shouts",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__BOXED,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_BOXED);
 
         object_class->finalize = gibbon_session_finalize;
 }
@@ -424,9 +408,8 @@ static gint
 gibbon_session_clip_shouts (GibbonSession *self,
                            const gchar *message, const gchar *ptr)
 {
-        const gchar *login;
         GibbonFIBSMessage *fibs_message;
-        gchar **tokens;
+        GibbonShouts *shouts;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -434,10 +417,10 @@ gibbon_session_clip_shouts (GibbonSession *self,
         if (!fibs_message)
                 return -1;
 
-        g_signal_emit (self, signals[GIBBON_SESSION_SHOUTS], 0,
-                       fibs_message);
+        shouts = gibbon_app_get_shouts (self->priv->app);
+        gibbon_shouts_append_message (shouts, fibs_message);
 
-        g_object_unref (fibs_message);
+        gibbon_fibs_message_free (fibs_message);
 
         return CLIP_SHOUTS;
 }
