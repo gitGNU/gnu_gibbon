@@ -336,8 +336,8 @@ gibbon_app_find_object (const GibbonApp *self, const gchar *id, GType type)
                 exit (-1);
         }
 
-        got_type = G_OBJECT_TYPE (obj);
-        if (type != got_type) {
+        if (!G_TYPE_CHECK_INSTANCE_TYPE (obj, type)) {
+                got_type = G_OBJECT_TYPE (obj);
                 gibbon_app_display_error (self,
                                           _("Object `%s' is not of type `%s'"
                                             " but `%s'!"),
@@ -402,13 +402,13 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                   (gpointer) self);
 
         obj = gibbon_app_find_object (self, "quit_menu_item",
-                                      GTK_TYPE_IMAGE_MENU_ITEM);
+                                      GTK_TYPE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   (gpointer) self);
 
         obj = gibbon_app_find_object (self, "connect_menu_item",
-                                      GTK_TYPE_IMAGE_MENU_ITEM);
+                                      GTK_TYPE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_connect_request),
                                   (gpointer) self);
@@ -419,7 +419,7 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                   (gpointer) self);
 
         obj = gibbon_app_find_object (self, "disconnect_menu_item",
-                                      GTK_TYPE_IMAGE_MENU_ITEM);
+                                      GTK_TYPE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_disconnect),
                                   (gpointer) self);
@@ -429,6 +429,7 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                   G_CALLBACK (gibbon_app_disconnect),
                                   (gpointer) self);
 
+        obj = gibbon_app_find_object (self, "window", GTK_TYPE_WINDOW);
         g_signal_connect_swapped (obj, "destroy",
                                   G_CALLBACK (gibbon_app_on_quit_request),
                                   (gpointer) self);
