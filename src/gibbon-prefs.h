@@ -74,12 +74,17 @@ enum GibbonPrefsString {
 
 enum GibbonPrefsInt {
         GIBBON_PREFS_PORT,
+        GIBBON_PREFS_MAX_COMMANDS,
 };
 
 enum GibbonPrefsBoolean {
         GIBBON_PREFS_SAVE_PASSWORD,
         GIBBON_PREFS_DEBUG_TIMESTAMPS,
         GIBBON_PREFS_DEBUG_SERVER_COMM,
+};
+
+enum GibbonPrefsList {
+        GIBBON_PREFS_COMMANDS,
 };
 
 GType gibbon_prefs_get_type (void) G_GNUC_CONST;
@@ -113,5 +118,10 @@ void gibbon_prefs_boolean_update_toggle_button (const GibbonPrefs *self,
 gboolean gibbon_prefs_boolean_read_toggle_button (GibbonPrefs *self,
                                                   GtkToggleButton *button,
                                                   enum GibbonPrefsBoolean key);
+
+GSList *gibbon_prefs_get_list (const GibbonPrefs *self,
+                               enum GibbonPrefsList key);
+void gibbon_prefs_set_list (const GibbonPrefs *self, enum GibbonPrefsList key,
+                            GSList *list);
 
 #endif

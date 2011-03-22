@@ -48,6 +48,8 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
 #define GIBBON_GCONF_SERVER_PREFS_PREFIX "/apps/gibbon/preferences/server/"
 #define GIBBON_GCONF_DEBUG_PREFS_PREFIX \
         "/apps/gibbon/preferences/debugging/"
+#define GIBBON_GCONF_DATA_PREFIX "/apps/gibbon/data/"
+#define GIBBON_GCONF_RECENT_PREFIX "/apps/gibbon/data/recent/"
 
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
@@ -55,6 +57,8 @@ static const gchar *gibbon_prefs_get_int_key (const GibbonPrefs *self,
                                               enum GibbonPrefsInt key);
 static const gchar *gibbon_prefs_get_boolean_key (const GibbonPrefs *self,
                                                   enum GibbonPrefsBoolean key);
+static const gchar *gibbon_prefs_get_list_key (const GibbonPrefs *self,
+                                               enum GibbonPrefsList key);
 
 static void gibbon_prefs_init (GibbonPrefs *self)
 {
@@ -136,6 +140,20 @@ gibbon_prefs_get_int_key (const GibbonPrefs *self,
         switch (key) {
                 case GIBBON_PREFS_PORT:
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "port";
+                case GIBBON_PREFS_MAX_COMMANDS:
+                        return GIBBON_GCONF_RECENT_PREFIX "max_commands";
+        }
+
+        g_return_val_if_reached (NULL);
+}
+
+static const gchar *
+gibbon_prefs_get_list_key (const GibbonPrefs *self,
+                          enum GibbonPrefsList key)
+{
+        switch (key) {
+                case GIBBON_PREFS_COMMANDS:
+                        return GIBBON_GCONF_RECENT_PREFIX "commands";
         }
 
         g_return_val_if_reached (NULL);
@@ -301,5 +319,36 @@ gibbon_prefs_get_int (const GibbonPrefs *self, enum GibbonPrefsInt key)
                 return FALSE;
 
         return gconf_client_get_int (self->priv->client, conf_key, NULL);
+}
+
+void
+gibbon_prefs_set_list (const GibbonPrefs *self, enum GibbonPrefsList key,
+                       GSList *list)
+{
+        const gchar *conf_key;
+
+        g_return_if_fail (GIBBON_IS_PREFS (self));
+
+        conf_key = gibbon_prefs_get_list_key (self, key);
+        if (!conf_key)
+                return;
+
+        gconf_client_set_list (self->priv->client, conf_key,
+                               GCONF_VALUE_STRING, list, NULL);
+}
+
+GSList *
+gibbon_prefs_get_list (const GibbonPrefs *self, enum GibbonPrefsList key)
+{
+        const gchar *conf_key;
+
+        g_return_val_if_fail (GIBBON_IS_PREFS (self), FALSE);
+
+        conf_key = gibbon_prefs_get_list_key (self, key);
+        if (!conf_key)
+                return FALSE;
+
+        return gconf_client_get_list (self->priv->client, conf_key,
+                                      GCONF_VALUE_STRING, NULL);
 }
 
