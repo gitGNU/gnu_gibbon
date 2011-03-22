@@ -96,8 +96,6 @@ static void gibbon_app_on_server_command (const GibbonApp *self,
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
 
-static struct GibbonPosition initial_position;
-
 static void 
 gibbon_app_init (GibbonApp *self)
 {
@@ -168,30 +166,6 @@ gibbon_app_class_init (GibbonAppClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonAppPrivate));
-
-        memset (&initial_position, 0, sizeof initial_position);
-        initial_position.checkers[0] = -2;
-        initial_position.checkers[5] = 5;
-        initial_position.checkers[7] = 3;
-        initial_position.checkers[11] = -5;
-        initial_position.checkers[12] = 5;
-        initial_position.checkers[16] = -3;
-        initial_position.checkers[18] = -5;
-        initial_position.checkers[23] = 2;
-        initial_position.match_length = 23;
-        initial_position.score[0] = 5;
-        initial_position.score[1] = 7;
-        initial_position.dice[0][0] = 0;
-        initial_position.dice[0][1] = 0;
-        initial_position.dice[1][0] = 0;
-        initial_position.dice[1][1] = 0;
-        initial_position.bar[0] = 0;
-        initial_position.bar[1] = 0;
-        initial_position.home[0] = 0;
-        initial_position.home[1] = 0;
-        initial_position.cube = 1;
-        initial_position.may_double[0] = 1;
-        initial_position.may_double[1] = 1;
 
         object_class->finalize = gibbon_app_finalize;
 }
@@ -383,8 +357,6 @@ gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
 
         if (!board)
                 return NULL;
-
-        gibbon_cairoboard_set_position (board, &initial_position);
 
         gtk_widget_show (GTK_WIDGET (board));
         /* FIXME! This should occupy reasonable space by default!  Do

@@ -25,7 +25,6 @@
 #include <libxml/parser.h>
 
 #include "gibbon-cairoboard.h"
-#include "game.h"
 #include "svg-util.h"
 #include "gibbon-board.h"
 
@@ -60,7 +59,7 @@ struct checker_rule checker_lookup[15] = {
 struct _GibbonCairoboardPrivate {
         GibbonApp *app;
 
-        struct GibbonPosition pos;
+        GibbonPosition *pos;
         
         GHashTable *ids;
 
@@ -81,6 +80,9 @@ static void gibbon_board_iface_init (GibbonBoardIface *iface);
 G_DEFINE_TYPE_WITH_CODE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_AREA,
                          G_IMPLEMENT_INTERFACE (GIBBON_TYPE_BOARD,
                                                 gibbon_board_iface_init))
+
+static void gibbon_cairoboard_set_position (GibbonBoard *self,
+                                            GibbonPosition *pos);
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -131,6 +133,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
                                                   GibbonCairoboardPrivate);
 
         self->priv->app = NULL;
+        self->priv->pos = NULL;
 
         self->priv->board = NULL;
         self->priv->white_checker = NULL;
@@ -153,7 +156,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
 static void
 gibbon_board_iface_init (GibbonBoardIface *iface)
 {
-        /* iface->do_this = gibbon_cairoboard_do_this;  */
+        iface->set_position = gibbon_cairoboard_set_position;
 }
 
 static void
@@ -162,12 +165,9 @@ gibbon_cairoboard_finalize (GObject *object)
         GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
         size_t i;
 
-        if (self->priv->pos.player[0])
-                g_free (self->priv->pos.player[0]);
-        self->priv->pos.player[0] = NULL;
-        if (self->priv->pos.player[1])
-                g_free (self->priv->pos.player[1]);
-        self->priv->pos.player[1] = NULL;
+        if (self->priv->pos)
+                gibbon_position_free (self->priv->pos);
+        self->priv->pos = NULL;
 
         if (self->priv->ids)
                 g_hash_table_destroy (self->priv->ids);
@@ -231,6 +231,7 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
         char id_str[8];
 
         self->priv->app = app;
+        self->priv->pos = gibbon_position_new ();
 
         error = NULL;
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
@@ -393,7 +394,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gibbon_cairoboard_draw_bar (self, cr, 1);
         
         for (i = 0; i < 24; ++i)
-                if (self->priv->pos.checkers[i])
+                if (self->priv->pos->points[i])
                         gibbon_cairoboard_draw_point (self, cr, i);
 return;
 
@@ -416,10 +417,10 @@ gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
 return;        
         if (side < 0) {
                 direction = -1;
-                checkers = self->priv->pos.bar[0];
+                checkers = self->priv->pos->bar[0];
         } else if (side > 0) {
                 direction = 1;
-                checkers = self->priv->pos.bar[1];
+                checkers = self->priv->pos->bar[1];
         }
         
         if (!checkers)
@@ -429,24 +430,8 @@ return;
 static void
 gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, gint side)
 {
-        gint direction;
-        gint checkers;
-        
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (side);
-                
-        if (side < 0) {
-                direction = -1;
-                checkers = self->priv->pos.home[0];
-        } else {
-                direction = 1;
-                checkers = self->priv->pos.home[1];
-        }
-
-        if (checkers < 0)
-                checkers = -checkers;
-        g_return_if_fail (checkers <= 15);
-        
 }
 
 static void
@@ -512,7 +497,7 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (point < 24);
 
-        checkers = self->priv->pos.checkers[point];
+        checkers = self->priv->pos->points[point];
         
         if (checkers < 0) {
                 checkers = -checkers;
@@ -560,21 +545,7 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
 static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
-        gint side;
-        guint value;
-        
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
-        
-        value = self->priv->pos.cube;
-
-        if (value == 1) {
-                side = 0;
-                value = 2;
-        } else if (self->priv->pos.may_double[0]) {
-                side = 1;
-        } else {
-                side = -1;
-        }
 }
 
 static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
@@ -597,16 +568,6 @@ static void
 gibbon_draw_dice (GibbonCairoboard *self, cairo_t *cr)
 {
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
-        
-        g_return_if_fail (self->priv->pos.dice[0][0] >= 0
-                          && self->priv->pos.dice[0][0] <= 6);
-        g_return_if_fail (self->priv->pos.dice[0][1] >= 0
-                          && self->priv->pos.dice[0][1] <= 6);
-        g_return_if_fail (self->priv->pos.dice[1][0] >= 0
-                          && self->priv->pos.dice[1][0] <= 6);
-        g_return_if_fail (self->priv->pos.dice[1][1] >= 0
-                          && self->priv->pos.dice[1][1] <= 6);
-       
 }
 
 #if (0)
@@ -622,29 +583,20 @@ gibbon_draw_die (GibbonCairoboard *self, cairo_t *cr,
 }
 #endif
 
-void
-gibbon_cairoboard_set_position (GibbonCairoboard *self,
-                                const struct GibbonPosition *pos)
+static void
+gibbon_cairoboard_set_position (GibbonBoard *_self,
+                                GibbonPosition *pos)
 {
-        struct GibbonPosition *mypos;
-        
-        g_return_if_fail (GIBBON_IS_CAIROBOARD (self)); 
-        g_return_if_fail (pos);
-        
-        mypos = &self->priv->pos;
+        GibbonCairoboard *self;
 
-        if (mypos->player[0])
-                g_free (mypos->player[0]);
-        if (mypos->player[1])
-                g_free (mypos->player[1]);
-                
-        self->priv->pos = *pos;
-        if (self->priv->pos.player[0])
-                self->priv->pos.player[0] = 
-                        g_strdup (self->priv->pos.player[0]);
-        if (self->priv->pos.player[1])
-                self->priv->pos.player[1] = 
-                        g_strdup (self->priv->pos.player[1]);
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (_self));
+        g_return_if_fail (pos != NULL);
+        
+        self = GIBBON_CAIROBOARD (_self);
+
+        if (self->priv->pos)
+                gibbon_position_free (self->priv->pos);
+        self->priv->pos = pos;
         
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }

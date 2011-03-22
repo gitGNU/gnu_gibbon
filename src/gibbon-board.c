@@ -32,6 +32,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-board.h"
+#include "gibbon-position.h"
 
 typedef GibbonBoardIface GibbonBoardInterface;
 G_DEFINE_INTERFACE (GibbonBoard, gibbon_board, G_TYPE_OBJECT)
@@ -39,4 +40,28 @@ G_DEFINE_INTERFACE (GibbonBoard, gibbon_board, G_TYPE_OBJECT)
 static void
 gibbon_board_default_init (GibbonBoardInterface *iface)
 {
+}
+
+/**
+ * gibbon_board_set_position:
+ * @self: the #GibbonBoard
+ * @position: the #GibbonPosition to display
+ *
+ * Apply a #GibbonPosition to a #GibbonBoard.  The #GibbonPosition will now
+ * be owned by the #GibbonBoard.  Do not gibbon_position_free() it.
+ */
+void
+gibbon_board_set_position (GibbonBoard *self, GibbonPosition *position)
+{
+        GibbonBoardIface *iface;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+        g_return_if_fail (position != NULL);
+
+        iface = GIBBON_BOARD_GET_IFACE (self);
+
+        g_return_if_fail (iface->set_position);
+
+        (*iface->set_position) (self, position);
 }

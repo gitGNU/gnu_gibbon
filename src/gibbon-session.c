@@ -27,7 +27,6 @@
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
-#include "game.h"
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-player-list.h"
@@ -35,6 +34,8 @@
 #include "gibbon-cairoboard.h"
 #include "gibbon-fibs-message.h"
 #include "gibbon-shouts.h"
+#include "gibbon-position.h"
+#include "gibbon-board.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -57,7 +58,8 @@ static gboolean gibbon_session_handle_board (GibbonSession *self,
 
 static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
-                               const gchar *what);
+                               const gchar *what,
+                               gint lower, gint upper);
 static gboolean parse_float (const gchar *str, gdouble* result,
                              const gchar *what);
 
@@ -352,7 +354,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                            "rating"),
                               free_vector (tokens));
         g_return_val_if_fail (parse_integer (tokens[6], &experience,
-                                             "experience"),
+                                             "experience", 0, G_MAXINT),
                               free_vector (tokens));
         
         idle = tokens[7];
@@ -425,8 +427,11 @@ gibbon_session_clip_shouts (GibbonSession *self,
         return CLIP_SHOUTS;
 }
 
+/* FIXME! Use g_ascii_strtoll in this function! */
+/* FIXME! Pass upper and lower bounds as arguments. */
 static gboolean
-parse_integer (const gchar *str, gint *result, const gchar *what)
+parse_integer (const gchar *str, gint *result, const gchar *what,
+               gint lower, gint upper)
 {
         char *endptr;
         long int r;
@@ -454,6 +459,8 @@ parse_integer (const gchar *str, gint *result, const gchar *what)
         }
         
         *result = (gint) r;
+        if (*result < lower || *result > upper)
+                return FALSE;
         
         return TRUE;       
 }
@@ -527,15 +534,17 @@ static gboolean
 gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 {
         gchar **tokens;
-        struct GibbonPosition pos;
+        GibbonPosition *pos;
+        GibbonPositionSide turn;
+        gint may_double;
         GibbonCairoboard *board;
         gint i;
+        gint dice[4];
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
         g_return_val_if_fail (string, FALSE);
-        
-        /* FIXME! Fill structure completely instead! */
-        memset (&pos, 0, sizeof pos);
+
+        pos = gibbon_position_new ();
         
         tokens = g_strsplit (string, ":", 99);
 
@@ -544,93 +553,76 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         for (i = 0; i <= 38; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
         
-        pos.player[0] = tokens[0];
-        g_return_val_if_fail (pos.player[0][0], free_vector (tokens));
+        pos->players[0] = g_strdup (tokens[0]);
+        g_return_val_if_fail (pos->players[0][0], free_vector (tokens));
         
-        pos.player[1] = tokens[1];
-        g_return_val_if_fail (pos.player[0][0], free_vector (tokens));
+        pos->players[1] = g_strdup (tokens[1]);
+        g_return_val_if_fail (pos->players[1][0], free_vector (tokens));
         
-        g_return_val_if_fail (parse_integer (tokens[2], &pos.match_length, 
-                              "match length"),
+        g_return_val_if_fail (parse_integer (tokens[2], &pos->match_length,
+                              "match length", 0, G_MAXINT),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.match_length > 0, free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[3], &pos.score[0], "score0"),
+        g_return_val_if_fail (parse_integer (tokens[3], &pos->scores[0],
+                                             "score0", 0, G_MAXINT),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.score[0] >= 0, free_vector (tokens));
-        g_return_val_if_fail (parse_integer (tokens[4], &pos.score[1], "score1"),
+        g_return_val_if_fail (parse_integer (tokens[4], &pos->scores[1],
+                                             "score1", 0, G_MAXINT),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.score[1] >= 0, free_vector (tokens));
         
-        g_return_val_if_fail (parse_integer (tokens[5], &pos.bar[0], "bar0"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.bar[0] >= -15 && pos.bar[0] <= 15,
+        g_return_val_if_fail (parse_integer (tokens[5], &pos->bar[0], "bar0",
+                                             -15, 15),
                               free_vector (tokens));
         
         for (i = 6; i < 30; ++i) {
                 g_return_val_if_fail (parse_integer (tokens[i], 
-                                                     &pos.checkers[i - 6],
-                                                     "checker"),
-                                      free_vector (tokens));
-                g_return_val_if_fail (pos.checkers[i - 6] >= -15
-                                      && pos.checkers[i - 6] <= 15,
+                                                     &pos->points[i - 6],
+                                                     "checker", -15, 15),
                                       free_vector (tokens));
         }
         
-        g_return_val_if_fail (parse_integer (tokens[30], &pos.bar[1], "bar1"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.bar[1] >= -15 && pos.bar[1] <= 15,
-                              free_vector (tokens));
-
-        g_return_val_if_fail (parse_integer (tokens[31], &pos.turn, "turn"),
-                              free_vector (tokens));
-        g_return_val_if_fail ((pos.turn >= -1 && pos.turn <= 1),
+        g_return_val_if_fail (parse_integer (tokens[30], &pos->bar[1], "bar1",
+                                             -15, 15),
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[32], &pos.dice[0][0], 
-                                             "dice[0][0]"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.dice[0][0] >= 0 && pos.dice[0][0] <= 6, 
+        g_return_val_if_fail (parse_integer (tokens[31], &turn, "turn", -1, 1),
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[33], &pos.dice[0][1], 
-                                             "dice[0][1]"),
+        g_return_val_if_fail (parse_integer (tokens[32], &dice[0],
+                                             "dice[0]", 0, 6),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.dice[0][1] >= 0 && pos.dice[0][1] <= 6, 
+        g_return_val_if_fail (parse_integer (tokens[33], &dice[1],
+                                             "dice[1]", 0, 6),
                               free_vector (tokens));
-
-        g_return_val_if_fail (parse_integer (tokens[34], &pos.dice[1][0], 
-                                             "dice[1][0]"),
+        g_return_val_if_fail (parse_integer (tokens[34], &dice[2],
+                                             "dice[2]", 0, 6),
                               free_vector (tokens));
-        g_return_val_if_fail (pos.dice[1][0] >= 0 && pos.dice[1][0] <= 6, 
-                              free_vector (tokens));
-
-        g_return_val_if_fail (parse_integer (tokens[35], &pos.dice[1][1], 
-                                             "dice[1][1]"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.dice[1][1] >= 0 && pos.dice[1][1] <= 6, 
-                              free_vector (tokens));
-        
-        g_return_val_if_fail (parse_integer (tokens[36], &pos.cube, "cube"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.cube, free_vector (tokens));
-        
-        g_return_val_if_fail (parse_integer (tokens[37], &pos.may_double[0], 
-                              "may double 0"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.may_double[0] == 0 || pos.may_double[0] == 1, 
+        g_return_val_if_fail (parse_integer (tokens[35], &dice[3],
+                                             "dice[3]", 0, 6),
                               free_vector (tokens));
 
-        g_return_val_if_fail (parse_integer (tokens[38], &pos.may_double[1], 
-                              "may double 0"),
-                              free_vector (tokens));
-        g_return_val_if_fail (pos.may_double[0] == 0 || pos.may_double[0] == 1, 
-                              free_vector (tokens));
+        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                g_return_val_if_fail (parse_integer (tokens[37], &may_double,
+                                                     "may double 0", 0, 1),
+                                      free_vector (tokens));
+                pos->dice[0] = dice[0];
+                pos->dice[1] = dice[1];
+        } else if (turn == GIBBON_POSITION_SIDE_BLACK) {
+                g_return_val_if_fail (parse_integer (tokens[38], &may_double,
+                                                     "may double 1", 0, 1),
+                                      free_vector (tokens));
+                pos->dice[0] = -dice[2];
+                pos->dice[1] = -dice[3];
+        } else {
+                pos->dice[0] = dice[0];
+                pos->dice[1] = -dice[2];
+        }
+        pos->may_double = may_double ? TRUE : FALSE;
 
         g_strfreev (tokens);
         
         board = gibbon_app_get_board (self->priv->app);
-        gibbon_cairoboard_set_position (board, &pos);
+        gibbon_board_set_position (GIBBON_BOARD (board), pos);
 
         return TRUE;
 }

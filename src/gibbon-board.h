@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gibbon-position.h"
+
 #define GIBBON_TYPE_BOARD \
         (gibbon_board_get_type ())
 #define GIBBON_BOARD(obj) \
@@ -39,8 +41,14 @@
         (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
                 GIBBON_TYPE_BOARD, GibbonBoardIface))
 
+typedef struct _GibbonBoard GibbonBoard;
+
 /**
  * GibbonBoardIface:
+ * @g_iface: The parent interface.
+ * @set_position: Transfer a #GibbonPosition to the #GibbonBoard.  The
+ *                #GibbonPosition is now owned by the #GibbonPosition.  Do
+ *                not gibbon_position_free() it yourself.
  *
  * Visual representation of a backgammon position.  It is the view for the
  * model #GibbonPosition.
@@ -49,8 +57,14 @@ typedef struct _GibbonBoardIface GibbonBoardIface;
 struct _GibbonBoardIface
 {
         GTypeInterface g_iface;
+
+        void (*set_position) (GibbonBoard *self,
+                              GibbonPosition *pos);
 };
 
 GType gibbon_board_get_type (void) G_GNUC_CONST;
+
+void gibbon_board_set_position (GibbonBoard *board,
+                                GibbonPosition *position);
 
 #endif

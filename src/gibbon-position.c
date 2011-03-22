@@ -31,17 +31,17 @@
  *
  * <programlisting>
  *  +13-14-15-16-17-18-------19-20-21-22-23-24-+ O: white
- *  | X           O    |   |  O              X |
- *  | X           O    |   |  O              X |
- *  | X           O    |   |  O                |
- *  | X                |   |  O                |
- *  | X                |   |  O                |
- * v|                  |BAR|                   |
- *  | O                |   |  X                |
- *  | O                |   |  X                |
+ *  | O           X    |   |  X              O |
+ *  | O           X    |   |  X              O |
  *  | O           X    |   |  X                |
- *  | O           X    |   |  X              O |
- *  | O           X    |   |  X              O |
+ *  | O                |   |  X                |
+ *  | O                |   |  X                |
+ * v|                  |BAR|                   |
+ *  | X                |   |  O                |
+ *  | X                |   |  O                |
+ *  | X           O    |   |  O                |
+ *  | X           O    |   |  O              X |
+ *  | X           O    |   |  O              X |
  *  +12-11-10--9--8--7--------6--5--4--3--2--1-+ X: black
  * </programlisting>
  *
@@ -49,11 +49,11 @@
  * looks like this:
  *
  * <programlisting>
- *  +12-13-14-15-16-17-------18-19-20-21-22-23-+ positive: black
+ *  +12-13-14-15-16-17-------18-19-20-21-22-23-+ negative: black or X
  *  |+5          -3    |   | -5             +2 |
  * v|                  |BAR|                   |
  *  |-5          +3    |   | +5             -2 |
- *  +11-10--9--8--7--6--------5--4--3--2--1--0-+ negative: white
+ *  +11-10--9--8--7--6--------5--4--3--2--1--0-+ positive: white or O
  * </programlisting>
  */
 
@@ -67,8 +67,12 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
 
 GibbonPosition initial = {
                 { NULL, NULL },
+                0,
+                { 0, 0 },
+                { 0, 0, 0, 0, 0, 0 },
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
                    5,  0,  0,  0, -3,  0, -5,  0,  0,  0,  0,  2 },
+                { 0, 0, 0, 0, 0, 0 },
                 { 0, 0 },
                 { 0, 0 },
                 0, FALSE

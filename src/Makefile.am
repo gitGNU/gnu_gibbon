@@ -65,7 +65,6 @@ common_SOURCES = 		\
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
 noinst_HEADERS =		\
-	game.h			\
 	gibbon-cairoboard.h	\
 	gibbon-connection.h	\
 	gibbon-connector.h	\

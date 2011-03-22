@@ -31,27 +31,30 @@
 
 /**
  * GibbonPosition:
- * @players: @players[0] is the black player name, @players[1] the white player;
+ * @players: @players[0] is the white player name, @players[1] the black player;
  *           %NULL representing unknown.  If you use gibbon_position_free()
  *           for disposing the object the pointers used will be passed
  *           to g_free()!
- * @points: points[0] is the ace point for black, and the 24 point for
- *          white; points[23] is the ace point for white, and the 24 point
- *          for black.  The absolute value gives the number of checkers on
+ * @points: points[0] is the ace point for white, and the 24 point for
+ *          black; points[23] is the ace point for black, and the 24 point
+ *          for number.  The absolute value gives the number of checkers on
  *          that point.  A negative value means that this point is occupied
- *          by white, a positive value means that it is occupied by black.
- * @bar: bar[0] holds the number of black checkers on the bar, bar[1] the
- *       number of white checkers on the bar.  For consistency, white's
- *       checkers are negative, black's checkers are positive.  Yes, and
+ *          by black, a positive value means that it is occupied by white.
+ * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
+ *       number of black checkers on the bar.  For consistency, black's
+ *       checkers are negative, white's checkers are positive.  Yes, and
  *       for consistency this should be called bars not bar but that sounds
  *       too ugly.
  * @dice: value of the two dice if currently visible.  Negative values are
  *        used for black's dice, positive ones for white's dice.  In the
- *        opening roll(s) the signs of the two integers may differ.  A zero
- *        value means that the dice are not visible (for whatever reason).
- *        If both dice are 0 the game was not yet started or is over.
+ *        opening roll(s) the signs of the two integers may differ from
+ *        each other.  A zero value means that the dice are not visible
+ *        (for whatever reason).  If both dice are 0 the game was not yet
+ *        started or is over.
  * @cube: current value of the cube or -1 if doubling is not possible during
  *        this game.
+ * @match_length: length of the match.
+ * @scores: white and black score (white first).
  * @may_double: %TRUE if player on turn may double, %FALSE otherwise.
  *
  * A boxed type representing a backgammon position.
@@ -61,8 +64,19 @@ struct _GibbonPosition
 {
         gchar *players[2];
 
+        gint match_length;
+        gint scores[2];
+
+        /*< private >*/
+        gint left_pad[6];
+
+        /*< public >*/
         gint points[24];
 
+        /*< private >*/
+        gint right_pad[6];
+
+        /*< public >*/
         gint bar[2];
 
         gint dice[2];
@@ -73,11 +87,16 @@ struct _GibbonPosition
 
 /**
  * GibbonPositionSide:
+ * @GIBBON_POSITION_SIDE_BLACK: black or X
+ * @GIBBON_POSITION_SIDE_NONE: neither side
+ * @GIBBON_POSITION_SIDE_WHITE: white or O
+ *
+ * Use these symbolic constants, when referring to one side of the board.
  */
 typedef enum {
-        GIBBON_POSITION_SIDE_WHITE = -1,
+        GIBBON_POSITION_SIDE_BLACK = -1,
         GIBBON_POSITION_SIDE_NONE = 0,
-        GIBBON_POSITION_SIDE_BLACK = 1
+        GIBBON_POSITION_SIDE_WHITE = 1
 } GibbonPositionSide;
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;
