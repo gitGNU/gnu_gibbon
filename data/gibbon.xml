@@ -807,21 +807,6 @@
       <placeholder/>
     </child>
     <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
