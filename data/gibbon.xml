@@ -55,7 +55,7 @@
             <child>
               <object class="GtkMenuItem" id="menuitem23">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Preferences</property>
+                <property name="label" translatable="yes">_Options</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu4">
@@ -807,6 +807,21 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
@@ -970,11 +985,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="checkbutton1">
+              <object class="GtkCheckButton" id="account-checkbutton-remember">
                 <property name="label" translatable="yes">Remember password</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <property name="relief">none</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -1049,6 +1065,7 @@
               <object class="GtkEntry" id="account-entry-password">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="visibility">False</property>
                 <property name="invisible_char">&#x25CF;</property>
                 <property name="truncate_multiline">True</property>
               </object>
@@ -1064,7 +1081,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">&#x25CF;</property>
-                <property name="text">fibs.com</property>
                 <property name="truncate_multiline">True</property>
               </object>
               <packing>
