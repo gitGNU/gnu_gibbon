@@ -60,7 +60,8 @@ common_SOURCES = 		\
 	gibbon-fibs-command.c				\
 	gibbon-shouts.c				\
 	gibbon-position.c				\
-	gibbon-board.c	
+	gibbon-board.c			\
+	gibbon-account-dialog.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -88,7 +89,8 @@ noinst_HEADERS =		\
 	gibbon-fibs-command.h			\
 	gibbon-shouts.h			\
 	gibbon-position.h			\
-	gibbon-board.h
+	gibbon-board.h		\
+	gibbon-account-dialog.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \

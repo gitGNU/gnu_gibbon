@@ -41,6 +41,7 @@
 #include "gibbon-signal.h"
 #include "gibbon-server-console.h"
 #include "gibbon-shouts.h"
+#include "gibbon-account-dialog.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -63,6 +64,8 @@ struct _GibbonAppPrivate {
         GibbonSignal *network_error_signal;
         GibbonSignal *disconnected_signal;
         GibbonSignal *server_command_signal;
+
+        GibbonAccountDialog *account_dialog;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -92,6 +95,7 @@ static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
 static void gibbon_app_on_server_command (const GibbonApp *self,
                                           GtkEntry *entry);
+static void gibbon_app_on_account_prefs (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -124,12 +128,16 @@ gibbon_app_init (GibbonApp *self)
         self->priv->network_error_signal = NULL;
         self->priv->disconnected_signal = NULL;
         self->priv->server_command_signal = NULL;
+
+        self->priv->account_dialog = NULL;
 }
 
 static void
 gibbon_app_finalize (GObject *object)
 {
         GibbonApp *self = GIBBON_APP (object);
+
+        gibbon_app_disconnect (self);
 
         if (self->priv->board)
                 g_object_unref (self->priv->board);
@@ -143,11 +151,13 @@ gibbon_app_finalize (GObject *object)
                 g_object_unref (self->priv->shouts);
         self->priv->shouts = NULL;
 
-        gibbon_app_disconnect (self);
-
-        if  (self->priv->prefs)
+        if (self->priv->prefs)
                 g_object_unref (self->priv->prefs);
         self->priv->prefs = NULL;
+
+        if (self->priv->account_dialog)
+                g_object_unref (self->priv->account_dialog);
+        self->priv->account_dialog = NULL;
 
         if (self->priv->builder)
                 g_object_unref (self->priv->builder);
@@ -432,6 +442,12 @@ gibbon_app_connect_signals (const GibbonApp *self)
         obj = gibbon_app_find_object (self, "window", GTK_TYPE_WINDOW);
         g_signal_connect_swapped (obj, "destroy",
                                   G_CALLBACK (gibbon_app_on_quit_request),
+                                  (gpointer) self);
+
+        obj = gibbon_app_find_object (self, "account-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                                  G_CALLBACK (gibbon_app_on_account_prefs),
                                   (gpointer) self);
 }
 
@@ -808,4 +824,15 @@ gibbon_app_on_server_command (const GibbonApp *self, GtkEntry *entry)
         g_free (trimmed);
 
         gtk_entry_set_text (entry, "");
+}
+
+static void
+gibbon_app_on_account_prefs (GibbonApp *self)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+
+        if (!self->priv->account_dialog)
+                self->priv->account_dialog = gibbon_account_dialog_new (self);
+
+        gibbon_account_dialog_show (self->priv->account_dialog);
 }
