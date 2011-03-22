@@ -111,6 +111,8 @@ gibbon_shouts_new (GibbonApp *app)
                                                        GTK_TYPE_TEXT_VIEW));
         gtk_text_view_set_wrap_mode (self->priv->text_view,
                                      GTK_WRAP_WORD);
+        gtk_text_view_set_cursor_visible (self->priv->text_view, FALSE);
+
         self->priv->buffer = gtk_text_view_get_buffer (self->priv->text_view);
 
         /* Pidgin uses #cc00000 and #204a87 as the default colors.  */
@@ -172,5 +174,4 @@ gibbon_shouts_append_message (const GibbonShouts *self,
         gtk_text_view_scroll_to_mark (self->priv->text_view,
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
-
 }
