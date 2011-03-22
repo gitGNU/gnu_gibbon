@@ -33,6 +33,87 @@
 
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
+#include "gibbon-signal.h"
+#include "gibbon-connection.h"
+
+static const char * const fibs_commands[] = {
+                "about",
+                "accept",
+                "address",
+                "autologin",
+                "average",
+                "away",
+                "back",
+                "beaver",
+                "beginner",
+                "blind",
+                "board",
+                "boardstyle",
+                "bye",
+                "client",
+                "cls",
+                "commands",
+                "complaints",
+                "countries",
+                "crawford",
+                "date",
+                "dicetest",
+                "double",
+                "erase",
+                "formula",
+                "gag",
+                "help",
+                "hostnames",
+                "invite",
+                "join",
+                "kibitz",
+                "last",
+                "leave",
+                "look",
+                "man",
+                "message",
+                "motd",
+                "move",
+                "names",
+                "off",
+                "oldboard",
+                "oldmoves",
+                "otter",
+                "panic",
+                "password",
+                "pip",
+                "raccoon",
+                "ratings",
+                "rawboard",
+                "rawwho",
+                "redouble",
+                "reject",
+                "resign",
+                "roll",
+                "rules",
+                "save",
+                "say",
+                "set",
+                "shout",
+                "show",
+                "shutdown",
+                "sortwho",
+                "stat",
+                "tell",
+                "time",
+                "timezones",
+                "tinyfugue",
+                "toggle",
+                "unwatch",
+                "version",
+                "watch",
+                "waitfor",
+                "wave",
+                "where",
+                "whisper",
+                "who",
+                NULL
+};
 
 typedef struct _GibbonServerConsolePrivate GibbonServerConsolePrivate;
 struct _GibbonServerConsolePrivate {
@@ -43,6 +124,12 @@ struct _GibbonServerConsolePrivate {
         GtkTextTag *raw_tag;
         GtkTextTag *sent_tag;
         GtkTextTag *received_tag;
+
+        GibbonSignal *command_signal;
+
+        GList *recents;
+        gint max_recents;
+        GtkListStore *model;
 };
 
 #define GIBBON_SERVER_CONSOLE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -55,6 +142,8 @@ static void _gibbon_server_console_print_raw (GibbonServerConsole *self,
                                               GtkTextTag *tag,
                                               const gchar *prefix,
                                               gboolean linefeed);
+static void gibbon_server_console_on_command (GibbonServerConsole *self,
+                                              GtkEntry *entry);
 
 static void 
 gibbon_server_console_init (GibbonServerConsole *self)
@@ -69,16 +158,22 @@ gibbon_server_console_init (GibbonServerConsole *self)
         self->priv->raw_tag = NULL;
         self->priv->sent_tag = NULL;
         self->priv->received_tag = NULL;
+
+        self->priv->command_signal = NULL;
+
+        self->priv->model = NULL;
+        self->priv->recents = NULL;
+        self->priv->max_recents = 100;
 }
 
 static void
 gibbon_server_console_finalize (GObject *object)
 {
         GibbonServerConsole *self = GIBBON_SERVER_CONSOLE (object);
-
-        self->priv->app = NULL;
-        self->priv->text_view = NULL;
-        self->priv->buffer = NULL;
+        GList *iter;
+        GSList *new_recents;
+        guint i, max_recents;
+        GibbonPrefs *prefs;
 
         if (self->priv->raw_tag)
                 g_object_unref (self->priv->raw_tag);
@@ -91,6 +186,44 @@ gibbon_server_console_finalize (GObject *object)
         if (self->priv->received_tag)
                 g_object_unref (self->priv->received_tag);
         self->priv->received_tag = NULL;
+
+        if (self->priv->command_signal)
+                g_object_unref (self->priv->command_signal);
+        self->priv->command_signal = NULL;
+
+        if (self->priv->recents) {
+                new_recents = NULL;
+                prefs = gibbon_app_get_prefs (self->priv->app);
+                max_recents = gibbon_prefs_get_int (prefs,
+                                                    GIBBON_PREFS_MAX_COMMANDS);
+                if (!max_recents)
+                        max_recents = 100;
+
+                iter = self->priv->recents;
+                for (i = 0; i < max_recents; ++i) {
+                        if (!iter)
+                                break;
+                        if (iter->data)
+                                new_recents = g_slist_append (new_recents,
+                                                              iter->data);
+                        iter = iter->next;
+                }
+                while (iter) {
+                        if (iter->data)
+                                g_free (iter->data);
+                }
+                g_list_free (self->priv->recents);
+                gibbon_prefs_set_list (prefs, GIBBON_PREFS_COMMANDS,
+                                       new_recents);
+        }
+
+        if (self->priv->model)
+                g_object_unref (self->priv->model);
+        self->priv->model = NULL;
+
+        self->priv->app = NULL;
+        self->priv->text_view = NULL;
+        self->priv->buffer = NULL;
 
         G_OBJECT_CLASS (gibbon_server_console_parent_class)->finalize(object);
 }
@@ -119,6 +252,13 @@ gibbon_server_console_new (GibbonApp *app)
         GibbonServerConsole *self = g_object_new (GIBBON_TYPE_SERVER_CONSOLE,
                                                   NULL);
         PangoFontDescription *font_desc;
+        GibbonPrefs *prefs;
+        GObject *entry;
+        GtkEntryCompletion *completion;
+        GSList *recents;
+        GtkTreeIter iter;
+        gsize num_known;
+        gsize i;
 
         self->priv->app = app;
         self->priv->text_view =
@@ -150,6 +290,50 @@ gibbon_server_console_new (GibbonApp *app)
         pango_font_description_free (font_desc);
 
         gtk_text_view_set_cursor_visible (self->priv->text_view, FALSE);
+
+        entry = gibbon_app_find_object (app, "server-command-entry",
+                                        GTK_TYPE_ENTRY);
+        completion = gtk_entry_completion_new ();
+        gtk_entry_completion_set_text_column(completion, 0);
+        gtk_entry_set_completion (GTK_ENTRY (entry), completion);
+        self->priv->model = gtk_list_store_new (1, G_TYPE_STRING);
+
+        prefs = gibbon_app_get_prefs (app);
+        self->priv->max_recents =
+                gibbon_prefs_get_int (prefs,
+                                      GIBBON_PREFS_MAX_COMMANDS);
+        recents = gibbon_prefs_get_list (prefs,
+                                         GIBBON_PREFS_COMMANDS);
+
+        /* Upgrade to a doubly-linked list.  */
+        while (recents) {
+                if (recents->data) {
+                        gtk_list_store_append (self->priv->model, &iter);
+                        gtk_list_store_set (self->priv->model, &iter,
+                                            0, recents->data,
+                                            -1);
+                        self->priv->recents = g_list_append (self->priv->recents,
+                                                             recents->data);
+                }
+                recents = recents->next;
+        }
+        g_slist_free (recents);
+        num_known = (sizeof fibs_commands) / (sizeof fibs_commands[0]);
+        for (i = 0; i < num_known; ++i) {
+                gtk_list_store_append (self->priv->model, &iter);
+                gtk_list_store_set (self->priv->model, &iter,
+                                    0, fibs_commands[i],
+                                    -1);
+        }
+        g_printerr ("Number of know commands: %d\n", num_known);
+
+        gtk_entry_completion_set_model (completion,
+                                        GTK_TREE_MODEL (self->priv->model));
+
+        self->priv->command_signal =
+                gibbon_signal_new (entry, "activate",
+                                   G_CALLBACK (gibbon_server_console_on_command),
+                                   G_OBJECT (self));
 
         return self;
 }
@@ -259,3 +443,30 @@ gibbon_server_console_print_input (GibbonServerConsole *self,
                                 ">>> ", TRUE);
         }
 }
+
+static void
+gibbon_server_console_on_command (GibbonServerConsole *self, GtkEntry *entry)
+{
+        gchar *trimmed;
+        GibbonConnection *connection;
+        GtkTreeIter iter;
+
+        g_return_if_fail (GIBBON_IS_SERVER_CONSOLE (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return;
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+
+        gibbon_connection_queue_command (connection, TRUE, "%s", trimmed);
+        self->priv->recents = g_list_prepend (self->priv->recents, trimmed);
+        gtk_list_store_prepend (self->priv->model, &iter);
+        gtk_list_store_set (self->priv->model, &iter,
+                            0, trimmed,
+                            -1);
+
+        gtk_entry_set_text (entry, "");
+}
+
