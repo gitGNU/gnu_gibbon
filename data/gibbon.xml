@@ -20,7 +20,7 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="connect_menu_item">
-                        <property name="label">_Connect</property>
+                        <property name="label">gtk-connect</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
@@ -46,6 +46,45 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem23">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Preferences</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu4">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                        <property name="label" translatable="yes">Account</property>
+                        <property name="visible">True</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem2">
+                        <property name="label" translatable="yes">FIBS options</property>
+                        <property name="visible">True</property>
+                        <property name="image">image2</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
+                        <property name="visible">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="imagemenuitem3">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Debug Gibbon</property>
                       </object>
                     </child>
                   </object>
@@ -105,7 +144,7 @@
               <object class="GtkToolButton" id="toolbar_connect_button">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Connect</property>
-                <property name="stock_id">gtk-network</property>
+                <property name="stock_id">gtk-connect</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -489,7 +528,7 @@
       <object class="GtkMenuItem" id="tell_player_menu_item">
         <property name="visible">True</property>
         <property name="sensitive">False</property>
-        <property name="label" translatable="yes">Tell</property>
+        <property name="label" translatable="yes">Chat</property>
         <property name="use_underline">True</property>
       </object>
     </child>
@@ -753,6 +792,21 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
@@ -864,5 +918,13 @@
         <property name="title" translatable="yes">Location of JavaFIBS</property>
       </packing>
     </child>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-dialog-authentication</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-preferences</property>
   </object>
 </interface>
