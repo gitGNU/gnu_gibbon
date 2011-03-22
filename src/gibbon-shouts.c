@@ -117,12 +117,12 @@ gibbon_shouts_new (GibbonApp *app)
         self->priv->date_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
                                             "foreground", "#cc0000",
-                                            "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
         self->priv->sender_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
                                             "foreground", "#cc0000",
+                                            "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
         return self;
