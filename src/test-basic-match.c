@@ -81,7 +81,7 @@ serialize_match (const GibbonMatch *match)
                 return FALSE;
         }
 
-        g_printerr ("%s", g_memory_output_stream_get_data  (out));
+        /* g_printerr ("%s", (gchar *) g_memory_output_stream_get_data  (out)) */;
 
         g_object_unref (out);
 
