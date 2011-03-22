@@ -73,5 +73,9 @@ GType gibbon_match_get_type (void) G_GNUC_CONST;
 GibbonMatch *gibbon_match_new ();
 
 const GSGFCollection *gibbon_match_get_collection ();
+gboolean gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
+                                        GError **error);
+gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
+                                        GError **error);
 
 #endif
