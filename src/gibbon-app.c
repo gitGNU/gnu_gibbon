@@ -63,7 +63,6 @@ struct _GibbonAppPrivate {
         GibbonSignal *logged_in_signal;
         GibbonSignal *network_error_signal;
         GibbonSignal *disconnected_signal;
-        GibbonSignal *server_command_signal;
 
         GibbonAccountDialog *account_dialog;
 };
@@ -93,8 +92,6 @@ static void gibbon_app_on_logged_in (GibbonApp *self,
                                      GibbonConnection *connection);
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
-static void gibbon_app_on_server_command (const GibbonApp *self,
-                                          GtkEntry *entry);
 static void gibbon_app_on_account_prefs (GibbonApp *self);
 
 static GibbonApp *singleton = NULL;
@@ -127,7 +124,6 @@ gibbon_app_init (GibbonApp *self)
         self->priv->logged_in_signal = NULL;
         self->priv->network_error_signal = NULL;
         self->priv->disconnected_signal = NULL;
-        self->priv->server_command_signal = NULL;
 
         self->priv->account_dialog = NULL;
 }
@@ -139,33 +135,8 @@ gibbon_app_finalize (GObject *object)
 
         gibbon_app_disconnect (self);
 
-        if (self->priv->board)
-                g_object_unref (self->priv->board);
-        self->priv->board = NULL;
-
-        if (self->priv->game_chat)
-                g_object_unref (self->priv->game_chat);
-        self->priv->game_chat = NULL;
-
-        if (self->priv->shouts)
-                g_object_unref (self->priv->shouts);
-        self->priv->shouts = NULL;
-
-        if (self->priv->prefs)
-                g_object_unref (self->priv->prefs);
-        self->priv->prefs = NULL;
-
-        if (self->priv->account_dialog)
-                g_object_unref (self->priv->account_dialog);
-        self->priv->account_dialog = NULL;
-
-        if (self->priv->builder)
-                g_object_unref (self->priv->builder);
-        self->priv->builder = NULL;
-
-        if (self->priv->pixmaps_directory)
-                g_free (self->priv->pixmaps_directory);
-        self->priv->pixmaps_directory = NULL;
+        if (self->priv->server_console)
+                g_object_unref (self->priv->server_console);
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -196,6 +167,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
         gchar *board_filename;
 
         g_return_val_if_fail (singleton == NULL, singleton);
+
+        self->priv->prefs = gibbon_prefs_new ();
+        if (!self->priv->prefs) {
+                g_object_unref (self);
+                return NULL;
+        }
 
         self->priv->builder = gibbon_app_get_builder (self, builder_path);
         if (!self->priv->builder) {
@@ -234,12 +211,6 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 
         self->priv->shouts = gibbon_shouts_new (self);
         if (!self->priv->shouts) {
-                g_object_unref (self);
-                return NULL;
-        }
-
-        self->priv->prefs = gibbon_prefs_new ();
-        if (!self->priv->prefs) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -454,6 +425,8 @@ gibbon_app_connect_signals (const GibbonApp *self)
 static void
 gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
 {
+        g_object_unref (self);
+
         gtk_main_quit ();
 }
 
@@ -639,10 +612,6 @@ gibbon_app_disconnect (GibbonApp *self)
                 g_object_unref (self->priv->disconnected_signal);
         self->priv->disconnected_signal = NULL;
 
-        if (self->priv->server_command_signal)
-                g_object_unref (self->priv->server_command_signal);
-        self->priv->server_command_signal = NULL;
-
         if (self->priv->connection_dialog)
                 g_object_unref (self->priv->connection_dialog);
         self->priv->connection_dialog = NULL;
@@ -722,11 +691,6 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
         obj = gibbon_app_find_object (self, "server-command-entry",
                                       GTK_TYPE_ENTRY);
         gtk_entry_set_editable (GTK_ENTRY (obj), TRUE);
-        self->priv->server_command_signal =
-                gibbon_signal_new (obj,
-                                   "activate",
-                                   G_CALLBACK (gibbon_app_on_server_command),
-                                   G_OBJECT (self));
 
         obj = gibbon_app_find_object (self, "game-chat-entry",
                                       GTK_TYPE_ENTRY);
@@ -806,24 +770,6 @@ gibbon_app_get_shouts (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->shouts;
-}
-
-static void
-gibbon_app_on_server_command (const GibbonApp *self, GtkEntry *entry)
-{
-        gchar *trimmed;
-
-        g_return_if_fail (GIBBON_IS_APP (self));
-        g_return_if_fail (GTK_IS_ENTRY (entry));
-
-        trimmed = pango_trim_string (gtk_entry_get_text (entry));
-
-        gibbon_connection_queue_command (self->priv->connection,
-                                         TRUE, "%s", trimmed);
-
-        g_free (trimmed);
-
-        gtk_entry_set_text (entry, "");
 }
 
 static void
