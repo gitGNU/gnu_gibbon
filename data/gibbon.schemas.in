@@ -86,5 +86,29 @@
         <long>Show complete server communication in server console</long>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/gibbon/data/recent/commands</key>
+      <applyto>/apps/gibbon/data/recent/commands</applyto>
+      <owner>gibbon</owner>
+      <type>list</type>
+      <list_type>string</list_type>
+      <locale name="C">
+        <short>Recent commands</short>
+        <long>List of commands that have been sent to the server recently.
+        </long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/gibbon/data/recent/max_commands</key>
+      <applyto>/apps/gibbon/data/recent/max_commands</applyto>
+      <owner>gibbon</owner>
+      <type>int</type>
+      <default>50</default>
+      <locale name="C">
+	<short>Maximum saved commands</short>
+	<long>Maximum number of commands that should be remembered for
+              auto-completion.</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
