@@ -94,6 +94,7 @@ static const char * const fibs_commands[] = {
                 "save",
                 "say",
                 "set",
+                "set redouble"
                 "shout",
                 "show",
                 "shutdown",
@@ -104,6 +105,21 @@ static const char * const fibs_commands[] = {
                 "timezones",
                 "tinyfugue",
                 "toggle",
+                "toggle allowpip"
+                "toggle autodouble"
+                "toggle autoroll"
+                "toggle automove"
+                "toggle crawford"
+                "toggle double"
+                "toggle greedy"
+                "toggle moves"
+                "toggle ratings"
+                "toggle rawboard"
+                "toggle ready"
+                "toggle report"
+                "toggle silent"
+                "toggle telnet"
+                "toggle wrap"
                 "unwatch",
                 "version",
                 "watch",
