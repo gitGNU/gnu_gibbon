@@ -26,6 +26,7 @@
 #include <gibbon-match.h>
 
 static GibbonMatch *fill_match (void);
+static gboolean check_match (const GibbonMatch *match);
 static gboolean serialize_match (const GibbonMatch *match);
 
 int
@@ -39,6 +40,9 @@ main(int argc, char *argv[])
         match = fill_match ();
         if (!match)
                 return -1;
+
+        if (!check_match (match))
+                status = -1;
 
         if (!serialize_match (match))
                 status = -1;
@@ -66,6 +70,30 @@ fill_match (void)
 }
 
 static gboolean
+check_match (const GibbonMatch *match)
+{
+        gboolean retval = TRUE;
+        const gchar *got;
+        const gchar *expect;
+
+        got = gibbon_match_get_black_player (match);
+        expect = "Joe Black";
+        if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected `%s', got `%s'!\n", expect, got);
+                retval = FALSE;
+        }
+
+        got = gibbon_match_get_white_player (match);
+        expect = "Snow White";
+        if (g_strcmp0 (expect, got)) {
+                g_printerr ("Expected `%s', got `%s'!\n", expect, got);
+                retval = FALSE;
+        }
+
+        return retval;
+}
+
+static gboolean
 serialize_match (const GibbonMatch *match)
 {
         const GSGFCollection *collection = gibbon_match_get_collection (match);
@@ -81,7 +109,9 @@ serialize_match (const GibbonMatch *match)
                 return FALSE;
         }
 
-        /* g_printerr ("%s", (gchar *) g_memory_output_stream_get_data  (out)) */;
+        g_printerr ("%s",
+                    (gchar *) g_memory_output_stream_get_data  (
+                                    G_MEMORY_OUTPUT_STREAM (out)));
 
         g_object_unref (out);
 

@@ -59,7 +59,7 @@ struct _GibbonMatch
 /**
  * GibbonMatchClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Class representing a complete match of backgammon!
  **/
 typedef struct _GibbonMatchClass GibbonMatchClass;
 struct _GibbonMatchClass
@@ -75,7 +75,9 @@ GibbonMatch *gibbon_match_new ();
 const GSGFCollection *gibbon_match_get_collection ();
 gboolean gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
                                         GError **error);
+const gchar *gibbon_match_get_white_player (const GibbonMatch *self);
 gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                                         GError **error);
+const gchar *gibbon_match_get_black_player (const GibbonMatch *self);
 
 #endif

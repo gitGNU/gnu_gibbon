@@ -42,6 +42,9 @@ struct _GibbonMatchPrivate {
         GSGFFlavor *flavor;
 
         GList *games;
+
+        gchar *black_player;
+        gchar *white_player;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -58,6 +61,9 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->collection = NULL;
         self->priv->flavor = NULL;
         self->priv->games = NULL;
+
+        self->priv->black_player = NULL;
+        self->priv->white_player = NULL;
 }
 
 static void
@@ -79,6 +85,11 @@ gibbon_match_finalize (GObject *object)
         if (self->priv->flavor)
                 g_object_unref (self->priv->flavor);
         self->priv->flavor = NULL;
+
+        if (self->priv->black_player)
+                g_free (self->priv->black_player);
+        if (self->priv->white_player)
+                g_free (self->priv->white_player);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -154,6 +165,10 @@ gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
                 }
         }
 
+        if (self->priv->white_player)
+                g_free (self->priv->white_player);
+        self->priv->white_player = g_strdup (name);
+
         return TRUE;
 }
 
@@ -183,6 +198,25 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                 }
         }
 
+        if (self->priv->black_player)
+                g_free (self->priv->black_player);
+        self->priv->black_player = g_strdup (name);
+
         return TRUE;
 }
 
+const gchar *
+gibbon_match_get_white_player (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->white_player;
+}
+
+const gchar *
+gibbon_match_get_black_player (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->black_player;
+}
