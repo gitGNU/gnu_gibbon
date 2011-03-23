@@ -103,7 +103,7 @@
       <applyto>/apps/gibbon/data/recent/max_commands</applyto>
       <owner>gibbon</owner>
       <type>int</type>
-      <default>50</default>
+      <default>100</default>
       <locale name="C">
 	<short>Maximum saved commands</short>
 	<long>Maximum number of commands that should be remembered for
