@@ -112,6 +112,7 @@ static const char * const fibs_commands[] = {
                 "where",
                 "whisper",
                 "who",
+                "whois",
                 NULL
 };
 
@@ -127,8 +128,8 @@ struct _GibbonServerConsolePrivate {
 
         GibbonSignal *command_signal;
 
-        GList *recents;
         gint max_recents;
+        gint num_recents;
         GtkListStore *model;
 };
 
@@ -162,18 +163,20 @@ gibbon_server_console_init (GibbonServerConsole *self)
         self->priv->command_signal = NULL;
 
         self->priv->model = NULL;
-        self->priv->recents = NULL;
         self->priv->max_recents = 100;
+        self->priv->num_recents = 0;
 }
 
 static void
 gibbon_server_console_finalize (GObject *object)
 {
         GibbonServerConsole *self = GIBBON_SERVER_CONSOLE (object);
-        GList *iter;
+        GtkTreePath *path;
+        GtkTreeIter iter;
         GSList *new_recents;
         guint i, max_recents;
         GibbonPrefs *prefs;
+        gchar *data;
 
         if (self->priv->raw_tag)
                 g_object_unref (self->priv->raw_tag);
@@ -191,34 +194,37 @@ gibbon_server_console_finalize (GObject *object)
                 g_object_unref (self->priv->command_signal);
         self->priv->command_signal = NULL;
 
-        if (self->priv->recents) {
+        if (self->priv->model) {
                 new_recents = NULL;
                 prefs = gibbon_app_get_prefs (self->priv->app);
                 max_recents = gibbon_prefs_get_int (prefs,
                                                     GIBBON_PREFS_MAX_COMMANDS);
-                if (!max_recents)
+                if (max_recents)
                         max_recents = 100;
+                if (self->priv->num_recents < max_recents)
+                        self->priv->num_recents = max_recents;
 
-                iter = self->priv->recents;
-                for (i = 0; i < max_recents; ++i) {
-                        if (!iter)
+                path = gtk_tree_path_new_first ();
+                for (i = 0; path && i < self->priv->num_recents; ++i) {
+                        if (!gtk_tree_model_get_iter (
+                                        GTK_TREE_MODEL (self->priv->model),
+                                        &iter, path))
                                 break;
-                        if (iter->data)
-                                new_recents = g_slist_append (new_recents,
-                                                              iter->data);
-                        iter = iter->next;
-                }
-                while (iter) {
-                        if (iter->data)
-                                g_free (iter->data);
-                }
-                g_list_free (self->priv->recents);
-                gibbon_prefs_set_list (prefs, GIBBON_PREFS_COMMANDS,
-                                       new_recents);
-        }
+                        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->model),
+                                            &iter, 0, &data, -1);
 
-        if (self->priv->model)
+                        if (!data)
+                                break;
+                        new_recents = g_slist_append (new_recents,
+                                                      data);
+                        gtk_tree_path_next (path);
+                }
+                if (new_recents)
+                        gibbon_prefs_set_list (prefs, GIBBON_PREFS_COMMANDS,
+                                               new_recents);
+                g_slist_free (new_recents);
                 g_object_unref (self->priv->model);
+        }
         self->priv->model = NULL;
 
         self->priv->app = NULL;
@@ -308,12 +314,11 @@ gibbon_server_console_new (GibbonApp *app)
         /* Upgrade to a doubly-linked list.  */
         while (recents) {
                 if (recents->data) {
+                        ++self->priv->num_recents;
                         gtk_list_store_append (self->priv->model, &iter);
                         gtk_list_store_set (self->priv->model, &iter,
                                             0, recents->data,
                                             -1);
-                        self->priv->recents = g_list_append (self->priv->recents,
-                                                             recents->data);
                 }
                 recents = recents->next;
         }
@@ -325,7 +330,6 @@ gibbon_server_console_new (GibbonApp *app)
                                     0, fibs_commands[i],
                                     -1);
         }
-        g_printerr ("Number of know commands: %d\n", num_known);
 
         gtk_entry_completion_set_model (completion,
                                         GTK_TREE_MODEL (self->priv->model));
@@ -459,13 +463,16 @@ gibbon_server_console_on_command (GibbonServerConsole *self, GtkEntry *entry)
                 return;
 
         trimmed = pango_trim_string (gtk_entry_get_text (entry));
-
+        if (!*trimmed) {
+                g_free (trimmed);
+                return;
+        }
         gibbon_connection_queue_command (connection, TRUE, "%s", trimmed);
-        self->priv->recents = g_list_prepend (self->priv->recents, trimmed);
         gtk_list_store_prepend (self->priv->model, &iter);
         gtk_list_store_set (self->priv->model, &iter,
                             0, trimmed,
                             -1);
+        ++self->priv->num_recents;
 
         gtk_entry_set_text (entry, "");
 }
