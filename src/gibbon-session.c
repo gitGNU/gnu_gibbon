@@ -196,6 +196,8 @@ gint
 gibbon_session_process_server_line (GibbonSession *self,
                                     const gchar *line)
 {
+        GibbonServerConsole *console;
+
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
         if (line[0] >= '0' && line[0] <= '9') {
@@ -203,6 +205,9 @@ gibbon_session_process_server_line (GibbonSession *self,
         } else if (0 == strncmp ("board:", line, 6)) {
                 if (gibbon_session_handle_board (self, line + 6))
                         return 0;
+        } else {
+                console = gibbon_app_get_server_console (self->priv->app);
+                gibbon_server_console_print_info (console, line);
         }
 
         return -1;
