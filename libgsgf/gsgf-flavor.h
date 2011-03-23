@@ -99,6 +99,8 @@ struct _GSGFFlavorClass
                                            gsize *bytes_written,
                                            GCancellable *cancellable,
                                            GError **error);
+
+        guint (*get_game_id) (const GSGFFlavor *flavor);
 };
 
 GType gsgf_flavor_get_type(void) G_GNUC_CONST;

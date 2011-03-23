@@ -211,10 +211,11 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
         gsize written_here;
         GList *iter;
         GSGFNode *root;
-        GSGFProperty *ap_property;
-        GSGFValue *ap_value;
+        GSGFProperty *my_property;
+        GSGFValue *my_value;
         gchar *app;
         gchar *version;
+        guint game_id;
 
         gsgf_return_val_if_fail (bytes_written, FALSE, error);
 
@@ -241,7 +242,7 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
                         version = g_strdup (VERSION);
                 }
 
-                ap_value = GSGF_VALUE (gsgf_compose_new (
+                my_value = GSGF_VALUE (gsgf_compose_new (
                         GSGF_COOKED_VALUE (gsgf_simple_text_new (app)),
                         GSGF_COOKED_VALUE (gsgf_simple_text_new (version)),
                         NULL));
@@ -249,15 +250,48 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
                 g_free (version);
                 root = GSGF_NODE (self->priv->nodes->data);
                 gsgf_node_remove_property (root, "AP");
-                ap_property = gsgf_node_add_property (root, "AP", error);
-                if (!ap_property) {
-                        g_object_unref (ap_value);
+                my_property = gsgf_node_add_property (root, "AP", error);
+                if (!my_property) {
+                        g_object_unref (my_value);
                         return FALSE;
                 }
 
-                if (!gsgf_property_set_value (ap_property, ap_value, error)) {
-                        g_object_unref (ap_value);
+                if (!gsgf_property_set_value (my_property, my_value, error)) {
+                        g_object_unref (my_value);
                         return FALSE;
+                }
+
+                my_value = GSGF_VALUE (gsgf_simple_text_new ("UTF-8"));
+                gsgf_node_remove_property (root, "CA");
+                my_property = gsgf_node_add_property (root, "CA", error);
+                if (!my_property) {
+                        g_object_unref (my_value);
+                        return FALSE;
+                }
+
+                if (!gsgf_property_set_value (my_property, my_value, error)) {
+                        g_object_unref (my_value);
+                        return FALSE;
+                }
+
+                if (self->priv->flavor) {
+                        game_id = gsgf_flavor_get_game_id (self->priv->flavor,
+                                                           error);
+                        if (!game_id)
+                                return FALSE;
+                        my_value = GSGF_VALUE (gsgf_number_new (game_id));
+                        gsgf_node_remove_property (root, "GM");
+                        my_property = gsgf_node_add_property (root, "GM", error);
+                        if (!my_property) {
+                                g_object_unref (my_value);
+                                return FALSE;
+                        }
+
+                        if (!gsgf_property_set_value (my_property, my_value,
+                                                      error)) {
+                                g_object_unref (my_value);
+                                return FALSE;
+                        }
                 }
         }
 

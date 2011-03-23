@@ -926,6 +926,18 @@ gsgf_flavor_append_points(const GSGFFlavor *self,
                                                           raw, i, error);
 }
 
+guint
+gsgf_flavor_get_game_id (const GSGFFlavor *self, GError **error)
+{
+        gsgf_return_val_if_fail (GSGF_IS_FLAVOR (self), FALSE, error);
+
+        /* We assume Go if flavor does not override the method.  */
+        if (!GSGF_FLAVOR_GET_CLASS(self)->get_game_id)
+                return 1;
+
+        return GSGF_FLAVOR_GET_CLASS(self)->get_game_id (self);
+}
+
 static gboolean
 _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *property,
                               const GSGFRaw *raw, GSGFCookedValue **cooked,

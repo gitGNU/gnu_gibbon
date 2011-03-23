@@ -38,7 +38,7 @@ test_collection(GSGFCollection *collection, GError *error)
         gboolean success =
                 gsgf_component_write_stream (GSGF_COMPONENT (collection), out,
                                              &written, NULL, &error);
-        gchar *expect = "(;AP[libgsgf:" VERSION "]CA[UTF-8])\n";
+        gchar *expect = "(;AP[libgsgf:" VERSION "]CA[UTF-8]GM[1])\n";
         gchar *got;
 
         if (error) return expect_error(error, NULL);

@@ -55,6 +55,7 @@ static gboolean gsgf_flavor_backgammon_write_compressed_list (const GSGFFlavor
                                    gsize *bytes_written,
                                    GCancellable *cancellable,
                                    GError **error);
+static guint gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -81,6 +82,7 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
         flavor_class->append_points = gsgf_flavor_backgammon_append_points;
         flavor_class->write_compressed_list =
                         gsgf_flavor_backgammon_write_compressed_list;
+        flavor_class->get_game_id = gsgf_flavor_backgammon_get_game_id;
 
         object_class->finalize = gsgf_flavor_backgammon_finalize;
 }
@@ -222,3 +224,10 @@ gsgf_flavor_backgammon_write_compressed_list (const GSGFFlavor *flavor,
 
         return TRUE;
 }
+
+static guint
+gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self)
+{
+        return 6;
+}
+
