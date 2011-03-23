@@ -173,6 +173,7 @@ gibbon_server_console_finalize (GObject *object)
         GibbonServerConsole *self = GIBBON_SERVER_CONSOLE (object);
         GtkTreePath *path;
         GtkTreeIter iter;
+        GSList *list_iter;
         GSList *new_recents;
         guint i, max_recents;
         GibbonPrefs *prefs;
@@ -222,6 +223,13 @@ gibbon_server_console_finalize (GObject *object)
                 if (new_recents)
                         gibbon_prefs_set_list (prefs, GIBBON_PREFS_COMMANDS,
                                                new_recents);
+
+                list_iter = new_recents;
+                while (list_iter) {
+                        if (list_iter->data)
+                                g_free (list_iter->data);
+                        list_iter = list_iter->next;
+                }
                 g_slist_free (new_recents);
                 g_object_unref (self->priv->model);
         }
