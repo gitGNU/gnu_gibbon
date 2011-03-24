@@ -422,7 +422,11 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                                signals[LOGGED_IN],
                                                0, self);
                         }
-                        gibbon_server_console_print_output (console, ptr);
+                        if (clip_code >= 0)
+                                gibbon_server_console_print_output (console,
+                                                                    ptr);
+                        else
+                                gibbon_server_console_print_info (console, ptr);
                 } else {
                         gibbon_server_console_print_info (console, ptr);
                 }
