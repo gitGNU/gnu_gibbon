@@ -64,8 +64,7 @@ gsgf_node_init(GSGFNode *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,  GSGF_TYPE_NODE,
                                                  GSGFNodePrivate);
 
-        self->priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                                       g_free, g_object_unref);
+        self->priv->properties = NULL;
         self->priv->previous = NULL;
         self->priv->losers = NULL;
         self->priv->parent = NULL;
@@ -119,6 +118,8 @@ _gsgf_node_new (GSGFNode *previous, GSGFGameTree *parent)
 
         self = g_object_new(GSGF_TYPE_NODE, NULL);
 
+        self->priv->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                                       g_free, g_object_unref);
         self->priv->previous = previous;
         self->priv->parent = parent;
 
