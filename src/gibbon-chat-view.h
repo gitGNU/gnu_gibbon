@@ -75,6 +75,6 @@ struct _GibbonChatViewClass
 
 GType gibbon_chat_view_get_type (void) G_GNUC_CONST;
 
-GibbonChatView *gibbon_chat_view_new (GibbonApp *app, const gchar *label);
+GibbonChatView *gibbon_chat_view_new (GibbonApp *app, const gchar *who);
 
 #endif

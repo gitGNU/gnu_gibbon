@@ -42,7 +42,8 @@ typedef struct _GibbonChatViewPrivate GibbonChatViewPrivate;
 struct _GibbonChatViewPrivate {
         GibbonApp *app;
 
-        gchar *label;
+        gchar *who;
+        gint page_number;
 };
 
 #define GIBBON_CHAT_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -58,7 +59,8 @@ gibbon_chat_view_init (GibbonChatView *self)
 
         self->priv->app = NULL;
 
-        self->priv->label = NULL;
+        self->priv->who = NULL;
+        self->priv->page_number = 1;
 }
 
 static void
@@ -66,9 +68,9 @@ gibbon_chat_view_finalize (GObject *object)
 {
         GibbonChatView *self = GIBBON_CHAT_VIEW (object);
 
-        if (self->priv->label)
-                g_free (self->priv->label);
-        self->priv->label = NULL;
+        if (self->priv->who)
+                g_free (self->priv->who);
+        self->priv->who = NULL;
 
         G_OBJECT_CLASS (gibbon_chat_view_parent_class)->finalize(object);
 }
@@ -85,19 +87,55 @@ gibbon_chat_view_class_init (GibbonChatViewClass *klass)
 
 /**
  * gibbon_chat_view_new:
- * @dummy: The argument.
+ * @app: The #GibbonApp.
+ * @who: Name of the other FIBSter.
  *
  * Creates a new #GibbonChatView.
  *
  * Returns: The newly created #GibbonChatView or %NULL in case of failure.
  */
 GibbonChatView *
-gibbon_chat_view_new (GibbonApp *app, const gchar *label)
+gibbon_chat_view_new (GibbonApp *app, const gchar *who)
 {
         GibbonChatView *self = g_object_new (GIBBON_TYPE_CHAT_VIEW, NULL);
+        GtkNotebook *notebook;
+        GtkWidget *vbox;
+        GtkWidget *scroll;
+        GtkWidget *text_view;
+        GtkWidget *entry;
+        GtkWidget *tab_label;
 
         self->priv->app = app;
-        self->priv->label = g_strdup (label);
+        self->priv->who = g_strdup (who);
+
+        notebook = GTK_NOTEBOOK (gibbon_app_find_object (app, "chat-notebook",
+                                                         GTK_TYPE_NOTEBOOK));
+
+        vbox = gtk_vbox_new (FALSE, 0);
+        scroll = gtk_scrolled_window_new (FALSE, FALSE);
+        gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll),
+                                        GTK_POLICY_AUTOMATIC,
+                                        GTK_POLICY_AUTOMATIC);
+        gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);
+        text_view = gtk_text_view_new ();
+        gtk_text_view_set_editable (GTK_TEXT_VIEW (text_view), FALSE);
+        gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (text_view), GTK_WRAP_WORD);
+        gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (text_view), FALSE);
+
+        gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scroll),
+                                               text_view);
+        entry = gtk_entry_new ();
+        gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, TRUE, 0);
+        gtk_widget_show_all (vbox);
+
+        tab_label = gtk_label_new (who);
+        gtk_widget_show_all (tab_label);
+
+        self->priv->page_number = gtk_notebook_get_n_pages (notebook);
+
+        gtk_notebook_append_page (notebook, vbox, tab_label);
+        gtk_notebook_set_current_page (notebook, self->priv->page_number);
+        gtk_widget_grab_focus (GTK_WIDGET (entry));
 
         return self;
 }
