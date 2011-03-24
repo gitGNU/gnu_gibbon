@@ -180,16 +180,8 @@ gibbon_server_console_finalize (GObject *object)
         GibbonPrefs *prefs;
         gchar *data;
 
-        if (self->priv->raw_tag)
-                g_object_unref (self->priv->raw_tag);
         self->priv->raw_tag = NULL;
-
-        if (self->priv->sent_tag)
-                g_object_unref (self->priv->sent_tag);
         self->priv->sent_tag = NULL;
-
-        if (self->priv->received_tag)
-                g_object_unref (self->priv->received_tag);
         self->priv->received_tag = NULL;
 
         if (self->priv->command_signal)
