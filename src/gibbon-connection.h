@@ -64,7 +64,8 @@ void gibbon_connection_fatal (GibbonConnection *connection,
 void gibbon_connection_queue_command (GibbonConnection *connection,
                                       gboolean is_manual,
                                       const gchar *command, ...);
-
+struct _GibbonSession *gibbon_connection_get_session (const GibbonConnection
+                                                      *self);
 G_END_DECLS
 
 #endif

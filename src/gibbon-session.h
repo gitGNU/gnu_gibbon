@@ -52,7 +52,6 @@ GibbonSession *gibbon_session_new (GibbonApp *app,
                                    GibbonConnection *connection);
 gint gibbon_session_process_server_line (GibbonSession *self,
                                          const gchar *line);
-
 G_END_DECLS
 
 #endif

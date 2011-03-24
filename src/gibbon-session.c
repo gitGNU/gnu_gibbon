@@ -72,6 +72,8 @@ struct _GibbonSessionPrivate {
 
         GibbonPlayerList *player_list;
         GibbonPlayerListView *player_list_view;
+
+        GHashTable *chats;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \

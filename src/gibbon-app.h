@@ -94,7 +94,11 @@ struct _GibbonServerConsole *gibbon_app_get_server_console (const GibbonApp
                                                             *self);
 struct _GibbonCairoboard *gibbon_app_get_board (const GibbonApp *self);
 struct _GibbonConnection *gibbon_app_get_connection (const GibbonApp *self);
+struct _GibbonSession *gibbon_app_get_session (const GibbonApp *self);
 struct _GibbonShouts *gibbon_app_get_shouts (const GibbonApp *self);
+
+void gibbon_app_start_chat (GibbonApp *self, const gchar *whom);
+void gibbon_app_close_chat (GibbonApp *self, const gchar *whom);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

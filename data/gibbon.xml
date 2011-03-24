@@ -525,9 +525,8 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="tell_player_menu_item">
+      <object class="GtkMenuItem" id="tell-player-menu-item">
         <property name="visible">True</property>
-        <property name="sensitive">False</property>
         <property name="label" translatable="yes">Chat</property>
         <property name="use_underline">True</property>
       </object>
@@ -718,6 +717,7 @@
                 <property name="label">gtk-connect</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
@@ -749,6 +749,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>

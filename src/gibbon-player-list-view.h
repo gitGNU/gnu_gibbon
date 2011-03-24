@@ -71,7 +71,7 @@ struct _GibbonPlayerListViewClass
 
 GType gibbon_player_list_view_get_type (void) G_GNUC_CONST;
 
-GibbonPlayerListView *gibbon_player_list_view_new (const GibbonApp *app,
+GibbonPlayerListView *gibbon_player_list_view_new (GibbonApp *app,
                                                    GibbonPlayerList *players);
 
 #endif

@@ -42,6 +42,7 @@
 #include "gibbon-server-console.h"
 #include "gibbon-shouts.h"
 #include "gibbon-account-dialog.h"
+#include "gibbon-chat-view.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -65,6 +66,8 @@ struct _GibbonAppPrivate {
         GibbonSignal *disconnected_signal;
 
         GibbonAccountDialog *account_dialog;
+
+        GHashTable *chats;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -126,6 +129,8 @@ gibbon_app_init (GibbonApp *self)
         self->priv->disconnected_signal = NULL;
 
         self->priv->account_dialog = NULL;
+
+        self->priv->chats = NULL;
 }
 
 static void
@@ -214,6 +219,9 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->chats = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                   g_free, g_object_unref);
 
         gibbon_app_set_state_disconnected (self);
 
@@ -764,6 +772,14 @@ gibbon_app_get_connection (const GibbonApp *self)
         return self->priv->connection;
 }
 
+struct _GibbonSession *
+gibbon_app_get_session (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return gibbon_connection_get_session (self->priv->connection);
+}
+
 GibbonShouts *
 gibbon_app_get_shouts (const GibbonApp *self)
 {
@@ -781,4 +797,36 @@ gibbon_app_on_account_prefs (GibbonApp *self)
                 self->priv->account_dialog = gibbon_account_dialog_new (self);
 
         gibbon_account_dialog_show (self->priv->account_dialog);
+}
+
+void
+gibbon_app_start_chat (GibbonApp *self, const gchar *who)
+{
+        GibbonChatView *view;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+
+        if (!g_strcmp0 (gibbon_connection_get_login (self->priv->connection),
+                                                     who)) {
+                gibbon_app_display_error (self, "%s",
+                                          _("You do not need this program"
+                                            " if you want to talk with"
+                                            " yourself!"));
+        } else {
+                view = gibbon_chat_view_new (self, who);
+                if (view) {
+                        g_hash_table_insert (self->priv->chats,
+                                             g_strdup (who), view);
+                }
+        }
+}
+
+void
+gibbon_app_close_chat (GibbonApp *self, const gchar *who)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+
+        g_hash_table_remove (self->priv->chats, who);
 }

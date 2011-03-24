@@ -675,3 +675,11 @@ gibbon_connection_fatal (GibbonConnection *self,
 
         g_free (message);
 }
+
+GibbonSession *
+gibbon_connection_get_session (const GibbonConnection *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
+
+        return self->priv->session;
+}
