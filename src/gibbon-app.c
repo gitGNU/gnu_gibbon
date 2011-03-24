@@ -454,10 +454,12 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
         obj = gibbon_app_find_object (self, "toolbar_connect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+        gtk_widget_set_visible (GTK_WIDGET (obj), TRUE);
 
         obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+        gtk_widget_set_visible (GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object (self, "connect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
@@ -489,10 +491,12 @@ gibbon_app_set_state_connecting (GibbonApp *self)
         obj = gibbon_app_find_object (self, "toolbar_connect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+        gtk_widget_set_visible (GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object (self, "toolbar_disconnect_button",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
+        gtk_widget_set_visible (GTK_WIDGET (obj), TRUE);
 
         obj = gibbon_app_find_object (self, "connect_menu_item",
                                       GTK_TYPE_IMAGE_MENU_ITEM);
