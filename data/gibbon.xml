@@ -144,6 +144,7 @@
               <object class="GtkToolButton" id="toolbar_connect_button">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Connect</property>
+                <property name="use_underline">True</property>
                 <property name="stock_id">gtk-connect</property>
               </object>
               <packing>
@@ -154,6 +155,7 @@
             <child>
               <object class="GtkToolButton" id="toolbar_disconnect_button">
                 <property name="visible">True</property>
+                <property name="use_underline">True</property>
                 <property name="stock_id">gtk-disconnect</property>
               </object>
               <packing>
@@ -752,6 +754,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
