@@ -221,6 +221,18 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkToolButton" id="board-fullscreen">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Fullscreen</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-fullscreen</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkSeparatorToolItem" id="toolbutton3">
                             <property name="visible">True</property>
                           </object>
@@ -966,6 +978,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
