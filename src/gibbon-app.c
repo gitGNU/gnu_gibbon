@@ -341,7 +341,8 @@ gibbon_app_find_object (const GibbonApp *self, const gchar *id, GType type)
 static GibbonCairoboard *
 gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
 {
-        GObject *left_vpane;
+        GObject *board_vbox;
+        GObject *dummy;
         GibbonCairoboard *board = gibbon_cairoboard_new (self, board_filename);
 
         if (!board)
@@ -353,12 +354,14 @@ gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
          */
         gtk_widget_set_size_request (GTK_WIDGET (board), 490, 380);
 
-        left_vpane = gibbon_app_find_object (self, "left_vpane",
-                                             GTK_TYPE_VPANED);
+        dummy = gibbon_app_find_object (self, "dummy-drawingarea",
+                                        GTK_TYPE_DRAWING_AREA);
+        gtk_widget_destroy (GTK_WIDGET (dummy));
 
-        gtk_widget_destroy (gtk_paned_get_child1 (GTK_PANED (left_vpane)));
-        gtk_paned_pack1 (GTK_PANED (left_vpane), GTK_WIDGET (board),
-                         TRUE, FALSE);
+        board_vbox = gibbon_app_find_object (self, "board-vbox",
+                                             GTK_TYPE_VBOX);
+        gtk_box_pack_start (GTK_BOX (board_vbox), GTK_WIDGET (board),
+                            TRUE, TRUE, 0);
 
         return board;
 }
