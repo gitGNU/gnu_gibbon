@@ -339,6 +339,9 @@
                     <child>
                       <object class="GtkToolbar" id="game-chat-toolbar">
                         <property name="visible">True</property>
+                        <property name="toolbar_style">icons</property>
+                        <property name="icon_size">2</property>
+                        <property name="icon_size_set">True</property>
                         <child>
                           <object class="GtkToggleToolButton" id="game-chat-say-button">
                             <property name="visible">True</property>
@@ -942,6 +945,12 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
