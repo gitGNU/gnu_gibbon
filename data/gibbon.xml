@@ -209,7 +209,7 @@
                         <property name="icon_size">1</property>
                         <property name="icon_size_set">True</property>
                         <child>
-                          <object class="GtkToolButton" id="toolbutton2">
+                          <object class="GtkToolButton" id="board-refresh">
                             <property name="visible">True</property>
                             <property name="label" translatable="yes">Aktualisieren</property>
                             <property name="use_underline">True</property>
@@ -291,7 +291,7 @@
                             <property name="visible">True</property>
                             <property name="label" translatable="yes">Next move</property>
                             <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-media-previous</property>
+                            <property name="stock_id">gtk-media-forward</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -304,6 +304,27 @@
                             <property name="label" translatable="yes">Next game</property>
                             <property name="use_underline">True</property>
                             <property name="stock_id">gtk-media-next</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorToolItem" id="toolbutton2">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="board-leave">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Leave</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-quit</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -945,6 +966,18 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
