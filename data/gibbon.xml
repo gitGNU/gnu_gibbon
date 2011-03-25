@@ -234,7 +234,7 @@
                             <property name="visible">True</property>
                             <property name="label" translatable="yes">Resign</property>
                             <property name="use_underline">True</property>
-                            <property name="stock_id">gnome-stock-not</property>
+                            <property name="stock_id">gtk-help</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -966,6 +966,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
