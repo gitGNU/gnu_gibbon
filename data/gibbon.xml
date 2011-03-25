@@ -332,12 +332,11 @@
                       </packing>
                     </child>
                     <child type="tab">
-                      <object class="GtkLabel" id="label6">
+                      <object class="GtkLabel" id="label321">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Players</property>
+                        <property name="label" translatable="yes">Server</property>
                       </object>
                       <packing>
-                        <property name="position">1</property>
                         <property name="tab_fill">False</property>
                       </packing>
                     </child>
@@ -402,9 +401,47 @@
                       </packing>
                     </child>
                     <child type="tab">
+                      <object class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Players</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkVBox" id="vbox3">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkComboBox" id="combobox1">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkTreeView" id="moves-view">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
                       <object class="GtkLabel" id="label7">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Server</property>
+                        <property name="label" translatable="yes">Moves</property>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -754,6 +791,12 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
