@@ -167,8 +167,8 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                 retval = 0;
                 endptr++;
         }
-        if (retval)
-                /* No whitespace following number).  */
+        if (retval && *endptr)
+                /* No whitespace following number.  */
                 return retval;
         
         switch (code) {
