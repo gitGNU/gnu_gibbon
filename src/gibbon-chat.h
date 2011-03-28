@@ -75,7 +75,6 @@ struct _GibbonChatClass
 
 GType gibbon_chat_get_type (void) G_GNUC_CONST;
 
-GibbonChat *gibbon_chat_new (GibbonApp *app, GtkTextBuffer *buffer,
-                             const gchar *user);
+GibbonChat *gibbon_chat_new (GibbonApp *app, const gchar *who);
 
 #endif
