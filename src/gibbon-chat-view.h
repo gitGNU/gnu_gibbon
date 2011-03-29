@@ -24,10 +24,10 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-app.h"
+#include "gibbon-chat.h"
 
 #define GIBBON_TYPE_CHAT_VIEW \
         (gibbon_chat_view_get_type ())
@@ -62,6 +62,7 @@ struct _GibbonChatView
 
 /**
  * GibbonChatViewClass:
+ * @on_activate: Handler for "activate" signal.
  *
  * Class representing the combination of a GtkTextArea and a GtkEntry that
  * can be used for communicating with other FIBSters.
@@ -71,10 +72,14 @@ struct _GibbonChatViewClass
 {
         /* <private >*/
         GObjectClass parent_class;
+
+        void (*on_activate) (GibbonChatView *self, GtkEntry *entry);
 };
 
 GType gibbon_chat_view_get_type (void) G_GNUC_CONST;
 
 GibbonChatView *gibbon_chat_view_new (GibbonApp *app, const gchar *who);
+
+void gibbon_chat_view_set_chat (GibbonChatView *self, struct _GibbonChat *chat);
 
 #endif

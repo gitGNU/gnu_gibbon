@@ -43,6 +43,7 @@
 #include "gibbon-shouts.h"
 #include "gibbon-account-dialog.h"
 #include "gibbon-chat-view.h"
+#include "gibbon-chat.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -810,6 +811,7 @@ void
 gibbon_app_start_chat (GibbonApp *self, const gchar *who)
 {
         GibbonChatView *view;
+        GibbonChat *chat;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (self->priv->connection != NULL);
@@ -820,13 +822,18 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
                                           _("You do not need this program"
                                             " if you want to talk with"
                                             " yourself!"));
-        } else {
-                view = gibbon_chat_view_new (self, who);
-                if (view) {
-                        g_hash_table_insert (self->priv->chats,
-                                             g_strdup (who), view);
-                }
+                return;
         }
+
+        chat = gibbon_chat_new (self, who);
+        view = gibbon_chat_view_new (self, who);
+        g_hash_table_insert (self->priv->chats, g_strdup (who), view);
+
+        /* Passs the reference for the chat to the view ... */
+        gibbon_chat_view_set_chat (view, chat);
+
+        /* ... and unref it.  */
+        g_object_unref (chat);
 }
 
 void

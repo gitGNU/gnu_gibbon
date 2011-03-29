@@ -37,13 +37,21 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-chat-view.h"
+#include "gibbon-chat.h"
+#include "gibbon-signal.h"
+#include "html-entities.h"
+#include "gibbon-connection.h"
 
 typedef struct _GibbonChatViewPrivate GibbonChatViewPrivate;
 struct _GibbonChatViewPrivate {
         GibbonApp *app;
 
+        GibbonChat *chat;
+
         gchar *who;
         gint page_number;
+
+        GibbonSignal *activate_handler;
 };
 
 #define GIBBON_CHAT_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -51,11 +59,16 @@ struct _GibbonChatViewPrivate {
 
 G_DEFINE_TYPE (GibbonChatView, gibbon_chat_view, G_TYPE_OBJECT)
 
+static void gibbon_chat_view_on_activate (GibbonChatView *self,
+                                          GtkEntry *entry);
+
 static void 
 gibbon_chat_view_init (GibbonChatView *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_CHAT_VIEW, GibbonChatViewPrivate);
+
+        self->priv->chat = NULL;
 
         self->priv->app = NULL;
 
@@ -67,6 +80,14 @@ static void
 gibbon_chat_view_finalize (GObject *object)
 {
         GibbonChatView *self = GIBBON_CHAT_VIEW (object);
+
+        if (self->priv->activate_handler)
+                g_object_unref (self->priv->activate_handler);
+        self->priv->activate_handler = NULL;
+
+        if (self->priv->chat)
+                g_object_unref (self->priv->chat);
+        self->priv->chat = NULL;
 
         if (self->priv->who)
                 g_free (self->priv->who);
@@ -80,6 +101,8 @@ gibbon_chat_view_class_init (GibbonChatViewClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
+        klass->on_activate = gibbon_chat_view_on_activate;
+
         g_type_class_add_private (klass, sizeof (GibbonChatViewPrivate));
 
         object_class->finalize = gibbon_chat_view_finalize;
@@ -104,6 +127,7 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
         GtkWidget *text_view;
         GtkWidget *entry;
         GtkWidget *tab_label;
+        GibbonChatViewClass *klass;
 
         self->priv->app = app;
         self->priv->who = g_strdup (who);
@@ -137,5 +161,53 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
         gtk_notebook_set_current_page (notebook, self->priv->page_number);
         gtk_widget_grab_focus (GTK_WIDGET (entry));
 
+        klass = GIBBON_CHAT_VIEW_GET_CLASS (self);
+
+        self->priv->activate_handler =
+                gibbon_signal_new (G_OBJECT (entry), "activate",
+                                   G_CALLBACK (klass->on_activate),
+                                   G_OBJECT (self));
+
         return self;
+}
+
+void
+gibbon_chat_view_set_chat (GibbonChatView *self, GibbonChat *chat)
+{
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
+        g_return_if_fail (GIBBON_IS_CHAT (chat));
+
+        if (self->priv->chat)
+                g_object_unref (self->priv->chat);
+        self->priv->chat = chat;
+        g_object_ref (chat);
+}
+
+static void
+gibbon_chat_view_on_activate (GibbonChatView *self, GtkEntry *entry)
+{
+        gchar *trimmed;
+        gchar *formatted;
+        GibbonConnection *connection;
+
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return;
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+        if (!*trimmed) {
+                g_free (trimmed);
+                return;
+        }
+        formatted = encode_html_entities (trimmed);
+        g_free (trimmed);
+        gibbon_connection_queue_command (connection, FALSE,
+                                         "tellx %s %s",
+                                         self->priv->who, formatted);
+        g_free (formatted);
+
+        gtk_entry_set_text (entry, "");
 }
