@@ -41,16 +41,14 @@
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
 #define CLIP_SHOUTS 13
+#define CLIP_YOU_TELL 16
 
 static gint gibbon_session_clip_welcome (GibbonSession *self,
-                                         const gchar *message,
-                                         const gchar *ptr);
+                                         const gchar *message);
 static gint gibbon_session_clip_who_info (GibbonSession *self,
-                                          const gchar *message,
-                                          const gchar *ptr);
+                                          const gchar *message);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
-                                        const gchar *message,
-                                        const gchar *ptr);
+                                        const gchar *message);
 static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
@@ -173,19 +171,16 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
         
         switch (code) {
                 case CLIP_WELCOME:
-                        retval = gibbon_session_clip_welcome (self, message,
-                                                              endptr);
+                        retval = gibbon_session_clip_welcome (self, endptr);
                         break;
                 case CLIP_WHO_INFO:
-                        retval = gibbon_session_clip_who_info (self, message,
-                                                               endptr);
+                        retval = gibbon_session_clip_who_info (self, endptr);
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
                         retval = CLIP_WHO_INFO_END;
                         break;
                 case CLIP_SHOUTS:
-                        retval = gibbon_session_clip_shouts (self, message,
-                                                             endptr);
+                        retval = gibbon_session_clip_shouts (self, endptr);
                         break;
                 default:
                         retval = -1;
@@ -217,7 +212,7 @@ gibbon_session_process_server_line (GibbonSession *self,
 
 static gint
 gibbon_session_clip_welcome (GibbonSession *self, 
-                             const gchar *message, const gchar *ptr)
+                             const gchar *message)
 {
         const gchar* login;
         gchar **tokens;
@@ -232,7 +227,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
 
         login = gibbon_connection_get_login (self->priv->connection);
 
-        tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 4);
+        tokens = g_strsplit_set (message, GIBBON_SESSION_WHITESPACE, 4);
         
         last_login.tv_usec = 0;
         if (tokens[1])
@@ -304,7 +299,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
 
 static gint
 gibbon_session_clip_who_info (GibbonSession *self, 
-                              const gchar *message, const gchar *ptr)
+                              const gchar *message)
 {
         gchar **tokens;
         gchar *who;
@@ -324,7 +319,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
-        tokens = g_strsplit_set (ptr, GIBBON_SESSION_WHITESPACE, 13);
+        tokens = g_strsplit_set (message, GIBBON_SESSION_WHITESPACE, 13);
         g_return_val_if_fail (tokens, FALSE);
         for (i = 0; i <= 11; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
@@ -415,14 +410,14 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
 static gint
 gibbon_session_clip_shouts (GibbonSession *self,
-                           const gchar *message, const gchar *ptr)
+                           const gchar *message)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonShouts *shouts;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
-        fibs_message = gibbon_fibs_message_new (ptr);
+        fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return -1;
 
