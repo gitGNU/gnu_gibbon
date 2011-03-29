@@ -816,14 +816,8 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (self->priv->connection != NULL);
 
-        if (!g_strcmp0 (gibbon_connection_get_login (self->priv->connection),
-                                                     who)) {
-                gibbon_app_display_error (self, "%s",
-                                          _("You do not need this program"
-                                            " if you want to talk with"
-                                            " yourself!"));
+        if (g_hash_table_lookup (self->priv->chats, who))
                 return;
-        }
 
         chat = gibbon_chat_new (self, who);
         view = gibbon_chat_view_new (self, who);
@@ -843,4 +837,26 @@ gibbon_app_close_chat (GibbonApp *self, const gchar *who)
         g_return_if_fail (self->priv->connection != NULL);
 
         g_hash_table_remove (self->priv->chats, who);
+}
+
+void
+gibbon_app_show_message (GibbonApp *self,
+                         const gchar *peer,
+                         const GibbonFIBSMessage *message)
+{
+        GibbonChatView *view;
+        GibbonChat *chat;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_app_start_chat (self, peer);
+        view = GIBBON_CHAT_VIEW (g_hash_table_lookup (self->priv->chats,
+                                                      peer));
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (view));
+        chat = gibbon_chat_view_get_chat (view);
+        g_return_if_fail (GIBBON_IS_CHAT (chat));
+
+        gibbon_chat_append_message (chat, message);
 }

@@ -80,6 +80,7 @@ GType gibbon_chat_view_get_type (void) G_GNUC_CONST;
 
 GibbonChatView *gibbon_chat_view_new (GibbonApp *app, const gchar *who);
 
-void gibbon_chat_view_set_chat (GibbonChatView *self, struct _GibbonChat *chat);
+void gibbon_chat_view_set_chat (GibbonChatView *self, GibbonChat *chat);
+GibbonChat *gibbon_chat_view_get_chat (const GibbonChatView *self);
 
 #endif

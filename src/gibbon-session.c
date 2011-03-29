@@ -41,7 +41,7 @@
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
 #define CLIP_SHOUTS 13
-#define CLIP_YOU_TELL 16
+#define CLIP_YOU_SAY 16
 
 static gint gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message);
@@ -49,6 +49,8 @@ static gint gibbon_session_clip_who_info (GibbonSession *self,
                                           const gchar *message);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
                                         const gchar *message);
+static gint gibbon_session_clip_you_say (GibbonSession *self,
+                                          const gchar *message);
 static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
@@ -181,6 +183,9 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                         break;
                 case CLIP_SHOUTS:
                         retval = gibbon_session_clip_shouts (self, endptr);
+                        break;
+                case CLIP_YOU_SAY:
+                        retval = gibbon_session_clip_you_say (self, endptr);
                         break;
                 default:
                         retval = -1;
@@ -425,6 +430,39 @@ gibbon_session_clip_shouts (GibbonSession *self,
         gibbon_shouts_append_message (shouts, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_SHOUTS;
+}
+
+static gint
+gibbon_session_clip_you_say (GibbonSession *self,
+                             const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+        gchar *receiver;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        fibs_message = gibbon_fibs_message_new (message);
+        if (!fibs_message)
+                return -1;
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return -1;
+
+        /* Steal the receiver, and make it our sender.  */
+        receiver = fibs_message->sender;
+        fibs_message->sender =
+                g_strdup (gibbon_connection_get_login (connection));
+
+        gibbon_app_show_message (self->priv->app,
+                                 receiver,
+                                 fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+        g_free (receiver);
 
         return CLIP_SHOUTS;
 }

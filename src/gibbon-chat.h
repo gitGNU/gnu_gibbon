@@ -24,10 +24,10 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-app.h"
+#include "gibbon-fibs-message.h"
 
 #define GIBBON_TYPE_CHAT \
         (gibbon_chat_get_type ())
@@ -76,5 +76,8 @@ struct _GibbonChatClass
 GType gibbon_chat_get_type (void) G_GNUC_CONST;
 
 GibbonChat *gibbon_chat_new (GibbonApp *app, const gchar *who);
+GtkTextBuffer *gibbon_chat_get_buffer (const GibbonChat *chat);
+void gibbon_chat_append_message (const GibbonChat *chat,
+                                 const GibbonFIBSMessage *message);
 
 #endif

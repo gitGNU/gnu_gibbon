@@ -25,6 +25,8 @@
 
 #include <gtk/gtk.h>
 
+#include "gibbon-fibs-message.h"
+
 #define GIBBON_TYPE_APP \
         (gibbon_app_get_type ())
 #define GIBBON_APP(obj) \
@@ -97,8 +99,10 @@ struct _GibbonConnection *gibbon_app_get_connection (const GibbonApp *self);
 struct _GibbonSession *gibbon_app_get_session (const GibbonApp *self);
 struct _GibbonShouts *gibbon_app_get_shouts (const GibbonApp *self);
 
-void gibbon_app_start_chat (GibbonApp *self, const gchar *whom);
-void gibbon_app_close_chat (GibbonApp *self, const gchar *whom);
+void gibbon_app_start_chat (GibbonApp *self, const gchar *peer);
+void gibbon_app_close_chat (GibbonApp *self, const gchar *peer);
+void gibbon_app_show_message (GibbonApp *self, const gchar *peer,
+                              const GibbonFIBSMessage *message);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

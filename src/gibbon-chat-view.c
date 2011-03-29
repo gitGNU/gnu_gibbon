@@ -46,6 +46,7 @@ typedef struct _GibbonChatViewPrivate GibbonChatViewPrivate;
 struct _GibbonChatViewPrivate {
         GibbonApp *app;
 
+        GtkTextView *view;
         GibbonChat *chat;
 
         gchar *who;
@@ -67,6 +68,8 @@ gibbon_chat_view_init (GibbonChatView *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_CHAT_VIEW, GibbonChatViewPrivate);
+
+        self->priv->view = NULL;
 
         self->priv->chat = NULL;
 
@@ -92,6 +95,8 @@ gibbon_chat_view_finalize (GObject *object)
         if (self->priv->who)
                 g_free (self->priv->who);
         self->priv->who = NULL;
+
+        self->priv->view = NULL;
 
         G_OBJECT_CLASS (gibbon_chat_view_parent_class)->finalize(object);
 }
@@ -142,9 +147,10 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
                                         GTK_POLICY_AUTOMATIC);
         gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);
         text_view = gtk_text_view_new ();
-        gtk_text_view_set_editable (GTK_TEXT_VIEW (text_view), FALSE);
-        gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (text_view), GTK_WRAP_WORD);
-        gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (text_view), FALSE);
+        self->priv->view = GTK_TEXT_VIEW (text_view);
+        gtk_text_view_set_editable (self->priv->view, FALSE);
+        gtk_text_view_set_wrap_mode (self->priv->view, GTK_WRAP_WORD);
+        gtk_text_view_set_cursor_visible (self->priv->view, FALSE);
 
         gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scroll),
                                                text_view);
@@ -174,6 +180,8 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
 void
 gibbon_chat_view_set_chat (GibbonChatView *self, GibbonChat *chat)
 {
+        GtkTextBuffer *buffer;
+
         g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
         g_return_if_fail (GIBBON_IS_CHAT (chat));
 
@@ -181,6 +189,9 @@ gibbon_chat_view_set_chat (GibbonChatView *self, GibbonChat *chat)
                 g_object_unref (self->priv->chat);
         self->priv->chat = chat;
         g_object_ref (chat);
+
+        buffer = gibbon_chat_get_buffer (chat);
+        gtk_text_view_set_buffer (self->priv->view, buffer);
 }
 
 static void
@@ -210,4 +221,12 @@ gibbon_chat_view_on_activate (GibbonChatView *self, GtkEntry *entry)
         g_free (formatted);
 
         gtk_entry_set_text (entry, "");
+}
+
+GibbonChat *
+gibbon_chat_view_get_chat (const GibbonChatView *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CHAT_VIEW (self), NULL);
+
+        return self->priv->chat;
 }

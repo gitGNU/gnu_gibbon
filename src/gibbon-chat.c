@@ -209,3 +209,11 @@ gibbon_chat_append_message (const GibbonChat *self,
         g_free (formatted);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
 }
+
+GtkTextBuffer *
+gibbon_chat_get_buffer (const GibbonChat *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CHAT (self), NULL);
+
+        return self->priv->buffer;
+}
