@@ -45,6 +45,7 @@ struct _GibbonPlayerListViewPrivate {
         GibbonSignal *look_handler;
         GibbonSignal *watch_handler;
         GibbonSignal *tell_handler;
+        GibbonSignal *row_activated_handler;
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -62,6 +63,9 @@ static gchar *gibbon_player_list_view_row_name (const GibbonPlayerListView
 static void gibbon_player_list_view_on_look (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_watch (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_tell (const GibbonPlayerListView *self);
+static void gibbon_player_list_view_on_row_activated (const
+                                                      GibbonPlayerListView
+                                                      *self);
 
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
@@ -82,6 +86,7 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->look_handler = NULL;
         self->priv->watch_handler = NULL;
         self->priv->tell_handler = NULL;
+        self->priv->row_activated_handler = NULL;
 }
 
 static void
@@ -115,6 +120,10 @@ gibbon_player_list_view_finalize (GObject *object)
         if (self->priv->tell_handler)
                 g_object_unref (self->priv->tell_handler);
         self->priv->tell_handler = NULL;
+
+        if (self->priv->row_activated_handler)
+                g_object_unref (self->priv->row_activated_handler);
+        self->priv->row_activated_handler = NULL;
 
         G_OBJECT_CLASS (gibbon_player_list_view_parent_class)->finalize(object);
 }
@@ -243,6 +252,11 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         callback = (GCallback) gibbon_player_list_view_on_tell;
         self->priv->tell_handler =
                  gibbon_signal_new (emitter, "activate",
+                                    callback, G_OBJECT (self));
+
+        callback = (GCallback) gibbon_player_list_view_on_row_activated;
+        self->priv->row_activated_handler =
+                 gibbon_signal_new (G_OBJECT (view), "row-activated",
                                     callback, G_OBJECT (self));
 
         return self;
@@ -394,4 +408,10 @@ gibbon_player_list_view_on_tell (const GibbonPlayerListView *self)
         gibbon_app_start_chat (self->priv->app, whom);
 
         g_free (whom);
+}
+
+static void
+gibbon_player_list_view_on_row_activated (const GibbonPlayerListView *self)
+{
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 }
