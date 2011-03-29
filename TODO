@@ -54,3 +54,4 @@
 - Cancelling a connection attempt probably has a race.  The connector
   object gets unreffed before it can check its state.  FIX: Temporarily
   keep a reference.
+- Check the reference handling for GibbonChatView and GibbonChat.
