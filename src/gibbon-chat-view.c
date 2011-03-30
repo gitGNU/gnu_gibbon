@@ -158,8 +158,7 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
         gtk_text_view_set_wrap_mode (self->priv->view, GTK_WRAP_WORD);
         gtk_text_view_set_cursor_visible (self->priv->view, FALSE);
 
-        gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scroll),
-                                               text_view);
+        gtk_container_add (GTK_CONTAINER (scroll), text_view);
         entry = gtk_entry_new ();
         gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, TRUE, 0);
         gtk_widget_show_all (vbox);
