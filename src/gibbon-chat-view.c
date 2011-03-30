@@ -123,7 +123,7 @@ gibbon_chat_view_class_init (GibbonChatViewClass *klass)
  * Returns: The newly created #GibbonChatView or %NULL in case of failure.
  */
 GibbonChatView *
-gibbon_chat_view_new (GibbonApp *app, const gchar *who)
+gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
 {
         GibbonChatView *self = g_object_new (GIBBON_TYPE_CHAT_VIEW, NULL);
         GtkNotebook *notebook;
@@ -133,6 +133,11 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
         GtkWidget *entry;
         GtkWidget *tab_label;
         GibbonChatViewClass *klass;
+        GtkTextBuffer *buffer;
+
+        g_return_val_if_fail (GIBBON_IS_CHAT (chat), NULL);
+        self->priv->chat = chat;
+        g_object_ref (chat);
 
         self->priv->app = app;
         self->priv->who = g_strdup (who);
@@ -146,7 +151,8 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who)
                                         GTK_POLICY_AUTOMATIC,
                                         GTK_POLICY_AUTOMATIC);
         gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);
-        text_view = gtk_text_view_new ();
+        buffer = gibbon_chat_get_buffer (chat);
+        text_view = gtk_text_view_new_with_buffer (buffer);
         self->priv->view = GTK_TEXT_VIEW (text_view);
         gtk_text_view_set_editable (self->priv->view, FALSE);
         gtk_text_view_set_wrap_mode (self->priv->view, GTK_WRAP_WORD);

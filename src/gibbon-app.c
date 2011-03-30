@@ -820,13 +820,10 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
                 return;
 
         chat = gibbon_chat_new (self, who);
-        view = gibbon_chat_view_new (self, who);
+        view = gibbon_chat_view_new (self, who, chat);
         g_hash_table_insert (self->priv->chats, g_strdup (who), view);
 
-        /* Pass the reference for the chat to the view ... */
-        gibbon_chat_view_set_chat (view, chat);
-
-        /* ... and unref it.  */
+        /* The chat view has a reference to the chat.  */
         g_object_unref (chat);
 }
 
