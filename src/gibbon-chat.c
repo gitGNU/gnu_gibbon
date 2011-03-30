@@ -59,12 +59,7 @@ gibbon_chat_init (GibbonChat *self)
 
         self->priv->app = NULL;
 
-        if (self->priv->buffer)
-                g_object_unref (self->priv->buffer);
         self->priv->buffer = NULL;
-
-        if (self->priv->who)
-                g_object_unref (self->priv->who);
         self->priv->who = NULL;
 
         self->priv->sender_tag = NULL;
@@ -79,31 +74,11 @@ gibbon_chat_finalize (GObject *object)
 {
         GibbonChat *self = GIBBON_CHAT (object);
 
-        if (self->priv->buffer)
+        if (self->priv->buffer && GTK_IS_TEXT_BUFFER (self->priv->buffer))
                 g_object_unref (self->priv->buffer);
-        self->priv->buffer = NULL;
-
-        self->priv->app = NULL;
 
         if (self->priv->who)
                 g_free (self->priv->who);
-        self->priv->who = NULL;
-
-        if (self->priv->sender_tag)
-                g_object_unref (self->priv->sender_tag);
-        self->priv->sender_tag = NULL;
-
-        if (self->priv->date_tag)
-                g_object_unref (self->priv->date_tag);
-        self->priv->date_tag = NULL;
-
-        if (self->priv->sender_gat)
-                g_object_unref (self->priv->sender_gat);
-        self->priv->sender_gat = NULL;
-
-        if (self->priv->date_gat)
-                g_object_unref (self->priv->date_gat);
-        self->priv->date_gat = NULL;
 
         G_OBJECT_CLASS (gibbon_chat_parent_class)->finalize(object);
 }

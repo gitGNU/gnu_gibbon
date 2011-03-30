@@ -40,7 +40,6 @@
 #include "gibbon-chat.h"
 #include "html-entities.h"
 #include "gibbon-connection.h"
-#include "gibbon-signal.h"
 
 typedef struct _GibbonChatViewPrivate GibbonChatViewPrivate;
 struct _GibbonChatViewPrivate {
@@ -51,14 +50,14 @@ struct _GibbonChatViewPrivate {
         GtkNotebook *notebook;
         GtkEntry *entry;
 
+        GtkWidget *hbox;
+        GtkWidget *vbox;
+
         GibbonChat *chat;
 
         gchar *who;
         gint page_number;
         guint unread;
-
-        GibbonSignal *activate_handler;
-        GibbonSignal *page_change_handler;
 };
 
 #define GIBBON_CHAT_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -69,6 +68,7 @@ G_DEFINE_TYPE (GibbonChatView, gibbon_chat_view, G_TYPE_OBJECT)
 static void gibbon_chat_view_on_activate (GibbonChatView *self,
                                           GtkEntry *entry);
 static void gibbon_chat_view_on_page_change (const GibbonChatView *self);
+static void gibbon_chat_view_close (GibbonChatView *self);
 
 static void 
 gibbon_chat_view_init (GibbonChatView *self)
@@ -95,14 +95,6 @@ gibbon_chat_view_finalize (GObject *object)
 {
         GibbonChatView *self = GIBBON_CHAT_VIEW (object);
 
-        if (self->priv->activate_handler)
-                g_object_unref (self->priv->activate_handler);
-        self->priv->activate_handler = NULL;
-
-        if (self->priv->page_change_handler)
-                g_object_unref (self->priv->page_change_handler);
-        self->priv->activate_handler = NULL;
-
         if (self->priv->chat)
                 g_object_unref (self->priv->chat);
         self->priv->chat = NULL;
@@ -110,14 +102,6 @@ gibbon_chat_view_finalize (GObject *object)
         if (self->priv->who)
                 g_free (self->priv->who);
         self->priv->who = NULL;
-
-        self->priv->tab_label = NULL;
-        self->priv->entry = NULL;
-        self->priv->notebook = NULL;
-
-        if (self->priv->view)
-                g_object_unref (self->priv->view);
-        self->priv->view = NULL;
 
         G_OBJECT_CLASS (gibbon_chat_view_parent_class)->finalize(object);
 }
@@ -149,10 +133,12 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
         GibbonChatView *self = g_object_new (GIBBON_TYPE_CHAT_VIEW, NULL);
         GtkNotebook *notebook;
         GtkWidget *vbox;
+        GtkWidget *hbox;
         GtkWidget *scroll;
         GtkWidget *text_view;
         GtkWidget *entry;
         GtkWidget *tab_label;
+        GtkWidget *close_button;
         GibbonChatViewClass *klass;
         GtkTextBuffer *buffer;
 
@@ -186,27 +172,47 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
         gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, TRUE, 0);
         gtk_widget_show_all (vbox);
 
+        hbox = gtk_hbox_new (FALSE, 0);
+
         tab_label = gtk_label_new (who);
         self->priv->tab_label = GTK_LABEL (tab_label);
         gtk_widget_show_all (tab_label);
 
+        gtk_box_pack_start (GTK_BOX (hbox), tab_label, FALSE, FALSE, 0);
+
+        close_button = gtk_button_new ();
+        gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+        gtk_button_set_focus_on_click (GTK_BUTTON (close_button), FALSE);
+        gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+        gtk_widget_set_tooltip_text (close_button, _("Close tab"));
+        g_signal_connect_swapped (G_OBJECT (close_button), "clicked",
+                                  G_CALLBACK (gibbon_chat_view_close),
+                                  self);
+
+        gtk_container_add (GTK_CONTAINER (close_button),
+                           gtk_image_new_from_stock (GTK_STOCK_CLOSE,
+                                                     GTK_ICON_SIZE_MENU));
+        gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+
+        gtk_widget_show_all (hbox);
+
         self->priv->page_number = gtk_notebook_get_n_pages (notebook);
 
-        gtk_notebook_append_page (notebook, vbox, tab_label);
+        gtk_notebook_append_page (notebook, vbox, hbox);
         gtk_notebook_set_current_page (notebook, self->priv->page_number);
         gtk_widget_grab_focus (GTK_WIDGET (entry));
 
+        self->priv->vbox = vbox;
+        self->priv->hbox = hbox;
+
         klass = GIBBON_CHAT_VIEW_GET_CLASS (self);
 
-        self->priv->activate_handler =
-                gibbon_signal_new (G_OBJECT (entry), "activate",
-                                   G_CALLBACK (klass->on_activate),
-                                   G_OBJECT (self));
-
-        self->priv->page_change_handler =
-                gibbon_signal_new (G_OBJECT (text_view), "map",
-                                   G_CALLBACK (gibbon_chat_view_on_page_change),
-                                   G_OBJECT (self));
+        g_signal_connect_swapped (G_OBJECT (entry), "activate",
+                                  G_CALLBACK (klass->on_activate),
+                                  G_OBJECT (self));
+        g_signal_connect_swapped (G_OBJECT (text_view), "map",
+                                  G_CALLBACK (gibbon_chat_view_on_page_change),
+                                  G_OBJECT (self));
 
         return self;
 }
@@ -310,4 +316,14 @@ gibbon_chat_view_on_page_change (const GibbonChatView *self)
 
         self->priv->unread = 0;
         gtk_label_set_text (self->priv->tab_label, self->priv->who);
+}
+
+static void
+gibbon_chat_view_close (GibbonChatView *self)
+{
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
+
+        gtk_notebook_remove_page (self->priv->notebook,
+                                  self->priv->page_number);
+        g_object_unref (self);
 }
