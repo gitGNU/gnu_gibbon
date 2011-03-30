@@ -139,23 +139,23 @@ gibbon_chat_new (GibbonApp *app, const gchar *who)
 
         self->priv->date_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
+                                            "foreground", "#204a87",
                                             NULL);
 
         self->priv->sender_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
+                                            "foreground", "#204a87",
                                             "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
         self->priv->date_gat =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#204a87",
+                                            "foreground", "#cc0000",
                                             NULL);
 
         self->priv->sender_gat =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#204a87",
+                                            "foreground", "#cc0000",
                                             "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
