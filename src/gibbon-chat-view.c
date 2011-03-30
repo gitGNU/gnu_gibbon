@@ -47,6 +47,10 @@ struct _GibbonChatViewPrivate {
         GibbonApp *app;
 
         GtkTextView *view;
+        GtkLabel *tab_label;
+        GtkNotebook *notebook;
+        GtkEntry *entry;
+
         GibbonChat *chat;
 
         gchar *who;
@@ -70,6 +74,9 @@ gibbon_chat_view_init (GibbonChatView *self)
                 GIBBON_TYPE_CHAT_VIEW, GibbonChatViewPrivate);
 
         self->priv->view = NULL;
+        self->priv->tab_label = NULL;
+        self->priv->notebook = NULL;
+        self->priv->entry = NULL;
 
         self->priv->chat = NULL;
 
@@ -96,6 +103,12 @@ gibbon_chat_view_finalize (GObject *object)
                 g_free (self->priv->who);
         self->priv->who = NULL;
 
+        self->priv->tab_label = NULL;
+        self->priv->entry = NULL;
+        self->priv->notebook = NULL;
+
+        if (self->priv->view)
+                g_object_unref (self->priv->view);
         self->priv->view = NULL;
 
         G_OBJECT_CLASS (gibbon_chat_view_parent_class)->finalize(object);
@@ -144,6 +157,7 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
 
         notebook = GTK_NOTEBOOK (gibbon_app_find_object (app, "chat-notebook",
                                                          GTK_TYPE_NOTEBOOK));
+        self->priv->notebook = notebook;
 
         vbox = gtk_vbox_new (FALSE, 0);
         scroll = gtk_scrolled_window_new (FALSE, FALSE);
@@ -160,10 +174,12 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
 
         gtk_container_add (GTK_CONTAINER (scroll), text_view);
         entry = gtk_entry_new ();
+        self->priv->entry = GTK_ENTRY (entry);
         gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, TRUE, 0);
         gtk_widget_show_all (vbox);
 
         tab_label = gtk_label_new (who);
+        self->priv->tab_label = GTK_LABEL (tab_label);
         gtk_widget_show_all (tab_label);
 
         self->priv->page_number = gtk_notebook_get_n_pages (notebook);
@@ -241,6 +257,8 @@ gibbon_chat_view_append_message (const GibbonChatView *self,
                                  const GibbonFIBSMessage *message)
 {
         GtkTextBuffer *buffer;
+        gint page_number;
+        gchar *markup;
 
         g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
         g_return_if_fail (message != NULL);
@@ -254,4 +272,17 @@ gibbon_chat_view_append_message (const GibbonChatView *self,
         gtk_text_view_scroll_to_mark (self->priv->view,
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
+
+        page_number = gtk_notebook_get_current_page (self->priv->notebook);
+        if (2 == gtk_notebook_get_n_pages (self->priv->notebook)) {
+                gtk_notebook_set_current_page (self->priv->notebook,
+                                               self->priv->page_number);
+                gtk_widget_grab_focus (GTK_WIDGET (self->priv->entry));
+        } else if (page_number != self->priv->page_number) {
+                markup = g_markup_printf_escaped ("<span weight=\"bold\""
+                                                  " color=\"#204a87\">"
+                                                  "%s</span>", self->priv->who);
+                gtk_label_set_markup (self->priv->tab_label, markup);
+                g_free (markup);
+        }
 }
