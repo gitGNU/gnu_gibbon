@@ -368,7 +368,7 @@ gibbon_player_list_view_on_look (const GibbonPlayerListView *self)
 
         connection = gibbon_app_get_connection (self->priv->app);
         gibbon_connection_queue_command (connection, FALSE,
-                                         "watch %s", who);
+                                         "look %s", who);
         gibbon_connection_queue_command (connection, FALSE, "board");
 
         g_free (who);
