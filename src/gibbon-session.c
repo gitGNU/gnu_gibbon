@@ -40,6 +40,7 @@
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
+#define CLIP_SAYS 12
 #define CLIP_SHOUTS 13
 #define CLIP_YOU_SAY 16
 
@@ -47,6 +48,8 @@ static gint gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message);
 static gint gibbon_session_clip_who_info (GibbonSession *self,
                                           const gchar *message);
+static gint gibbon_session_clip_says (GibbonSession *self,
+                                      const gchar *message);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
                                         const gchar *message);
 static gint gibbon_session_clip_you_say (GibbonSession *self,
@@ -180,6 +183,9 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
                         retval = CLIP_WHO_INFO_END;
+                        break;
+                case CLIP_SAYS:
+                        retval = gibbon_session_clip_says (self, endptr);
                         break;
                 case CLIP_SHOUTS:
                         retval = gibbon_session_clip_shouts (self, endptr);
@@ -411,6 +417,32 @@ gibbon_session_clip_who_info (GibbonSession *self,
         g_strfreev (tokens);
 
         return CLIP_WHO_INFO;
+}
+
+static gint
+gibbon_session_clip_says (GibbonSession *self,
+                             const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        fibs_message = gibbon_fibs_message_new (message);
+        if (!fibs_message)
+                return -1;
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return -1;
+
+        gibbon_app_show_message (self->priv->app,
+                                 fibs_message->sender,
+                                 fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_SAYS;
 }
 
 static gint
