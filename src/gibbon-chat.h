@@ -75,9 +75,10 @@ struct _GibbonChatClass
 
 GType gibbon_chat_get_type (void) G_GNUC_CONST;
 
-GibbonChat *gibbon_chat_new (GibbonApp *app, const gchar *who);
-GtkTextBuffer *gibbon_chat_get_buffer (const GibbonChat *chat);
-void gibbon_chat_append_message (const GibbonChat *chat,
+GibbonChat *gibbon_chat_new (GibbonApp *app, const gchar *me);
+GtkTextBuffer *gibbon_chat_get_buffer (const GibbonChat *self);
+void gibbon_chat_set_my_name (GibbonChat *self, const gchar *me);
+void gibbon_chat_append_message (const GibbonChat *self,
                                  const GibbonFIBSMessage *message);
 
 #endif
