@@ -38,9 +38,9 @@
 
 #include "gibbon-chat-view.h"
 #include "gibbon-chat.h"
-#include "gibbon-signal.h"
 #include "html-entities.h"
 #include "gibbon-connection.h"
+#include "gibbon-signal.h"
 
 typedef struct _GibbonChatViewPrivate GibbonChatViewPrivate;
 struct _GibbonChatViewPrivate {
@@ -55,8 +55,10 @@ struct _GibbonChatViewPrivate {
 
         gchar *who;
         gint page_number;
+        guint unread;
 
         GibbonSignal *activate_handler;
+        GibbonSignal *page_change_handler;
 };
 
 #define GIBBON_CHAT_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -66,6 +68,7 @@ G_DEFINE_TYPE (GibbonChatView, gibbon_chat_view, G_TYPE_OBJECT)
 
 static void gibbon_chat_view_on_activate (GibbonChatView *self,
                                           GtkEntry *entry);
+static void gibbon_chat_view_on_page_change (const GibbonChatView *self);
 
 static void 
 gibbon_chat_view_init (GibbonChatView *self)
@@ -84,6 +87,7 @@ gibbon_chat_view_init (GibbonChatView *self)
 
         self->priv->who = NULL;
         self->priv->page_number = 1;
+        self->priv->unread = 0;
 }
 
 static void
@@ -93,6 +97,10 @@ gibbon_chat_view_finalize (GObject *object)
 
         if (self->priv->activate_handler)
                 g_object_unref (self->priv->activate_handler);
+        self->priv->activate_handler = NULL;
+
+        if (self->priv->page_change_handler)
+                g_object_unref (self->priv->page_change_handler);
         self->priv->activate_handler = NULL;
 
         if (self->priv->chat)
@@ -195,6 +203,11 @@ gibbon_chat_view_new (GibbonApp *app, const gchar *who, GibbonChat *chat)
                                    G_CALLBACK (klass->on_activate),
                                    G_OBJECT (self));
 
+        self->priv->page_change_handler =
+                gibbon_signal_new (G_OBJECT (text_view), "map",
+                                   G_CALLBACK (gibbon_chat_view_on_page_change),
+                                   G_OBJECT (self));
+
         return self;
 }
 
@@ -279,10 +292,22 @@ gibbon_chat_view_append_message (const GibbonChatView *self,
                                                self->priv->page_number);
                 gtk_widget_grab_focus (GTK_WIDGET (self->priv->entry));
         } else if (page_number != self->priv->page_number) {
+                ++self->priv->unread;
                 markup = g_markup_printf_escaped ("<span weight=\"bold\""
                                                   " color=\"#204a87\">"
-                                                  "%s</span>", self->priv->who);
+                                                  "%s (%u)</span>",
+                                                  self->priv->who,
+                                                  self->priv->unread);
                 gtk_label_set_markup (self->priv->tab_label, markup);
                 g_free (markup);
         }
+}
+
+static void
+gibbon_chat_view_on_page_change (const GibbonChatView *self)
+{
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
+
+        self->priv->unread = 0;
+        gtk_label_set_text (self->priv->tab_label, self->priv->who);
 }
