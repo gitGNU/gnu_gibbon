@@ -182,6 +182,8 @@ gibbon_chat_append_message (const GibbonChat *self,
                 tag = self->priv->sender_tag;
         else
                 tag = self->priv->sender_gat;
+        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
+        gtk_text_buffer_place_cursor (buffer, &start);
         gtk_text_buffer_insert_at_cursor (buffer, message->sender, -1);
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
         gtk_text_buffer_get_end_iter (buffer, &end);
@@ -208,6 +210,8 @@ gibbon_chat_append_message (const GibbonChat *self,
         gtk_text_buffer_insert_at_cursor (buffer, formatted, -1);
         g_free (formatted);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
+        gtk_text_buffer_get_end_iter (buffer, &end);
+        gtk_text_buffer_place_cursor (buffer, &end);
 }
 
 GtkTextBuffer *
