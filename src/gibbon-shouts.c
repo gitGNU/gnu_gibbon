@@ -32,9 +32,12 @@
 #include "gibbon-shouts.h"
 #include "gibbon-connection.h"
 #include "gibbon-chat.h"
+#include "html-entities.h"
 
 typedef struct _GibbonShoutsPrivate GibbonShoutsPrivate;
 struct _GibbonShoutsPrivate {
+        GibbonApp *app;
+
         GtkTextView *view;
         GtkTextBuffer *buffer;
         GibbonChat *chat;
@@ -45,12 +48,16 @@ struct _GibbonShoutsPrivate {
 
 G_DEFINE_TYPE (GibbonShouts, gibbon_shouts, G_TYPE_OBJECT)
 
+static void gibbon_shouts_on_shout (const GibbonShouts *shouts,
+                                    GtkEntry *entry);
+
 static void 
 gibbon_shouts_init (GibbonShouts *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_SHOUTS, GibbonShoutsPrivate);
 
+        self->priv->app = NULL;
         self->priv->view = NULL;
         self->priv->chat = NULL;
 }
@@ -89,6 +96,9 @@ gibbon_shouts_new (GibbonApp *app)
 {
         GibbonShouts *self = g_object_new (GIBBON_TYPE_SHOUTS, NULL);
         GtkTextBuffer *buffer;
+        GObject *entry;
+
+        self->priv->app = app;
 
         self->priv->view =
                 GTK_TEXT_VIEW (gibbon_app_find_object (app,
@@ -99,6 +109,11 @@ gibbon_shouts_new (GibbonApp *app)
 
         buffer = gibbon_chat_get_buffer (self->priv->chat);
         gtk_text_view_set_buffer (self->priv->view, buffer);
+
+        entry = gibbon_app_find_object (app, "shout-entry", GTK_TYPE_ENTRY);
+        g_signal_connect_swapped (entry, "activate",
+                                  G_CALLBACK (gibbon_shouts_on_shout),
+                                  G_OBJECT (self));
 
         return self;
 }
@@ -129,4 +144,32 @@ gibbon_shouts_set_my_name (GibbonShouts *self, const gchar *me)
         g_return_if_fail (GIBBON_IS_SHOUTS (self));
 
         gibbon_chat_set_my_name (self->priv->chat, me);
+}
+
+static void
+gibbon_shouts_on_shout (const GibbonShouts *self, GtkEntry *entry)
+{
+        GibbonConnection *connection;
+        gchar *trimmed;
+        gchar *formatted;
+
+        g_return_if_fail (GIBBON_IS_SHOUTS (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return;
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+        if (!*trimmed) {
+                g_free (trimmed);
+                return;
+        }
+        formatted = encode_html_entities (trimmed);
+        g_free (trimmed);
+        gibbon_connection_queue_command (connection, FALSE,
+                                         "shout %s", formatted);
+        g_free (formatted);
+
+        gtk_entry_set_text (entry, "");
 }

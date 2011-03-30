@@ -103,6 +103,7 @@ void gibbon_app_start_chat (GibbonApp *self, const gchar *peer);
 void gibbon_app_close_chat (GibbonApp *self, const gchar *peer);
 void gibbon_app_show_message (GibbonApp *self, const gchar *peer,
                               const GibbonFIBSMessage *message);
+void gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

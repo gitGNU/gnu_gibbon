@@ -43,6 +43,7 @@
 #define CLIP_SAYS 12
 #define CLIP_SHOUTS 13
 #define CLIP_YOU_SAY 16
+#define CLIP_YOU_SHOUT 17
 
 static gint gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message);
@@ -54,6 +55,8 @@ static gint gibbon_session_clip_shouts (GibbonSession *self,
                                         const gchar *message);
 static gint gibbon_session_clip_you_say (GibbonSession *self,
                                           const gchar *message);
+static gint gibbon_session_clip_you_shout (GibbonSession *self,
+                                           const gchar *message);
 static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
@@ -188,6 +191,9 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                         break;
                 case CLIP_YOU_SAY:
                         retval = gibbon_session_clip_you_say (self, endptr);
+                        break;
+                case CLIP_YOU_SHOUT:
+                        retval = gibbon_session_clip_you_shout (self, endptr);
                         break;
                 default:
                         retval = -1;
@@ -467,11 +473,11 @@ gibbon_session_clip_you_say (GibbonSession *self,
 
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
-                return -1;
+                return FALSE;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
-                return -1;
+                return FALSE;
 
         /* Steal the receiver, and make it our sender.  */
         receiver = fibs_message->sender;
@@ -485,7 +491,32 @@ gibbon_session_clip_you_say (GibbonSession *self,
         gibbon_fibs_message_free (fibs_message);
         g_free (receiver);
 
-        return CLIP_SHOUTS;
+        return CLIP_YOU_SAY;
+}
+
+static gint
+gibbon_session_clip_you_shout (GibbonSession *self,
+                               const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return FALSE;
+
+        fibs_message = g_malloc (sizeof *fibs_message);
+        fibs_message->message = g_strdup (message);
+        fibs_message->sender =
+                g_strdup (gibbon_connection_get_login (connection));
+
+        gibbon_app_show_shout (self->priv->app, fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_YOU_SHOUT;
 }
 
 /* FIXME! Use g_ascii_strtoll in this function! */

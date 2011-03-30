@@ -859,3 +859,13 @@ gibbon_app_show_message (GibbonApp *self,
 
         gibbon_chat_view_append_message (view, message);
 }
+
+void
+gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_shouts_append_message (self->priv->shouts, message);
+}
