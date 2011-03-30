@@ -265,10 +265,11 @@ gsgf_real_to_string (const GSGFReal *self)
 
         if (isnan (self->priv->value)) {
                 return NULL;
-        } else if (isinf (self->priv->value) > 0) {
-                value = +G_MAXDOUBLE;
-        } else if (isinf (self->priv->value) < 0) {
-                value = -G_MAXDOUBLE;
+        } else if (isinf (self->priv->value)) {
+                if (self->priv->value > 0)
+                        value = +G_MAXDOUBLE;
+                else
+                        value = -G_MAXDOUBLE;
         } else {
                 value = self->priv->value;
         }
