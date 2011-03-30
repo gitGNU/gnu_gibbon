@@ -636,6 +636,8 @@ gibbon_app_disconnect (GibbonApp *self)
                 g_object_unref (self->priv->connection);
         self->priv->connection = NULL;
 
+        gibbon_shouts_set_my_name (self->priv->shouts, NULL);
+
         gibbon_app_set_state_disconnected (self);
 }
 
@@ -716,7 +718,8 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
                                       GTK_TYPE_ENTRY);
         gtk_entry_set_editable (GTK_ENTRY (obj), TRUE);
 
-
+        gibbon_shouts_set_my_name (self->priv->shouts,
+                                   gibbon_connection_get_login (conn));
 }
 
 static void
@@ -812,6 +815,7 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
 {
         GibbonChatView *view;
         GibbonChat *chat;
+        const gchar *me;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (self->priv->connection != NULL);
@@ -819,7 +823,8 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
         if (g_hash_table_lookup (self->priv->chats, who))
                 return;
 
-        chat = gibbon_chat_new (self, who);
+        me = gibbon_connection_get_login (self->priv->connection);
+        chat = gibbon_chat_new (self, me);
         view = gibbon_chat_view_new (self, who, chat);
         g_hash_table_insert (self->priv->chats, g_strdup (who), view);
 
