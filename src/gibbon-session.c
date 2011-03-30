@@ -63,8 +63,6 @@ static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what,
                                gint lower, gint upper);
-static gboolean parse_float (const gchar *str, gdouble* result,
-                             const gchar *what);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -356,9 +354,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
                 away = FALSE;
         }
 
-        g_return_val_if_fail (parse_float (tokens[5], &rating,
-                                           "rating"),
-                              free_vector (tokens));
+        rating = g_ascii_strtod (tokens[5], NULL);
         g_return_val_if_fail (parse_integer (tokens[6], &experience,
                                              "experience", 0, G_MAXINT),
                               free_vector (tokens));
@@ -526,61 +522,6 @@ parse_integer (const gchar *str, gint *result, const gchar *what,
         *result = (gint) r;
         if (*result < lower || *result > upper)
                 return FALSE;
-        
-        return TRUE;       
-}
-
-static gboolean
-parse_float (const gchar *str, gdouble *result, const gchar *what)
-{
-        char *endptr;
-        long int r;
-        gdouble fract = 0.1;
-        
-        if (!str) {
-                g_print ("Error parsing %s: NULL pointer passed.\n",
-                         what);
-                return FALSE;
-        }
-        
-        errno = 0;
-
-        r = strtol (str, &endptr, 10);
-        
-        if (errno) {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, strerror (errno));
-                return FALSE;
-        }
-        
-        if (*endptr == 0) {
-                *result = (gdouble) r;
-                return TRUE;
-        }
-        
-        if (*endptr != '.') {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, "Expected decimal point");
-                return FALSE;
-        }
-
-        *result = (gdouble) r;
-
-        while (TRUE) {
-                ++endptr;
-                if (!*endptr)
-                        break;
-                if (*endptr < '0' || *endptr > '9') {
-                        g_print ("Error parsing %s: `%s': %s.\n",
-                                 what, str, "Trailing garbage");
-                        return FALSE;
-                }
-                *result += (*endptr - '0') / fract;
-                fract /= 10;
-                
-                if (fract < 0.000001)
-                        break;
-        }
         
         return TRUE;       
 }
