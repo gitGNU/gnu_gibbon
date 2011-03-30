@@ -82,5 +82,7 @@ GibbonChatView *gibbon_chat_view_new (GibbonApp *app, const gchar *who);
 
 void gibbon_chat_view_set_chat (GibbonChatView *self, GibbonChat *chat);
 GibbonChat *gibbon_chat_view_get_chat (const GibbonChatView *self);
+void gibbon_chat_view_append_message (const GibbonChatView *self,
+                                      const GibbonFIBSMessage *message);
 
 #endif

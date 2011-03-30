@@ -823,7 +823,7 @@ gibbon_app_start_chat (GibbonApp *self, const gchar *who)
         view = gibbon_chat_view_new (self, who);
         g_hash_table_insert (self->priv->chats, g_strdup (who), view);
 
-        /* Passs the reference for the chat to the view ... */
+        /* Pass the reference for the chat to the view ... */
         gibbon_chat_view_set_chat (view, chat);
 
         /* ... and unref it.  */
@@ -845,7 +845,6 @@ gibbon_app_show_message (GibbonApp *self,
                          const GibbonFIBSMessage *message)
 {
         GibbonChatView *view;
-        GibbonChat *chat;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (self->priv->connection != NULL);
@@ -855,8 +854,6 @@ gibbon_app_show_message (GibbonApp *self,
         view = GIBBON_CHAT_VIEW (g_hash_table_lookup (self->priv->chats,
                                                       peer));
         g_return_if_fail (GIBBON_IS_CHAT_VIEW (view));
-        chat = gibbon_chat_view_get_chat (view);
-        g_return_if_fail (GIBBON_IS_CHAT (chat));
 
-        gibbon_chat_append_message (chat, message);
+        gibbon_chat_view_append_message (view, message);
 }

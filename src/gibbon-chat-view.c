@@ -230,3 +230,23 @@ gibbon_chat_view_get_chat (const GibbonChatView *self)
 
         return self->priv->chat;
 }
+
+void
+gibbon_chat_view_append_message (const GibbonChatView *self,
+                                 const GibbonFIBSMessage *message)
+{
+        GtkTextBuffer *buffer;
+
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (self));
+        g_return_if_fail (message != NULL);
+        g_return_if_fail (message->sender != NULL);
+        g_return_if_fail (message->message != NULL);
+
+        gibbon_chat_append_message (self->priv->chat, message);
+
+        buffer = gibbon_chat_get_buffer (self->priv->chat);
+
+        gtk_text_view_scroll_to_mark (self->priv->view,
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
+}
