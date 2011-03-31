@@ -55,7 +55,7 @@
  *        this game.
  * @match_length: length of the match.
  * @scores: white and black score (white first).
- * @may_double: %TRUE if player on turn may double, %FALSE otherwise.
+ * @may_double: %TRUE if respective player may double, %FALSE otherwise.
  *
  * A boxed type representing a backgammon position.
  */
@@ -82,7 +82,7 @@ struct _GibbonPosition
         gint dice[2];
 
         gint cube;
-        gboolean may_double;
+        gboolean may_double[2];
 };
 
 /**

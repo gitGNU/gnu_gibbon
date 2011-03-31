@@ -31,7 +31,7 @@
 /* This lookup table determines, iff and where to draw a certain checker.
  * The index is the number of checkers, the first number is the position
  * in steps of 0.5 checker widths, the third one is the maximum number
- * when to draw it.  This takes into account that piled checkers may get
+ * when to draw it.  This takes into account that piled checkers may be
  * invisible.
  */
 struct checker_rule {
@@ -65,11 +65,18 @@ struct _GibbonCairoboardPrivate {
 
         struct svg_component *board;
         
-        struct svg_component *white_checker;
-        struct svg_component *black_checker;
+        struct svg_component *checker_w_flat;
+        struct svg_component *checker_w_home;
+
+        struct svg_component *checker_b_flat;
+        struct svg_component *checker_b_home;
 
         struct svg_component *white_dice[6];
         struct svg_component *black_dice[6];
+        struct svg_component *cube;
+
+        struct svg_component *point1;
+        struct svg_component *point24;
 
         gdouble checker_width;
 };
@@ -141,8 +148,12 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv->pos = NULL;
 
         self->priv->board = NULL;
-        self->priv->white_checker = NULL;
-        self->priv->black_checker = NULL;
+        self->priv->point1 = NULL;
+        self->priv->point24 = NULL;
+        self->priv->checker_w_flat = NULL;
+        self->priv->checker_w_home = NULL;
+        self->priv->checker_b_flat = NULL;
+        self->priv->checker_b_home = NULL;
 
         for (i = 0;
              i < sizeof self->priv->white_dice / sizeof self->priv->white_dice[0];
@@ -154,6 +165,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
              ++i) {
             self->priv->black_dice[i] = NULL;
         }
+        self->priv->cube = NULL;
 
         self->priv->checker_width = 0;
 
@@ -181,11 +193,20 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->board)
                 svg_util_free_component (self->priv->board);
         
-        if (self->priv->white_checker)
-                svg_util_free_component (self->priv->white_checker);
+        if (self->priv->point1)
+                svg_util_free_component (self->priv->point1);
+        if (self->priv->point24)
+                svg_util_free_component (self->priv->point24);
+
+        if (self->priv->checker_w_flat)
+                svg_util_free_component (self->priv->checker_w_flat);
+        if (self->priv->checker_w_home)
+                svg_util_free_component (self->priv->checker_w_home);
         
-        if (self->priv->black_checker)
-                svg_util_free_component (self->priv->black_checker);
+        if (self->priv->checker_b_flat)
+                svg_util_free_component (self->priv->checker_b_flat);
+        if (self->priv->checker_b_home)
+                svg_util_free_component (self->priv->checker_b_home);
         
         for (i = 0;
              i < sizeof self->priv->white_dice / sizeof self->priv->white_dice[0];
@@ -201,6 +222,8 @@ gibbon_cairoboard_finalize (GObject *object)
                         svg_util_free_component (self->priv->black_dice[i]);
             self->priv->black_dice[i] = NULL;
         }
+        if (self->priv->cube)
+                svg_util_free_component (self->priv->cube);
 
         self->priv->app = NULL;
 
@@ -263,23 +286,43 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
                                                  xmlFree, NULL);        
         gibbon_cairoboard_save_ids (self, xmlDocGetRootElement (doc));
 
-        self->priv->white_checker = 
+        self->priv->checker_w_flat =
                 gibbon_cairoboard_get_component (self,
-                                                 "checker_w_24_1", TRUE,
+                                                 "checker_w_flat", TRUE,
                                                  doc, filename);
-        if (!self->priv->white_checker) {
+        if (!self->priv->checker_w_flat) {
                 xmlFree (doc);
                 g_object_ref_sink (self);
                 return NULL;
         }
 
-        self->priv->checker_width = self->priv->white_checker->width;
+        self->priv->checker_width = self->priv->checker_w_flat->width;
 
-        self->priv->black_checker = 
+        self->priv->checker_w_home =
                 gibbon_cairoboard_get_component (self,
-                                                 "checker_b_1_1", TRUE,
+                                                 "checker_w_home", TRUE,
                                                  doc, filename);
-        if (!self->priv->black_checker) {
+        if (!self->priv->checker_w_home) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
+        self->priv->checker_b_flat =
+                gibbon_cairoboard_get_component (self,
+                                                 "checker_b_flat", TRUE,
+                                                 doc, filename);
+        if (!self->priv->checker_b_flat) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
+        self->priv->checker_b_home =
+                gibbon_cairoboard_get_component (self,
+                                                 "checker_b_home", TRUE,
+                                                 doc, filename);
+        if (!self->priv->checker_b_home) {
                 xmlFree (doc);
                 g_object_ref_sink (self);
                 return NULL;
@@ -313,7 +356,34 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
                 }
         }
 
-        if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc, 
+        self->priv->point1 = gibbon_cairoboard_get_component (self, "point1",
+                                                               FALSE, doc,
+                                                               filename);
+        if (!self->priv->point1) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
+        self->priv->point24 = gibbon_cairoboard_get_component (self, "point24",
+                                                               FALSE, doc,
+                                                               filename);
+        if (!self->priv->point24) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
+        self->priv->cube = gibbon_cairoboard_get_component (self, "cube",
+                                                            TRUE, doc,
+                                                            filename);
+        if (!self->priv->cube) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
+        if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc,
                                       filename, &self->priv->board, TRUE)) {
             g_object_ref_sink (self);
             xmlFreeDoc (doc);
@@ -395,48 +465,115 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         svg_cairo_render (self->priv->board->scr, cr);
 
         gibbon_draw_dice (self, cr);
+        gibbon_draw_cube (self, cr);
 
-        gibbon_cairoboard_draw_bar (self, cr, -1);
-        gibbon_cairoboard_draw_bar (self, cr, 1);
+        gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_WHITE);
+        gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_BLACK);
         
+        gibbon_draw_home (self, cr, GIBBON_POSITION_SIDE_WHITE);
+        gibbon_draw_home (self, cr, GIBBON_POSITION_SIDE_BLACK);
+
         for (i = 0; i < 24; ++i)
                 if (self->priv->pos->points[i])
                         gibbon_cairoboard_draw_point (self, cr, i);
-return;
-
-        gibbon_draw_home (self, cr, -1);
-        gibbon_draw_home (self, cr, 1);
-
-        gibbon_draw_cube (self, cr);
 }
 
 static void
-gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr, gint side)
+gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr,
+                            gint side)
 {
-        gint direction;
         guint checkers;
+        gdouble x, y;
+        gint i;
+        struct checker_rule *pos;
+        gdouble offset;
+        gdouble base_length;
         
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (side);
 
-return;        
-        if (side < 0) {
-                direction = -1;
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
                 checkers = self->priv->pos->bar[0];
-        } else if (side > 0) {
-                direction = 1;
+        } else if (side == GIBBON_POSITION_SIDE_BLACK) {
                 checkers = self->priv->pos->bar[1];
+        } else {
+                return;
         }
-        
+
         if (!checkers)
                 return;
+
+        g_return_if_fail (checkers <= 15);
+
+        base_length = (gdouble) checkers;
+        if (base_length > 5)
+                base_length = 5;
+
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                y = self->priv->point1->y + self->priv->point1->height
+                    - self->priv->checker_width
+                    - 0.5 * (5 - base_length) * self->priv->checker_width;
+        } else {
+                y = self->priv->point24->y
+                    + self->priv->checker_width
+                    + 0.5 * (5 - base_length) * self->priv->checker_width;
+        }
+
+        x = self->priv->board->width / 2;
+
+        for (i = 0; i < checkers; ++i) {
+                pos = checker_lookup + i;
+                if (i <= pos->max_checkers) {
+                        offset = -side * pos->pos * self->priv->checker_width;
+                        gibbon_cairoboard_draw_flat_checker (self, cr,
+                                                             1,
+                                                             x,
+                                                             y + offset,
+                                                             side);
+                }
+        }
 }
 
 static void
-gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, gint side)
+gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
 {
+        guint checkers = 0;
+        gint i;
+        gdouble x, y;
+        struct svg_component *checker;
+
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (side);
+
+        for (i = 0; i < 24; ++i) {
+                if (side * self->priv->pos->points[i] > 0)
+                        checkers += side * self->priv->pos->points[i];
+        }
+
+        if (checkers >= 15)
+                return;
+
+        checkers = 15 - checkers;
+
+        x = self->priv->board->width -
+            0.5 * (self->priv->board->width
+                   - self->priv->point24->x - self->priv->point24->width);
+
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                checker = self->priv->checker_w_home;
+                y = self->priv->point24->y + 0.5 * checker->height;
+        } else {
+                checker = self->priv->checker_b_home;
+                y = self->priv->point1->y + self->priv->point1->height
+                    - 0.5 * checker->height;
+        }
+
+        for (i = 0; i < checkers; ++i) {
+                gibbon_cairoboard_draw_svg_component (self, cr,
+                                                      checker,
+                                                      x, y);
+                y += side * checker->height;
+        }
 }
 
 static void
@@ -461,14 +598,14 @@ gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint 
 
         if (side > 0) {
                 gibbon_cairoboard_draw_svg_component (self, cr, 
-                                                      self->priv->white_checker, 
+                                                      self->priv->checker_w_flat,
                                                       x, y);
-                text_width = self->priv->white_checker->width * 0.75;
+                text_width = self->priv->checker_w_flat->width * 0.75;
         } else if (side < 0) {
                 gibbon_cairoboard_draw_svg_component (self, cr, 
-                                                      self->priv->black_checker, 
+                                                      self->priv->checker_b_flat,
                                                       x, y);
-                text_width = self->priv->black_checker->width * 0.75;
+                text_width = self->priv->checker_b_flat->width * 0.75;
         }
         
         if (number > 1) {
@@ -489,11 +626,11 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         gdouble x, y;
         gdouble design_width;
         gdouble design_height;
-        gdouble outer_border_h = 10;
+        gdouble outer_border_h;
         gdouble checker_width;
-        gdouble bar_width = 30;
-        gdouble point_width = 30;
-        int side = 0;
+        gdouble bar_width;
+        gdouble point_width;
+        GibbonPositionSide side = GIBBON_POSITION_SIDE_NONE;
         
         gint direction;
         gint i;
@@ -507,14 +644,17 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
         design_width = board->width;
         design_height = board->height;
         checker_width = self->priv->checker_width;
-
+        point_width = self->priv->point24->width;
+        outer_border_h = self->priv->point24->y;
         checkers = self->priv->pos->points[point];
-        
+        bar_width = -self->priv->board->width
+                    + 2 * self->priv->point24->x
+                    - 10 * self->priv->point24->width;
         if (checkers < 0) {
                 checkers = -checkers;
-                side = -1;
+                side = GIBBON_POSITION_SIDE_BLACK;
         } else if (checkers > 0) {
-                side = 1;
+                side = GIBBON_POSITION_SIDE_WHITE;
         }
         g_return_if_fail (checkers <= 15);
         
@@ -556,7 +696,53 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
 static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
+        gdouble bar_width;
+        gdouble x, y;
+        gdouble saved_size;
+        const gchar *saved_text;
+        gchar *cube_value;
+        gdouble scale;
+
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        if (self->priv->pos->may_double[0]) {
+                if (self->priv->pos->may_double[1])
+                        y = self->priv->board->height / 2;
+                else
+                        y = self->priv->point24->y
+                            + self->priv->cube->height / 2;
+        } else if (self->priv->pos->may_double[1]) {
+                y = self->priv->point1->y + self->priv->point1->height
+                    - self->priv->cube->height / 2;
+        } else {
+                return;
+        }
+        bar_width = -self->priv->board->width
+                    + 2 * self->priv->point24->x
+                    - 10 * self->priv->point24->width;
+        x = (self->priv->board->width - bar_width -
+             12 * self->priv->point24->width) / 4;
+
+        cube_value = g_strdup_printf ("%d", self->priv->pos->cube);
+        if (strlen (cube_value) > 2)
+                scale = 2.0 / (gdouble) strlen (cube_value);
+        else
+                scale = 1.0;
+        g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
+                                                      "cube-value",
+                                                      cube_value, scale, 0,
+                                                      &saved_text,
+                                                      &saved_size));
+
+        gibbon_cairoboard_draw_svg_component (self, cr, self->priv->cube, x, y);
+        g_free (cube_value);
+
+        g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
+                                                      "cube-value",
+                                                      saved_text, 0,
+                                                      saved_size,
+                                                      NULL,
+                                                      NULL));
 }
 
 static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
@@ -605,6 +791,9 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
                             gint value, guint die_pos)
 {
         GibbonPositionSide side;
+        gdouble x, y;
+        struct svg_component *die;
+        gdouble bar_width;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
@@ -614,16 +803,31 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
         if (value < 0)
                 side = GIBBON_POSITION_SIDE_BLACK;
-        else
+        else if (value > 0)
                 side = GIBBON_POSITION_SIDE_WHITE;
+        else
+                return;
         
         /* Normalize value.  */
         value *= side;
 
-        if (side == GIBBON_POSITION_SIDE_BLACK)
-                g_printerr ("B: %d\n", value);
-        else
-                g_printerr ("W: %d\n", value);
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                die = self->priv->black_dice[value - 1];
+        } else {
+                die = self->priv->white_dice[value - 1];
+        }
+
+        bar_width = -self->priv->board->width
+                    + 2 * self->priv->point24->x
+                    - 10 * self->priv->point24->width;
+        x = self->priv->board->width / 2 - side * (bar_width / 2)
+                        - side * 3 * self->priv->point24->width
+                        + (die_pos - 0.5) * 1.5 * die->width;
+        y = self->priv->board->height / 2;
+
+        g_printerr ("(%f|%f)\n", x, y);
+
+        gibbon_cairoboard_draw_svg_component (self, cr, die, x, y);
 }
 
 static void
@@ -682,7 +886,7 @@ gibbon_cairoboard_get_component (GibbonCairoboard *self,
                 gibbon_app_display_error (self->priv->app,
                                           _("Board definition `%s' does not"
                                             " have an element `%s'.\n"),
-                                          filename, "checker_w_24_1");
+                                          filename, id);
                 return NULL;
         }
 

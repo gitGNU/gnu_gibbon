@@ -573,13 +573,14 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         gchar **tokens;
         GibbonPosition *pos;
         GibbonPositionSide turn;
-        gint may_double;
+        gint may_double[2];
         GibbonCairoboard *board;
         gint i;
         gint dice[4];
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
         g_return_val_if_fail (string, FALSE);
+g_printerr ("Board: %s\n", string);
 
         pos = gibbon_position_new ();
         
@@ -637,24 +638,29 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail (parse_integer (tokens[35], &dice[3],
                                              "dice[3]", 0, 6),
                               free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[36], &pos->cube,
+                                             "cube", 0, G_MAXINT),
+                              free_vector (tokens));
 
+        g_return_val_if_fail (parse_integer (tokens[37], &may_double[0],
+                                             "may double 0", 0, 1),
+                                             free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[38], &may_double[1],
+                                             "may double 0", 0, 1),
+                                             free_vector (tokens));
+
+        pos->may_double[0] = may_double[0] ? TRUE : FALSE;
+        pos->may_double[1] = may_double[1] ? TRUE : FALSE;
         if (turn == GIBBON_POSITION_SIDE_WHITE) {
-                g_return_val_if_fail (parse_integer (tokens[37], &may_double,
-                                                     "may double 0", 0, 1),
-                                      free_vector (tokens));
-                pos->dice[0] = dice[0];
-                pos->dice[1] = dice[1];
+                pos->dice[0] = dice[2];
+                pos->dice[1] = dice[3];
         } else if (turn == GIBBON_POSITION_SIDE_BLACK) {
-                g_return_val_if_fail (parse_integer (tokens[38], &may_double,
-                                                     "may double 1", 0, 1),
-                                      free_vector (tokens));
-                pos->dice[0] = -dice[2];
-                pos->dice[1] = -dice[3];
+                pos->dice[0] = -dice[0];
+                pos->dice[1] = -dice[1];
         } else {
-                pos->dice[0] = dice[0];
-                pos->dice[1] = -dice[2];
+                pos->dice[0] = dice[2];
+                pos->dice[1] = -dice[0];
         }
-        pos->may_double = may_double ? TRUE : FALSE;
 
         g_strfreev (tokens);
         
