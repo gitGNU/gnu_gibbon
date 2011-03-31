@@ -48,12 +48,20 @@
 	<polygon points="380,370 410,370 395,220" fill="#7f7f7f"/>
 	<polygon points="410,370 440,370 425,220" fill="#900000" id="point1"/>
 
-        <g id="checker_w_24_1">
+        <g id="checker_w_flat">
 	    <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="15" cy="25" cx="425"/>
         </g>
+        <g id="checker_w_home">
+            <rect stroke="#aaaaaa" stroke-width="1" fill="#dddddd"
+                  rx="2" ry="2" x="450" y="10" height="10" width="30"/>
+        </g>
         
-        <g id="checker_b_1_1">
+        <g id="checker_b_flat">
 	    <circle stroke="#444444" stroke-width="1" fill="#111111" r="15" cy="355" cx="425"/>
+        </g>
+        <g id="checker_b_home">
+            <rect stroke="#444444" stroke-width="1" fille="#111111"
+                  rx="2" ry="2" x="450" y="360" height="10" width="30"/>
         </g>
 
         <g id="die_w_1">
@@ -134,5 +142,18 @@
             <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="190" cx="405"/>
             <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="395"/>
             <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="1.8" cy="185" cx="405"/>
+        </g>
+        <g id="cube">
+            <rect stroke="#aaaaaa" stroke-width="1" fill="#dddddd"
+                  rx="3" ry="3" width="30" height="30"
+                  x="10" y="175"/>
+            <text x="25" y="190" id="cube-value"
+                  text-anchor="middle"
+                  font-size="20px"
+                  color="111111"
+                  font-family="Arial"
+                  font-weight="bold"
+                  dominant-baseline="central"
+                  >1</text>
         </g>
 </svg>
