@@ -84,6 +84,9 @@ static svg_status_t
 _svg_style_parse_text_anchor (svg_style_t *style, const char *str);
 
 static svg_status_t
+_svg_style_parse_dominant_baseline (svg_style_t *style, const char *str);
+
+static svg_status_t
 _svg_style_parse_visibility (svg_style_t *style, const char *str);
 
 static svg_status_t
@@ -151,7 +154,8 @@ static const svg_style_parse_map_t SVG_STYLE_PARSE_MAP[] = {
     { "stroke-opacity",		_svg_style_parse_stroke_opacity,	"1.0" },
     { "stroke",			_svg_style_parse_stroke_paint,		"none" },
     { "stroke-width",		_svg_style_parse_stroke_width,		"1.0" },
-    { "text-anchor",		_svg_style_parse_text_anchor,		"start" },
+    { "text-anchor",            _svg_style_parse_text_anchor,           "start" },
+    { "dominant-baseline",      _svg_style_parse_dominant_baseline,     "auto" },
 /* XXX: { "text-rendering",	_svg_style_parse_text_rendering,	"auto" }, */
     { "visibility",		_svg_style_parse_visibility,		"visible" },
 /* XXX: { "word-spacing",	_svg_style_parse_word_spacing,		"normal" }, */
@@ -234,6 +238,7 @@ _svg_style_init_copy (svg_style_t *style, svg_style_t *other)
 
     style->color = other->color;
     style->text_anchor = other->text_anchor;
+    style->dominant_baseline = other->dominant_baseline;
 
     return SVG_STATUS_SUCCESS;
 }
@@ -600,6 +605,39 @@ _svg_style_parse_text_anchor (svg_style_t *style, const char *str)
 }
 
 static svg_status_t
+_svg_style_parse_dominant_baseline (svg_style_t *style, const char *str)
+{
+    if (strcmp (str, "auto") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_AUTO;
+    else if (strcmp (str, "use-script") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_USE_SCRIPT;
+    else if (strcmp (str, "no-change") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_NO_CHANGE;
+    else if (strcmp (str, "reset-size") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_RESET_SIZE;
+    else if (strcmp (str, "ideographic") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_IDEOGRAPHIC;
+    else if (strcmp (str, "alphabetic") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_ALPHABETIC;
+    else if (strcmp (str, "hanging") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_HANGING;
+    else if (strcmp (str, "mathematical") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_MATHEMATICAL;
+    else if (strcmp (str, "central") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_CENTRAL;
+    else if (strcmp (str, "middle") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_MIDDLE;
+    else if (strcmp (str, "text-after-edge") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_TEXT_AFTER_EDGE;
+    else if (strcmp (str, "text-before-edge") == 0)
+        style->dominant_baseline = SVG_DOMINANT_BASELINE_TEXT_BEFORE_EDGE;
+
+    style->flags |= SVG_STYLE_FLAG_DOMINANT_BASELINE;
+
+    return SVG_STATUS_SUCCESS;
+}
+
+static svg_status_t
 _svg_style_parse_visibility (svg_style_t *style, const char *str)
 {
     /* XXX: Do we care about the CSS2 definitions for these? */
@@ -914,6 +952,12 @@ _svg_style_render (svg_style_t		*style,
 	status = (engine->set_text_anchor) (closure, style->text_anchor);
 	if (status)
 	    return status;
+    }
+
+    if (style->flags & SVG_STYLE_FLAG_DOMINANT_BASELINE) {
+        status = (engine->set_dominant_baseline) (closure, style->dominant_baseline);
+        if (status)
+            return status;
     }
 
     return SVG_STATUS_SUCCESS;

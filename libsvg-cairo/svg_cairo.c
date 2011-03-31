@@ -132,6 +132,9 @@ static svg_status_t
 _svg_cairo_set_text_anchor (void *closure, svg_text_anchor_t text_anchor);
 
 static svg_status_t
+_svg_cairo_set_dominant_baseline (void *closure, svg_dominant_baseline_t dominant_baseline);
+
+static svg_status_t
 _svg_cairo_transform (void *closure,
 		      double a, double b,
 		      double c, double d,
@@ -233,6 +236,7 @@ static svg_render_engine_t SVG_CAIRO_RENDER_ENGINE = {
     _svg_cairo_set_stroke_paint,
     _svg_cairo_set_stroke_width,
     _svg_cairo_set_text_anchor,
+    _svg_cairo_set_dominant_baseline,
     /* transform */
     _svg_cairo_transform,
     _svg_cairo_apply_view_box,
@@ -985,6 +989,16 @@ _svg_cairo_set_text_anchor (void *closure, svg_text_anchor_t text_anchor)
 }
 
 static svg_status_t
+_svg_cairo_set_dominant_baseline (void *closure, svg_dominant_baseline_t dominant_baseline)
+{
+    svg_cairo_t *svg_cairo = closure;
+
+    svg_cairo->state->dominant_baseline = dominant_baseline;
+
+    return SVG_STATUS_SUCCESS;
+}
+
+static svg_status_t
 _svg_cairo_transform (void *closure,
 		  double a, double b,
 		  double c, double d,
@@ -1178,6 +1192,18 @@ _svg_cairo_render_text (void *closure,
 	    cairo_rel_move_to (svg_cairo->cr, -extents.x_advance, -extents.y_advance);
 	else if (svg_cairo->state->text_anchor == SVG_TEXT_ANCHOR_MIDDLE)
 	    cairo_rel_move_to (svg_cairo->cr, -extents.x_advance / 2.0, -extents.y_advance / 2.0);
+    }
+
+    if (svg_cairo->state->dominant_baseline != SVG_DOMINANT_BASELINE_AUTO) {
+        cairo_text_extents_t extents;
+        cairo_text_extents (svg_cairo->cr, utf8, &extents);
+
+        if (svg_cairo->state->dominant_baseline == SVG_DOMINANT_BASELINE_CENTRAL) {
+            cairo_rel_move_to (svg_cairo->cr, 0, extents.height / 2.0);
+        } else if (svg_cairo->state->dominant_baseline == SVG_DOMINANT_BASELINE_MIDDLE)
+            cairo_rel_move_to (svg_cairo->cr, 0, extents.height / 2.0);
+        else if (svg_cairo->state->dominant_baseline == SVG_DOMINANT_BASELINE_HANGING)
+            cairo_rel_move_to (svg_cairo->cr, 0, extents.height);
     }
 
     if (fill_paint->type) {

@@ -229,7 +229,7 @@ _svg_path_init_copy (svg_path_t *path,
 	(svg_status_t (*) (void *)) _svg_path_close_path,
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL,
 	_svg_path_do_nothing,
 	NULL, NULL, NULL, NULL
     };
