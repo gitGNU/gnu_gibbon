@@ -36,6 +36,9 @@
 
 #include "svg-util.h"
 
+#include <svgint.h>
+#include <svg-cairo-internal.h>
+
 struct svg_util_render_state {
         cairo_matrix_t transform;
         
@@ -45,6 +48,7 @@ struct svg_util_render_state {
         svg_font_style_t font_style;
         gboolean font_dirty;
         svg_text_anchor_t text_anchor;
+        svg_dominant_baseline_t dominant_baseline;
         
         gdouble stroke_width;        
         
@@ -126,6 +130,8 @@ static svg_status_t svg_util_set_stroke_width (gpointer closure,
                                                svg_length_t *width);
 static svg_status_t svg_util_set_text_anchor (gpointer closure, 
                                               svg_text_anchor_t text_anchor);
+static svg_status_t svg_util_set_dominant_baseline (gpointer closure,
+                                                    svg_dominant_baseline_t dominant_baseline);
 static svg_status_t svg_util_transform (gpointer closure,
                                         double a, double b,
                                         double c, double d,
@@ -209,6 +215,7 @@ svg_render_engine_t svg_util_render_engine = {
         svg_util_set_stroke_paint,
         svg_util_set_stroke_width,
         svg_util_set_text_anchor,
+        svg_util_set_dominant_baseline,
         svg_util_transform,
         svg_util_apply_view_box,
         svg_util_set_viewport_dimension,
@@ -466,7 +473,7 @@ svg_util_line_to (gpointer closure, double x, double y)
         }
         
         svg_util_move_to (ctx, x, y);              
-        update_boundings (ctx, x1, y1, x2 - x1, y1 - y1);
+        update_boundings (ctx, x1, y1, x2 - x1, y2 - y1);
         
         return SVG_STATUS_SUCCESS; 
 }
@@ -518,7 +525,6 @@ svg_util_arc_to (gpointer closure,
                  double x,
                  double y)
 { 
-        g_print ("arc_to :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -686,6 +692,17 @@ svg_util_set_text_anchor (gpointer closure,
 }
 
 static svg_status_t
+svg_util_set_dominant_baseline (gpointer closure,
+                                svg_dominant_baseline_t dominant_baseline)
+{
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        ctx->state->dominant_baseline = dominant_baseline;
+
+        return SVG_STATUS_SUCCESS;
+}
+
+static svg_status_t
 svg_util_transform (gpointer closure,
                     double a, double b,
                     double c, double d,
@@ -727,8 +744,7 @@ svg_util_render_line (gpointer closure,
                       svg_length_t *y1,
                       svg_length_t *x2,
                       svg_length_t *y2)
-{ 
-        g_print ("render_line :-(\n");
+{
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -782,7 +798,6 @@ svg_util_render_text (gpointer closure,
                       svg_length_t *y,
                       const char *utf8)
 { 
-        g_print ("render_text :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -796,7 +811,6 @@ svg_util_render_image (gpointer closure,
                        svg_length_t *width,
                        svg_length_t *height)
 { 
-        g_print ("render_image :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -907,6 +921,7 @@ static struct svg_util_render_state
         new_state->font_weight = 1;
         new_state->font_dirty = TRUE;
         new_state->text_anchor = SVG_TEXT_ANCHOR_START;
+        new_state->dominant_baseline = SVG_DOMINANT_BASELINE_AUTO;
                       
         new_state->prev = state;
         
@@ -936,9 +951,9 @@ update_boundings (struct svg_util_render_context *ctx,
         min_y = y;
         max_x = x + width;
         max_y = y + height;
-        
+
         cairo_matrix_transform_point (&ctx->state->transform, &min_x, &min_y);
-        cairo_matrix_transform_point (&ctx->state->transform, &max_y, &max_y);
+        cairo_matrix_transform_point (&ctx->state->transform, &max_x, &max_y);
         
         /* We ignore the stroke width for now.  But this decision has to
          * be checked again.  It probably makes sense for calculating the
@@ -953,7 +968,7 @@ update_boundings (struct svg_util_render_context *ctx,
         if (min_y < ctx->min_y)
                 ctx->min_y = min_y;
         if (min_y > ctx->max_y)
-                ctx->max_y = max_y;
+                ctx->max_y = min_y;
         if (max_x < ctx->min_x)
                 ctx->min_x = max_x;
         if (max_x > ctx->max_x)
@@ -993,4 +1008,42 @@ svg_cairo_strerror (svg_cairo_status_t status)
         }
         
         return _("Unknown error!");
+}
+
+gboolean
+svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
+                            const gchar *new_text,
+                            gdouble scale,
+                            gdouble size,
+                            const gchar **saved_text,
+                            gdouble *saved_size)
+{
+        struct svg_cairo *svg_cairo = (struct svg_cairo *) _svg->scr;
+        svg_t *svg = svg_cairo->svg;
+        svg_xml_hash_table_t *element_ids = svg->element_ids;
+        svg_element_t *element;
+
+        element = (svg_element_t *) _svg_xml_hash_lookup (element_ids,
+                                                        (const unsigned char *)
+                                                        id);
+
+        if (!element)
+                return FALSE;
+
+        if (element->type != SVG_ELEMENT_TYPE_TEXT)
+                return FALSE;
+
+        if (saved_text)
+                *saved_text = (const gchar *) element->e.text.chars;
+        element->e.text.chars = (char *) new_text;
+        if (saved_size)
+                *saved_size = (gdouble) element->style.font_size.value;
+
+        if (scale) {
+                element->style.font_size.value *= scale;
+        } else if (size) {
+                element->style.font_size.value = (double) size;
+        }
+
+        return TRUE;
 }
