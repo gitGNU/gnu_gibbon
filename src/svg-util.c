@@ -922,8 +922,8 @@ svg_util_push_state (struct svg_util_render_state *state)
         return new_state;
 }
 
-static struct svg_util_render_state
-        *svg_util_pop_state (struct svg_util_render_state *state)
+static struct svg_util_render_state *
+svg_util_pop_state (struct svg_util_render_state *state)
 {
         struct svg_util_render_state *prev_state = state->prev;
         
