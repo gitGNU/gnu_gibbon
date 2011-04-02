@@ -69,6 +69,9 @@ typedef struct svg_util_render_context {
         struct svg_util_render_state *state;
 } svg_util_render_context;
 
+static xmlDoc *svg_util_copy_node_path (xmlDoc *doc,
+                                        const xmlNode *node);
+
 static struct svg_util_render_state 
         *svg_util_push_state (struct svg_util_render_state *state);
 static struct svg_util_render_state
@@ -261,8 +264,6 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         svg_status_t status;
         svg_util_render_context ctx;
         xmlDoc *doc_copy = NULL;
-        xmlNode *root_copy = NULL;
-        xmlNode *node_copy = NULL;
         struct svg_component *component;
                       
         g_return_val_if_fail (node, FALSE);
@@ -286,30 +287,9 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
 
-        doc_copy = xmlCopyDoc (doc, FALSE);
-        if (!doc_copy) {
-                g_error (_("Error copying SVG structure!\n"));
-                svg_destroy (svg);
-                return FALSE;
-        }
+        doc_copy = svg_util_copy_node_path (doc, node);
 
-        root_copy = xmlCopyNode (xmlDocGetRootElement (doc), 0);
-        if (!root_copy) {
-                g_error (_("Error copying SVG root element!\n"));
-                xmlFreeDoc (doc_copy);
-                return FALSE;
-        }
-        xmlAddChild ((xmlNodePtr) doc_copy, root_copy);
-
-        node_copy = xmlCopyNode (node, 1);        
-        if (!node_copy) {
-                g_error (_("Error copying SVG node!\n"));
-                xmlFreeDoc (doc_copy);
-                return FALSE;
-        }
-        xmlAddChild (root_copy, node_copy);
-
-        xmlDocDumpFormatMemory (doc_copy, &xml_src, NULL, 1);
+        xmlDocDumpMemory (doc_copy, &xml_src, NULL);
         
         xmlFreeDoc (doc_copy);
         
@@ -714,7 +694,7 @@ svg_util_transform (gpointer closure,
         cairo_matrix_init (&new_transform, a, b, c, d, e, f);
         cairo_matrix_multiply (&ctx->state->transform, &ctx->state->transform,
                                &new_transform);
-                               
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -906,23 +886,27 @@ bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
         *width = max_x - min_x;
 }
 
-static struct svg_util_render_state 
-        *svg_util_push_state (struct svg_util_render_state *state)
+static struct svg_util_render_state *
+svg_util_push_state (struct svg_util_render_state *state)
 {
         struct svg_util_render_state *new_state = g_malloc (sizeof *new_state);
 
-        memset (new_state, 0, sizeof *new_state);
+        if (!state) {
+                memset (new_state, 0, sizeof *new_state);
                 
-        cairo_matrix_init_identity (&new_state->transform);
+                cairo_matrix_init_identity (&new_state->transform);
 
-        /* Cairo default font size.  */
-        new_state->font_size = 10;
-        new_state->font_style = SVG_FONT_STYLE_NORMAL;
-        new_state->font_weight = 1;
-        new_state->font_dirty = TRUE;
-        new_state->text_anchor = SVG_TEXT_ANCHOR_START;
-        new_state->dominant_baseline = SVG_DOMINANT_BASELINE_AUTO;
-                      
+                /* Cairo default font size.  */
+                new_state->font_size = 10;
+                new_state->font_style = SVG_FONT_STYLE_NORMAL;
+                new_state->font_weight = 1;
+                new_state->font_dirty = TRUE;
+                new_state->text_anchor = SVG_TEXT_ANCHOR_START;
+                new_state->dominant_baseline = SVG_DOMINANT_BASELINE_AUTO;
+        } else {
+                *new_state = *state;
+        }
+
         new_state->prev = state;
         
         return new_state;
@@ -1046,4 +1030,58 @@ svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
         }
 
         return TRUE;
+}
+
+static xmlDoc *
+svg_util_copy_node_path (xmlDoc *doc,
+                         const xmlNode *node)
+{
+        xmlDoc *copy = xmlCopyDoc (doc, TRUE);
+        const xmlNode *orig_parent;
+        const xmlNode *orig_node;
+        const xmlNode *orig_child;
+        const xmlNode *orig_root;
+        guint pos, i;
+        guint *p;
+        GSList *path = NULL;
+        xmlNode *parent;
+        xmlNode *child;
+        xmlNode *orphan;
+
+        orig_root = xmlDocGetRootElement (doc);
+        orig_node = node;
+        orig_parent = node->parent;
+        while (orig_parent && orig_node != orig_root) {
+                pos = 0;
+                orig_child = orig_parent->children;
+                while (orig_child != orig_node) {
+                        ++pos;
+                        orig_child = orig_child->next;
+                }
+                p = g_alloca (sizeof pos);
+                *p = pos;
+                path = g_slist_prepend (path, p);
+                orig_node = orig_parent;
+                orig_parent = orig_parent->parent;
+        }
+
+        parent = xmlDocGetRootElement (copy);
+        while (parent && path) {
+                p = path->data;
+
+                child = parent->children;
+                i = 0;
+                while (child) {
+                        orphan = child;
+                        child = child->next;
+                        if (i++ != *p) {
+                                xmlUnlinkNode (orphan);
+                                xmlFreeNode (orphan);
+                        }
+                }
+                path = g_slist_remove (path, p);
+                parent = parent->children;
+        }
+
+        return copy;
 }
