@@ -769,15 +769,26 @@ svg_util_render_rect (gpointer closure,
                       svg_length_t *rx,
                       svg_length_t *ry)
 { 
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x1, x2;
+        gdouble y1, y2;
+
+        x1 = x->value;
+        x2 = x->value + width->value;
+        y1 = y->value;
+        y2 = y->value + height->value;
+
+        cairo_matrix_transform_point (&ctx->state->transform, &x1, &y1);
+        cairo_matrix_transform_point (&ctx->state->transform, &x2, &y2);
+
         /* This is not completely accurate, if we draw a rounded rectangle.
          * However, libsvg-cairo also seems to rely on a move_to operation
          * after a rectangle is rendered, in order to initialize cairo's
          * current point.
          */
-        svg_util_move_to (closure, x->value, y->value);
-        update_boundings (closure, 
-                          x->value, y->value,
-                          width->value, height->value);
+        ctx->x = x1;
+        ctx->y = y1;
+        update_boundings (closure, x1, y1, x2 - x1, y2 - y1);
                 
         return SVG_STATUS_SUCCESS; 
 }
