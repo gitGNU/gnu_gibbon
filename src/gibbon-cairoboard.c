@@ -102,7 +102,6 @@ static void gibbon_draw_home (GibbonCairoboard *board, cairo_t *cr,
 static void gibbon_cairoboard_draw_point (GibbonCairoboard *board, cairo_t *cr,
                                guint point);
 static void gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *board, cairo_t *cr,
-                                                 guint number,
                                                  gdouble x, gdouble y,
                                                  gint side);
 static void gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
@@ -114,15 +113,7 @@ static void gibbon_cairoboard_draw_svg_component (GibbonCairoboard *board,
                                                   cairo_t *cr,
                                                   struct svg_component *svg,
                                                   gdouble x, gdouble y);
-static void gibbon_write_text (GibbonCairoboard *board, cairo_t *cr,
-                               const gchar *text,
-                               gdouble x, gdouble y, gdouble ext);
 
-#if (0)
-static void gibbon_draw_die (GibbonCairoboard *board, cairo_t *cr, 
-                             guint value, gint side,
-                             gdouble x, gdouble y);
-#endif
 static void gibbon_cairoboard_save_ids (GibbonCairoboard *board,
                                         xmlNode *node);
 static struct svg_component *
@@ -526,7 +517,6 @@ gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr,
                 if (i <= pos->max_checkers) {
                         offset = -side * pos->pos * self->priv->checker_width;
                         gibbon_cairoboard_draw_flat_checker (self, cr,
-                                                             1,
                                                              x,
                                                              y + offset,
                                                              side);
@@ -577,46 +567,22 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
 }
 
 static void
-gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr, guint number,
+gibbon_cairoboard_draw_flat_checker (GibbonCairoboard *self, cairo_t *cr,
                                      gdouble x, gdouble y, gint side)
 {
-        const gchar *font_family = "sans-serif";
-        cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
-        cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
-        gchar *text;
-        gdouble text_width;
-        
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         
         g_return_if_fail (side);
         
-        /* On normal points, we can only have a maximum of 3 checkers,
-         * on the bar it is 15: We have two spaces for the bar, and a
-         * maximum of 15 checkers.
-         */
-        g_return_if_fail (number <= 8);
-
         if (side > 0) {
                 gibbon_cairoboard_draw_svg_component (self, cr, 
                                                       self->priv->checker_w_flat,
                                                       x, y);
-                text_width = self->priv->checker_w_flat->width * 0.75;
         } else if (side < 0) {
                 gibbon_cairoboard_draw_svg_component (self, cr, 
                                                       self->priv->checker_b_flat,
                                                       x, y);
-                text_width = self->priv->checker_b_flat->width * 0.75;
         }
-        
-        if (number > 1) {
-                cairo_select_font_face (cr, font_family, slant, weight);
-                cairo_set_source_rgb (cr, 0.5, 0.5, 0.5);
-                text = g_strdup_printf ("%d", number);
-                gibbon_write_text (self, cr, text, 
-                                   x, y, 
-                                   text_width);
-                g_free (text);
-        }        
 }
 
 static void
@@ -684,7 +650,6 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
                 pos = checker_lookup + i;
                 if (i <= pos->max_checkers) {
                         gibbon_cairoboard_draw_flat_checker (self, cr,
-                                                             1,
                                                              x,
                                                              y + (direction * pos->pos
                                                                   * checker_width),
@@ -743,22 +708,6 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
                                                       saved_size,
                                                       NULL,
                                                       NULL));
-}
-
-static void gibbon_write_text (GibbonCairoboard *self, cairo_t *cr,
-                               const gchar *text,
-                               gdouble x, gdouble y, gdouble ext)
-{
-        cairo_text_extents_t te;
-
-        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
-
-        cairo_set_font_size (cr, ext);
-        cairo_text_extents (cr, text, &te);
-        cairo_move_to (cr, 
-                       x - te.width / 2 - te.x_bearing, 
-                       y + te.height / 2);
-        cairo_show_text (cr, text);
 }
 
 static void
