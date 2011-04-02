@@ -755,7 +755,7 @@ svg_util_render_ellipse (gpointer closure,
         cairo_matrix_transform_point (&ctx->state->transform, &x1, &y1);
         cairo_matrix_transform_point (&ctx->state->transform, &x2, &y2);
 
-        update_boundings (closure, x1, x2, x2 - x1, y2 - y1);
+        update_boundings (closure, x1, y1, x2 - x1, y2 - y1);
                 
         return SVG_STATUS_SUCCESS; 
 }
