@@ -129,6 +129,8 @@ static gdouble gibbon_cairoboard_get_bar_x (GibbonCairoboard *self);
 static gdouble gibbon_cairoboard_get_bar_y (GibbonCairoboard *self,
                                             guint checker, guint total,
                                             GibbonPositionSide side);
+static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
+                                             GibbonPositionSide side);
 
 #ifdef M_PI
 # undef M_PI
@@ -541,21 +543,25 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
                         checkers += side * self->priv->pos->points[i];
         }
 
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                checkers -= self->priv->pos->bar[0];
+        } else {
+                checkers -= self->priv->pos->bar[1];
+        }
+
         if (checkers >= 15)
                 return;
 
         checkers = 15 - checkers;
 
-        x = self->priv->board->width -
-            0.5 * (self->priv->board->width
-                   - self->priv->point24->x - self->priv->point24->width);
+        x = gibbon_cairoboard_get_home_x (self, side);
 
         if (side == GIBBON_POSITION_SIDE_WHITE) {
                 checker = self->priv->checker_w_home;
-                y = self->priv->point24->y + 0.5 * checker->height;
+                y = checker->y + 0.5 * checker->height;
         } else {
                 checker = self->priv->checker_b_home;
-                y = self->priv->point1->y + self->priv->point1->height
+                y = checker->y + checker->height
                     - 0.5 * checker->height;
         }
 
@@ -623,32 +629,32 @@ gibbon_cairoboard_draw_point (GibbonCairoboard *self, cairo_t *cr, guint point)
 static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
-        gdouble bar_width;
         gdouble x, y;
         gdouble saved_size;
         const gchar *saved_text;
         gchar *cube_value;
         gdouble scale;
+        gdouble top, bottom;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
+        top = self->priv->checker_w_home->y;
+        bottom = self->priv->checker_b_home->y
+                 + self->priv->checker_b_home->height;
+
         if (self->priv->pos->may_double[0]) {
                 if (self->priv->pos->may_double[1])
-                        y = self->priv->board->height / 2;
+                        y = 0.5 * (top + bottom);
                 else
-                        y = self->priv->point24->y
-                            + self->priv->cube->height / 2;
+                        y = top + 0.5 * self->priv->cube->height;
         } else if (self->priv->pos->may_double[1]) {
-                y = self->priv->point1->y + self->priv->point1->height
-                    - self->priv->cube->height / 2;
+                y = bottom - 0.5 * self->priv->cube->height;
+
         } else {
                 return;
         }
-        bar_width = -self->priv->board->width
-                    + 2 * self->priv->point24->x
-                    - 10 * self->priv->point24->width;
-        x = (self->priv->board->width - bar_width -
-             12 * self->priv->point24->width) / 4;
+
+        x = self->priv->cube->x + 0.5 * self->priv->cube->width;
 
         cube_value = g_strdup_printf ("%d", self->priv->pos->cube);
         if (strlen (cube_value) > 2)
@@ -705,12 +711,16 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
         gdouble x, y;
         struct svg_component *die;
         gdouble bar_width;
+        gdouble top, bottom;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         g_return_if_fail (value != 0);
         g_return_if_fail (value >= -6);
         g_return_if_fail (value <= +6);
+
+        top = self->priv->point24->y;
+        bottom = self->priv->point12->y + self->priv->point12->height;
 
         if (value < 0)
                 side = GIBBON_POSITION_SIDE_BLACK;
@@ -734,7 +744,7 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
         x = self->priv->board->width / 2 - side * (bar_width / 2)
                         - side * 3 * self->priv->point24->width
                         + (die_pos - 0.5) * 1.5 * die->width;
-        y = self->priv->board->height / 2;
+        y = 0.5 * (top + bottom);
 
         gibbon_cairoboard_draw_svg_component (self, cr, die, x, y);
 }
@@ -902,4 +912,17 @@ gibbon_cairoboard_get_bar_y (GibbonCairoboard *self, guint checker_number,
         y += side * pos->pos * checker->height;
 
         return y;
+}
+
+static gdouble
+gibbon_cairoboard_get_home_x (GibbonCairoboard *self, GibbonPositionSide side)
+{
+        g_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE, 0.0);
+
+        if (side == GIBBON_POSITION_SIDE_BLACK)
+                return self->priv->checker_b_home->x
+                       + 0.5 * self->priv->checker_b_home->width;
+        else
+                return self->priv->checker_w_home->x
+                       + 0.5 * self->priv->checker_w_home->width;
 }
