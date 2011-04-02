@@ -436,6 +436,7 @@ svg_util_line_to (gpointer closure, double x, double y)
         gdouble x1, x2;
         gdouble y1, y2;
         
+        cairo_matrix_transform_point (&ctx->state->transform, &x, &y);
         if (x > ctx->x) {
                 x1 = ctx->x;
                 x2 = x;
@@ -451,8 +452,9 @@ svg_util_line_to (gpointer closure, double x, double y)
                 y1 = y;
                 y2 = ctx->y;
         }
-        
-        svg_util_move_to (ctx, x, y);              
+
+        ctx->x = x;
+        ctx->y = y;
         update_boundings (ctx, x1, y1, x2 - x1, y2 - y1);
         
         return SVG_STATUS_SUCCESS; 
@@ -741,11 +743,19 @@ svg_util_render_ellipse (gpointer closure,
                          svg_length_t *rx,
                          svg_length_t *ry)
 {
-        update_boundings (closure, 
-                          cx->value - rx->value, cy->value - ry->value,
-                          2 * rx->value, 2 * ry->value);
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x1, x2;
+        gdouble y1, y2;
 
-        /* FIXME! Will the ellipse move the current point?  */
+        x1 = cx->value - rx->value;
+        x2 = cx->value + rx->value;
+        y1 = cy->value - ry->value;
+        y2 = cy->value + ry->value;
+
+        cairo_matrix_transform_point (&ctx->state->transform, &x1, &y1);
+        cairo_matrix_transform_point (&ctx->state->transform, &x2, &y2);
+
+        update_boundings (closure, x1, x2, x2 - x1, y2 - y1);
                 
         return SVG_STATUS_SUCCESS; 
 }
@@ -936,14 +946,11 @@ update_boundings (struct svg_util_render_context *ctx,
         max_x = x + width;
         max_y = y + height;
 
-        cairo_matrix_transform_point (&ctx->state->transform, &min_x, &min_y);
-        cairo_matrix_transform_point (&ctx->state->transform, &max_x, &max_y);
-        
         /* We ignore the stroke width for now.  But this decision has to
          * be checked again.  It probably makes sense for calculating the
          * dimension of the board, but for the checkers for example it may
          * cause problems.  Adjacent checkers could then overlap.  Maybe it
-         * is bettere to make it optional.
+         * is better to make it optional.
          */
         if (min_x < ctx->min_x)
                 ctx->min_x = min_x;
