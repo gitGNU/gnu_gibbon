@@ -9,9 +9,13 @@
 <!ENTITY frame_color       "#332600">
 <!ENTITY board_color       "#664000">
 ]>
-<svg viewBox="0 0 490 380" height="380" width="490" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-	<!-- Frame, covering everything.  -->
-	<rect height="380" width="490" fill="#332600"/>
+<svg viewBox="0 0 490 490" width="490" height="490" 
+     xmlns:xlink="http://www.w3.org/1999/xlink" 
+     xmlns="http://www.w3.org/2000/svg">
+    <rect width="490" height="490" fill="#664000"/>
+    <g transform="translate(0, 60)">
+        <!-- Frame, covering the inner board.  -->
+        <rect width="490" height="380" fill="#332600"/>
 	<!-- Left home compartments.  -->
 	<rect height="150" width="30" y="10" x="10" fill="#664000"/>
 	<rect height="150" width="30" y="220" x="10" fill="#664000"/>
@@ -35,7 +39,7 @@
 	<polygon points="350,10 380,10 365,160" fill="#7f7f7f"/>
 	<polygon points="380,10 410,10 395,160" fill="#900000"/>
 	<polygon points="410,10 440,10 425,160" fill="#7f7f7f" id="point24"/>
-	<polygon points=" 50,370  80,370  65,220" fill="#7f7f7f"/>
+	<polygon points=" 50,370  80,370  65,220" fill="#7f7f7f" id="point12"/>
 	<polygon points=" 80,370 110,370  95,220" fill="#900000"/>
 	<polygon points="110,370 140,370 125,220" fill="#7f7f7f"/>
 	<polygon points="140,370 170,370 155,220" fill="#900000"/>
@@ -57,7 +61,7 @@
         </g>
         
         <g id="checker_b_flat">
-	    <circle stroke="#444444" stroke-width="1" fill="#111111" r="15" cy="355" cx="425"/>
+	    <circle stroke="#444444" stroke-width="1" fill="#111111" r="15" cy="355" cx="65"/>
         </g>
         <g id="checker_b_home">
             <rect stroke="#444444" stroke-width="1" fille="#111111"
@@ -156,4 +160,5 @@
                   dominant-baseline="central"
                   >1</text>
         </g>
+    </g>
 </svg>
