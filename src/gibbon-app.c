@@ -353,7 +353,7 @@ gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
         /* FIXME! This should occupy reasonable space by default!  Do
          * not hardcode the values.
          */
-        gtk_widget_set_size_request (GTK_WIDGET (board), 500, 400);
+        gtk_widget_set_size_request (GTK_WIDGET (board), 490, 490);
 
         dummy = gibbon_app_find_object (self, "dummy-drawingarea",
                                         GTK_TYPE_DRAWING_AREA);
