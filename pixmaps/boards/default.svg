@@ -12,7 +12,7 @@
 <svg viewBox="0 0 490 490" width="490" height="490" 
      xmlns:xlink="http://www.w3.org/1999/xlink" 
      xmlns="http://www.w3.org/2000/svg">
-    <rect width="490" height="490" fill="#664000"/>
+    <rect width="490" height="490" fill="#aa8000"/>
     <g transform="translate(0, 60)">
         <!-- Frame, covering the inner board.  -->
         <rect width="490" height="380" fill="#332600"/>
