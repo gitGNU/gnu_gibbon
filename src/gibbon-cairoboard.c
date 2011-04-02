@@ -710,8 +710,8 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
         GibbonPositionSide side;
         gdouble x, y;
         struct svg_component *die;
-        gdouble bar_width;
         gdouble top, bottom;
+        gdouble left, right;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
@@ -734,16 +734,15 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 die = self->priv->black_dice[value - 1];
+                left = self->priv->point12->x;
+                right = left + 6 * self->priv->point12->width;
         } else {
                 die = self->priv->white_dice[value - 1];
+                right = self->priv->point24->x + self->priv->point24->width;
+                left = right - 6 * self->priv->point24->width;
         }
 
-        bar_width = -self->priv->board->width
-                    + 2 * self->priv->point24->x
-                    - 10 * self->priv->point24->width;
-        x = self->priv->board->width / 2 - side * (bar_width / 2)
-                        - side * 3 * self->priv->point24->width
-                        + (die_pos - 0.5) * 1.5 * die->width;
+        x = 0.5 * (left + right) + (die_pos - 0.5) * 1.5 * die->width;
         y = 0.5 * (top + bottom);
 
         gibbon_cairoboard_draw_svg_component (self, cr, die, x, y);
