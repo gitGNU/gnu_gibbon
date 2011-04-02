@@ -9,11 +9,44 @@
 <!ENTITY frame_color       "#332600">
 <!ENTITY board_color       "#664000">
 ]>
-<svg viewBox="0 0 490 490" width="490" height="490" 
+<svg viewBox="0 0 490 460" width="490" height="460" 
      xmlns:xlink="http://www.w3.org/1999/xlink" 
      xmlns="http://www.w3.org/2000/svg">
-    <rect width="490" height="490" fill="#aa8000"/>
-    <g transform="translate(0, 60)">
+    <rect width="490" height="460" fill="#553000"/>
+    <g>
+      <text id="match_length" font-family="Verdana"
+            font-size="12px" text-anchor="start"
+            x="10" y="15" fill="#ffd020">Match length: 7</text>
+      <text id="match_info" font-family="Verdana"
+            font-size="12px" text-anchor="end"
+            x="480" y="15" fill="#ffd020">Post Crawford game</text>
+      <text id="result2" font-family="Verdana"
+            font-size="12px" text-anchor="start"
+            x="10" y="35" fill="#ffd020">Score: 3 (4-away)</text>
+      <text id="pip2" font-family="Verdana"
+            font-size="12px" text-anchor="middle"
+            x="245" y="35" fill="#ffd020">Pips: 167</text>
+      <text id="player2" font-family="Verdana" font-weight="bold"
+            font-size="12px" text-anchor="end"
+            x="480" y="35" fill="#ffd020">She</text>
+    </g>
+
+    <g transform="translate(0, 420)">
+      <text id="result2" font-family="Verdana"
+            font-size="12px" text-anchor="start"
+            x="10" y="15" fill="#ffd020">Score: 6 (1-away)</text>
+      <text id="pip2" font-family="Verdana"
+            font-size="12px" text-anchor="middle"
+            x="245" y="15" fill="#ffd020">Pips: 167</text>
+      <text id="player2" font-family="Verdana" font-weight="bold"
+            font-size="12px" text-anchor="end"
+            x="480" y="15" fill="#ffd020">You</text>
+      <text id="status-bar" font-family="Verdana"
+            font-size="12px" text-anchor="middle"
+            x="245" y="35" fill="#ffd020">It's your turn to roll the dice</text>
+    </g>
+
+    <g transform="translate(0, 40)">
         <!-- Frame, covering the inner board.  -->
         <rect width="490" height="380" fill="#332600"/>
 	<!-- Left home compartments.  -->
