@@ -58,6 +58,17 @@
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
  *
  * A boxed type representing a backgammon position.
+ *
+ * The player colors black and white must not be taken literally.  They are
+ * just placeholders.  In Gibbon the user or the player that the user is
+ * watching always plays with the "white" checkers, the opponent with the
+ * black checkers.  "White" has its home board in the bottom right corner,
+ * "black" in the top-right corner.
+ *
+ * The visual board representation may differ.  The colors black and white
+ * may be swapped and there are four distinct options for the location of
+ * the "white" home board, with each option having an impact on the direction
+ * of movement of the checkers.
  */
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
