@@ -94,7 +94,9 @@ static void gibbon_cairoboard_set_position (GibbonBoard *self,
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
 static void gibbon_cairoboard_draw (GibbonCairoboard *board, cairo_t *cr);
-static void gibbon_cairoboard_draw_bar (GibbonCairoboard *board, cairo_t *cr, gint side);
+static void gibbon_cairoboard_set_info (GibbonCairoboard *board);
+static void gibbon_cairoboard_draw_bar (GibbonCairoboard *board, cairo_t *cr,
+                                        gint side);
 static void gibbon_draw_home (GibbonCairoboard *board, cairo_t *cr,
                                   gint side);
 static void gibbon_cairoboard_draw_point (GibbonCairoboard *board, cairo_t *cr,
@@ -135,6 +137,9 @@ static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
 # undef M_PI
 #endif
 #define M_PI 3.14159265358979323846
+
+/* The C programmer's spacer.gif.  */
+static const gchar *gibbon_cairoboard_empty = "";
 
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
@@ -427,6 +432,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gint i;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        gibbon_cairoboard_set_info (self);
 
         width = self->priv->board->width;
         height = self->priv->board->height;
@@ -915,4 +922,26 @@ gibbon_cairoboard_get_home_x (GibbonCairoboard *self, GibbonPositionSide side)
         else
                 return self->priv->checker_w_home->x
                        + 0.5 * self->priv->checker_w_home->width;
+}
+
+static void
+gibbon_cairoboard_set_info (GibbonCairoboard *self)
+{
+        const gchar *text;
+
+        text = self->priv->pos->players[0] ? self->priv->pos->players[0]
+                        : gibbon_cairoboard_empty;
+        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
+                                        "player1",
+                                        text, 1.0, 0,
+                                        NULL,
+                                        NULL));
+
+        text = self->priv->pos->players[1] ? self->priv->pos->players[1]
+                        : gibbon_cairoboard_empty;
+        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
+                                        "player2",
+                                        text, 1.0, 0,
+                                        NULL,
+                                        NULL));
 }
