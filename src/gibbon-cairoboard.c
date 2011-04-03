@@ -75,7 +75,6 @@ struct _GibbonCairoboardPrivate {
         struct svg_component *black_dice[6];
         struct svg_component *cube;
 
-        struct svg_component *point1;
         struct svg_component *point12;
         struct svg_component *point24;
 };
@@ -150,7 +149,6 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv->pos = NULL;
 
         self->priv->board = NULL;
-        self->priv->point1 = NULL;
         self->priv->point12 = NULL;
         self->priv->point24 = NULL;
         self->priv->checker_w_flat = NULL;
@@ -194,8 +192,6 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->board)
                 svg_util_free_component (self->priv->board);
         
-        if (self->priv->point1)
-                svg_util_free_component (self->priv->point1);
         if (self->priv->point12)
                 svg_util_free_component (self->priv->point12);
         if (self->priv->point24)
@@ -355,15 +351,6 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
                         g_object_ref_sink (self);
                         return NULL;
                 }
-        }
-
-        self->priv->point1 = gibbon_cairoboard_get_component (self, "point1",
-                                                               FALSE, doc,
-                                                               filename);
-        if (!self->priv->point1) {
-                xmlFree (doc);
-                g_object_ref_sink (self);
-                return NULL;
         }
 
         self->priv->point12 = gibbon_cairoboard_get_component (self, "point12",
