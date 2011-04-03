@@ -513,6 +513,10 @@ gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr,
         if (!checkers)
                 return;
 
+        if (checkers < 0)
+                checkers = -1;
+        g_return_if_fail (checkers <= 15);
+
         x = gibbon_cairoboard_get_bar_x (self);
 
         for (i = 0; i < checkers; ++i) {
