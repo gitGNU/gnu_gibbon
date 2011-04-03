@@ -1029,11 +1029,9 @@ svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
                                                         (const unsigned char *)
                                                         id);
 
-        if (!element)
-                return FALSE;
+        g_return_val_if_fail (element != NULL, FALSE);
 
-        if (element->type != SVG_ELEMENT_TYPE_TEXT)
-                return FALSE;
+        g_return_val_if_fail (element->type == SVG_ELEMENT_TYPE_TEXT, FALSE);
 
         if (saved_text)
                 *saved_text = (const gchar *) element->e.text.chars;
