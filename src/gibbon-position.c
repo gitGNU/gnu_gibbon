@@ -30,7 +30,7 @@
  * game of backgammon looks like this:
  *
  * <programlisting>
- *  +13-14-15-16-17-18-------19-20-21-22-23-24-+ O: white
+ *  +13-14-15-16-17-18-------19-20-21-22-23-24-+ X: black
  *  | O           X    |   |  X              O |
  *  | O           X    |   |  X              O |
  *  | O           X    |   |  X                |
@@ -42,7 +42,7 @@
  *  | X           O    |   |  O                |
  *  | X           O    |   |  O              X |
  *  | X           O    |   |  O              X |
- *  +12-11-10--9--8--7--------6--5--4--3--2--1-+ X: black
+ *  +12-11-10--9--8--7--------6--5--4--3--2--1-+ O: white
  * </programlisting>
  *
  * Translated into the checkers array of a #GibbonPosition the image
