@@ -32,13 +32,13 @@
     </g>
 
     <g transform="translate(0, 420)">
-      <text id="result2" font-family="Verdana"
+      <text id="result1" font-family="Verdana"
             font-size="12px" text-anchor="start"
             x="10" y="15" fill="#ffd020">Score: 6 (1-away)</text>
-      <text id="pip2" font-family="Verdana"
+      <text id="pip1" font-family="Verdana"
             font-size="12px" text-anchor="middle"
             x="245" y="15" fill="#ffd020">Pips: 167</text>
-      <text id="player2" font-family="Verdana" font-weight="bold"
+      <text id="player1" font-family="Verdana" font-weight="bold"
             font-size="12px" text-anchor="end"
             x="480" y="15" fill="#ffd020">You</text>
       <text id="status-bar" font-family="Verdana"
