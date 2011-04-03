@@ -567,12 +567,29 @@ free_vector (gchar ** v)
         return FALSE;
 }
 
+/*
+ * This requires a little explanation.
+ *
+ * On FIBS, colors are X and O.  When necessary X is represented as -1,
+ * and O as 1, zero is used for indicating none of these.  This mapping
+ * is similar to that used in #GibbonPosition.
+ *
+ * The initial color for the two opponents is randomly chosen.
+ *
+ * The board is represented with 26 integer fields.
+ *
+ * Index #0 and index #25 are the home board and the bar for the player
+ * on move.  Which one is home and which one is bar depends on the direction.
+ * And the sign depends your color.  We therefore ignore them altogether
+ * and rather rely on the explicit broken down values given at the end of
+ * the board string because they are always positive.
+ */
 static gboolean
 gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 {
         gchar **tokens;
         GibbonPosition *pos;
-        GibbonPositionSide turn;
+        GibbonPositionSide turn, color, direction;
         gint may_double[2];
         GibbonCairoboard *board;
         gint i;
@@ -580,7 +597,6 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
         g_return_val_if_fail (string, FALSE);
-g_printerr ("Board: %s\n", string);
 
         pos = gibbon_position_new ();
         
@@ -590,7 +606,20 @@ g_printerr ("Board: %s\n", string);
         
         for (i = 0; i <= 38; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
-        
+
+        g_return_val_if_fail (parse_integer (tokens[31], &turn,
+                              "turn", -1, 1),
+                free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[40], &color,
+                              "color", -1, 1),
+                free_vector (tokens));
+        g_return_val_if_fail (parse_integer (tokens[41], &direction,
+                              "direction", -1, 1),
+                free_vector (tokens));
+
+        /* FIXME! This must be replaced by the real name if playing.
+         * Otherwise it is always the string "You".
+         */
         pos->players[0] = g_strdup (tokens[0]);
         g_return_val_if_fail (pos->players[0][0], free_vector (tokens));
         
@@ -608,24 +637,25 @@ g_printerr ("Board: %s\n", string);
                                              "score1", 0, G_MAXINT),
                               free_vector (tokens));
         
-        g_return_val_if_fail (parse_integer (tokens[5], &pos->bar[0], "bar0",
-                                             -15, 15),
-                              free_vector (tokens));
-        
-        for (i = 6; i < 30; ++i) {
-                g_return_val_if_fail (parse_integer (tokens[i], 
-                                                     &pos->points[i - 6],
-                                                     "checker", -15, 15),
-                                      free_vector (tokens));
+        if (direction == GIBBON_POSITION_SIDE_BLACK) {
+                for (i = 6; i < 30; ++i) {
+                        g_return_val_if_fail (parse_integer (tokens[i],
+                                                             &pos->points[i - 6],
+                                                             "checker", -15, 15),
+                                              free_vector (tokens));
+                        pos->points[i - 6] *= color;
+                }
+        } else {
+                for (i = 29; i >= 6; --i) {
+                        g_return_val_if_fail (parse_integer (tokens[i],
+                                                             &pos->points[i - 6],
+                                                             "checker", -15, 15),
+                                              free_vector (tokens));
+                        pos->points[i - 6] *= color;
+                }
+
         }
         
-        g_return_val_if_fail (parse_integer (tokens[30], &pos->bar[1], "bar1",
-                                             -15, 15),
-                              free_vector (tokens));
-
-        g_return_val_if_fail (parse_integer (tokens[31], &turn, "turn", -1, 1),
-                              free_vector (tokens));
-
         g_return_val_if_fail (parse_integer (tokens[32], &dice[0],
                                              "dice[0]", 0, 6),
                               free_vector (tokens));
@@ -641,7 +671,6 @@ g_printerr ("Board: %s\n", string);
         g_return_val_if_fail (parse_integer (tokens[36], &pos->cube,
                                              "cube", 0, G_MAXINT),
                               free_vector (tokens));
-
         g_return_val_if_fail (parse_integer (tokens[37], &may_double[0],
                                              "may double 0", 0, 1),
                                              free_vector (tokens));
@@ -651,16 +680,25 @@ g_printerr ("Board: %s\n", string);
 
         pos->may_double[0] = may_double[0] ? TRUE : FALSE;
         pos->may_double[1] = may_double[1] ? TRUE : FALSE;
-        if (turn == GIBBON_POSITION_SIDE_WHITE) {
-                pos->dice[0] = dice[2];
-                pos->dice[1] = dice[3];
-        } else if (turn == GIBBON_POSITION_SIDE_BLACK) {
-                pos->dice[0] = -dice[0];
-                pos->dice[1] = -dice[1];
-        } else {
-                pos->dice[0] = dice[2];
-                pos->dice[1] = -dice[0];
+
+        /* FIXME! It is better to rely on the moves displayed.  The dice from
+         * the board command should only be checked for consistency.
+         */
+        if (turn == color) {
+                pos->dice[0] = dice[0];
+                pos->dice[1] = dice[1];
+        } else if (turn) {
+                pos->dice[0] = -dice[2];
+                pos->dice[1] = -dice[3];
         }
+
+        g_return_val_if_fail (parse_integer (tokens[46], &pos->bar[0], "bar0",
+                                             0, 15),
+                              free_vector (tokens));
+
+        g_return_val_if_fail (parse_integer (tokens[47], &pos->bar[1], "bar1",
+                                             0, 15),
+                              free_vector (tokens));
 
         g_strfreev (tokens);
         
