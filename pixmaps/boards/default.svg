@@ -60,29 +60,113 @@
 	<!-- Right board.  -->
 	<rect height="360" width="180" y="10" x="260" fill="#664000"/>
 	<!-- Points.  -->
+        <text id="text13" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="65" y="8" fill="#ffd020">13</text>
 	<polygon points=" 50,10  80,10  65,160" fill="#900000"/>
+        <text id="text14" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="95" y="8" fill="#ffd020">14</text>
 	<polygon points=" 80,10 110,10  95,160" fill="#7f7f7f"/>
+        <text id="text15" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="125" y="8" fill="#ffd020">15</text>
 	<polygon points="110,10 140,10 125,160" fill="#900000"/>
+        <text id="text16" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="155" y="8" fill="#ffd020">16</text>
 	<polygon points="140,10 170,10 155,160" fill="#7f7f7f"/>
+        <text id="text17" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="185" y="8" fill="#ffd020">17</text>
 	<polygon points="170,10 200,10 185,160" fill="#900000"/>
+        <text id="text18" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="215" y="8" fill="#ffd020">18</text>
 	<polygon points="200,10 230,10 215,160" fill="#7f7f7f"/>
+        <text id="text19" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="275" y="8" fill="#ffd020">19</text>
 	<polygon points="260,10 290,10 275,160" fill="#900000"/>
+        <text id="text20" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="305" y="8" fill="#ffd020">20</text>
 	<polygon points="290,10 320,10 305,160" fill="#7f7f7f"/>
+        <text id="text21" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="335" y="8" fill="#ffd020">21</text>
 	<polygon points="320,10 350,10 335,160" fill="#900000"/>
+        <text id="text22" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="365" y="8" fill="#ffd020">22</text>
 	<polygon points="350,10 380,10 365,160" fill="#7f7f7f"/>
+        <text id="text23" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="395" y="8" fill="#ffd020">23</text>
 	<polygon points="380,10 410,10 395,160" fill="#900000"/>
+        <text id="text24" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              x="425" y="8" fill="#ffd020">24</text>
 	<polygon points="410,10 440,10 425,160" fill="#7f7f7f" id="point24"/>
+        <text id="text12" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="65" y="372" fill="#ffd020">12</text>
 	<polygon points=" 50,370  80,370  65,220" fill="#7f7f7f" id="point12"/>
+        <text id="text11" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="95" y="372" fill="#ffd020">11</text>
 	<polygon points=" 80,370 110,370  95,220" fill="#900000"/>
+        <text id="text10" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="125" y="372" fill="#ffd020">10</text>
 	<polygon points="110,370 140,370 125,220" fill="#7f7f7f"/>
+        <text id="text9" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="155" y="372" fill="#ffd020">9</text>
 	<polygon points="140,370 170,370 155,220" fill="#900000"/>
+        <text id="text8" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="185" y="372" fill="#ffd020">8</text>
 	<polygon points="170,370 200,370 185,220" fill="#7f7f7f"/>
+        <text id="text7" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="215" y="372" fill="#ffd020">7</text>
 	<polygon points="200,370 230,370 215,220" fill="#900000"/>
+        <text id="text6" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="275" y="372" fill="#ffd020">6</text>
 	<polygon points="260,370 290,370 275,220" fill="#7f7f7f"/>
+        <text id="text5" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="305" y="372" fill="#ffd020">5</text>
 	<polygon points="290,370 320,370 305,220" fill="#900000"/>
+        <text id="text4" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="335" y="372" fill="#ffd020">4</text>
 	<polygon points="320,370 350,370 335,220" fill="#7f7f7f"/>
+        <text id="text3" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="365" y="372" fill="#ffd020">3</text>
 	<polygon points="350,370 380,370 365,220" fill="#900000"/>
+        <text id="text2" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="395" y="372" fill="#ffd020">2</text>
 	<polygon points="380,370 410,370 395,220" fill="#7f7f7f"/>
+        <text id="text1" font-family="Verdana"
+              font-size="8px" text-anchor="middle"
+              dominant-baseline="hanging"
+              x="425" y="372" fill="#ffd020">1</text>
 	<polygon points="410,370 440,370 425,220" fill="#900000" id="point1"/>
 
         <g id="checker_w_flat">
