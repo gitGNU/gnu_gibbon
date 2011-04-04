@@ -55,7 +55,9 @@ enum {
         GIBBON_PLAYER_LIST_COL_EXPERIENCE,
         GIBBON_PLAYER_LIST_COL_OPPONENT,
         GIBBON_PLAYER_LIST_COL_WATCHING,
-        GIBBON_PLAYER_LIST_N_COLUMNS,
+        GIBBON_PLAYER_LIST_COL_CLIENT,
+        GIBBON_PLAYER_LIST_COL_EMAIL,
+        GIBBON_PLAYER_LIST_N_COLUMNS
 };
 
 GibbonPlayerList *gibbon_player_list_new (void);
@@ -69,7 +71,9 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              gdouble rating,
                              guint experience,
                              gchar *opponent,
-                             gchar *watching);
+                             gchar *watching,
+                             gchar *client,
+                             gchar *email);
 
 G_END_DECLS
 

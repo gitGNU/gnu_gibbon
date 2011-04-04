@@ -375,7 +375,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
-                                opponent, watching);
+                                opponent, watching, client, email);
 
         if (!g_strcmp0 (who,
                         gibbon_connection_get_login (self->priv->connection))) {
