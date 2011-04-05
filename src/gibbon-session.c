@@ -702,6 +702,14 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 
         g_strfreev (tokens);
         
+        if (pos->match_length &&
+            (pos->scores[0] == pos->match_length - 1
+             || pos->scores[1] == pos->match_length - 1)
+            && !pos->may_double[0]
+            && !pos->may_double[1]) {
+                pos->game_info = g_strdup (_("Crawford game"));
+        }
+
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (GIBBON_BOARD (board), pos);
 
