@@ -56,6 +56,8 @@
  * @match_length: length of the match.
  * @scores: white and black score (white first).
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
+ * @match_length: Length of the match of 0 for unlimited.
+ * @game_info: Free-form string describing the game ("Crawford", ...).
  *
  * A boxed type representing a backgammon position.
  *
@@ -94,6 +96,8 @@ struct _GibbonPosition
 
         gint cube;
         gboolean may_double[2];
+
+        gchar *game_info;
 };
 
 /**

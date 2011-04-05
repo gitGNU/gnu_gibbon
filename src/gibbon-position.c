@@ -112,6 +112,8 @@ gibbon_position_free (GibbonPosition *self)
                         g_free (self->players[0]);
                 if (self->players[1])
                         g_free (self->players[1]);
+                if (self->game_info)
+                        g_free (self->game_info);
                 g_free (self);
         }
 }
@@ -135,10 +137,9 @@ gibbon_position_copy (const GibbonPosition *self)
 
         copy = g_malloc (sizeof *self);
         *copy = *self;
-        if (copy->players[0])
-                copy->players[0] = g_strdup (copy->players[0]);
-        if (copy->players[1])
-                copy->players[1] = g_strdup (copy->players[1]);
+        copy->players[0] = g_strdup (copy->players[0]);
+        copy->players[1] = g_strdup (copy->players[1]);
+        copy->game_info = g_strdup (copy->game_info);
 
         return copy;
 }
