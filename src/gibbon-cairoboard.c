@@ -138,9 +138,6 @@ static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
 #endif
 #define M_PI 3.14159265358979323846
 
-/* The C programmer's spacer.gif.  */
-static const gchar *gibbon_cairoboard_empty = "";
-
 static void
 gibbon_cairoboard_init (GibbonCairoboard *self)
 {
@@ -924,19 +921,49 @@ gibbon_cairoboard_get_home_x (GibbonCairoboard *self, GibbonPositionSide side)
 static void
 gibbon_cairoboard_set_info (GibbonCairoboard *self)
 {
-        const gchar *text;
+        gchar *text;
+        guint num_players = 0;
+        gboolean running;
+        GibbonPosition *pos = self->priv->pos;
 
-        text = self->priv->pos->players[0] ? self->priv->pos->players[0]
-                        : gibbon_cairoboard_empty;
+        text = pos->players[0] ? pos->players[0] : "";
         g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                        "player1",
-                                        text, 1.0, 0,
-                                        NULL));
+                                                      "player1",
+                                                      text, 1.0, 0,
+                                                      NULL));
+        if (text)
+                ++num_players;
 
-        text = self->priv->pos->players[1] ? self->priv->pos->players[1]
-                        : gibbon_cairoboard_empty;
+        text = pos->players[1] ? pos->players[1] : "";
         g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                        "player2",
-                                        text, 1.0, 0,
-                                        NULL));
+                                                      "player2",
+                                                      text, 1.0, 0,
+                                                      NULL));
+
+        if (text)
+                ++num_players;
+
+        running = num_players == 2;
+
+        text = running && pos->game_info ? pos->game_info : "";
+        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
+                                                      "game_info",
+                                                      text, 1.0, 0,
+                                                      NULL));
+
+        if (running) {
+                if (pos->match_length) {
+                        text = g_strdup_printf (_("%u-point match"),
+                                                  pos->match_length);
+                } else {
+                        text = g_strdup (_("Unlimited match"));
+                }
+        } else {
+                text = g_strdup ("");
+        }
+        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
+                                                      "match_lengt",
+                                                      text, 1.0, 0,
+                                                      NULL));
+        g_free (text);
 }
