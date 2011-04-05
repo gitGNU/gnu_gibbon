@@ -962,7 +962,7 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
                 text = g_strdup ("");
         }
         g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                      "match_lengt",
+                                                      "match_length",
                                                       text, 1.0, 0,
                                                       NULL));
         g_free (text);
