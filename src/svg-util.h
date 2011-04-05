@@ -48,7 +48,6 @@ extern gboolean svg_util_steal_text_params (struct svg_component *svg,
                                             const gchar *new_text,
                                             gdouble scale,
                                             gdouble size,
-                                            const gchar **saved_text,
                                             gdouble *saved_size);
 
 G_END_DECLS

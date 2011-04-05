@@ -629,7 +629,6 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
         gdouble x, y;
         gdouble saved_size;
-        const gchar *saved_text;
         gchar *cube_value;
         gdouble scale;
         gdouble top, bottom;
@@ -662,7 +661,6 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
                                                       "cube-value",
                                                       cube_value, scale, 0,
-                                                      &saved_text,
                                                       &saved_size));
 
         gibbon_cairoboard_draw_svg_component (self, cr, self->priv->cube, x, y);
@@ -670,9 +668,8 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 
         g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
                                                       "cube-value",
-                                                      saved_text, 0,
+                                                      NULL, 0,
                                                       saved_size,
-                                                      NULL,
                                                       NULL));
 }
 
@@ -934,7 +931,6 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         g_return_if_fail (svg_util_steal_text_params (self->priv->board,
                                         "player1",
                                         text, 1.0, 0,
-                                        NULL,
                                         NULL));
 
         text = self->priv->pos->players[1] ? self->priv->pos->players[1]
@@ -942,6 +938,5 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         g_return_if_fail (svg_util_steal_text_params (self->priv->board,
                                         "player2",
                                         text, 1.0, 0,
-                                        NULL,
                                         NULL));
 }

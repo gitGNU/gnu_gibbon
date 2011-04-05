@@ -1017,7 +1017,6 @@ svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
                             const gchar *new_text,
                             gdouble scale,
                             gdouble size,
-                            const gchar **saved_text,
                             gdouble *saved_size)
 {
         struct svg_cairo *svg_cairo = (struct svg_cairo *) _svg->scr;
@@ -1033,9 +1032,10 @@ svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
 
         g_return_val_if_fail (element->type == SVG_ELEMENT_TYPE_TEXT, FALSE);
 
-        if (saved_text)
-                *saved_text = (const gchar *) element->e.text.chars;
-        element->e.text.chars = (char *) new_text;
+        if (element->e.text.chars)
+                g_free (element->e.text.chars);
+
+        element->e.text.chars = g_strdup (new_text);
         if (saved_size)
                 *saved_size = (gdouble) element->style.font_size.value;
 

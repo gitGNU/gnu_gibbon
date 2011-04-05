@@ -55,8 +55,3 @@
   object gets unreffed before it can check its state.  FIX: Temporarily
   keep a reference.
 - Get rid of GibbonSignal, it's pretty useless.
-- "Stealing" text crashes the application if the SVG cairo context
-  is disposed.  This happens, when the empty string is set as a
-  text.  Solution: Never try to recycle the original text but just
-  overwrite it with a g_strdup()'d text.  Alternatively, allow NULL
-  pointers for text without warning.
