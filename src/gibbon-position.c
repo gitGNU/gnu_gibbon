@@ -143,3 +143,55 @@ gibbon_position_copy (const GibbonPosition *self)
 
         return copy;
 }
+
+guint
+gibbon_position_get_borne_off (const GibbonPosition *self,
+                               GibbonPositionSide side)
+{
+        guint checkers = 15;
+        guint i;
+
+        if (!side)
+                return 0;
+
+        for (i = 0; i < 24; ++i) {
+                if (side < 0 && self->points[i] < 0)
+                        checkers += self->points[i];
+                else if (side > 0 && self->points[i] > 0)
+                        checkers -= self->points[i];
+        }
+
+        if (side < 0)
+                checkers -= abs (self->bar [1]);
+        else if (side > 0)
+                checkers -= abs (self->bar [0]);
+
+        return checkers;
+}
+
+guint
+gibbon_position_get_pip_count (const GibbonPosition *self,
+                               GibbonPositionSide side)
+{
+        guint pips = 0;
+        guint i;
+
+        if (!side)
+                return 0;
+
+        if (side < 0) {
+                for (i = 0; i < 24; ++i) {
+                        if (self->points[i] < 0)
+                                pips -= (24 - i) * self->points[i];
+                }
+                pips += 25 * abs (self->bar[1]);
+        } else {
+                for (i = 0; i < 24; ++i) {
+                        if (self->points[i] > 0)
+                                pips += (i + 1) * self->points[i];
+                }
+                pips += 25 * abs (self->bar[0]);
+        }
+
+        return pips;
+}

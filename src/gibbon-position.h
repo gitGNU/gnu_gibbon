@@ -123,4 +123,9 @@ GibbonPosition *gibbon_position_copy (const GibbonPosition *self);
 void gibbon_position_set_player (GibbonPosition *self,
                                  const gchar *name, GibbonPositionSide side);
 
+guint gibbon_position_get_pip_count (const GibbonPosition *self,
+                                     GibbonPositionSide side);
+guint gibbon_position_get_borne_off (const GibbonPosition *self,
+                                     GibbonPositionSide side);
+
 #endif
