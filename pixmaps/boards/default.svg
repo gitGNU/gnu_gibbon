@@ -17,10 +17,10 @@
       <text id="match_length" font-family="Verdana"
             font-size="12px" text-anchor="start"
             x="10" y="15" fill="#ffd020">Match length: 7</text>
-      <text id="match_info" font-family="Verdana"
+      <text id="game_info" font-family="Verdana"
             font-size="12px" text-anchor="end"
             x="480" y="15" fill="#ffd020">Post Crawford game</text>
-      <text id="result2" font-family="Verdana"
+      <text id="score2" font-family="Verdana"
             font-size="12px" text-anchor="start"
             x="10" y="35" fill="#ffd020">Score: 3 (4-away)</text>
       <text id="pip2" font-family="Verdana"
@@ -32,7 +32,7 @@
     </g>
 
     <g transform="translate(0, 420)">
-      <text id="result1" font-family="Verdana"
+      <text id="score1" font-family="Verdana"
             font-size="12px" text-anchor="start"
             x="10" y="15" fill="#ffd020">Score: 6 (1-away)</text>
       <text id="pip1" font-family="Verdana"
