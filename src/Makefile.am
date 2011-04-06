@@ -26,6 +26,7 @@ platform_libadd += -ldnsapi -lws2_32
 endif
 
 AM_CPPFLAGS = 				\
+	-D_GNU_SOURCE			\
 	-I$(top_srcdir)			\
 	-I$(top_srcdir)/libsvg		\
 	-I$(top_srcdir)/libsvg-cairo	\
