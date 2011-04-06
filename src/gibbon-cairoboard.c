@@ -926,20 +926,17 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         gboolean running;
         GibbonPosition *pos = self->priv->pos;
         guint away[2];
+        guint pip_count[2];
 
         text = pos->players[0] ? pos->players[0] : "";
-        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                      "player1",
-                                                      text, 1.0, 0,
-                                                      NULL));
+        svg_util_steal_text_params (self->priv->board, "player1", text,
+                                    1.0, 0, NULL);
         if (text)
                 ++num_players;
 
         text = pos->players[1] ? pos->players[1] : "";
-        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                      "player2",
-                                                      text, 1.0, 0,
-                                                      NULL));
+        svg_util_steal_text_params (self->priv->board, "player2", text,
+                                    1.0, 0, NULL);
 
         if (text)
                 ++num_players;
@@ -947,10 +944,8 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         running = num_players == 2;
 
         text = running && pos->game_info ? pos->game_info : "";
-        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                      "game_info",
-                                                      text, 1.0, 0,
-                                                      NULL));
+        svg_util_steal_text_params (self->priv->board, "game_info", text,
+                                    1.0, 0, NULL);
 
         if (running) {
                 if (pos->match_length) {
@@ -962,52 +957,53 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         } else {
                 text = g_strdup ("");
         }
-        g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                      "match_length",
-                                                      text, 1.0, 0,
-                                                      NULL));
+        svg_util_steal_text_params (self->priv->board, "match_length", text,
+                                    1.0, 0, NULL);
         g_free (text);
 
         if (!running) {
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score0",
-                                                              "", 1.0, 0,
-                                                              NULL));
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score1",
-                                                              "", 1.0, 0,
-                                                              NULL));
+                svg_util_steal_text_params (self->priv->board, "score0", "",
+                                            1.0, 0, NULL);
+                svg_util_steal_text_params (self->priv->board, "score1", "",
+                                            1.0, 0, NULL);
         } else if (pos->match_length
             && pos->scores[0] < pos->match_length
             && pos->scores[1] < pos->match_length) {
                 away[0] = pos->match_length - pos->scores[0];
                 text = g_strdup_printf (_("Score: %u (%u-away)"),
                                         pos->scores[0], away[0]);
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score1",
-                                                              text, 1.0, 0,
-                                                              NULL));
+                svg_util_steal_text_params (self->priv->board, "score1", text,
+                                            1.0, 0, NULL);
                 g_free (text);
                 away[1] = pos->match_length - pos->scores[1];
                 text = g_strdup_printf (_("Score: %u (%u-away)"),
                                         pos->scores[1], away[1]);
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score2",
-                                                              text, 1.0, 0,
-                                                              NULL));
+                svg_util_steal_text_params (self->priv->board, "score2", text,
+                                            1.0, 0, NULL);
                 g_free (text);
         } else {
                 text = g_strdup_printf (_("Score: %u"), pos->scores[0]);
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score1",
-                                                              text, 1.0, 0,
-                                                              NULL));
+                svg_util_steal_text_params (self->priv->board, "score1", text,
+                                            1.0, 0, NULL);
                 g_free (text);
                 text = g_strdup_printf (_("Score: %u"), pos->scores[1]);
-                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
-                                                              "score2",
-                                                              text, 1.0, 0,
-                                                              NULL));
+                svg_util_steal_text_params (self->priv->board, "score2", text,
+                                            1.0, 0, NULL);
                 g_free (text);
         }
+
+        pip_count[0] = gibbon_position_get_pip_count (pos,
+                                                    GIBBON_POSITION_SIDE_WHITE);
+        pip_count[1] = gibbon_position_get_pip_count (pos,
+                                                    GIBBON_POSITION_SIDE_BLACK);
+        text = g_strdup_printf (_("Pips: %u (%+d)"),
+                                  pip_count[0], pip_count[0] - pip_count[1]);
+        svg_util_steal_text_params (self->priv->board, "pip1", text,
+                                    1.0, 0, NULL);
+        g_free (text);
+        text = g_strdup_printf (_("Pips: %u (%+d)"),
+                                  pip_count[1], pip_count[1] - pip_count[0]);
+        svg_util_steal_text_params (self->priv->board, "pip2", text,
+                                    1.0, 0, NULL);
+        g_free (text);
 }
