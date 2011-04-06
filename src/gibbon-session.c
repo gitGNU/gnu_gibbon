@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
@@ -61,11 +62,77 @@ static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar *board);
+static gchar *gibbon_session_decode_client (GibbonSession *self,
+                                            const gchar *token);
 
 static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what,
                                gint lower, gint upper);
+
+#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
+static const gchar *keys[] = {
+                "player",
+                "opponent",
+                "match length",
+                "player's score",
+                "opponents's score",
+                "home/bar",
+                "point 0",
+                "point 1",
+                "point 2",
+                "point 3",
+                "point 4",
+                "point 5",
+                "point 6",
+                "point 7",
+                "point 8",
+                "point 9",
+                "point 10",
+                "point 11",
+                "point 12",
+                "point 13",
+                "point 14",
+                "point 15",
+                "point 16",
+                "point 17",
+                "point 18",
+                "point 19",
+                "point 20",
+                "point 21",
+                "point 22",
+                "point 23",
+                "home/bar",
+                "turn",
+                "player's die 0",
+                "player's die 1",
+                "opponent's die 0",
+                "opponent's die 1",
+                "doubling cube",
+                "player may double",
+                "opponent may double",
+                "was doubled",
+                "color",
+                "direction",
+                "home index",
+                "bar index",
+                "player's checkers on home",
+                "opponent's checkers on home",
+                "player's checkers on bar",
+                "opponent's checkers on bar",
+                "can move",
+                "forced move",
+                "did crawford",
+                "redoubles",
+                NULL
+};
+
+static void gibbon_session_dump_board (const GibbonSession *self,
+                                       const gchar *raw,
+                                       gchar **tokens);
+static void gibbon_session_dump_position (const GibbonSession *self,
+                                          const GibbonPosition *pos);
+#endif
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -368,14 +435,15 @@ gibbon_session_clip_who_info (GibbonSession *self,
         idle = tokens[7];
         login = tokens[8];
         hostname = tokens[9];
-        client = tokens[10];
+        client = gibbon_session_decode_client (self, tokens[10]);
         email = tokens[11];
 
         available = ready && !away && !opponent[0];
-        
+
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
                                 opponent, watching, client, email);
+        g_free (client);
 
         if (!g_strcmp0 (who,
                         gibbon_connection_get_login (self->priv->connection))) {
@@ -603,6 +671,10 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         tokens = g_strsplit (string, ":", 99);
 
         g_return_val_if_fail (tokens, FALSE);
+
+#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
+        gibbon_session_dump_board (self, string, tokens);
+#endif
         
         for (i = 0; i <= 38; ++i)
                 g_return_val_if_fail (tokens[i], free_vector (tokens));
@@ -713,5 +785,103 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (GIBBON_BOARD (board), pos);
 
+#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
+        gibbon_session_dump_position (self, pos);
+#endif
+
         return TRUE;
 }
+
+static gchar *
+gibbon_session_decode_client (GibbonSession *self, const gchar *client)
+{
+        gchar *retval;
+        gchar *underscore;
+
+        if (client[0] >= 60 && client[0] <= 63
+            && 20 == strlen (client)
+            && client[1] >= 'A'
+            && client[1] <= 'Z'
+            && client[2] >= 'A'
+            && client[2] <= 'Z') {
+                if (client[19] >= 33 && client[19] <= 39)
+                        return g_strdup ("JavaFIBS");
+                else if (!(strcmp ("=NTTourney1rganizer2", client)))
+                        return g_strdup ("TourneyBot");
+                else
+                        return g_strdup (client);
+        } else {
+                retval = g_strdup (client);
+                underscore = index (retval, '_');
+                if (underscore && underscore != client)
+                        *underscore = ' ';
+                return retval;
+        }
+}
+
+#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
+static void
+gibbon_session_dump_board (const GibbonSession *self,
+                           const gchar *raw,
+                           gchar **tokens)
+{
+        int i = 0;
+
+        g_printerr ("=== Board ===\n");
+        g_printerr ("board:%s\n", raw);
+        for (i = 0; keys[i]; ++i)
+                g_printerr ("%s (%s)\n", keys[i], tokens[i]);
+}
+
+static void
+gibbon_session_dump_position (const GibbonSession *self,
+                              const GibbonPosition *pos)
+{
+        gint i;
+
+        g_printerr ("=== Position ===\n");
+        g_printerr ("Opponent: %s, %d/%d points, %u pips\n",
+                    pos->players[1], pos->scores[1], pos->match_length,
+                    gibbon_position_get_pip_count (pos,
+                                                   GIBBON_POSITION_SIDE_BLACK));
+        g_printerr ("\
+  +-12-13-14-15-16-17-------18-19-20-21-22-23-+ negative: black or X\n");
+        g_printerr ("  |");
+        for (i = 12; i < 18; ++i)
+                if (pos->points[i])
+                        g_printerr ("%+3d", pos->points[i]);
+                else
+                        g_printerr ("%s", "   ");
+        g_printerr (" |%+3d|", pos->bar[1]);
+        for (i = 18; i < 24; ++i)
+                if (pos->points[i])
+                        g_printerr ("%+3d", pos->points[i]);
+                else
+                        g_printerr ("%s", "   ");
+        g_printerr (" | May double: %s\n", pos->may_double[1] ? "yes" : "no");
+        g_printerr (" v| dice: %+d : %+d     ",
+                    pos->dice[0], pos->dice[1]);
+        g_printerr ("|BAR|                   | ");
+        g_printerr (" Cube: %d\n", pos->cube);
+        g_printerr ("  |");
+        for (i = 11; i >= 6; --i)
+                if (pos->points[i])
+                        g_printerr ("%+3d", pos->points[i]);
+                else
+                        g_printerr ("%s", "   ");
+        g_printerr (" |%+3d|", pos->bar[0]);
+        for (i = 5; i >= 0; --i)
+                if (pos->points[i])
+                        g_printerr ("%+3d", pos->points[i]);
+                else
+                        g_printerr ("%s", "   ");
+        g_printerr (" | May double: %s\n", pos->may_double[0] ? "yes" : "no");
+        g_printerr ("\
+  +-11-10--9--8--7--6--------5--4--3--2--1--0-+ positive: white or O\n");
+        g_printerr ("Player: %s, %d/%d points, %u pips\n",
+                    pos->players[0], pos->scores[0], pos->match_length,
+                    gibbon_position_get_pip_count (pos,
+                                                   GIBBON_POSITION_SIDE_WHITE));
+        g_printerr ("Game info: %s\n", pos->game_info);
+}
+#endif
