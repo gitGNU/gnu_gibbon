@@ -44,6 +44,7 @@
 #include "gibbon-account-dialog.h"
 #include "gibbon-chat-view.h"
 #include "gibbon-chat.h"
+#include "gibbon-help.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -432,6 +433,13 @@ gibbon_app_connect_signals (const GibbonApp *self)
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_account_prefs),
                                   (gpointer) self);
+
+        obj = gibbon_app_find_object (self, "about-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect (obj, "activate",
+                          G_CALLBACK (gibbon_help_show_about),
+                          (gpointer) self->priv->window);
+
 }
 
 static void
