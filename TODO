@@ -55,3 +55,4 @@
   object gets unreffed before it can check its state.  FIX: Temporarily
   keep a reference.
 - Get rid of GibbonSignal, it's pretty useless.
+- gibbon-session.c leaks memory in case of board errors; pos must be freed!
