@@ -29,7 +29,4 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
 	gcreate_class.pl.in
 
-ChangeLog:
-	$(GIT2CL) >$@.new && mv $@.new $@ || rm -f $@.new
-
 .PHONY: ChangeLog
