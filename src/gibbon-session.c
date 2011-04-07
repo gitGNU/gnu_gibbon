@@ -46,33 +46,12 @@
 #define CLIP_YOU_SAY 16
 #define CLIP_YOU_SHOUT 17
 
-static gint gibbon_session_clip_welcome (GibbonSession *self,
-                                         const gchar *message);
-static gint gibbon_session_clip_who_info (GibbonSession *self,
-                                          const gchar *message);
-static gint gibbon_session_clip_says (GibbonSession *self,
-                                      const gchar *message);
-static gint gibbon_session_clip_shouts (GibbonSession *self,
-                                        const gchar *message);
-static gint gibbon_session_clip_you_say (GibbonSession *self,
-                                          const gchar *message);
-static gint gibbon_session_clip_you_shout (GibbonSession *self,
-                                           const gchar *message);
-static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
-                                                  const gchar *message);
-static gboolean gibbon_session_handle_board (GibbonSession *self,
-                                             const gchar *board);
-static gchar *gibbon_session_decode_client (GibbonSession *self,
-                                            const gchar *token);
-static gboolean gibbon_session_handle_watching (GibbonSession *self,
-                                                const gchar *line);
-static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
-                                                        const gchar *who);
-
-static gboolean free_vector (gchar **);
-static gboolean parse_integer (const gchar *str, gint* result,
-                               const gchar *what,
-                               gint lower, gint upper);
+typedef enum {
+        GIBBON_SESSION_PLAYER_YOU = 0,
+        GIBBON_SESSION_PLAYER_WATCHING = 1,
+        GIBBON_SESSION_PLAYER_OPPONENT = 2,
+        GIBBON_SESSION_PLAYER_OTHER = 3
+} GibbonSessionPlayer;
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
 static const gchar *keys[] = {
@@ -137,6 +116,38 @@ static void gibbon_session_dump_board (const GibbonSession *self,
 static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
 #endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
+
+static gint gibbon_session_clip_welcome (GibbonSession *self,
+                                         const gchar *message);
+static gint gibbon_session_clip_who_info (GibbonSession *self,
+                                          const gchar *message);
+static gint gibbon_session_clip_says (GibbonSession *self,
+                                      const gchar *message);
+static gint gibbon_session_clip_shouts (GibbonSession *self,
+                                        const gchar *message);
+static gint gibbon_session_clip_you_say (GibbonSession *self,
+                                          const gchar *message);
+static gint gibbon_session_clip_you_shout (GibbonSession *self,
+                                           const gchar *message);
+static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
+                                                  const gchar *message);
+static gboolean gibbon_session_handle_board (GibbonSession *self,
+                                             const gchar *board);
+static gchar *gibbon_session_decode_client (GibbonSession *self,
+                                            const gchar *token);
+static gboolean gibbon_session_handle_someone (GibbonSession *self,
+                                               GibbonSessionPlayer player,
+                                               const gchar *line);
+static gboolean gibbon_session_handle_rolls (GibbonSession *self,
+                                             GibbonSessionPlayer player,
+                                             const gchar *line);
+static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
+                                                        const gchar *who);
+
+static gboolean free_vector (gchar **);
+static gboolean parse_integer (const gchar *str, gint* result,
+                               const gchar *what,
+                               gint lower, gint upper);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -319,8 +330,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 length = strlen (self->priv->watching);
                 if (0 == strncmp (self->priv->watching, line, length)
                     && ' ' == line[length]
-                    && gibbon_session_handle_watching (self,
-                                                       line + length + 1))
+                    && gibbon_session_handle_someone (self,
+                                                      GIBBON_SESSION_PLAYER_WATCHING,
+                                                      line + length + 1))
                         return 0;
         }
 
@@ -719,18 +731,23 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         if (g_strcmp0 ("You", tokens[0])) {
                 pos->players[0] = g_strdup (tokens[0]);
                 g_free (self->priv->watching);
-                self->priv->watching = NULL;
+                self->priv->watching = g_strdup (pos->players[0]);
         } else {
                 connection = gibbon_app_get_connection (self->priv->app);
                 pos->players[0] =
                         g_strdup (gibbon_connection_get_login (connection));
+                g_free (self->priv->watching);
+                self->priv->watching = NULL;
         }
         g_return_val_if_fail (pos->players[0][0], free_vector (tokens));
         
         pos->players[1] = g_strdup (tokens[1]);
         g_return_val_if_fail (pos->players[1][0], free_vector (tokens));
-        if (!g_strcmp0 (self->priv->opponent, pos->players[1]))
+
+        if (g_strcmp0 (self->priv->opponent, pos->players[1])) {
+                g_free (self->priv->opponent);
                 self->priv->opponent = g_strdup (pos->players[1]);
+        }
         
         g_return_val_if_fail (parse_integer (tokens[2], &pos->match_length,
                               "match length", 0, G_MAXINT),
@@ -921,12 +938,49 @@ gibbon_session_dump_position (const GibbonSession *self,
 #endif
 
 static gboolean
-gibbon_session_handle_watching (GibbonSession *self, const gchar *line)
+gibbon_session_handle_someone (GibbonSession *self, GibbonSessionPlayer player,
+                               const gchar *line)
 {
-        while (' ' == *line)
-                ++line;
-
-        g_printerr ("Watched player does ...: %s\n", line);
+        if (0 == strncmp ("rolls ", line, 6)) {
+                if (player == GIBBON_SESSION_PLAYER_OPPONENT
+                    || player == GIBBON_SESSION_PLAYER_WATCHING)
+                        return gibbon_session_handle_rolls (self, player,
+                                                            line + 6);
+                return FALSE;
+        }
 
         return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
+                               const gchar *line)
+{
+        guint dice[2];
+
+        if (*line >= '1' && *line <= '6')
+                dice[0] = *line++ - '0';
+        else
+                return FALSE;
+
+        if (strncmp (line, " and ", 5))
+                return FALSE;
+
+        line += 5;
+
+        if (*line >= '1' && *line <= '6')
+                dice[1] = *line++ - '0';
+        else
+                return FALSE;
+
+        if (*line++ != '.')
+                return FALSE;
+
+        if (*line)
+                return FALSE;
+
+        g_printerr ("Player type %d rolled %u and %u.\n",
+                    player, dice[0], dice[1]);
+
+        return TRUE;
 }
