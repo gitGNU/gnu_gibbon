@@ -74,6 +74,8 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              gchar *watching,
                              gchar *client,
                              gchar *email);
+gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
+                                    const gchar *player_name);
 
 G_END_DECLS
 

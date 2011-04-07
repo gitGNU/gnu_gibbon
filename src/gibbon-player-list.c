@@ -245,3 +245,11 @@ compare_utf8_string (GtkTreeModel *model,
         
         return result;
 }
+
+gboolean
+gibbon_player_list_exists (const GibbonPlayerList *self, const gchar *name)
+{
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        return (gboolean) g_hash_table_lookup (self->priv->hash, name);
+}
