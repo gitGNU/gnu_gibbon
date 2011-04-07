@@ -166,6 +166,8 @@ gibbon_position_get_borne_off (const GibbonPosition *self,
         else if (side > 0)
                 checkers -= abs (self->bar [0]);
 
+        g_return_val_if_fail (checkers < 15, 0);
+
         return checkers;
 }
 
