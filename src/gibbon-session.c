@@ -718,12 +718,12 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                         pos->points[i - 6] *= color;
                 }
         } else {
-                for (i = 29; i >= 6; --i) {
+                for (i = 6; i < 30; ++i) {
                         g_return_val_if_fail (parse_integer (tokens[i],
-                                                             &pos->points[i - 6],
+                                                             &pos->points[29 - i],
                                                              "checker", -15, 15),
                                               free_vector (tokens));
-                        pos->points[i - 6] *= color;
+                        pos->points[29 - i] *= color;
                 }
 
         }
