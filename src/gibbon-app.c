@@ -438,7 +438,7 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                       GTK_TYPE_MENU_ITEM);
         g_signal_connect (obj, "activate",
                           G_CALLBACK (gibbon_help_show_about),
-                          (gpointer) self->priv->window);
+                          (gpointer) self);
 
 }
 

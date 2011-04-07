@@ -26,9 +26,11 @@
 
 #include <gtk/gtk.h>
 
+#include "gibbon-app.h"
+
 G_BEGIN_DECLS
 
-void gibbon_help_show_about (GObject *emitter, GtkWindow *window);
+void gibbon_help_show_about (GObject *emitter, const GibbonApp *app);
 
 G_END_DECLS
 

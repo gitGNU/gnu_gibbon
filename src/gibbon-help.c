@@ -22,13 +22,10 @@
 #include "gibbon-help.h"
 
 void
-gibbon_help_show_about (GObject *emitter, GtkWindow *window)
+gibbon_help_show_about (GObject *emitter, const GibbonApp *app)
 {
+        GtkWindow *window = GTK_WINDOW (gibbon_app_get_window (app));
         static const gchar * const authors[] = {
-                "Guido Flohr <guido@imperia.bg>",
-                NULL
-        };
-        static const gchar * const documenters[] = {
                 "Guido Flohr <guido@imperia.bg>",
                 NULL
         };
@@ -39,16 +36,25 @@ gibbon_help_show_about (GObject *emitter, GtkWindow *window)
                 _("%s is a program for playing backgammon online."),
                   PACKAGE);
 
+        const gchar *pixmaps_dir = gibbon_app_get_pixmaps_directory (app);
+        gchar *logo_path = g_build_filename (pixmaps_dir, "icons",
+                                             PACKAGE ".svg", NULL);
+        GtkImage *logo_image = gibbon_app_load_scaled_image (app, logo_path,
+                                                             128, 128);
+        GdkPixbuf *logo = gtk_image_get_pixbuf (logo_image);
+
         gtk_show_about_dialog (window,
                                "program-name", PACKAGE,
                                "authors", authors,
                                "comments", comments,
                                "copyright", copyright,
-                               "documenters", documenters,
                                "translator-credits", _("translator-credits"),
                                "version", VERSION,
                                "website", "http://gibbon.guido-flohr.net/",
+                               "logo", logo,
                                NULL);
 
+        g_object_unref (logo_image);
+        g_free (logo_path);
         g_free (comments);
 }
