@@ -839,11 +839,11 @@ gibbon_cairoboard_get_flat_checker_y (GibbonCairoboard *self,
         pos = checker_lookup + checker;
 
         if (point < 12) {
-                return self->priv->checker_b_flat->y
-                       + (0.5 - pos->pos) * self->priv->checker_b_flat->height;
-        } else {
                 return self->priv->checker_w_flat->y
-                       + (0.5 + pos->pos) * self->priv->checker_w_flat->height;
+                       + (0.5 - pos->pos) * self->priv->checker_w_flat->height;
+        } else {
+                return self->priv->checker_b_flat->y
+                       + (0.5 + pos->pos) * self->priv->checker_b_flat->height;
         }
 }
 
