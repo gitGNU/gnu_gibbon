@@ -533,21 +533,7 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
         g_return_if_fail (side);
 
-        for (i = 0; i < 24; ++i) {
-                if (side * self->priv->pos->points[i] > 0)
-                        checkers += side * self->priv->pos->points[i];
-        }
-
-        if (side == GIBBON_POSITION_SIDE_WHITE) {
-                checkers += abs (self->priv->pos->bar[0]);
-        } else {
-                checkers += abs (self->priv->pos->bar[1]);
-        }
-
-        if (checkers >= 15)
-                return;
-
-        checkers = 15 - checkers;
+        checkers = gibbon_position_get_borne_off (self->priv->pos, side);
 
         x = gibbon_cairoboard_get_home_x (self, side);
 
@@ -564,7 +550,7 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
                 gibbon_cairoboard_draw_svg_component (self, cr,
                                                       checker,
                                                       x, y);
-                y += side * checker->height;
+                y -= side * checker->height;
         }
 }
 
