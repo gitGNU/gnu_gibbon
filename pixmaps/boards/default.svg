@@ -172,16 +172,16 @@
         <g id="checker_w_flat">
 	    <circle stroke="#aaaaaa" stroke-width="1" fill="#dddddd" r="15" cy="25" cx="425"/>
         </g>
-        <g id="checker_w_home">
-            <rect stroke="#aaaaaa" stroke-width="1" fill="#dddddd"
+        <g id="checker_b_home">
+            <rect stroke="#444444" stroke-width="1" fille="#111111"
                   rx="2" ry="2" x="450" y="10" height="10" width="30"/>
         </g>
         
         <g id="checker_b_flat">
 	    <circle stroke="#444444" stroke-width="1" fill="#111111" r="15" cy="355" cx="65"/>
         </g>
-        <g id="checker_b_home">
-            <rect stroke="#444444" stroke-width="1" fille="#111111"
+        <g id="checker_w_home">
+            <rect stroke="#aaaaaa" stroke-width="1" fill="#dddddd"
                   rx="2" ry="2" x="450" y="360" height="10" width="30"/>
         </g>
 
