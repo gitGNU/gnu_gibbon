@@ -64,6 +64,10 @@ static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar *board);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
+static gboolean gibbon_session_handle_watching (GibbonSession *self,
+                                                const gchar *line);
+static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
+                                                        const gchar *who);
 
 static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
@@ -132,7 +136,7 @@ static void gibbon_session_dump_board (const GibbonSession *self,
                                        gchar **tokens);
 static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
-#endif
+#endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -269,16 +273,54 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
         return retval;
 }
 
+static gboolean
+gibbon_session_handle_you_are_watching (GibbonSession *self,
+                                        const gchar *line)
+{
+        gsize length = strlen (line);
+        gchar *player = alloca (length);
+        player = strdup (line);
+        player[length - 1] = 0;
+
+        if (!gibbon_player_list_exists (self->priv->player_list, player))
+                return FALSE;
+
+        g_free (self->priv->watching);
+        self->priv->watching = g_strdup (player);
+        g_free (self->priv->opponent);
+        self->priv->opponent = NULL;
+
+        return TRUE;
+}
+
 gint
 gibbon_session_process_server_line (GibbonSession *self,
                                     const gchar *line)
 {
+        gsize length;
+
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
-        if (line[0] >= '0' && line[0] <= '9') {
+        if (line[0] >= '0' && line[0] <= '9')
                 return gibbon_session_dispatch_clip_message (self, line);
-        } else if (0 == strncmp ("board:", line, 6)) {
+
+        if (0 == strncmp ("board:", line, 6))
                 if (gibbon_session_handle_board (self, line + 6))
+                        return 0;
+
+        /* Error message.  */
+        if (0 == strncmp ("** ", line, 3))
+                return -1;
+
+        if (0 == strncmp ("You're now watching ", line, 20))
+                return gibbon_session_handle_you_are_watching (self, line + 20);
+
+        if (self->priv->watching && self->priv->opponent) {
+                length = strlen (self->priv->watching);
+                if (0 == strncmp (self->priv->watching, line, length)
+                    && ' ' == line[length]
+                    && gibbon_session_handle_watching (self,
+                                                       line + length + 1))
                         return 0;
         }
 
@@ -451,28 +493,12 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         opponent = NULL;
                 if (!watching[0])
                         watching = NULL;
-                if (self->priv->opponent) {
-                        if (opponent) {
-                                if (strcmp (opponent, self->priv->opponent)) {
-                                        g_free (self->priv->opponent);
-                                        self->priv->opponent = g_strdup (opponent);
-                                }
-                        } else {
-                                self->priv->opponent = g_strdup (opponent);
-                        }
-                } else if (opponent) {
+                if (g_strcmp0 (opponent, self->priv->opponent)) {
+                        g_free (self->priv->opponent);
                         self->priv->opponent = g_strdup (opponent);
                 }
-                if (self->priv->watching) {
-                        if (watching) {
-                                if (strcmp (watching, self->priv->watching)) {
-                                        g_free (self->priv->watching);
-                                        self->priv->watching = g_strdup (watching);
-                                }
-                        } else {
-                                self->priv->watching = g_strdup (watching);
-                        }
-                } else if (watching) {
+                if (g_strcmp0 (watching, self->priv->watching)) {
+                        g_free (self->priv->watching);
                         self->priv->watching = g_strdup (watching);
                 }
         }
@@ -662,6 +688,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         GibbonCairoboard *board;
         gint i;
         gint dice[4];
+        GibbonConnection *connection;
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
         g_return_val_if_fail (string, FALSE);
@@ -689,14 +716,21 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                               "direction", -1, 1),
                 free_vector (tokens));
 
-        /* FIXME! This must be replaced by the real name if playing.
-         * Otherwise it is always the string "You".
-         */
-        pos->players[0] = g_strdup (tokens[0]);
+        if (g_strcmp0 ("You", tokens[0])) {
+                pos->players[0] = g_strdup (tokens[0]);
+                g_free (self->priv->watching);
+                self->priv->watching = NULL;
+        } else {
+                connection = gibbon_app_get_connection (self->priv->app);
+                pos->players[0] =
+                        g_strdup (gibbon_connection_get_login (connection));
+        }
         g_return_val_if_fail (pos->players[0][0], free_vector (tokens));
         
         pos->players[1] = g_strdup (tokens[1]);
         g_return_val_if_fail (pos->players[1][0], free_vector (tokens));
+        if (!g_strcmp0 (self->priv->opponent, pos->players[1]))
+                self->priv->opponent = g_strdup (pos->players[1]);
         
         g_return_val_if_fail (parse_integer (tokens[2], &pos->match_length,
                               "match length", 0, G_MAXINT),
@@ -885,3 +919,14 @@ gibbon_session_dump_position (const GibbonSession *self,
         g_printerr ("Game info: %s\n", pos->game_info);
 }
 #endif
+
+static gboolean
+gibbon_session_handle_watching (GibbonSession *self, const gchar *line)
+{
+        while (' ' == *line)
+                ++line;
+
+        g_printerr ("Watched player does ...: %s\n", line);
+
+        return FALSE;
+}
