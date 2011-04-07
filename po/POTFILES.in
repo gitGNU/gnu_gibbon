@@ -55,6 +55,7 @@ src/gibbon-account-dialog.c
 src/gibbon-app.c
 src/gibbon-archive.c
 src/gibbon-cairoboard.c
+src/gibbon-chat-view.c
 src/gibbon-connection.c
 src/gibbon-connection-dialog.c
 src/gibbon-connector.c
