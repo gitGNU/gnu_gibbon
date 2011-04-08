@@ -65,3 +65,26 @@ gibbon_board_set_position (GibbonBoard *self, GibbonPosition *position)
 
         (*iface->set_position) (self, position);
 }
+
+/**
+ * gibbon_board_get_position:
+ * @self: the #GibbonBoard
+ *
+ * Get the #GibbonPosition the board is currently displaying.
+ *
+ * Returns: the #GibbonPosition or %NULL for failure.
+ */
+GibbonPosition *
+gibbon_board_get_position (const GibbonBoard *self)
+{
+        GibbonBoardIface *iface;
+
+        g_return_val_if_fail (self != NULL, NULL);
+        g_return_val_if_fail (GIBBON_IS_BOARD (self), NULL);
+
+        iface = GIBBON_BOARD_GET_IFACE (self);
+
+        g_return_val_if_fail (iface->get_position, NULL);
+
+        return (*iface->get_position) (self);
+}
