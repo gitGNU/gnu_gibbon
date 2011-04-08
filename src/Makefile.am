@@ -64,7 +64,8 @@ common_SOURCES = 		\
 	gibbon-board.c			\
 	gibbon-account-dialog.c			\
 	gibbon-chat-view.c				\
-	gibbon-chat.c	
+	gibbon-chat.c			\
+	gibbon-help.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -95,7 +96,8 @@ noinst_HEADERS =		\
 	gibbon-board.h		\
 	gibbon-account-dialog.h			\
 	gibbon-chat-view.h			\
-	gibbon-chat.h
+	gibbon-chat.h			\
+	gibbon-help.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
