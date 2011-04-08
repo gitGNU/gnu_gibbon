@@ -754,8 +754,9 @@ gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
                                                     &error);
 
         if (!pixbuf) {
-                gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
-                               path, error->message);
+                gibbon_app_display_error (self,
+                                          _("Error loading image `%s': %s!"),
+                                          path, error->message);
                 return NULL;
         }
 
