@@ -36,12 +36,11 @@ gibbon_help_show_about (GObject *emitter, const GibbonApp *app)
                 _("%s is a program for playing backgammon online."),
                   PACKAGE);
 
-        const gchar *pixmaps_dir = gibbon_app_get_pixmaps_directory (app);
-        gchar *logo_path = g_build_filename (pixmaps_dir, "icons",
-                                             PACKAGE ".svg", NULL);
-        GtkImage *logo_image = gibbon_app_load_scaled_image (app, logo_path,
-                                                             128, 128);
-        GdkPixbuf *logo = gtk_image_get_pixbuf (logo_image);
+        gchar *logo_path = g_build_filename (GIBBON_DATADIR,
+                                             "icons", "hicolor",
+                                             "128x128", "apps",
+                                             PACKAGE ".png", NULL);
+        GdkPixbuf *logo = gdk_pixbuf_new_from_file (logo_path, NULL);
 
         gtk_show_about_dialog (window,
                                "program-name", PACKAGE,
@@ -54,7 +53,8 @@ gibbon_help_show_about (GObject *emitter, const GibbonApp *app)
                                "logo", logo,
                                NULL);
 
-        g_object_unref (logo_image);
+        if (logo)
+                g_object_unref (logo);
         g_free (logo_path);
         g_free (comments);
 }
