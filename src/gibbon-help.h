@@ -30,6 +30,7 @@
 
 G_BEGIN_DECLS
 
+void gibbon_help_show_help (GObject *emitter, const GibbonApp *app);
 void gibbon_help_show_about (GObject *emitter, const GibbonApp *app);
 
 G_END_DECLS

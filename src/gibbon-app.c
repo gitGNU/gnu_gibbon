@@ -434,6 +434,12 @@ gibbon_app_connect_signals (const GibbonApp *self)
                                   G_CALLBACK (gibbon_app_on_account_prefs),
                                   (gpointer) self);
 
+        obj = gibbon_app_find_object (self, "help-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect (obj, "activate",
+                          G_CALLBACK (gibbon_help_show_help),
+                          (gpointer) self);
+
         obj = gibbon_app_find_object (self, "about-menu-item",
                                       GTK_TYPE_MENU_ITEM);
         g_signal_connect (obj, "activate",
