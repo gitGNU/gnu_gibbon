@@ -65,7 +65,9 @@
  * just placeholders.  In Gibbon the user or the player that the user is
  * watching always plays with the "white" checkers, the opponent with the
  * black checkers.  "White" has its home board in the bottom right corner,
- * "black" in the top-right corner.
+ * "black" in the top-right corner.  "White" is sometimes referred to
+ * as O, and "Black" as X.  Checker counts for "white" are positive,
+ * checker counts for "black" are negative.
  *
  * The visual board representation may differ.  The colors black and white
  * may be swapped and there are four distinct options for the location of
@@ -113,6 +115,26 @@ typedef enum {
         GIBBON_POSITION_SIDE_NONE = 0,
         GIBBON_POSITION_SIDE_WHITE = 1
 } GibbonPositionSide;
+
+/**
+ * GibbonMove:
+ * @from: The starting point for a move.  1 is the ace point for white, O,
+ *        or the player with positive checker counts.  23 is the ace point
+ *        for black, X, or the player with negative checker counts.  0 and
+ *        24 represent home and the bar accordingly.
+ * @to: The end point for a move, see @from for semantics.
+ *
+ * A boxed type representing a backgammon move.
+ *
+ * A move is always a checker moves.  Other actions like offering a double,
+ * taking or dropping a double, resignations and so on are not handled.
+ */
+typedef struct _GibbonMove GibbonMove;
+struct _GibbonMove
+{
+        guint from;
+        guint to;
+};
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;
 
