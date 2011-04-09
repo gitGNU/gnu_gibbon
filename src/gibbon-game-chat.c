@@ -145,7 +145,7 @@ gibbon_game_chat_new (GibbonApp *app)
         buffer = gibbon_chat_get_buffer (self->priv->chat);
         gtk_text_view_set_buffer (self->priv->view, buffer);
 
-        entry = gibbon_app_find_object (app, "shout-entry", GTK_TYPE_ENTRY);
+        entry = gibbon_app_find_object (app, "game-chat-entry", GTK_TYPE_ENTRY);
         g_signal_connect_swapped (entry, "activate",
                                   G_CALLBACK (gibbon_game_chat_on_utter),
                                   G_OBJECT (self));
