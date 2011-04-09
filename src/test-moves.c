@@ -49,11 +49,14 @@ test_white_opening_31 ()
         GSList *moves;
 
         pos->match_length = 1;
+        pos->turn = GIBBON_POSITION_SIDE_WHITE;
         pos->dice[0] = 3;
         pos->dice[1] = 1;
 
         moves = gibbon_position_get_moves (pos);
         g_return_val_if_fail (moves != NULL, FALSE);
+
+        gibbon_position_free_moves (moves);
 
         return TRUE;
 }
