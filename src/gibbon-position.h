@@ -150,4 +150,7 @@ guint gibbon_position_get_pip_count (const GibbonPosition *self,
 guint gibbon_position_get_borne_off (const GibbonPosition *self,
                                      GibbonPositionSide side);
 
+GSList *gibbon_position_get_moves (const GibbonPosition *self);
+void gibbon_position_free_moves (GSList *moves);
+
 #endif

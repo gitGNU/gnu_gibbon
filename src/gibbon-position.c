@@ -198,3 +198,11 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
 
         return pips;
 }
+
+GSList *
+gibbon_position_get_moves (const GibbonPosition *self)
+{
+        g_return_val_if_fail (self != NULL, NULL);
+
+        return (GSList *) 123;
+}
