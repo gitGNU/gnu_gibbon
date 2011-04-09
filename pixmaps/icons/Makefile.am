@@ -18,6 +18,7 @@
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons
 pixmap_DATA = \
 	say.svg	\
-	whisper.svg
+	whisper.svg \
+	white_flag.svg
 
 EXTRA_DIST = $(pixmap_DATA)
