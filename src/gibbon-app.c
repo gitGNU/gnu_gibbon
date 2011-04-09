@@ -651,6 +651,7 @@ gibbon_app_disconnect (GibbonApp *self)
         self->priv->connection = NULL;
 
         gibbon_shouts_set_my_name (self->priv->shouts, NULL);
+        gibbon_game_chat_set_my_name (self->priv->game_chat, NULL);
 
         gibbon_app_set_state_disconnected (self);
 }
@@ -734,6 +735,8 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
 
         gibbon_shouts_set_my_name (self->priv->shouts,
                                    gibbon_connection_get_login (conn));
+        gibbon_game_chat_set_my_name (self->priv->game_chat,
+                                      gibbon_connection_get_login (conn));
 }
 
 static void
@@ -814,6 +817,14 @@ gibbon_app_get_shouts (const GibbonApp *self)
         return self->priv->shouts;
 }
 
+GibbonGameChat *
+gibbon_app_get_game_chat (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->game_chat;
+}
+
 static void
 gibbon_app_on_account_prefs (GibbonApp *self)
 {
@@ -883,4 +894,14 @@ gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message)
         g_return_if_fail (message != NULL);
 
         gibbon_shouts_append_message (self->priv->shouts, message);
+}
+
+void
+gibbon_app_show_game_chat (GibbonApp *self, const GibbonFIBSMessage *message)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_game_chat_append_message (self->priv->game_chat, message);
 }

@@ -37,14 +37,19 @@
 #include "gibbon-shouts.h"
 #include "gibbon-position.h"
 #include "gibbon-board.h"
+#include "gibbon-game-chat.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
 #define CLIP_SAYS 12
 #define CLIP_SHOUTS 13
+#define CLIP_WHISPERS 14
+#define CLIP_KIBITZES 15
 #define CLIP_YOU_SAY 16
 #define CLIP_YOU_SHOUT 17
+#define CLIP_YOU_WHISPER 18
+#define CLIP_YOU_KIBITZ 19
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -125,10 +130,18 @@ static gint gibbon_session_clip_says (GibbonSession *self,
                                       const gchar *message);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
                                         const gchar *message);
+static gint gibbon_session_clip_whispers (GibbonSession *self,
+                                          const gchar *message);
+static gint gibbon_session_clip_kibitzes (GibbonSession *self,
+                                          const gchar *message);
 static gint gibbon_session_clip_you_say (GibbonSession *self,
                                           const gchar *message);
 static gint gibbon_session_clip_you_shout (GibbonSession *self,
                                            const gchar *message);
+static gint gibbon_session_clip_you_whisper (GibbonSession *self,
+                                             const gchar *message);
+static gint gibbon_session_clip_you_kibitz (GibbonSession *self,
+                                            const gchar *message);
 static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
                                                   const gchar *message);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
@@ -271,11 +284,23 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                 case CLIP_SHOUTS:
                         retval = gibbon_session_clip_shouts (self, endptr);
                         break;
+                case CLIP_WHISPERS:
+                        retval = gibbon_session_clip_whispers (self, endptr);
+                        break;
+                case CLIP_KIBITZES:
+                        retval = gibbon_session_clip_kibitzes (self, endptr);
+                        break;
                 case CLIP_YOU_SAY:
                         retval = gibbon_session_clip_you_say (self, endptr);
                         break;
                 case CLIP_YOU_SHOUT:
                         retval = gibbon_session_clip_you_shout (self, endptr);
+                        break;
+                case CLIP_YOU_WHISPER:
+                        retval = gibbon_session_clip_you_whisper (self, endptr);
+                        break;
+                case CLIP_YOU_KIBITZ:
+                        retval = gibbon_session_clip_you_kibitz (self, endptr);
                         break;
                 default:
                         retval = -1;
@@ -568,6 +593,48 @@ gibbon_session_clip_shouts (GibbonSession *self,
 }
 
 static gint
+gibbon_session_clip_whispers (GibbonSession *self,
+                              const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonGameChat *game_chat;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        fibs_message = gibbon_fibs_message_new (message);
+        if (!fibs_message)
+                return -1;
+
+        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        gibbon_game_chat_append_message (game_chat, fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_WHISPERS;
+}
+
+static gint
+gibbon_session_clip_kibitzes (GibbonSession *self,
+                              const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonGameChat *game_chat;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        fibs_message = gibbon_fibs_message_new (message);
+        if (!fibs_message)
+                return -1;
+
+        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        gibbon_game_chat_append_message (game_chat, fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_KIBITZES;
+}
+
+static gint
 gibbon_session_clip_you_say (GibbonSession *self,
                              const gchar *message)
 {
@@ -623,6 +690,56 @@ gibbon_session_clip_you_shout (GibbonSession *self,
         gibbon_fibs_message_free (fibs_message);
 
         return CLIP_YOU_SHOUT;
+}
+
+static gint
+gibbon_session_clip_you_whisper (GibbonSession *self,
+                                 const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return FALSE;
+
+        fibs_message = g_malloc (sizeof *fibs_message);
+        fibs_message->message = g_strdup (message);
+        fibs_message->sender =
+                g_strdup (gibbon_connection_get_login (connection));
+
+        gibbon_app_show_game_chat (self->priv->app, fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_YOU_WHISPER;
+}
+
+static gint
+gibbon_session_clip_you_kibitz (GibbonSession *self,
+                                const gchar *message)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return FALSE;
+
+        fibs_message = g_malloc (sizeof *fibs_message);
+        fibs_message->message = g_strdup (message);
+        fibs_message->sender =
+                g_strdup (gibbon_connection_get_login (connection));
+
+        gibbon_app_show_game_chat (self->priv->app, fibs_message);
+
+        gibbon_fibs_message_free (fibs_message);
+
+        return CLIP_YOU_KIBITZ;
 }
 
 /* FIXME! Use g_ascii_strtoll in this function! */
