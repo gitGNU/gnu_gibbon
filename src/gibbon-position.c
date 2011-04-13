@@ -338,9 +338,47 @@ gibbon_position_check_move (const GibbonPosition *_before,
 }
 
 static gboolean
-gibbon_position_is_diff (const gint *before, const gint *after,
+gibbon_position_is_diff (const gint *_before, const gint *after,
                          const GibbonMove *move)
 {
+        gint *before = g_alloca (26 * sizeof *_before);
+        guint i, from, to;
+        const GibbonMovement *movement;
+
+        memcpy (before, _before, 26 * sizeof *_before);
+
+        for (i = 0; i < move->number; ++i) {
+                movement = move->movements + i;
+                to = movement->to;
+
+                /* Is the target point occupied?  */
+                if (before[to] < -1)
+                        return FALSE;
+
+                /* Remove the opponent's checker if this is a hit.  */
+                if (before[to] == -1)
+                        before[to] = 0;
+
+                ++before[to];
+                from = movement->from;
+                --before[from];
+        }
+
+        /* Is the resulting position identical to what we expect? */
+        if (memcmp (before, after, 26 * sizeof *before))
+                return FALSE;
+
+        /* At this point we know:
+         *
+         * 1) All intermediate points and the landing point are free.
+         * 2) The resulting position exactly reflects the effect of the move.
+         *
+         * After this, we only have to check these constraints:
+         *
+         * - Bear-off only allowed, when all checkers are in the home board.
+         * - No legal moves, while checkers on the bar.
+         * - Maximize number of pips used.
+         */
         return TRUE;
 }
 
@@ -369,6 +407,7 @@ static void
 gibbon_position_fill_movement (GibbonMove *move, gsize num,
                                guint point, guint die)
 {
+        /* FIXME! Detect bear-offs with excess pips!  */
         move->movements[num].from = point;
         move->movements[num].to = point - die;
 }
