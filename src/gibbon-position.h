@@ -30,6 +30,20 @@
 #define GIBBON_TYPE_POSITION (gibbon_position_get_type ())
 
 /**
+ * GibbonPositionSide:
+ * @GIBBON_POSITION_SIDE_BLACK: black or X
+ * @GIBBON_POSITION_SIDE_NONE: neither side
+ * @GIBBON_POSITION_SIDE_WHITE: white or O
+ *
+ * Use these symbolic constants, when referring to one side of the board.
+ */
+typedef enum {
+        GIBBON_POSITION_SIDE_BLACK = -1,
+        GIBBON_POSITION_SIDE_NONE = 0,
+        GIBBON_POSITION_SIDE_WHITE = 1
+} GibbonPositionSide;
+
+/**
  * GibbonPosition:
  * @players: @players[0] is the white player name, @players[1] the black player;
  *           %NULL representing unknown.  If you use gibbon_position_free()
@@ -103,37 +117,51 @@ struct _GibbonPosition
 };
 
 /**
- * GibbonPositionSide:
- * @GIBBON_POSITION_SIDE_BLACK: black or X
- * @GIBBON_POSITION_SIDE_NONE: neither side
- * @GIBBON_POSITION_SIDE_WHITE: white or O
- *
- * Use these symbolic constants, when referring to one side of the board.
- */
-typedef enum {
-        GIBBON_POSITION_SIDE_BLACK = -1,
-        GIBBON_POSITION_SIDE_NONE = 0,
-        GIBBON_POSITION_SIDE_WHITE = 1
-} GibbonPositionSide;
-
-/**
- * GibbonMove:
+ * GibbonMovement:
  * @from: The starting point for a move.  1 is the ace point for white, O,
  *        or the player with positive checker counts.  23 is the ace point
  *        for black, X, or the player with negative checker counts.  0 and
  *        24 represent home and the bar accordingly.
  * @to: The end point for a move, see @from for semantics.
  *
- * A boxed type representing a backgammon move.
+ * Structure representing a single backgammon checker movement.
+ */
+typedef struct _GibbonMovement GibbonMovement;
+struct _GibbonMovement
+{
+        guint from;
+        guint to;
+};
+
+/**
+ * GibbonMoveError:
+ * @GIBBON_MOVE_LEGAL: legal move
+ * @GIBBON_MOVE_ILLEGAL: illegal move
+ * @GIBBON_MVOE_BACKWARDS: moved backwards
  *
- * A move is always a checker moves.  Other actions like offering a double,
- * taking or dropping a double, resignations and so on are not handled.
+ * Use these symbolic constants, when referring to one side of the board.
+ */
+typedef enum {
+        GIBBON_MOVE_LEGAL = 0,
+        GIBBON_MOVE_ILLEGAL = 1,
+        GIBBON_MOVE_TOO_MANY_MOVES = 2
+} GibbonMoveError;
+
+/**
+ * GibbonMove:
+ * @number: number of movements following (0 to 4).
+ * @movements: the individual movements.
+ * @status: status of this move.
+ *
+ * Structure representing a backgammon move.  This is always a checker move.
+ * Other actions like doubling, resigning, etc. are not covered.
  */
 typedef struct _GibbonMove GibbonMove;
 struct _GibbonMove
 {
-        guint from;
-        guint to;
+        gint number;
+        GibbonMoveError status;
+        GibbonMovement movements[];
 };
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;
@@ -150,7 +178,8 @@ guint gibbon_position_get_pip_count (const GibbonPosition *self,
 guint gibbon_position_get_borne_off (const GibbonPosition *self,
                                      GibbonPositionSide side);
 
-GSList *gibbon_position_get_moves (const GibbonPosition *self);
-void gibbon_position_free_moves (GSList *moves);
+GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
+                                        const GibbonPosition *after,
+                                        GibbonPositionSide side);
 
 #endif

@@ -57,6 +57,8 @@
  * </programlisting>
  */
 
+#include <stdlib.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -64,6 +66,15 @@
 
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
+
+/* True if a and b have the same sign, false otherwise.  */
+#define SAME_SIGN(a, b) !((a & G_MININT) ^ (b & G_MININT))
+
+/* True if a checker with "my_color" can move to a point with "target"
+ * points.
+ */
+#define IS_FREE(target, my_color, her_color) \
+        (!target || target == her_color || SAME_SIGN (target, my_color))
 
 GibbonPosition initial = {
                 { NULL, NULL },
@@ -79,6 +90,25 @@ GibbonPosition initial = {
                 { FALSE, FALSE },
                 NULL
 };
+
+
+static GibbonMove *gibbon_position_alloc_move (gsize num_movements);
+static void gibbon_position_fill_movement (GibbonMove *move, gsize num,
+                                           guint point, guint die);
+static GList *gibbon_position_find_double (const gint *before,
+                                           const gint *after,
+                                           guint die,
+                                           gsize num_froms,
+                                           const guint *froms);
+static GList *gibbon_position_find_double4 (const gint *before,
+                                            const gint *after,
+                                            guint die,
+                                            const guint *froms);
+static GList *gibbon_position_find_non_double (const gint *before,
+                                               const gint *after,
+                                               guint die1, guint die2,
+                                               gsize num_froms,
+                                               const guint *froms);
 
 /**
  * gibbon_position_new:
@@ -199,10 +229,149 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
         return pips;
 }
 
-GSList *
-gibbon_position_get_moves (const GibbonPosition *self)
+static GibbonMove *
+gibbon_position_alloc_move (gsize num_movements)
 {
-        g_return_val_if_fail (self != NULL, NULL);
+        GibbonMove *move = g_malloc (sizeof move->number
+                                     + num_movements * sizeof *move->movements
+                                     + sizeof move->status);
+        move->number = 0;
+        move->status = GIBBON_MOVE_LEGAL;
 
-        return (GSList *) 123;
+        return move;
+}
+
+GibbonMove *
+gibbon_position_check_move (const GibbonPosition *_before,
+                            const GibbonPosition *_after,
+                            GibbonPositionSide side)
+{
+        GibbonMove *move;
+        GList *found;
+        gint before[26];
+        gint after[26];
+        gint i, tmp;
+        guint num_froms = 0;
+        guint froms[4];
+        guint die1, die2;
+        GList *iter;
+
+        die1 = abs (_before->dice[0]);
+        die2 = abs (_before->dice[1]);
+
+        move = gibbon_position_alloc_move (0);
+        move->status = GIBBON_MOVE_ILLEGAL;
+
+        g_return_val_if_fail (die1 != 0, move);
+        g_return_val_if_fail (die2 != 0, move);
+        g_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
+                              || side == GIBBON_POSITION_SIDE_BLACK,
+                              move);
+
+        /* This structure is handier for us.  It would probably be easier
+         * if we also change GibbonPosition accordingly.
+         */
+        memcpy (before + 1, _before->points, 24 * sizeof *before);
+        memcpy (after + 1, _after->points, 24 * sizeof *after);
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                before[0] = gibbon_position_get_borne_off (_before, side);
+                after[0] = gibbon_position_get_borne_off (_after, side);
+                before[25] = _before->bar[0];
+                after[25] = _after->bar[0];
+        } else {
+                before[25] = gibbon_position_get_borne_off (_before, side);
+                after[25] = gibbon_position_get_borne_off (_after, side);
+                before[0] = -_before->bar[1];
+                after[0] = -_after->bar[1];
+
+                /* Now "normalize" the board representation.  Negative
+                 * checker counts are ours, positive ones are hers.
+                 */
+                for (i = 0; i <= 25; ++i) {
+                        before[i] = -before[i];
+                        after[i] = -after[i];
+                }
+
+                /* And swap the direction.  */
+                for (i = 0; i <= 12; ++i) {
+                        tmp = before[25 - i];
+                        before[25 - i] = before[i];
+                        before[i] = tmp;
+                        tmp = after[25 - i];
+                        after[25 - i] = after[i];
+                        after[i] = tmp;
+                }
+        }
+
+        /* Find the number of possible starting points.  */
+        for (i = 1; i <= 25; ++i) {
+                if (after[i] < before[i]) {
+                        froms[num_froms++] = 1;
+                        /* More than four are always illegal.  */
+                        if (num_froms > 4) {
+                                move->status = GIBBON_MOVE_TOO_MANY_MOVES;
+                                return move;
+                        }
+                }
+        }
+
+        if (die1 == die2) {
+                found = gibbon_position_find_double (before, after,
+                                                     die1,
+                                                     num_froms, froms);
+        } else {
+                found = gibbon_position_find_non_double (before, after,
+                                                         die1, die2,
+                                                         num_froms, froms);
+        }
+
+        iter = found;
+        while (iter) {
+                iter = iter->next;
+        }
+
+        return move;
+}
+
+static GList *
+gibbon_position_find_non_double (const gint *before,
+                                 const gint *after,
+                                 guint die1, guint die2,
+                                 gsize num_froms, const guint *froms)
+{
+        return NULL;
+}
+
+static GList *
+gibbon_position_find_double (const gint *before,
+                             const gint *after,
+                             guint die,
+                             gsize num_froms, const guint *froms)
+{
+        if (num_froms == 4)
+                return gibbon_position_find_double4 (before, after, die, froms);
+
+        return NULL;
+}
+
+static void
+gibbon_position_fill_movement (GibbonMove *move, gsize num,
+                               guint point, guint die)
+{
+        move->movements[num].from = point;
+        move->movements[num].to = point - die;
+}
+
+static GList *
+gibbon_position_find_double4 (const gint *before,
+                              const gint *after,
+                              guint die, const guint *froms)
+{
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        guint i;
+
+        for (i = 0; i < 4; ++i)
+                gibbon_position_fill_movement (move, i, froms[i], die);
+
+        return g_list_append (NULL, move);
 }

@@ -27,7 +27,7 @@
 
 #include <gibbon-position.h>
 
-static gboolean test_white_opening_31 (void);
+static gboolean test_white_simple_doubles (void);
 
 int
 main(int argc, char *argv[])
@@ -36,27 +36,69 @@ main(int argc, char *argv[])
 
         g_type_init ();
 
-        if (!test_white_opening_31 ())
+        if (!test_white_simple_doubles ())
                 status = -1;
 
         return status;
 }
 
 static gboolean
-test_white_opening_31 ()
+test_white_simple_doubles ()
 {
-        GibbonPosition *pos = gibbon_position_new ();
-        GSList *moves;
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMovement *movement;
+        gint i;
 
-        pos->match_length = 1;
-        pos->turn = GIBBON_POSITION_SIDE_WHITE;
-        pos->dice[0] = 3;
-        pos->dice[1] = 1;
+        before->match_length = 1;
+        before->dice[0] = 2;
+        before->dice[1] = 2;
 
-        moves = gibbon_position_get_moves (pos);
-        g_return_val_if_fail (moves != NULL, FALSE);
+        for (i = 0; i < 24; ++i)
+                before->points[i] = 0;
 
-        gibbon_position_free_moves (moves);
+        /* Black has two checkers on her ace-point.  White has one checker
+         * on his 16-point, one on his 13-point, one on his 10-point, one on
+         * his 7-point, and one on his 4-point..
+         */
+        before->points[23] = -2;
+        before->points[15] = 1;
+        before->points[12] = 1;
+        before->points[9] = 1;
+        before->points[6] = 1;
+        before->points[3] = 1;
+
+        /* White moves each of his checkers 2 pips.  */
+        after = gibbon_position_copy (before);
+        after->points[15] = 0;
+        after->points[13] = 1;
+        after->points[12] = 0;
+        after->points[10] = 1;
+        after->points[9] = 0;
+        after->points[7] = 1;
+        after->points[6] = 0;
+        after->points[4] = 1;
+        after->points[3] = 0;
+        after->points[1] = 1;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        g_return_val_if_fail (move != NULL, FALSE);
+        g_return_val_if_fail (move->status == GIBBON_MOVE_TOO_MANY_MOVES,
+                              FALSE);
+        g_free (move);
+
+        /* Move the extra checker back.  */
+        after->points[15] = 1;
+        after->points[13] = 0;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        g_return_val_if_fail (move != NULL, FALSE);
+        g_return_val_if_fail (move->status == GIBBON_MOVE_LEGAL, FALSE);
+        g_free (move);
+
+        gibbon_position_free (after);
 
         return TRUE;
 }
