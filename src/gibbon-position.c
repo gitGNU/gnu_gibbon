@@ -67,15 +67,6 @@
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
 
-/* True if a and b have the same sign, false otherwise.  */
-#define SAME_SIGN(a, b) !((a & G_MININT) ^ (b & G_MININT))
-
-/* True if a checker with "my_color" can move to a point with "target"
- * points.
- */
-#define IS_FREE(target, my_color, her_color) \
-        (!target || target == her_color || SAME_SIGN (target, my_color))
-
 GibbonPosition initial = {
                 { NULL, NULL },
                 0,
@@ -109,6 +100,9 @@ static GList *gibbon_position_find_non_double (const gint *before,
                                                guint die1, guint die2,
                                                gsize num_froms,
                                                const guint *froms);
+static gboolean gibbon_position_is_diff (const gint *before,
+                                         const gint *after,
+                                         const GibbonMove *move);
 
 /**
  * gibbon_position_new:
@@ -315,6 +309,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
                 }
         }
 
+        /* Find candidate moves.  */
         if (die1 == die2) {
                 found = gibbon_position_find_double (before, after,
                                                      die1,
@@ -327,10 +322,26 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
         iter = found;
         while (iter) {
+                if (gibbon_position_is_diff (before, after,
+                                             (GibbonMove *) iter->data)) {
+                        *move = *((GibbonMove *) iter->data);
+                        break;
+                }
                 iter = iter->next;
         }
+        g_list_foreach (found, (GFunc) g_free, NULL);
+
+        if (move->status != GIBBON_MOVE_LEGAL)
+                return move;
 
         return move;
+}
+
+static gboolean
+gibbon_position_is_diff (const gint *before, const gint *after,
+                         const GibbonMove *move)
+{
+        return TRUE;
 }
 
 static GList *
