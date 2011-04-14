@@ -298,7 +298,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
         }
 
         /* Find the number of possible starting points.  */
-        for (i = 1; i <= 25; ++i) {
+        for (i = 25; i >= 1; --i) {
                 if (after[i] < before[i]) {
                         froms[num_froms++] = i;
                         /* More than four are always illegal.  */
@@ -324,7 +324,9 @@ gibbon_position_check_move (const GibbonPosition *_before,
         while (iter) {
                 if (gibbon_position_is_diff (before, after,
                                              (GibbonMove *) iter->data)) {
-                        *move = *((GibbonMove *) iter->data);
+                        g_free (move);
+                        move = (GibbonMove *) iter->data;
+                        iter->data = NULL;
                         break;
                 }
                 iter = iter->next;
