@@ -138,7 +138,8 @@ struct _GibbonMovement
  * @GIBBON_MOVE_LEGAL: legal move
  * @GIBBON_MOVE_ILLEGAL: illegal move
  * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
- * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied
+ * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied,
+ *                        probably never used
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
@@ -146,7 +147,7 @@ typedef enum {
         GIBBON_MOVE_LEGAL = 0,
         GIBBON_MOVE_ILLEGAL = 1,
         GIBBON_MOVE_TOO_MANY_MOVES = 2,
-        GIBBON_MOVE_OCCUPIED = 3
+        GIBBON_MOVE_BLOCKED = 3
 } GibbonMoveError;
 
 /**

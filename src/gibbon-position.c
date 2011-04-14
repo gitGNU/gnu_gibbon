@@ -355,7 +355,7 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
 
                 /* Is the target point occupied?  */
                 if (before[to] < -1) {
-                        move->status = GIBBON_MOVE_OCCUPIED;
+                        move->status = GIBBON_MOVE_BLOCKED;
                         return FALSE;
                 }
 
