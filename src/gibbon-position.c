@@ -102,7 +102,7 @@ static GList *gibbon_position_find_non_double (const gint *before,
                                                const guint *froms);
 static gboolean gibbon_position_is_diff (const gint *before,
                                          const gint *after,
-                                         const GibbonMove *move);
+                                         GibbonMove *move);
 
 /**
  * gibbon_position_new:
@@ -300,7 +300,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
         /* Find the number of possible starting points.  */
         for (i = 1; i <= 25; ++i) {
                 if (after[i] < before[i]) {
-                        froms[num_froms++] = 1;
+                        froms[num_froms++] = i;
                         /* More than four are always illegal.  */
                         if (num_froms > 4) {
                                 move->status = GIBBON_MOVE_TOO_MANY_MOVES;
@@ -339,7 +339,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
 static gboolean
 gibbon_position_is_diff (const gint *_before, const gint *after,
-                         const GibbonMove *move)
+                         GibbonMove *move)
 {
         gint *before = g_alloca (26 * sizeof *_before);
         guint i, from, to;
@@ -352,8 +352,10 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
                 to = movement->to;
 
                 /* Is the target point occupied?  */
-                if (before[to] < -1)
+                if (before[to] < -1) {
+                        move->status = GIBBON_MOVE_OCCUPIED;
                         return FALSE;
+                }
 
                 /* Remove the opponent's checker if this is a hit.  */
                 if (before[to] == -1)
@@ -410,6 +412,7 @@ gibbon_position_fill_movement (GibbonMove *move, gsize num,
         /* FIXME! Detect bear-offs with excess pips!  */
         move->movements[num].from = point;
         move->movements[num].to = point - die;
+        ++move->number;
 }
 
 static GList *
