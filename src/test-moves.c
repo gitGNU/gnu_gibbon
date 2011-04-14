@@ -101,7 +101,6 @@ test_white_simple_doubles ()
         /* Move the extra checker back.  */
         after->points[15] = 1;
         after->points[13] = 0;
-        g_printerr ("========= Mark ============\n");
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
         expect->number = 4;
@@ -116,6 +115,34 @@ test_white_simple_doubles ()
         expect->movements[3].to = 2;
 
         if (!expect_move (expect, move, "Moved 4 checkers after 22"))
+                retval = FALSE;
+
+        /* Put two black checkers in the way.  */
+        before->points[7] = -2;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_ILLEGAL;
+        if (!expect_move (expect, move, "Blocked move after 22"))
+                retval = FALSE;
+
+        /* Remove one of these black checkers again.  */
+        before->points[7] = -1;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        expect->number = 4;
+        expect->status = GIBBON_MOVE_LEGAL;
+        expect->movements[0].from = 13;
+        expect->movements[0].to = 11;
+        expect->movements[1].from = 10;
+        expect->movements[1].to = 8;
+        expect->movements[2].from = 7;
+        expect->movements[2].to = 5;
+        expect->movements[3].from = 4;
+        expect->movements[3].to = 2;
+
+        if (!expect_move (expect, move, "Hitting one black checker after 22"))
                 retval = FALSE;
 
         gibbon_position_free (after);
