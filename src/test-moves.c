@@ -361,6 +361,12 @@ test_white_3moves_doubles ()
 
         expect->number = 3;
         expect->status = GIBBON_MOVE_LEGAL;
+        expect->movements[0].from = 20;
+        expect->movements[0].to = 17;
+        expect->movements[1].from = 16;
+        expect->movements[1].to = 13;
+        expect->movements[2].from = 12;
+        expect->movements[2].to = 9;
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
 

@@ -95,6 +95,10 @@ static GList *gibbon_position_find_double4 (const gint *before,
                                             const gint *after,
                                             guint die,
                                             const guint *froms);
+static GList *gibbon_position_find_double3 (const gint *before,
+                                            const gint *after,
+                                            guint die,
+                                            const guint *froms);
 static GList *gibbon_position_find_non_double (const gint *before,
                                                const gint *after,
                                                guint die1, guint die2,
@@ -386,6 +390,16 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
         return TRUE;
 }
 
+static void
+gibbon_position_fill_movement (GibbonMove *move, gsize num,
+                               guint point, guint die)
+{
+        /* FIXME! Detect bear-offs with excess pips!  */
+        move->movements[num].from = point;
+        move->movements[num].to = point - die;
+        ++move->number;
+}
+
 static GList *
 gibbon_position_find_non_double (const gint *before,
                                  const gint *after,
@@ -401,20 +415,16 @@ gibbon_position_find_double (const gint *before,
                              guint die,
                              gsize num_froms, const guint *froms)
 {
-        if (num_froms == 4)
-                return gibbon_position_find_double4 (before, after, die, froms);
+        switch (num_froms) {
+                case 4:
+                        return gibbon_position_find_double4 (before, after,
+                                                             die, froms);
+                case 3:
+                        return gibbon_position_find_double3 (before, after,
+                                                             die, froms);
+        }
 
         return NULL;
-}
-
-static void
-gibbon_position_fill_movement (GibbonMove *move, gsize num,
-                               guint point, guint die)
-{
-        /* FIXME! Detect bear-offs with excess pips!  */
-        move->movements[num].from = point;
-        move->movements[num].to = point - die;
-        ++move->number;
 }
 
 static GList *
@@ -423,10 +433,42 @@ gibbon_position_find_double4 (const gint *before,
                               guint die, const guint *froms)
 {
         GibbonMove *move = gibbon_position_alloc_move (4);
-        guint i;
 
-        for (i = 0; i < 4; ++i)
-                gibbon_position_fill_movement (move, i, froms[i], die);
+        gibbon_position_fill_movement (move, 0, froms[0], die);
+        gibbon_position_fill_movement (move, 1, froms[1], die);
+        gibbon_position_fill_movement (move, 2, froms[2], die);
+        gibbon_position_fill_movement (move, 3, froms[3], die);
 
         return g_list_append (NULL, move);
+}
+
+static GList *
+gibbon_position_find_double3 (const gint *before,
+                              const gint *after,
+                              guint die, const guint *froms)
+{
+        GList *moves = NULL;
+        GibbonMove *move;
+        guint i;
+
+        /* Move each checker once.  */
+        move = gibbon_position_alloc_move (4);
+        gibbon_position_fill_movement (move, 0, froms[0], die);
+        gibbon_position_fill_movement (move, 1, froms[1], die);
+        gibbon_position_fill_movement (move, 2, froms[2], die);
+        moves = g_list_append (moves, move);
+
+        /* Now try to move two checkers.  */
+        for (i = 0; i < 3; ++i) {
+                if (before[froms[i]] > 1) {
+                        move = gibbon_position_alloc_move (4);
+                        gibbon_position_fill_movement (move, 0, froms[0], die);
+                        gibbon_position_fill_movement (move, 1, froms[1], die);
+                        gibbon_position_fill_movement (move, 2, froms[2], die);
+                        gibbon_position_fill_movement (move, i, froms[i], die);
+                        moves = g_list_append (moves, move);
+                }
+        }
+
+        return moves;
 }
