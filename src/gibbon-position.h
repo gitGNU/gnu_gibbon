@@ -123,6 +123,7 @@ struct _GibbonPosition
  *        for black, X, or the player with negative checker counts.  0 and
  *        24 represent home and the bar accordingly.
  * @to: The end point for a move, see @from for semantics.
+ * @num: How many checkers were moved?
  *
  * Structure representing a single backgammon checker movement.
  */
@@ -131,6 +132,7 @@ struct _GibbonMovement
 {
         guint from;
         guint to;
+        guint num;
 };
 
 /**

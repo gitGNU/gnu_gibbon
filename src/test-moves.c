@@ -113,12 +113,16 @@ test_white_simple_doubles ()
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 13;
         expect->movements[0].to = 11;
+        expect->movements[0].num = 1;
         expect->movements[1].from = 10;
         expect->movements[1].to = 8;
+        expect->movements[1].num = 1;
         expect->movements[2].from = 7;
         expect->movements[2].to = 5;
+        expect->movements[2].num = 1;
         expect->movements[3].from = 4;
         expect->movements[3].to = 2;
+        expect->movements[3].num = 1;
 
         if (!expect_move (expect, move, "White moved 4 checkers after 22"))
                 retval = FALSE;
@@ -141,12 +145,16 @@ test_white_simple_doubles ()
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 13;
         expect->movements[0].to = 11;
+        expect->movements[0].num = 1;
         expect->movements[1].from = 10;
         expect->movements[1].to = 8;
+        expect->movements[1].num = 1;
         expect->movements[2].from = 7;
         expect->movements[2].to = 5;
+        expect->movements[2].num = 1;
         expect->movements[3].from = 4;
         expect->movements[3].to = 2;
+        expect->movements[3].num = 1;
 
         if (!expect_move (expect, move, "Hitting one black checker after 22"))
                 retval = FALSE;
@@ -218,12 +226,16 @@ test_black_simple_doubles ()
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 13;
         expect->movements[0].to = 11;
+        expect->movements[0].num = 1;
         expect->movements[1].from = 10;
         expect->movements[1].to = 8;
+        expect->movements[1].num = 1;
         expect->movements[2].from = 7;
         expect->movements[2].to = 5;
+        expect->movements[1].num = 1;
         expect->movements[3].from = 4;
         expect->movements[3].to = 2;
+        expect->movements[3].num = 1;
 
         if (!expect_move (expect, move, "Black moved 4 checkers after 22"))
                 retval = FALSE;
@@ -246,12 +258,16 @@ test_black_simple_doubles ()
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 13;
         expect->movements[0].to = 11;
+        expect->movements[0].num = 1;
         expect->movements[1].from = 10;
         expect->movements[1].to = 8;
+        expect->movements[1].num = 1;
         expect->movements[2].from = 7;
         expect->movements[2].to = 5;
+        expect->movements[2].num = 1;
         expect->movements[3].from = 4;
         expect->movements[3].to = 2;
+        expect->movements[3].num = 1;
 
         if (!expect_move (expect, move, "Hitting one white checker after 22"))
                 retval = FALSE;
@@ -266,10 +282,10 @@ static gboolean expect_move (const GibbonMove *expect,
 {
         gboolean retval = TRUE;
         guint i;
-        guint got_from, got_to;
+        guint got_from, got_to, got_num;
         const GibbonMovement *got_movement;
         const GibbonMovement *expect_movement;
-        guint expect_from, expect_to;
+        guint expect_from, expect_to, expect_num;
 
         if (!got) {
                 g_printerr ("%s: Returned move is NULL!\n", msg);
@@ -293,15 +309,20 @@ static gboolean expect_move (const GibbonMove *expect,
                         got_movement = got->movements + i;
                         got_from = got_movement->from;
                         got_to = got_movement->to;
+                        got_num = got_movement->num;
                         expect_movement = expect->movements + i;
                         expect_from = expect_movement->from;
                         expect_to = expect_movement->to;
+                        expect_num = expect_movement->num;
                         if (got_from != expect_from
-                            || got_to != expect_to) {
+                            || got_to != expect_to
+                            || got_num != expect_num) {
                                 g_printerr ("%s: Movement %u: "
-                                            "Expected %u/%u, got %u/%u.\n",
-                                            msg, i, expect_from , expect_to,
-                                            got_from, got_to);
+                                            "Expected %u/%u(%u),"
+                                            " got %u/%u(%u).\n",
+                                            msg, i,
+                                            expect_from , expect_to, expect_num,
+                                            got_from, got_to, got_num);
                                 retval = FALSE;
                         }
                 }
@@ -363,10 +384,13 @@ test_white_3moves_doubles ()
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 20;
         expect->movements[0].to = 17;
+        expect->movements[0].num = 1;
         expect->movements[1].from = 16;
         expect->movements[1].to = 13;
+        expect->movements[1].num = 1;
         expect->movements[2].from = 12;
         expect->movements[2].to = 9;
+        expect->movements[2].num = 1;
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
 
