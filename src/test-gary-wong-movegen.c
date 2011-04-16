@@ -235,6 +235,9 @@ LegalMove (int anBoardPre[28], int anBoardPost[28], int anRoll[2],
 }
 
 /* End of Gary Wong's code.  */
+
+#define DEBUG_MOVE_GEN 1
+
 static GibbonPosition *generate_position (void);
 static void test_position (GibbonPosition *position, gint board[28]);
 static void test_position_with_dice (GibbonPosition *position, gint board[28]);
@@ -247,6 +250,7 @@ static void compare_results (GibbonPosition *position,
                              GibbonMove *move,
                              gint success, gint moves[8]);
 static void dump_position (const GibbonPosition *position);
+static void dump_move (const GibbonMove *move);
 static void translate_position (gint board[28], const GibbonPosition *position);
 static gboolean apply_move (GibbonPosition *position, const GibbonMove *move);
 static void test_position_with_move (GibbonPosition *position, gint board[28],
@@ -289,6 +293,10 @@ main (int argc, char *argv[])
 
         for (i = 0; i < num_positions; ++i) {
                 position = generate_position ();
+#if (DEBUG_MOVE_GEN)
+                g_printerr ("================ New Position ===============\n");
+                dump_position (position);
+#endif
                 translate_position (board, position);
                 test_position (position, board);
                 gibbon_position_free (position);
@@ -364,10 +372,9 @@ test_position (GibbonPosition *position, gint board[28])
         int i, j;
 
         for (i = 1; i <= 6; ++i) {
-                position->dice[0] = 1 + random () % 6;
+                position->dice[0] = i;
                 for (j = i; j <= 6; ++j) {
-                        position->dice[1] = 1 + random () % 6;
-
+                        position->dice[1] = j;
                         test_position_with_dice (position, board);
                 }
         }
@@ -398,7 +405,7 @@ dump_position (const GibbonPosition *pos)
 
         g_printerr ("=== Position ===\n");
         g_printerr ("\
-  +-12-13-14-15-16-17-------18-19-20-21-22-23-+ negative: black or X\n");
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
         g_printerr ("  |");
         for (i = 12; i < 18; ++i)
                 if (pos->points[i])
@@ -430,7 +437,22 @@ dump_position (const GibbonPosition *pos)
                         g_printerr ("%s", "   ");
         g_printerr (" |\n");
         g_printerr ("\
-  +-11-10--9--8--7--6--------5--4--3--2--1--0-+ positive: white or O\n");
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
+}
+
+static void
+dump_move (const GibbonMove *move)
+{
+        gint i;
+
+        for (i = 0; i < move->number; ++i) {
+                g_printerr (" %d/%d",
+                            move->movements[i].from,
+                            move->movements[i].to);
+                if (move->movements[i].num != 1)
+                        g_printerr ("(%u)", move->movements[i].num);
+        }
+        g_printerr ("\n");
 }
 
 static void
@@ -442,6 +464,7 @@ compare_results (GibbonPosition *position,
         gboolean match = TRUE;
         gint i;
 
+return;
         if (move->status == GIBBON_MOVE_LEGAL && !success)
                 match = FALSE;
         else if (move->status != GIBBON_MOVE_LEGAL && success)
@@ -469,14 +492,7 @@ compare_results (GibbonPosition *position,
         }
         if (move->status == GIBBON_MOVE_LEGAL) {
                 g_printerr ("Move according to Gibbon:");
-                for (i = 0; i < move->number; ++i) {
-                        g_printerr (" %u/%u",
-                                    move->movements[i].from,
-                                    move->movements[i].to);
-                        if (move->movements[i].num != 1)
-                                g_printerr ("(%u)", move->movements[i].num);
-                }
-                g_printerr ("\n");
+                dump_move (move);
         }
 
         exit (1);
@@ -512,11 +528,12 @@ test_position_with_non_double (GibbonPosition *position,
         gint i, j;
 
         /* Test single checker movements.  */
+        g_printerr ("One checker once.\n");
         move->number = 1;
         movement = move->movements;
         movement->num = 1;
         for (i = 25; i > 0; --i) {
-                if (position->points[i] > 0) {
+                if (board[i] > 0) {
                         movement->from = i;
                         movement->to = i - position->dice[0];
                         test_position_with_move (position, board, move);
@@ -525,7 +542,70 @@ test_position_with_non_double (GibbonPosition *position,
                 }
         }
 
+        /* Now try to move the same checker twice.  */
+        g_printerr ("One checker twice.\n");
+        move->number = 2;
+        move->movements[0].num = 1;
+        move->movements[1].num = 1;
+        for (i = 25; i > 0; --i) {
+                if (board[i] > 0) {
+                        move->movements[0].from = i;
+                        move->movements[0].to = i - position->dice[0];
+                        if (move->movements[0].to > 0) {
+                                move->movements[1].from = move->movements[0].to;
+                                move->movements[1].to = move->movements[1].from
+                                                - position->dice[1];
+                                test_position_with_move (position, board, move);
+                        }
+                        move->movements[0].to = i - position->dice[1];
+                        if (move->movements[0].to > 0) {
+                                move->movements[1].from = move->movements[0].to;
+                                move->movements[1].to = move->movements[1].from
+                                                - position->dice[0];
+                                test_position_with_move (position, board, move);
+                        }
+                }
+        }
+
+        g_printerr ("Two checkers from one point.\n");
+        /* Now try to move two checkers from one point.  */
+        for (i = 25; i > 0; --i) {
+                if (board[i] < 2)
+                        continue;
+                move->movements[0].from = i;
+                move->movements[0].to = i - position->dice[0];
+                move->movements[1].from = i;
+                move->movements[1].to = i - position->dice[1];
+                test_position_with_move (position, board, move);
+        }
+
+        g_printerr ("Two checkers from different points.\n");
+        /* And finally two, in both orders.  */
+        for (i = 25; i > 0; --i) {
+                if (board[i] < 1)
+                        continue;
+                move->movements[0].from = i;
+                for (j = i - 1; j > 0; --j) {
+                        if (board[j] < 1)
+                                continue;
+                        move->movements[1].from = j;
+                        move->movements[0].to = i - position->dice[0];
+                        move->movements[1].to = j - position->dice[1];
+                        /* If  the starting point of the second submove is the
+                         * landing point of the first, we have seen that move
+                         * already.
+                         */
+                        if (move->movements[0].to != move->movements[1].from)
+                                test_position_with_move (position, board, move);
+                        move->movements[0].to = i - position->dice[1];
+                        move->movements[1].to = j - position->dice[0];
+                        if (move->movements[0].to != move->movements[1].from)
+                                test_position_with_move (position, board, move);
+                }
+        }
+
         g_free (move);
+        g_printerr ("Next roll/position.\n");
 }
 
 /* Only works for white.  And only checks that the starting checker is
@@ -544,7 +624,7 @@ apply_move (GibbonPosition *pos, const GibbonMove *move)
                 from = movement->from - 1;
                 to = movement->to - 1;
                 if (to < 0)
-                        return FALSE;
+                        to = 0;
                 if (to > 0 && pos->points[to] < -1)
                         return FALSE;
 
@@ -572,6 +652,11 @@ test_position_with_move (GibbonPosition *position, gint board[28],
         gint moves[8];
         int gary_legal;
         gint dice[2];
+
+#if (DEBUG_MOVE_GEN)
+        g_printerr ("Testing move: %d%d", position->dice[0], position->dice[1]);
+        dump_move (move);
+#endif
 
         post_position = gibbon_position_copy (position);
         if (!apply_move (post_position, move)) {
