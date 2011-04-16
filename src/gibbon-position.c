@@ -274,27 +274,17 @@ gibbon_position_check_move (const GibbonPosition *_before,
          */
         memcpy (before + 1, _before->points, 24 * sizeof *before);
         memcpy (after + 1, _after->points, 24 * sizeof *after);
-        if (side == GIBBON_POSITION_SIDE_WHITE) {
-                before[25] = gibbon_position_get_borne_off (_before, side);
-                after[25] = gibbon_position_get_borne_off (_after, side);
-                before[0] = _before->bar[0];
-                after[0] = _after->bar[0];
-        } else {
-                before[0] = gibbon_position_get_borne_off (_before, side);
-                after[0] = gibbon_position_get_borne_off (_after, side);
-                before[25] = -_before->bar[1];
-                after[25] = -_after->bar[1];
-
-                /* Now "normalize" the board representation.  Negative
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                /* "Normalize" the board representation.  Negative
                  * checker counts are ours, positive ones are hers.
                  */
-                for (i = 0; i <= 25; ++i) {
+                for (i = 1; i <= 24; ++i) {
                         before[i] = -before[i];
                         after[i] = -after[i];
                 }
 
                 /* And swap the direction.  */
-                for (i = 0; i <= 12; ++i) {
+                for (i = 1; i <= 12; ++i) {
                         tmp = before[25 - i];
                         before[25 - i] = before[i];
                         before[i] = tmp;
@@ -303,6 +293,10 @@ gibbon_position_check_move (const GibbonPosition *_before,
                         after[i] = tmp;
                 }
         }
+        before[0] = gibbon_position_get_borne_off (_before, side);
+        after[0] = gibbon_position_get_borne_off (_after, side);
+        before[25] = _before->bar[0];
+        after[25] = _after->bar[0];
 
         /* Find the number of possible starting points.  */
         for (i = 25; i >= 1; --i) {
@@ -466,7 +460,8 @@ gibbon_position_find_double3 (const gint *before,
         gibbon_position_fill_movement (move, froms[1], die, 1);
         gibbon_position_fill_movement (move, froms[2], die, 1);
         moves = g_list_append (moves, move);
-        /* Now try to move two checkers.  */
+
+        /* Now try to move two checkers or let one of them move twice.  */
         for (i = 0; i < 3; ++i) {
                 if (before[froms[i]] > 1) {
                         move = gibbon_position_copy_move (first);
