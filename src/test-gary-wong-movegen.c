@@ -253,7 +253,7 @@ static void dump_position (const GibbonPosition *position);
 static void dump_move (const GibbonMove *move);
 static void translate_position (gint board[28], const GibbonPosition *position);
 static gboolean apply_move (GibbonPosition *position, const GibbonMove *move);
-static void test_position_with_move (GibbonPosition *position, gint board[28],
+static gint test_position_with_move (GibbonPosition *position, gint board[28],
                                      const GibbonMove *move);
 
 int
@@ -516,7 +516,91 @@ translate_position (gint board[28], const GibbonPosition *position)
 static void
 test_position_with_double (GibbonPosition *position, gint board[28])
 {
-        /* FIXME! */
+        /* Try to use just one die.  */
+        gint i, j;
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        gint found = 0;
+        guint die = position->dice[0];
+
+        /* Try to move a single checker once.  */
+        g_printerr ("Move a single checker once.\n");
+        move->number = 1;
+        move->movements[0].num = 1;
+        for (i = 25; i > 0; --i) {
+                if (board[i] <= 0)
+                        continue;
+                move->movements[0].from = i;
+                move->movements[0].to = i - die;
+                found += test_position_with_move (position, board, move);
+        }
+
+        /* If there was no legal move after one round we can take an early
+         * exit here.
+         */
+        if (!found) {
+                g_free (move);
+                return;
+        }
+
+        /* Now try to use two dice values.  */
+        found = 0;
+
+        /* Try to move a single checker twice.  */
+        g_printerr ("Move a single checker twice.\n");
+        move->number = 2;
+        move->movements[0].num = 1;
+        move->movements[1].num = 1;
+        for (i = 25; i > 0; --i) {
+                if (board[i] <= 0)
+                        continue;
+                move->movements[0].from = i;
+                move->movements[0].to = i - die;
+                move->movements[1].from = i - die;
+                move->movements[1].to = i - 2 * die;
+                found += test_position_with_move (position, board, move);
+        }
+
+        /* Try to move a pair of checkers once.  */
+        g_printerr ("Move a pair of checkers once.\n");
+        move->number = 1;
+        move->movements[0].num = 2;
+        for (i = 25; i > 0; --i) {
+                if (board[i] <= 1)
+                        continue;
+                move->movements[0].from = i;
+                move->movements[0].to = i - die;
+                found += test_position_with_move (position, board, move);
+        }
+
+        /* Try to move two checkers once.  */
+        g_printerr ("Move two checkers once.\n");
+        move->number = 2;
+        move->movements[0].num = 1;
+        move->movements[0].num = 1;
+        for (i = 25; i > 0; --i) {
+                if (board[i] <= 0)
+                        continue;
+                move->movements[0].from = i;
+                move->movements[0].to = i - die;
+                for (j = i - 1; j > 0; --j) {
+                        if (board[j] <= 0)
+                                continue;
+                        move->movements[1].from = j;
+                        move->movements[1].to = j - die;
+                        if (move->movements[0].to == move->movements[1].from)
+                                continue;
+                        found += test_position_with_move (position, board, move);
+                }
+        }
+
+        if (!found) {
+                g_free (move);
+                return;
+        }
+
+        g_free (move);
+
+        exit (1);
 }
 
 static void
@@ -642,7 +726,7 @@ apply_move (GibbonPosition *pos, const GibbonMove *move)
         return TRUE;
 }
 
-static void
+static gint
 test_position_with_move (GibbonPosition *position, gint board[28],
                          const GibbonMove *move)
 {
@@ -661,7 +745,7 @@ test_position_with_move (GibbonPosition *position, gint board[28],
         post_position = gibbon_position_copy (position);
         if (!apply_move (post_position, move)) {
                 gibbon_position_free (post_position);
-                return;
+                return 0;
         }
 
         memcpy (post_board, board, sizeof post_board);
@@ -675,4 +759,6 @@ test_position_with_move (GibbonPosition *position, gint board[28],
 
         g_free (gibbon_move);
         gibbon_position_free (post_position);
+
+        return 1;
 }
