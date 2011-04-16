@@ -403,10 +403,32 @@ test_white_3moves_doubles ()
         before->points[19] = +2;
         after->points[16] = +2;
         expect->movements[0].num = 2;
-
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
+        if (!expect_move (expect, move, "White moved 4a checkers after 33"))
+                retval = FALSE;
 
+        /* Same with the next possibility.  */
+        before->points[19] = +1;
+        after->points[16] = +1;
+        expect->movements[0].num = 1;
+        before->points[15] = +2;
+        after->points[12] = +2;
+        expect->movements[1].num = 2;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        if (!expect_move (expect, move, "White moved 4a checkers after 33"))
+                retval = FALSE;
+
+        /* And once more.  */
+        before->points[15] = +1;
+        after->points[12] = +1;
+        expect->movements[1].num = 1;
+        before->points[11] = +2;
+        after->points[8] = +2;
+        expect->movements[2].num = 2;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
         if (!expect_move (expect, move, "White moved 4a checkers after 33"))
                 retval = FALSE;
 
