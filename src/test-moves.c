@@ -397,6 +397,19 @@ test_white_3moves_doubles ()
         if (!expect_move (expect, move, "White moved 3 checkers after 33"))
                 retval = FALSE;
 
+        /* We double the most backward movable white checkers so that we can
+         * move two checkers at once.
+         */
+        before->points[19] = +2;
+        after->points[16] = +2;
+        expect->movements[0].num = 2;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "White moved 4a checkers after 33"))
+                retval = FALSE;
+
         gibbon_position_free (after);
 
         return retval;
