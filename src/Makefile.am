@@ -103,17 +103,20 @@ AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
 	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
 
-TESTS_C = test_html_entities test_basic_match test_position test_moves
+TESTS_C = test_html_entities test_basic_match test_position test_moves \
+	test_gary_wong_movegen
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
-check_PROGRAMS = test_html_entities test_basic_match test_position test_moves
+check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
+	test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
 test_position_SOURCES = $(common_SOURCES) test-position.c
 test_moves_SOURCES = $(common_SOURCES) test-moves.c
+test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 
 SGF_FILES =
 

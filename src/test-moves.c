@@ -445,17 +445,17 @@ test_white_3moves_doubles ()
          */
         before->points[23] = +1;
         before->points[22] = +1;
-        before->points[11] = +1;
+        before->points[21] = +1;
         gibbon_position_free (after);
         after = gibbon_position_copy (before);
 
         /* Let the most backward checker move twice, the others once.  */
         after->points[23] = 0;
-        after->points[17] = +2;
+        after->points[17] = +1;
         after->points[22] = 0;
-        after->points[19] = +2;
+        after->points[19] = +1;
         after->points[21] = 0;
-        after->points[18] = +2;
+        after->points[18] = +1;
         expect->number = 4;
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 24;
@@ -473,6 +473,64 @@ test_white_3moves_doubles ()
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
         if (!expect_move (expect, move, "White moved 4d checkers after 33"))
+                retval = FALSE;
+
+        /* Now the middle checker move twice, the others once.  */
+        after->points[23] = 0;
+        after->points[20] = 1;
+        after->points[17] = 0;
+        after->points[22] = 0;
+        after->points[19] = 0;
+        after->points[16] = 1;
+        after->points[21] = 0;
+        after->points[18] = 1;
+        after->points[15] = 0;
+        expect->number = 4;
+        expect->status = GIBBON_MOVE_LEGAL;
+        expect->movements[0].from = 24;
+        expect->movements[0].to = 21;
+        expect->movements[0].num = 1;
+        expect->movements[1].from = 23;
+        expect->movements[1].to = 20;
+        expect->movements[1].num = 1;
+        expect->movements[2].from = 20;
+        expect->movements[2].to = 17;
+        expect->movements[2].num = 1;
+        expect->movements[3].from = 22;
+        expect->movements[3].to = 19;
+        expect->movements[3].num = 1;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        if (!expect_move (expect, move, "White moved 4e checkers after 33"))
+                retval = FALSE;
+
+        /* Now the forward checker move twice, the others once.  */
+        after->points[23] = 0;
+        after->points[20] = 1;
+        after->points[17] = 0;
+        after->points[22] = 0;
+        after->points[19] = 1;
+        after->points[16] = 0;
+        after->points[21] = 0;
+        after->points[18] = 0;
+        after->points[15] = 1;
+        expect->number = 4;
+        expect->status = GIBBON_MOVE_LEGAL;
+        expect->movements[0].from = 24;
+        expect->movements[0].to = 21;
+        expect->movements[0].num = 1;
+        expect->movements[1].from = 23;
+        expect->movements[1].to = 20;
+        expect->movements[1].num = 1;
+        expect->movements[2].from = 22;
+        expect->movements[2].to = 19;
+        expect->movements[2].num = 1;
+        expect->movements[3].from = 19;
+        expect->movements[3].to = 16;
+        expect->movements[3].num = 1;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+        if (!expect_move (expect, move, "White moved 4e checkers after 33"))
                 retval = FALSE;
 
         gibbon_position_free (after);

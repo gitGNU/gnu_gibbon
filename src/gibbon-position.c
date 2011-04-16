@@ -84,7 +84,6 @@ GibbonPosition initial = {
 
 static void dump_move (const GibbonMove *move);
 
-static GibbonMove *gibbon_position_alloc_move (gsize num_movements);
 static GibbonMove *gibbon_position_copy_move (const GibbonMove *src);
 static void gibbon_position_fill_movement (GibbonMove *move,
                                            guint point, guint die,
@@ -230,7 +229,7 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
         return pips;
 }
 
-static GibbonMove *
+GibbonMove *
 gibbon_position_alloc_move (gsize num_movements)
 {
         GibbonMove *move = g_malloc (sizeof move->number

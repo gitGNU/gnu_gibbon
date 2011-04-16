@@ -130,9 +130,9 @@ struct _GibbonPosition
 typedef struct _GibbonMovement GibbonMovement;
 struct _GibbonMovement
 {
-        guint from;
-        guint to;
-        guint num;
+        gint from;
+        gint to;
+        gsize num;
 };
 
 /**
@@ -186,5 +186,6 @@ guint gibbon_position_get_borne_off (const GibbonPosition *self,
 GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
                                         const GibbonPosition *after,
                                         GibbonPositionSide side);
+GibbonMove *gibbon_position_alloc_move (gsize num_movements);
 
 #endif
