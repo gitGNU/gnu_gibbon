@@ -348,6 +348,7 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
         guint i, from, to;
         const GibbonMovement *movement;
 
+        /* dump_move (move); */
         memcpy (before, _before, sizeof before);
 
         for (i = 0; i < move->number; ++i) {
@@ -436,6 +437,7 @@ gibbon_position_find_double4 (const gint *before,
 {
         GibbonMove *move = gibbon_position_alloc_move (4);
 
+        /* Always one candidate move.  */
         gibbon_position_fill_movement (move, froms[0], die, 1);
         gibbon_position_fill_movement (move, froms[1], die, 1);
         gibbon_position_fill_movement (move, froms[2], die, 1);
@@ -454,6 +456,8 @@ gibbon_position_find_double3 (const gint *before,
         GibbonMove *first;
         gint i;
 
+        /* Between one and seven candidate moves.  */
+
         /* Move each checker once.  */
         move = first = gibbon_position_alloc_move (3);
         gibbon_position_fill_movement (move, froms[0], die, 1);
@@ -461,13 +465,41 @@ gibbon_position_find_double3 (const gint *before,
         gibbon_position_fill_movement (move, froms[2], die, 1);
         moves = g_list_append (moves, move);
 
-        /* Now try to move two checkers or let one of them move twice.  */
+        /* Now try to move two checkers.  */
         for (i = 0; i < 3; ++i) {
                 if (before[froms[i]] > 1) {
                         move = gibbon_position_copy_move (first);
                         move->movements[i].num = 2;
                         moves = g_list_append (moves, move);
                 }
+        }
+
+        /* And finally try to move each checker twice instead of once.
+         * It is more efficient to unroll that loop.
+         */
+        if (froms[0] >= die) {
+                move = gibbon_position_alloc_move (4);
+                gibbon_position_fill_movement (move, froms[0], die, 1);
+                gibbon_position_fill_movement (move, froms[0] - die, die, 1);
+                gibbon_position_fill_movement (move, froms[1], die, 1);
+                gibbon_position_fill_movement (move, froms[2], die, 1);
+                moves = g_list_append (moves, move);
+        }
+        if (froms[1] >= die) {
+                move = gibbon_position_alloc_move (4);
+                gibbon_position_fill_movement (move, froms[0], die, 1);
+                gibbon_position_fill_movement (move, froms[1], die, 1);
+                gibbon_position_fill_movement (move, froms[1] - die, die, 1);
+                gibbon_position_fill_movement (move, froms[2], die, 1);
+                moves = g_list_append (moves, move);
+        }
+        if (froms[2] >= die) {
+                move = gibbon_position_alloc_move (4);
+                gibbon_position_fill_movement (move, froms[0], die, 1);
+                gibbon_position_fill_movement (move, froms[1], die, 1);
+                gibbon_position_fill_movement (move, froms[2], die, 1);
+                gibbon_position_fill_movement (move, froms[2] - die, die, 1);
+                moves = g_list_append (moves, move);
         }
 
         return moves;
