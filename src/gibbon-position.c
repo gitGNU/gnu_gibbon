@@ -82,8 +82,10 @@ GibbonPosition initial = {
                 NULL
 };
 
+static void dump_move (const GibbonMove *move);
 
 static GibbonMove *gibbon_position_alloc_move (gsize num_movements);
+static GibbonMove *gibbon_position_copy_move (const GibbonMove *src);
 static void gibbon_position_fill_movement (GibbonMove *move,
                                            guint point, guint die,
                                            guint num_checkers);
@@ -273,15 +275,15 @@ gibbon_position_check_move (const GibbonPosition *_before,
         memcpy (before + 1, _before->points, 24 * sizeof *before);
         memcpy (after + 1, _after->points, 24 * sizeof *after);
         if (side == GIBBON_POSITION_SIDE_WHITE) {
-                before[0] = gibbon_position_get_borne_off (_before, side);
-                after[0] = gibbon_position_get_borne_off (_after, side);
-                before[25] = _before->bar[0];
-                after[25] = _after->bar[0];
-        } else {
                 before[25] = gibbon_position_get_borne_off (_before, side);
                 after[25] = gibbon_position_get_borne_off (_after, side);
-                before[0] = -_before->bar[1];
-                after[0] = -_after->bar[1];
+                before[0] = _before->bar[0];
+                after[0] = _after->bar[0];
+        } else {
+                before[0] = gibbon_position_get_borne_off (_before, side);
+                after[0] = gibbon_position_get_borne_off (_after, side);
+                before[25] = -_before->bar[1];
+                after[25] = -_after->bar[1];
 
                 /* Now "normalize" the board representation.  Negative
                  * checker counts are ours, positive ones are hers.
@@ -348,11 +350,11 @@ static gboolean
 gibbon_position_is_diff (const gint *_before, const gint *after,
                          GibbonMove *move)
 {
-        gint *before = g_alloca (26 * sizeof *_before);
+        gint before[26];
         guint i, from, to;
         const GibbonMovement *movement;
 
-        memcpy (before, _before, 26 * sizeof *_before);
+        memcpy (before, _before, sizeof before);
 
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
@@ -368,13 +370,13 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
                 if (before[to] == -1)
                         before[to] = 0;
 
-                ++before[to];
+                before[to] += movement->num;
                 from = movement->from;
-                --before[from];
+                before[from] -= movement->num;
         }
 
         /* Is the resulting position identical to what we expect? */
-        if (memcmp (before, after, 26 * sizeof *before))
+        if (memcmp (before, after, sizeof before))
                 return FALSE;
 
         /* At this point we know:
@@ -398,9 +400,10 @@ gibbon_position_fill_movement (GibbonMove *move,
 {
         guint movement_num = move->number;
 
-        /* FIXME! Detect bear-offs with excess pips!  */
         move->movements[movement_num].from = point;
         move->movements[movement_num].to = point - die;
+        if (move->movements[movement_num].to > 24)
+                move->movements[movement_num].to = 24;
         move->movements[movement_num].num = num_checkers;
         ++move->number;
 }
@@ -454,26 +457,58 @@ gibbon_position_find_double3 (const gint *before,
 {
         GList *moves = NULL;
         GibbonMove *move;
-        guint i;
+        GibbonMove *first;
+        gint i;
 
         /* Move each checker once.  */
-        move = gibbon_position_alloc_move (4);
+        move = first = gibbon_position_alloc_move (3);
         gibbon_position_fill_movement (move, froms[0], die, 1);
         gibbon_position_fill_movement (move, froms[1], die, 1);
         gibbon_position_fill_movement (move, froms[2], die, 1);
         moves = g_list_append (moves, move);
-
         /* Now try to move two checkers.  */
         for (i = 0; i < 3; ++i) {
                 if (before[froms[i]] > 1) {
-                        move = gibbon_position_alloc_move (4);
-                        gibbon_position_fill_movement (move, froms[0], die, 1);
-                        gibbon_position_fill_movement (move, froms[1], die, 1);
-                        gibbon_position_fill_movement (move, froms[2], die, 1);
-                        gibbon_position_fill_movement (move, froms[i], die, 1);
+                        move = gibbon_position_copy_move (first);
+                        move->movements[i].num = 2;
                         moves = g_list_append (moves, move);
                 }
         }
 
         return moves;
+}
+
+static GibbonMove *
+gibbon_position_copy_move (const GibbonMove *src)
+{
+        gsize bytes = sizeof src->number
+                      + src->number * sizeof *src->movements
+                      + sizeof src->status;
+        GibbonMove *dest = g_malloc (bytes);
+
+        memcpy (dest, src, bytes);
+
+        return dest;
+}
+
+static void
+dump_move (const GibbonMove *move)
+{
+        int i;
+
+        g_printerr ("Move:");
+        if (move->status) {
+                g_printerr (" error %d.\n", move->status);
+                return;
+        }
+
+        for (i = 0; i < move->number; ++i) {
+                g_printerr (" %u/%u",
+                            move->movements[i].from,
+                            move->movements[i].to);
+                if (move->movements[i].num > 1)
+                        g_printerr ("(%u)", move->movements[i].num);
+        }
+
+        g_printerr ("\n");
 }
