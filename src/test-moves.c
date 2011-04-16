@@ -459,14 +459,17 @@ test_white_3moves_doubles ()
         expect->number = 4;
         expect->status = GIBBON_MOVE_LEGAL;
         expect->movements[0].from = 24;
-        expect->movements[0].to = 18;
+        expect->movements[0].to = 21;
         expect->movements[0].num = 1;
-        expect->movements[1].from = 23;
-        expect->movements[1].to = 20;
+        expect->movements[1].from = 21;
+        expect->movements[1].to = 18;
         expect->movements[1].num = 1;
-        expect->movements[2].from = 22;
-        expect->movements[2].to = 19;
+        expect->movements[2].from = 23;
+        expect->movements[2].to = 20;
         expect->movements[2].num = 1;
+        expect->movements[3].from = 22;
+        expect->movements[3].to = 19;
+        expect->movements[3].num = 1;
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
         if (!expect_move (expect, move, "White moved 4d checkers after 33"))
