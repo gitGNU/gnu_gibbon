@@ -119,7 +119,15 @@
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="about_menu_item">
+                      <object class="GtkImageMenuItem" id="help-menu-item">
+                        <property name="label">gtk-help</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="about-menu-item">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
@@ -373,7 +381,7 @@
                       <object class="GtkToolbar" id="game-chat-toolbar">
                         <property name="visible">True</property>
                         <property name="toolbar_style">icons</property>
-                        <property name="icon_size">2</property>
+                        <property name="icon_size">1</property>
                         <property name="icon_size_set">True</property>
                         <child>
                           <object class="GtkToggleToolButton" id="game-chat-say-button">
@@ -413,7 +421,7 @@
                         <property name="hscrollbar_policy">automatic</property>
                         <property name="vscrollbar_policy">automatic</property>
                         <child>
-                          <object class="GtkTextView" id="textview1">
+                          <object class="GtkTextView" id="game-chat-text-view">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                           </object>
@@ -516,7 +524,7 @@
                         <child type="tab">
                           <object class="GtkLabel" id="label321">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Server</property>
+                            <property name="label" translatable="yes">Players</property>
                           </object>
                           <packing>
                             <property name="tab_fill">False</property>
@@ -585,7 +593,7 @@
                         <child type="tab">
                           <object class="GtkLabel" id="label6">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Players</property>
+                            <property name="label" translatable="yes">Server</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
@@ -669,7 +677,6 @@
                               <object class="GtkEntry" id="shout-entry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="invisible_char">&#x25CF;</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -978,6 +985,24 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>

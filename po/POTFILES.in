@@ -55,10 +55,12 @@ src/gibbon-account-dialog.c
 src/gibbon-app.c
 src/gibbon-archive.c
 src/gibbon-cairoboard.c
+src/gibbon-chat-view.c
 src/gibbon-connection.c
 src/gibbon-connection-dialog.c
 src/gibbon-connector.c
 src/gibbon-game-chat.c
+src/gibbon-help.c
 src/gibbon-player-list-view.c
 src/gibbon-session.c
 src/gibbon.c

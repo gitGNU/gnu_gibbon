@@ -31,7 +31,10 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-app.h"
+#include "gibbon-chat.h"
 #include "gibbon-game-chat.h"
+#include "gibbon-connection.h"
+#include "html-entities.h"
 
 enum GibbonGameChatMode {
         GIBBON_GAME_CHAT_MODE_SAY = 0,
@@ -49,6 +52,10 @@ struct _GibbonGameChatPrivate {
         GtkToggleToolButton *toggle_whisper;
 
         enum GibbonGameChatMode mode;
+
+        GibbonChat *chat;
+        GtkTextView *view;
+        GtkTextBuffer *buffer;
 };
 
 #define GIBBON_GAME_CHAT_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -67,6 +74,8 @@ static void gibbon_game_chat_on_combo_change (GibbonGameChat *self,
                                               GtkComboBox *combo);
 static void gibbon_game_chat_on_tool_button_toggle (GibbonGameChat *self,
                                                     GtkToggleToolButton *btn);
+static void gibbon_game_chat_on_utter (const GibbonGameChat *self,
+                                       GtkEntry *entry);
 
 static void 
 gibbon_game_chat_init (GibbonGameChat *self)
@@ -80,6 +89,9 @@ gibbon_game_chat_init (GibbonGameChat *self)
         self->priv->toggle_whisper = NULL;
 
         self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
+
+        self->priv->chat = NULL;
+        self->priv->view = NULL;
 }
 
 static void
@@ -99,9 +111,11 @@ gibbon_game_chat_class_init (GibbonGameChatClass *klass)
 }
 
 GibbonGameChat *
-gibbon_game_chat_new (const GibbonApp *app)
+gibbon_game_chat_new (GibbonApp *app)
 {
         GibbonGameChat *self;
+        GtkTextBuffer *buffer;
+        GObject *entry;
 
         g_return_val_if_fail (!singleton, singleton);
 
@@ -120,6 +134,21 @@ gibbon_game_chat_new (const GibbonApp *app)
         }
 
         gibbon_game_chat_synchronize_toolbar (self);
+
+        self->priv->view =
+                GTK_TEXT_VIEW (gibbon_app_find_object (app,
+                                                       "game-chat-text-view",
+                                                       GTK_TYPE_TEXT_VIEW));
+
+        self->priv->chat = gibbon_chat_new (app, NULL);
+
+        buffer = gibbon_chat_get_buffer (self->priv->chat);
+        gtk_text_view_set_buffer (self->priv->view, buffer);
+
+        entry = gibbon_app_find_object (app, "game-chat-entry", GTK_TYPE_ENTRY);
+        g_signal_connect_swapped (entry, "activate",
+                                  G_CALLBACK (gibbon_game_chat_on_utter),
+                                  G_OBJECT (self));
 
         return self;
 }
@@ -306,3 +335,75 @@ gibbon_game_chat_on_tool_button_toggle (GibbonGameChat *self,
         self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
         gtk_combo_box_set_active (self->priv->combo, mode);
 }
+
+void
+gibbon_game_chat_append_message (const GibbonGameChat *self,
+                                 const GibbonFIBSMessage *message)
+{
+        GtkTextBuffer *buffer;
+
+        g_return_if_fail (GIBBON_IS_GAME_CHAT (self));
+        g_return_if_fail (message != NULL);
+        g_return_if_fail (message->sender != NULL);
+        g_return_if_fail (message->message != NULL);
+
+        gibbon_chat_append_message (self->priv->chat, message);
+
+        buffer = gibbon_chat_get_buffer (self->priv->chat);
+
+        gtk_text_view_scroll_to_mark (self->priv->view,
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
+}
+
+void
+gibbon_game_chat_set_my_name (GibbonGameChat *self, const gchar *me)
+{
+        g_return_if_fail (GIBBON_IS_GAME_CHAT (self));
+
+        gibbon_chat_set_my_name (self->priv->chat, me);
+}
+
+static void
+gibbon_game_chat_on_utter (const GibbonGameChat *self, GtkEntry *entry)
+{
+        GibbonConnection *connection;
+        gchar *trimmed;
+        gchar *formatted;
+
+        g_return_if_fail (GIBBON_IS_GAME_CHAT (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return;
+
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+        if (!*trimmed) {
+                g_free (trimmed);
+                return;
+        }
+        formatted = encode_html_entities (trimmed);
+        g_free (trimmed);
+
+        switch (self->priv->mode) {
+                case GIBBON_GAME_CHAT_MODE_SAY:
+                        gibbon_connection_queue_command (connection, FALSE,
+                                                         "say %s", formatted);
+                        break;
+                case GIBBON_GAME_CHAT_MODE_KIBITZ:
+                        gibbon_connection_queue_command (connection, FALSE,
+                                                         "kibitz %s",
+                                                         formatted);
+                        break;
+                case GIBBON_GAME_CHAT_MODE_WHISPER:
+                        gibbon_connection_queue_command (connection, FALSE,
+                                                         "whisper %s",
+                                                         formatted);
+                        break;
+        }
+        g_free (formatted);
+
+        gtk_entry_set_text (entry, "");
+}
+

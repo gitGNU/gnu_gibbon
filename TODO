@@ -54,3 +54,8 @@
 - Cancelling a connection attempt probably has a race.  The connector
   object gets unreffed before it can check its state.  FIX: Temporarily
   keep a reference.
+- Get rid of GibbonSignal, it's pretty useless.
+- gibbon-session.c leaks memory in case of board errors; pos must be freed!
+- gibbon-game-chat.c: Depending on the current situation, not all of 
+  say, kibitz, and whisper are possible.
+- activate/deactivate game chat entry according to situation.

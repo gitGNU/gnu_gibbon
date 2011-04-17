@@ -68,6 +68,7 @@ typedef struct svg_cairo_state {
     int bbox;
 
     svg_text_anchor_t text_anchor;
+    svg_dominant_baseline_t dominant_baseline;
 
     struct svg_cairo_state *next;
 } svg_cairo_state_t;

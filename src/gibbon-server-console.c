@@ -359,6 +359,8 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         gchar *timestamp;
 
         length = gtk_text_buffer_get_char_count (buffer);
+        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
+        gtk_text_buffer_place_cursor (buffer, &start);
 
         prefs = gibbon_app_get_prefs (self->priv->app);
 
@@ -387,6 +389,8 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
         gtk_text_buffer_get_end_iter (buffer, &end);
         gtk_text_buffer_apply_tag (buffer, tag, &start, &end);
+
+        gtk_text_buffer_place_cursor (buffer, &end);
 
         gtk_text_view_scroll_to_mark (self->priv->text_view,
                 gtk_text_buffer_get_insert (buffer),

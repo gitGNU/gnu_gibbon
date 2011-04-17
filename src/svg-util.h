@@ -43,6 +43,13 @@ extern gboolean svg_util_get_dimensions (xmlNode* node, xmlDoc *doc,
 void svg_util_free_component (struct svg_component *svg);
 const gchar *svg_cairo_strerror (svg_cairo_status_t status);
 
+extern gboolean svg_util_steal_text_params (struct svg_component *svg,
+                                            const gchar *id,
+                                            const gchar *new_text,
+                                            gdouble scale,
+                                            gdouble size,
+                                            gdouble *saved_size);
+
 G_END_DECLS
 
 #endif

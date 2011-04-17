@@ -30,6 +30,20 @@
 #define GIBBON_TYPE_POSITION (gibbon_position_get_type ())
 
 /**
+ * GibbonPositionSide:
+ * @GIBBON_POSITION_SIDE_BLACK: black or X
+ * @GIBBON_POSITION_SIDE_NONE: neither side
+ * @GIBBON_POSITION_SIDE_WHITE: white or O
+ *
+ * Use these symbolic constants, when referring to one side of the board.
+ */
+typedef enum {
+        GIBBON_POSITION_SIDE_BLACK = -1,
+        GIBBON_POSITION_SIDE_NONE = 0,
+        GIBBON_POSITION_SIDE_WHITE = 1
+} GibbonPositionSide;
+
+/**
  * GibbonPosition:
  * @players: @players[0] is the white player name, @players[1] the black player;
  *           %NULL representing unknown.  If you use gibbon_position_free()
@@ -55,9 +69,24 @@
  *        this game.
  * @match_length: length of the match.
  * @scores: white and black score (white first).
- * @may_double: %TRUE if player on turn may double, %FALSE otherwise.
+ * @may_double: %TRUE if respective player may double, %FALSE otherwise.
+ * @match_length: Length of the match of 0 for unlimited.
+ * @game_info: Free-form string describing the game ("Crawford", ...).
  *
  * A boxed type representing a backgammon position.
+ *
+ * The player colors black and white must not be taken literally.  They are
+ * just placeholders.  In Gibbon the user or the player that the user is
+ * watching always plays with the "white" checkers, the opponent with the
+ * black checkers.  "White" has its home board in the bottom right corner,
+ * "black" in the top-right corner.  "White" is sometimes referred to
+ * as O, and "Black" as X.  Checker counts for "white" are positive,
+ * checker counts for "black" are negative.
+ *
+ * The visual board representation may differ.  The colors black and white
+ * may be swapped and there are four distinct options for the location of
+ * the "white" home board, with each option having an impact on the direction
+ * of movement of the checkers.
  */
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
@@ -82,22 +111,63 @@ struct _GibbonPosition
         gint dice[2];
 
         gint cube;
-        gboolean may_double;
+        gboolean may_double[2];
+
+        gchar *game_info;
 };
 
 /**
- * GibbonPositionSide:
- * @GIBBON_POSITION_SIDE_BLACK: black or X
- * @GIBBON_POSITION_SIDE_NONE: neither side
- * @GIBBON_POSITION_SIDE_WHITE: white or O
+ * GibbonMovement:
+ * @from: The starting point for a move.  1 is the ace point for white, O,
+ *        or the player with positive checker counts.  23 is the ace point
+ *        for black, X, or the player with negative checker counts.  0 and
+ *        24 represent home and the bar accordingly.
+ * @to: The end point for a move, see @from for semantics.
+ * @num: How many checkers were moved?
+ *
+ * Structure representing a single backgammon checker movement.
+ */
+typedef struct _GibbonMovement GibbonMovement;
+struct _GibbonMovement
+{
+        gint from;
+        gint to;
+        gsize num;
+};
+
+/**
+ * GibbonMoveError:
+ * @GIBBON_MOVE_LEGAL: legal move
+ * @GIBBON_MOVE_ILLEGAL: illegal move
+ * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
+ * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied,
+ *                        probably never used
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
 typedef enum {
-        GIBBON_POSITION_SIDE_BLACK = -1,
-        GIBBON_POSITION_SIDE_NONE = 0,
-        GIBBON_POSITION_SIDE_WHITE = 1
-} GibbonPositionSide;
+        GIBBON_MOVE_LEGAL = 0,
+        GIBBON_MOVE_ILLEGAL = 1,
+        GIBBON_MOVE_TOO_MANY_MOVES = 2,
+        GIBBON_MOVE_BLOCKED = 3
+} GibbonMoveError;
+
+/**
+ * GibbonMove:
+ * @number: number of movements following (0 to 4).
+ * @movements: the individual movements.
+ * @status: status of this move.
+ *
+ * Structure representing a backgammon move.  This is always a checker move.
+ * Other actions like doubling, resigning, etc. are not covered.
+ */
+typedef struct _GibbonMove GibbonMove;
+struct _GibbonMove
+{
+        gint number;
+        GibbonMoveError status;
+        GibbonMovement movements[];
+};
 
 GType gibbon_position_get_type (void) G_GNUC_CONST;
 
@@ -107,5 +177,15 @@ GibbonPosition *gibbon_position_copy (const GibbonPosition *self);
 
 void gibbon_position_set_player (GibbonPosition *self,
                                  const gchar *name, GibbonPositionSide side);
+
+guint gibbon_position_get_pip_count (const GibbonPosition *self,
+                                     GibbonPositionSide side);
+guint gibbon_position_get_borne_off (const GibbonPosition *self,
+                                     GibbonPositionSide side);
+
+GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
+                                        const GibbonPosition *after,
+                                        GibbonPositionSide side);
+GibbonMove *gibbon_position_alloc_move (gsize num_movements);
 
 #endif

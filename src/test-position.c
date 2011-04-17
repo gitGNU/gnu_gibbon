@@ -87,8 +87,10 @@ test_constructor ()
         g_return_val_if_fail (pos->dice[0] == 0, FALSE);
         g_return_val_if_fail (pos->dice[1] == 0, FALSE);
 
-        g_return_val_if_fail (pos->cube == 0, FALSE);
-        g_return_val_if_fail (pos->may_double == FALSE, FALSE);
+        g_return_val_if_fail (pos->cube == 1, FALSE);
+        g_return_val_if_fail (pos->may_double[0] == FALSE, FALSE);
+        g_return_val_if_fail (pos->may_double[1] == FALSE, FALSE);
+        g_return_val_if_fail (pos->game_info == NULL, FALSE);
 
         gibbon_position_free (pos);
 

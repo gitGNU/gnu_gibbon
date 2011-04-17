@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-app.h"
+#include "gibbon-fibs-message.h"
 
 #define GIBBON_TYPE_GAME_CHAT \
         (gibbon_game_chat_get_type ())
@@ -70,6 +71,9 @@ struct _GibbonGameChatClass
 
 GType gibbon_game_chat_get_type (void) G_GNUC_CONST;
 
-GibbonGameChat *gibbon_game_chat_new (const GibbonApp *app);
+GibbonGameChat *gibbon_game_chat_new (GibbonApp *app);
+void gibbon_game_chat_set_my_name (GibbonGameChat *self, const gchar *me);
+void gibbon_game_chat_append_message (const GibbonGameChat *self,
+                                      const GibbonFIBSMessage *message);
 
 #endif

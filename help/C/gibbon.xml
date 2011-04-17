@@ -87,7 +87,21 @@
     <sect2 id="gibbon-features">
       <title>Features</title>
       <para>
-        TODO!
+        Gibbon is currently is not yet ready.  This manual only describes the features
+        that <emphasis>are</emphasis> finished at least to a certain extent.  Currently
+        with Gibbon you can:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            <indexterm><primary>Watch matches</primary></indexterm>
+            Watch other people playing.
+          </para></listitem>
+        <listitem><para>Chat with other players privately.</para></listitem>
+        <listitem><para>Take part in the public chat communication.</para></listitem>
+      </itemizedlist>
+      <para>
+        More features will hopefully follow while the software evolves.
       </para>
     </sect2>
     <sect2 id="gibbon-on-the-internet">
@@ -141,7 +155,7 @@
         sequences of ridiculously lucky rolls.  Another interesting "feature"
         of &fibs;&apos; "random" number generator is that it gives significantly
         better rolls to the strong players, and the weak ones just don't have
-        a chance to improve their game because of the bad numers they roll.  Isn't 
+        a chance to improve their game because of the bad numbers they roll.  Isn't 
         that unfair? Yes! But there is nothing that &app; can do about it.
       </para>
     </sect2>
@@ -161,6 +175,12 @@
       </para>
     </sect2>
   </sect1>
+
+  <appendix id="appendix">
+    <title></title>
+      <index/>
+      <para><!-- Make DTD happy! --></para>
+  </appendix>
 
 </article>
 

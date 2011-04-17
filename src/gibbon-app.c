@@ -43,6 +43,8 @@
 #include "gibbon-shouts.h"
 #include "gibbon-account-dialog.h"
 #include "gibbon-chat-view.h"
+#include "gibbon-chat.h"
+#include "gibbon-help.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -352,7 +354,7 @@ gibbon_app_init_board (GibbonApp *self, const gchar *board_filename)
         /* FIXME! This should occupy reasonable space by default!  Do
          * not hardcode the values.
          */
-        gtk_widget_set_size_request (GTK_WIDGET (board), 490, 380);
+        gtk_widget_set_size_request (GTK_WIDGET (board), 245, 230);
 
         dummy = gibbon_app_find_object (self, "dummy-drawingarea",
                                         GTK_TYPE_DRAWING_AREA);
@@ -431,6 +433,19 @@ gibbon_app_connect_signals (const GibbonApp *self)
         g_signal_connect_swapped (obj, "activate",
                                   G_CALLBACK (gibbon_app_on_account_prefs),
                                   (gpointer) self);
+
+        obj = gibbon_app_find_object (self, "help-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect (obj, "activate",
+                          G_CALLBACK (gibbon_help_show_help),
+                          (gpointer) self);
+
+        obj = gibbon_app_find_object (self, "about-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect (obj, "activate",
+                          G_CALLBACK (gibbon_help_show_about),
+                          (gpointer) self);
+
 }
 
 static void
@@ -635,6 +650,9 @@ gibbon_app_disconnect (GibbonApp *self)
                 g_object_unref (self->priv->connection);
         self->priv->connection = NULL;
 
+        gibbon_shouts_set_my_name (self->priv->shouts, NULL);
+        gibbon_game_chat_set_my_name (self->priv->game_chat, NULL);
+
         gibbon_app_set_state_disconnected (self);
 }
 
@@ -715,7 +733,10 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
                                       GTK_TYPE_ENTRY);
         gtk_entry_set_editable (GTK_ENTRY (obj), TRUE);
 
-
+        gibbon_shouts_set_my_name (self->priv->shouts,
+                                   gibbon_connection_get_login (conn));
+        gibbon_game_chat_set_my_name (self->priv->game_chat,
+                                      gibbon_connection_get_login (conn));
 }
 
 static void
@@ -742,8 +763,9 @@ gibbon_app_load_scaled_image (const GibbonApp *self, const gchar *path,
                                                     &error);
 
         if (!pixbuf) {
-                gibbon_app_display_error (NULL, _("Error loading image `%s': %s!"),
-                               path, error->message);
+                gibbon_app_display_error (self,
+                                          _("Error loading image `%s': %s!"),
+                                          path, error->message);
                 return NULL;
         }
 
@@ -795,6 +817,14 @@ gibbon_app_get_shouts (const GibbonApp *self)
         return self->priv->shouts;
 }
 
+GibbonGameChat *
+gibbon_app_get_game_chat (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->game_chat;
+}
+
 static void
 gibbon_app_on_account_prefs (GibbonApp *self)
 {
@@ -810,23 +840,22 @@ void
 gibbon_app_start_chat (GibbonApp *self, const gchar *who)
 {
         GibbonChatView *view;
+        GibbonChat *chat;
+        const gchar *me;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (self->priv->connection != NULL);
 
-        if (!g_strcmp0 (gibbon_connection_get_login (self->priv->connection),
-                                                     who)) {
-                gibbon_app_display_error (self, "%s",
-                                          _("You do not need this program"
-                                            " if you want to talk with"
-                                            " yourself!"));
-        } else {
-                view = gibbon_chat_view_new (self, who);
-                if (view) {
-                        g_hash_table_insert (self->priv->chats,
-                                             g_strdup (who), view);
-                }
-        }
+        if (g_hash_table_lookup (self->priv->chats, who))
+                return;
+
+        me = gibbon_connection_get_login (self->priv->connection);
+        chat = gibbon_chat_new (self, me);
+        view = gibbon_chat_view_new (self, who, chat);
+        g_hash_table_insert (self->priv->chats, g_strdup (who), view);
+
+        /* The chat view has a reference to the chat.  */
+        g_object_unref (chat);
 }
 
 void
@@ -836,4 +865,43 @@ gibbon_app_close_chat (GibbonApp *self, const gchar *who)
         g_return_if_fail (self->priv->connection != NULL);
 
         g_hash_table_remove (self->priv->chats, who);
+}
+
+void
+gibbon_app_show_message (GibbonApp *self,
+                         const gchar *peer,
+                         const GibbonFIBSMessage *message)
+{
+        GibbonChatView *view;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_app_start_chat (self, peer);
+        view = GIBBON_CHAT_VIEW (g_hash_table_lookup (self->priv->chats,
+                                                      peer));
+        g_return_if_fail (GIBBON_IS_CHAT_VIEW (view));
+
+        gibbon_chat_view_append_message (view, message);
+}
+
+void
+gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_shouts_append_message (self->priv->shouts, message);
+}
+
+void
+gibbon_app_show_game_chat (GibbonApp *self, const GibbonFIBSMessage *message)
+{
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (self->priv->connection != NULL);
+        g_return_if_fail (message != NULL);
+
+        gibbon_game_chat_append_message (self->priv->game_chat, message);
 }

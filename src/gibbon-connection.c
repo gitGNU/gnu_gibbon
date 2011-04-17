@@ -362,6 +362,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         gchar *pretty_login;
         gint clip_code;
         GibbonSession *session;
+        gchar *package;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
@@ -442,13 +443,17 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                 if (strcmp (self->priv->in_buffer, "login: ") == 0) {
                         gibbon_server_console_print_raw (console,
                                                          self->priv->in_buffer);
+                        package = g_strdup (PACKAGE);
+                        if (*package >= 'a' && *package <= 'z')
+                                *package -= 32;
                         gibbon_connection_queue_command (self,
                                         FALSE,
                                         "login %s_%s 9999 %s %s",
-                                         PACKAGE,
+                                         package,
                                          VERSION,
                                          self->priv->login,
                                          self->priv->password);
+                        g_free (package);
                         g_free (self->priv->in_buffer);
                         self->priv->in_buffer = g_strdup ("");
                         self->priv->state = WAIT_WELCOME;

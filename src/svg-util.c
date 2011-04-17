@@ -36,6 +36,9 @@
 
 #include "svg-util.h"
 
+#include <svgint.h>
+#include <svg-cairo-internal.h>
+
 struct svg_util_render_state {
         cairo_matrix_t transform;
         
@@ -45,6 +48,7 @@ struct svg_util_render_state {
         svg_font_style_t font_style;
         gboolean font_dirty;
         svg_text_anchor_t text_anchor;
+        svg_dominant_baseline_t dominant_baseline;
         
         gdouble stroke_width;        
         
@@ -64,6 +68,9 @@ typedef struct svg_util_render_context {
         
         struct svg_util_render_state *state;
 } svg_util_render_context;
+
+static xmlDoc *svg_util_copy_node_path (xmlDoc *doc,
+                                        const xmlNode *node);
 
 static struct svg_util_render_state 
         *svg_util_push_state (struct svg_util_render_state *state);
@@ -126,6 +133,8 @@ static svg_status_t svg_util_set_stroke_width (gpointer closure,
                                                svg_length_t *width);
 static svg_status_t svg_util_set_text_anchor (gpointer closure, 
                                               svg_text_anchor_t text_anchor);
+static svg_status_t svg_util_set_dominant_baseline (gpointer closure,
+                                                    svg_dominant_baseline_t dominant_baseline);
 static svg_status_t svg_util_transform (gpointer closure,
                                         double a, double b,
                                         double c, double d,
@@ -209,6 +218,7 @@ svg_render_engine_t svg_util_render_engine = {
         svg_util_set_stroke_paint,
         svg_util_set_stroke_width,
         svg_util_set_text_anchor,
+        svg_util_set_dominant_baseline,
         svg_util_transform,
         svg_util_apply_view_box,
         svg_util_set_viewport_dimension,
@@ -254,8 +264,6 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         svg_status_t status;
         svg_util_render_context ctx;
         xmlDoc *doc_copy = NULL;
-        xmlNode *root_copy = NULL;
-        xmlNode *node_copy = NULL;
         struct svg_component *component;
                       
         g_return_val_if_fail (node, FALSE);
@@ -279,30 +287,9 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
                 return FALSE;
         }
 
-        doc_copy = xmlCopyDoc (doc, FALSE);
-        if (!doc_copy) {
-                g_error (_("Error copying SVG structure!\n"));
-                svg_destroy (svg);
-                return FALSE;
-        }
+        doc_copy = svg_util_copy_node_path (doc, node);
 
-        root_copy = xmlCopyNode (xmlDocGetRootElement (doc), 0);
-        if (!root_copy) {
-                g_error (_("Error copying SVG root element!\n"));
-                xmlFreeDoc (doc_copy);
-                return FALSE;
-        }
-        xmlAddChild ((xmlNodePtr) doc_copy, root_copy);
-
-        node_copy = xmlCopyNode (node, 1);        
-        if (!node_copy) {
-                g_error (_("Error copying SVG node!\n"));
-                xmlFreeDoc (doc_copy);
-                return FALSE;
-        }
-        xmlAddChild (root_copy, node_copy);
-
-        xmlDocDumpFormatMemory (doc_copy, &xml_src, NULL, 1);
+        xmlDocDumpMemory (doc_copy, &xml_src, NULL);
         
         xmlFreeDoc (doc_copy);
         
@@ -449,6 +436,7 @@ svg_util_line_to (gpointer closure, double x, double y)
         gdouble x1, x2;
         gdouble y1, y2;
         
+        cairo_matrix_transform_point (&ctx->state->transform, &x, &y);
         if (x > ctx->x) {
                 x1 = ctx->x;
                 x2 = x;
@@ -464,9 +452,10 @@ svg_util_line_to (gpointer closure, double x, double y)
                 y1 = y;
                 y2 = ctx->y;
         }
-        
-        svg_util_move_to (ctx, x, y);              
-        update_boundings (ctx, x1, y1, x2 - x1, y1 - y1);
+
+        ctx->x = x;
+        ctx->y = y;
+        update_boundings (ctx, x1, y1, x2 - x1, y2 - y1);
         
         return SVG_STATUS_SUCCESS; 
 }
@@ -518,7 +507,6 @@ svg_util_arc_to (gpointer closure,
                  double x,
                  double y)
 { 
-        g_print ("arc_to :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -686,6 +674,17 @@ svg_util_set_text_anchor (gpointer closure,
 }
 
 static svg_status_t
+svg_util_set_dominant_baseline (gpointer closure,
+                                svg_dominant_baseline_t dominant_baseline)
+{
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+
+        ctx->state->dominant_baseline = dominant_baseline;
+
+        return SVG_STATUS_SUCCESS;
+}
+
+static svg_status_t
 svg_util_transform (gpointer closure,
                     double a, double b,
                     double c, double d,
@@ -697,7 +696,7 @@ svg_util_transform (gpointer closure,
         cairo_matrix_init (&new_transform, a, b, c, d, e, f);
         cairo_matrix_multiply (&ctx->state->transform, &ctx->state->transform,
                                &new_transform);
-                               
+
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -727,8 +726,7 @@ svg_util_render_line (gpointer closure,
                       svg_length_t *y1,
                       svg_length_t *x2,
                       svg_length_t *y2)
-{ 
-        g_print ("render_line :-(\n");
+{
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -745,11 +743,19 @@ svg_util_render_ellipse (gpointer closure,
                          svg_length_t *rx,
                          svg_length_t *ry)
 {
-        update_boundings (closure, 
-                          cx->value - rx->value, cy->value - ry->value,
-                          2 * rx->value, 2 * ry->value);
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x1, x2;
+        gdouble y1, y2;
 
-        /* FIXME! Will the ellipse move the current point?  */
+        x1 = cx->value - rx->value;
+        x2 = cx->value + rx->value;
+        y1 = cy->value - ry->value;
+        y2 = cy->value + ry->value;
+
+        cairo_matrix_transform_point (&ctx->state->transform, &x1, &y1);
+        cairo_matrix_transform_point (&ctx->state->transform, &x2, &y2);
+
+        update_boundings (closure, x1, y1, x2 - x1, y2 - y1);
                 
         return SVG_STATUS_SUCCESS; 
 }
@@ -763,15 +769,26 @@ svg_util_render_rect (gpointer closure,
                       svg_length_t *rx,
                       svg_length_t *ry)
 { 
+        svg_util_render_context *ctx = (svg_util_render_context *) closure;
+        gdouble x1, x2;
+        gdouble y1, y2;
+
+        x1 = x->value;
+        x2 = x->value + width->value;
+        y1 = y->value;
+        y2 = y->value + height->value;
+
+        cairo_matrix_transform_point (&ctx->state->transform, &x1, &y1);
+        cairo_matrix_transform_point (&ctx->state->transform, &x2, &y2);
+
         /* This is not completely accurate, if we draw a rounded rectangle.
          * However, libsvg-cairo also seems to rely on a move_to operation
          * after a rectangle is rendered, in order to initialize cairo's
          * current point.
          */
-        svg_util_move_to (closure, x->value, y->value);
-        update_boundings (closure, 
-                          x->value, y->value,
-                          width->value, height->value);
+        ctx->x = x1;
+        ctx->y = y1;
+        update_boundings (closure, x1, y1, x2 - x1, y2 - y1);
                 
         return SVG_STATUS_SUCCESS; 
 }
@@ -782,7 +799,6 @@ svg_util_render_text (gpointer closure,
                       svg_length_t *y,
                       const char *utf8)
 { 
-        g_print ("render_text :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -796,7 +812,6 @@ svg_util_render_image (gpointer closure,
                        svg_length_t *width,
                        svg_length_t *height)
 { 
-        g_print ("render_image :-(\n");
         return SVG_STATUS_SUCCESS; 
 }
 
@@ -892,29 +907,34 @@ bezier1d_boundings (gdouble x0, gdouble x1, gdouble x2, gdouble x3,
         *width = max_x - min_x;
 }
 
-static struct svg_util_render_state 
-        *svg_util_push_state (struct svg_util_render_state *state)
+static struct svg_util_render_state *
+svg_util_push_state (struct svg_util_render_state *state)
 {
         struct svg_util_render_state *new_state = g_malloc (sizeof *new_state);
 
-        memset (new_state, 0, sizeof *new_state);
+        if (!state) {
+                memset (new_state, 0, sizeof *new_state);
                 
-        cairo_matrix_init_identity (&new_state->transform);
+                cairo_matrix_init_identity (&new_state->transform);
 
-        /* Cairo default font size.  */
-        new_state->font_size = 10;
-        new_state->font_style = SVG_FONT_STYLE_NORMAL;
-        new_state->font_weight = 1;
-        new_state->font_dirty = TRUE;
-        new_state->text_anchor = SVG_TEXT_ANCHOR_START;
-                      
+                /* Cairo default font size.  */
+                new_state->font_size = 10;
+                new_state->font_style = SVG_FONT_STYLE_NORMAL;
+                new_state->font_weight = 1;
+                new_state->font_dirty = TRUE;
+                new_state->text_anchor = SVG_TEXT_ANCHOR_START;
+                new_state->dominant_baseline = SVG_DOMINANT_BASELINE_AUTO;
+        } else {
+                *new_state = *state;
+        }
+
         new_state->prev = state;
         
         return new_state;
 }
 
-static struct svg_util_render_state
-        *svg_util_pop_state (struct svg_util_render_state *state)
+static struct svg_util_render_state *
+svg_util_pop_state (struct svg_util_render_state *state)
 {
         struct svg_util_render_state *prev_state = state->prev;
         
@@ -936,15 +956,12 @@ update_boundings (struct svg_util_render_context *ctx,
         min_y = y;
         max_x = x + width;
         max_y = y + height;
-        
-        cairo_matrix_transform_point (&ctx->state->transform, &min_x, &min_y);
-        cairo_matrix_transform_point (&ctx->state->transform, &max_y, &max_y);
-        
+
         /* We ignore the stroke width for now.  But this decision has to
          * be checked again.  It probably makes sense for calculating the
          * dimension of the board, but for the checkers for example it may
          * cause problems.  Adjacent checkers could then overlap.  Maybe it
-         * is bettere to make it optional.
+         * is better to make it optional.
          */
         if (min_x < ctx->min_x)
                 ctx->min_x = min_x;
@@ -953,7 +970,7 @@ update_boundings (struct svg_util_render_context *ctx,
         if (min_y < ctx->min_y)
                 ctx->min_y = min_y;
         if (min_y > ctx->max_y)
-                ctx->max_y = max_y;
+                ctx->max_y = min_y;
         if (max_x < ctx->min_x)
                 ctx->min_x = max_x;
         if (max_x > ctx->max_x)
@@ -993,4 +1010,94 @@ svg_cairo_strerror (svg_cairo_status_t status)
         }
         
         return _("Unknown error!");
+}
+
+gboolean
+svg_util_steal_text_params (struct svg_component *_svg, const gchar *id,
+                            const gchar *new_text,
+                            gdouble scale,
+                            gdouble size,
+                            gdouble *saved_size)
+{
+        struct svg_cairo *svg_cairo = (struct svg_cairo *) _svg->scr;
+        svg_t *svg = svg_cairo->svg;
+        svg_xml_hash_table_t *element_ids = svg->element_ids;
+        svg_element_t *element;
+
+        element = (svg_element_t *) _svg_xml_hash_lookup (element_ids,
+                                                        (const unsigned char *)
+                                                        id);
+
+        g_return_val_if_fail (element != NULL, FALSE);
+
+        g_return_val_if_fail (element->type == SVG_ELEMENT_TYPE_TEXT, FALSE);
+
+        if (element->e.text.chars)
+                g_free (element->e.text.chars);
+
+        element->e.text.chars = g_strdup (new_text);
+        if (saved_size)
+                *saved_size = (gdouble) element->style.font_size.value;
+
+        if (scale) {
+                element->style.font_size.value *= scale;
+        } else if (size) {
+                element->style.font_size.value = (double) size;
+        }
+
+        return TRUE;
+}
+
+static xmlDoc *
+svg_util_copy_node_path (xmlDoc *doc,
+                         const xmlNode *node)
+{
+        xmlDoc *copy = xmlCopyDoc (doc, TRUE);
+        const xmlNode *orig_parent;
+        const xmlNode *orig_node;
+        const xmlNode *orig_child;
+        const xmlNode *orig_root;
+        guint pos, i;
+        guint *p;
+        GSList *path = NULL;
+        xmlNode *parent;
+        xmlNode *child;
+        xmlNode *orphan;
+
+        orig_root = xmlDocGetRootElement (doc);
+        orig_node = node;
+        orig_parent = node->parent;
+        while (orig_parent && orig_node != orig_root) {
+                pos = 0;
+                orig_child = orig_parent->children;
+                while (orig_child != orig_node) {
+                        ++pos;
+                        orig_child = orig_child->next;
+                }
+                p = g_alloca (sizeof pos);
+                *p = pos;
+                path = g_slist_prepend (path, p);
+                orig_node = orig_parent;
+                orig_parent = orig_parent->parent;
+        }
+
+        parent = xmlDocGetRootElement (copy);
+        while (parent && path) {
+                p = path->data;
+
+                child = parent->children;
+                i = 0;
+                while (child) {
+                        orphan = child;
+                        child = child->next;
+                        if (i++ != *p) {
+                                xmlUnlinkNode (orphan);
+                                xmlFreeNode (orphan);
+                        }
+                }
+                path = g_slist_remove (path, p);
+                parent = parent->children;
+        }
+
+        return copy;
 }

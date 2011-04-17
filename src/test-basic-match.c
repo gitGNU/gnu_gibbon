@@ -109,9 +109,11 @@ serialize_match (const GibbonMatch *match)
                 return FALSE;
         }
 
+#if (0)
         g_printerr ("%s",
                     (gchar *) g_memory_output_stream_get_data  (
                                     G_MEMORY_OUTPUT_STREAM (out)));
+#endif
 
         g_object_unref (out);
 

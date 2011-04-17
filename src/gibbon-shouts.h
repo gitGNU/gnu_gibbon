@@ -76,6 +76,7 @@ struct _GibbonShoutsClass
 GType gibbon_shouts_get_type (void) G_GNUC_CONST;
 
 GibbonShouts *gibbon_shouts_new (GibbonApp *app);
+void gibbon_shouts_set_my_name (GibbonShouts *self, const gchar *me);
 void gibbon_shouts_append_message (const GibbonShouts *self,
                                    const GibbonFIBSMessage *message);
 

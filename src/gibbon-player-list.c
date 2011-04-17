@@ -72,6 +72,8 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING);
         self->priv->store = store;
         
@@ -115,10 +117,20 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
 
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_NAME] = 
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_AVAILABLE] =
+                G_TYPE_BOOLEAN;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RATING] = 
                 G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
+                G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_WATCHING] =
+                G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
+                G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
+                G_TYPE_STRING;
                 
         G_OBJECT_CLASS (parent_class)->finalize = gibbon_player_list_finalize;
 }
@@ -155,7 +167,9 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         gdouble rating,
                         guint experience,
                         gchar *opponent,
-                        gchar *watching)
+                        gchar *watching,
+                        gchar *client,
+                        gchar *email)
 {
         struct GibbonPlayer *player;
                         
@@ -181,6 +195,8 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
+                            GIBBON_PLAYER_LIST_COL_CLIENT, client,
+                            GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }
 
@@ -228,4 +244,12 @@ compare_utf8_string (GtkTreeModel *model,
         g_free (str_b);
         
         return result;
+}
+
+gboolean
+gibbon_player_list_exists (const GibbonPlayerList *self, const gchar *name)
+{
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        return (gboolean) g_hash_table_lookup (self->priv->hash, name);
 }

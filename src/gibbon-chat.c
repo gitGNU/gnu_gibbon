@@ -37,7 +37,7 @@ typedef struct _GibbonChatPrivate GibbonChatPrivate;
 struct _GibbonChatPrivate {
         GibbonApp *app;
         GtkTextBuffer *buffer;
-        gchar *user;
+        gchar *me;
 
         GtkTextTag *sender_tag;
         GtkTextTag *date_tag;
@@ -58,9 +58,9 @@ gibbon_chat_init (GibbonChat *self)
                 GIBBON_TYPE_CHAT, GibbonChatPrivate);
 
         self->priv->app = NULL;
-        self->priv->buffer = NULL;
 
-        self->priv->user = NULL;
+        self->priv->buffer = NULL;
+        self->priv->me = NULL;
 
         self->priv->sender_tag = NULL;
         self->priv->date_tag = NULL;
@@ -74,31 +74,11 @@ gibbon_chat_finalize (GObject *object)
 {
         GibbonChat *self = GIBBON_CHAT (object);
 
-        if (self->priv->buffer)
+        if (self->priv->buffer && GTK_IS_TEXT_BUFFER (self->priv->buffer))
                 g_object_unref (self->priv->buffer);
-        self->priv->buffer = NULL;
 
-        self->priv->app = NULL;
-
-        if (self->priv->user)
-                g_free (self->priv->user);
-        self->priv->user = NULL;
-
-        if (self->priv->sender_tag)
-                g_object_unref (self->priv->sender_tag);
-        self->priv->sender_tag = NULL;
-
-        if (self->priv->date_tag)
-                g_object_unref (self->priv->date_tag);
-        self->priv->date_tag = NULL;
-
-        if (self->priv->sender_gat)
-                g_object_unref (self->priv->sender_gat);
-        self->priv->sender_gat = NULL;
-
-        if (self->priv->date_gat)
-                g_object_unref (self->priv->date_gat);
-        self->priv->date_gat = NULL;
+        if (self->priv->me)
+                g_free (self->priv->me);
 
         G_OBJECT_CLASS (gibbon_chat_parent_class)->finalize(object);
 }
@@ -116,43 +96,40 @@ gibbon_chat_class_init (GibbonChatClass *klass)
 /**
  * gibbon_chat_new:
  * @app: The #GibbonApp.
- * @buffer: The #GtkTextBuffer for saving the communication.
- * @user: Name of the Gibbon user.
+ * @me: Login of the current player.
  *
  * Creates a new #GibbonChat.
  *
  * Returns: The newly created #GibbonChat or %NULL in case of failure.
  */
 GibbonChat *
-gibbon_chat_new (GibbonApp *app, GtkTextBuffer *buffer,
-                 const gchar *user)
+gibbon_chat_new (GibbonApp *app, const gchar *me)
 {
         GibbonChat *self = g_object_new (GIBBON_TYPE_CHAT, NULL);
 
         self->priv->app = app;
-        self->priv->buffer = buffer;
-        g_object_ref (buffer);
-        self->priv->user = g_strdup (user);
+        self->priv->buffer = gtk_text_buffer_new (NULL);
+        self->priv->me = g_strdup (me);
 
         self->priv->date_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
+                                            "foreground", "#204a87",
                                             NULL);
 
         self->priv->sender_tag =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
+                                            "foreground", "#204a87",
                                             "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
         self->priv->date_gat =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#204a87",
+                                            "foreground", "#cc0000",
                                             NULL);
 
         self->priv->sender_gat =
                 gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#204a87",
+                                            "foreground", "#cc0000",
                                             "weight", PANGO_WEIGHT_BOLD,
                                             NULL);
 
@@ -175,17 +152,19 @@ gibbon_chat_append_message (const GibbonChat *self,
         g_return_if_fail (GIBBON_IS_CHAT (self));
 
         length = gtk_text_buffer_get_char_count (buffer);
-        if (g_strcmp0 (message->sender, self->priv->user))
+        if (!g_strcmp0 (message->sender, self->priv->me))
                 tag = self->priv->sender_tag;
         else
                 tag = self->priv->sender_gat;
+        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
+        gtk_text_buffer_place_cursor (buffer, &start);
         gtk_text_buffer_insert_at_cursor (buffer, message->sender, -1);
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
         gtk_text_buffer_get_end_iter (buffer, &end);
         gtk_text_buffer_apply_tag (buffer, tag, &start, &end);
 
         length = gtk_text_buffer_get_char_count (buffer);
-        if (g_strcmp0 (message->sender, self->priv->user))
+        if (!g_strcmp0 (message->sender, self->priv->me))
                 tag = self->priv->date_tag;
         else
                 tag = self->priv->date_gat;
@@ -205,4 +184,25 @@ gibbon_chat_append_message (const GibbonChat *self,
         gtk_text_buffer_insert_at_cursor (buffer, formatted, -1);
         g_free (formatted);
         gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
+        gtk_text_buffer_get_end_iter (buffer, &end);
+        gtk_text_buffer_place_cursor (buffer, &end);
+}
+
+GtkTextBuffer *
+gibbon_chat_get_buffer (const GibbonChat *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CHAT (self), NULL);
+
+        return self->priv->buffer;
+}
+
+void
+gibbon_chat_set_my_name (GibbonChat *self, const gchar *me)
+{
+        g_return_if_fail (GIBBON_IS_CHAT (self));
+
+        if (self->priv->me)
+                g_free (self->priv->me);
+
+        self->priv->me = g_strdup (me);
 }

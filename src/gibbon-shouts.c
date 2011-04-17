@@ -30,21 +30,26 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-shouts.h"
+#include "gibbon-connection.h"
+#include "gibbon-chat.h"
+#include "html-entities.h"
 
 typedef struct _GibbonShoutsPrivate GibbonShoutsPrivate;
 struct _GibbonShoutsPrivate {
         GibbonApp *app;
-        GtkTextView *text_view;
-        GtkTextBuffer *buffer;
 
-        GtkTextTag *sender_tag;
-        GtkTextTag *date_tag;
+        GtkTextView *view;
+        GtkTextBuffer *buffer;
+        GibbonChat *chat;
 };
 
 #define GIBBON_SHOUTS_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_SHOUTS, GibbonShoutsPrivate))
 
 G_DEFINE_TYPE (GibbonShouts, gibbon_shouts, G_TYPE_OBJECT)
+
+static void gibbon_shouts_on_shout (const GibbonShouts *shouts,
+                                    GtkEntry *entry);
 
 static void 
 gibbon_shouts_init (GibbonShouts *self)
@@ -53,11 +58,8 @@ gibbon_shouts_init (GibbonShouts *self)
                 GIBBON_TYPE_SHOUTS, GibbonShoutsPrivate);
 
         self->priv->app = NULL;
-        self->priv->text_view = NULL;
-        self->priv->buffer = NULL;
-
-        self->priv->sender_tag = NULL;
-        self->priv->date_tag = NULL;
+        self->priv->view = NULL;
+        self->priv->chat = NULL;
 }
 
 static void
@@ -65,17 +67,8 @@ gibbon_shouts_finalize (GObject *object)
 {
         GibbonShouts *self = GIBBON_SHOUTS (object);
 
-        self->priv->app = NULL;
-        self->priv->text_view = NULL;
-        self->priv->buffer = NULL;
-
-        if (self->priv->sender_tag)
-                g_object_unref (self->priv->sender_tag);
-        self->priv->sender_tag = NULL;
-
-        if (self->priv->date_tag)
-                g_object_unref (self->priv->date_tag);
-        self->priv->date_tag = NULL;
+        if (self->priv->chat)
+                g_object_unref (self->priv->chat);
 
         G_OBJECT_CLASS (gibbon_shouts_parent_class)->finalize(object);
 }
@@ -102,30 +95,25 @@ GibbonShouts *
 gibbon_shouts_new (GibbonApp *app)
 {
         GibbonShouts *self = g_object_new (GIBBON_TYPE_SHOUTS, NULL);
+        GtkTextBuffer *buffer;
+        GObject *entry;
 
-        self->priv->app = NULL;
+        self->priv->app = app;
 
-        self->priv->text_view =
+        self->priv->view =
                 GTK_TEXT_VIEW (gibbon_app_find_object (app,
                                                        "shout-text-view",
                                                        GTK_TYPE_TEXT_VIEW));
-        gtk_text_view_set_wrap_mode (self->priv->text_view,
-                                     GTK_WRAP_WORD);
-        gtk_text_view_set_cursor_visible (self->priv->text_view, FALSE);
 
-        self->priv->buffer = gtk_text_view_get_buffer (self->priv->text_view);
+        self->priv->chat = gibbon_chat_new (app, NULL);
 
-        /* Pidgin uses #cc00000 and #204a87 as the default colors.  */
-        self->priv->date_tag =
-                gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
-                                            NULL);
+        buffer = gibbon_chat_get_buffer (self->priv->chat);
+        gtk_text_view_set_buffer (self->priv->view, buffer);
 
-        self->priv->sender_tag =
-                gtk_text_buffer_create_tag (self->priv->buffer, NULL,
-                                            "foreground", "#cc0000",
-                                            "weight", PANGO_WEIGHT_BOLD,
-                                            NULL);
+        entry = gibbon_app_find_object (app, "shout-entry", GTK_TYPE_ENTRY);
+        g_signal_connect_swapped (entry, "activate",
+                                  G_CALLBACK (gibbon_shouts_on_shout),
+                                  G_OBJECT (self));
 
         return self;
 }
@@ -134,44 +122,54 @@ void
 gibbon_shouts_append_message (const GibbonShouts *self,
                               const GibbonFIBSMessage *message)
 {
-        GtkTextBuffer *buffer = self->priv->buffer;
-        gint length;
-        GtkTextIter start, end;
-        struct tm *now;
-        GTimeVal timeval;
-        gchar *timestamp;
-        GtkTextTag *tag;
+        GtkTextBuffer *buffer;
+
+        g_return_if_fail (GIBBON_IS_SHOUTS (self));
+        g_return_if_fail (message != NULL);
+        g_return_if_fail (message->sender != NULL);
+        g_return_if_fail (message->message != NULL);
+
+        gibbon_chat_append_message (self->priv->chat, message);
+
+        buffer = gibbon_chat_get_buffer (self->priv->chat);
+
+        gtk_text_view_scroll_to_mark (self->priv->view,
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
+}
+
+void
+gibbon_shouts_set_my_name (GibbonShouts *self, const gchar *me)
+{
+        g_return_if_fail (GIBBON_IS_SHOUTS (self));
+
+        gibbon_chat_set_my_name (self->priv->chat, me);
+}
+
+static void
+gibbon_shouts_on_shout (const GibbonShouts *self, GtkEntry *entry)
+{
+        GibbonConnection *connection;
+        gchar *trimmed;
         gchar *formatted;
 
         g_return_if_fail (GIBBON_IS_SHOUTS (self));
+        g_return_if_fail (GTK_IS_ENTRY (entry));
 
-        length = gtk_text_buffer_get_char_count (buffer);
-        tag = self->priv->sender_tag;
-        gtk_text_buffer_insert_at_cursor (buffer, message->sender, -1);
-        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
-        gtk_text_buffer_get_end_iter (buffer, &end);
-        gtk_text_buffer_apply_tag (buffer, tag, &start, &end);
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return;
 
-        length = gtk_text_buffer_get_char_count (buffer);
-        tag = self->priv->date_tag;
-        g_get_current_time (&timeval);
-        now = localtime ((time_t *) &timeval.tv_sec);
-        timestamp = g_strdup_printf (" (%02d:%02d:%02d) ",
-                                     now->tm_hour,
-                                     now->tm_min,
-                                     now->tm_sec);
-        gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
-        g_free (timestamp);
-        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
-        gtk_text_buffer_get_end_iter (buffer, &end);
-        gtk_text_buffer_apply_tag (buffer, tag, &start, &end);
-
-        formatted = gibbon_fibs_message_formatted (message);
-        gtk_text_buffer_insert_at_cursor (buffer, formatted, -1);
+        trimmed = pango_trim_string (gtk_entry_get_text (entry));
+        if (!*trimmed) {
+                g_free (trimmed);
+                return;
+        }
+        formatted = encode_html_entities (trimmed);
+        g_free (trimmed);
+        gibbon_connection_queue_command (connection, FALSE,
+                                         "shout %s", formatted);
         g_free (formatted);
-        gtk_text_buffer_insert_at_cursor (buffer, "\n", -1);
 
-        gtk_text_view_scroll_to_mark (self->priv->text_view,
-                gtk_text_buffer_get_insert (buffer),
-                0.0, TRUE, 0.5, 1);
+        gtk_entry_set_text (entry, "");
 }

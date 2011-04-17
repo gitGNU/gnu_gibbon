@@ -137,6 +137,21 @@ typedef enum svg_text_anchor {
     SVG_TEXT_ANCHOR_END
 } svg_text_anchor_t;
 
+typedef enum svg_dominant_baseline {
+        SVG_DOMINANT_BASELINE_AUTO,
+        SVG_DOMINANT_BASELINE_USE_SCRIPT,
+        SVG_DOMINANT_BASELINE_NO_CHANGE,
+        SVG_DOMINANT_BASELINE_RESET_SIZE,
+        SVG_DOMINANT_BASELINE_IDEOGRAPHIC,
+        SVG_DOMINANT_BASELINE_ALPHABETIC,
+        SVG_DOMINANT_BASELINE_HANGING,
+        SVG_DOMINANT_BASELINE_MATHEMATICAL,
+        SVG_DOMINANT_BASELINE_CENTRAL,
+        SVG_DOMINANT_BASELINE_MIDDLE,
+        SVG_DOMINANT_BASELINE_TEXT_AFTER_EDGE,
+        SVG_DOMINANT_BASELINE_TEXT_BEFORE_EDGE
+} svg_dominant_baseline_t;
+
 typedef enum svg_gradient_type_t {
     SVG_GRADIENT_LINEAR,
     SVG_GRADIENT_RADIAL
@@ -264,6 +279,7 @@ typedef struct svg_render_engine {
     svg_status_t (* set_stroke_paint) (void *closure, const svg_paint_t *paint);
     svg_status_t (* set_stroke_width) (void *closure, svg_length_t *width);
     svg_status_t (* set_text_anchor) (void *closure, svg_text_anchor_t text_anchor);
+    svg_status_t (* set_dominant_baseline) (void *closure, svg_dominant_baseline_t dominant_baseline);
     /* transform */
     svg_status_t (* transform) (void *closure,
 				double a, double b,
