@@ -936,7 +936,7 @@ find_good_movement (gint board[28], gint dice[2],
         gint next_die = dice[1];
         gboolean may_bear_off = FALSE;
         gint to;
-        gint points_lost;
+        gint lost_points;
 
         /* Can we bear off?  */
         for (i = 24; i > 0; --i) {
@@ -962,11 +962,22 @@ find_good_movement (gint board[28], gint dice[2],
                 for (i = 24; i > die && i > next_die; --i) {
                         if (board[i] <= 0)
                                 continue;
-                        if (board[i - die] != -1
-                            || board[i - die + next_die] <= 0)
+                        if (board[i - die] != -1)
                                 continue;
+
+                        if  (die == next_die) {
+                                if (board[i] == 1 || board[i] == 3)
+                                        continue;
+                        } else {
+                                /* Only make the point with a blot or from
+                                 * highly stacked points.
+                                 */
+                                if (board[i - die + next_die] <= 0
+                                    || board[i - die + next_die] == 2)
+                                        continue;
+                        }
 #if (DEBUG_TEST_ENGINE)
-                        g_printerr (" >>> Point on opp's head <<<");
+                        g_printerr (" >>> Point on opp's head <<< ");
                         print_movement (board, i, die, turn);
 #endif
                         --board[i];
@@ -983,11 +994,63 @@ find_good_movement (gint board[28], gint dice[2],
                 if (board[i - die] != 1)
                         continue;
 #if (DEBUG_TEST_ENGINE)
+                        g_printerr (" >>> Make a new point <<< ");
                         print_movement (board, i, die, turn);
 #endif
                         --board[i];
                         ++board[i - die];
                         return;
+        }
+
+        /* Again, try to make a point on the opponent's head, but this
+         * time we accept leaving a blot behind.  We don't do that with
+         * doubles though.
+         */
+        if (next_die && die != next_die) {
+                for (i = 24; i > die && i > next_die; --i) {
+                        if (board[i] <= 0)
+                                continue;
+                        if (board[i - die] != -1)
+                                continue;
+                        if (board[i - die + next_die] < 1)
+                                continue;
+
+                        lost_points = 0;
+
+                        if (board[i - die + next_die] == 2)
+                                ++lost_points;
+                        if (board[i] == 2)
+                                ++lost_points;
+
+                        if (lost_points > 1)
+                                continue;
+
+#if (DEBUG_TEST_ENGINE)
+                        g_printerr (" >>> Point risky on opp's head <<< ");
+                        print_movement (board, i, die, turn);
+#endif
+                        --board[i];
+                        board[i - die] = 1;
+                        ++board[0];
+                        return;
+                }
+        }
+
+        /* Try to hit loosely.  */
+        for (i = 24; i > die; --i) {
+                if (board[i] <= 0)
+                        continue;
+                if (board[i - die] != -1)
+                        continue;
+
+#if (DEBUG_TEST_ENGINE)
+                g_printerr (" >>> Hit loosely <<< ");
+                print_movement (board, i, die, turn);
+#endif
+               --board[i];
+               board[i - die] = 1;
+               ++board[0];
+               return;
         }
 
         /* As a lost resort, try to move the most backward checker.  */
@@ -1005,6 +1068,7 @@ find_good_movement (gint board[28], gint dice[2],
                 if (to > 0 && board[to] < -1)
                         continue;
 
+                g_printerr (" >>> Last resort <<< ");
                 print_movement (board, i, die, turn);
                 --board[i];
 
