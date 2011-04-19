@@ -236,25 +236,38 @@ LegalMove (int anBoardPre[28], int anBoardPost[28], int anRoll[2],
 
 /* End of Gary Wong's code.  */
 
-#define DEBUG_MOVE_GEN 1
+#define DEBUG_TEST_ENGINE 1
 
-static GibbonPosition *generate_position (void);
-static void test_position (GibbonPosition *position, gint board[28]);
-static void test_position_with_dice (GibbonPosition *position, gint board[28]);
-static void test_position_with_double (GibbonPosition *position,
-                                       gint board[28]);
-static void test_position_with_non_double (GibbonPosition *position,
-                                           gint board[28]);
 static void compare_results (GibbonPosition *position,
                              GibbonPosition *post_position,
                              GibbonMove *move,
                              gint success, gint moves[8]);
 static void dump_position (const GibbonPosition *position);
 static void dump_move (const GibbonMove *move);
-static void translate_position (gint board[28], const GibbonPosition *position);
-static gboolean apply_move (GibbonPosition *position, const GibbonMove *move);
-static gint test_position_with_move (GibbonPosition *position, gint board[28],
-                                     const GibbonMove *move);
+static void translate_position (gint board[28], const GibbonPosition *position,
+                                GibbonPositionSide turn);
+static guint test_game (guint64 max_positions);
+static guint test_roll (GibbonPosition *position, guint64 max_positions);
+static gboolean game_over (const GibbonPosition *position);
+static void move_checker (GibbonPosition *position, gint board[28],
+                          guint die, GibbonPositionSide side);
+static void find_any_move (const GibbonPosition *position, gint board[28],
+                           GibbonPosition *post_position,
+                           GibbonPositionSide side, gint dice[5]);
+static void find_good_move (const GibbonPosition *position, gint board[28],
+                            GibbonPosition *post_position,
+                            GibbonPositionSide side, gint dice[5]);
+static void find_good_movement (gint board[28], gint dice[2],
+                                GibbonPositionSide turn);
+static gboolean come_in_from_bar (gint board[28], gint die,
+                                  GibbonPositionSide turn);
+
+static void print_moves (gint moves[8], GibbonPositionSide side, gint dice[2]);
+
+#if (DEBUG_TEST_ENGINE)
+static void print_movement (gint board[28], gint from, gint die,
+                            GibbonPositionSide turn);
+#endif
 
 int
 main (int argc, char *argv[])
@@ -263,8 +276,6 @@ main (int argc, char *argv[])
         guint64 i;
         guint64 random_seed = time (NULL);
         gboolean verbose = FALSE;
-        GibbonPosition *position;
-        int board[28];
 
         g_type_init ();
 
@@ -291,110 +302,279 @@ main (int argc, char *argv[])
         }
         srandom (random_seed);
 
-        for (i = 0; i < num_positions; ++i) {
-                position = generate_position ();
-#if (DEBUG_MOVE_GEN)
-                g_printerr ("================ New Position ===============\n");
-                dump_position (position);
-#endif
-                translate_position (board, position);
-                test_position (position, board);
-                gibbon_position_free (position);
+        for (i = 0; i < num_positions; /* empty */) {
+                i += test_game(num_positions - i);
         }
 
         return 0;
 }
 
-static GibbonPosition *
-generate_position (void)
+static guint
+test_game (guint64 max_positions)
 {
-        int i;
-        gint point;
         GibbonPosition *position = gibbon_position_new ();
-        guint white_home = 0;
-        guint black_home = 0;
+        GibbonPositionSide side = random () % 2
+                        ? GIBBON_POSITION_SIDE_WHITE
+                                        : GIBBON_POSITION_SIDE_BLACK;
+        guint num_positions = 0;
 
-        memset (position->points, 0, sizeof position->points);
+        while (num_positions < max_positions) {
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        position->dice[0] = 1 + random () % 6;
+                        position->dice[1] = 1 + random () % 6;
+                } else {
+                        position->dice[0] = -6 + random () % 6;
+                        position->dice[1] = -6 + random () % 6;
+                }
 
-        for (i = 0; i < 15; ++i) {
-                point = -1;
-                while (1) {
-                        point = random () % 26;
-                        if (point == 0 || point == 25) {
-                                break;
-                        }
-                        if (position->points[point - 1] >= 0)
-                                break;
+                if (game_over (position)) {
+#if (DEBUG_TEST_ENGINE)
+                        g_printerr ("***** Game over! *****\n");
+#endif
+                        break;
                 }
-                switch (point) {
-                        case 0:
-                                ++position->bar[0];
-                                break;
-                        case 25:
-                                ++white_home;
-                                break;
-                        default:
-                                ++position->points[point];
-                                break;
-                }
-                while (1) {
-                        point = random () % 26;
-                        if (point == 0 || point == 25) {
-                                break;
-                        }
-                        if (position->points[point - 1] <= 0)
-                                break;
-                }
-                switch (point) {
-                        case 0:
-                                ++position->bar[0];
-                                break;
-                        case 25:
-                                ++black_home;
-                                break;
-                        default:
-                                --position->points[point];
-                                break;
-                }
+
+                num_positions += test_roll (position,
+                                            max_positions - num_positions);
+
+                side = -side;
         }
 
-        if (white_home == 15 || black_home == 15) {
-                gibbon_position_free (position);
-                position = generate_position ();
-        }
+        gibbon_position_free (position);
 
-        return position;
+        return num_positions;
 }
 
-static void
-test_position (GibbonPosition *position, gint board[28])
+static guint
+test_roll (GibbonPosition *position, guint64 max_positions)
 {
-        int i, j;
-
-        for (i = 1; i <= 6; ++i) {
-                position->dice[0] = i;
-                for (j = i; j <= 6; ++j) {
-                        position->dice[1] = j;
-                        test_position_with_dice (position, board);
-                }
-        }
-}
-
-static void
-test_position_with_dice (GibbonPosition *position, int board[28])
-{
+        gboolean is_double = position->dice[0] == position->dice[1];
+        guint max_movements = is_double ? 4 : 2;
+        GibbonPosition *post_position;
+        guint num_positions = 0;
+        guint i;
+        GibbonPositionSide turn;
+        gint dice[5], die;
+        gint board[28];
+        gint post_board[28];
+        gint moves[8];
         GibbonMove *move;
+        int legal;
+        guint free_checkers;
 
-        /* First check if no move at all is legal in this position.  */
-        move = gibbon_position_alloc_move (0);
-        test_position_with_move (position, board, move);
+        if (position->dice[0] < 0)
+                turn = GIBBON_POSITION_SIDE_BLACK;
+        else
+                turn = GIBBON_POSITION_SIDE_WHITE;
 
-        g_free (move);
+        memset (dice, 0, sizeof dice);
+        for (i = 0; i < max_movements; ++i)
+                dice[i] = abs (position->dice[i % 2]);
 
-        if (position->dice[0] == position->dice[1]) {
-                test_position_with_double (position, board);
+        translate_position (board, position, turn);
+
+        free_checkers = 15 - gibbon_position_get_borne_off (position, turn);
+        if (free_checkers < max_movements)
+                max_movements = free_checkers;
+
+#if (DEBUG_TEST_ENGINE)
+        dump_position (position);
+#endif
+
+        while (num_positions++ < max_positions) {
+                /* Swap the dice after every try.  The "reasonable" move
+                 * generator always uses the dice in order.  In the
+                 * "tricky" situations it would then fail to find a move.
+                 * The "tricky" ones are those where the first die has to
+                 * be used first, in order to be able to use the second.
+                 * Or where the first is the higher, and it has to be
+                 * used in favor of the other.
+                 *
+                 * But since
+                 */
+                die = dice[0];
+                dice[0] = dice[1];
+                dice[1] = die;
+
+                post_position = gibbon_position_copy (position);
+
+                /* Half of the moves are more or less random, the other half
+                 * more or less reasonable.
+                 */
+                if (!(random () % 10)) {
+#if (DEBUG_TEST_ENGINE)
+                        if (turn == GIBBON_POSITION_SIDE_WHITE)
+                                g_printerr ("  ?? w: %u%u:", dice[0], dice[1]);
+                        else
+                                g_printerr ("  ?? b: %u%u:", dice[0], dice[1]);
+#endif
+                        find_any_move (position, board, post_position,
+                                       turn, dice);
+                } else {
+                        if (turn == GIBBON_POSITION_SIDE_WHITE)
+                                g_printerr ("  !! w: %u%u:", dice[0], dice[1]);
+                        else
+                                g_printerr ("  !! b: %u%u:", dice[0], dice[1]);
+                        find_good_move (position, board, post_position,
+                                        turn, dice);
+                }
+
+                translate_position (post_board, post_position, turn);
+
+                move = gibbon_position_check_move (position, post_position,
+                                                   turn);
+                legal = LegalMove (board, post_board, dice, moves);
+                compare_results (position, post_position, move,
+                                 legal, moves);
+                g_free (move);
+                if (legal) {
+#if (DEBUG_TEST_ENGINE)
+                        print_moves (moves, turn, dice);
+#endif
+
+                        memcpy (position->points, post_position->points,
+                                sizeof position->points);
+                        memcpy (position->bar, post_position->bar,
+                                sizeof position->bar);
+                        gibbon_position_free (post_position);
+                        break;
+                }
+                gibbon_position_free (post_position);
+        }
+
+        return num_positions;
+}
+
+/* This function moves a checker more or less randomly.
+ *
+ * However, the checkers are not moved completely randomly.  If there is
+ * a checker on the bar, mostly moves from the bar are possible.
+ *
+ * A move to an occupied checker position is avoided most of the time.
+ *
+ * Bear-offs, when there are still checkers outside home, are also mostly
+ * refuted.
+ */
+static void
+move_checker (GibbonPosition *position, gint board[28],
+              guint die, GibbonPositionSide turn)
+{
+        gint from;
+        gint to;
+        gboolean may_bear_off = TRUE;
+        gint i;
+        gint first_bear_off = -1;
+
+        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                if (position->bar[0])
+                        may_bear_off = FALSE;
+                else
+                        for (i = 23; i > 5; --i) {
+                                if (position->points[i] < -1) {
+                                        may_bear_off = FALSE;
+                                        break;
+                                }
+                        }
+                if (may_bear_off)
+                        for (i = 0; i < 6; ++i)
+                                if (position->points[i] > 0)
+                                        first_bear_off = i;
         } else {
-                test_position_with_non_double (position, board);
+                if (position->bar[1])
+                        may_bear_off = FALSE;
+                else
+                        for (i = 0; i < 18; ++i) {
+                                if (position->points[i] > 1) {
+                                        may_bear_off = FALSE;
+                                        break;
+                                }
+                        }
+                for (i = 23; i >= 18; --i)
+                        if (position->points[i] < 0)
+                                first_bear_off = i;
+        }
+
+        while (1) {
+                from = random () % 25;
+                if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                        if (position->bar[0] && random () % 10)
+                                from = 24;
+                        if (from == 24) {
+                                if (!position->bar[0])
+                                        continue;
+                                --position->bar[0];
+                                if (position->points[24 - die] == -1) {
+                                        ++position->bar[1];
+                                        position->points[24 - die] = 0;
+                                }
+                                ++position->points[24 - die];
+#if (DEBUG_TEST_ENGINE)
+                                print_movement (board, 25, die, turn);
+#endif
+                                return;
+                        } else if (position->points[from] > 0) {
+                                to = from - die;
+                                if (to < 0 && !may_bear_off && random () % 10)
+                                        continue;
+                                if (to < 0 && may_bear_off
+                                    && to > first_bear_off && random () % 10)
+                                        continue;
+                                if (to > 0 && position->points[to] < -1
+                                    && random () % 10)
+                                        continue;
+                                --position->points[from];
+#if (DEBUG_TEST_ENGINE)
+                                print_movement (board, from + 1, die, turn);
+#endif
+                                if (to < 0)
+                                        return;
+                                if (position->points[to] == -1) {
+                                        ++position->bar[1];
+                                        position->points[to] = 0;
+                                }
+                                ++position->points[to];
+                                return;
+                        }
+                } else {
+                        if (position->bar[1] && random () % 10)
+                                from = 24;
+                        if (from == 24) {
+                                if (!position->bar[1])
+                                        continue;
+                                --position->bar[1];
+                                if (position->points[die - 1] == 1) {
+                                        ++position->bar[0];
+                                        position->points[die - 1] = 0;
+                                }
+                                --position->points[die - 1];
+#if (DEBUG_TEST_ENGINE)
+                                print_movement (board, 25, die, turn);
+#endif
+                                return;
+                        } else if (position->points[from] < 0) {
+                                to = from + die;
+                                if (to > 23 && !may_bear_off && random () % 10)
+                                        continue;
+                                if (to <= 23 && position->points[to] > 1
+                                    && random () % 10)
+                                        continue;
+                                if (to >= 23 && may_bear_off
+                                    && to < first_bear_off && random () % 10)
+                                        continue;
+                                ++position->points[from];
+#if (DEBUG_TEST_ENGINE)
+                                print_movement (board, 24 - from, die, turn);
+#endif
+                                if (to > 23)
+                                        return;
+                                if (position->points[to] == 1) {
+                                        ++position->bar[0];
+                                        position->points[to] = 0;
+                                }
+                                --position->points[to];
+                                return;
+                        }
+                }
         }
 }
 
@@ -499,266 +679,346 @@ return;
 }
 
 static void
-translate_position (gint board[28], const GibbonPosition *position)
+translate_position (gint board[28], const GibbonPosition *position,
+                    GibbonPositionSide turn)
 {
+        int i;
+
         /* Translate position into structure expected by Gary's move
          * legality checker.
          */
-        board[0] = -position->bar[1];
-        memcpy (board + 1, position->points, sizeof position->points);
-        board[25] = position->bar[0];
-        board[26] = gibbon_position_get_borne_off (position,
-                        GIBBON_POSITION_SIDE_WHITE);
-        board[27] = gibbon_position_get_borne_off (position,
-                        GIBBON_POSITION_SIDE_BLACK);
+        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                board[0] = position->bar[1];
+                memcpy (board + 1, position->points, sizeof position->points);
+                board[25] = position->bar[0];
+                board[26] = gibbon_position_get_borne_off (position,
+                                GIBBON_POSITION_SIDE_WHITE);
+                board[27] = gibbon_position_get_borne_off (position,
+                                GIBBON_POSITION_SIDE_BLACK);
+        } else {
+                board[0] = position->bar[0];
+                for (i = 0; i < 24; ++i) {
+                        board[i + 1] = -position->points[23 - i];
+                }
+                board[25] = position->bar[1];
+                board[26] = gibbon_position_get_borne_off (position,
+                                GIBBON_POSITION_SIDE_BLACK);
+                board[27] = gibbon_position_get_borne_off (position,
+                                GIBBON_POSITION_SIDE_WHITE);
+        }
 }
 
 static void
-test_position_with_double (GibbonPosition *position, gint board[28])
+translate_board (GibbonPosition *position, gint board[28],
+                 GibbonPositionSide turn)
 {
-        /* Try to use just one die.  */
-        gint i, j;
-        GibbonMove *move = gibbon_position_alloc_move (4);
-        gint found = 0;
-        guint die = position->dice[0];
+        int i;
 
-        /* Try to move a single checker once.  */
-        g_printerr ("Move a single checker once.\n");
-        move->number = 1;
-        move->movements[0].num = 1;
-        for (i = 25; i > 0; --i) {
-                if (board[i] <= 0)
-                        continue;
-                move->movements[0].from = i;
-                move->movements[0].to = i - die;
-                found += test_position_with_move (position, board, move);
-        }
-
-        /* If there was no legal move after one round we can take an early
-         * exit here.
+        /* Translate position into structure expected by Gary's move
+         * legality checker.
          */
-        if (!found) {
-                g_free (move);
-                return;
-        }
-
-        /* Now try to use two dice values.  */
-        found = 0;
-
-        /* Try to move a single checker twice.  */
-        g_printerr ("Move a single checker twice.\n");
-        move->number = 2;
-        move->movements[0].num = 1;
-        move->movements[1].num = 1;
-        for (i = 25; i > 0; --i) {
-                if (board[i] <= 0)
-                        continue;
-                move->movements[0].from = i;
-                move->movements[0].to = i - die;
-                move->movements[1].from = i - die;
-                move->movements[1].to = i - 2 * die;
-                found += test_position_with_move (position, board, move);
-        }
-
-        /* Try to move a pair of checkers once.  */
-        g_printerr ("Move a pair of checkers once.\n");
-        move->number = 1;
-        move->movements[0].num = 2;
-        for (i = 25; i > 0; --i) {
-                if (board[i] <= 1)
-                        continue;
-                move->movements[0].from = i;
-                move->movements[0].to = i - die;
-                found += test_position_with_move (position, board, move);
-        }
-
-        /* Try to move two checkers once.  */
-        g_printerr ("Move two checkers once.\n");
-        move->number = 2;
-        move->movements[0].num = 1;
-        move->movements[0].num = 1;
-        for (i = 25; i > 0; --i) {
-                if (board[i] <= 0)
-                        continue;
-                move->movements[0].from = i;
-                move->movements[0].to = i - die;
-                for (j = i - 1; j > 0; --j) {
-                        if (board[j] <= 0)
-                                continue;
-                        move->movements[1].from = j;
-                        move->movements[1].to = j - die;
-                        if (move->movements[0].to == move->movements[1].from)
-                                continue;
-                        found += test_position_with_move (position, board, move);
+        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                position->bar[1] = board[0];
+                memcpy (position->points, board + 1, sizeof position->points);
+                position->bar[0] = board[25];
+        } else {
+                position->bar[0] = board[0];
+                for (i = 0; i < 24; ++i) {
+                        position->points[23 - i] = -board[i + 1];
                 }
+                position->bar[1] = board[25];
         }
+}
 
-        if (!found) {
-                g_free (move);
-                return;
-        }
+static gboolean
+game_over (const GibbonPosition *position)
+{
+        guint num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_WHITE);
 
-        g_free (move);
+        if (num_checkers >= 15)
+                return TRUE;
 
-        exit (1);
+        num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_BLACK);
+
+        if (num_checkers >= 15)
+                return TRUE;
+
+        return FALSE;
 }
 
 static void
-test_position_with_non_double (GibbonPosition *position,
-                               gint board[28])
+print_moves (gint moves[8], GibbonPositionSide turn, gint dice[2])
 {
-        GibbonMove *move = gibbon_position_alloc_move (2);
-        GibbonMovement *movement;
-        gint i, j;
+        gint i;
 
-        /* Test single checker movements.  */
-        g_printerr ("One checker once.\n");
-        move->number = 1;
-        movement = move->movements;
-        movement->num = 1;
-        for (i = 25; i > 0; --i) {
-                if (board[i] > 0) {
-                        movement->from = i;
-                        movement->to = i - position->dice[0];
-                        test_position_with_move (position, board, move);
-                        movement->to = i - position->dice[1];
-                        test_position_with_move (position, board, move);
-                }
+        if (turn == GIBBON_POSITION_SIDE_WHITE)
+                g_printerr ("W: %u%u", dice[0], dice[1]);
+        else
+                g_printerr ("B: %u%u", dice[0], dice[1]);
+
+        if (!*moves) {
+                g_printerr (" -\n");
+                return;
         }
 
-        /* Now try to move the same checker twice.  */
-        g_printerr ("One checker twice.\n");
-        move->number = 2;
-        move->movements[0].num = 1;
-        move->movements[1].num = 1;
-        for (i = 25; i > 0; --i) {
-                if (board[i] > 0) {
-                        move->movements[0].from = i;
-                        move->movements[0].to = i - position->dice[0];
-                        if (move->movements[0].to > 0) {
-                                move->movements[1].from = move->movements[0].to;
-                                move->movements[1].to = move->movements[1].from
-                                                - position->dice[1];
-                                test_position_with_move (position, board, move);
-                        }
-                        move->movements[0].to = i - position->dice[1];
-                        if (move->movements[0].to > 0) {
-                                move->movements[1].from = move->movements[0].to;
-                                move->movements[1].to = move->movements[1].from
-                                                - position->dice[0];
-                                test_position_with_move (position, board, move);
-                        }
-                }
-        }
+        if (turn == GIBBON_POSITION_SIDE_WHITE)
+                for (i = 0; moves[i] && i < 8; i += 2)
+                        g_printerr (" %d/%d", moves[i], moves[i + 1]);
+        else
+                for (i = 0; moves[i] && i < 8; i += 2)
+                        g_printerr (" %d/%d", 25 - moves[i], 25 - moves[i + 1]);
 
-        g_printerr ("Two checkers from one point.\n");
-        /* Now try to move two checkers from one point.  */
-        for (i = 25; i > 0; --i) {
-                if (board[i] < 2)
-                        continue;
-                move->movements[0].from = i;
-                move->movements[0].to = i - position->dice[0];
-                move->movements[1].from = i;
-                move->movements[1].to = i - position->dice[1];
-                test_position_with_move (position, board, move);
-        }
-
-        g_printerr ("Two checkers from different points.\n");
-        /* And finally two, in both orders.  */
-        for (i = 25; i > 0; --i) {
-                if (board[i] < 1)
-                        continue;
-                move->movements[0].from = i;
-                for (j = i - 1; j > 0; --j) {
-                        if (board[j] < 1)
-                                continue;
-                        move->movements[1].from = j;
-                        move->movements[0].to = i - position->dice[0];
-                        move->movements[1].to = j - position->dice[1];
-                        /* If  the starting point of the second submove is the
-                         * landing point of the first, we have seen that move
-                         * already.
-                         */
-                        if (move->movements[0].to != move->movements[1].from)
-                                test_position_with_move (position, board, move);
-                        move->movements[0].to = i - position->dice[1];
-                        move->movements[1].to = j - position->dice[0];
-                        if (move->movements[0].to != move->movements[1].from)
-                                test_position_with_move (position, board, move);
-                }
-        }
-
-        g_free (move);
-        g_printerr ("Next roll/position.\n");
+        g_printerr ("\n");
 }
 
-/* Only works for white.  And only checks that the starting checker is
- * inside the board, and that the landing point is not occupied.
+static void
+find_any_move (const GibbonPosition *position, gint board[28],
+               GibbonPosition *post_position,
+               GibbonPositionSide turn, gint dice[5])
+{
+        gboolean is_double = dice[0] == dice[1];
+        guint max_movements = is_double ? 4 : 2;
+        gint free_checkers;
+        gint i;
+        gint num_movements;
+
+        if (position->dice[0] < 0)
+                turn = GIBBON_POSITION_SIDE_BLACK;
+        else
+                turn = GIBBON_POSITION_SIDE_WHITE;
+
+        free_checkers = 15 - gibbon_position_get_borne_off (position, turn);
+        if (free_checkers < max_movements)
+                max_movements = free_checkers;
+
+        /* Decide how many dice values to use.  We try to avoid those
+         * that forfeit two or more checker movements because the
+         * legality check for them is trivial.
+         */
+        num_movements = random () % (max_movements + 1);
+        if (max_movements - num_movements >= 2
+            && random () & 0x1)
+                return find_any_move (position, board, post_position,
+                                      turn, dice);
+
+        if (!num_movements) {
+                g_printerr (" -\n");
+                return;
+        }
+
+        for (i = 0; i < num_movements; ++i) {
+                move_checker (post_position, board, dice[i], turn);
+        }
+        g_printerr ("\n");
+}
+
+/* This is a mini backgammon engine.  It plays about the same level as "expert"
+ * in gnubg.  The gnubg engine will still win most of the time because it
+ * cheats.  We all know that very well.
+ *
+ * The reasoning behind it is not so much to produce realistic game scenarios
+ * but to avoid the test engine to hang.  That happens when only a handful
+ * of moves from a large quantity are legal.
  */
-static gboolean
-apply_move (GibbonPosition *pos, const GibbonMove *move)
+static void
+find_good_move (const GibbonPosition *position, gint _board[28],
+                GibbonPosition *post_position,
+                GibbonPositionSide turn, gint dice[5])
 {
-        gsize i;
-        gint from, to;
-        const GibbonMovement *movement;
+        gint i = 0;
+        gint *dice_pair;
+        gint die;
+        gint brought_in = 0;
+        gint bring_in_die = 0;
+        gint board[28];
 
-        for (i = 0; i < move->number; ++i) {
-                movement = move->movements + i;
+        dice_pair = dice;
 
-                from = movement->from - 1;
-                to = movement->to - 1;
-                if (to < 0)
-                        to = 0;
-                if (to > 0 && pos->points[to] < -1)
-                        return FALSE;
+        /* Make a copy of the board.  */
+        memcpy (board, _board, sizeof board);
 
-                if (from == 25)
-                        pos->bar[0] -= movement->num;
-                else
-                        pos->points[from] -= movement->num;
-
-                if (pos->points[to] == -1)
-                        ++pos->bar[1];
-
-                pos->points[to] += movement->num;
+        /* Try to come in from the bar in if possible.  */
+        for (i = 0; board[25] && dice[i]; ++i) {
+                if (come_in_from_bar (board, dice[i], turn)) {
+                        ++brought_in;
+                        bring_in_die = dice[i];
+                }
         }
 
-        return TRUE;
+        if (board[25]) {
+                /* Dancing.  */
+                g_printerr ("\n");
+                return;
+        }
+
+        /* Swap the dice, if we used the second one for coming in.  */
+        if (1 == brought_in
+            && bring_in_die == dice[1] && bring_in_die != dice[0]) {
+                die = dice[0];
+                dice[0] = dice[1];
+                dice[1] = die;
+        }
+
+        /* And advance it to the first unused.  */
+        dice_pair += brought_in;
+
+        /* Now with the bar business being done, try to use the remaining
+         * dice value.
+         */
+        while (*dice_pair)
+                find_good_movement (board, dice_pair++, turn);
+
+        g_printerr ("\n");
+
+        translate_board (post_position, board, turn);
 }
 
-static gint
-test_position_with_move (GibbonPosition *position, gint board[28],
-                         const GibbonMove *move)
+static gboolean
+come_in_from_bar (gint board[28], gint die, GibbonPositionSide turn)
 {
-        int post_board[28];
-        GibbonPosition *post_position;
-        GibbonMove *gibbon_move;
-        gint moves[8];
-        int gary_legal;
-        gint dice[2];
+        if (board[25 - die] >= -1) {
+#if (DEBUG_TEST_ENGINE)
+                print_movement (board, 25, die, turn);
+#endif
+                --board[25];
+                if (board[25 - die] == -1) {
+                        ++board[0];
+                        board[25 - die] = 0;
+                }
+                ++board[25 - die];
+                return  TRUE;
+        }
 
-#if (DEBUG_MOVE_GEN)
-        g_printerr ("Testing move: %d%d", position->dice[0], position->dice[1]);
-        dump_move (move);
+        return FALSE;
+}
+
+#if (DEBUG_TEST_ENGINE)
+static void
+print_movement (gint board[28], gint from, gint die,
+                GibbonPositionSide turn)
+{
+        gint to;
+
+        if (from == 25) {
+                g_printerr (" bar/");
+        } else if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                g_printerr (" %d/", from);
+        } else {
+                g_printerr (" %d/", 25 - from);
+        }
+
+        to = from - die;
+
+        if (to <= 0) {
+                g_printerr ("off");
+        } else {
+                if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                        g_printerr ("%d", to);
+                } else {
+                        g_printerr ("%d", 25 - to);
+                }
+                if (board[to] == -1)
+                        g_printerr ("*");
+        }
+}
 #endif
 
-        post_position = gibbon_position_copy (position);
-        if (!apply_move (post_position, move)) {
-                gibbon_position_free (post_position);
-                return 0;
+static void
+find_good_movement (gint board[28], gint dice[2],
+                    GibbonPositionSide turn)
+{
+        gint i;
+        gint die = dice[0];
+        gint next_die = dice[1];
+        gboolean may_bear_off = FALSE;
+        gint to;
+        gint points_lost;
+
+        /* Can we bear off?  */
+        for (i = 24; i > 0; --i) {
+                if (board[i] > 0) {
+                        if (i > 6)
+                                break;
+                        may_bear_off = TRUE;
+                        break;
+                }
         }
 
-        memcpy (post_board, board, sizeof post_board);
-        dice[0] = abs (position->dice[0]);
-        dice[1] = abs (position->dice[1]);
-        gary_legal = LegalMove (board, post_board, dice, moves);
-        gibbon_move = gibbon_position_check_move (position, post_position,
-                                                  GIBBON_POSITION_SIDE_WHITE);
-        compare_results (position, post_position, gibbon_move,
-                         gary_legal, moves);
+        if (may_bear_off && board[die] > 0) {
+#if (DEBUG_TEST_ENGINE)
+                print_movement (board, die, die, turn);
+#endif
+                ++board[26];
+                --board[die];
+                return;
+        }
 
-        g_free (gibbon_move);
-        gibbon_position_free (post_position);
+        if (next_die) {
+                /* Try to point on the opponent's head.  */
+                for (i = 24; i > die && i > next_die; --i) {
+                        if (board[i] <= 0)
+                                continue;
+                        if (board[i - die] != -1
+                            || board[i - die + next_die] <= 0)
+                                continue;
+#if (DEBUG_TEST_ENGINE)
+                        g_printerr (" >>> Point on opp's head <<<");
+                        print_movement (board, i, die, turn);
+#endif
+                        --board[i];
+                        board[i - die] = 1;
+                        ++board[0];
+                        return;
+                }
+        }
 
-        return 1;
+        /* Try to make a new point.  */
+        for (i = 24; i > die; --i) {
+                if (board[i] <= 0 || board[i] == 2)
+                        continue;
+                if (board[i - die] != 1)
+                        continue;
+#if (DEBUG_TEST_ENGINE)
+                        print_movement (board, i, die, turn);
+#endif
+                        --board[i];
+                        ++board[i - die];
+                        return;
+        }
+
+        /* As a lost resort, try to move the most backward checker.  */
+        for (i = 24; i > 0; --i) {
+                /* Too far?  */
+                if (!may_bear_off && i <= die)
+                        break;
+
+                /* Do we have a checker?  */
+                if (board[i] <= 0)
+                        continue;
+                to = i - die;
+
+                /* Blocked? */
+                if (to > 0 && board[to] < -1)
+                        continue;
+
+                print_movement (board, i, die, turn);
+                --board[i];
+
+                if (to > 0 && board[to] == -1) {
+                        /* Hit! */
+                        ++board[0];
+                        board[to] = 0;
+                }
+
+
+                if (to <= 0)
+                        ++board[26];
+
+                ++board[to];
+                break;
+        }
 }
