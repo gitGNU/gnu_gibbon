@@ -82,6 +82,52 @@ GibbonPosition initial = {
                 NULL
 };
 
+/* Move patterns describe how a double roll was used.
+ *
+ * For decoding, they have to be split into bytes first.  Each byte is then
+ * split into nibbles.  The left nibble gives the number of checkers to
+ * move, and the right number gives the number of dice to use.
+ */
+guint move_patterns1[] = {
+                0x11,
+                0x21,
+                0x12,
+                0x31,
+                0x13,
+                0x41,
+                0x14
+};
+
+guint move_patterns2[] = {
+                0x1111,
+                0x1112,
+                0x1121,
+                0x1211,
+                0x2111,
+                0x1113,
+                0x1131,
+                0x1311,
+                0x3111,
+                0x1212,
+                0x1221,
+                0x2112,
+                0x2121
+};
+
+guint move_patterns3[] = {
+                0x111111,
+                0x111112,
+                0x111121,
+                0x111211,
+                0x112111,
+                0x121111,
+                0x211111
+};
+
+guint move_patterns4[] = {
+                0x11111111
+};
+
 static void dump_move (const GibbonMove *move);
 
 static GibbonMove *gibbon_position_copy_move (const GibbonMove *src);
@@ -359,11 +405,23 @@ gibbon_position_check_move (const GibbonPosition *_before,
 static gboolean
 gibbon_position_can_move (const gint board[26], gint die)
 {
-        /* Dance? */
-        if (board[25] && board[25 - die] < -1)
-                return FALSE;
+        gint i;
 
-        return TRUE;
+        /* Dance? */
+        if (board[25]) {
+                if (board[25 - die] < -1)
+                        return FALSE;
+                else
+                        return TRUE;
+        }
+
+        /* Move freely?  */
+        for (i = 24; i > die; --i) {
+                if (board[i - die] >= -1)
+                        return TRUE;
+        }
+
+        return FALSE;
 }
 
 static gboolean
@@ -379,6 +437,14 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
 
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
+
+                from = movement->from;
+                if (from <= 0) {
+                        /* Actually this move is a duplicate.  */
+                        move->status = GIBBON_MOVE_ILLEGAL;
+                        return FALSE;
+                }
+
                 to = movement->to;
 
                 /* Is the target point occupied?  */
@@ -396,7 +462,6 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
                 }
 
                 before[to] += movement->num;
-                from = movement->from;
                 before[from] -= movement->num;
         }
 
@@ -477,13 +542,6 @@ gibbon_position_find_non_double (const gint *before,
                 moves = g_list_append (moves, move);
         }
 
-        if (die1 == 6 && die2 == 3) {
-                g_printerr ("Third move is %d/%d %d/%d.\n",
-                            froms[0], froms[0] - die1,
-                            froms[0], froms[0] - die2);
-        } else {
-                g_printerr ("not mine ...\n");
-        }
         move = gibbon_position_alloc_move (2);
         gibbon_position_fill_movement (move, froms[0], die1, 1);
         gibbon_position_fill_movement (move, froms[0], die2, 1);
@@ -506,7 +564,59 @@ gibbon_position_find_double (const gint *before,
                              guint die,
                              gsize num_froms, const guint *froms)
 {
-        return NULL;
+        guint *move_patterns;
+        GList *moves = NULL;
+        gsize i, j, k, num_patterns;
+        GibbonMove *move;
+        gsize num_checkers, num_steps;
+        guint pattern;
+        gint from;
+
+        switch (num_froms) {
+                case 0:
+                        return NULL;
+                case 1:
+                        move_patterns = move_patterns1;
+                        num_patterns = (sizeof move_patterns1)
+                                        / sizeof *move_patterns1;
+                        break;
+                case 2:
+                        move_patterns = move_patterns2;
+                        num_patterns = (sizeof move_patterns2)
+                                        / sizeof *move_patterns2;
+                        break;
+                case 3:
+                        move_patterns = move_patterns3;
+                        num_patterns = (sizeof move_patterns3)
+                                        / sizeof *move_patterns3;
+                        break;
+                default:
+                        move_patterns = move_patterns4;
+                        num_patterns = (sizeof move_patterns4)
+                                        / sizeof *move_patterns4;
+                        break;
+        }
+
+        for (i = 0; i < num_patterns; ++i) {
+                pattern = move_patterns[i];
+                /* This may allocate too much but calculating the correct size
+                 * would never pay out.
+                 */
+                move = gibbon_position_alloc_move (4);
+                for (j = 0; j < num_froms; ++j) {
+                        num_steps = pattern & 0xf;
+                        num_checkers = (pattern & 0xf0) >> 4;
+                        from = froms[j];
+                        for (k = 0; k < num_steps; ++k) {
+                                gibbon_position_fill_movement (move, from, die,
+                                                               num_checkers);
+                                from -= die;
+                        }
+                        pattern >>= 8;
+                }
+        }
+
+        return moves;
 }
 
 static GibbonMove *
