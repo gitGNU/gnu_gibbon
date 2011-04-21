@@ -123,6 +123,7 @@ struct _GibbonPosition
  *        for black, X, or the player with negative checker counts.  0 and
  *        24 represent home and the bar accordingly.
  * @to: The end point for a move, see @from for semantics.
+ * @die: The die value used for the move.
  * @num: How many checkers were moved?
  *
  * Structure representing a single backgammon checker movement.
@@ -132,6 +133,7 @@ struct _GibbonMovement
 {
         gint from;
         gint to;
+        gint die;
         gsize num;
 };
 
@@ -142,6 +144,9 @@ struct _GibbonMovement
  * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
  * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied,
  *                        probably never used
+ * @GIBBON_MOVE_USE_ALL: at least one more checker can be moved
+ * @GIBBON_MOVE_USE_HIGHER: in doubt, you must use the higher value
+ * @GIBBON_MOVE_TRY_SWAP: two checkers can be moved by swapping the dice order
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
@@ -149,7 +154,11 @@ typedef enum {
         GIBBON_MOVE_LEGAL = 0,
         GIBBON_MOVE_ILLEGAL = 1,
         GIBBON_MOVE_TOO_MANY_MOVES = 2,
-        GIBBON_MOVE_BLOCKED = 3
+        GIBBON_MOVE_BLOCKED = 3,
+        GIBBON_MOVE_NOT_COMPLETE = 4,
+        GIBBON_MOVE_USE_ALL = 5,
+        GIBBON_MOVE_USE_HIGHER = 6,
+        GIBBON_MOVE_TRY_SWAP
 } GibbonMoveError;
 
 /**
