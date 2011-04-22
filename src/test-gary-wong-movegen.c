@@ -632,8 +632,6 @@ dump_move (const GibbonMove *move)
                 g_printerr (" %d/%d",
                             move->movements[i].from,
                             move->movements[i].to);
-                if (move->movements[i].num != 1)
-                        g_printerr ("(%u)", move->movements[i].num);
         }
         g_printerr ("\n");
 }

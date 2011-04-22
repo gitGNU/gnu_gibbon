@@ -124,7 +124,6 @@ struct _GibbonPosition
  *        24 represent home and the bar accordingly.
  * @to: The end point for a move, see @from for semantics.
  * @die: The die value used for the move.
- * @num: How many checkers were moved?
  *
  * Structure representing a single backgammon checker movement.
  */
@@ -134,7 +133,6 @@ struct _GibbonMovement
         gint from;
         gint to;
         gint die;
-        gsize num;
 };
 
 /**
