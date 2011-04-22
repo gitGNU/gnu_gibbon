@@ -130,6 +130,7 @@ static gboolean gibbon_position_is_diff (const gint before[26],
                                          const gint after[26],
                                          GibbonMove *move);
 static gboolean gibbon_position_can_move (const gint board[26], gint die);
+static gint find_backmost_checker (const gint board[26]);
 
 /**
  * gibbon_position_new:
@@ -411,8 +412,9 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
                          GibbonMove *move)
 {
         gint before[26];
-        guint i, from, to;
+        gint i, from, to;
         const GibbonMovement *movement;
+        gint backmost;
 
         /* dump_move (move); */
         memcpy (before, _before, sizeof before);
@@ -429,25 +431,39 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
 
                 to = movement->to;
 
-                /* Is the target point occupied?  */
-                if (before[to] < -1) {
+                if (to == 0) {
+                        backmost = find_backmost_checker (before);
+
+                        if (backmost > 6)
+                                move->status = GIBBON_MOVE_PREMATURE_BEAR_OFF;
+                        /* Although this move is illegal, we continue.  If
+                         * the resulting position matches, we know that the
+                         * intentionally bore off the checker, and we can
+                         * inform about the error.
+                         */
+                } else if (before[to] < -1) {
+                        /* Is the target point occupied?  */
                         move->status = GIBBON_MOVE_BLOCKED;
                         return FALSE;
-                }
-
-                /* Remove the opponent's checker if this is a hit and put it
-                 * on the bar.
-                 */
-                if (before[to] == -1) {
+                } else if (before[to] == -1) {
                         before[to] = 0;
                         ++before[0];
                 }
 
-                ++before[to];
+                if (to)
+                        ++before[to];
+                /* Else: No need to know about it.  We count the checkers on
+                 * the board instead, and calculate the difference.
+                 */
                 --before[from];
         }
 
         /* Is the resulting position identical to what we expect? */
+        if (memcmp (before, after, sizeof before)) {
+                for (i = 25; i >= 0; --i) {
+                        g_printerr ("  %d: %d | %d\n", i, before[i], after[i]);
+                }
+        }
         if (memcmp (before, after, sizeof before))
                 return FALSE;
 
@@ -458,10 +474,10 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
          *
          * After this, we only have to check these constraints:
          *
-         * - Bear-off only allowed, when all checkers are in the home board.
          * - No legal moves, while checkers on the bar.
          * - Maximize number of pips used.
          */
+
         return TRUE;
 }
 
@@ -631,4 +647,16 @@ dump_move (const GibbonMove *move)
         }
 
         g_printerr ("\n");
+}
+
+static gint
+find_backmost_checker (const gint board[26])
+{
+        gint i;
+
+        for (i = 25; i > 0; --i)
+                if (board[i] > 0)
+                        break;
+
+        return i;
 }

@@ -145,6 +145,9 @@ struct _GibbonMovement
  * @GIBBON_MOVE_USE_ALL: at least one more checker can be moved
  * @GIBBON_MOVE_USE_HIGHER: in doubt, you must use the higher value
  * @GIBBON_MOVE_TRY_SWAP: two checkers can be moved by swapping the dice order
+ * @GIBOBN_MOVE_PREMATURE_BEAR_OFF: checker borne off with checkers outhside
+ *                                  home board
+ * @GIBBON_MOVE_ILLEGAL_WASTE: move higher before bearing off with waste
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
@@ -156,7 +159,9 @@ typedef enum {
         GIBBON_MOVE_NOT_COMPLETE = 4,
         GIBBON_MOVE_USE_ALL = 5,
         GIBBON_MOVE_USE_HIGHER = 6,
-        GIBBON_MOVE_TRY_SWAP
+        GIBBON_MOVE_TRY_SWAP = 7,
+        GIBBON_MOVE_PREMATURE_BEAR_OFF = 8,
+        GIBBON_MOVE_ILLEGAL_WASTE = 9
 } GibbonMoveError;
 
 /**
