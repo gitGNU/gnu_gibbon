@@ -82,50 +82,31 @@ GibbonPosition initial = {
                 NULL
 };
 
-/* Move patterns describe how a double roll was used.
+/* Move patterns describe how a double roll was used, when we know the set
+ * of starting points.
  *
  * For decoding, they have to be split into bytes first.  Each byte is then
- * split into nibbles.  The left nibble gives the number of checkers to
- * move, and the right number gives the number of dice to use.
+ * split into nibbles.  The left nibble gives the index into the set of
+ * starting points, and the right number gives the number of dice values
+ * to use.
+ *
+ * For example, if we know that the user has moved checkers from points
+ * 6, 9, and 20, and has rolled a double 2, a 0x12 means that he has
+ * moved two checkers from the 9-point (9 is point number 1 in the set
+ * 6, 9, and 20).
  */
 guint move_patterns1[] = {
-                0x11,
-                0x21,
-                0x12,
-                0x31,
-                0x13,
-                0x41,
-                0x14
+                0x0103
 };
 
 guint move_patterns2[] = {
-                0x1111,
-                0x1112,
-                0x1121,
-                0x1211,
-                0x2111,
-                0x1113,
-                0x1131,
-                0x1311,
-                0x3111,
-                0x1212,
-                0x1221,
-                0x2112,
-                0x2121
+
 };
 
 guint move_patterns3[] = {
-                0x111111,
-                0x111112,
-                0x111121,
-                0x111211,
-                0x112111,
-                0x121111,
-                0x211111
 };
 
 guint move_patterns4[] = {
-                0x11111111
 };
 
 static void dump_move (const GibbonMove *move);
@@ -566,10 +547,11 @@ gibbon_position_find_double (const gint *before,
 {
         guint *move_patterns;
         GList *moves = NULL;
-        gsize i, j, k, num_patterns;
+        gsize i, j, num_patterns;
         GibbonMove *move;
-        gsize num_checkers, num_steps;
+        gsize num_steps;
         guint pattern;
+        guint from_index;
         gint from;
 
         switch (num_froms) {
@@ -603,17 +585,19 @@ gibbon_position_find_double (const gint *before,
                  * would never pay out.
                  */
                 move = gibbon_position_alloc_move (4);
-                for (j = 0; j < num_froms; ++j) {
+
+                while (pattern) {
                         num_steps = pattern & 0xf;
-                        num_checkers = (pattern & 0xf0) >> 4;
-                        from = froms[j];
-                        for (k = 0; k < num_steps; ++k) {
+                        from_index = (pattern & 0xf0) >> 4;
+                        from = froms[from_index];
+                        for (j = 0; j < num_steps; ++j) {
                                 gibbon_position_fill_movement (move, from, die,
-                                                               num_checkers);
+                                                               1);
                                 from -= die;
                         }
                         pattern >>= 8;
                 }
+                moves = g_list_append (moves, move);
         }
 
         return moves;
