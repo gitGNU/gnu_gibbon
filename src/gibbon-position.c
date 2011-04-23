@@ -117,9 +117,10 @@ guint move_patterns3[] = {
 guint move_patterns4[] = {
 };
 
+#if (0)
 static void dump_move (const GibbonMove *move);
+#endif
 
-static GibbonMove *gibbon_position_copy_move (const GibbonMove *src);
 static void gibbon_position_fill_movement (GibbonMove *move,
                                            guint point, guint die);
 static GList *gibbon_position_find_double (const gint *before,
@@ -634,19 +635,7 @@ gibbon_position_find_double (const gint *before,
         return moves;
 }
 
-static GibbonMove *
-gibbon_position_copy_move (const GibbonMove *src)
-{
-        gsize bytes = sizeof src->number
-                      + src->number * sizeof *src->movements
-                      + sizeof src->status;
-        GibbonMove *dest = g_malloc (bytes);
-
-        memcpy (dest, src, bytes);
-
-        return dest;
-}
-
+#if (0)
 static void
 dump_move (const GibbonMove *move)
 {
@@ -666,6 +655,7 @@ dump_move (const GibbonMove *move)
 
         g_printerr ("\n");
 }
+#endif
 
 static gint
 find_backmost_checker (const gint board[26])
