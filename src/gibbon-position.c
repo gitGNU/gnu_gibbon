@@ -96,7 +96,11 @@ GibbonPosition initial = {
  * 6, 9, and 20).
  */
 guint move_patterns1[] = {
-                0x0103
+                0x04,
+                0x0103,
+                0x0202,
+                0x020101,
+                0x01010101
 };
 
 guint move_patterns2[] = {
@@ -106,11 +110,13 @@ guint move_patterns2[] = {
                 0x111201,
                 0x111102,
                 0x11010101,
+                0x11110101,
                 0x111101
 };
 
 guint move_patterns3[] = {
                 0x211102,
+                0x221101,
                 0x21110101,
                 0x21111101,
                 0x21211101
@@ -389,6 +395,12 @@ gibbon_position_check_move (const GibbonPosition *_before,
                                 move->status = GIBBON_MOVE_USE_ALL;
                                 return move;
                         }
+                }
+        } else {
+                if (move->number != 4
+                    && gibbon_position_can_move (after, die1)) {
+                        move->status = GIBBON_MOVE_USE_ALL;
+                        return move;
                 }
         }
 
