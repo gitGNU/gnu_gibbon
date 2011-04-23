@@ -397,6 +397,7 @@ static gboolean
 gibbon_position_can_move (const gint board[26], gint die)
 {
         gint i;
+        gint backmost;
 
         /* Dance? */
         if (board[25]) {
@@ -410,6 +411,19 @@ gibbon_position_can_move (const gint board[26], gint die)
         for (i = 24; i > die; --i)
                 if (board[i] >= 1 && board[i - die] >= -1)
                         return TRUE;
+
+        /* Can we bear-off? */
+        backmost = find_backmost_checker (board);
+        if (backmost > 6)
+                return FALSE;
+
+        /* Direct bear-off? */
+        if (board[die] >= 1)
+                return TRUE;
+
+        /* Wasteful bear-off? */
+        if (die > backmost)
+                return TRUE;
 
         return FALSE;
 }
@@ -665,6 +679,9 @@ find_backmost_checker (const gint board[26])
         for (i = 25; i > 0; --i)
                 if (board[i] > 0)
                         break;
+
+        if (!i)
+                return 26;
 
         return i;
 }
