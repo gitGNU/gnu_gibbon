@@ -509,8 +509,12 @@ gibbon_position_find_non_double (const gint *before,
         GibbonMove *move;
         GList *moves = NULL;
 
-        if (!num_froms)
-                return NULL;
+        if (!num_froms) {
+                move = gibbon_position_alloc_move (0);
+                moves = g_list_append (moves, move);
+
+                return moves;
+        }
 
         /* Two possibilities.  */
         if (2 == num_froms) {
@@ -576,9 +580,10 @@ gibbon_position_find_double (const gint *before,
 
         switch (num_froms) {
                 case 0:
-                        move_patterns = NULL;
-                        num_patterns = 0;
-                        break;
+                        move = gibbon_position_alloc_move (0);
+                        moves = g_list_append (moves, move);
+
+                        return moves;
                 case 1:
                         move_patterns = move_patterns1;
                         num_patterns = (sizeof move_patterns1)
@@ -625,10 +630,6 @@ gibbon_position_find_double (const gint *before,
                 }
                 moves = g_list_append (moves, move);
         }
-
-        /* Always append the empty move.  */
-        move = gibbon_position_alloc_move (0);
-        moves = g_list_append (moves, move);
 
         return moves;
 }
