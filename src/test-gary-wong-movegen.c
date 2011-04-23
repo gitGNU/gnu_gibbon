@@ -270,11 +270,12 @@ static void print_movement (gint board[28], gint from, gint die,
                             GibbonPositionSide turn);
 #endif
 
+static guint64 total_positions = 1000;
+static guint64 done_positions = 0;
+
 int
 main (int argc, char *argv[])
 {
-        guint64 num_positions = 1000;
-        guint64 i;
         guint64 random_seed = time (NULL);
         gboolean verbose = FALSE;
 
@@ -282,13 +283,13 @@ main (int argc, char *argv[])
 
         if (argc > 1) {
                 errno = 0;
-                num_positions = g_ascii_strtoull (argv[1], NULL, 10);
+                total_positions = g_ascii_strtoull (argv[1], NULL, 10);
                 if (errno) {
                         g_printerr ("Invalid number of positions `%s': %s!\n",
                                     argv[1], strerror (errno));
                         return -1;
                 }
-                g_print ("Testing %llu positions.\n", num_positions);
+                g_print ("Testing %llu positions.\n", total_positions);
                 verbose = TRUE;
         }
 
@@ -303,9 +304,8 @@ main (int argc, char *argv[])
         }
         srandom (random_seed);
 
-        for (i = 0; i < num_positions; /* empty */) {
-                i += test_game(num_positions - i);
-        }
+        for (done_positions = 0; done_positions < total_positions; /* empty */)
+                done_positions += test_game (total_positions - done_positions);
 
         return 0;
 }
@@ -644,7 +644,6 @@ compare_results (GibbonPosition *position,
                 GibbonPositionSide turn)
 {
         gboolean match = TRUE;
-        gint i;
 
         if (move->status == GIBBON_MOVE_LEGAL && !success)
                 match = FALSE;
@@ -654,7 +653,8 @@ compare_results (GibbonPosition *position,
         if (match)
                 return;
 
-        g_printerr ("Legality checks differ:\n");
+        g_printerr ("Legality checks differ after %llu/%llu positions:\n",
+                    done_positions, total_positions);
         g_printerr ("Gary Wong: %s, Gibbon: %s\n",
                     success ? "legal" : "illegal",
                     move->status == GIBBON_MOVE_LEGAL ? "legal" : "illegal");
