@@ -103,6 +103,7 @@ guint move_patterns2[] = {
                 0x1202,
                 0x1103,
                 0x110201,
+                0x111201,
                 0x111102,
                 0x111101
 };
@@ -573,7 +574,9 @@ gibbon_position_find_double (const gint *before,
 
         switch (num_froms) {
                 case 0:
-                        return NULL;
+                        move_patterns = NULL;
+                        num_patterns = 0;
+                        break;
                 case 1:
                         move_patterns = move_patterns1;
                         num_patterns = (sizeof move_patterns1)
@@ -611,10 +614,19 @@ gibbon_position_find_double (const gint *before,
                                 gibbon_position_fill_movement (move, from, die);
                                 from -= die;
                         }
+
+                        /* FIXME! The sub moves have to be sorted.  Otherwise,
+                         * the correct order for bearing off could not
+                         * be found.
+                         */
                         pattern >>= 8;
                 }
                 moves = g_list_append (moves, move);
         }
+
+        /* Always append the empty move.  */
+        move = gibbon_position_alloc_move (0);
+        moves = g_list_append (moves, move);
 
         return moves;
 }
