@@ -407,10 +407,9 @@ gibbon_position_can_move (const gint board[26], gint die)
         }
 
         /* Move freely?  */
-        for (i = 24; i > die; --i) {
-                if (board[i - die] >= -1)
+        for (i = 24; i > die; --i)
+                if (board[i] >= 1 && board[i - die] >= -1)
                         return TRUE;
-        }
 
         return FALSE;
 }
@@ -549,16 +548,16 @@ gibbon_position_find_non_double (const gint *before,
                 moves = g_list_append (moves, move);
         }
 
-        move = gibbon_position_alloc_move (2);
+        move = gibbon_position_alloc_move (1);
         gibbon_position_fill_movement (move, froms[0], die1);
+        moves = g_list_append (moves, move);
+
+        move = gibbon_position_alloc_move (1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
 
-        move = gibbon_position_alloc_move (1);
+        move = gibbon_position_alloc_move (2);
         gibbon_position_fill_movement (move, froms[0], die1);
-        moves = g_list_append (moves, move);
-
-        move = gibbon_position_alloc_move (1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
 
