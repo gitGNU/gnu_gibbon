@@ -649,9 +649,10 @@ compare_results (GibbonPosition *position,
 
         g_printerr ("Legality checks differ after %llu/%llu positions:\n",
                     done_positions, total_positions);
-        g_printerr ("Gary Wong: %s, Gibbon: %s\n",
+        g_printerr ("Gary Wong: %s, Gibbon: %s (%d)\n",
                     success ? "legal" : "illegal",
-                    move->status == GIBBON_MOVE_LEGAL ? "legal" : "illegal");
+                    move->status == GIBBON_MOVE_LEGAL ? "legal" : "illegal",
+                    move->status);
 
         g_printerr ("Starting position:\n");
         dump_position (position);
