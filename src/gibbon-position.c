@@ -104,6 +104,7 @@ guint move_patterns1[] = {
 };
 
 guint move_patterns2[] = {
+                0x1101,
                 0x1202,
                 0x1103,
                 0x110201,
@@ -111,6 +112,7 @@ guint move_patterns2[] = {
                 0x111102,
                 0x11010101,
                 0x11110101,
+                0x11111101,
                 0x111101
 };
 
