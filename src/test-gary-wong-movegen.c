@@ -247,8 +247,8 @@ static void dump_position (const GibbonPosition *position);
 static void dump_move (const GibbonMove *move);
 static void translate_position (gint board[28], const GibbonPosition *position,
                                 GibbonPositionSide turn);
-static guint test_game (guint64 max_positions);
-static guint test_roll (GibbonPosition *position, guint64 max_positions);
+static void test_game (void);
+static void test_roll (GibbonPosition *position);
 static gboolean game_over (const GibbonPosition *position);
 static void move_checker (GibbonPosition *position, gint board[28],
                           guint die, GibbonPositionSide side);
@@ -304,22 +304,20 @@ main (int argc, char *argv[])
         }
         srandom (random_seed);
 
-        for (done_positions = 0; done_positions < total_positions; /* empty */)
-                done_positions += test_game (total_positions - done_positions);
+        while (done_positions < total_positions)
+                test_game ();
 
         return 0;
 }
 
-static guint
-test_game (guint64 max_positions)
+static void
+test_game (void)
 {
         GibbonPosition *position = gibbon_position_new ();
         GibbonPositionSide side = random () % 2
                         ? GIBBON_POSITION_SIDE_WHITE
                                         : GIBBON_POSITION_SIDE_BLACK;
-        guint num_positions = 0;
-
-        while (num_positions < max_positions) {
+        while (done_positions < total_positions) {
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
                         position->dice[0] = 1 + random () % 6;
                         position->dice[1] = 1 + random () % 6;
@@ -335,24 +333,20 @@ test_game (guint64 max_positions)
                         break;
                 }
 
-                num_positions += test_roll (position,
-                                            max_positions - num_positions);
+                test_roll (position);
 
                 side = -side;
         }
 
         gibbon_position_free (position);
-
-        return num_positions;
 }
 
-static guint
-test_roll (GibbonPosition *position, guint64 max_positions)
+static void
+test_roll (GibbonPosition *position)
 {
         gboolean is_double = position->dice[0] == position->dice[1];
         guint max_movements = is_double ? 4 : 2;
         GibbonPosition *post_position;
-        guint num_positions = 0;
         guint i;
         GibbonPositionSide turn;
         gint dice[5], die;
@@ -382,7 +376,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
         dump_position (position);
 #endif
 
-        while (num_positions++ < max_positions) {
+        while (done_positions++ < total_positions) {
                 /* Swap the dice after every try.  The "reasonable" move
                  * generator always uses the dice in order.  In the
                  * "tricky" situations it would then fail to find a move.
@@ -445,7 +439,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
                 gibbon_position_free (post_position);
         }
 
-        return num_positions;
+        return;
 }
 
 /* This function moves a checker more or less randomly.
