@@ -149,6 +149,11 @@ static gboolean gibbon_position_is_diff (const gint before[26],
                                          const gint after[26],
                                          GibbonMove *move);
 static gboolean gibbon_position_can_move (const gint board[26], gint die);
+static gboolean gibbon_position_can_move_checker (const gint board[26],
+                                                  gint point,
+                                                  gint die, gint backmost);
+static gboolean gibbon_position_can_move2 (gint board[26],
+                                           gint die1, gint die2);
 static gint find_backmost_checker (const gint board[26]);
 
 /**
@@ -398,6 +403,15 @@ gibbon_position_check_move (const GibbonPosition *_before,
                                 move->status = GIBBON_MOVE_USE_ALL;
                                 return move;
                         }
+
+                        /* FIXME: Check if higher die can be used.  */
+
+                        if (gibbon_position_can_move2 (before, die1, die2)
+                            || gibbon_position_can_move2 (before, die2,
+                                                          die1)) {
+                                move->status = GIBBON_MOVE_TRY_SWAP;
+                                return move;
+                        }
                 }
         } else {
                 if (move->number != 4
@@ -441,6 +455,74 @@ gibbon_position_can_move (const gint board[26], gint die)
         /* Wasteful bear-off? */
         if (die > backmost)
                 return TRUE;
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_position_can_move_checker (const gint board[26], gint point,
+                                  gint backmost, gint die)
+{
+        if (board[point] < 1)
+                return FALSE;
+
+        if (point > die) {
+                if (board[point - die] >= -1)
+                        return TRUE;
+                else
+                        return FALSE;
+        }
+
+        /* Bear-off.  */
+        if (backmost > 6)
+                return FALSE;
+
+        if (point == die)
+                return TRUE;
+
+        if (die > backmost)
+                return TRUE;
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
+{
+        gint i;
+        gint backmost = 0;
+
+        /* If there are two or more checkers on the bar, we have an early
+         * exit because this case was certainly checked already.
+         */
+        if (board[25] >= 2)
+                return FALSE;
+
+        if (board[25] == 1) {
+                if (board[25 - die1] < -1)
+                        return FALSE;
+
+                if (gibbon_position_can_move_checker (board, 25,
+                                                      25, die1 + die2))
+                                return TRUE;
+                return FALSE;
+        }
+
+        for (i = 24; i > die1; --i) {
+                if (board[i] <= 0)
+                        continue;
+
+                if (!backmost)
+                        backmost = i;
+
+                if (!gibbon_position_can_move_checker (board, i,
+                                                       backmost, die1))
+                        continue;
+
+                if (gibbon_position_can_move_checker (board, i, backmost,
+                                                      die1 + die2))
+                        return TRUE;
+        }
 
         return FALSE;
 }
