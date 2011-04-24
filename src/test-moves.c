@@ -30,6 +30,7 @@
 static gboolean expect_move (const GibbonMove *expect,
                              GibbonMove *got, const gchar *msg);
 static gboolean test_too_many_moves (void);
+static gboolean test_use_all (void);
 
 int
 main(int argc, char *argv[])
@@ -39,6 +40,8 @@ main(int argc, char *argv[])
         g_type_init ();
 
         if (!test_too_many_moves ())
+                status = -1;
+        if (!test_use_all ())
                 status = -1;
 
         return status;
@@ -112,6 +115,73 @@ test_too_many_moves ()
         expect->movements[3].to = 2;
 
         if (!expect_move (expect, move, "White moved 4 checkers after 22"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_use_all ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 3;
+        before->dice[1] = 2;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->points[3] = -2;
+        before->points[10] = +1;
+
+        after = gibbon_position_copy (before);
+        after->points[3] = -1;
+        after->points[6] = -1;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_USE_ALL;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_BLACK);
+        if (!expect_move (expect, move,
+                          "Black moved only one checker after 32"))
+                retval = FALSE;
+
+        /* Move one white checker in the way.  */
+        before->points[5] = 1;
+        after->points[5] = 1;
+        before->points[8] = 2;
+        after->points[8] = 2;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_BLACK);
+        if (!expect_move (expect, move,
+                          "Black moved only one checker after 32,"
+                          " and did not hit"))
+                retval = FALSE;
+
+        /* Now really block the point.  */
+        before->points[5] = 2;
+        after->points[5] = 2;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_BLACK);
+        expect->status = GIBBON_MOVE_LEGAL;
+        expect->number = 1;
+        expect->movements[0].from = 21;
+        expect->movements[0].to = 18;
+        if (!expect_move (expect, move,
+                          "Black could not move the 2 after 32"))
                 retval = FALSE;
 
         gibbon_position_free (after);
