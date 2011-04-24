@@ -51,7 +51,6 @@ test_too_many_moves ()
         GibbonPosition *after;
         GibbonMove *move;
         GibbonMove *expect;
-        gint i;
         gboolean retval = TRUE;
 
         expect = g_alloca (sizeof expect->number
@@ -62,8 +61,7 @@ test_too_many_moves ()
         before->dice[0] = 2;
         before->dice[1] = 2;
 
-        for (i = 0; i < 24; ++i)
-                before->points[i] = 0;
+        memset (before->points, 0, sizeof before->points);
 
         /* Black has two checkers on her ace-point.  White has one checker
          * on his 16-point, one on his 13-point, one on his 10-point, one on
