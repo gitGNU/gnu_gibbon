@@ -29,7 +29,6 @@
 
 static gboolean expect_move (const GibbonMove *expect,
                              GibbonMove *got, const gchar *msg);
-
 static gboolean test_white_simple_doubles (void);
 static gboolean test_black_simple_doubles (void);
 static gboolean test_white_3moves_doubles (void);
@@ -261,15 +260,16 @@ test_black_simple_doubles ()
         return retval;
 }
 
-static gboolean expect_move (const GibbonMove *expect,
-                             GibbonMove *got, const gchar *msg)
+static gboolean
+expect_move (const GibbonMove *expect,
+             GibbonMove *got, const gchar *msg)
 {
         gboolean retval = TRUE;
         guint i;
-        guint got_from, got_to, got_num;
+        guint got_from, got_to;
         const GibbonMovement *got_movement;
         const GibbonMovement *expect_movement;
-        guint expect_from, expect_to, expect_num;
+        guint expect_from, expect_to;
 
         if (!got) {
                 g_printerr ("%s: Returned move is NULL!\n", msg);
@@ -296,9 +296,7 @@ static gboolean expect_move (const GibbonMove *expect,
                         expect_movement = expect->movements + i;
                         expect_from = expect_movement->from;
                         expect_to = expect_movement->to;
-                        if (got_from != expect_from
-                            || got_to != expect_to
-                            || got_num != expect_num) {
+                        if (got_from != expect_from || got_to != expect_to) {
                                 g_printerr ("%s: Movement %u: "
                                             "Expected %u/%u,"
                                             " got %u/%u.\n",
