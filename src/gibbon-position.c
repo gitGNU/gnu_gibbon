@@ -578,12 +578,6 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
                 --before[from];
         }
 
-        /* Is the resulting position identical to what we expect? */
-        if (memcmp (before, after, sizeof before)) {
-                for (i = 25; i >= 0; --i) {
-                        g_printerr ("  %d: %d | %d\n", i, before[i], after[i]);
-                }
-        }
         if (memcmp (before, after, sizeof before))
                 return FALSE;
 
