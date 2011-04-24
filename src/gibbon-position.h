@@ -140,8 +140,8 @@ struct _GibbonMovement
  * @GIBBON_MOVE_LEGAL: legal move
  * @GIBBON_MOVE_ILLEGAL: illegal move
  * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
- * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied,
- *                        probably never used
+ * @GIBBON_MOVE_BLOCKED: one of the intermediate landing points was occupied,
+ *                       never used here
  * @GIBBON_MOVE_USE_ALL: at least one more checker can be moved
  * @GIBBON_MOVE_USE_HIGHER: in doubt, you must use the higher value
  * @GIBBON_MOVE_TRY_SWAP: two checkers can be moved by swapping the dice order
@@ -156,12 +156,11 @@ typedef enum {
         GIBBON_MOVE_ILLEGAL = 1,
         GIBBON_MOVE_TOO_MANY_MOVES = 2,
         GIBBON_MOVE_BLOCKED = 3,
-        GIBBON_MOVE_NOT_COMPLETE = 4,
-        GIBBON_MOVE_USE_ALL = 5,
-        GIBBON_MOVE_USE_HIGHER = 6,
-        GIBBON_MOVE_TRY_SWAP = 7,
-        GIBBON_MOVE_PREMATURE_BEAR_OFF = 8,
-        GIBBON_MOVE_ILLEGAL_WASTE = 9
+        GIBBON_MOVE_USE_ALL = 4,
+        GIBBON_MOVE_USE_HIGHER = 5,
+        GIBBON_MOVE_TRY_SWAP = 6,
+        GIBBON_MOVE_PREMATURE_BEAR_OFF = 7,
+        GIBBON_MOVE_ILLEGAL_WASTE = 8
 } GibbonMoveError;
 
 /**
