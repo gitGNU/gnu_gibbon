@@ -48,6 +48,59 @@ main(int argc, char *argv[])
 }
 
 static gboolean
+expect_move (const GibbonMove *expect,
+             GibbonMove *got, const gchar *msg)
+{
+        gboolean retval = TRUE;
+        guint i;
+        guint got_from, got_to;
+        const GibbonMovement *got_movement;
+        const GibbonMovement *expect_movement;
+        guint expect_from, expect_to;
+
+        if (!got) {
+                g_printerr ("%s: Returned move is NULL!\n", msg);
+                return FALSE;
+        }
+
+        if (got->status != expect->status) {
+                g_printerr ("%s: Expected status %d, got %d.\n",
+                            msg, expect->status, got->status);
+                retval = FALSE;
+        }
+
+        if (expect->status == GIBBON_MOVE_LEGAL) {
+                if (expect->number != got->number) {
+                        g_printerr ("%s: Expected %u movements, got %u.\n",
+                                    msg, expect->number, got->number);
+                        retval = FALSE;
+                }
+
+                for (i = 0; i < got->number && i < expect->number; ++i) {
+                        got_movement = got->movements + i;
+                        got_from = got_movement->from;
+                        got_to = got_movement->to;
+                        expect_movement = expect->movements + i;
+                        expect_from = expect_movement->from;
+                        expect_to = expect_movement->to;
+                        if (got_from != expect_from || got_to != expect_to) {
+                                g_printerr ("%s: Movement %u: "
+                                            "Expected %u/%u,"
+                                            " got %u/%u.\n",
+                                            msg, i,
+                                            expect_from , expect_to,
+                                            got_from, got_to);
+                                retval = FALSE;
+                        }
+                }
+        }
+
+        g_free (got);
+
+        return retval;
+}
+
+static gboolean
 test_too_many_moves ()
 {
         GibbonPosition *before = gibbon_position_new ();
@@ -185,59 +238,6 @@ test_use_all ()
                 retval = FALSE;
 
         gibbon_position_free (after);
-
-        return retval;
-}
-
-static gboolean
-expect_move (const GibbonMove *expect,
-             GibbonMove *got, const gchar *msg)
-{
-        gboolean retval = TRUE;
-        guint i;
-        guint got_from, got_to;
-        const GibbonMovement *got_movement;
-        const GibbonMovement *expect_movement;
-        guint expect_from, expect_to;
-
-        if (!got) {
-                g_printerr ("%s: Returned move is NULL!\n", msg);
-                return FALSE;
-        }
-
-        if (got->status != expect->status) {
-                g_printerr ("%s: Expected status %d, got %d.\n",
-                            msg, expect->status, got->status);
-                retval = FALSE;
-        }
-
-        if (expect->status == GIBBON_MOVE_LEGAL) {
-                if (expect->number != got->number) {
-                        g_printerr ("%s: Expected %u movements, got %u.\n",
-                                    msg, expect->number, got->number);
-                        retval = FALSE;
-                }
-
-                for (i = 0; i < got->number && i < expect->number; ++i) {
-                        got_movement = got->movements + i;
-                        got_from = got_movement->from;
-                        got_to = got_movement->to;
-                        expect_movement = expect->movements + i;
-                        expect_from = expect_movement->from;
-                        expect_to = expect_movement->to;
-                        if (got_from != expect_from || got_to != expect_to) {
-                                g_printerr ("%s: Movement %u: "
-                                            "Expected %u/%u,"
-                                            " got %u/%u.\n",
-                                            msg, i,
-                                            expect_from , expect_to,
-                                            got_from, got_to);
-                                retval = FALSE;
-                        }
-                }
-        }
-
-        g_free (got);
 
         return retval;
 }
