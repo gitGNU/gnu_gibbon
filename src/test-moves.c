@@ -288,7 +288,7 @@ test_try_swap1 ()
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_BLACK);
 
-        if (!expect_move (expect, move, "White must use the 4 before the 6"))
+        if (!expect_move (expect, move, "White must use the 3 before the 6"))
                 retval = FALSE;
 
         gibbon_position_free (after);
