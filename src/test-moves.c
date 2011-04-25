@@ -31,6 +31,7 @@ static gboolean expect_move (const GibbonMove *expect,
                              GibbonMove *got, const gchar *msg);
 static gboolean test_too_many_moves (void);
 static gboolean test_use_all (void);
+static gboolean test_try_swap1 (void);
 
 int
 main(int argc, char *argv[])
@@ -42,6 +43,8 @@ main(int argc, char *argv[])
         if (!test_too_many_moves ())
                 status = -1;
         if (!test_use_all ())
+                status = -1;
+        if (!test_try_swap1 ())
                 status = -1;
 
         return status;
@@ -235,6 +238,57 @@ test_use_all ()
         expect->movements[0].to = 18;
         if (!expect_move (expect, move,
                           "Black could not move the 2 after 32"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_try_swap1 ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 6;
+        before->dice[1] = 3;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->points[23] = -1;
+        before->points[21] = +2;
+        before->points[20] = -3;
+        before->points[19] = -1;
+        before->points[18] = -2;
+        before->points[12] = +2;
+        before->points[7] = +2;
+        before->points[6] = -1;
+        before->points[5] = +2;
+        before->points[3] = +2;
+        before->points[2] = +2;
+
+        /* Black now moves only the three but could use the three and
+         * the six.
+         */
+        after = gibbon_position_copy (before);
+        after->points[20] = -2;
+        after->points[23] = -2;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_TRY_SWAP;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_BLACK);
+
+        if (!expect_move (expect, move, "White must use the 4 before the 6"))
                 retval = FALSE;
 
         gibbon_position_free (after);
