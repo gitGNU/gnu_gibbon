@@ -32,6 +32,7 @@ static gboolean expect_move (const GibbonMove *expect,
 static gboolean test_too_many_moves (void);
 static gboolean test_use_all (void);
 static gboolean test_try_swap1 (void);
+static gboolean test_try_swap2 (void);
 
 int
 main(int argc, char *argv[])
@@ -45,6 +46,8 @@ main(int argc, char *argv[])
         if (!test_use_all ())
                 status = -1;
         if (!test_try_swap1 ())
+                status = -1;
+        if (!test_try_swap2 ())
                 status = -1;
 
         return status;
@@ -289,6 +292,58 @@ test_try_swap1 ()
                                            GIBBON_POSITION_SIDE_BLACK);
 
         if (!expect_move (expect, move, "White must use the 3 before the 6"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_try_swap2 ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 1;
+        before->dice[1] = 4;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->points[21] = -2;
+        before->points[20] = -2;
+        before->points[18] = -4;
+        before->points[16] = +1;
+        before->points[14] = -2;
+        before->points[12] = -1;
+        before->points[11] = -3;
+        before->points[8] = -1;
+        before->points[2] = +1;
+        before->points[1] = +4;
+        before->points[0] = +4;
+
+        /* White can move the one and the four with the checker on his
+         * 17-point.  But he must use the four so that he can move the one
+         * within his home board.
+         */
+        after = gibbon_position_copy (before);
+        after->points[16] = 0;
+        after->points[15] = +1;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_TRY_SWAP;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "White must the one in his home board"))
                 retval = FALSE;
 
         gibbon_position_free (after);
