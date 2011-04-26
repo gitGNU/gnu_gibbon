@@ -493,6 +493,8 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
 {
         gint i;
         gint backmost = 0;
+        gboolean can_move;
+        gint saved_from, saved_to;
 
         /* If there are two or more checkers on the bar, we have an early
          * exit because this case was certainly checked already.
@@ -507,6 +509,17 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
                 if (gibbon_position_can_move_checker (board, 25,
                                                       25, die1 + die2))
                                 return TRUE;
+
+                board[25] = 0;
+                saved_to = board[25 - die1];
+                board[25 - die1] = 1;
+
+                can_move = gibbon_position_can_move (board, die2);
+                board[25] = 1;
+                board[25 - die1] = saved_to;
+                if (can_move)
+                        return TRUE;
+
                 return FALSE;
         }
 
@@ -523,6 +536,18 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
 
                 if (gibbon_position_can_move_checker (board, i, backmost,
                                                       die1 + die2))
+                        return TRUE;
+                saved_from = board[i];
+                saved_to = board[i - die1];
+                board[i] = 0;
+                board[i - die1] = 1;
+                /* FIXME! We know already the backmost checker and
+                 * that information could be used here.
+                 */
+                can_move = gibbon_position_can_move (board, die2);
+                board[i] = saved_from;
+                board[i - die1] = saved_to;
+                if (can_move)
                         return TRUE;
         }
 
