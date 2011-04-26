@@ -343,7 +343,8 @@ test_try_swap2 ()
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
 
-        if (!expect_move (expect, move, "White must the one in his home board"))
+        if (!expect_move (expect, move, "White must move the one in his home"
+                                        " board"))
                 retval = FALSE;
 
         gibbon_position_free (after);
