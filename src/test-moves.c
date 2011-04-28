@@ -35,6 +35,8 @@ static gboolean test_try_swap1 (void);
 static gboolean test_try_swap2 (void);
 static gboolean test_try_dance (void);
 static gboolean test_illegal_waste (void);
+static gboolean test_use_higher (void);
+static gboolean test_not_use_higher (void);
 
 int
 main(int argc, char *argv[])
@@ -54,6 +56,10 @@ main(int argc, char *argv[])
         if (!test_try_dance ())
                 status = -1;
         if (!test_illegal_waste ())
+                status = -1;
+        if (!test_use_higher ())
+                status = -1;
+        if (!test_not_use_higher ())
                 status = -1;
 
         return status;
@@ -339,6 +345,11 @@ test_try_swap2 ()
         /* White can move the one and the four with the checker on his
          * 17-point.  But he must use the four so that he can move the one
          * within his home board.
+         *
+         * This case would already be caught by the rule that the higher
+         * number has to be used.  But since the "try swap" error message
+         * contains better information for the user, we expect this error
+         * instead.
          */
         after = gibbon_position_copy (before);
         after->points[16] = 0;
@@ -464,6 +475,117 @@ test_illegal_waste ()
                                            GIBBON_POSITION_SIDE_WHITE);
 
         if (!expect_move (expect, move, "Illegal bear-off by white"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_use_higher ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 6;
+        before->dice[1] = 4;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->bar[0] = 1;
+        before->points[23] = -2;
+        before->points[22] = -2;
+        before->points[17] = -1;
+        before->points[16] = -1;
+        before->points[14] = -2;
+        before->points[8] = -1;
+        before->points[6] = -1;
+        before->points[4] = +2;
+        before->points[3] = +3;
+        before->points[2] = +2;
+        before->points[1] = +2;
+        before->points[0] = -5;
+
+        /* White can come in from the bar with the six and the four.  But
+         * it must use the six because it is higher, and both numbers cannot
+         * be used elsewhere.
+         */
+        after = gibbon_position_copy (before);
+        after->bar[0] = 0;
+        after->points[20] = +1;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_USE_HIGHER;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "White used lower number"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_not_use_higher ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 4;
+        before->dice[1] = 6;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->points[23] = -2;
+        before->points[20] = -1;
+        before->points[0] = +1;
+
+        /* White bears off his last checker from the ace point.  Even if the
+         * legality checker assumed that the lower number was used for
+         * bearing off, this move is legal.
+         */
+        after = gibbon_position_copy (before);
+        after->points[0] = 0;
+
+        expect->number = 1;
+        expect->movements[0].from = 1;
+        expect->movements[0].to = 0;
+        expect->status = GIBBON_MOVE_LEGAL;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "False positive for use higher"))
+                retval = FALSE;
+
+        /* Now swap the two dice.  Independently of the internal implementation,
+         * the above described bug should strike in one of the two cases
+         * if it is not handled.
+         */
+        before->dice[0] = 6;
+        before->dice[1] = 4;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "False positive for use higher"))
                 retval = FALSE;
 
         gibbon_position_free (after);

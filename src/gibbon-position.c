@@ -305,7 +305,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
         gint i, tmp;
         guint num_froms = 0;
         guint froms[4];
-        guint die1, die2, other_die;
+        guint die1, die2, this_die, other_die;
         GList *iter;
 
         die1 = abs (_before->dice[0]);
@@ -410,21 +410,47 @@ gibbon_position_check_move (const GibbonPosition *_before,
                                 return move;
                         }
                 } else if (move->number == 1) {
-                        if (move->movements[0].die == die1)
+                        if (move->movements[0].die == die1) {
+                                this_die = die1;
                                 other_die = die2;
-                        else
+                        } else {
+                                this_die = die2;
                                 other_die = die1;
+                        }
                         if (gibbon_position_can_move (after, other_die)) {
                                 move->status = GIBBON_MOVE_USE_ALL;
                                 return move;
                         }
 
-                        /* FIXME: Check if higher die can be used.  */
-
                         if (gibbon_position_can_move2 (before, die1, die2)
                             || gibbon_position_can_move2 (before, die2,
                                                           die1)) {
                                 move->status = GIBBON_MOVE_TRY_SWAP;
+                                return move;
+                        }
+
+                        /* It would be a lot more efficient to do this test
+                         * before the "try swap" test because it is the
+                         * cheaper one.  However, the information that the
+                         * numbers used have to be swapped is much better for
+                         * the user who moved wrong, and it better matches
+                         * the phrasing of the backgammon rules.
+                         */
+                        if (this_die < other_die
+                            && gibbon_position_can_move (before,
+                                                         other_die)) {
+                                move->status = GIBBON_MOVE_USE_HIGHER;
+
+                                /* Special case: If this was a bear-off, and
+                                 * and the checker may be borne off with either
+                                 * number then either number has to be accepted.
+                                 */
+                                if (move->movements[0].to == 0) {
+                                        if (this_die >=
+                                            find_backmost_checker (before))
+                                                move->status =
+                                                        GIBBON_MOVE_LEGAL;
+                                }
                                 return move;
                         }
                 }
