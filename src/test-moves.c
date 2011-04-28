@@ -33,6 +33,8 @@ static gboolean test_too_many_moves (void);
 static gboolean test_use_all (void);
 static gboolean test_try_swap1 (void);
 static gboolean test_try_swap2 (void);
+static gboolean test_try_dance (void);
+static gboolean test_illegal_waste (void);
 
 int
 main(int argc, char *argv[])
@@ -48,6 +50,10 @@ main(int argc, char *argv[])
         if (!test_try_swap1 ())
                 status = -1;
         if (!test_try_swap2 ())
+                status = -1;
+        if (!test_try_dance ())
+                status = -1;
+        if (!test_illegal_waste ())
                 status = -1;
 
         return status;
@@ -345,6 +351,119 @@ test_try_swap2 ()
 
         if (!expect_move (expect, move, "White must move the one in his home"
                                         " board"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_try_dance ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 1;
+        before->dice[1] = 2;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->bar[0] = 3;
+        before->points[21] = -2;
+        before->points[6] = 1;
+
+        /* White comes in with only one checker, and moves 6/5.  */
+        after = gibbon_position_copy (before);
+        after->bar[0] = 2;
+        after->points[22] = +1;
+        after->points[6] = 0;
+        after->points[5] = +1;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_DANCING;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "White moved although dancing"))
+                retval = FALSE;
+
+        /* Now correct the move.  */
+        after->bar[0] = 1;
+        after->points[23] = +1;
+        after->points[6] = +1;
+        after->points[5] = 0;
+
+        expect->number = 2;
+        expect->movements[0].from = 25;
+        expect->movements[0].to = 24;
+        expect->movements[1].from = 25;
+        expect->movements[1].to = 23;
+        expect->status = GIBBON_MOVE_LEGAL;
+
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "White coming in from the bar with"
+                                        " two checkers"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_illegal_waste ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = 1;
+        before->dice[1] = 5;
+
+        memset (before->points, 0, sizeof before->points);
+
+        before->points[22] = -2;
+        before->points[20] = -2;
+        before->points[18] = -4;
+        before->points[16] = -4;
+        before->points[13] = -1;
+        before->points[5] = -1;
+        before->points[4] = +3;
+        before->points[3] = +4;
+        before->points[2] = +3;
+        before->points[1] = +2;
+        before->points[0] = +2;
+
+        /* White now moves 1/off and 3/2.  */
+        after = gibbon_position_copy (before);
+        after->points[2] = +2;
+        after->points[1] = +3;
+        after->points[0] = +1;
+
+        expect->number = 0;
+        expect->status = GIBBON_MOVE_ILLEGAL_WASTE;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        if (!expect_move (expect, move, "Illegal bear-off by white"))
                 retval = FALSE;
 
         gibbon_position_free (after);

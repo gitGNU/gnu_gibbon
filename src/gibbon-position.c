@@ -392,6 +392,16 @@ gibbon_position_check_move (const GibbonPosition *_before,
         if (move->status != GIBBON_MOVE_LEGAL)
                 return move;
 
+        /* Dancing? */
+        if (after[25]) {
+                for (i = 0; i < move->number; ++i) {
+                        if (move->movements[i].from != 25) {
+                                move->status = GIBBON_MOVE_DANCING;
+                                return move;
+                        }
+                }
+        }
+
         if (die1 != die2) {
                 if (move->number == 0) {
                         if (gibbon_position_can_move (after, die1)
@@ -586,8 +596,10 @@ gibbon_position_is_diff (const gint _before[26], const gint after[26],
 
                         if (backmost > 6)
                                 move->status = GIBBON_MOVE_PREMATURE_BEAR_OFF;
-                        /* Although this move is illegal, we continue.  If
-                         * the resulting position matches, we know that the
+                        else if (from != movement->die && from != backmost)
+                                move->status = GIBBON_MOVE_ILLEGAL_WASTE;
+                        /* Even when this move is illegal, we continue.  If
+                         * the resulting position matches, we know that we
                          * intentionally bore off the checker, and we can
                          * inform about the error.
                          */

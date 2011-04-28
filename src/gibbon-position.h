@@ -148,6 +148,7 @@ struct _GibbonMovement
  * @GIBOBN_MOVE_PREMATURE_BEAR_OFF: checker borne off with checkers outhside
  *                                  home board
  * @GIBBON_MOVE_ILLEGAL_WASTE: move higher before bearing off with waste
+ * @GIBBON_MOVE_DANCING: Must come in from the bar first
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
@@ -160,7 +161,8 @@ typedef enum {
         GIBBON_MOVE_USE_HIGHER = 5,
         GIBBON_MOVE_TRY_SWAP = 6,
         GIBBON_MOVE_PREMATURE_BEAR_OFF = 7,
-        GIBBON_MOVE_ILLEGAL_WASTE = 8
+        GIBBON_MOVE_ILLEGAL_WASTE = 8,
+        GIBBON_MOVE_DANCING = 9
 } GibbonMoveError;
 
 /**
