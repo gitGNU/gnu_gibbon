@@ -558,7 +558,9 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
 
                 board[25] = 0;
                 saved_to = board[25 - die1];
-                board[25 - die1] = 1;
+                if (saved_to < 0)
+                        board[25 - die1] = 0;
+                ++board[25 - die1];
 
                 can_move = gibbon_position_can_move (board, die2);
                 board[25] = 1;
@@ -585,8 +587,10 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
                         return TRUE;
                 saved_from = board[i];
                 saved_to = board[i - die1];
-                board[i] = 0;
-                board[i - die1] = 1;
+                if (saved_to < 0)
+                        board[i - die1] = 0;
+                --board[i];
+                ++board[i - die1];
                 /* FIXME! We know already the backmost checker and
                  * that information could be used here.
                  */
