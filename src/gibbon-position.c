@@ -106,7 +106,7 @@ guint move_patterns1[] = {
 };
 
 guint move_patterns2[] = {
-                0x1101,
+                /* Using all four numbers.  */
                 0x1202,
                 0x1103,
                 0x1301,
@@ -117,8 +117,15 @@ guint move_patterns2[] = {
                 0x11010101,
                 0x11110101,
                 0x11111101,
+
+                /* Using three out of four numbers.  */
                 0x110101,
-                0x111101
+                0x111101,
+                0x1102,
+                0x1201,
+
+                /* Using two out of four numbers.  */
+                0x1101
 };
 
 guint move_patterns3[] = {
