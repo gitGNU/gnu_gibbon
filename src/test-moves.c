@@ -776,7 +776,7 @@ test_ordered_bear_off ()
         after = gibbon_position_copy (before);
         after->points[4] = 0;
         after->points[2] = 0;
-        after->points[1] = +2;
+        after->points[1] = +4;
 
         expect->number = 4;
         expect->movements[0].from = 5;
