@@ -236,7 +236,7 @@ LegalMove (int anBoardPre[28], int anBoardPost[28], int anRoll[2],
 
 /* End of Gary Wong's code.  */
 
-#define DEBUG_TEST_ENGINE 1
+#define DEBUG_TEST_ENGINE 0
 
 static void compare_results (GibbonPosition *position,
                              GibbonPosition *post_position,
@@ -396,7 +396,7 @@ test_roll (GibbonPosition *position)
                 /* Half of the moves are more or less random, the other half
                  * more or less reasonable.
                  */
-                if (!(random () % 10)) {
+                if (!(random () & 0x1)) {
 #if (DEBUG_TEST_ENGINE)
                         if (turn == GIBBON_POSITION_SIDE_WHITE)
                                 g_printerr ("  ?? w: %u%u:", dice[0], dice[1]);
@@ -663,10 +663,8 @@ compare_results (GibbonPosition *position,
                 g_printerr ("Move according to Gary Wong:");
                 print_moves (moves, turn, position->dice);
         }
-        if (move->status == GIBBON_MOVE_LEGAL) {
-                g_printerr ("Move according to Gibbon:");
-                dump_move (move);
-        }
+        g_printerr ("Move according to Gibbon:");
+        dump_move (move);
 
         exit (1);
 }
