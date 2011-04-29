@@ -101,7 +101,9 @@ guint move_patterns1[] = {
                 0x0202,
                 0x020101,
                 0x01010101,
+                0x03,
                 0x010101,
+                0x02,
                 0x01
 };
 
@@ -167,6 +169,8 @@ static gboolean gibbon_position_can_move_checker (const gint board[26],
 static gboolean gibbon_position_can_move2 (gint board[26],
                                            gint die1, gint die2);
 static gint find_backmost_checker (const gint board[26]);
+static void swap_movements (GibbonMovement *m1, GibbonMovement *m2);
+static void order_movements (GibbonMove *move);
 
 /**
  * gibbon_position_new:
@@ -764,6 +768,7 @@ gibbon_position_find_double (const gint *before,
         guint pattern;
         guint from_index;
         gint from;
+        gboolean is_bear_off;
 
         switch (num_froms) {
                 case 0:
@@ -799,6 +804,7 @@ gibbon_position_find_double (const gint *before,
                  * would never pay out.
                  */
                 move = gibbon_position_alloc_move (4);
+                is_bear_off = FALSE;
 
                 while (pattern) {
                         num_steps = pattern & 0xf;
@@ -807,14 +813,17 @@ gibbon_position_find_double (const gint *before,
                         for (j = 0; j < num_steps; ++j) {
                                 gibbon_position_fill_movement (move, from, die);
                                 from -= die;
+
+                                if (from < 0)
+                                        is_bear_off = TRUE;
                         }
 
-                        /* FIXME! The sub moves have to be sorted.  Otherwise,
-                         * the correct order for bearing off could not
-                         * be found.
-                         */
                         pattern >>= 8;
                 }
+
+                if (is_bear_off)
+                        order_movements (move);
+
                 moves = g_list_append (moves, move);
         }
 
@@ -834,7 +843,7 @@ dump_move (const GibbonMove *move)
         }
 
         for (i = 0; i < move->number; ++i) {
-                g_printerr (" %u/%u",
+                g_printerr (" %d/%d",
                             move->movements[i].from,
                             move->movements[i].to);
         }
@@ -856,4 +865,29 @@ find_backmost_checker (const gint board[26])
                 return 26;
 
         return i;
+}
+
+static void
+swap_movements (GibbonMovement *m1, GibbonMovement *m2)
+{
+        GibbonMovement tmp;
+
+        memcpy (&tmp, m1, sizeof tmp);
+        memcpy (m1, m2, sizeof *m1);
+        memcpy (m2, &tmp, sizeof *m2);
+}
+
+static void
+order_movements (GibbonMove *move)
+{
+        gint i;
+
+        for (i = 1; i < move->number; ++i) {
+                if (move->movements[i].to == 0) {
+                        if (move->movements[i].from
+                            > move->movements[i - 1].from)
+                                swap_movements (move->movements + i,
+                                                move->movements + i - 1);
+                }
+        }
 }
