@@ -96,21 +96,29 @@ GibbonPosition initial = {
  * 6, 9, and 20).
  */
 guint move_patterns1[] = {
+                /* Using all four numbers.  */
                 0x04,
                 0x0103,
                 0x0202,
-                0x020101,
+                0x010102,
                 0x01010101,
+
+                /* Using three out of four numbers.  */
                 0x03,
                 0x010101,
+
+                /* Using two out of four numbers.  */
                 0x02,
+                0x0101,
+
+                /* Using one number.  */
                 0x01
 };
 
 guint move_patterns2[] = {
                 /* Using all four numbers.  */
-                0x1202,
                 0x1103,
+                0x1202,
                 0x1301,
                 0x110201,
                 0x111201,
@@ -131,12 +139,16 @@ guint move_patterns2[] = {
 };
 
 guint move_patterns3[] = {
+                /* Using all four numbers.  */
                 0x211102,
                 0x211201,
                 0x221101,
                 0x21110101,
                 0x21111101,
-                0x21211101
+                0x21211101,
+
+                /* Using three out of four numbers.  */
+                0x211101
 };
 
 guint move_patterns4[] = {
@@ -556,9 +568,6 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
                 if (board[25 - die1] < -1)
                         return FALSE;
 
-                if (gibbon_position_can_move_checker (board, 25,
-                                                      25, die1 + die2))
-                                return TRUE;
 
                 board[25] = 0;
                 saved_to = board[25 - die1];
@@ -566,7 +575,10 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
                         board[25 - die1] = 0;
                 ++board[25 - die1];
 
-                can_move = gibbon_position_can_move (board, die2);
+                can_move = gibbon_position_can_move_checker (board, 25,
+                                                             25, die1 + die2);
+                if (!can_move)
+                        can_move = gibbon_position_can_move (board, die2);
                 board[25] = 1;
                 board[25 - die1] = saved_to;
                 if (can_move)
@@ -586,19 +598,21 @@ gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
                                                        backmost, die1))
                         continue;
 
-                if (gibbon_position_can_move_checker (board, i, backmost,
-                                                      die1 + die2))
-                        return TRUE;
                 saved_from = board[i];
                 saved_to = board[i - die1];
                 if (saved_to < 0)
                         board[i - die1] = 0;
                 --board[i];
                 ++board[i - die1];
+
+                can_move = gibbon_position_can_move_checker (board, i, backmost,
+                                                             die2);
+
                 /* FIXME! We know already the backmost checker and
                  * that information could be used here.
                  */
-                can_move = gibbon_position_can_move (board, die2);
+                if (!can_move)
+                        can_move = gibbon_position_can_move (board, die2);
                 board[i] = saved_from;
                 board[i - die1] = saved_to;
                 if (can_move)
@@ -694,11 +708,20 @@ gibbon_position_fill_movement (GibbonMove *move, guint point, guint die)
 static GList *
 gibbon_position_find_non_double (const gint *before,
                                  const gint *after,
-                                 guint die1, guint die2,
+                                 guint _die1, guint _die2,
                                  gsize num_froms, const guint *froms)
 {
         GibbonMove *move;
         GList *moves = NULL;
+        guint die1, die2;
+
+        if (_die1 < _die2) {
+                die1 = _die1;
+                die2 = _die2;
+        } else {
+                die1 = _die2;
+                die2 = _die1;
+        }
 
         if (!num_froms) {
                 move = gibbon_position_alloc_move (0);
@@ -814,7 +837,7 @@ gibbon_position_find_double (const gint *before,
                                 gibbon_position_fill_movement (move, from, die);
                                 from -= die;
 
-                                if (from < 0)
+                                if (from <= 0)
                                         is_bear_off = TRUE;
                         }
 
@@ -883,11 +906,8 @@ order_movements (GibbonMove *move)
         gint i;
 
         for (i = 1; i < move->number; ++i) {
-                if (move->movements[i].to == 0) {
-                        if (move->movements[i].from
-                            > move->movements[i - 1].from)
-                                swap_movements (move->movements + i,
-                                                move->movements + i - 1);
-                }
+                if (move->movements[i].from > move->movements[i - 1].from)
+                        swap_movements (move->movements + i,
+                                        move->movements + i - 1);
         }
 }
