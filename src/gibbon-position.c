@@ -324,7 +324,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
                             const GibbonPosition *_after,
                             GibbonPositionSide side)
 {
-        GibbonMove *move;
+        GibbonMove *move, *this_move;
         GList *found;
         gint before[26];
         gint after[26];
@@ -406,14 +406,27 @@ gibbon_position_check_move (const GibbonPosition *_before,
         while (iter) {
                 if (gibbon_position_is_diff (before, after,
                                              (GibbonMove *) iter->data)) {
-                        g_free (move);
-                        move = (GibbonMove *) iter->data;
-                        iter->data = NULL;
-                        break;
+                        this_move = (GibbonMove *) iter->data;
+
+                        if (this_move->status == GIBBON_MOVE_LEGAL
+                            || move->status == GIBBON_MOVE_ILLEGAL) {
+                                g_free (move);
+                                move = this_move;
+                                iter->data = NULL;
+                        }
+
+                        /* If this is a bear-off error, we keep on
+                         * searching for a possibly legal alternative.
+                         */
+                        if (this_move->status == GIBBON_MOVE_LEGAL
+                            || (move->status != GIBBON_MOVE_PREMATURE_BEAR_OFF
+                                && move->status != GIBBON_MOVE_ILLEGAL_WASTE))
+                                break;
                 }
                 iter = iter->next;
         }
         g_list_foreach (found, (GFunc) g_free, NULL);
+        g_list_free (found);
 
         if (move->status != GIBBON_MOVE_LEGAL)
                 return move;
@@ -863,10 +876,8 @@ dump_move (const GibbonMove *move)
         int i;
 
         g_printerr ("Move:");
-        if (move->status) {
-                g_printerr (" error %d.\n", move->status);
-                return;
-        }
+        if (move->status)
+                g_printerr (" error %d:", move->status);
 
         for (i = 0; i < move->number; ++i) {
                 g_printerr (" %d/%d",
