@@ -41,6 +41,7 @@ static gboolean test_try_swap_bug1 (void);
 static gboolean test_try_swap_bug2 (void);
 static gboolean test_try_swap_bug3 (void);
 static gboolean test_ordered_bear_off (void);
+static gboolean test_bear_off_bug1 (void);
 
 int
 main(int argc, char *argv[])
@@ -72,6 +73,8 @@ main(int argc, char *argv[])
         if (!test_try_swap_bug3 ())
                 status = -1;
         if (!test_ordered_bear_off ())
+                status = -1;
+        if (!test_bear_off_bug1 ())
                 status = -1;
 
         return status;
@@ -859,7 +862,70 @@ test_ordered_bear_off ()
         expect->status = GIBBON_MOVE_LEGAL;
         move = gibbon_position_check_move (before, after,
                                            GIBBON_POSITION_SIDE_WHITE);
-        if (!expect_move (expect, move, "Beaf-off in wrong order"))
+        if (!expect_move (expect, move, "Bear-off in wrong order"))
+                retval = FALSE;
+
+        gibbon_position_free (after);
+
+        return retval;
+}
+
+static gboolean
+test_bear_off_bug1 ()
+{
+        GibbonPosition *before = gibbon_position_new ();
+        GibbonPosition *after;
+        GibbonMove *move;
+        GibbonMove *expect;
+        gboolean retval = TRUE;
+
+        expect = g_alloca (sizeof expect->number
+                           + 4 * sizeof *expect->movements
+                           + sizeof expect->status);
+
+        before->match_length = 1;
+        before->dice[0] = -1;
+        before->dice[1] = -4;
+
+        memset (before->points, 0, sizeof before->points);
+
+        /*
+         * Starting position:
+         * === Position ===
+         *   +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X
+         *   |                +2 | +0| -2 +3 -1 -3 +3    |
+         *  v| dice: -1 : -4     |BAR|                   |  Cube: 1
+         *   |                   | +0|       +2 +5       |
+         *   +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O
+         *  End position:
+         * === Position ===
+         *   +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X
+         *   |                +2 | +0| -2 +3    -3 +3    |
+         *  v| dice: -1 : -4     |BAR|                   |  Cube: 1
+         *   |                   | +0|       +2 +5       |
+         *   +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O
+         */
+
+        before->points[22] = +3;
+        before->points[21] = -3;
+        before->points[20] = -1;
+        before->points[19] = +3;
+        before->points[18] = -2;
+        before->points[17] = +2;
+        before->points[3] = +2;
+        before->points[2] = +5;
+
+        /* White uses only the four, and bears off with it.  */
+        after = gibbon_position_copy (before);
+        after->points[20] = 0;
+
+        expect->number = 1;
+        expect->movements[0].from = 4;
+        expect->movements[0].to = 0;
+        expect->status = GIBBON_MOVE_LEGAL;
+        move = gibbon_position_check_move (before, after,
+                                           GIBBON_POSITION_SIDE_BLACK);
+        if (!expect_move (expect, move, "Overlooked direct bear-off"))
                 retval = FALSE;
 
         gibbon_position_free (after);
