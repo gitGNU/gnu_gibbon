@@ -103,7 +103,10 @@ guint move_patterns1[] = {
                 0x010102,
                 0x01010101,
 
-                /* Using three out of four numbers.  */
+                /* Using three out of four numbers.  The pattern 0x0201
+                 * seems to be missing here but it is not.  There is no
+                 * such legal move.
+                 */
                 0x03,
                 0x010101,
 
