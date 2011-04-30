@@ -72,6 +72,7 @@ typedef enum {
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
  * @match_length: Length of the match of 0 for unlimited.
  * @game_info: Free-form string describing the game ("Crawford", ...).
+ * @status: Free-form string describing the status ("It's your move", ...).
  *
  * A boxed type representing a backgammon position.
  *
@@ -106,6 +107,7 @@ struct _GibbonPosition
         gboolean may_double[2];
 
         gchar *game_info;
+        gchar *status;
 };
 
 /**

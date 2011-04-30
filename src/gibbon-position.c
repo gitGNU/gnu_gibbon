@@ -77,6 +77,7 @@ GibbonPosition initial = {
                 { 0, 0 },
                 1,
                 { FALSE, FALSE },
+                NULL,
                 NULL
 };
 
@@ -214,12 +215,10 @@ void
 gibbon_position_free (GibbonPosition *self)
 {
         if (self) {
-                if (self->players[0])
-                        g_free (self->players[0]);
-                if (self->players[1])
-                        g_free (self->players[1]);
-                if (self->game_info)
-                        g_free (self->game_info);
+                g_free (self->players[0]);
+                g_free (self->players[1]);
+                g_free (self->game_info);
+                g_free (self->game_info);
                 g_free (self);
         }
 }
@@ -246,6 +245,7 @@ gibbon_position_copy (const GibbonPosition *self)
         copy->players[0] = g_strdup (copy->players[0]);
         copy->players[1] = g_strdup (copy->players[1]);
         copy->game_info = g_strdup (copy->game_info);
+        copy->status = g_strdup (copy->status);
 
         return copy;
 }
