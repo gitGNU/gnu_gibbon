@@ -1013,7 +1013,7 @@ gibbon_session_dump_position (const GibbonSession *self,
                     gibbon_position_get_pip_count (pos,
                                                    GIBBON_POSITION_SIDE_BLACK));
         g_printerr ("\
-  +-12-13-14-15-16-17-------18-19-20-21-22-23-+ negative: black or X\n");
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
         g_printerr ("  |");
         for (i = 12; i < 18; ++i)
                 if (pos->points[i])
@@ -1045,7 +1045,7 @@ gibbon_session_dump_position (const GibbonSession *self,
                         g_printerr ("%s", "   ");
         g_printerr (" | May double: %s\n", pos->may_double[0] ? "yes" : "no");
         g_printerr ("\
-  +-11-10--9--8--7--6--------5--4--3--2--1--0-+ positive: white or O\n");
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
         g_printerr ("Player: %s, %d/%d points, %u pips\n",
                     pos->players[0], pos->scores[0], pos->match_length,
                     gibbon_position_get_pip_count (pos,
