@@ -96,16 +96,8 @@ struct _GibbonPosition
         gint match_length;
         gint scores[2];
 
-        /*< private >*/
-        gint left_pad[6];
-
-        /*< public >*/
         gint points[24];
 
-        /*< private >*/
-        gint right_pad[6];
-
-        /*< public >*/
         gint bar[2];
 
         gint dice[2];
