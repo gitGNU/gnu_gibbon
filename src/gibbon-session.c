@@ -369,6 +369,13 @@ gibbon_session_process_server_line (GibbonSession *self,
                                                       GIBBON_SESSION_PLAYER_WATCHING,
                                                       line + length + 1))
                         return 0;
+                length = strlen (self->priv->opponent);
+                if (0 == strncmp (self->priv->opponent, line, length)
+                    && ' ' == line[length]
+                    && gibbon_session_handle_someone (self,
+                                                      GIBBON_SESSION_PLAYER_OPPONENT,
+                                                      line + length + 1))
+                        return 0;
         }
 
         return -1;
@@ -833,7 +840,14 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail (string, FALSE);
 
         pos = gibbon_position_new ();
-        
+        if (self->priv->position) {
+                if (self->priv->position->game_info)
+                        pos->game_info =
+                                g_strdup (self->priv->position->game_info);
+                if (self->priv->position->status)
+                        pos->status = g_strdup (self->priv->position->status);
+        }
+
         tokens = g_strsplit (string, ":", 99);
 
         g_return_val_if_fail (tokens, FALSE);
@@ -1065,6 +1079,7 @@ gibbon_session_dump_position (const GibbonSession *self,
                     gibbon_position_get_pip_count (pos,
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_printerr ("Game info: %s\n", pos->game_info);
+        g_printerr ("Status: %s\n", pos->status);
 }
 #endif
 
@@ -1117,28 +1132,29 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
                         self->priv->position->dice[0] = -dice[0];
                         self->priv->position->dice[1] = -dice[1];
                         g_free (self->priv->position->game_info);
-                        self->priv->position->game_info =
-                                g_strdup_printf (_("%s rolls %u/%u"),
+                        self->priv->position->status =
+                                g_strdup_printf (_("%s rolls %u/%u."),
                                                  self->priv->opponent,
                                                  dice[0], dice[1]);
                         break;
                 case GIBBON_SESSION_PLAYER_YOU:
                         self->priv->position->dice[0] = dice[0];
                         self->priv->position->dice[1] = dice[1];
-                        self->priv->position->game_info =
-                                g_strdup_printf (_("You roll %u/%u"),
+                        self->priv->position->status =
+                                g_strdup_printf (_("You roll %u/%u."),
                                                  dice[0], dice[1]);
                         break;
                 case GIBBON_SESSION_PLAYER_WATCHING:
                         self->priv->position->dice[0] = dice[0];
                         self->priv->position->dice[1] = dice[1];
-                        g_strdup_printf (_("%s rolls %u/%u"),
-                                         self->priv->watching,
-                                         dice[0], dice[1]);
+                        self->priv->position->status =
+                                g_strdup_printf (_("%s rolls %u/%u."),
+                                                 self->priv->watching,
+                                                 dice[0], dice[1]);
                         break;
         }
 
-        gibbon_board_set_position (self->priv->board,
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    gibbon_position_copy (self->priv->position));
 
         return TRUE;
