@@ -169,6 +169,11 @@ struct _GibbonSessionPrivate {
         gchar *watching;
         gchar *opponent;
 
+        /* This is the approved position.   It is the result of a "board"
+         * message, or of a move, roll, or other game play action made.
+         */
+        GibbonPosition *position;
+
         GibbonPlayerList *player_list;
         GibbonPlayerListView *player_list_view;
 };
@@ -190,6 +195,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->connection = NULL;
         self->priv->watching = NULL;
         self->priv->opponent = NULL;
+        self->priv->position = NULL;
         self->priv->player_list = NULL;
         self->priv->player_list_view = NULL;
 }
@@ -211,6 +217,10 @@ gibbon_session_finalize (GObject *object)
         if (self->priv->opponent)
                 g_free (self->priv->opponent);
         self->priv->opponent = NULL;
+
+        if (self->priv->position)
+                gibbon_position_free (self->priv->position);
+        self->priv->position = NULL;
 
         if (self->priv->player_list)
                 g_object_unref (self->priv->player_list);
@@ -950,6 +960,10 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                 pos->game_info = g_strdup (_("Crawford game"));
         }
 
+        if (self->priv->position)
+                gibbon_position_free (self->priv->position);
+        self->priv->position = gibbon_position_copy (pos);
+
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (GIBBON_BOARD (board), pos);
 
@@ -1096,8 +1110,36 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
         if (*line)
                 return FALSE;
 
-        g_printerr ("Player type %d rolled %u and %u.\n",
-                    player, dice[0], dice[1]);
+        switch (player) {
+                case GIBBON_SESSION_PLAYER_OTHER:
+                        return FALSE;
+                case GIBBON_SESSION_PLAYER_OPPONENT:
+                        self->priv->position->dice[0] = -dice[0];
+                        self->priv->position->dice[1] = -dice[1];
+                        g_free (self->priv->position->game_info);
+                        self->priv->position->game_info =
+                                g_strdup_printf (_("%s rolls %u/%u"),
+                                                 self->priv->opponent,
+                                                 dice[0], dice[1]);
+                        break;
+                case GIBBON_SESSION_PLAYER_YOU:
+                        self->priv->position->dice[0] = dice[0];
+                        self->priv->position->dice[1] = dice[1];
+                        self->priv->position->game_info =
+                                g_strdup_printf (_("You roll %u/%u"),
+                                                 dice[0], dice[1]);
+                        break;
+                case GIBBON_SESSION_PLAYER_WATCHING:
+                        self->priv->position->dice[0] = dice[0];
+                        self->priv->position->dice[1] = dice[1];
+                        g_strdup_printf (_("%s rolls %u/%u"),
+                                         self->priv->watching,
+                                         dice[0], dice[1]);
+                        break;
+        }
+
+        gibbon_board_set_position (self->priv->board,
+                                   gibbon_position_copy (self->priv->position));
 
         return TRUE;
 }
