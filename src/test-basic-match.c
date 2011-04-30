@@ -24,6 +24,7 @@
 #include <glib.h>
 
 #include <gibbon-match.h>
+#include <gibbon-game.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -56,6 +57,8 @@ static GibbonMatch *
 fill_match (void)
 {
         GibbonMatch *match = gibbon_match_new ();
+        GibbonGame *game;
+
         GError *error = NULL;
 
         if (!gibbon_match_set_black_player (match, "Joe Black", &error))
@@ -65,6 +68,10 @@ fill_match (void)
         if (!gibbon_match_set_white_player (match, "Snow White", &error))
                 g_printerr ("Error setting white player: %s.\n",
                             error->message);
+
+        game = gibbon_match_get_current_game (match);
+        if (!game)
+                g_printerr ("Fresh match has no game.\n");
 
         return match;
 }
