@@ -740,7 +740,7 @@ gibbon_cairoboard_set_position (GibbonBoard *_self,
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
         self->priv->pos = pos;
-        
+
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
@@ -931,6 +931,9 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
 
         text = running && pos->game_info ? pos->game_info : "";
         svg_util_steal_text_params (self->priv->board, "game_info", text,
+                                    1.0, 0, NULL);
+        text = pos->status ? pos->status : "";
+        svg_util_steal_text_params (self->priv->board, "status-bar", text,
                                     1.0, 0, NULL);
 
         if (running) {
