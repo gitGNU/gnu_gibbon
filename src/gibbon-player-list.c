@@ -33,6 +33,7 @@ struct GibbonPlayer {
         
         guint experience;
         gdouble rating;
+        gboolean use_backslash_u;
 };
 
 static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
@@ -172,7 +173,8 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         gchar *email)
 {
         struct GibbonPlayer *player;
-                        
+        gchar *version_string = NULL;
+
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
         
@@ -186,6 +188,23 @@ gibbon_player_list_set (GibbonPlayerList *self,
 
         player->rating = rating;
         player->experience = experience;
+        player->use_backslash_u = FALSE;
+
+        if (client) {
+                if (strncmp ("BGOnline v", client, 10) == 0)
+                        version_string = client + 10;
+                else if (strncmp ("Padgammon v", client, 11) == 0)
+                        version_string = client + 11;
+
+                if (version_string) {
+                        if ((version_string[0] == '1'
+                             && version_string[1] == '.')
+                            || (version_string[0] == '2'
+                                && version_string[1] == '.'
+                                && version_string[2] == '0'))
+                                player->use_backslash_u = TRUE;
+                }
+        }
         
         gtk_list_store_set (self->priv->store,
                             &player->iter,
