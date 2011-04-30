@@ -270,7 +270,7 @@ static void print_movement (gint board[28], gint from, gint die,
                             GibbonPositionSide turn);
 #endif
 
-static guint64 total_positions = 1000;
+static guint64 total_positions = 100000;
 static guint64 done_positions = 0;
 
 int
