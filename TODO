@@ -59,5 +59,3 @@
 - gibbon-game-chat.c: Depending on the current situation, not all of 
   say, kibitz, and whisper are possible.
 - activate/deactivate game chat entry according to situation.
-- gibbon_app_get_board() should return a GibbonBoard, not a
-  GibbonCairoBoard.

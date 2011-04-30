@@ -33,6 +33,7 @@
 #include <stdlib.h>
 
 #include "gibbon-app.h"
+#include "gibbon-board.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-game-chat.h"
 #include "gibbon-prefs.h"
@@ -785,12 +786,12 @@ gibbon_app_get_server_console (const GibbonApp *self)
         return self->priv->server_console;
 }
 
-GibbonCairoboard *
+GibbonBoard *
 gibbon_app_get_board (const GibbonApp *self)
 {
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
-        return self->priv->board;
+        return GIBBON_BOARD (self->priv->board);
 }
 
 GibbonConnection *

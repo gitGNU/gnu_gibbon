@@ -831,7 +831,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         GibbonPosition *pos;
         GibbonPositionSide turn, color, direction;
         gint may_double[2];
-        GibbonCairoboard *board;
+        GibbonBoard *board;
         gint i;
         gint dice[4];
         GibbonConnection *connection;
