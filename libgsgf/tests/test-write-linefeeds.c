@@ -39,9 +39,8 @@ test_collection(GSGFCollection *collection, GError *error)
                 gsgf_component_write_stream (GSGF_COMPONENT (collection), out,
                                              &written, NULL, &error);
         /* All types of line endings should be converted to \n.  */
-        gchar *expect = "(;AP[libgsgf:" VERSION
-                        "]CA[UTF-8]GM[1]"
-                        "XY[\n\n]XYYZ[\n\n]YZ[\n\n]YZXY[\n\n])\n";
+        gchar *expect = "(;FF[4]GM[1]CA[UTF-8]AP[libgsgf:" VERSION
+                        "]XY[\n\n]XYYZ[\n\n]YZ[\n\n]YZXY[\n\n])\n";
         gchar *got;
 
         if (error) return expect_error(error, NULL);

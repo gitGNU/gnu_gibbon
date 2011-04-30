@@ -274,6 +274,19 @@ gsgf_game_tree_write_stream (const GSGFComponent *_self,
                         return FALSE;
                 }
 
+                my_value = GSGF_VALUE (gsgf_number_new (4));
+                gsgf_node_remove_property (root, "FF");
+                my_property = gsgf_node_add_property (root, "FF", error);
+                if (!my_property) {
+                        g_object_unref (my_value);
+                        return FALSE;
+                }
+
+                if (!gsgf_property_set_value (my_property, my_value, error)) {
+                        g_object_unref (my_value);
+                        return FALSE;
+                }
+
                 if (self->priv->flavor) {
                         game_id = gsgf_flavor_get_game_id (self->priv->flavor,
                                                            error);
