@@ -337,6 +337,31 @@ test_apply_move (void)
                 retval = FALSE;
         }
 
+        /* From here on, we will not reverse black's moves.  */
+
+        move->number = 2;
+        move->movements[0].from = 13;
+        move->movements[0].to = 11;
+        move->movements[0].die = 2;
+        move->movements[1].from = 6;
+        move->movements[1].to = 1;
+        move->movements[1].die = 5;
+        expect->points[12] = +4;
+        expect->points[10] = +1;
+        expect->points[5] = +3;
+        expect->points[0] = +1;
+        expect->bar[1] = 2;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_WHITE, FALSE)) {
+                g_printerr ("Cannot apply white's 2: 25 13/11* 6/1*.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after white's 2:"
+                            " 25 13/11* 6/1*.\n");
+                retval = FALSE;
+        }
+
         g_free (move);
         gibbon_position_free (got);
         gibbon_position_free (expect);
