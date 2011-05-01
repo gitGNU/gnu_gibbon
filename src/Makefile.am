@@ -37,65 +37,65 @@ AM_CPPFLAGS = 				\
 	-D_ISOC99_SOURCE		\
 	-D_SVID_SOURCE
 
-common_SOURCES = 		\
-	gibbon-cairoboard.c	\
-	gibbon-connection.c	\
-	gibbon-connector.c	\
-	gibbon-game.c           \
-	gibbon-match.c          \
-	gibbon-player-list.c	\
-	gibbon-session.c	\
-	html-entities.c		\
+common_SOURCES = 			\
+	gibbon-cairoboard.c		\
+	gibbon-connection.c		\
+	gibbon-connector.c		\
+	gibbon-game.c           	\
+	gibbon-match.c          	\
+	gibbon-player-list.c		\
+	gibbon-session.c		\
+	html-entities.c			\
 	svg-util.c			\
-	gibbon-game-chat.c				\
-	gibbon-prefs.c				\
-	gibbon-archive.c				\
-	gibbon-java-fibs-importer.c				\
-	gibbon-action.c				\
-	gibbon-fibs-message.c				\
-	gibbon-app.c				\
-	gibbon-player-list-view.c				\
-	gibbon-connection-dialog.c				\
-	gibbon-signal.c				\
-	gibbon-server-console.c							\
-	gibbon-fibs-command.c				\
-	gibbon-shouts.c				\
-	gibbon-position.c				\
+	gibbon-game-chat.c		\
+	gibbon-prefs.c			\
+	gibbon-archive.c		\
+	gibbon-java-fibs-importer.c	\
+	gibbon-action.c			\
+	gibbon-fibs-message.c		\
+	gibbon-app.c			\
+	gibbon-player-list-view.c	\
+	gibbon-connection-dialog.c	\
+	gibbon-signal.c			\
+	gibbon-server-console.c		\
+	gibbon-fibs-command.c		\
+	gibbon-shouts.c			\
+	gibbon-position.c		\
 	gibbon-board.c			\
-	gibbon-account-dialog.c			\
-	gibbon-chat-view.c				\
+	gibbon-account-dialog.c		\
+	gibbon-chat-view.c		\
 	gibbon-chat.c			\
 	gibbon-help.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
-noinst_HEADERS =		\
-	gibbon-cairoboard.h	\
-	gibbon-connection.h	\
-	gibbon-connector.h	\
-	gibbon-game.h           \
-	gibbon-match.h          \
-	gibbon-player-list.h	\
-	gibbon-session.h	\
-	html-entities.h		\
+noinst_HEADERS =			\
+	gibbon-cairoboard.h		\
+	gibbon-connection.h		\
+	gibbon-connector.h		\
+	gibbon-game.h           	\
+	gibbon-match.h          	\
+	gibbon-player-list.h		\
+	gibbon-session.h		\
+	html-entities.h			\
 	svg-util.h			\
-	gibbon-game-chat.h			\
+	gibbon-game-chat.h		\
 	gibbon-prefs.h			\
-	gibbon-archive.h			\
-	gibbon-java-fibs-importer.h			\
+	gibbon-archive.h		\
+	gibbon-java-fibs-importer.h	\
 	gibbon-action.h			\
-	gibbon-fibs-message.h			\
+	gibbon-fibs-message.h		\
 	gibbon-app.h			\
-	gibbon-player-list-view.h			\
-	gibbon-connection-dialog.h			\
+	gibbon-player-list-view.h	\
+	gibbon-connection-dialog.h	\
 	gibbon-signal.h			\
-	gibbon-server-console.h				\
-	gibbon-fibs-command.h			\
+	gibbon-server-console.h		\
+	gibbon-fibs-command.h		\
 	gibbon-shouts.h			\
-	gibbon-position.h			\
-	gibbon-board.h		\
-	gibbon-account-dialog.h			\
-	gibbon-chat-view.h			\
+	gibbon-position.h		\
+	gibbon-board.h			\
+	gibbon-account-dialog.h		\
+	gibbon-chat-view.h		\
 	gibbon-chat.h			\
 	gibbon-help.h
 
@@ -103,20 +103,23 @@ AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
 	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
 
+## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
+	test_pretty_print_move \
 	test_gary_wong_movegen
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
-	test_gary_wong_movegen
+	test_gary_wong_movegen test_pretty_print_move
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
 test_position_SOURCES = $(common_SOURCES) test-position.c
 test_moves_SOURCES = $(common_SOURCES) test-moves.c
 test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
+test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 
 SGF_FILES =
 
