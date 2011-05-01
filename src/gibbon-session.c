@@ -154,6 +154,9 @@ static gboolean gibbon_session_handle_someone (GibbonSession *self,
 static gboolean gibbon_session_handle_rolls (GibbonSession *self,
                                              GibbonSessionPlayer player,
                                              const gchar *line);
+static gboolean gibbon_session_handle_moves (GibbonSession *self,
+                                             GibbonSessionPlayer player,
+                                             const gchar *line);
 static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
                                                         const gchar *who);
 
@@ -252,6 +255,8 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->player_list = gibbon_player_list_new ();
         self->priv->player_list_view =
                 gibbon_player_list_view_new (app, self->priv->player_list);
+
+        self->priv->position = gibbon_position_new ();
 
         return self;
 }
@@ -974,15 +979,27 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                 pos->game_info = g_strdup (_("Crawford game"));
         }
 
-        if (self->priv->position)
-                gibbon_position_free (self->priv->position);
-        self->priv->position = gibbon_position_copy (pos);
+        if (gibbon_position_equals_technically (pos, self->priv->position)) {
+                g_printerr ("Session positions are equal.\n");
+        } else {
+                g_printerr ("Session positions are not equal.\n");
+                if (self->priv->position)
+                        gibbon_position_free (self->priv->position);
+                self->priv->position = gibbon_position_copy (pos);
+        }
 
         board = gibbon_app_get_board (self->priv->app);
-        gibbon_board_set_position (GIBBON_BOARD (board), pos);
+        if (gibbon_position_equals_technically (pos,
+                                           gibbon_board_get_position (board))) {
+                g_printerr ("Board positions are equal.\n");
+                gibbon_position_free (pos);
+        } else {
+                g_printerr ("Board positions are not equal.\n");
+                gibbon_board_set_position (GIBBON_BOARD (board), pos);
+        }
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-        gibbon_session_dump_position (self, pos);
+        gibbon_session_dump_position (self, self->priv->position);
 #endif
 
         return TRUE;
@@ -1093,6 +1110,12 @@ gibbon_session_handle_someone (GibbonSession *self, GibbonSessionPlayer player,
                         return gibbon_session_handle_rolls (self, player,
                                                             line + 6);
                 return FALSE;
+        } else if (0 == strncmp ("moves ", line, 6)) {
+                if (player == GIBBON_SESSION_PLAYER_OPPONENT
+                    || player == GIBBON_SESSION_PLAYER_WATCHING)
+                        return gibbon_session_handle_moves (self, player,
+                                                            line + 6);
+                return FALSE;
         }
 
         return FALSE;
@@ -1151,6 +1174,132 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
                                 g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->watching,
                                                  dice[0], dice[1]);
+                        break;
+        }
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   gibbon_position_copy (self->priv->position));
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
+                             const gchar *line)
+{
+        GibbonMove *move = g_alloca (sizeof move->number
+                                     + 4 * sizeof *move->movements
+                                     + sizeof move->status);
+        GibbonMovement *movement;
+        gchar **tokens;
+        gchar *token;
+        gchar *endptr;
+        gint i;
+        guint64 from, to;
+
+        move->number = 0;
+
+        /* g_printerr ("Handle move %s\n", line); */
+
+        tokens = g_strsplit_set (line, " .", 0);
+        if (!tokens)
+                return FALSE;
+
+        for (i = 0; tokens[i] && *tokens[i]; ++i) {
+                if (i >= 4) {
+                        g_critical ("Too many tokens in move '%s'.\n", line);
+                        g_strfreev (tokens);
+                        return FALSE;
+                }
+                token = tokens[i];
+                movement = move->movements + move->number++;
+                if (0 == strncmp ("bar", token, 3)) {
+                        movement->from = 25;
+                        endptr = token + 3;
+                } else {
+                        errno = 0;
+                        from = g_ascii_strtoull (token, &endptr, 10);
+                        if (errno) {
+                                g_critical ("Error parsing token #%d in"
+                                            " move '%s': %s!\n",
+                                            i, line, strerror (errno));
+                                g_strfreev (tokens);
+                                return FALSE;
+                        }
+                        if (from == 0 || from > 24) {
+                                g_critical ("Error parsing token #%d in"
+                                            " move '%s': Starting point out"
+                                            " of range!\n",
+                                            i, line);
+                                g_strfreev (tokens);
+                                return FALSE;
+                        }
+                        movement->from = from;
+                }
+
+                if ('-' != *endptr) {
+                        g_critical ("Error parsing token #%d in"
+                                    " move '%s': Expected '-'!\n",
+                                    i, line);
+                        g_strfreev (tokens);
+                        return FALSE;
+                }
+
+                token = endptr + 1;
+
+                if (0 == strncmp ("off", token, 3)) {
+                        movement->to = 0;
+                        endptr = token + 3;
+                } else {
+                        errno = 0;
+                        from = g_ascii_strtoull (token, &endptr, 10);
+                        if (errno) {
+                                g_critical ("Error parsing token #%d in"
+                                            " move '%s': %s!\n",
+                                            i, line, strerror (errno));
+                                g_strfreev (tokens);
+                                return FALSE;
+                        }
+                        if (from == 0 || from > 24) {
+                                g_critical ("Error parsing token #%d in"
+                                            " move '%s': Landing point out"
+                                            " of range (%s)!\n",
+                                            i, line, token);
+                                g_strfreev (tokens);
+                                return FALSE;
+                        }
+                        movement->to = to;
+                }
+
+                if (*endptr) {
+                        g_critical ("Error parsing token #%d in"
+                                    " move '%s': Trailing garbage!\n",
+                                    i, line);
+                        g_strfreev (tokens);
+                        return FALSE;
+                }
+
+                if (movement->from == 25) {
+                        /* Coming back from bar.  Convert starting point to
+                         * our notion.
+                         */
+                        if (player == GIBBON_SESSION_PLAYER_OPPONENT)
+                                movement->from = 0;
+                }
+                if (movement->to == 0) {
+                        /* Bear-off.  Convert landing point to our notion.  */
+                        if (player != GIBBON_SESSION_PLAYER_OPPONENT)
+                                movement->to = 25;                }
+        }
+
+        switch (player) {
+                case GIBBON_SESSION_PLAYER_OTHER:
+                        return FALSE;
+                case GIBBON_SESSION_PLAYER_OPPONENT:
+                        break;
+                case GIBBON_SESSION_PLAYER_YOU:
+                        break;
+                case GIBBON_SESSION_PLAYER_WATCHING:
                         break;
         }
 
