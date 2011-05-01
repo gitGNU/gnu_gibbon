@@ -197,4 +197,16 @@ GibbonMove *gibbon_position_alloc_move (gsize num_movements);
 gboolean gibbon_position_equals_technically (const GibbonPosition *self,
                                              const GibbonPosition *other);
 
+/* Apply a move to a position.  The function only does a plausability test,
+ * not a legality test.
+ *
+ * If reverse is true, assume the board is turned.
+ *
+ * White is considered to move from 23 to 0, black the other way round.  24
+ * is white's bar and black's home, 0 is black's bar and white's home.
+ */
+gboolean gibbon_position_apply_move (GibbonPosition *self,
+                                     const GibbonMove *move,
+                                     GibbonPositionSide side,
+                                     gboolean reverse);
 #endif

@@ -941,3 +941,85 @@ gibbon_position_equals_technically (const GibbonPosition *self,
 
         return TRUE;
 }
+
+gboolean
+gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
+                            GibbonPositionSide side, gboolean reverse)
+{
+        gint m, c;
+        gint i, from, to;
+        const GibbonMovement *movement;
+        gboolean from_bar, bear_off;
+        gint *my_bar, *her_bar;
+
+        g_return_val_if_fail (side, FALSE);
+
+        if (reverse) {
+                m = -1;
+                c = 24;
+        } else {
+                m = 1;
+                c = -1;
+        }
+
+        for (i = 0; i < move->number; ++i) {
+                movement = move->movements + i;
+                from = m * movement->from + c;
+
+                to = m * movement->to + c;
+
+                from_bar = bear_off = FALSE;
+
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        g_return_val_if_fail (from <= 24, FALSE);
+                        g_return_val_if_fail (from >= 0, FALSE);
+                        g_return_val_if_fail (to <= 23, FALSE);
+                        g_return_val_if_fail (to >= -1, FALSE);
+
+                        from_bar = from == 24;
+                        bear_off = to == -1;
+                        my_bar = self->bar + 0;
+                        her_bar = self->bar + 1;
+                } else {
+                        g_return_val_if_fail (from >= -1, FALSE);
+                        g_return_val_if_fail (from <= 23, FALSE);
+                        g_return_val_if_fail (to >= 0, FALSE);
+                        g_return_val_if_fail (to <= 24, FALSE);
+
+                        from_bar = from == -1;
+                        bear_off = to == 24;
+                        my_bar = self->bar + 1;
+                        her_bar = self->bar + 0;
+                }
+
+                if (from_bar) {
+                        g_return_val_if_fail (*my_bar > 0, FALSE);
+                        --(*my_bar);
+                } else {
+                        g_return_val_if_fail (self->points[from] != 0, FALSE);
+
+                        /* This tests for the same sign.  */
+                        g_return_val_if_fail ((side ^ self->points[from]) >= 0,
+                                              FALSE);
+                        self->points[from] -= side;
+                }
+
+                /* If this is a bear-off, it is sufficient to remove the
+                 * checker from the source point.
+                 */
+                if (!bear_off) {
+                        if (self->points[to] == 0
+                            || (side ^ self->points[to]) >= 0) {
+                                self->points[to] += side;
+                        } else if (self->points[to] == -side) {
+                                ++(*her_bar);
+                                self->points[to] = side;
+                        } else {
+                                g_critical ("gibbon_position_apply_move:"
+                                            " Target point is blocked.");
+                        }
+                }
+        }
+
+        return TRUE;
+}
