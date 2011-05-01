@@ -1050,3 +1050,11 @@ gibbon_position_game_over (const GibbonPosition *position)
         return FALSE;
 }
 
+gchar *
+gibbon_position_format_move (GibbonPosition *self,
+                             const GibbonMove *move,
+                             GibbonPositionSide side,
+                             gboolean reverse)
+{
+        return g_strdup (_("Not yet implemented"));
+}

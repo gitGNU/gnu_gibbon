@@ -211,4 +211,10 @@ gboolean gibbon_position_apply_move (GibbonPosition *self,
                                      gboolean reverse);
 gboolean gibbon_position_game_over (const GibbonPosition *position);
 
+/* Free return value with g_free()!  */
+gchar *gibbon_position_format_move (GibbonPosition *self,
+                                    const GibbonMove *move,
+                                    GibbonPositionSide side,
+                                    gboolean reverse);
+
 #endif
