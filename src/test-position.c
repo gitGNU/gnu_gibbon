@@ -308,7 +308,8 @@ test_apply_move (void)
         expect->points[7] = 2;
         expect->points[5] = 4;
         expect->points[4] = 2;
-        if (!gibbon_position_apply_move (got, move, FALSE)) {
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_WHITE, FALSE)) {
                 g_printerr ("Cannot apply white's 1: 31 8/5 6/5.\n");
                 retval = FALSE;
         }
@@ -325,8 +326,9 @@ test_apply_move (void)
         move->movements[1].to = 14;
         move->movements[1].die = 4;
         expect->points[0] = -1;
-        expect->points[11] = -1;
-        if (!gibbon_position_apply_move (got, move, FALSE)) {
+        expect->points[10] = -1;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_BLACK, TRUE)) {
                 g_printerr ("Cannot apply black's 1: 64 24/14.\n");
                 retval = FALSE;
         }
