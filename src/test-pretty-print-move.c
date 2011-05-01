@@ -27,7 +27,7 @@
 
 #include <gibbon-position.h>
 
-static gboolean test_very_basic (void);
+static gboolean test_cannot_move (void);
 
 int
 main(int argc, char *argv[])
@@ -36,19 +36,19 @@ main(int argc, char *argv[])
 
         g_type_init ();
 
-        if (!test_very_basic ())
+        if (!test_cannot_move ())
                 status = -1;
 
         return status;
 }
 
 static gboolean
-test_very_basic ()
+test_cannot_move ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
-        gchar *expect = "8/5 6/5";
+        GibbonMove *move = gibbon_position_alloc_move (0);
+        gchar *expect = "-";
         gchar *got = NULL;
 
         got = gibbon_position_format_move (position, move,
@@ -58,9 +58,9 @@ test_very_basic ()
                 g_printerr ("Expected '%s', got '%s'.\n",
                             expect, got);
         }
+        g_free (got);
 
         gibbon_position_free (position);
-        g_free (got);
         g_free (move);
 
         return retval;
