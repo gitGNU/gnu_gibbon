@@ -68,7 +68,6 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
 
 GibbonPosition initial = {
-                { NULL, NULL },
                 0,
                 { 0, 0 },
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
@@ -77,6 +76,7 @@ GibbonPosition initial = {
                 { 0, 0 },
                 1,
                 { FALSE, FALSE },
+                { NULL, NULL },
                 NULL,
                 NULL
 };
@@ -922,4 +922,22 @@ order_movements (GibbonMove *move)
                         swap_movements (move->movements + i,
                                         move->movements + i - 1);
         }
+}
+
+gboolean
+gibbon_position_equals_technically (const GibbonPosition *self,
+                                    const GibbonPosition *other)
+{
+        if (g_strcmp0 (self->players[0], other->players[0]))
+                return FALSE;
+        if (g_strcmp0 (self->players[1], other->players[1]))
+                return FALSE;
+        if (g_strcmp0 (self->game_info, other->game_info))
+                return FALSE;
+        if (g_strcmp0 (self->status, other->status))
+                return FALSE;
+        if (memcmp (self, other, (gpointer) &self->players[0] - (gpointer) self))
+                return FALSE;
+
+        return TRUE;
 }

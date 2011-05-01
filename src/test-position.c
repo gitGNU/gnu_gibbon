@@ -274,7 +274,7 @@ test_compare (void)
                 retval = FALSE;
         }
         g_free (def->status);
-        def->game_info = NULL;
+        def->status = NULL;
 
         if (!gibbon_position_equals_technically (ref, def)) {
                 g_printerr ("Test case for compare function must be fixed.\n");

@@ -92,8 +92,6 @@ typedef enum {
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
 {
-        gchar *players[2];
-
         gint match_length;
         gint scores[2];
 
@@ -105,6 +103,8 @@ struct _GibbonPosition
 
         gint cube;
         gboolean may_double[2];
+
+        gchar *players[2];
 
         gchar *game_info;
         gchar *status;
@@ -194,5 +194,7 @@ GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
                                         const GibbonPosition *after,
                                         GibbonPositionSide side);
 GibbonMove *gibbon_position_alloc_move (gsize num_movements);
+gboolean gibbon_position_equals_technically (const GibbonPosition *self,
+                                             const GibbonPosition *other);
 
 #endif
