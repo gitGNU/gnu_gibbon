@@ -373,9 +373,10 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                                          GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
                 g_get_current_time (&timeval);
                 now = localtime ((time_t *) &timeval.tv_sec);
-                timestamp = g_strdup_printf ("[%02d:%02d.%07ld] ",
+                timestamp = g_strdup_printf ("[%02d:%02d:%02d.%06ld] ",
                                              now->tm_hour,
                                              now->tm_min,
+                                             now->tm_sec,
                                              timeval.tv_usec);
                 gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
                 g_free (timestamp);
