@@ -1056,5 +1056,8 @@ gibbon_position_format_move (GibbonPosition *self,
                              GibbonPositionSide side,
                              gboolean reverse)
 {
+        if (move->number == 0)
+                return g_strdup ("-");
+
         return g_strdup (_("Not yet implemented"));
 }
