@@ -928,6 +928,12 @@ gboolean
 gibbon_position_equals_technically (const GibbonPosition *self,
                                     const GibbonPosition *other)
 {
+        if (!self && !other)
+                return TRUE;
+        if (!self)
+                return FALSE;
+        if (!other)
+                return FALSE;
         if (g_strcmp0 (self->players[0], other->players[0]))
                 return FALSE;
         if (g_strcmp0 (self->players[1], other->players[1]))
