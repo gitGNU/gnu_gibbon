@@ -1133,7 +1133,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
                         self->priv->position->dice[1] = -dice[1];
                         g_free (self->priv->position->game_info);
                         self->priv->position->status =
-                                g_strdup_printf (_("%s rolls %u/%u."),
+                                g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->opponent,
                                                  dice[0], dice[1]);
                         break;
@@ -1141,14 +1141,14 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
                         self->priv->position->dice[0] = dice[0];
                         self->priv->position->dice[1] = dice[1];
                         self->priv->position->status =
-                                g_strdup_printf (_("You roll %u/%u."),
+                                g_strdup_printf (_("You roll %u and %u."),
                                                  dice[0], dice[1]);
                         break;
                 case GIBBON_SESSION_PLAYER_WATCHING:
                         self->priv->position->dice[0] = dice[0];
                         self->priv->position->dice[1] = dice[1];
                         self->priv->position->status =
-                                g_strdup_printf (_("%s rolls %u/%u."),
+                                g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->watching,
                                                  dice[0], dice[1]);
                         break;
