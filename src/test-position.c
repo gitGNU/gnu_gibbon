@@ -310,11 +310,11 @@ test_apply_move (void)
         expect->points[4] = 2;
         if (!gibbon_position_apply_move (got, move,
                                          GIBBON_POSITION_SIDE_WHITE, FALSE)) {
-                g_printerr ("Cannot apply white's 1: 31 8/5 6/5.\n");
+                g_printerr ("Cannot apply white's 1) 31: 8/5 6/5.\n");
                 retval = FALSE;
         }
         if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's 1: 31 8/5 6/5.\n");
+                g_printerr ("Positions differ after white's 1) 31: 8/5 6/5.\n");
                 retval = FALSE;
         }
 
@@ -329,15 +329,13 @@ test_apply_move (void)
         expect->points[10] = -1;
         if (!gibbon_position_apply_move (got, move,
                                          GIBBON_POSITION_SIDE_BLACK, TRUE)) {
-                g_printerr ("Cannot apply black's 1: 64 24/14.\n");
+                g_printerr ("Cannot apply black's 1) 64: 24/14.\n");
                 retval = FALSE;
         }
         if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after black's 1: 64 24/14.\n");
+                g_printerr ("Positions differ after black's 1) 64: 24/14.\n");
                 retval = FALSE;
         }
-
-        /* From here on, we will not reverse black's moves.  */
 
         move->number = 2;
         move->movements[0].from = 13;
@@ -353,12 +351,116 @@ test_apply_move (void)
         expect->bar[1] = 2;
         if (!gibbon_position_apply_move (got, move,
                                          GIBBON_POSITION_SIDE_WHITE, FALSE)) {
-                g_printerr ("Cannot apply white's 2: 25 13/11* 6/1*.\n");
+                g_printerr ("Cannot apply white's 2) 25: 13/11* 6/1*.\n");
                 retval = FALSE;
         }
         if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's 2:"
-                            " 25 13/11* 6/1*.\n");
+                g_printerr ("Positions differ after white's 2)"
+                            " 25: 13/11* 6/1*.\n");
+                retval = FALSE;
+        }
+
+        /* From here on, we will not reverse black's moves.  */
+        move->number = 1;
+        move->movements[0].from = 0;
+        move->movements[0].to = 1;
+        move->movements[0].die = 1;
+        expect->points[0] = -1;
+        expect->bar[0] = 1;
+        expect->bar[1] = 1;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_BLACK, FALSE)) {
+                g_printerr ("Cannot apply black's 2) 61: bar/24*.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after black's 2) 61: bar/24.\n");
+                retval = FALSE;
+        }
+
+        move->number = 4;
+        move->movements[0].from = 25;
+        move->movements[0].to = 20;
+        move->movements[0].die = 5;
+        move->movements[1].from = 20;
+        move->movements[1].to = 15;
+        move->movements[1].die = 5;
+        move->movements[2].from = 15;
+        move->movements[2].to = 10;
+        move->movements[2].die = 5;
+        move->movements[3].from = 10;
+        move->movements[3].to = 5;
+        move->movements[3].die = 5;
+        expect->points[4] = +3;
+        expect->bar[0] = 0;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_WHITE, FALSE)) {
+                g_printerr ("Cannot apply white's 3: 55 bar/5.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after white's 3)"
+                            " 55: bar/5.\n");
+                retval = FALSE;
+        }
+
+        move->number = 4;
+        move->movements[0].from = 0;
+        move->movements[0].to = 4;
+        move->movements[0].die = 4;
+        move->movements[1].from = 12;
+        move->movements[1].to = 16;
+        move->movements[1].die = 4;
+        move->movements[2].from = 12;
+        move->movements[2].to = 16;
+        move->movements[2].die = 4;
+        move->movements[3].from = 12;
+        move->movements[3].to = 16;
+        move->movements[3].die = 4;
+        expect->points[3] = -1;
+        expect->points[11] = -2;
+        expect->points[15] = -3;
+        expect->bar[1] = 0;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_BLACK, FALSE)) {
+                g_printerr ("Cannot apply black's 3) 44: bar/21 12/9(3).\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after black's"
+                            " 3) 44: bar/21 12/9(3).\n");
+                retval = FALSE;
+        }
+
+        /* Some moves later ... */
+        gibbon_position_free (got);
+        gibbon_position_free (expect);
+
+        got = gibbon_position_new ();
+        memset (got->points, 0, sizeof got->points);
+        got->points[0] = +1;
+        got->points[2] = +1;
+        got->points[23] = -2;
+        expect = gibbon_position_copy (got);
+
+        move->number = 2;
+        move->movements[0].from = 3;
+        move->movements[0].to = 0;
+        move->movements[0].die = 6;
+        move->movements[1].from = 1;
+        move->movements[1].to = 0;
+        move->movements[1].die = 4;
+
+        expect->points[0] = 0;
+        expect->points[2] = 0;
+        if (!gibbon_position_apply_move (got, move,
+                                         GIBBON_POSITION_SIDE_WHITE, FALSE)) {
+                g_printerr ("Cannot apply white's n: 64 3/off 1/off.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after white's n)"
+                            " 64: 3/off 1/off.\n");
                 retval = FALSE;
         }
 
