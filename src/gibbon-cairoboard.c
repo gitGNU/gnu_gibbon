@@ -90,6 +90,8 @@ G_DEFINE_TYPE_WITH_CODE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_A
 
 static void gibbon_cairoboard_set_position (GibbonBoard *self,
                                             GibbonPosition *pos);
+static const GibbonPosition *gibbon_cairoboard_get_position (const GibbonBoard
+                                                             *self);
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -177,6 +179,7 @@ static void
 gibbon_board_iface_init (GibbonBoardIface *iface)
 {
         iface->set_position = gibbon_cairoboard_set_position;
+        iface->get_position = gibbon_cairoboard_get_position;
 }
 
 static void
@@ -742,6 +745,18 @@ gibbon_cairoboard_set_position (GibbonBoard *_self,
         self->priv->pos = pos;
 
         gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static const GibbonPosition *
+gibbon_cairoboard_get_position (const GibbonBoard *_self)
+{
+        GibbonCairoboard *self;
+
+        g_return_val_if_fail (GIBBON_IS_CAIROBOARD (_self), NULL);
+
+        self = GIBBON_CAIROBOARD (_self);
+
+        return self->priv->pos;
 }
 
 static void

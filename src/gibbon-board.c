@@ -74,7 +74,7 @@ gibbon_board_set_position (GibbonBoard *self, GibbonPosition *position)
  *
  * Returns: the #GibbonPosition or %NULL for failure.
  */
-GibbonPosition *
+const GibbonPosition *
 gibbon_board_get_position (const GibbonBoard *self)
 {
         GibbonBoardIface *iface;
