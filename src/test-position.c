@@ -29,6 +29,7 @@
 
 static gboolean test_constructor (void);
 static gboolean test_copy_constructor (void);
+static gboolean test_compare (void);
 
 int
 main(int argc, char *argv[])
@@ -39,8 +40,9 @@ main(int argc, char *argv[])
 
         if (!test_constructor ())
                 status = -1;
-
         if (!test_copy_constructor ())
+                status = -1;
+        if (!test_compare ())
                 status = -1;
 
         return status;
@@ -135,4 +137,152 @@ test_copy_constructor (void)
         gibbon_position_free (copy);
 
         return TRUE;
+}
+
+static gboolean
+test_compare (void)
+{
+        gboolean retval = TRUE;
+        GibbonPosition *ref = gibbon_position_new ();
+        GibbonPosition *def = gibbon_position_copy (ref);
+
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Equal positions differ technically.\n");
+                retval = FALSE;
+        }
+
+        def->players[0] = g_strdup ("foo");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different white player do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        g_free (def->players[1]);
+        def->players[0] = NULL;
+
+        def->players[1] = g_strdup ("foo");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different black player do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        g_free (def->players[1]);
+        def->players[1] = NULL;
+
+        def->match_length = 7;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different match lengths do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->match_length = 0;
+
+        def->scores[0] = 1;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different scores for white do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->scores[0] = 0;
+
+        def->scores[1] = 1;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different scores for black do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->scores[1] = 0;
+
+        --def->points[12];
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different points do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        ++def->points[12];
+
+        def->bar[0] = 1;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different bars for white do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->bar[0] = 0;
+
+        def->bar[1] = 1;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different bars for black do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->bar[1] = 0;
+
+
+        def->dice[0] = 2;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different first die do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->dice[0] = 0;
+
+        def->dice[1] = 3;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different second die do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->dice[1] = 0;
+
+        def->cube = 2;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different second die do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->cube = ref->cube;
+
+        def->may_double[0] = !def->may_double[0];
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different white doubling do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->may_double[0] = !def->may_double[0];
+
+        def->may_double[1] = !def->may_double[1];
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different black doubling do not"
+                            " differ technically.\n");
+                retval = FALSE;
+        }
+        def->may_double[1] = !def->may_double[1];
+
+        def->game_info = g_strdup ("Crawford game");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different game info do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        g_free (def->game_info);
+        def->game_info = NULL;
+
+        def->status = g_strdup ("It is your turn.");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different status do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        g_free (def->status);
+        def->game_info = NULL;
+
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Test case for compare function must be fixed.\n");
+                retval = FALSE;
+        }
+
+        gibbon_position_free (ref);
+        gibbon_position_free (def);
+
+        return retval;
 }
