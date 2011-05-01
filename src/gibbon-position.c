@@ -1023,3 +1023,24 @@ gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
 
         return TRUE;
 }
+
+gboolean
+gibbon_position_game_over (const GibbonPosition *position)
+{
+        guint num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_WHITE);
+
+        if (num_checkers >= 15)
+                return TRUE;
+
+        num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_BLACK);
+
+        if (num_checkers >= 15)
+                return TRUE;
+
+        return FALSE;
+}
+

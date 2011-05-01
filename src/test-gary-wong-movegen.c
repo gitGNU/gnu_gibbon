@@ -249,7 +249,6 @@ static void translate_position (gint board[28], const GibbonPosition *position,
                                 GibbonPositionSide turn);
 static void test_game (void);
 static void test_roll (GibbonPosition *position);
-static gboolean game_over (const GibbonPosition *position);
 static void move_checker (GibbonPosition *position, gint board[28],
                           guint die, GibbonPositionSide side);
 static void find_any_move (const GibbonPosition *position, gint board[28],
@@ -326,7 +325,7 @@ test_game (void)
                         position->dice[1] = -6 + random () % 6;
                 }
 
-                if (game_over (position)) {
+                if (gibbon_position_game_over (position)) {
 #if (DEBUG_TEST_ENGINE)
                         g_printerr ("***** Game over! *****\n");
 #endif
@@ -719,26 +718,6 @@ translate_board (GibbonPosition *position, gint board[28],
                 }
                 position->bar[1] = board[25];
         }
-}
-
-static gboolean
-game_over (const GibbonPosition *position)
-{
-        guint num_checkers =
-                gibbon_position_get_borne_off (position,
-                                               GIBBON_POSITION_SIDE_WHITE);
-
-        if (num_checkers >= 15)
-                return TRUE;
-
-        num_checkers =
-                gibbon_position_get_borne_off (position,
-                                               GIBBON_POSITION_SIDE_BLACK);
-
-        if (num_checkers >= 15)
-                return TRUE;
-
-        return FALSE;
 }
 
 static void

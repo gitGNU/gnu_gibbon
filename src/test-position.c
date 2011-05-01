@@ -31,6 +31,7 @@ static gboolean test_constructor (void);
 static gboolean test_copy_constructor (void);
 static gboolean test_compare (void);
 static gboolean test_apply_move (void);
+static gboolean test_game_over (void);
 
 int
 main(int argc, char *argv[])
@@ -46,6 +47,8 @@ main(int argc, char *argv[])
         if (!test_compare ())
                 status = -1;
         if (!test_apply_move ())
+                status = -1;
+        if (!test_game_over ())
                 status = -1;
 
         return status;
@@ -453,6 +456,7 @@ test_apply_move (void)
 
         expect->points[0] = 0;
         expect->points[2] = 0;
+
         if (!gibbon_position_apply_move (got, move,
                                          GIBBON_POSITION_SIDE_WHITE, FALSE)) {
                 g_printerr ("Cannot apply white's n: 64 3/off 1/off.\n");
@@ -467,6 +471,34 @@ test_apply_move (void)
         g_free (move);
         gibbon_position_free (got);
         gibbon_position_free (expect);
+
+        return retval;
+}
+
+static gboolean
+test_game_over ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+
+        if (gibbon_position_game_over (position)) {
+                g_printerr ("False positive for game over for initial"
+                            " position.\n");
+                retval = FALSE;
+        }
+        memset (position->points, 0, sizeof position->points);
+        position->points[10] = +2;
+        if (!gibbon_position_game_over (position)) {
+                g_printerr ("Black win not detected.\n");
+                retval = FALSE;
+        }
+        position->points[10] = -2;
+        if (!gibbon_position_game_over (position)) {
+                g_printerr ("White win not detected.\n");
+                retval = FALSE;
+        }
+
+        gibbon_position_free (position);
 
         return retval;
 }

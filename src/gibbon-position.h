@@ -209,4 +209,6 @@ gboolean gibbon_position_apply_move (GibbonPosition *self,
                                      const GibbonMove *move,
                                      GibbonPositionSide side,
                                      gboolean reverse);
+gboolean gibbon_position_game_over (const GibbonPosition *position);
+
 #endif
