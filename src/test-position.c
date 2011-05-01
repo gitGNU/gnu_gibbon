@@ -30,6 +30,7 @@
 static gboolean test_constructor (void);
 static gboolean test_copy_constructor (void);
 static gboolean test_compare (void);
+static gboolean test_apply_move (void);
 
 int
 main(int argc, char *argv[])
@@ -43,6 +44,8 @@ main(int argc, char *argv[])
         if (!test_copy_constructor ())
                 status = -1;
         if (!test_compare ())
+                status = -1;
+        if (!test_apply_move ())
                 status = -1;
 
         return status;
@@ -283,6 +286,58 @@ test_compare (void)
 
         gibbon_position_free (ref);
         gibbon_position_free (def);
+
+        return retval;
+}
+
+static gboolean
+test_apply_move (void)
+{
+        gboolean retval = TRUE;
+        GibbonPosition *expect = gibbon_position_new ();
+        GibbonPosition *got = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (4);
+
+        move->number = 2;
+        move->movements[0].from = 8;
+        move->movements[0].to = 5;
+        move->movements[0].die = 3;
+        move->movements[1].from = 6;
+        move->movements[1].to = 5;
+        move->movements[1].die = 1;
+        expect->points[7] = 2;
+        expect->points[5] = 4;
+        expect->points[4] = 2;
+        if (!gibbon_position_apply_move (got, move, FALSE)) {
+                g_printerr ("Cannot apply white's 1: 31 8/5 6/5.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after white's 1: 31 8/5 6/5.\n");
+                retval = FALSE;
+        }
+
+        move->number = 2;
+        move->movements[0].from = 24;
+        move->movements[0].to = 18;
+        move->movements[0].die = 6;
+        move->movements[1].from = 18;
+        move->movements[1].to = 14;
+        move->movements[1].die = 4;
+        expect->points[0] = -1;
+        expect->points[11] = -1;
+        if (!gibbon_position_apply_move (got, move, FALSE)) {
+                g_printerr ("Cannot apply black's 1: 64 24/14.\n");
+                retval = FALSE;
+        }
+        if (!gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions differ after black's 1: 64 24/14.\n");
+                retval = FALSE;
+        }
+
+        g_free (move);
+        gibbon_position_free (got);
+        gibbon_position_free (expect);
 
         return retval;
 }
