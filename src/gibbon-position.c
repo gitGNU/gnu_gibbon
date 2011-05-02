@@ -1052,12 +1052,40 @@ gibbon_position_game_over (const GibbonPosition *position)
 
 gchar *
 gibbon_position_format_move (GibbonPosition *self,
-                             const GibbonMove *move,
+                             const GibbonMove *_move,
                              GibbonPositionSide side,
                              gboolean reverse)
 {
-        if (move->number == 0)
-                return g_strdup ("-");
+        gint i;
+        GibbonMove *move = g_alloca (sizeof move->number
+                                     + _move->number * sizeof *move->movements
+                                     + sizeof move->status);
+        GString *string;
+        gchar *retval;
 
-        return g_strdup (_("Not yet implemented"));
+        g_return_val_if_fail (side, g_strdup (_("invalid")));
+
+        if (_move->number == 0)
+                return g_strdup ("-");
+        else if (_move->number > 4)
+                return g_strdup (_("invalid"));
+
+        string = g_string_new ("");
+        memcpy (move, _move, sizeof move->number
+                + _move->number * sizeof *move->movements
+                + sizeof move->status);
+
+        for (i = 0; i < move->number; ++i) {
+                if (string->len) {
+                        g_string_append_c (string, ' ');
+                }
+                g_string_append_printf (string, "%d/%d",
+                                        move->movements[i].from,
+                                        move->movements[i].to);
+        }
+
+        retval = string->str;
+        g_string_free (string, FALSE);
+
+        return retval;
 }
