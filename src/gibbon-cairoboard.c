@@ -60,7 +60,20 @@ struct _GibbonCairoboardPrivate {
         GibbonApp *app;
 
         GibbonPosition *pos;
+
+        GibbonPosition *target;
+        GibbonMove *move;
+        guint animation_id;
+        gint animation_move_number;
+        GibbonPositionSide animation_side;
         
+        /* For each sub move we have these animations steps:
+         *      -1: Start.
+         * 0 - 999: Move the checker from the starting point.
+         * 1 -1999: Move a possible hit checker to the bar.
+         */
+        gint animation_step;
+
         GHashTable *ids;
 
         struct svg_component *board;
@@ -92,6 +105,12 @@ static void gibbon_cairoboard_set_position (GibbonBoard *self,
                                             GibbonPosition *pos);
 static const GibbonPosition *gibbon_cairoboard_get_position (const GibbonBoard
                                                              *self);
+static void gibbon_cairoboard_animate_move (GibbonBoard *self,
+                                            const GibbonMove *move,
+                                            GibbonPositionSide side,
+                                            GibbonPosition *target_position);
+static void gibbon_cairoboard_cancel_animation (GibbonCairoboard *self);
+static gboolean gibbon_cairoboard_do_animation (GibbonCairoboard *self);
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -151,6 +170,10 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
 
         self->priv->app = NULL;
         self->priv->pos = NULL;
+        self->priv->target = NULL;
+        self->priv->move = NULL;
+        self->priv->animation_id = 0;
+        self->priv->animation_move_number = 0;
 
         self->priv->board = NULL;
         self->priv->point12 = NULL;
@@ -180,6 +203,7 @@ gibbon_board_iface_init (GibbonBoardIface *iface)
 {
         iface->set_position = gibbon_cairoboard_set_position;
         iface->get_position = gibbon_cairoboard_get_position;
+        iface->animate_move = gibbon_cairoboard_animate_move;
 }
 
 static void
@@ -188,8 +212,14 @@ gibbon_cairoboard_finalize (GObject *object)
         GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
         size_t i;
 
+        gibbon_cairoboard_cancel_animation (self);
+
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
+        if (self->priv->target)
+                gibbon_position_free (self->priv->target);
+        if (self->priv->move)
+                g_free (self->priv->move);
 
         if (self->priv->ids)
                 g_hash_table_destroy (self->priv->ids);
@@ -740,6 +770,8 @@ gibbon_cairoboard_set_position (GibbonBoard *_self,
         
         self = GIBBON_CAIROBOARD (_self);
 
+        gibbon_cairoboard_cancel_animation (self);
+
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
         self->priv->pos = pos;
@@ -755,6 +787,10 @@ gibbon_cairoboard_get_position (const GibbonBoard *_self)
         g_return_val_if_fail (GIBBON_IS_CAIROBOARD (_self), NULL);
 
         self = GIBBON_CAIROBOARD (_self);
+
+        /* When animating towards a new position, fake the reply.  */
+        if (self->priv->target)
+                return self->priv->target;
 
         return self->priv->pos;
 }
@@ -1010,4 +1046,159 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         svg_util_steal_text_params (self->priv->board, "pip2", text,
                                     1.0, 0, NULL);
         g_free (text);
+}
+
+static void
+gibbon_cairoboard_animate_move (GibbonBoard *_self, const GibbonMove *move,
+                                GibbonPositionSide side,
+                                GibbonPosition *target_position)
+{
+        GibbonCairoboard *self;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (_self));
+        g_return_if_fail (target_position != NULL);
+
+        self = GIBBON_CAIROBOARD (_self);
+
+        gibbon_cairoboard_cancel_animation (self);
+
+        self->priv->target = target_position;
+
+        self->priv->move = gibbon_position_alloc_move (move->number);
+        memcpy (self->priv->move, move,
+                sizeof move->number
+                + move->number * sizeof *move->movements
+                + sizeof move->status);
+
+        self->priv->animation_move_number = 0;
+        self->priv->animation_side = side;
+        self->priv->animation_step = -1;
+
+        self->priv->animation_id =
+                g_timeout_add (500,
+                               (GSourceFunc) gibbon_cairoboard_do_animation,
+                               (gpointer) self);
+}
+
+static void
+gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
+{
+        if (!self->priv->target)
+                return;
+
+        gibbon_position_free (self->priv->pos);
+        self->priv->pos = self->priv->target;
+        self->priv->target = NULL;
+
+        g_free (self->priv->move);
+        self->priv->move = NULL;
+
+        if (self->priv->animation_id)
+                g_source_remove (self->priv->animation_id);
+        self->priv->animation_id = 0;
+
+        gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static gboolean
+gibbon_cairoboard_do_animation (GibbonCairoboard *self)
+{
+        gint move_number = self->priv->animation_move_number;
+        gint from, to;
+        GibbonMove *move = self->priv->move;
+        GibbonPosition *pos = self->priv->pos;
+        GibbonPositionSide side = self->priv->animation_side;
+
+#define stop_animation(s) { \
+        self->priv->animation_id = 0; \
+        gibbon_cairoboard_cancel_animation (s); \
+        return FALSE; \
+}
+
+        if (!move || move_number >= move->number || !side)
+                stop_animation (self);
+
+        /* Consistency checks first.  */
+        from = move->movements[move_number].from;
+        to = move->movements[move_number].to;
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                if (from == 25) {
+                        if (!pos->bar[0])
+                                stop_animation (self);
+                } else if (from <= 0 || from > 25) {
+                        stop_animation (self);
+                } else if (pos->points[from - 1] <= 0) {
+                        stop_animation (self);
+                }
+                if (to < 0 || to > 24) {
+                        stop_animation (self);
+                } else if (pos->points[to - 1] < -1) {
+                        stop_animation (self);
+                }
+        } else {
+                if (from == 25) {
+                        if (!pos->bar[1])
+                                stop_animation (self);
+                } else if (from <= 0 || from > 25) {
+                        stop_animation (self);
+                } else if (pos->points[from - 1] >= 0) {
+                        stop_animation (self);
+                }
+                if (to < 1 || to > 25) {
+                        stop_animation (self);
+                } else if (pos->points[to - 1] > +1) {
+                                stop_animation (self);
+                }
+        }
+
+        if (self->priv->animation_step < 0) {
+                /* Checker starts floating.  */
+                g_printerr ("Start moving checker.\n");
+                self->priv->animation_step = 0;
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        if (from == 25)
+                                --pos->bar[0];
+                        --pos->points[from - 1];
+                } else {
+                        if (from == 25)
+                                --pos->bar[1];
+                        ++pos->points[from - 1];
+                }
+        } else if (self->priv->animation_step < 1000) {
+                g_printerr ("Checker is floating.\n");
+                self->priv->animation_step += 100;
+        } else if (self->priv->animation_step == 1000) {
+                g_printerr ("Checker is landing.\n");
+                self->priv->animation_step += 100;
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        if (pos->points[to - 1] == -1) {
+                                ++pos->bar[1];
+                                pos->points[to - 1] = 1;
+                        } else {
+                                ++pos->points[to - 1];
+                                self->priv->animation_step = 2000;
+                        }
+                } else {
+                        if (pos->points[to - 1] == +1) {
+                                ++pos->bar[0];
+                                pos->points[to - 1] = -1;
+                        } else {
+                                --pos->points[to - 1];
+                                self->priv->animation_step = 2000;
+                        }
+                }
+        } else if (self->priv->animation_step < 2000) {
+                g_printerr ("Hit checker is travelling to the bar.\n");
+                self->priv->animation_step += 100;
+        } else {
+                g_printerr ("Done with this movement.\n");
+                ++self->priv->animation_move_number;
+                self->priv->animation_step = -1;
+                if (self->priv->animation_move_number >= move->number)
+                        stop_animation (self);
+        }
+
+        gtk_widget_queue_draw (GTK_WIDGET (self));
+
+        return TRUE;
 }

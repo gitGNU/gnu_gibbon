@@ -385,10 +385,39 @@ gibbon_app_get_pixmaps_directory (const GibbonApp *self)
         return self->priv->pixmaps_directory;
 }
 
+#include "gibbon-position.h"
+static void
+gibbon_app_on_debug (const GibbonApp *self)
+{
+        GibbonMove *move = gibbon_position_alloc_move (2);
+        GibbonPosition *target_position = gibbon_position_new ();
+
+        move->number = 2;
+        move->movements[0].from = 8;
+        move->movements[0].to = 4;
+        move->movements[1].from = 6;
+        move->movements[1].to = 4;
+
+        gibbon_position_apply_move (target_position, move,
+                                    GIBBON_POSITION_SIDE_WHITE, FALSE);
+
+        gibbon_board_animate_move (GIBBON_BOARD (self->priv->board), move,
+                                   GIBBON_POSITION_SIDE_WHITE,
+                                   target_position);
+
+        g_free (move);
+}
+
 static void
 gibbon_app_connect_signals (const GibbonApp *self)
 {
         GObject* obj;
+
+        obj = gibbon_app_find_object (self, "debug-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                                  G_CALLBACK (gibbon_app_on_debug),
+                                  (gpointer) self);
 
         obj = gibbon_app_find_object (self, "toolbar_quit_button",
                                       GTK_TYPE_TOOL_BUTTON);

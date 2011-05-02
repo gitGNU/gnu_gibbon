@@ -369,6 +369,15 @@ gibbon_session_process_server_line (GibbonSession *self,
         if (self->priv->watching && self->priv->opponent) {
                 length = strlen (self->priv->watching);
                 if (0 == strncmp (self->priv->watching, line, length)
+                    && ' ' == line[length])
+                        g_printerr ("%s\n", line);
+                length = strlen (self->priv->opponent);
+                if (0 == strncmp (self->priv->opponent, line, length)
+                    && ' ' == line[length])
+                        g_printerr ("%s\n", line);
+
+                length = strlen (self->priv->watching);
+                if (0 == strncmp (self->priv->watching, line, length)
                     && ' ' == line[length]
                     && gibbon_session_handle_someone (self,
                                                       GIBBON_SESSION_PLAYER_WATCHING,
@@ -873,6 +882,11 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail (parse_integer (tokens[41], &direction,
                               "direction", -1, 1),
                 free_vector (tokens));
+        if (!direction) {
+                g_critical (_("Invalid direction 0 in board state.\n"));
+                free_vector (tokens);
+                return FALSE;
+        }
 
         if (g_strcmp0 ("You", tokens[0])) {
                 pos->players[0] = g_strdup (tokens[0]);
@@ -968,6 +982,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         g_return_val_if_fail (parse_integer (tokens[47], &pos->bar[1], "bar1",
                                              0, 15),
                               free_vector (tokens));
+
 
         g_strfreev (tokens);
         
@@ -1196,10 +1211,16 @@ gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
         gchar *endptr;
         gint i;
         guint64 from, to;
+        GibbonPositionSide side;
+        gchar *pretty_move;
+        gint *dice;
 
         move->number = 0;
 
-        /* g_printerr ("Handle move %s\n", line); */
+        if (player == GIBBON_SESSION_PLAYER_OPPONENT)
+                side = GIBBON_POSITION_SIDE_BLACK;
+        else
+                side = GIBBON_POSITION_SIDE_WHITE;
 
         tokens = g_strsplit_set (line, " .", 0);
         if (!tokens)
@@ -1214,7 +1235,7 @@ gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
                 token = tokens[i];
                 movement = move->movements + move->number++;
                 if (0 == strncmp ("bar", token, 3)) {
-                        movement->from = 25;
+                        movement->from = -1;
                         endptr = token + 3;
                 } else {
                         errno = 0;
@@ -1248,11 +1269,11 @@ gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
                 token = endptr + 1;
 
                 if (0 == strncmp ("off", token, 3)) {
-                        movement->to = 0;
+                        movement->to = -1;
                         endptr = token + 3;
                 } else {
                         errno = 0;
-                        from = g_ascii_strtoull (token, &endptr, 10);
+                        to = g_ascii_strtoull (token, &endptr, 10);
                         if (errno) {
                                 g_critical ("Error parsing token #%d in"
                                             " move '%s': %s!\n",
@@ -1260,7 +1281,7 @@ gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
                                 g_strfreev (tokens);
                                 return FALSE;
                         }
-                        if (from == 0 || from > 24) {
+                        if (to == 0 || to > 24) {
                                 g_critical ("Error parsing token #%d in"
                                             " move '%s': Landing point out"
                                             " of range (%s)!\n",
@@ -1279,30 +1300,104 @@ gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
                         return FALSE;
                 }
 
-                if (movement->from == 25) {
-                        /* Coming back from bar.  Convert starting point to
-                         * our notion.
-                         */
-                        if (player == GIBBON_SESSION_PLAYER_OPPONENT)
+                /* Now repair the move according to our notion.  The
+                 * direction of the move is actually giving in the board
+                 * state but that is even more unreliable because we
+                 * could have missed it.
+                 *
+                 * First assign bar and home accordingly.
+                 */
+                if  (movement->from == -1) {
+                        if (movement->to <= 6) {
                                 movement->from = 0;
+                        } else {
+                                movement->from = 25;
+                        }
                 }
-                if (movement->to == 0) {
-                        /* Bear-off.  Convert landing point to our notion.  */
-                        if (player != GIBBON_SESSION_PLAYER_OPPONENT)
-                                movement->to = 25;                }
+                if (movement->to == -1) {
+                        if (movement->from <= 6) {
+                                movement->to = 0;
+                        } else {
+                                movement->to = 25;
+                        }
+                }
+
+                /* At this point, the direction is determined.  We want white
+                 * to move from his 24 to his ace point, and black the
+                 * other way round.
+                 */
+                if ((side == GIBBON_POSITION_SIDE_WHITE
+                     && movement->from < movement->to)
+                    || (side == GIBBON_POSITION_SIDE_BLACK
+                        && movement->from > movement->to)) {
+                        movement->from = 25 - movement->from;
+                        movement->to = 25 - movement->to;
+                }
         }
 
+        g_strfreev (tokens);
+
+        pretty_move = gibbon_position_format_move (self->priv->position, move,
+                                                   side, FALSE);
+        g_free (self->priv->position->status);
+        self->priv->position->status = NULL;
+        dice = self->priv->position->dice;
         switch (player) {
                 case GIBBON_SESSION_PLAYER_OTHER:
+                        g_free (pretty_move);
                         return FALSE;
                 case GIBBON_SESSION_PLAYER_OPPONENT:
+                        self->priv->position->status =
+                            g_strdup_printf (_("%d%d: %s moves %s."),
+                                             abs (dice[0]),
+                                             abs (dice[1]),
+                                             self->priv->opponent,
+                                             pretty_move);
                         break;
                 case GIBBON_SESSION_PLAYER_YOU:
+                        self->priv->position->status =
+                            g_strdup_printf (_("%d%d: You move %s."),
+                                             abs (dice[0]),
+                                             abs (dice[1]),
+                                             pretty_move);
                         break;
                 case GIBBON_SESSION_PLAYER_WATCHING:
+                        self->priv->position->status =
+                            g_strdup_printf (_("%d%d: %s moves %s."),
+                                             abs (dice[0]),
+                                             abs (dice[1]),
+                                             self->priv->watching,
+                                             pretty_move);
                         break;
         }
+        if (!gibbon_position_apply_move (self->priv->position, move,
+                                         side, FALSE)) {
+                g_critical ("Error applying move %s to position.",
+                            pretty_move);
+                g_critical ("Move received from FIBS: %s.", line);
+                g_critical ("Parsed numbers:");
+                for (i = 0; i < move->number; ++i) {
+                        g_critical ("    %d/%d",
+                                    move->movements[i].from,
+                                    move->movements[i].to);
+                }
+                if (side == GIBBON_POSITION_SIDE_WHITE)
+                        g_critical ("White on move.");
+                else
+                        g_critical ("Black on move.");
+                gibbon_position_free (self->priv->position);
+                self->priv->position = gibbon_position_new ();
+                self->priv->position->status =
+                    g_strdup_printf (_("Error applying move %s to position.\n"),
+                                     pretty_move);
+                g_free (pretty_move);
+                return FALSE;
+        }
 
+        g_free (pretty_move);
+
+        self->priv->position->dice[0] = 0;
+        self->priv->position->dice[1] = 0;
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    gibbon_position_copy (self->priv->position));
 
