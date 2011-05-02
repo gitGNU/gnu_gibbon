@@ -73,6 +73,7 @@ struct _GibbonCairoboardPrivate {
          * 1 -1999: Move a possible hit checker to the bar.
          */
         gint animation_step;
+        GibbonPositionSide animation_floating;
 
         GHashTable *ids;
 
@@ -174,6 +175,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv->move = NULL;
         self->priv->animation_id = 0;
         self->priv->animation_move_number = 0;
+        self->priv->animation_floating = GIBBON_POSITION_SIDE_NONE;
 
         self->priv->board = NULL;
         self->priv->point12 = NULL;
@@ -567,7 +569,8 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
         g_return_if_fail (side);
 
         checkers = gibbon_position_get_borne_off (self->priv->pos, side);
-
+        if (self->priv->animation_floating == side)
+                --checkers;
         x = gibbon_cairoboard_get_home_x (self, side);
 
         if (side == GIBBON_POSITION_SIDE_WHITE) {
@@ -1164,6 +1167,7 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
                                 --pos->bar[1];
                         ++pos->points[from - 1];
                 }
+                self->priv->animation_floating = side;
         } else if (self->priv->animation_step < 1000) {
                 g_printerr ("Checker is floating.\n");
                 self->priv->animation_step += 100;
@@ -1174,17 +1178,23 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
                         if (pos->points[to - 1] == -1) {
                                 ++pos->bar[1];
                                 pos->points[to - 1] = 1;
+                                self->priv->animation_floating = -side;
                         } else {
                                 ++pos->points[to - 1];
                                 self->priv->animation_step = 2000;
+                                self->priv->animation_floating =
+                                    GIBBON_POSITION_SIDE_NONE;
                         }
                 } else {
                         if (pos->points[to - 1] == +1) {
                                 ++pos->bar[0];
                                 pos->points[to - 1] = -1;
+                                self->priv->animation_floating = -side;
                         } else {
                                 --pos->points[to - 1];
                                 self->priv->animation_step = 2000;
+                                self->priv->animation_floating =
+                                    GIBBON_POSITION_SIDE_NONE;
                         }
                 }
         } else if (self->priv->animation_step < 2000) {
