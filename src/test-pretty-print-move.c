@@ -75,7 +75,7 @@ test_basic_move ()
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
         GibbonMove *move = gibbon_position_alloc_move (2);
-        gchar *expect = "8/5 6/5";
+        gchar *expect;
         gchar *got = NULL;
 
         move->number = 2;
@@ -83,6 +83,22 @@ test_basic_move ()
         move->movements[0].to = 5;
         move->movements[1].from = 6;
         move->movements[1].to = 5;
+        expect = "8/5 6/5";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Test compression.  */
+        move->movements[0].from = 24;
+        move->movements[0].to = 18;
+        move->movements[1].from = 18;
+        move->movements[1].to = 13;
+        expect = "24/13";
         got = gibbon_position_format_move (position, move,
                                            GIBBON_POSITION_SIDE_WHITE, FALSE);
         if (g_strcmp0 (expect, got)) {

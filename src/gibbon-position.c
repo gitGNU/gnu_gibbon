@@ -1056,12 +1056,13 @@ gibbon_position_format_move (GibbonPosition *self,
                              GibbonPositionSide side,
                              gboolean reverse)
 {
-        gint i;
+        gint i, j;
         GibbonMove *move = g_alloca (sizeof move->number
                                      + _move->number * sizeof *move->movements
                                      + sizeof move->status);
         GString *string;
         gchar *retval;
+        gint from, to;
 
         g_return_val_if_fail (side, g_strdup (_("invalid")));
 
@@ -1075,10 +1076,31 @@ gibbon_position_format_move (GibbonPosition *self,
                 + _move->number * sizeof *move->movements
                 + sizeof move->status);
 
+        /* We abuse the die field of the movements for our own purposes.  */
+        for (i = 0; i < move->number; ++i)
+                move->movements[i].die = 1;
+
+        /* First run.  Compress movements with one checker.  */
         for (i = 0; i < move->number; ++i) {
+                for (j = i; j < move->number; ++j) {
+                        if (move->movements[j].from
+                            == move->movements[i].to) {
+                                move->movements[j].die = 0;
+                                move->movements[i].to = move->movements[j].to;
+                        }
+                }
+        }
+
+        for (i = 0; i < move->number; ++i) {
+                if (!move->movements[i].die)
+                        continue;
+
+                from = move->movements[i].from;
+                to = move->movements[i].to;
                 if (string->len) {
                         g_string_append_c (string, ' ');
                 }
+
                 g_string_append_printf (string, "%d/%d",
                                         move->movements[i].from,
                                         move->movements[i].to);
