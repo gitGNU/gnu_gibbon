@@ -771,15 +771,18 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 static void
 gibbon_draw_animation (GibbonCairoboard *self, cairo_t *cr)
 {
-        gdouble from_x, from_y;
-        gdouble to_x, to_y;
-        gdouble x, y;
+        gdouble from_x = 12, from_y = 23;
+        gdouble to_x = 34, to_y = 45;
         gint from, to;
         GibbonPositionSide side;
+        guint num_checkers;
+        struct svg_component *checker;
+        GibbonPosition *pos;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         side = self->priv->animation_floating;
+        pos = self->priv->pos;
 
         if (!side)
                 return;
@@ -802,36 +805,75 @@ gibbon_draw_animation (GibbonCairoboard *self, cairo_t *cr)
         if (from == 0) {
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
                         from_x = gibbon_cairoboard_get_home_x (self, side);
+
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        from_y = checker->y +
+                                 (num_checkers + 0.5) * checker->height;
                 } else {
                         from_x = gibbon_cairoboard_get_bar_x (self);
+                        from_y = gibbon_cairoboard_get_bar_y (self,
+                                                              pos->bar[1] + 1,
+                                                              pos->bar[1],
+                                                              side);
                 }
         } else if (from == 25) {
                 if (side == GIBBON_POSITION_SIDE_BLACK) {
                         from_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        from_y = checker->y +
+                                 (num_checkers + 0.5) * checker->height;
                 } else {
                         from_x = gibbon_cairoboard_get_bar_x (self);
+                        from_y = gibbon_cairoboard_get_bar_y (self,
+                                                              pos->bar[0] + 1,
+                                                              pos->bar[0],
+                                                              side);
                 }
         } else {
                 from_x = gibbon_cairoboard_get_flat_checker_x (self, from - 1);
+                num_checkers = abs (self->priv->pos->points[from - 1]);
+                from_y = gibbon_cairoboard_get_flat_checker_y (self, from - 1,
+                                                               num_checkers
+                                                               + 1);
         }
 
         if (to == 0) {
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
                         to_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        to_y = checker->y + 0.5 * checker->height;
                 } else {
                         to_x = gibbon_cairoboard_get_bar_x (self);
                 }
         } else if (to == 25) {
                 if (side == GIBBON_POSITION_SIDE_BLACK) {
                         to_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        from_y = checker->y + 0.5 * checker->height;
                 } else {
                         to_x = gibbon_cairoboard_get_bar_x (self);
                 }
         } else {
                 to_x = gibbon_cairoboard_get_flat_checker_x (self, to - 1);
+                num_checkers = abs (self->priv->pos->points[to - 1]);
+                to_y = gibbon_cairoboard_get_flat_checker_y (self, to - 1,
+                                                             num_checkers
+                                                             + 1);
         }
 
-        g_printerr ("Route: (%f) -> (%f)\n", from_x, to_x);
+        g_printerr ("Route: (%f|%f) -> (%f|%f)\n", from_x, from_y, to_x, to_y);
 }
 
 static void
