@@ -1050,64 +1050,167 @@ gibbon_position_game_over (const GibbonPosition *position)
         return FALSE;
 }
 
+static GRegex *re_adjacent1 = NULL;
+static GRegex *re_adjacent2 = NULL;
+static GRegex *re_dup2 = NULL;
+static GRegex *re_dup3 = NULL;
+static GRegex *re_dup4 = NULL;
+static GRegex *re_prune_intermediate = NULL;
+
 gchar *
 gibbon_position_format_move (GibbonPosition *self,
-                             const GibbonMove *_move,
+                             const GibbonMove *move,
                              GibbonPositionSide side,
                              gboolean reverse)
 {
         gint i, j;
-        GibbonMove *move = g_alloca (sizeof move->number
-                                     + _move->number * sizeof *move->movements
-                                     + sizeof move->status);
-        GString *string;
-        gchar *retval;
         gint from, to;
+        gchar buf[29];
+        GError *error = NULL;
+        gchar *new_buf = NULL;
+        gchar *old_buf = NULL;
+        GString *string;
+        gint blots[24];
+        gboolean do_reverse = FALSE;
 
         g_return_val_if_fail (side, g_strdup (_("invalid")));
 
-        if (_move->number == 0)
+        if (move->number == 0)
                 return g_strdup ("-");
-        else if (_move->number > 4)
+        else if (move->number > 4)
                 return g_strdup (_("invalid"));
 
-        string = g_string_new ("");
-        memcpy (move, _move, sizeof move->number
-                + _move->number * sizeof *move->movements
-                + sizeof move->status);
+        if ((side == GIBBON_POSITION_SIDE_BLACK && !reverse)
+            || (side == GIBBON_POSITION_SIDE_WHITE && reverse))
+                do_reverse = TRUE;
 
-        /* We abuse the die field of the movements for our own purposes.  */
-        for (i = 0; i < move->number; ++i)
-                move->movements[i].die = 1;
+        /* We first convert the complete move into two-character tokens.
+         * The first character of each token represents the starting point
+         * in the range of 'a'-'z', the second token represents the landing
+         * point, again in the range of 'a'-'z'.
+         */
 
-        /* First run.  Compress movements with one checker.  */
-        for (i = 0; i < move->number; ++i) {
-                for (j = i; j < move->number; ++j) {
-                        if (move->movements[j].from
-                            == move->movements[i].to) {
-                                move->movements[j].die = 0;
-                                move->movements[i].to = move->movements[j].to;
-                        }
-                }
-        }
-
-        for (i = 0; i < move->number; ++i) {
-                if (!move->movements[i].die)
-                        continue;
-
+        /* First convert it into our character form.  */
+        for (i = 0, j = 0; i < move->number; ++i) {
                 from = move->movements[i].from;
                 to = move->movements[i].to;
-                if (string->len) {
-                        g_string_append_c (string, ' ');
-                }
 
-                g_string_append_printf (string, "%d/%d",
-                                        move->movements[i].from,
-                                        move->movements[i].to);
+                if (do_reverse) {
+                        from = 25 - from;
+                        to = 25 - to;
+                }
+                buf[j++] = 'a' + from;
+                buf[j++] = '/';
+                buf[j++] = 'a' + to;
+                buf[j++] = ' ';
+        }
+        buf[j - 1] = 0;
+
+        if (!re_adjacent1) {
+                re_adjacent1 = g_regex_new ("([a-z]) \\1",
+                                            0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_adjacent2) {
+                re_adjacent2 = g_regex_new ("([a-z])/([a-z])(.*) \\2/([a-z])",
+                                            0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup4) {
+                re_dup4 = g_regex_new ("([a-z]/[a-z]) \\1 \\1 \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup3) {
+                re_dup3 = g_regex_new ("([a-z]/[a-z]) \\1 \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup2) {
+                re_dup2 = g_regex_new ("([a-z](?:/[a-z])+) \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_prune_intermediate) {
+                re_prune_intermediate = g_regex_new ("/[1-9][0-9]*/",
+                                                     0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
         }
 
-        retval = string->str;
-        g_string_free (string, FALSE);
+        /* First compression step.  Condense ab bc into abc, or
+         * ab bc cd into abcd.
+         */
+        new_buf = g_regex_replace (re_adjacent1, buf, -1, 0, "\\1", 0, &error);
+        if (error)
+                return g_strdup (error->message);
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_adjacent2, old_buf, -1, 0,
+                                   "\\1/\\2/\\4\\3", 0, &error);
+        if (error)
+                return g_strdup (error->message);
 
-        return retval;
+        /* Now group identical checker movements.  */
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup4, old_buf, -1, 0, "\\1(4)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup3, old_buf, -1, 0, "\\1(3)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup2, old_buf, -1, 0, "\\1(2)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        string = g_string_new ("");
+
+        /* Create a virtual table with opposing blots.  */
+        memset (blots, 0, sizeof blots);
+        for (i = 0; i < 24; ++i) {
+                j = (side == GIBBON_POSITION_SIDE_BLACK) ? 23 - i : i;
+                if (self->points[j] == -side)
+                        blots[i] = 1;
+        }
+
+        /* And finally convert the string back into the numerical form.  */
+        for (i = 0; new_buf[i]; ++i) {
+                if ('a' == new_buf[i]) {
+                        g_string_append (string, "off");
+                } else if ('z' == new_buf[i]) {
+                        g_string_append (string, "bar");
+                } else if ('a' < new_buf[i] && 'z' > new_buf[i]) {
+                        g_string_append_printf (string, "%u", new_buf[i] - 'a');
+                        if (blots[new_buf[i] - 'a' - 1]) {
+                                g_string_append_c (string, '*');
+                                blots[new_buf[i] - 'a' - 1] = 0;
+                        }
+                } else {
+                        g_string_append_c (string, new_buf[i]);
+                }
+        }
+        g_free (new_buf);
+
+        /* And finally prune out unneeded intermediate points.  */
+        new_buf = g_regex_replace (re_prune_intermediate,
+                                   string->str, -1, 0, "/", 0, &error);
+        g_string_free (string, TRUE);
+        if (error)
+                return g_strdup (error->message);
+
+        return new_buf;
 }

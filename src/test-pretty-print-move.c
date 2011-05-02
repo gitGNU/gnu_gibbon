@@ -29,6 +29,14 @@
 
 static gboolean test_cannot_move (void);
 static gboolean test_basic_move (void);
+static gboolean test_double2 (void);
+static gboolean test_double3 (void);
+static gboolean test_double4 (void);
+static gboolean test_from_bar (void);
+static gboolean test_bear_off (void);
+static gboolean test_black_move (void);
+static gboolean test_black_move_reverse (void);
+static gboolean test_double_bug1 (void);
 
 int
 main(int argc, char *argv[])
@@ -40,6 +48,22 @@ main(int argc, char *argv[])
         if (!test_cannot_move ())
                 status = -1;
         if (!test_basic_move ())
+                status = -1;
+        if (!test_double2 ())
+                status = -1;
+        if (!test_double3 ())
+                status = -1;
+        if (!test_double4 ())
+                status = -1;
+        if (!test_from_bar ())
+                status = -1;
+        if (!test_bear_off ())
+                status = -1;
+        if (!test_black_move ())
+                status = -1;
+        if (!test_black_move_reverse ())
+                status = -1;
+        if (!test_double_bug1 ())
                 status = -1;
 
         return status;
@@ -108,7 +132,353 @@ test_basic_move ()
         }
         g_free (got);
 
+        /* Now make this a hit.  */
+        position->points[18] = -4;
+        position->points[17] = -1;
+        expect = "24/18*/13";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
         gibbon_position_free (position);
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_double2 ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 4;
+        move->movements[0].from = 24;
+        move->movements[0].to = 18;
+        move->movements[1].from = 24;
+        move->movements[1].to = 18;
+        move->movements[2].from = 13;
+        move->movements[2].to = 7;
+        move->movements[3].from = 13;
+        move->movements[3].to = 7;
+        expect = "24/18(2) 13/7(2)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Now make one a hit.  */
+        position->points[18] = -4;
+        position->points[6] = -1;
+        expect = "24/18(2) 13/7*(2)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_double3 ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 4;
+        move->movements[0].from = 24;
+        move->movements[0].to = 18;
+        move->movements[1].from = 13;
+        move->movements[1].to = 7;
+        move->movements[2].from = 13;
+        move->movements[2].to = 7;
+        move->movements[3].from = 13;
+        move->movements[3].to = 7;
+        expect = "24/18 13/7(3)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Now make this a hit.  */
+        position->points[18] = -4;
+        position->points[6] = -1;
+        expect = "24/18 13/7*(3)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_double4 ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 4;
+        move->movements[0].from = 13;
+        move->movements[0].to = 7;
+        move->movements[1].from = 13;
+        move->movements[1].to = 7;
+        move->movements[2].from = 13;
+        move->movements[2].to = 7;
+        move->movements[3].from = 13;
+        move->movements[3].to = 7;
+        expect = "13/7(4)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Now make this a hit.  */
+        position->points[18] = -4;
+        position->points[6] = -1;
+        expect = "13/7*(4)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_from_bar ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (1);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 1;
+        move->movements[0].from = 25;
+        move->movements[0].to = 23;
+        expect = "bar/23";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_bear_off ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (1);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 1;
+        move->movements[0].from = 3;
+        move->movements[0].to = 0;
+        expect = "3/off";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_WHITE, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_black_move ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (2);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 2;
+        move->movements[0].from = 0;
+        move->movements[0].to = 6;
+        move->movements[1].from = 22;
+        move->movements[1].to = 25;
+        expect = "bar/19 3/off";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Make it a hit.  */
+        position->points[5] = +1;
+        expect = "bar/19* 3/off";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, FALSE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+
+static gboolean
+test_black_move_reverse ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (2);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 2;
+        move->movements[0].from = 25;
+        move->movements[0].to = 20;
+        move->movements[1].from = 3;
+        move->movements[1].to = 0;
+        expect = "bar/20 3/off";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, TRUE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        /* Make it a hit.  */
+        position->points[4] = +1;
+        expect = "bar/20* 3/off";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, TRUE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        gibbon_position_free (position);
+
+        g_free (move);
+
+        return retval;
+}
+
+static gboolean
+test_double_bug1 ()
+{
+        gboolean retval = TRUE;
+        GibbonPosition *position = gibbon_position_new ();
+        GibbonMove *move = gibbon_position_alloc_move (4);
+        gchar *expect;
+        gchar *got = NULL;
+
+        move->number = 4;
+        move->movements[0].from = 18;
+        move->movements[0].to = 13;
+        move->movements[1].from = 18;
+        move->movements[1].to = 13;
+        move->movements[2].from = 13;
+        move->movements[2].to = 8;
+        move->movements[3].from = 13;
+        move->movements[3].to = 8;
+        expect = "18/8(2)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, TRUE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
+        position->points[11] = +1;
+        expect = "18/13*/8(2)";
+        got = gibbon_position_format_move (position, move,
+                                           GIBBON_POSITION_SIDE_BLACK, TRUE);
+        if (g_strcmp0 (expect, got)) {
+                retval = FALSE;
+                g_printerr ("Expected '%s', got '%s'.\n",
+                            expect, got);
+        }
+        g_free (got);
+
         g_free (move);
 
         return retval;
