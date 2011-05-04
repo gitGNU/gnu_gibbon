@@ -33,6 +33,7 @@
 #include <stdlib.h>
 
 #include "gibbon-app.h"
+#include "gibbon-archive.h"
 #include "gibbon-board.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-game-chat.h"
@@ -71,6 +72,8 @@ struct _GibbonAppPrivate {
         GibbonAccountDialog *account_dialog;
 
         GHashTable *chats;
+
+        GibbonArchive *archive;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -134,6 +137,8 @@ gibbon_app_init (GibbonApp *self)
         self->priv->account_dialog = NULL;
 
         self->priv->chats = NULL;
+
+        self->priv->archive = NULL;
 }
 
 static void
@@ -145,6 +150,9 @@ gibbon_app_finalize (GObject *object)
 
         if (self->priv->server_console)
                 g_object_unref (self->priv->server_console);
+
+        if (self->priv->archive)
+                g_object_unref (self->priv->archive);
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -230,6 +238,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
 
         gibbon_app_connect_signals (self);
 
+        self->priv->archive = gibbon_archive_new (self);
+        if (!self->priv->archive) {
+                g_object_unref (self);
+                return NULL;
+        }
+
         singleton = self;
 
         return self;
@@ -259,17 +273,17 @@ gibbon_app_display_error (const GibbonApp* self,
 {
         va_list args;
         gchar *message;
+        GtkWidget *dialog;
 
         va_start (args, message_format);
         message = g_strdup_vprintf (message_format, args);
         va_end (args);
 
-        GtkWidget *dialog =
-                gtk_message_dialog_new (GTK_WINDOW (self->priv->window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_CLOSE,
-                                        "%s", message);
+        dialog = gtk_message_dialog_new (GTK_WINDOW (self->priv->window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_ERROR,
+                                         GTK_BUTTONS_CLOSE,
+                                         "%s", message);
 
         g_free (message);
 
@@ -283,17 +297,17 @@ gibbon_app_display_info (const GibbonApp *self, const gchar *message_format, ...
 {
         va_list args;
         gchar *message;
+        GtkWidget *dialog;
 
         va_start (args, message_format);
         message = g_strdup_vprintf (message_format, args);
         va_end (args);
 
-        GtkWidget *dialog =
-                gtk_message_dialog_new (GTK_WINDOW (self->priv->window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_INFO,
-                                        GTK_BUTTONS_CLOSE,
-                                        "%s", message);
+        dialog = gtk_message_dialog_new (GTK_WINDOW (self->priv->window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_INFO,
+                                         GTK_BUTTONS_CLOSE,
+                                         "%s", message);
 
         g_free (message);
 
@@ -391,6 +405,12 @@ gibbon_app_on_debug (const GibbonApp *self)
 {
         GibbonMove *move = gibbon_position_alloc_move (2);
         GibbonPosition *target_position = gibbon_position_new ();
+
+        target_position->points[3] = -1;
+        target_position->points[11] = -4;
+
+        gibbon_board_set_position (GIBBON_BOARD (self->priv->board),
+                                   gibbon_position_copy (target_position));
 
         move->number = 2;
         move->movements[0].from = 8;
