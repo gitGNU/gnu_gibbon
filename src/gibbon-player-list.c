@@ -39,8 +39,8 @@ struct GibbonPlayer {
 static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
 
 #define GIBBON_PLAYER_LIST_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                  GIBBON_TYPE_PLAYER_LIST,           \
-                                  GibbonPlayerListPrivate))
+                                       GIBBON_TYPE_PLAYER_LIST,           \
+                                       GibbonPlayerListPrivate))
                                              
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
@@ -271,4 +271,29 @@ gibbon_player_list_exists (const GibbonPlayerList *self, const gchar *name)
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
 
         return (gboolean) g_hash_table_lookup (self->priv->hash, name);
+}
+
+void
+gibbon_player_list_remove (GibbonPlayerList *self,
+                           const gchar *name)
+{
+        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
+                                                           name);
+        GtkTreeIter iter;
+        gchar *opponent;
+
+        if (!player)
+                return;
+
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_PLAYER_LIST_COL_OPPONENT, &opponent,
+                            -1);
+        if (*opponent)
+                g_printerr ("%s dropped while playing with %s!.\n", name, opponent);
+
+        gtk_list_store_remove (self->priv->store, &iter);
+
+        (void) g_hash_table_remove (self->priv->hash, name);
 }
