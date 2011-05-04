@@ -40,6 +40,7 @@
 
 #include "gibbon-archive.h"
 #include "gibbon-connection.h"
+#include "gibbon-database.h"
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
@@ -47,6 +48,8 @@ struct _GibbonArchivePrivate {
 
         gchar *servers_directory;
         gchar *session_directory;
+
+        GibbonDatabase *db;
 };
 
 #define GIBBON_ARCHIVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -61,9 +64,8 @@ gibbon_archive_init (GibbonArchive *self)
                 GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate);
 
         self->priv->app = NULL;
-
         self->priv->servers_directory = NULL;
-
+        self->priv->db = NULL;
 }
 
 static void
@@ -73,13 +75,9 @@ gibbon_archive_finalize (GObject *object)
 
         if (self->priv->servers_directory)
                 g_free (self->priv->servers_directory);
-        self->priv->servers_directory = NULL;
 
         if (self->priv->session_directory)
                 g_free (self->priv->session_directory);
-        self->priv->session_directory = NULL;
-
-        self->priv->app = NULL;
 
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
@@ -100,6 +98,7 @@ gibbon_archive_new (GibbonApp *app)
         GibbonArchive *self;
         const gchar *documents_servers_directory;
         gboolean first_run = FALSE;
+        gchar *db_path;
 
         self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
 
@@ -115,6 +114,16 @@ gibbon_archive_new (GibbonApp *app)
                 gibbon_app_display_error (app,
                                           _("Cannot determine documents"
                                             " servers_directory!"));
+                g_object_unref (self);
+                return NULL;
+        }
+
+        db_path = g_build_filename (documents_servers_directory,
+                                    PACKAGE, "db.sqlite", NULL);
+        self->priv->db = gibbon_database_new (app, db_path);
+        g_free (db_path);
+
+        if (!self->priv->db) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -143,31 +152,6 @@ gibbon_archive_new (GibbonApp *app)
                                            " Check the menu `Extras' to see if"
                                            " your old client software is"
                                            " supported!"));
-
-        return self;
-}
-
-GibbonArchive *
-gibbon_archive_new_from_session_info (const gchar *host, guint port,
-                                      const gchar *login)
-{
-        GibbonArchive *self = gibbon_archive_new (NULL);
-        gchar *session_directory;
-        gchar *buf;
-
-        if (!self)
-                return NULL;
-
-        session_directory = g_build_filename (self->priv->servers_directory,
-                                              host, NULL);
-        if (port != 4321) {
-                buf = g_strdup_printf ("%s_%u", session_directory, port);
-                g_free (session_directory);
-                session_directory = buf;
-        }
-        buf = g_build_filename (session_directory, login, NULL);
-        g_free (session_directory);
-        self->priv->session_directory = buf;
 
         return self;
 }
