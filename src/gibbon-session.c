@@ -42,6 +42,8 @@
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
+#define CLIP_LOGIN 7
+#define CLIP_LOGOUT 8
 #define CLIP_SAYS 12
 #define CLIP_SHOUTS 13
 #define CLIP_WHISPERS 14
@@ -126,6 +128,8 @@ static gint gibbon_session_clip_welcome (GibbonSession *self,
                                          const gchar *message);
 static gint gibbon_session_clip_who_info (GibbonSession *self,
                                           const gchar *message);
+static gint gibbon_session_clip_logout (GibbonSession *self,
+                                        const gchar *message);
 static gint gibbon_session_clip_says (GibbonSession *self,
                                       const gchar *message);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
@@ -210,28 +214,20 @@ gibbon_session_finalize (GObject *object)
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
-        self->priv->app = NULL;
-        self->priv->connection = NULL;
-
         if (self->priv->watching)
                 g_free (self->priv->watching);
-        self->priv->watching = NULL;
 
         if (self->priv->opponent)
                 g_free (self->priv->opponent);
-        self->priv->opponent = NULL;
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
-        self->priv->position = NULL;
 
         if (self->priv->player_list)
                 g_object_unref (self->priv->player_list);
-        self->priv->player_list = NULL;
 
         if (self->priv->player_list_view)
                 g_object_unref (self->priv->player_list_view);
-        self->priv->player_list_view = NULL;
 }
 
 static void
@@ -292,6 +288,12 @@ gibbon_session_dispatch_clip_message (GibbonSession *self,
                         break;
                 case CLIP_WHO_INFO_END: /* Ignored.  */
                         retval = CLIP_WHO_INFO_END;
+                        break;
+                case CLIP_LOGIN: /* Ignored.  */
+                        retval = CLIP_LOGIN;
+                        break;
+                case CLIP_LOGOUT:
+                        retval = gibbon_session_clip_logout (self, endptr);
                         break;
                 case CLIP_SAYS:
                         retval = gibbon_session_clip_says (self, endptr);
@@ -577,8 +579,46 @@ gibbon_session_clip_who_info (GibbonSession *self,
 }
 
 static gint
+gibbon_session_clip_logout (GibbonSession *self, const gchar *line)
+{
+        size_t i = 0;
+        gchar *name;
+
+        while (line[i] && line[i] != ' ')
+                ++i;
+
+        name = g_alloca (i + 1);
+        strncpy (name, line, i + 1);
+        name [i] = 0;
+
+        if (0 == g_strcmp0 (name, self->priv->watching)) {
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                    g_strdup_printf (_("%s logged out!"), name);
+                g_free (self->priv->watching);
+                self->priv->watching = NULL;
+                g_free (self->priv->opponent);
+                self->priv->opponent = NULL;
+        } else if (0 == g_strcmp0 (name, self->priv->opponent)) {
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                    g_strdup_printf (_("%s logged out."), name);
+                g_free (self->priv->opponent);
+                self->priv->opponent = NULL;
+                if (!self->priv->watching)
+                        gibbon_app_display_info (self->priv->app,
+                                                 _("%s logged out!"),
+                                                 name);
+        }
+
+        gibbon_player_list_remove (self->priv->player_list, name);
+
+        return CLIP_LOGOUT;
+}
+
+static gint
 gibbon_session_clip_says (GibbonSession *self,
-                             const gchar *message)
+                          const gchar *message)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
