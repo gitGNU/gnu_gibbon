@@ -47,6 +47,7 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *rollback;
         sqlite3_stmt *create_server;
         sqlite3_stmt *create_user;
+        sqlite3_stmt *update_user;
 
         gboolean in_transaction;
 
@@ -89,6 +90,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->rollback = NULL;
         self->priv->create_server = NULL;
         self->priv->create_user = NULL;
+        self->priv->update_user = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -109,6 +111,10 @@ gibbon_database_finalize (GObject *object)
                 if (self->priv->rollback)
                         sqlite3_finalize (self->priv->rollback);
                 if (self->priv->create_server)
+                        sqlite3_finalize (self->priv->create_server);
+                if (self->priv->create_user)
+                        sqlite3_finalize (self->priv->create_user);
+                if (self->priv->update_user)
                         sqlite3_finalize (self->priv->create_server);
         }
 
@@ -603,6 +609,12 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                         return gibbon_database_display_error (
                                                         self, sql);
                                 break;
+                        case G_TYPE_DOUBLE:
+                                if (sqlite3_bind_int64 (stmt, i,
+                                                        *((gdouble *) ptr)))
+                                        return gibbon_database_display_error (
+                                                        self, sql);
+                                break;
                         case G_TYPE_STRING:
                                 if (sqlite3_bind_text (stmt, i,
                                                        *((gchar **) ptr), -1,
@@ -630,7 +642,6 @@ gibbon_database_sql_execute (GibbonDatabase *self,
         return TRUE;
 }
 
-
 static gboolean
 gibbon_database_get_statement (GibbonDatabase *self,
                                sqlite3_stmt **stmt,
@@ -643,6 +654,53 @@ gibbon_database_get_statement (GibbonDatabase *self,
 
         if (sqlite3_prepare_v2 (self->priv->dbh, sql, -1, stmt, NULL))
                 return gibbon_database_display_error (self, sql);
+
+        return TRUE;
+}
+
+gboolean
+gibbon_database_update_user (GibbonDatabase *self,
+                             const gchar *host,
+                             guint port, const gchar *login,
+                             gint experience, gint rating)
+{
+        const gchar *sql_update_user =
+                "INSERT OR IGNORE INTO"
+                "        user (name, server_id, last_seen,"
+                "              experience, rating)\n"
+                "    VALUES(?, (SELECT id FROM server\n"
+                "                   WHERE name = ? AND port = ?),"
+                "           ?, ?, ?)";
+        gint64 now;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (host != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+
+        if (!gibbon_database_get_statement (self, &self->priv->update_user,
+                                            sql_update_user))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        now = (gint64) time (NULL);
+        if (!gibbon_database_sql_execute (self, self->priv->update_user,
+                                          sql_update_user,
+                                          G_TYPE_STRING, &login,
+                                          G_TYPE_STRING, &host,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_INT64, &now,
+                                          G_TYPE_UINT, &experience,
+                                          G_TYPE_DOUBLE, &rating,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        if (!gibbon_database_commit (self))
+                return FALSE;
 
         return TRUE;
 }

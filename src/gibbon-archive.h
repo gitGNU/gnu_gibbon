@@ -70,10 +70,11 @@ struct _GibbonArchiveClass
 GType gibbon_archive_get_type (void) G_GNUC_CONST;
 
 GibbonArchive *gibbon_archive_new (GibbonApp *app);
-GibbonArchive *gibbon_archive_new_from_session_info (const gchar *host,
-                                                     guint port,
-                                                     const gchar *login);
-void gibbon_archive_on_login (GibbonArchive *archive,
+void gibbon_archive_on_login (GibbonArchive *self,
                               struct _GibbonConnection *connection);
+void gibbon_archive_update_user (GibbonArchive *self,
+                                 const gchar *hostname, guint port,
+                                 const gchar *login, gdouble rating,
+                                 gint experience);
 
 #endif

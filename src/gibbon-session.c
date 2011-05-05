@@ -38,6 +38,7 @@
 #include "gibbon-position.h"
 #include "gibbon-board.h"
 #include "gibbon-game-chat.h"
+#include "gibbon-archive.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -503,6 +504,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gchar *email;
         gchar *hostname;
         gint i;
+        GibbonConnection *connection;
+        GibbonArchive *archive;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -572,6 +575,14 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         self->priv->watching = g_strdup (watching);
                 }
         }
+
+        archive = gibbon_app_get_archive (self->priv->app);
+        connection = self->priv->connection;
+
+        gibbon_archive_update_user (archive,
+                                    gibbon_connection_get_hostname (connection),
+                                    gibbon_connection_get_port (connection),
+                                    who, rating, experience);
 
         g_strfreev (tokens);
 

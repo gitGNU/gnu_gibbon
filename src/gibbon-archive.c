@@ -205,3 +205,18 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
         gibbon_database_update_account (self->priv->db, login,
                                         host, port);
 }
+
+void
+gibbon_archive_update_user (GibbonArchive *self,
+                            const gchar *hostname, guint port,
+                            const gchar *login, gdouble rating,
+                            gint experience)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (login != NULL);
+
+        gibbon_database_update_user (self->priv->db,
+                                     hostname, port, login,
+                                     rating, experience);
+}
