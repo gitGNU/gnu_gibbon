@@ -32,6 +32,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -50,6 +51,8 @@ struct _GibbonArchivePrivate {
         gchar *session_directory;
 
         GibbonDatabase *db;
+
+        gchar *archive_directory;
 };
 
 #define GIBBON_ARCHIVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -99,6 +102,7 @@ gibbon_archive_new (GibbonApp *app)
         const gchar *documents_servers_directory;
         gboolean first_run = FALSE;
         gchar *db_path;
+        mode_t mode;
 
         self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
 
@@ -134,8 +138,8 @@ gibbon_archive_new (GibbonApp *app)
         if (!g_file_test (self->priv->servers_directory, G_FILE_TEST_EXISTS))
                 first_run = TRUE;
 
-        /* FIXME! Use constants from sys/stat.h!  */
-        if (0 != g_mkdir_with_parents (self->priv->servers_directory, 0755)) {
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+        if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
                 gibbon_app_display_error (app,
                                           _("Failed to create"
                                             " servers_directory `%s': %s!"),
@@ -164,6 +168,7 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
         const gchar *host;
         gchar *session_directory;
         gchar *buf;
+        mode_t mode;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (GIBBON_IS_CONNECTION (connection));
@@ -171,9 +176,6 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
         login = gibbon_connection_get_login (connection);
         host = gibbon_connection_get_hostname (connection);
         port = gibbon_connection_get_port (connection);
-
-        if (self->priv->session_directory)
-                g_free (self->priv->session_directory);
 
         session_directory = g_build_filename (self->priv->servers_directory,
                                               host, NULL);
@@ -184,5 +186,22 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
         }
         buf = g_build_filename (session_directory, login, NULL);
         g_free (session_directory);
+
+        if (self->priv->session_directory)
+                g_free (self->priv->session_directory);
         self->priv->session_directory = buf;
+
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+        if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
+                gibbon_app_display_error (self->priv->app,
+                                          _("Failed to create"
+                                            " directory `%s': %s!\n\n"
+                                            "It will be impossible to save"
+                                            " your matches and other data."),
+                               self->priv->servers_directory,
+                               strerror (errno));
+        }
+
+        gibbon_database_update_account (self->priv->db, login,
+                                        host, port);
 }
