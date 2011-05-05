@@ -958,3 +958,11 @@ gibbon_app_show_game_chat (GibbonApp *self, const GibbonFIBSMessage *message)
 
         gibbon_game_chat_append_message (self->priv->game_chat, message);
 }
+
+GibbonArchive *
+gibbon_app_get_archive (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->archive;
+}
