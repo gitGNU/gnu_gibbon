@@ -76,4 +76,11 @@ GType gibbon_database_get_type (void) G_GNUC_CONST;
 
 GibbonDatabase *gibbon_database_new (GibbonApp *app, const gchar *path);
 
+gboolean gibbon_database_update_account (GibbonDatabase *self,
+                                         const gchar *login,
+                                         const gchar *hostname, guint port);
+gboolean gibbon_database_update_user (GibbonDatabase *self, const gchar *login,
+                                      const gchar *hostname, guint port,
+                                      gint experience, gint rating);
+
 #endif

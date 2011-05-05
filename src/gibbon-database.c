@@ -29,8 +29,9 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
-
+#include <stdarg.h>
 #include <sqlite3.h>
+#include <time.h>
 
 #include "gibbon-database.h"
 
@@ -44,6 +45,8 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *begin_transaction;
         sqlite3_stmt *commit;
         sqlite3_stmt *rollback;
+        sqlite3_stmt *create_server;
+        sqlite3_stmt *create_user;
 
         gboolean in_transaction;
 
@@ -67,6 +70,12 @@ static gboolean gibbon_database_display_error (GibbonDatabase *self,
                                                const gchar *msg_fmt, ...);
 static gboolean gibbon_database_sql_do (GibbonDatabase *self,
                                         const gchar *sql_fmt, ...);
+static gboolean gibbon_database_sql_execute (GibbonDatabase *self,
+                                             sqlite3_stmt *stmt,
+                                             const gchar *sql, ...);
+static gboolean gibbon_database_get_statement (GibbonDatabase *self,
+                                               sqlite3_stmt **stmt,
+                                               const gchar *sql);
 
 static void 
 gibbon_database_init (GibbonDatabase *self)
@@ -78,6 +87,8 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->begin_transaction = NULL;
         self->priv->commit = NULL;
         self->priv->rollback = NULL;
+        self->priv->create_server = NULL;
+        self->priv->create_user = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -97,6 +108,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->commit);
                 if (self->priv->rollback)
                         sqlite3_finalize (self->priv->rollback);
+                if (self->priv->create_server)
+                        sqlite3_finalize (self->priv->create_server);
         }
 
         if (self->priv->path)
@@ -218,8 +231,10 @@ gibbon_database_initialize (GibbonDatabase *self)
         }
 
         if (major == GIBBON_DATABASE_SCHEMA_MAJOR
-            && minor == GIBBON_DATABASE_SCHEMA_MINOR)
+            && minor == GIBBON_DATABASE_SCHEMA_MINOR) {
+                (void) gibbon_database_sql_do (self, "VACUUM");
                 return TRUE;
+        }
 
         if (major) {
                 if (major > GIBBON_DATABASE_SCHEMA_MAJOR
@@ -296,8 +311,12 @@ gibbon_database_initialize (GibbonDatabase *self)
         if (!gibbon_database_sql_do (self,
                                      "CREATE TABLE IF NOT EXISTS user ("
                                      "  id INTEGER PRIMARY KEY,"
-                                     "  name TEXT,"
+                                     "  name TEXT NOT NULL,"
                                      "  server_id INTEGER NOT NULL,"
+                                     "  experience INTEGER,"
+                                     "  rating REAL,"
+                                     "  activity REAL,"
+                                     "  last_seen INT64,"
                                      "  UNIQUE (name, server_id),"
                                      "  FOREIGN KEY (server_id)"
                                      "    REFERENCES server(id)"
@@ -309,9 +328,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (!gibbon_database_sql_do (self,
-                                     "INSERT INTO version (major, minor,"
-                                     " revision, app_version)"
-                                     " VALUES(%d, %d, %d, '%s %s')",
+                                     "INSERT INTO version (major, minor,\n"
+                                     "                     revision,\n"
+                                     "                     app_version)\n"
+                                     "    VALUES(%d, %d, %d, '%s %s')",
                                      GIBBON_DATABASE_SCHEMA_MAJOR,
                                      GIBBON_DATABASE_SCHEMA_MINOR,
                                      GIBBON_DATABASE_SCHEMA_REVISION,
@@ -330,9 +350,9 @@ static gboolean
 gibbon_database_exists_table (GibbonDatabase *self, const char *name)
 {
         sqlite3_stmt *stmt;
-        gchar *sql = g_strdup_printf ("SELECT type FROM sqlite_master"
-                                      " WHERE name = '%s'"
-                                      " AND type = 'table'",
+        gchar *sql = g_strdup_printf ("SELECT type FROM sqlite_master\n"
+                                      "    WHERE name = '%s'\n"
+                                      "      AND type = 'table'",
                                       name);
         int status;
         sqlite3 *dbh;
@@ -490,4 +510,144 @@ gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
         sqlite3_finalize (stmt);
 
         return retval;
+}
+
+gboolean
+gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
+                                const gchar *host, guint port)
+{
+        const gchar *sql_create_server =
+                "INSERT OR IGNORE INTO server (name, port) VALUES (?, ?)";
+        const gchar *sql_create_user =
+                "INSERT OR IGNORE INTO user (name, server_id, last_seen)\n"
+                "    VALUES(?, (SELECT id FROM server\n"
+                "                   WHERE name = ? AND port = ?), ?)";
+        time_t now;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (host != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+
+        g_printerr ("Prepare: %s\n", sql_create_server);
+        if (!gibbon_database_get_statement (self, &self->priv->create_server,
+                                            sql_create_server))
+                return FALSE;
+        g_printerr ("Prepare: %s\n", sql_create_user);
+        if (!gibbon_database_get_statement (self, &self->priv->create_user,
+                                            sql_create_user))
+                return FALSE;
+        g_printerr ("Prepare done.\n");
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        g_printerr ("Transaction started.\n");
+        if (!gibbon_database_sql_execute (self, self->priv->create_server,
+                                          sql_create_server,
+                                          G_TYPE_STRING, &host,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_INT64, &now,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        g_printerr ("Server created.\n");
+        now = time (NULL);
+        if (!gibbon_database_sql_execute (self, self->priv->create_user,
+                                          sql_create_user,
+                                          G_TYPE_STRING, &login,
+                                          G_TYPE_STRING, &host,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_INT64, &now,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        g_printerr ("User created.\n");
+        if (!gibbon_database_commit (self))
+                return FALSE;
+
+        g_printerr ("Wow!\n");
+        return TRUE;
+}
+
+static gboolean
+gibbon_database_sql_execute (GibbonDatabase *self,
+                             sqlite3_stmt *stmt,
+                             const gchar *sql, ...)
+{
+        gint type;
+        gpointer ptr;
+        va_list args;
+        gint i = 0;
+        sqlite3_reset (stmt);
+
+        va_start (args, sql);
+
+        type = va_arg (args, gint);
+
+        while (type != -1) {
+                ++i;
+                ptr = va_arg (args, gpointer);
+                if (!ptr) {
+                        if (sqlite3_bind_null (stmt, i))
+                                return FALSE;
+                        continue;
+                }
+
+                switch (type) {
+                        case G_TYPE_UINT:
+                                if (sqlite3_bind_int (stmt, i,
+                                                      *((gint *) ptr)))
+                                        return FALSE;
+                                break;
+                        case G_TYPE_INT64:
+                                if (sqlite3_bind_int64 (stmt, i,
+                                                        *((sqlite3_int64 *) ptr)))
+                                        return FALSE;
+                                break;
+                        case G_TYPE_STRING:
+                                if (sqlite3_bind_text (stmt, i,
+                                                       *((gchar **) ptr), -1,
+                                                       SQLITE_STATIC
+                                                       ))
+                                        return FALSE;
+                                break;
+                        default:
+                                gibbon_app_display_error (self->priv->app,
+                                                          _("Unknown data"
+                                                            " type %d!"),
+                                                            type);
+                                return FALSE;
+                }
+
+                type = va_arg (args, gint);
+        }
+
+        va_end (args);
+
+        if (!sqlite3_step (stmt))
+                return gibbon_database_display_error (self, sql);
+
+        return TRUE;
+}
+
+
+static gboolean
+gibbon_database_get_statement (GibbonDatabase *self,
+                               sqlite3_stmt **stmt,
+                               const gchar *sql)
+{
+        if (*stmt) {
+                sqlite3_reset (*stmt);
+                return TRUE;
+        }
+
+        if (sqlite3_prepare_v2 (self->priv->dbh, sql, -1, stmt, NULL))
+                return gibbon_database_display_error (self, sql);
+
+        return TRUE;
 }
