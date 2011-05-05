@@ -662,7 +662,7 @@ gboolean
 gibbon_database_update_user (GibbonDatabase *self,
                              const gchar *host,
                              guint port, const gchar *login,
-                             gint experience, gint rating)
+                             gdouble rating, gint experience)
 {
         const gchar *sql_update_user =
                 "INSERT OR IGNORE INTO"

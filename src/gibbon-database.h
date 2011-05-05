@@ -82,6 +82,6 @@ gboolean gibbon_database_update_account (GibbonDatabase *self,
 gboolean gibbon_database_update_user (GibbonDatabase *self,
                                       const gchar *hostname,
                                       guint port, const gchar *login,
-                                      gint experience, gint rating);
+                                      gdouble rating, gint experience);
 
 #endif
