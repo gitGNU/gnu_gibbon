@@ -522,39 +522,33 @@ gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
                 "INSERT OR IGNORE INTO user (name, server_id, last_seen)\n"
                 "    VALUES(?, (SELECT id FROM server\n"
                 "                   WHERE name = ? AND port = ?), ?)";
-        time_t now;
+        gint64 now;
 
         g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
         g_return_val_if_fail (login != NULL, FALSE);
         g_return_val_if_fail (host != NULL, FALSE);
         g_return_val_if_fail (port != 0, FALSE);
 
-        g_printerr ("Prepare: %s\n", sql_create_server);
         if (!gibbon_database_get_statement (self, &self->priv->create_server,
                                             sql_create_server))
                 return FALSE;
-        g_printerr ("Prepare: %s\n", sql_create_user);
         if (!gibbon_database_get_statement (self, &self->priv->create_user,
                                             sql_create_user))
                 return FALSE;
-        g_printerr ("Prepare done.\n");
 
         if (!gibbon_database_begin_transaction (self))
                 return FALSE;
 
-        g_printerr ("Transaction started.\n");
         if (!gibbon_database_sql_execute (self, self->priv->create_server,
                                           sql_create_server,
                                           G_TYPE_STRING, &host,
                                           G_TYPE_UINT, &port,
-                                          G_TYPE_INT64, &now,
                                           -1)) {
                 gibbon_database_rollback (self);
                 return FALSE;
         }
 
-        g_printerr ("Server created.\n");
-        now = time (NULL);
+        now = (gint64) time (NULL);
         if (!gibbon_database_sql_execute (self, self->priv->create_user,
                                           sql_create_user,
                                           G_TYPE_STRING, &login,
@@ -566,11 +560,9 @@ gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
                 return FALSE;
         }
 
-        g_printerr ("User created.\n");
         if (!gibbon_database_commit (self))
                 return FALSE;
 
-        g_printerr ("Wow!\n");
         return TRUE;
 }
 
@@ -602,19 +594,22 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                         case G_TYPE_UINT:
                                 if (sqlite3_bind_int (stmt, i,
                                                       *((gint *) ptr)))
-                                        return FALSE;
+                                        return gibbon_database_display_error (
+                                                        self, sql);
                                 break;
                         case G_TYPE_INT64:
                                 if (sqlite3_bind_int64 (stmt, i,
                                                         *((sqlite3_int64 *) ptr)))
-                                        return FALSE;
+                                        return gibbon_database_display_error (
+                                                        self, sql);
                                 break;
                         case G_TYPE_STRING:
                                 if (sqlite3_bind_text (stmt, i,
                                                        *((gchar **) ptr), -1,
                                                        SQLITE_STATIC
                                                        ))
-                                        return FALSE;
+                                        return gibbon_database_display_error (
+                                                        self, sql);
                                 break;
                         default:
                                 gibbon_app_display_error (self->priv->app,
