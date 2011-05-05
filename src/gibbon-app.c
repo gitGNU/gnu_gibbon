@@ -760,7 +760,8 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
 
         g_return_if_fail (GIBBON_IS_CONNECTION (conn));
 
-        gchar *msg = g_strdup_printf (_("Logged in on %s port %d."),
+        gchar *msg = g_strdup_printf (_("Logged in as %s on %s port %d."),
+                                      gibbon_connection_get_login (conn),
                                       gibbon_connection_get_hostname (conn),
                                       gibbon_connection_get_port (conn));
         GtkStatusbar *statusbar =
@@ -787,6 +788,8 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
                                    gibbon_connection_get_login (conn));
         gibbon_game_chat_set_my_name (self->priv->game_chat,
                                       gibbon_connection_get_login (conn));
+
+        gibbon_archive_on_login (self->priv->archive, conn);
 }
 
 static void
