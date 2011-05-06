@@ -300,10 +300,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS server"))
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS servers"))
                 return FALSE;
         if (!gibbon_database_sql_do (self,
-                                     "CREATE TABLE IF NOT EXISTS server ("
+                                     "CREATE TABLE IF NOT EXISTS servers ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  name TEXT,"
                                      "  port INTEGER,"
@@ -312,10 +312,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS user"))
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS users"))
                 return FALSE;
         if (!gibbon_database_sql_do (self,
-                                     "CREATE TABLE IF NOT EXISTS user ("
+                                     "CREATE TABLE IF NOT EXISTS users ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  name TEXT NOT NULL,"
                                      "  server_id INTEGER NOT NULL,"
@@ -325,7 +325,7 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      "  last_seen INT64,"
                                      "  UNIQUE (name, server_id),"
                                      "  FOREIGN KEY (server_id)"
-                                     "    REFERENCES server(id)"
+                                     "    REFERENCES servers (id)"
                                      "    ON DELETE CASCADE"
                                      ")"))
                 return FALSE;
@@ -523,10 +523,10 @@ gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
                                 const gchar *host, guint port)
 {
         const gchar *sql_create_server =
-                "INSERT OR IGNORE INTO server (name, port) VALUES (?, ?)";
+                "INSERT OR IGNORE INTO servers (name, port) VALUES (?, ?)";
         const gchar *sql_create_user =
-                "INSERT OR IGNORE INTO user (name, server_id, last_seen)\n"
-                "    VALUES(?, (SELECT id FROM server\n"
+                "INSERT OR IGNORE INTO users (name, server_id, last_seen)\n"
+                "    VALUES(?, (SELECT id FROM servers\n"
                 "                   WHERE name = ? AND port = ?), ?)";
         gint64 now;
 
@@ -666,9 +666,9 @@ gibbon_database_update_user (GibbonDatabase *self,
 {
         const gchar *sql_update_user =
                 "INSERT OR IGNORE INTO"
-                "        user (name, server_id, last_seen,"
+                "        users (name, server_id, last_seen,"
                 "              experience, rating)\n"
-                "    VALUES(?, (SELECT id FROM server\n"
+                "    VALUES(?, (SELECT id FROM servers\n"
                 "                   WHERE name = ? AND port = ?),"
                 "           ?, ?, ?)";
         gint64 now;
