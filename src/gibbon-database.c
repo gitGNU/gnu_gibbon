@@ -305,8 +305,8 @@ gibbon_database_initialize (GibbonDatabase *self)
         if (!gibbon_database_sql_do (self,
                                      "CREATE TABLE IF NOT EXISTS servers ("
                                      "  id INTEGER PRIMARY KEY,"
-                                     "  name TEXT,"
-                                     "  port INTEGER,"
+                                     "  name TEXT NOT NULL,"
+                                     "  port INTEGER NOT NULL,"
                                      "  UNIQUE (name, port)"
                                      ")"))
                 return FALSE;
@@ -322,10 +322,24 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      "  experience INTEGER,"
                                      "  rating REAL,"
                                      "  activity REAL,"
-                                     "  last_seen INT64,"
+                                     "  last_seen INT64 NOT NULL,"
                                      "  UNIQUE (name, server_id),"
                                      "  FOREIGN KEY (server_id)"
                                      "    REFERENCES servers (id)"
+                                     "    ON DELETE CASCADE"
+                                     ")"))
+                return FALSE;
+
+        if (drop_first
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS activities"))
+                return FALSE;
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE TABLE IF NOT EXISTS activities ("
+                                     "  user_id INTEGER NOT NULL,"
+                                     "  what REAL NOT NULL,"
+                                     "  when INT64 NOT NULL,"
+                                     "  FOREIGN KEY (user_id)"
+                                     "    REFERENCES users (id)"
                                      "    ON DELETE CASCADE"
                                      ")"))
                 return FALSE;
