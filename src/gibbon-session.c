@@ -153,9 +153,18 @@ static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar *board);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
+static gboolean gibbon_session_handle_one_of_us (GibbonSession *self,
+                                                 GibbonSessionPlayer player,
+                                                 const gchar *line);
 static gboolean gibbon_session_handle_someone (GibbonSession *self,
-                                               GibbonSessionPlayer player,
+                                               const gchar *player,
                                                const gchar *line);
+static gboolean gibbon_session_handle_someone_and (GibbonSession *self,
+                                                   const gchar *player1,
+                                                   const gchar *line);
+static gboolean gibbon_session_handle_someone_wins (GibbonSession *self,
+                                                    const gchar *player1,
+                                                    const gchar *line);
 static gboolean gibbon_session_handle_rolls (GibbonSession *self,
                                              GibbonSessionPlayer player,
                                              const gchar *line);
@@ -352,6 +361,8 @@ gibbon_session_process_server_line (GibbonSession *self,
                                     const gchar *line)
 {
         gsize length;
+        gchar **tokens;
+        gboolean status;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
@@ -382,17 +393,34 @@ gibbon_session_process_server_line (GibbonSession *self,
                 length = strlen (self->priv->watching);
                 if (0 == strncmp (self->priv->watching, line, length)
                     && ' ' == line[length]
-                    && gibbon_session_handle_someone (self,
-                                                      GIBBON_SESSION_PLAYER_WATCHING,
-                                                      line + length + 1))
+                    && gibbon_session_handle_one_of_us (self,
+                                                 GIBBON_SESSION_PLAYER_WATCHING,
+                                                 line + length + 1))
                         return 0;
                 length = strlen (self->priv->opponent);
                 if (0 == strncmp (self->priv->opponent, line, length)
                     && ' ' == line[length]
-                    && gibbon_session_handle_someone (self,
-                                                      GIBBON_SESSION_PLAYER_OPPONENT,
-                                                      line + length + 1))
+                    && gibbon_session_handle_one_of_us (self,
+                                                 GIBBON_SESSION_PLAYER_OPPONENT,
+                                                 line + length + 1))
                         return 0;
+        }
+
+        tokens = g_strsplit (line, " ", 2);
+        if (!tokens)
+                return -1;
+
+        if (tokens[0]
+            && gibbon_player_list_exists (self->priv->player_list,
+                                          tokens[0])) {
+                length = strlen (tokens[0]);
+                status = gibbon_session_handle_someone (self, tokens[0],
+                                                        line + length + 1);
+                g_strfreev (tokens);
+                if (status)
+                        return 0;
+        } else {
+                g_strfreev (tokens);
         }
 
         return -1;
@@ -1167,8 +1195,9 @@ gibbon_session_dump_position (const GibbonSession *self,
 #endif
 
 static gboolean
-gibbon_session_handle_someone (GibbonSession *self, GibbonSessionPlayer player,
-                               const gchar *line)
+gibbon_session_handle_one_of_us (GibbonSession *self,
+                                 GibbonSessionPlayer player,
+                                 const gchar *line)
 {
         if (0 == strncmp ("rolls ", line, 6)) {
                 if (player == GIBBON_SESSION_PLAYER_OPPONENT
@@ -1184,6 +1213,96 @@ gibbon_session_handle_someone (GibbonSession *self, GibbonSessionPlayer player,
                 return FALSE;
         }
 
+        return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_someone (GibbonSession *self,
+                               const gchar *player,
+                               const gchar *line)
+
+{
+        if (0 == strncmp ("and ", line, 4)) {
+                return gibbon_session_handle_someone_and (self, player,
+                                                          line + 4);
+        } else if (0 == strncmp ("wins a ", line, 7)) {
+                return gibbon_session_handle_someone_wins (self, player,
+                                                           line + 7);
+        }
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_someone_and (GibbonSession *self,
+                                   const gchar *player1,
+                                   const gchar *line)
+{
+        gchar **tokens;
+        gchar *player2;
+
+        tokens = g_strsplit (line, " ", 0);
+        if (!tokens)
+                return FALSE;
+
+        player2 = tokens[0];
+        if (!player2) {
+                g_strfreev (tokens);
+                return FALSE;
+        }
+
+        if (!gibbon_player_list_exists (self->priv->player_list, player2)) {
+                g_strfreev (tokens);
+                return FALSE;
+        }
+        if (0 == g_strcmp0 ("start", tokens[1])
+            && 0 == g_strcmp0 ("a", tokens[2])
+            && '1' <= tokens[3][0]
+            && '9' >= tokens[3][0]
+            && 0 == g_strcmp0 ("point", tokens[4])
+            && 0 == g_strcmp0 ("match.", tokens[5])) {
+                /* Ignore.  */
+                g_strfreev (tokens);
+                return TRUE;
+        } else if (0 == g_strcmp0 ("are", tokens[1])
+                   && 0 == g_strcmp0 ("resuming", tokens[2])
+                   && 0 == g_strcmp0 ("their", tokens[3])
+                   && '1' <= tokens[4][0]
+                   && '9' >= tokens[4][0]
+                   && 0 == g_strcmp0 ("match.", tokens[5])) {
+                /* Give the dropper a little compensation.  */
+                g_strfreev (tokens);
+                return TRUE;
+        }
+
+        g_strfreev (tokens);
+        return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_someone_wins (GibbonSession *self,
+                                    const gchar *player1,
+                                    const gchar *line)
+{
+        gchar **tokens;
+
+        tokens = g_strsplit_set (line, " ", 0);
+        if (!tokens)
+                return FALSE;
+
+        if ('1' <= tokens[0][0]
+            && '9' >= tokens[0][0]
+            && 0 == g_strcmp0 ("point", tokens[1])
+            && 0 == g_strcmp0 ("match", tokens[2])
+            && 0 == g_strcmp0 ("against", tokens[3])
+            && tokens[4]
+            && gibbon_player_list_exists (self->priv->player_list,
+                                          tokens[4])) {
+                g_strfreev (tokens);
+                return TRUE;
+        }
+
+        g_strfreev (tokens);
         return FALSE;
 }
 
