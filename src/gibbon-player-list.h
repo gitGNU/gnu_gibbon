@@ -76,6 +76,8 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);
+gchar *gibbon_player_list_get_opponent (const GibbonPlayerList *self,
+                                        const gchar *player_name);
 void gibbon_player_list_remove (GibbonPlayerList *self,
                                 const gchar *player_name);
 

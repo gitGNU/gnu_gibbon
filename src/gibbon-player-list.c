@@ -280,20 +280,34 @@ gibbon_player_list_remove (GibbonPlayerList *self,
         struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
                                                            name);
         GtkTreeIter iter;
-        gchar *opponent;
 
         if (!player)
                 return;
 
         iter = player->iter;
 
-        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
-                            GIBBON_PLAYER_LIST_COL_OPPONENT, &opponent,
-                            -1);
-        if (*opponent)
-                g_printerr ("%s dropped while playing with %s!.\n", name, opponent);
-
         gtk_list_store_remove (self->priv->store, &iter);
 
         (void) g_hash_table_remove (self->priv->hash, name);
+}
+
+gchar *
+gibbon_player_list_get_opponent (const GibbonPlayerList *self,
+                                 const gchar *name)
+{
+        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
+                                                           name);
+        GtkTreeIter iter;
+        gchar *opponent;
+
+        if (!player)
+                return NULL;
+
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_PLAYER_LIST_COL_OPPONENT, &opponent,
+                            -1);
+
+        return opponent;
 }

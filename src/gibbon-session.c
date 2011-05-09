@@ -193,6 +193,7 @@ struct _GibbonSessionPrivate {
 
         GibbonPlayerList *player_list;
         GibbonPlayerListView *player_list_view;
+        GibbonArchive *archive;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -215,6 +216,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->position = NULL;
         self->priv->player_list = NULL;
         self->priv->player_list_view = NULL;
+        self->priv->archive = NULL;
 }
 
 static void
@@ -263,6 +265,8 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
                 gibbon_player_list_view_new (app, self->priv->player_list);
 
         self->priv->position = gibbon_position_new ();
+
+        self->priv->archive = gibbon_app_get_archive (app);
 
         return self;
 }
@@ -622,6 +626,7 @@ gibbon_session_clip_logout (GibbonSession *self, const gchar *line)
 {
         size_t i = 0;
         gchar *name;
+        gchar *opponent;
 
         while (line[i] && line[i] != ' ')
                 ++i;
@@ -650,6 +655,12 @@ gibbon_session_clip_logout (GibbonSession *self, const gchar *line)
                                                  name);
         }
 
+        opponent = gibbon_player_list_get_opponent (self->priv->player_list,
+                                                    name);
+        if (opponent) {
+                gibbon_archive_save_drop (self->priv->archive, name, opponent);
+                g_free (opponent);
+        }
         gibbon_player_list_remove (self->priv->player_list, name);
 
         return CLIP_LOGOUT;
@@ -1271,6 +1282,8 @@ gibbon_session_handle_someone_and (GibbonSession *self,
                    && '9' >= tokens[4][0]
                    && 0 == g_strcmp0 ("match.", tokens[5])) {
                 /* Give the dropper a little compensation.  */
+                gibbon_archive_save_resume (self->priv->archive,
+                                            player1, player2);
                 g_strfreev (tokens);
                 return TRUE;
         }
@@ -1298,6 +1311,8 @@ gibbon_session_handle_someone_wins (GibbonSession *self,
             && tokens[4]
             && gibbon_player_list_exists (self->priv->player_list,
                                           tokens[4])) {
+                gibbon_archive_save_win (self->priv->archive, player1,
+                                         tokens[4]);
                 g_strfreev (tokens);
                 return TRUE;
         }

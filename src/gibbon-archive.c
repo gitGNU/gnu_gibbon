@@ -220,3 +220,30 @@ gibbon_archive_update_user (GibbonArchive *self,
                                      hostname, port, login,
                                      rating, experience);
 }
+
+void
+gibbon_archive_save_win (GibbonArchive *self,
+                         const gchar *winner, const gchar *loser)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (winner != NULL);
+        g_return_if_fail (loser != NULL);
+}
+
+void
+gibbon_archive_save_drop (GibbonArchive *self,
+                          const gchar *dropper, const gchar *victim)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (dropper != NULL);
+        g_return_if_fail (victim != NULL);
+}
+
+void
+gibbon_archive_save_resume (GibbonArchive *self,
+                            const gchar *player1, const gchar *player2)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (player1 != NULL);
+        g_return_if_fail (player2 != NULL);
+}
