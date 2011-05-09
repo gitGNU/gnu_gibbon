@@ -60,3 +60,5 @@
   say, kibitz, and whisper are possible.
 - activate/deactivate game chat entry according to situation.
 - gibbon_session_handle_board() leaks memory, in case of failure.
+- Write a replacement for g_strsplit() that consumes multiple occurencies
+  of the delimiter.
