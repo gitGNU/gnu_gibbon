@@ -321,7 +321,6 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      "  server_id INTEGER NOT NULL,"
                                      "  experience INTEGER,"
                                      "  rating REAL,"
-                                     "  activity REAL,"
                                      "  last_seen INT64 NOT NULL,"
                                      "  UNIQUE (name, server_id),"
                                      "  FOREIGN KEY (server_id)"
@@ -336,8 +335,8 @@ gibbon_database_initialize (GibbonDatabase *self)
         if (!gibbon_database_sql_do (self,
                                      "CREATE TABLE IF NOT EXISTS activities ("
                                      "  user_id INTEGER NOT NULL,"
-                                     "  what REAL NOT NULL,"
-                                     "  when INT64 NOT NULL,"
+                                     "  value REAL NOT NULL,"
+                                     "  date_time INT64 NOT NULL,"
                                      "  FOREIGN KEY (user_id)"
                                      "    REFERENCES users (id)"
                                      "    ON DELETE CASCADE"
