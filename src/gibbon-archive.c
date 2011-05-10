@@ -53,12 +53,18 @@ struct _GibbonArchivePrivate {
         GibbonDatabase *db;
 
         gchar *archive_directory;
+
+        GHashTable *droppers;
 };
 
 #define GIBBON_ARCHIVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate))
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
+
+static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                                 const gchar *player1,
+                                                 const gchar *player2);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -69,6 +75,7 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv->app = NULL;
         self->priv->servers_directory = NULL;
         self->priv->db = NULL;
+        self->priv->droppers = NULL;
 }
 
 static void
@@ -81,6 +88,9 @@ gibbon_archive_finalize (GObject *object)
 
         if (self->priv->session_directory)
                 g_free (self->priv->session_directory);
+
+        if (self->priv->droppers)
+                g_hash_table_destroy (self->priv->droppers);
 
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
@@ -148,6 +158,9 @@ gibbon_archive_new (GibbonApp *app)
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->droppers = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                      g_free, NULL);
 
         if (first_run)
                 gibbon_app_display_info (app,
@@ -228,6 +241,9 @@ gibbon_archive_save_win (GibbonArchive *self,
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (winner != NULL);
         g_return_if_fail (loser != NULL);
+
+        gibbon_archive_remove_from_droppers (self, winner, loser);
+        g_printerr ("TODO: Record win %s/%s.\n", winner, loser);
 }
 
 void
@@ -237,13 +253,49 @@ gibbon_archive_save_drop (GibbonArchive *self,
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (dropper != NULL);
         g_return_if_fail (victim != NULL);
+
+        g_hash_table_insert (self->priv->droppers,
+                             g_strdup_printf ("%s:%s", dropper, victim),
+                             (gpointer) 1);
+
+        g_printerr ("TODO: Record drop %s/%s.\n", dropper, victim);
 }
 
 void
 gibbon_archive_save_resume (GibbonArchive *self,
                             const gchar *player1, const gchar *player2)
 {
+        gchar *key;
+
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (player1 != NULL);
         g_return_if_fail (player2 != NULL);
+
+        key = g_alloca (strlen (player1) + strlen (player2) + 2);
+
+        (void) sprintf (key, "%s:%s", player1, player2);
+        if (g_hash_table_remove (self->priv->droppers, key)) {
+                g_printerr ("TODO: Record resume %s/%s.\n", player1, player2);
+                return;
+        }
+
+        (void) sprintf (key, "%s:%s", player2, player1);
+        if (g_hash_table_remove (self->priv->droppers, key)) {
+                g_printerr ("TODO: Record resume %s/%s.\n", player2, player1);
+                return;
+        }
+
+        g_printerr ("Stale resume %s/%s.\n", player1, player2);
+}
+
+static void
+gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                     const gchar *player1, const gchar *player2)
+{
+        gchar *key = g_alloca (strlen (player1) + strlen (player2) + 2);
+
+        (void) sprintf (key, "%s:%s", player1, player2);
+        (void) g_hash_table_remove (self->priv->droppers, key);
+        (void) sprintf (key, "%s:%s", player2, player1);
+        (void) g_hash_table_remove (self->priv->droppers, key);
 }

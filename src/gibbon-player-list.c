@@ -99,12 +99,9 @@ gibbon_player_list_finalize (GObject *object)
 
         if (self->priv->hash)
                 g_hash_table_destroy (self->priv->hash);
-        self->priv->hash = NULL;
         
         if (self->priv->model)
                 g_object_unref (self->priv->model);
-        self->priv->model = NULL;
-        self->priv->store = NULL;
 
         G_OBJECT_CLASS (gibbon_player_list_parent_class)->finalize (object);
 }
@@ -309,5 +306,9 @@ gibbon_player_list_get_opponent (const GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, &opponent,
                             -1);
 
+        if (!*opponent) {
+                g_free (opponent);
+                return NULL;
+        }
         return opponent;
 }

@@ -154,6 +154,9 @@ gibbon_app_finalize (GObject *object)
         if (self->priv->archive)
                 g_object_unref (self->priv->archive);
 
+        if (self->priv->chats)
+                g_hash_table_destroy (self->priv->chats);
+
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
 
