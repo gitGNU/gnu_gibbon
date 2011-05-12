@@ -60,6 +60,7 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *select_server_id;
         sqlite3_stmt *create_user;
         sqlite3_stmt *update_user;
+        sqlite3_stmt *record_activity;
 
         gboolean in_transaction;
 
@@ -108,6 +109,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->select_server_id = NULL;
         self->priv->create_user = NULL;
         self->priv->update_user = NULL;
+        self->priv->record_activity = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -135,6 +137,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->create_user);
                 if (self->priv->update_user)
                         sqlite3_finalize (self->priv->create_server);
+                if (self->priv->record_activity)
+                        sqlite3_finalize (self->priv->record_activity);
         }
 
         if (self->priv->path)
@@ -639,6 +643,7 @@ gibbon_database_update_server (GibbonDatabase *self,
         return server_id;
 }
 
+/* FIXME! INSERT OR IGNORE is wrong here!  */
 gboolean
 gibbon_database_update_account (GibbonDatabase *self,
                                 guint server_id, const gchar *login)
@@ -715,8 +720,8 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                                         self, sql);
                                 break;
                         case G_TYPE_DOUBLE:
-                                if (sqlite3_bind_int64 (stmt, i,
-                                                        *((gdouble *) ptr)))
+                                if (sqlite3_bind_double (stmt, i,
+                                                         *((gdouble *) ptr)))
                                         return gibbon_database_display_error (
                                                         self, sql);
                                 break;
@@ -812,6 +817,7 @@ gibbon_database_get_statement (GibbonDatabase *self,
         return TRUE;
 }
 
+/* FIXME! INSERT OR IGNORE is wrong here!  */
 gboolean
 gibbon_database_update_user (GibbonDatabase *self,
                              guint server_id,
@@ -851,6 +857,42 @@ gibbon_database_update_user (GibbonDatabase *self,
         return TRUE;
 }
 
+gboolean
+gibbon_database_record_activity (GibbonDatabase *self,
+                                 guint server_id,
+                                 const gchar *login,
+                                 gdouble value)
+{
+        const gchar *sql_record_activity =
+                "INSERT INTO activities (user_id, value, date_time)"
+                " VALUES ((SELECT id FROM users"
+                " WHERE name = ? AND server_id = ?), ?, ?)";
+        gint64 now;
+
+        if (!gibbon_database_get_statement (self, &self->priv->record_activity,
+                                            sql_record_activity))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        now = (gint64) time (NULL);
+        if (!gibbon_database_sql_execute (self, self->priv->record_activity,
+                                          sql_record_activity,
+                                          G_TYPE_STRING, &login,
+                                          G_TYPE_UINT, &server_id,
+                                          G_TYPE_DOUBLE, &value,
+                                          G_TYPE_INT64, &now,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        if (!gibbon_database_commit (self))
+                return FALSE;
+
+        return TRUE;
+}
 
 static gboolean
 gibbon_database_maintain (GibbonDatabase *self)

@@ -24,6 +24,30 @@
  * Since: 0.1.1
  *
  * Handling of archived games.
+ *
+ * One of the things handled here is the detection and evaluation of the
+ * so-called "droppers", i.e. players on FIBS that leave a game, while it
+ * is going on.  This is sometimes due to network problems.  Some people
+ * hope to save a higher rating.
+ *
+ * Every player that finishes a match is assigned one point.  For each drop,
+ * the dropper gets a malus of one point.  A resume is honored with 0.75
+ * points but only if the associated drop happened while our session.
+ * Otherwise it is impossible to find out who of the two opponents was
+ * the dropper.
+ *
+ * This gives a malus to both types of droppers which is exactly what we want.
+ * It could be argued that only finished matches that happened during our
+ * session should be honored, just like only resumes after drops are honored.
+ * But the interval between a drop and a resume is necessarily shorter than
+ * the interface between start of a match and regular end.  And besides,
+ * the result bias from the little injustice does not affect players that
+ * stay long on the server.
+ *
+ * The whole thing results in two values: One is the confidence, which is
+ * simply the number of recorded events.  The other is a a rating for the
+ * player's reliability, which is the average of all recorded bonusses and
+ * malusses.
  **/
 
 #ifdef HAVE_CONFIG_H
@@ -247,7 +271,13 @@ gibbon_archive_save_win (GibbonArchive *self,
         g_return_if_fail (loser != NULL);
 
         gibbon_archive_remove_from_droppers (self, winner, loser);
-        g_printerr ("TODO: Record win %s/%s.\n", winner, loser);
+
+        (void) gibbon_database_record_activity (self->priv->db,
+                                                self->priv->server_id,
+                                                winner, 1.0);
+        (void) gibbon_database_record_activity (self->priv->db,
+                                                self->priv->server_id,
+                                                loser, 1.0);
 }
 
 void
@@ -262,7 +292,9 @@ gibbon_archive_save_drop (GibbonArchive *self,
                              g_strdup_printf ("%s:%s", dropper, victim),
                              (gpointer) 1);
 
-        g_printerr ("TODO: Record drop %s/%s.\n", dropper, victim);
+        (void) gibbon_database_record_activity (self->priv->db,
+                                                self->priv->server_id,
+                                                dropper, -1.0);
 }
 
 void
@@ -279,17 +311,19 @@ gibbon_archive_save_resume (GibbonArchive *self,
 
         (void) sprintf (key, "%s:%s", player1, player2);
         if (g_hash_table_remove (self->priv->droppers, key)) {
-                g_printerr ("TODO: Record resume %s/%s.\n", player1, player2);
+                (void) gibbon_database_record_activity (self->priv->db,
+                                                        self->priv->server_id,
+                                                        player1, +0.75);
                 return;
         }
 
         (void) sprintf (key, "%s:%s", player2, player1);
         if (g_hash_table_remove (self->priv->droppers, key)) {
-                g_printerr ("TODO: Record resume %s/%s.\n", player2, player1);
+                (void) gibbon_database_record_activity (self->priv->db,
+                                                        self->priv->server_id,
+                                                        player2, +0.75);
                 return;
         }
-
-        g_printerr ("Stale resume %s/%s.\n", player1, player2);
 }
 
 static void

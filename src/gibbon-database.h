@@ -83,5 +83,8 @@ gboolean gibbon_database_update_account (GibbonDatabase *self,
 gboolean gibbon_database_update_user (GibbonDatabase *self,
                                       guint server_id, const gchar *login,
                                       gdouble rating, gint experience);
+gboolean gibbon_database_record_activity (GibbonDatabase *self,
+                                          guint server_id, const gchar *login,
+                                          gdouble value);
 
 #endif
