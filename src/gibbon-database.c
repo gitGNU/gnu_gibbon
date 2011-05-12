@@ -35,8 +35,19 @@
 
 #include "gibbon-database.h"
 
+/* Differences in the major schema version require a complete rebuild of the
+ * database.
+ */
 #define GIBBON_DATABASE_SCHEMA_MAJOR 1
-#define GIBBON_DATABASE_SCHEMA_MINOR 0
+
+/* Differences in the minor schema version require conditional creation of
+ * new tables or indexes.
+ */
+#define GIBBON_DATABASE_SCHEMA_MINOR 1
+
+/* Differences int the schema revision are for cosmetic changes that will
+ * not have any impact on existing databases (case, column order, ...).
+ */
 #define GIBBON_DATABASE_SCHEMA_REVISION 0
 
 typedef struct _GibbonDatabasePrivate GibbonDatabasePrivate;
@@ -207,6 +218,11 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
                 return NULL;
         }
 
+        (void) gibbon_database_maintain (self);
+
+        g_timeout_add_seconds (60 * 60, (GSourceFunc) gibbon_database_maintain,
+                               (gpointer) self);
+
         return self;
 }
 
@@ -246,15 +262,13 @@ gibbon_database_initialize (GibbonDatabase *self)
         }
 
         if (major == GIBBON_DATABASE_SCHEMA_MAJOR
-            && minor == GIBBON_DATABASE_SCHEMA_MINOR) {
-                (void) gibbon_database_maintain (self);
+            && minor == GIBBON_DATABASE_SCHEMA_MINOR)
                 return TRUE;
-        }
 
         if (major) {
                 if (major > GIBBON_DATABASE_SCHEMA_MAJOR
                     || (major == GIBBON_DATABASE_SCHEMA_MAJOR
-                        && minor < GIBBON_DATABASE_SCHEMA_MINOR)) {
+                        && minor > GIBBON_DATABASE_SCHEMA_MINOR)) {
                         msg = N_("Your database was created"
                                  " with a more recent version"
                                  " of Gibbon.  With a downgrade"
@@ -352,6 +366,13 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      ")"))
                 return FALSE;
 
+        /* Needed for clean-up.  */
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE INDEX IF NOT EXISTS"
+                                     " actitivities_date_time_index"
+                                     " ON activities (date_time)"))
+                return FALSE;
+
         if (!gibbon_database_sql_do (self, "DELETE FROM version"))
                 return FALSE;
 
@@ -366,7 +387,7 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      PACKAGE, VERSION))
                 return FALSE;
 
-        if (major)
+        if (drop_first)
                 gibbon_app_display_info (self->priv->app,
                                          _("You should now repopulate your"
                                            " database (menu `Options')."));
@@ -834,21 +855,37 @@ gibbon_database_update_user (GibbonDatabase *self,
 static gboolean
 gibbon_database_maintain (GibbonDatabase *self)
 {
-        gchar *sql = "VACUUM";
+        const gchar *sql;
         sqlite3_stmt *stmt;
+        gint64 now, then;
 
-        if (SQLITE_OK != sqlite3_prepare_v2 (self->priv->dbh, sql,
-                                             -1, &stmt,
-                                             NULL))
-                return FALSE;
+        if (!gibbon_database_begin_transaction (self))
+                return TRUE;
 
-        if (SQLITE_DONE != sqlite3_step (stmt)) {
+        /* Delete all activities older than 100 days.  Also handle
+         * clock skews gracefully.
+         */
+        now = time (NULL);
+        then = now - 100 * 24 * 60 * 60;
+        sql = "DELETE FROM activities WHERE (date_time < ? OR date_time > ?)";
+        if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
+                                             -1, &stmt, NULL)) {
+                (void) gibbon_database_sql_execute (self, stmt, sql,
+                                                    G_TYPE_INT64, &then,
+                                                    G_TYPE_INT64, &now,
+                                                    -1);
                 sqlite3_finalize (stmt);
-                return FALSE;
         }
 
-        sqlite3_finalize (stmt);
+        sql = "VACUUM";
+        if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
+                                             -1, &stmt, NULL)) {
+                (void) gibbon_database_sql_execute (self, stmt, sql, -1);
+                sqlite3_finalize (stmt);
+        }
+
+        if (!gibbon_database_commit (self))
+                gibbon_database_rollback (self);
 
         return TRUE;
 }
-
