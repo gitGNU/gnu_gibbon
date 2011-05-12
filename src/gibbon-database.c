@@ -216,7 +216,6 @@ gibbon_database_initialize (GibbonDatabase *self)
         int major = 0;
         int minor = 0;
         sqlite3_stmt *stmt;
-        gchar *sql;
         int status;
         gchar *msg;
         GtkWidget *main_window;
@@ -224,23 +223,25 @@ gibbon_database_initialize (GibbonDatabase *self)
         gint reply;
         sqlite3 *dbh;
         gboolean drop_first = FALSE;
+        const gchar *sql_select_version =
+                        "SELECT major, minor FROM version";
 
         dbh = self->priv->dbh;
 
         /* Version check.  */
         if (gibbon_database_exists_table (self, "version")) {
-                sql = g_strdup_printf ("SELECT major, minor FROM version");
-                status = sqlite3_prepare_v2 (dbh, sql, -1, &stmt, NULL);
-                g_free (sql);
+                status = sqlite3_prepare_v2 (dbh,
+                                             sql_select_version,
+                                             -1, &stmt, NULL);
 
                 if (status != SQLITE_OK)
                         return FALSE;
 
-                status = sqlite3_step (stmt);
-                if (status == SQLITE_ROW) {
-                        major = sqlite3_column_int (stmt, 0);
-                        minor = sqlite3_column_int (stmt, 1);
-                }
+                (void) gibbon_database_sql_select_row (self, stmt,
+                                                       sql_select_version,
+                                                       G_TYPE_INT, &major,
+                                                       G_TYPE_INT, &minor,
+                                                       -1);
                 sqlite3_finalize (stmt);
         }
 
@@ -740,8 +741,6 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
 
         status = sqlite3_step (stmt);
         if (SQLITE_DONE == status) {
-                gibbon_app_display_error (self->priv->app,
-                                          "%s: No more rows!", sql);
                 return FALSE;
         } else if (SQLITE_ROW != status) {
                 return gibbon_database_display_error (self, sql);
