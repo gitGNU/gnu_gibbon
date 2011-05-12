@@ -51,6 +51,7 @@ struct _GibbonArchivePrivate {
         gchar *session_directory;
 
         GibbonDatabase *db;
+        gint server_id;
 
         gchar *archive_directory;
 
@@ -75,6 +76,7 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv->app = NULL;
         self->priv->servers_directory = NULL;
         self->priv->db = NULL;
+        self->priv->server_id = -1;
         self->priv->droppers = NULL;
 }
 
@@ -215,8 +217,10 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
                                strerror (errno));
         }
 
-        gibbon_database_update_account (self->priv->db, login,
-                                        host, port);
+        self->priv->server_id = gibbon_database_update_server (self->priv->db,
+                                                               host, port);
+        gibbon_database_update_account (self->priv->db,
+                                        self->priv->server_id, login);
 }
 
 void
@@ -230,7 +234,7 @@ gibbon_archive_update_user (GibbonArchive *self,
         g_return_if_fail (login != NULL);
 
         gibbon_database_update_user (self->priv->db,
-                                     hostname, port, login,
+                                     self->priv->server_id, login,
                                      rating, experience);
 }
 

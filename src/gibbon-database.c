@@ -46,6 +46,7 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *commit;
         sqlite3_stmt *rollback;
         sqlite3_stmt *create_server;
+        sqlite3_stmt *select_server_id;
         sqlite3_stmt *create_user;
         sqlite3_stmt *update_user;
 
@@ -67,6 +68,7 @@ static gboolean gibbon_database_exists_table (GibbonDatabase *self,
 static gboolean gibbon_database_begin_transaction (GibbonDatabase *self);
 static gboolean gibbon_database_commit (GibbonDatabase *self);
 static gboolean gibbon_database_rollback (GibbonDatabase *self);
+static gboolean gibbon_database_maintain (GibbonDatabase *self);
 static gboolean gibbon_database_display_error (GibbonDatabase *self,
                                                const gchar *msg_fmt, ...);
 static gboolean gibbon_database_sql_do (GibbonDatabase *self,
@@ -74,6 +76,9 @@ static gboolean gibbon_database_sql_do (GibbonDatabase *self,
 static gboolean gibbon_database_sql_execute (GibbonDatabase *self,
                                              sqlite3_stmt *stmt,
                                              const gchar *sql, ...);
+static gboolean gibbon_database_sql_select_row (GibbonDatabase *self,
+                                                sqlite3_stmt *stmt,
+                                                const gchar *sql, ...);
 static gboolean gibbon_database_get_statement (GibbonDatabase *self,
                                                sqlite3_stmt **stmt,
                                                const gchar *sql);
@@ -89,6 +94,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->commit = NULL;
         self->priv->rollback = NULL;
         self->priv->create_server = NULL;
+        self->priv->select_server_id = NULL;
         self->priv->create_user = NULL;
         self->priv->update_user = NULL;
 
@@ -112,6 +118,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->rollback);
                 if (self->priv->create_server)
                         sqlite3_finalize (self->priv->create_server);
+                if (self->priv->select_server_id)
+                        sqlite3_finalize (self->priv->select_server_id);
                 if (self->priv->create_user)
                         sqlite3_finalize (self->priv->create_user);
                 if (self->priv->update_user)
@@ -238,7 +246,7 @@ gibbon_database_initialize (GibbonDatabase *self)
 
         if (major == GIBBON_DATABASE_SCHEMA_MAJOR
             && minor == GIBBON_DATABASE_SCHEMA_MINOR) {
-                (void) gibbon_database_sql_do (self, "VACUUM");
+                (void) gibbon_database_maintain (self);
                 return TRUE;
         }
 
@@ -415,6 +423,10 @@ gibbon_database_begin_transaction (GibbonDatabase *self)
                 sqlite3_reset (self->priv->begin_transaction);
         }
 
+        if (!gibbon_database_sql_execute (self, self->priv->begin_transaction,
+                                          "BEGIN TRANSACTION", -1))
+                return FALSE;
+
         return TRUE;
 }
 
@@ -438,6 +450,10 @@ gibbon_database_commit (GibbonDatabase *self)
         } else {
                 sqlite3_reset (self->priv->commit);
         }
+
+        if (!gibbon_database_sql_execute (self, self->priv->commit,
+                                          "COMMIT", -1))
+                return FALSE;
 
         return TRUE;
 }
@@ -463,6 +479,10 @@ gibbon_database_rollback (GibbonDatabase *self)
         } else {
                 sqlite3_reset (self->priv->rollback);
         }
+
+        if (!gibbon_database_sql_execute (self, self->priv->rollback,
+                                          "ROLLBACK", -1))
+                return FALSE;
 
         return TRUE;
 }
@@ -531,26 +551,84 @@ gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
         return retval;
 }
 
-gboolean
-gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
-                                const gchar *host, guint port)
+gint
+gibbon_database_update_server (GibbonDatabase *self,
+                               const gchar *hostname, guint port)
 {
         const gchar *sql_create_server =
                 "INSERT OR IGNORE INTO servers (name, port) VALUES (?, ?)";
+        const gchar *sql_select_server_id =
+                "SELECT id FROM servers WHERE name = ? AND port = ?";
+        guint server_id = 0;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), -1);
+        g_return_val_if_fail (hostname != NULL, -1);
+        g_return_val_if_fail (port != 0, -1);
+
+        if (!gibbon_database_get_statement (self, &self->priv->create_server,
+                                            sql_create_server))
+                return -1;
+
+        if (!gibbon_database_get_statement (self, &self->priv->select_server_id,
+                                            sql_select_server_id))
+                return -1;
+
+        if (!gibbon_database_begin_transaction (self))
+                return -1;
+
+        if (!gibbon_database_sql_execute (self, self->priv->create_server,
+                                          sql_create_server,
+                                          G_TYPE_STRING, &hostname,
+                                          G_TYPE_UINT, &port,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_sql_execute (self, self->priv->select_server_id,
+                                          sql_select_server_id,
+                                          G_TYPE_STRING, &hostname,
+                                          G_TYPE_UINT, &port,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_sql_select_row (self, self->priv->select_server_id,
+                                             sql_select_server_id,
+                                             G_TYPE_UINT, &server_id,
+                                            -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (server_id <= 0) {
+                gibbon_database_rollback (self);
+                gibbon_app_display_error (self->priv->app,
+                                          _("No server id for '%s' port %u"
+                                            " found in database!"),
+                                          hostname, port);
+                return -1;
+        }
+
+        if (!gibbon_database_commit (self))
+                return -1;
+
+        return server_id;
+}
+
+gboolean
+gibbon_database_update_account (GibbonDatabase *self,
+                                guint server_id, const gchar *login)
+{
         const gchar *sql_create_user =
                 "INSERT OR IGNORE INTO users (name, server_id, last_seen)\n"
-                "    VALUES(?, (SELECT id FROM servers\n"
-                "                   WHERE name = ? AND port = ?), ?)";
+                "    VALUES(?, ?, ?)";
         gint64 now;
 
         g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
         g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (host != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
 
-        if (!gibbon_database_get_statement (self, &self->priv->create_server,
-                                            sql_create_server))
-                return FALSE;
         if (!gibbon_database_get_statement (self, &self->priv->create_user,
                                             sql_create_user))
                 return FALSE;
@@ -558,21 +636,11 @@ gibbon_database_update_account (GibbonDatabase *self, const gchar *login,
         if (!gibbon_database_begin_transaction (self))
                 return FALSE;
 
-        if (!gibbon_database_sql_execute (self, self->priv->create_server,
-                                          sql_create_server,
-                                          G_TYPE_STRING, &host,
-                                          G_TYPE_UINT, &port,
-                                          -1)) {
-                gibbon_database_rollback (self);
-                return FALSE;
-        }
-
         now = (gint64) time (NULL);
         if (!gibbon_database_sql_execute (self, self->priv->create_user,
                                           sql_create_user,
                                           G_TYPE_STRING, &login,
-                                          G_TYPE_STRING, &host,
-                                          G_TYPE_UINT, &port,
+                                          G_TYPE_UINT, &server_id,
                                           G_TYPE_INT64, &now,
                                           -1)) {
                 gibbon_database_rollback (self);
@@ -594,6 +662,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
         gpointer ptr;
         va_list args;
         gint i = 0;
+
         sqlite3_reset (stmt);
 
         va_start (args, sql);
@@ -610,6 +679,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                 }
 
                 switch (type) {
+                        case G_TYPE_INT:
                         case G_TYPE_UINT:
                                 if (sqlite3_bind_int (stmt, i,
                                                       *((gint *) ptr)))
@@ -649,8 +719,59 @@ gibbon_database_sql_execute (GibbonDatabase *self,
 
         va_end (args);
 
-        if (!sqlite3_step (stmt))
+        if (g_ascii_strncasecmp (sql, "SELECT", 6)) {
+                if (!sqlite3_step (stmt))
+                        return gibbon_database_display_error (self, sql);
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_database_sql_select_row (GibbonDatabase *self,
+                                sqlite3_stmt *stmt,
+                                const gchar *sql, ...)
+{
+        gint type;
+        gpointer ptr;
+        va_list args;
+        gint i = 0;
+        int status;
+
+        status = sqlite3_step (stmt);
+        if (SQLITE_DONE == status) {
+                gibbon_app_display_error (self->priv->app,
+                                          "%s: No more rows!", sql);
+                return FALSE;
+        } else if (SQLITE_ROW != status) {
                 return gibbon_database_display_error (self, sql);
+        }
+
+        va_start (args, sql);
+
+        type = va_arg (args, gint);
+
+        while (type != -1) {
+                ptr = va_arg (args, gpointer);
+
+                switch (type) {
+                        case G_TYPE_INT:
+                                *((gint *) ptr) = sqlite3_column_int (stmt, i);
+                                break;
+                        case G_TYPE_UINT:
+                                *((guint *) ptr) = sqlite3_column_int (stmt, i);
+                                break;
+                        default:
+                                gibbon_app_display_error (self->priv->app,
+                                                          _("Unknown data"
+                                                            " type %d!"),
+                                                            type);
+                                return FALSE;
+                }
+
+                type = va_arg (args, gint);
+                ++i;
+        }
 
         return TRUE;
 }
@@ -673,23 +794,16 @@ gibbon_database_get_statement (GibbonDatabase *self,
 
 gboolean
 gibbon_database_update_user (GibbonDatabase *self,
-                             const gchar *host,
-                             guint port, const gchar *login,
+                             guint server_id,
+                             const gchar *login,
                              gdouble rating, gint experience)
 {
         const gchar *sql_update_user =
                 "INSERT OR IGNORE INTO"
-                "        users (name, server_id, last_seen,"
+                "        users (name, server_id, last_seen,\n"
                 "              experience, rating)\n"
-                "    VALUES(?, (SELECT id FROM servers\n"
-                "                   WHERE name = ? AND port = ?),"
-                "           ?, ?, ?)";
+                "    VALUES(?, ?, ?, ?, ?)";
         gint64 now;
-
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (host != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
 
         if (!gibbon_database_get_statement (self, &self->priv->update_user,
                                             sql_update_user))
@@ -702,8 +816,7 @@ gibbon_database_update_user (GibbonDatabase *self,
         if (!gibbon_database_sql_execute (self, self->priv->update_user,
                                           sql_update_user,
                                           G_TYPE_STRING, &login,
-                                          G_TYPE_STRING, &host,
-                                          G_TYPE_UINT, &port,
+                                          G_TYPE_UINT, &server_id,
                                           G_TYPE_INT64, &now,
                                           G_TYPE_UINT, &experience,
                                           G_TYPE_DOUBLE, &rating,
@@ -717,3 +830,26 @@ gibbon_database_update_user (GibbonDatabase *self,
 
         return TRUE;
 }
+
+
+static gboolean
+gibbon_database_maintain (GibbonDatabase *self)
+{
+        gchar *sql = "VACUUM";
+        sqlite3_stmt *stmt;
+
+        if (SQLITE_OK != sqlite3_prepare_v2 (self->priv->dbh, sql,
+                                             -1, &stmt,
+                                             NULL))
+                return FALSE;
+
+        if (SQLITE_DONE != sqlite3_step (stmt)) {
+                sqlite3_finalize (stmt);
+                return FALSE;
+        }
+
+        sqlite3_finalize (stmt);
+
+        return TRUE;
+}
+
