@@ -182,8 +182,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 view,
                 -1,
                 _("Available"),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_PLAYER_LIST_COL_AVAILABLE,
+                gtk_cell_renderer_pixbuf_new (),
+                "stock-id", GIBBON_PLAYER_LIST_COL_AVAILABLE,
                 NULL);
         col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_NAME);
         gtk_tree_view_column_set_clickable (col, TRUE);

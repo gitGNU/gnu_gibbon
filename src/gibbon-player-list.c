@@ -69,7 +69,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
 
         store = gtk_list_store_new (GIBBON_PLAYER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
-                                    G_TYPE_BOOLEAN,
+                                    G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
@@ -116,7 +116,7 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_NAME] = 
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_AVAILABLE] =
-                G_TYPE_BOOLEAN;
+                G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RATING] = 
                 G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
@@ -171,6 +171,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
 {
         struct GibbonPlayer *player;
         gchar *version_string = NULL;
+        const gchar *stock_id;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
@@ -203,10 +204,19 @@ gibbon_player_list_set (GibbonPlayerList *self,
                 }
         }
         
+        if (available) {
+                stock_id = GTK_STOCK_YES;
+        } else {
+                if (opponent && *opponent)
+                        stock_id = GTK_STOCK_NO;
+                else
+                        stock_id = GTK_STOCK_STOP;
+        }
+
         gtk_list_store_set (self->priv->store,
                             &player->iter,
                             GIBBON_PLAYER_LIST_COL_NAME, name,
-                            GIBBON_PLAYER_LIST_COL_AVAILABLE, available,
+                            GIBBON_PLAYER_LIST_COL_AVAILABLE, stock_id,
                             GIBBON_PLAYER_LIST_COL_RATING, rating,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
