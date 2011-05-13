@@ -62,3 +62,4 @@
 - gibbon_session_handle_board() leaks memory, in case of failure.
 - Write a replacement for g_strsplit() that consumes multiple occurencies
   of the delimiter.
+- Remove old lines from beginning of text views in order to save memory.
