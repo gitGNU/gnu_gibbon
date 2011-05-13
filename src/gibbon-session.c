@@ -367,8 +367,19 @@ gibbon_session_process_server_line (GibbonSession *self,
         gsize length;
         gchar **tokens;
         gboolean status;
+        const gchar *white_space;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
+
+        /* Discard lines containing only whitespace.  */
+        white_space = line;
+        while (1) {
+                if (' ' == *white_space)
+                        continue;
+                if (!*white_space)
+                        return 0;
+                break;
+        }
 
         if (line[0] >= '0' && line[0] <= '9')
                 return gibbon_session_dispatch_clip_message (self, line);
