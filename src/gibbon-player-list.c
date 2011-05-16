@@ -72,6 +72,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
+                                    G_TYPE_DOUBLE,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -121,6 +122,8 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
                 G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RELIABILITY] =
+                G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_WATCHING] =
@@ -164,6 +167,8 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         gboolean available,
                         gdouble rating,
                         guint experience,
+                        gdouble reliability,
+                        guint confidence,
                         gchar *opponent,
                         gchar *watching,
                         gchar *client,
@@ -219,6 +224,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_AVAILABLE, stock_id,
                             GIBBON_PLAYER_LIST_COL_RATING, rating,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
+                            GIBBON_PLAYER_LIST_COL_RELIABILITY, reliability,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,

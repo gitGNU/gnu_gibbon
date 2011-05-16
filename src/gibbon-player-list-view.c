@@ -208,8 +208,22 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
                 NULL);
-        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RATING);
+        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_EXPERIENCE);
         gtk_tree_view_column_set_clickable (col, TRUE);
+
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
+                _("Rel."),
+                renderer,
+                "text", GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                NULL);
+        col = gtk_tree_view_get_column (view,
+                                        GIBBON_PLAYER_LIST_COL_RELIABILITY);
+        gtk_tree_view_column_set_cell_data_func (col, renderer,
+                print2digits, (gpointer) GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                NULL);
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
