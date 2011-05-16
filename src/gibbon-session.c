@@ -549,6 +549,11 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gint i;
         GibbonConnection *connection;
         GibbonArchive *archive;
+        gdouble reliability;
+        guint confidence;
+        const gchar *account;
+        guint port;
+        const gchar *server;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -598,13 +603,24 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         available = ready && !away && !opponent[0];
 
+        account = gibbon_connection_get_login (self->priv->connection);
+        server = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
+
+        if (!gibbon_archive_get_reliability (self->priv->archive,
+                                             server, port, who,
+                                             &reliability, &confidence)) {
+                confidence = 123;
+                reliability = 4.56;
+        }
+
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
+                                reliability, confidence,
                                 opponent, watching, client, email);
         g_free (client);
 
-        if (!g_strcmp0 (who,
-                        gibbon_connection_get_login (self->priv->connection))) {
+        if (!g_strcmp0 (who, account)) {
                 if (!opponent[0])
                         opponent = NULL;
                 if (!watching[0])
