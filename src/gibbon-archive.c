@@ -243,6 +243,7 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
 
         self->priv->server_id = gibbon_database_update_server (self->priv->db,
                                                                host, port);
+        host = gibbon_connection_get_hostname (connection);
         gibbon_database_update_account (self->priv->db,
                                         self->priv->server_id, login);
 }
@@ -336,4 +337,22 @@ gibbon_archive_remove_from_droppers (GibbonArchive *self,
         (void) g_hash_table_remove (self->priv->droppers, key);
         (void) sprintf (key, "%s:%s", player2, player1);
         (void) g_hash_table_remove (self->priv->droppers, key);
+}
+
+gboolean
+gibbon_archive_get_reliability (GibbonArchive *self,
+                                const gchar *hostname, guint port,
+                                const gchar *login,
+                                gdouble *value, guint *confidence)
+{
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (value != NULL, FALSE);
+        g_return_val_if_fail (confidence != NULL, FALSE);
+
+        return gibbon_database_get_reliability (self->priv->db,
+                                                hostname, port,
+                                                login, value, confidence);
 }

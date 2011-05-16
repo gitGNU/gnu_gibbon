@@ -82,5 +82,9 @@ void gibbon_archive_save_drop (GibbonArchive *self,
                                const gchar *dropper, const gchar *victim);
 void gibbon_archive_save_resume (GibbonArchive *self,
                                  const gchar *player1, const gchar *player2);
+gboolean gibbon_archive_get_reliability (GibbonArchive *self,
+                                         const gchar *hostname, guint port,
+                                         const gchar *login,
+                                         gdouble *value, guint *confidence);
 
 #endif
