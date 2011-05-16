@@ -61,6 +61,7 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *create_user;
         sqlite3_stmt *update_user;
         sqlite3_stmt *record_activity;
+        sqlite3_stmt *select_activity;
 
         gboolean in_transaction;
 
@@ -110,6 +111,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->create_user = NULL;
         self->priv->update_user = NULL;
         self->priv->record_activity = NULL;
+        self->priv->select_activity = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -139,6 +141,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->create_server);
                 if (self->priv->record_activity)
                         sqlite3_finalize (self->priv->record_activity);
+                if (self->priv->select_activity)
+                        sqlite3_finalize (self->priv->select_activity);
         }
 
         if (self->priv->path)
@@ -160,7 +164,7 @@ gibbon_database_class_init (GibbonDatabaseClass *klass)
 /**
  * gibbon_database_new:
  * @app: Our application.
- * @path: Path to the sqlitee database.
+ * @path: Path to the sqlite database.
  *
  * Creates a new #GibbonDatabase.
  *
@@ -637,8 +641,10 @@ gibbon_database_update_server (GibbonDatabase *self,
                 return -1;
         }
 
-        if (!gibbon_database_commit (self))
-                return -1;
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
 
         return server_id;
 }
@@ -674,8 +680,10 @@ gibbon_database_update_account (GibbonDatabase *self,
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self))
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
                 return FALSE;
+        }
 
         return TRUE;
 }
@@ -786,6 +794,10 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                         case G_TYPE_UINT:
                                 *((guint *) ptr) = sqlite3_column_int (stmt, i);
                                 break;
+                        case G_TYPE_DOUBLE:
+                                *((gdouble *) ptr) =
+                                        sqlite3_column_double (stmt, i);
+                                break;
                         default:
                                 gibbon_app_display_error (self->priv->app,
                                                           _("Unknown data"
@@ -851,8 +863,10 @@ gibbon_database_update_user (GibbonDatabase *self,
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self))
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
                 return FALSE;
+        }
 
         return TRUE;
 }
@@ -868,6 +882,10 @@ gibbon_database_record_activity (GibbonDatabase *self,
                 " VALUES ((SELECT id FROM users"
                 " WHERE name = ? AND server_id = ?), ?, ?)";
         gint64 now;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (server_id > 0, FALSE);
 
         if (!gibbon_database_get_statement (self, &self->priv->record_activity,
                                             sql_record_activity))
@@ -888,8 +906,10 @@ gibbon_database_record_activity (GibbonDatabase *self,
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self))
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
                 return FALSE;
+        }
 
         return TRUE;
 }
@@ -926,8 +946,63 @@ gibbon_database_maintain (GibbonDatabase *self)
                 sqlite3_finalize (stmt);
         }
 
-        if (!gibbon_database_commit (self))
+        if (!gibbon_database_commit (self)) {
                 gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_database_get_reliability (GibbonDatabase *self,
+                                 const gchar *host, guint port,
+                                 const gchar *login,
+                                 gdouble *value, guint *confidence)
+{
+        const gchar *sql_select_activity =
+                "SELECT AVG(value), COUNT(*)"
+                " FROM activities a, users u, servers s"
+                " WHERE s.name = ? AND s.port = ?"
+                " AND u.name = ? AND u.server_id = s.id"
+                " AND a.user_id = u.id";
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (value != NULL, FALSE);
+        g_return_val_if_fail (confidence != NULL, FALSE);
+        g_return_val_if_fail (host != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+
+        if (!gibbon_database_get_statement (self, &self->priv->select_activity,
+                                            sql_select_activity))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        if (!gibbon_database_sql_execute (self, self->priv->select_activity,
+                                          sql_select_activity,
+                                          G_TYPE_STRING, &host,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_STRING, &login,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_sql_select_row (self, self->priv->select_activity,
+                                             sql_select_activity,
+                                             G_TYPE_DOUBLE, value,
+                                             G_TYPE_UINT, confidence,
+                                            -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
 
         return TRUE;
 }

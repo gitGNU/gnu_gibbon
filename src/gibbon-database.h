@@ -86,5 +86,9 @@ gboolean gibbon_database_update_user (GibbonDatabase *self,
 gboolean gibbon_database_record_activity (GibbonDatabase *self,
                                           guint server_id, const gchar *login,
                                           gdouble value);
+gboolean gibbon_database_get_reliability (GibbonDatabase *self,
+                                          const gchar *hostname, guint port,
+                                          const gchar *login,
+                                          gdouble *value, guint *confidence);
 
 #endif
