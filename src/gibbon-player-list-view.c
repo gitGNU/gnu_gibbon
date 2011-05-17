@@ -206,8 +206,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 view,
                 -1,
                 _("Exp."),
-                gtk_cell_renderer_progress_new (),
-                "value", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
                 NULL);
         col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_EXPERIENCE);
         gtk_tree_view_column_set_clickable (col, TRUE);
