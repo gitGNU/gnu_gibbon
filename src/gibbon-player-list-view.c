@@ -32,6 +32,7 @@
 #include "gibbon-player-list-view.h"
 #include "gibbon-signal.h"
 #include "gibbon-connection.h"
+#include "gibbon-reliability-renderer.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
@@ -205,24 +206,19 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 view,
                 -1,
                 _("Exp."),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                gtk_cell_renderer_progress_new (),
+                "value", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
                 NULL);
         col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_EXPERIENCE);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
-        renderer = gtk_cell_renderer_text_new ();
+        renderer = gibbon_reliability_renderer_new ();
         gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
-                _("Rel."),
+                _("Reliability"),
                 renderer,
-                "text", GIBBON_PLAYER_LIST_COL_RELIABILITY,
-                NULL);
-        col = gtk_tree_view_get_column (view,
-                                        GIBBON_PLAYER_LIST_COL_RELIABILITY);
-        gtk_tree_view_column_set_cell_data_func (col, renderer,
-                print2digits, (gpointer) GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                "reliability", GIBBON_PLAYER_LIST_COL_RELIABILITY,
                 NULL);
 
         gtk_tree_view_insert_column_with_attributes (

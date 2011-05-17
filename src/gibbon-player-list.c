@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-player-list.h"
+#include "gibbon-reliability.h"
 
 struct _GibbonPlayerListPrivate {
         GHashTable *hash;
@@ -72,7 +73,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
-                                    G_TYPE_DOUBLE,
+                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -123,7 +124,7 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RELIABILITY] =
-                G_TYPE_DOUBLE;
+                GIBBON_TYPE_RELIABILITY;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_WATCHING] =
@@ -177,10 +178,14 @@ gibbon_player_list_set (GibbonPlayerList *self,
         struct GibbonPlayer *player;
         gchar *version_string = NULL;
         const gchar *stock_id;
+        GibbonReliability rel;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
         
+        rel.value = reliability;
+        rel.confidence = confidence;
+
         player = g_hash_table_lookup (self->priv->hash, name);
         if (!player) {
                 player = g_malloc0 (sizeof *player);
@@ -224,7 +229,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_AVAILABLE, stock_id,
                             GIBBON_PLAYER_LIST_COL_RATING, rating,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
-                            GIBBON_PLAYER_LIST_COL_RELIABILITY, reliability,
+                            GIBBON_PLAYER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
