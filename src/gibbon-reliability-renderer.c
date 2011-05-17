@@ -198,7 +198,7 @@ gibbon_reliability_renderer_get_size (GtkCellRenderer *cell,
         gint calc_height;
 
         calc_width  = (gint) cell->xpad * 2 + 80;
-        calc_height = (gint) cell->ypad * 2 + 16;
+        calc_height = (gint) cell->ypad * 2 + 12;
 
         if (width)
                 *width = calc_width;
@@ -214,8 +214,8 @@ gibbon_reliability_renderer_get_size (GtkCellRenderer *cell,
                 }
 
                 if (y_offset) {
-                        *y_offset = cell->yalign * (cell_area->height
-                                                    - calc_height);
+                        *y_offset = cell->yalign * 0.5 * (cell_area->height
+                                                          - calc_height);
                         *y_offset = MAX (*y_offset, 0);
                 }
         }
@@ -231,11 +231,12 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
                                     guint flags)
 {
         GibbonReliabilityRenderer *self = GIBBON_RELIABILITY_RENDERER (cell);
-        GtkStateType state;
         gint width, height;
         gint x_offset, y_offset;
         gdouble percentage;
-        GtkStyle *style;
+        cairo_t *cr;
+        GdkColor color;
+        GdkRectangle bar;
 
         gibbon_reliability_renderer_get_size (cell, widget, cell_area,
                                               &x_offset, &y_offset,
@@ -253,34 +254,58 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
                     expose_area->x, expose_area->y);
         */
 
-        if (GTK_WIDGET_HAS_FOCUS (widget))
-                state = GTK_STATE_ACTIVE;
-        else
-                state = GTK_STATE_NORMAL;
-
         width  -= cell->xpad * 2;
         height -= cell->ypad * 2;
-
-        gtk_paint_box (widget->style,
-                       window,
-                       GTK_STATE_NORMAL, GTK_SHADOW_IN,
-                       expose_area, widget, NULL,
-                       cell_area->x + x_offset + cell->xpad,
-                       cell_area->y + y_offset + cell->ypad,
-                       width - 1, height - 1);
 
         percentage = 0.1 * self->priv->rel->confidence;
         if (percentage > 1.0)
                 percentage = 1.0;
 
-        style = gtk_style_copy (widget->style);
-        gtk_paint_box (widget->style,
-                       window,
-                       state, GTK_SHADOW_OUT,
-                       expose_area, widget, "bar",
-                       cell_area->x + x_offset + cell->xpad,
-                       cell_area->y + y_offset + cell->ypad,
-                       width * percentage,
-                       height - 1);
-        g_object_unref (style);
+        cr = gdk_cairo_create (window);
+
+        gdk_cairo_rectangle (cr, expose_area);
+        cairo_clip (cr);
+
+        color.red = 0x0000;
+        color.green = 0x0000;
+        color.blue = 0x0000;
+        gdk_cairo_set_source_color (cr, &color);
+
+        bar.x = cell_area->x + x_offset + cell->xpad;
+        bar.y = cell_area->y + y_offset + cell->ypad;
+        bar.width = width;
+        bar.height = height - 1;
+        gdk_cairo_rectangle (cr, &bar);
+
+        cairo_set_line_width (cr, 0.2);
+        cairo_stroke (cr);
+
+        bar.x += 2;
+        bar.y += 2;
+        bar.width = (width - 4) * percentage;
+        bar.height = height - 5;
+        gdk_cairo_rectangle (cr, &bar);
+
+        color.pixel = 0;
+        if (self->priv->rel->value >= 0.95) {
+                color.red = 0x0000;
+                color.green = 0xb800;
+                color.blue = 0x0000;
+        } else if (self->priv->rel->value >= 0.85) {
+                color.red = 0xff00;
+                color.green = 0xff00;
+                color.blue = 0x0000;
+        } else if (self->priv->rel->value >= 0.65) {
+                color.red = 0xff00;
+                color.green = 0xc000;
+                color.blue = 0x0000;
+        } else {
+                color.red = 0xec00;
+                color.green = 0x0000;
+                color.blue = 0x0000;
+        }
+        gdk_cairo_set_source_color (cr, &color);
+        cairo_fill (cr);
+
+        cairo_destroy (cr);
 }
