@@ -47,6 +47,9 @@ struct _GibbonPlayerListViewPrivate {
         GibbonSignal *watch_handler;
         GibbonSignal *tell_handler;
         GibbonSignal *row_activated_handler;
+
+        GtkTreeViewColumn *available_column;
+        GtkTreeViewColumn *reliability_column;
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -64,9 +67,13 @@ static gchar *gibbon_player_list_view_row_name (const GibbonPlayerListView
 static void gibbon_player_list_view_on_look (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_watch (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_tell (const GibbonPlayerListView *self);
-static void gibbon_player_list_view_on_row_activated (const
-                                                      GibbonPlayerListView
+static void gibbon_player_list_view_on_row_activated (const GibbonPlayerListView
                                                       *self);
+static gboolean gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
+                                                          gint x, gint y,
+                                                          gboolean keyboard_tip,
+                                                          GtkTooltip *tooltip,
+                                                          gpointer _self);
 
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
@@ -88,6 +95,9 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->watch_handler = NULL;
         self->priv->tell_handler = NULL;
         self->priv->row_activated_handler = NULL;
+
+        self->priv->available_column = NULL;
+        self->priv->reliability_column = NULL;
 }
 
 static void
@@ -187,8 +197,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 gtk_cell_renderer_pixbuf_new (),
                 "stock-id", GIBBON_PLAYER_LIST_COL_AVAILABLE,
                 NULL);
-        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_NAME);
-        gtk_tree_view_column_set_clickable (col, TRUE);
+        self->priv->available_column =
+              gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_AVAILABLE);
 
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
@@ -221,6 +231,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 renderer,
                 "reliability", GIBBON_PLAYER_LIST_COL_RELIABILITY,
                 NULL);
+        self->priv->reliability_column =
+            gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RELIABILITY);
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -250,6 +262,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_PLAYER_LIST_COL_EMAIL,
                 NULL);
+
+        g_object_set (G_OBJECT (view), "has-tooltip", TRUE, NULL);
 
         gibbon_player_list_connect_view (self->priv->players, view);
         callback = (GCallback) gibbon_player_list_view_on_button_pressed;
@@ -283,6 +297,10 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         self->priv->row_activated_handler =
                  gibbon_signal_new (G_OBJECT (view), "row-activated",
                                     callback, G_OBJECT (self));
+
+        callback = (GCallback) gibbon_player_list_view_on_query_tooltip;
+        (void) g_signal_connect (GTK_WIDGET (view), "query-tooltip",
+                                 callback, self);
 
         return self;
 }
@@ -439,4 +457,56 @@ static void
 gibbon_player_list_view_on_row_activated (const GibbonPlayerListView *self)
 {
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
+}
+
+static gboolean
+gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
+                                          gint x, gint y,
+                                          gboolean keyboard_tip,
+                                          GtkTooltip *tooltip,
+                                          gpointer _self)
+{
+        GtkTreeIter iter;
+        GtkTreeView *tree_view;
+        GtkTreeModel *model;
+        GtkTreePath *path = NULL;
+        GtkTreeViewColumn *column = NULL;
+        GibbonPlayerListView *self;
+        gchar *player_name;
+        gint bx, by;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (_self), FALSE);
+        self = GIBBON_PLAYER_LIST_VIEW (_self);
+        g_return_val_if_fail (GTK_IS_TREE_VIEW (widget), FALSE);
+
+        tree_view = GTK_TREE_VIEW (widget);
+        model = gtk_tree_view_get_model (tree_view);
+
+        if (!gtk_tree_view_get_tooltip_context (tree_view, &x, &y,
+                                                keyboard_tip,
+                                                &model, &path, &iter))
+                return FALSE;
+        gtk_tree_view_convert_widget_to_bin_window_coords (tree_view,
+                                                           x, y, &bx, &by);
+        gtk_tree_view_get_path_at_pos (tree_view, bx, by, NULL,
+                                       &column, NULL, NULL);
+        if (!column)
+                return FALSE;
+
+        if (column == self->priv->available_column) {
+        } else if (column == self->priv->reliability_column) {
+        } else {
+                return FALSE;
+        }
+
+        gtk_tree_model_get (model, &iter, 0, &player_name, -1);
+
+        gtk_tooltip_set_text (tooltip, player_name);
+
+        gtk_tree_view_set_tooltip_row (tree_view, tooltip, path);
+
+        gtk_tree_path_free (path);
+        g_free (player_name);
+
+        return TRUE;
 }
