@@ -296,7 +296,8 @@ gibbon_chat_view_append_message (const GibbonChatView *self,
         if (2 == gtk_notebook_get_n_pages (self->priv->notebook)) {
                 gtk_notebook_set_current_page (self->priv->notebook,
                                                self->priv->page_number);
-                gtk_widget_grab_focus (GTK_WIDGET (self->priv->entry));
+                if (!gtk_widget_has_focus (GTK_WIDGET (self->priv->entry)))
+                        gtk_widget_grab_focus (GTK_WIDGET (self->priv->entry));
         } else if (page_number != self->priv->page_number) {
                 ++self->priv->unread;
                 markup = g_markup_printf_escaped ("<span weight=\"bold\""
