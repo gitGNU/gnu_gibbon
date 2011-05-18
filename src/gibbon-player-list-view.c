@@ -141,7 +141,8 @@ gibbon_player_list_view_class_init (GibbonPlayerListViewClass *klass)
 
 /**
  * gibbon_player_list_view_new:
- * @dummy: The argument.
+ * @app: The #GibbonApp.
+ * @players: The underlying #GibbonPlayerList.
  *
  * Creates a new #GibbonPlayerListView.
  *
