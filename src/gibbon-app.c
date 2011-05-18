@@ -47,6 +47,8 @@
 #include "gibbon-chat-view.h"
 #include "gibbon-chat.h"
 #include "gibbon-help.h"
+#include "gibbon-player-list.h"
+#include "gibbon-player-list-view.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -74,6 +76,9 @@ struct _GibbonAppPrivate {
         GHashTable *chats;
 
         GibbonArchive *archive;
+
+        GibbonPlayerList *player_list;
+        GibbonPlayerListView *player_list_view;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -139,6 +144,9 @@ gibbon_app_init (GibbonApp *self)
         self->priv->chats = NULL;
 
         self->priv->archive = NULL;
+
+        self->priv->player_list = NULL;
+        self->priv->player_list_view = NULL;
 }
 
 static void
@@ -147,6 +155,12 @@ gibbon_app_finalize (GObject *object)
         GibbonApp *self = GIBBON_APP (object);
 
         gibbon_app_disconnect (self);
+
+        if (self->priv->player_list_view)
+                g_object_unref (self->priv->player_list_view);
+
+        if (self->priv->player_list)
+                g_object_unref (self->priv->player_list);
 
         if (self->priv->server_console)
                 g_object_unref (self->priv->server_console);
@@ -246,6 +260,10 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->player_list = gibbon_player_list_new ();
+        self->priv->player_list_view =
+                gibbon_player_list_view_new (self, self->priv->player_list);
 
         singleton = self;
 
@@ -705,6 +723,7 @@ gibbon_app_disconnect (GibbonApp *self)
 
         gibbon_shouts_set_my_name (self->priv->shouts, NULL);
         gibbon_game_chat_set_my_name (self->priv->game_chat, NULL);
+        gibbon_player_list_clear (self->priv->player_list);
 
         gibbon_app_set_state_disconnected (self);
 }
@@ -968,4 +987,12 @@ gibbon_app_get_archive (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->archive;
+}
+
+GibbonPlayerList *
+gibbon_app_get_player_list (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->player_list;
 }

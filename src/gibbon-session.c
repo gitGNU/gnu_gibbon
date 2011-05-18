@@ -192,7 +192,7 @@ struct _GibbonSessionPrivate {
         GibbonPosition *position;
 
         GibbonPlayerList *player_list;
-        GibbonPlayerListView *player_list_view;
+
         GibbonArchive *archive;
 };
 
@@ -215,7 +215,6 @@ gibbon_session_init (GibbonSession *self)
         self->priv->opponent = NULL;
         self->priv->position = NULL;
         self->priv->player_list = NULL;
-        self->priv->player_list_view = NULL;
         self->priv->archive = NULL;
 }
 
@@ -234,12 +233,6 @@ gibbon_session_finalize (GObject *object)
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
-
-        if (self->priv->player_list)
-                g_object_unref (self->priv->player_list);
-
-        if (self->priv->player_list_view)
-                g_object_unref (self->priv->player_list_view);
 }
 
 static void
@@ -260,9 +253,7 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->connection = connection;
         self->priv->app = app;
 
-        self->priv->player_list = gibbon_player_list_new ();
-        self->priv->player_list_view =
-                gibbon_player_list_view_new (app, self->priv->player_list);
+        self->priv->player_list = gibbon_app_get_player_list (app);
 
         self->priv->position = gibbon_position_new ();
 
