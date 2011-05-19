@@ -33,6 +33,8 @@
 #include "gibbon-signal.h"
 #include "gibbon-connection.h"
 #include "gibbon-reliability-renderer.h"
+#include "gibbon-player-list.h"
+#include "gibbon-reliability.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
@@ -474,6 +476,11 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         GibbonPlayerListView *self;
         gchar *player_name;
         gint bx, by;
+        gchar *available = NULL;
+        gchar *text = NULL;
+        GibbonReliability *rel;
+        const gchar *rel_descr;
+        const gchar *conf_descr;
 
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (_self), FALSE);
         self = GIBBON_PLAYER_LIST_VIEW (_self);
@@ -493,20 +500,69 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         if (!column)
                 return FALSE;
 
+        gtk_tree_model_get (model, &iter, 0, &player_name, -1);
+
         if (column == self->priv->available_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_PLAYER_LIST_COL_AVAILABLE,
+                                    &available,
+                                    -1);
+                if (g_strcmp0 ("gtk-yes", available) == 0)
+                        text = g_strdup_printf ("<i>%s</i> is ready to play.",
+                                                player_name);
+                else if (g_strcmp0 ("gtk-no", available) == 0)
+                        text = g_strdup_printf ("<i>%s</i> is currently playing.",
+                                                player_name);
+                else
+                        text = g_strdup_printf ("<i>%s</i> does not want to"
+                                                " play right now.",
+                                                player_name);
         } else if (column == self->priv->reliability_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_PLAYER_LIST_COL_RELIABILITY, &rel,
+                                    -1);
+                if (rel->confidence) {
+                        if (rel->value > 0.95)
+                                rel_descr = _("good");
+                        else if (rel->value > 0.85)
+                                rel_descr = ("okay");
+                        else if (rel->value > 0.65)
+                                rel_descr = ("poor");
+                        else
+                                rel_descr = _("keep away");
+                        if (rel->confidence >= 10)
+                                conf_descr = _("very certain");
+                        else if (rel->confidence >= 5)
+                                conf_descr = _("certain");
+                        else if (rel->confidence >= 1)
+                                conf_descr = _("uncertain");
+                        else
+                                conf_descr = _("unknown");
+
+                        text = g_strdup_printf ("<b>Reliability of player"
+                                                " <i>%s</i>:</b>\n"
+                                                " %f (%s) with a measurement"
+                                                " confidence "
+                                                " of %u (%s).",
+                                                player_name,
+                                                rel->value, rel_descr,
+                                                rel->confidence, conf_descr);
+                } else {
+                        text = g_strdup_printf ("<b>Reliability of player"
+                                                " <i>%s</i></b>: unknown.",
+                                                player_name);
+                }
         } else {
                 return FALSE;
         }
 
-        gtk_tree_model_get (model, &iter, 0, &player_name, -1);
-
-        gtk_tooltip_set_text (tooltip, player_name);
+        gtk_tooltip_set_markup (tooltip, text);
 
         gtk_tree_view_set_tooltip_row (tree_view, tooltip, path);
 
         gtk_tree_path_free (path);
         g_free (player_name);
+        g_free (text);
 
         return TRUE;
 }
