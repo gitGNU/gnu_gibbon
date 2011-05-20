@@ -1,14 +1,6 @@
 - beginning with glib 2.2, there is a GResolver object allowing asynchronous
   DNS, based on libasyncns for Unix and a native implementation for MS-DOS.
   Integrate it as soon as it is widely available.
-- GibbonCairoboard should query a GibbonDesign for the values.
-- Change structure of match position.
-- Set up a consistent convention for positive and negative checker
-  numbers.
-- Write a function that finds the player name for a selection.
-- Implement a ping function to avoid timeouts.
-- Change the constructor of gibbon_cairoboard to handle failure without
-  warnings.
 - Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
 - Do not return NULL from constructor of GibbonCairoboard in case the 
   constructor fails.
@@ -24,8 +16,6 @@
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
-- Preserve original order of nodes, use a default order when creating
-  missing default nodes.
 - Make archive directory configurable.
 - gsgf_node_get_property_cooked() must return a GSGFValue and should therefore
   be renamed.
@@ -40,17 +30,12 @@
 - GSGFSimpleText does not allow newlines.  Enforce that restriction.
   For example, gsgf_game_tree_set_application() must be changed
   accordingly.
-- Rewrite most of the old stuff src/*.c from scratch.
 - Check whether the player list context menu can be created with glade.
   Before 3.5.4 it was always converted to a GtkAction.
-- Changing the port number in the connection dialog does not have an
-  effect.
 - Change svg-util.c to not switch locale.  Instead fix libsvg to
   use the g_ascii_strto...() functions from glib.
 - Password gets lost if not saved in preferences.  Use a temporary
   buffer for it.
-- Check that all instances of GibbonConnection, GibbonConnector, and
-  GibbonSession get disposed.
 - Cancelling a connection attempt probably has a race.  The connector
   object gets unreffed before it can check its state.  FIX: Temporarily
   keep a reference.
