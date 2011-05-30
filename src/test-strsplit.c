@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <gibbon-util.h>
 
-static gboolean test_strsplit_ws (const gchar *in, const gchar *out, ...);
+static gboolean test_strsplit_ws (const gchar *in, ...);
 
 int
 main (int argc, char *argv[])
@@ -73,11 +73,11 @@ main (int argc, char *argv[])
 }
 
 static gboolean
-test_strsplit_ws (const gchar *in, const gchar *out, ...)
+test_strsplit_ws (const gchar *in, ...)
 {
         gchar **tokens;
         va_list list;
-        const gchar *arg = out;
+        const gchar *arg;
         const gchar *prefix = "Splitting at whitespace";
         gsize i = 0;
         gboolean retval = TRUE;
@@ -88,8 +88,9 @@ test_strsplit_ws (const gchar *in, const gchar *out, ...)
                 return FALSE;
         }
 
-        va_start (list, out);
+        va_start (list, in);
         do {
+                arg = va_arg (list, const gchar *);
                 if (g_strcmp0 (arg, tokens[i])) {
                         g_printerr ("%s: %s: token #%u:"
                                     "expected '%s', got '%s'.\n", 
@@ -97,7 +98,6 @@ test_strsplit_ws (const gchar *in, const gchar *out, ...)
                         retval = FALSE;
                         break;
                 }
-                arg = va_arg (list, const gchar *);
                 ++i;
         } while (arg);
 
