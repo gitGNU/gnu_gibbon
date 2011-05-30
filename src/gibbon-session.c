@@ -163,7 +163,7 @@ static gint gibbon_session_clip_you_kibitz (GibbonSession *self,
                                             const gchar *line,
                                             const gchar **tokens);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
-                                             const gchar *board);
+                                             const gchar **tokens);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 static gboolean gibbon_session_handle_one_of_us (GibbonSession *self,
@@ -306,13 +306,22 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return retval;
         }
 
-        if (0 == strncmp ("board:", line, 6))
-                if (gibbon_session_handle_board (self, line + 6))
-                        return 0;
+        if (0 == strncmp ("board:", line, 6)) {
+                g_strfreev (tokens);
+                tokens = g_strsplit (line, ":", 0);
+                retval = gibbon_session_handle_board (self,
+                                                      (const gchar **)
+                                                      tokens + 1);
+                /* FIXME! Handle the line continuation bug! */
+                g_strfreev (tokens);
+                return retval;
+        }
 
         /* Error message.  */
-        if (0 == strncmp ("** ", line, 3))
+        if (0 == g_strcmp0 ("**", tokens[0])) {
+                g_strfreev (tokens);
                 return -1;
+        }
 
         if (0 == strncmp ("You're now watching ", line, 20))
                 return gibbon_session_handle_you_are_watching (self, line + 20);
@@ -948,9 +957,8 @@ parse_integer (const gchar *str, gint *result, const gchar *what,
  * the board string because they are always positive.
  */
 static gboolean
-gibbon_session_handle_board (GibbonSession *self, const gchar *string)
+gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
 {
-        gchar **tokens;
         GibbonPosition *pos;
         GibbonPositionSide turn, color, direction;
         gint may_double[2];
@@ -960,7 +968,7 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         GibbonConnection *connection;
                         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-        g_return_val_if_fail (string, FALSE);
+        g_return_val_if_fail (tokens, FALSE);
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -971,16 +979,11 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                         pos->status = g_strdup (self->priv->position->status);
         }
 
-        tokens = g_strsplit (string, ":", 99);
-
-        g_return_val_if_fail (tokens, FALSE);
-
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
         gibbon_session_dump_board (self, string, tokens);
 #endif
-        
-        for (i = 0; i <= 38; ++i)
-                g_return_val_if_fail (tokens[i], -1);
+
+        g_return_val_if_fail (52 == g_strv_length ((gchar **) tokens), -1);
 
         g_return_val_if_fail (parse_integer (tokens[31], &turn,
                               "turn", -1, 1), -1);
