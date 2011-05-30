@@ -73,10 +73,10 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              guint experience,
                              gdouble reliability,
                              guint confidence,
-                             gchar *opponent,
-                             gchar *watching,
-                             gchar *client,
-                             gchar *email);
+                             const gchar *opponent,
+                             const gchar *watching,
+                             const gchar *client,
+                             const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);
 gchar *gibbon_player_list_get_opponent (const GibbonPlayerList *self,

@@ -170,13 +170,13 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         guint experience,
                         gdouble reliability,
                         guint confidence,
-                        gchar *opponent,
-                        gchar *watching,
-                        gchar *client,
-                        gchar *email)
+                        const gchar *opponent,
+                        const gchar *watching,
+                        const gchar *client,
+                        const gchar *email)
 {
         struct GibbonPlayer *player;
-        gchar *version_string = NULL;
+        const gchar *version_string = NULL;
         const gchar *stock_id;
         GibbonReliability rel;
 

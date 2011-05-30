@@ -280,19 +280,16 @@ gibbon_session_process_server_line (GibbonSession *self,
 {
         gsize length;
         gchar **tokens;
-        gsize num_tokens;
         gboolean status;
-        const gchar *white_space;
         gint retval = -1;
         gchar *first;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
         tokens = gibbon_strsplit_ws (line);
-        num_tokens = g_strv_length (tokens);
 
         /* Ignore empty lines or lines with whitespace only.  */
-        if (0 == num_tokens) {
+        if (!tokens[0]) {
                 g_strfreev (tokens);
                 return 0;
         }
@@ -303,7 +300,8 @@ gibbon_session_process_server_line (GibbonSession *self,
         if (first[0] >= '1' && first[0] <= '9'
             && (!first[1]
                 || ((first[1] >= '0' && first[1]) <= '9' && !first[2]))) {
-                retval = gibbon_session_handle_number (self, line, tokens);
+                retval = gibbon_session_handle_number (self, line,
+                                                       (const gchar **) tokens);
                 g_strfreev (tokens);
                 return retval;
         }
@@ -449,7 +447,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
         GibbonPrefs *prefs;
         
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
-        g_return_val_if_fail (4 == g_strv_length (tokens), -1);
+        g_return_val_if_fail (4 == g_strv_length ((gchar **) tokens), -1);
 
         login = gibbon_connection_get_login (self->priv->connection);
 
@@ -507,9 +505,9 @@ gibbon_session_clip_who_info (GibbonSession *self,
                               const gchar *line,
                               const gchar **tokens)
 {
-        gchar *who;
-        gchar *opponent;
-        gchar *watching;
+        const gchar *who;
+        const gchar *opponent;
+        const gchar *watching;
         gboolean ready;
         gboolean available;
         gboolean away;
@@ -517,9 +515,9 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gint experience;
         const gchar *idle;
         const gchar *login;
-        const gchar *client;
+        gchar *client;
         const gchar *email;
-        gchar *hostname;
+        const gchar *hostname;
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
@@ -530,7 +528,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
-        g_return_val_if_fail (13 == g_strv_length (tokens), -1);
+        g_return_val_if_fail (13 == g_strv_length ((gchar **) tokens), -1);
 
         who = tokens[1];
         
