@@ -18,11 +18,50 @@
  */
 
 #include <glib/gi18n.h>
-
 #include "gibbon-util.h"
+
 
 gchar **
 gibbon_strsplit_ws (const gchar *string)
 {
-        return NULL;
+        gchar **vector = NULL;
+        GSList *list = NULL;
+        GSList *iter;
+        gsize i, num_tokens = 0;
+        const gchar *start;
+        const gchar *ptr;
+
+        if (!string) {
+                vector = g_new (gchar *, num_tokens + 1);
+                vector[0] = NULL;
+                return vector;
+        }
+
+        ptr = string;
+
+        while (1) {
+                while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n'
+                       || *ptr == '\v' || *ptr == '\f' || *ptr == '\r')
+                        ++ptr;
+                if (!*ptr)
+                        break;
+                start = ptr;
+                while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n'
+                       && *ptr != '\v' && *ptr != '\f' && *ptr != '\r')
+                        ++ptr;
+                list = g_slist_prepend (list, g_strndup (start, ptr - start));
+                ++num_tokens;
+        }
+
+        vector = g_new (gchar *, num_tokens + 1);
+        iter = list;
+        for (i = 0; i < num_tokens; ++i) {
+                vector[num_tokens - i - 1] = iter->data;
+                iter = iter->next;
+        }
+        vector[num_tokens] = NULL;
+
+        g_slist_free (list);
+
+        return vector;
 }
