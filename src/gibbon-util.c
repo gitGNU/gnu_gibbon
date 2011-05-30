@@ -65,3 +65,49 @@ gibbon_strsplit_ws (const gchar *string)
 
         return vector;
 }
+
+const gchar *
+gibbon_skip_ws_tokens (const gchar *string, const gchar **tokens, gsize num)
+{
+        gsize i;
+        gsize length;
+        const gchar *previous;
+        const gchar *retval;
+
+        retval = string;
+
+        while (*retval == ' ' || *retval == '\t' || *retval == '\n'
+               || *retval == '\v' || *retval == '\f' || *retval == '\r')
+                ++retval;
+
+        if (!*retval)
+                return NULL;
+
+        for (i = 0; i < num; ++i) {
+                if (!tokens[i])
+                        return NULL;
+                length = strlen (tokens[i]);
+                if (strncmp (tokens[i], retval, length))
+                        return NULL;
+                retval += length;
+                while (*retval == ' ' || *retval == '\t' || *retval == '\n'
+                       || *retval == '\v' || *retval == '\f' || *retval == '\r')
+                        ++retval;
+        }
+
+        if (!*retval)
+                return NULL;
+
+        do {
+                previous = retval - 1;
+                if (*previous != ' ' && *previous != '\t' && *previous != '\n'
+                    && *previous != '\v' && *previous != '\f' && *previous != '\r')
+                        break;
+                --retval;
+        } while (1);
+        if (*retval == ' ' || *retval == '\t' || *retval == '\n'
+            || *retval == '\v' || *retval == '\f' || *retval == '\r')
+                ++retval;
+
+        return retval;
+}

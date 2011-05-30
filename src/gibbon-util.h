@@ -29,6 +29,8 @@
 G_BEGIN_DECLS
 
 gchar **gibbon_strsplit_ws (const gchar *string);
+const gchar *gibbon_skip_ws_tokens (const gchar *string,
+                                    const gchar **tokens, guint num);
 
 G_END_DECLS
 
