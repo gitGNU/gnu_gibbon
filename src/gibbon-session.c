@@ -164,6 +164,12 @@ static gint gibbon_session_clip_you_kibitz (GibbonSession *self,
                                             const gchar **tokens);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar **tokens);
+static gboolean gibbon_session_handle_youre (GibbonSession *self,
+                                               const gchar **tokens);
+static gboolean gibbon_session_handle_youre_now (GibbonSession *self,
+                                                 const gchar **tokens);
+static gboolean gibbon_session_handle_youre_now_watching (GibbonSession *self,
+                                                          const gchar **tokens);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 static gboolean gibbon_session_handle_one_of_us (GibbonSession *self,
@@ -184,8 +190,6 @@ static gboolean gibbon_session_handle_rolls (GibbonSession *self,
 static gboolean gibbon_session_handle_moves (GibbonSession *self,
                                              GibbonSessionPlayer player,
                                              const gchar *line);
-static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
-                                                        const gchar *who);
 
 static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what,
@@ -323,8 +327,13 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return -1;
         }
 
-        if (0 == strncmp ("You're now watching ", line, 20))
-                return gibbon_session_handle_you_are_watching (self, line + 20);
+        if (0 == strcmp ("You're", tokens[0])) {
+                if (gibbon_session_handle_youre (self,
+                                                 (const gchar **) tokens))
+                        retval = 0;
+                g_strfreev (tokens);
+                return retval;
+        }
 
         if (self->priv->watching && self->priv->opponent) {
                 length = strlen (self->priv->watching);
@@ -1058,16 +1067,45 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
 }
 
 static gboolean
-gibbon_session_handle_you_are_watching (GibbonSession *self,
-                                        const gchar *line)
+gibbon_session_handle_youre (GibbonSession *self,
+                             const gchar **tokens)
 {
-        gsize length = strlen (line);
-        gchar *player = alloca (length);
-        player = strdup (line);
-        player[length - 1] = 0;
-
-        if (!gibbon_player_list_exists (self->priv->player_list, player))
+        if (!tokens[1])
                 return FALSE;
+
+        if (!g_strcmp0 ("now", tokens[1]))
+                return gibbon_session_handle_youre_now (self, tokens);
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_youre_now (GibbonSession *self,
+                                 const gchar **tokens)
+{
+        if (!tokens[2])
+                return FALSE;
+
+        if (!g_strcmp0 ("watching", tokens[2]))
+                return gibbon_session_handle_youre_now_watching (self, tokens);
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_session_handle_youre_now_watching (GibbonSession *self,
+                                          const gchar **tokens)
+{
+        gchar *player;
+        gsize length;
+
+        if (!tokens[3])
+                return FALSE;
+
+        player = g_strdup (tokens[3]);
+        length = strlen (player);
+        if ('.' == player[length - 1])
+                player[length - 1] = 0;
 
         g_free (self->priv->watching);
         self->priv->watching = g_strdup (player);
