@@ -55,7 +55,7 @@ gibbon_reliability_free (GibbonReliability *self)
 GibbonReliability *
 gibbon_reliability_new (gdouble value, guint confidence)
 {
-        GibbonReliability *self;
+        GibbonReliability *self = g_malloc (sizeof *self);
 
         self->value = value;
         self->confidence = confidence;
