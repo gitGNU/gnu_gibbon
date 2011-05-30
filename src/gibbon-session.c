@@ -39,6 +39,7 @@
 #include "gibbon-board.h"
 #include "gibbon-game-chat.h"
 #include "gibbon-archive.h"
+#include "gibbon-util.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -125,30 +126,42 @@ static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
 #endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
 
+static gint gibbon_session_handle_number (GibbonSession *self,
+                                          const gchar *line,
+                                          const gchar **tokens);
 static gint gibbon_session_clip_welcome (GibbonSession *self,
-                                         const gchar *message);
+                                         const gchar *line,
+                                         const gchar **tokens);
 static gint gibbon_session_clip_who_info (GibbonSession *self,
-                                          const gchar *message);
+                                          const gchar *line,
+                                          const gchar **tokens);
 static gint gibbon_session_clip_logout (GibbonSession *self,
-                                        const gchar *message);
+                                        const gchar *line,
+                                        const gchar **tokens);
 static gint gibbon_session_clip_says (GibbonSession *self,
-                                      const gchar *message);
+                                      const gchar *line,
+                                      const gchar **tokens);
 static gint gibbon_session_clip_shouts (GibbonSession *self,
-                                        const gchar *message);
+                                        const gchar *line,
+                                        const gchar **tokens);
 static gint gibbon_session_clip_whispers (GibbonSession *self,
-                                          const gchar *message);
+                                          const gchar *line,
+                                          const gchar **tokens);
 static gint gibbon_session_clip_kibitzes (GibbonSession *self,
-                                          const gchar *message);
+                                          const gchar *line,
+                                          const gchar **tokens);
 static gint gibbon_session_clip_you_say (GibbonSession *self,
-                                          const gchar *message);
+                                         const gchar *line,
+                                         const gchar **tokens);
 static gint gibbon_session_clip_you_shout (GibbonSession *self,
-                                           const gchar *message);
+                                           const gchar *line,
+                                           const gchar **tokens);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self,
-                                             const gchar *message);
+                                             const gchar *line,
+                                             const gchar **tokens);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self,
-                                            const gchar *message);
-static gint gibbon_session_dispatch_clip_message (GibbonSession *self,
-                                                  const gchar *message);
+                                            const gchar *line,
+                                            const gchar **tokens);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar *board);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
@@ -174,7 +187,6 @@ static gboolean gibbon_session_handle_moves (GibbonSession *self,
 static gboolean gibbon_session_handle_you_are_watching (GibbonSession *self,
                                                         const gchar *who);
 
-static gboolean free_vector (gchar **);
 static gboolean parse_integer (const gchar *str, gint* result,
                                const gchar *what,
                                gint lower, gint upper);
@@ -262,118 +274,39 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         return self;
 }
 
-static gint
-gibbon_session_dispatch_clip_message (GibbonSession *self,
-                                      const gchar *message)
-{
-        unsigned long int code;
-        gchar *endptr;
-        gint retval = -1;
-
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
-        
-        code = strtoul (message, &endptr, 10);
-        
-        /* Skip whitespace.  */
-        while (*endptr == ' ' || *endptr == '\t' || *endptr == '\r'
-               || *endptr == '\f' || *endptr == '\v') {
-                retval = 0;
-                endptr++;
-        }
-        if (retval && *endptr)
-                /* No whitespace following number.  */
-                return retval;
-        
-        switch (code) {
-                case CLIP_WELCOME:
-                        retval = gibbon_session_clip_welcome (self, endptr);
-                        break;
-                case CLIP_WHO_INFO:
-                        retval = gibbon_session_clip_who_info (self, endptr);
-                        break;
-                case CLIP_WHO_INFO_END: /* Ignored.  */
-                        retval = CLIP_WHO_INFO_END;
-                        break;
-                case CLIP_LOGIN: /* Ignored.  */
-                        retval = CLIP_LOGIN;
-                        break;
-                case CLIP_LOGOUT:
-                        retval = gibbon_session_clip_logout (self, endptr);
-                        break;
-                case CLIP_SAYS:
-                        retval = gibbon_session_clip_says (self, endptr);
-                        break;
-                case CLIP_SHOUTS:
-                        retval = gibbon_session_clip_shouts (self, endptr);
-                        break;
-                case CLIP_WHISPERS:
-                        retval = gibbon_session_clip_whispers (self, endptr);
-                        break;
-                case CLIP_KIBITZES:
-                        retval = gibbon_session_clip_kibitzes (self, endptr);
-                        break;
-                case CLIP_YOU_SAY:
-                        retval = gibbon_session_clip_you_say (self, endptr);
-                        break;
-                case CLIP_YOU_SHOUT:
-                        retval = gibbon_session_clip_you_shout (self, endptr);
-                        break;
-                case CLIP_YOU_WHISPER:
-                        retval = gibbon_session_clip_you_whisper (self, endptr);
-                        break;
-                case CLIP_YOU_KIBITZ:
-                        retval = gibbon_session_clip_you_kibitz (self, endptr);
-                        break;
-                default:
-                        retval = -1;
-        }
-
-        return retval;
-}
-
-static gboolean
-gibbon_session_handle_you_are_watching (GibbonSession *self,
-                                        const gchar *line)
-{
-        gsize length = strlen (line);
-        gchar *player = alloca (length);
-        player = strdup (line);
-        player[length - 1] = 0;
-
-        if (!gibbon_player_list_exists (self->priv->player_list, player))
-                return FALSE;
-
-        g_free (self->priv->watching);
-        self->priv->watching = g_strdup (player);
-        g_free (self->priv->opponent);
-        self->priv->opponent = NULL;
-
-        return TRUE;
-}
-
 gint
 gibbon_session_process_server_line (GibbonSession *self,
                                     const gchar *line)
 {
         gsize length;
         gchar **tokens;
+        gsize num_tokens;
         gboolean status;
         const gchar *white_space;
+        gint retval = -1;
+        gchar *first;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
 
-        /* Discard lines containing only whitespace.  */
-        white_space = line;
-        while (1) {
-                if (' ' == *white_space)
-                        continue;
-                if (!*white_space)
-                        return 0;
-                break;
+        tokens = gibbon_strsplit_ws (line);
+        num_tokens = g_strv_length (tokens);
+
+        /* Ignore empty lines or lines with whitespace only.  */
+        if (0 == num_tokens) {
+                g_strfreev (tokens);
+                return 0;
         }
 
-        if (line[0] >= '0' && line[0] <= '9')
-                return gibbon_session_dispatch_clip_message (self, line);
+        first = tokens[0];
+
+        /* First token is a valid digital number?  */
+        if (first[0] >= '1' && first[0] <= '9'
+            && (!first[1]
+                || ((first[1] >= '0' && first[1]) <= '9' && !first[2]))) {
+                retval = gibbon_session_handle_number (self, line, tokens);
+                g_strfreev (tokens);
+                return retval;
+        }
 
         if (0 == strncmp ("board:", line, 6))
                 if (gibbon_session_handle_board (self, line + 6))
@@ -433,11 +366,81 @@ gibbon_session_process_server_line (GibbonSession *self,
 }
 
 static gint
+gibbon_session_handle_number (GibbonSession *self,
+                              const gchar *line,
+                              const gchar **tokens)
+{
+        unsigned long int code;
+        gint retval;
+
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
+        
+        code = strtoul (tokens[0], NULL, 10);
+
+        switch (code) {
+                case CLIP_WELCOME:
+                        retval = gibbon_session_clip_welcome (self,
+                                                              line, tokens);
+                        break;
+                case CLIP_WHO_INFO:
+                        retval = gibbon_session_clip_who_info (self,
+                                                               line, tokens);
+                        break;
+                case CLIP_WHO_INFO_END: /* Ignored.  */
+                        retval = CLIP_WHO_INFO_END;
+                        break;
+                case CLIP_LOGIN: /* Ignored.  */
+                        retval = CLIP_LOGIN;
+                        break;
+                case CLIP_LOGOUT:
+                        retval = gibbon_session_clip_logout (self,
+                                                             line, tokens);
+                        break;
+                case CLIP_SAYS:
+                        retval = gibbon_session_clip_says (self,
+                                                           line, tokens);
+                        break;
+                case CLIP_SHOUTS:
+                        retval = gibbon_session_clip_shouts (self,
+                                                             line, tokens);
+                        break;
+                case CLIP_WHISPERS:
+                        retval = gibbon_session_clip_whispers (self,
+                                                               line, tokens);
+                        break;
+                case CLIP_KIBITZES:
+                        retval = gibbon_session_clip_kibitzes (self,
+                                                               line, tokens);
+                        break;
+                case CLIP_YOU_SAY:
+                        retval = gibbon_session_clip_you_say (self,
+                                                              line, tokens);
+                        break;
+                case CLIP_YOU_SHOUT:
+                        retval = gibbon_session_clip_you_shout (self,
+                                                                line, tokens);
+                        break;
+                case CLIP_YOU_WHISPER:
+                        retval = gibbon_session_clip_you_whisper (self,
+                                                                  line, tokens);
+                        break;
+                case CLIP_YOU_KIBITZ:
+                        retval = gibbon_session_clip_you_kibitz (self,
+                                                                 line, tokens);
+                        break;
+                default:
+                        retval = -1;
+        }
+
+        return retval;
+}
+
+static gint
 gibbon_session_clip_welcome (GibbonSession *self, 
-                             const gchar *message)
+                             const gchar *line,
+                             const gchar **tokens)
 {
         const gchar* login;
-        gchar **tokens;
         GTimeVal last_login;
         gchar *last_login_str;
         gchar *reply;
@@ -445,21 +448,19 @@ gibbon_session_clip_welcome (GibbonSession *self,
         GibbonServerConsole *console;
         GibbonPrefs *prefs;
         
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
+        g_return_val_if_fail (4 == g_strv_length (tokens), -1);
 
         login = gibbon_connection_get_login (self->priv->connection);
 
-        tokens = g_strsplit_set (message, GIBBON_SESSION_WHITESPACE, 4);
-        
         last_login.tv_usec = 0;
-        if (tokens[1])
-                last_login.tv_sec = strtol (tokens[1], NULL, 10);
+        last_login.tv_sec = strtol (tokens[1], NULL, 10);
         
-        if (!tokens[0] || strcmp (tokens[0], login)) {
+        if (g_strcmp0 (tokens[1], login)) {
                 gibbon_connection_fatal (self->priv->connection,
                                          _("Parser expected `%s' as"
                                            " login: %s\n"),
-                                         login, message);
+                                         login, line);
                 return -1;
         }
 
@@ -467,25 +468,9 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 gibbon_connection_fatal (self->priv->connection,
                                          _("Parser expected timestamp after"
                                            "login `%s': %s\n"),
-                                           login, message);
+                                           login, line);
                 return -1;
         }
-
-        if (!tokens[2]) {
-                gibbon_connection_fatal (self->priv->connection,
-                                         _("Parser expected address after"
-                                           " timestamp: %s\n"),
-                                           message);
-                return -1;
-        }
-
-        if (tokens[3]) {
-                gibbon_connection_fatal (self->priv->connection,
-                                         _("Trailing garbage after address:"
-                                           " %s\n"), message);
-                return -1;
-        }
-
 
         /* FIXME! Isn't there a better way to format a date and time
          * in glib?
@@ -514,16 +499,14 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 g_free (mail);
         }
         
-        g_strfreev (tokens);
-        
         return CLIP_WELCOME;
 }
 
 static gint
 gibbon_session_clip_who_info (GibbonSession *self, 
-                              const gchar *message)
+                              const gchar *line,
+                              const gchar **tokens)
 {
-        gchar **tokens;
         gchar *who;
         gchar *opponent;
         gchar *watching;
@@ -532,12 +515,11 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gboolean away;
         gdouble rating;
         gint experience;
-        gchar *idle;
-        gchar *login;
-        gchar *client;
-        gchar *email;
+        const gchar *idle;
+        const gchar *login;
+        const gchar *client;
+        const gchar *email;
         gchar *hostname;
-        gint i;
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
@@ -548,49 +530,45 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
-        tokens = g_strsplit_set (message, GIBBON_SESSION_WHITESPACE, 13);
-        g_return_val_if_fail (tokens, FALSE);
-        for (i = 0; i <= 11; ++i)
-                g_return_val_if_fail (tokens[i], free_vector (tokens));
+        g_return_val_if_fail (13 == g_strv_length (tokens), -1);
+
+        who = tokens[1];
         
-        who = tokens[0];
-        
-        opponent = tokens[1];
+        opponent = tokens[2];
         if (opponent[0] == '-' && opponent[1] == 0)
                 opponent = "";
                 
-        watching = tokens[2];
+        watching = tokens[3];
         if (watching[0] == '-' && watching[1] == 0)
                 watching = "";
                 
-        g_return_val_if_fail (tokens[3][0] == '0' || tokens[3][0] == '1',
-                              free_vector (tokens));
-        g_return_val_if_fail (tokens[3][1] == 0, free_vector (tokens));
-        if (tokens[3][0] == '1') {
+        g_return_val_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1',
+                              -1);
+        g_return_val_if_fail (tokens[4][1] == 0, -1);
+        if (tokens[4][0] == '1') {
                 ready = TRUE;
         } else {
                 ready = FALSE;
         }
         
-        g_return_val_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1',
-                              free_vector (tokens));
-        g_return_val_if_fail (tokens[4][1] == 0, free_vector (tokens));
-        if (tokens[4][0] == '1') {
+        g_return_val_if_fail (tokens[5][0] == '0' || tokens[5][0] == '1', -1);
+        g_return_val_if_fail (tokens[5][1] == 0, -1);
+        if (tokens[5][0] == '1') {
                 away = TRUE;
         } else {
                 away = FALSE;
         }
 
-        rating = g_ascii_strtod (tokens[5], NULL);
-        g_return_val_if_fail (parse_integer (tokens[6], &experience,
+        rating = g_ascii_strtod (tokens[6], NULL);
+        g_return_val_if_fail (parse_integer (tokens[7], &experience,
                                              "experience", 0, G_MAXINT),
-                              free_vector (tokens));
+                              -1);
         
-        idle = tokens[7];
-        login = tokens[8];
-        hostname = tokens[9];
-        client = gibbon_session_decode_client (self, tokens[10]);
-        email = tokens[11];
+        idle = tokens[8];
+        login = tokens[9];
+        hostname = tokens[10];
+        client = gibbon_session_decode_client (self, tokens[11]);
+        email = tokens[12];
 
         available = ready && !away && !opponent[0];
 
@@ -634,24 +612,18 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                     gibbon_connection_get_port (connection),
                                     who, rating, experience);
 
-        g_strfreev (tokens);
-
         return CLIP_WHO_INFO;
 }
 
 static gint
-gibbon_session_clip_logout (GibbonSession *self, const gchar *line)
+gibbon_session_clip_logout (GibbonSession *self,
+                            const gchar *line,
+                            const gchar **tokens)
 {
-        size_t i = 0;
-        gchar *name;
+        const gchar *name;
         gchar *opponent;
 
-        while (line[i] && line[i] != ' ')
-                ++i;
-
-        name = g_alloca (i + 1);
-        strncpy (name, line, i + 1);
-        name [i] = 0;
+        name = tokens[1];
 
         if (0 == g_strcmp0 (name, self->priv->watching)) {
                 g_free (self->priv->position->status);
@@ -686,13 +658,14 @@ gibbon_session_clip_logout (GibbonSession *self, const gchar *line)
 
 static gint
 gibbon_session_clip_says (GibbonSession *self,
-                          const gchar *message)
+                          const gchar *line,
+                          const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *message;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return -1;
@@ -712,13 +685,16 @@ gibbon_session_clip_says (GibbonSession *self,
 
 static gint
 gibbon_session_clip_shouts (GibbonSession *self,
-                           const gchar *message)
+                            const gchar *line,
+                            const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonShouts *shouts;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return -1;
@@ -733,13 +709,16 @@ gibbon_session_clip_shouts (GibbonSession *self,
 
 static gint
 gibbon_session_clip_whispers (GibbonSession *self,
-                              const gchar *message)
+                              const gchar *line,
+                              const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonGameChat *game_chat;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return -1;
@@ -754,13 +733,16 @@ gibbon_session_clip_whispers (GibbonSession *self,
 
 static gint
 gibbon_session_clip_kibitzes (GibbonSession *self,
-                              const gchar *message)
+                              const gchar *line,
+                              const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonGameChat *game_chat;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return -1;
@@ -775,14 +757,17 @@ gibbon_session_clip_kibitzes (GibbonSession *self,
 
 static gint
 gibbon_session_clip_you_say (GibbonSession *self,
-                             const gchar *message)
+                             const gchar *line,
+                             const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
         gchar *receiver;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = gibbon_fibs_message_new (message);
         if (!fibs_message)
                 return FALSE;
@@ -808,10 +793,12 @@ gibbon_session_clip_you_say (GibbonSession *self,
 
 static gint
 gibbon_session_clip_you_shout (GibbonSession *self,
-                               const gchar *message)
+                               const gchar *line,
+                               const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -819,6 +806,7 @@ gibbon_session_clip_you_shout (GibbonSession *self,
         if (!connection)
                 return FALSE;
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = g_malloc (sizeof *fibs_message);
         fibs_message->message = g_strdup (message);
         fibs_message->sender =
@@ -833,10 +821,12 @@ gibbon_session_clip_you_shout (GibbonSession *self,
 
 static gint
 gibbon_session_clip_you_whisper (GibbonSession *self,
-                                 const gchar *message)
+                                 const gchar *line,
+                                 const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -844,6 +834,7 @@ gibbon_session_clip_you_whisper (GibbonSession *self,
         if (!connection)
                 return FALSE;
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = g_malloc (sizeof *fibs_message);
         fibs_message->message = g_strdup (message);
         fibs_message->sender =
@@ -858,10 +849,12 @@ gibbon_session_clip_you_whisper (GibbonSession *self,
 
 static gint
 gibbon_session_clip_you_kibitz (GibbonSession *self,
-                                const gchar *message)
+                                const gchar *line,
+                                const gchar **tokens)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *message;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
@@ -869,6 +862,7 @@ gibbon_session_clip_you_kibitz (GibbonSession *self,
         if (!connection)
                 return FALSE;
 
+        message = gibbon_skip_ws_tokens (line, tokens, 1);
         fibs_message = g_malloc (sizeof *fibs_message);
         fibs_message->message = g_strdup (message);
         fibs_message->sender =
@@ -881,8 +875,27 @@ gibbon_session_clip_you_kibitz (GibbonSession *self,
         return CLIP_YOU_KIBITZ;
 }
 
+static gboolean
+gibbon_session_handle_you_are_watching (GibbonSession *self,
+                                        const gchar *line)
+{
+        gsize length = strlen (line);
+        gchar *player = alloca (length);
+        player = strdup (line);
+        player[length - 1] = 0;
+
+        if (!gibbon_player_list_exists (self->priv->player_list, player))
+                return FALSE;
+
+        g_free (self->priv->watching);
+        self->priv->watching = g_strdup (player);
+        g_free (self->priv->opponent);
+        self->priv->opponent = NULL;
+
+        return TRUE;
+}
+
 /* FIXME! Use g_ascii_strtoll in this function! */
-/* FIXME! Pass upper and lower bounds as arguments. */
 static gboolean
 parse_integer (const gchar *str, gint *result, const gchar *what,
                gint lower, gint upper)
@@ -917,16 +930,6 @@ parse_integer (const gchar *str, gint *result, const gchar *what,
                 return FALSE;
         
         return TRUE;       
-}
-
-/* Convenience function: Free a vector (returned from the tokenizer)
- * and return FALSE so that it can be used in g_return_val_if_fail().
- */
-static gboolean
-free_vector (gchar ** v)
-{
-        g_free (v);
-        return FALSE;
 }
 
 /*
@@ -979,20 +982,16 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
 #endif
         
         for (i = 0; i <= 38; ++i)
-                g_return_val_if_fail (tokens[i], free_vector (tokens));
+                g_return_val_if_fail (tokens[i], -1);
 
         g_return_val_if_fail (parse_integer (tokens[31], &turn,
-                              "turn", -1, 1),
-                free_vector (tokens));
+                              "turn", -1, 1), -1);
         g_return_val_if_fail (parse_integer (tokens[40], &color,
-                              "color", -1, 1),
-                free_vector (tokens));
+                              "color", -1, 1), -1);
         g_return_val_if_fail (parse_integer (tokens[41], &direction,
-                              "direction", -1, 1),
-                free_vector (tokens));
+                              "direction", -1, 1), -1);
         if (!direction) {
                 g_critical (_("Invalid direction 0 in board state.\n"));
-                free_vector (tokens);
                 return FALSE;
         }
 
@@ -1007,10 +1006,10 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                 g_free (self->priv->watching);
                 self->priv->watching = NULL;
         }
-        g_return_val_if_fail (pos->players[0][0], free_vector (tokens));
+        g_return_val_if_fail (pos->players[0][0], -1);
         
         pos->players[1] = g_strdup (tokens[1]);
-        g_return_val_if_fail (pos->players[1][0], free_vector (tokens));
+        g_return_val_if_fail (pos->players[1][0], -1);
 
         if (g_strcmp0 (self->priv->opponent, pos->players[1])) {
                 g_free (self->priv->opponent);
@@ -1018,22 +1017,19 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         }
         
         g_return_val_if_fail (parse_integer (tokens[2], &pos->match_length,
-                              "match length", 0, G_MAXINT),
-                              free_vector (tokens));
+                              "match length", 0, G_MAXINT), -1);
 
         g_return_val_if_fail (parse_integer (tokens[3], &pos->scores[0],
-                                             "score0", 0, G_MAXINT),
-                              free_vector (tokens));
+                                             "score0", 0, G_MAXINT), -1);
         g_return_val_if_fail (parse_integer (tokens[4], &pos->scores[1],
-                                             "score1", 0, G_MAXINT),
-                              free_vector (tokens));
+                                             "score1", 0, G_MAXINT), -1);
         
         if (direction == GIBBON_POSITION_SIDE_BLACK) {
                 for (i = 6; i < 30; ++i) {
                         g_return_val_if_fail (parse_integer (tokens[i],
                                                              &pos->points[i - 6],
                                                              "checker", -15, 15),
-                                              free_vector (tokens));
+                                              -1);
                         pos->points[i - 6] *= color;
                 }
         } else {
@@ -1041,33 +1037,26 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
                         g_return_val_if_fail (parse_integer (tokens[i],
                                                              &pos->points[29 - i],
                                                              "checker", -15, 15),
-                                              free_vector (tokens));
+                                              -1);
                         pos->points[29 - i] *= color;
                 }
 
         }
         
         g_return_val_if_fail (parse_integer (tokens[32], &dice[0],
-                                             "dice[0]", 0, 6),
-                              free_vector (tokens));
+                                             "dice[0]", 0, 6), -1);
         g_return_val_if_fail (parse_integer (tokens[33], &dice[1],
-                                             "dice[1]", 0, 6),
-                              free_vector (tokens));
+                                             "dice[1]", 0, 6), -1);
         g_return_val_if_fail (parse_integer (tokens[34], &dice[2],
-                                             "dice[2]", 0, 6),
-                              free_vector (tokens));
+                                             "dice[2]", 0, 6), -1);
         g_return_val_if_fail (parse_integer (tokens[35], &dice[3],
-                                             "dice[3]", 0, 6),
-                              free_vector (tokens));
+                                             "dice[3]", 0, 6), -1);
         g_return_val_if_fail (parse_integer (tokens[36], &pos->cube,
-                                             "cube", 0, G_MAXINT),
-                              free_vector (tokens));
+                                             "cube", 0, G_MAXINT), -1);
         g_return_val_if_fail (parse_integer (tokens[37], &may_double[0],
-                                             "may double 0", 0, 1),
-                                             free_vector (tokens));
+                                             "may double 0", 0, 1), -1);
         g_return_val_if_fail (parse_integer (tokens[38], &may_double[1],
-                                             "may double 0", 0, 1),
-                                             free_vector (tokens));
+                                             "may double 0", 0, 1), -1);
 
         pos->may_double[0] = may_double[0] ? TRUE : FALSE;
         pos->may_double[1] = may_double[1] ? TRUE : FALSE;
@@ -1084,15 +1073,11 @@ gibbon_session_handle_board (GibbonSession *self, const gchar *string)
         }
 
         g_return_val_if_fail (parse_integer (tokens[46], &pos->bar[0], "bar0",
-                                             0, 15),
-                              free_vector (tokens));
+                                             0, 15), -1);
 
         g_return_val_if_fail (parse_integer (tokens[47], &pos->bar[1], "bar1",
-                                             0, 15),
-                              free_vector (tokens));
+                                             0, 15), -1);
 
-
-        g_strfreev (tokens);
         
         if (pos->match_length &&
             (pos->scores[0] == pos->match_length - 1
