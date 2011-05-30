@@ -882,63 +882,6 @@ gibbon_session_clip_you_kibitz (GibbonSession *self,
         return CLIP_YOU_KIBITZ;
 }
 
-static gboolean
-gibbon_session_handle_you_are_watching (GibbonSession *self,
-                                        const gchar *line)
-{
-        gsize length = strlen (line);
-        gchar *player = alloca (length);
-        player = strdup (line);
-        player[length - 1] = 0;
-
-        if (!gibbon_player_list_exists (self->priv->player_list, player))
-                return FALSE;
-
-        g_free (self->priv->watching);
-        self->priv->watching = g_strdup (player);
-        g_free (self->priv->opponent);
-        self->priv->opponent = NULL;
-
-        return TRUE;
-}
-
-/* FIXME! Use g_ascii_strtoll in this function! */
-static gboolean
-parse_integer (const gchar *str, gint *result, const gchar *what,
-               gint lower, gint upper)
-{
-        char *endptr;
-        long int r;
-                
-        if (!str) {
-                g_print ("Error parsing %s: NULL pointer passed.\n",
-                         what);
-                return FALSE;
-        }
-        
-        errno = 0;
-
-        r = strtol (str, &endptr, 10);
-        
-        if (errno) {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, strerror (errno));
-                return FALSE;
-        }
-        
-        if (*endptr != 0) {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, "Trailing garbage in integer");
-                return FALSE;
-        }
-        
-        *result = (gint) r;
-        if (*result < lower || *result > upper)
-                return FALSE;
-        
-        return TRUE;       
-}
-
 /*
  * This requires a little explanation.
  *
@@ -1110,6 +1053,63 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
         gibbon_session_dump_position (self, self->priv->position);
 #endif
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_session_handle_you_are_watching (GibbonSession *self,
+                                        const gchar *line)
+{
+        gsize length = strlen (line);
+        gchar *player = alloca (length);
+        player = strdup (line);
+        player[length - 1] = 0;
+
+        if (!gibbon_player_list_exists (self->priv->player_list, player))
+                return FALSE;
+
+        g_free (self->priv->watching);
+        self->priv->watching = g_strdup (player);
+        g_free (self->priv->opponent);
+        self->priv->opponent = NULL;
+
+        return TRUE;
+}
+
+/* FIXME! Use g_ascii_strtoll in this function! */
+static gboolean
+parse_integer (const gchar *str, gint *result, const gchar *what,
+               gint lower, gint upper)
+{
+        char *endptr;
+        long int r;
+
+        if (!str) {
+                g_print ("Error parsing %s: NULL pointer passed.\n",
+                         what);
+                return FALSE;
+        }
+
+        errno = 0;
+
+        r = strtol (str, &endptr, 10);
+
+        if (errno) {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, strerror (errno));
+                return FALSE;
+        }
+
+        if (*endptr != 0) {
+                g_print ("Error parsing %s: `%s': %s.\n",
+                         what, str, "Trailing garbage in integer");
+                return FALSE;
+        }
+
+        *result = (gint) r;
+        if (*result < lower || *result > upper)
+                return FALSE;
 
         return TRUE;
 }
