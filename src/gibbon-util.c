@@ -67,7 +67,8 @@ gibbon_strsplit_ws (const gchar *string)
 }
 
 const gchar *
-gibbon_skip_ws_tokens (const gchar *string, const gchar **tokens, gsize num)
+gibbon_skip_ws_tokens (const gchar *string, const gchar * const * const tokens,
+                       gsize num)
 {
         gsize i;
         gsize length;
