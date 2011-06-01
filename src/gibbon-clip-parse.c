@@ -38,12 +38,18 @@ static gboolean gibbon_clip_parse_clip_own_info (const gchar *line,
 static GSList *gibbon_clip_parse_alloc_int (GSList *list,
                                             enum GibbonClipType type,
                                             gint64 value);
+static GSList *gibbon_clip_parse_alloc_double (GSList *list,
+                                               enum GibbonClipType type,
+                                               gdouble value);
 static GSList *gibbon_clip_parse_alloc_string (GSList *list,
                                                enum GibbonClipType type,
                                                const gchar *value);
 static gboolean gibbon_clip_extract_integer (const gchar *str, gint64 *result,
                                              const gchar *what,
                                              gint64 lower, gint64 upper);
+static gboolean gibbon_clip_extract_double (const gchar *str, gdouble *result,
+                                            const gchar *what,
+                                            gdouble lower, gdouble upper);
 
 GSList *
 gibbon_clip_parse (const gchar *line)
@@ -131,6 +137,7 @@ gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
                                  GSList **result)
 {
         gint64 i;
+        gdouble d;
 
         if (22 != g_strv_length (tokens))
                 return FALSE;
@@ -163,6 +170,142 @@ gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
                                                GIBBON_CLIP_TYPE_BOOLEAN,
                                                i);
 
+        if (!gibbon_clip_extract_integer (tokens[5], &i,
+                                          "automove info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[6], &i,
+                                          "away info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[7], &i,
+                                          "bell info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[8], &i,
+                                          "crawford info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[9], &i,
+                                          "double info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[10], &i,
+                                          "experience info",
+                                          0, G_MAXINT))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_UINT,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[11], &i,
+                                          "greedy info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[12], &i,
+                                          "moreboards info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[13], &i,
+                                          "moves info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[14], &i,
+                                          "notify info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_double (tokens[15], &d,
+                                         "rating info",
+                                         0, G_MAXDOUBLE))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_double (*result,
+                                                  GIBBON_CLIP_TYPE_DOUBLE,
+                                                  d);
+
+        if (!gibbon_clip_extract_integer (tokens[16], &i,
+                                          "ratings info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[17], &i,
+                                          "ready info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (g_strcmp0 ("unlimited", tokens[18])) {
+                if (!gibbon_clip_extract_integer (tokens[18], &i,
+                                                  "redoubles info",
+                                                  0, G_MAXINT))
+                        return FALSE;
+        } else {
+                i = -1;
+        }
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[19], &i,
+                                          "report info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[20], &i,
+                                          "silent info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        *result = gibbon_clip_parse_alloc_string (*result,
+                                                  GIBBON_CLIP_TYPE_STRING,
+                                                  tokens[21]);
+
         return TRUE;
 }
 
@@ -175,6 +318,19 @@ gibbon_clip_parse_alloc_int (GSList *list,
 
         token->type = type;
         token->v.i64 = value;
+
+        return g_slist_prepend (list, token);
+}
+
+static GSList *
+gibbon_clip_parse_alloc_double (GSList *list,
+                                enum GibbonClipType type,
+                                gdouble value)
+{
+        struct GibbonClipTokenSet *token = g_malloc (sizeof *token);
+
+        token->type = type;
+        token->v.d = value;
 
         return g_slist_prepend (list, token);
 }
@@ -246,6 +402,41 @@ gibbon_clip_extract_integer (const gchar *str, gint64 *result,
                 g_printerr (_("Error parsing %s: `%s':"
                               " value %lld outside valid range"
                               " (%lld to %lld).\n"),
+                            what, str, r, lower, upper);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_extract_double (const gchar *str, gdouble *result,
+                            const gchar *what, gdouble lower, gdouble upper)
+{
+        char *endptr;
+        gdouble r;
+
+        errno = 0;
+
+        r = g_ascii_strtod (str, &endptr);
+
+        if (errno) {
+                g_printerr (_("Error parsing %s: `%s': %s.\n"),
+                            what, str, strerror (errno));
+                return FALSE;
+        }
+
+        if (*endptr != 0) {
+                g_printerr (_("Error parsing %s: `%s': %s.\n"),
+                            what, str, _("Trailing garbage in double)"));
+                return FALSE;
+        }
+
+        *result = r;
+        if (*result < lower || *result > upper) {
+                g_printerr (_("Error parsing %s: `%s':"
+                              " value %f outside valid range"
+                              " (%f to %f).\n"),
                             what, str, r, lower, upper);
                 return FALSE;
         }
