@@ -31,6 +31,9 @@ static gboolean gibbon_clip_parse_clip (const gchar *line,
 static gboolean gibbon_clip_parse_clip_welcome (const gchar *line,
                                                 gchar **tokens,
                                                 GSList **result);
+static gboolean gibbon_clip_parse_clip_own_info (const gchar *line,
+                                                 gchar **tokens,
+                                                 GSList **result);
 
 static GSList *gibbon_clip_parse_alloc_int (GSList *list,
                                             enum GibbonClipType type,
@@ -85,6 +88,9 @@ gibbon_clip_parse_clip (const gchar *line, gchar **tokens,
                 case GIBBON_CLIP_CODE_WELCOME:
                         return gibbon_clip_parse_clip_welcome (line, tokens,
                                                                result);
+                case GIBBON_CLIP_CODE_OWN_INFO:
+                        return gibbon_clip_parse_clip_own_info (line, tokens,
+                                                                result);
                 default:
                         break;
         }
@@ -105,7 +111,8 @@ gibbon_clip_parse_clip_welcome (const gchar *line, gchar **tokens,
                                                   GIBBON_CLIP_TYPE_NAME,
                                                   tokens[1]);
         if (!gibbon_clip_extract_integer (tokens[2], &timestamp,
-                                          _("timestamp"), G_MININT, G_MAXINT))
+                                          "login timestamp",
+                                          G_MININT, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_parse_alloc_int (*result,
                                                GIBBON_CLIP_TYPE_TIMESTAMP,
@@ -114,6 +121,47 @@ gibbon_clip_parse_clip_welcome (const gchar *line, gchar **tokens,
         *result = gibbon_clip_parse_alloc_string (*result,
                                                   GIBBON_CLIP_TYPE_STRING,
                                                   tokens[3]);
+
+        return TRUE;
+}
+
+
+static gboolean
+gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
+                                 GSList **result)
+{
+        gint64 i;
+
+        if (22 != g_strv_length (tokens))
+                return FALSE;
+
+        *result = gibbon_clip_parse_alloc_string (*result,
+                                                  GIBBON_CLIP_TYPE_NAME,
+                                                  tokens[1]);
+
+        if (!gibbon_clip_extract_integer (tokens[2], &i,
+                                          "allowpip info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[3], &i,
+                                          "autoboard info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
+
+        if (!gibbon_clip_extract_integer (tokens[4], &i,
+                                          "autodouble info",
+                                          0, 1))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_BOOLEAN,
+                                               i);
 
         return TRUE;
 }
