@@ -193,7 +193,7 @@ stringify_token_type (enum GibbonClipType type)
                 case GIBBON_CLIP_TYPE_UINT:
                         return g_strdup ("unsigned integer");
                 case GIBBON_CLIP_TYPE_INT:
-                        return g_strdup ("unsigned integer");
+                        return g_strdup ("integer");
                 case GIBBON_CLIP_TYPE_DOUBLE:
                         return g_strdup ("double");
                 case GIBBON_CLIP_TYPE_BOOLEAN:
