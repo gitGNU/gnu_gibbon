@@ -35,6 +35,9 @@ enum GibbonClipCode {
 enum GibbonClipType {
                         GIBBON_CLIP_TYPE_END = 0,
                         GIBBON_CLIP_TYPE_UINT,
+                        GIBBON_CLIP_TYPE_INT,
+                        GIBBON_CLIP_TYPE_DOUBLE,
+                        GIBBON_CLIP_TYPE_BOOLEAN,
                         GIBBON_CLIP_TYPE_STRING,
                         GIBBON_CLIP_TYPE_NAME,
                         GIBBON_CLIP_TYPE_TIMESTAMP
@@ -45,6 +48,7 @@ struct GibbonClipTokenSet {
         union {
                 guint64 i64;
                 gchar *s;
+                gdouble d;
         } v;
 };
 

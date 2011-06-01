@@ -52,6 +52,26 @@ struct test_case test_case02 = {
                 " Europe/Sofia",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_INT, "2396" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "3457.85" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -172,6 +192,12 @@ stringify_token_type (enum GibbonClipType type)
                         return g_strdup ("end");
                 case GIBBON_CLIP_TYPE_UINT:
                         return g_strdup ("unsigned integer");
+                case GIBBON_CLIP_TYPE_INT:
+                        return g_strdup ("unsigned integer");
+                case GIBBON_CLIP_TYPE_DOUBLE:
+                        return g_strdup ("double");
+                case GIBBON_CLIP_TYPE_BOOLEAN:
+                        return g_strdup ("boolean");
                 case GIBBON_CLIP_TYPE_STRING:
                         return g_strdup ("string");
                 case GIBBON_CLIP_TYPE_NAME:
@@ -192,6 +218,17 @@ stringify_token_value (struct GibbonClipTokenSet *token_set)
                 case GIBBON_CLIP_TYPE_UINT:
                         return g_strdup_printf ("%llu",
                                                 (guint64) token_set->v.i64);
+                case GIBBON_CLIP_TYPE_INT:
+                        return g_strdup_printf ("%lld",
+                                                (gint64) token_set->v.i64);
+                case GIBBON_CLIP_TYPE_DOUBLE:
+                        return g_strdup_printf ("%f",
+                                                (gdouble) token_set->v.d);
+                case GIBBON_CLIP_TYPE_BOOLEAN:
+                        if (token_set->v.i64)
+                                return g_strdup ("TRUE");
+                        else
+                                return g_strdup ("FALSE");
                 case GIBBON_CLIP_TYPE_STRING:
                 case GIBBON_CLIP_TYPE_NAME:
                         return g_strdup (token_set->v.s);
