@@ -40,7 +40,7 @@ struct test_case test_case01 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
-                                { GIBBON_CLIP_TYPE_TIMESTAMP, "130685048" },
+                                { GIBBON_CLIP_TYPE_TIMESTAMP, "1306865048" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                                 "gibbon.example.com" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -118,7 +118,7 @@ test_single_case (struct test_case *test_case)
 
                 g_printerr ("%s: token #%u: expected `%s' (token type %s)"
                             " got nothing.\n",
-                            test_case->line, i,
+                            test_case->line, i + 1,
                             expect->value, expect_type);
                 g_free (expect_type);
 
