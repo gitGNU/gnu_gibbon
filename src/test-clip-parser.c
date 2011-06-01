@@ -61,7 +61,7 @@ struct test_case test_case02 = {
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
-                                { GIBBON_CLIP_TYPE_INT, "2396" },
+                                { GIBBON_CLIP_TYPE_UINT, "2396" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
