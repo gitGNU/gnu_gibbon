@@ -20,6 +20,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <errno.h>
+
 #include "gibbon-clip-parse.h"
 #include "gibbon-util.h"
 
@@ -36,6 +38,9 @@ static GSList *gibbon_clip_parse_alloc_int (GSList *list,
 static GSList *gibbon_clip_parse_alloc_string (GSList *list,
                                                enum GibbonClipType type,
                                                const gchar *value);
+static gboolean gibbon_clip_extract_integer (const gchar *str, gint64 *result,
+                                             const gchar *what,
+                                             gint64 lower, gint64 upper);
 
 GSList *
 gibbon_clip_parse (const gchar *line)
@@ -91,12 +96,24 @@ static gboolean
 gibbon_clip_parse_clip_welcome (const gchar *line, gchar **tokens,
                                 GSList **result)
 {
+        gint64 timestamp;
+
         if (4 != g_strv_length (tokens))
                 return FALSE;
 
         *result = gibbon_clip_parse_alloc_string (*result,
                                                   GIBBON_CLIP_TYPE_NAME,
                                                   tokens[1]);
+        if (!gibbon_clip_extract_integer (tokens[2], &timestamp,
+                                          _("timestamp"), G_MININT, G_MAXINT))
+                return FALSE;
+        *result = gibbon_clip_parse_alloc_int (*result,
+                                               GIBBON_CLIP_TYPE_TIMESTAMP,
+                                               timestamp);
+
+        *result = gibbon_clip_parse_alloc_string (*result,
+                                                  GIBBON_CLIP_TYPE_STRING,
+                                                  tokens[3]);
 
         return TRUE;
 }
@@ -151,4 +168,39 @@ gibbon_clip_free_result (GSList *result)
         }
 
         g_slist_free (result);
+}
+
+static gboolean
+gibbon_clip_extract_integer (const gchar *str, gint64 *result,
+                             const gchar *what, gint64 lower, gint64 upper)
+{
+        char *endptr;
+        gint64 r;
+
+        errno = 0;
+
+        r = g_ascii_strtoll (str, &endptr, 10);
+
+        if (errno) {
+                g_printerr (_("Error parsing %s: `%s': %s.\n"),
+                            what, str, strerror (errno));
+                return FALSE;
+        }
+
+        if (*endptr != 0) {
+                g_printerr (_("Error parsing %s: `%s': %s.\n"),
+                            what, str, _("Trailing garbage in integer)"));
+                return FALSE;
+        }
+
+        *result = (gint) r;
+        if (*result < lower || *result > upper) {
+                g_printerr (_("Error parsing %s: `%s':"
+                              " value %lld outside valid range"
+                              " (%lld to %lld).\n"),
+                            what, str, r, lower, upper);
+                return FALSE;
+        }
+
+        return TRUE;
 }
