@@ -35,6 +35,13 @@ struct test_case {
         struct token_pair tokens[];
 };
 
+struct test_case test_case00 = {
+                "| This is part of the motto of the day. |",
+                {
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_case01 = {
                 "1 gflohr 1306865048 gibbon.example.com",
                 {
@@ -77,9 +84,209 @@ struct test_case test_case02 = {
                 }
 };
 
+struct test_case test_case03 = {
+                "3",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case04 = {
+                "4",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case05 = {
+                "5 gflohr barrack - 0 0 1418.61 1914 23 1306926526"
+                " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_NAME, "barrack" },
+                                { GIBBON_CLIP_TYPE_NAME, "" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "1418.610000" },
+                                { GIBBON_CLIP_TYPE_UINT, "1914" },
+                                { GIBBON_CLIP_TYPE_UINT, "23" },
+                                { GIBBON_CLIP_TYPE_TIMESTAMP, "1306926526" },
+                                { GIBBON_CLIP_TYPE_STRING, "173.223.48.110" },
+                                { GIBBON_CLIP_TYPE_STRING, "Gibbon_0.1.1" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "president@whitehouse.gov" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case06 = {
+                "6",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "6" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case07 = {
+                "7 gflohr gflohr logs in.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING, "gflohr logs in" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case08 = {
+                "8 gflohr gflohr drops connection.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "8" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "gflohr drops connection" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case09 = {
+                "9 gflohr -1306935184    Be back at 20 p.m.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "9" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_TIMESTAMP, "-1306935184" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "   Be back at 20 p.m." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case10 = {
+                "10 gflohr",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "10" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case11 = {
+                "11 gflohr",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "11" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case12 = {
+                "12 gflohr Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "12" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case13 = {
+                "13 gflohr Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "13" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case14 = {
+                "14 gflohr Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "14" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case15 = {
+                "15 gflohr Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "15" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case16 = {
+                "16 gflohr Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "16" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case17 = {
+                "17 Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "17" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case18 = {
+                "18 Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "18" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_case19 = {
+                "19 Hello world.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "19" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Hello world." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
+                &test_case00,
                 &test_case01,
-                &test_case02
+                &test_case02,
+                &test_case03,
+                &test_case04,
+                &test_case05,
+                &test_case06,
+                &test_case07,
+                &test_case08,
+                &test_case09,
+                &test_case10,
+                &test_case11,
+                &test_case12,
+                &test_case13,
+                &test_case14,
+                &test_case15,
+                &test_case16,
+                &test_case17,
+                &test_case18,
+                &test_case19
 };
 
 static gboolean test_single_case (struct test_case *test_case);
@@ -115,14 +322,9 @@ test_single_case (struct test_case *test_case)
         gsize i = 0;
         gchar *expect_type;
 
-        if (!result) {
-                g_printerr ("%s: parser returned NULL!\n", test_case->line);
-
-                return FALSE;
-        }
+        expect = test_case->tokens;
 
         iter = result;
-        expect = test_case->tokens;
         while (iter) {
                 ++i;
                 if (!check_result (test_case->line, i, expect,
