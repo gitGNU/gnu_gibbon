@@ -66,12 +66,13 @@ struct test_case test_case02 = {
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
-                                { GIBBON_CLIP_TYPE_DOUBLE, "3457.85" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "3457.850000" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_STRING, "Europe/Sofia" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
