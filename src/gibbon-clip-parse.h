@@ -27,9 +27,34 @@
 #include <glib.h>
 
 enum GibbonClipCode {
+                        /* Numerical CLIP codes.  */
                         GIBBON_CLIP_CODE_UNHANDLED = 0,
                         GIBBON_CLIP_CODE_WELCOME = 1,
-                        GIBBON_CLIP_CODE_OWN_INFO = 2
+                        GIBBON_CLIP_CODE_OWN_INFO = 2,
+                        GIBBON_CLIP_CODE_MOTD = 3,
+                        GIBBON_CLIP_CODE_MOTD_END = 4,
+                        GIBBON_CLIP_CODE_WHO_INFO = 5,
+                        GIBBON_CLIP_CODE_WHO_INFO_END = 6,
+                        GIBBON_CLIP_CODE_LOGIN = 7,
+                        GIBBON_CLIP_CODE_LOGOUT = 8,
+                        GIBBON_CLIP_CODE_MESSAGE = 9,
+                        GIBBON_CLIP_CODE_MESSAGE_DELIVERED = 10,
+                        GIBBON_CLIP_CODE_MESSAGE_SAVED = 11,
+                        GIBBON_CLIP_CODE_SAYS = 12,
+                        GIBBON_CLIP_CODE_SHOUTS = 13,
+                        GIBBON_CLIP_CODE_WHISPERS = 14,
+                        GIBBON_CLIP_CODE_KIBITZES = 15,
+                        GIBBON_CLIP_CODE_YOU_SAY = 16,
+                        GIBBON_CLIP_CODE_YOU_SHOUT = 17,
+                        GIBBON_CLIP_CODE_YOU_WHISPER = 18,
+                        GIBBON_CLIP_CODE_YOU_KIBITZ = 19,
+
+                        /* Errors.  */
+                        GIBBON_CLIP_CODE_ERROR = 100,
+
+                        /* Game play.  */
+                        GIBBON_CLIP_CODE_BOARD = 200,
+                        GIBBON_CLIP_CODE_BAD_BOARD = 201
 };
 
 enum GibbonClipType {

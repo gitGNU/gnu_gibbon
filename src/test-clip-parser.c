@@ -35,14 +35,14 @@ struct test_case {
         struct token_pair tokens[];
 };
 
-struct test_case test_case00 = {
+struct test_case test_clip00 = {
                 "| This is part of the motto of the day. |",
                 {
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
 
-struct test_case test_case01 = {
+struct test_case test_clip01 = {
                 "1 gflohr 1306865048 gibbon.example.com",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
@@ -54,7 +54,7 @@ struct test_case test_case01 = {
                 }
 };
 
-struct test_case test_case02 = {
+struct test_case test_clip02 = {
                 "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
                 " Europe/Sofia",
                 {
@@ -84,7 +84,7 @@ struct test_case test_case02 = {
                 }
 };
 
-struct test_case test_case03 = {
+struct test_case test_clip03 = {
                 "3",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "3" },
@@ -92,7 +92,7 @@ struct test_case test_case03 = {
                 }
 };
 
-struct test_case test_case04 = {
+struct test_case test_clip04 = {
                 "4",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "4" },
@@ -100,7 +100,7 @@ struct test_case test_case04 = {
                 }
 };
 
-struct test_case test_case05 = {
+struct test_case test_clip05 = {
                 "5 gflohr barrack - 0 0 1418.61 1914 23 1306926526"
                 " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
                 {
@@ -122,7 +122,7 @@ struct test_case test_case05 = {
                 }
 };
 
-struct test_case test_case06 = {
+struct test_case test_clip06 = {
                 "6",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "6" },
@@ -130,7 +130,7 @@ struct test_case test_case06 = {
                 }
 };
 
-struct test_case test_case07 = {
+struct test_case test_clip07 = {
                 "7 gflohr gflohr logs in.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
@@ -140,7 +140,7 @@ struct test_case test_case07 = {
                 }
 };
 
-struct test_case test_case08 = {
+struct test_case test_clip08 = {
                 "8 gflohr gflohr drops connection.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "8" },
@@ -151,7 +151,7 @@ struct test_case test_case08 = {
                 }
 };
 
-struct test_case test_case09 = {
+struct test_case test_clip09 = {
                 "9 gflohr -1306935184    Be back at 20 p.m.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "9" },
@@ -163,7 +163,7 @@ struct test_case test_case09 = {
                 }
 };
 
-struct test_case test_case10 = {
+struct test_case test_clip10 = {
                 "10 gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "10" },
@@ -172,7 +172,7 @@ struct test_case test_case10 = {
                 }
 };
 
-struct test_case test_case11 = {
+struct test_case test_clip11 = {
                 "11 gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "11" },
@@ -181,7 +181,7 @@ struct test_case test_case11 = {
                 }
 };
 
-struct test_case test_case12 = {
+struct test_case test_clip12 = {
                 "12 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "12" },
@@ -192,7 +192,7 @@ struct test_case test_case12 = {
                 }
 };
 
-struct test_case test_case13 = {
+struct test_case test_clip13 = {
                 "13 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "13" },
@@ -203,7 +203,7 @@ struct test_case test_case13 = {
                 }
 };
 
-struct test_case test_case14 = {
+struct test_case test_clip14 = {
                 "14 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "14" },
@@ -214,7 +214,7 @@ struct test_case test_case14 = {
                 }
 };
 
-struct test_case test_case15 = {
+struct test_case test_clip15 = {
                 "15 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "15" },
@@ -225,7 +225,7 @@ struct test_case test_case15 = {
                 }
 };
 
-struct test_case test_case16 = {
+struct test_case test_clip16 = {
                 "16 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "16" },
@@ -236,7 +236,7 @@ struct test_case test_case16 = {
                 }
 };
 
-struct test_case test_case17 = {
+struct test_case test_clip17 = {
                 "17 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "17" },
@@ -246,7 +246,7 @@ struct test_case test_case17 = {
                 }
 };
 
-struct test_case test_case18 = {
+struct test_case test_clip18 = {
                 "18 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "18" },
@@ -256,7 +256,7 @@ struct test_case test_case18 = {
                 }
 };
 
-struct test_case test_case19 = {
+struct test_case test_clip19 = {
                 "19 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "19" },
@@ -266,27 +266,39 @@ struct test_case test_case19 = {
                 }
 };
 
+struct test_case test_error00 = {
+                "** Unknown command: 'ping'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Unknown command: 'ping'." },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
-                &test_case00,
-                &test_case01,
-                &test_case02,
-                &test_case03,
-                &test_case04,
-                &test_case05,
-                &test_case06,
-                &test_case07,
-                &test_case08,
-                &test_case09,
-                &test_case10,
-                &test_case11,
-                &test_case12,
-                &test_case13,
-                &test_case14,
-                &test_case15,
-                &test_case16,
-                &test_case17,
-                &test_case18,
-                &test_case19
+                &test_clip00,
+                &test_clip01,
+                &test_clip02,
+                &test_clip03,
+                &test_clip04,
+                &test_clip05,
+                &test_clip06,
+                &test_clip07,
+                &test_clip08,
+                &test_clip09,
+                &test_clip10,
+                &test_clip11,
+                &test_clip12,
+                &test_clip13,
+                &test_clip14,
+                &test_clip15,
+                &test_clip16,
+                &test_clip17,
+                &test_clip18,
+                &test_clip19,
+
+                &test_error00
 };
 
 static gboolean test_single_case (struct test_case *test_case);
