@@ -35,7 +35,7 @@
 
 #include <errno.h>
 
-#include "gibbon-clip-parse.h"
+#include "gibbon-clip.h"
 #include "gibbon-util.h"
 
 static gboolean gibbon_clip_parse_clip (const gchar *line,

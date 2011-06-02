@@ -70,7 +70,7 @@ common_SOURCES = 			\
 	gibbon-reliability.c		\
 	gibbon-reliability-renderer.c	\
 	gibbon-util.c			\
-	gibbon-clip-parse.c	
+	gibbon-clip.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -107,7 +107,7 @@ noinst_HEADERS =			\
 	gibbon-reliability.h		\
 	gibbon-reliability-renderer.h	\
 	gibbon-util.h			\
-	gibbon-clip-parse.h
+	gibbon-clip.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
@@ -115,14 +115,14 @@ LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
-	test_pretty_print_move test_strsplit test_clip_parser \
+	test_pretty_print_move test_strsplit test_clip \
 	test_gary_wong_movegen
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
-	test_clip_parser test_pretty_print_move test_strsplit
+	test_clip test_pretty_print_move test_strsplit
 	test_gary_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
@@ -132,7 +132,7 @@ test_moves_SOURCES = $(common_SOURCES) test-moves.c
 test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
-test_clip_parser_SOURCES = $(common_SOURCES) test-clip-parser.c
+test_clip_SOURCES = $(common_SOURCES) test-clip.c
 
 SGF_FILES =
 

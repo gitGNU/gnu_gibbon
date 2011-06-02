@@ -17,8 +17,8 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_CLIP_PARSE_H
-# define _GIBBON_CLIP_PARSE_H
+#ifndef _GIBBON_CLIP_H
+# define _GIBBON_CLIP_H
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

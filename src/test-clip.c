@@ -23,7 +23,7 @@
 
 #include <glib-object.h>
 
-#include "gibbon-clip-parse.h"
+#include "gibbon-clip.h"
 
 struct token_pair {
         enum GibbonClipType type;
