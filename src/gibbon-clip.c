@@ -38,6 +38,67 @@
 #include "gibbon-clip.h"
 #include "gibbon-util.h"
 
+#ifdef GIBBON_CLIP_DEBUG_BOARD_STATE
+static const gchar *keys[] = {
+                "player",
+                "opponent",
+                "match length",
+                "player's score",
+                "opponents's score",
+                "home/bar",
+                "point 0",
+                "point 1",
+                "point 2",
+                "point 3",
+                "point 4",
+                "point 5",
+                "point 6",
+                "point 7",
+                "point 8",
+                "point 9",
+                "point 10",
+                "point 11",
+                "point 12",
+                "point 13",
+                "point 14",
+                "point 15",
+                "point 16",
+                "point 17",
+                "point 18",
+                "point 19",
+                "point 20",
+                "point 21",
+                "point 22",
+                "point 23",
+                "home/bar",
+                "turn",
+                "player's die 0",
+                "player's die 1",
+                "opponent's die 0",
+                "opponent's die 1",
+                "doubling cube",
+                "player may double",
+                "opponent may double",
+                "was doubled",
+                "color",
+                "direction",
+                "home index",
+                "bar index",
+                "player's checkers on home",
+                "opponent's checkers on home",
+                "player's checkers on bar",
+                "opponent's checkers on bar",
+                "can move",
+                "forced move",
+                "did crawford",
+                "redoubles",
+                NULL
+};
+
+static void gibbon_clip_dump_board (const gchar *raw,
+                                    gchar **tokens);
+#endif /* #ifdef GIBBON_CLIP_DEBUG_BOARD_STATE */
+
 static gboolean gibbon_clip_parse_clip (const gchar *line,
                                         gchar **tokens,
                                         GSList **result);
@@ -520,9 +581,15 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         gchar **tokens;
         gsize num_tokens;
         gboolean retval = FALSE;
+        gint64 turn, color, direction;
+        gint64 i;
 
         tokens = g_strsplit (_tokens[0] + 6, ":", 0);
         num_tokens = g_strv_length (tokens);
+
+#ifdef GIBBON_CLIP_DEBUG_BOARD_STATE
+        gibbon_clip_dump_board (line, tokens);
+#endif
 
         if (52 != num_tokens)
                 goto bail_out;
@@ -536,6 +603,24 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         /* Opponent's name.  */
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             tokens[1]);
+
+        if (!gibbon_clip_extract_integer (tokens[2], &i, "match length",
+                                          0, G_MAXINT))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
+
+        if (!gibbon_clip_extract_integer (tokens[31], &turn, "turn", -1, 1))
+                goto bail_out;
+
+        if (!gibbon_clip_extract_integer (tokens[40], &color, "color", -1, 1))
+                goto bail_out;
+
+        if (!gibbon_clip_extract_integer (tokens[41], &direction, "direction",
+                                          -1, 1))
+                goto bail_out;
+
+        if (!direction)
+                goto bail_out;
 
         retval = TRUE;
 
@@ -687,3 +772,18 @@ gibbon_clip_parse_chop (gchar *str, gchar c)
 
         return FALSE;
 }
+
+
+#ifdef GIBBON_CLIP_DEBUG_BOARD_STATE
+static void
+gibbon_clip_dump_board (const gchar *raw,
+                        gchar **tokens)
+{
+        int i = 0;
+
+        g_printerr ("=== Board ===\n");
+        g_printerr ("board:%s\n", raw);
+        for (i = 0; keys[i]; ++i)
+                g_printerr ("%s (%s)\n", keys[i], tokens[i]);
+}
+#endif
