@@ -285,6 +285,8 @@ struct test_case test_board00 =  {
                                 { GIBBON_CLIP_TYPE_STRING, "joe_white" },
                                 { GIBBON_CLIP_TYPE_STRING, "black_jack" },
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };

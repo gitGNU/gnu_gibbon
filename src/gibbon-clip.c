@@ -609,6 +609,15 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                 goto bail_out;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
+        if (!gibbon_clip_extract_integer (tokens[3], &i, "player's score",
+                                          0, G_MAXINT))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
+        if (!gibbon_clip_extract_integer (tokens[4], &i, "opponent's score",
+                                          0, G_MAXINT))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
+
         if (!gibbon_clip_extract_integer (tokens[31], &turn, "turn", -1, 1))
                 goto bail_out;
 
