@@ -276,6 +276,18 @@ struct test_case test_error00 = {
                 }
 };
 
+struct test_case test_board00 =  {
+                "board:joe_white:black_jack:7:5:0:0:0:2:-1:0:-1:4:0:2:0:0:0:-2"
+                ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
+                ":0:0:0:2:6:0:0",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "200" },
+                                { GIBBON_CLIP_TYPE_STRING, "joe_white" },
+                                { GIBBON_CLIP_TYPE_STRING, "black_jack" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -298,7 +310,9 @@ struct test_case *test_cases[] = {
                 &test_clip18,
                 &test_clip19,
 
-                &test_error00
+                &test_error00,
+
+                &test_board00
 };
 
 static gboolean test_single_case (struct test_case *test_case);
