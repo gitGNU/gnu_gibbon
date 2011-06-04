@@ -142,10 +142,8 @@ static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
 static GSList *gibbon_clip_alloc_string (GSList *list, enum GibbonClipType type,
                                          const gchar *value);
 static gboolean gibbon_clip_extract_integer (const gchar *str, gint64 *result,
-                                             const gchar *what,
                                              gint64 lower, gint64 upper);
 static gboolean gibbon_clip_extract_double (const gchar *str, gdouble *result,
-                                            const gchar *what,
                                             gdouble lower, gdouble upper);
 static gboolean gibbon_clip_parse_chop (gchar *str, gchar c);
 
@@ -261,7 +259,6 @@ gibbon_clip_parse_clip_welcome (const gchar *line, gchar **tokens,
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[1]);
         if (!gibbon_clip_extract_integer (tokens[2], &timestamp,
-                                          "login timestamp",
                                           G_MININT, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_TIMESTAMP,
@@ -288,81 +285,74 @@ gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
                                             tokens[1]);
 
         if (!gibbon_clip_extract_integer (tokens[2], &i,
-                                          "allowpip info",
                                           0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
         if (!gibbon_clip_extract_integer (tokens[3], &i,
-                                          "autoboard info",
                                           0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[4], &i, "autodouble info",
-                                          0, 1))
+        if (!gibbon_clip_extract_integer (tokens[4], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[5], &i, "automove info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[5], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[6], &i, "away info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[6], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[7], &i, "bell info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[7], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[8], &i, "crawford info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[8], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[9], &i, "double info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[9], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[10], &i, "experience info",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[10], &i, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
-        if (!gibbon_clip_extract_integer (tokens[11], &i, "greedy info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[11], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[12], &i, "moreboards info",
-                                          0, 1))
+        if (!gibbon_clip_extract_integer (tokens[12], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[13], &i, "moves info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[13], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[14], &i, "notify info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[14], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_double (tokens[15], &d, "rating info",
-                                         0, G_MAXDOUBLE))
+        if (!gibbon_clip_extract_double (tokens[15], &d, 0, G_MAXDOUBLE))
                 return FALSE;
         *result = gibbon_clip_alloc_double (*result, GIBBON_CLIP_TYPE_DOUBLE,
                                             d);
 
-        if (!gibbon_clip_extract_integer (tokens[16], &i, "ratings info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[16], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[17], &i, "ready info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[17], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
         if (g_strcmp0 ("unlimited", tokens[18])) {
                 if (!gibbon_clip_extract_integer (tokens[18], &i,
-                                                  "redoubles info",
                                                   0, G_MAXINT))
                         return FALSE;
         } else {
@@ -370,15 +360,13 @@ gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
         }
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[19], &i, "report info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[19], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[20], &i, "silent info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[20], &i, 0, 1))
                 return FALSE;
-        *result = gibbon_clip_alloc_int (*result,
-                                               GIBBON_CLIP_TYPE_BOOLEAN,
-                                               i);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             tokens[21]);
@@ -410,33 +398,28 @@ gibbon_clip_parse_clip_who_info (const gchar *line, gchar **tokens,
                 s = "";
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME, s);
 
-        if (!gibbon_clip_extract_integer (tokens[4], &i, "ready who info",
-                                          0, 1))
+        if (!gibbon_clip_extract_integer (tokens[4], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_integer (tokens[5], &i, "away who info", 0, 1))
+        if (!gibbon_clip_extract_integer (tokens[5], &i, 0, 1))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_double (tokens[6], &d, "rating who info",
-                                         0, G_MAXDOUBLE))
+        if (!gibbon_clip_extract_double (tokens[6], &d, 0, G_MAXDOUBLE))
                 return FALSE;
         *result = gibbon_clip_alloc_double (*result, GIBBON_CLIP_TYPE_DOUBLE,
                                             d);
 
-        if (!gibbon_clip_extract_integer (tokens[7], &i, "experience who info",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[7], &i, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
-        if (!gibbon_clip_extract_integer (tokens[8], &i, "idle who info",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[8], &i, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
-        if (!gibbon_clip_extract_integer (tokens[9], &i, "idle who timestamp",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[9], &i, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_TIMESTAMP,
                                          i);
@@ -512,8 +495,7 @@ gibbon_clip_parse_clip_message (const gchar *line, gchar **tokens,
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[1]);
 
-        if (!gibbon_clip_extract_integer (tokens[2], &i, "message timestamp",
-                                          G_MININT, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[2], &i, G_MININT, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_TIMESTAMP,
                                          i);
@@ -604,28 +586,24 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             tokens[1]);
 
-        if (!gibbon_clip_extract_integer (tokens[2], &i, "match length",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[2], &i, 0, G_MAXINT))
                 goto bail_out;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
-        if (!gibbon_clip_extract_integer (tokens[3], &i, "player's score",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[3], &i, 0, G_MAXINT))
                 goto bail_out;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
-        if (!gibbon_clip_extract_integer (tokens[4], &i, "opponent's score",
-                                          0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[4], &i, 0, G_MAXINT))
                 goto bail_out;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
 
-        if (!gibbon_clip_extract_integer (tokens[31], &turn, "turn", -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
                 goto bail_out;
 
-        if (!gibbon_clip_extract_integer (tokens[40], &color, "color", -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[40], &color, -1, 1))
                 goto bail_out;
 
-        if (!gibbon_clip_extract_integer (tokens[41], &direction, "direction",
-                                          -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[41], &direction, -1, 1))
                 goto bail_out;
 
         if (!direction)
@@ -701,7 +679,7 @@ gibbon_clip_free_result (GSList *result)
 
 static gboolean
 gibbon_clip_extract_integer (const gchar *str, gint64 *result,
-                             const gchar *what, gint64 lower, gint64 upper)
+                             gint64 lower, gint64 upper)
 {
         char *endptr;
         gint64 r;
@@ -710,33 +688,22 @@ gibbon_clip_extract_integer (const gchar *str, gint64 *result,
 
         r = g_ascii_strtoll (str, &endptr, 10);
 
-        if (errno) {
-                g_printerr (_("Error parsing %s: `%s': %s.\n"),
-                            what, str, strerror (errno));
+        if (errno)
                 return FALSE;
-        }
 
-        if (*endptr != 0) {
-                g_printerr (_("Error parsing %s: `%s': %s.\n"),
-                            what, str, _("Trailing garbage in integer)"));
+        if (*endptr != 0)
                 return FALSE;
-        }
 
         *result = (gint) r;
-        if (*result < lower || *result > upper) {
-                g_printerr (_("Error parsing %s: `%s':"
-                              " value %lld outside valid range"
-                              " (%lld to %lld).\n"),
-                            what, str, r, lower, upper);
+        if (*result < lower || *result > upper)
                 return FALSE;
-        }
 
         return TRUE;
 }
 
 static gboolean
 gibbon_clip_extract_double (const gchar *str, gdouble *result,
-                            const gchar *what, gdouble lower, gdouble upper)
+                            gdouble lower, gdouble upper)
 {
         char *endptr;
         gdouble r;
@@ -745,26 +712,15 @@ gibbon_clip_extract_double (const gchar *str, gdouble *result,
 
         r = g_ascii_strtod (str, &endptr);
 
-        if (errno) {
-                g_printerr (_("Error parsing %s: `%s': %s.\n"),
-                            what, str, strerror (errno));
+        if (errno)
                 return FALSE;
-        }
 
-        if (*endptr != 0) {
-                g_printerr (_("Error parsing %s: `%s': %s.\n"),
-                            what, str, _("Trailing garbage in double)"));
+        if (*endptr != 0)
                 return FALSE;
-        }
 
         *result = r;
-        if (*result < lower || *result > upper) {
-                g_printerr (_("Error parsing %s: `%s':"
-                              " value %f outside valid range"
-                              " (%f to %f).\n"),
-                            what, str, r, lower, upper);
+        if (*result < lower || *result > upper)
                 return FALSE;
-        }
 
         return TRUE;
 }
