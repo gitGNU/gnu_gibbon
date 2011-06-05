@@ -510,14 +510,6 @@ struct test_case test_various04 = {
                 }
 };
 
-/*
- * Missing:
- *
- * xyz rolls ....
- * xyz moves ...
- * a and b are resuming their n-point match.
- */
-
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
