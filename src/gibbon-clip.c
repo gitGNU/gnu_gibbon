@@ -140,6 +140,13 @@ static gboolean gibbon_clip_parse_youre_watching (const gchar *line,
                                                   gchar **tokens,
                                                   GSList **result);
 
+static gboolean gibbon_clip_parse_and (const gchar *line,
+                                       gchar **tokens,
+                                       GSList **result);
+static gboolean gibbon_clip_parse_start_match (const gchar *line,
+                                               gchar **tokens,
+                                               GSList **result);
+
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
 static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
@@ -185,6 +192,11 @@ gibbon_clip_parse (const gchar *line)
                                                                     tokens,
                                                                     &result);
                 break;
+        }
+
+        if (!success) {
+                if (0 == g_strcmp0 ("and", tokens[1]))
+                        success = gibbon_clip_parse_and (line, tokens, &result);
         }
 
         g_strfreev (tokens);
@@ -730,6 +742,54 @@ gibbon_clip_parse_youre_watching (const gchar *line, gchar **tokens,
         return TRUE;
 }
 
+static gboolean
+gibbon_clip_parse_and (const gchar *line, gchar **tokens, GSList **result)
+{
+        if (!tokens[2])
+                return FALSE;
+
+        if (0 == g_strcmp0 ("start", tokens[3]))
+                return gibbon_clip_parse_start_match (line, tokens, result);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_start_match (const gchar *line, gchar **tokens,
+                               GSList **result)
+{
+        gint64 length = -1;
+
+        if ((0 == g_strcmp0 ("a", tokens[4])
+             || 0 == g_strcmp0 ("an", tokens[4]))) {
+                if (0 == g_strcmp0 ("unlimited", tokens[5])
+                    && 0 == g_strcmp0 ("match.", tokens[6])
+                    && !tokens[7]) {
+                        length = 0;
+                } else if (gibbon_clip_extract_integer (tokens[5], &length,
+                                                        1, G_MAXINT)
+                           && 0 == g_strcmp0 ("point", tokens[6])
+                           && 0 == g_strcmp0 ("match", tokens[7])
+                           && !tokens[8]) {
+                        /* Side-effect from extracting integer.  */
+                }
+        }
+
+        if  (length == -1)
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_START_MATCH);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[2]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         length);
+
+        return TRUE;
+}
+
 static GSList *
 gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type, gint64 value)
 {
@@ -797,6 +857,9 @@ gibbon_clip_extract_integer (const gchar *str, gint64 *result,
         char *endptr;
         gint64 r;
 
+        if (!str)
+                return FALSE;
+
         errno = 0;
 
         r = g_ascii_strtoll (str, &endptr, 10);
@@ -820,6 +883,9 @@ gibbon_clip_extract_double (const gchar *str, gdouble *result,
 {
         char *endptr;
         gdouble r;
+
+        if (!str)
+                return FALSE;
 
         errno = 0;
 
