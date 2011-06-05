@@ -331,6 +331,15 @@ struct test_case test_board00 =  {
                 }
 };
 
+struct test_case test_between00 = {
+                "You're now watching gflohr.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "302" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -355,7 +364,9 @@ struct test_case *test_cases[] = {
 
                 &test_error00,
 
-                &test_board00
+                &test_board00,
+
+                &test_between00
 };
 
 static gboolean test_single_case (struct test_case *test_case);

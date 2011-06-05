@@ -136,6 +136,10 @@ static gboolean gibbon_clip_parse_board (const gchar *line,
                                          gchar **tokens,
                                          GSList **result);
 
+static gboolean gibbon_clip_parse_youre_watching (const gchar *line,
+                                                  gchar **tokens,
+                                                  GSList **result);
+
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
 static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
@@ -146,7 +150,7 @@ static gboolean gibbon_clip_extract_integer (const gchar *str, gint64 *result,
                                              gint64 lower, gint64 upper);
 static gboolean gibbon_clip_extract_double (const gchar *str, gdouble *result,
                                             gdouble lower, gdouble upper);
-static gboolean gibbon_clip_parse_chop (gchar *str, gchar c);
+static gboolean gibbon_clip_parse_chomp (gchar *str, gchar c);
 
 GSList *
 gibbon_clip_parse (const gchar *line)
@@ -172,6 +176,14 @@ gibbon_clip_parse (const gchar *line)
                 if (0 == strncmp ("board:", first, 6))
                         success = gibbon_clip_parse_board (line, tokens,
                                                            &result);
+                break;
+        case 'Y':
+                if (0 == g_strcmp0 ("You're", tokens[0])
+                    && 0 == g_strcmp0 ("now", tokens[1])
+                    && 0 == g_strcmp0 ("watching", tokens[2]))
+                        success = gibbon_clip_parse_youre_watching (line,
+                                                                    tokens,
+                                                                    &result);
                 break;
         }
 
@@ -454,8 +466,8 @@ gibbon_clip_parse_clip_somebody_message (const gchar *line, gchar **tokens,
         s2 = g_alloca (length);
         memcpy (s2, s, length);
 
-        while (gibbon_clip_parse_chop (s2, '.')) {}
-        while (gibbon_clip_parse_chop (s2, ' ')) {}
+        while (gibbon_clip_parse_chomp (s2, '.')) {}
+        while (gibbon_clip_parse_chomp (s2, ' ')) {}
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             s2);
 
@@ -705,6 +717,19 @@ bail_out:
         return retval;
 }
 
+static gboolean
+gibbon_clip_parse_youre_watching (const gchar *line, gchar **tokens,
+                                  GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_YOURE_WATCHING);
+        gibbon_clip_parse_chomp (tokens[3], '.');
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[3]);
+
+        return TRUE;
+}
+
 static GSList *
 gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type, gint64 value)
 {
@@ -814,7 +839,7 @@ gibbon_clip_extract_double (const gchar *str, gdouble *result,
 }
 
 static gboolean
-gibbon_clip_parse_chop (gchar *str, gchar c)
+gibbon_clip_parse_chomp (gchar *str, gchar c)
 {
         gsize length = strlen (str);
 
