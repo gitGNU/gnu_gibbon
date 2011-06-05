@@ -57,7 +57,12 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_BAD_BOARD = 201,
 
                         /* Between game action.  */
-                        GIBBON_CLIP_CODE_YOURE_WATCHING = 302
+                        GIBBON_CLIP_CODE_YOURE_WATCHING = 302,
+
+                        /* Various.  */
+                        GIBBON_CLIP_CODE_START_MATCH = 400,
+                        GIBBON_CLIP_CODE_WIN_MATCH = 401,
+                        GIBBON_CLIP_CODE_RESUME_MATCH = 402
 };
 
 enum GibbonClipType {

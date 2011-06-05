@@ -340,6 +340,38 @@ struct test_case test_between00 = {
                 }
 };
 
+struct test_case test_various00 = {
+                "gflohr and GibbonTestA start a 7 point match.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "400" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_various01 = {
+                "gflohr and GibbonTestA start an unlimited match.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "400" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+/*
+ * Missing:
+ *
+ * xyz rolls ....
+ * xyz moves ...
+ * a and b start a n-point match.
+ * a and b are resuming their n-point match.
+ * a wins a n-point match against b.
+ */
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -366,7 +398,10 @@ struct test_case *test_cases[] = {
 
                 &test_board00,
 
-                &test_between00
+                &test_between00,
+
+                &test_various00,
+                &test_various01
 };
 
 static gboolean test_single_case (struct test_case *test_case);
