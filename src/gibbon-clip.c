@@ -37,6 +37,7 @@
 
 #include "gibbon-clip.h"
 #include "gibbon-util.h"
+#include "gibbon-position.h"
 
 #ifdef GIBBON_CLIP_DEBUG_BOARD_STATE
 static const gchar *keys[] = {
@@ -563,8 +564,9 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         gchar **tokens;
         gsize num_tokens;
         gboolean retval = FALSE;
-        gint64 turn, color, direction;
-        gint64 i;
+        gint64 color, direction;
+        gint64 i64;
+        gint i;
 
         tokens = g_strsplit (_tokens[0] + 6, ":", 0);
         num_tokens = g_strv_length (tokens);
@@ -586,19 +588,16 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             tokens[1]);
 
-        if (!gibbon_clip_extract_integer (tokens[2], &i, 0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[2], &i64, 0, G_MAXINT))
                 goto bail_out;
-        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
-        if (!gibbon_clip_extract_integer (tokens[3], &i, 0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[3], &i64, 0, G_MAXINT))
                 goto bail_out;
-        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
-        if (!gibbon_clip_extract_integer (tokens[4], &i, 0, G_MAXINT))
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
+        if (!gibbon_clip_extract_integer (tokens[4], &i64, 0, G_MAXINT))
                 goto bail_out;
-        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i);
-
-        if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
-                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         if (!gibbon_clip_extract_integer (tokens[40], &color, -1, 1))
                 goto bail_out;
@@ -608,6 +607,48 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 
         if (!direction)
                 goto bail_out;
+
+        /*
+         * Black:
+         * 6 -> 6 -> 0
+         * 7 -> 7 -> 1
+         * 8 -> 8 -> 2
+         * 9 -> 9 -> 3
+         *
+         * White:
+         * 6 -> 6 -> 23
+         * 7 -> 7 -> 22
+         * 8 -> 8 -> 21
+         * ...
+         * 27 -> 27 -> 2
+         * 28 -> 28 -> 1
+         * 29 -> 29 -> 0
+         */
+        if (direction == GIBBON_POSITION_SIDE_BLACK) {
+                for (i = 6; i < 30; ++i) {
+                        if (!gibbon_clip_extract_integer (tokens[i], &i64,
+                                                          -15, 15))
+                                goto bail_out;
+
+                        i64 *= color;
+
+                        *result = gibbon_clip_alloc_int (*result,
+                                                         GIBBON_CLIP_TYPE_INT,
+                                                         i64);
+                }
+        } else {
+                for (i = 29; i >= 0; --i) {
+                        if (!gibbon_clip_extract_integer (tokens[i], &i64,
+                                                          -15, 15))
+                                goto bail_out;
+
+                        i64 *= color;
+
+                        *result = gibbon_clip_alloc_int (*result,
+                                                         GIBBON_CLIP_TYPE_INT,
+                                                         i64);
+                }
+        }
 
         retval = TRUE;
 

@@ -281,12 +281,41 @@ struct test_case test_board00 =  {
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
                 ":0:0:0:2:6:0:0",
                 {
+                                /* Board.  */
                                 { GIBBON_CLIP_TYPE_UINT, "200" },
+                                /* Player and opponent.  */
                                 { GIBBON_CLIP_TYPE_STRING, "joe_white" },
                                 { GIBBON_CLIP_TYPE_STRING, "black_jack" },
+                                /* Match length.  */
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
+                                /* Score.  */
                                 { GIBBON_CLIP_TYPE_UINT, "5" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* Position.  */
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "4" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "4" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-3" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "-4" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
