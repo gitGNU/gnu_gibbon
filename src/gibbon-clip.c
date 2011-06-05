@@ -157,7 +157,11 @@ static gboolean gibbon_clip_parse_wins (const gchar *line,
 static gboolean gibbon_clip_parse_rolls (const gchar *line,
                                          gchar **tokens,
                                          GSList **result);
+static gboolean gibbon_clip_parse_moves (const gchar *line,
+                                         gchar **tokens,
+                                         GSList **result);
 
+static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
 static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
@@ -214,6 +218,11 @@ gibbon_clip_parse (const gchar *line)
                         if (0 == g_strcmp0 ("and", tokens[1]))
                                 success = gibbon_clip_parse_and (line, tokens,
                                                                  &result);
+                        break;
+                case 'm':
+                        if (0 == g_strcmp0 ("moves", tokens[1]))
+                                success = gibbon_clip_parse_moves (line, tokens,
+                                                                  &result);
                         break;
                 case 'r':
                         if (0 == g_strcmp0 ("rolls", tokens[1]))
@@ -946,6 +955,66 @@ gibbon_clip_parse_rolls (const gchar *line, gchar **tokens, GSList **result)
         if (!gibbon_clip_extract_integer (tokens[4], &i64, 1, 6))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_moves (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 num_movements = g_strv_length (tokens) - 3;
+        gint i;
+
+        if (num_movements < 1 || num_movements > 4)
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_MOVES);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         num_movements);
+        for (i = 0; i < num_movements; ++i)
+                if (!gibbon_clip_parse_movement (tokens[i + 2], result))
+                        return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_movement (gchar *str, GSList **result)
+{
+        gint64 from, to;
+        gchar *ptr;
+
+        ptr = index (str, '-');
+        if (!ptr)
+                return FALSE;
+
+        *ptr++ = 0;
+
+        if (0 == g_strcmp0 ("bar", str))
+                from = 0;
+        else if (!gibbon_clip_extract_integer (str, &from, 1, 24))
+                return FALSE;
+
+        if (0 == g_strcmp0 ("to", ptr))
+                to = 0;
+        else if (!gibbon_clip_extract_integer (ptr, &to, 1, 24))
+                return FALSE;
+
+        if (!(from || to)) {
+                return FALSE;
+        } else if (!from) {
+                if (to <= 6)
+                        from = 25;
+        } else if (!to) {
+                if (from < 19)
+                        to = 25;
+        }
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, from);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, to);
 
         return TRUE;
 }
