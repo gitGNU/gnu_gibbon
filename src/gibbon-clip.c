@@ -998,7 +998,7 @@ gibbon_clip_parse_movement (gchar *str, GSList **result)
         else if (!gibbon_clip_extract_integer (str, &from, 1, 24))
                 return FALSE;
 
-        if (0 == g_strcmp0 ("to", ptr))
+        if (0 == g_strcmp0 ("off", ptr))
                 to = 0;
         else if (!gibbon_clip_extract_integer (ptr, &to, 1, 24))
                 return FALSE;
@@ -1006,11 +1006,25 @@ gibbon_clip_parse_movement (gchar *str, GSList **result)
         if (!(from || to)) {
                 return FALSE;
         } else if (!from) {
-                if (to <= 6)
+                if (to >= 19)
                         from = 25;
+                else if (to > 6)
+                        return FALSE;
         } else if (!to) {
-                if (from < 19)
+                if (from >= 19)
                         to = 25;
+                else if (from > 6)
+                        return FALSE;
+        }
+
+        if (from == to) {
+                return FALSE;
+        } else if (from < to) {
+                if (to - from > 6)
+                        return FALSE;
+        } else {
+                if (from - to > 6)
+                        return FALSE;
         }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, from);
