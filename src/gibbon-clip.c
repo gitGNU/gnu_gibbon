@@ -154,6 +154,10 @@ static gboolean gibbon_clip_parse_wins (const gchar *line,
                                         gchar **tokens,
                                         GSList **result);
 
+static gboolean gibbon_clip_parse_rolls (const gchar *line,
+                                         gchar **tokens,
+                                         GSList **result);
+
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
 static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
@@ -202,13 +206,29 @@ gibbon_clip_parse (const gchar *line)
         }
 
         if (!success) {
-                if (0 == g_strcmp0 ("and", tokens[1]))
-                        success = gibbon_clip_parse_and (line, tokens, &result);
-                else if (0 == g_strcmp0 ("wins", tokens[1]))
-                        success = gibbon_clip_parse_wins (line, tokens,
-                                                          &result);
+                if (!tokens[1])
+                        goto bail_out;
+
+                switch (tokens[1][0]) {
+                case 'a':
+                        if (0 == g_strcmp0 ("and", tokens[1]))
+                                success = gibbon_clip_parse_and (line, tokens,
+                                                                 &result);
+                        break;
+                case 'r':
+                        if (0 == g_strcmp0 ("rolls", tokens[1]))
+                                success = gibbon_clip_parse_rolls (line, tokens,
+                                                                   &result);
+                        break;
+                case 'w':
+                        if (0 == g_strcmp0 ("wins", tokens[1]))
+                                success = gibbon_clip_parse_wins (line, tokens,
+                                                                  &result);
+                        break;
+                }
         }
 
+bail_out:
         g_strfreev (tokens);
         if (!success) {
                 gibbon_clip_free_result (result);
@@ -610,7 +630,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 #endif
 
         if (52 != num_tokens)
-                goto bail_out;
+                goto bail_out_board;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          GIBBON_CLIP_CODE_BOARD);
@@ -623,30 +643,30 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                             tokens[1]);
 
         if (!gibbon_clip_extract_integer (tokens[2], &i64, 0, G_MAXINT))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         if (!gibbon_clip_extract_integer (tokens[3], &i64, 0, G_MAXINT))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
         if (!gibbon_clip_extract_integer (tokens[4], &i64, 0, G_MAXINT))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         if (!gibbon_clip_extract_integer (tokens[40], &color, -1, 1))
-                goto bail_out;
+                goto bail_out_board;
 
         if (!gibbon_clip_extract_integer (tokens[41], &direction, -1, 1))
-                goto bail_out;
+                goto bail_out_board;
 
         if (!direction)
-                goto bail_out;
+                goto bail_out_board;
 
         if (direction == GIBBON_POSITION_SIDE_BLACK) {
                 for (i = 6; i < 30; ++i) {
                         if (!gibbon_clip_extract_integer (tokens[i], &i64,
                                                           -15, 15))
-                                goto bail_out;
+                                goto bail_out_board;
 
                         i64 *= color;
 
@@ -658,7 +678,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                 for (i = 29; i >= 0; --i) {
                         if (!gibbon_clip_extract_integer (tokens[i], &i64,
                                                           -15, 15))
-                                goto bail_out;
+                                goto bail_out_board;
 
                         i64 *= color;
 
@@ -669,31 +689,31 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         }
 
         if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
-                goto bail_out;
+                goto bail_out_board;
 
         if (turn == color) {
                 if (!gibbon_clip_extract_integer (tokens[32], &i64,
                                                   0, 6))
-                        goto bail_out;
+                        goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  i64);
                 if (!gibbon_clip_extract_integer (tokens[33], &i64,
                                                   0, 6))
-                        goto bail_out;
+                        goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  i64);
         } else if (turn) {
                 if (!gibbon_clip_extract_integer (tokens[34], &i64,
                                                   0, 6))
-                        goto bail_out;
+                        goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  -i64);
                 if (!gibbon_clip_extract_integer (tokens[35], &i64,
                                                   0, 6))
-                        goto bail_out;
+                        goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  -i64);
@@ -701,39 +721,39 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 
         if (!gibbon_clip_extract_integer (tokens[36], &i64,
                                           1, G_MAXINT))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          i64);
         if (!gibbon_clip_extract_integer (tokens[37], &i64,
                                           0, 1))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
                                          i64);
         if (!gibbon_clip_extract_integer (tokens[38], &i64,
                                           0, 1))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
                                          i64);
 
         if (!gibbon_clip_extract_integer (tokens[46], &i64,
                                           0, 15))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          i64);
         if (!gibbon_clip_extract_integer (tokens[47], &i64,
                                           0, 15))
-                goto bail_out;
+                goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          i64);
 
         retval = TRUE;
 
-bail_out:
+bail_out_board:
         g_strfreev (tokens);
 
         return retval;
@@ -848,7 +868,6 @@ gibbon_clip_parse_start_match (const gchar *line, gchar **tokens,
         return TRUE;
 }
 
-
 static gboolean
 gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
 {
@@ -899,6 +918,34 @@ gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
         if (s1 >= i64)
                 return FALSE;
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_rolls (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 i64;
+
+        if (5 != g_strv_length (tokens))
+                return FALSE;
+
+        if (g_strcmp0 ("and", tokens[3]))
+                return FALSE;
+
+        gibbon_clip_chomp (tokens[4], '.');
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_ROLLS);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+
+        if (!gibbon_clip_extract_integer (tokens[2], &i64, 1, 6))
+                return FALSE;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
+        if (!gibbon_clip_extract_integer (tokens[4], &i64, 1, 6))
+                return FALSE;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         return TRUE;
 }
