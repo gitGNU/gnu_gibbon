@@ -316,6 +316,9 @@ struct test_case test_board00 =  {
                                 { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_INT, "0" },
+                                /* Dice.  */
+                                { GIBBON_CLIP_TYPE_INT, "-6" },
+                                { GIBBON_CLIP_TYPE_INT, "-6" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };

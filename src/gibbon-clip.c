@@ -564,7 +564,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         gchar **tokens;
         gsize num_tokens;
         gboolean retval = FALSE;
-        gint64 color, direction;
+        gint64 color, direction, turn;
         gint64 i64;
         gint i;
 
@@ -608,22 +608,6 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         if (!direction)
                 goto bail_out;
 
-        /*
-         * Black:
-         * 6 -> 6 -> 0
-         * 7 -> 7 -> 1
-         * 8 -> 8 -> 2
-         * 9 -> 9 -> 3
-         *
-         * White:
-         * 6 -> 6 -> 23
-         * 7 -> 7 -> 22
-         * 8 -> 8 -> 21
-         * ...
-         * 27 -> 27 -> 2
-         * 28 -> 28 -> 1
-         * 29 -> 29 -> 0
-         */
         if (direction == GIBBON_POSITION_SIDE_BLACK) {
                 for (i = 6; i < 30; ++i) {
                         if (!gibbon_clip_extract_integer (tokens[i], &i64,
@@ -649,6 +633,38 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                                          i64);
                 }
         }
+
+        if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
+                goto bail_out;
+        g_printerr ("Turn: %lld, color: %lld.\n", turn, color);
+        if (turn == color) {
+                if (!gibbon_clip_extract_integer (tokens[32], &i64,
+                                                  0, 6))
+                        goto bail_out;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 i64);
+                if (!gibbon_clip_extract_integer (tokens[33], &i64,
+                                                  0, 6))
+                        goto bail_out;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 i64);
+        } else if (turn) {
+                if (!gibbon_clip_extract_integer (tokens[34], &i64,
+                                                  0, 6))
+                        goto bail_out;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 -i64);
+                if (!gibbon_clip_extract_integer (tokens[35], &i64,
+                                                  0, 6))
+                        goto bail_out;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 -i64);
+        }
+
 
         retval = TRUE;
 
