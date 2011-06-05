@@ -363,7 +363,7 @@ struct test_case test_various01 = {
 };
 
 struct test_case test_various02 = {
-                "gflohr wins a 7 point match against GibbonBotA 8-3 .",
+                "gflohr wins a 7 point match against GibbonTestA 8-3 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "401" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },

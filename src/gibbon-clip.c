@@ -143,9 +143,16 @@ static gboolean gibbon_clip_parse_youre_watching (const gchar *line,
 static gboolean gibbon_clip_parse_and (const gchar *line,
                                        gchar **tokens,
                                        GSList **result);
+static gboolean gibbon_clip_parse_resuming (const gchar *line,
+                                            gchar **tokens,
+                                            GSList **result);
 static gboolean gibbon_clip_parse_start_match (const gchar *line,
                                                gchar **tokens,
                                                GSList **result);
+
+static gboolean gibbon_clip_parse_wins (const gchar *line,
+                                        gchar **tokens,
+                                        GSList **result);
 
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
@@ -197,6 +204,9 @@ gibbon_clip_parse (const gchar *line)
         if (!success) {
                 if (0 == g_strcmp0 ("and", tokens[1]))
                         success = gibbon_clip_parse_and (line, tokens, &result);
+                else if (0 == g_strcmp0 ("wins", tokens[1]))
+                        success = gibbon_clip_parse_wins (line, tokens,
+                                                          &result);
         }
 
         g_strfreev (tokens);
@@ -747,11 +757,29 @@ gibbon_clip_parse_and (const gchar *line, gchar **tokens, GSList **result)
 {
         if (!tokens[2])
                 return FALSE;
+        if (!tokens[3])
+                return FALSE;
 
-        if (0 == g_strcmp0 ("start", tokens[3]))
+        if (0 == g_strcmp0 ("are", tokens[3])) {
+                if (0 == g_strcmp0 ("resuming", tokens[4])
+                    && 0 == g_strcmp0 ("their", tokens[5]))
+                        return gibbon_clip_parse_resuming (line, tokens,
+                                                           result);
+        } else if (0 == g_strcmp0 ("start", tokens[3])) {
                 return gibbon_clip_parse_start_match (line, tokens, result);
+        }
 
         return TRUE;
+}
+
+
+static gboolean
+gibbon_clip_parse_resuming (const gchar *line, gchar **tokens,
+                            GSList **result)
+{
+        g_printerr ("%u tokens!\n", g_strv_length (tokens));
+
+        return FALSE;
 }
 
 static gboolean
@@ -786,6 +814,61 @@ gibbon_clip_parse_start_match (const gchar *line, gchar **tokens,
                                             tokens[2]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          length);
+
+        return TRUE;
+}
+
+
+static gboolean
+gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 i64;
+        gint64 s0, s1;
+        gchar *ptr;
+
+        if (10 != g_strv_length (tokens))
+                return FALSE;
+
+        if (g_strcmp0 ("a", tokens[2]))
+                return FALSE;
+        if (g_strcmp0 ("point", tokens[4]))
+                return FALSE;
+        if (g_strcmp0 ("match", tokens[5]))
+                return FALSE;
+        if (g_strcmp0 ("against", tokens[6]))
+                return FALSE;
+        if (g_strcmp0 (".", tokens[9]))
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_WIN_MATCH);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[7]);
+
+        if (!gibbon_clip_extract_integer (tokens[3], &i64, 1, G_MAXINT))
+                return FALSE;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
+
+        ptr = index (tokens[8], '-');
+        if (!ptr)
+                return FALSE;
+
+        *ptr++ = 0;
+        if (!gibbon_clip_extract_integer (tokens[8], &s0, 1, G_MAXINT))
+                return FALSE;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s0);
+        if (!gibbon_clip_extract_integer (ptr, &s1, 1, G_MAXINT))
+                return FALSE;
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s1);
+
+        if (s0 < i64)
+                return FALSE;
+        if (s0 < s1)
+                return FALSE;
+        if (s1 >= i64)
+                return FALSE;
 
         return TRUE;
 }
