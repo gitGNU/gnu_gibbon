@@ -636,7 +636,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 
         if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
                 goto bail_out;
-        g_printerr ("Turn: %lld, color: %lld.\n", turn, color);
+
         if (turn == color) {
                 if (!gibbon_clip_extract_integer (tokens[32], &i64,
                                                   0, 6))
@@ -665,6 +665,37 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                                  -i64);
         }
 
+        if (!gibbon_clip_extract_integer (tokens[36], &i64,
+                                          1, G_MAXINT))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         i64);
+        if (!gibbon_clip_extract_integer (tokens[37], &i64,
+                                          0, 1))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_BOOLEAN,
+                                         i64);
+        if (!gibbon_clip_extract_integer (tokens[38], &i64,
+                                          0, 1))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_BOOLEAN,
+                                         i64);
+
+        if (!gibbon_clip_extract_integer (tokens[46], &i64,
+                                          0, 15))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         i64);
+        if (!gibbon_clip_extract_integer (tokens[47], &i64,
+                                          0, 15))
+                goto bail_out;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         i64);
 
         retval = TRUE;
 

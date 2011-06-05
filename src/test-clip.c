@@ -319,6 +319,14 @@ struct test_case test_board00 =  {
                                 /* Dice.  */
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
+                                /* Cube.  */
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                /* Player and opponent may double? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                /* Player's and opponent's bar.  */
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
