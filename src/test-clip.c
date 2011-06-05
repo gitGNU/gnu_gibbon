@@ -356,6 +356,94 @@ struct test_case test_moves00 = {
                 }
 };
 
+struct test_case test_moves01 = {
+                "gflohr moves 17-20 19-20 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "17" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_UINT, "19" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves02 = {
+                "gflohr moves 17-20 17-20 19-20 19-20 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_UINT, "17" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_UINT, "17" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_UINT, "19" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_UINT, "19" },
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves03 = {
+                "gflohr moves bar-24 bar-22 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "25" },
+                                { GIBBON_CLIP_TYPE_UINT, "24" },
+                                { GIBBON_CLIP_TYPE_UINT, "25" },
+                                { GIBBON_CLIP_TYPE_UINT, "22" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves04 = {
+                "gflohr moves bar-1 bar-3 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves05 = {
+                "gflohr moves 24-off 22-off .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "24" },
+                                { GIBBON_CLIP_TYPE_UINT, "25" },
+                                { GIBBON_CLIP_TYPE_UINT, "22" },
+                                { GIBBON_CLIP_TYPE_UINT, "25" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves06 = {
+                "gflohr moves 1-off 3-off .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_between00 = {
                 "You're now watching gflohr.",
                 {
@@ -457,6 +545,12 @@ struct test_case *test_cases[] = {
                 &test_board00,
                 &test_rolls00,
                 &test_moves00,
+                &test_moves01,
+                &test_moves02,
+                &test_moves03,
+                &test_moves04,
+                &test_moves05,
+                &test_moves06,
 
                 &test_between00,
 
