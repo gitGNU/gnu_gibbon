@@ -56,6 +56,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_BOARD = 200,
                         GIBBON_CLIP_CODE_BAD_BOARD = 201,
                         GIBBON_CLIP_CODE_ROLLS = 202,
+                        GIBBON_CLIP_CODE_MOVES = 203,
 
                         /* Between game action.  */
                         GIBBON_CLIP_CODE_YOURE_WATCHING = 302,

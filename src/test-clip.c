@@ -331,13 +331,27 @@ struct test_case test_board00 =  {
                 }
 };
 
-struct test_case test_game00 = {
+struct test_case test_rolls00 = {
                 "gflohr rolls 3 and 1.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "202" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_UINT, "3" },
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_moves00 = {
+                "gflohr moves 8-5 6-5 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "8" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_UINT, "6" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -441,7 +455,8 @@ struct test_case *test_cases[] = {
                 &test_error00,
 
                 &test_board00,
-                &test_game00,
+                &test_rolls00,
+                &test_moves00,
 
                 &test_between00,
 
