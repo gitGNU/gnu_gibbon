@@ -1205,3 +1205,27 @@ gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
 
         return TRUE;
 }
+
+gboolean
+gibbon_clip_get_string (GSList **list, enum GibbonClipType type,
+                        const gchar **value)
+{
+        GSList *iter;
+        struct GibbonClipTokenSet *token;
+
+        g_return_val_if_fail (list, FALSE);
+        g_return_val_if_fail (*list, FALSE);
+
+        iter = *list;
+
+        token = (struct GibbonClipTokenSet *) iter->data;
+
+        if (token->type != type)
+                return FALSE;
+
+        *value = token->v.s;
+
+        *list = (*list)->next;
+
+        return TRUE;
+}
