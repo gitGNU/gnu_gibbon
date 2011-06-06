@@ -90,4 +90,7 @@ struct GibbonClipTokenSet {
 GSList *gibbon_clip_parse (const gchar *line);
 void gibbon_clip_free_result (GSList *list);
 
+gboolean gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
+                                 guint64 *value);
+
 #endif

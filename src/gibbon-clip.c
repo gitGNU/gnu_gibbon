@@ -180,7 +180,14 @@ gibbon_clip_parse (const gchar *line)
         gboolean success = FALSE;
         GSList *result = NULL;
         gchar **tokens = gibbon_strsplit_ws (line);
-        gchar *first = tokens[0];
+        gchar *first;
+
+        if (!tokens)
+                return NULL;
+
+        first = tokens[0];
+        if (!first)
+                return NULL;
 
         if (first[0] >= '1' && first[0] <= '9' && !first[1])
                 success = gibbon_clip_parse_clip (line, tokens, &result);
@@ -1174,3 +1181,27 @@ gibbon_clip_dump_board (const gchar *raw,
                 g_printerr ("%s (%s)\n", keys[i], tokens[i]);
 }
 #endif
+
+gboolean
+gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
+                        guint64 *value)
+{
+        GSList *iter;
+        struct GibbonClipTokenSet *token;
+
+        g_return_val_if_fail (list, FALSE);
+        g_return_val_if_fail (*list, FALSE);
+
+        iter = *list;
+
+        token = (struct GibbonClipTokenSet *) iter->data;
+
+        if (token->type != type)
+                return FALSE;
+
+        *value = token->v.i64;
+
+        *list = (*list)->next;
+
+        return TRUE;
+}
