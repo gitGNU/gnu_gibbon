@@ -42,8 +42,6 @@
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
 
-#define CLIP_WELCOME 1
-#define CLIP_WHO_INFO 5
 #define CLIP_WHO_INFO_END 6
 #define CLIP_LOGIN 7
 #define CLIP_LOGOUT 8
@@ -131,9 +129,7 @@ static gint gibbon_session_handle_number (GibbonSession *self,
                                           const gchar *line,
                                           const gchar **tokens);
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
-static gint gibbon_session_clip_who_info (GibbonSession *self,
-                                          const gchar *line,
-                                          const gchar **tokens);
+static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_logout (GibbonSession *self,
                                         const gchar *line,
                                         const gchar **tokens);
@@ -304,6 +300,9 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_WELCOME:
                 retval = gibbon_session_clip_welcome (self, iter);
                 break;
+        case GIBBON_CLIP_CODE_WHO_INFO:
+                retval = gibbon_session_clip_who_info (self, iter);
+                break;
         }
 
         gibbon_clip_free_result (values);
@@ -374,8 +373,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
 
 static gint
 gibbon_session_clip_who_info (GibbonSession *self, 
-                              const gchar *line,
-                              const gchar **tokens)
+                              GSList *iter)
 {
         const gchar *who;
         const gchar *opponent;
@@ -384,9 +382,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gboolean available;
         gboolean away;
         gdouble rating;
-        gint experience;
-        const gchar *idle;
-        const gchar *login;
+        guint64 experience;
+        const gchar *raw_client;
         gchar *client;
         const gchar *email;
         const gchar *hostname;
@@ -398,47 +395,50 @@ gibbon_session_clip_who_info (GibbonSession *self,
         guint port;
         const gchar *server;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
 
-        g_return_val_if_fail (13 == g_strv_length ((gchar **) tokens), -1);
-
-        who = tokens[1];
-        
-        opponent = tokens[2];
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
+                return -1;
         if (opponent[0] == '-' && opponent[1] == 0)
                 opponent = "";
                 
-        watching = tokens[3];
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &watching))
+                return -1;
         if (watching[0] == '-' && watching[1] == 0)
                 watching = "";
-                
-        g_return_val_if_fail (tokens[4][0] == '0' || tokens[4][0] == '1',
-                              -1);
-        g_return_val_if_fail (tokens[4][1] == 0, -1);
-        if (tokens[4][0] == '1') {
-                ready = TRUE;
-        } else {
-                ready = FALSE;
-        }
-        
-        g_return_val_if_fail (tokens[5][0] == '0' || tokens[5][0] == '1', -1);
-        g_return_val_if_fail (tokens[5][1] == 0, -1);
-        if (tokens[5][0] == '1') {
-                away = TRUE;
-        } else {
-                away = FALSE;
-        }
 
-        rating = g_ascii_strtod (tokens[6], NULL);
-        g_return_val_if_fail (parse_integer (tokens[7], &experience,
-                                             "experience", 0, G_MAXINT),
-                              -1);
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &ready))
+                return -1;
+
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &away))
+                return -1;
+
+        if (!gibbon_clip_get_double (&iter, GIBBON_CLIP_TYPE_DOUBLE,
+                                     &rating))
+                return -1;
+
+        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
+                                     &experience))
+                return -1;
+
+        iter = iter->next;
+        iter = iter->next;
         
-        idle = tokens[8];
-        login = tokens[9];
-        hostname = tokens[10];
-        client = gibbon_session_decode_client (self, tokens[11]);
-        email = tokens[12];
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &hostname))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &raw_client))
+                return -1;
+        client = gibbon_session_decode_client (self, raw_client);
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &email))
+                return -1;
 
         available = ready && !away && !opponent[0];
 
@@ -482,7 +482,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                     gibbon_connection_get_port (connection),
                                     who, rating, experience);
 
-        return CLIP_WHO_INFO;
+        return GIBBON_CLIP_CODE_WHO_INFO;
 }
 
 static gint
