@@ -212,8 +212,6 @@ struct _GibbonSessionPrivate {
                                       GibbonSessionPrivate))
 G_DEFINE_TYPE (GibbonSession, gibbon_session, G_TYPE_OBJECT);
 
-#define GIBBON_SESSION_WHITESPACE " \t\r\v\f"
-
 static void
 gibbon_session_init (GibbonSession *self)
 {
@@ -299,6 +297,16 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_WELCOME:
                 retval = gibbon_session_clip_welcome (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_OWN_INFO:
+                /* FIXME! Parse settings! */
+                retval = GIBBON_CLIP_CODE_OWN_INFO;
+                break;
+        case GIBBON_CLIP_CODE_MOTD:
+                retval = GIBBON_CLIP_CODE_MOTD;
+                break;
+        case GIBBON_CLIP_CODE_MOTD_END:
+                retval = GIBBON_CLIP_CODE_MOTD_END;
                 break;
         case GIBBON_CLIP_CODE_WHO_INFO:
                 retval = gibbon_session_clip_who_info (self, iter);
