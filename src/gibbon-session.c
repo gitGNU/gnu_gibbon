@@ -40,6 +40,7 @@
 #include "gibbon-game-chat.h"
 #include "gibbon-archive.h"
 #include "gibbon-util.h"
+#include "gibbon-clip.h"
 
 #define CLIP_WELCOME 1
 #define CLIP_WHO_INFO 5
@@ -129,9 +130,7 @@ static void gibbon_session_dump_position (const GibbonSession *self,
 static gint gibbon_session_handle_number (GibbonSession *self,
                                           const gchar *line,
                                           const gchar **tokens);
-static gint gibbon_session_clip_welcome (GibbonSession *self,
-                                         const gchar *line,
-                                         const gchar **tokens);
+static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self,
                                           const gchar *line,
                                           const gchar **tokens);
@@ -282,211 +281,66 @@ gint
 gibbon_session_process_server_line (GibbonSession *self,
                                     const gchar *line)
 {
-        gsize length;
-        gchar **tokens;
-        gboolean status;
         gint retval = -1;
-        gchar *first;
+        GSList *values, *iter;
+        guint64 code;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
+        g_return_val_if_fail (line != NULL, -1);
 
-        tokens = gibbon_strsplit_ws (line);
-
-        /* Ignore empty lines or lines with whitespace only.  */
-        if (!tokens[0]) {
-                g_strfreev (tokens);
-                return 0;
-        }
-
-        first = tokens[0];
-
-        /* First token is a valid digital number?  */
-        if (first[0] >= '1' && first[0] <= '9'
-            && (!first[1]
-                || ((first[1] >= '0' && first[1]) <= '9' && !first[2]))) {
-                retval = gibbon_session_handle_number (self, line,
-                                                       (const gchar **) tokens);
-                g_strfreev (tokens);
-                return retval;
-        }
-
-        if (0 == strncmp ("board:", line, 6)) {
-                g_strfreev (tokens);
-                tokens = g_strsplit (line, ":", 0);
-                retval = gibbon_session_handle_board (self,
-                                                      (const gchar **)
-                                                      tokens + 1);
-                /* FIXME! Handle the line continuation bug! */
-                g_strfreev (tokens);
-                return retval;
-        }
-
-        /* Error message.  */
-        if (0 == g_strcmp0 ("**", tokens[0])) {
-                g_strfreev (tokens);
-                return -1;
-        }
-
-        if (0 == strcmp ("You're", tokens[0])) {
-                if (gibbon_session_handle_youre (self,
-                                                 (const gchar **) tokens))
-                        retval = 0;
-                g_strfreev (tokens);
-                return retval;
-        }
-
-        if (self->priv->watching && self->priv->opponent) {
-                length = strlen (self->priv->watching);
-                if (0 == strncmp (self->priv->watching, line, length)
-                    && ' ' == line[length])
-                        g_printerr ("%s\n", line);
-                length = strlen (self->priv->opponent);
-                if (0 == strncmp (self->priv->opponent, line, length)
-                    && ' ' == line[length])
-                        g_printerr ("%s\n", line);
-
-                length = strlen (self->priv->watching);
-                if (0 == strncmp (self->priv->watching, line, length)
-                    && ' ' == line[length]
-                    && gibbon_session_handle_one_of_us (self,
-                                                 GIBBON_SESSION_PLAYER_WATCHING,
-                                                 line + length + 1))
-                        return 0;
-                length = strlen (self->priv->opponent);
-                if (0 == strncmp (self->priv->opponent, line, length)
-                    && ' ' == line[length]
-                    && gibbon_session_handle_one_of_us (self,
-                                                 GIBBON_SESSION_PLAYER_OPPONENT,
-                                                 line + length + 1))
-                        return 0;
-        }
-
-        tokens = g_strsplit (line, " ", 2);
-        if (!tokens)
+        values = gibbon_clip_parse (line);
+        if (!values)
                 return -1;
 
-        if (tokens[0]
-            && gibbon_player_list_exists (self->priv->player_list,
-                                          tokens[0])) {
-                length = strlen (tokens[0]);
-                status = gibbon_session_handle_someone (self, tokens[0],
-                                                        line + length + 1);
-                g_strfreev (tokens);
-                if (status)
-                        return 0;
-        } else {
-                g_strfreev (tokens);
+        iter = values;
+        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT, &code)) {
+                gibbon_clip_free_result (iter);
+                return -1;
         }
-
-        return -1;
-}
-
-static gint
-gibbon_session_handle_number (GibbonSession *self,
-                              const gchar *line,
-                              const gchar **tokens)
-{
-        unsigned long int code;
-        gint retval;
-
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
-        
-        code = strtoul (tokens[0], NULL, 10);
 
         switch (code) {
-                case CLIP_WELCOME:
-                        retval = gibbon_session_clip_welcome (self,
-                                                              line, tokens);
-                        break;
-                case CLIP_WHO_INFO:
-                        retval = gibbon_session_clip_who_info (self,
-                                                               line, tokens);
-                        break;
-                case CLIP_WHO_INFO_END: /* Ignored.  */
-                        retval = CLIP_WHO_INFO_END;
-                        break;
-                case CLIP_LOGIN: /* Ignored.  */
-                        retval = CLIP_LOGIN;
-                        break;
-                case CLIP_LOGOUT:
-                        retval = gibbon_session_clip_logout (self,
-                                                             line, tokens);
-                        break;
-                case CLIP_SAYS:
-                        retval = gibbon_session_clip_says (self,
-                                                           line, tokens);
-                        break;
-                case CLIP_SHOUTS:
-                        retval = gibbon_session_clip_shouts (self,
-                                                             line, tokens);
-                        break;
-                case CLIP_WHISPERS:
-                        retval = gibbon_session_clip_whispers (self,
-                                                               line, tokens);
-                        break;
-                case CLIP_KIBITZES:
-                        retval = gibbon_session_clip_kibitzes (self,
-                                                               line, tokens);
-                        break;
-                case CLIP_YOU_SAY:
-                        retval = gibbon_session_clip_you_say (self,
-                                                              line, tokens);
-                        break;
-                case CLIP_YOU_SHOUT:
-                        retval = gibbon_session_clip_you_shout (self,
-                                                                line, tokens);
-                        break;
-                case CLIP_YOU_WHISPER:
-                        retval = gibbon_session_clip_you_whisper (self,
-                                                                  line, tokens);
-                        break;
-                case CLIP_YOU_KIBITZ:
-                        retval = gibbon_session_clip_you_kibitz (self,
-                                                                 line, tokens);
-                        break;
-                default:
-                        retval = -1;
+        case GIBBON_CLIP_CODE_UNHANDLED:
+                break;
+        case GIBBON_CLIP_CODE_WELCOME:
+                retval = gibbon_session_clip_welcome (self, iter);
+                break;
         }
+
+        gibbon_clip_free_result (values);
 
         return retval;
 }
 
 static gint
-gibbon_session_clip_welcome (GibbonSession *self, 
-                             const gchar *line,
-                             const gchar **tokens)
+gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
 {
-        const gchar* login;
+        const gchar *login;
+        const gchar *expect;
+        gint64 tv_sec;
+        const gchar *last_from;
         GTimeVal last_login;
         gchar *last_login_str;
         gchar *reply;
         gchar *mail;
         GibbonServerConsole *console;
         GibbonPrefs *prefs;
-        
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
-        g_return_val_if_fail (4 == g_strv_length ((gchar **) tokens), -1);
 
-        login = gibbon_connection_get_login (self->priv->connection);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &login))
+                return -1;
+
+        expect = gibbon_connection_get_login (self->priv->connection);
+        if (g_strcmp0 (expect, login))
+                return -1;
 
         last_login.tv_usec = 0;
-        last_login.tv_sec = strtol (tokens[1], NULL, 10);
+        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_TIMESTAMP,
+                                     (guint64 *) &tv_sec))
+                return -1;
+        last_login.tv_sec = tv_sec;
         
-        if (g_strcmp0 (tokens[1], login)) {
-                gibbon_connection_fatal (self->priv->connection,
-                                         _("Parser expected `%s' as"
-                                           " login: %s\n"),
-                                         login, line);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &last_from))
                 return -1;
-        }
-
-        if (last_login.tv_usec < 0) {
-                gibbon_connection_fatal (self->priv->connection,
-                                         _("Parser expected timestamp after"
-                                           "login `%s': %s\n"),
-                                           login, line);
-                return -1;
-        }
 
         /* FIXME! Isn't there a better way to format a date and time
          * in glib?
@@ -495,7 +349,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
         last_login_str[strlen (last_login_str) - 1] = 0;
                 
         reply = g_strdup_printf (_("Last login on %s from %s."),
-                                   last_login_str, tokens[2]);
+                                   last_login_str, last_from);
         console = gibbon_app_get_server_console (self->priv->app);
         gibbon_server_console_print_info (console, reply);
         g_free (reply);
@@ -515,7 +369,7 @@ gibbon_session_clip_welcome (GibbonSession *self,
                 g_free (mail);
         }
         
-        return CLIP_WELCOME;
+        return GIBBON_CLIP_CODE_WELCOME;
 }
 
 static gint
