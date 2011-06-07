@@ -42,17 +42,6 @@
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
 
-#define CLIP_LOGIN 7
-#define CLIP_LOGOUT 8
-#define CLIP_SAYS 12
-#define CLIP_SHOUTS 13
-#define CLIP_WHISPERS 14
-#define CLIP_KIBITZES 15
-#define CLIP_YOU_SAY 16
-#define CLIP_YOU_SHOUT 17
-#define CLIP_YOU_WHISPER 18
-#define CLIP_YOU_KIBITZ 19
-
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
         GIBBON_SESSION_PLAYER_WATCHING = 1,
@@ -124,36 +113,17 @@ static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
 #endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
 
-static gint gibbon_session_handle_number (GibbonSession *self,
-                                          const gchar *line,
-                                          const gchar **tokens);
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_logout (GibbonSession *self, GSList *iter);
-static gint gibbon_session_clip_says (GibbonSession *self,
-                                      const gchar *line,
-                                      const gchar **tokens);
-static gint gibbon_session_clip_shouts (GibbonSession *self,
-                                        const gchar *line,
-                                        const gchar **tokens);
-static gint gibbon_session_clip_whispers (GibbonSession *self,
-                                          const gchar *line,
-                                          const gchar **tokens);
-static gint gibbon_session_clip_kibitzes (GibbonSession *self,
-                                          const gchar *line,
-                                          const gchar **tokens);
-static gint gibbon_session_clip_you_say (GibbonSession *self,
-                                         const gchar *line,
-                                         const gchar **tokens);
-static gint gibbon_session_clip_you_shout (GibbonSession *self,
-                                           const gchar *line,
-                                           const gchar **tokens);
-static gint gibbon_session_clip_you_whisper (GibbonSession *self,
-                                             const gchar *line,
-                                             const gchar **tokens);
-static gint gibbon_session_clip_you_kibitz (GibbonSession *self,
-                                            const gchar *line,
-                                            const gchar **tokens);
+static gint gibbon_session_clip_says (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_shouts (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_whispers (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_kibitzes (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_you_say (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gboolean gibbon_session_handle_board (GibbonSession *self,
                                              const gchar **tokens);
 static gboolean gibbon_session_handle_youre (GibbonSession *self,
@@ -316,6 +286,30 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_LOGOUT:
                 retval = gibbon_session_clip_logout (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_SAYS:
+                retval = gibbon_session_clip_says (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_SHOUTS:
+                retval = gibbon_session_clip_shouts (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_WHISPERS:
+                retval = gibbon_session_clip_whispers (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_KIBITZES:
+                retval = gibbon_session_clip_kibitzes (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_YOU_SAY:
+                retval = gibbon_session_clip_you_say (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_YOU_SHOUT:
+                retval = gibbon_session_clip_you_shout (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_YOU_WHISPER:
+                retval = gibbon_session_clip_you_whisper (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_YOU_KIBITZ:
+                retval = gibbon_session_clip_you_kibitz (self, iter);
                 break;
         }
 
@@ -540,22 +534,24 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
 }
 
 static gint
-gibbon_session_clip_says (GibbonSession *self,
-                          const gchar *line,
-                          const gchar **tokens)
+gibbon_session_clip_says (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
         const gchar *message;
-
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = gibbon_fibs_message_new (message);
-        if (!fibs_message)
-                return -1;
+        const gchar *sender;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
                 return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
 
         gibbon_app_show_message (self->priv->app,
                                  fibs_message->sender,
@@ -563,199 +559,204 @@ gibbon_session_clip_says (GibbonSession *self,
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_SAYS;
+        return GIBBON_CLIP_CODE_SAYS;
 }
 
 static gint
-gibbon_session_clip_shouts (GibbonSession *self,
-                            const gchar *line,
-                            const gchar **tokens)
+gibbon_session_clip_shouts (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonShouts *shouts;
+        const gchar *sender;
         const gchar *message;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = gibbon_fibs_message_new (message);
-        if (!fibs_message)
+        shouts = gibbon_app_get_shouts (self->priv->app);
+        if (!shouts)
                 return -1;
 
-        shouts = gibbon_app_get_shouts (self->priv->app);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
+
         gibbon_shouts_append_message (shouts, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_SHOUTS;
+        return GIBBON_CLIP_CODE_SHOUTS;
 }
 
 static gint
-gibbon_session_clip_whispers (GibbonSession *self,
-                              const gchar *line,
-                              const gchar **tokens)
+gibbon_session_clip_whispers (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonGameChat *game_chat;
+        const gchar *sender;
         const gchar *message;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = gibbon_fibs_message_new (message);
-        if (!fibs_message)
+        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        if (!game_chat)
                 return -1;
 
-        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
+
         gibbon_game_chat_append_message (game_chat, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_WHISPERS;
+        return GIBBON_CLIP_CODE_WHISPERS;
 }
 
 static gint
-gibbon_session_clip_kibitzes (GibbonSession *self,
-                              const gchar *line,
-                              const gchar **tokens)
+gibbon_session_clip_kibitzes (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonGameChat *game_chat;
+        const gchar *sender;
         const gchar *message;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = gibbon_fibs_message_new (message);
-        if (!fibs_message)
+        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        if (!game_chat)
                 return -1;
 
-        game_chat = gibbon_app_get_game_chat (self->priv->app);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
+
         gibbon_game_chat_append_message (game_chat, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_KIBITZES;
+        return GIBBON_CLIP_CODE_KIBITZES;
 }
 
 static gint
-gibbon_session_clip_you_say (GibbonSession *self,
-                             const gchar *line,
-                             const gchar **tokens)
+gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
-        gchar *receiver;
+        const gchar *sender;
+        const gchar *receiver;
         const gchar *message;
-
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = gibbon_fibs_message_new (message);
-        if (!fibs_message)
-                return FALSE;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
-                return FALSE;
+                return -1;
 
-        /* Steal the receiver, and make it our sender.  */
-        receiver = fibs_message->sender;
-        fibs_message->sender =
-                g_strdup (gibbon_connection_get_login (connection));
+        sender = gibbon_connection_get_login (connection);
+        if (!sender)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &receiver))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
 
         gibbon_app_show_message (self->priv->app,
                                  receiver,
                                  fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
-        g_free (receiver);
 
-        return CLIP_YOU_SAY;
+        return GIBBON_CLIP_CODE_YOU_SAY;
 }
 
 static gint
-gibbon_session_clip_you_shout (GibbonSession *self,
-                               const gchar *line,
-                               const gchar **tokens)
+gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
-        const gchar *message;
+        const gchar *sender;
 
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
+        const gchar *message;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
                 return FALSE;
 
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = g_malloc (sizeof *fibs_message);
-        fibs_message->message = g_strdup (message);
-        fibs_message->sender =
-                g_strdup (gibbon_connection_get_login (connection));
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        sender = gibbon_connection_get_login (connection);
+        fibs_message = gibbon_fibs_message_new (sender, message);
 
         gibbon_app_show_shout (self->priv->app, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_YOU_SHOUT;
+        return GIBBON_CLIP_CODE_YOU_SHOUT;
 }
 
 static gint
-gibbon_session_clip_you_whisper (GibbonSession *self,
-                                 const gchar *line,
-                                 const gchar **tokens)
+gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *sender;
         const gchar *message;
-
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
-                return FALSE;
+                return -1;
 
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = g_malloc (sizeof *fibs_message);
-        fibs_message->message = g_strdup (message);
-        fibs_message->sender =
-                g_strdup (gibbon_connection_get_login (connection));
+        sender = gibbon_connection_get_login (connection);
+        if (!sender)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
 
         gibbon_app_show_game_chat (self->priv->app, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_YOU_WHISPER;
+        return GIBBON_CLIP_CODE_YOU_WHISPER;
 }
 
 static gint
-gibbon_session_clip_you_kibitz (GibbonSession *self,
-                                const gchar *line,
-                                const gchar **tokens)
+gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter)
 {
         GibbonFIBSMessage *fibs_message;
         GibbonConnection *connection;
+        const gchar *sender;
         const gchar *message;
-
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
-                return FALSE;
+                return -1;
 
-        message = gibbon_skip_ws_tokens (line, tokens, 1);
-        fibs_message = g_malloc (sizeof *fibs_message);
-        fibs_message->message = g_strdup (message);
-        fibs_message->sender =
-                g_strdup (gibbon_connection_get_login (connection));
+        sender = gibbon_connection_get_login (connection);
+        if (!sender)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
 
         gibbon_app_show_game_chat (self->priv->app, fibs_message);
 
         gibbon_fibs_message_free (fibs_message);
 
-        return CLIP_YOU_KIBITZ;
+        return GIBBON_CLIP_CODE_YOU_KIBITZ;
 }
 
 /*
