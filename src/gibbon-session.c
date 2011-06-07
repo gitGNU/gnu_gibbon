@@ -42,7 +42,6 @@
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
 
-#define CLIP_WHO_INFO_END 6
 #define CLIP_LOGIN 7
 #define CLIP_LOGOUT 8
 #define CLIP_SAYS 12
@@ -130,9 +129,7 @@ static gint gibbon_session_handle_number (GibbonSession *self,
                                           const gchar **tokens);
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
-static gint gibbon_session_clip_logout (GibbonSession *self,
-                                        const gchar *line,
-                                        const gchar **tokens);
+static gint gibbon_session_clip_logout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_says (GibbonSession *self,
                                       const gchar *line,
                                       const gchar **tokens);
@@ -310,6 +307,15 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_WHO_INFO:
                 retval = gibbon_session_clip_who_info (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_WHO_INFO_END:
+                retval = GIBBON_CLIP_CODE_WHO_INFO_END;
+                break;
+        case GIBBON_CLIP_CODE_LOGIN:
+                retval = GIBBON_CLIP_CODE_LOGIN;
+                break;
+        case GIBBON_CLIP_CODE_LOGOUT:
+                retval = gibbon_session_clip_logout (self, iter);
                 break;
         }
 
@@ -494,14 +500,13 @@ gibbon_session_clip_who_info (GibbonSession *self,
 }
 
 static gint
-gibbon_session_clip_logout (GibbonSession *self,
-                            const gchar *line,
-                            const gchar **tokens)
+gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
 {
         const gchar *name;
         gchar *opponent;
 
-        name = tokens[1];
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
+                return -1;
 
         if (0 == g_strcmp0 (name, self->priv->watching)) {
                 g_free (self->priv->position->status);
@@ -531,7 +536,7 @@ gibbon_session_clip_logout (GibbonSession *self,
         }
         gibbon_player_list_remove (self->priv->player_list, name);
 
-        return CLIP_LOGOUT;
+        return GIBBON_CLIP_CODE_LOGOUT;
 }
 
 static gint
