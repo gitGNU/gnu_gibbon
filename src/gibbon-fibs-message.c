@@ -62,28 +62,13 @@ gibbon_fibs_message_free (GibbonFIBSMessage *self)
 }
 
 GibbonFIBSMessage *
-gibbon_fibs_message_new (const gchar *raw)
+gibbon_fibs_message_new (const gchar *sender, const gchar *message)
 {
         GibbonFIBSMessage *self;
-        gchar **tokens = g_strsplit_set (raw, " \t\r\v\f", 2);
-
-        if (!tokens)
-                return NULL;
 
         self = g_malloc (sizeof *self);
-        self->sender = g_strdup (tokens[0]);
-        if (!self->sender) {
-                g_free (self);
-                return NULL;
-        }
-        self->message = g_strdup (tokens[1]);
-        if (!self->message) {
-                g_free (self->sender);
-                g_free (self);
-                return NULL;
-        }
-
-        g_strfreev (tokens);
+        self->sender = g_strdup (sender);
+        self->message = g_strdup (message);
 
         return self;
 }
