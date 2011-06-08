@@ -92,6 +92,12 @@ void gibbon_clip_free_result (GSList *list);
 
 gboolean gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
                                  guint64 *value);
+gboolean gibbon_clip_get_int64 (GSList **list, enum GibbonClipType type,
+                                 gint64 *value);
+gboolean gibbon_clip_get_uint (GSList **list, enum GibbonClipType type,
+                                 guint *value);
+gboolean gibbon_clip_get_int (GSList **list, enum GibbonClipType type,
+                                 gint *value);
 gboolean gibbon_clip_get_string (GSList **list, enum GibbonClipType type,
                                  const gchar **value);
 gboolean gibbon_clip_get_boolean (GSList **list, enum GibbonClipType type,

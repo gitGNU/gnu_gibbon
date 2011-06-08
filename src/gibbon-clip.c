@@ -1207,6 +1207,78 @@ gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
 }
 
 gboolean
+gibbon_clip_get_int64 (GSList **list, enum GibbonClipType type,
+                        gint64 *value)
+{
+        GSList *iter;
+        struct GibbonClipTokenSet *token;
+
+        g_return_val_if_fail (list, FALSE);
+        g_return_val_if_fail (*list, FALSE);
+
+        iter = *list;
+
+        token = (struct GibbonClipTokenSet *) iter->data;
+
+        if (token->type != type)
+                return FALSE;
+
+        *value = (gint64) token->v.i64;
+
+        *list = (*list)->next;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_get_uint (GSList **list, enum GibbonClipType type,
+                      guint *value)
+{
+        GSList *iter;
+        struct GibbonClipTokenSet *token;
+
+        g_return_val_if_fail (list, FALSE);
+        g_return_val_if_fail (*list, FALSE);
+
+        iter = *list;
+
+        token = (struct GibbonClipTokenSet *) iter->data;
+
+        if (token->type != type)
+                return FALSE;
+
+        *value = (guint) token->v.i64;
+
+        *list = (*list)->next;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_clip_get_int (GSList **list, enum GibbonClipType type,
+                     gint *value)
+{
+        GSList *iter;
+        struct GibbonClipTokenSet *token;
+
+        g_return_val_if_fail (list, FALSE);
+        g_return_val_if_fail (*list, FALSE);
+
+        iter = *list;
+
+        token = (struct GibbonClipTokenSet *) iter->data;
+
+        if (token->type != type)
+                return FALSE;
+
+        *value = (gint) token->v.i64;
+
+        *list = (*list)->next;
+
+        return TRUE;
+}
+
+gboolean
 gibbon_clip_get_string (GSList **list, enum GibbonClipType type,
                         const gchar **value)
 {
