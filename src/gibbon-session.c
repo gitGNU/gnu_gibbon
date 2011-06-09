@@ -66,23 +66,10 @@ static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gboolean gibbon_session_handle_board (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_youre (GibbonSession *self,
-                                               const gchar **tokens);
-static gboolean gibbon_session_handle_youre_now (GibbonSession *self,
-                                                 const gchar **tokens);
 static gboolean gibbon_session_handle_youre_now_watching (GibbonSession *self,
                                                           const gchar **tokens);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
-static gboolean gibbon_session_handle_one_of_us (GibbonSession *self,
-                                                 GibbonSessionPlayer player,
-                                                 const gchar *line);
-static gboolean gibbon_session_handle_someone (GibbonSession *self,
-                                               const gchar *player,
-                                               const gchar *line);
-static gboolean gibbon_session_handle_someone_and (GibbonSession *self,
-                                                   const gchar *player1,
-                                                   const gchar *line);
 static gboolean gibbon_session_handle_someone_wins (GibbonSession *self,
                                                     const gchar *player1,
                                                     const gchar *line);
@@ -840,32 +827,6 @@ bail_out_board:
 }
 
 static gboolean
-gibbon_session_handle_youre (GibbonSession *self,
-                             const gchar **tokens)
-{
-        if (!tokens[1])
-                return FALSE;
-
-        if (!g_strcmp0 ("now", tokens[1]))
-                return gibbon_session_handle_youre_now (self, tokens);
-
-        return FALSE;
-}
-
-static gboolean
-gibbon_session_handle_youre_now (GibbonSession *self,
-                                 const gchar **tokens)
-{
-        if (!tokens[2])
-                return FALSE;
-
-        if (!g_strcmp0 ("watching", tokens[2]))
-                return gibbon_session_handle_youre_now_watching (self, tokens);
-
-        return FALSE;
-}
-
-static gboolean
 gibbon_session_handle_youre_now_watching (GibbonSession *self,
                                           const gchar **tokens)
 {
@@ -969,93 +930,6 @@ gibbon_session_dump_position (const GibbonSession *self,
         g_printerr ("Status: %s\n", pos->status);
 }
 #endif
-
-static gboolean
-gibbon_session_handle_one_of_us (GibbonSession *self,
-                                 GibbonSessionPlayer player,
-                                 const gchar *line)
-{
-        if (0 == strncmp ("rolls ", line, 6)) {
-                if (player == GIBBON_SESSION_PLAYER_OPPONENT
-                    || player == GIBBON_SESSION_PLAYER_WATCHING)
-                        return gibbon_session_handle_rolls (self, player,
-                                                            line + 6);
-                return FALSE;
-        } else if (0 == strncmp ("moves ", line, 6)) {
-                if (player == GIBBON_SESSION_PLAYER_OPPONENT
-                    || player == GIBBON_SESSION_PLAYER_WATCHING)
-                        return gibbon_session_handle_moves (self, player,
-                                                            line + 6);
-                return FALSE;
-        }
-
-        return FALSE;
-}
-
-static gboolean
-gibbon_session_handle_someone (GibbonSession *self,
-                               const gchar *player,
-                               const gchar *line)
-
-{
-        if (0 == strncmp ("and ", line, 4)) {
-                return gibbon_session_handle_someone_and (self, player,
-                                                          line + 4);
-        } else if (0 == strncmp ("wins a ", line, 7)) {
-                return gibbon_session_handle_someone_wins (self, player,
-                                                           line + 7);
-        }
-
-        return FALSE;
-}
-
-static gboolean
-gibbon_session_handle_someone_and (GibbonSession *self,
-                                   const gchar *player1,
-                                   const gchar *line)
-{
-        gchar **tokens;
-        gchar *player2;
-
-        tokens = g_strsplit (line, " ", 0);
-        if (!tokens)
-                return FALSE;
-
-        player2 = tokens[0];
-        if (!player2) {
-                g_strfreev (tokens);
-                return FALSE;
-        }
-
-        if (!gibbon_player_list_exists (self->priv->player_list, player2)) {
-                g_strfreev (tokens);
-                return FALSE;
-        }
-        if (0 == g_strcmp0 ("start", tokens[1])
-            && 0 == g_strcmp0 ("a", tokens[2])
-            && '1' <= tokens[3][0]
-            && '9' >= tokens[3][0]
-            && 0 == g_strcmp0 ("point", tokens[4])
-            && 0 == g_strcmp0 ("match.", tokens[5])) {
-                /* Ignore.  */
-                g_strfreev (tokens);
-                return TRUE;
-        } else if (0 == g_strcmp0 ("are", tokens[1])
-                   && 0 == g_strcmp0 ("resuming", tokens[2])
-                   && 0 == g_strcmp0 ("their", tokens[3])
-                   && '1' <= tokens[4][0]
-                   && '9' >= tokens[4][0]
-                   && 0 == g_strcmp0 ("match.", tokens[5])) {
-                /* Give the dropper a little compensation.  */
-                gibbon_archive_save_resume (self->priv->archive,
-                                            player1, player2);
-                g_strfreev (tokens);
-                return TRUE;
-        }
-
-        g_strfreev (tokens);
-        return FALSE;
-}
 
 static gboolean
 gibbon_session_handle_someone_wins (GibbonSession *self,
