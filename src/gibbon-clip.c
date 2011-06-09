@@ -696,7 +696,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                                          i64);
                 }
         } else {
-                for (i = 29; i >= 0; --i) {
+                for (i = 29; i >= 6; --i) {
                         if (!gibbon_clip_extract_integer (tokens[i], &i64,
                                                           -15, 15))
                                 goto bail_out_board;
