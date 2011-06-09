@@ -54,7 +54,7 @@ typedef enum {
  *          for number.  The absolute value gives the number of checkers on
  *          that point.  A negative value means that this point is occupied
  *          by black, a positive value means that it is occupied by white.
- * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
+a * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
  *       number of black checkers on the bar.  For consistency, black's
  *       checkers are negative, white's checkers are positive.  Yes, and
  *       for consistency this should be called bars not bar but that sounds
@@ -92,16 +92,16 @@ typedef enum {
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
 {
-        gint match_length;
-        gint scores[2];
+        guint match_length;
+        guint scores[2];
 
         gint points[24];
 
-        gint bar[2];
+        guint bar[2];
 
         gint dice[2];
 
-        gint cube;
+        guint cube;
         gboolean may_double[2];
 
         gchar *players[2];

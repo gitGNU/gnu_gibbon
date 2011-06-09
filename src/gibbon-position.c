@@ -956,7 +956,7 @@ gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
         gint i, from, to;
         const GibbonMovement *movement;
         gboolean from_bar, bear_off;
-        gint *my_bar, *her_bar;
+        guint *my_bar, *her_bar;
 
         g_return_val_if_fail (side, FALSE);
 
