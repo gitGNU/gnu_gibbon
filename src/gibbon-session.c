@@ -50,65 +50,6 @@ typedef enum {
 } GibbonSessionPlayer;
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-static const gchar *keys[] = {
-                "player",
-                "opponent",
-                "match length",
-                "player's score",
-                "opponents's score",
-                "home/bar",
-                "point 0",
-                "point 1",
-                "point 2",
-                "point 3",
-                "point 4",
-                "point 5",
-                "point 6",
-                "point 7",
-                "point 8",
-                "point 9",
-                "point 10",
-                "point 11",
-                "point 12",
-                "point 13",
-                "point 14",
-                "point 15",
-                "point 16",
-                "point 17",
-                "point 18",
-                "point 19",
-                "point 20",
-                "point 21",
-                "point 22",
-                "point 23",
-                "home/bar",
-                "turn",
-                "player's die 0",
-                "player's die 1",
-                "opponent's die 0",
-                "opponent's die 1",
-                "doubling cube",
-                "player may double",
-                "opponent may double",
-                "was doubled",
-                "color",
-                "direction",
-                "home index",
-                "bar index",
-                "player's checkers on home",
-                "opponent's checkers on home",
-                "player's checkers on bar",
-                "opponent's checkers on bar",
-                "can move",
-                "forced move",
-                "did crawford",
-                "redoubles",
-                NULL
-};
-
-static void gibbon_session_dump_board (const GibbonSession *self,
-                                       const gchar *raw,
-                                       gchar **tokens);
 static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
 #endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
@@ -124,8 +65,7 @@ static gint gibbon_session_clip_you_say (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_board (GibbonSession *self,
-                                             const gchar **tokens);
+static gboolean gibbon_session_handle_board (GibbonSession *self, GSList *iter);
 static gboolean gibbon_session_handle_youre (GibbonSession *self,
                                                const gchar **tokens);
 static gboolean gibbon_session_handle_youre_now (GibbonSession *self,
@@ -152,10 +92,6 @@ static gboolean gibbon_session_handle_rolls (GibbonSession *self,
 static gboolean gibbon_session_handle_moves (GibbonSession *self,
                                              GibbonSessionPlayer player,
                                              const gchar *line);
-
-static gboolean parse_integer (const gchar *str, gint* result,
-                               const gchar *what,
-                               gint lower, gint upper);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -310,6 +246,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_YOU_KIBITZ:
                 retval = gibbon_session_clip_you_kibitz (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_BOARD:
+                retval = gibbon_session_handle_board (self, iter);
                 break;
         }
 
@@ -777,18 +716,14 @@ gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter)
  * the board string because they are always positive.
  */
 static gboolean
-gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
+gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 {
         GibbonPosition *pos;
-        GibbonPositionSide turn, color, direction;
-        gint may_double[2];
         GibbonBoard *board;
         gint i;
-        gint dice[4];
         GibbonConnection *connection;
-                        
-        g_return_val_if_fail (GIBBON_IS_SESSION (self), FALSE);
-        g_return_val_if_fail (tokens, FALSE);
+        const gchar *str;
+        gint retval = -1;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -799,25 +734,11 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
                         pos->status = g_strdup (self->priv->position->status);
         }
 
-#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-        gibbon_session_dump_board (self, string, tokens);
-#endif
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &str))
+                goto bail_out_board;
 
-        g_return_val_if_fail (52 == g_strv_length ((gchar **) tokens), -1);
-
-        g_return_val_if_fail (parse_integer (tokens[31], &turn,
-                              "turn", -1, 1), -1);
-        g_return_val_if_fail (parse_integer (tokens[40], &color,
-                              "color", -1, 1), -1);
-        g_return_val_if_fail (parse_integer (tokens[41], &direction,
-                              "direction", -1, 1), -1);
-        if (!direction) {
-                g_critical (_("Invalid direction 0 in board state.\n"));
-                return FALSE;
-        }
-
-        if (g_strcmp0 ("You", tokens[0])) {
-                pos->players[0] = g_strdup (tokens[0]);
+        if (g_strcmp0 ("You", str)) {
+                pos->players[0] = g_strdup (str);
                 g_free (self->priv->watching);
                 self->priv->watching = g_strdup (pos->players[0]);
         } else {
@@ -827,78 +748,59 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
                 g_free (self->priv->watching);
                 self->priv->watching = NULL;
         }
-        g_return_val_if_fail (pos->players[0][0], -1);
         
-        pos->players[1] = g_strdup (tokens[1]);
-        g_return_val_if_fail (pos->players[1][0], -1);
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
+                                     (const gchar **) &pos->players[1]))
+                goto bail_out_board;
 
         if (g_strcmp0 (self->priv->opponent, pos->players[1])) {
                 g_free (self->priv->opponent);
                 self->priv->opponent = g_strdup (pos->players[1]);
         }
         
-        g_return_val_if_fail (parse_integer (tokens[2], &pos->match_length,
-                              "match length", 0, G_MAXINT), -1);
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->match_length))
+                goto bail_out_board;
 
-        g_return_val_if_fail (parse_integer (tokens[3], &pos->scores[0],
-                                             "score0", 0, G_MAXINT), -1);
-        g_return_val_if_fail (parse_integer (tokens[4], &pos->scores[1],
-                                             "score1", 0, G_MAXINT), -1);
-        
-        if (direction == GIBBON_POSITION_SIDE_BLACK) {
-                for (i = 6; i < 30; ++i) {
-                        g_return_val_if_fail (parse_integer (tokens[i],
-                                                             &pos->points[i - 6],
-                                                             "checker", -15, 15),
-                                              -1);
-                        pos->points[i - 6] *= color;
-                }
-        } else {
-                for (i = 6; i < 30; ++i) {
-                        g_return_val_if_fail (parse_integer (tokens[i],
-                                                             &pos->points[29 - i],
-                                                             "checker", -15, 15),
-                                              -1);
-                        pos->points[29 - i] *= color;
-                }
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->scores[0]))
+                goto bail_out_board;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->scores[1]))
+                goto bail_out_board;
 
+        for (i = 0; i < 24; ++i) {
+                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
+                                          &pos->points[i]))
+                        goto bail_out_board;
+                g_printerr (" %d", pos->points[i]);
         }
+        g_printerr ("!\n");
+
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
+                                  &pos->dice[0]))
+                goto bail_out_board;
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
+                                  &pos->dice[1]))
+                goto bail_out_board;
         
-        g_return_val_if_fail (parse_integer (tokens[32], &dice[0],
-                                             "dice[0]", 0, 6), -1);
-        g_return_val_if_fail (parse_integer (tokens[33], &dice[1],
-                                             "dice[1]", 0, 6), -1);
-        g_return_val_if_fail (parse_integer (tokens[34], &dice[2],
-                                             "dice[2]", 0, 6), -1);
-        g_return_val_if_fail (parse_integer (tokens[35], &dice[3],
-                                             "dice[3]", 0, 6), -1);
-        g_return_val_if_fail (parse_integer (tokens[36], &pos->cube,
-                                             "cube", 0, G_MAXINT), -1);
-        g_return_val_if_fail (parse_integer (tokens[37], &may_double[0],
-                                             "may double 0", 0, 1), -1);
-        g_return_val_if_fail (parse_integer (tokens[38], &may_double[1],
-                                             "may double 0", 0, 1), -1);
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->cube))
+                goto bail_out_board;
 
-        pos->may_double[0] = may_double[0] ? TRUE : FALSE;
-        pos->may_double[1] = may_double[1] ? TRUE : FALSE;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &pos->may_double[0]))
+                goto bail_out_board;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &pos->may_double[1]))
+                goto bail_out_board;
 
-        /* FIXME! It is better to rely on the moves displayed.  The dice from
-         * the board command should only be checked for consistency.
-         */
-        if (turn == color) {
-                pos->dice[0] = dice[0];
-                pos->dice[1] = dice[1];
-        } else if (turn) {
-                pos->dice[0] = -dice[2];
-                pos->dice[1] = -dice[3];
-        }
-
-        g_return_val_if_fail (parse_integer (tokens[46], &pos->bar[0], "bar0",
-                                             0, 15), -1);
-
-        g_return_val_if_fail (parse_integer (tokens[47], &pos->bar[1], "bar1",
-                                             0, 15), -1);
-
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->bar[0]))
+                goto bail_out_board;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &pos->bar[1]))
+                goto bail_out_board;
         
         if (pos->match_length &&
             (pos->scores[0] == pos->match_length - 1
@@ -920,10 +822,8 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,
                                            gibbon_board_get_position (board))) {
-                g_printerr ("Board positions are equal.\n");
                 gibbon_position_free (pos);
         } else {
-                g_printerr ("Board positions are not equal.\n");
                 gibbon_board_set_position (GIBBON_BOARD (board), pos);
         }
 
@@ -931,7 +831,12 @@ gibbon_session_handle_board (GibbonSession *self, const gchar **tokens)
         gibbon_session_dump_position (self, self->priv->position);
 #endif
 
-        return TRUE;
+        return GIBBON_CLIP_CODE_BOARD;
+
+bail_out_board:
+        gibbon_position_free (pos);
+
+        return retval;
 }
 
 static gboolean
@@ -983,43 +888,6 @@ gibbon_session_handle_youre_now_watching (GibbonSession *self,
         return TRUE;
 }
 
-/* FIXME! Use g_ascii_strtoll in this function! */
-static gboolean
-parse_integer (const gchar *str, gint *result, const gchar *what,
-               gint lower, gint upper)
-{
-        char *endptr;
-        long int r;
-
-        if (!str) {
-                g_print ("Error parsing %s: NULL pointer passed.\n",
-                         what);
-                return FALSE;
-        }
-
-        errno = 0;
-
-        r = strtol (str, &endptr, 10);
-
-        if (errno) {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, strerror (errno));
-                return FALSE;
-        }
-
-        if (*endptr != 0) {
-                g_print ("Error parsing %s: `%s': %s.\n",
-                         what, str, "Trailing garbage in integer");
-                return FALSE;
-        }
-
-        *result = (gint) r;
-        if (*result < lower || *result > upper)
-                return FALSE;
-
-        return TRUE;
-}
-
 static gchar *
 gibbon_session_decode_client (GibbonSession *self, const gchar *client)
 {
@@ -1048,19 +916,6 @@ gibbon_session_decode_client (GibbonSession *self, const gchar *client)
 }
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-static void
-gibbon_session_dump_board (const GibbonSession *self,
-                           const gchar *raw,
-                           gchar **tokens)
-{
-        int i = 0;
-
-        g_printerr ("=== Board ===\n");
-        g_printerr ("board:%s\n", raw);
-        for (i = 0; keys[i]; ++i)
-                g_printerr ("%s (%s)\n", keys[i], tokens[i]);
-}
-
 static void
 gibbon_session_dump_position (const GibbonSession *self,
                               const GibbonPosition *pos)
