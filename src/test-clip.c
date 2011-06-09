@@ -284,8 +284,8 @@ struct test_case test_board00 =  {
                                 /* Board.  */
                                 { GIBBON_CLIP_TYPE_UINT, "200" },
                                 /* Player and opponent.  */
-                                { GIBBON_CLIP_TYPE_STRING, "joe_white" },
-                                { GIBBON_CLIP_TYPE_STRING, "black_jack" },
+                                { GIBBON_CLIP_TYPE_NAME, "joe_white" },
+                                { GIBBON_CLIP_TYPE_NAME, "black_jack" },
                                 /* Match length.  */
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
                                 /* Score.  */
@@ -319,6 +319,61 @@ struct test_case test_board00 =  {
                                 /* Dice.  */
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
+                                /* Cube.  */
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                /* Player and opponent may double? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                /* Player's and opponent's bar.  */
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_board01 =  {
+                "board:joe_white:black_jack:1:0:0:0:6:2:0:2:0:0:0:0:0:-1:0:0"
+                ":-2:0:0:0:0:0:0:-3:-1:-3:-1:-4:0:1:0:0:6:2:1:1:1:0:-1:1:25:0"
+                ":0:5:0:0:2:4:0:0",
+                {
+                                /* Board.  */
+                                { GIBBON_CLIP_TYPE_UINT, "200" },
+                                /* Player and opponent.  */
+                                { GIBBON_CLIP_TYPE_NAME, "joe_white" },
+                                { GIBBON_CLIP_TYPE_NAME, "black_jack" },
+                                /* Match length.  */
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                /* Score.  */
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* Position.  */
+                                { GIBBON_CLIP_TYPE_INT, "4" },
+                                { GIBBON_CLIP_TYPE_INT, "1" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "1" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "1" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "-6" },
+                                /* Dice.  */
+                                { GIBBON_CLIP_TYPE_INT, "-6" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
                                 /* Cube.  */
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
                                 /* Player and opponent may double? */
@@ -535,6 +590,7 @@ struct test_case *test_cases[] = {
                 &test_error00,
 
                 &test_board00,
+                &test_board01,
                 &test_rolls00,
                 &test_moves00,
                 &test_moves01,
