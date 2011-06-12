@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="index" xml:lang="de">
+
+  <info>
+    <title type="link">Gibbon</title>
+    <title type="text">Gibbon</title>
+    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
+    
+    
+      Guido Flohr
+      guido@imperia.net
+    
+    
+      Creative Commons Share Alike 3.0
+        
+  </info></page>
