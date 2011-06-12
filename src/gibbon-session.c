@@ -163,7 +163,7 @@ gibbon_session_process_server_line (GibbonSession *self,
 {
         gint retval = -1;
         GSList *values, *iter;
-        guint64 code;
+        enum GibbonClipCode code;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
         g_return_val_if_fail (line != NULL, -1);
