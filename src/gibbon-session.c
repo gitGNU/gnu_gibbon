@@ -66,6 +66,8 @@ static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gboolean gibbon_session_handle_board (GibbonSession *self, GSList *iter);
+static gboolean gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
+static gboolean gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
 static gboolean gibbon_session_handle_youre_now_watching (GibbonSession *self,
                                                           const gchar **tokens);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
@@ -73,12 +75,6 @@ static gchar *gibbon_session_decode_client (GibbonSession *self,
 static gboolean gibbon_session_handle_someone_wins (GibbonSession *self,
                                                     const gchar *player1,
                                                     const gchar *line);
-static gboolean gibbon_session_handle_rolls (GibbonSession *self,
-                                             GibbonSessionPlayer player,
-                                             const gchar *line);
-static gboolean gibbon_session_handle_moves (GibbonSession *self,
-                                             GibbonSessionPlayer player,
-                                             const gchar *line);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -236,6 +232,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_BOARD:
                 retval = gibbon_session_handle_board (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ROLLS:
+                retval = gibbon_session_handle_rolls (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_MOVES:
+                retval = gibbon_session_handle_moves (self, iter);
                 break;
         }
 
@@ -961,59 +963,42 @@ gibbon_session_handle_someone_wins (GibbonSession *self,
 }
 
 static gboolean
-gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
-                               const gchar *line)
+gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 {
+        const gchar *who;
         guint dice[2];
 
-        if (*line >= '1' && *line <= '6')
-                dice[0] = *line++ - '0';
-        else
-                return FALSE;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
 
-        if (strncmp (line, " and ", 5))
-                return FALSE;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &dice[0]))
+                return -1;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &dice[1]))
+                return -1;
 
-        line += 5;
-
-        if (*line >= '1' && *line <= '6')
-                dice[1] = *line++ - '0';
-        else
-                return FALSE;
-
-        if (*line++ != '.')
-                return FALSE;
-
-        if (*line)
-                return FALSE;
-
-        switch (player) {
-                case GIBBON_SESSION_PLAYER_OTHER:
-                        return FALSE;
-                case GIBBON_SESSION_PLAYER_OPPONENT:
-                        self->priv->position->dice[0] = -dice[0];
-                        self->priv->position->dice[1] = -dice[1];
-                        g_free (self->priv->position->game_info);
-                        self->priv->position->status =
+        if (0 == g_strcmp0 ("You", who)) {
+                self->priv->position->dice[0] = dice[0];
+                self->priv->position->dice[1] = dice[1];
+                self->priv->position->status =
+                        g_strdup_printf (_("You roll %u and %u."),
+                                         dice[0], dice[1]);
+        } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
+                self->priv->position->dice[0] = -dice[0];
+                self->priv->position->dice[1] = -dice[1];
+                g_free (self->priv->position->game_info);
+                self->priv->position->status =
                                 g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->opponent,
                                                  dice[0], dice[1]);
-                        break;
-                case GIBBON_SESSION_PLAYER_YOU:
-                        self->priv->position->dice[0] = dice[0];
-                        self->priv->position->dice[1] = dice[1];
-                        self->priv->position->status =
-                                g_strdup_printf (_("You roll %u and %u."),
-                                                 dice[0], dice[1]);
-                        break;
-                case GIBBON_SESSION_PLAYER_WATCHING:
-                        self->priv->position->dice[0] = dice[0];
-                        self->priv->position->dice[1] = dice[1];
-                        self->priv->position->status =
-                                g_strdup_printf (_("%s rolls %u and %u."),
-                                                 self->priv->watching,
-                                                 dice[0], dice[1]);
-                        break;
+        } else if (0 == g_strcmp0 (self->priv->watching, who)) {
+                self->priv->position->dice[0] = dice[0];
+                self->priv->position->dice[1] = dice[1];
+                self->priv->position->status =
+                        g_strdup_printf (_("%s rolls %u and %u."),
+                                         self->priv->watching,
+                                         dice[0], dice[1]);
+        } else {
+                return -1;
         }
 
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
@@ -1023,182 +1008,77 @@ gibbon_session_handle_rolls (GibbonSession *self, GibbonSessionPlayer player,
 }
 
 static gboolean
-gibbon_session_handle_moves (GibbonSession *self, GibbonSessionPlayer player,
-                             const gchar *line)
+gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 {
-        GibbonMove *move = g_alloca (sizeof move->number
-                                     + 4 * sizeof *move->movements
-                                     + sizeof move->status);
+        GibbonMove *move;
         GibbonMovement *movement;
-        gchar **tokens;
-        gchar *token;
-        gchar *endptr;
         gint i;
-        guint64 from, to;
         GibbonPositionSide side;
         gchar *pretty_move;
         gint *dice;
+        const gchar *player;
+        guint num_moves;
 
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &player))
+                return -1;
+
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &num_moves))
+                return -1;
+
+        if (g_strcmp0 (player, self->priv->opponent))
+                side = GIBBON_POSITION_SIDE_WHITE;
+        else
+                side = GIBBON_POSITION_SIDE_BLACK;
+
+        move = g_alloca (sizeof move->number
+                         + num_moves * sizeof *move->movements
+                         + sizeof move->status);
         move->number = 0;
 
-        if (player == GIBBON_SESSION_PLAYER_OPPONENT)
-                side = GIBBON_POSITION_SIDE_BLACK;
-        else
-                side = GIBBON_POSITION_SIDE_WHITE;
-
-        tokens = g_strsplit_set (line, " .", 0);
-        if (!tokens)
-                return FALSE;
-
-        for (i = 0; tokens[i] && *tokens[i]; ++i) {
-                if (i >= 4) {
-                        g_critical ("Too many tokens in move '%s'.\n", line);
-                        g_strfreev (tokens);
-                        return FALSE;
-                }
-                token = tokens[i];
+        for (i = 0; i < num_moves; ++i) {
                 movement = move->movements + move->number++;
-                if (0 == strncmp ("bar", token, 3)) {
-                        movement->from = -1;
-                        endptr = token + 3;
-                } else {
-                        errno = 0;
-                        from = g_ascii_strtoull (token, &endptr, 10);
-                        if (errno) {
-                                g_critical ("Error parsing token #%d in"
-                                            " move '%s': %s!\n",
-                                            i, line, strerror (errno));
-                                g_strfreev (tokens);
-                                return FALSE;
-                        }
-                        if (from == 0 || from > 24) {
-                                g_critical ("Error parsing token #%d in"
-                                            " move '%s': Starting point out"
-                                            " of range!\n",
-                                            i, line);
-                                g_strfreev (tokens);
-                                return FALSE;
-                        }
-                        movement->from = from;
-                }
-
-                if ('-' != *endptr) {
-                        g_critical ("Error parsing token #%d in"
-                                    " move '%s': Expected '-'!\n",
-                                    i, line);
-                        g_strfreev (tokens);
-                        return FALSE;
-                }
-
-                token = endptr + 1;
-
-                if (0 == strncmp ("off", token, 3)) {
-                        movement->to = -1;
-                        endptr = token + 3;
-                } else {
-                        errno = 0;
-                        to = g_ascii_strtoull (token, &endptr, 10);
-                        if (errno) {
-                                g_critical ("Error parsing token #%d in"
-                                            " move '%s': %s!\n",
-                                            i, line, strerror (errno));
-                                g_strfreev (tokens);
-                                return FALSE;
-                        }
-                        if (to == 0 || to > 24) {
-                                g_critical ("Error parsing token #%d in"
-                                            " move '%s': Landing point out"
-                                            " of range (%s)!\n",
-                                            i, line, token);
-                                g_strfreev (tokens);
-                                return FALSE;
-                        }
-                        movement->to = to;
-                }
-
-                if (*endptr) {
-                        g_critical ("Error parsing token #%d in"
-                                    " move '%s': Trailing garbage!\n",
-                                    i, line);
-                        g_strfreev (tokens);
-                        return FALSE;
-                }
-
-                /* Now repair the move according to our notion.  The
-                 * direction of the move is actually giving in the board
-                 * state but that is even more unreliable because we
-                 * could have missed it.
-                 *
-                 * First assign bar and home accordingly.
-                 */
-                if  (movement->from == -1) {
-                        if (movement->to <= 6) {
-                                movement->from = 0;
-                        } else {
-                                movement->from = 25;
-                        }
-                }
-                if (movement->to == -1) {
-                        if (movement->from <= 6) {
-                                movement->to = 0;
-                        } else {
-                                movement->to = 25;
-                        }
-                }
-
-                /* At this point, the direction is determined.  We want white
-                 * to move from his 24 to his ace point, and black the
-                 * other way round.
-                 */
-                if ((side == GIBBON_POSITION_SIDE_WHITE
-                     && movement->from < movement->to)
-                    || (side == GIBBON_POSITION_SIDE_BLACK
-                        && movement->from > movement->to)) {
-                        movement->from = 25 - movement->from;
-                        movement->to = 25 - movement->to;
-                }
+                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
+                                          &movement->from))
+                        return -1;
+                if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
+                                          &movement->from))
+                        return -1;
         }
-
-        g_strfreev (tokens);
 
         pretty_move = gibbon_position_format_move (self->priv->position, move,
                                                    side, FALSE);
         g_free (self->priv->position->status);
         self->priv->position->status = NULL;
         dice = self->priv->position->dice;
-        switch (player) {
-                case GIBBON_SESSION_PLAYER_OTHER:
-                        g_free (pretty_move);
-                        return FALSE;
-                case GIBBON_SESSION_PLAYER_OPPONENT:
-                        self->priv->position->status =
-                            g_strdup_printf (_("%d%d: %s moves %s."),
-                                             abs (dice[0]),
-                                             abs (dice[1]),
-                                             self->priv->opponent,
-                                             pretty_move);
-                        break;
-                case GIBBON_SESSION_PLAYER_YOU:
-                        self->priv->position->status =
-                            g_strdup_printf (_("%d%d: You move %s."),
-                                             abs (dice[0]),
-                                             abs (dice[1]),
-                                             pretty_move);
-                        break;
-                case GIBBON_SESSION_PLAYER_WATCHING:
-                        self->priv->position->status =
-                            g_strdup_printf (_("%d%d: %s moves %s."),
-                                             abs (dice[0]),
-                                             abs (dice[1]),
-                                             self->priv->watching,
-                                             pretty_move);
-                        break;
+
+        if (0 == g_strcmp0 (self->priv->opponent, player)) {
+                self->priv->position->status =
+                                g_strdup_printf (_("%d%d: %s moves %s."),
+                                                 abs (dice[0]),
+                                                 abs (dice[1]),
+                                                 self->priv->opponent,
+                                                 pretty_move);
+        } else if (0 == g_strcmp0 ("You", player)) {
+                self->priv->position->status =
+                                g_strdup_printf (_("%d%d: You move %s."),
+                                                 abs (dice[0]),
+                                                 abs (dice[1]),
+                                                 pretty_move);
+        } else if (0 == g_strcmp0 (self->priv->watching, player)) {
+                self->priv->position->status =
+                                g_strdup_printf (_("%d%d: %s moves %s."),
+                                                abs (dice[0]),
+                                                abs (dice[1]),
+                                                self->priv->watching,
+                                                pretty_move);
+        } else {
+                return -1;
         }
+
         if (!gibbon_position_apply_move (self->priv->position, move,
                                          side, FALSE)) {
                 g_critical ("Error applying move %s to position.",
                             pretty_move);
-                g_critical ("Move received from FIBS: %s.", line);
                 g_critical ("Parsed numbers:");
                 for (i = 0; i < move->number; ++i) {
                         g_critical ("    %d/%d",
