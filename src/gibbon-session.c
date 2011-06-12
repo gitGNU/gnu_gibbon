@@ -65,11 +65,11 @@ static gint gibbon_session_clip_you_say (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_board (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
-static gboolean gibbon_session_handle_youre_now_watching (GibbonSession *self,
-                                                          const gchar **tokens);
+static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_youre_watching (GibbonSession *self,
+                                                  GSList *iter);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 static gboolean gibbon_session_handle_someone_wins (GibbonSession *self,
@@ -173,7 +173,8 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return -1;
 
         iter = values;
-        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT, &code)) {
+        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
+                                     (guint64 *) &code)) {
                 gibbon_clip_free_result (iter);
                 return -1;
         }
@@ -238,6 +239,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_MOVES:
                 retval = gibbon_session_handle_moves (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_YOURE_WATCHING:
+                retval = gibbon_session_handle_youre_watching (self, iter);
                 break;
         }
 
@@ -828,20 +832,13 @@ bail_out_board:
         return retval;
 }
 
-static gboolean
-gibbon_session_handle_youre_now_watching (GibbonSession *self,
-                                          const gchar **tokens)
+static gint
+gibbon_session_handle_youre_watching (GibbonSession *self, GSList *iter)
 {
-        gchar *player;
-        gsize length;
+        const gchar *player;
 
-        if (!tokens[3])
-                return FALSE;
-
-        player = g_strdup (tokens[3]);
-        length = strlen (player);
-        if ('.' == player[length - 1])
-                player[length - 1] = 0;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+                return -1;
 
         g_free (self->priv->watching);
         self->priv->watching = g_strdup (player);
