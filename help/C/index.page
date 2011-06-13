@@ -7,7 +7,6 @@
     <title type="link">Gibbon</title>
     <title type="text">Gibbon</title>
     <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
-    </revision>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -23,4 +22,8 @@
     </media>
     Gibbon 
   </title>
+
+  <section id="getting_started" style="2column">
+    <title>Getting Started</title>
+  </section>
 </page>
