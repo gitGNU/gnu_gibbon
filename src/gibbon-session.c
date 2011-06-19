@@ -171,7 +171,8 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return -1;
 
         iter = values;
-        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT, &code)) {
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
+                                  (gint *) &code)) {
                 gibbon_clip_free_result (iter);
                 return -1;
         }
@@ -242,6 +243,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_EMPTY:
+                retval = GIBBON_CLIP_CODE_EMPTY;
                 break;
         }
 
