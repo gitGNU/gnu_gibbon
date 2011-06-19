@@ -71,6 +71,7 @@ static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_youre_watching (GibbonSession *self,
@@ -245,6 +246,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_BOARD:
                 retval = gibbon_session_handle_board (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_BAD_BOARD:
+                retval = gibbon_session_handle_bad_board (self, iter);
                 break;
         case GIBBON_CLIP_CODE_ROLLS:
                 retval = gibbon_session_handle_rolls (self, iter);
@@ -914,6 +918,25 @@ bail_out_board:
         gibbon_position_free (pos);
 
         return retval;
+}
+
+static gboolean
+gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter)
+{
+        const gchar *board;
+        const gchar *other;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &board))
+                return -1;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &other))
+                return -1;
+
+        if (0 > gibbon_session_process_server_line (self, board))
+                return -1;
+        if (0 > gibbon_session_process_server_line (self, other))
+                return -1;
+
+        return GIBBON_CLIP_CODE_BAD_BOARD;
 }
 
 static gint
