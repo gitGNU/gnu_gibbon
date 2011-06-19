@@ -1199,8 +1199,8 @@ gibbon_clip_get_uint64 (GSList **list, enum GibbonClipType type,
         GSList *iter;
         struct GibbonClipTokenSet *token;
 
-        g_return_val_if_fail (list, FALSE);
-        g_return_val_if_fail (*list, FALSE);
+        g_return_val_if_fail (list != NULL, FALSE);
+        g_return_val_if_fail (*list != NULL, FALSE);
 
         iter = *list;
 
