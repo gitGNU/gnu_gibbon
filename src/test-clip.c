@@ -577,6 +577,14 @@ struct test_case test_various04 = {
                 }
 };
 
+struct test_case test_various05 = {
+                "   ",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "403" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -619,7 +627,8 @@ struct test_case *test_cases[] = {
                 &test_various01,
                 &test_various02,
                 &test_various03,
-                &test_various04
+                &test_various04,
+                &test_various05
 };
 
 static gboolean test_single_case (struct test_case *test_case);

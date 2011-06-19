@@ -182,12 +182,14 @@ gibbon_clip_parse (const gchar *line)
         gchar **tokens = gibbon_strsplit_ws (line);
         gchar *first;
 
-        if (!tokens)
-                return NULL;
+        if (!tokens || !tokens[0]) {
+                g_strfreev (tokens);
+                result = gibbon_clip_alloc_int (result, GIBBON_CLIP_TYPE_UINT,
+                                                GIBBON_CLIP_CODE_EMPTY);
+                return result;
+        }
 
         first = tokens[0];
-        if (!first)
-                return NULL;
 
         if (first[0] >= '1' && first[0] <= '9' && !first[1])
                 success = gibbon_clip_parse_clip (line, tokens, &result);
