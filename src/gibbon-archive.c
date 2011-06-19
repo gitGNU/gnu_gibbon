@@ -64,7 +64,6 @@
 #include <glib/gprintf.h>
 
 #include "gibbon-archive.h"
-#include "gibbon-connection.h"
 #include "gibbon-database.h"
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
@@ -75,7 +74,6 @@ struct _GibbonArchivePrivate {
         gchar *session_directory;
 
         GibbonDatabase *db;
-        gint server_id;
 
         gchar *archive_directory;
 
@@ -88,6 +86,8 @@ struct _GibbonArchivePrivate {
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
 
 static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                                 const gchar *hostname,
+                                                 guint port,
                                                  const gchar *player1,
                                                  const gchar *player2);
 
@@ -100,7 +100,6 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv->app = NULL;
         self->priv->servers_directory = NULL;
         self->priv->db = NULL;
-        self->priv->server_id = -1;
         self->priv->droppers = NULL;
 }
 
@@ -200,24 +199,20 @@ gibbon_archive_new (GibbonApp *app)
 }
 
 void
-gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
+gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
+                         guint port, const gchar *login)
 {
-        guint port;
-        const gchar *login;
-        const gchar *host;
         gchar *session_directory;
         gchar *buf;
         mode_t mode;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
-        g_return_if_fail (GIBBON_IS_CONNECTION (connection));
-
-        login = gibbon_connection_get_login (connection);
-        host = gibbon_connection_get_hostname (connection);
-        port = gibbon_connection_get_port (connection);
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (port > 0);
+        g_return_if_fail (login != NULL);
 
         session_directory = g_build_filename (self->priv->servers_directory,
-                                              host, NULL);
+                                              hostname, NULL);
         if (port != 4321) {
                 buf = g_strdup_printf ("%s_%u", session_directory, port);
                 g_free (session_directory);
@@ -241,11 +236,10 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
                                strerror (errno));
         }
 
-        self->priv->server_id = gibbon_database_update_server (self->priv->db,
-                                                               host, port);
-        host = gibbon_connection_get_hostname (connection);
-        gibbon_database_update_account (self->priv->db,
-                                        self->priv->server_id, login);
+        if (gibbon_database_get_server_id (self->priv->db, hostname, port)) {
+                (void) gibbon_database_get_user_id (self->priv->db,
+                                                    hostname, port, login);
+        }
 }
 
 void
@@ -259,69 +253,83 @@ gibbon_archive_update_user_full (GibbonArchive *self,
         g_return_if_fail (login != NULL);
 
         gibbon_database_update_user_full (self->priv->db,
-                                          self->priv->server_id, login,
+                                          hostname, port, login,
                                           rating, experience);
 }
 
 void
 gibbon_archive_save_win (GibbonArchive *self,
+                         const gchar *hostname, guint port,
                          const gchar *winner, const gchar *loser)
 {
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
         g_return_if_fail (winner != NULL);
         g_return_if_fail (loser != NULL);
 
-        gibbon_archive_remove_from_droppers (self, winner, loser);
+        gibbon_archive_remove_from_droppers (self, hostname, port, winner, loser);
 
-        (void) gibbon_database_record_activity (self->priv->db,
-                                                self->priv->server_id,
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
                                                 winner, 1.0);
-        (void) gibbon_database_record_activity (self->priv->db,
-                                                self->priv->server_id,
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
                                                 loser, 1.0);
 }
 
 void
 gibbon_archive_save_drop (GibbonArchive *self,
+                          const gchar *hostname, guint port,
                           const gchar *dropper, const gchar *victim)
 {
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
         g_return_if_fail (dropper != NULL);
         g_return_if_fail (victim != NULL);
 
         g_hash_table_insert (self->priv->droppers,
-                             g_strdup_printf ("%s:%s", dropper, victim),
+                             g_strdup_printf ("%s:%u%s:%s",
+                                              hostname, port, dropper, victim),
                              (gpointer) 1);
 
-        (void) gibbon_database_record_activity (self->priv->db,
-                                                self->priv->server_id,
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
                                                 dropper, -1.0);
 }
 
 void
 gibbon_archive_save_resume (GibbonArchive *self,
+                            const gchar *hostname, guint port,
                             const gchar *player1, const gchar *player2)
 {
         gchar *key;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
         g_return_if_fail (player1 != NULL);
         g_return_if_fail (player2 != NULL);
 
-        key = g_alloca (strlen (player1) + strlen (player2) + 2);
+        key = g_alloca (strlen (hostname) + 5
+                        + strlen (player1) + strlen (player2) + 4);
 
-        (void) sprintf (key, "%s:%s", player1, player2);
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player1, player2);
         if (g_hash_table_remove (self->priv->droppers, key)) {
-                (void) gibbon_database_record_activity (self->priv->db,
-                                                        self->priv->server_id,
+                (void) gibbon_database_insert_activity (self->priv->db,
+                                                        hostname, port,
                                                         player1, +0.75);
                 return;
         }
 
-        (void) sprintf (key, "%s:%s", player2, player1);
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player2, player1);
         if (g_hash_table_remove (self->priv->droppers, key)) {
-                (void) gibbon_database_record_activity (self->priv->db,
-                                                        self->priv->server_id,
+                (void) gibbon_database_insert_activity (self->priv->db,
+                                                        hostname, port,
                                                         player2, +0.75);
                 return;
         }
@@ -329,13 +337,15 @@ gibbon_archive_save_resume (GibbonArchive *self,
 
 static void
 gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                     const gchar *hostname, guint port,
                                      const gchar *player1, const gchar *player2)
 {
-        gchar *key = g_alloca (strlen (player1) + strlen (player2) + 2);
+        gchar *key = g_alloca (strlen (hostname) + 5
+                               + strlen (player1) + strlen (player2) + 4);
 
-        (void) sprintf (key, "%s:%s", player1, player2);
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player1, player2);
         (void) g_hash_table_remove (self->priv->droppers, key);
-        (void) sprintf (key, "%s:%s", player2, player1);
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player2, player1);
         (void) g_hash_table_remove (self->priv->droppers, key);
 }
 
@@ -348,6 +358,7 @@ gibbon_archive_get_reliability (GibbonArchive *self,
         g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
         g_return_val_if_fail (hostname != NULL, FALSE);
         g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (port <= 65536, FALSE);
         g_return_val_if_fail (login != NULL, FALSE);
         g_return_val_if_fail (value != NULL, FALSE);
         g_return_val_if_fail (confidence != NULL, FALSE);

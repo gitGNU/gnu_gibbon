@@ -811,7 +811,10 @@ gibbon_app_on_logged_in (GibbonApp *self, GibbonConnection *conn)
         gibbon_game_chat_set_my_name (self->priv->game_chat,
                                       gibbon_connection_get_login (conn));
 
-        gibbon_archive_on_login (self->priv->archive, conn);
+        gibbon_archive_on_login (self->priv->archive,
+                                 gibbon_connection_get_hostname (conn),
+                                 gibbon_connection_get_port (conn),
+                                 gibbon_connection_get_login (conn));
 }
 
 static void

@@ -428,6 +428,9 @@ gibbon_session_clip_who_info (GibbonSession *self,
 static gint
 gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
 {
+        const gchar *hostname;
+        guint port;
+
         const gchar *name;
         gchar *opponent;
 
@@ -457,7 +460,10 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         opponent = gibbon_player_list_get_opponent (self->priv->player_list,
                                                     name);
         if (opponent) {
-                gibbon_archive_save_drop (self->priv->archive, name, opponent);
+                hostname = gibbon_connection_get_hostname (self->priv->connection);
+                port = gibbon_connection_get_port (self->priv->connection);
+                gibbon_archive_save_drop (self->priv->archive,
+                                          hostname, port, name, opponent);
                 g_free (opponent);
         }
         gibbon_player_list_remove (self->priv->player_list, name);
@@ -933,6 +939,8 @@ gibbon_session_dump_position (const GibbonSession *self,
 static gboolean
 gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
 {
+        const gchar *hostname;
+        guint port;
         const gchar *player1;
         const gchar *player2;
 
@@ -941,17 +949,11 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
                 return -1;
 
-        /*
-         * FIXME! The who output is often incomplete.  Handle unknown
-         * players gracefully by inserting default values for unknown
-         * players.
-         */
-        if (!gibbon_player_list_exists (self->priv->player_list, player1))
-                return -1;
-        if (!gibbon_player_list_exists (self->priv->player_list, player2))
-                return -1;
+        hostname = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
 
-        gibbon_archive_save_win (self->priv->archive, player1, player2);
+        gibbon_archive_save_win (self->priv->archive, hostname, port,
+                                 player1, player2);
 
         return GIBBON_CLIP_CODE_WIN_MATCH;
 }

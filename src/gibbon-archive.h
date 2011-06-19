@@ -71,16 +71,23 @@ GType gibbon_archive_get_type (void) G_GNUC_CONST;
 
 GibbonArchive *gibbon_archive_new (GibbonApp *app);
 void gibbon_archive_on_login (GibbonArchive *self,
-                              struct _GibbonConnection *connection);
+                              const gchar *hostname, guint port,
+                              const gchar *login);
+void gibbon_archive_update_user (GibbonArchive *self,
+                                 const gchar *hostname, guint port,
+                                 const gchar *login);
 void gibbon_archive_update_user_full (GibbonArchive *self,
                                       const gchar *hostname, guint port,
                                       const gchar *login, gdouble rating,
                                       gint experience);
 void gibbon_archive_save_win (GibbonArchive *self,
+                              const gchar *hostname, guint port,
                               const gchar *winner, const gchar *loser);
 void gibbon_archive_save_drop (GibbonArchive *self,
+                               const gchar *hostname, guint port,
                                const gchar *dropper, const gchar *victim);
 void gibbon_archive_save_resume (GibbonArchive *self,
+                                 const gchar *hostname, guint port,
                                  const gchar *player1, const gchar *player2);
 gboolean gibbon_archive_get_reliability (GibbonArchive *self,
                                          const gchar *hostname, guint port,

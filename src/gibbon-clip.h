@@ -64,7 +64,8 @@ enum GibbonClipCode {
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
                         GIBBON_CLIP_CODE_WIN_MATCH = 401,
-                        GIBBON_CLIP_CODE_RESUME_MATCH = 402
+                        GIBBON_CLIP_CODE_RESUME_MATCH = 402,
+                        GIBBON_CLIP_EMPTY = 403
 };
 
 enum GibbonClipType {
