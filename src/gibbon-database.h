@@ -86,6 +86,10 @@ gboolean gibbon_database_insert_activity (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login,
                                           gdouble value);
+gboolean gibbon_database_void_activity (GibbonDatabase *self,
+                                        const gchar *hostname, guint port,
+                                        const gchar *login,
+                                        gdouble value);
 gboolean gibbon_database_get_reliability (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login,

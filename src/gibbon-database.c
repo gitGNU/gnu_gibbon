@@ -38,7 +38,7 @@
 /* Differences in the major schema version require a complete rebuild of the
  * database.
  */
-#define GIBBON_DATABASE_SCHEMA_MAJOR 1
+#define GIBBON_DATABASE_SCHEMA_MAJOR 2
 
 /* Differences in the minor schema version require conditional creation of
  * new tables or indexes.
@@ -90,6 +90,11 @@ struct _GibbonDatabasePrivate {
 #define GIBBON_DATABASE_SELECT_ACTIVITY                                      \
         "SELECT AVG(value), COUNT(*) FROM activities a WHERE a.user_id = ?"
         sqlite3_stmt *select_activity;
+
+#define GIBBON_DATABASE_DELETE_ACTIVITY                                   \
+        "DELETE FROM activity WHERE id = "                                \
+        " (SELECT MAX(id) FROM activity WHERE user_id = ? AND value = ?)"
+        sqlite3_stmt *delete_activity;
 
         gboolean in_transaction;
 
@@ -148,6 +153,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->update_user = NULL;
         self->priv->insert_activity = NULL;
         self->priv->select_activity = NULL;
+        self->priv->delete_activity = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -181,6 +187,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->insert_activity);
                 if (self->priv->select_activity)
                         sqlite3_finalize (self->priv->select_activity);
+                if (self->priv->delete_activity)
+                        sqlite3_finalize (self->priv->delete_activity);
         }
 
         if (self->priv->path)
@@ -406,6 +414,7 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
         if (!gibbon_database_sql_do (self,
                                      "CREATE TABLE IF NOT EXISTS activities ("
+                                     "  id INTEGER PRIMARY KEY,"
                                      "  user_id INTEGER NOT NULL,"
                                      "  value REAL NOT NULL,"
                                      "  date_time INT64 NOT NULL,"
@@ -1120,4 +1129,44 @@ _gibbon_database_get_server_id (GibbonDatabase *self,
         }
 
         return server_id;
+}
+
+gboolean
+gibbon_database_void_activity (GibbonDatabase *self,
+                               const gchar *hostname, guint port,
+                               const gchar *login,
+                               gdouble value)
+{
+        guint user_id;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+
+        if (!gibbon_database_get_statement (self, &self->priv->delete_activity,
+                                            GIBBON_DATABASE_DELETE_ACTIVITY))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        user_id = _gibbon_database_get_user_id (self, hostname, port, login,
+                                                FALSE);
+
+        if (!gibbon_database_sql_execute (self, self->priv->delete_activity,
+                                          GIBBON_DATABASE_DELETE_ACTIVITY,
+                                          G_TYPE_UINT, &user_id,
+                                          G_TYPE_DOUBLE, &value,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        return TRUE;
 }

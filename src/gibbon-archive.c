@@ -44,13 +44,12 @@
  * the result bias from the little injustice does not affect players that
  * stay long on the server.
  *
- * An exception is made for resumes against known bots.  In this case the
- * bonus is 3.0 instead of 1.5.  That effectively compensates the former
- * malus for the drop completely.  Although that artificially increases
- * the confidence.  The rationale behind the exceptions is that it
- * is legitime to play against a bot under circumstances where it is
- * likely that the match cannot be finished and must be continued later.  Note
- * that unresumed drops against bots cause the same malus as against humans.
+ * An exception is made for resumes against known bots.  In this case both the
+ * drop and the resume is simply discarded as if it had never happened.
+ * The rationale behind the exceptions is that it is legitime to play against
+ * a bot under circumstances where it is likely that the match cannot be
+ * finished and must be continued later.  Note that unresumed drops against
+ * bots cause the same malus as against humans.
  *
  * The whole thing results in two values: One is the confidence, which is
  * simply the number of recorded events.  The other is a a rating for the
@@ -361,7 +360,6 @@ gibbon_archive_save_resume (GibbonArchive *self,
 {
         gchar *key;
         struct GibbonArchiveBotInfo info;
-        gdouble bonus = 1.5;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (hostname != 0);
@@ -380,11 +378,16 @@ gibbon_archive_save_resume (GibbonArchive *self,
                 info.login = player2;
                 if (bsearch (&info, bots,
                              (sizeof bots) / (sizeof bots[0]), sizeof bots[0],
-                              compare_bot_info))
-                        bonus = 3.0;
-                (void) gibbon_database_insert_activity (self->priv->db,
-                                                        hostname, port,
-                                                        player1, bonus);
+                              compare_bot_info)) {
+                        (void) gibbon_database_void_activity (self->priv->db,
+                                                              hostname, port,
+                                                              player1, -1.0);
+                } else {
+                        (void) gibbon_database_insert_activity (self->priv->db,
+                                                                hostname, port,
+                                                                player1, 1.5);
+                }
+
                 return;
         }
 
@@ -395,11 +398,16 @@ gibbon_archive_save_resume (GibbonArchive *self,
                 info.login = player1;
                 if (bsearch (&info, bots,
                              (sizeof bots) / (sizeof bots[0]), sizeof bots[0],
-                              compare_bot_info))
-                        bonus = 3.0;
-                (void) gibbon_database_insert_activity (self->priv->db,
-                                                        hostname, port,
-                                                        player2, bonus);
+                              compare_bot_info)) {
+                        (void) gibbon_database_void_activity (self->priv->db,
+                                                              hostname, port,
+                                                              player2, -1.0);
+                } else {
+                        (void) gibbon_database_insert_activity (self->priv->db,
+                                                                hostname, port,
+                                                                player2, 1.5);
+                }
+
                 return;
         }
 }
