@@ -193,7 +193,7 @@ gibbon_server_console_finalize (GObject *object)
                 prefs = gibbon_app_get_prefs (self->priv->app);
                 max_recents = gibbon_prefs_get_int (prefs,
                                                     GIBBON_PREFS_MAX_COMMANDS);
-                if (max_recents)
+                if (!max_recents)
                         max_recents = 100;
                 if (self->priv->num_recents < max_recents)
                         self->priv->num_recents = max_recents;
@@ -460,6 +460,8 @@ gibbon_server_console_on_command (GibbonServerConsole *self, GtkEntry *entry)
         gchar *trimmed;
         GibbonConnection *connection;
         GtkTreeIter iter;
+        GtkTreePath *path;
+        gchar *data;
 
         g_return_if_fail (GIBBON_IS_SERVER_CONSOLE (self));
         g_return_if_fail (GTK_IS_ENTRY (entry));
@@ -474,6 +476,30 @@ gibbon_server_console_on_command (GibbonServerConsole *self, GtkEntry *entry)
                 return;
         }
         gibbon_connection_queue_command (connection, TRUE, "%s", trimmed);
+
+        path = gtk_tree_path_new_first ();
+        while (path) {
+                if (!gtk_tree_model_get_iter (
+                                GTK_TREE_MODEL (self->priv->model),
+                                &iter, path))
+                        break;
+                gtk_tree_model_get (GTK_TREE_MODEL (self->priv->model),
+                                    &iter, 0, &data, -1);
+
+                if (!data)
+                        break;
+
+                if (0 == g_strcmp0 (data, trimmed)) {
+                        (void) gtk_list_store_remove (self->priv->model, &iter);
+                        g_free (data);
+                        break;
+                }
+
+                g_free (data);
+
+                gtk_tree_path_next (path);
+        }
+
         gtk_list_store_prepend (self->priv->model, &iter);
         gtk_list_store_set (self->priv->model, &iter,
                             0, trimmed,
