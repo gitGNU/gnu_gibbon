@@ -31,7 +31,7 @@
  * hope to save a higher rating.
  *
  * Every player that finishes a match is assigned one point.  For each drop,
- * the dropper gets a malus of one point.  A resume is honored with 0.75
+ * the dropper gets a malus of one point.  A resume is honored with 1.5
  * points but only if the associated drop happened while our session.
  * Otherwise it is impossible to find out who of the two opponents was
  * the dropper.
@@ -43,6 +43,14 @@
  * the interface between start of a match and regular end.  And besides,
  * the result bias from the little injustice does not affect players that
  * stay long on the server.
+ *
+ * An exception is made for resumes against known bots.  In this case the
+ * bonus is 3.0 instead of 1.5.  That effectively compensates the former
+ * malus for the drop completely.  Although that artificially increases
+ * the confidence.  The rationale behind the exceptions is that it
+ * is legitime to play against a bot under circumstances where it is
+ * likely that the match cannot be finished and must be continued later.  Note
+ * that unresumed drops against bots cause the same malus as against humans.
  *
  * The whole thing results in two values: One is the confidence, which is
  * simply the number of recorded events.  The other is a a rating for the
@@ -57,6 +65,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -65,6 +74,46 @@
 
 #include "gibbon-archive.h"
 #include "gibbon-database.h"
+
+/* FIXME! This list must be retrieved online!  */
+static struct GibbonArchiveBotInfo {
+        const gchar *hostname;
+        guint port;
+        const gchar *login;
+} bots[] = {
+                { "fibs.com", 4321, "bonehead" },
+                { "fibs.com", 4321, "BlunderBot" },
+                { "fibs.com", 4321, "BlunderBot_II" },
+                { "fibs.com", 4321, "BlunderBot_III" },
+                { "fibs.com", 4321, "BlunderBot_IV" },
+                { "fibs.com", 4321, "BlunderBot_IX" },
+                { "fibs.com", 4321, "BlunderBot_V" },
+                { "fibs.com", 4321, "BlunderBot_VI" },
+                { "fibs.com", 4321, "BlunderBot_VII" },
+                { "fibs.com", 4321, "BlunderBot_VIII" },
+                { "fibs.com", 4321, "BlunderBot_X" },
+                { "fibs.com", 4321, "GammonBot" },
+                { "fibs.com", 4321, "GammonBot_II" },
+                { "fibs.com", 4321, "GammonBot_III" },
+                { "fibs.com", 4321, "GammonBot_IV" },
+                { "fibs.com", 4321, "GammonBot_IX" },
+                { "fibs.com", 4321, "GammonBot_V" },
+                { "fibs.com", 4321, "GammonBot_VI" },
+                { "fibs.com", 4321, "GammonBot_VII" },
+                { "fibs.com", 4321, "GammonBot_VIII" },
+                { "fibs.com", 4321, "GammonBot_X" },
+                { "fibs.com", 4321, "GammonBot_XI" },
+                { "fibs.com", 4321, "GammonBot_XII" },
+                { "fibs.com", 4321, "GammonBot_XIII" },
+                { "fibs.com", 4321, "GammonBot_XIV" },
+                { "fibs.com", 4321, "GammonBot_XIX" },
+                { "fibs.com", 4321, "GammonBot_XV" },
+                { "fibs.com", 4321, "GammonBot_XVI" },
+                { "fibs.com", 4321, "GammonBot_XVII" },
+                { "fibs.com", 4321, "GammonBot_XVIII" },
+                { "fibs.com", 4321, "GammonBot_XX" },
+                { "fibs.com", 4321, "MonteCarlo" }
+};
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
@@ -85,6 +134,7 @@ struct _GibbonArchivePrivate {
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
 
+static int compare_bot_info (const void *p1, const void *p2);
 static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
                                                  const gchar *hostname,
                                                  guint port,
@@ -126,6 +176,9 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonArchivePrivate));
+
+        qsort (bots, (sizeof bots) / (sizeof bots[0]), sizeof bots[0],
+               compare_bot_info);
 
         object_class->finalize = gibbon_archive_finalize;
 }
@@ -307,6 +360,8 @@ gibbon_archive_save_resume (GibbonArchive *self,
                             const gchar *player1, const gchar *player2)
 {
         gchar *key;
+        struct GibbonArchiveBotInfo info;
+        gdouble bonus = 1.5;
 
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (hostname != 0);
@@ -320,17 +375,31 @@ gibbon_archive_save_resume (GibbonArchive *self,
 
         (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player1, player2);
         if (g_hash_table_remove (self->priv->droppers, key)) {
+                info.hostname = hostname;
+                info.port = port;
+                info.login = player2;
+                if (bsearch (&info, bots,
+                             (sizeof bots) / (sizeof bots[0]), sizeof bots[0],
+                              compare_bot_info))
+                        bonus = 3.0;
                 (void) gibbon_database_insert_activity (self->priv->db,
                                                         hostname, port,
-                                                        player1, +0.75);
+                                                        player1, bonus);
                 return;
         }
 
         (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player2, player1);
         if (g_hash_table_remove (self->priv->droppers, key)) {
+                info.hostname = hostname;
+                info.port = port;
+                info.login = player1;
+                if (bsearch (&info, bots,
+                             (sizeof bots) / (sizeof bots[0]), sizeof bots[0],
+                              compare_bot_info))
+                        bonus = 3.0;
                 (void) gibbon_database_insert_activity (self->priv->db,
                                                         hostname, port,
-                                                        player2, +0.75);
+                                                        player2, bonus);
                 return;
         }
 }
@@ -366,4 +435,24 @@ gibbon_archive_get_reliability (GibbonArchive *self,
         return gibbon_database_get_reliability (self->priv->db,
                                                 hostname, port,
                                                 login, value, confidence);
+}
+
+static
+int compare_bot_info (const void *p1, const void *p2)
+{
+        int retval;
+
+        struct GibbonArchiveBotInfo *i1 = (struct GibbonArchiveBotInfo *) p1;
+        struct GibbonArchiveBotInfo *i2 = (struct GibbonArchiveBotInfo *) p2;
+
+        retval = g_strcmp0 (i1->login, i2->login);
+        if (retval)
+                return retval;
+
+        if (i1->port < i2->port)
+                return -1;
+        else if (i1->port > i2->port)
+                return +1;
+
+        return g_strcmp0 (i1->hostname, i2->hostname);
 }
