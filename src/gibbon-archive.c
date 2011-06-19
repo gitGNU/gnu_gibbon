@@ -249,18 +249,18 @@ gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
 }
 
 void
-gibbon_archive_update_user (GibbonArchive *self,
-                            const gchar *hostname, guint port,
-                            const gchar *login, gdouble rating,
-                            gint experience)
+gibbon_archive_update_user_full (GibbonArchive *self,
+                                 const gchar *hostname, guint port,
+                                 const gchar *login, gdouble rating,
+                                 gint experience)
 {
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (hostname != NULL);
         g_return_if_fail (login != NULL);
 
-        gibbon_database_update_user (self->priv->db,
-                                     self->priv->server_id, login,
-                                     rating, experience);
+        gibbon_database_update_user_full (self->priv->db,
+                                          self->priv->server_id, login,
+                                          rating, experience);
 }
 
 void

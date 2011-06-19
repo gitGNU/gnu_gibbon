@@ -652,7 +652,7 @@ gibbon_database_update_server (GibbonDatabase *self,
 /* FIXME! INSERT OR IGNORE is wrong here!  */
 gboolean
 gibbon_database_update_account (GibbonDatabase *self,
-                                guint server_id, const gchar *login)
+                                gint server_id, const gchar *login)
 {
         const gchar *sql_create_user =
                 "INSERT OR IGNORE INTO users (name, server_id, last_seen)\n"
@@ -660,6 +660,7 @@ gibbon_database_update_account (GibbonDatabase *self,
         gint64 now;
 
         g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (server_id > 0, FALSE);
         g_return_val_if_fail (login != NULL, FALSE);
 
         if (!gibbon_database_get_statement (self, &self->priv->create_user,
@@ -831,10 +832,10 @@ gibbon_database_get_statement (GibbonDatabase *self,
 
 /* FIXME! INSERT OR IGNORE is wrong here!  */
 gboolean
-gibbon_database_update_user (GibbonDatabase *self,
-                             guint server_id,
-                             const gchar *login,
-                             gdouble rating, gint experience)
+gibbon_database_update_user_full (GibbonDatabase *self,
+                                  gint server_id,
+                                  const gchar *login,
+                                  gdouble rating, guint experience)
 {
         const gchar *sql_update_user =
                 "INSERT OR IGNORE INTO"
@@ -842,6 +843,10 @@ gibbon_database_update_user (GibbonDatabase *self,
                 "              experience, rating)\n"
                 "    VALUES(?, ?, ?, ?, ?)";
         gint64 now;
+
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (server_id > 0, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
 
         if (!gibbon_database_get_statement (self, &self->priv->update_user,
                                             sql_update_user))
@@ -873,7 +878,7 @@ gibbon_database_update_user (GibbonDatabase *self,
 
 gboolean
 gibbon_database_record_activity (GibbonDatabase *self,
-                                 guint server_id,
+                                 gint server_id,
                                  const gchar *login,
                                  gdouble value)
 {

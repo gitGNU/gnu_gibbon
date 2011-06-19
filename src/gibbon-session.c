@@ -171,8 +171,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 return -1;
 
         iter = values;
-        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
-                                     (guint64 *) &code)) {
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT, &code)) {
                 gibbon_clip_free_result (iter);
                 return -1;
         }
@@ -418,7 +417,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         archive = gibbon_app_get_archive (self->priv->app);
         connection = self->priv->connection;
 
-        gibbon_archive_update_user (archive,
+        gibbon_archive_update_user_full (archive,
                                     gibbon_connection_get_hostname (connection),
                                     gibbon_connection_get_port (connection),
                                     who, rating, experience);
