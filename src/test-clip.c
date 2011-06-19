@@ -54,6 +54,18 @@ struct test_case test_clip01 = {
                 }
 };
 
+struct test_case test_clip01a = {
+                "1 GibbonTestA 1308476373 95.87.204.192",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_TIMESTAMP, "1308476373" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "95.87.204.192" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_clip02 = {
                 "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
                 " Europe/Sofia",
@@ -568,6 +580,7 @@ struct test_case test_various04 = {
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
+                &test_clip01a,
                 &test_clip02,
                 &test_clip03,
                 &test_clip04,
