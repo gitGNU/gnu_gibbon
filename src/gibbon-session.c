@@ -77,6 +77,8 @@ static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_youre_watching (GibbonSession *self,
                                                   GSList *iter);
 static gint gibbon_session_handle_win_match (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_resume_match (GibbonSession *self,
+                                                GSList *iter);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 
@@ -259,8 +261,14 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_YOURE_WATCHING:
                 retval = gibbon_session_handle_youre_watching (self, iter);
                 break;
+        case GIBBON_CLIP_CODE_START_MATCH:
+                retval = GIBBON_CLIP_CODE_START_MATCH;
+                break;
         case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_RESUME_MATCH:
+                retval = gibbon_session_handle_resume_match (self, iter);
                 break;
         case GIBBON_CLIP_CODE_EMPTY:
                 retval = GIBBON_CLIP_CODE_EMPTY;
@@ -1057,6 +1065,28 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
                                  player1, player2);
 
         return GIBBON_CLIP_CODE_WIN_MATCH;
+}
+
+static gboolean
+gibbon_session_handle_resume_match (GibbonSession *self, GSList *iter)
+{
+        const gchar *hostname;
+        guint port;
+        const gchar *player1;
+        const gchar *player2;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player1))
+                return -1;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
+                return -1;
+
+        hostname = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
+
+        gibbon_archive_save_resume (self->priv->archive, hostname, port,
+                                    player1, player2);
+
+        return GIBBON_CLIP_CODE_RESUME_MATCH;
 }
 
 static gboolean
