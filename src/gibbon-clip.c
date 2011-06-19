@@ -128,10 +128,6 @@ static gboolean gibbon_clip_parse_clip_something (const gchar *line,
                                                   gchar **tokens,
                                                   GSList **result);
 
-static gboolean gibbon_clip_parse_error (const gchar *line,
-                                         gchar **tokens,
-                                         GSList **result);
-
 static gboolean gibbon_clip_parse_board (const gchar *line,
                                          gchar **tokens,
                                          GSList **result);
@@ -198,11 +194,6 @@ gibbon_clip_parse (const gchar *line)
                 success = gibbon_clip_parse_clip (line, tokens, &result);
 
         switch (first[0]) {
-        case '*':
-                if ('*' == first[1] && !first[2])
-                        success = gibbon_clip_parse_error (line, tokens,
-                                                           &result);
-                        break;
         case 'b':
                 if (0 == strncmp ("board:", first, 6))
                         success = gibbon_clip_parse_board (line, tokens,
@@ -604,24 +595,6 @@ gibbon_clip_parse_clip_something (const gchar *line, gchar **tokens,
                 return FALSE;
 
         s = gibbon_skip_ws_tokens (line, (const gchar * const *) tokens, 1);
-
-        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
-                                            s);
-
-        return TRUE;
-}
-
-static gboolean
-gibbon_clip_parse_error (const gchar *line, gchar **tokens,
-                         GSList **result)
-{
-        const gchar *s;
-
-        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_ERROR);
-
-        s = gibbon_skip_ws_tokens (line,
-                                   (const gchar * const* const) tokens, 1);
 
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             s);

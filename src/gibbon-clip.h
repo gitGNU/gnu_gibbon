@@ -49,8 +49,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_YOU_WHISPER = 18,
                         GIBBON_CLIP_CODE_YOU_KIBITZ = 19,
 
-                        /* Errors.  */
-                        GIBBON_CLIP_CODE_ERROR = 100,
+                        /* 100-199 reserved for double asterisk messages.  */
 
                         /* Game play.  */
                         GIBBON_CLIP_CODE_BOARD = 200,
