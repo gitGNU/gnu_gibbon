@@ -840,7 +840,7 @@ gibbon_database_insert_activity (GibbonDatabase *self,
         now = (gint64) time (NULL);
         if (!gibbon_database_sql_execute (self, self->priv->insert_activity,
                                           GIBBON_DATABASE_INSERT_ACTIVITY,
-                                          G_TYPE_UINT, &login,
+                                          G_TYPE_UINT, &user_id,
                                           G_TYPE_DOUBLE, &value,
                                           G_TYPE_INT64, &now,
                                           -1)) {
