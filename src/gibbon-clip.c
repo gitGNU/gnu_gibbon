@@ -639,46 +639,86 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         gint64 color, direction, turn;
         gint64 i64;
         gint i;
+        gboolean is_bad_board = FALSE;
+        gchar *board;
+        gchar *fifty_third;
+        gchar c;
 
-        tokens = g_strsplit (_tokens[0] + 6, ":", 0);
+        tokens = g_strsplit (line, ":", 53);
         num_tokens = g_strv_length (tokens);
 
 #ifdef GIBBON_CLIP_DEBUG_BOARD_STATE
         gibbon_clip_dump_board (line, tokens);
 #endif
 
-        if (52 != num_tokens)
+        if (num_tokens < 53)
                 goto bail_out_board;
+
+        fifty_third = tokens[52];
+        if (fifty_third[0] == '0'
+            && (fifty_third[1] >= '0' && fifty_third[1] <= '9')) {
+                is_bad_board = TRUE;
+        } else {
+                while (*fifty_third) {
+                        if (*fifty_third < '0' || *fifty_third > '9') {
+                                is_bad_board = TRUE;
+                                break;
+                        }
+                        ++fifty_third;
+                }
+        }
+
+        if (is_bad_board) {
+                *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_BAD_BOARD);
+                c = tokens[52][1];
+                tokens[52][1] = 0;
+
+                board = g_strjoinv (":", tokens);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    board);
+                g_free (board);
+
+                tokens[52][1] = c;
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    tokens[52] + 1);
+
+                g_strfreev (tokens);
+
+                return TRUE;
+        }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          GIBBON_CLIP_CODE_BOARD);
 
         /* Player's name.  */
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
-                                            tokens[0]);
+                                            tokens[1]);
         /* Opponent's name.  */
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
-                                            tokens[1]);
+                                            tokens[2]);
 
         /* Match length.  */
-        if (!gibbon_clip_extract_integer (tokens[2], &i64, 0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[3], &i64, 0, G_MAXINT))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         /* Scores.  */
-        if (!gibbon_clip_extract_integer (tokens[3], &i64, 0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[4], &i64, 0, G_MAXINT))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
-        if (!gibbon_clip_extract_integer (tokens[4], &i64, 0, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[5], &i64, 0, G_MAXINT))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, i64);
 
         /* Color.  */
-        if (!gibbon_clip_extract_integer (tokens[40], &color, -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[41], &color, -1, 1))
                 goto bail_out_board;
 
         /* Playing direction.  */
-        if (!gibbon_clip_extract_integer (tokens[41], &direction, -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[42], &direction, -1, 1))
                 goto bail_out_board;
 
         if (!direction)
@@ -687,7 +727,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         /* Regular points.  */
         if (direction == GIBBON_POSITION_SIDE_BLACK) {
                 for (i = 6; i < 30; ++i) {
-                        if (!gibbon_clip_extract_integer (tokens[i], &i64,
+                        if (!gibbon_clip_extract_integer (tokens[i + 1], &i64,
                                                           -15, 15))
                                 goto bail_out_board;
 
@@ -699,7 +739,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                 }
         } else {
                 for (i = 29; i >= 6; --i) {
-                        if (!gibbon_clip_extract_integer (tokens[i], &i64,
+                        if (!gibbon_clip_extract_integer (tokens[i + 1], &i64,
                                                           -15, 15))
                                 goto bail_out_board;
 
@@ -711,31 +751,31 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                 }
         }
 
-        if (!gibbon_clip_extract_integer (tokens[31], &turn, -1, 1))
+        if (!gibbon_clip_extract_integer (tokens[32], &turn, -1, 1))
                 goto bail_out_board;
 
         /* Dice.  */
         if (turn == color) {
-                if (!gibbon_clip_extract_integer (tokens[32], &i64,
-                                                  0, 6))
-                        goto bail_out_board;
-                *result = gibbon_clip_alloc_int (*result,
-                                                 GIBBON_CLIP_TYPE_INT,
-                                                 i64);
                 if (!gibbon_clip_extract_integer (tokens[33], &i64,
                                                   0, 6))
                         goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  i64);
-        } else if (turn) {
                 if (!gibbon_clip_extract_integer (tokens[34], &i64,
                                                   0, 6))
                         goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
-                                                 -i64);
+                                                 i64);
+        } else if (turn) {
                 if (!gibbon_clip_extract_integer (tokens[35], &i64,
+                                                  0, 6))
+                        goto bail_out_board;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 -i64);
+                if (!gibbon_clip_extract_integer (tokens[36], &i64,
                                                   0, 6))
                         goto bail_out_board;
                 *result = gibbon_clip_alloc_int (*result,
@@ -744,7 +784,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         }
 
         /* Cube.  */
-        if (!gibbon_clip_extract_integer (tokens[36], &i64,
+        if (!gibbon_clip_extract_integer (tokens[37], &i64,
                                           1, G_MAXINT))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
@@ -752,13 +792,13 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                          i64);
 
         /* May double?  */
-        if (!gibbon_clip_extract_integer (tokens[37], &i64,
+        if (!gibbon_clip_extract_integer (tokens[38], &i64,
                                           0, 1))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
                                          i64);
-        if (!gibbon_clip_extract_integer (tokens[38], &i64,
+        if (!gibbon_clip_extract_integer (tokens[39], &i64,
                                           0, 1))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
@@ -766,13 +806,13 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                          i64);
 
         /* Checkers on bar.  */
-        if (!gibbon_clip_extract_integer (tokens[46], &i64,
+        if (!gibbon_clip_extract_integer (tokens[47], &i64,
                                           0, 15))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          i64);
-        if (!gibbon_clip_extract_integer (tokens[47], &i64,
+        if (!gibbon_clip_extract_integer (tokens[48], &i64,
                                           0, 15))
                 goto bail_out_board;
         *result = gibbon_clip_alloc_int (*result,
@@ -1185,12 +1225,12 @@ static void
 gibbon_clip_dump_board (const gchar *raw,
                         gchar **tokens)
 {
-        int i = 0;
+        int i;
 
         g_printerr ("=== Board ===\n");
         g_printerr ("board:%s\n", raw);
         for (i = 0; keys[i]; ++i)
-                g_printerr ("%s (%s)\n", keys[i], tokens[i]);
+                g_printerr ("%s (%s)\n", keys[i], tokens[i + 1]);
 }
 #endif
 

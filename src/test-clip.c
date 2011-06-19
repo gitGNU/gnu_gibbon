@@ -398,6 +398,67 @@ struct test_case test_board01 =  {
                 }
 };
 
+struct test_case test_bad_board00 =  {
+                "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
+                ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
+                ":0:0:05 anotherplayer - - 0 0 1439.79 1262 410 1041251697"
+                " somehost.com - -",
+                {
+                                /* Bad Board.  */
+                                { GIBBON_CLIP_TYPE_UINT, "201" },
+                                { GIBBON_CLIP_TYPE_STRING, "board:You:"
+                                                "someplayer:3:0:0:0:-2:0:0:0:0"
+                                                ":5:0:3:0:0:0:-5:5:0:0:0:-3:0"
+                                                ":-5:0:0:0:0:2:0:1:6:2:0:0:1"
+                                                ":1:1:0:1:-1:0:25:0:0:0:0:2:0"
+                                                ":0:0" },
+                                { GIBBON_CLIP_TYPE_STRING, "5 anotherplayer "
+                                                "- - 0 0 1439.79 1262 410 "
+                                                "1041251697 somehost.com - -" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_bad_board01 =  {
+                "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
+                ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
+                ":0:0:15 anotherplayer - - 0 0 1439.79 1262 410 1041251697"
+                " somehost.com - -",
+                {
+                                /* Bad Board.  */
+                                { GIBBON_CLIP_TYPE_UINT, "201" },
+                                { GIBBON_CLIP_TYPE_STRING, "board:You:"
+                                                "someplayer:3:0:0:0:-2:0:0:0:0"
+                                                ":5:0:3:0:0:0:-5:5:0:0:0:-3:0"
+                                                ":-5:0:0:0:0:2:0:1:6:2:0:0:1"
+                                                ":1:1:0:1:-1:0:25:0:0:0:0:2:0"
+                                                ":0:1" },
+                                { GIBBON_CLIP_TYPE_STRING, "5 anotherplayer "
+                                                "- - 0 0 1439.79 1262 410 "
+                                                "1041251697 somehost.com - -" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_bad_board02 =  {
+                "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
+                ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
+                ":0:0:1Some arbitrary other message",
+                {
+                                /* Bad Board.  */
+                                { GIBBON_CLIP_TYPE_UINT, "201" },
+                                { GIBBON_CLIP_TYPE_STRING, "board:You:"
+                                                "someplayer:3:0:0:0:-2:0:0:0:0"
+                                                ":5:0:3:0:0:0:-5:5:0:0:0:-3:0"
+                                                ":-5:0:0:0:0:2:0:1:6:2:0:0:1"
+                                                ":1:1:0:1:-1:0:25:0:0:0:0:2:0"
+                                                ":0:1" },
+                                { GIBBON_CLIP_TYPE_STRING, "Some arbitrary"
+                                                " other message" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_rolls00 = {
                 "gflohr rolls 3 and 1.",
                 {
@@ -612,6 +673,9 @@ struct test_case *test_cases[] = {
 
                 &test_board00,
                 &test_board01,
+                &test_bad_board00,
+                &test_bad_board01,
+                &test_bad_board02,
                 &test_rolls00,
                 &test_moves00,
                 &test_moves01,
