@@ -57,6 +57,11 @@ static void gibbon_session_dump_position (const GibbonSession *self,
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_logout (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_message (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_message_delivered (GibbonSession *self,
+                                                   GSList *iter);
+static gint gibbon_session_clip_message_saved (GibbonSession *self,
+                                               GSList *iter);
 static gint gibbon_session_clip_says (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_shouts (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_whispers (GibbonSession *self, GSList *iter);
@@ -204,6 +209,15 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_LOGOUT:
                 retval = gibbon_session_clip_logout (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_MESSAGE:
+                retval = gibbon_session_clip_message (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_MESSAGE_DELIVERED:
+                retval = gibbon_session_clip_message_delivered (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_MESSAGE_SAVED:
+                retval = gibbon_session_clip_message_saved (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SAYS:
                 retval = gibbon_session_clip_says (self, iter);
@@ -473,6 +487,66 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         gibbon_player_list_remove (self->priv->player_list, name);
 
         return GIBBON_CLIP_CODE_LOGOUT;
+}
+
+static gint
+gibbon_session_clip_message (GibbonSession *self, GSList *iter)
+{
+       const gchar *sender;
+       const gchar *message;
+       gint64 when;
+       GTimeVal last_login;
+       gchar *last_login_str;
+
+       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+               return -1;
+
+       if (!gibbon_clip_get_int64 (&iter, GIBBON_CLIP_TYPE_TIMESTAMP, &when))
+               return -1;
+
+       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+               return -1;
+
+       last_login_str = ctime (&last_login.tv_sec);
+       last_login_str[strlen (last_login_str) - 1] = 0;
+
+       gibbon_app_display_info (self->priv->app,
+                                _("User `%s' left you a message at %s: %s"),
+                                sender, last_login_str, message);
+
+       return GIBBON_CLIP_CODE_MESSAGE;
+}
+
+static gint
+gibbon_session_clip_message_delivered (GibbonSession *self, GSList *iter)
+{
+       const gchar *recipient;
+
+       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
+               return -1;
+
+       gibbon_app_display_info (self->priv->app,
+                                _("Your message for user `%s' has been"
+                                  " delivered!"),
+                                recipient);
+
+       return GIBBON_CLIP_CODE_MESSAGE_DELIVERED;
+}
+
+static gint
+gibbon_session_clip_message_saved (GibbonSession *self, GSList *iter)
+{
+       const gchar *recipient;
+
+       if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
+               return -1;
+
+       gibbon_app_display_info (self->priv->app,
+                                _("User `%s' is not logged in.  Your message"
+                                  " has been saved!"),
+                                recipient);
+
+       return GIBBON_CLIP_CODE_MESSAGE_DELIVERED;
 }
 
 static gint
