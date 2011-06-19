@@ -594,7 +594,7 @@ struct test_case test_various01 = {
 };
 
 struct test_case test_various02 = {
-                "gflohr wins a 7 point match against GibbonTestA 8-3 .",
+                "gflohr wins a 7 point match against GibbonTestA  8-3 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "401" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
@@ -602,6 +602,19 @@ struct test_case test_various02 = {
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
                                 { GIBBON_CLIP_TYPE_UINT, "8" },
                                 { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_various02a = {
+                "gflohr wins a 1 point match against GibbonTestA  1-0 .",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "401" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -678,6 +691,7 @@ struct test_case *test_cases[] = {
                 &test_various00,
                 &test_various01,
                 &test_various02,
+                &test_various02a,
                 &test_various03,
                 &test_various04,
                 &test_various05

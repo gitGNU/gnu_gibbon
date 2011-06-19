@@ -946,10 +946,10 @@ gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *ptr++ = 0;
-        if (!gibbon_clip_extract_integer (tokens[8], &s0, 1, G_MAXINT))
+        if (!gibbon_clip_extract_integer (tokens[8], &s0, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s0);
-        if (!gibbon_clip_extract_integer (ptr, &s1, 1, G_MAXINT))
+        if (!gibbon_clip_extract_integer (ptr, &s1, 0, G_MAXINT))
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s1);
 
