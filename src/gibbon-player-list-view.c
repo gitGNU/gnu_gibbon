@@ -261,6 +261,13 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
+                _("Hostname"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_PLAYER_LIST_COL_HOSTNAME,
+                NULL);
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
                 _("Address"),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_PLAYER_LIST_COL_EMAIL,
