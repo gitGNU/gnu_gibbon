@@ -109,6 +109,9 @@ void gibbon_app_show_message (GibbonApp *self, const gchar *peer,
 void gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message);
 void gibbon_app_show_game_chat (GibbonApp *self,
                                 const GibbonFIBSMessage *message);
+void gibbon_app_configure_player_menu (const GibbonApp *self,
+                                       const gchar *player,
+                                       GtkMenu *menu);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

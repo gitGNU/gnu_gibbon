@@ -49,6 +49,7 @@
 #include "gibbon-help.h"
 #include "gibbon-player-list.h"
 #include "gibbon-player-list-view.h"
+#include "gibbon-session.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -998,4 +999,14 @@ gibbon_app_get_player_list (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->player_list;
+}
+
+void
+gibbon_app_configure_player_menu (const GibbonApp *self,
+                                  const gchar *player,
+                                  GtkMenu *menu)
+{
+        gibbon_session_configure_player_menu (
+                        gibbon_connection_get_session (self->priv->connection),
+                        player, menu);
 }
