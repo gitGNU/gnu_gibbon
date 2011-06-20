@@ -297,7 +297,7 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
                 color.blue = 0x0000;
         } else if (self->priv->rel->value >= 0.65) {
                 color.red = 0xff00;
-                color.green = 0xc000;
+                color.green = 0xa000;
                 color.blue = 0x0000;
         } else {
                 color.red = 0xec00;
