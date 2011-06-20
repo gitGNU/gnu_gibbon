@@ -52,6 +52,11 @@ GibbonSession *gibbon_session_new (GibbonApp *app,
                                    GibbonConnection *connection);
 gint gibbon_session_process_server_line (GibbonSession *self,
                                          const gchar *line);
+void gibbon_session_configure_player_menu (const GibbonSession *self,
+                                           const gchar *player,
+                                           GtkMenu *menu);
+const gchar * const gibbon_session_get_watching (const GibbonSession *self);
+
 G_END_DECLS
 
 #endif

@@ -56,6 +56,8 @@ static void gibbon_session_dump_position (const GibbonSession *self,
 
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_who_info_end (GibbonSession *self,
+                                              GSList *iter);
 static gint gibbon_session_clip_logout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_message (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_message_delivered (GibbonSession *self,
@@ -79,8 +81,15 @@ static gint gibbon_session_handle_youre_watching (GibbonSession *self,
 static gint gibbon_session_handle_win_match (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_resume_match (GibbonSession *self,
                                                 GSList *iter);
+static gint gibbon_session_handle_show_setting (GibbonSession *self,
+                                                GSList *iter);
+static gint gibbon_session_handle_show_toggle (GibbonSession *self,
+                                               GSList *iter);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
+static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
+                                                  GSList **list,
+                                                  const gchar *string);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -97,6 +106,11 @@ struct _GibbonSessionPrivate {
         GibbonPlayerList *player_list;
 
         GibbonArchive *archive;
+
+        gboolean initialized;
+
+        GSList *expect_settings;
+        GSList *expect_toggles;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -107,6 +121,8 @@ G_DEFINE_TYPE (GibbonSession, gibbon_session, G_TYPE_OBJECT);
 static void
 gibbon_session_init (GibbonSession *self)
 {
+        GSList *iter;
+
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_SESSION, 
                                                   GibbonSessionPrivate);
@@ -117,6 +133,37 @@ gibbon_session_init (GibbonSession *self)
         self->priv->position = NULL;
         self->priv->player_list = NULL;
         self->priv->archive = NULL;
+
+        self->priv->initialized = FALSE;
+
+        iter = NULL;
+        iter = g_slist_prepend (iter, "boardstyle");
+        iter = g_slist_prepend (iter, "linelength");
+        iter = g_slist_prepend (iter, "pagelength");
+        iter = g_slist_prepend (iter, "redoubles");
+        iter = g_slist_prepend (iter, "sortwho");
+        iter = g_slist_prepend (iter, "timezone");
+        self->priv->expect_settings = iter;
+
+        iter = NULL;
+        iter = g_slist_prepend (iter, "wrap");
+        iter = g_slist_prepend (iter, "telnet");
+        iter = g_slist_prepend (iter, "silent");
+        iter = g_slist_prepend (iter, "report");
+        iter = g_slist_prepend (iter, "ready");
+        iter = g_slist_prepend (iter, "ratings");
+        iter = g_slist_prepend (iter, "notify");
+        iter = g_slist_prepend (iter, "moves");
+        iter = g_slist_prepend (iter, "moreboards");
+        iter = g_slist_prepend (iter, "greedy");
+        iter = g_slist_prepend (iter, "double");
+        iter = g_slist_prepend (iter, "crawford");
+        iter = g_slist_prepend (iter, "bell");
+        iter = g_slist_prepend (iter, "automove");
+        iter = g_slist_prepend (iter, "autodouble");
+        iter = g_slist_prepend (iter, "autoboard");
+        iter = g_slist_prepend (iter, "allowpip");
+        self->priv->expect_toggles = iter;
 }
 
 static void
@@ -134,6 +181,11 @@ gibbon_session_finalize (GObject *object)
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
+
+        if (self->priv->expect_settings)
+                g_slist_free (self->priv->expect_settings);
+        if (self->priv->expect_toggles)
+                g_slist_free (self->priv->expect_toggles);
 }
 
 static void
@@ -205,7 +257,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_clip_who_info (self, iter);
                 break;
         case GIBBON_CLIP_CODE_WHO_INFO_END:
-                retval = GIBBON_CLIP_CODE_WHO_INFO_END;
+                retval = gibbon_session_clip_who_info_end (self, iter);
                 break;
         case GIBBON_CLIP_CODE_LOGIN:
                 retval = GIBBON_CLIP_CODE_LOGIN;
@@ -273,6 +325,24 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_EMPTY:
                 retval = GIBBON_CLIP_CODE_EMPTY;
                 break;
+        case GIBBON_CLIP_CODE_START_SETTINGS:
+                if (self->priv->expect_settings)
+                        retval = GIBBON_CLIP_CODE_START_SETTINGS;
+                else
+                        retval = -1;
+                break;
+        case GIBBON_CLIP_CODE_SHOW_SETTING:
+                retval = gibbon_session_handle_show_setting (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_START_TOGGLES:
+                if (self->priv->expect_toggles)
+                        retval = GIBBON_CLIP_CODE_START_TOGGLES;
+                else
+                        retval = -1;
+                break;
+        case GIBBON_CLIP_CODE_SHOW_TOGGLE:
+                retval = gibbon_session_handle_show_toggle (self, iter);
+                break;
         }
 
         gibbon_clip_free_result (values);
@@ -290,9 +360,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         GTimeVal last_login;
         gchar *last_login_str;
         gchar *reply;
-        gchar *mail;
         GibbonServerConsole *console;
-        GibbonPrefs *prefs;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &login))
                 return -1;
@@ -322,22 +390,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         console = gibbon_app_get_server_console (self->priv->app);
         gibbon_server_console_print_info (console, reply);
         g_free (reply);
-                
-        gibbon_connection_queue_command (self->priv->connection,
-                                         FALSE,
-                                         "set boardstyle 3");
 
-        prefs = gibbon_app_get_prefs (self->priv->app);
-        mail = gibbon_prefs_get_string (prefs,
-                                        GIBBON_PREFS_MAIL_ADDRESS);
-        if (mail) {
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "address %s",
-                                                 mail);
-                g_free (mail);
-        }
-        
         return GIBBON_CLIP_CODE_WELCOME;
 }
 
@@ -453,6 +506,38 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                     who, rating, experience);
 
         return GIBBON_CLIP_CODE_WHO_INFO;
+}
+
+static gint
+gibbon_session_clip_who_info_end (GibbonSession *self,
+                                  GSList *iter)
+{
+        GibbonPrefs *prefs;
+        gchar *mail;
+
+        if (!self->priv->initialized) {
+                self->priv->initialized = TRUE;
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "set");
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "toggle");
+
+                prefs = gibbon_app_get_prefs (self->priv->app);
+                mail = gibbon_prefs_get_string (prefs,
+                                                GIBBON_PREFS_MAIL_ADDRESS);
+                if (mail) {
+                        gibbon_connection_queue_command (self->priv->connection,
+                                                         FALSE,
+                                                         "address %s",
+                                                         mail);
+                        g_free (mail);
+                }
+
+        }
+
+        return GIBBON_CLIP_CODE_WHO_INFO_END;
 }
 
 static gint
@@ -1233,4 +1318,163 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                    gibbon_position_copy (self->priv->position));
 
         return GIBBON_CLIP_CODE_MOVES;
+}
+
+static gint
+gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
+{
+        gint retval = -1;
+        const gchar *key;
+        const gchar *value;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
+                return -1;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &value))
+                return -1;
+
+        if (gibbon_session_clear_expect_list (self,
+                                              &self->priv->expect_settings,
+                                              key))
+                retval = GIBBON_CLIP_CODE_SHOW_SETTING;
+
+        /* The only setting we are interested in is "boardstyle".  */
+        if (0 == g_strcmp0 ("boardstyle", key)
+            && (value[0] != '3' || value[1])) {
+                /*
+                 * Somebody changed the boardstyle.  This is assumed an error.
+                 * We will therefore completely show the communication with
+                 * FIBS and neither hide the command sent, nor will we
+                 * try to hide the reply.
+                 */
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 TRUE,
+                                                 "set boardstyle 3");
+        }
+
+        return retval;
+}
+
+static gint
+gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
+{
+        gint retval = -1;
+        const gchar *key;
+        gboolean value;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN, &value))
+                return -1;
+
+        if (gibbon_session_clear_expect_list (self,
+                                              &self->priv->expect_toggles,
+                                              key))
+                retval = GIBBON_CLIP_CODE_SHOW_TOGGLE;
+
+        if (0 == g_strcmp0 ("notify", key)) {
+                if (!value) {
+                        gibbon_connection_queue_command (self->priv->connection,
+                                                         TRUE,
+                                                         "toggle notify");
+                }
+        }
+
+        return retval;
+}
+
+static gboolean
+gibbon_session_clear_expect_list (GibbonSession *self, GSList **list,
+                                  const gchar *key)
+{
+        GSList *iter = *list;
+
+        while (iter) {
+                if (0 == g_strcmp0 (iter->data, key)) {
+                        *list = g_slist_remove (*list, iter->data);
+                        return TRUE;
+                }
+                iter = iter->next;
+        }
+
+        return FALSE;
+}
+
+void
+gibbon_session_configure_player_menu (const GibbonSession *self,
+                                      const gchar *player,
+                                      GtkMenu *menu)
+{
+        gboolean is_self;
+        gboolean am_playing;
+        GObject *item;
+        gboolean sensitive;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_if_fail (player != NULL);
+        g_return_if_fail (GTK_IS_MENU (menu));
+
+        if (g_strcmp0 (player,
+                        gibbon_connection_get_login (self->priv->connection)))
+                is_self = FALSE;
+        else
+                is_self = TRUE;
+
+        am_playing = self->priv->opponent && !self->priv->watching;
+
+        item = gibbon_app_find_object (self->priv->app,
+                                       "invite_player_menu_item",
+                                       GTK_TYPE_MENU_ITEM);
+        if (is_self || am_playing)
+                sensitive = FALSE;
+        else
+                sensitive = TRUE;
+        gtk_widget_set_sensitive (GTK_WIDGET (item), sensitive);
+
+        item = gibbon_app_find_object (self->priv->app,
+                                       "look_player_menu_item",
+                                        GTK_TYPE_MENU_ITEM);
+        if (is_self)
+                sensitive = FALSE;
+        else
+                sensitive = TRUE;
+        gtk_widget_set_sensitive (GTK_WIDGET (item), sensitive);
+
+        item = gibbon_app_find_object (self->priv->app,
+                                      "watch_player_menu_item",
+                                      GTK_TYPE_MENU_ITEM);
+        if (is_self || am_playing)
+                sensitive = FALSE;
+        else
+                sensitive = TRUE;
+        gtk_widget_set_sensitive (GTK_WIDGET (item), sensitive);
+        if (self->priv->watching
+            && 0 == g_strcmp0 (player, self->priv->watching)) {
+                gtk_menu_item_set_label (GTK_MENU_ITEM (item), _("Stop"
+                                                                 " watching"));
+        } else {
+                gtk_menu_item_set_label (GTK_MENU_ITEM (item), _("Watch"));
+        }
+
+        item = gibbon_app_find_object (self->priv->app,
+                                       "tell-player-menu-item",
+                                       GTK_TYPE_MENU_ITEM);
+        /*
+         * We do not let the user select the "chat" menu item for the
+         * current opponent.  The game chat entry is already open for that
+         * purpose.
+         */
+        if (is_self
+            || (am_playing && 0 == g_strcmp0 (player, self->priv->opponent)))
+                sensitive = FALSE;
+        else
+                sensitive = TRUE;
+        gtk_widget_set_sensitive (GTK_WIDGET (item), sensitive);
+}
+
+const gchar * const
+gibbon_session_get_watching (const GibbonSession *self)
+{
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), NULL);
+
+        return self->priv->watching;
 }
