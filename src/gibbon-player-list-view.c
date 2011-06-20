@@ -35,6 +35,7 @@
 #include "gibbon-reliability-renderer.h"
 #include "gibbon-player-list.h"
 #include "gibbon-reliability.h"
+#include "gibbon-session.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
@@ -328,6 +329,7 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
         GtkTreePath *path;
         GtkTreeView *view;
         GObject *player_menu;
+        gchar *who;
 
         if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
                 return FALSE;
@@ -346,6 +348,13 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
 
         player_menu = gibbon_app_find_object (self->priv->app, "player_menu",
                                               GTK_TYPE_MENU);
+        who = gibbon_player_list_view_row_name (self);
+        if (!who)
+                return TRUE;
+        gibbon_app_configure_player_menu (self->priv->app, who,
+                                          GTK_MENU (player_menu));
+        g_free (who);
+
         gtk_widget_show_all (GTK_WIDGET (player_menu));
 
         gtk_menu_popup (GTK_MENU (player_menu),
@@ -424,6 +433,8 @@ gibbon_player_list_view_on_watch (const GibbonPlayerListView *self)
 {
         gchar *who;
         GibbonConnection *connection;
+        GibbonSession *session;
+        const gchar *command;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 
@@ -431,9 +442,14 @@ gibbon_player_list_view_on_watch (const GibbonPlayerListView *self)
         if (!who)
                 return;
 
+        session = gibbon_app_get_session (self->priv->app);
+        if (0 == g_strcmp0 (gibbon_session_get_watching (session), who))
+                command = "unwatch";
+        else
+                command = "watch";
         connection = gibbon_app_get_connection (self->priv->app);
         gibbon_connection_queue_command (connection, FALSE,
-                                         "watch %s", who);
+                                         "%s %s", command, who);
         gibbon_connection_queue_command (connection, FALSE, "board");
 
         g_free (who);
