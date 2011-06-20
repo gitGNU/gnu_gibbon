@@ -57,6 +57,7 @@ enum {
         GIBBON_PLAYER_LIST_COL_OPPONENT,
         GIBBON_PLAYER_LIST_COL_WATCHING,
         GIBBON_PLAYER_LIST_COL_CLIENT,
+        GIBBON_PLAYER_LIST_COL_HOSTNAME,
         GIBBON_PLAYER_LIST_COL_EMAIL,
         GIBBON_PLAYER_LIST_N_COLUMNS
 };
@@ -76,6 +77,7 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              const gchar *opponent,
                              const gchar *watching,
                              const gchar *client,
+                             const gchar *hostname,
                              const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);

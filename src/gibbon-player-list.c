@@ -77,6 +77,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING);
         self->priv->store = store;
         
@@ -131,6 +132,8 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
+                G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
                 
@@ -173,6 +176,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *opponent,
                         const gchar *watching,
                         const gchar *client,
+                        const gchar *hostname,
                         const gchar *email)
 {
         struct GibbonPlayer *player;
@@ -233,6 +237,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
+                            GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }

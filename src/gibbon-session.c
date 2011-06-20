@@ -479,7 +479,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
                                 reliability, confidence,
-                                opponent, watching, client, email);
+                                opponent, watching, client, hostname, email);
         g_free (client);
 
         if (!g_strcmp0 (who, account)) {
