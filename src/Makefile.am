@@ -70,7 +70,8 @@ common_SOURCES = 			\
 	gibbon-reliability.c		\
 	gibbon-reliability-renderer.c	\
 	gibbon-util.c			\
-	gibbon-clip.c	
+	gibbon-clip.c			\
+	gibbon-inviter-list.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -107,7 +108,8 @@ noinst_HEADERS =			\
 	gibbon-reliability.h		\
 	gibbon-reliability-renderer.h	\
 	gibbon-util.h			\
-	gibbon-clip.h
+	gibbon-clip.h			\
+	gibbon-inviter-list.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
