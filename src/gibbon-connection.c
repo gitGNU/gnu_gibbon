@@ -30,6 +30,7 @@
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-fibs-command.h"
+#include "gibbon-clip.h"
 
 enum gibbon_connection_signals {
         RESOLVING,
@@ -68,6 +69,7 @@ struct _GibbonConnectionPrivate {
         gchar *in_buffer;
         guint out_watcher;
         GList *out_queue;
+        gboolean out_ready;
         
         GibbonSession *session;
 };
@@ -114,6 +116,7 @@ gibbon_connection_init (GibbonConnection *conn)
         
         conn->priv->out_watcher = 0;
         conn->priv->out_queue = NULL;
+        conn->priv->out_ready = FALSE;
         
         conn->priv->session = NULL;
 }
@@ -417,17 +420,26 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         session = self->priv->session;
                         clip_code = gibbon_session_process_server_line (session,
                                                                         ptr);
-                        if (clip_code == 1) {
+                        if (clip_code == GIBBON_CLIP_CODE_WELCOME) {
                                 self->priv->state = WAIT_COMMANDS;
                                 g_signal_emit (self,
                                                signals[LOGGED_IN],
                                                0, self);
                         }
-                        if (clip_code >= 0)
+                        if (clip_code >= 0) {
+                                /*
+                                 * Only send commands to FIBS, when it has
+                                 * send some kind of reply.  Just lumping
+                                 * them together results in only the first
+                                 * one being recognized.
+                                 */
+                                if (clip_code > 0)
+                                        self->priv->out_ready = TRUE;
                                 gibbon_server_console_print_output (console,
                                                                     ptr);
-                        else
+                        } else {
                                 gibbon_server_console_print_info (console, ptr);
+                        }
                 } else {
                         gibbon_server_console_print_info (console, ptr);
                 }
@@ -446,6 +458,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         package = g_strdup (PACKAGE);
                         if (*package >= 'a' && *package <= 'z')
                                 *package -= 32;
+                        self->priv->out_ready = TRUE;
                         gibbon_connection_queue_command (self,
                                         FALSE,
                                         "login %s_%s 9999 %s %s",
@@ -513,6 +526,20 @@ gibbon_connection_on_output (GIOChannel *channel,
                 self->priv->out_watcher = 0;
                 return FALSE;
         }
+
+        /*
+         * It is not possible to send bulk commands to FIBS.  Ideally, the
+         * next command should only be sent after a reply has been received
+         * for the last command.  But FIBS chokes on commands more than
+         * often and that approach could be dangerous.
+         *
+         * What we do instead is that we just wait for _any_ valid message
+         * from FIBS.  That could be a reply to an earlier command or just
+         * some asynchronous message.   Only in that case, we send the
+         * command.
+         */
+        if (!self->priv->out_ready)
+                return TRUE;
         
         command = g_list_nth_data (self->priv->out_queue, 0);
         buffer = gibbon_fibs_command_get_pointer (command);
@@ -550,6 +577,11 @@ gibbon_connection_on_output (GIOChannel *channel,
                 g_object_unref (command);
                 self->priv->out_queue = g_list_remove (self->priv->out_queue,
                                                        command);
+                /*
+                 * Wait for a reply from FIBS, before sending the next
+                 * command.
+                 */
+                self->priv->out_ready = FALSE;
         }
 
         if (!self->priv->out_queue) {
