@@ -157,7 +157,32 @@ static gboolean gibbon_clip_parse_moves (const gchar *line,
                                          gchar **tokens,
                                          GSList **result);
 
+static gboolean gibbon_clip_parse_start_settings (const gchar *line,
+                                                  gchar **tokens,
+                                                  GSList **result);
+static gboolean gibbon_clip_parse_setting (const gchar *key,
+                                           const gchar *value,
+                                           GSList **result);
+static gboolean gibbon_clip_parse_setting1 (const gchar *line,
+                                            gchar **tokens,
+                                            GSList **result);
+static gboolean gibbon_clip_parse_setting2 (const gchar *line,
+                                            gchar **tokens,
+                                            GSList **result);
+static gboolean gibbon_clip_parse_start_toggles (const gchar *line,
+                                                 gchar **tokens,
+                                                 GSList **result);
+static gboolean gibbon_clip_parse_toggle (const gchar *key, gboolean value,
+                                          GSList **result);
+static gboolean gibbon_clip_parse_toggle1 (const gchar *line,
+                                           gchar **tokens,
+                                           GSList **result);
+static gboolean gibbon_clip_parse_2stars (const gchar *line,
+                                          gchar **tokens,
+                                          GSList **result);
+
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
+
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
                                       gint64 value);
 static GSList *gibbon_clip_alloc_double (GSList *list, enum GibbonClipType type,
@@ -193,25 +218,166 @@ gibbon_clip_parse (const gchar *line)
                  && !first[2])
                 success = gibbon_clip_parse_clip (line, tokens, &result);
 
-        switch (first[0]) {
-        case 'b':
-                if (0 == strncmp ("board:", first, 6))
-                        success = gibbon_clip_parse_board (line, tokens,
-                                                           &result);
-                break;
-        case 'Y':
-                if (0 == g_strcmp0 ("You're", tokens[0])
-                    && 0 == g_strcmp0 ("now", tokens[1])
-                    && 0 == g_strcmp0 ("watching", tokens[2]))
-                        success = gibbon_clip_parse_youre_watching (line,
+        if (!success) {
+                gibbon_clip_free_result (result);
+                result = NULL;
+                switch (first[0]) {
+                case '*':
+                        if ('*' == first[1] && !first[2])
+                                success = gibbon_clip_parse_2stars (line,
                                                                     tokens,
                                                                     &result);
-                break;
+                        break;
+                case 'a':
+                        if (0 == g_strcmp0 ("allowpip", first)
+                            || 0 == g_strcmp0 ("autoboard", first)
+                            || 0 == g_strcmp0 ("autodouble", first)
+                            || 0 == g_strcmp0 ("automove", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'b':
+                        if (0 == strncmp ("board:", first, 6))
+                                success = gibbon_clip_parse_board (line, tokens,
+                                                                   &result);
+                        else if (0 == g_strcmp0 ("boardstyle:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        else if (0 == g_strcmp0 ("bell", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'c':
+                        if (0 == g_strcmp0 ("crawford", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                case 'd':
+                        if (0 == g_strcmp0 ("double", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                case 'g':
+                        if (0 == g_strcmp0 ("greedy", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                case 'l':
+                        if (0 == g_strcmp0 ("linelength:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        break;
+                case 'm':
+                        if (0 == g_strcmp0 ("moreboards", first)
+                            || 0 == g_strcmp0 ("moves", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'n':
+                        if (0 == g_strcmp0 ("notify", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'p':
+                        if (0 == g_strcmp0 ("pagelength:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        break;
+                case 'r':
+                        if (0 == g_strcmp0 ("redoubles:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        else if (0 == g_strcmp0 ("ratings", first)
+                                || 0 == g_strcmp0 ("ready", first)
+                                || 0 == g_strcmp0 ("report", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 's':
+                        if (0 == g_strcmp0 ("sortwho:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        else if (0 == g_strcmp0 ("silent", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 't':
+                        if (0 == g_strcmp0 ("timezone:", first))
+                                success = gibbon_clip_parse_setting1 (line,
+                                                                      tokens,
+                                                                      &result);
+                        else if (0 == g_strcmp0 ("telnet", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'w':
+                        if (0 == g_strcmp0 ("wrap", first))
+                                success = gibbon_clip_parse_toggle1 (line,
+                                                                     tokens,
+                                                                     &result);
+                        break;
+                case 'S':
+                        if (0 == g_strcmp0 ("Settings", tokens[0])
+                            && 0 == g_strcmp0 ("of", tokens[1])
+                            && 0 == g_strcmp0 ("variables:", tokens[2])
+                            && !tokens[3])
+                                success =
+                                        gibbon_clip_parse_start_settings (line,
+                                                                       tokens,
+                                                                       &result);
+                        break;
+                case 'T':
+                        if (0 == g_strcmp0 ("The", tokens[0])
+                            && 0 == g_strcmp0 ("current", tokens[1])
+                            && 0 == g_strcmp0 ("settings", tokens[2])
+                            && 0 == g_strcmp0 ("are:", tokens[3])
+                            && !tokens[4])
+                                success =
+                                        gibbon_clip_parse_start_toggles (line,
+                                                                       tokens,
+                                                                       &result);
+                        break;
+                case 'V':
+                        if (0 == g_strcmp0 ("Value", first)
+                            && 0 == g_strcmp0 ("of", tokens[1])
+                            && tokens[2]
+                            && 0 == g_strcmp0 ("set", tokens[3])
+                            && 0 == g_strcmp0 ("to", tokens[4])
+                            && tokens[5] && !tokens[6])
+                                success = gibbon_clip_parse_setting2 (line,
+                                                                      tokens,
+                                                                      &result);
+                                break;
+                case 'Y':
+                        if (0 == g_strcmp0 ("You're", tokens[0])
+                            && 0 == g_strcmp0 ("now", tokens[1])
+                            && 0 == g_strcmp0 ("watching", tokens[2]))
+                                success =
+                                        gibbon_clip_parse_youre_watching (line,
+                                                                         tokens,
+                                                                       &result);
+                        break;
+                }
         }
 
         if (!success) {
                 if (!tokens[1])
                         goto bail_out;
+
+                gibbon_clip_free_result (result);
+                result = NULL;
 
                 switch (tokens[1][0]) {
                 case 'a':
@@ -1011,6 +1177,234 @@ gibbon_clip_parse_moves (const gchar *line, gchar **tokens, GSList **result)
                         return FALSE;
 
         return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_start_settings (const gchar *line, gchar **tokens,
+                                  GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_START_SETTINGS);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_setting (const gchar *key, const gchar *value,
+                           GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_SHOW_SETTING);
+
+        if (0 == g_strcmp0 ("boardstyle", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "boardstyle");
+        else if (0 == g_strcmp0 ("linelength", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "linelength");
+        else if (0 == g_strcmp0 ("pagelength", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "pagelength");
+        else if (0 == g_strcmp0 ("redoubles", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "redoubles");
+        else if (0 == g_strcmp0 ("sortwho", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "sortwho");
+        else if (0 == g_strcmp0 ("timezone", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "timezone");
+        else
+                return FALSE;
+
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
+                                            value);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_setting1 (const gchar *line, gchar **tokens,
+                            GSList **result)
+{
+        gchar *key;
+
+        if (!tokens[1] || tokens[2])
+                return FALSE;
+
+        key = g_alloca (1 + strlen (tokens[0]));
+        strcpy (key, tokens[0]);
+        gibbon_clip_chomp (key, ':');
+
+        return gibbon_clip_parse_setting (key, tokens[1], result);
+}
+
+static gboolean
+gibbon_clip_parse_setting2 (const gchar *line, gchar **tokens,
+                            GSList **result)
+{
+        gchar *key;
+        gchar *value;
+
+        key = g_alloca (1 + strlen (tokens[2]));
+        strcpy (key, tokens[2]);
+        ++key;
+        gibbon_clip_chomp (key, '\'');
+
+        value = g_alloca (1 + strlen (tokens[5]));
+        strcpy (value, tokens[5]);
+        gibbon_clip_chomp (value, '.');
+
+        return gibbon_clip_parse_setting (key, value, result);
+}
+
+static gboolean
+gibbon_clip_parse_start_toggles (const gchar *line, gchar **tokens,
+                                  GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_START_TOGGLES);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_toggle (const gchar *key, gboolean value, GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_SHOW_TOGGLE);
+
+        if (0 == g_strcmp0 ("allowpip", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "allowpip");
+        else if (0 == g_strcmp0 ("autoboard", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "autoboard");
+        else if (0 == g_strcmp0 ("autodouble", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "autodouble");
+        else if (0 == g_strcmp0 ("automove", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "automove");
+        else if (0 == g_strcmp0 ("bell", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "bell");
+        else if (0 == g_strcmp0 ("crawford", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "crawford");
+        else if (0 == g_strcmp0 ("double", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "double");
+        else if (0 == g_strcmp0 ("greedy", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "greedy");
+        else if (0 == g_strcmp0 ("moreboards", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "moreboards");
+        else if (0 == g_strcmp0 ("moves", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "moves");
+        else if (0 == g_strcmp0 ("notify", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "notify");
+        else if (0 == g_strcmp0 ("ratings", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "ratings");
+        else if (0 == g_strcmp0 ("ready", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "ready");
+        else if (0 == g_strcmp0 ("report", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "report");
+        else if (0 == g_strcmp0 ("silent", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "silent");
+        else if (0 == g_strcmp0 ("telnet", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "telnet");
+        else if (0 == g_strcmp0 ("wrap", key))
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "wrap");
+        else
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN,
+                                         value);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_toggle1 (const gchar *line, gchar **tokens,
+                           GSList **result)
+{
+        gboolean value;
+
+        if (!tokens[1] || tokens[2])
+                return FALSE;
+
+        if (0 == g_strcmp0 ("YES", tokens[1]))
+                value = TRUE;
+        else if (0 == g_strcmp0 ("NO", tokens[1]))
+                value = FALSE;
+        else
+                return FALSE;
+
+        return gibbon_clip_parse_toggle (tokens[0], value, result);
+}
+
+
+static gboolean
+gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
+                           GSList **result)
+{
+        if (0 == g_strcmp0 ("You", tokens[1])) {
+                if (0 == g_strcmp0 ("won't", tokens[2])
+                    && 0 == g_strcmp0 ("be", tokens[3])
+                    && 0 == g_strcmp0 ("notified", tokens[4])
+                    && 0 == g_strcmp0 ("when", tokens[5])
+                    && 0 == g_strcmp0 ("new", tokens[6])
+                    && 0 == g_strcmp0 ("users", tokens[7])
+                    && 0 == g_strcmp0 ("log", tokens[8])
+                    && 0 == g_strcmp0 ("in.", tokens[9]))
+                    return gibbon_clip_parse_toggle ("notify", FALSE, result);
+        }
+
+        if (0 == g_strcmp0 ("You'll", tokens[1])) {
+                if (0 == g_strcmp0 ("be", tokens[2])
+                    && 0 == g_strcmp0 ("notified", tokens[3])
+                    && 0 == g_strcmp0 ("when", tokens[4])
+                    && 0 == g_strcmp0 ("new", tokens[5])
+                    && 0 == g_strcmp0 ("users", tokens[6])
+                    && 0 == g_strcmp0 ("log", tokens[7])
+                    && 0 == g_strcmp0 ("in.", tokens[8]))
+                    return gibbon_clip_parse_toggle ("notify", TRUE, result);
+        }
+
+        return FALSE;
 }
 
 static gboolean

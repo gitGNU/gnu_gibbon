@@ -649,6 +649,332 @@ struct test_case test_various05 = {
                 }
 };
 
+struct test_case test_settings00 = {
+                "Settings of variables:",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "404" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings01 = {
+                "boardstyle: 3",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "boardstyle" },
+                                { GIBBON_CLIP_TYPE_STRING, "3" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings02 = {
+                "linelength: 0",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "linelength" },
+                                { GIBBON_CLIP_TYPE_STRING, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings03 = {
+                "pagelength: 0",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "pagelength" },
+                                { GIBBON_CLIP_TYPE_STRING, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings04 = {
+                "redoubles: none",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "redoubles" },
+                                { GIBBON_CLIP_TYPE_STRING, "none" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings05 = {
+                "sortwho: login",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "sortwho" },
+                                { GIBBON_CLIP_TYPE_STRING, "login" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings06 = {
+                "timezone: UTC",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "timezone" },
+                                { GIBBON_CLIP_TYPE_STRING, "UTC" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings07 = {
+                "Value of 'boardstyle' set to 3.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "boardstyle" },
+                                { GIBBON_CLIP_TYPE_STRING, "3" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings08 = {
+                "Value of 'linelength' set to 0.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "linelength" },
+                                { GIBBON_CLIP_TYPE_STRING, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings09 = {
+                "Value of 'pagelength' set to 0.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "pagelength" },
+                                { GIBBON_CLIP_TYPE_STRING, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings10 = {
+                "Value of 'redoubles' set to none.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "redoubles" },
+                                { GIBBON_CLIP_TYPE_STRING, "none" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings11 = {
+                "Value of 'sortwho' set to login.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "sortwho" },
+                                { GIBBON_CLIP_TYPE_STRING, "login" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_settings12 = {
+                "Value of 'timezone' set to UTC.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "405" },
+                                { GIBBON_CLIP_TYPE_STRING, "timezone" },
+                                { GIBBON_CLIP_TYPE_STRING, "UTC" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles00 = {
+                "The current settings are:",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "406" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles01 = {
+                "allowpip   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "allowpip" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles02 = {
+                "autoboard   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "autoboard" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles03 = {
+                "autodouble   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "autodouble" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles04 = {
+                "automove   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "automove" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles05 = {
+                "bell   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "bell" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles06 = {
+                "crawford   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "crawford" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles07 = {
+                "double   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "double" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles08 = {
+                "greedy   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "greedy" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles09 = {
+                "moreboards   YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "moreboards" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles10 = {
+                "moves   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "moves" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles11 = {
+                "notify  YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "notify" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles12 = {
+                "ratings   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "ratings" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles13 = {
+                "ready   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "ready" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles14 = {
+                "report   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "report" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles15 = {
+                "silent   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "silent" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles16 = {
+                "telnet  YES",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "telnet" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles17 = {
+                "wrap   NO",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "wrap" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles18 = {
+                "** You won't be notified when new users log in.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "notify" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles19 = {
+                "** You'll be notified when new users log in.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "notify" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -694,7 +1020,41 @@ struct test_case *test_cases[] = {
                 &test_various02a,
                 &test_various03,
                 &test_various04,
-                &test_various05
+                &test_various05,
+
+                &test_settings00,
+                &test_settings01,
+                &test_settings02,
+                &test_settings03,
+                &test_settings04,
+                &test_settings05,
+                &test_settings06,
+                &test_settings07,
+                &test_settings08,
+                &test_settings09,
+                &test_settings10,
+                &test_settings11,
+                &test_settings12,
+                &test_toggles00,
+                &test_toggles01,
+                &test_toggles02,
+                &test_toggles03,
+                &test_toggles04,
+                &test_toggles05,
+                &test_toggles06,
+                &test_toggles07,
+                &test_toggles08,
+                &test_toggles09,
+                &test_toggles10,
+                &test_toggles11,
+                &test_toggles12,
+                &test_toggles13,
+                &test_toggles14,
+                &test_toggles15,
+                &test_toggles16,
+                &test_toggles17,
+                &test_toggles18,
+                &test_toggles19
 };
 
 static gboolean test_single_case (struct test_case *test_case);
@@ -746,7 +1106,6 @@ test_single_case (struct test_case *test_case)
 
         if (expect->type != GIBBON_CLIP_TYPE_END) {
                 expect_type = stringify_token_type (expect->type);
-
                 g_printerr ("%s: token #%u: expected `%s' (token type %s)"
                             " got nothing.\n",
                             test_case->line, i + 1,
