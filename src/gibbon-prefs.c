@@ -50,6 +50,7 @@ G_DEFINE_TYPE (GibbonPrefs, gibbon_prefs, G_TYPE_OBJECT)
         "/apps/gibbon/preferences/debugging/"
 #define GIBBON_GCONF_DATA_PREFIX "/apps/gibbon/data/"
 #define GIBBON_GCONF_RECENT_PREFIX "/apps/gibbon/data/recent/"
+#define GIBBON_GCONF_PREFS_MATCH_PREFIX "/apps/gibbon/preferences/match/"
 
 static const gchar *gibbon_prefs_get_string_key (const GibbonPrefs *self,
                                                  enum GibbonPrefsString key);
@@ -142,6 +143,9 @@ gibbon_prefs_get_int_key (const GibbonPrefs *self,
                         return GIBBON_GCONF_SERVER_PREFS_PREFIX "port";
                 case GIBBON_PREFS_MAX_COMMANDS:
                         return GIBBON_GCONF_RECENT_PREFIX "max_commands";
+                case GIBBON_PREFS_MATCH_LENGTH:
+                        return GIBBON_GCONF_PREFS_MATCH_PREFIX "length";
+
         }
 
         g_return_val_if_reached (NULL);

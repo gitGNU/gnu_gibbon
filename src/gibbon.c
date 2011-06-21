@@ -74,11 +74,11 @@ main (int argc, char *argv[])
          */
         if (data_dir) {
                 builder_filename = g_build_filename (data_dir,
-                                                     PACKAGE ".xml",
+                                                     PACKAGE ".ui",
                                                      NULL);
         } else {
                 builder_filename = g_build_filename (GIBBON_DATADIR, PACKAGE,
-                                                     PACKAGE ".xml",
+                                                     PACKAGE ".ui",
                                                      NULL);
         }
 
@@ -88,7 +88,8 @@ main (int argc, char *argv[])
                                             "pixmaps", PACKAGE, NULL);
         }
 
-        app = gibbon_app_new (builder_filename, pixmaps_dir);
+        app = gibbon_app_new (builder_filename, pixmaps_dir,
+                              data_dir ? data_dir : GIBBON_DATADIR);
         if (!app)
                 return -1;
 

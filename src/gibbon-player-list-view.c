@@ -36,6 +36,8 @@
 #include "gibbon-player-list.h"
 #include "gibbon-reliability.h"
 #include "gibbon-session.h"
+#include "gibbon-saved-info.h"
+#include "gibbon-prefs.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
@@ -46,6 +48,7 @@ struct _GibbonPlayerListViewPrivate {
 
         GibbonSignal *button_pressed_handler;
 
+        GibbonSignal *invite_handler;
         GibbonSignal *look_handler;
         GibbonSignal *watch_handler;
         GibbonSignal *tell_handler;
@@ -53,6 +56,11 @@ struct _GibbonPlayerListViewPrivate {
 
         GtkTreeViewColumn *available_column;
         GtkTreeViewColumn *reliability_column;
+};
+
+static int const match_lengths[] = {
+                1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19,
+                29, 39, 49, 59, 69, 79, 89, 99, -1
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -67,11 +75,10 @@ static gboolean gibbon_player_list_view_on_button_pressed (GibbonPlayerListView
                                                            *event);
 static gchar *gibbon_player_list_view_row_name (const GibbonPlayerListView
                                                 *self);
+static void gibbon_player_list_view_on_invite (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_look (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_watch (const GibbonPlayerListView *self);
 static void gibbon_player_list_view_on_tell (const GibbonPlayerListView *self);
-static void gibbon_player_list_view_on_row_activated (const GibbonPlayerListView
-                                                      *self);
 static gboolean gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                                                           gint x, gint y,
                                                           gboolean keyboard_tip,
@@ -94,6 +101,7 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->player_menu = NULL;
 
         self->priv->button_pressed_handler = NULL;
+        self->priv->invite_handler = NULL;
         self->priv->look_handler = NULL;
         self->priv->watch_handler = NULL;
         self->priv->tell_handler = NULL;
@@ -122,6 +130,10 @@ gibbon_player_list_view_finalize (GObject *object)
         if (self->priv->button_pressed_handler)
                 g_object_unref (self->priv->button_pressed_handler);
         self->priv->button_pressed_handler = NULL;
+
+        if (self->priv->invite_handler)
+                g_object_unref (self->priv->invite_handler);
+        self->priv->invite_handler = NULL;
 
         if (self->priv->look_handler)
                 g_object_unref (self->priv->look_handler);
@@ -282,6 +294,13 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                  gibbon_signal_new (G_OBJECT (view), "button-press-event",
                                     callback, G_OBJECT (self));
 
+        emitter = gibbon_app_find_object (app, "invite_player_menu_item",
+                                          GTK_TYPE_MENU_ITEM);
+        callback = (GCallback) gibbon_player_list_view_on_invite;
+        self->priv->invite_handler =
+                 gibbon_signal_new (emitter, "activate",
+                                    callback, G_OBJECT (self));
+
         emitter = gibbon_app_find_object (app, "look_player_menu_item",
                                           GTK_TYPE_MENU_ITEM);
         callback = (GCallback) gibbon_player_list_view_on_look;
@@ -301,11 +320,6 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         callback = (GCallback) gibbon_player_list_view_on_tell;
         self->priv->tell_handler =
                  gibbon_signal_new (emitter, "activate",
-                                    callback, G_OBJECT (self));
-
-        callback = (GCallback) gibbon_player_list_view_on_row_activated;
-        self->priv->row_activated_handler =
-                 gibbon_signal_new (G_OBJECT (view), "row-activated",
                                     callback, G_OBJECT (self));
 
         callback = (GCallback) gibbon_player_list_view_on_query_tooltip;
@@ -337,6 +351,11 @@ gibbon_player_list_view_on_button_pressed (GibbonPlayerListView *self,
         GtkTreeView *view;
         GObject *player_menu;
         gchar *who;
+
+        if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
+                gibbon_player_list_view_on_invite (self);
+                return TRUE;
+        }
 
         if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
                 return FALSE;
@@ -416,6 +435,135 @@ gibbon_player_list_view_row_name (const GibbonPlayerListView *self)
 }
 
 static void
+gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
+{
+        gchar *who;
+        GibbonConnection *connection;
+        GtkWidget *main_window;
+        GtkWidget *dialog;
+        gint reply;
+        GibbonSession *session;
+        const GibbonSavedInfo *saved_info;
+        GtkWidget *combo;
+        gint selected = -1;
+        GibbonPrefs *prefs;
+        gint pref_length;
+        gchar *length_string;
+        gint length;
+        gint i;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
+
+        who = gibbon_player_list_view_row_name (self);
+        if (!who)
+                return;
+
+        connection = gibbon_app_get_connection (self->priv->app);
+
+        /* We could have got here via double-click or row activation.  */
+        if (!g_strcmp0 (gibbon_connection_get_login (connection), who))
+                return;
+        if (!gibbon_player_list_get_available (self->priv->players, who))
+                return;
+
+        main_window = gibbon_app_get_window (self->priv->app);
+        session = gibbon_app_get_session (self->priv->app);
+        saved_info = gibbon_session_get_saved (session, who);
+
+        if (saved_info) {
+                dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_QUESTION,
+                                         GTK_BUTTONS_YES_NO,
+                                         _("Invite %s to resume"
+                                           " your saved match?"), who);
+                reply = gtk_dialog_run (GTK_DIALOG (dialog));
+                gtk_widget_destroy (dialog);
+
+                if (reply == GTK_RESPONSE_YES) {
+                        g_printerr ("invite %s resume\n", who);
+                }
+        } else {
+                dialog = gtk_dialog_new_with_buttons (_("Invitation"),
+                                                      GTK_WINDOW (main_window),
+                                                      GTK_DIALOG_MODAL
+                                                      | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                      GTK_STOCK_CANCEL,
+                                                      GTK_RESPONSE_REJECT,
+                                                      GTK_STOCK_OK,
+                                                      GTK_RESPONSE_ACCEPT,
+                                                      NULL);
+
+                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                                    gtk_label_new (_("Match length:")),
+                                    TRUE, TRUE, 0);
+                combo = gtk_combo_box_new_text ();
+                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                                    combo, TRUE, TRUE, 0);
+
+                prefs = gibbon_app_get_prefs (self->priv->app);
+
+                pref_length = gibbon_prefs_get_int (prefs,
+                                                     GIBBON_PREFS_MATCH_LENGTH);
+
+                for (i = 0;
+                     i < (sizeof match_lengths) / (sizeof match_lengths[0]);
+                     ++i) {
+                        length = match_lengths[i];
+                        if (length < 0) {
+                                length_string = g_strdup (_("unlimited"));
+                        } else {
+                                length_string = g_strdup_printf ("%d", length);
+                        }
+                        gtk_combo_box_append_text (GTK_COMBO_BOX (combo),
+                                                   length_string);
+                        g_free (length_string);
+                        if (pref_length == length)
+                                g_object_set (G_OBJECT (combo), "active", i,
+                                              NULL);
+                }
+
+                gtk_widget_show_all (dialog);
+
+                reply = gtk_dialog_run (GTK_DIALOG (dialog));
+
+                if (reply != GTK_RESPONSE_ACCEPT) {
+                        gtk_widget_destroy (dialog);
+                        g_free (who);
+                        return;
+                }
+
+                g_object_get (G_OBJECT (combo), "active", &selected, NULL);
+                if (selected < 0
+                    || selected >= (sizeof match_lengths)
+                            / (sizeof match_lengths[0])) {
+                        gtk_widget_destroy (dialog);
+                        g_free (who);
+                        return;
+                }
+
+                length = match_lengths[selected];
+                if (length < 0) {
+                        length_string = g_strdup ("unlimited");
+                } else {
+                        length_string = g_strdup_printf ("%d", length);
+                }
+
+                gibbon_connection_queue_command (connection, FALSE,
+                                                 "invite %s %s\n",
+                                                 who, length_string);
+                g_free (length_string);
+
+                (void) gibbon_prefs_set_int (prefs, GIBBON_PREFS_MATCH_LENGTH,
+                                             length);
+
+                gtk_widget_destroy (dialog);
+        }
+
+        g_free (who);
+}
+
+static void
 gibbon_player_list_view_on_look (const GibbonPlayerListView *self)
 {
         gchar *who;
@@ -476,12 +624,6 @@ gibbon_player_list_view_on_tell (const GibbonPlayerListView *self)
         gibbon_app_start_chat (self->priv->app, whom);
 
         g_free (whom);
-}
-
-static void
-gibbon_player_list_view_on_row_activated (const GibbonPlayerListView *self)
-{
-        g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 }
 
 static gboolean

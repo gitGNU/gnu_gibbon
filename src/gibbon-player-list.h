@@ -83,6 +83,8 @@ gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);
 gchar *gibbon_player_list_get_opponent (const GibbonPlayerList *self,
                                         const gchar *player_name);
+gboolean gibbon_player_list_get_available (const GibbonPlayerList *self,
+                                           const gchar *player_name);
 void gibbon_player_list_remove (GibbonPlayerList *self,
                                 const gchar *player_name);
 

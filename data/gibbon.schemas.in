@@ -57,11 +57,22 @@
       <key>/schemas/apps/gibbon/preferences/server/address</key>
       <applyto>/apps/gibbon/preferences/server/address</applyto>
       <owner>gibbon</owner>
-      <type>bool</type>
+      <type>string</type>
       <default>FALSE</default>
       <locale name="C">
 	<short>E-mail address</short>
 	<long>E-mail address to display on the server</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/gibbon/preferences/match/length</key>
+      <applyto>/apps/gibbon/preferences/match/length</applyto>
+      <owner>gibbon</owner>
+      <type>int</type>
+      <default>5</default>
+      <locale name="C">
+	<short>Preferred match length</short>
+	<long>Preferred match length (-1 for unlimited)</long>
       </locale>
     </schema>
     <schema>

@@ -49,6 +49,8 @@
 #include "gibbon-help.h"
 #include "gibbon-player-list.h"
 #include "gibbon-player-list-view.h"
+#include "gibbon-inviter-list.h"
+#include "gibbon-inviter-list-view.h"
 #include "gibbon-session.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
@@ -80,6 +82,9 @@ struct _GibbonAppPrivate {
 
         GibbonPlayerList *player_list;
         GibbonPlayerListView *player_list_view;
+
+        GibbonInviterList *inviter_list;
+        GibbonInviterListView *inviter_list_view;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -108,9 +113,22 @@ static void gibbon_app_on_logged_in (GibbonApp *self,
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
 static void gibbon_app_on_account_prefs (GibbonApp *self);
+static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
+
+static const char * const gibbon_app_icon_sizes[] = {
+                "16x16",
+                "22x22",
+                "24x24",
+                "32x32",
+                "48x48",
+                "128x128",
+                /* 256x256 causes a Gdk warning "icons too large".  */
+                /* "256x256", */
+                "scalable",
+};
 
 static void 
 gibbon_app_init (GibbonApp *self)
@@ -148,6 +166,8 @@ gibbon_app_init (GibbonApp *self)
 
         self->priv->player_list = NULL;
         self->priv->player_list_view = NULL;
+        self->priv->inviter_list = NULL;
+        self->priv->inviter_list_view = NULL;
 }
 
 static void
@@ -156,6 +176,12 @@ gibbon_app_finalize (GObject *object)
         GibbonApp *self = GIBBON_APP (object);
 
         gibbon_app_disconnect (self);
+
+        if (self->priv->inviter_list_view)
+                g_object_unref (self->priv->inviter_list_view);
+
+        if (self->priv->inviter_list)
+                g_object_unref (self->priv->inviter_list);
 
         if (self->priv->player_list_view)
                 g_object_unref (self->priv->player_list_view);
@@ -195,7 +221,8 @@ gibbon_app_class_init (GibbonAppClass *klass)
  * Returns: The newly created #GibbonApp or %NULL in case of failure.
  */
 GibbonApp *
-gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
+gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory,
+                const gchar *data_dir)
 {
         GibbonApp *self = g_object_new (GIBBON_TYPE_APP, NULL);
         gchar *board_filename;
@@ -265,6 +292,12 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory)
         self->priv->player_list = gibbon_player_list_new ();
         self->priv->player_list_view =
                 gibbon_player_list_view_new (self, self->priv->player_list);
+
+        self->priv->inviter_list = gibbon_inviter_list_new ();
+        self->priv->inviter_list_view =
+                gibbon_inviter_list_view_new (self, self->priv->inviter_list);
+
+        gibbon_app_set_icon (self, data_dir);
 
         singleton = self;
 
@@ -725,6 +758,7 @@ gibbon_app_disconnect (GibbonApp *self)
         gibbon_shouts_set_my_name (self->priv->shouts, NULL);
         gibbon_game_chat_set_my_name (self->priv->game_chat, NULL);
         gibbon_player_list_clear (self->priv->player_list);
+        gibbon_inviter_list_clear (self->priv->inviter_list);
 
         gibbon_app_set_state_disconnected (self);
 }
@@ -1001,6 +1035,14 @@ gibbon_app_get_player_list (const GibbonApp *self)
         return self->priv->player_list;
 }
 
+GibbonInviterList *
+gibbon_app_get_player_inviter_list (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->inviter_list;
+}
+
 void
 gibbon_app_configure_player_menu (const GibbonApp *self,
                                   const gchar *player,
@@ -1009,4 +1051,37 @@ gibbon_app_configure_player_menu (const GibbonApp *self,
         gibbon_session_configure_player_menu (
                         gibbon_connection_get_session (self->priv->connection),
                         player, menu);
+}
+
+static void
+gibbon_app_set_icon (const GibbonApp *self, const gchar *data_dir)
+{
+        GList *list = NULL;
+        gint i;
+        const gchar *size;
+        const gchar * const pngname = PACKAGE ".png";
+        const gchar * const svgname = PACKAGE ".svg";
+        gchar *filename;
+        gboolean is_svg;
+        GdkPixbuf *pixbuf;
+
+        for (i = 0;
+             i < (sizeof gibbon_app_icon_sizes)
+             / (sizeof gibbon_app_icon_sizes[0]);
+             ++i) {
+                size = gibbon_app_icon_sizes[i];
+                is_svg = !g_strcmp0 ("scalable", size);
+                filename = g_build_filename (data_dir, "icons", "hicolor",
+                                             size, "apps",
+                                             is_svg ? svgname : pngname,
+                                             NULL);
+                pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+                if (pixbuf)
+                        list = g_list_prepend (list, pixbuf);
+                g_free (filename);
+        }
+
+        gtk_window_set_default_icon_list (list);
+
+
 }

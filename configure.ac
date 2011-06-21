@@ -172,6 +172,7 @@ AC_CONFIG_FILES([
     share/icons/application/48x48/Makefile
     share/icons/application/128x128/Makefile
     share/icons/application/256x256/Makefile
+    share/icons/application/scalable/Makefile
 ])
 AC_OUTPUT
 

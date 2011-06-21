@@ -37,7 +37,7 @@ install-data-local:
 endif
 
 gtkbuilderdir = $(datadir)/$(PACKAGE)
-gtkbuilder_DATA = $(PACKAGE).xml
+gtkbuilder_DATA = $(PACKAGE).ui
 
 EXTRA_DIST = \
 	$(desktop_in_files) \

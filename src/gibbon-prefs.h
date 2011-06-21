@@ -75,6 +75,7 @@ enum GibbonPrefsString {
 enum GibbonPrefsInt {
         GIBBON_PREFS_PORT,
         GIBBON_PREFS_MAX_COMMANDS,
+        GIBBON_PREFS_MATCH_LENGTH
 };
 
 enum GibbonPrefsBoolean {

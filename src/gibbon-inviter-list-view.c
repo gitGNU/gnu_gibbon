@@ -46,10 +46,7 @@ struct _GibbonInviterListViewPrivate {
 
         GibbonSignal *button_pressed_handler;
 
-        GibbonSignal *look_handler;
-        GibbonSignal *watch_handler;
         GibbonSignal *tell_handler;
-        GibbonSignal *row_activated_handler;
 
         GtkTreeViewColumn *reliability_column;
 };
@@ -66,11 +63,7 @@ static gboolean gibbon_inviter_list_view_on_button_pressed (GibbonInviterListVie
                                                            *event);
 static gchar *gibbon_inviter_list_view_row_name (const GibbonInviterListView
                                                 *self);
-static void gibbon_inviter_list_view_on_look (const GibbonInviterListView *self);
-static void gibbon_inviter_list_view_on_watch (const GibbonInviterListView *self);
 static void gibbon_inviter_list_view_on_tell (const GibbonInviterListView *self);
-static void gibbon_inviter_list_view_on_row_activated (const GibbonInviterListView
-                                                      *self);
 static gboolean gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
                                                           gint x, gint y,
                                                           gboolean keyboard_tip,
@@ -93,10 +86,7 @@ gibbon_inviter_list_view_init (GibbonInviterListView *self)
         self->priv->player_menu = NULL;
 
         self->priv->button_pressed_handler = NULL;
-        self->priv->look_handler = NULL;
-        self->priv->watch_handler = NULL;
         self->priv->tell_handler = NULL;
-        self->priv->row_activated_handler = NULL;
 
         self->priv->reliability_column = NULL;
 }
@@ -121,21 +111,9 @@ gibbon_inviter_list_view_finalize (GObject *object)
                 g_object_unref (self->priv->button_pressed_handler);
         self->priv->button_pressed_handler = NULL;
 
-        if (self->priv->look_handler)
-                g_object_unref (self->priv->look_handler);
-        self->priv->look_handler = NULL;
-
-        if (self->priv->watch_handler)
-                g_object_unref (self->priv->watch_handler);
-        self->priv->watch_handler = NULL;
-
         if (self->priv->tell_handler)
                 g_object_unref (self->priv->tell_handler);
         self->priv->tell_handler = NULL;
-
-        if (self->priv->row_activated_handler)
-                g_object_unref (self->priv->row_activated_handler);
-        self->priv->row_activated_handler = NULL;
 
         G_OBJECT_CLASS (gibbon_inviter_list_view_parent_class)->finalize(object);
 }
@@ -176,13 +154,13 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
 
         self->priv->inviters_view = view =
             GTK_TREE_VIEW (gibbon_app_find_object (app,
-                                                   "inviter_view",
+                                                   "inviter-view",
                                                    GTK_TYPE_TREE_VIEW));
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
-                _("Name"),
+                _("Inviter"),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_INVITER_LIST_COL_NAME,
                 NULL);
@@ -267,30 +245,11 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                  gibbon_signal_new (G_OBJECT (view), "button-press-event",
                                     callback, G_OBJECT (self));
 
-        emitter = gibbon_app_find_object (app, "look_player_menu_item",
-                                          GTK_TYPE_MENU_ITEM);
-        callback = (GCallback) gibbon_inviter_list_view_on_look;
-        self->priv->look_handler =
-                 gibbon_signal_new (emitter, "activate",
-                                    callback, G_OBJECT (self));
-
-        emitter = gibbon_app_find_object (app, "watch_player_menu_item",
-                                          GTK_TYPE_MENU_ITEM);
-        callback = (GCallback) gibbon_inviter_list_view_on_watch;
-        self->priv->watch_handler =
-                 gibbon_signal_new (emitter, "activate",
-                                    callback, G_OBJECT (self));
-
         emitter = gibbon_app_find_object (app, "tell-inviter-menu-item",
                                           GTK_TYPE_MENU_ITEM);
         callback = (GCallback) gibbon_inviter_list_view_on_tell;
         self->priv->tell_handler =
                  gibbon_signal_new (emitter, "activate",
-                                    callback, G_OBJECT (self));
-
-        callback = (GCallback) gibbon_inviter_list_view_on_row_activated;
-        self->priv->row_activated_handler =
-                 gibbon_signal_new (G_OBJECT (view), "row-activated",
                                     callback, G_OBJECT (self));
 
         callback = (GCallback) gibbon_inviter_list_view_on_query_tooltip;
@@ -401,53 +360,6 @@ gibbon_inviter_list_view_row_name (const GibbonInviterListView *self)
 }
 
 static void
-gibbon_inviter_list_view_on_look (const GibbonInviterListView *self)
-{
-        gchar *who;
-        GibbonConnection *connection;
-
-        g_return_if_fail (GIBBON_IS_INVITER_LIST_VIEW (self));
-
-        who = gibbon_inviter_list_view_row_name (self);
-        if (!who)
-                return;
-
-        connection = gibbon_app_get_connection (self->priv->app);
-        gibbon_connection_queue_command (connection, FALSE,
-                                         "look %s", who);
-        gibbon_connection_queue_command (connection, FALSE, "board");
-
-        g_free (who);
-}
-
-static void
-gibbon_inviter_list_view_on_watch (const GibbonInviterListView *self)
-{
-        gchar *who;
-        GibbonConnection *connection;
-        GibbonSession *session;
-        const gchar *command;
-
-        g_return_if_fail (GIBBON_IS_INVITER_LIST_VIEW (self));
-
-        who = gibbon_inviter_list_view_row_name (self);
-        if (!who)
-                return;
-
-        session = gibbon_app_get_session (self->priv->app);
-        if (0 == g_strcmp0 (gibbon_session_get_watching (session), who))
-                command = "unwatch";
-        else
-                command = "watch";
-        connection = gibbon_app_get_connection (self->priv->app);
-        gibbon_connection_queue_command (connection, FALSE,
-                                         "%s %s", command, who);
-        gibbon_connection_queue_command (connection, FALSE, "board");
-
-        g_free (who);
-}
-
-static void
 gibbon_inviter_list_view_on_tell (const GibbonInviterListView *self)
 {
         gchar *whom;
@@ -461,12 +373,6 @@ gibbon_inviter_list_view_on_tell (const GibbonInviterListView *self)
         gibbon_app_start_chat (self->priv->app, whom);
 
         g_free (whom);
-}
-
-static void
-gibbon_inviter_list_view_on_row_activated (const GibbonInviterListView *self)
-{
-        g_return_if_fail (GIBBON_IS_INVITER_LIST_VIEW (self));
 }
 
 static gboolean

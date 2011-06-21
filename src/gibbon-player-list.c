@@ -323,6 +323,8 @@ gibbon_player_list_get_opponent (const GibbonPlayerList *self,
         GtkTreeIter iter;
         gchar *opponent;
 
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), NULL);
+
         if (!player)
                 return NULL;
 
@@ -337,4 +339,33 @@ gibbon_player_list_get_opponent (const GibbonPlayerList *self,
                 return NULL;
         }
         return opponent;
+}
+
+gboolean
+gibbon_player_list_get_available (const GibbonPlayerList *self,
+                                  const gchar *name)
+{
+        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
+                                                           name);
+        GtkTreeIter iter;
+        gchar *status;
+        gboolean available;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        if (!player)
+                return FALSE;
+
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_PLAYER_LIST_COL_AVAILABLE, &status,
+                            -1);
+
+        if (g_strcmp0 ("gtk-yes", status))
+                available = FALSE;
+        else
+                available = TRUE;
+
+        return available;
 }

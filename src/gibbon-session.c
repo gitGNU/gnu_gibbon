@@ -41,6 +41,7 @@
 #include "gibbon-archive.h"
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
+#include "gibbon-saved-info.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -85,6 +86,8 @@ static gint gibbon_session_handle_show_setting (GibbonSession *self,
                                                 GSList *iter);
 static gint gibbon_session_handle_show_toggle (GibbonSession *self,
                                                GSList *iter);
+static gint gibbon_session_handle_show_saved (GibbonSession *self,
+                                              GSList *iter);
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
@@ -111,6 +114,9 @@ struct _GibbonSessionPrivate {
 
         GSList *expect_settings;
         GSList *expect_toggles;
+
+        GHashTable *saved_games;
+        gboolean saved_games_finished;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -164,6 +170,13 @@ gibbon_session_init (GibbonSession *self)
         iter = g_slist_prepend (iter, "autoboard");
         iter = g_slist_prepend (iter, "allowpip");
         self->priv->expect_toggles = iter;
+
+        self->priv->saved_games =
+                g_hash_table_new_full (g_str_hash,
+                                       g_str_equal,
+                                       g_free,
+                                       (GDestroyNotify) gibbon_saved_info_free);
+        self->priv->saved_games_finished = FALSE;
 }
 
 static void
@@ -186,6 +199,9 @@ gibbon_session_finalize (GObject *object)
                 g_slist_free (self->priv->expect_settings);
         if (self->priv->expect_toggles)
                 g_slist_free (self->priv->expect_toggles);
+
+        if (self->priv->saved_games)
+                g_hash_table_destroy (self->priv->saved_games);
 }
 
 static void
@@ -342,6 +358,22 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_SHOW_TOGGLE:
                 retval = gibbon_session_handle_show_toggle (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_SHOW_START_SAVED:
+                if (self->priv->saved_games_finished)
+                        retval = -1;
+                else
+                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                break;
+        case GIBBON_CLIP_CODE_SHOW_SAVED:
+                retval = gibbon_session_handle_show_saved (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
+                if (self->priv->saved_games_finished)
+                        retval = -1;
+                else
+                        retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
+                self->priv->saved_games_finished = TRUE;
                 break;
         }
 
@@ -517,6 +549,9 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
 
         if (!self->priv->initialized) {
                 self->priv->initialized = TRUE;
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "show saved");
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "set");
@@ -1382,6 +1417,34 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
         return retval;
 }
 
+static gint
+gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
+{
+        const gchar *opponent;
+        guint match_length, scores[2];
+        GibbonSavedInfo *info;
+
+        if  (self->priv->saved_games_finished)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
+                return -1;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &match_length))
+                return -1;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &scores[0]))
+                return -1;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &scores[1]))
+                return -1;
+
+        info = gibbon_saved_info_new (opponent, match_length,
+                                      scores[0], scores[1]);
+
+        g_hash_table_insert (self->priv->saved_games,
+                             (gpointer) opponent, (gpointer) info);
+
+        return GIBBON_CLIP_CODE_SHOW_SAVED;
+}
+
 static gboolean
 gibbon_session_clear_expect_list (GibbonSession *self, GSList **list,
                                   const gchar *key)
@@ -1408,6 +1471,7 @@ gibbon_session_configure_player_menu (const GibbonSession *self,
         gboolean am_playing;
         GObject *item;
         gboolean sensitive;
+        gboolean is_occupied = FALSE;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
         g_return_if_fail (player != NULL);
@@ -1421,10 +1485,15 @@ gibbon_session_configure_player_menu (const GibbonSession *self,
 
         am_playing = self->priv->opponent && !self->priv->watching;
 
+        if (!is_self
+            && !gibbon_player_list_get_available (self->priv->player_list,
+                                                  player))
+                        is_occupied = TRUE;
+
         item = gibbon_app_find_object (self->priv->app,
                                        "invite_player_menu_item",
                                        GTK_TYPE_MENU_ITEM);
-        if (is_self || am_playing)
+        if (is_self || am_playing || is_occupied)
                 sensitive = FALSE;
         else
                 sensitive = TRUE;
@@ -1477,4 +1546,13 @@ gibbon_session_get_watching (const GibbonSession *self)
         g_return_val_if_fail (GIBBON_IS_SESSION (self), NULL);
 
         return self->priv->watching;
+}
+
+const GibbonSavedInfo const *
+gibbon_session_get_saved (const GibbonSession *self, const gchar *who)
+{
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), NULL);
+        g_return_val_if_fail (who != NULL, NULL);
+
+        return g_hash_table_lookup (self->priv->saved_games, who);
 }

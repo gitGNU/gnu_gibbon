@@ -72,7 +72,8 @@ struct _GibbonAppClass
 
 GType gibbon_app_get_type (void) G_GNUC_CONST;
 
-GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir);
+GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir,
+                           const gchar *data_dir);
 void gibbon_app_display_error (const GibbonApp *self,
                                const gchar *message_format, ...);
 void gibbon_app_display_info (const GibbonApp *self,
@@ -101,6 +102,7 @@ struct _GibbonShouts *gibbon_app_get_shouts (const GibbonApp *self);
 struct _GibbonGameChat *gibbon_app_get_game_chat (const GibbonApp *self);
 struct _GibbonArchive *gibbon_app_get_archive (const GibbonApp *self);
 struct _GibbonPlayerList *gibbon_app_get_player_list (const GibbonApp *self);
+struct _GibbonInviterList *gibbon_app_get_inviter_list (const GibbonApp *self);
 
 void gibbon_app_start_chat (GibbonApp *self, const gchar *peer);
 void gibbon_app_close_chat (GibbonApp *self, const gchar *peer);

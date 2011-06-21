@@ -483,7 +483,7 @@
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="vscrollbar_policy">automatic</property>
                     <child>
-                      <object class="GtkTreeView" id="invites-view">
+                      <object class="GtkTreeView" id="inviter-view">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
@@ -1154,6 +1154,15 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="label" translatable="yes">This wizard will lead you through the import of your user data and saved matches from JavaFIBS.</property>
@@ -1479,5 +1488,15 @@
       <action-widget response="0">account-dialog-cancel</action-widget>
       <action-widget response="0">account-dialog-okay</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkMenu" id="inviter_menu">
+    <property name="visible">True</property>
+    <child>
+      <object class="GtkMenuItem" id="tell-inviter-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Chat</property>
+        <property name="use_underline">True</property>
+      </object>
+    </child>
   </object>
 </interface>

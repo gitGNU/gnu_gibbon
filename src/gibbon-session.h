@@ -56,6 +56,8 @@ void gibbon_session_configure_player_menu (const GibbonSession *self,
                                            const gchar *player,
                                            GtkMenu *menu);
 const gchar * const gibbon_session_get_watching (const GibbonSession *self);
+const struct _GibbonSavedInfo *
+        gibbon_session_get_saved (const GibbonSession *self, const gchar *who);
 
 G_END_DECLS
 

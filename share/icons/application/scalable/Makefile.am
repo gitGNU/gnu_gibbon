@@ -15,19 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = 16x16 22x22 24x24 32x32 48x48 128x128 256x256 scalable
+icondir = $(datadir)/icons/hicolor/scalable/apps
+icon_DATA = gibbon.svg
 
-gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
-
-install-data-hook: update-icon-cache
-uninstall-hook: update-icon-cache
-
-update-icon-cache:
-	@-if test -z "$(DESTDIR)"; then \
-	echo "Updating Gtk icon cache."; \
-       	$(gtk_update_icon_cache); \
-	else \
-       	echo "*** Icon cache not updated. After (un)install, run this:"; \
-	echo "*** $(gtk_update_icon_cache)"; \
-	fi 
-
+EXTRA_DIST = $(icon_DATA)
