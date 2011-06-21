@@ -31,7 +31,7 @@
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-player-list.h"
-#include "gibbon-player-list-view.h"
+#include "gibbon-inviter-list.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-fibs-message.h"
 #include "gibbon-shouts.h"
@@ -107,6 +107,7 @@ struct _GibbonSessionPrivate {
         GibbonPosition *position;
 
         GibbonPlayerList *player_list;
+        GibbonInviterList *inviter_list;
 
         GibbonArchive *archive;
 
@@ -138,6 +139,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->opponent = NULL;
         self->priv->position = NULL;
         self->priv->player_list = NULL;
+        self->priv->inviter_list = NULL;
         self->priv->archive = NULL;
 
         self->priv->initialized = FALSE;
@@ -223,6 +225,7 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->app = app;
 
         self->priv->player_list = gibbon_app_get_player_list (app);
+        self->priv->inviter_list = gibbon_app_get_inviter_list (app);
 
         self->priv->position = gibbon_position_new ();
 
@@ -325,6 +328,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_MOVES:
                 retval = gibbon_session_handle_moves (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_TYPE_JOIN:
+                retval = GIBBON_CLIP_CODE_TYPE_JOIN;
                 break;
         case GIBBON_CLIP_CODE_YOURE_WATCHING:
                 retval = gibbon_session_handle_youre_watching (self, iter);
@@ -514,6 +520,9 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                 opponent, watching, client, hostname, email);
         g_free (client);
 
+        if (opponent && *opponent)
+                gibbon_inviter_list_remove (self->priv->inviter_list, who);
+
         if (!g_strcmp0 (who, account)) {
                 if (!opponent[0])
                         opponent = NULL;
@@ -617,6 +626,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 g_free (opponent);
         }
         gibbon_player_list_remove (self->priv->player_list, name);
+        gibbon_inviter_list_remove (self->priv->inviter_list, name);
 
         return GIBBON_CLIP_CODE_LOGOUT;
 }
