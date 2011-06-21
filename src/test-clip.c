@@ -563,6 +563,26 @@ struct test_case test_moves06 = {
 };
 
 struct test_case test_between00 = {
+                "GibbonTestA wants to play a 5 point match with you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "300" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between01 = {
+                "GibbonTestA wants to play an unlimited match with you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "300" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between02 = {
                 "You're now watching gflohr.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "302" },
@@ -975,6 +995,70 @@ struct test_case test_toggles19 = {
                 }
 };
 
+struct test_case test_saved00 = {
+        "  opponent          matchlength   score (user's points first)",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "408" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved01 = {
+        "  GammonBot_VII           5                0 -  0",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "409" },
+                                { GIBBON_CLIP_TYPE_NAME, "GammonBot_VII" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved02 = {
+        " *BlunderBot_VI           3                1 -  0",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "409" },
+                                { GIBBON_CLIP_TYPE_NAME, "BlunderBot_VI" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved03 = {
+        "**bonehead                3                1 -  2",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "409" },
+                                { GIBBON_CLIP_TYPE_NAME, "bonehead" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved04 = {
+        "no saved games.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "410" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved05 = {
+        "  deadbeef                unlimited         1 -  2",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "409" },
+                                { GIBBON_CLIP_TYPE_NAME, "deadbeef" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -1013,6 +1097,8 @@ struct test_case *test_cases[] = {
                 &test_moves06,
 
                 &test_between00,
+                &test_between01,
+                &test_between02,
 
                 &test_various00,
                 &test_various01,
@@ -1054,7 +1140,14 @@ struct test_case *test_cases[] = {
                 &test_toggles16,
                 &test_toggles17,
                 &test_toggles18,
-                &test_toggles19
+                &test_toggles19,
+
+                &test_saved00,
+                &test_saved01,
+                &test_saved02,
+                &test_saved03,
+                &test_saved04,
+                &test_saved05
 };
 
 static gboolean test_single_case (struct test_case *test_case);

@@ -58,6 +58,8 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_MOVES = 203,
 
                         /* Between game action.  */
+                        GIBBON_CLIP_CODE_INVITATION = 300,
+                        GIBBON_CLIP_CODE_TYPE_JOIN = 301,
                         GIBBON_CLIP_CODE_YOURE_WATCHING = 302,
 
                         /* Various.  */
@@ -68,7 +70,10 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_START_SETTINGS = 404,
                         GIBBON_CLIP_CODE_SHOW_SETTING = 405,
                         GIBBON_CLIP_CODE_START_TOGGLES = 406,
-                        GIBBON_CLIP_CODE_SHOW_TOGGLE = 407
+                        GIBBON_CLIP_CODE_SHOW_TOGGLE = 407,
+                        GIBBON_CLIP_CODE_SHOW_START_SAVED = 408,
+                        GIBBON_CLIP_CODE_SHOW_SAVED = 409,
+                        GIBBON_CLIP_CODE_SHOW_SAVED_NONE = 410
 
 };
 
