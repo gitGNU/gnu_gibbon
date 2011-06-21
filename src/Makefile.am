@@ -71,7 +71,9 @@ common_SOURCES = 			\
 	gibbon-reliability-renderer.c	\
 	gibbon-util.c			\
 	gibbon-clip.c			\
-	gibbon-inviter-list.c
+	gibbon-inviter-list.c		\
+	gibbon-inviter-list-view.c	\
+	gibbon-saved-info.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -109,7 +111,9 @@ noinst_HEADERS =			\
 	gibbon-reliability-renderer.h	\
 	gibbon-util.h			\
 	gibbon-clip.h			\
-	gibbon-inviter-list.h
+	gibbon-inviter-list.h		\
+	gibbon-inviter-list-view.h	\
+	gibbon-saved-info.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
@@ -124,8 +128,8 @@ TESTS_SH =
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
-	test_clip test_pretty_print_move test_strsplit
-	test_gary_movegen
+	test_clip test_pretty_print_move test_strsplit	\
+	test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
