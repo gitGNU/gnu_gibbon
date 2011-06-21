@@ -1036,7 +1036,7 @@ gibbon_app_get_player_list (const GibbonApp *self)
 }
 
 GibbonInviterList *
-gibbon_app_get_player_inviter_list (const GibbonApp *self)
+gibbon_app_get_inviter_list (const GibbonApp *self)
 {
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
