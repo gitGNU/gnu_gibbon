@@ -156,6 +156,8 @@ AC_CONFIG_FILES([
     pixmaps/Makefile
     pixmaps/boards/Makefile
     pixmaps/icons/Makefile
+    pixmaps/icons/16x16/Makefile
+    pixmaps/icons/scalable/Makefile
     po/Makefile.in
     docs/Makefile
     docs/reference/Makefile
