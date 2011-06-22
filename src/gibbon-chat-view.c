@@ -344,5 +344,7 @@ gibbon_chat_view_close (GibbonChatView *self)
 
         gtk_notebook_remove_page (self->priv->notebook,
                                   self->priv->page_number);
+        gibbon_app_close_chat (self->priv->app, self->priv->who);
+
         g_object_unref (self);
 }
