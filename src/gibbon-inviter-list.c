@@ -32,8 +32,7 @@ struct _GibbonInviterListPrivate {
 struct GibbonInviter {
         GtkTreeIter iter;
         
-        guint experience;
-        gdouble rating;
+        gint saved_count;
 };
 
 static GType gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_N_COLUMNS];
@@ -72,10 +71,11 @@ gibbon_inviter_list_init (GibbonInviterList *self)
                                     G_TYPE_DOUBLE,
                                     G_TYPE_UINT,
                                     GIBBON_TYPE_RELIABILITY,
-                                    G_TYPE_INT,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
-                                    G_TYPE_STRING);
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    G_TYPE_BOOLEAN);
         self->priv->store = store;
         
         model = gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (store));
@@ -121,7 +121,7 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
                 G_TYPE_UINT;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_RELIABILITY] =
                 GIBBON_TYPE_RELIABILITY;
-        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_SAVEDCOUNT] =
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_SAVED_COUNT] =
                 G_TYPE_INT;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_CLIENT] =
                 G_TYPE_STRING;
@@ -129,6 +129,8 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
                 G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT] =
+                G_TYPE_BOOLEAN;
                 
         G_OBJECT_CLASS (parent_class)->finalize = gibbon_inviter_list_finalize;
 }
@@ -184,10 +186,8 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                 g_hash_table_insert (self->priv->hash, g_strdup (name), inviter);
                 gtk_list_store_append (self->priv->store, 
                                        &inviter->iter);
+                inviter->saved_count = -1;
         }
-
-        inviter->rating = rating;
-        inviter->experience = experience;
 
         gtk_list_store_set (self->priv->store,
                             &inviter->iter,
@@ -195,10 +195,10 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_INVITER_LIST_COL_RELIABILITY, &rel,
-                            GIBBON_INVITER_LIST_COL_SAVEDCOUNT, -1,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
                             GIBBON_INVITER_LIST_COL_HOSTNAME, hostname,
                             GIBBON_INVITER_LIST_COL_EMAIL, email,
+                            GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT, TRUE,
                             -1);
 }
 
@@ -272,4 +272,49 @@ gibbon_inviter_list_remove (GibbonInviterList *self,
         gtk_list_store_remove (self->priv->store, &iter);
 
         (void) g_hash_table_remove (self->priv->hash, name);
+}
+
+gint
+gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
+                                     const gchar *name)
+{
+        struct GibbonInviter *player;
+
+        g_return_val_if_fail (GIBBON_IS_INVITER_LIST (self), -1);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        if (!player)
+                return -1;
+
+        return player->saved_count;
+}
+
+
+void
+gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
+                                     const gchar *name, gint count)
+{
+        gchar *stringified;
+
+        struct GibbonInviter *player;
+
+        g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        g_return_if_fail (player != NULL);
+
+        player->saved_count = count;
+
+        if (count < 0) {
+                stringified = NULL;
+        } else {
+                stringified = g_strdup_printf ("%d", count);
+        }
+
+        gtk_list_store_set (self->priv->store,
+                            &player->iter,
+                            GIBBON_INVITER_LIST_COL_SAVED_COUNT, stringified,
+                            GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
+                                    stringified ? FALSE : TRUE,
+                            -1);
 }

@@ -85,6 +85,10 @@ gchar *gibbon_player_list_get_opponent (const GibbonPlayerList *self,
                                         const gchar *player_name);
 gboolean gibbon_player_list_get_available (const GibbonPlayerList *self,
                                            const gchar *player_name);
+GtkListStore *gibbon_player_list_get_store (GibbonPlayerList *self);
+gboolean gibbon_player_list_get_iter (GibbonPlayerList *self,
+                                      const gchar *player_name,
+                                      GtkTreeIter *iter);
 void gibbon_player_list_remove (GibbonPlayerList *self,
                                 const gchar *player_name);
 

@@ -53,10 +53,11 @@ enum {
         GIBBON_INVITER_LIST_COL_RATING,
         GIBBON_INVITER_LIST_COL_EXPERIENCE,
         GIBBON_INVITER_LIST_COL_RELIABILITY,
-        GIBBON_INVITER_LIST_COL_SAVEDCOUNT,
+        GIBBON_INVITER_LIST_COL_SAVED_COUNT,
         GIBBON_INVITER_LIST_COL_CLIENT,
         GIBBON_INVITER_LIST_COL_HOSTNAME,
         GIBBON_INVITER_LIST_COL_EMAIL,
+        GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
         GIBBON_INVITER_LIST_N_COLUMNS
 };
 
@@ -78,6 +79,11 @@ gboolean gibbon_inviter_list_exists (const GibbonInviterList *self,
                                     const gchar *inviter_name);
 void gibbon_inviter_list_remove (GibbonInviterList *self,
                                 const gchar *inviter_name);
+gint gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
+                                          const gchar *inviter_name);
+void gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
+                                          const gchar *inviter_name,
+                                          gint count);
 
 G_END_DECLS
 

@@ -49,6 +49,9 @@ struct _GibbonInviterListViewPrivate {
         GibbonSignal *tell_handler;
 
         GtkTreeViewColumn *reliability_column;
+
+        GtkCellRenderer *spinner_renderer;
+        guint pulse_updater;
 };
 
 #define GIBBON_INVITER_LIST_VIEW_PRIVATE(obj) \
@@ -69,6 +72,9 @@ static gboolean gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
                                                           gboolean keyboard_tip,
                                                           GtkTooltip *tooltip,
                                                           gpointer _self);
+static gboolean
+        gibbon_inviter_list_view_pulse_updater (const GibbonInviterListView
+                                                *self);
 
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
@@ -89,6 +95,9 @@ gibbon_inviter_list_view_init (GibbonInviterListView *self)
         self->priv->tell_handler = NULL;
 
         self->priv->reliability_column = NULL;
+
+        self->priv->pulse_updater = 0;
+        self->priv->spinner_renderer = NULL;
 }
 
 static void
@@ -98,22 +107,15 @@ gibbon_inviter_list_view_finalize (GObject *object)
 
         if (self->priv->inviters)
                 g_object_unref (self->priv->inviters);
-        self->priv->inviters = NULL;
 
         if (self->priv->player_menu)
                 g_object_unref (self->priv->player_menu);
-        self->priv->player_menu = NULL;
-
-        self->priv->inviters_view = NULL;
-        self->priv->app = NULL;
 
         if (self->priv->button_pressed_handler)
                 g_object_unref (self->priv->button_pressed_handler);
-        self->priv->button_pressed_handler = NULL;
 
         if (self->priv->tell_handler)
                 g_object_unref (self->priv->tell_handler);
-        self->priv->tell_handler = NULL;
 
         G_OBJECT_CLASS (gibbon_inviter_list_view_parent_class)->finalize(object);
 }
@@ -147,6 +149,7 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         GtkCellRenderer *renderer;
         GCallback callback;
         GObject *emitter;
+        GSourceFunc source_func;
 
         self->priv->app = app;
         self->priv->inviters = inviters;
@@ -158,17 +161,17 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                                                    GTK_TYPE_TREE_VIEW));
 
         col = gtk_tree_view_column_new ();
+        gtk_tree_view_column_set_title (col, _("Decline"));
+        renderer = gtk_cell_renderer_pixbuf_new ();
+        gtk_tree_view_column_pack_start (col, renderer, TRUE);
+        g_object_set (G_OBJECT (renderer), "stock-id", "gtk-close", NULL);
+        gtk_tree_view_insert_column (view, col, -1);
+
+        col = gtk_tree_view_column_new ();
         gtk_tree_view_column_set_title (col, _("Accept"));
         renderer = gtk_cell_renderer_pixbuf_new ();
         gtk_tree_view_column_pack_start (col, renderer, TRUE);
         g_object_set (G_OBJECT (renderer), "stock-id", "gtk-ok", NULL);
-        gtk_tree_view_insert_column (view, col, -1);
-
-        col = gtk_tree_view_column_new ();
-        gtk_tree_view_column_set_title (col, _("Decline"));
-        renderer = gtk_cell_renderer_pixbuf_new ();
-        gtk_tree_view_column_pack_start (col, renderer, TRUE);
-        g_object_set (G_OBJECT (renderer), "stock-id", "gtk-cancel", NULL);
         gtk_tree_view_insert_column (view, col, -1);
 
         gtk_tree_view_insert_column_with_attributes (
@@ -219,16 +222,26 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         self->priv->reliability_column =
             gtk_tree_view_get_column (view, GIBBON_INVITER_LIST_COL_RELIABILITY);
 
-        gtk_tree_view_insert_column_with_attributes (
-                view,
-                -1,
-                _("Saved games"),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_INVITER_LIST_COL_SAVEDCOUNT,
-                NULL);
-        col = gtk_tree_view_get_column (view,
-                                        GIBBON_INVITER_LIST_COL_SAVEDCOUNT + 2);
-        gtk_tree_view_column_set_clickable (col, TRUE);
+        renderer = gtk_cell_renderer_spinner_new ();
+        col = gtk_tree_view_column_new ();
+        gtk_tree_view_column_set_title (col, _("Saved"));
+        gtk_tree_view_column_pack_start (col, renderer, FALSE);
+        gtk_tree_view_column_set_attributes (col, renderer,
+                                             "active",
+                                    GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
+                                             NULL);
+        self->priv->spinner_renderer = renderer;
+        source_func = (GSourceFunc) gibbon_inviter_list_view_pulse_updater;
+        self->priv->pulse_updater = g_timeout_add (250, source_func,
+                                                   (gpointer) self);
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_column_pack_start (col, renderer, TRUE);
+
+        gtk_tree_view_column_set_attributes (col, renderer,
+                                             "text",
+                                             GIBBON_INVITER_LIST_COL_SAVED_COUNT,
+                                             NULL);
+        gtk_tree_view_insert_column (view, col, -1);
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -470,6 +483,46 @@ gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
         gtk_tree_path_free (path);
         g_free (inviter_name);
         g_free (text);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_inviter_list_view_pulse_updater (const GibbonInviterListView *self)
+{
+        guint pulse;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        GtkTreePath *path;
+
+        g_return_val_if_fail (GIBBON_IS_INVITER_LIST_VIEW (self), FALSE);
+
+        model = gtk_tree_view_get_model (self->priv->inviters_view);
+        g_return_val_if_fail (GTK_IS_TREE_MODEL (model), FALSE);
+
+        if (!gtk_tree_model_get_iter_first (model, &iter))
+                return TRUE;
+
+        g_object_get (G_OBJECT (self->priv->spinner_renderer),
+                      "pulse", &pulse, NULL);
+        if (pulse >= G_MAXUINT)
+                pulse = 0;
+        else
+                ++pulse;
+        g_object_set (G_OBJECT (self->priv->spinner_renderer),
+                      "pulse", pulse, NULL);
+
+        while (1) {
+                path = gtk_tree_model_get_path (model, &iter);
+                if (!path)
+                        return TRUE;
+
+                gtk_tree_model_row_changed (model, path, &iter);
+                gtk_tree_path_free (path);
+
+                if (!gtk_tree_model_iter_next (model, &iter))
+                        break;
+        }
 
         return TRUE;
 }

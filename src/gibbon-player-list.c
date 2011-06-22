@@ -345,14 +345,14 @@ gboolean
 gibbon_player_list_get_available (const GibbonPlayerList *self,
                                   const gchar *name)
 {
-        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
-                                                           name);
+        struct GibbonPlayer *player;
         GtkTreeIter iter;
         gchar *status;
         gboolean available;
 
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
 
+        player = g_hash_table_lookup (self->priv->hash, name);
         if (!player)
                 return FALSE;
 
@@ -368,4 +368,29 @@ gibbon_player_list_get_available (const GibbonPlayerList *self,
                 available = TRUE;
 
         return available;
+}
+
+GtkListStore *
+gibbon_player_list_get_store (GibbonPlayerList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), NULL);
+
+        return self->priv->store;
+}
+
+gboolean
+gibbon_player_list_get_iter (GibbonPlayerList *self, const gchar *name,
+                             GtkTreeIter *iter)
+{
+        struct GibbonPlayer *player;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        if (!player)
+                return FALSE;
+
+        *iter = player->iter;
+
+        return TRUE;
 }

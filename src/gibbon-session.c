@@ -42,6 +42,7 @@
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
 #include "gibbon-saved-info.h"
+#include "gibbon-reliability.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -77,6 +78,8 @@ static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_invitation (GibbonSession *self,
+                                              GSList *iter);
 static gint gibbon_session_handle_youre_watching (GibbonSession *self,
                                                   GSList *iter);
 static gint gibbon_session_handle_win_match (GibbonSession *self, GSList *iter);
@@ -88,6 +91,9 @@ static gint gibbon_session_handle_show_toggle (GibbonSession *self,
                                                GSList *iter);
 static gint gibbon_session_handle_show_saved (GibbonSession *self,
                                               GSList *iter);
+static gint gibbon_session_handle_show_saved_count (GibbonSession *self,
+                                                    GSList *iter);
+
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
 static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
@@ -329,6 +335,9 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_MOVES:
                 retval = gibbon_session_handle_moves (self, iter);
                 break;
+        case GIBBON_CLIP_CODE_INVITATION:
+                retval = gibbon_session_handle_invitation (self, iter);
+                break;
         case GIBBON_CLIP_CODE_TYPE_JOIN:
                 retval = GIBBON_CLIP_CODE_TYPE_JOIN;
                 break;
@@ -380,6 +389,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 else
                         retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
                 self->priv->saved_games_finished = TRUE;
+                break;
+        case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
+                retval = gibbon_session_handle_show_saved_count (self, iter);
                 break;
         }
 
@@ -518,6 +530,19 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                 who, available, rating, experience,
                                 reliability, confidence,
                                 opponent, watching, client, hostname, email);
+
+        if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
+                if (opponent) {
+                        gibbon_inviter_list_remove (self->priv->inviter_list,
+                                                    who);
+                } else {
+                        gibbon_inviter_list_set (self->priv->inviter_list, who,
+                                                 rating, experience,
+                                                 reliability, confidence,
+                                                 client, hostname, email);
+                }
+        }
+
         g_free (client);
 
         if (opponent && *opponent)
@@ -1365,6 +1390,85 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         return GIBBON_CLIP_CODE_MOVES;
 }
 
+static gboolean
+gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
+{
+        const gchar *opponent;
+        guint length;
+        GtkListStore *store;
+        GtkTreeIter tree_iter;
+        GibbonPlayerList *pl;
+        gdouble rating = 1500.0;
+        guint experience = 0;
+        GibbonReliability *rel = NULL;
+        gdouble reliability = 0;
+        guint confidence = 0;
+        gchar *client = NULL;
+        gchar *hostname = NULL;
+        gchar *email = NULL;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
+                                     &opponent))
+                return -1;
+
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+                                   &length))
+                return -1;
+
+        pl = self->priv->player_list;
+        store = gibbon_player_list_get_store (pl);
+
+        g_return_val_if_fail (store != NULL, -1);
+
+        if (gibbon_player_list_get_iter (pl, opponent, &tree_iter)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (store), &tree_iter,
+                                    GIBBON_PLAYER_LIST_COL_RATING, &rating,
+                                    GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                                            &experience,
+                                    GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                                            &rel,
+                                    GIBBON_PLAYER_LIST_COL_CLIENT, &client,
+                                    GIBBON_PLAYER_LIST_COL_HOSTNAME, &hostname,
+                                    GIBBON_PLAYER_LIST_COL_EMAIL, &email,
+                                    -1);
+                if (rel) {
+                        reliability = rel->value;
+                        confidence = rel->confidence;
+                        gibbon_reliability_free (rel);
+                }
+
+        } else {
+                /*
+                 * FIBS never sent a who info for that user.  Try to force
+                 * the information about the inviter.
+                 */
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "rawwho %s", opponent);
+        }
+
+        gibbon_inviter_list_set (self->priv->inviter_list,
+                                 opponent,
+                                 rating,
+                                 experience,
+                                 reliability,
+                                 confidence,
+                                 client,
+                                 hostname,
+                                 email);
+
+        g_free (client);
+        g_free (hostname);
+        g_free (email);
+
+        /* Get the saved count.  */
+        gibbon_connection_queue_command (self->priv->connection,
+                                         FALSE,
+                                         "show savedcount %s", opponent);
+
+        return GIBBON_CLIP_CODE_INVITATION;
+}
+
 static gint
 gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
 {
@@ -1453,6 +1557,44 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
                              (gpointer) opponent, (gpointer) info);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED;
+}
+
+static gint
+gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+        guint count;
+
+        g_printerr ("Got saved count.\n");
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+        g_printerr ("  For user %s.\n", who);
+
+        /*
+         * If the user is not an active inviter we guess that the command
+         * was sent manually.
+         */
+        if (!gibbon_inviter_list_exists (self->priv->inviter_list, who))
+                return -1;
+        g_printerr ("  %s is an inviter.\n", who);
+
+        /*
+         * Same, when we know that user's saved count already.
+         */
+        if (gibbon_inviter_list_get_saved_count (self->priv->inviter_list,
+                                                 who) >= 0)
+                return -1;
+        g_printerr ("  %s has a saved count < 0.\n", who);
+
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &count))
+                return -1;
+        g_printerr ("  %s has a saved count of %d.\n", who, count);
+
+        gibbon_inviter_list_set_saved_count (self->priv->inviter_list, who,
+                                             count);
+        g_printerr ("  %s saved count set.\n", who);
+
+        return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
 }
 
 static gboolean
