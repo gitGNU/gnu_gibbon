@@ -15,12 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIR = scalable
-
-pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons
-pixmap_DATA = \
-	say.svg	\
-	whisper.svg \
-	white_flag.svg
+pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons/scalable
+pixmap_DATA = cellphone.png computer.png robot.png 
 
 EXTRA_DIST = $(pixmap_DATA)
