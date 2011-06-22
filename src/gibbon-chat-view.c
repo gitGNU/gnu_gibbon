@@ -342,9 +342,12 @@ gibbon_chat_view_close (GibbonChatView *self)
                         return;
         }
 
-        gtk_notebook_remove_page (self->priv->notebook,
-                                  self->priv->page_number);
         gibbon_app_close_chat (self->priv->app, self->priv->who);
 
-        g_object_unref (self);
+        /*
+         * Removing the page from the notebook will destroy this object.
+         * It would maybe be cleaner to let self->priv->app do all this.
+         */
+        gtk_notebook_remove_page (self->priv->notebook,
+                                  self->priv->page_number);
 }
