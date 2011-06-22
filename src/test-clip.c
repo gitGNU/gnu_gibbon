@@ -1059,6 +1059,36 @@ struct test_case test_saved05 = {
         }
 };
 
+struct test_case test_saved06 = {
+        "deadbeef has no saved games.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "411" },
+                                { GIBBON_CLIP_TYPE_NAME, "deadbeef" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved07 = {
+        "deadbeef has 12 saved games.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "411" },
+                                { GIBBON_CLIP_TYPE_NAME, "deadbeef" },
+                                { GIBBON_CLIP_TYPE_UINT, "12" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_saved08 = {
+        "deadbeef has 1 saved game.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "411" },
+                                { GIBBON_CLIP_TYPE_NAME, "deadbeef" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -1147,7 +1177,10 @@ struct test_case *test_cases[] = {
                 &test_saved02,
                 &test_saved03,
                 &test_saved04,
-                &test_saved05
+                &test_saved05,
+                &test_saved06,
+                &test_saved07,
+                &test_saved08
 };
 
 static gboolean test_single_case (struct test_case *test_case);

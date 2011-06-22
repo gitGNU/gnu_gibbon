@@ -73,7 +73,8 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_SHOW_TOGGLE = 407,
                         GIBBON_CLIP_CODE_SHOW_START_SAVED = 408,
                         GIBBON_CLIP_CODE_SHOW_SAVED = 409,
-                        GIBBON_CLIP_CODE_SHOW_SAVED_NONE = 410
+                        GIBBON_CLIP_CODE_SHOW_SAVED_NONE = 410,
+                        GIBBON_CLIP_CODE_SHOW_SAVED_COUNT = 411
 
 };
 

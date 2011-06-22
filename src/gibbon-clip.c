@@ -192,6 +192,9 @@ static gboolean gibbon_clip_parse_show_saved (const gchar *line,
 static gboolean gibbon_clip_parse_show_saved_none (const gchar *line,
                                                    gchar **tokens,
                                                    GSList **result);
+static gboolean gibbon_clip_parse_saved_count (const gchar *line,
+                                               gchar **tokens,
+                                               GSList **result);
 
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
 
@@ -411,6 +414,16 @@ gibbon_clip_parse (const gchar *line)
                         if (0 == g_strcmp0 ("and", tokens[1]))
                                 success = gibbon_clip_parse_and (line, tokens,
                                                                  &result);
+                        break;
+                case 'h':
+                        if (0 == g_strcmp0 ("has", tokens[1])
+                            && 0 == g_strcmp0 ("saved", tokens[3])
+                            && (0 == g_strcmp0 ("games.", tokens[4])
+                                || 0 == g_strcmp0 ("game.", tokens[4]))
+                            && !tokens[5])
+                                success = gibbon_clip_parse_saved_count (line,
+                                                                         tokens,
+                                                                       &result);
                         break;
                 case 'm':
                         if (0 == g_strcmp0 ("moves", tokens[1]))
@@ -1527,7 +1540,6 @@ gibbon_clip_parse_show_saved_none (const gchar *line, gchar **tokens,
         return TRUE;
 }
 
-
 static gboolean
 gibbon_clip_parse_show_saved (const gchar *line, gchar **tokens,
                               GSList **result)
@@ -1575,6 +1587,28 @@ gibbon_clip_parse_show_saved (const gchar *line, gchar **tokens,
                                          user_score);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          other_score);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_saved_count (const gchar *line, gchar **tokens,
+                               GSList **result)
+{
+        gint64 num;
+
+        if (0 == g_strcmp0 ("no", tokens[2]))
+                num = 0;
+        else if (!gibbon_clip_extract_integer (tokens[2], &num,
+                                          1, G_MAXUINT))
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                          GIBBON_CLIP_CODE_SHOW_SAVED_COUNT);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         num);
 
         return TRUE;
 }
