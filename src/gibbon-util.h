@@ -28,10 +28,23 @@
 
 G_BEGIN_DECLS
 
+enum GibbonClientType {
+        GibbonClientUnknown = 0,
+        GibbonClientGibbon = 1,
+        GibbonClientRegular = 2,
+        GibbonClientBot = 3,
+        GibbonClientDaemon = 4,
+        GibbonClientMobile = 5
+};
+
 gchar **gibbon_strsplit_ws (const gchar *string);
 const gchar *gibbon_skip_ws_tokens (const gchar *string,
                                     const gchar * const * const tokens,
                                     guint num);
+enum GibbonClientType gibbon_get_client_type (const gchar *client_name,
+                                              const gchar *user_name,
+                                              const gchar *host_name,
+                                              guint port);
 
 G_END_DECLS
 
