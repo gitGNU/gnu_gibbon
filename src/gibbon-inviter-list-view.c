@@ -211,6 +211,14 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                                         GIBBON_INVITER_LIST_COL_EXPERIENCE + 2);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
+        gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
+                _("Software"),
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_INVITER_LIST_COL_CLIENT,
+                NULL);
+
         renderer = gibbon_reliability_renderer_new ();
         gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -243,13 +251,6 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                                              NULL);
         gtk_tree_view_insert_column (view, col, -1);
 
-        gtk_tree_view_insert_column_with_attributes (
-                view,
-                -1,
-                _("Software"),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_INVITER_LIST_COL_CLIENT,
-                NULL);
         gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,

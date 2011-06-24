@@ -70,8 +70,8 @@ gibbon_inviter_list_init (GibbonInviterList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE,
                                     G_TYPE_UINT,
-                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
+                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -119,12 +119,12 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
                 G_TYPE_DOUBLE;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_CLIENT] =
+                G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_RELIABILITY] =
                 GIBBON_TYPE_RELIABILITY;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_SAVED_COUNT] =
                 G_TYPE_INT;
-        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_CLIENT] =
-                G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_EMAIL] =
@@ -194,8 +194,8 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_NAME, name,
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
-                            GIBBON_INVITER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
+                            GIBBON_INVITER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_INVITER_LIST_COL_HOSTNAME, hostname,
                             GIBBON_INVITER_LIST_COL_EMAIL, email,
                             GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT, TRUE,
