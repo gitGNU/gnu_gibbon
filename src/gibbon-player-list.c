@@ -73,8 +73,8 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
-                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
+                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -124,13 +124,13 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
                 G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
+                G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RELIABILITY] =
                 GIBBON_TYPE_RELIABILITY;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_WATCHING] =
-                G_TYPE_STRING;
-        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
