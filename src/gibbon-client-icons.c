@@ -35,6 +35,11 @@
 typedef struct _GibbonClientIconsPrivate GibbonClientIconsPrivate;
 struct _GibbonClientIconsPrivate {
         gchar *pixmaps_dir;
+
+        GdkPixbuf *gibbon_pixbuf;
+        GdkPixbuf *regular_pixbuf;
+        GdkPixbuf *mobile_pixbuf;
+        GdkPixbuf *bot_pixbuf;
 };
 
 #define GIBBON_CLIENT_ICONS_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -49,6 +54,11 @@ gibbon_client_icons_init (GibbonClientIcons *self)
                 GIBBON_TYPE_CLIENT_ICONS, GibbonClientIconsPrivate);
 
         self->priv->pixmaps_dir = NULL;
+
+        self->priv->gibbon_pixbuf = NULL;
+        self->priv->mobile_pixbuf = NULL;
+        self->priv->regular_pixbuf = NULL;
+        self->priv->bot_pixbuf = NULL;
 }
 
 static void
@@ -58,6 +68,15 @@ gibbon_client_icons_finalize (GObject *object)
 
         if (self->priv->pixmaps_dir)
                 g_free (self->priv->pixmaps_dir);
+
+        if (self->priv->gibbon_pixbuf)
+                g_object_unref (self->priv->gibbon_pixbuf);
+        if (self->priv->mobile_pixbuf)
+                g_object_unref (self->priv->mobile_pixbuf);
+        if (self->priv->regular_pixbuf)
+                g_object_unref (self->priv->regular_pixbuf);
+        if (self->priv->bot_pixbuf)
+                g_object_unref (self->priv->bot_pixbuf);
 
         G_OBJECT_CLASS (gibbon_client_icons_parent_class)->finalize(object);
 }
@@ -94,7 +113,41 @@ GdkPixbuf *
 gibbon_client_icons_get_icon (GibbonClientIcons *self,
                               enum GibbonClientType type)
 {
+        GdkPixbuf **pixbuf;
+        gchar *filename;
+        gchar *path;
+
         g_return_val_if_fail (GIBBON_IS_CLIENT_ICONS (self), NULL);
 
-        return NULL;
+        switch (type) {
+        case GibbonClientGibbon:
+                pixbuf = &self->priv->gibbon_pixbuf;
+                filename = "gibbon.png";
+                break;
+        case GibbonClientMobile:
+                pixbuf = &self->priv->mobile_pixbuf;
+                filename = "cellphone.png";
+                break;
+        case GibbonClientRegular:
+                pixbuf = &self->priv->regular_pixbuf;
+                filename = "computer.png";
+                break;
+        case GibbonClientBot:
+        case GibbonClientDaemon:
+                pixbuf = &self->priv->bot_pixbuf;
+                filename = "robot.png";
+                break;
+        case GibbonClientUnknown:
+                return NULL;
+        }
+
+        if (*pixbuf)
+                return *pixbuf;
+
+        path = g_build_filename (self->priv->pixmaps_dir, "icons", "16x16",
+                                 filename, NULL);
+        *pixbuf = gdk_pixbuf_new_from_file_at_size (path, 16, 16, NULL);
+        g_free (path);
+
+        return *pixbuf;
 }

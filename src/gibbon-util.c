@@ -174,9 +174,9 @@ gibbon_get_client_type (const gchar *client_name, const gchar *user_name,
 
         if (0 == strncmp ("OdesysMobileR", client_name, 13))
                 return GibbonClientMobile;
-        if (0 == strncmp ("BGOnline_v", client_name, 10))
+        if (0 == strncmp ("BGOnline v", client_name, 10))
                 return GibbonClientMobile;
-        if (0 == strncmp ("Gibbon_v", client_name, 8))
+        if (0 == strncmp ("Gibbon v", client_name, 8))
                 return GibbonClientGibbon;
 
         if (!initialized) {
@@ -201,7 +201,7 @@ gibbon_get_client_type (const gchar *client_name, const gchar *user_name,
                      gibbon_util_compare_bot_info))
                 return GibbonClientDaemon;
 
-        return GibbonClientUnknown;
+        return GibbonClientRegular;
 }
 
 static

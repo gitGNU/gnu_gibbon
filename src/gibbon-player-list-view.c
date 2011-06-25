@@ -55,6 +55,7 @@ struct _GibbonPlayerListViewPrivate {
         GibbonSignal *row_activated_handler;
 
         GtkTreeViewColumn *available_column;
+        GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
 };
 
@@ -108,6 +109,7 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->row_activated_handler = NULL;
 
         self->priv->available_column = NULL;
+        self->priv->client_column = NULL;
         self->priv->reliability_column = NULL;
 }
 
@@ -118,38 +120,27 @@ gibbon_player_list_view_finalize (GObject *object)
 
         if (self->priv->players)
                 g_object_unref (self->priv->players);
-        self->priv->players = NULL;
 
         if (self->priv->player_menu)
                 g_object_unref (self->priv->player_menu);
-        self->priv->player_menu = NULL;
-
-        self->priv->players_view = NULL;
-        self->priv->app = NULL;
 
         if (self->priv->button_pressed_handler)
                 g_object_unref (self->priv->button_pressed_handler);
-        self->priv->button_pressed_handler = NULL;
 
         if (self->priv->invite_handler)
                 g_object_unref (self->priv->invite_handler);
-        self->priv->invite_handler = NULL;
 
         if (self->priv->look_handler)
                 g_object_unref (self->priv->look_handler);
-        self->priv->look_handler = NULL;
 
         if (self->priv->watch_handler)
                 g_object_unref (self->priv->watch_handler);
-        self->priv->watch_handler = NULL;
 
         if (self->priv->tell_handler)
                 g_object_unref (self->priv->tell_handler);
-        self->priv->tell_handler = NULL;
 
         if (self->priv->row_activated_handler)
                 g_object_unref (self->priv->row_activated_handler);
-        self->priv->row_activated_handler = NULL;
 
         G_OBJECT_CLASS (gibbon_player_list_view_parent_class)->finalize(object);
 }
@@ -183,6 +174,7 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         GtkCellRenderer *renderer;
         GCallback callback;
         GObject *emitter;
+        gint colno;
 
         self->priv->app = app;
         self->priv->players = players;
@@ -205,15 +197,15 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Status"),
                 gtk_cell_renderer_pixbuf_new (),
                 "stock-id", GIBBON_PLAYER_LIST_COL_AVAILABLE,
                 NULL);
-        self->priv->available_column =
-              gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_AVAILABLE);
+        self->priv->available_column = gtk_tree_view_get_column (view,
+                                                                 colno - 1);
 
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
@@ -238,16 +230,17 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_EXPERIENCE);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
-                _("Software"),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_PLAYER_LIST_COL_CLIENT,
+                NULL,
+                gtk_cell_renderer_pixbuf_new (),
+                "pixbuf", GIBBON_PLAYER_LIST_COL_CLIENT_ICON,
                 NULL);
+        self->priv->client_column = gtk_tree_view_get_column (view, colno - 1);
 
         renderer = gibbon_reliability_renderer_new ();
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Reliability"),
@@ -255,7 +248,7 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
                 "reliability", GIBBON_PLAYER_LIST_COL_RELIABILITY,
                 NULL);
         self->priv->reliability_column =
-            gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RELIABILITY);
+                        gtk_tree_view_get_column (view, colno - 1);
 
         gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -683,6 +676,11 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                         text = g_strdup_printf ("<i>%s</i> does not want to"
                                                 " play right now.",
                                                 player_name);
+        } else if (column == self->priv->client_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_PLAYER_LIST_COL_CLIENT,
+                                    &text,
+                                    -1);
         } else if (column == self->priv->reliability_column) {
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_PLAYER_LIST_COL_RELIABILITY, &rel,

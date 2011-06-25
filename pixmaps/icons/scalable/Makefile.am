@@ -16,6 +16,6 @@
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons/scalable
-pixmap_DATA = cellphone.svg computer.svg robot.svg 
+pixmap_DATA = cellphone.svg computer.svg robot.svg gibbon.svg
 
 EXTRA_DIST = $(pixmap_DATA)

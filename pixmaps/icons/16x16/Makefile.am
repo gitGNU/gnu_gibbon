@@ -16,6 +16,6 @@
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons/16x16
-pixmap_DATA = cellphone.png computer.png robot.png 
+pixmap_DATA = cellphone.png computer.png robot.png gibbon.png
 
 EXTRA_DIST = $(pixmap_DATA)

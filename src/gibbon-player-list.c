@@ -74,6 +74,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
+                                    GDK_TYPE_PIXBUF,
                                     GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -126,6 +127,8 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
                 G_TYPE_UINT;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT_ICON] =
+                GDK_TYPE_PIXBUF;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RELIABILITY] =
                 GIBBON_TYPE_RELIABILITY;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
@@ -176,7 +179,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *opponent,
                         const gchar *watching,
                         const gchar *client,
-                        enum GibbonClientType client_type,
+                        GdkPixbuf *client_icon,
                         const gchar *hostname,
                         const gchar *email)
 {
@@ -218,7 +221,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                                 player->use_backslash_u = TRUE;
                 }
         }
-        
+
         if (available) {
                 stock_id = GTK_STOCK_YES;
         } else {
@@ -238,6 +241,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
+                            GIBBON_PLAYER_LIST_COL_CLIENT_ICON, client_icon,
                             GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
