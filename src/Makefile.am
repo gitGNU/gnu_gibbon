@@ -73,7 +73,8 @@ common_SOURCES = 			\
 	gibbon-clip.c			\
 	gibbon-inviter-list.c		\
 	gibbon-inviter-list-view.c	\
-	gibbon-saved-info.c
+	gibbon-saved-info.c			\
+	gibbon-client-icons.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -113,7 +114,8 @@ noinst_HEADERS =			\
 	gibbon-clip.h			\
 	gibbon-inviter-list.h		\
 	gibbon-inviter-list-view.h	\
-	gibbon-saved-info.h
+	gibbon-saved-info.h			\
+	gibbon-client-icons.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \

@@ -52,6 +52,7 @@
 #include "gibbon-inviter-list.h"
 #include "gibbon-inviter-list-view.h"
 #include "gibbon-session.h"
+#include "gibbon-client-icons.h"
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
@@ -85,6 +86,8 @@ struct _GibbonAppPrivate {
 
         GibbonInviterList *inviter_list;
         GibbonInviterListView *inviter_list_view;
+
+        GibbonClientIcons *client_icons;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -168,6 +171,8 @@ gibbon_app_init (GibbonApp *self)
         self->priv->player_list_view = NULL;
         self->priv->inviter_list = NULL;
         self->priv->inviter_list_view = NULL;
+
+        self->priv->client_icons = NULL;
 }
 
 static void
@@ -176,6 +181,9 @@ gibbon_app_finalize (GObject *object)
         GibbonApp *self = GIBBON_APP (object);
 
         gibbon_app_disconnect (self);
+
+        if (self->priv->client_icons)
+                g_object_unref (self->priv->client_icons);
 
         if (self->priv->inviter_list_view)
                 g_object_unref (self->priv->inviter_list_view);
@@ -288,6 +296,8 @@ gibbon_app_new (const gchar *builder_path, const gchar *pixmaps_directory,
                 g_object_unref (self);
                 return NULL;
         }
+
+        self->priv->client_icons = gibbon_client_icons_new (pixmaps_directory);
 
         self->priv->player_list = gibbon_player_list_new ();
         self->priv->player_list_view =
