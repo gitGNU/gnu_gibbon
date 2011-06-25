@@ -464,6 +464,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         GdkPixbuf *client_icon;
         const gchar *email;
         const gchar *hostname;
+        const gchar *country = NULL;
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
@@ -538,7 +539,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                 reliability, confidence,
                                 opponent, watching,
                                 client, client_icon,
-                                hostname, email);
+                                hostname, country, email);
 
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
                 if (opponent) {

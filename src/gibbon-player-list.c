@@ -79,6 +79,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING);
         self->priv->store = store;
         
@@ -137,6 +138,8 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY] =
+                GDK_TYPE_PIXBUF;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
                 
@@ -181,6 +184,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *client,
                         GdkPixbuf *client_icon,
                         const gchar *hostname,
+                        const gchar *country,
                         const gchar *email)
 {
         struct GibbonPlayer *player;
@@ -243,6 +247,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
                             GIBBON_PLAYER_LIST_COL_CLIENT_ICON, client_icon,
                             GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
+                            GIBBON_PLAYER_LIST_COL_COUNTRY, country,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }
