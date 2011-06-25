@@ -174,9 +174,9 @@ gibbon_get_client_type (const gchar *client_name, const gchar *user_name,
 
         if (0 == strncmp ("OdesysMobileR", client_name, 13))
                 return GibbonClientMobile;
-        if (0 == strncmp ("BGOnline v", client_name, 10))
+        if (0 == strncmp ("BGOnline ", client_name, 9))
                 return GibbonClientMobile;
-        if (0 == strncmp ("Gibbon v", client_name, 8))
+        if (0 == strncmp ("Gibbon ", client_name, 7))
                 return GibbonClientGibbon;
 
         if (!initialized) {
