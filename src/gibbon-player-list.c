@@ -176,6 +176,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *opponent,
                         const gchar *watching,
                         const gchar *client,
+                        enum GibbonClientType client_type,
                         const gchar *hostname,
                         const gchar *email)
 {

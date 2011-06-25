@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-client-icons.h"
+#include "gibbon-util.h"
 
 typedef struct _GibbonClientIconsPrivate GibbonClientIconsPrivate;
 struct _GibbonClientIconsPrivate {
@@ -87,4 +88,13 @@ gibbon_client_icons_new (const gchar *dir)
         self->priv->pixmaps_dir = g_strdup (dir);
 
         return self;
+}
+
+GdkPixbuf *
+gibbon_client_icons_get_icon (GibbonClientIcons *self,
+                              enum GibbonClientType type)
+{
+        g_return_val_if_fail (GIBBON_IS_CLIENT_ICONS (self), NULL);
+
+        return NULL;
 }

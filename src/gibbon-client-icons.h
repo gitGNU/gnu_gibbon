@@ -24,8 +24,9 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
+
+#include "gibbon-util.h"
 
 #define GIBBON_TYPE_CLIENT_ICONS \
         (gibbon_client_icons_get_type ())
@@ -73,5 +74,7 @@ struct _GibbonClientIconsClass
 GType gibbon_client_icons_get_type (void) G_GNUC_CONST;
 
 GibbonClientIcons *gibbon_client_icons_new (const gchar *pixmaps_dir);
+GdkPixbuf *gibbon_client_icons_get_icon (GibbonClientIcons *self,
+                                         enum GibbonClientType type);
 
 #endif

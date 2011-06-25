@@ -458,6 +458,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         guint64 experience;
         const gchar *raw_client;
         gchar *client;
+        enum GibbonClientType client_type;
         const gchar *email;
         const gchar *hostname;
         GibbonConnection *connection;
@@ -526,10 +527,13 @@ gibbon_session_clip_who_info (GibbonSession *self,
                 reliability = 4.56;
         }
 
+        client_type = gibbon_get_client_type (client, account, server, port);
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
                                 reliability, confidence,
-                                opponent, watching, client, hostname, email);
+                                opponent, watching,
+                                client, client_type,
+                                hostname, email);
 
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
                 if (opponent) {
@@ -566,10 +570,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         archive = gibbon_app_get_archive (self->priv->app);
         connection = self->priv->connection;
 
-        gibbon_archive_update_user_full (archive,
-                                    gibbon_connection_get_hostname (connection),
-                                    gibbon_connection_get_port (connection),
-                                    who, rating, experience);
+        gibbon_archive_update_user_full (archive, server, port, account,
+                                         rating, experience);
 
         return GIBBON_CLIP_CODE_WHO_INFO;
 }

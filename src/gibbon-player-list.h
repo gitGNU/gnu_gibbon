@@ -22,6 +22,8 @@
 
 #include <glib.h>
 
+#include "gibbon-util.h"
+
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_PLAYER_LIST             (gibbon_player_list_get_type ())
@@ -77,6 +79,7 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              const gchar *opponent,
                              const gchar *watching,
                              const gchar *client,
+                             enum GibbonClientType type,
                              const gchar *hostname,
                              const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
