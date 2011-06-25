@@ -43,6 +43,7 @@
 #include "gibbon-clip.h"
 #include "gibbon-saved-info.h"
 #include "gibbon-reliability.h"
+#include "gibbon-client-icons.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -459,6 +460,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         const gchar *raw_client;
         gchar *client;
         enum GibbonClientType client_type;
+        GibbonClientIcons *client_icons;
+        GdkPixbuf *client_icon;
         const gchar *email;
         const gchar *hostname;
         GibbonConnection *connection;
@@ -528,11 +531,13 @@ gibbon_session_clip_who_info (GibbonSession *self,
         }
 
         client_type = gibbon_get_client_type (client, account, server, port);
+        client_icons = gibbon_app_get_client_icons (self->priv->app);
+        client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
                                 reliability, confidence,
                                 opponent, watching,
-                                client, client_type,
+                                client, client_icon,
                                 hostname, email);
 
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
@@ -1567,10 +1572,8 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
         const gchar *who;
         guint count;
 
-        g_printerr ("Got saved count.\n");
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
-        g_printerr ("  For user %s.\n", who);
 
         /*
          * If the user is not an active inviter we guess that the command
@@ -1578,7 +1581,6 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
          */
         if (!gibbon_inviter_list_exists (self->priv->inviter_list, who))
                 return -1;
-        g_printerr ("  %s is an inviter.\n", who);
 
         /*
          * Same, when we know that user's saved count already.
@@ -1586,15 +1588,12 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
         if (gibbon_inviter_list_get_saved_count (self->priv->inviter_list,
                                                  who) >= 0)
                 return -1;
-        g_printerr ("  %s has a saved count < 0.\n", who);
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &count))
                 return -1;
-        g_printerr ("  %s has a saved count of %d.\n", who, count);
 
         gibbon_inviter_list_set_saved_count (self->priv->inviter_list, who,
                                              count);
-        g_printerr ("  %s saved count set.\n", who);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
 }
