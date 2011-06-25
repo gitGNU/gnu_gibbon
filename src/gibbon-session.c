@@ -464,7 +464,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         GdkPixbuf *client_icon;
         const gchar *email;
         const gchar *hostname;
-        const gchar *country = NULL;
+        const gchar *country = "??";
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;

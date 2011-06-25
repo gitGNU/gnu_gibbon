@@ -139,7 +139,7 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY] =
-                GDK_TYPE_PIXBUF;
+                G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
                 
