@@ -43,7 +43,7 @@
 /* Differences in the minor schema version require conditional creation of
  * new tables or indexes.
  */
-#define GIBBON_DATABASE_SCHEMA_MINOR 1
+#define GIBBON_DATABASE_SCHEMA_MINOR 2
 
 /* Differences int the schema revision are for cosmetic changes that will
  * not have any impact on existing databases (case, column order, ...).
@@ -409,9 +409,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      ")"))
                 return FALSE;
 
-        if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS activities"))
-                return FALSE;
+        /*
+         * We do not drop the activities table because it contains semi-
+         * precious data.
+         */
         if (!gibbon_database_sql_do (self,
                                      "CREATE TABLE IF NOT EXISTS activities ("
                                      "  id INTEGER PRIMARY KEY,"
@@ -430,6 +431,21 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      " actitivities_date_time_index"
                                      " ON activities (date_time)"))
                 return FALSE;
+
+        if (drop_first
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS geoip"))
+                return FALSE;
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE TABLE IF NOT EXISTS geoip ("
+                                     "  address TEXT PRIMARY KEY,"
+                                     "  country TEXT NOT NULL,"
+                                     "  date_time INT64 NOT NULL"
+                                     ")"))
+                return FALSE;
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE INDEX IF NOT EXISTS"
+                                     " geoip_timestamp_index"
+                                     " ON geoip (date_time)"))
 
         if (!gibbon_database_sql_do (self, "DELETE FROM version"))
                 return FALSE;
@@ -881,6 +897,20 @@ gibbon_database_maintain (GibbonDatabase *self)
         now = time (NULL);
         then = now - 100 * 24 * 60 * 60;
         sql = "DELETE FROM activities WHERE (date_time < ? OR date_time > ?)";
+        if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
+                                             -1, &stmt, NULL)) {
+                (void) gibbon_database_sql_execute (self, stmt, sql,
+                                                    G_TYPE_INT64, &then,
+                                                    G_TYPE_INT64, &now,
+                                                    -1);
+                sqlite3_finalize (stmt);
+        }
+
+        /*
+         * Same for our litte geo ip database.  100 days seems okay for
+         * the caching time.
+         */
+        sql = "DELETE FROM geoip WHERE (date_time < ? OR date_time > ?)";
         if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
                                              -1, &stmt, NULL)) {
                 (void) gibbon_database_sql_execute (self, stmt, sql,
