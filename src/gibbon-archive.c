@@ -395,3 +395,27 @@ gibbon_archive_get_reliability (GibbonArchive *self,
                                                 hostname, port,
                                                 login, value, confidence);
 }
+
+const gchar *
+gibbon_archive_get_country (const GibbonArchive *self,
+                            const gchar *hostname)
+{
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+        g_return_val_if_fail (hostname != NULL, NULL);
+
+        /* FIXME! Use a session cache here for failed lookups! */
+        return gibbon_database_get_country (self->priv->db, hostname);
+}
+
+void
+gibbon_archive_set_country (const GibbonArchive *self,
+                            const gchar *hostname,
+                            const gchar *country)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != NULL);
+
+        /* FIXME! Use a session cache here for failed lookups! */
+        if (country)
+                gibbon_database_set_country (self->priv->db, hostname, country);
+}

@@ -1200,3 +1200,25 @@ gibbon_database_void_activity (GibbonDatabase *self,
 
         return TRUE;
 }
+
+const gchar *
+gibbon_database_get_country (const GibbonDatabase *self,
+                             const gchar *hostname)
+{
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), NULL);
+        g_return_val_if_fail (hostname != NULL, NULL);
+
+        /* FIXME! Query database! */
+        return NULL;
+}
+
+void
+gibbon_database_set_country (const GibbonDatabase *self,
+                             const gchar *hostname,
+                             const gchar *country)
+{
+        g_return_if_fail (GIBBON_IS_DATABASE (self));
+        g_return_if_fail (hostname != NULL);
+
+        /* FIXME! Update database! */
+}

@@ -464,7 +464,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         GdkPixbuf *client_icon;
         const gchar *email;
         const gchar *hostname;
-        const gchar *country = "??";
+        const gchar *country;
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
@@ -534,6 +534,10 @@ gibbon_session_clip_who_info (GibbonSession *self,
         client_type = gibbon_get_client_type (client, who, server, port);
         client_icons = gibbon_app_get_client_icons (self->priv->app);
         client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
+
+        country = gibbon_archive_get_country (self->priv->archive,
+                                              hostname);
+
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
                                 reliability, confidence,

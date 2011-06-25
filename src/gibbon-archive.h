@@ -93,5 +93,10 @@ gboolean gibbon_archive_get_reliability (GibbonArchive *self,
                                          const gchar *hostname, guint port,
                                          const gchar *login,
                                          gdouble *value, guint *confidence);
+const gchar *gibbon_archive_get_country (const GibbonArchive *self,
+                                         const gchar *hostname);
+void gibbon_archive_set_country (const GibbonArchive *self,
+                                 const gchar *hostname,
+                                 const gchar *country);
 
 #endif

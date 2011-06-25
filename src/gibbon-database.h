@@ -97,5 +97,10 @@ gboolean gibbon_database_get_reliability (GibbonDatabase *self,
 guint gibbon_database_get_user_id (GibbonDatabase *self,
                                    const gchar *hostname, guint port,
                                    const gchar *login);
+const gchar *gibbon_database_get_country (const GibbonDatabase *self,
+                                          const gchar *hostname);
+void gibbon_database_set_country (const GibbonDatabase *self,
+                                  const gchar *hostname,
+                                  const gchar *country);
 
 #endif
