@@ -15,4 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = boards icons flags
+SUBDIR = 16x16
+

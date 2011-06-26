@@ -15,4 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = boards icons flags
+pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/flags/16x16
+
+pixmap_DATA =
+
+EXTRA_DIST = $(pixmap_DATA)
