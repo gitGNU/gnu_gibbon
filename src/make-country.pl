@@ -334,7 +334,7 @@ EOF
                 $max = $num;
         }
         print <<EOF;
-        GIBBON_COUNTRY_N_COUNTRIES\n";
+        GIBBON_COUNTRY_N_COUNTRIES
 };
 
 #endif

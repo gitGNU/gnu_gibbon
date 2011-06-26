@@ -266,7 +266,6 @@ enum GibbonCountry {
         GIBBON_COUNTRY_yu = 891,
         GIBBON_COUNTRY_zm = 894,
         GIBBON_COUNTRY_N_COUNTRIES
-";
 };
 
 #endif
