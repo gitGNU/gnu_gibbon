@@ -114,12 +114,26 @@ noinst_HEADERS =			\
 	gibbon-clip.h			\
 	gibbon-inviter-list.h		\
 	gibbon-inviter-list-view.h	\
-	gibbon-saved-info.h			\
-	gibbon-client-icons.h
+	gibbon-saved-info.h		\
+	gibbon-client-icons.h		\
+	gibbon-country.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
 	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
+
+if HAS_PERL
+$(srcdir)/gibbon-country.h: $(srcdir)/isolist.txt $(srcdir)/make-country.pl
+	top_srcdir="$(top_srcdir)" \
+		$(PERL) $(srcdir)/make-country.pl $(srcdir)/isolist.txt H >$@
+else
+$(srcdir)/gibbon-country.h: $(srcdir)/isolist.txt $(srcdir)/make-country.pl
+	@echo Cannot re-generate $(srcdir)/gibbon-country.h from $@.
+	@echo There was no Perl interpreter found on your system.
+	@echo Either install Perl and rerun $(top_srcdir)/configure
+	@echo or just touch $@.
+	@exit 1
+endif
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
@@ -144,4 +158,4 @@ test_clip_SOURCES = $(common_SOURCES) test-clip.c
 
 SGF_FILES =
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH)
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) isolist.txt make-country.pl
