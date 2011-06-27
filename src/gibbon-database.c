@@ -19,7 +19,7 @@
 
 /**
  * SECTION:gibbon-database
- * @short_description: FIXME! Short description missing!
+ * @short_description: SQL backend for Gibbon.
  *
  * Since: 0.1.1
  *
@@ -34,6 +34,7 @@
 #include <time.h>
 
 #include "gibbon-database.h"
+#include "gibbon-geo-ip-updater.h"
 
 /* Differences in the major schema version require a complete rebuild of the
  * database.
@@ -43,7 +44,7 @@
 /* Differences in the minor schema version require conditional creation of
  * new tables or indexes.
  */
-#define GIBBON_DATABASE_SCHEMA_MINOR 2
+#define GIBBON_DATABASE_SCHEMA_MINOR 3
 
 /* Differences int the schema revision are for cosmetic changes that will
  * not have any impact on existing databases (case, column order, ...).
@@ -96,11 +97,15 @@ struct _GibbonDatabasePrivate {
         " (SELECT MAX(id) FROM activity WHERE user_id = ? AND value = ?)"
         sqlite3_stmt *delete_activity;
 
+#define GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE                           \
+        "SELECT last_update FROM ip2country_update"
+        sqlite3_stmt *select_ip2country_update;
+
         gboolean in_transaction;
 
         gchar *path;
-
         GibbonApp *app;
+        GibbonGeoIPUpdater *geo_ip_updater;
 };
 
 #define GIBBON_DATABASE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -109,6 +114,7 @@ struct _GibbonDatabasePrivate {
 G_DEFINE_TYPE (GibbonDatabase, gibbon_database, G_TYPE_OBJECT)
 
 static gboolean gibbon_database_initialize (GibbonDatabase *self);
+static gboolean gibbon_database_check_ip2country (GibbonDatabase *self);
 static gboolean gibbon_database_exists_table (GibbonDatabase *self,
                                               const gchar *table);
 static gboolean gibbon_database_begin_transaction (GibbonDatabase *self);
@@ -154,10 +160,12 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->insert_activity = NULL;
         self->priv->select_activity = NULL;
         self->priv->delete_activity = NULL;
+        self->priv->select_ip2country_update = NULL;
 
         self->priv->in_transaction = FALSE;
 
         self->priv->path = NULL;
+        self->priv->geo_ip_updater = NULL;
 }
 
 static void
@@ -166,6 +174,9 @@ gibbon_database_finalize (GObject *object)
         GibbonDatabase *self = GIBBON_DATABASE (object);
 
         if (self->priv->dbh) {
+                if (self->priv->geo_ip_updater)
+                        g_object_unref (self->priv->geo_ip_updater);
+
                 sqlite3_close (self->priv->dbh);
                 if (self->priv->begin_transaction)
                         sqlite3_finalize (self->priv->begin_transaction);
@@ -189,6 +200,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->select_activity);
                 if (self->priv->delete_activity)
                         sqlite3_finalize (self->priv->delete_activity);
+                if (self->priv->select_ip2country_update)
+                        sqlite3_finalize (self->priv->select_ip2country_update);
         }
 
         if (self->priv->path)
@@ -267,7 +280,13 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
                 g_object_unref (self);
                 return NULL;
         }
+
         if (!gibbon_database_commit (self)) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        if (!gibbon_database_check_ip2country (self)) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -432,20 +451,20 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      " ON activities (date_time)"))
                 return FALSE;
 
-        if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS geoip"))
+        if (!gibbon_database_sql_do (self, "DROP TABLE IF EXISTS geoip"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
-                                     "CREATE TABLE IF NOT EXISTS geoip ("
-                                     "  address TEXT PRIMARY KEY,"
-                                     "  country TEXT NOT NULL,"
-                                     "  date_time INT64 NOT NULL"
-                                     ")"))
+
+        if (!gibbon_database_sql_do (self, "CREATE TABLE"
+                                           " IF NOT EXISTS ip2country ("
+                                           " start_ip INT64 NOT NULL,"
+                                           " end_ip INT64 NOT NULL,"
+                                           " code CHAR(2) NOT NULL,"
+                                           " PRIMARY KEY (start_ip, end_ip))"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
-                                     "CREATE INDEX IF NOT EXISTS"
-                                     " geoip_timestamp_index"
-                                     " ON geoip (date_time)"))
+        if (!gibbon_database_sql_do (self, "CREATE TABLE"
+                                           " IF NOT EXISTS ip2country_update ("
+                                           " last_update INT64 NOT NULL)"))
+                return FALSE;
 
         if (!gibbon_database_sql_do (self, "DELETE FROM version"))
                 return FALSE;
@@ -465,6 +484,11 @@ gibbon_database_initialize (GibbonDatabase *self)
                 gibbon_app_display_info (self->priv->app,
                                          _("You should now repopulate your"
                                            " database (menu `Options')."));
+
+        if (!gibbon_database_get_statement (self,
+                                          &self->priv->select_ip2country_update,
+                                      GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE))
+                return FALSE;
 
         return TRUE;
 }
@@ -906,20 +930,6 @@ gibbon_database_maintain (GibbonDatabase *self)
                 sqlite3_finalize (stmt);
         }
 
-        /*
-         * Same for our litte geo ip database.  100 days seems okay for
-         * the caching time.
-         */
-        sql = "DELETE FROM geoip WHERE (date_time < ? OR date_time > ?)";
-        if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
-                                             -1, &stmt, NULL)) {
-                (void) gibbon_database_sql_execute (self, stmt, sql,
-                                                    G_TYPE_INT64, &then,
-                                                    G_TYPE_INT64, &now,
-                                                    -1);
-                sqlite3_finalize (stmt);
-        }
-
         sql = "VACUUM";
         if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
                                              -1, &stmt, NULL)) {
@@ -1221,4 +1231,41 @@ gibbon_database_set_country (const GibbonDatabase *self,
         g_return_if_fail (hostname != NULL);
 
         /* FIXME! Update database! */
+}
+
+static gboolean
+gibbon_database_check_ip2country (GibbonDatabase *self)
+{
+        gint64 last_update;
+        gint64 now;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        if (!gibbon_database_sql_execute (self,
+                                          self->priv->select_ip2country_update,
+                                       GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
+                                          -1))
+                return FALSE;
+
+        if (!gibbon_database_sql_select_row (self,
+                                           self->priv->select_ip2country_update,
+                                       GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
+                                             G_TYPE_INT64, &last_update,
+                                             -1))
+                last_update = G_MININT64;
+
+        now = time (NULL);
+
+        if (now - last_update >= 30 * 24 * 60 * 60)
+                self->priv->geo_ip_updater =
+                                gibbon_geo_ip_updater_new (self->priv->app,
+                                                           self, last_update);
+
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        return TRUE;
 }
