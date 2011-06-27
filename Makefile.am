@@ -28,16 +28,21 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 noinst_HEADERS = gibbon-geoip-data.h
 
+geoipdir = $(datadir)/$(PACKAGE)
+geoip_DATA = ip2country.csv.gz
+
 # This target is meant for maintainer maintainers only.
-$(srcdir)/ip2country.csv.gz: $(srcdir)/download_uri
+geoip:
 	$(SHELL) $(srcdir)/download_uri \
-		"http://software77.net/geo-ip/?DL=1" >$@.new \
-		&& mv -f $@.new $@ \
+		"http://software77.net/geo-ip/?DL=1" \
+			>$(srcdir)/ip2country.csv.gz.new \
+		&& mv -f $(srcdir)/ip2country.csv.gz.new \
+			$(srcdir)/ip2country.csv.gz \
 		&& $(SED) "s/@GIBBON_GEOIP_DATA_UPDATE@/`date +%s`/" \
 			<$(srcdir)/gibbon-geoip-data.h.tmpl \
 			>$(srcdir)/gibbon-geoip-data.h
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in ip2country.csv.gz gibbon-geoip-data.h.tmpl
+	gcreate_class.pl.in gibbon-geoip-data.h.tmpl
 
-.PHONY: ChangeLog ip2country.csv.gz
+.PHONY: ChangeLog geoip
