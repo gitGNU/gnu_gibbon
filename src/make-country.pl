@@ -267,6 +267,16 @@ my %code2country = {
         zw => 'Zimbabwe'
 };
 
+my %pngs;
+my $check_png;
+if (exists $ENV{top_srcdir}) {
+        my $flags_dir = "$ENV{top_srcdir}/pixmaps/flags/16x16";
+        opendir DIR, $flags_dir or die "Cannot opendif `$flags_dir': $!\n";
+        %pngs = map { s/\.png$//; $_ => 1 } grep { /\.png$/ } readdir DIR;
+        closedir DIR;
+        $check_png = 1;
+}
+
 open HANDLE, "<$infile"
         or die "Cannot open `$infile': $!\n";
 
@@ -280,6 +290,15 @@ foreach my $line (@lines) {
         my ($code, $ip) = split;
         die "$infile:$lineno: Unexpected country code `$code'\n"
                 unless $code =~ /^[a-z][a-z]$/;
+
+        if ($check_png) {
+                unless (delete $pngs{$code}) {
+                        my $flags_dir = "$ENV{top_srcdir}/pixmaps/flags/16x16";
+                        warn "$infile:$lineno: Flag `$flags_dir/$code.png'"
+                            . " is missing.\n";
+                }
+        }
+
         my @ip = split /\./, $ip, 4;
         die "$infile:$lineno: First octet must be 127, not $ip[0]!\n"
                 unless 127 == $ip[0];

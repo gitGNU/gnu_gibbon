@@ -64,9 +64,6 @@ LT_INIT
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 IT_PROG_INTLTOOL([0.40.6])
 
-AC_PATH_PROG(PERL, perl)
-AM_CONDITIONAL([HAS_PERL], [test -n "$PERL"])
-
 PKG_PROG_PKG_CONFIG
 
 AC_SEARCH_LIBS([strerror],[cposix])
@@ -83,7 +80,7 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 
 AM_GLIB_GNU_GETTEXT([external])
 
-m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.13.0])
+m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.24.0])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.22.0])
 m4_define(gibbon_gconf_requirement, [gconf-2.0 >= 2.24.0])
 m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
