@@ -26,7 +26,18 @@ DISTCLEANFILES =		\
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in
+noinst_HEADERS = gibbon-geoip-data.h
 
-.PHONY: ChangeLog
+# This target is meant for maintainer maintainers only.
+$(srcdir)/ip2country.csv.gz: $(srcdir)/download_uri
+	$(SHELL) $(srcdir)/download_uri \
+		"http://software77.net/geo-ip/?DL=1" >$@.new \
+		&& mv -f $@.new $@ \
+		&& $(SED) "s/@GIBBON_GEOIP_DATA_UPDATE@/`date +%s`/" \
+			<$(srcdir)/gibbon-geoip-data.h.tmpl \
+			>$(srcdir)/gibbon-geoip-data.h
+
+EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
+	gcreate_class.pl.in ip2country.csv.gz gibbon-geoip-data.h.tmpl
+
+.PHONY: ChangeLog ip2country.csv.gz

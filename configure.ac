@@ -64,6 +64,12 @@ LT_INIT
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 IT_PROG_INTLTOOL([0.40.6])
 
+AC_PATH_PROG(LWP_REQUEST, "lwp-request")
+AC_PATH_PROG(LYNX, "lynx")
+AC_PATH_PROG(LINKS, "links")
+AC_PATH_PROG(W3M, "w3m")
+AC_PATH_PROG(WGET, "wget")
+
 PKG_PROG_PKG_CONFIG
 
 AC_SEARCH_LIBS([strerror],[cposix])
@@ -142,6 +148,7 @@ GNOME_DOC_INIT([0.9.0],,
 AC_CONFIG_FILES([ 
     Makefile
     gcreate_class.pl
+    download_uri
     libgsgf/Makefile
     libgsgf/examples/Makefile
     libgsgf/tests/Makefile
