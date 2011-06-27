@@ -734,8 +734,10 @@ void gibbon_app_disconnect(GibbonApp *self)
 
         gibbon_shouts_set_my_name(self->priv->shouts, NULL);
         gibbon_game_chat_set_my_name(self->priv->game_chat, NULL);
-        gibbon_player_list_clear(self->priv->player_list);
-        gibbon_inviter_list_clear(self->priv->inviter_list);
+        if (self->priv->player_list)
+                gibbon_player_list_clear(self->priv->player_list);
+        if (self->priv->inviter_list)
+                gibbon_inviter_list_clear(self->priv->inviter_list);
 
         gibbon_app_set_state_disconnected(self);
 }
