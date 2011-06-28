@@ -17,9 +17,9 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_GEOIP_DATA_H
-# define _GIBBON_GEOIP_DATA_H
+#ifndef _GIBBON_GEO_IP_DATA_H
+# define _GIBBON_GEO_IP_DATA_H
 
-#define GIBBON_GEOIP_DATA_UPDATE 1309200169
+#define GIBBON_GEO_IP_DATA_UPDATE 1309247506
 
 #endif

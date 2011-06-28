@@ -26,23 +26,23 @@ DISTCLEANFILES =		\
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-noinst_HEADERS = gibbon-geoip-data.h
+noinst_HEADERS = gibbon-geo-ip-data.h
 
-geoipdir = $(datadir)/$(PACKAGE)
-geoip_DATA = ip2country.csv.gz
+geo_ipdir = $(datadir)/$(PACKAGE)
+geo_ip_DATA = ip2country.csv.gz
 
 # This target is meant for maintainer maintainers only.
-geoip:
+geo_ip:
 	$(SHELL) $(srcdir)/download_uri \
 		"http://software77.net/geo-ip/?DL=1" \
 			>$(srcdir)/ip2country.csv.gz.new \
 		&& mv -f $(srcdir)/ip2country.csv.gz.new \
 			$(srcdir)/ip2country.csv.gz \
-		&& $(SED) "s/@GIBBON_GEOIP_DATA_UPDATE@/`date +%s`/" \
-			<$(srcdir)/gibbon-geoip-data.h.tmpl \
-			>$(srcdir)/gibbon-geoip-data.h
+		&& $(SED) "s/@GIBBON_GEO_IP_DATA_UPDATE@/`date +%s`/" \
+			<$(srcdir)/gibbon-geo-ip-data.h.tmpl \
+			>$(srcdir)/gibbon-geo-ip-data.h
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in gibbon-geoip-data.h.tmpl
+	gcreate_class.pl.in gibbon-geo_ip-data.h.tmpl
 
-.PHONY: ChangeLog geoip
+.PHONY: ChangeLog geo_ip

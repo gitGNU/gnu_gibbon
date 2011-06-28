@@ -30,8 +30,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-geo-ip-updater.h"
-/* Ouch, change that name.  */
-#include "gibbon-geoip-data.h"
+#include "gibbon-geo-ip-data.h"
 
 typedef struct _GibbonGeoIPUpdaterPrivate GibbonGeoIPUpdaterPrivate;
 struct _GibbonGeoIPUpdaterPrivate {
@@ -117,7 +116,7 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
         main_window = GTK_WINDOW (gibbon_app_get_window (app));
 
         if (_last_update == 0)
-                last_update = GIBBON_GEOIP_DATA_UPDATE;
+                last_update = GIBBON_GEO_IP_DATA_UPDATE;
         else
                 last_update = _last_update;
 
