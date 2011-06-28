@@ -34,7 +34,7 @@ geo_ip_DATA = ip2country.csv.gz
 # This target is meant for maintainer maintainers only.
 geo_ip:
 	$(SHELL) $(srcdir)/download_uri \
-		"http://software77.net/geo-ip/?DL=1" \
+		"http://gibbon.guido-flohr.net/ip2country.csv.gz" \
 			>$(srcdir)/ip2country.csv.gz.new \
 		&& mv -f $(srcdir)/ip2country.csv.gz.new \
 			$(srcdir)/ip2country.csv.gz \
