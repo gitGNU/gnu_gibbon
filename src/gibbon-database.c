@@ -1238,8 +1238,14 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
 {
         gint64 last_update;
         gint64 now;
+        guint64 diff;
 
         if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        if (!gibbon_database_get_statement (self,
+                                          &self->priv->select_ip2country_update,
+                                      GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE))
                 return FALSE;
 
         if (!gibbon_database_sql_execute (self,
@@ -1253,9 +1259,10 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
                                        GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
                                              G_TYPE_INT64, &last_update,
                                              -1))
-                last_update = G_MININT64;
+                last_update = 0;
 
         now = time (NULL);
+        diff = now - last_update;
 
         if (now - last_update >= 30 * 24 * 60 * 60)
                 self->priv->geo_ip_updater =
