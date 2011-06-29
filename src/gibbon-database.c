@@ -101,6 +101,10 @@ struct _GibbonDatabasePrivate {
         "SELECT last_update FROM ip2country_update"
         sqlite3_stmt *select_ip2country_update;
 
+#define GIBBON_DATABASE_INSERT_IP2COUNTRY                                  \
+        "INSERT INTO ip2country (start_ip, end_ip, code) VALUES (?, ?, ?)"
+        sqlite3_stmt *insert_ip2country;
+
         gboolean in_transaction;
 
         gchar *path;
@@ -777,6 +781,14 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                         case G_TYPE_UINT:
                                 *((guint *) ptr) = sqlite3_column_int (stmt, i);
                                 break;
+                        case G_TYPE_INT64:
+                                *((gint64 *) ptr) = sqlite3_column_int64 (stmt,
+                                                                          i);
+                                break;
+                        case G_TYPE_UINT64:
+                                *((gint64 *) ptr) = sqlite3_column_int64 (stmt,
+                                                                          i);
+                                break;
                         case G_TYPE_DOUBLE:
                                 *((gdouble *) ptr) =
                                         sqlite3_column_double (stmt, i);
@@ -1222,17 +1234,6 @@ gibbon_database_get_country (const GibbonDatabase *self,
         return NULL;
 }
 
-void
-gibbon_database_set_country (const GibbonDatabase *self,
-                             const gchar *hostname,
-                             const gchar *country)
-{
-        g_return_if_fail (GIBBON_IS_DATABASE (self));
-        g_return_if_fail (hostname != NULL);
-
-        /* FIXME! Update database! */
-}
-
 static gboolean
 gibbon_database_check_ip2country (GibbonDatabase *self)
 {
@@ -1268,6 +1269,8 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
                 self->priv->geo_ip_updater =
                                 gibbon_geo_ip_updater_new (self->priv->app,
                                                            self, last_update);
+        if (self->priv->geo_ip_updater)
+                gibbon_geo_ip_updater_start (self->priv->geo_ip_updater);
 
         if (!gibbon_database_commit (self)) {
                 gibbon_database_rollback (self);
@@ -1275,4 +1278,86 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
         }
 
         return TRUE;
+}
+
+void
+gibbon_database_cancel_geo_ip_update (GibbonDatabase *self)
+{
+        g_return_if_fail (GIBBON_IS_DATABASE (self));
+
+        if (self->priv->geo_ip_updater) {
+                g_object_unref (self->priv->geo_ip_updater);
+                self->priv->geo_ip_updater = NULL;
+        }
+
+        if (self->priv->in_transaction)
+                gibbon_database_rollback (self);
+}
+
+void
+gibbon_database_close_geo_ip_update (GibbonDatabase *self)
+{
+        gint64 now = time (NULL);
+
+        g_return_if_fail (GIBBON_IS_DATABASE (self));
+        g_return_if_fail (self->priv->geo_ip_updater != NULL);
+
+        if (!gibbon_database_sql_do (self, "DELETE FROM ip2country_update")) {
+                gibbon_database_cancel_geo_ip_update (self);
+                return;
+        }
+        if (!gibbon_database_sql_do (self, "INSERT INTO"
+                                           " ip2country_update (last_update)"
+                                           " VALUES (%llu)", now)) {
+                gibbon_database_cancel_geo_ip_update (self);
+                return;
+        }
+
+        g_object_unref (self->priv->geo_ip_updater);
+        self->priv->geo_ip_updater = NULL;
+
+        gibbon_database_commit (self);
+}
+
+void
+gibbon_database_on_start_geo_ip_update (GibbonDatabase *self)
+{
+        g_return_if_fail (GIBBON_IS_DATABASE (self));
+        g_return_if_fail (self->priv->geo_ip_updater != NULL);
+
+        if (!gibbon_database_begin_transaction (self))
+                gibbon_database_cancel_geo_ip_update (self);
+
+        if (!gibbon_database_sql_do (self, "%s", "DELETE FROM ip2country"))
+                gibbon_database_cancel_geo_ip_update (self);
+}
+
+void
+gibbon_database_set_geo_ip (GibbonDatabase *self,
+                            const gchar *from_ip, const gchar *to_ip,
+                            const gchar *alpha2)
+{
+        g_return_if_fail (GIBBON_IS_DATABASE (self));
+        g_return_if_fail (from_ip != NULL);
+        g_return_if_fail (to_ip != NULL);
+        g_return_if_fail (alpha2 != NULL);
+        g_return_if_fail (alpha2[0] >= 'a' && alpha2[0] <= 'z');
+        g_return_if_fail (alpha2[1] >= 'a' && alpha2[1] <= 'z');
+        g_return_if_fail (alpha2[3]);
+
+        if (!gibbon_database_get_statement (self,
+                                            &self->priv->insert_ip2country,
+                                            GIBBON_DATABASE_INSERT_IP2COUNTRY)) {
+                gibbon_database_cancel_geo_ip_update (self);
+                return;
+        }
+
+        if (!gibbon_database_sql_execute (self,
+                                          self->priv->insert_ip2country,
+                                          GIBBON_DATABASE_INSERT_IP2COUNTRY,
+                                          G_TYPE_STRING, &from_ip,
+                                          G_TYPE_STRING, &to_ip,
+                                          G_TYPE_STRING, &alpha2,
+                                          -1))
+                gibbon_database_cancel_geo_ip_update (self);
 }

@@ -99,8 +99,11 @@ guint gibbon_database_get_user_id (GibbonDatabase *self,
                                    const gchar *login);
 const gchar *gibbon_database_get_country (const GibbonDatabase *self,
                                           const gchar *hostname);
-void gibbon_database_set_country (const GibbonDatabase *self,
-                                  const gchar *hostname,
-                                  const gchar *country);
+void gibbon_database_on_start_geo_ip_update (GibbonDatabase *self);
+void gibbon_database_set_geo_ip (GibbonDatabase *self,
+                                 const gchar *from_ip, const gchar *to_ip,
+                                 const gchar *alpha2);
+void gibbon_database_cancel_geo_ip_update (GibbonDatabase *self);
+void gibbon_database_close_geo_ip_update (GibbonDatabase *self);
 
 #endif

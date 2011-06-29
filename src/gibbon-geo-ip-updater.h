@@ -78,5 +78,6 @@ GType gibbon_geo_ip_updater_get_type (void) G_GNUC_CONST;
 GibbonGeoIPUpdater *gibbon_geo_ip_updater_new (const GibbonApp *app,
                                                GibbonDatabase *database,
                                                gint64 last_update);
+void gibbon_geo_ip_updater_start (GibbonGeoIPUpdater *self);
 
 #endif
