@@ -32,7 +32,9 @@
 
 G_DEFINE_TYPE (GibbonCountry, gibbon_country, G_TYPE_OBJECT)
 
-static const gchar * const country_codes[676] = {
+#define GIBBON_COUNTRY_MAX 26 * 26
+
+static const gchar * const country_codes[GIBBON_COUNTRY_MAX] = {
         "aa",
         "ab",
         "ac",
@@ -711,7 +713,7 @@ static const gchar * const country_codes[676] = {
         "zz",
 };
 
-static const gchar *const country_names[676] = {
+static const gchar *const country_names[GIBBON_COUNTRY_MAX] = {
         /* aa */
         NULL,
         /* ab */
@@ -2066,6 +2068,9 @@ static const gchar *const country_names[676] = {
         N_("Invalid IP address")
 };
 
+static const GdkPixbuf *gibbon_country_pixbufs[GIBBON_COUNTRY_MAX];
+static gibbon_country_initialized[GIBBON_COUNTRY_MAX];
+
 static void 
 gibbon_country_init (GibbonCountry *self)
 {
@@ -2081,6 +2086,10 @@ static void
 gibbon_country_class_init (GibbonCountryClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+        memset (gibbon_country_pixbufs, 0, sizeof gibbon_country_pixbufs);
+        memset (gibbon_country_initialized, 0,
+                sizeof gibbon_country_initialized);
 
         object_class->finalize = gibbon_country_finalize;
 }
