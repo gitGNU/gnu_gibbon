@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+]>
+<svg viewBox="0 0 640 400" width="640" height="400" 
+     xmlns:xlink="http://www.w3.org/1999/xlink" 
+     xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="400" fill="#a0a0a0"/>
+
+    <polygon points="270,0 370,0 640,200 370,400 270,400 0,200" fill="#ffffff"/>
+
+    <polygon points="320,50 522.5,200 320,350 117.5,200" fill="#c0c0c0"/>
+
+    <text font-family="Times New Roman" font-weight="bold" font-size="500px" 
+          text-anchor="middle" x="320" y="370" fill="#000000">?</text>
+</svg>
