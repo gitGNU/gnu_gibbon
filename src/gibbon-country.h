@@ -53,6 +53,9 @@ typedef struct _GibbonCountry GibbonCountry;
 struct _GibbonCountry
 {
         GObject parent_instance;
+
+        /*< private >*/
+        struct _GibbonCountryPrivate *priv;
 };
 
 /**

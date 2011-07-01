@@ -23,6 +23,7 @@
 #include <glib.h>
 
 #include "gibbon-util.h"
+#include "gibbon-country.h"
 
 G_BEGIN_DECLS
 
@@ -83,7 +84,7 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              const gchar *client,
                              GdkPixbuf *client_icon,
                              const gchar *hostname,
-                             const gchar *country,
+                             GibbonCountry *country,
                              const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);

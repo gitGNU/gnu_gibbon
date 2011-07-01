@@ -26,13 +26,24 @@
  * This class represents a country.
  */
 
-#include <gtk.h>
+#include <glib.h>
+#include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-country.h"
+
+typedef struct _GibbonCountryPrivate GibbonCountryPrivate;
+struct _GibbonCountryPrivate {
+        gsize idx;
+};
+
+#define GIBBON_COUNTRY_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+        GIBBON_TYPE_COUNTRY, GibbonCountryPrivate))
 
 G_DEFINE_TYPE (GibbonCountry, gibbon_country, G_TYPE_OBJECT)
 
 #define GIBBON_COUNTRY_MAX 26 * 26
+#define GIBBON_COUNTRY_FALLBACK (26 * 'x' - 'a') + 'y' - 'a'
 
 static const gchar * const country_codes[GIBBON_COUNTRY_MAX] = {
         "aa",
@@ -2069,11 +2080,12 @@ static const gchar *const country_names[GIBBON_COUNTRY_MAX] = {
 };
 
 static const GdkPixbuf *gibbon_country_pixbufs[GIBBON_COUNTRY_MAX];
-static gibbon_country_initialized[GIBBON_COUNTRY_MAX];
+static gboolean gibbon_country_pixbuf_initialized[GIBBON_COUNTRY_MAX];
 
 static void 
 gibbon_country_init (GibbonCountry *self)
 {
+        self->priv->idx = GIBBON_COUNTRY_FALLBACK;
 }
 
 static void
@@ -2087,9 +2099,11 @@ gibbon_country_class_init (GibbonCountryClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+        g_type_class_add_private (klass, sizeof (GibbonCountryPrivate));
+
         memset (gibbon_country_pixbufs, 0, sizeof gibbon_country_pixbufs);
-        memset (gibbon_country_initialized, 0,
-                sizeof gibbon_country_initialized);
+        memset (gibbon_country_pixbuf_initialized, 0,
+                sizeof gibbon_country_pixbuf_initialized);
 
         object_class->finalize = gibbon_country_finalize;
 }
@@ -2106,6 +2120,17 @@ GibbonCountry *
 gibbon_country_new (const gchar *alpha2)
 {
         GibbonCountry *self = g_object_new (GIBBON_TYPE_COUNTRY, NULL);
+        gint idx;
+
+        if (!alpha2
+            || alpha2[0] < 'a' || alpha2[0] > 'z'
+            || alpha2[1] < 'a' || alpha2[1] > 'z') {
+                idx = GIBBON_COUNTRY_FALLBACK;
+        } else {
+                idx = (alpha2[0] - 'a') * 26 + alpha2[1] - 'a';
+        }
+
+
 
         return self;
 }

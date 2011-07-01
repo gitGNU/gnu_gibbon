@@ -74,6 +74,7 @@
 #include "gibbon-archive.h"
 #include "gibbon-database.h"
 #include "gibbon-util.h"
+#include "gibbon-country.h"
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
@@ -396,13 +397,13 @@ gibbon_archive_get_reliability (GibbonArchive *self,
                                                 login, value, confidence);
 }
 
-const gchar *
+GibbonCountry *
 gibbon_archive_get_country (const GibbonArchive *self,
-                            const gchar *hostname)
+                            const gchar *hostname,
+                            GibbonGeoIPCallback callback)
 {
         g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
         g_return_val_if_fail (hostname != NULL, NULL);
 
-        /* FIXME! Use a session cache here for failed lookups! */
-        return gibbon_database_get_country (self->priv->db, hostname);
+        return gibbon_country_new ("xy");
 }

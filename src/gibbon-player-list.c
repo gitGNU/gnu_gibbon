@@ -184,7 +184,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *client,
                         GdkPixbuf *client_icon,
                         const gchar *hostname,
-                        const gchar *country,
+                        GibbonCountry *country,
                         const gchar *email)
 {
         struct GibbonPlayer *player;
@@ -247,7 +247,6 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
                             GIBBON_PLAYER_LIST_COL_CLIENT_ICON, client_icon,
                             GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
-                            GIBBON_PLAYER_LIST_COL_COUNTRY, country,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }

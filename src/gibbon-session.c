@@ -44,6 +44,7 @@
 #include "gibbon-saved-info.h"
 #include "gibbon-reliability.h"
 #include "gibbon-client-icons.h"
+#include "gibbon-country.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -100,6 +101,11 @@ static gchar *gibbon_session_decode_client (GibbonSession *self,
 static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
                                                   GSList **list,
                                                   const gchar *string);
+
+static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
+                                              const gchar *hostname,
+                                              const gchar *alpha2,
+                                              const gchar *username);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -464,7 +470,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         GdkPixbuf *client_icon;
         const gchar *email;
         const gchar *hostname;
-        const gchar *country;
+        GibbonCountry *country;
         GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
@@ -535,8 +541,9 @@ gibbon_session_clip_who_info (GibbonSession *self,
         client_icons = gibbon_app_get_client_icons (self->priv->app);
         client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
 
-        country = gibbon_archive_get_country (self->priv->archive,
-                                              hostname);
+        country = gibbon_archive_get_country (self->priv->archive, hostname,
+                                              (GibbonGeoIPCallback)
+                                              gibbon_session_on_geo_ip_resolve);
 
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
@@ -1713,4 +1720,13 @@ gibbon_session_get_saved (const GibbonSession *self, const gchar *who)
         g_return_val_if_fail (who != NULL, NULL);
 
         return g_hash_table_lookup (self->priv->saved_games, who);
+}
+
+static void
+gibbon_session_on_geo_ip_resolve (GibbonSession *self,
+                                  const gchar *hostname,
+                                  const gchar *alpha2,
+                                  const gchar *username)
+{
+        /* TODO! */
 }

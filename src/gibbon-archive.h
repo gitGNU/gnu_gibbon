@@ -69,6 +69,9 @@ struct _GibbonArchiveClass
 
 GType gibbon_archive_get_type (void) G_GNUC_CONST;
 
+typedef void (*GibbonGeoIPCallback) (GObject *obj, const gchar *hostname,
+                                     const gchar *alpha2, gpointer data);
+
 GibbonArchive *gibbon_archive_new (GibbonApp *app);
 void gibbon_archive_on_login (GibbonArchive *self,
                               const gchar *hostname, guint port,
@@ -93,7 +96,9 @@ gboolean gibbon_archive_get_reliability (GibbonArchive *self,
                                          const gchar *hostname, guint port,
                                          const gchar *login,
                                          gdouble *value, guint *confidence);
-const gchar *gibbon_archive_get_country (const GibbonArchive *self,
-                                         const gchar *hostname);
+struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
+                                                   const gchar *hostname,
+                                                   GibbonGeoIPCallback
+                                                   callback);
 
 #endif
