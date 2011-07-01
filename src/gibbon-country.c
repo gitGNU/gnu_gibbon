@@ -2151,7 +2151,7 @@ gibbon_country_new (const gchar *alpha2)
                 gibbon_country_pixbuf_initialized[idx] = 1;
                 snprintf (filename, 7, "%s.png", self->priv->alpha2);
                 path = g_build_filename (gibbon_app_pixmaps_directory, "flags",
-                                         filename, NULL);
+                                         "16x16", filename, NULL);
                 gibbon_country_pixbufs[idx] =
                                 gdk_pixbuf_new_from_file_at_size (path, -1, 16,
                                                                   NULL);
