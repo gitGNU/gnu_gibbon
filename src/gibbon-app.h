@@ -72,6 +72,8 @@ struct _GibbonAppClass
 
 GType gibbon_app_get_type (void) G_GNUC_CONST;
 
+gchar *gibbon_app_pixmaps_directory;
+
 GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir,
                            const gchar *data_dir);
 void gibbon_app_display_error (const GibbonApp *self,

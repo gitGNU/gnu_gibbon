@@ -54,6 +54,8 @@
 #include "gibbon-session.h"
 #include "gibbon-client-icons.h"
 
+gchar *gibbon_app_pixmaps_directory = NULL;
+
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
 struct _GibbonAppPrivate {
         GtkBuilder *builder;
@@ -131,7 +133,7 @@ static void gibbon_app_init(GibbonApp *self)
                         GIBBON_TYPE_APP, GibbonAppPrivate);
 
         self->priv->builder = NULL;
-        self->priv->pixmaps_directory = NULL;
+        self->priv->pixmaps_directory =  NULL;
 
         self->priv->board = NULL;
         self->priv->window = NULL;
@@ -238,7 +240,9 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                 return NULL;
         }
 
-        self->priv->pixmaps_directory = g_strdup(pixmaps_directory);
+        self->priv->pixmaps_directory =
+                        gibbon_app_pixmaps_directory =
+                                        g_strdup(pixmaps_directory);
 
         self->priv->window
                         = GTK_WIDGET (gibbon_app_find_object (self, "window",
