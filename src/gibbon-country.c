@@ -727,7 +727,7 @@ static const gchar * const country_codes[GIBBON_COUNTRY_MAX] = {
         "zz",
 };
 
-static const gchar *const country_names[GIBBON_COUNTRY_MAX] = {
+static const gchar * const country_names[GIBBON_COUNTRY_MAX] = {
         /* aa */
         NULL,
         /* ab */
@@ -2088,6 +2088,9 @@ static gboolean gibbon_country_pixbuf_initialized[GIBBON_COUNTRY_MAX];
 static void 
 gibbon_country_init (GibbonCountry *self)
 {
+        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                GIBBON_TYPE_COUNTRY, GibbonCountryPrivate);
+
         self->priv->alpha2 = NULL;
         self->priv->name = NULL;
         self->priv->pixbuf = NULL;
