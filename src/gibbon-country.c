@@ -31,10 +31,13 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-country.h"
+#include "gibbon-app.h"
 
 typedef struct _GibbonCountryPrivate GibbonCountryPrivate;
 struct _GibbonCountryPrivate {
-        gsize idx;
+        const gchar *alpha2;
+        const gchar *name;
+        const GdkPixbuf *pixbuf;
 };
 
 #define GIBBON_COUNTRY_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -2085,7 +2088,9 @@ static gboolean gibbon_country_pixbuf_initialized[GIBBON_COUNTRY_MAX];
 static void 
 gibbon_country_init (GibbonCountry *self)
 {
-        self->priv->idx = GIBBON_COUNTRY_FALLBACK;
+        self->priv->alpha2 = NULL;
+        self->priv->name = NULL;
+        self->priv->pixbuf = NULL;
 }
 
 static void
@@ -2121,6 +2126,8 @@ gibbon_country_new (const gchar *alpha2)
 {
         GibbonCountry *self = g_object_new (GIBBON_TYPE_COUNTRY, NULL);
         gint idx;
+        gchar *path;
+        gchar filename[7];
 
         if (!alpha2
             || alpha2[0] < 'a' || alpha2[0] > 'z'
@@ -2130,7 +2137,25 @@ gibbon_country_new (const gchar *alpha2)
                 idx = (alpha2[0] - 'a') * 26 + alpha2[1] - 'a';
         }
 
+        if (!country_codes[idx])
+                idx = GIBBON_COUNTRY_FALLBACK;
 
+        self->priv->alpha2 = country_codes[idx];
+
+        self->priv->name = country_names[idx];
+
+        if (!gibbon_country_pixbuf_initialized[idx]) {
+                gibbon_country_pixbuf_initialized[idx] = 1;
+                snprintf (filename, 7, "%s.png", self->priv->alpha2);
+                path = g_build_filename (gibbon_app_pixmaps_directory, "flags",
+                                         filename, NULL);
+                gibbon_country_pixbufs[idx] =
+                                gdk_pixbuf_new_from_file_at_size (path, -1, 16,
+                                                                  NULL);
+                g_free (path);
+        }
+
+        self->priv->pixbuf = gibbon_country_pixbufs[idx];
 
         return self;
 }
