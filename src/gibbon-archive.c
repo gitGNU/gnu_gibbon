@@ -79,6 +79,14 @@
 /* We can safely cache that across sessions.  */
 static GHashTable *gibbon_archive_countries = NULL;
 GResolver *gibbon_archive_resolver = NULL;
+#define GIBBON_ARCHIVE_RE_OCTET \
+        "(1[0-9][0-9]|[1-9][0-9]|2[0-4][0-9]|25[0-5]|[0-9])"
+#define GIBBON_ARCHIVE_RE_IP                            \
+                GIBBON_ARCHIVE_RE_OCTET                 \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET  \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET  \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET
+GRegex *gibbon_archive_re_ip = NULL;
 
 typedef struct _GibbonArchiveLookupInfo {
         gchar *hostname;
@@ -148,6 +156,7 @@ static void
 gibbon_archive_class_init (GibbonArchiveClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GError *error = NULL;
         
         g_type_class_add_private (klass, sizeof (GibbonArchivePrivate));
 
@@ -155,6 +164,12 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
                                                           g_str_equal,
                                                           g_free, g_free);
         gibbon_archive_resolver = g_resolver_get_default ();
+        gibbon_archive_re_ip = g_regex_new (GIBBON_ARCHIVE_RE_IP,
+                                            G_REGEX_OPTIMIZE, 0, &error);
+        if (!gibbon_archive_re_ip) {
+                g_error ("Compiling regular expression `%s' failed: %s!",
+                         GIBBON_ARCHIVE_RE_IP, error->message);
+        }
 
         object_class->finalize = gibbon_archive_finalize;
 }
@@ -493,11 +508,11 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
 
         ips = g_resolver_lookup_by_name_finish (G_RESOLVER (resolver),
                                                 result, NULL);
-if (!ips)
-        g_printerr ("DNS lookup for %s failed.\n", info.hostname);
 
-        if (!ips)
+        if (!ips) {
+                g_printerr ("DNS lookup for %s failed.\n", info.hostname);
                 return;
+        }
 
         /*
          * The address space stored in our GeoIP database should be
