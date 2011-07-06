@@ -483,7 +483,14 @@ gibbon_archive_get_country (const GibbonArchive *self,
                                              hostname, g_strdup ("xl"));
                         return gibbon_country_new ("xl");
                 }
-                g_object_unref (address);
+                if (address)
+                        g_object_unref (address);
+
+                if (0 == g_strcmp0 (_hostname, "localhost")) {
+                        g_hash_table_insert (gibbon_archive_countries,
+                                             hostname, g_strdup ("xl"));
+                        return gibbon_country_new ("xl");
+                }
 
                 g_hash_table_insert (gibbon_archive_countries,
                                      hostname, g_strdup ("xy"));

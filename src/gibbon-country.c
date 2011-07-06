@@ -1947,7 +1947,7 @@ static const gchar * const country_names[GIBBON_COUNTRY_MAX] = {
         /* xk */
         NULL,
         /* xl */
-        NULL,
+        N_("On the server network"),
         /* xm */
         NULL,
         /* xn */
@@ -2145,7 +2145,10 @@ gibbon_country_new (const gchar *alpha2)
 
         self->priv->alpha2 = country_codes[idx];
 
-        self->priv->name = country_names[idx];
+        if (country_names[idx])
+                self->priv->name = _(country_names[idx]);
+        else
+                self->priv->name = NULL;
 
         if (!gibbon_country_pixbuf_initialized[idx]) {
                 gibbon_country_pixbuf_initialized[idx] = 1;
@@ -2155,6 +2158,9 @@ gibbon_country_new (const gchar *alpha2)
                 gibbon_country_pixbufs[idx] =
                                 gdk_pixbuf_new_from_file_at_size (path, -1, 16,
                                                                   NULL);
+ if (0 == g_strcmp0 ("xl", alpha2)) {
+         g_printerr ("Pixbuf: %s (%p)\n", path, gibbon_country_pixbufs[idx]);
+ }
                 g_free (path);
         }
 
