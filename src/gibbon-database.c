@@ -46,10 +46,10 @@
  */
 #define GIBBON_DATABASE_SCHEMA_MINOR 3
 
-/* Differences int the schema revision are for cosmetic changes that will
+/* Differences in the schema revision are for cosmetic changes that will
  * not have any impact on existing databases (case, column order, ...).
  */
-#define GIBBON_DATABASE_SCHEMA_REVISION 0
+#define GIBBON_DATABASE_SCHEMA_REVISION 1
 
 typedef struct _GibbonDatabasePrivate GibbonDatabasePrivate;
 struct _GibbonDatabasePrivate {
@@ -104,6 +104,11 @@ struct _GibbonDatabasePrivate {
 #define GIBBON_DATABASE_INSERT_IP2COUNTRY                                  \
         "INSERT INTO ip2country (start_ip, end_ip, code) VALUES (?, ?, ?)"
         sqlite3_stmt *insert_ip2country;
+
+#define GIBBON_DATABASE_SELECT_IP2COUNTRY                       \
+        "SELECT DISTINCT code FROM ip2country"                  \
+        " WHERE start_ip <= ? AND end_ip >= ?"
+        sqlite3_stmt *select_ip2country;
 
         gboolean in_transaction;
 
@@ -165,6 +170,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->select_activity = NULL;
         self->priv->delete_activity = NULL;
         self->priv->select_ip2country_update = NULL;
+        self->priv->select_ip2country = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -460,8 +466,8 @@ gibbon_database_initialize (GibbonDatabase *self)
 
         if (!gibbon_database_sql_do (self, "CREATE TABLE"
                                            " IF NOT EXISTS ip2country ("
-                                           " start_ip INT64 NOT NULL,"
-                                           " end_ip INT64 NOT NULL,"
+                                           " start_ip UINT32 NOT NULL,"
+                                           " end_ip UINT32 NOT NULL,"
                                            " code CHAR(2) NOT NULL,"
                                            " PRIMARY KEY (start_ip, end_ip))"))
                 return FALSE;
@@ -686,6 +692,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
         gint i = 0;
 
         sqlite3_reset (stmt);
+        sqlite3_clear_bindings (stmt);
 
         va_start (args, sql);
 
@@ -792,6 +799,10 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                         case G_TYPE_DOUBLE:
                                 *((gdouble *) ptr) =
                                         sqlite3_column_double (stmt, i);
+                                break;
+                        case G_TYPE_STRING:
+                                *((const guchar **) ptr) =
+                                                sqlite3_column_text (stmt, i);
                                 break;
                         default:
                                 gibbon_app_display_error (self->priv->app,
@@ -1223,15 +1234,42 @@ gibbon_database_void_activity (GibbonDatabase *self,
         return TRUE;
 }
 
-const gchar *
-gibbon_database_get_country (const GibbonDatabase *self,
-                             const gchar *hostname)
+gchar *
+gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
 {
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), NULL);
-        g_return_val_if_fail (hostname != NULL, NULL);
+        guint address;
+        gchar *alpha2;
 
-        /* FIXME! Query database! */
-        return NULL;
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), NULL);
+
+        if (!gibbon_database_get_statement (self, &self->priv->select_ip2country,
+                                            GIBBON_DATABASE_SELECT_IP2COUNTRY)) {
+                return NULL;
+        }
+
+        address = (guint) _address;
+
+        if (!gibbon_database_sql_execute (self,
+                                          self->priv->select_ip2country,
+                                          GIBBON_DATABASE_SELECT_IP2COUNTRY,
+                                          G_TYPE_UINT, &address,
+                                          G_TYPE_UINT, &address,
+                                          -1)) {
+                return NULL;
+        }
+
+        if (!gibbon_database_sql_select_row (self,
+                                             self->priv->select_ip2country,
+                                             GIBBON_DATABASE_SELECT_IP2COUNTRY,
+                                             G_TYPE_STRING, &alpha2,
+                                             -1)) {
+                g_printerr ("Database lookup for 0x%8x (%u) failed.\n", address, address);
+                return NULL;
+        }
+
+        alpha2 = g_strdup (alpha2);
+
+        return alpha2;
 }
 
 static gboolean

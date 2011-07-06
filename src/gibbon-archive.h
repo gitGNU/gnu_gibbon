@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-app.h"
+#include "gibbon-country.h"
 
 #define GIBBON_TYPE_ARCHIVE \
         (gibbon_archive_get_type ())
@@ -58,7 +59,7 @@ struct _GibbonArchive
 /**
  * GibbonArchiveClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Class representing the data that Gibbon saves.
  **/
 typedef struct _GibbonArchiveClass GibbonArchiveClass;
 struct _GibbonArchiveClass
@@ -70,7 +71,7 @@ struct _GibbonArchiveClass
 GType gibbon_archive_get_type (void) G_GNUC_CONST;
 
 typedef void (*GibbonGeoIPCallback) (GObject *obj, const gchar *hostname,
-                                     const gchar *alpha2, gpointer data);
+                                     const GibbonCountry *country);
 
 GibbonArchive *gibbon_archive_new (GibbonApp *app);
 void gibbon_archive_on_login (GibbonArchive *self,
@@ -99,6 +100,7 @@ gboolean gibbon_archive_get_reliability (GibbonArchive *self,
 struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
                                                    const gchar *hostname,
                                                    GibbonGeoIPCallback
-                                                   callback);
+                                                   callback,
+                                                   gpointer data);
 
 #endif

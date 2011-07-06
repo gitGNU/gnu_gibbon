@@ -63,6 +63,7 @@ enum {
         GIBBON_PLAYER_LIST_COL_WATCHING,
         GIBBON_PLAYER_LIST_COL_HOSTNAME,
         GIBBON_PLAYER_LIST_COL_COUNTRY,
+        GIBBON_PLAYER_LIST_COL_COUNTRY_ICON,
         GIBBON_PLAYER_LIST_COL_EMAIL,
         GIBBON_PLAYER_LIST_N_COLUMNS
 };
@@ -82,9 +83,9 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              const gchar *opponent,
                              const gchar *watching,
                              const gchar *client,
-                             GdkPixbuf *client_icon,
+                             const GdkPixbuf *client_icon,
                              const gchar *hostname,
-                             GibbonCountry *country,
+                             const GibbonCountry *country,
                              const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);
@@ -98,6 +99,9 @@ gboolean gibbon_player_list_get_iter (GibbonPlayerList *self,
                                       GtkTreeIter *iter);
 void gibbon_player_list_remove (GibbonPlayerList *self,
                                 const gchar *player_name);
+void gibbon_player_list_update_country (GibbonPlayerList *self,
+                                        const gchar *hostname,
+                                        const GibbonCountry *country);
 
 G_END_DECLS
 

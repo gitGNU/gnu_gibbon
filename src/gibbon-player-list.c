@@ -79,7 +79,8 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
-                                    G_TYPE_STRING,
+                                    GIBBON_TYPE_COUNTRY,
+                                    GDK_TYPE_PIXBUF,
                                     G_TYPE_STRING);
         self->priv->store = store;
         
@@ -139,7 +140,9 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY] =
-                G_TYPE_STRING;
+                GIBBON_TYPE_COUNTRY;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY_ICON] =
+                GDK_TYPE_PIXBUF;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
                 
@@ -182,15 +185,16 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         const gchar *opponent,
                         const gchar *watching,
                         const gchar *client,
-                        GdkPixbuf *client_icon,
+                        const GdkPixbuf *client_icon,
                         const gchar *hostname,
-                        GibbonCountry *country,
+                        const GibbonCountry *country,
                         const gchar *email)
 {
         struct GibbonPlayer *player;
         const gchar *version_string = NULL;
         const gchar *stock_id;
         GibbonReliability rel;
+        const GdkPixbuf *country_icon;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
@@ -235,6 +239,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         stock_id = GTK_STOCK_STOP;
         }
 
+        country_icon = gibbon_country_get_pixbuf (country);
         gtk_list_store_set (self->priv->store,
                             &player->iter,
                             GIBBON_PLAYER_LIST_COL_NAME, name,
@@ -247,6 +252,8 @@ gibbon_player_list_set (GibbonPlayerList *self,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
                             GIBBON_PLAYER_LIST_COL_CLIENT_ICON, client_icon,
                             GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
+                            GIBBON_PLAYER_LIST_COL_COUNTRY, country,
+                            GIBBON_PLAYER_LIST_COL_COUNTRY_ICON, country_icon,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }
@@ -402,4 +409,40 @@ gibbon_player_list_get_iter (GibbonPlayerList *self, const gchar *name,
         *iter = player->iter;
 
         return TRUE;
+}
+
+void
+gibbon_player_list_update_country (GibbonPlayerList *self,
+                                   const gchar *hostname,
+                                   const GibbonCountry *country)
+{
+        GtkTreeIter iter;
+        gboolean valid;
+        gchar *stored_hostname;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (GIBBON_IS_COUNTRY (country));
+
+        valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (self->priv->store),
+                                               &iter);
+        while (valid) {
+                gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                                    GIBBON_PLAYER_LIST_COL_HOSTNAME,
+                                    &stored_hostname,
+                                    -1);
+
+                if (0 == g_strcmp0 (hostname, stored_hostname)) {
+                        gtk_list_store_set (self->priv->store,
+                                            &iter,
+                                            GIBBON_PLAYER_LIST_COL_COUNTRY,
+                                            country,
+                                            GIBBON_PLAYER_LIST_COL_COUNTRY_ICON,
+                                            gibbon_country_get_pixbuf (country),
+                                            -1);
+                }
+                valid = gtk_tree_model_iter_next (
+                                GTK_TREE_MODEL (self->priv->store),
+                                &iter);
+        }
 }

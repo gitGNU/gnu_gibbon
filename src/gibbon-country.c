@@ -46,7 +46,7 @@ struct _GibbonCountryPrivate {
 G_DEFINE_TYPE (GibbonCountry, gibbon_country, G_TYPE_OBJECT)
 
 #define GIBBON_COUNTRY_MAX 26 * 26
-#define GIBBON_COUNTRY_FALLBACK (26 * 'x' - 'a') + 'y' - 'a'
+#define GIBBON_COUNTRY_FALLBACK (26 * ('x' - 'a')) + 'y' - 'a'
 
 static const gchar * const country_codes[GIBBON_COUNTRY_MAX] = {
         "aa",
@@ -2161,4 +2161,28 @@ gibbon_country_new (const gchar *alpha2)
         self->priv->pixbuf = gibbon_country_pixbufs[idx];
 
         return self;
+}
+
+const GdkPixbuf *
+gibbon_country_get_pixbuf (const GibbonCountry *self)
+{
+        g_return_val_if_fail (GIBBON_IS_COUNTRY (self), NULL);
+
+        return self->priv->pixbuf;
+}
+
+const gchar *
+gibbon_country_get_name (const GibbonCountry *self)
+{
+        g_return_val_if_fail (GIBBON_IS_COUNTRY (self), NULL);
+
+        return self->priv->name;
+}
+
+const gchar *
+gibbon_country_get_alpha2 (const GibbonCountry *self)
+{
+        g_return_val_if_fail (GIBBON_IS_COUNTRY (self), NULL);
+
+        return self->priv->alpha2;
 }

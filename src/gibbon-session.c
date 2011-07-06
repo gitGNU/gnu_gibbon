@@ -104,8 +104,7 @@ static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
 
 static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
-                                              const gchar *alpha2,
-                                              const gchar *username);
+                                              const GibbonCountry *country);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -543,7 +542,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         country = gibbon_archive_get_country (self->priv->archive, hostname,
                                               (GibbonGeoIPCallback)
-                                              gibbon_session_on_geo_ip_resolve);
+                                              gibbon_session_on_geo_ip_resolve,
+                                              self);
 
         gibbon_player_list_set (self->priv->player_list,
                                 who, available, rating, experience,
@@ -1725,8 +1725,13 @@ gibbon_session_get_saved (const GibbonSession *self, const gchar *who)
 static void
 gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                   const gchar *hostname,
-                                  const gchar *alpha2,
-                                  const gchar *username)
+                                  const GibbonCountry *country)
 {
-        /* TODO! */
+        /* Silently fail for timed out sessions.  */
+        if (!GIBBON_IS_SESSION (self))
+                return;
+
+        if (self->priv->player_list)
+                gibbon_player_list_update_country (self->priv->player_list,
+                                                   hostname, country);
 }

@@ -24,8 +24,7 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #define GIBBON_TYPE_COUNTRY \
         (gibbon_country_get_type ())
@@ -73,5 +72,8 @@ struct _GibbonCountryClass
 GType gibbon_country_get_type (void) G_GNUC_CONST;
 
 GibbonCountry *gibbon_country_new (const gchar *alpha2);
+const gchar *gibbon_country_get_alpha2 (const GibbonCountry *self);
+const gchar *gibbon_country_get_name (const GibbonCountry *self);
+const GdkPixbuf *gibbon_country_get_pixbuf (const GibbonCountry *self);
 
 #endif

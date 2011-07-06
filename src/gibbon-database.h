@@ -97,8 +97,7 @@ gboolean gibbon_database_get_reliability (GibbonDatabase *self,
 guint gibbon_database_get_user_id (GibbonDatabase *self,
                                    const gchar *hostname, guint port,
                                    const gchar *login);
-const gchar *gibbon_database_get_country (const GibbonDatabase *self,
-                                          const gchar *hostname);
+gchar *gibbon_database_get_country (GibbonDatabase *self, guint32 address);
 void gibbon_database_on_start_geo_ip_update (GibbonDatabase *self);
 void gibbon_database_set_geo_ip (GibbonDatabase *self,
                                  const gchar *from_ip, const gchar *to_ip,

@@ -57,6 +57,7 @@ struct _GibbonPlayerListViewPrivate {
         GtkTreeViewColumn *available_column;
         GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
+        GtkTreeViewColumn *country_column;
 };
 
 static int const match_lengths[] = {
@@ -111,6 +112,7 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->available_column = NULL;
         self->priv->client_column = NULL;
         self->priv->reliability_column = NULL;
+        self->priv->country_column = NULL;
 }
 
 static void
@@ -207,27 +209,36 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         self->priv->available_column = gtk_tree_view_get_column (view,
                                                                  colno - 1);
 
+        colno = gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
+                NULL,
+                gtk_cell_renderer_pixbuf_new (),
+                "pixbuf", GIBBON_PLAYER_LIST_COL_COUNTRY_ICON,
+                NULL);
+        self->priv->country_column = gtk_tree_view_get_column (view, colno - 1);
+
         renderer = gtk_cell_renderer_text_new ();
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Rating"),
                 renderer,
                 "text", GIBBON_PLAYER_LIST_COL_RATING,
                 NULL);
-        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_RATING);
+        col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_cell_data_func (col, renderer,
                 print2digits, (gpointer) GIBBON_PLAYER_LIST_COL_RATING, NULL);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Exp."),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_PLAYER_LIST_COL_EXPERIENCE,
                 NULL);
-        col = gtk_tree_view_get_column (view, GIBBON_PLAYER_LIST_COL_EXPERIENCE);
+        col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
         colno = gtk_tree_view_insert_column_with_attributes (
@@ -640,6 +651,8 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         GibbonReliability *rel;
         const gchar *rel_descr;
         const gchar *conf_descr;
+        GibbonCountry *country;
+        gchar *hostname;
 
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (_self), FALSE);
         self = GIBBON_PLAYER_LIST_VIEW (_self);
@@ -673,14 +686,23 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                         text = g_strdup_printf ("<i>%s</i> is currently playing.",
                                                 player_name);
                 else
-                        text = g_strdup_printf ("<i>%s</i> does not want to"
-                                                " play right now.",
+                        text = g_strdup_printf (_("<i>%s</i> does not want to"
+                                                  " play right now."),
                                                 player_name);
         } else if (column == self->priv->client_column) {
                 gtk_tree_model_get (model, &iter,
-                                    GIBBON_PLAYER_LIST_COL_CLIENT,
-                                    &text,
+                                    GIBBON_PLAYER_LIST_COL_CLIENT, &text,
                                     -1);
+        } else if (column == self->priv->country_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_PLAYER_LIST_COL_COUNTRY, &country,
+                                    GIBBON_PLAYER_LIST_COL_HOSTNAME, &hostname,
+                                    -1);
+                text = g_strdup_printf ("<b>%s</b>\n%s",
+                                        gibbon_country_get_name (country),
+                                        hostname);
+                g_object_unref (country);
+                g_free (hostname);
         } else if (column == self->priv->reliability_column) {
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_PLAYER_LIST_COL_RELIABILITY, &rel,
@@ -703,17 +725,17 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                         else
                                 conf_descr = _("unknown");
 
-                        text = g_strdup_printf ("<b>Reliability of player"
-                                                " <i>%s</i>:</b>\n"
-                                                " %f (%s) with a measurement"
-                                                " confidence "
-                                                " of %u (%s).",
+                        text = g_strdup_printf (_("<b>Reliability of player"
+                                                  " <i>%s</i>:</b>\n"
+                                                  " %f (%s) with a measurement"
+                                                  " confidence "
+                                                  " of %u (%s)."),
                                                 player_name,
                                                 rel->value, rel_descr,
                                                 rel->confidence, conf_descr);
                 } else {
-                        text = g_strdup_printf ("<b>Reliability of player"
-                                                " <i>%s</i></b>: unknown.",
+                        text = g_strdup_printf (_("<b>Reliability of player"
+                                                  " <i>%s</i></b>: unknown."),
                                                 player_name);
                 }
         } else {

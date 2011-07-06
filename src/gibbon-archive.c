@@ -76,6 +76,17 @@
 #include "gibbon-util.h"
 #include "gibbon-country.h"
 
+/* We can safely cache that across sessions.  */
+static GHashTable *gibbon_archive_countries = NULL;
+GResolver *gibbon_archive_resolver = NULL;
+
+typedef struct _GibbonArchiveLookupInfo {
+        gchar *hostname;
+        GibbonGeoIPCallback callback;
+        GibbonDatabase *database;
+        gpointer data;
+} GibbonArchiveLookupInfo;
+
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
         GibbonApp *app;
@@ -100,6 +111,9 @@ static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
                                                  guint port,
                                                  const gchar *player1,
                                                  const gchar *player2);
+
+static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
+                                       gpointer data);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -136,6 +150,11 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonArchivePrivate));
+
+        gibbon_archive_countries = g_hash_table_new_full (g_str_hash,
+                                                          g_str_equal,
+                                                          g_free, g_free);
+        gibbon_archive_resolver = g_resolver_get_default ();
 
         object_class->finalize = gibbon_archive_finalize;
 }
@@ -399,11 +418,114 @@ gibbon_archive_get_reliability (GibbonArchive *self,
 
 GibbonCountry *
 gibbon_archive_get_country (const GibbonArchive *self,
-                            const gchar *hostname,
-                            GibbonGeoIPCallback callback)
+                            const gchar *_hostname,
+                            GibbonGeoIPCallback callback,
+                            gpointer data)
 {
-        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
-        g_return_val_if_fail (hostname != NULL, NULL);
+        const gchar *alpha2;
+        GibbonArchiveLookupInfo *info;
+        gchar *hostname;
 
-        return gibbon_country_new ("xy");
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+        g_return_val_if_fail (_hostname != NULL, NULL);
+        g_return_val_if_fail (*_hostname != 0, NULL);
+
+        /*
+         * We do not bother normalizing the hostname.  It is the result of a
+         * reverse DNS lookup done by FIBS, and it will be at least
+         * unambiguous if not canonical.
+         *
+         * We also do not bother to use the extended lookup function here.
+         * We will store "xy" for unknown IPs or unknown locations, and
+         * a returned NULL means therefore that this IP is new.
+         */
+
+        alpha2 = g_hash_table_lookup (gibbon_archive_countries, _hostname);
+
+        if (!alpha2) {
+                /*
+                 * We immediately insert the fallback country in the hash
+                 * table in order to avoid parallel lookups of the same
+                 * hostname.  We rely on the callback updating the
+                 * country information of all rows.
+                 */
+                hostname = g_strdup (_hostname);
+                g_hash_table_insert (gibbon_archive_countries,
+                                     hostname, g_strdup ("xy"));
+                alpha2 = "xy";
+
+                info = g_malloc (sizeof *info);
+                info->hostname = hostname;
+                info->callback = callback;
+                info->database = self->priv->db;
+                info->data = data;
+
+                g_resolver_lookup_by_name_async (gibbon_archive_resolver,
+                                                 hostname,
+                                                 /* No need to cancel.  */
+                                                 NULL,
+                                                 gibbon_archive_on_resolve,
+                                                 info);
+        }
+
+        return gibbon_country_new (alpha2);
+}
+
+static void
+gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
+                           gpointer data)
+{
+        GibbonArchiveLookupInfo info = *(GibbonArchiveLookupInfo *) data;
+        GList *ips;
+        GInetAddress *address;
+        gsize address_size;
+        gsize i;
+        const guint8 *octets;
+        guint32 key;
+        gchar *alpha2;
+        GibbonCountry *country;
+
+        /*
+         * The hostname pointer is still in use as a hash key, we cannot
+         * g_free() it.
+         */
+        g_free (data);
+
+        ips = g_resolver_lookup_by_name_finish (G_RESOLVER (resolver),
+                                                result, NULL);
+if (!ips)
+        g_printerr ("DNS lookup for %s failed.\n", info.hostname);
+
+        if (!ips)
+                return;
+
+        /*
+         * The address space stored in our GeoIP database should be
+         * exhaustive.  There is no point iterating over the list.  Picking
+         * the first, preferred address from the list is accepatble.
+         */
+        address = G_INET_ADDRESS (ips->data);
+
+        address_size = g_inet_address_get_native_size (address);
+        if (4 != address_size) {
+                g_resolver_free_addresses (ips);
+                g_return_if_fail (4 == address_size);
+        }
+
+        octets = g_inet_address_to_bytes (address);
+        key = 0;
+        for (i = 0; i < 4; ++i) {
+                key <<= 8;
+                key += octets[i];
+        }
+        g_resolver_free_addresses (ips);
+
+        alpha2 = gibbon_database_get_country (info.database, key);
+
+        country = gibbon_country_new (alpha2);
+        g_hash_table_insert (gibbon_archive_countries,
+                             g_strdup (info.hostname),
+                             g_strdup (gibbon_country_get_alpha2 (country)));
+
+        info.callback (info.data, info.hostname, country);
 }
