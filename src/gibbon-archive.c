@@ -443,6 +443,7 @@ gibbon_archive_get_country (const GibbonArchive *self,
         const gchar *alpha2;
         GibbonArchiveLookupInfo *info;
         gchar *hostname;
+        GInetAddress *address;
 
         g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
         g_return_val_if_fail (_hostname != NULL, NULL);
@@ -468,6 +469,22 @@ gibbon_archive_get_country (const GibbonArchive *self,
                  * country information of all rows.
                  */
                 hostname = g_strdup (_hostname);
+
+                /*
+                 * First try to find out if it is a numerical IP address in
+                 * one of the private IP ranges.
+                 */
+                address = g_inet_address_new_from_string (_hostname);
+                if (address
+                    && (g_inet_address_get_is_site_local (address)
+                        || g_inet_address_get_is_loopback (address))) {
+                        g_object_unref (address);
+                        g_hash_table_insert (gibbon_archive_countries,
+                                             hostname, g_strdup ("xl"));
+                        return gibbon_country_new ("xl");
+                }
+                g_object_unref (address);
+
                 g_hash_table_insert (gibbon_archive_countries,
                                      hostname, g_strdup ("xy"));
                 alpha2 = "xy";
@@ -575,11 +592,6 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
         }
         g_resolver_free_addresses (ips);
 
-        /*
-         * FIXME! If we get an address from one of the three private IP
-         * ranges we should assume the country of the server!  But that has
-         * to be looked up first.
-         */
         alpha2 = gibbon_database_get_country (info.database, key);
 
         country = gibbon_country_new (alpha2);
@@ -649,11 +661,6 @@ gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
                 key += octets[i];
         }
 
-        /*
-         * FIXME! If we get an address from one of the three private IP
-         * ranges we should assume the country of the server!  But that has
-         * to be looked up first.
-         */
         alpha2 = gibbon_database_get_country (info.database, key);
 
         country = gibbon_country_new (alpha2);
