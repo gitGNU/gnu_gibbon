@@ -49,6 +49,7 @@ struct _GibbonInviterListViewPrivate {
         GibbonSignal *tell_handler;
 
         GtkTreeViewColumn *reliability_column;
+        GtkTreeViewColumn *country_column;
 
         GtkCellRenderer *spinner_renderer;
         guint pulse_updater;
@@ -95,6 +96,7 @@ gibbon_inviter_list_view_init (GibbonInviterListView *self)
         self->priv->tell_handler = NULL;
 
         self->priv->reliability_column = NULL;
+        self->priv->country_column = NULL;
 
         self->priv->pulse_updater = 0;
         self->priv->spinner_renderer = NULL;
@@ -150,6 +152,7 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         GCallback callback;
         GObject *emitter;
         GSourceFunc source_func;
+        gint colno;
 
         self->priv->app = app;
         self->priv->inviters = inviters;
@@ -174,41 +177,49 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         g_object_set (G_OBJECT (renderer), "stock-id", "gtk-ok", NULL);
         gtk_tree_view_insert_column (view, col, -1);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Inviter"),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_INVITER_LIST_COL_NAME,
                 NULL);
-        col = gtk_tree_view_get_column (view, GIBBON_INVITER_LIST_COL_NAME + 2);
+        col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
 
+
+        colno = gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
+                NULL,
+                gtk_cell_renderer_pixbuf_new (),
+                "pixbuf", GIBBON_INVITER_LIST_COL_COUNTRY_ICON,
+                NULL);
+        self->priv->country_column = gtk_tree_view_get_column (view, colno - 1);
+
         renderer = gtk_cell_renderer_text_new ();
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Rating"),
                 renderer,
                 "text", GIBBON_INVITER_LIST_COL_RATING,
                 NULL);
-        col = gtk_tree_view_get_column (view,
-                                        GIBBON_INVITER_LIST_COL_RATING + 2);
+        col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_cell_data_func (col, renderer,
                 print2digits, (gpointer) GIBBON_INVITER_LIST_COL_RATING, NULL);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Exp."),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_INVITER_LIST_COL_EXPERIENCE,
                 NULL);
-        col = gtk_tree_view_get_column (view,
-                                        GIBBON_INVITER_LIST_COL_EXPERIENCE + 2);
+        col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
         gtk_tree_view_insert_column_with_attributes (
@@ -220,15 +231,15 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 NULL);
 
         renderer = gibbon_reliability_renderer_new ();
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
                 _("Reliability"),
                 renderer,
                 "reliability", GIBBON_INVITER_LIST_COL_RELIABILITY,
                 NULL);
-        self->priv->reliability_column =
-            gtk_tree_view_get_column (view, GIBBON_INVITER_LIST_COL_RELIABILITY);
+        self->priv->reliability_column = gtk_tree_view_get_column (view,
+                                                                   colno - 1);
 
         renderer = gtk_cell_renderer_spinner_new ();
         col = gtk_tree_view_column_new ();
@@ -417,6 +428,8 @@ gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
         GibbonReliability *rel;
         const gchar *rel_descr;
         const gchar *conf_descr;
+        GibbonCountry *country;
+        gchar *hostname;
 
         g_return_val_if_fail (GIBBON_IS_INVITER_LIST_VIEW (_self), FALSE);
         self = GIBBON_INVITER_LIST_VIEW (_self);
@@ -473,6 +486,16 @@ gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
                                                 " <i>%s</i></b>: unknown.",
                                                 inviter_name);
                 }
+        } else if (column == self->priv->country_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_INVITER_LIST_COL_COUNTRY, &country,
+                                    GIBBON_INVITER_LIST_COL_HOSTNAME, &hostname,
+                                    -1);
+                text = g_strdup_printf ("<b>%s</b>\n%s",
+                                        gibbon_country_get_name (country),
+                                        hostname);
+                g_object_unref (country);
+                g_free (hostname);
         } else {
                 return FALSE;
         }
