@@ -22,6 +22,8 @@
 
 #include <glib.h>
 
+#include "gibbon-country.h"
+
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_INVITER_LIST             (gibbon_inviter_list_get_type ())
@@ -56,6 +58,8 @@ enum {
         GIBBON_INVITER_LIST_COL_RELIABILITY,
         GIBBON_INVITER_LIST_COL_SAVED_COUNT,
         GIBBON_INVITER_LIST_COL_HOSTNAME,
+        GIBBON_INVITER_LIST_COL_COUNTRY,
+        GIBBON_INVITER_LIST_COL_COUNTRY_ICON,
         GIBBON_INVITER_LIST_COL_EMAIL,
         GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
         GIBBON_INVITER_LIST_N_COLUMNS
@@ -74,6 +78,7 @@ void gibbon_inviter_list_set (GibbonInviterList *self,
                               guint confidence,
                               const gchar *client,
                               const gchar *hostname,
+                              const GibbonCountry *country,
                               const gchar *email);
 gboolean gibbon_inviter_list_exists (const GibbonInviterList *self,
                                     const gchar *inviter_name);
@@ -84,6 +89,9 @@ gint gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
 void gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                                           const gchar *inviter_name,
                                           gint count);
+void gibbon_inviter_list_update_country (GibbonInviterList *self,
+                                         const gchar *hostname,
+                                         const GibbonCountry *country);
 
 G_END_DECLS
 

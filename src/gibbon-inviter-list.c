@@ -74,6 +74,8 @@ gibbon_inviter_list_init (GibbonInviterList *self)
                                     GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    GIBBON_TYPE_COUNTRY,
+                                    GDK_TYPE_PIXBUF,
                                     G_TYPE_STRING,
                                     G_TYPE_BOOLEAN);
         self->priv->store = store;
@@ -127,6 +129,10 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
                 G_TYPE_INT;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_COUNTRY] =
+                GIBBON_TYPE_COUNTRY;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_COUNTRY_ICON] =
+                GDK_TYPE_PIXBUF;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT] =
@@ -169,10 +175,12 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                         guint confidence,
                         const gchar *client,
                         const gchar *hostname,
+                        const GibbonCountry *country,
                         const gchar *email)
 {
         struct GibbonInviter *inviter;
         GibbonReliability rel;
+        const GdkPixbuf *country_icon;
 
         g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
         g_return_if_fail (name);
@@ -189,6 +197,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                 inviter->saved_count = -1;
         }
 
+        country_icon = gibbon_country_get_pixbuf (country);
         gtk_list_store_set (self->priv->store,
                             &inviter->iter,
                             GIBBON_INVITER_LIST_COL_NAME, name,
@@ -197,6 +206,8 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
                             GIBBON_INVITER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_INVITER_LIST_COL_HOSTNAME, hostname,
+                            GIBBON_INVITER_LIST_COL_COUNTRY, country,
+                            GIBBON_INVITER_LIST_COL_COUNTRY_ICON, country_icon,
                             GIBBON_INVITER_LIST_COL_EMAIL, email,
                             GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT, TRUE,
                             -1);
@@ -317,4 +328,40 @@ gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
                                     stringified ? FALSE : TRUE,
                             -1);
+}
+
+void
+gibbon_inviter_list_update_country (GibbonInviterList *self,
+                                    const gchar *hostname,
+                                    const GibbonCountry *country)
+{
+        GtkTreeIter iter;
+        gboolean valid;
+        gchar *stored_hostname;
+
+        g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (GIBBON_IS_COUNTRY (country));
+
+        valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (self->priv->store),
+                                               &iter);
+        while (valid) {
+                gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                                    GIBBON_INVITER_LIST_COL_HOSTNAME,
+                                    &stored_hostname,
+                                    -1);
+
+                if (0 == g_strcmp0 (hostname, stored_hostname)) {
+                        gtk_list_store_set (self->priv->store,
+                                            &iter,
+                                            GIBBON_INVITER_LIST_COL_COUNTRY,
+                                            country,
+                                            GIBBON_INVITER_LIST_COL_COUNTRY_ICON,
+                                            gibbon_country_get_pixbuf (country),
+                                            -1);
+                }
+                valid = gtk_tree_model_iter_next (
+                                GTK_TREE_MODEL (self->priv->store),
+                                &iter);
+        }
 }

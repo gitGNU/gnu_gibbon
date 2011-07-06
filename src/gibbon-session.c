@@ -560,7 +560,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         gibbon_inviter_list_set (self->priv->inviter_list, who,
                                                  rating, experience,
                                                  reliability, confidence,
-                                                 client, hostname, email);
+                                                 client, hostname, country,
+                                                 email);
                 }
         }
 
@@ -1425,6 +1426,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         gchar *client = NULL;
         gchar *hostname = NULL;
         gchar *email = NULL;
+        const GibbonCountry *country;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
                                      &opponent))
@@ -1466,6 +1468,11 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                                  "rawwho %s", opponent);
         }
 
+        country = gibbon_archive_get_country (self->priv->archive, hostname,
+                                              (GibbonGeoIPCallback)
+                                              gibbon_session_on_geo_ip_resolve,
+                                              self);
+
         gibbon_inviter_list_set (self->priv->inviter_list,
                                  opponent,
                                  rating,
@@ -1474,6 +1481,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                  confidence,
                                  client,
                                  hostname,
+                                 country,
                                  email);
 
         g_free (client);
@@ -1734,4 +1742,7 @@ gibbon_session_on_geo_ip_resolve (GibbonSession *self,
         if (self->priv->player_list)
                 gibbon_player_list_update_country (self->priv->player_list,
                                                    hostname, country);
+        if (self->priv->inviter_list)
+                gibbon_inviter_list_update_country (self->priv->inviter_list,
+                                                    hostname, country);
 }
