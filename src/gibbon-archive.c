@@ -527,7 +527,6 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
          * the IP geographically.
          */
         if (!ips) {
-                g_printerr ("DNS lookup for %s failed.\n", info.hostname);
                 if (!g_regex_match (gibbon_archive_re_ip, info.hostname, 0,
                                    &match_info))
                         return;
@@ -541,7 +540,7 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
                             xoctets[2],
                             xoctets[3]);
                 g_match_info_free (match_info);
-                g_printerr ("Extracted numerical IP %s.\n", numerical_ip);
+
                 address = g_inet_address_new_from_string (numerical_ip);
 
                 data = g_malloc (sizeof info);
@@ -656,8 +655,6 @@ gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
          * to be looked up first.
          */
         alpha2 = gibbon_database_get_country (info.database, key);
-
-        g_printerr ("Located %s in %s.\n", info.hostname, alpha2);
 
         country = gibbon_country_new (alpha2);
         g_hash_table_insert (gibbon_archive_countries,
