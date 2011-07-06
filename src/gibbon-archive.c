@@ -122,6 +122,9 @@ static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
 
 static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
                                        gpointer data);
+static void gibbon_archive_on_resolve_ip (GObject *resolver,
+                                          GAsyncResult *result,
+                                          gpointer data);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -499,6 +502,9 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
         guint32 key;
         gchar *alpha2;
         GibbonCountry *country;
+        GMatchInfo *match_info;
+        gchar *xoctets[4];
+        gchar numerical_ip[16];
 
         /*
          * The hostname pointer is still in use as a hash key, we cannot
@@ -509,8 +515,43 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
         ips = g_resolver_lookup_by_name_finish (G_RESOLVER (resolver),
                                                 result, NULL);
 
+        /*
+         * FIBS does a gratuitous reverse lookup on IP addresses.  But
+         * unfortunately a reverse lookup for the resolved IPs fails quite
+         * often, especially for IPs assigned by ISPs to their private
+         * clients.
+         *
+         * However, these names contain the numerical IP most of the time.
+         * If we can extract such an IP, and it resolves to our original
+         * name, we have worked around the problem and can still locate
+         * the IP geographically.
+         */
         if (!ips) {
                 g_printerr ("DNS lookup for %s failed.\n", info.hostname);
+                if (!g_regex_match (gibbon_archive_re_ip, info.hostname, 0,
+                                   &match_info))
+                        return;
+
+                for (i = 0; i < 4; ++i) {
+                        xoctets[i] = g_match_info_fetch (match_info, i + 1);
+                }
+                g_snprintf (numerical_ip, sizeof numerical_ip, "%s.%s.%s.%s",
+                            xoctets[0],
+                            xoctets[1],
+                            xoctets[2],
+                            xoctets[3]);
+                g_match_info_free (match_info);
+                g_printerr ("Extracted numerical IP %s.\n", numerical_ip);
+                address = g_inet_address_new_from_string (numerical_ip);
+
+                data = g_malloc (sizeof info);
+                memcpy (data, &info, sizeof info);
+                g_resolver_lookup_by_address_async (gibbon_archive_resolver,
+                                                    address,
+                                                    /* No need to cancel.  */
+                                                    NULL,
+                                                   gibbon_archive_on_resolve_ip,
+                                                    data);
                 return;
         }
 
@@ -535,7 +576,88 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
         }
         g_resolver_free_addresses (ips);
 
+        /*
+         * FIXME! If we get an address from one of the three private IP
+         * ranges we should assume the country of the server!  But that has
+         * to be looked up first.
+         */
         alpha2 = gibbon_database_get_country (info.database, key);
+
+        country = gibbon_country_new (alpha2);
+        g_hash_table_insert (gibbon_archive_countries,
+                             g_strdup (info.hostname),
+                             g_strdup (gibbon_country_get_alpha2 (country)));
+
+        info.callback (info.data, info.hostname, country);
+}
+
+static void
+gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
+                              gpointer data)
+{
+        GibbonArchiveLookupInfo info = *(GibbonArchiveLookupInfo *) data;
+        gchar *hostname;
+        GMatchInfo *match_info;
+        gchar *xoctets[4];
+        gchar numerical_ip[16];
+        guint32 key;
+        GInetAddress *address;
+        gint i;
+        const guint8 *octets;
+        gchar *alpha2;
+        GibbonCountry *country;
+
+        /*
+         * The hostname pointer is still in use as a hash key, we cannot
+         * g_free() it.
+         */
+        g_free (data);
+
+        hostname = g_resolver_lookup_by_address_finish (G_RESOLVER (resolver),
+                                                        result, NULL);
+
+        if (g_strcmp0 (hostname, info.hostname))
+                return;
+        g_free (hostname);
+
+        /*
+         * FIXME! It is not exactly efficient to match again here!
+         */
+        if (!g_regex_match (gibbon_archive_re_ip, info.hostname, 0,
+                           &match_info)) {
+                g_critical ("Could not extract numerical IP from %s",
+                            info.hostname);
+                return;
+        }
+
+        for (i = 0; i < 4; ++i) {
+                xoctets[i] = g_match_info_fetch (match_info, i + 1);
+        }
+        g_snprintf (numerical_ip, sizeof numerical_ip, "%s.%s.%s.%s",
+                    xoctets[0],
+                    xoctets[1],
+                    xoctets[2],
+                    xoctets[3]);
+        g_match_info_free (match_info);
+        address = g_inet_address_new_from_string (numerical_ip);
+
+        octets = g_inet_address_to_bytes (address);
+        g_object_unref (address);
+
+        key = 0;
+        for (i = 0; i < 4; ++i) {
+                key <<= 8;
+                key += octets[i];
+        }
+
+        /*
+         * FIXME! If we get an address from one of the three private IP
+         * ranges we should assume the country of the server!  But that has
+         * to be looked up first.
+         */
+        alpha2 = gibbon_database_get_country (info.database, key);
+
+        g_printerr ("Located %s in %s.\n", info.hostname, alpha2);
 
         country = gibbon_country_new (alpha2);
         g_hash_table_insert (gibbon_archive_countries,
