@@ -47,3 +47,4 @@
 - gibbon_session_handle_board() leaks memory, in case of failure.
 - Remove old lines from beginning of text views in order to save memory.
 - In the shout room, make TAB-expansion work on know user names.
+- Try to guess numerical IP from unresolvable host names.
