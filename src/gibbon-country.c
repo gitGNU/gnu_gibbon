@@ -2158,9 +2158,6 @@ gibbon_country_new (const gchar *alpha2)
                 gibbon_country_pixbufs[idx] =
                                 gdk_pixbuf_new_from_file_at_size (path, -1, 16,
                                                                   NULL);
- if (0 == g_strcmp0 ("xl", alpha2)) {
-         g_printerr ("Pixbuf: %s (%p)\n", path, gibbon_country_pixbufs[idx]);
- }
                 g_free (path);
         }
 
