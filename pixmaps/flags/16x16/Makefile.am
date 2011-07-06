@@ -252,6 +252,7 @@ pixmap_DATA = \
 	vu.png \
 	wf.png \
 	ws.png \
+	xl.png \
 	xy.png \
 	ye.png \
 	yt.png \
