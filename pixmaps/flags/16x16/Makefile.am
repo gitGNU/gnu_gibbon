@@ -66,7 +66,6 @@ pixmap_DATA = \
 	cn.png \
 	co.png \
 	cr.png \
-	cs.png \
 	cu.png \
 	cv.png \
 	cx.png \
@@ -253,6 +252,7 @@ pixmap_DATA = \
 	vu.png \
 	wf.png \
 	ws.png \
+	xy.png \
 	ye.png \
 	yt.png \
 	za.png \

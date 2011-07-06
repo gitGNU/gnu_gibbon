@@ -17,3 +17,4 @@
 
 SUBDIR = 16x16
 
+EXTRA_DIST = xy.svg
