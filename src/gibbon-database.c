@@ -716,6 +716,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                                         self, sql);
                                 break;
                         case G_TYPE_INT64:
+                        case G_TYPE_UINT64:
                                 if (sqlite3_bind_int64 (stmt, i,
                                                         *((sqlite3_int64 *) ptr)))
                                         return gibbon_database_display_error (
@@ -1235,7 +1236,7 @@ gibbon_database_void_activity (GibbonDatabase *self,
 gchar *
 gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
 {
-        guint address;
+        guint64 address;
         gchar *alpha2;
 
         g_return_val_if_fail (GIBBON_IS_DATABASE (self), NULL);
@@ -1250,8 +1251,8 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
         if (!gibbon_database_sql_execute (self,
                                           self->priv->select_ip2country,
                                           GIBBON_DATABASE_SELECT_IP2COUNTRY,
-                                          G_TYPE_UINT, &address,
-                                          G_TYPE_UINT, &address,
+                                          G_TYPE_UINT64, &address,
+                                          G_TYPE_UINT64, &address,
                                           -1)) {
                 return NULL;
         }
@@ -1261,7 +1262,6 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
                                              GIBBON_DATABASE_SELECT_IP2COUNTRY,
                                              G_TYPE_STRING, &alpha2,
                                              -1)) {
-                g_printerr ("Database lookup for 0x%8x (%u) failed.\n", address, address);
                 return NULL;
         }
 
