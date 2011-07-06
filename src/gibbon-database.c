@@ -824,10 +824,8 @@ gibbon_database_get_statement (GibbonDatabase *self,
                                sqlite3_stmt **stmt,
                                const gchar *sql)
 {
-        if (*stmt) {
-                sqlite3_reset (*stmt);
+        if (*stmt)
                 return TRUE;
-        }
 
         if (sqlite3_prepare_v2 (self->priv->dbh, sql, -1, stmt, NULL))
                 return gibbon_database_display_error (self, sql);
