@@ -560,7 +560,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         gibbon_inviter_list_set (self->priv->inviter_list, who,
                                                  rating, experience,
                                                  reliability, confidence,
-                                                 client, hostname, country,
+                                                 client, client_icon,
+                                                 hostname, country,
                                                  email);
                 }
         }
@@ -1424,9 +1425,15 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         gdouble reliability = 0;
         guint confidence = 0;
         gchar *client = NULL;
+        enum GibbonClientType client_type;
+        GibbonClientIcons *client_icons;
+        GdkPixbuf *client_icon;
         gchar *hostname = NULL;
         gchar *email = NULL;
         const GibbonCountry *country;
+        guint port;
+        const gchar *server;
+        GibbonConnection *connection;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
                                      &opponent))
@@ -1473,6 +1480,13 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                               gibbon_session_on_geo_ip_resolve,
                                               self);
 
+        connection = gibbon_app_get_connection (self->priv->app);
+        server = gibbon_connection_get_hostname (connection);
+        port = gibbon_connection_get_port (connection);
+        client_type = gibbon_get_client_type (client, opponent, server, port);
+        client_icons = gibbon_app_get_client_icons (self->priv->app);
+        client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
+
         gibbon_inviter_list_set (self->priv->inviter_list,
                                  opponent,
                                  rating,
@@ -1480,6 +1494,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                  reliability,
                                  confidence,
                                  client,
+                                 client_icon,
                                  hostname,
                                  country,
                                  email);

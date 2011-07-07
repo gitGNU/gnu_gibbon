@@ -48,6 +48,7 @@ struct _GibbonInviterListViewPrivate {
 
         GibbonSignal *tell_handler;
 
+        GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
         GtkTreeViewColumn *country_column;
 
@@ -97,6 +98,7 @@ gibbon_inviter_list_view_init (GibbonInviterListView *self)
 
         self->priv->reliability_column = NULL;
         self->priv->country_column = NULL;
+        self->priv->client_column = NULL;
 
         self->priv->pulse_updater = 0;
         self->priv->spinner_renderer = NULL;
@@ -189,7 +191,6 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
 
-
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
@@ -222,13 +223,14 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
 
-        gtk_tree_view_insert_column_with_attributes (
+        colno = gtk_tree_view_insert_column_with_attributes (
                 view,
                 -1,
-                _("Software"),
-                gtk_cell_renderer_text_new (),
-                "text", GIBBON_INVITER_LIST_COL_CLIENT,
+                NULL,
+                gtk_cell_renderer_pixbuf_new (),
+                "pixbuf", GIBBON_INVITER_LIST_COL_CLIENT_ICON,
                 NULL);
+        self->priv->client_column = gtk_tree_view_get_column (view, colno - 1);
 
         renderer = gibbon_reliability_renderer_new ();
         colno = gtk_tree_view_insert_column_with_attributes (
@@ -496,6 +498,10 @@ gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
                                         hostname);
                 g_object_unref (country);
                 g_free (hostname);
+        } else if (column == self->priv->client_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_INVITER_LIST_COL_CLIENT, &text,
+                                    -1);
         } else {
                 return FALSE;
         }

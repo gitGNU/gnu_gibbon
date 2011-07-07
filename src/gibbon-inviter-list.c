@@ -71,6 +71,7 @@ gibbon_inviter_list_init (GibbonInviterList *self)
                                     G_TYPE_DOUBLE,
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
+                                    GDK_TYPE_PIXBUF,
                                     GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -123,6 +124,8 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
                 G_TYPE_UINT;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_CLIENT] =
                 G_TYPE_STRING;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_CLIENT_ICON] =
+                GDK_TYPE_PIXBUF;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_RELIABILITY] =
                 GIBBON_TYPE_RELIABILITY;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_SAVED_COUNT] =
@@ -174,6 +177,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                         gdouble reliability,
                         guint confidence,
                         const gchar *client,
+                        const GdkPixbuf *client_icon,
                         const gchar *hostname,
                         const GibbonCountry *country,
                         const gchar *email)
@@ -204,6 +208,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
+                            GIBBON_INVITER_LIST_COL_CLIENT_ICON, client_icon,
                             GIBBON_INVITER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_INVITER_LIST_COL_HOSTNAME, hostname,
                             GIBBON_INVITER_LIST_COL_COUNTRY, country,
