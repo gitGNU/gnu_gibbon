@@ -449,6 +449,8 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         gchar *length_string;
         gint length;
         gint i;
+        gchar *message;
+        GtkWidget *label;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 
@@ -482,7 +484,8 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                         g_printerr ("invite %s resume\n", who);
                 }
         } else {
-                dialog = gtk_dialog_new_with_buttons (_("Invitation"),
+                message = g_strdup_printf (_("Invite %s"), who);
+                dialog = gtk_dialog_new_with_buttons (message,
                                                       GTK_WINDOW (main_window),
                                                       GTK_DIALOG_MODAL
                                                       | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -491,10 +494,19 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                                                       GTK_STOCK_OK,
                                                       GTK_RESPONSE_ACCEPT,
                                                       NULL);
+                g_free (message);
+
+                label = gtk_label_new (NULL);
+                message = g_strdup_printf (_("<b>Invite %s</b>"), who);
+                gtk_label_set_markup (GTK_LABEL (label), message);
+                g_free (message);
+
+                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                                    label, TRUE, TRUE, 10);
 
                 gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
                                     gtk_label_new (_("Match length:")),
-                                    TRUE, TRUE, 0);
+                                    TRUE, TRUE, 10);
                 combo = gtk_combo_box_new_text ();
                 gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
                                     combo, TRUE, TRUE, 0);
