@@ -58,8 +58,6 @@ struct _GibbonPlayerListViewPrivate {
         GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
         GtkTreeViewColumn *country_column;
-
-        GtkWidget *invite_spinner;
 };
 
 static int const match_lengths[] = {
@@ -88,6 +86,9 @@ static gboolean gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                                                           gboolean keyboard_tip,
                                                           GtkTooltip *tooltip,
                                                           gpointer _self);
+static void gibbon_player_list_view_on_saved (GibbonPlayerListView *self,
+                                              gchar *invitee, guint count,
+                                              GtkWidget *spinner);
 
 static void print2digits (GtkTreeViewColumn *tree_column,
                           GtkCellRenderer *cell, GtkTreeModel *tree_model,
@@ -115,8 +116,6 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->client_column = NULL;
         self->priv->reliability_column = NULL;
         self->priv->country_column = NULL;
-
-        self->priv->invite_spinner = NULL;
 }
 
 static void
@@ -456,6 +455,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         gchar *message;
         GtkWidget *label;
         GtkWidget *hbox;
+        GtkWidget *spinner;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 
@@ -517,13 +517,9 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                                                      " matches:")),
                                     TRUE, TRUE, 5);
 
-                if (self->priv->invite_spinner)
-                        gtk_widget_destroy (self->priv->invite_spinner);
-                self->priv->invite_spinner = gtk_spinner_new ();
-                gtk_box_pack_start (GTK_BOX (hbox),
-                                    self->priv->invite_spinner,
-                                    TRUE, TRUE, 5);
-                gtk_spinner_start (GTK_SPINNER (self->priv->invite_spinner));
+                spinner = gtk_spinner_new ();
+                gtk_box_pack_start (GTK_BOX (hbox), spinner, TRUE, TRUE, 5);
+                gtk_spinner_start (GTK_SPINNER (spinner));
 
                 hbox = gtk_hbox_new (FALSE, 5);
                 gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
@@ -556,6 +552,12 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                                 g_object_set (G_OBJECT (combo), "active", i,
                                               NULL);
                 }
+
+                gibbon_session_get_saved_count (
+                                session, g_strdup (who),
+                                (GibbonSessionCallback)
+                                gibbon_player_list_view_on_saved,
+                                G_OBJECT (self), spinner);
 
                 gtk_widget_show_all (dialog);
 
@@ -780,4 +782,24 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         g_free (text);
 
         return TRUE;
+}
+
+static void
+gibbon_player_list_view_on_saved (GibbonPlayerListView *self, gchar *invitee,
+                                  guint count, GtkWidget *spinner)
+{
+        GtkWidget *hbox;
+        gchar *text;
+
+        if (!GIBBON_IS_PLAYER_LIST_VIEW (self))
+                return;
+
+        hbox = gtk_widget_get_parent (spinner);
+        gtk_widget_destroy (spinner);
+
+        text = g_strdup_printf ("%u", count);
+        gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (text),
+                            TRUE, TRUE, 5);
+        g_free (text);
+        gtk_widget_show_all (hbox);
 }

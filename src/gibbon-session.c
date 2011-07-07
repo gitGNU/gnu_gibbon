@@ -53,6 +53,13 @@ typedef enum {
         GIBBON_SESSION_PLAYER_OTHER = 3
 } GibbonSessionPlayer;
 
+struct GibbonSessionSavedCountCallbackInfo {
+        GibbonSessionCallback callback;
+        gchar *who;
+        GObject *object;
+        gpointer data;
+};
+
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
 static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
@@ -127,6 +134,7 @@ struct _GibbonSessionPrivate {
 
         GSList *expect_settings;
         GSList *expect_toggles;
+        GSList *expect_saved_counts;
 
         GHashTable *saved_games;
         gboolean saved_games_finished;
@@ -185,6 +193,8 @@ gibbon_session_init (GibbonSession *self)
         iter = g_slist_prepend (iter, "allowpip");
         self->priv->expect_toggles = iter;
 
+        self->priv->expect_saved_counts = NULL;
+
         self->priv->saved_games =
                 g_hash_table_new_full (g_str_hash,
                                        g_str_equal,
@@ -197,6 +207,8 @@ static void
 gibbon_session_finalize (GObject *object)
 {
         GibbonSession *self = GIBBON_SESSION (object);
+        struct GibbonSessionSavedCountCallbackInfo *info;
+        GSList *iter;
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
@@ -209,10 +221,17 @@ gibbon_session_finalize (GObject *object)
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
 
-        if (self->priv->expect_settings)
-                g_slist_free (self->priv->expect_settings);
-        if (self->priv->expect_toggles)
-                g_slist_free (self->priv->expect_toggles);
+        g_slist_free (self->priv->expect_settings);
+        g_slist_free (self->priv->expect_toggles);
+
+        iter = self->priv->expect_saved_counts;
+        while (iter) {
+                info = (struct GibbonSessionSavedCountCallbackInfo *) iter->data;
+                g_free (info->who);
+                g_free (info);
+                iter = iter->next;
+        }
+        g_slist_free (self->priv->expect_saved_counts);
 
         if (self->priv->saved_games)
                 g_hash_table_destroy (self->priv->saved_games);
@@ -1606,9 +1625,33 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
         guint count;
+        GSList *iter2;
+        struct GibbonSessionSavedCountCallbackInfo *info;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
+
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &count))
+                return -1;
+
+        /*
+         * Are we currently waiting for a saved count for a player we want
+         * to invite?
+         */
+        iter2 = self->priv->expect_saved_counts;
+        while (iter2) {
+                info = (struct GibbonSessionSavedCountCallbackInfo *) iter2->data;
+                if (0 == g_strcmp0 (info->who, who)) {
+                        self->priv->expect_saved_counts =
+                                g_slist_remove (self->priv->expect_saved_counts,
+                                                iter2->data);
+                        info->callback (info->object, info->who,
+                                        count, info->data);
+                        g_free (info->who);
+                        return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
+                }
+                iter2 = iter2->next;
+        }
 
         /*
          * If the user is not an active inviter we guess that the command
@@ -1622,9 +1665,6 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
          */
         if (gibbon_inviter_list_get_saved_count (self->priv->inviter_list,
                                                  who) >= 0)
-                return -1;
-
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &count))
                 return -1;
 
         gibbon_inviter_list_set_saved_count (self->priv->inviter_list, who,
@@ -1760,4 +1800,34 @@ gibbon_session_on_geo_ip_resolve (GibbonSession *self,
         if (self->priv->inviter_list)
                 gibbon_inviter_list_update_country (self->priv->inviter_list,
                                                     hostname, country);
+}
+
+void
+gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
+                                GibbonSessionCallback callback,
+                                GObject *object, gpointer data)
+{
+        struct GibbonSessionSavedCountCallbackInfo *info;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_if_fail (who != NULL);
+        g_return_if_fail (callback != NULL);
+        g_return_if_fail (G_IS_OBJECT (object));
+
+        info = g_malloc (sizeof *info);
+
+        info->callback = callback;
+        info->who = who;
+        info->object = object;
+        info->data = data;
+
+        /*
+         * Yes, prepending to a singly linked list is inefficient but this
+         * list is always tiny.
+         */
+        self->priv->expect_saved_counts =
+                        g_slist_append (self->priv->expect_saved_counts, info);
+
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "show savedcount %s");
 }
