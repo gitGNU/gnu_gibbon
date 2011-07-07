@@ -58,6 +58,8 @@ struct _GibbonPlayerListViewPrivate {
         GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
         GtkTreeViewColumn *country_column;
+
+        GtkWidget *invite_spinner;
 };
 
 static int const match_lengths[] = {
@@ -113,6 +115,8 @@ gibbon_player_list_view_init (GibbonPlayerListView *self)
         self->priv->client_column = NULL;
         self->priv->reliability_column = NULL;
         self->priv->country_column = NULL;
+
+        self->priv->invite_spinner = NULL;
 }
 
 static void
@@ -451,6 +455,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         gint i;
         gchar *message;
         GtkWidget *label;
+        GtkWidget *hbox;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 
@@ -504,17 +509,36 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
                                     label, TRUE, TRUE, 10);
 
+                hbox = gtk_hbox_new (FALSE, 5);
                 gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                                    hbox, TRUE, TRUE, 10);
+                gtk_box_pack_start (GTK_BOX (hbox),
+                                    gtk_label_new (_("Number of saved"
+                                                     " matches:")),
+                                    TRUE, TRUE, 5);
+
+                if (self->priv->invite_spinner)
+                        gtk_widget_destroy (self->priv->invite_spinner);
+                self->priv->invite_spinner = gtk_spinner_new ();
+                gtk_box_pack_start (GTK_BOX (hbox),
+                                    self->priv->invite_spinner,
+                                    TRUE, TRUE, 5);
+                gtk_spinner_start (GTK_SPINNER (self->priv->invite_spinner));
+
+                hbox = gtk_hbox_new (FALSE, 5);
+                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                                    hbox, TRUE, TRUE, 10);
+                gtk_box_pack_start (GTK_BOX (hbox),
                                     gtk_label_new (_("Match length:")),
                                     TRUE, TRUE, 10);
                 combo = gtk_combo_box_new_text ();
-                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                gtk_box_pack_start (GTK_BOX (hbox),
                                     combo, TRUE, TRUE, 0);
 
                 prefs = gibbon_app_get_prefs (self->priv->app);
 
                 pref_length = gibbon_prefs_get_int (prefs,
-                                                     GIBBON_PREFS_MATCH_LENGTH);
+                                                    GIBBON_PREFS_MATCH_LENGTH);
 
                 for (i = 0;
                      i < (sizeof match_lengths) / (sizeof match_lengths[0]);
