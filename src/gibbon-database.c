@@ -187,7 +187,6 @@ gibbon_database_finalize (GObject *object)
                 if (self->priv->geo_ip_updater)
                         g_object_unref (self->priv->geo_ip_updater);
 
-                sqlite3_close (self->priv->dbh);
                 if (self->priv->begin_transaction)
                         sqlite3_finalize (self->priv->begin_transaction);
                 if (self->priv->commit)
@@ -212,6 +211,7 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->delete_activity);
                 if (self->priv->select_ip2country_update)
                         sqlite3_finalize (self->priv->select_ip2country_update);
+                sqlite3_close (self->priv->dbh);
         }
 
         if (self->priv->path)
