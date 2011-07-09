@@ -132,6 +132,7 @@ struct _GibbonServerConsolePrivate {
         gint max_recents;
         gint num_recents;
         GtkListStore *model;
+        GtkEntryCompletion *completion;
 };
 
 #define GIBBON_SERVER_CONSOLE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -164,6 +165,7 @@ gibbon_server_console_init (GibbonServerConsole *self)
         self->priv->command_signal = NULL;
 
         self->priv->model = NULL;
+        self->priv->completion = NULL;
         self->priv->max_recents = 100;
         self->priv->num_recents = 0;
 }
@@ -227,6 +229,9 @@ gibbon_server_console_finalize (GObject *object)
                 g_object_unref (self->priv->model);
         }
         self->priv->model = NULL;
+
+        if (self->priv->completion)
+                g_object_unref (self->priv->completion);
 
         self->priv->app = NULL;
         self->priv->text_view = NULL;
@@ -300,7 +305,7 @@ gibbon_server_console_new (GibbonApp *app)
 
         entry = gibbon_app_find_object (app, "server-command-entry",
                                         GTK_TYPE_ENTRY);
-        completion = gtk_entry_completion_new ();
+        completion = self->priv->completion = gtk_entry_completion_new ();
         gtk_entry_completion_set_text_column(completion, 0);
         gtk_entry_set_completion (GTK_ENTRY (entry), completion);
         self->priv->model = gtk_list_store_new (1, G_TYPE_STRING);
