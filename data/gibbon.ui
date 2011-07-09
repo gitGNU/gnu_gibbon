@@ -76,17 +76,6 @@
                         <property name="use_stock">False</property>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
-                        <property name="visible">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="debug-menu-item">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">Debug Gibbon</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -985,6 +974,9 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="urgency_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <placeholder/>
     </child>
