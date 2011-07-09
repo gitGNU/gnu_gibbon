@@ -1,12 +1,94 @@
-# g_get_home_dir always returns the same string.
 {
-   g_get_home_dir
-   Memcheck:Leak
-   fun:malloc
-   obj:/lib/libc-*.so
-   fun:__nss_database_lookup
-   fun:getpwnam_r
-   obj:/usr/lib/libglib-*.so.*
-   fun:g_get_home_dir
+   Dynamic loader conditional
+   Memcheck:Cond
+   obj:/lib/ld-2.12.2.so
+   obj:/lib/ld-2.12.2.so
 }
-
+{
+   Dynamic loader addr4
+   Memcheck:Addr4
+   obj:/lib/ld-2.12.2.so
+   obj:/lib/ld-2.12.2.so
+}
+{
+   I18N  conditional jump
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   fun:setlocale
+   fun:init_i18n
+   fun:main
+}
+{
+   I18N  invalid read
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   fun:setlocale
+   fun:init_i18n
+   fun:main
+}
+{
+   glibc i18n cond
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   ...
+   fun:dcgettext
+}
+{
+   module load
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:vasprintf
+   fun:asprintf
+   fun:dlerror
+}
+{
+   command line 
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   ...
+   fun:g_option_context_parse
+   fun:parse_command_line
+   fun:main
+}
+{
+   gdk windowing init
+   Memcheck:Cond
+   ...
+   fun:_gdk_windowing_init
+}
+{
+   gdk x11 initialize locale
+   Memcheck:Cond
+   ...
+   fun:_gdk_x11_initialize_locale
+}
+{
+   Supports locale
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   ...
+   fun:__vsprintf_chk
+   fun:__sprintf_chk
+   fun:_XlcFileName
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/libX11.so.6.3.0
+   obj:/usr/lib/libX11.so.6.3.0
+   ...
+   fun:XSupportsLocale
+}
+{
+   Supports locale cond
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   ...
+   fun:__vsprintf_chk
+   fun:__sprintf_chk
+   fun:_XlcFileName
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/libX11.so.6.3.0
+   obj:/usr/lib/libX11.so.6.3.0
+   ...
+   fun:XSupportsLocale
+}
