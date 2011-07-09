@@ -152,6 +152,9 @@ gibbon_archive_finalize (GObject *object)
         if (self->priv->droppers)
                 g_hash_table_destroy (self->priv->droppers);
 
+        if (self->priv->db)
+                g_object_unref (self->priv->db);
+
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
 
