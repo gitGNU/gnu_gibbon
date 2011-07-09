@@ -1011,7 +1011,8 @@ static void gibbon_app_set_icon(const GibbonApp *self, const gchar *data_dir)
         }
 
         gtk_window_set_default_icon_list(list);
-
+        g_list_foreach (list, (GFunc) g_object_unref, NULL);
+        g_list_free (list);
 }
 
 GibbonClientIcons *
