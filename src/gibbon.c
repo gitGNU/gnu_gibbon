@@ -57,7 +57,7 @@ main (int argc, char *argv[])
         gchar *pixmaps_dir_buf = NULL;
 
         init_i18n ();
-        
+
         if (!parse_command_line (argc, argv))
                 return 1;
         
@@ -99,6 +99,8 @@ main (int argc, char *argv[])
 
         gtk_widget_show (gibbon_app_get_window (app));
         gtk_main ();
+
+        g_object_unref (app);
         
         return 0;
 }
@@ -131,9 +133,9 @@ parse_command_line (int argc, char *argv[])
         g_option_context_free (context);
 
         if (error) {
-                g_print ("%s\n%s\n",
-                         error->message,
-                         _("Run `%s --help' for more information!"));
+                g_printerr ("%s\n", error->message);
+                g_printerr (_("Run `%s --help' for more information!\n"),
+                            argv[0]);
                 g_error_free (error);
                 return 0;
         }
