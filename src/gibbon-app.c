@@ -549,8 +549,6 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
 
 static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
 {
-        g_object_unref(self);
-
         gtk_main_quit();
 }
 
