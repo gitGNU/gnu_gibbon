@@ -30,6 +30,13 @@
 }
 {
    glibc i18n cond
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   ...
+   fun:dcgettext
+}
+{
+   glibc i18n addr4
    Memcheck:Addr4
    obj:/lib/libc-2.12.2.so
    ...
@@ -91,4 +98,189 @@
    obj:/usr/lib/libX11.so.6.3.0
    ...
    fun:XSupportsLocale
+}
+{
+   gconf_activate_server
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+   fun:g_strdup_vprintf
+   fun:g_strdup_printf
+   ...
+   fun:gconf_activate_server
+}
+{
+   g_main_context_iterate addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+   fun:g_strdup_vprintf
+   fun:g_strdup_printf
+   fun:g_dbus_message_new_from_blob
+   fun:_g_dbus_worker_do_read_cb
+   fun:g_simple_async_result_complete
+   fun:complete_in_idle_cb
+   fun:g_idle_dispatch
+   fun:g_main_context_dispatch
+   fun:g_main_context_iterate
+}
+{
+   ORBit_marshal_value addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__vsnprintf_chk
+   fun:g_vsnprintf
+   fun:g_snprintf
+   obj:/usr/lib/libORBit-2.so.0.1.0
+   fun:link_protocol_get_sockaddr
+   fun:link_server_setup
+   fun:giop_server_new
+   fun:ORBit_ORB_start_servers
+   fun:IOP_generate_profiles
+   fun:ORBit_marshal_object
+   fun:ORBit_marshal_value
+}
+{
+   pango font stuff cond
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   obj:/usr/lib/libcairo.so.2.11000.2
+   obj:/usr/lib/libcairo.so.2.11000.2
+   fun:cairo_ft_font_face_create_for_pattern
+   obj:/usr/lib/libpangocairo-1.0.so.0.2800.3
+   obj:/usr/lib/libpangocairo-1.0.so.0.2800.3
+   obj:/usr/lib/libpangocairo-1.0.so.0.2800.3
+   fun:pango_font_get_metrics
+   obj:/usr/lib/libpango-1.0.so.0.2800.3
+   fun:pango_layout_line_get_extents
+   obj:/usr/lib/libpango-1.0.so.0.2800.3
+   obj:/usr/lib/libpango-1.0.so.0.2800.3
+}
+{
+   g_markup_parse_context_parse cond
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   fun:gmtime_r
+   obj:/lib/libc-2.12.2.so
+   obj:/lib/libc-2.12.2.so
+   fun:timegm
+   fun:g_time_val_from_iso8601
+   fun:start_element_raw_cb
+   fun:emit_start_element
+   fun:g_markup_parse_context_parse
+}
+{
+   gtk_icon_set_render_icon addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+   fun:g_strdup_vprintf
+   fun:g_strdup_printf
+   fun:g_key_file_get_locale_string
+   fun:insert_theme
+   fun:ensure_valid_themes
+   fun:choose_icon
+   fun:gtk_icon_theme_lookup_icon
+   fun:gtk_icon_theme_load_icon
+   fun:gtk_icon_set_render_icon
+}
+{
+   choose_icon addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+   fun:g_strdup_vprintf
+   fun:g_error_new_valist
+   fun:g_set_error
+   fun:g_key_file_get_value
+   fun:g_key_file_get_string
+   fun:g_key_file_get_locale_string
+   fun:insert_theme
+   fun:ensure_valid_themes
+   fun:choose_icon
+}
+{
+   gtk_icon_set_render_icon 2 addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__gio_xdg_cache_get_mime_types_from_file_name
+   fun:_gio_xdg_get_mime_types_from_file_name
+   fun:g_content_type_guess
+   fun:get_content_type
+   fun:_g_local_file_info_get
+   fun:g_local_file_query_info
+   fun:g_file_query_info
+   fun:icon_info_ensure_scale_and_pixbuf
+   fun:gtk_icon_info_load_icon
+   ...
+}
+{
+   svg id attribute
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:_svg_element_apply_attributes
+   fun:_svg_parser_sax_start_element
+   fun:xmlParseStartTag
+}
+{
+   _svg_style_parse_font_family
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:_svg_style_parse_font_family
+   fun:_svg_style_apply_attributes
+   fun:_svg_element_apply_attributes
+   fun:_svg_parser_sax_start_element
+   fun:xmlParseStartTag
+}
+{
+   __vasprintf_chk cond
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+}
+{
+   __vasprintf_chk addr4
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:__vasprintf_chk
+   fun:g_vasprintf
+}
+{
+   _svg_style_render
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:_svg_cairo_set_font_family
+   fun:_svg_style_render
+}
+{
+   _svg_cairo_push_state
+   Memcheck:Addr4
+   obj:/lib/libc-2.12.2.so
+   fun:_svg_cairo_state_init_copy
+   fun:_svg_cairo_state_push
+   fun:_svg_cairo_push_state
+}
+{
+   cairo_show_text
+   Memcheck:Cond
+   obj:/lib/libc-2.12.2.so
+   obj:/usr/lib/libcairo.so.2.11000.2
+   obj:/usr/lib/libcairo.so.2.11000.2
+   obj:/usr/lib/libcairo.so.2.11000.2
+   obj:/usr/lib/libcairo.so.2.11000.2
+   fun:cairo_scaled_font_create
+   obj:/usr/lib/libcairo.so.2.11000.2
+   obj:/usr/lib/libcairo.so.2.11000.2
+   fun:cairo_show_text
+   fun:_svg_cairo_render_text
+   fun:_svg_text_render
+   fun:svg_element_render
 }
