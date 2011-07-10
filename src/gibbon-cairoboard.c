@@ -161,6 +161,8 @@ static gdouble gibbon_cairoboard_get_bar_y (GibbonCairoboard *self,
                                             GibbonPositionSide side);
 static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
                                              GibbonPositionSide side);
+static gboolean gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
+                                                   GdkEventButton *event);
 
 #ifdef M_PI
 # undef M_PI
@@ -222,6 +224,10 @@ gibbon_cairoboard_finalize (GObject *object)
         size_t i;
 
         gibbon_cairoboard_cancel_animation (self);
+
+        g_signal_handlers_disconnect_by_func (self, 
+                                              gibbon_cairoboard_on_button_press,
+                                              NULL);
 
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
@@ -432,6 +438,12 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
         }
 
         xmlFreeDoc (doc);
+
+        gtk_widget_add_events (GTK_WIDGET (self), 
+                               GDK_BUTTON_PRESS_MASK);
+        g_signal_connect (self, "button-press-event",
+                          G_CALLBACK (gibbon_cairoboard_on_button_press),
+                          NULL);
 
         return self;
 }
@@ -1364,6 +1376,27 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
         }
 
         gtk_widget_queue_draw (GTK_WIDGET (self));
+
+        return TRUE;
+}
+
+static gboolean 
+gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
+                                   GdkEventButton *event)
+{
+        gdouble x, y;
+        
+        x = event->x;
+        y = event->y;
+
+        if (x >= self->priv->checker_b_home->x
+            && x <= self->priv->checker_b_home->x
+                    + self->priv->checker_b_home->width
+            && y >= self->priv->checker_b_home->y
+            && y <= self->priv->checker_b_home->y
+                    + 15 * self->priv->checker_b_home->height) {
+                g_printerr ("Click in black home area ...\n");
+        }
 
         return TRUE;
 }
