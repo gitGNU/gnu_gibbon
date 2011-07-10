@@ -1396,6 +1396,17 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
             && y <= self->priv->checker_b_home->y
                     + 15 * self->priv->checker_b_home->height) {
                 g_printerr ("Click in black home area ...\n");
+                return TRUE;
+        }
+
+        if (x >= self->priv->checker_w_home->x
+            && x <= self->priv->checker_w_home->x
+                    + self->priv->checker_w_home->width
+            && y <= self->priv->checker_w_home->y
+            && y >= self->priv->checker_w_home->y
+                    - 15 * self->priv->checker_w_home->height) {
+                g_printerr ("Click in white home area ...\n");
+                return TRUE;
         }
 
         return TRUE;
