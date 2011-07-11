@@ -596,9 +596,17 @@ gibbon_connection_on_connect (GObject *src_object,
         int socket_fd;
         GSocket *socket;
 
+        /*
+         * This can happen, when cancelled while eastablishing the
+         * connection.
+         */
+        if (!_self || !GIBBON_IS_CONNECTION (_self))
+                return;
+
         self = GIBBON_CONNECTION (_self);
 
-        g_object_unref (self->priv->cancellable);
+        if (self->priv->cancellable)
+                g_object_unref (self->priv->cancellable);
         self->priv->cancellable = NULL;
 
         self->priv->socket_connection =
