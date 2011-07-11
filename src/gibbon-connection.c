@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "gibbon-connection.h"
-#include "gibbon-connector.h"
 #include "gibbon-session.h"
 #include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
@@ -33,7 +32,6 @@
 #include "gibbon-clip.h"
 
 enum gibbon_connection_signals {
-        RESOLVING,
         CONNECTING,
         CONNECTED,
         LOGIN,
@@ -57,11 +55,13 @@ struct _GibbonConnectionPrivate {
         guint port;
         gchar *login;
         gchar *password;
+
+        GCancellable *cancellable;
+        GSocketClient *socket_client;
+        GSocketConnection *socket_connection;
         
-        enum GibbonConnectorState connector_state;
         enum GibbonConnectionState state;
         
-        GibbonConnector *connector;
         gchar *error;
         
         GIOChannel *io;
@@ -88,7 +88,11 @@ static gboolean gibbon_connection_on_input (GIOChannel *channel,
 static gboolean gibbon_connection_on_output (GIOChannel *channel,
                                              GIOCondition condition,
                                              GibbonConnection *self);
-static gboolean gibbon_connection_wait_connect (GibbonConnection *self);
+static void gibbon_connection_on_connect (GObject *src_object,
+                                          GAsyncResult *res,
+                                          gpointer _self);
+static void gibbon_connection_fatal (GibbonConnection *connection,
+                                     const gchar *format, ...);
 
 static void
 gibbon_connection_init (GibbonConnection *conn)
@@ -102,10 +106,11 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->password = NULL;
         conn->priv->login = NULL;
         
+        conn->priv->cancellable = NULL;
+        conn->priv->socket_client = NULL;
+        conn->priv->socket_connection = NULL;
+
         conn->priv->state = WAIT_LOGIN_PROMPT;
-        
-        conn->priv->connector = NULL;
-        conn->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
         
         conn->priv->error = NULL;
         
@@ -126,25 +131,14 @@ gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *self = GIBBON_CONNECTION (object);
 
-        if (self->priv->connector) {
-                gibbon_connector_cancel (self->priv->connector);
-                g_object_unref (self->priv->connector);
-        }
-
-        self->priv->connector = NULL;
-        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
-
         if (self->priv->in_watcher)
                 g_source_remove (self->priv->in_watcher);
-        self->priv->in_watcher = 0;
 
         if (self->priv->in_buffer)
                 g_free (self->priv->in_buffer);
-        self->priv->in_buffer = NULL;
         
         if (self->priv->out_watcher)
                 g_source_remove (self->priv->out_watcher);
-        self->priv->out_watcher = 0;
 
         if (self->priv->out_queue) {
                 g_list_foreach (self->priv->out_queue, (GFunc) g_object_unref,
@@ -153,11 +147,21 @@ gibbon_connection_finalize (GObject *object)
         }
         self->priv->out_queue = NULL;
 
+        if (self->priv->cancellable) {
+                g_cancellable_cancel (self->priv->cancellable);
+                g_object_unref (self->priv->cancellable);
+        }
+
         if (self->priv->io) {
                 g_io_channel_close (self->priv->io);
                 g_io_channel_unref (self->priv->io);
         }
-        self->priv->io = NULL;
+
+        if (self->priv->socket_client)
+                g_object_unref (self->priv->socket_client);
+
+        if (self->priv->socket_connection)
+                g_object_unref (self->priv->socket_connection);
 
         if (self->priv->hostname)
                 g_free (self->priv->hostname);
@@ -167,15 +171,12 @@ gibbon_connection_finalize (GObject *object)
 
         if (self->priv->password)
                 g_free (self->priv->password);
-        self->priv->password = NULL;
 
         if (self->priv->login)
                 g_free (self->priv->login);
-        self->priv->login = NULL;
 
         if (self->priv->session)
                 g_object_unref (self->priv->session);
-        self->priv->session = NULL;
         
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
@@ -189,16 +190,6 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
 
         object_class->finalize = gibbon_connection_finalize;
 
-        signals[RESOLVING] =
-                g_signal_new ("resolving",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__STRING,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_STRING);
         signals[CONNECTING] =
                 g_signal_new ("connecting",
                               G_TYPE_FROM_CLASS (klass),
@@ -297,10 +288,7 @@ gibbon_connection_new (GibbonApp *app)
                 self->priv->hostname[i] =
                         g_ascii_tolower (self->priv->hostname[i]);
 
-        self->priv->connector = gibbon_connector_new (self->priv->hostname,
-                                                      self->priv->port);
         self->priv->state = WAIT_LOGIN_PROMPT;
-        self->priv->connector_state = GIBBON_CONNECTOR_INITIAL;
 
         self->priv->session = gibbon_session_new (app, self);
 
@@ -311,14 +299,19 @@ gboolean
 gibbon_connection_connect (GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+        g_return_val_if_fail (self->priv->socket_client == NULL, FALSE);
 
-        if (!gibbon_connector_connect (self->priv->connector)) {
-                gibbon_app_display_error (self->priv->app, "%s",
-                                          gibbon_connector_error (self->priv->connector));
-                return FALSE;
-        }
+        self->priv->cancellable = g_cancellable_new ();
+        self->priv->socket_client = g_socket_client_new ();
 
-        g_timeout_add (100, (GSourceFunc) gibbon_connection_wait_connect, self);
+        g_signal_emit (self, signals[CONNECTING], 0, self);
+
+        g_socket_client_connect_to_host_async (self->priv->socket_client,
+                                               self->priv->hostname,
+                                               self->priv->port,
+                                               self->priv->cancellable,
+                                               gibbon_connection_on_connect,
+                                               self);
 
         return TRUE;
 }
@@ -594,17 +587,48 @@ gibbon_connection_on_output (GIOChannel *channel,
 }
 
 static void
-gibbon_connection_establish (GibbonConnection *self)
+gibbon_connection_on_connect (GObject *src_object,
+                              GAsyncResult *res,
+                              gpointer _self)
 {
+        GibbonConnection *self;
+        GError *error = NULL;
         int socket_fd;
+        GSocket *socket;
+
+        self = GIBBON_CONNECTION (_self);
+
+        g_object_unref (self->priv->cancellable);
+        self->priv->cancellable = NULL;
+
+        self->priv->socket_connection =
+                g_socket_client_connect_to_host_finish (self->priv->socket_client,
+                                                        res, &error);
+        g_object_unref (self->priv->socket_client);
+
+        if (!self->priv->socket_connection) {
+                gibbon_connection_fatal (self, _("Error connecting to `%s'"
+                                                 " port %u: %s.\n"),
+                                         self->priv->hostname,
+                                         self->priv->port,
+                                         error->message);
+                g_error_free (error);
+                return;
+        }
+
+        socket = g_socket_connection_get_socket (self->priv->socket_connection);
+        g_return_if_fail (socket != NULL);
+
+        socket_fd = g_socket_get_fd (socket);
 
         g_signal_emit (self, signals[CONNECTED], 0, self);
 
-        socket_fd = gibbon_connector_steal_socket (self->priv->connector);
-        g_object_unref (self->priv->connector);
-        self->priv->connector = NULL;
-
+#ifdef G_OS_WIN32
+        self->priv->io = g_io_channel_win32_new_socket (socket_fd);
+#else
         self->priv->io = g_io_channel_unix_new (socket_fd);
+#endif
+
         g_io_channel_set_encoding (self->priv->io, NULL, NULL);
         g_io_channel_set_buffered (self->priv->io, FALSE);
         self->priv->in_watcher = 
@@ -612,58 +636,6 @@ gibbon_connection_establish (GibbonConnection *self)
                                 G_IO_IN | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
                                 (GIOFunc) gibbon_connection_on_input,
                                 self);
-}
-
-static gboolean
-gibbon_connection_wait_connect (GibbonConnection *self)
-{
-        enum GibbonConnectorState last_state;
-        GibbonConnector *connector;
-
-        /* FIXME! Instead of silently returning false here, it would would
-         * be cleaner to instead remove the timeout, when finalizing the
-         * object.
-         */
-        if (!GIBBON_IS_CONNECTION (self))
-                return FALSE;
-        
-        connector = self->priv->connector;
-        if (!connector) {
-                g_signal_emit (self, signals[NETWORK_ERROR], 0,
-                               _("Could not initialize network connector."));
-                return FALSE;
-        }
-                
-        last_state = self->priv->connector_state;
-        self->priv->connector_state = 
-                gibbon_connector_get_state (connector);
-        if (last_state == self->priv->connector_state)
-                return TRUE;
-
-        switch (self->priv->connector_state) {
-                case GIBBON_CONNECTOR_INITIAL:
-                        return TRUE;
-                case GIBBON_CONNECTOR_RESOLVING:
-                        g_signal_emit (self, signals[RESOLVING], 0, 
-                                       self->priv->hostname);
-                        break;
-                case GIBBON_CONNECTOR_CONNECTING:
-                        g_signal_emit (self, signals[CONNECTING], 0, self);
-                        break;
-                case GIBBON_CONNECTOR_CANCELLED:
-                        g_signal_emit (self, signals[DISCONNECTED], 0,
-                                       NULL);
-                        return FALSE;
-                case GIBBON_CONNECTOR_ERROR:
-                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
-                                       gibbon_connector_error (connector));
-                        return FALSE;
-                case GIBBON_CONNECTOR_CONNECTED:
-                        gibbon_connection_establish (self);
-                        return FALSE;
-        }
-        
-        return TRUE;
 }
 
 void
@@ -697,7 +669,7 @@ gibbon_connection_queue_command (GibbonConnection *self,
         } 
 }
 
-void
+static void
 gibbon_connection_fatal (GibbonConnection *self,
                          const gchar *message_format, ...)
 {

@@ -40,7 +40,6 @@ AM_CPPFLAGS = 				\
 common_SOURCES = 			\
 	gibbon-cairoboard.c		\
 	gibbon-connection.c		\
-	gibbon-connector.c		\
 	gibbon-game.c           	\
 	gibbon-match.c          	\
 	gibbon-player-list.c		\
@@ -83,7 +82,6 @@ gibbon_SOURCES = gibbon.c $(common_SOURCES)
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
 	gibbon-connection.h		\
-	gibbon-connector.h		\
 	gibbon-game.h           	\
 	gibbon-match.h          	\
 	gibbon-player-list.h		\

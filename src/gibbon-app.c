@@ -70,7 +70,6 @@ struct _GibbonAppPrivate {
         GibbonConnection *connection;
         GibbonShouts *shouts;
 
-        GibbonSignal *resolving_signal;
         GibbonSignal *connecting_signal;
         GibbonSignal *connected_signal;
         GibbonSignal *logged_in_signal;
@@ -105,7 +104,6 @@ static void gibbon_app_connect_signals(const GibbonApp *self);
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter);
-static void gibbon_app_on_resolving(GibbonApp *self, const gchar *hostname);
 static void gibbon_app_on_connecting(GibbonApp *self,
                                      GibbonConnection *connection);
 static void gibbon_app_on_connected(GibbonApp *self,
@@ -147,7 +145,6 @@ static void gibbon_app_init(GibbonApp *self)
         self->priv->connection = NULL;
         self->priv->shouts = NULL;
 
-        self->priv->resolving_signal = NULL;
         self->priv->connecting_signal = NULL;
         self->priv->connected_signal = NULL;
         self->priv->logged_in_signal = NULL;
@@ -637,10 +634,6 @@ void gibbon_app_connect(GibbonApp *self)
                 return;
         }
 
-        self->priv->resolving_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection), "resolving",
-                        G_CALLBACK (gibbon_app_on_resolving),
-                        G_OBJECT (self));
         self->priv->connecting_signal = gibbon_signal_new(
                         G_OBJECT (self->priv->connection), "connecting",
                         G_CALLBACK (gibbon_app_on_connecting),
@@ -669,10 +662,6 @@ void gibbon_app_connect(GibbonApp *self)
 
 void gibbon_app_disconnect(GibbonApp *self)
 {
-        if (self->priv->resolving_signal)
-                g_object_unref(self->priv->resolving_signal);
-        self->priv->resolving_signal = NULL;
-
         if (self->priv->connecting_signal)
                 g_object_unref(self->priv->connecting_signal);
         self->priv->connecting_signal = NULL;
@@ -711,19 +700,6 @@ void gibbon_app_disconnect(GibbonApp *self)
         gibbon_app_set_state_disconnected(self);
 }
 
-static void gibbon_app_on_resolving(GibbonApp *self, const gchar *hostname)
-{
-        gchar *msg = g_strdup_printf(_("Resolving address for %s."), hostname);
-        GtkStatusbar
-                        *statusbar =
-                                        GTK_STATUSBAR (gibbon_app_find_object (self, "statusbar",
-                                                                        GTK_TYPE_STATUSBAR));
-
-        gtk_statusbar_pop(statusbar, 0);
-        gtk_statusbar_push(statusbar, 0, msg);
-        g_free(msg);
-}
-
 static void gibbon_app_on_connecting(GibbonApp *self, GibbonConnection *conn)
 {
         g_return_if_fail (GIBBON_IS_CONNECTION (conn));
@@ -731,10 +707,9 @@ static void gibbon_app_on_connecting(GibbonApp *self, GibbonConnection *conn)
         gchar *msg = g_strdup_printf(_("Connecting with %s port %d."),
                         gibbon_connection_get_hostname(conn),
                         gibbon_connection_get_port(conn));
-        GtkStatusbar
-                        *statusbar =
-                                        GTK_STATUSBAR (gibbon_app_find_object (self, "statusbar",
-                                                                        GTK_TYPE_STATUSBAR));
+        GtkStatusbar *statusbar =
+                GTK_STATUSBAR (gibbon_app_find_object (self, "statusbar",
+                                                       GTK_TYPE_STATUSBAR));
 
         gtk_statusbar_pop(statusbar, 0);
         gtk_statusbar_push(statusbar, 0, msg);

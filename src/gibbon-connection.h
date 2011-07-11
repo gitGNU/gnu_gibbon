@@ -59,8 +59,6 @@ guint gibbon_connection_get_port (const GibbonConnection *connection);
 const gchar *gibbon_connection_get_password (const GibbonConnection *connection);
 const gchar *gibbon_connection_get_login (const GibbonConnection *connection);
 
-void gibbon_connection_fatal (GibbonConnection *connection,
-                              const gchar *format, ...);
 void gibbon_connection_queue_command (GibbonConnection *connection,
                                       gboolean is_manual,
                                       const gchar *command, ...);
