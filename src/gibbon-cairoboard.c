@@ -1385,10 +1385,17 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                    GdkEventButton *event)
 {
         gdouble x, y;
+        guint column;
+        guint point;
         
         x = event->x;
         y = event->y;
 
+        /*
+         * These are the least probable cases but it is better to test them
+         * first because the borne-off checkers are more or less outside
+         * of the board.
+         */
         if (x >= self->priv->checker_b_home->x
             && x <= self->priv->checker_b_home->x
                     + self->priv->checker_b_home->width
@@ -1407,6 +1414,53 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                     - 15 * self->priv->checker_w_home->height) {
                 g_printerr ("Click in white home area ...\n");
                 return TRUE;
+        }
+
+        /*
+         * First we test whether there is a remote possibility of a click in
+         * the active area of the board.
+         */
+        if (x < self->priv->point12->x
+            || x > self->priv->point24->x
+                   + self->priv->point24->width
+            || y < self->priv->point24->y
+            || y > self->priv->point12->y
+                   + self->priv->point12->height) {
+                return FALSE;
+        }
+
+        if (x <= self->priv->point12->x
+                 + 6 * self->priv->checker_w_flat->width
+                 && y >= self->priv->point24->y
+                 && y <= self->priv->point12->y + self->priv->point12->height) {
+                column = (x - self->priv->point12->x)
+                                / self->priv->checker_w_flat->width;
+                if (y <= self->priv->point24->y + self->priv->point12->height)
+                        point = 13 + column;
+                else if (y >= self->priv->point12->y)
+                        point = 12 - column;
+                else
+                        return FALSE;
+                g_printerr ("Click on point #%u\n", point);
+        } else if (x <= self->priv->point24->x
+                        - 5 * self->priv->checker_w_flat->width) {
+                g_printerr ("Click on bar ...\n");
+                return TRUE;
+        } else if (x <= self->priv->point24->x
+                        + self->priv->point24->width
+                        && y >= self->priv->point24->y
+                        && y <= self->priv->point12->y
+                                + self->priv->point12->height) {
+                column = (self->priv->point24->x
+                          + self->priv->point24->width - x)
+                          / self->priv->checker_w_flat->width;
+                if (y <= self->priv->point24->y + self->priv->point12->height)
+                        point = 24 - column;
+                else if (y >= self->priv->point12->y)
+                        point = 1 + column;
+                else
+                        return FALSE;
+                g_printerr ("Click on point #%u\n", point);
         }
 
         return TRUE;
