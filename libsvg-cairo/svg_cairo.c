@@ -609,6 +609,9 @@ _svg_cairo_set_gradient (svg_cairo_t *svg_cairo,
     case SVG_GRADIENT_SPREAD_REFLECT:
 	cairo_pattern_set_extend (pattern, CAIRO_EXTEND_REFLECT);
 	break;
+    case SVG_GRADIENT_SPREAD_PAD:
+        cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
+        break;
     default:
 	cairo_pattern_set_extend (pattern, CAIRO_EXTEND_NONE);
 	break;

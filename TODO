@@ -1,4 +1,3 @@
-- Implement patch from https://bugs.freedesktop.org/show_bug.cgi?id=14773
 - Do not return NULL from constructor of GibbonCairoboard in case the 
   constructor fails.
 - Are esacped values in SGF files passed through?
