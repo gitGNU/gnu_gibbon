@@ -78,7 +78,7 @@
 
 /* We can safely cache that across sessions.  */
 static GHashTable *gibbon_archive_countries = NULL;
-GResolver *gibbon_archive_resolver = NULL;
+
 #define GIBBON_ARCHIVE_RE_OCTET \
         "(1[0-9][0-9]|[1-9][0-9]|2[0-4][0-9]|25[0-5]|[0-9])"
 #define GIBBON_ARCHIVE_RE_IP                            \
@@ -169,7 +169,7 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
         gibbon_archive_countries = g_hash_table_new_full (g_str_hash,
                                                           g_str_equal,
                                                           g_free, g_free);
-        gibbon_archive_resolver = g_resolver_get_default ();
+
         gibbon_archive_re_ip = g_regex_new (GIBBON_ARCHIVE_RE_IP,
                                             G_REGEX_OPTIMIZE, 0, &error);
         if (!gibbon_archive_re_ip) {
@@ -447,10 +447,17 @@ gibbon_archive_get_country (const GibbonArchive *self,
         GibbonArchiveLookupInfo *info;
         gchar *hostname;
         GInetAddress *address;
+        GResolver *resolver;
 
         g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
-        g_return_val_if_fail (_hostname != NULL, NULL);
-        g_return_val_if_fail (*_hostname != 0, NULL);
+
+        /*
+         * FIBS does not necessarily show all logged in users.  Thosse that
+         * suddenly pop up will have empty information.  This is hopefully
+         * healed later by issuing a rawwho command on that user.
+         */
+        if (!_hostname || !*_hostname)
+                return gibbon_country_new ("xy");
 
         /*
          * We do not bother normalizing the hostname.  It is the result of a
@@ -505,7 +512,8 @@ gibbon_archive_get_country (const GibbonArchive *self,
                 info->database = self->priv->db;
                 info->data = data;
 
-                g_resolver_lookup_by_name_async (gibbon_archive_resolver,
+                resolver = g_resolver_get_default ();
+                g_resolver_lookup_by_name_async (resolver,
                                                  hostname,
                                                  /* No need to cancel.  */
                                                  NULL,
@@ -517,7 +525,7 @@ gibbon_archive_get_country (const GibbonArchive *self,
 }
 
 static void
-gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
+gibbon_archive_on_resolve (GObject *oresolver, GAsyncResult *result,
                            gpointer data)
 {
         GibbonArchiveLookupInfo info = *(GibbonArchiveLookupInfo *) data;
@@ -532,6 +540,7 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
         GMatchInfo *match_info;
         gchar *xoctets[4];
         gchar numerical_ip[16];
+        GResolver *resolver;
 
         /*
          * The hostname pointer is still in use as a hash key, we cannot
@@ -539,8 +548,9 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
          */
         g_free (data);
 
-        ips = g_resolver_lookup_by_name_finish (G_RESOLVER (resolver),
+        ips = g_resolver_lookup_by_name_finish (G_RESOLVER (oresolver),
                                                 result, NULL);
+        g_object_unref (oresolver);
 
         /*
          * FIBS does a gratuitous reverse lookup on IP addresses.  But
@@ -572,7 +582,8 @@ gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
 
                 data = g_malloc (sizeof info);
                 memcpy (data, &info, sizeof info);
-                g_resolver_lookup_by_address_async (gibbon_archive_resolver,
+                resolver = g_resolver_get_default ();
+                g_resolver_lookup_by_address_async (resolver,
                                                     address,
                                                     /* No need to cancel.  */
                                                     NULL,
@@ -636,6 +647,7 @@ gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
 
         hostname = g_resolver_lookup_by_address_finish (G_RESOLVER (resolver),
                                                         result, NULL);
+        g_object_unref (resolver);
 
         if (g_strcmp0 (hostname, info.hostname))
                 return;
