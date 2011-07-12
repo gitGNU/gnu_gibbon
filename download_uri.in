@@ -1,6 +1,6 @@
 #! /bin/sh
 
-set -x
+#set -x
 
 lwp_request="@LWP_REQUEST@"
 lynx="@LYNX@"
