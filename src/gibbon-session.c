@@ -1829,5 +1829,5 @@ gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
                         g_slist_append (self->priv->expect_saved_counts, info);
 
         gibbon_connection_queue_command (self->priv->connection, FALSE,
-                                         "show savedcount %s");
+                                         "show savedcount %s", who);
 }
