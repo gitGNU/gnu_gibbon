@@ -172,6 +172,9 @@ gibbon_get_client_type (const gchar *client_name, const gchar *user_name,
 {
         struct GibbonUtilBotInfo info;
 
+        if (!client_name)
+                return GibbonClientRegular;
+
         if (0 == strncmp ("OdesysMobileR", client_name, 13))
                 return GibbonClientMobile;
         if (0 == strncmp ("BGOnline ", client_name, 9))
