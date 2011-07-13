@@ -223,7 +223,11 @@ gibbon_archive_new (GibbonApp *app)
         if (!g_file_test (self->priv->servers_directory, G_FILE_TEST_EXISTS))
                 first_run = TRUE;
 
+#ifdef G_OS_WIN32
+	mode = S_IRWXU;
+#else
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
                 gibbon_app_display_error (app,
                                           _("Failed to create"
@@ -275,7 +279,11 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
                 g_free (self->priv->session_directory);
         self->priv->session_directory = buf;
 
+#ifdef G_OS_WIN32
+	mode = S_IRWXU;
+#else
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
         if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
                 gibbon_app_display_error (self->priv->app,
                                           _("Failed to create"

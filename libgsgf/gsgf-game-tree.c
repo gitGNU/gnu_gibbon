@@ -554,6 +554,9 @@ gsgf_game_tree_set_application (GSGFGameTree *self,
                 return FALSE;
         }
 
+#ifndef HAVE_INDEX
+#define index(str, c) memchr (str, c, strlen (str))
+#endif
         if (index (app, '\n') || index (version, '\n')
             || index (app, '\r') || index (version, '\r')) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,

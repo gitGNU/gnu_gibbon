@@ -24,4 +24,4 @@ AM_CPPFLAGS = 				\
 
 gsgf_list_bg_SOURCES = gsgf_list_bg.c
 
-gsgf_list_bg_LDADD = $(GIBBON_LIBS) ../libgsgf.a
+gsgf_list_bg_LDADD = ../libgsgf.a $(GIBBON_LIBS) 

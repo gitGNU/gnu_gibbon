@@ -17,7 +17,10 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs help
+SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs 
+if BUILD_HELP 
+SUBDIRS += help
+endif
 
 DISTCLEANFILES =		\
 	intltool-extract	\
@@ -43,6 +46,6 @@ geo_ip:
 			>$(srcdir)/gibbon-geo-ip-data.h
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in gibbon-geo_ip-data.h.tmpl
+	gcreate_class.pl.in gibbon-geo-ip-data.h.tmpl
 
 .PHONY: ChangeLog geo_ip

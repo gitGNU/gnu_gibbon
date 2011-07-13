@@ -1071,6 +1071,9 @@ gibbon_clip_parse_resuming (const gchar *line, gchar **tokens,
         if (0 == g_strcmp0 ("unlimited", tokens[6])) {
                 length = 0;
         } else {
+#ifndef HAVE_INDEX
+# define index(str, c) memchr (str, c, strlen (str))
+#endif
                 ptr = index (tokens[6], '-');
                 if (!ptr)
                         return FALSE;

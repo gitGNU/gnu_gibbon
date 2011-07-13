@@ -1178,6 +1178,9 @@ gibbon_session_decode_client (GibbonSession *self, const gchar *client)
                         return g_strdup (client);
         } else {
                 retval = g_strdup (client);
+#ifndef HAVE_INDEX
+# define index(str, c) memchr (str, c, strlen (str))
+#endif
                 underscore = index (retval, '_');
                 if (underscore && underscore != client)
                         *underscore = ' ';

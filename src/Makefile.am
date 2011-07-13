@@ -120,8 +120,8 @@ noinst_HEADERS =			\
 	gibbon-country.h
 
 AM_LDFLAGS = -export-dynamic
-LDADD = $(GIBBON_LIBS) ../libsvg/libsvg.a \
-	../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a $(platform_libadd)
+LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
+	$(GIBBON_LIBS) $(platform_libadd)
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
@@ -146,4 +146,4 @@ test_clip_SOURCES = $(common_SOURCES) test-clip.c
 
 SGF_FILES =
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) isolist.txt make-country.pl
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) 

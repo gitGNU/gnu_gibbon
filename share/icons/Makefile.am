@@ -17,4 +17,4 @@
 
 SUBDIRS = application
 
-EXTRA_DIST = gibbon.svg
+EXTRA_DIST =

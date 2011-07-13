@@ -3,6 +3,7 @@
 *.a
 *.bak
 *.orig
+*.exe
 /po/stamp-it
 /Debug
 autom4te.cache
