@@ -360,7 +360,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         GibbonSession *session;
         gchar *package;
 
-        g_printerr ("Got input!\n");
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
@@ -453,7 +452,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         if (*package >= 'a' && *package <= 'z')
                                 *package -= 32;
                         self->priv->out_ready = TRUE;
-                        g_printerr ("Queing command: login %s_%s 9999 %s %s\n", package, VERSION, self->priv->login, self->priv->password);
                         gibbon_connection_queue_command (self,
                                         FALSE,
                                         "login %s_%s 9999 %s %s",
@@ -513,7 +511,6 @@ gibbon_connection_on_output (GIOChannel *channel,
         gchar *line;
         GibbonServerConsole *console;
 
-        g_printerr ("Ready for output ...\n");
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
         g_return_val_if_fail (G_IO_OUT & condition, TRUE);
 
@@ -644,7 +641,8 @@ gibbon_connection_on_connect (GObject *src_object,
         g_io_channel_set_buffered (self->priv->io, FALSE);
         self->priv->in_watcher = 
                 g_io_add_watch (self->priv->io, 
-                                G_IO_IN | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
+                                G_IO_IN | G_IO_OUT
+                                | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
                                 (GIOFunc) gibbon_connection_on_input,
                                 self);
 }
@@ -659,7 +657,6 @@ gibbon_connection_queue_command (GibbonConnection *self,
         gchar *line;
         GibbonFIBSCommand *command;
 
-g_printerr ("queing ...\n");        
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
         va_start (args, format);
@@ -678,7 +675,6 @@ g_printerr ("queing ...\n");
                                         G_IO_OUT,
                                         (GIOFunc) gibbon_connection_on_output,
                                         self);
-        g_printerr ("Out watcher: %u\n", self->priv->out_watcher);
         } 
 }
 
