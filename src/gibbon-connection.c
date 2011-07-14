@@ -64,7 +64,7 @@ struct _GibbonConnectionPrivate {
         
         gchar *error;
         
-        GIOChannel *io;
+        GSocket *socket;
         guint in_watcher;
         gchar *in_buffer;
         guint out_watcher;
@@ -82,17 +82,23 @@ struct _GibbonConnectionPrivate {
                                       GibbonConnectionPrivate))
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
 
-static gboolean gibbon_connection_on_input (GIOChannel *channel,
+static gboolean gibbon_connection_on_input (GSocket *socket,
                                             GIOCondition condition,
                                             GibbonConnection *self);
-static gboolean gibbon_connection_on_output (GIOChannel *channel,
+static gboolean gibbon_connection_on_output (GSocket *socket,
                                              GIOCondition condition,
                                              GibbonConnection *self);
+static gboolean gibbon_connection_handle_input (GibbonConnection *self,
+                                                GIOChannel *channel);
+static gboolean gibbon_connection_handle_output (GibbonConnection *self,
+                                                 GIOChannel *channel);
 static void gibbon_connection_on_connect (GObject *src_object,
                                           GAsyncResult *res,
                                           gpointer _self);
 static void gibbon_connection_fatal (GibbonConnection *connection,
                                      const gchar *format, ...);
+static gboolean gibbon_connection_handle_input (GibbonConnection *self,
+                                                GIOChannel *channel);
 
 static void
 gibbon_connection_init (GibbonConnection *conn)
@@ -114,7 +120,7 @@ gibbon_connection_init (GibbonConnection *conn)
         
         conn->priv->error = NULL;
         
-        conn->priv->io = NULL;
+        conn->priv->socket = NULL;
 
         conn->priv->in_watcher = 0;
         conn->priv->in_buffer = g_strconcat ("", NULL);
@@ -152,9 +158,9 @@ gibbon_connection_finalize (GObject *object)
                 g_object_unref (self->priv->cancellable);
         }
 
-        if (self->priv->io) {
-                g_io_channel_close (self->priv->io);
-                g_io_channel_unref (self->priv->io);
+        if (self->priv->socket) {
+                g_socket_close (self->priv->socket, NULL);
+                g_object_unref (self->priv->socket);
         }
 
         if (self->priv->socket_client)
@@ -486,22 +492,65 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 }
 
 static gboolean
-gibbon_connection_on_input (GIOChannel *channel,
+gibbon_connection_on_input (GSocket *socket,
                             GIOCondition condition,
                             GibbonConnection *self)
 {
+        GIOChannel *io;
+        guint socket_fd;
+        gboolean retval;
+
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
 
-        if (G_IO_IN & condition)
-                return gibbon_connection_handle_input (self, channel);
-        
-        return TRUE;
+        socket_fd = g_socket_get_fd (socket);
+
+#ifdef G_OS_WIN32
+        io = g_io_channel_win32_new_socket (socket_fd);
+#else
+        io = g_io_channel_unix_new (socket_fd);
+#endif
+
+        g_io_channel_set_encoding (io, NULL, NULL);
+        g_io_channel_set_buffered (io, FALSE);
+
+        retval = gibbon_connection_handle_input (self, io);
+
+        g_io_channel_unref (io);
+
+        return retval;
 }
 
 static gboolean
-gibbon_connection_on_output (GIOChannel *channel,
+gibbon_connection_on_output (GSocket *socket,
                              GIOCondition condition,
                              GibbonConnection *self)
+{
+        GIOChannel *io;
+        guint socket_fd;
+        gboolean retval;
+
+        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
+
+        socket_fd = g_socket_get_fd (socket);
+
+#ifdef G_OS_WIN32
+        io = g_io_channel_win32_new_socket (socket_fd);
+#else
+        io = g_io_channel_unix_new (socket_fd);
+#endif
+
+        g_io_channel_set_encoding (io, NULL, NULL);
+        g_io_channel_set_buffered (io, FALSE);
+
+        retval = gibbon_connection_handle_output (self, io);
+
+        g_io_channel_unref (io);
+
+        return retval;
+}
+
+static gboolean
+gibbon_connection_handle_output (GibbonConnection *self, GIOChannel *channel)
 {
         gsize bytes_written;
         GError *error = NULL;
@@ -512,7 +561,6 @@ gibbon_connection_on_output (GIOChannel *channel,
         GibbonServerConsole *console;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
-        g_return_val_if_fail (G_IO_OUT & condition, TRUE);
 
         if (!self->priv->out_queue) {
                 g_source_remove (self->priv->out_watcher);
@@ -538,7 +586,7 @@ gibbon_connection_on_output (GIOChannel *channel,
         buffer = gibbon_fibs_command_get_pointer (command);
         pending = gibbon_fibs_command_get_pending (command);
 
-        if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (self->priv->io,
+        if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (channel,
                                                             buffer,
                                                             pending,
                                                             &bytes_written,
@@ -593,8 +641,7 @@ gibbon_connection_on_connect (GObject *src_object,
 {
         GibbonConnection *self;
         GError *error = NULL;
-        int socket_fd;
-        GSocket *socket;
+        GSource *source;
 
         /*
          * This can happen, when cancelled while eastablishing the
@@ -624,27 +671,19 @@ gibbon_connection_on_connect (GObject *src_object,
                 return;
         }
 
-        socket = g_socket_connection_get_socket (self->priv->socket_connection);
-        g_return_if_fail (socket != NULL);
-
-        socket_fd = g_socket_get_fd (socket);
+        self->priv->socket =
+                g_socket_connection_get_socket (self->priv->socket_connection);
+        g_return_if_fail (self->priv->socket != NULL);
 
         g_signal_emit (self, signals[CONNECTED], 0, self);
 
-#ifdef G_OS_WIN32
-        self->priv->io = g_io_channel_win32_new_socket (socket_fd);
-#else
-        self->priv->io = g_io_channel_unix_new (socket_fd);
-#endif
-
-        g_io_channel_set_encoding (self->priv->io, NULL, NULL);
-        g_io_channel_set_buffered (self->priv->io, FALSE);
-        self->priv->in_watcher = 
-                g_io_add_watch (self->priv->io, 
-                                G_IO_IN | G_IO_OUT
-                                | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
-                                (GIOFunc) gibbon_connection_on_input,
-                                self);
+        source = g_socket_create_source (self->priv->socket, G_IO_IN, NULL);
+        g_source_set_priority (source, G_PRIORITY_DEFAULT);
+        g_source_set_callback (source,
+                               (GSourceFunc) gibbon_connection_on_input,
+                               self, NULL);
+        self->priv->in_watcher = g_source_attach (source, NULL);
+        g_source_unref (source);
 }
 
 void
@@ -656,6 +695,7 @@ gibbon_connection_queue_command (GibbonConnection *self,
         gchar *formatted;
         gchar *line;
         GibbonFIBSCommand *command;
+        GSource *source;
 
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
@@ -669,13 +709,18 @@ gibbon_connection_queue_command (GibbonConnection *self,
 
         self->priv->out_queue = g_list_append (self->priv->out_queue, command);
 
+
         if (!self->priv->out_watcher) {
-                self->priv->out_watcher = 
-                        g_io_add_watch (self->priv->io, 
-                                        G_IO_OUT,
-                                        (GIOFunc) gibbon_connection_on_output,
-                                        self);
-        } 
+                source = g_socket_create_source (self->priv->socket, G_IO_OUT,
+                                                 NULL);
+                g_source_set_priority (source, G_PRIORITY_DEFAULT);
+                g_source_set_callback (source,
+                                       (GSourceFunc)
+                                       gibbon_connection_on_output,
+                                       self, NULL);
+                self->priv->out_watcher = g_source_attach (source, NULL);
+                g_source_unref (source);
+        }
 }
 
 static void
