@@ -46,8 +46,13 @@ static const GOptionEntry options[] =
 	        { NULL }
 };
 
-static void init_i18n (void);
 static guint parse_command_line (int argc, char *argv[]);
+#ifdef G_OS_WIN32
+static void setup_path (const gchar *installdir);
+static void init_i18n (const gchar *installdir);
+#else
+static void init_i18n (void);
+#endif
 
 int
 main (int argc, char *argv[])
@@ -58,9 +63,12 @@ main (int argc, char *argv[])
 #ifdef G_OS_WIN32
         gchar *win32_dir =
                 g_win32_get_package_installation_directory_of_module (NULL);
-#endif
 
+        init_i18n (win32_dir);                
+        setup_path (win32_dir);
+#else
         init_i18n ();
+#endif
 
         if (!parse_command_line (argc, argv))
                 return 1;
@@ -121,17 +129,25 @@ main (int argc, char *argv[])
 }
 
 static void
+#ifdef G_OS_WIN32
+init_i18n (const gchar *installdir)
+#else
 init_i18n (void)
+#endif
 {
         gchar *locale_dir;
 
         setlocale(LC_ALL, "");
 
-        locale_dir = g_build_filename(GIBBON_DATADIR, "locale", NULL);
-        bindtextdomain(GETTEXT_PACKAGE, locale_dir);
-        g_free(locale_dir);
-        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-        textdomain(GETTEXT_PACKAGE);
+#ifdef G_OS_WIN32
+        locale_dir = g_build_filename (installdir, "share", "locale", NULL);
+#else
+        locale_dir = g_build_filename (GIBBON_DATADIR, "locale", NULL);
+#endif
+        bindtextdomain (GETTEXT_PACKAGE, locale_dir);
+        g_free (locale_dir);
+        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+        textdomain (GETTEXT_PACKAGE);
 }
  
 static guint 
@@ -157,3 +173,25 @@ parse_command_line (int argc, char *argv[])
         
         return 1;
 }
+
+#ifdef G_OS_WIN32
+/*
+ * Under MS-DOS shared libraries are searched in $PATH.  We have to make sure
+ * that gconfd-2 finds its libraries.  
+ */
+void
+setup_path (const gchar *installdir)
+{
+        gchar *bin = g_build_filename (installdir, "bin", NULL);
+        gchar *path = g_build_path (";", bin, g_getenv ("PATH"), NULL);
+        
+        g_free (bin);
+        
+        if (!g_setenv ("PATH", path, TRUE))
+                g_printerr (_("Error setting PATH environment variable!\n"));
+        
+        g_free (path);
+        
+        g_printerr ("PATH: %s\n", g_getenv ("PATH"));
+}
+#endif
