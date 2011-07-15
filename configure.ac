@@ -179,6 +179,8 @@ AC_CONFIG_FILES([
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
     help/Makefile
+    win32/Makefile
+    win32/gibbon.iss
     share/Makefile
     share/icons/Makefile
     share/icons/application/Makefile
