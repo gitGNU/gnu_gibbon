@@ -3,6 +3,9 @@ echo "You need to execute this on a Windows machine within msys (http://www.ming
 echo "You also need InnoSetup (http://www.innosetup.org) with iscc in your PATH"
 echo "Make sure gibbon and all its dependencies have been installed correctly to /local"
 
+# This file is mostly stolen from gedit and a mess.  It should be re-written
+# from scratch.
+
 #set -x
 ISCC=iscc
 
@@ -83,6 +86,7 @@ strip installer/gibbon/bin/*.dll || exit 1
 # stripping libxml2.dll renders it unusable (although not changing it in size).
 # We therefore copy it after having stripped the rest. Same with the other DLLs
 # here. Perhaps those were built with MSVC.
+mkdir -p installer/gibbon/bin
 cp "${mingw_prefix}/bin/libxml2-2.dll" installer/gibbon/bin || exit 1
 cp "${mingw_prefix}/bin/intl.dll" installer/gibbon/bin || exit 1
 cp "${mingw_prefix}/bin/libiconv-2.dll" installer/gibbon/bin || exit 1
@@ -138,6 +142,7 @@ cp "${gibbon_prefix}/share/gibbon/gibbon.ui" installer/gibbon/share/gibbon || ex
 cp "${gibbon_prefix}/share/gibbon/ip2country.csv.gz" installer/gibbon/share/gibbon || exit 1
 
 echo "Copying executable..."
+mkdir -p installer/gibbon/bin
 cp "${gibbon_prefix}/bin/gibbon.exe" installer/gibbon/bin || exit 1
 strip installer/gibbon/bin/gibbon.exe || exit 1
 
