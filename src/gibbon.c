@@ -191,7 +191,5 @@ setup_path (const gchar *installdir)
                 g_printerr (_("Error setting PATH environment variable!\n"));
         
         g_free (path);
-        
-        g_printerr ("PATH: %s\n", g_getenv ("PATH"));
 }
 #endif
