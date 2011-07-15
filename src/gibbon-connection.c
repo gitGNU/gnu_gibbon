@@ -65,6 +65,7 @@ struct _GibbonConnectionPrivate {
         gchar *error;
         
         GSocket *socket;
+        GIOChannel *io;
         guint in_watcher;
         gchar *in_buffer;
         guint out_watcher;
@@ -82,7 +83,7 @@ struct _GibbonConnectionPrivate {
                                       GibbonConnectionPrivate))
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
 
-static gboolean gibbon_connection_on_input (GSocket *socket,
+static gboolean gibbon_connection_on_input (GIOChannel *channel,
                                             GIOCondition condition,
                                             GibbonConnection *self);
 static gboolean gibbon_connection_on_output (GSocket *socket,
@@ -97,8 +98,6 @@ static void gibbon_connection_on_connect (GObject *src_object,
                                           gpointer _self);
 static void gibbon_connection_fatal (GibbonConnection *connection,
                                      const gchar *format, ...);
-static gboolean gibbon_connection_handle_input (GibbonConnection *self,
-                                                GIOChannel *channel);
 
 static void
 gibbon_connection_init (GibbonConnection *conn)
@@ -120,6 +119,7 @@ gibbon_connection_init (GibbonConnection *conn)
         
         conn->priv->error = NULL;
         
+        conn->priv->io = NULL;
         conn->priv->socket = NULL;
 
         conn->priv->in_watcher = 0;
@@ -158,6 +158,9 @@ gibbon_connection_finalize (GObject *object)
                 g_object_unref (self->priv->cancellable);
         }
 
+        if (self->priv->io)
+                g_io_channel_unref (self->priv->io);
+                
         if (self->priv->socket) {
                 g_socket_close (self->priv->socket, NULL);
                 g_object_unref (self->priv->socket);
@@ -367,7 +370,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         gchar *package;
 
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
-        
+
         status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
                                           &bytes_read, &error);
         switch (status) {
@@ -492,32 +495,11 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
 }
 
 static gboolean
-gibbon_connection_on_input (GSocket *socket,
+gibbon_connection_on_input (GIOChannel *io,
                             GIOCondition condition,
                             GibbonConnection *self)
 {
-        GIOChannel *io;
-        guint socket_fd;
-        gboolean retval;
-
-        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
-
-        socket_fd = g_socket_get_fd (socket);
-
-#ifdef G_OS_WIN32
-        io = g_io_channel_win32_new_socket (socket_fd);
-#else
-        io = g_io_channel_unix_new (socket_fd);
-#endif
-
-        g_io_channel_set_encoding (io, NULL, NULL);
-        g_io_channel_set_buffered (io, FALSE);
-
-        retval = gibbon_connection_handle_input (self, io);
-
-        g_io_channel_unref (io);
-
-        return retval;
+        return gibbon_connection_handle_input (self, io);
 }
 
 static gboolean
@@ -528,8 +510,6 @@ gibbon_connection_on_output (GSocket *socket,
         GIOChannel *io;
         guint socket_fd;
         gboolean retval;
-
-        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
 
         socket_fd = g_socket_get_fd (socket);
 
@@ -641,8 +621,8 @@ gibbon_connection_on_connect (GObject *src_object,
 {
         GibbonConnection *self;
         GError *error = NULL;
-        GSource *source;
-
+        guint socket_fd;
+        
         /*
          * This can happen, when cancelled while eastablishing the
          * connection.
@@ -674,16 +654,32 @@ gibbon_connection_on_connect (GObject *src_object,
         self->priv->socket =
                 g_socket_connection_get_socket (self->priv->socket_connection);
         g_return_if_fail (self->priv->socket != NULL);
-
+        
         g_signal_emit (self, signals[CONNECTED], 0, self);
 
-        source = g_socket_create_source (self->priv->socket, G_IO_IN, NULL);
-        g_source_set_priority (source, G_PRIORITY_DEFAULT);
-        g_source_set_callback (source,
-                               (GSourceFunc) gibbon_connection_on_input,
-                               self, NULL);
-        self->priv->in_watcher = g_source_attach (source, NULL);
-        g_source_unref (source);
+        /* 
+         * This is a little weird under Windows.  If we use a GIOChannel
+         * and watch it with g_io_add_watch, we can read but the channel
+         * never gets ready for output.  If we use the socket, it is
+         * always ready for input but reading fails with EAGAIN so that
+         * we effectively block the application.  We therefore use a mixed
+         * approach, and read from the GIOChannel, and write to the GSocket.                                             
+         */
+        socket_fd = g_socket_get_fd (self->priv->socket);
+        
+#ifdef G_OS_WIN32
+        self->priv->io = g_io_channel_win32_new_socket (socket_fd);
+#else
+        self->priv->io = g_io_channel_unix_new (socket_fd);
+#endif
+
+        g_io_channel_set_encoding (self->priv->io, NULL, NULL);
+        g_io_channel_set_buffered (self->priv->io, FALSE);
+        
+        self->priv->in_watcher = 
+                g_io_add_watch (self->priv->io, G_IO_IN,
+                                (GIOFunc) gibbon_connection_on_input,
+                                self);
 }
 
 void
