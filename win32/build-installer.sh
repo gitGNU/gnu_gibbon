@@ -127,7 +127,10 @@ cp -R "${gibbon_prefix}/etc/gconf/"* installer/gibbon/etc/gconf || exit 1
 mkdir -p installer/gibbon/libexec || exit 1
 cp "${mingw_prefix}/libexec/gconfd-2.exe" installer/gibbon/libexec || exit 1
 
+# Pixmaps, etc.
 echo "Copying shared data (ui files, icons, etc.)..."
+mkdir -p installer/gibbon/share/pixmaps
+cp -r "${gibbon_prefix}/share/pixmaps/gibbon" installer/gibbon/share/pixmaps ||exit 1
 
 # GtkBuilder file and GeoIP database.
 mkdir -p installer/gibbon/share/gibbon || exit 1
@@ -139,13 +142,18 @@ cp "${gibbon_prefix}/bin/gibbon.exe" installer/gibbon/bin || exit 1
 strip installer/gibbon/bin/gibbon.exe || exit 1
 
 # Just a dummy so that the file gets uninstalled.
-touch installer/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+mkdir -p installer/lib/gdk-pixbuf-2.0/2.10.0
+touch installer/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache || exit 1
 
 echo "gdk-pixbuf-query-loaders.exe > ../lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" >installer/gibbon/bin/querymodules.bat
 
 echo "Creating installer..."
 
 perl -pe "s/INSTALLERREVISION/$revision/" gibbon.iss >installer/gibbon.iss || exit | 1
-"$ISCC" installer/gibbon.iss || exit 1
+"$ISCC" installer/gibbon.iss >/dev/null || exit 1
 
-echo "Done"
+mv installer/Output/gibbon-setup-*.exe .
+
+rm -r installer
+
+echo "Successfully created " gibbon-setup-*.exe

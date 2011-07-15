@@ -40,7 +40,7 @@ static const GOptionEntry options[] =
                   N_("DIRECTORY")
                 },
                 { "pixmaps-dir", 'b', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
-                  N_("Path to pixmaps directory"),
+                  N_("Path to pixmaps directory (developers only)"),
                   N_("DIRECTORY")
                 },
 	        { NULL }
@@ -55,6 +55,10 @@ main (int argc, char *argv[])
         GibbonApp *app;
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
+#ifdef G_OS_WIN32
+        gchar *win32_dir =
+                g_win32_get_package_installation_directory_of_module (NULL);
+#endif
 
         init_i18n ();
 
@@ -67,9 +71,9 @@ main (int argc, char *argv[])
 	}
 
         gtk_init (&argc, &argv);
-        
+
         /* It is unsafe to guess that we are in a development environment
-         * just because there is a data/gibbon.xml file.  Rather require
+         * just because there is a data/gibbon.ui file.  Rather require
          * an option!
          */
         if (data_dir) {
@@ -77,15 +81,26 @@ main (int argc, char *argv[])
                                                      PACKAGE ".ui",
                                                      NULL);
         } else {
+#ifdef G_OS_WIN32
+                builder_filename = g_build_filename (win32_dir, "share", 
+                                                     PACKAGE,
+                                                     PACKAGE ".ui", NULL);
+#else
                 builder_filename = g_build_filename (GIBBON_DATADIR, PACKAGE,
                                                      PACKAGE ".ui",
                                                      NULL);
+#endif
         }
 
         if (!pixmaps_dir) {
                 pixmaps_dir = pixmaps_dir_buf
+#ifdef G_OS_WIN32
+                        = g_build_filename (win32_dir, "share",
+                                            "pixmaps", PACKAGE, NULL);
+#else
                         = g_build_filename (GIBBON_DATADIR,
                                             "pixmaps", PACKAGE, NULL);
+#endif
         }
 
         app = gibbon_app_new (builder_filename, pixmaps_dir,
