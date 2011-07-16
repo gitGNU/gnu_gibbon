@@ -141,6 +141,7 @@ AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
 
 AM_GCONF_SOURCE_2
+GLIB_GSETTINGS
 
 dnl gtk-doc 1.16 produces a failure for missing overview.xml after
 dnl "make distcheck".

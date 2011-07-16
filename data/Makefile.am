@@ -36,6 +36,13 @@ else
 install-data-local:
 endif
 
+gsettings_files = \
+	bg.Gibbon.gschema.xml.in \
+	$(NULL)
+gsettings_SCHEMAS = $(gsettings_files:.xml.in=.xml)
+@INTLTOOL_XML_NOMERGE_RULE@
+@GSETTINGS_RULES@
+
 gtkbuilderdir = $(datadir)/$(PACKAGE)
 gtkbuilder_DATA = $(PACKAGE).ui
 
