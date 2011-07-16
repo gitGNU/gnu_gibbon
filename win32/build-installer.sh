@@ -77,6 +77,8 @@ echo "Copying misc DLL files..."
 mkdir -p installer/gibbon/bin
 
 cp "${mingw_prefix}/bin/libORBit-2-0.dll" installer/gibbon/bin || exit 1
+cp "${mingw_prefix}/bin/libORBit-imodule-2-0.dll" installer/gibbon/bin || exit 1
+cp "${mingw_prefix}/bin/libORBitCosNaming-2-0.dll" installer/gibbon/bin || exit 1
 cp "${mingw_prefix}/bin/libgconf-2-4.dll" installer/gibbon/bin || exit 1
 
 echo "Stripping DLL files..."
@@ -106,6 +108,7 @@ cp "${mingw_prefix}/lib/gtk-2.0/2.10.0/engines/libwimp.dll" installer/gtk/lib/gt
 strip installer/gtk/lib/gtk-2.0/2.10.0/engines/libwimp.dll || exit 1
 
 cp "${mingw_prefix}/bin/gdk-pixbuf-query-loaders.exe" installer/gtk/bin || exit 1
+cp "${mingw_prefix}/bin/gtk-query-immodules-2.0.exe" installer/gtk/bin || exit 1
 
 mkdir -p installer/gtk/share/themes || exit
 cp -R "${mingw_prefix}/share/themes/MS-Windows" installer/gtk/share/themes || exit 1
@@ -151,6 +154,7 @@ mkdir -p installer/lib/gdk-pixbuf-2.0/2.10.0
 touch installer/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache || exit 1
 
 echo "gdk-pixbuf-query-loaders.exe > ../lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" >installer/gibbon/bin/querymodules.bat
+echo "gtk-query-immodules-2.0.exe > ../etc/gtk-2.0/gtk.immodules" >>installer/gibbon/bin/querymodules.bat
 
 echo "Creating installer..."
 
@@ -159,6 +163,6 @@ perl -pe "s/INSTALLERREVISION/$revision/" gibbon.iss >installer/gibbon.iss || ex
 
 mv installer/Output/gibbon-setup-*.exe .
 
-rm -r installer
+#rm -r installer
 
 echo "Successfully created " gibbon-setup-*.exe
