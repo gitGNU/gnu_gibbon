@@ -193,26 +193,12 @@ gibbon_archive_new (GibbonApp *app)
 
         self->priv->app = app;
 
-        documents_servers_directory =
-                g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS);
-
-        if (!documents_servers_directory)
-                documents_servers_directory = g_get_home_dir ();
+        documents_servers_directory = g_get_user_data_dir ();
 
         if (!documents_servers_directory) {
                 gibbon_app_display_error (app,
-                                          _("Cannot determine documents"
-                                            " servers_directory!"));
-                g_object_unref (self);
-                return NULL;
-        }
-
-        db_path = g_build_filename (documents_servers_directory,
-                                    PACKAGE, "db.sqlite", NULL);
-        self->priv->db = gibbon_database_new (app, db_path);
-        g_free (db_path);
-
-        if (!self->priv->db) {
+                                          _("Cannot determine user data"
+                                            " directory!"));
                 g_object_unref (self);
                 return NULL;
         }
@@ -234,6 +220,16 @@ gibbon_archive_new (GibbonApp *app)
                                             " servers_directory `%s': %s!"),
                                self->priv->servers_directory,
                                strerror (errno));
+                g_object_unref (self);
+                return NULL;
+        }
+
+        db_path = g_build_filename (documents_servers_directory,
+                                    PACKAGE, "db.sqlite", NULL);
+        self->priv->db = gibbon_database_new (app, db_path);
+        g_free (db_path);
+
+        if (!self->priv->db) {
                 g_object_unref (self);
                 return NULL;
         }
