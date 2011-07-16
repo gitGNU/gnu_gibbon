@@ -2,6 +2,7 @@
 <schemalist>
   <schema id="bg.Gibbon" path="/apps/gibbon/">
     <child name="preferences" schema="bg.Gibbon.preferences"/>
+    <child name="data" schema="bg.Gibbon.data"/>
   </schema>
   <schema id="bg.Gibbon.preferences" path="/apps/gibbon/preferences/">
     <child name="debugging" schema="bg.Gibbon.preferences.debugging"/>
@@ -13,12 +14,12 @@
     <key name="server-communication" type="b">
       <default>false</default>
       <_summary>Show server communication</_summary>
-      <_description>Show complete server communication in server console</_description>
+      <_description>Show complete server communication in server console.</_description>
     </key>
     <key name="timestamps" type="b">
       <default>true</default>
       <_summary>Show timestamps</_summary>
-      <_description>Prefix all server output with a high-resolution timestamp</_description>
+      <_description>Prefix all server output with a high-resolution timestamp.</_description>
     </key>
   </schema>
   <schema id="bg.Gibbon.preferences.match"
@@ -26,7 +27,7 @@
     <key name="length" type="i">
       <default>5</default>
       <_summary>Preferred match length</_summary>
-      <_description>Preferred match length (-1 for unlimited)</_description>
+      <_description>Preferred match length (-1 for unlimited).</_description>
     </key>
   </schema>
   <schema id="bg.Gibbon.preferences.server"
@@ -34,32 +35,42 @@
     <key name="address" type="s">
       <default>''</default>
       <_summary>E-mail address</_summary>
-      <_description>E-mail address to display on the server</_description>
+      <_description>E-mail address to display on the server.</_description>
     </key>
     <key name="host" type="s">
       <default>'fibs.com'</default>
       <_summary>Server</_summary>
-      <_description>The server that you want to connect to, usually fibs.com</_description>
+      <_description>The server that you want to connect to, usually fibs.com.</_description>
     </key>
     <key name="login" type="s">
       <default>''</default>
       <_summary>Login</_summary>
-      <_description>Your username on the server</_description>
+      <_description>Your username on the server.</_description>
     </key>
     <key name="password" type="s">
       <default>''</default>
       <_summary>Password</_summary>
-      <_description>Your password on the server</_description>
+      <_description>Your password on the server.</_description>
     </key>
     <key name="port" type="i">
       <default>4321</default>
       <_summary>Port</_summary>
-      <_description>The port number of the server, normally 4321</_description>
+      <_description>The port number of the server, normally 4321.</_description>
     </key>
     <key name="save-pwd" type="b">
       <default>false</default>
       <_summary>Remember password?</_summary>
       <_description>Should your password be stored on your hard disk?</_description>
+    </key>
+  </schema>
+  <schema id="bg.Gibbon.data" path="/apps/gibbon/data/">
+    <child name="recent" schema="bg.Gibbon.data.recent"/>
+  </schema>
+  <schema id="bg.Gibbon.data.recent" path="/apps/gibbon/data/recent/">
+    <key name="max-commands" type="i">
+      <default>100</default>
+      <_summary>Maximum saved commands</_summary>
+      <_description>Maximum number of server commands that should be remembered for auto-completion in the server console.</_description>
     </key>
   </schema>
 </schemalist>
