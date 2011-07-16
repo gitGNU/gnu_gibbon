@@ -25,6 +25,8 @@
   <schema id="bg.Gibbon.preferences.match"
           path="/apps/gibbon/preferences/match/">
     <key name="length" type="i">
+      <!-- FIXME! Change unlimited to 0 so that we have a valid range.  -->
+      <range min="-1" max="99"/>
       <default>5</default>
       <_summary>Preferred match length</_summary>
       <_description>Preferred match length (-1 for unlimited).</_description>
@@ -54,6 +56,7 @@
     </key>
     <key name="port" type="i">
       <default>4321</default>
+      <range min="1" max="65535"/>
       <_summary>Port</_summary>
       <_description>The port number of the server, normally 4321.</_description>
     </key>
@@ -69,6 +72,7 @@
   <schema id="bg.Gibbon.data.recent" path="/apps/gibbon/data/recent/">
     <key name="max-commands" type="i">
       <default>100</default>
+      <range min="1" max="65535"/>
       <_summary>Maximum saved commands</_summary>
       <_description>Maximum number of server commands that should be remembered for auto-completion in the server console.</_description>
     </key>
