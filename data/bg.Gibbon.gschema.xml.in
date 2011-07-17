@@ -54,13 +54,12 @@
       <_summary>Password</_summary>
       <_description>Your password on the server.</_description>
     </key>
-    <key name="port" type="i">
+    <key name="port" type="q">
       <default>4321</default>
-      <range min="1" max="65535"/>
       <_summary>Port</_summary>
       <_description>The port number of the server, normally 4321.</_description>
     </key>
-    <key name="save-pwd" type="b">
+    <key name="save-password" type="b">
       <default>false</default>
       <_summary>Remember password?</_summary>
       <_description>Should your password be stored on your hard disk?</_description>
@@ -75,6 +74,11 @@
       <range min="1" max="65535"/>
       <_summary>Maximum saved commands</_summary>
       <_description>Maximum number of server commands that should be remembered for auto-completion in the server console.</_description>
+    </key>
+    <key name="commands" type="as">
+      <default>[]</default>
+      <_summary>Recent commands</_summary>
+      <_description>List of commands that have been sent to the server recently.</_description>
     </key>
   </schema>
 </schemalist>
