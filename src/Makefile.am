@@ -76,7 +76,7 @@ common_SOURCES = 			\
 	gibbon-client-icons.c		\
 	gibbon-geo-ip-updater.c		\
 	gibbon-country.c		\
-	gibbon-gsettings.c
+	gibbon-settings.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -119,7 +119,7 @@ noinst_HEADERS =			\
 	gibbon-client-icons.h		\
 	gibbon-geo-ip-updater.h		\
 	gibbon-country.h		\
-	gibbon-gsettings.h
+	gibbon-settings.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \

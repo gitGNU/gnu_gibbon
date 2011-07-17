@@ -20,8 +20,7 @@
 #ifndef _GIBBON_CONNECTION_DIALOG_H
 # define _GIBBON_CONNECTION_DIALOG_H
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-app.h"
 
@@ -50,7 +49,7 @@
 typedef struct _GibbonConnectionDialog GibbonConnectionDialog;
 struct _GibbonConnectionDialog
 {
-        GObject parent_instance;
+        GtkDialog parent_instance;
 
         /*< private >*/
         struct _GibbonConnectionDialogPrivate *priv;
@@ -65,11 +64,14 @@ typedef struct _GibbonConnectionDialogClass GibbonConnectionDialogClass;
 struct _GibbonConnectionDialogClass
 {
         /* <private >*/
-        GObjectClass parent_class;
+        GtkDialogClass parent_class;
 };
 
 GType gibbon_connection_dialog_get_type (void) G_GNUC_CONST;
 
-GibbonConnectionDialog *gibbon_connection_dialog_new (GibbonApp *app);
+GibbonConnectionDialog *gibbon_connection_dialog_new (GibbonApp *app,
+                                                      gboolean just_conf);
+const gchar *gibbon_connection_dialog_get_password (const GibbonConnectionDialog
+                                                    *self);
 
 #endif

@@ -22,12 +22,12 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "gibbon-gsettings.h"
+#include "gibbon-settings.h"
 
 GVariant * 
-gibbon_gsettings_bind_string_to_port (const GValue *value,
-                                      const GVariantType *variant_type,
-                                      gpointer user_data)
+gibbon_settings_bind_string_to_port (const GValue *value,
+                                     const GVariantType *variant_type,
+                                     gpointer user_data)
 {
         GVariant *variant;
 
@@ -48,9 +48,9 @@ gibbon_gsettings_bind_string_to_port (const GValue *value,
 }
 
 gboolean
-gibbon_gsettings_bind_port_to_string (GValue *value,
-                                      GVariant *variant,
-                                      gpointer user_data)
+gibbon_settings_bind_port_to_string (GValue *value,
+                                     GVariant *variant,
+                                     gpointer user_data)
 {
         guint16 port = g_variant_get_uint16 (variant);
 
@@ -60,9 +60,9 @@ gibbon_gsettings_bind_port_to_string (GValue *value,
 }
 
 GVariant * 
-gibbon_gsettings_bind_trimmed_string (const GValue *value,
-                                      const GVariantType *variant_type,
-                                      gpointer user_data)
+gibbon_settings_bind_trimmed_string (const GValue *value,
+                                     const GVariantType *variant_type,
+                                     gpointer user_data)
 {
         gchar *s = pango_trim_string (g_value_get_string (value));
         GVariant *variant = g_variant_new_string (s);

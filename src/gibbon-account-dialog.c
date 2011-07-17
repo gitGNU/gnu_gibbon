@@ -31,7 +31,7 @@
 
 #include "gibbon-account-dialog.h"
 #include "gibbon-signal.h"
-#include "gibbon-gsettings.h"
+#include "gibbon-settings.h"
 
 typedef struct _GibbonAccountDialogPrivate GibbonAccountDialogPrivate;
 struct _GibbonAccountDialogPrivate {
@@ -43,7 +43,7 @@ struct _GibbonAccountDialogPrivate {
         GibbonSignal *destroy_handler;
         GibbonSignal *okay_handler;
 
-        GSettings *gsettings_server;
+        GSettings *settings;
 };
 
 #define GIBBON_ACCOUNT_DIALOG_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -66,9 +66,8 @@ gibbon_account_dialog_init (GibbonAccountDialog *self)
         self->priv->destroy_handler = NULL;
         self->priv->okay_handler = NULL;
 
-        self->priv->gsettings_server =
-                        g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
-        g_settings_delay (self->priv->gsettings_server);
+        self->priv->settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        g_settings_delay (self->priv->settings);
 }
 
 static void
@@ -87,8 +86,8 @@ gibbon_account_dialog_finalize (GObject *object)
         if (self->priv->okay_handler)
                 g_object_unref (self->priv->okay_handler);
 
-        if (self->priv->gsettings_server)
-                g_object_unref (self->priv->gsettings_server);
+        if (self->priv->settings)
+                g_object_unref (self->priv->settings);
 
         G_OBJECT_CLASS (gibbon_account_dialog_parent_class)->finalize(object);
 }
@@ -144,51 +143,51 @@ gibbon_account_dialog_new (GibbonApp *app)
 
         obj = gibbon_app_find_object (app, "account-entry-server",
                                       GTK_TYPE_ENTRY);
-        g_settings_bind_with_mapping (self->priv->gsettings_server,
+        g_settings_bind_with_mapping (self->priv->settings,
                                       GIBBON_PREFS_SERVER_HOST, obj, "text",
                                       G_SETTINGS_BIND_DEFAULT,
                                       NULL,
-                                      gibbon_gsettings_bind_trimmed_string,
+                                      gibbon_settings_bind_trimmed_string,
                                       NULL, NULL);
 
         obj = gibbon_app_find_object (app, "account-entry-port",
                                       GTK_TYPE_ENTRY);
-        g_settings_bind_with_mapping (self->priv->gsettings_server,
+        g_settings_bind_with_mapping (self->priv->settings,
                                       GIBBON_PREFS_SERVER_PORT, obj, "text",
                                       G_SETTINGS_BIND_DEFAULT,
-                                      gibbon_gsettings_bind_port_to_string,
-                                      gibbon_gsettings_bind_string_to_port,
+                                      gibbon_settings_bind_port_to_string,
+                                      gibbon_settings_bind_string_to_port,
                                       NULL, NULL);
 
         obj = gibbon_app_find_object (app, "account-entry-login",
                                       GTK_TYPE_ENTRY);
-        g_settings_bind_with_mapping (self->priv->gsettings_server,
+        g_settings_bind_with_mapping (self->priv->settings,
                                       GIBBON_PREFS_SERVER_LOGIN, obj, "text",
                                       G_SETTINGS_BIND_DEFAULT,
                                       NULL,
-                                      gibbon_gsettings_bind_trimmed_string,
+                                      gibbon_settings_bind_trimmed_string,
                                       NULL, NULL);
 
         obj = gibbon_app_find_object (app,
                                       "account-checkbutton-remember",
                                       GTK_TYPE_CHECK_BUTTON);
-        g_settings_bind (self->priv->gsettings_server,
+        g_settings_bind (self->priv->settings,
                          GIBBON_PREFS_SERVER_SAVE_PASSWORD, obj,
                          "active",
                          G_SETTINGS_BIND_DEFAULT);
 
         obj = gibbon_app_find_object (app, "account-entry-password",
                                       GTK_TYPE_ENTRY);
-        if (g_settings_get_boolean (self->priv->gsettings_server,
+        if (g_settings_get_boolean (self->priv->settings,
                                     GIBBON_PREFS_SERVER_SAVE_PASSWORD)) {
-                g_settings_bind (self->priv->gsettings_server,
+                g_settings_bind (self->priv->settings,
                                  GIBBON_PREFS_SERVER_PASSWORD, obj, "text",
                                  G_SETTINGS_BIND_DEFAULT);
         } else {
-                string = g_settings_get_string (self->priv->gsettings_server,
+                string = g_settings_get_string (self->priv->settings,
                                                 GIBBON_PREFS_SERVER_PASSWORD);
                 if (*string)
-                        g_settings_set_string (self->priv->gsettings_server,
+                        g_settings_set_string (self->priv->settings,
                                                GIBBON_PREFS_SERVER_PASSWORD,
                                                "");
                 g_free (string);
@@ -198,11 +197,11 @@ gibbon_account_dialog_new (GibbonApp *app)
 
         obj = gibbon_app_find_object (app, "account-entry-address",
                                       GTK_TYPE_ENTRY);
-        g_settings_bind_with_mapping (self->priv->gsettings_server,
+        g_settings_bind_with_mapping (self->priv->settings,
                                       GIBBON_PREFS_SERVER_ADDRESS, obj, "text",
                                       G_SETTINGS_BIND_DEFAULT,
                                       NULL,
-                                      gibbon_gsettings_bind_trimmed_string,
+                                      gibbon_settings_bind_trimmed_string,
                                       NULL, NULL);
 
         return self;
@@ -224,7 +223,7 @@ gibbon_account_dialog_on_cancel (GibbonAccountDialog *self)
 {
         g_return_if_fail (GIBBON_IS_ACCOUNT_DIALOG (self));
 
-        g_settings_revert (self->priv->gsettings_server);
+        g_settings_revert (self->priv->settings);
 
         gtk_widget_hide (GTK_WIDGET (self->priv->dialog));
 }
@@ -243,48 +242,48 @@ gibbon_account_dialog_on_okay (GibbonAccountDialog *self)
 
         app = self->priv->app;
 
-        variant = g_settings_get_value (self->priv->gsettings_server,
+        variant = g_settings_get_value (self->priv->settings,
                                         GIBBON_PREFS_SERVER_PORT);
         portno = g_variant_get_uint16 (variant);
         g_variant_unref (variant);
         if (!portno) {
-                g_settings_revert (self->priv->gsettings_server);
+                g_settings_revert (self->priv->settings);
                 gibbon_app_display_error (app, _("Invalid port number!"));
                 return;
         }
 
-        string = g_settings_get_string (self->priv->gsettings_server,
+        string = g_settings_get_string (self->priv->settings,
                                         GIBBON_PREFS_SERVER_LOGIN);
 
         if (0 == g_strcmp0 ("guest", string)) {
                 g_free (string);
-                g_settings_revert (self->priv->gsettings_server);
+                g_settings_revert (self->priv->settings);
                 gibbon_app_display_error (app,
                                           _("Guest login is not supported."));
                 return;
         }
 
-        string = g_settings_get_string (self->priv->gsettings_server,
+        string = g_settings_get_string (self->priv->settings,
                                         GIBBON_PREFS_SERVER_PASSWORD);
         obj = gibbon_app_find_object (app,
                                       "account-entry-password",
                                       GTK_TYPE_ENTRY);
-        if (g_settings_get_boolean (self->priv->gsettings_server,
+        if (g_settings_get_boolean (self->priv->settings,
                                     GIBBON_PREFS_SERVER_SAVE_PASSWORD)) {
                 /*
                  * Well, ummh, ... the effect of this is that it works. ;-)
                  */
-                g_settings_bind (self->priv->gsettings_server,
+                g_settings_bind (self->priv->settings,
                                  GIBBON_PREFS_SERVER_PASSWORD, obj,
                                  "text",
                                  G_SETTINGS_BIND_SET);
-                g_settings_bind (self->priv->gsettings_server,
+                g_settings_bind (self->priv->settings,
                                  GIBBON_PREFS_SERVER_PASSWORD, obj,
                                  "text",
                                  G_SETTINGS_BIND_DEFAULT);
         } else {
                 if (*string)
-                        g_settings_set_string (self->priv->gsettings_server,
+                        g_settings_set_string (self->priv->settings,
                                                GIBBON_PREFS_SERVER_PASSWORD,
                                                "");
                 g_settings_unbind (obj, "text");
@@ -294,5 +293,5 @@ gibbon_account_dialog_on_okay (GibbonAccountDialog *self)
 
         gtk_widget_hide (GTK_WIDGET (self->priv->dialog));
 
-        g_settings_apply (self->priv->gsettings_server);
+        g_settings_apply (self->priv->settings);
 }

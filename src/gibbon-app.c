@@ -53,6 +53,7 @@
 #include "gibbon-inviter-list-view.h"
 #include "gibbon-session.h"
 #include "gibbon-client-icons.h"
+#include "gibbon-settings.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -66,7 +67,6 @@ struct _GibbonAppPrivate {
         GibbonCairoboard *board;
         GibbonGameChat *game_chat;
         GibbonPrefs *prefs;
-        GibbonConnectionDialog *connection_dialog;
         GibbonConnection *connection;
         GibbonShouts *shouts;
 
@@ -141,7 +141,6 @@ static void gibbon_app_init(GibbonApp *self)
         self->priv->server_console = NULL;
         self->priv->game_chat = NULL;
         self->priv->prefs = NULL;
-        self->priv->connection_dialog = NULL;
         self->priv->connection = NULL;
         self->priv->shouts = NULL;
 
@@ -516,11 +515,89 @@ static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
         gtk_main_quit();
 }
 
-static void gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
+static void
+gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 {
-        if (!self->priv->connection_dialog)
-                self->priv->connection_dialog = gibbon_connection_dialog_new(
-                                self);
+        GibbonConnectionDialog *dialog;
+        gint response;
+        const gchar *password;
+        guint16 port;
+        GSettings *settings;
+        gchar *hostname = NULL;
+        gchar *login = NULL;
+        GVariant *variant;
+
+        dialog = gibbon_connection_dialog_new (self, FALSE);
+        response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+        if (response != GTK_RESPONSE_OK) {
+                gtk_widget_destroy (GTK_WIDGET (dialog));
+                return;
+        }
+
+        password = gibbon_connection_dialog_get_password (dialog);
+
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+
+        hostname = g_settings_get_string (settings,
+                                          GIBBON_PREFS_SERVER_HOST);
+        if (!hostname || !*hostname) {
+                g_free (hostname);
+                g_object_unref (settings);
+                gibbon_app_display_error (self, _("No hostname given!"));
+                return;
+        }
+
+        login = g_settings_get_string (settings,
+                                       GIBBON_PREFS_SERVER_LOGIN);
+        if (!login || !*login) {
+                g_free (hostname);
+                g_free (login);
+                g_object_unref (settings);
+                gibbon_app_display_error (self, _("No user name given!"));
+                return;
+        }
+        if (0 == g_strcmp0 (login, "guest")) {
+                g_free (hostname);
+                g_free (login);
+                g_object_unref (settings);
+                gibbon_app_display_error (self, _("Invalid login `guest'!"));
+                return;
+        }
+
+        variant = g_settings_get_value (settings, GIBBON_PREFS_SERVER_PORT);
+        port = g_variant_get_uint16 (variant);
+        g_variant_unref (variant);
+        if (!port) {
+                g_free (hostname);
+                g_free (login);
+                g_object_unref (settings);
+                gibbon_app_display_error (self, _("Invalid port number!"
+                                                  " In doubt try the default"
+                                                  " port number 4321."));
+                return;
+        }
+
+        if (!password || !*password) {
+                g_free (hostname);
+                g_free (login);
+                g_object_unref (settings);
+                gibbon_app_display_error (self, _("No password given!"));
+                return;
+        }
+
+        /*
+         * TODO: Change the constructor of gibbon_connection_new() to
+         * get all connection parameters as arguments.  That way we will
+         * get rid of GConf in GibbonConnection.
+         */
+        g_printerr ("TODO: Connect ... \n");
+        /*
+         * TODO: Get rid of GibbonAccountDialog.
+         * TODO: Remove both dialogs from the Glade UI file.
+         */
 }
 
 void gibbon_app_set_state_disconnected(GibbonApp *self)
@@ -681,10 +758,6 @@ void gibbon_app_disconnect(GibbonApp *self)
         if (self->priv->disconnected_signal)
                 g_object_unref(self->priv->disconnected_signal);
         self->priv->disconnected_signal = NULL;
-
-        if (self->priv->connection_dialog)
-                g_object_unref(self->priv->connection_dialog);
-        self->priv->connection_dialog = NULL;
 
         if (self->priv->connection)
                 g_object_unref(self->priv->connection);

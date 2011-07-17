@@ -17,8 +17,8 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_GSETTINGS_H
-# define _GIBBON_GSETTINGS_H
+#ifndef _GIBBON_SETTINGS_H
+# define _GIBBON_SETTINGS_H
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -39,15 +39,15 @@
 
 G_BEGIN_DECLS
 
-GVariant *gibbon_gsettings_bind_string_to_port (const GValue *value, 
-                                                const GVariantType *type,
-                                                gpointer user_data);
-gboolean gibbon_gsettings_bind_port_to_string (GValue *value,
-                                               GVariant *variant,
+GVariant *gibbon_settings_bind_string_to_port (const GValue *value,
+                                               const GVariantType *type,
                                                gpointer user_data);
-GVariant *gibbon_gsettings_bind_trimmed_string (const GValue *value, 
-                                                const GVariantType *type,
-                                                gpointer user_data);
+gboolean gibbon_settings_bind_port_to_string (GValue *value,
+                                              GVariant *variant,
+                                              gpointer user_data);
+GVariant *gibbon_settings_bind_trimmed_string (const GValue *value,
+                                               const GVariantType *type,
+                                               gpointer user_data);
 
 G_END_DECLS
 
