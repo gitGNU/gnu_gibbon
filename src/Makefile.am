@@ -72,10 +72,11 @@ common_SOURCES = 			\
 	gibbon-clip.c			\
 	gibbon-inviter-list.c		\
 	gibbon-inviter-list-view.c	\
-	gibbon-saved-info.c			\
-	gibbon-client-icons.c				\
-	gibbon-geo-ip-updater.c				\
-	gibbon-country.c	
+	gibbon-saved-info.c		\
+	gibbon-client-icons.c		\
+	gibbon-geo-ip-updater.c		\
+	gibbon-country.c		\
+	gibbon-gsettings.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -115,9 +116,10 @@ noinst_HEADERS =			\
 	gibbon-inviter-list.h		\
 	gibbon-inviter-list-view.h	\
 	gibbon-saved-info.h		\
-	gibbon-client-icons.h			\
-	gibbon-geo-ip-updater.h			\
-	gibbon-country.h
+	gibbon-client-icons.h		\
+	gibbon-geo-ip-updater.h		\
+	gibbon-country.h		\
+	gibbon-gsettings.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
