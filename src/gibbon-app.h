@@ -89,7 +89,6 @@ struct _GibbonPrefs *gibbon_app_get_prefs (const GibbonApp *app);
 const gchar *gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id);
 const gchar *gibbon_app_get_trimmed_entry_text (const GibbonApp *self,
                                                 const gchar *id);
-void gibbon_app_connect (GibbonApp *self);
 void gibbon_app_disconnect (GibbonApp *self);
 GtkImage *gibbon_app_load_scaled_image (const GibbonApp *self, 
                                         const gchar *path, 

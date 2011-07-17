@@ -588,19 +588,52 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 return;
         }
 
-        /*
-         * TODO: Change the constructor of gibbon_connection_new() to
-         * get all connection parameters as arguments.  That way we will
-         * get rid of GConf in GibbonConnection.
+        /* Clean up opened connection dialog and stale connection objects.
+         * The latter should not happen.
          */
-        g_printerr ("TODO: Connect ... \n");
+        gibbon_app_disconnect (self);
+        gibbon_app_set_state_connecting (self);
+
+        self->priv->connection = gibbon_connection_new (self, hostname, port,
+                                                        login, password);
+        if (!self->priv->connection) {
+                gibbon_app_disconnect (self);
+                return;
+        }
+
+        self->priv->connecting_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "connecting",
+                        G_CALLBACK (gibbon_app_on_connecting),
+                        G_OBJECT (self));
+        self->priv->connected_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "connected",
+                        G_CALLBACK (gibbon_app_on_connected),
+                        G_OBJECT (self));
+        self->priv->logged_in_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "logged_in",
+                        G_CALLBACK (gibbon_app_on_logged_in),
+                        G_OBJECT (self));
+        self->priv->network_error_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection),
+                        "network-error",
+                        G_CALLBACK (gibbon_app_on_network_error),
+                        G_OBJECT (self));
+        self->priv->disconnected_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection),
+                        "disconnected", G_CALLBACK (gibbon_app_disconnect),
+                        G_OBJECT (self));
+
+        if (!gibbon_connection_connect (self->priv->connection))
+                gibbon_app_disconnect (self);
+
         /*
          * TODO: Get rid of GibbonAccountDialog.
          * TODO: Remove both dialogs from the Glade UI file.
          */
 }
 
-void gibbon_app_set_state_disconnected(GibbonApp *self)
+void
+gibbon_app_set_state_disconnected(GibbonApp *self)
 {
         GObject* obj;
 
@@ -634,7 +667,8 @@ void gibbon_app_set_state_disconnected(GibbonApp *self)
 
 }
 
-void gibbon_app_set_state_connecting(GibbonApp *self)
+void
+gibbon_app_set_state_connecting(GibbonApp *self)
 {
         GObject* obj;
 
@@ -692,49 +726,6 @@ gibbon_app_get_trimmed_entry_text(const GibbonApp *self, const gchar *id)
         g_free(trimmed);
 
         return gtk_entry_get_text(GTK_ENTRY (entry));
-}
-
-void gibbon_app_connect(GibbonApp *self)
-{
-        /* Clean up opened connection dialog and stale connection objects.
-         * The latter should not happen.
-         */
-        gibbon_app_disconnect(self);
-        gibbon_app_set_state_connecting(self);
-
-        /* FIXME: Pass the password explicitely, as it might not be saved
-         * in the user preferences!
-         */
-        self->priv->connection = gibbon_connection_new(self);
-        if (!self->priv->connection) {
-                gibbon_app_disconnect(self);
-                return;
-        }
-
-        self->priv->connecting_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection), "connecting",
-                        G_CALLBACK (gibbon_app_on_connecting),
-                        G_OBJECT (self));
-        self->priv->connected_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection), "connected",
-                        G_CALLBACK (gibbon_app_on_connected),
-                        G_OBJECT (self));
-        self->priv->logged_in_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection), "logged_in",
-                        G_CALLBACK (gibbon_app_on_logged_in),
-                        G_OBJECT (self));
-        self->priv->network_error_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection),
-                        "network-error",
-                        G_CALLBACK (gibbon_app_on_network_error),
-                        G_OBJECT (self));
-        self->priv->disconnected_signal = gibbon_signal_new(
-                        G_OBJECT (self->priv->connection),
-                        "disconnected", G_CALLBACK (gibbon_app_disconnect),
-                        G_OBJECT (self));
-
-        if (!gibbon_connection_connect(self->priv->connection))
-                gibbon_app_disconnect(self);
 }
 
 void gibbon_app_disconnect(GibbonApp *self)

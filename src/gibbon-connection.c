@@ -26,7 +26,6 @@
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
-#include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-fibs-command.h"
 #include "gibbon-clip.h"
@@ -52,7 +51,7 @@ struct _GibbonConnectionPrivate {
         GibbonApp *app;
 
         gchar *hostname;
-        guint port;
+        guint16 port;
         gchar *login;
         gchar *password;
 
@@ -174,7 +173,6 @@ gibbon_connection_finalize (GObject *object)
 
         if (self->priv->hostname)
                 g_free (self->priv->hostname);
-        self->priv->hostname = NULL;
 
         self->priv->port = 0;
 
@@ -261,38 +259,29 @@ gibbon_connection_class_init (GibbonConnectionClass *klass)
 }
 
 GibbonConnection *
-gibbon_connection_new (GibbonApp *app)
+gibbon_connection_new (GibbonApp *app, const gchar *hostname, guint16 port,
+                       const gchar *login, const gchar *password)
 {
         GibbonConnection *self = g_object_new (GIBBON_TYPE_CONNECTION, NULL);
-        gchar *hostname;
-        GibbonPrefs *prefs;
         gsize i;
 
         g_return_val_if_fail (GIBBON_IS_APP (app), NULL);
 
         self->priv->app = app;
-        prefs = gibbon_app_get_prefs (app);
 
-        hostname = gibbon_prefs_get_string (prefs, GIBBON_PREFS_HOST);
-        if (hostname && hostname[0])
-                self->priv->hostname = g_strdup (hostname);
-        else
-                self->priv->hostname =
-                        g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
-
-        self->priv->port = gibbon_prefs_get_int (prefs, GIBBON_PREFS_PORT);
+        self->priv->hostname = g_strdup (hostname);
+        if (!self->priv->hostname)
+                self->priv->hostname = g_strdup (GIBBON_CONNECTION_DEFAULT_HOST);
+        self->priv->port = port;
         if (!self->priv->port)
                 self->priv->port = GIBBON_CONNECTION_DEFAULT_PORT;
+        self->priv->login = g_strdup (login);
+        self->priv->password = g_strdup (password);
 
-        self->priv->login = gibbon_prefs_get_string (prefs, GIBBON_PREFS_LOGIN);
-
-        /* FIXME!  If password is not saved in preferences, then this will
-         * be NULL here.
+        /*
+         * Make sure that the hostname is basically canonical.  Maybe this
+         * should be done in the binding to the corresponding setting?
          */
-        self->priv->password = gibbon_prefs_get_string (prefs,
-                                                        GIBBON_PREFS_PASSWORD);
-
-        /* Make sure that the hostname is basically canonical.  */
         for (i = 0; i < strlen (self->priv->hostname); ++i)
                 self->priv->hostname[i] =
                         g_ascii_tolower (self->priv->hostname[i]);
@@ -329,13 +318,15 @@ const gchar *
 gibbon_connection_get_hostname (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
+
         return self->priv->hostname;
 }
 
-guint
+guint16
 gibbon_connection_get_port (const GibbonConnection *self)
 {
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), 0);
+
         return self->priv->port;
 }
 
