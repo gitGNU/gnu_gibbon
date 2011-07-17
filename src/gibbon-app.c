@@ -520,7 +520,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 {
         GibbonConnectionDialog *dialog;
         gint response;
-        const gchar *password;
+        gchar *password;
         guint16 port;
         GSettings *settings;
         gchar *hostname = NULL;
@@ -535,7 +535,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 return;
         }
 
-        password = gibbon_connection_dialog_get_password (dialog);
+        password = g_strdup (gibbon_connection_dialog_get_password (dialog));
 
         gtk_widget_destroy (GTK_WIDGET (dialog));
 
@@ -544,6 +544,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         hostname = g_settings_get_string (settings,
                                           GIBBON_PREFS_SERVER_HOST);
         if (!hostname || !*hostname) {
+                g_free (password);
                 g_free (hostname);
                 g_object_unref (settings);
                 gibbon_app_display_error (self, _("No hostname given!"));
@@ -553,6 +554,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         login = g_settings_get_string (settings,
                                        GIBBON_PREFS_SERVER_LOGIN);
         if (!login || !*login) {
+                g_free (password);
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
@@ -560,6 +562,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 return;
         }
         if (0 == g_strcmp0 (login, "guest")) {
+                g_free (password);
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
@@ -571,6 +574,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         port = g_variant_get_uint16 (variant);
         g_variant_unref (variant);
         if (!port) {
+                g_free (password);
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
@@ -581,6 +585,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         }
 
         if (!password || !*password) {
+                g_free (password);
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
@@ -596,6 +601,9 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 
         self->priv->connection = gibbon_connection_new (self, hostname, port,
                                                         login, password);
+        g_free (password);
+        g_free (hostname);
+        g_free (login);
         if (!self->priv->connection) {
                 gibbon_app_disconnect (self);
                 return;
