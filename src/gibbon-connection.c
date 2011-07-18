@@ -348,6 +348,9 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonServerConsole *console;
         GibbonSession *session;
 
+        if (!self || !GIBBON_IS_CONNECTION (self))
+                return;
+
         if (self->priv->read_cancellable)
                 g_object_unref (self->priv->read_cancellable);
         self->priv->read_cancellable = NULL;
@@ -471,7 +474,8 @@ gibbon_connection_handle_output (GOutputStream *output_stream,
         GibbonFIBSCommand *command;
         gsize pending;
 
-        g_return_if_fail (GIBBON_IS_CONNECTION (self));
+        if (!self || !GIBBON_IS_CONNECTION (self))
+                return;
 
         if (self->priv->write_cancellable)
                 g_object_unref (self->priv->write_cancellable);
