@@ -651,13 +651,13 @@ gibbon_app_set_state_disconnected(GibbonApp *self)
 
         obj = gibbon_app_find_object(self, "server-command-entry",
                         GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), FALSE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), FALSE);
 
         obj = gibbon_app_find_object(self, "game-chat-entry", GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), FALSE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), FALSE);
 
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), FALSE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), FALSE);
 
 }
 
@@ -804,13 +804,13 @@ static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
 
         obj = gibbon_app_find_object(self, "server-command-entry",
                         GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), TRUE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), TRUE);
 
         obj = gibbon_app_find_object(self, "game-chat-entry", GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), TRUE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), TRUE);
 
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
-        gtk_entry_set_editable(GTK_ENTRY (obj), TRUE);
+        gtk_editable_set_editable(GTK_EDITABLE (obj), TRUE);
 
         gibbon_shouts_set_my_name(self->priv->shouts,
                         gibbon_connection_get_login(conn));

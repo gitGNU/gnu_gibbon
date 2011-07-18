@@ -336,11 +336,19 @@ print2digits (GtkTreeViewColumn *tree_column,
               GtkTreeIter *iter, gpointer data)
 {
         GtkCellRendererText *cell_text = (GtkCellRendererText *) cell;
+        gchar *text;
         gdouble d;
 
-        g_free (cell_text->text);
+        g_object_get (cell_text,
+                      "text", &text,
+                      NULL);
+
         gtk_tree_model_get (tree_model, iter, GPOINTER_TO_INT (data), &d, -1);
-        cell_text->text = g_strdup_printf ("%.2f", d);
+        text = g_strdup_printf ("%.2f", d);
+        g_object_set (cell_text,
+                      "text", text,
+                      NULL);
+        g_free (text);
 }
 
 static gboolean
@@ -456,6 +464,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         GtkWidget *label;
         GtkWidget *hbox;
         GtkWidget *spinner;
+        GtkWidget *dialog_vbox;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST_VIEW (self));
 
@@ -506,11 +515,12 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 gtk_label_set_markup (GTK_LABEL (label), message);
                 g_free (message);
 
-                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                dialog_vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+                gtk_box_pack_start (GTK_BOX (dialog_vbox),
                                     label, TRUE, TRUE, 10);
 
                 hbox = gtk_hbox_new (FALSE, 5);
-                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                gtk_box_pack_start (GTK_BOX (dialog_vbox),
                                     hbox, TRUE, TRUE, 10);
                 gtk_box_pack_start (GTK_BOX (hbox),
                                     gtk_label_new (_("Number of saved"
@@ -522,7 +532,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 gtk_spinner_start (GTK_SPINNER (spinner));
 
                 hbox = gtk_hbox_new (FALSE, 5);
-                gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+                gtk_box_pack_start (GTK_BOX (dialog_vbox),
                                     hbox, TRUE, TRUE, 10);
                 gtk_box_pack_start (GTK_BOX (hbox),
                                     gtk_label_new (_("Match length:")),
