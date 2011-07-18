@@ -28,7 +28,6 @@
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
-#include "gibbon-prefs.h"
 #include "gibbon-server-console.h"
 #include "gibbon-player-list.h"
 #include "gibbon-inviter-list.h"
@@ -45,6 +44,7 @@
 #include "gibbon-reliability.h"
 #include "gibbon-client-icons.h"
 #include "gibbon-country.h"
+#include "gibbon-settings.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -618,7 +618,7 @@ static gint
 gibbon_session_clip_who_info_end (GibbonSession *self,
                                   GSList *iter)
 {
-        GibbonPrefs *prefs;
+        GSettings *settings;
         gchar *mail;
 
         if (!self->priv->initialized) {
@@ -633,9 +633,9 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                                                  FALSE,
                                                  "toggle");
 
-                prefs = gibbon_app_get_prefs (self->priv->app);
-                mail = gibbon_prefs_get_string (prefs,
-                                                GIBBON_PREFS_MAIL_ADDRESS);
+                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+                mail = g_settings_get_string (settings,
+                                              GIBBON_PREFS_SERVER_ADDRESS);
                 if (mail) {
                         gibbon_connection_queue_command (self->priv->connection,
                                                          FALSE,
@@ -643,6 +643,7 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                                                          mail);
                         g_free (mail);
                 }
+                g_object_unref (settings);
 
         }
 
