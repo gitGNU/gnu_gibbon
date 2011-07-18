@@ -55,7 +55,9 @@ struct _GibbonConnectionPrivate {
         gchar *login;
         gchar *password;
 
-        GCancellable *cancellable;
+        GCancellable *connect_cancellable;
+        GCancellable *read_cancellable;
+        GCancellable *write_cancellable;
         GSocketClient *socket_client;
         GSocketConnection *socket_connection;
         
@@ -63,13 +65,10 @@ struct _GibbonConnectionPrivate {
         
         gchar *error;
         
-        GSocket *socket;
-        GIOChannel *io;
-        guint in_watcher;
+#define GIBBON_CONNECTION_CHUNK_SIZE 4096
+        gchar read_buf[GIBBON_CONNECTION_CHUNK_SIZE];
         gchar *in_buffer;
-        guint out_watcher;
         GList *out_queue;
-        gboolean out_ready;
         
         GibbonSession *session;
 };
@@ -82,16 +81,13 @@ struct _GibbonConnectionPrivate {
                                       GibbonConnectionPrivate))
 G_DEFINE_TYPE (GibbonConnection, gibbon_connection, G_TYPE_OBJECT);
 
-static gboolean gibbon_connection_on_input (GIOChannel *channel,
-                                            GIOCondition condition,
+static void gibbon_connection_handle_input (GInputStream *stream,
+                                            GAsyncResult *result,
                                             GibbonConnection *self);
-static gboolean gibbon_connection_on_output (GSocket *socket,
-                                             GIOCondition condition,
+static void gibbon_connection_handle_output (GOutputStream *stream,
+                                             GAsyncResult *result,
                                              GibbonConnection *self);
-static gboolean gibbon_connection_handle_input (GibbonConnection *self,
-                                                GIOChannel *channel);
-static gboolean gibbon_connection_handle_output (GibbonConnection *self,
-                                                 GIOChannel *channel);
+static void gibbon_connection_send_chunk (GibbonConnection *self);
 static void gibbon_connection_on_connect (GObject *src_object,
                                           GAsyncResult *res,
                                           gpointer _self);
@@ -110,7 +106,9 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->password = NULL;
         conn->priv->login = NULL;
         
-        conn->priv->cancellable = NULL;
+        conn->priv->connect_cancellable = NULL;
+        conn->priv->read_cancellable = NULL;
+        conn->priv->write_cancellable = NULL;
         conn->priv->socket_client = NULL;
         conn->priv->socket_connection = NULL;
 
@@ -118,15 +116,9 @@ gibbon_connection_init (GibbonConnection *conn)
         
         conn->priv->error = NULL;
         
-        conn->priv->io = NULL;
-        conn->priv->socket = NULL;
-
-        conn->priv->in_watcher = 0;
         conn->priv->in_buffer = g_strconcat ("", NULL);
         
-        conn->priv->out_watcher = 0;
         conn->priv->out_queue = NULL;
-        conn->priv->out_ready = FALSE;
         
         conn->priv->session = NULL;
 }
@@ -136,15 +128,9 @@ gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *self = GIBBON_CONNECTION (object);
 
-        if (self->priv->in_watcher)
-                g_source_remove (self->priv->in_watcher);
-
         if (self->priv->in_buffer)
                 g_free (self->priv->in_buffer);
         
-        if (self->priv->out_watcher)
-                g_source_remove (self->priv->out_watcher);
-
         if (self->priv->out_queue) {
                 g_list_foreach (self->priv->out_queue, (GFunc) g_object_unref,
                                 NULL);
@@ -152,17 +138,19 @@ gibbon_connection_finalize (GObject *object)
         }
         self->priv->out_queue = NULL;
 
-        if (self->priv->cancellable) {
-                g_cancellable_cancel (self->priv->cancellable);
-                g_object_unref (self->priv->cancellable);
+        if (self->priv->connect_cancellable) {
+                g_cancellable_cancel (self->priv->connect_cancellable);
+                g_object_unref (self->priv->connect_cancellable);
         }
 
-        if (self->priv->io)
-                g_io_channel_unref (self->priv->io);
-                
-        if (self->priv->socket) {
-                g_socket_close (self->priv->socket, NULL);
-                g_object_unref (self->priv->socket);
+        if (self->priv->read_cancellable) {
+                g_cancellable_cancel (self->priv->read_cancellable);
+                g_object_unref (self->priv->read_cancellable);
+        }
+
+        if (self->priv->write_cancellable) {
+                g_cancellable_cancel (self->priv->write_cancellable);
+                g_object_unref (self->priv->write_cancellable);
         }
 
         if (self->priv->socket_client)
@@ -299,7 +287,7 @@ gibbon_connection_connect (GibbonConnection *self)
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
         g_return_val_if_fail (self->priv->socket_client == NULL, FALSE);
 
-        self->priv->cancellable = g_cancellable_new ();
+        self->priv->connect_cancellable = g_cancellable_new ();
         self->priv->socket_client = g_socket_client_new ();
 
         g_signal_emit (self, signals[CONNECTING], 0, self);
@@ -307,7 +295,7 @@ gibbon_connection_connect (GibbonConnection *self)
         g_socket_client_connect_to_host_async (self->priv->socket_client,
                                                self->priv->hostname,
                                                self->priv->port,
-                                               self->priv->cancellable,
+                                               self->priv->connect_cancellable,
                                                gibbon_connection_on_connect,
                                                self);
 
@@ -344,58 +332,43 @@ gibbon_connection_get_password (const GibbonConnection *self)
         return self->priv->password;
 }
 
-static gboolean
-gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
+static void
+gibbon_connection_handle_input (GInputStream *input_stream,
+                                GAsyncResult *result,
+                                GibbonConnection *self)
 {
-        gchar buf[4096];
-        GIOStatus status;
         gsize bytes_read;
         GError *error = NULL;
+        gchar *pretty_login;
+        gchar *package;
+        gint clip_code;
         gchar *head;
         gchar *ptr;
         gchar *line_end;
         GibbonServerConsole *console;
-        gchar *pretty_login;
-        gint clip_code;
         GibbonSession *session;
-        gchar *package;
 
-        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), FALSE);
+        g_object_unref (self->priv->read_cancellable);
+        self->priv->read_cancellable = NULL;
 
-        status = g_io_channel_read_chars (channel, buf, -1 + sizeof buf, 
-                                          &bytes_read, &error);
-        switch (status) {
-                case G_IO_STATUS_ERROR:
-                        gdk_threads_enter ();
-                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
-                                       error->message);
-                        gdk_threads_leave ();
-                        g_error_free (error);
+        bytes_read = g_input_stream_read_finish (input_stream, result, &error);
 
-                        return FALSE;
-                        
-                case G_IO_STATUS_EOF:
-                        gdk_threads_enter ();
-                        g_signal_emit (self, signals[NETWORK_ERROR], 0,
-                                       _("End-of-file while receiving data from"
-                                         " server."));
-                        gdk_threads_leave ();
-
-                        return FALSE;
-                        
-                case G_IO_STATUS_AGAIN:
-                        /* FIXME! What is the appropriate reaction?  */
-                        return TRUE;
-                        
-                case G_IO_STATUS_NORMAL:
-                        break;
+        if (bytes_read < 0) {
+                g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                               error->message);
+                g_error_free (error);
+                return;
+        } else if (bytes_read == 0) {
+                g_signal_emit (self, signals[NETWORK_ERROR], 0,
+                               _("End-of-file while receiving data from"
+                                 " server."));
+                return;
         }
         
         /* The input fifo is not exactly efficient.  */
         head = self->priv->in_buffer;
-        buf[bytes_read] = 0;
-
-        self->priv->in_buffer = g_strconcat (head, buf, NULL);
+        self->priv->read_buf[bytes_read] = 0;
+        self->priv->in_buffer = g_strconcat (head, self->priv->read_buf, NULL);
         g_free (head);
         
 #ifndef HAVE_INDEX
@@ -420,14 +393,6 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                                                0, self);
                         }
                         if (clip_code >= 0) {
-                                /*
-                                 * Only send commands to FIBS, when it has
-                                 * send some kind of reply.  Just lumping
-                                 * them together results in only the first
-                                 * one being recognized.
-                                 */
-                                if (clip_code > 0)
-                                        self->priv->out_ready = TRUE;
                                 gibbon_server_console_print_output (console,
                                                                     ptr);
                         } else {
@@ -451,7 +416,7 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
                         package = g_strdup (PACKAGE);
                         if (*package >= 'a' && *package <= 'z')
                                 *package -= 32;
-                        self->priv->out_ready = TRUE;
+
                         gibbon_connection_queue_command (self,
                                         FALSE,
                                         "login %s_%s 9999 %s %s",
@@ -474,107 +439,56 @@ gibbon_connection_handle_input (GibbonConnection *self, GIOChannel *channel)
         } else if (self->priv->state == WAIT_WELCOME) {
                 if (strcmp (self->priv->in_buffer, "login: ") == 0) {
                         gibbon_server_console_print_output (console, "login: ");
-                        gdk_threads_enter ();
                         g_signal_emit (self, signals[NETWORK_ERROR], 0,
                                        _("Authentication failed."));
-                        gdk_threads_leave ();
-                        return FALSE;
+                        return;
                 }
         }
 
-        return TRUE;
+        self->priv->read_cancellable = g_cancellable_new ();
+        g_input_stream_read_async (input_stream,
+                                   self->priv->read_buf,
+                                   sizeof self->priv->read_buf,
+                                   G_PRIORITY_DEFAULT,
+                                   self->priv->read_cancellable,
+                                   (GAsyncReadyCallback)
+                                   gibbon_connection_handle_input,
+                                   self);
+
+        return;
 }
 
-static gboolean
-gibbon_connection_on_input (GIOChannel *io,
-                            GIOCondition condition,
-                            GibbonConnection *self)
-{
-        return gibbon_connection_handle_input (self, io);
-}
-
-static gboolean
-gibbon_connection_on_output (GSocket *socket,
-                             GIOCondition condition,
-                             GibbonConnection *self)
-{
-        GIOChannel *io;
-        guint socket_fd;
-        gboolean retval;
-
-        socket_fd = g_socket_get_fd (socket);
-
-#ifdef G_OS_WIN32
-        io = g_io_channel_win32_new_socket (socket_fd);
-#else
-        io = g_io_channel_unix_new (socket_fd);
-#endif
-
-        g_io_channel_set_encoding (io, NULL, NULL);
-        g_io_channel_set_buffered (io, FALSE);
-
-        retval = gibbon_connection_handle_output (self, io);
-
-        g_io_channel_unref (io);
-
-        return retval;
-}
-
-static gboolean
-gibbon_connection_handle_output (GibbonConnection *self, GIOChannel *channel)
+static void
+gibbon_connection_handle_output (GOutputStream *output_stream,
+                                 GAsyncResult *result,
+                                 GibbonConnection *self)
 {
         gsize bytes_written;
         GError *error = NULL;
-        GibbonFIBSCommand *command;
-        gsize pending;
-        const gchar *buffer;
         gchar *line;
         GibbonServerConsole *console;
+        GibbonFIBSCommand *command;
+        gsize pending;
 
-        g_return_val_if_fail (GIBBON_IS_CONNECTION (self), TRUE);
+        g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
-        if (!self->priv->out_queue) {
-                g_source_remove (self->priv->out_watcher);
-                self->priv->out_watcher = 0;
-                return FALSE;
-        }
+        g_object_unref (self->priv->write_cancellable);
+        self->priv->write_cancellable = NULL;
 
-        /*
-         * It is not possible to send bulk commands to FIBS.  Ideally, the
-         * next command should only be sent after a reply has been received
-         * for the last command.  But FIBS chokes on commands more than
-         * often and that approach could be dangerous.
-         *
-         * What we do instead is that we just wait for _any_ valid message
-         * from FIBS.  That could be a reply to an earlier command or just
-         * some asynchronous message.   Only in that case, we send the
-         * command.
-         */
-        if (!self->priv->out_ready)
-                return TRUE;
-        
-        command = g_list_nth_data (self->priv->out_queue, 0);
-        buffer = gibbon_fibs_command_get_pointer (command);
-        pending = gibbon_fibs_command_get_pending (command);
+        bytes_written = g_output_stream_write_finish (output_stream, result,
+                                                      &error);
 
-        if (G_IO_STATUS_NORMAL != g_io_channel_write_chars (channel,
-                                                            buffer,
-                                                            pending,
-                                                            &bytes_written,
-                                                            &error)) {
-                gdk_threads_enter ();
+        if (bytes_written < 0) {
                 g_signal_emit (self, signals[NETWORK_ERROR], 0,
                                error->message);
-                gdk_threads_leave ();
                 g_error_free (error);
-                g_object_unref (command);
-                self->priv->out_queue = g_list_remove (self->priv->out_queue,
-                                                       command);
-                return FALSE;
+                return;
         }
 
+        command = g_list_nth_data (self->priv->out_queue, 0);
         gibbon_fibs_command_write (command, bytes_written);
         pending = gibbon_fibs_command_get_pending (command);
+
         if (pending <= 0) {
                 console = gibbon_app_get_server_console (self->priv->app);
                 line = g_strdup (
@@ -589,20 +503,10 @@ gibbon_connection_handle_output (GibbonConnection *self, GIOChannel *channel)
                 g_object_unref (command);
                 self->priv->out_queue = g_list_remove (self->priv->out_queue,
                                                        command);
-                /*
-                 * Wait for a reply from FIBS, before sending the next
-                 * command.
-                 */
-                self->priv->out_ready = FALSE;
         }
 
-        if (!self->priv->out_queue) {
-                g_source_remove (self->priv->out_watcher);
-                self->priv->out_watcher = 0;
-                return FALSE;
-        }
-                        
-        return TRUE;
+        if (self->priv->out_queue)
+                gibbon_connection_send_chunk (self);
 }
 
 static void
@@ -612,7 +516,7 @@ gibbon_connection_on_connect (GObject *src_object,
 {
         GibbonConnection *self;
         GError *error = NULL;
-        guint socket_fd;
+        GInputStream *input_stream;
         
         /*
          * This can happen, when cancelled while eastablishing the
@@ -623,14 +527,15 @@ gibbon_connection_on_connect (GObject *src_object,
 
         self = GIBBON_CONNECTION (_self);
 
-        if (self->priv->cancellable)
-                g_object_unref (self->priv->cancellable);
-        self->priv->cancellable = NULL;
+        if (self->priv->connect_cancellable)
+                g_object_unref (self->priv->connect_cancellable);
+        self->priv->connect_cancellable = NULL;
 
         self->priv->socket_connection =
                 g_socket_client_connect_to_host_finish (self->priv->socket_client,
                                                         res, &error);
         g_object_unref (self->priv->socket_client);
+        self->priv->socket_client = NULL;
 
         if (!self->priv->socket_connection) {
                 gibbon_connection_fatal (self, _("Error connecting to `%s'"
@@ -642,35 +547,55 @@ gibbon_connection_on_connect (GObject *src_object,
                 return;
         }
 
-        self->priv->socket =
-                g_socket_connection_get_socket (self->priv->socket_connection);
-        g_return_if_fail (self->priv->socket != NULL);
-        
         g_signal_emit (self, signals[CONNECTED], 0, self);
 
-        /* 
-         * This is a little weird under Windows.  If we use a GIOChannel
-         * and watch it with g_io_add_watch, we can read but the channel
-         * never gets ready for output.  If we use the socket, it is
-         * always ready for input but reading fails with EAGAIN so that
-         * we effectively block the application.  We therefore use a mixed
-         * approach, and read from the GIOChannel, and write to the GSocket.                                             
-         */
-        socket_fd = g_socket_get_fd (self->priv->socket);
+        self->priv->read_cancellable = g_cancellable_new ();
         
-#ifdef G_OS_WIN32
-        self->priv->io = g_io_channel_win32_new_socket (socket_fd);
-#else
-        self->priv->io = g_io_channel_unix_new (socket_fd);
-#endif
+        input_stream = g_io_stream_get_input_stream (
+                        G_IO_STREAM (self->priv->socket_connection));
+        g_input_stream_read_async (input_stream,
+                                   self->priv->read_buf,
+                                   sizeof self->priv->read_buf,
+                                   G_PRIORITY_DEFAULT,
+                                   self->priv->read_cancellable,
+                                   (GAsyncReadyCallback)
+                                   gibbon_connection_handle_input,
+                                   self);
+}
 
-        g_io_channel_set_encoding (self->priv->io, NULL, NULL);
-        g_io_channel_set_buffered (self->priv->io, FALSE);
-        
-        self->priv->in_watcher = 
-                g_io_add_watch (self->priv->io, G_IO_IN,
-                                (GIOFunc) gibbon_connection_on_input,
-                                self);
+static void
+gibbon_connection_send_chunk (GibbonConnection *self)
+{
+        GibbonFIBSCommand *command;
+        gsize pending;
+        const gchar *buffer;
+        GIOStream *io_stream;
+        GOutputStream *output_stream;
+
+        g_return_if_fail (self->priv->socket_connection != NULL);
+        g_return_if_fail (G_IS_SOCKET_CONNECTION (self->priv->socket_connection));
+
+        if (!self->priv->out_queue)
+                return;
+
+        if (self->priv->write_cancellable)
+                return;
+
+        self->priv->write_cancellable = g_cancellable_new ();
+
+        command = g_list_nth_data (self->priv->out_queue, 0);
+        buffer = gibbon_fibs_command_get_pointer (command);
+        pending = gibbon_fibs_command_get_pending (command);
+
+        io_stream = G_IO_STREAM (self->priv->socket_connection);
+        output_stream = g_io_stream_get_output_stream (io_stream);
+
+        g_output_stream_write_async (output_stream, buffer, pending,
+                                     G_PRIORITY_DEFAULT,
+                                     self->priv->write_cancellable,
+                                     (GAsyncReadyCallback)
+                                     gibbon_connection_handle_output,
+                                     self);
 }
 
 void
@@ -682,7 +607,6 @@ gibbon_connection_queue_command (GibbonConnection *self,
         gchar *formatted;
         gchar *line;
         GibbonFIBSCommand *command;
-        GSource *source;
 
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
         
@@ -696,18 +620,8 @@ gibbon_connection_queue_command (GibbonConnection *self,
 
         self->priv->out_queue = g_list_append (self->priv->out_queue, command);
 
-
-        if (!self->priv->out_watcher) {
-                source = g_socket_create_source (self->priv->socket, G_IO_OUT,
-                                                 NULL);
-                g_source_set_priority (source, G_PRIORITY_DEFAULT);
-                g_source_set_callback (source,
-                                       (GSourceFunc)
-                                       gibbon_connection_on_output,
-                                       self, NULL);
-                self->priv->out_watcher = g_source_attach (source, NULL);
-                g_source_unref (source);
-        }
+        if (!self->priv->write_cancellable)
+                gibbon_connection_send_chunk (self);
 }
 
 static void
