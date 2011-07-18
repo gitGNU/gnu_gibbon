@@ -301,11 +301,15 @@ print2digits (GtkTreeViewColumn *tree_column,
               GtkTreeIter *iter, gpointer data)
 {
         GtkCellRendererText *cell_text = (GtkCellRendererText *) cell;
+        gchar *text;
         gdouble d;
 
-        g_free (cell_text->text);
         gtk_tree_model_get (tree_model, iter, GPOINTER_TO_INT (data), &d, -1);
-        cell_text->text = g_strdup_printf ("%.2f", d);
+        text = g_strdup_printf ("%.2f", d);
+        g_object_set (cell_text,
+                      "text", text,
+                      NULL);
+        g_free (text);
 }
 
 static gboolean
