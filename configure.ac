@@ -63,7 +63,6 @@ AC_CONFIG_HEADERS(config.h)
 
 LT_INIT
 
-AC_PATH_PROG(GCONFTOOL, gconftool-2)
 IT_PROG_INTLTOOL([0.40.6])
 
 AC_PATH_PROG(LWP_REQUEST, "lwp-request")
@@ -140,7 +139,6 @@ GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
 
-AM_GCONF_SOURCE_2
 GLIB_GSETTINGS
 
 dnl gtk-doc 1.16 produces a failure for missing overview.xml after
