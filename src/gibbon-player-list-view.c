@@ -37,7 +37,7 @@
 #include "gibbon-reliability.h"
 #include "gibbon-session.h"
 #include "gibbon-saved-info.h"
-#include "gibbon-prefs.h"
+#include "gibbon-settings.h"
 
 typedef struct _GibbonPlayerListViewPrivate GibbonPlayerListViewPrivate;
 struct _GibbonPlayerListViewPrivate {
@@ -62,7 +62,7 @@ struct _GibbonPlayerListViewPrivate {
 
 static int const match_lengths[] = {
                 1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19,
-                29, 39, 49, 59, 69, 79, 89, 99, -1
+                29, 39, 49, 59, 69, 79, 89, 99, 0
 };
 
 #define GIBBON_PLAYER_LIST_VIEW_PRIVATE(obj) \
@@ -447,8 +447,8 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         const GibbonSavedInfo *saved_info;
         GtkWidget *combo;
         gint selected = -1;
-        GibbonPrefs *prefs;
-        gint pref_length;
+        GSettings *settings;
+        guint pref_length;
         gchar *length_string;
         gint length;
         gint i;
@@ -531,16 +531,17 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 gtk_box_pack_start (GTK_BOX (hbox),
                                     combo, TRUE, TRUE, 0);
 
-                prefs = gibbon_app_get_prefs (self->priv->app);
+                settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
 
-                pref_length = gibbon_prefs_get_int (prefs,
-                                                    GIBBON_PREFS_MATCH_LENGTH);
+                pref_length = gibbon_settings_get_uint (settings,
+                                                     GIBBON_PREFS_MATCH_LENGTH);
+                g_object_unref (settings);
 
                 for (i = 0;
                      i < (sizeof match_lengths) / (sizeof match_lengths[0]);
                      ++i) {
                         length = match_lengths[i];
-                        if (length < 0) {
+                        if (!length) {
                                 length_string = g_strdup (_("unlimited"));
                         } else {
                                 length_string = g_strdup_printf ("%d", length);
@@ -579,7 +580,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 }
 
                 length = match_lengths[selected];
-                if (length < 0) {
+                if (!length) {
                         length_string = g_strdup ("unlimited");
                 } else {
                         length_string = g_strdup_printf ("%d", length);
@@ -590,8 +591,10 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                                                  who, length_string);
                 g_free (length_string);
 
-                (void) gibbon_prefs_set_int (prefs, GIBBON_PREFS_MATCH_LENGTH,
-                                             length);
+                settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
+                gibbon_settings_set_uint (settings, GIBBON_PREFS_MATCH_LENGTH,
+                                          length);
+                g_object_unref (settings);
 
                 gtk_widget_destroy (dialog);
         }

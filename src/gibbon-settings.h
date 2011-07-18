@@ -44,6 +44,9 @@
 #define GIBBON_PREFS_DEBUG_TIMESTAMPS "timestamps"
 #define GIBBON_PREFS_DEBUG_FIBS "server-communication"
 
+#define GIBBON_PREFS_MATCH_SCHEMA GIBBON_PREFS_SCHEMA ".match"
+#define GIBBON_PREFS_MATCH_LENGTH "length"
+
 #define GIBBON_DATA_SCHEMA GIBBON_SCHEMA ".data"
 
 #define GIBBON_DATA_RECENT_SCHEMA GIBBON_DATA_SCHEMA ".recent"
@@ -65,6 +68,8 @@ GVariant *gibbon_settings_bind_trimmed_string (const GValue *value,
 guint gibbon_settings_get_uint (GSettings *settings, const gchar *key);
 gboolean gibbon_settings_set_string_list (GSettings *settings, const gchar *key,
                                           GSList *list);
+gboolean gibbon_settings_set_uint (GSettings *settings, const gchar *key,
+                                   guint value);
 
 G_END_DECLS
 

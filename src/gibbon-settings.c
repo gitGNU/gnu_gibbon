@@ -125,3 +125,10 @@ gibbon_settings_set_string_list (GSettings *settings, const gchar *key,
 
         return retval;
 }
+
+gboolean
+gibbon_settings_set_uint (GSettings *settings, const gchar *key, guint value)
+{
+        return g_settings_set_value (settings, key,
+                                     g_variant_new_uint32 (value));
+}
