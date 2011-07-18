@@ -61,7 +61,7 @@ struct _GibbonFIBSCommand
 /**
  * GibbonFIBSCommandClass:
  *
- * FIXME! The author was negligent enough to not document this class!
+ * Queued output command for FIBS communcation!
  **/
 typedef struct _GibbonFIBSCommandClass GibbonFIBSCommandClass;
 struct _GibbonFIBSCommandClass

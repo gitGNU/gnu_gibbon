@@ -19,11 +19,12 @@
 
 /**
  * SECTION:gibbon-fibs-command
- * @short_description: FIXME! Short description missing!
+ * @short_description: Entry for an output command queue!
  *
  * Since: 0.1.1
  *
- * FIXME! Long description missing!
+ * We have to queue commands to the server.  Each individual element in the
+ * queue is represented by an GibbonFIBSCommand.
  **/
 
 #include <glib.h>
@@ -65,13 +66,12 @@ gibbon_fibs_command_finalize (GObject *object)
 
         if (self->priv->line)
                 g_free (self->priv->line);
-        self->priv->line = NULL;
 
         self->priv->length = 0;
         self->priv->is_manual = FALSE;
         self->priv->offset = 0;
 
-        G_OBJECT_CLASS (gibbon_fibs_command_parent_class)->finalize(object);
+        G_OBJECT_CLASS (gibbon_fibs_command_parent_class)->finalize (object);
 }
 
 static void
@@ -150,5 +150,3 @@ gibbon_fibs_command_get_line (const GibbonFIBSCommand *self)
 
         return self->priv->line;
 }
-
-
