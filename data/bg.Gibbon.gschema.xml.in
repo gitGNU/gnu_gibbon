@@ -24,9 +24,9 @@
   </schema>
   <schema id="bg.Gibbon.preferences.match"
           path="/apps/gibbon/preferences/match/">
-    <key name="length" type="i">
+    <key name="length" type="u">
       <!-- FIXME! Change unlimited to 0 so that we have a valid range.  -->
-      <range min="-1" max="99"/>
+      <range min="0" max="99"/>
       <default>5</default>
       <_summary>Preferred match length</_summary>
       <_description>Preferred match length (-1 for unlimited).</_description>
