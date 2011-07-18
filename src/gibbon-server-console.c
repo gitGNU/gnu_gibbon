@@ -31,7 +31,7 @@
 
 #include <time.h>
 
-#include "gibbon-prefs.h"
+#include "gibbon-settings.h"
 #include "gibbon-server-console.h"
 #include "gibbon-signal.h"
 #include "gibbon-connection.h"
@@ -179,8 +179,8 @@ gibbon_server_console_finalize (GObject *object)
         GSList *list_iter;
         GSList *new_recents;
         guint i, max_recents;
-        GibbonPrefs *prefs;
         gchar *data;
+        GSettings *settings;
 
         self->priv->raw_tag = NULL;
         self->priv->sent_tag = NULL;
@@ -192,9 +192,10 @@ gibbon_server_console_finalize (GObject *object)
 
         if (self->priv->model) {
                 new_recents = NULL;
-                prefs = gibbon_app_get_prefs (self->priv->app);
-                max_recents = gibbon_prefs_get_int (prefs,
-                                                    GIBBON_PREFS_MAX_COMMANDS);
+                settings = g_settings_new (GIBBON_DATA_RECENT_SCHEMA);
+                max_recents =
+                        gibbon_settings_get_uint (settings,
+                                                  GIBBON_DATA_MAX_COMMANDS);
                 if (!max_recents)
                         max_recents = 100;
                 if (self->priv->num_recents < max_recents)
@@ -216,8 +217,10 @@ gibbon_server_console_finalize (GObject *object)
                         gtk_tree_path_next (path);
                 }
                 if (new_recents)
-                        gibbon_prefs_set_list (prefs, GIBBON_PREFS_COMMANDS,
-                                               new_recents);
+                        (void)
+                        gibbon_settings_set_string_list (settings,
+                                                         GIBBON_DATA_COMMANDS,
+                                                         new_recents);
 
                 list_iter = new_recents;
                 while (list_iter) {
@@ -264,10 +267,11 @@ gibbon_server_console_new (GibbonApp *app)
         GibbonServerConsole *self = g_object_new (GIBBON_TYPE_SERVER_CONSOLE,
                                                   NULL);
         PangoFontDescription *font_desc;
-        GibbonPrefs *prefs;
+        GSettings *settings;
         GObject *entry;
         GtkEntryCompletion *completion;
-        GSList *recents;
+        gchar **recents;
+        gchar **recent;
         GtkTreeIter iter;
         gsize num_known;
         gsize i;
@@ -310,25 +314,24 @@ gibbon_server_console_new (GibbonApp *app)
         gtk_entry_set_completion (GTK_ENTRY (entry), completion);
         self->priv->model = gtk_list_store_new (1, G_TYPE_STRING);
 
-        prefs = gibbon_app_get_prefs (app);
-        self->priv->max_recents =
-                gibbon_prefs_get_int (prefs,
-                                      GIBBON_PREFS_MAX_COMMANDS);
-        recents = gibbon_prefs_get_list (prefs,
-                                         GIBBON_PREFS_COMMANDS);
+        settings = g_settings_new (GIBBON_DATA_RECENT_SCHEMA);
 
-        /* Upgrade to a doubly-linked list.  */
-        while (recents) {
-                if (recents->data) {
-                        ++self->priv->num_recents;
-                        gtk_list_store_append (self->priv->model, &iter);
-                        gtk_list_store_set (self->priv->model, &iter,
-                                            0, recents->data,
-                                            -1);
-                }
-                recents = recents->next;
+        self->priv->max_recents =
+                        gibbon_settings_get_uint (settings,
+                                                  GIBBON_DATA_MAX_COMMANDS);
+        recents = g_settings_get_strv (settings,
+                                       GIBBON_DATA_COMMANDS);
+        g_object_unref (settings);
+
+        recent = recents;
+        while (*recent) {
+                ++self->priv->num_recents;
+                gtk_list_store_append (self->priv->model, &iter);
+                gtk_list_store_set (self->priv->model, &iter, 0, *recent, -1);
+                ++recent;
         }
-        g_slist_free (recents);
+        g_strfreev (recents);
+
         num_known = (sizeof fibs_commands) / (sizeof fibs_commands[0]);
         for (i = 0; i < num_known; ++i) {
                 gtk_list_store_append (self->priv->model, &iter);
@@ -358,24 +361,24 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         GtkTextBuffer *buffer = self->priv->buffer;
         gint length;
         GtkTextIter start, end;
-        GibbonPrefs *prefs = prefs;
         struct tm *now;
         GTimeVal timeval;
         gchar *timestamp;
+        GSettings *settings;
 
         length = gtk_text_buffer_get_char_count (buffer);
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
         gtk_text_buffer_place_cursor (buffer, &start);
 
-        prefs = gibbon_app_get_prefs (self->priv->app);
+        settings = g_settings_new (GIBBON_PREFS_DEBUG_SCHEMA);
 
         /* We abuse the prefix a little.  If prefix is empty it is ignored.
          * If it is NULL, we assume that this is the login and in this case
          * we never print a timestamp.
          */
         if (prefix
-            && gibbon_prefs_get_boolean (prefs,
-                                         GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
+            && g_settings_get_boolean (settings,
+                                       GIBBON_PREFS_DEBUG_TIMESTAMPS)) {
                 g_get_current_time (&timeval);
                 now = localtime ((time_t *) &timeval.tv_sec);
                 timestamp = g_strdup_printf ("[%02d:%02d:%02d.%06ld] ",
@@ -386,6 +389,7 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                 gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
                 g_free (timestamp);
         }
+        g_object_unref (settings);
 
         if (prefix)
                 gtk_text_buffer_insert_at_cursor (buffer, prefix, -1);
@@ -431,12 +435,15 @@ void
 gibbon_server_console_print_output (GibbonServerConsole *self,
                                     const gchar *string)
 {
-        GibbonPrefs *prefs = prefs;
+        GSettings *settings;
 
-        prefs = gibbon_app_get_prefs (self->priv->app);
+        g_return_if_fail (GIBBON_IS_SERVER_CONSOLE (self));
+        g_return_if_fail (string != NULL);
 
-        if (gibbon_prefs_get_boolean (prefs,
-                                      GIBBON_PREFS_DEBUG_SERVER_COMM)) {
+        settings = g_settings_new (GIBBON_PREFS_DEBUG_SCHEMA);
+
+        if (g_settings_get_boolean (settings,
+                                    GIBBON_PREFS_DEBUG_FIBS)) {
                 _gibbon_server_console_print_raw (self, string,
                                 self->priv->received_tag,
                                 "<<< ", TRUE);
@@ -447,16 +454,20 @@ void
 gibbon_server_console_print_input (GibbonServerConsole *self,
                                    const gchar *string)
 {
-        GibbonPrefs *prefs = prefs;
+        GSettings *settings;
 
-        prefs = gibbon_app_get_prefs (self->priv->app);
+        g_return_if_fail (GIBBON_IS_SERVER_CONSOLE (self));
+        g_return_if_fail (string != NULL);
 
-        if (gibbon_prefs_get_boolean (prefs,
-                                      GIBBON_PREFS_DEBUG_SERVER_COMM)) {
+        settings = g_settings_new (GIBBON_PREFS_DEBUG_SCHEMA);
+
+        if (g_settings_get_boolean (settings,
+                                    GIBBON_PREFS_DEBUG_FIBS)) {
                 _gibbon_server_console_print_raw (self, string,
                                 self->priv->sent_tag,
                                 ">>> ", TRUE);
         }
+        g_object_unref (settings);
 }
 
 static void

@@ -26,9 +26,12 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include <gio/gio.h>
 
 #define GIBBON_SCHEMA "bg.Gibbon"
+
 #define GIBBON_PREFS_SCHEMA GIBBON_SCHEMA ".preferences"
+
 #define GIBBON_PREFS_SERVER_SCHEMA GIBBON_PREFS_SCHEMA ".server"
 #define GIBBON_PREFS_SERVER_HOST "host"
 #define GIBBON_PREFS_SERVER_LOGIN "login"
@@ -36,6 +39,16 @@
 #define GIBBON_PREFS_SERVER_PORT "port"
 #define GIBBON_PREFS_SERVER_SAVE_PASSWORD "save-password"
 #define GIBBON_PREFS_SERVER_ADDRESS "address"
+
+#define GIBBON_PREFS_DEBUG_SCHEMA GIBBON_PREFS_SCHEMA ".debugging"
+#define GIBBON_PREFS_DEBUG_TIMESTAMPS "timestamps"
+#define GIBBON_PREFS_DEBUG_FIBS "server-communication"
+
+#define GIBBON_DATA_SCHEMA GIBBON_SCHEMA ".data"
+
+#define GIBBON_DATA_RECENT_SCHEMA GIBBON_DATA_SCHEMA ".recent"
+#define GIBBON_DATA_COMMANDS "commands"
+#define GIBBON_DATA_MAX_COMMANDS "max-commands"
 
 G_BEGIN_DECLS
 
@@ -48,6 +61,10 @@ gboolean gibbon_settings_bind_port_to_string (GValue *value,
 GVariant *gibbon_settings_bind_trimmed_string (const GValue *value,
                                                const GVariantType *type,
                                                gpointer user_data);
+
+guint gibbon_settings_get_uint (GSettings *settings, const gchar *key);
+gboolean gibbon_settings_set_string_list (GSettings *settings, const gchar *key,
+                                          GSList *list);
 
 G_END_DECLS
 

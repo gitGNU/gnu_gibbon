@@ -69,7 +69,7 @@
     <child name="recent" schema="bg.Gibbon.data.recent"/>
   </schema>
   <schema id="bg.Gibbon.data.recent" path="/apps/gibbon/data/recent/">
-    <key name="max-commands" type="i">
+    <key name="max-commands" type="u">
       <default>100</default>
       <range min="1" max="65535"/>
       <_summary>Maximum saved commands</_summary>

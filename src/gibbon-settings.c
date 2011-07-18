@@ -72,3 +72,56 @@ gibbon_settings_bind_trimmed_string (const GValue *value,
         return variant;
 }
 
+guint
+gibbon_settings_get_uint (GSettings *settings, const gchar *key)
+{
+        GVariant *variant;
+        guint retval;
+
+        g_return_val_if_fail (G_IS_SETTINGS (settings), 0);
+        g_return_val_if_fail (key != NULL, 0);
+
+        variant = g_settings_get_value (settings, key);
+        retval = g_variant_get_uint32 (variant);
+        g_variant_unref (variant);
+
+        return retval;
+}
+
+/*
+ * We cannot use const GSettings or const GSList here.  Blame Glib!
+ */
+gboolean
+gibbon_settings_set_string_list (GSettings *settings, const gchar *key,
+                                 GSList *list)
+{
+        const GSList *iter;
+        const gchar **strv;
+        guint length;
+        guint i;
+        gboolean retval;
+
+        g_return_val_if_fail (G_IS_SETTINGS (settings), FALSE);
+        g_return_val_if_fail (key != NULL, FALSE);
+
+        length = g_slist_length (list);
+        /* Early exit?  */
+        if (!length)
+                return g_settings_set_strv (settings, key, NULL);
+
+        /*
+         * Better not use g_alloca here because there is no arbitrary limit
+         * on the length of the list to store.
+         */
+        strv = g_malloc ((length + 1) * sizeof *strv);
+
+        strv[length] = NULL;
+        for (iter = list, i = 0; iter; iter = iter->next)
+                strv[i++] = iter->data;
+
+        retval = g_settings_set_strv (settings, key, strv);
+
+        g_free (strv);
+
+        return retval;
+}
