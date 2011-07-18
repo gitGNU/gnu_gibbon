@@ -59,6 +59,12 @@ AM_CONDITIONAL(OSX, test x$platform_osx = xyes)
 
 AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_msdos$platform_osx = xnono)
 
+AC_ARG_ENABLE(gtk3-migration,
+              AC_HELP_STRING([--enable-gtk3-migration],
+                             [Enable additional compiler flags to check for compatibility with gtk+-3.0 [default=no]]),
+              [gibbon_gtk_migration_pre_flight=$enableval])
+AM_CONDITIONAL(GIBBON_GTK_MIGRATION_PRE_FLIGHT, test "x$gibbon_gtk_migration_pre_flight" = "xyes")
+
 AC_CONFIG_HEADERS(config.h)
 
 LT_INIT
