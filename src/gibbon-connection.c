@@ -348,7 +348,8 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonServerConsole *console;
         GibbonSession *session;
 
-        g_object_unref (self->priv->read_cancellable);
+        if (self->priv->read_cancellable)
+                g_object_unref (self->priv->read_cancellable);
         self->priv->read_cancellable = NULL;
 
         bytes_read = g_input_stream_read_finish (input_stream, result, &error);
@@ -472,7 +473,8 @@ gibbon_connection_handle_output (GOutputStream *output_stream,
 
         g_return_if_fail (GIBBON_IS_CONNECTION (self));
 
-        g_object_unref (self->priv->write_cancellable);
+        if (self->priv->write_cancellable)
+                g_object_unref (self->priv->write_cancellable);
         self->priv->write_cancellable = NULL;
 
         bytes_written = g_output_stream_write_finish (output_stream, result,
