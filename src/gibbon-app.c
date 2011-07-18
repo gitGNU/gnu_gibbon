@@ -43,7 +43,6 @@
 #include "gibbon-signal.h"
 #include "gibbon-server-console.h"
 #include "gibbon-shouts.h"
-#include "gibbon-account-dialog.h"
 #include "gibbon-chat-view.h"
 #include "gibbon-chat.h"
 #include "gibbon-help.h"
@@ -75,8 +74,6 @@ struct _GibbonAppPrivate {
         GibbonSignal *logged_in_signal;
         GibbonSignal *network_error_signal;
         GibbonSignal *disconnected_signal;
-
-        GibbonAccountDialog *account_dialog;
 
         GHashTable *chats;
 
@@ -149,8 +146,6 @@ static void gibbon_app_init(GibbonApp *self)
         self->priv->logged_in_signal = NULL;
         self->priv->network_error_signal = NULL;
         self->priv->disconnected_signal = NULL;
-
-        self->priv->account_dialog = NULL;
 
         self->priv->chats = NULL;
 
@@ -930,12 +925,13 @@ gibbon_app_get_game_chat(const GibbonApp *self)
 
 static void gibbon_app_on_account_prefs(GibbonApp *self)
 {
+        GibbonConnectionDialog *dialog;
+
         g_return_if_fail (GIBBON_IS_APP (self));
 
-        if (!self->priv->account_dialog)
-                self->priv->account_dialog = gibbon_account_dialog_new(self);
-
-        gibbon_account_dialog_show(self->priv->account_dialog);
+        dialog = gibbon_connection_dialog_new (self, TRUE);
+        gtk_dialog_run (GTK_DIALOG (dialog));
+        gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 void gibbon_app_start_chat(GibbonApp *self, const gchar *who)

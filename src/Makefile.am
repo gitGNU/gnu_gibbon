@@ -61,7 +61,6 @@ common_SOURCES = 			\
 	gibbon-shouts.c			\
 	gibbon-position.c		\
 	gibbon-board.c			\
-	gibbon-account-dialog.c		\
 	gibbon-chat-view.c		\
 	gibbon-chat.c			\
 	gibbon-help.c			\
@@ -104,7 +103,6 @@ noinst_HEADERS =			\
 	gibbon-shouts.h			\
 	gibbon-position.h		\
 	gibbon-board.h			\
-	gibbon-account-dialog.h		\
 	gibbon-chat-view.h		\
 	gibbon-chat.h			\
 	gibbon-help.h			\
