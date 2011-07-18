@@ -455,7 +455,7 @@ gibbon_cairoboard_expose (GtkWidget *widget, GdkEventExpose *event)
         
         g_return_val_if_fail (GIBBON_IS_CAIROBOARD (widget), FALSE);
         
-        cr = gdk_cairo_create (widget->window);
+        cr = gdk_cairo_create (gtk_widget_get_window (widget));
         
         cairo_rectangle (cr,
                          event->area.x, event->area.y,
@@ -473,7 +473,7 @@ static void
 gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
-        GtkAllocation *allocation;
+        GtkAllocation allocation;
         gdouble widget_ratio;
         gdouble translate_x, translate_y, scale;
         gdouble aspect_ratio;
@@ -492,24 +492,24 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         aspect_ratio = (double) width / height;
         
         widget = GTK_WIDGET (self);
-        allocation = &widget->allocation;
+        gtk_widget_get_allocation (widget, &allocation);
         
-        if (!allocation->height)
+        if (!allocation.height)
                 return;
-        if (!allocation->width)
+        if (!allocation.width)
                 return;
         
-        widget_ratio = (gdouble) allocation->width / allocation->height;
+        widget_ratio = (gdouble) allocation.width / allocation.height;
 
         if (widget_ratio > aspect_ratio) {
-                scale = (gdouble) allocation->height / height; 
+                scale = (gdouble) allocation.height / height; 
                 translate_y = 0;
-                translate_x = (allocation->width 
+                translate_x = (allocation.width 
                                - scale * width) / 2;
         } else {
-                scale = (gdouble) allocation->width / width;
+                scale = (gdouble) allocation.width / width;
                 translate_x = 0;
-                translate_y = (allocation->height 
+                translate_y = (allocation.height 
                                - scale * height) / 2;
         }
 
@@ -517,8 +517,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         cairo_scale (cr, scale, scale);
 
         svg_cairo_set_viewport_dimension (self->priv->board->scr,
-                                          allocation->width,
-                                          allocation->height);
+                                          allocation.width,
+                                          allocation.height);
         svg_cairo_render (self->priv->board->scr, cr);
 
         gibbon_draw_dice (self, cr);
