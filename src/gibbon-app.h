@@ -84,7 +84,6 @@ GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,
                                  GType type);
 GtkWidget *gibbon_app_get_window (const GibbonApp *self);
 const gchar *gibbon_app_get_pixmaps_directory (const GibbonApp *app);
-struct _GibbonPrefs *gibbon_app_get_prefs (const GibbonApp *app);
 
 const gchar *gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id);
 const gchar *gibbon_app_get_trimmed_entry_text (const GibbonApp *self,

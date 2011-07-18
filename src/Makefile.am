@@ -47,7 +47,6 @@ common_SOURCES = 			\
 	html-entities.c			\
 	svg-util.c			\
 	gibbon-game-chat.c		\
-	gibbon-prefs.c			\
 	gibbon-archive.c		\
 	gibbon-java-fibs-importer.c	\
 	gibbon-action.c			\
@@ -89,7 +88,6 @@ noinst_HEADERS =			\
 	html-entities.h			\
 	svg-util.h			\
 	gibbon-game-chat.h		\
-	gibbon-prefs.h			\
 	gibbon-archive.h		\
 	gibbon-java-fibs-importer.h	\
 	gibbon-action.h			\

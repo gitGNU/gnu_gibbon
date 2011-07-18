@@ -37,7 +37,6 @@
 #include "gibbon-board.h"
 #include "gibbon-cairoboard.h"
 #include "gibbon-game-chat.h"
-#include "gibbon-prefs.h"
 #include "gibbon-connection-dialog.h"
 #include "gibbon-connection.h"
 #include "gibbon-signal.h"
@@ -65,7 +64,6 @@ struct _GibbonAppPrivate {
         GibbonServerConsole *server_console;
         GibbonCairoboard *board;
         GibbonGameChat *game_chat;
-        GibbonPrefs *prefs;
         GibbonConnection *connection;
         GibbonShouts *shouts;
 
@@ -137,7 +135,6 @@ static void gibbon_app_init(GibbonApp *self)
                 g_object_unref(self->priv->server_console);
         self->priv->server_console = NULL;
         self->priv->game_chat = NULL;
-        self->priv->prefs = NULL;
         self->priv->connection = NULL;
         self->priv->shouts = NULL;
 
@@ -218,12 +215,6 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
         gchar *board_filename;
 
         g_return_val_if_fail (singleton == NULL, singleton);
-
-        self->priv->prefs = gibbon_prefs_new();
-        if (!self->priv->prefs) {
-                g_object_unref(self);
-                return NULL;
-        }
 
         self->priv->builder = gibbon_app_get_builder(self, builder_path);
         if (!self->priv->builder) {
@@ -692,14 +683,6 @@ gibbon_app_set_state_connecting(GibbonApp *self)
         obj = gibbon_app_find_object(self, "disconnect_menu_item",
                         GTK_TYPE_IMAGE_MENU_ITEM);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-}
-
-GibbonPrefs *
-gibbon_app_get_prefs(const GibbonApp *self)
-{
-        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
-
-        return self->priv->prefs;
 }
 
 const gchar *
