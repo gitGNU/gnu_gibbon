@@ -18,3 +18,6 @@
 		
 EXTRA_DIST = gibbon.iss.in build-installer.sh
 
+all-local: gibbon.iss
+
+gibbon.iss: gibbon.iss.in

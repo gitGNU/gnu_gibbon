@@ -17,7 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs win32
+SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs msdos
 if BUILD_HELP 
 SUBDIRS += help
 endif

@@ -22,7 +22,12 @@ AUTOMAKE_OPTIONS = color-tests
 platform_libadd =
 
 if MSDOS
-platform_libadd += -ldnsapi -lws2_32
+gibbon-res.o: gibbon.rc ../share/icons/application/gibbon.ico
+	$(WINDRES) -i gibbon.rc --input-format=rc -o $@ -O coff
+
+gibbon.rc: gibbon.rc.in
+
+platform_libadd += gibbon-res.o -ldnsapi -lws2_32
 endif
 
 if GIBBON_GTK_MIGRATION_PRE_FLIGHT
@@ -131,6 +136,9 @@ noinst_HEADERS =			\
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 	$(GIBBON_LIBS) $(platform_libadd)
+if MSDOS
+gibbon_LDFLAGS = -mwindows
+endif
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
@@ -155,4 +163,4 @@ test_clip_SOURCES = $(common_SOURCES) test-clip.c
 
 SGF_FILES =
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) 
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) gibbon.rc

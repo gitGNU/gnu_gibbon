@@ -1,0 +1,25 @@
+A ICON "../share/icons/application/gibbon.ico"
+1 VERSIONINFO
+FILEVERSION     0,0,1,0 
+PRODUCTVERSION  0,0,1,0 
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "Guido Flohr"
+      VALUE "FileDescription", "A free client for FIBS"
+      VALUE "FileVersion", "@PACKAGE_VERSION@.0"
+      VALUE "InternalName", "gibbon"
+      VALUE "LegalCopyright", "Guido Flohr"
+      VALUE "OriginalFilename", "gibbon.exe"
+      VALUE "ProductName", "Gibbon"
+      VALUE "ProductVersion", "@PACKAGE_VERSION@.0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

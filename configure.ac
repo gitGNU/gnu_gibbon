@@ -36,6 +36,7 @@ AM_MAINTAINER_MODE
 AC_MSG_CHECKING([for MS-DOS])
 case "$host" in
 	*-*-mingw*)
+		AC_CHECK_TOOL(WINDRES, windres)
 		gibbon_native_msdos=yes
         	;;
 	*)
@@ -169,6 +170,7 @@ AC_CONFIG_FILES([
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile
+    src/gibbon.rc
     data/Makefile
     data/gibbon.desktop.in
     pixmaps/Makefile
@@ -184,8 +186,8 @@ AC_CONFIG_FILES([
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
     help/Makefile
-    win32/Makefile
-    win32/gibbon.iss
+    msdos/Makefile
+    msdos/gibbon.iss
     share/Makefile
     share/icons/Makefile
     share/icons/application/Makefile

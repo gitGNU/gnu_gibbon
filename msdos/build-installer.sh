@@ -127,12 +127,10 @@ find installer/locale/share/locale/ -type f | grep -v atk10.mo | grep -v gtk20.m
 find installer/locale/share/locale -type d | xargs rmdir -p --ignore-fail-on-non-empty
 
 # GConf.
-echo "Copying GConf schemas and gconf daemon ..."
-mkdir -p installer/gibbon/etc/gconf/schemas || exit 1
-cp "${gibbon_prefix}/etc/gconf/schemas/"* installer/gibbon/etc/gconf/schemas ||exit
-cp -R "${gibbon_prefix}/etc/gconf/"* installer/gibbon/etc/gconf || exit 1
-mkdir -p installer/gibbon/libexec || exit 1
-cp "${mingw_prefix}/libexec/gconfd-2.exe" installer/gibbon/libexec || exit 1
+echo "Copying GSettings schemas ..."
+mkdir -p installer/gibbon/share/glib-2.0/schemas || exit 1
+cp "${gibbon_prefix}/share/glib-2.0/schemas/bg.Gibbon.gschema.xml" installer/gibbon/share/glib-2.0/schemas || exit 1
+"${mingw_prefix}/bin/glib-compile-schemas.exe" installer/gibbon/share/glib-2.0/schemas || exit 1
 
 # Pixmaps, etc.
 echo "Copying shared data (ui files, icons, etc.)..."
@@ -149,14 +147,19 @@ mkdir -p installer/gibbon/bin
 cp "${gibbon_prefix}/bin/gibbon.exe" installer/gibbon/bin || exit 1
 strip installer/gibbon/bin/gibbon.exe || exit 1
 
-# Just a dummy so that the file gets uninstalled.
-mkdir -p installer/lib/gdk-pixbuf-2.0/2.10.0
-touch installer/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache || exit 1
+# Dummies to make sure that the file get uninstalled.
+mkdir -p installer/Gibbon/etc/gtk-2.0
+touch installer/Gibbon/etc/gtk-2.0/gtk.immodules || exit 1
+mkdir -p installer/Gibbon/lib/gdk-pixbuf-2.0/2.10.0
+touch installer/Gibbon/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache || exit 1
 
 echo "gdk-pixbuf-query-loaders.exe > ../lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" >installer/gibbon/bin/querymodules.bat
 echo "gtk-query-immodules-2.0.exe > ../etc/gtk-2.0/gtk.immodules" >>installer/gibbon/bin/querymodules.bat
 
 echo "Creating installer..."
+
+cp license.txt installer/license.txt
+cp *.isl installer
 
 perl -pe "s/INSTALLERREVISION/$revision/" gibbon.iss >installer/gibbon.iss || exit | 1
 "$ISCC" installer/gibbon.iss >/dev/null || exit 1
