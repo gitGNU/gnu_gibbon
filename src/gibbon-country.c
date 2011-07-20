@@ -1701,7 +1701,7 @@ static const gchar * const country_names[GIBBON_COUNTRY_MAX] = {
         /* sr */
         N_("Suriname"),
         /* ss */
-        NULL,
+        N_("South Sudan"),
         /* st */
         N_("Sao Tome and Principe"),
         /* su */

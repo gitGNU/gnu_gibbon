@@ -217,6 +217,7 @@ pixmap_DATA = \
 	sn.png \
 	so.png \
 	sr.png \
+	ss.png \
 	st.png \
 	sv.png \
 	sy.png \
