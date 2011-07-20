@@ -452,6 +452,7 @@ gibbon_archive_get_country (const GibbonArchive *self,
         gchar *hostname;
         GInetAddress *address;
         GResolver *resolver;
+        gsize l;
 
         g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
 
@@ -523,6 +524,17 @@ gibbon_archive_get_country (const GibbonArchive *self,
                                                  NULL,
                                                  gibbon_archive_on_resolve,
                                                  info);
+
+                /*
+                 * Assume the tld until the lookup is done, but only if it is
+                 * a known one.
+                 *
+                 * FIXME! gibbon_country_new() should fall back to "xy" for
+                 * unknown countries.
+                 */
+                l = strlen (hostname);
+                if (l >= 4 && hostname[l - 3] == '.')
+                        alpha2 = hostname + l - 2;
         }
 
         return gibbon_country_new (alpha2);
