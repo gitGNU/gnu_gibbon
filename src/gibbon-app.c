@@ -641,6 +641,10 @@ gibbon_app_set_state_disconnected(GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
         gtk_widget_set_visible(GTK_WIDGET (obj), FALSE);
 
+        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+                        GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
+
         obj = gibbon_app_find_object(self, "connect_menu_item",
                         GTK_TYPE_IMAGE_MENU_ITEM);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
@@ -675,6 +679,10 @@ gibbon_app_set_state_connecting(GibbonApp *self)
                         GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         gtk_widget_set_visible(GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+                        GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object(self, "connect_menu_item",
                         GTK_TYPE_IMAGE_MENU_ITEM);
@@ -811,6 +819,10 @@ static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
 
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
         gtk_editable_set_editable(GTK_EDITABLE (obj), TRUE);
+
+        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+                        GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 
         gibbon_shouts_set_my_name(self->priv->shouts,
                         gibbon_connection_get_login(conn));

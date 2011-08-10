@@ -581,7 +581,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toobar_ready_button">
+              <object class="GtkToolButton" id="toolbar_ready_button">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>

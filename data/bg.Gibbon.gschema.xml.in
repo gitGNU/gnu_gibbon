@@ -31,6 +31,11 @@
       <_summary>Preferred match length</_summary>
       <_description>Preferred match length (-1 for unlimited).</_description>
     </key>
+    <key name="ready" type="b">
+      <default>false</default>
+      <_summary>Ready to play</_summary>
+      <_description>Can other players invite you to a match?</_description>
+    </key>
   </schema>
   <schema id="bg.Gibbon.preferences.server"
           path="/apps/gibbon/preferences/server/">
