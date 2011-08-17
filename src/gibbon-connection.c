@@ -69,6 +69,7 @@ struct _GibbonConnectionPrivate {
         gchar read_buf[GIBBON_CONNECTION_CHUNK_SIZE];
         gchar *in_buffer;
         GList *out_queue;
+        gboolean out_ready;
         
         GibbonSession *session;
 };
@@ -119,6 +120,7 @@ gibbon_connection_init (GibbonConnection *conn)
         conn->priv->in_buffer = g_strconcat ("", NULL);
         
         conn->priv->out_queue = NULL;
+        conn->priv->out_ready = FALSE;
         
         conn->priv->session = NULL;
 }
@@ -397,6 +399,15 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                                                0, self);
                         }
                         if (clip_code >= 0) {
+                                /*
+                                 * This is a recognized reply to a command.
+                                 * FIBS is now ready to receive new commands.
+                                 */
+                                if (clip_code > 0) {
+                                        self->priv->out_ready = TRUE;
+                                        gibbon_connection_send_chunk (self);
+                                }
+
                                 gibbon_server_console_print_output (console,
                                                                     ptr);
                         } else {
@@ -420,7 +431,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                         package = g_strdup (PACKAGE);
                         if (*package >= 'a' && *package <= 'z')
                                 *package -= 32;
-
+                        self->priv->out_ready = TRUE;
                         gibbon_connection_queue_command (self,
                                         FALSE,
                                         "login %s_%s 9999 %s %s",
@@ -509,6 +520,11 @@ gibbon_connection_handle_output (GOutputStream *output_stream,
                 g_object_unref (command);
                 self->priv->out_queue = g_list_remove (self->priv->out_queue,
                                                        command);
+                /*
+                 * First wait for a reply from FIBS before sending the next
+                 * command.
+                 */
+                self->priv->out_ready = FALSE;
         }
 
         if (self->priv->out_queue)
@@ -585,6 +601,12 @@ gibbon_connection_send_chunk (GibbonConnection *self)
                 return;
 
         if (self->priv->write_cancellable)
+                return;
+
+        /*
+         * Wait for a reply from FIBS before sending the next command.
+         */
+        if (!self->priv->out_ready)
                 return;
 
         self->priv->write_cancellable = g_cancellable_new ();
