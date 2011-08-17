@@ -628,9 +628,6 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "set");
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "toggle");
         }
 
         return GIBBON_CLIP_CODE_WHO_INFO_END;
@@ -1537,6 +1534,11 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                                               key))
                 retval = GIBBON_CLIP_CODE_SHOW_SETTING;
 
+        if (!self->priv->init_commands_sent && !self->priv->expect_settings)
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "toggle");
+
         /* The only setting we are interested in is "boardstyle".  */
         if (0 == g_strcmp0 ("boardstyle", key)
             && (value[0] != '3' || value[1])) {
@@ -1549,6 +1551,11 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                 gibbon_connection_queue_command (self->priv->connection,
                                                  TRUE,
                                                  "set boardstyle 3");
+                /*
+                 * FIXME! We have to queue a new "set" command and also
+                 * re-initialize the list expect_settings.  Only this
+                 * way we can be sure that the command gets executed.
+                 */
         }
 
         return retval;
