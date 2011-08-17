@@ -131,6 +131,7 @@ struct _GibbonSessionPrivate {
         GibbonArchive *archive;
 
         gboolean initialized;
+        gboolean init_commands_sent;
 
         GSList *expect_settings;
         GSList *expect_toggles;
@@ -163,6 +164,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->archive = NULL;
 
         self->priv->initialized = FALSE;
+        self->priv->init_commands_sent = FALSE;
 
         iter = NULL;
         iter = g_slist_prepend (iter, "boardstyle");
@@ -618,9 +620,6 @@ static gint
 gibbon_session_clip_who_info_end (GibbonSession *self,
                                   GSList *iter)
 {
-        GSettings *settings;
-        gchar *mail;
-
         if (!self->priv->initialized) {
                 self->priv->initialized = TRUE;
                 gibbon_connection_queue_command (self->priv->connection,
@@ -632,19 +631,6 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "toggle");
-
-                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
-                mail = g_settings_get_string (settings,
-                                              GIBBON_PREFS_SERVER_ADDRESS);
-                if (mail) {
-                        gibbon_connection_queue_command (self->priv->connection,
-                                                         FALSE,
-                                                         "address %s",
-                                                         mail);
-                        g_free (mail);
-                }
-                g_object_unref (settings);
-
         }
 
         return GIBBON_CLIP_CODE_WHO_INFO_END;
@@ -1574,6 +1560,8 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
         gint retval = -1;
         const gchar *key;
         gboolean value;
+        GSettings *settings;
+        gchar *mail;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
                 return -1;
@@ -1584,6 +1572,23 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                                               &self->priv->expect_toggles,
                                               key))
                 retval = GIBBON_CLIP_CODE_SHOW_TOGGLE;
+
+        if (!self->priv->init_commands_sent
+            && !self->priv->expect_toggles) {
+                self->priv->init_commands_sent = TRUE;
+
+                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+                mail = g_settings_get_string (settings,
+                                              GIBBON_PREFS_SERVER_ADDRESS);
+                if (mail) {
+                        gibbon_connection_queue_command (self->priv->connection,
+                                                         FALSE,
+                                                         "address %s",
+                                                         mail);
+                        g_free (mail);
+                }
+                g_object_unref (settings);
+        }
 
         if (0 == g_strcmp0 ("notify", key)) {
                 if (!value) {
