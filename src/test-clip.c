@@ -1089,6 +1089,23 @@ struct test_case test_saved08 = {
         }
 };
 
+struct test_case test_address01 = {
+        "Your email address is 'gibbon@example.com'.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "412" },
+                                { GIBBON_CLIP_TYPE_STRING, "gibbon@example.com" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
+struct test_case test_address02 = {
+        "** 'http://foo.bar.baz' is not an email address.",
+        {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+        }
+};
+
 struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -1180,7 +1197,10 @@ struct test_case *test_cases[] = {
                 &test_saved05,
                 &test_saved06,
                 &test_saved07,
-                &test_saved08
+                &test_saved08,
+
+                &test_address01,
+                &test_address02
 };
 
 static gboolean test_single_case (struct test_case *test_case);
