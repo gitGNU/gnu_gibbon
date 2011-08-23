@@ -624,9 +624,6 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 self->priv->initialized = TRUE;
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
-                                                 "show saved");
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
                                                  "set");
         }
 
@@ -1595,6 +1592,10 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         g_free (mail);
                 }
                 g_object_unref (settings);
+                /*
+                 * FIXME! Send the "show saved" command after we received
+                 * feedback to the address command.
+                 */
         }
 
         if (0 == g_strcmp0 ("notify", key)) {
@@ -1602,6 +1603,11 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         gibbon_connection_queue_command (self->priv->connection,
                                                          TRUE,
                                                          "toggle notify");
+                        /*
+                         * FIXME! We have to make sure that the toggle command
+                         * is successful.  Rather restart the entire
+                         * initialization procedure.
+                         */
                 }
         }
 
