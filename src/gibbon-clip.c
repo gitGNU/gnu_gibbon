@@ -195,6 +195,9 @@ static gboolean gibbon_clip_parse_show_saved_none (const gchar *line,
 static gboolean gibbon_clip_parse_saved_count (const gchar *line,
                                                gchar **tokens,
                                                GSList **result);
+static gboolean gibbon_clip_parse_show_address (const gchar *line,
+                                                gchar **tokens,
+                                                GSList **result);
 
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
 
@@ -401,6 +404,14 @@ gibbon_clip_parse (const gchar *line)
                                         gibbon_clip_parse_youre_watching (line,
                                                                          tokens,
                                                                        &result);
+                        else if (0 == g_strcmp0 ("Your", tokens[0])
+                                 && 0 == g_strcmp0 ("email", tokens[1])
+                                 && 0 == g_strcmp0 ("address", tokens[2])
+                                 && 0 == g_strcmp0 ("is", tokens[3])) {
+                                success = gibbon_clip_parse_show_address (line,
+                                                                         tokens,
+                                                                       &result);
+                        }
                         break;
                 }
         }
@@ -1612,6 +1623,36 @@ gibbon_clip_parse_saved_count (const gchar *line, gchar **tokens,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          num);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
+                                GSList **result)
+{
+        gchar *quoted_address = tokens[4];
+        gsize length;
+
+        if (!quoted_address)
+                return FALSE;
+
+        gibbon_clip_chomp (quoted_address, '.');
+
+        if ('\'' != quoted_address[0])
+                return FALSE;
+
+        length = strlen (quoted_address);
+
+        if ('\'' != quoted_address[length - 1])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                          GIBBON_CLIP_CODE_SHOW_ADDRESS);
+
+        gibbon_clip_chomp (quoted_address, '\'');
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
+                                            quoted_address + 1);
 
         return TRUE;
 }
