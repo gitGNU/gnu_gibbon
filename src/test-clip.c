@@ -1099,9 +1099,10 @@ struct test_case test_address01 = {
 };
 
 struct test_case test_address02 = {
-        "** 'http://foo.bar.baz' is not an email address.",
+        "** 'http://foobar' is not an email address.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING, "http://foobar" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
         }
 };
