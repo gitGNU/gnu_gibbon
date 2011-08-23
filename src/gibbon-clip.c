@@ -199,6 +199,8 @@ static gboolean gibbon_clip_parse_show_address (const gchar *line,
                                                 gchar **tokens,
                                                 GSList **result);
 
+static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
+                                                     GSList **result);
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
 
 static GSList *gibbon_clip_alloc_int (GSList *list, enum GibbonClipType type,
@@ -1531,6 +1533,16 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                     return gibbon_clip_parse_toggle ("notify", TRUE, result);
         }
 
+        if (0 == g_strcmp0 ("is", tokens[2])) {
+                if (0 == g_strcmp0 ("not", tokens[3])
+                    && 0 == g_strcmp0 ("an", tokens[4])
+                    && 0 == g_strcmp0 ("email", tokens[5])
+                    && 0 == g_strcmp0 ("address.", tokens[6])
+                    && !tokens[7])
+                    return gibbon_clip_parse_not_email_address (tokens[1],
+                                                                result);
+        }
+
         return FALSE;
 }
 
@@ -1652,6 +1664,36 @@ gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
 
         gibbon_clip_chomp (quoted_address, '\'');
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
+                                            quoted_address + 1);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_not_email_address (gchar *quoted_address,
+                                     GSList **result)
+{
+        gsize length;
+
+        if (!quoted_address)
+                return FALSE;
+
+        gibbon_clip_chomp (quoted_address, '.');
+
+        if ('\'' != quoted_address[0])
+                return FALSE;
+
+        length = strlen (quoted_address);
+
+        if ('\'' != quoted_address[length - 1])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                       GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS);
+
+        gibbon_clip_chomp (quoted_address, '\'');
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_STRING,
                                             quoted_address + 1);
 
         return TRUE;
