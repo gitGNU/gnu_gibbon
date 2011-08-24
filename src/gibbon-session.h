@@ -48,10 +48,23 @@ struct _GibbonSession
         GibbonSessionPrivate *priv;
 };
 
+typedef void (*GibbonSessionCallback) (GObject *object, gchar *who,
+                                       guint count, gpointer data);
+
 GibbonSession *gibbon_session_new (GibbonApp *app,
                                    GibbonConnection *connection);
 gint gibbon_session_process_server_line (GibbonSession *self,
                                          const gchar *line);
+void gibbon_session_configure_player_menu (const GibbonSession *self,
+                                           const gchar *player,
+                                           GtkMenu *menu);
+const gchar * const gibbon_session_get_watching (const GibbonSession *self);
+const struct _GibbonSavedInfo *
+        gibbon_session_get_saved (const GibbonSession *self, const gchar *who);
+void gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
+                                     GibbonSessionCallback callback,
+                                     GObject *object, gpointer data);
+
 G_END_DECLS
 
 #endif

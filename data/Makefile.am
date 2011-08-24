@@ -20,24 +20,15 @@ desktop_in_files = $(PACKAGE).desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
-schemasdir = $(GCONF_SCHEMA_FILE_DIR)
-schemas_in_files = $(PACKAGE).schemas.in
-schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
-@INTLTOOL_SCHEMAS_RULE@
-
-if GCONF_SCHEMAS_INSTALL
-install-data-local:
-	if test -z "$(DESTDIR)" ; then \
-                for p in $(schemas_DATA) ; do \
-			GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(top_builddir)/data/$$p ; \
-		done \
-	fi
-else
-install-data-local:
-endif
+gsettings_files = \
+	bg.Gibbon.gschema.xml.in \
+	$(NULL)
+gsettings_SCHEMAS = $(gsettings_files:.xml.in=.xml)
+@INTLTOOL_XML_NOMERGE_RULE@
+@GSETTINGS_RULES@
 
 gtkbuilderdir = $(datadir)/$(PACKAGE)
-gtkbuilder_DATA = $(PACKAGE).xml
+gtkbuilder_DATA = $(PACKAGE).ui
 
 EXTRA_DIST = \
 	$(desktop_in_files) \

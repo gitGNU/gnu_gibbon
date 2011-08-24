@@ -68,47 +68,123 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
 
 GibbonPosition initial = {
-                { NULL, NULL },
                 0,
                 { 0, 0 },
-                { 0, 0, 0, 0, 0, 0 },
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
                    5,  0,  0,  0, -3,  0, -5,  0,  0,  0,  0,  2 },
-                { 0, 0, 0, 0, 0, 0 },
                 { 0, 0 },
                 { 0, 0 },
                 1,
                 { FALSE, FALSE },
+                { NULL, NULL },
+                NULL,
                 NULL
 };
 
-static void dump_move (const GibbonMove *move);
+/* Move patterns describe how a double roll was used, when we know the set
+ * of starting points.
+ *
+ * For decoding, they have to be split into bytes first.  Each byte is then
+ * split into nibbles.  The left nibble gives the index into the set of
+ * starting points, and the right number gives the number of dice values
+ * to use.
+ *
+ * For example, if we know that the user has moved checkers from points
+ * 6, 9, and 20, and has rolled a double 2, a 0x12 means that he has
+ * moved two checkers from the 9-point (9 is point number 1 in the set
+ * 6, 9, and 20).
+ */
+guint move_patterns1[] = {
+                /* Using all four numbers.  */
+                0x04,
+                0x0103,
+                0x0202,
+                0x010102,
+                0x01010101,
 
-static GibbonMove *gibbon_position_copy_move (const GibbonMove *src);
+                /* Using three out of four numbers.  The pattern 0x0201
+                 * seems to be missing here but it is not.  There is no
+                 * such legal move.
+                 */
+                0x03,
+                0x010101,
+
+                /* Using two out of four numbers.  */
+                0x02,
+                0x0101,
+
+                /* Using one number.  */
+                0x01
+};
+
+guint move_patterns2[] = {
+                /* Using all four numbers.  */
+                0x1103,
+                0x1202,
+                0x1301,
+                0x110201,
+                0x111201,
+                0x111102,
+                0x120101,
+                0x11010101,
+                0x11110101,
+                0x11111101,
+
+                /* Using three out of four numbers.  */
+                0x110101,
+                0x111101,
+                0x1102,
+                0x1201,
+
+                /* Using two out of four numbers.  */
+                0x1101
+};
+
+guint move_patterns3[] = {
+                /* Using all four numbers.  */
+                0x211102,
+                0x211201,
+                0x221101,
+                0x21110101,
+                0x21111101,
+                0x21211101,
+
+                /* Using three out of four numbers.  */
+                0x211101
+};
+
+guint move_patterns4[] = {
+                0x31211101
+};
+
+#if (0)
+static void dump_move (const GibbonMove *move);
+#endif
+
 static void gibbon_position_fill_movement (GibbonMove *move,
-                                           guint point, guint die,
-                                           guint num_checkers);
+                                           guint point, guint die);
 static GList *gibbon_position_find_double (const gint *before,
                                            const gint *after,
                                            guint die,
                                            gsize num_froms,
                                            const guint *froms);
-static GList *gibbon_position_find_double4 (const gint *before,
-                                            const gint *after,
-                                            guint die,
-                                            const guint *froms);
-static GList *gibbon_position_find_double3 (const gint *before,
-                                            const gint *after,
-                                            guint die,
-                                            const guint *froms);
 static GList *gibbon_position_find_non_double (const gint *before,
                                                const gint *after,
                                                guint die1, guint die2,
                                                gsize num_froms,
                                                const guint *froms);
-static gboolean gibbon_position_is_diff (const gint *before,
-                                         const gint *after,
+static gboolean gibbon_position_is_diff (const gint before[26],
+                                         const gint after[26],
                                          GibbonMove *move);
+static gboolean gibbon_position_can_move (const gint board[26], gint die);
+static gboolean gibbon_position_can_move_checker (const gint board[26],
+                                                  gint point,
+                                                  gint die, gint backmost);
+static gboolean gibbon_position_can_move2 (gint board[26],
+                                           gint die1, gint die2);
+static gint find_backmost_checker (const gint board[26]);
+static void swap_movements (GibbonMovement *m1, GibbonMovement *m2);
+static void order_movements (GibbonMove *move);
 
 /**
  * gibbon_position_new:
@@ -139,12 +215,10 @@ void
 gibbon_position_free (GibbonPosition *self)
 {
         if (self) {
-                if (self->players[0])
-                        g_free (self->players[0]);
-                if (self->players[1])
-                        g_free (self->players[1]);
-                if (self->game_info)
-                        g_free (self->game_info);
+                g_free (self->players[0]);
+                g_free (self->players[1]);
+                g_free (self->game_info);
+                g_free (self->game_info);
                 g_free (self);
         }
 }
@@ -171,6 +245,7 @@ gibbon_position_copy (const GibbonPosition *self)
         copy->players[0] = g_strdup (copy->players[0]);
         copy->players[1] = g_strdup (copy->players[1]);
         copy->game_info = g_strdup (copy->game_info);
+        copy->status = g_strdup (copy->status);
 
         return copy;
 }
@@ -247,19 +322,18 @@ gibbon_position_check_move (const GibbonPosition *_before,
                             const GibbonPosition *_after,
                             GibbonPositionSide side)
 {
-        GibbonMove *move;
+        GibbonMove *move, *this_move;
         GList *found;
         gint before[26];
         gint after[26];
         gint i, tmp;
         guint num_froms = 0;
         guint froms[4];
-        guint die1, die2;
+        guint die1, die2, this_die, other_die;
         GList *iter;
 
         die1 = abs (_before->dice[0]);
         die2 = abs (_before->dice[1]);
-
         move = gibbon_position_alloc_move (0);
         move->status = GIBBON_MOVE_ILLEGAL;
 
@@ -274,10 +348,17 @@ gibbon_position_check_move (const GibbonPosition *_before,
          */
         memcpy (before + 1, _before->points, 24 * sizeof *before);
         memcpy (after + 1, _after->points, 24 * sizeof *after);
-        if (side == GIBBON_POSITION_SIDE_BLACK) {
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                before[0] = _before->bar[1];
+                after[0] = _after->bar[1];
+                before[25] = _before->bar[0];
+                after[25] = _after->bar[0];
+        } else {
                 /* "Normalize" the board representation.  Negative
                  * checker counts are ours, positive ones are hers.
                  */
+                before[0] = _before->bar[0];
+                after[0] = _after->bar[0];
                 for (i = 1; i <= 24; ++i) {
                         before[i] = -before[i];
                         after[i] = -after[i];
@@ -292,11 +373,9 @@ gibbon_position_check_move (const GibbonPosition *_before,
                         after[25 - i] = after[i];
                         after[i] = tmp;
                 }
+                before[25] = _before->bar[1];
+                after[25] = _after->bar[1];
         }
-        before[0] = gibbon_position_get_borne_off (_before, side);
-        after[0] = gibbon_position_get_borne_off (_after, side);
-        before[25] = _before->bar[0];
-        after[25] = _after->bar[0];
 
         /* Find the number of possible starting points.  */
         for (i = 25; i >= 1; --i) {
@@ -325,52 +404,291 @@ gibbon_position_check_move (const GibbonPosition *_before,
         while (iter) {
                 if (gibbon_position_is_diff (before, after,
                                              (GibbonMove *) iter->data)) {
-                        g_free (move);
-                        move = (GibbonMove *) iter->data;
-                        iter->data = NULL;
-                        break;
+                        this_move = (GibbonMove *) iter->data;
+
+                        if (this_move->status == GIBBON_MOVE_LEGAL
+                            || move->status == GIBBON_MOVE_ILLEGAL) {
+                                g_free (move);
+                                move = this_move;
+                                iter->data = NULL;
+                        }
+
+                        /* If this is a bear-off error, we keep on
+                         * searching for a possibly legal alternative.
+                         */
+                        if (this_move->status == GIBBON_MOVE_LEGAL
+                            || (move->status != GIBBON_MOVE_PREMATURE_BEAR_OFF
+                                && move->status != GIBBON_MOVE_ILLEGAL_WASTE))
+                                break;
                 }
                 iter = iter->next;
         }
         g_list_foreach (found, (GFunc) g_free, NULL);
+        g_list_free (found);
 
         if (move->status != GIBBON_MOVE_LEGAL)
                 return move;
+
+        /* Dancing? */
+        if (after[25]) {
+                for (i = 0; i < move->number; ++i) {
+                        if (move->movements[i].from != 25) {
+                                move->status = GIBBON_MOVE_DANCING;
+                                return move;
+                        }
+                }
+        }
+
+        if (die1 != die2) {
+                if (move->number == 0) {
+                        if (gibbon_position_can_move (after, die1)
+                            || gibbon_position_can_move (after, die2)) {
+                                move->status = GIBBON_MOVE_USE_ALL;
+                                return move;
+                        }
+                } else if (move->number == 1) {
+                        if (move->movements[0].die == die1) {
+                                this_die = die1;
+                                other_die = die2;
+                        } else {
+                                this_die = die2;
+                                other_die = die1;
+                        }
+                        if (gibbon_position_can_move (after, other_die)) {
+                                move->status = GIBBON_MOVE_USE_ALL;
+                                return move;
+                        }
+
+                        if (gibbon_position_can_move2 (before, die1, die2)
+                            || gibbon_position_can_move2 (before, die2,
+                                                          die1)) {
+                                move->status = GIBBON_MOVE_TRY_SWAP;
+                                return move;
+                        }
+
+                        /* It would be a lot more efficient to do this test
+                         * before the "try swap" test because it is the
+                         * cheaper one.  However, the information that the
+                         * numbers used have to be swapped is much better for
+                         * the user who moved wrong, and it better matches
+                         * the phrasing of the backgammon rules.
+                         */
+                        if (this_die < other_die
+                            && gibbon_position_can_move (before,
+                                                         other_die)) {
+                                move->status = GIBBON_MOVE_USE_HIGHER;
+
+                                /* Special case: If this was a bear-off, and
+                                 * and the checker may be borne off with either
+                                 * number then either number has to be accepted.
+                                 */
+                                if (move->movements[0].to == 0) {
+                                        if (this_die >=
+                                            find_backmost_checker (before))
+                                                move->status =
+                                                        GIBBON_MOVE_LEGAL;
+                                }
+                                return move;
+                        }
+                }
+        } else {
+                if (move->number != 4
+                    && gibbon_position_can_move (after, die1)) {
+                        move->status = GIBBON_MOVE_USE_ALL;
+                        return move;
+                }
+        }
 
         return move;
 }
 
 static gboolean
-gibbon_position_is_diff (const gint *_before, const gint *after,
+gibbon_position_can_move (const gint board[26], gint die)
+{
+        gint i;
+        gint backmost;
+
+        /* Dance? */
+        if (board[25]) {
+                if (board[25 - die] < -1)
+                        return FALSE;
+                else
+                        return TRUE;
+        }
+
+        /* Move freely?  */
+        for (i = 24; i > die; --i)
+                if (board[i] >= 1 && board[i - die] >= -1)
+                        return TRUE;
+
+        /* Can we bear-off? */
+        backmost = find_backmost_checker (board);
+        if (backmost > 6)
+                return FALSE;
+
+        /* Direct bear-off? */
+        if (board[die] >= 1)
+                return TRUE;
+
+        /* Wasteful bear-off? */
+        if (die > backmost)
+                return TRUE;
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_position_can_move_checker (const gint board[26], gint point,
+                                  gint backmost, gint die)
+{
+        if (board[point] < 1)
+                return FALSE;
+
+        if (point > die) {
+                if (board[point - die] >= -1)
+                        return TRUE;
+                else
+                        return FALSE;
+        }
+
+        /* Bear-off.  */
+        if (backmost > 6)
+                return FALSE;
+
+        if (point == die)
+                return TRUE;
+
+        if (die > backmost)
+                return TRUE;
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_position_can_move2 (gint board[26], gint die1, gint die2)
+{
+        gint i;
+        gint backmost = 0;
+        gboolean can_move;
+        gint saved_from, saved_to;
+
+        /* If there are two or more checkers on the bar, we have an early
+         * exit because this case was certainly checked already.
+         */
+        if (board[25] >= 2)
+                return FALSE;
+
+        if (board[25] == 1) {
+                if (board[25 - die1] < -1)
+                        return FALSE;
+
+
+                board[25] = 0;
+                saved_to = board[25 - die1];
+                if (saved_to < 0)
+                        board[25 - die1] = 0;
+                ++board[25 - die1];
+
+                can_move = gibbon_position_can_move_checker (board, 25,
+                                                             25, die1 + die2);
+                if (!can_move)
+                        can_move = gibbon_position_can_move (board, die2);
+                board[25] = 1;
+                board[25 - die1] = saved_to;
+                if (can_move)
+                        return TRUE;
+
+                return FALSE;
+        }
+
+        for (i = 24; i > die1; --i) {
+                if (board[i] <= 0)
+                        continue;
+
+                if (!backmost)
+                        backmost = i;
+
+                if (!gibbon_position_can_move_checker (board, i,
+                                                       backmost, die1))
+                        continue;
+
+                saved_from = board[i];
+                saved_to = board[i - die1];
+                if (saved_to < 0)
+                        board[i - die1] = 0;
+                --board[i];
+                ++board[i - die1];
+
+                can_move = gibbon_position_can_move_checker (board, i, backmost,
+                                                             die2);
+
+                /* FIXME! We know already the backmost checker and
+                 * that information could be used here.
+                 */
+                if (!can_move)
+                        can_move = gibbon_position_can_move (board, die2);
+                board[i] = saved_from;
+                board[i - die1] = saved_to;
+                if (can_move)
+                        return TRUE;
+        }
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_position_is_diff (const gint _before[26], const gint after[26],
                          GibbonMove *move)
 {
         gint before[26];
-        guint i, from, to;
+        gint i, from, to;
         const GibbonMovement *movement;
+        gint backmost;
 
         /* dump_move (move); */
         memcpy (before, _before, sizeof before);
 
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
-                to = movement->to;
 
-                /* Is the target point occupied?  */
-                if (before[to] < -1) {
-                        move->status = GIBBON_MOVE_BLOCKED;
+                from = movement->from;
+                if (from <= 0) {
+                        /* Actually this move is a duplicate.  */
+                        move->status = GIBBON_MOVE_ILLEGAL;
                         return FALSE;
                 }
 
-                /* Remove the opponent's checker if this is a hit.  */
-                if (before[to] == -1)
-                        before[to] = 0;
+                to = movement->to;
 
-                before[to] += movement->num;
-                from = movement->from;
-                before[from] -= movement->num;
+                if (to == 0) {
+                        backmost = find_backmost_checker (before);
+
+                        if (backmost > 6)
+                                move->status = GIBBON_MOVE_PREMATURE_BEAR_OFF;
+                        else if (from != movement->die && from != backmost)
+                                move->status = GIBBON_MOVE_ILLEGAL_WASTE;
+                        /* Even when this move is illegal, we continue.  If
+                         * the resulting position matches, we know that we
+                         * intentionally bore off the checker, and we can
+                         * inform about the error.
+                         */
+                } else if (before[to] < -1) {
+                        /* Is the target point occupied?  */
+                        move->status = GIBBON_MOVE_BLOCKED;
+                        return FALSE;
+                } else if (before[to] == -1) {
+                        before[to] = 0;
+                        ++before[0];
+                }
+
+                if (to)
+                        ++before[to];
+                /* Else: No need to know about it.  We count the checkers on
+                 * the board instead, and calculate the difference.
+                 */
+                --before[from];
         }
 
-        /* Is the resulting position identical to what we expect? */
         if (memcmp (before, after, sizeof before))
                 return FALSE;
 
@@ -381,35 +699,96 @@ gibbon_position_is_diff (const gint *_before, const gint *after,
          *
          * After this, we only have to check these constraints:
          *
-         * - Bear-off only allowed, when all checkers are in the home board.
          * - No legal moves, while checkers on the bar.
          * - Maximize number of pips used.
          */
+
         return TRUE;
 }
 
 static void
-gibbon_position_fill_movement (GibbonMove *move,
-                               guint point, guint die,
-                               guint num_checkers)
+gibbon_position_fill_movement (GibbonMove *move, guint point, guint die)
 {
         guint movement_num = move->number;
 
         move->movements[movement_num].from = point;
         move->movements[movement_num].to = point - die;
-        if (move->movements[movement_num].to > 24)
-                move->movements[movement_num].to = 24;
-        move->movements[movement_num].num = num_checkers;
+        if (move->movements[movement_num].to < 0)
+                move->movements[movement_num].to = 0;
+        move->movements[movement_num].die = die;
         ++move->number;
 }
 
 static GList *
 gibbon_position_find_non_double (const gint *before,
                                  const gint *after,
-                                 guint die1, guint die2,
+                                 guint _die1, guint _die2,
                                  gsize num_froms, const guint *froms)
 {
-        return NULL;
+        GibbonMove *move;
+        GList *moves = NULL;
+        guint die1, die2;
+
+        if (_die1 < _die2) {
+                die1 = _die1;
+                die2 = _die2;
+        } else {
+                die1 = _die2;
+                die2 = _die1;
+        }
+
+        if (!num_froms) {
+                move = gibbon_position_alloc_move (0);
+                moves = g_list_append (moves, move);
+
+                return moves;
+        }
+
+        /* Two possibilities.  */
+        if (2 == num_froms) {
+                move = gibbon_position_alloc_move (2);
+                gibbon_position_fill_movement (move, froms[0], die1);
+                gibbon_position_fill_movement (move, froms[1], die2);
+                moves = g_list_append (moves, move);
+
+                move = gibbon_position_alloc_move (2);
+                gibbon_position_fill_movement (move, froms[0], die2);
+                gibbon_position_fill_movement (move, froms[1], die1);
+                moves = g_list_append (moves, move);
+
+                return moves;
+        }
+
+        /* Only one checker was moved.  This can happen in five distinct
+         * ways.
+         */
+        if (froms[0] > die1) {
+                move = gibbon_position_alloc_move (2);
+                gibbon_position_fill_movement (move, froms[0], die1);
+                gibbon_position_fill_movement (move, froms[0] - die1, die2);
+                moves = g_list_append (moves, move);
+        }
+        if (froms[0] > die2) {
+                move = gibbon_position_alloc_move (2);
+                gibbon_position_fill_movement (move, froms[0], die2);
+                gibbon_position_fill_movement (move, froms[0] - die2, die1);
+                moves = g_list_append (moves, move);
+        }
+
+        move = gibbon_position_alloc_move (1);
+        gibbon_position_fill_movement (move, froms[0], die1);
+        moves = g_list_append (moves, move);
+
+        move = gibbon_position_alloc_move (1);
+        gibbon_position_fill_movement (move, froms[0], die2);
+        moves = g_list_append (moves, move);
+
+        move = gibbon_position_alloc_move (2);
+        gibbon_position_fill_movement (move, froms[0], die1);
+        gibbon_position_fill_movement (move, froms[0], die2);
+        moves = g_list_append (moves, move);
+
+        return moves;
 }
 
 static GList *
@@ -418,124 +797,420 @@ gibbon_position_find_double (const gint *before,
                              guint die,
                              gsize num_froms, const guint *froms)
 {
-        switch (num_froms) {
-                case 4:
-                        return gibbon_position_find_double4 (before, after,
-                                                             die, froms);
-                case 3:
-                        return gibbon_position_find_double3 (before, after,
-                                                             die, froms);
-        }
-
-        return NULL;
-}
-
-static GList *
-gibbon_position_find_double4 (const gint *before,
-                              const gint *after,
-                              guint die, const guint *froms)
-{
-        GibbonMove *move = gibbon_position_alloc_move (4);
-
-        /* Always one candidate move.  */
-        gibbon_position_fill_movement (move, froms[0], die, 1);
-        gibbon_position_fill_movement (move, froms[1], die, 1);
-        gibbon_position_fill_movement (move, froms[2], die, 1);
-        gibbon_position_fill_movement (move, froms[3], die, 1);
-
-        return g_list_append (NULL, move);
-}
-
-static GList *
-gibbon_position_find_double3 (const gint *before,
-                              const gint *after,
-                              guint die, const guint *froms)
-{
+        guint *move_patterns;
         GList *moves = NULL;
+        gsize i, j, num_patterns;
         GibbonMove *move;
-        GibbonMove *first;
-        gint i;
+        gsize num_steps;
+        guint pattern;
+        guint from_index;
+        gint from;
+        gboolean is_bear_off;
 
-        /* Between one and seven candidate moves.  */
-
-        /* Move each checker once.  */
-        move = first = gibbon_position_alloc_move (3);
-        gibbon_position_fill_movement (move, froms[0], die, 1);
-        gibbon_position_fill_movement (move, froms[1], die, 1);
-        gibbon_position_fill_movement (move, froms[2], die, 1);
-        moves = g_list_append (moves, move);
-
-        /* Now try to move two checkers.  */
-        for (i = 0; i < 3; ++i) {
-                if (before[froms[i]] > 1) {
-                        move = gibbon_position_copy_move (first);
-                        move->movements[i].num = 2;
+        switch (num_froms) {
+                case 0:
+                        move = gibbon_position_alloc_move (0);
                         moves = g_list_append (moves, move);
-                }
+
+                        return moves;
+                case 1:
+                        move_patterns = move_patterns1;
+                        num_patterns = (sizeof move_patterns1)
+                                        / sizeof *move_patterns1;
+                        break;
+                case 2:
+                        move_patterns = move_patterns2;
+                        num_patterns = (sizeof move_patterns2)
+                                        / sizeof *move_patterns2;
+                        break;
+                case 3:
+                        move_patterns = move_patterns3;
+                        num_patterns = (sizeof move_patterns3)
+                                        / sizeof *move_patterns3;
+                        break;
+                default:
+                        move_patterns = move_patterns4;
+                        num_patterns = (sizeof move_patterns4)
+                                        / sizeof *move_patterns4;
+                        break;
         }
 
-        /* And finally try to move each checker twice instead of once.
-         * It is more efficient to unroll that loop.
-         */
-        if (froms[0] >= die) {
+        for (i = 0; i < num_patterns; ++i) {
+                pattern = move_patterns[i];
+                /* This may allocate too much but calculating the correct size
+                 * would never pay out.
+                 */
                 move = gibbon_position_alloc_move (4);
-                gibbon_position_fill_movement (move, froms[0], die, 1);
-                gibbon_position_fill_movement (move, froms[0] - die, die, 1);
-                gibbon_position_fill_movement (move, froms[1], die, 1);
-                gibbon_position_fill_movement (move, froms[2], die, 1);
-                moves = g_list_append (moves, move);
-        }
-        if (froms[1] >= die) {
-                move = gibbon_position_alloc_move (4);
-                gibbon_position_fill_movement (move, froms[0], die, 1);
-                gibbon_position_fill_movement (move, froms[1], die, 1);
-                gibbon_position_fill_movement (move, froms[1] - die, die, 1);
-                gibbon_position_fill_movement (move, froms[2], die, 1);
-                moves = g_list_append (moves, move);
-        }
-        if (froms[2] >= die) {
-                move = gibbon_position_alloc_move (4);
-                gibbon_position_fill_movement (move, froms[0], die, 1);
-                gibbon_position_fill_movement (move, froms[1], die, 1);
-                gibbon_position_fill_movement (move, froms[2], die, 1);
-                gibbon_position_fill_movement (move, froms[2] - die, die, 1);
+                is_bear_off = FALSE;
+
+                while (pattern) {
+                        num_steps = pattern & 0xf;
+                        from_index = (pattern & 0xf0) >> 4;
+                        from = froms[from_index];
+                        for (j = 0; j < num_steps; ++j) {
+                                gibbon_position_fill_movement (move, from, die);
+                                from -= die;
+
+                                if (from <= 0)
+                                        is_bear_off = TRUE;
+                        }
+
+                        pattern >>= 8;
+                }
+
+                if (is_bear_off)
+                        order_movements (move);
+
                 moves = g_list_append (moves, move);
         }
 
         return moves;
 }
 
-static GibbonMove *
-gibbon_position_copy_move (const GibbonMove *src)
-{
-        gsize bytes = sizeof src->number
-                      + src->number * sizeof *src->movements
-                      + sizeof src->status;
-        GibbonMove *dest = g_malloc (bytes);
-
-        memcpy (dest, src, bytes);
-
-        return dest;
-}
-
+#if (0)
 static void
 dump_move (const GibbonMove *move)
 {
         int i;
 
         g_printerr ("Move:");
-        if (move->status) {
-                g_printerr (" error %d.\n", move->status);
-                return;
-        }
+        if (move->status)
+                g_printerr (" error %d:", move->status);
 
         for (i = 0; i < move->number; ++i) {
-                g_printerr (" %u/%u",
+                g_printerr (" %d/%d",
                             move->movements[i].from,
                             move->movements[i].to);
-                if (move->movements[i].num > 1)
-                        g_printerr ("(%u)", move->movements[i].num);
         }
 
         g_printerr ("\n");
+}
+#endif
+
+static gint
+find_backmost_checker (const gint board[26])
+{
+        gint i;
+
+        for (i = 25; i > 0; --i)
+                if (board[i] > 0)
+                        break;
+
+        if (!i)
+                return 26;
+
+        return i;
+}
+
+static void
+swap_movements (GibbonMovement *m1, GibbonMovement *m2)
+{
+        GibbonMovement tmp;
+
+        memcpy (&tmp, m1, sizeof tmp);
+        memcpy (m1, m2, sizeof *m1);
+        memcpy (m2, &tmp, sizeof *m2);
+}
+
+static void
+order_movements (GibbonMove *move)
+{
+        gint i;
+
+        for (i = 1; i < move->number; ++i) {
+                if (move->movements[i].from > move->movements[i - 1].from)
+                        swap_movements (move->movements + i,
+                                        move->movements + i - 1);
+        }
+}
+
+gboolean
+gibbon_position_equals_technically (const GibbonPosition *self,
+                                    const GibbonPosition *other)
+{
+        if (!self && !other)
+                return TRUE;
+        if (!self)
+                return FALSE;
+        if (!other)
+                return FALSE;
+        if (g_strcmp0 (self->players[0], other->players[0]))
+                return FALSE;
+        if (g_strcmp0 (self->players[1], other->players[1]))
+                return FALSE;
+        if (g_strcmp0 (self->game_info, other->game_info))
+                return FALSE;
+        if (g_strcmp0 (self->status, other->status))
+                return FALSE;
+        if (memcmp (self, other, (gpointer) &self->players[0] - (gpointer) self))
+                return FALSE;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
+                            GibbonPositionSide side, gboolean reverse)
+{
+        gint m, c;
+        gint i, from, to;
+        const GibbonMovement *movement;
+        gboolean from_bar, bear_off;
+        guint *my_bar, *her_bar;
+
+        g_return_val_if_fail (side, FALSE);
+
+        if (reverse) {
+                m = -1;
+                c = 24;
+        } else {
+                m = 1;
+                c = -1;
+        }
+
+        for (i = 0; i < move->number; ++i) {
+                movement = move->movements + i;
+                from = m * movement->from + c;
+
+                to = m * movement->to + c;
+
+                from_bar = bear_off = FALSE;
+
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        g_return_val_if_fail (from <= 24, FALSE);
+                        g_return_val_if_fail (from >= 0, FALSE);
+                        g_return_val_if_fail (to <= 23, FALSE);
+                        g_return_val_if_fail (to >= -1, FALSE);
+
+                        from_bar = from == 24;
+                        bear_off = to == -1;
+                        my_bar = self->bar + 0;
+                        her_bar = self->bar + 1;
+                } else {
+                        g_return_val_if_fail (from >= -1, FALSE);
+                        g_return_val_if_fail (from <= 23, FALSE);
+                        g_return_val_if_fail (to >= 0, FALSE);
+                        g_return_val_if_fail (to <= 24, FALSE);
+
+                        from_bar = from == -1;
+                        bear_off = to == 24;
+                        my_bar = self->bar + 1;
+                        her_bar = self->bar + 0;
+                }
+
+                if (from_bar) {
+                        g_return_val_if_fail (*my_bar > 0, FALSE);
+                        --(*my_bar);
+                } else {
+                        g_return_val_if_fail (self->points[from] != 0, FALSE);
+
+                        /* This tests for the same sign.  */
+                        g_return_val_if_fail ((side ^ self->points[from]) >= 0,
+                                              FALSE);
+                        self->points[from] -= side;
+                }
+
+                /* If this is a bear-off, it is sufficient to remove the
+                 * checker from the source point.
+                 */
+                if (!bear_off) {
+                        if (self->points[to] == 0
+                            || (side ^ self->points[to]) >= 0) {
+                                self->points[to] += side;
+                        } else if (self->points[to] == -side) {
+                                ++(*her_bar);
+                                self->points[to] = side;
+                        } else {
+                                g_critical ("gibbon_position_apply_move:"
+                                            " Target point is blocked.");
+                        }
+                }
+        }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_position_game_over (const GibbonPosition *position)
+{
+        guint num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_WHITE);
+
+        if (num_checkers >= 15)
+                return TRUE;
+
+        num_checkers =
+                gibbon_position_get_borne_off (position,
+                                               GIBBON_POSITION_SIDE_BLACK);
+
+        if (num_checkers >= 15)
+                return TRUE;
+
+        return FALSE;
+}
+
+static GRegex *re_adjacent1 = NULL;
+static GRegex *re_adjacent2 = NULL;
+static GRegex *re_dup2 = NULL;
+static GRegex *re_dup3 = NULL;
+static GRegex *re_dup4 = NULL;
+static GRegex *re_prune_intermediate = NULL;
+
+gchar *
+gibbon_position_format_move (GibbonPosition *self,
+                             const GibbonMove *move,
+                             GibbonPositionSide side,
+                             gboolean reverse)
+{
+        gint i, j;
+        gint from, to;
+        gchar buf[29];
+        GError *error = NULL;
+        gchar *new_buf = NULL;
+        gchar *old_buf = NULL;
+        GString *string;
+        gint blots[24];
+        gboolean do_reverse = FALSE;
+
+        g_return_val_if_fail (side, g_strdup (_("invalid")));
+
+        if (move->number == 0)
+                return g_strdup ("-");
+        else if (move->number > 4)
+                return g_strdup (_("invalid"));
+
+        if ((side == GIBBON_POSITION_SIDE_BLACK && !reverse)
+            || (side == GIBBON_POSITION_SIDE_WHITE && reverse))
+                do_reverse = TRUE;
+
+        /* We first convert the complete move into two-character tokens.
+         * The first character of each token represents the starting point
+         * in the range of 'a'-'z', the second token represents the landing
+         * point, again in the range of 'a'-'z'.
+         */
+
+        /* First convert it into our character form.  */
+        for (i = 0, j = 0; i < move->number; ++i) {
+                from = move->movements[i].from;
+                to = move->movements[i].to;
+
+                if (do_reverse) {
+                        from = 25 - from;
+                        to = 25 - to;
+                }
+                buf[j++] = 'a' + from;
+                buf[j++] = '/';
+                buf[j++] = 'a' + to;
+                buf[j++] = ' ';
+        }
+        buf[j - 1] = 0;
+
+        if (!re_adjacent1) {
+                re_adjacent1 = g_regex_new ("([a-z]) \\1",
+                                            0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_adjacent2) {
+                re_adjacent2 = g_regex_new ("([a-z])/([a-z])(.*) \\2/([a-z])",
+                                            0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup4) {
+                re_dup4 = g_regex_new ("([a-z]/[a-z]) \\1 \\1 \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup3) {
+                re_dup3 = g_regex_new ("([a-z]/[a-z]) \\1 \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_dup2) {
+                re_dup2 = g_regex_new ("([a-z](?:/[a-z])+) \\1",
+                                       0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+        if (!re_prune_intermediate) {
+                re_prune_intermediate = g_regex_new ("/[1-9][0-9]*/",
+                                                     0, 0, &error);
+                if (error)
+                        return g_strdup (error->message);
+        }
+
+        /* First compression step.  Condense ab bc into abc, or
+         * ab bc cd into abcd.
+         */
+        new_buf = g_regex_replace (re_adjacent1, buf, -1, 0, "\\1", 0, &error);
+        if (error)
+                return g_strdup (error->message);
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_adjacent2, old_buf, -1, 0,
+                                   "\\1/\\2/\\4\\3", 0, &error);
+        if (error)
+                return g_strdup (error->message);
+
+        /* Now group identical checker movements.  */
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup4, old_buf, -1, 0, "\\1(4)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup3, old_buf, -1, 0, "\\1(3)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        old_buf = new_buf;
+        new_buf = g_regex_replace (re_dup2, old_buf, -1, 0, "\\1(2)", 0,
+                                   &error);
+        g_free (old_buf);
+        if (error)
+                return g_strdup (error->message);
+
+        string = g_string_new ("");
+
+        /* Create a virtual table with opposing blots.  */
+        memset (blots, 0, sizeof blots);
+        for (i = 0; i < 24; ++i) {
+                j = (side == GIBBON_POSITION_SIDE_BLACK) ? 23 - i : i;
+                if (self->points[j] == -side)
+                        blots[i] = 1;
+        }
+
+        /* And finally convert the string back into the numerical form.  */
+        for (i = 0; new_buf[i]; ++i) {
+                if ('a' == new_buf[i]) {
+                        g_string_append (string, "off");
+                } else if ('z' == new_buf[i]) {
+                        g_string_append (string, "bar");
+                } else if ('a' < new_buf[i] && 'z' > new_buf[i]) {
+                        g_string_append_printf (string, "%u", new_buf[i] - 'a');
+                        if (blots[new_buf[i] - 'a' - 1]) {
+                                g_string_append_c (string, '*');
+                                blots[new_buf[i] - 'a' - 1] = 0;
+                        }
+                } else {
+                        g_string_append_c (string, new_buf[i]);
+                }
+        }
+        g_free (new_buf);
+
+        /* And finally prune out unneeded intermediate points.  */
+        new_buf = g_regex_replace (re_prune_intermediate,
+                                   string->str, -1, 0, "/", 0, &error);
+        g_string_free (string, TRUE);
+        if (error)
+                return g_strdup (error->message);
+
+        return new_buf;
 }

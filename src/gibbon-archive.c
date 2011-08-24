@@ -24,6 +24,37 @@
  * Since: 0.1.1
  *
  * Handling of archived games.
+ *
+ * One of the things handled here is the detection and evaluation of the
+ * so-called "droppers", i.e. players on FIBS that leave a game, while it
+ * is going on.  This is sometimes due to network problems.  Some people
+ * hope to save a higher rating.
+ *
+ * Every player that finishes a match is assigned one point.  For each drop,
+ * the dropper gets a malus of one point.  A resume is honored with 1.5
+ * points but only if the associated drop happened while our session.
+ * Otherwise it is impossible to find out who of the two opponents was
+ * the dropper.
+ *
+ * This gives a malus to both types of droppers which is exactly what we want.
+ * It could be argued that only finished matches that happened during our
+ * session should be honored, just like only resumes after drops are honored.
+ * But the interval between a drop and a resume is necessarily shorter than
+ * the interface between start of a match and regular end.  And besides,
+ * the result bias from the little injustice does not affect players that
+ * stay long on the server.
+ *
+ * An exception is made for resumes against known bots.  In this case both the
+ * drop and the resume is simply discarded as if it had never happened.
+ * The rationale behind the exceptions is that it is legitime to play against
+ * a bot under circumstances where it is likely that the match cannot be
+ * finished and must be continued later.  Note that unresumed drops against
+ * bots cause the same malus as against humans.
+ *
+ * The whole thing results in two values: One is the confidence, which is
+ * simply the number of recorded events.  The other is a a rating for the
+ * player's reliability, which is the average of all recorded bonusses and
+ * malusses.
  **/
 
 #ifdef HAVE_CONFIG_H
@@ -32,6 +63,8 @@
 
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <stdlib.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -39,7 +72,28 @@
 #include <glib/gprintf.h>
 
 #include "gibbon-archive.h"
-#include "gibbon-connection.h"
+#include "gibbon-database.h"
+#include "gibbon-util.h"
+#include "gibbon-country.h"
+
+/* We can safely cache that across sessions.  */
+static GHashTable *gibbon_archive_countries = NULL;
+
+#define GIBBON_ARCHIVE_RE_OCTET \
+        "(1[0-9][0-9]|[1-9][0-9]|2[0-4][0-9]|25[0-5]|[0-9])"
+#define GIBBON_ARCHIVE_RE_IP                            \
+                GIBBON_ARCHIVE_RE_OCTET                 \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET  \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET  \
+                        "[-.]" GIBBON_ARCHIVE_RE_OCTET
+GRegex *gibbon_archive_re_ip = NULL;
+
+typedef struct _GibbonArchiveLookupInfo {
+        gchar *hostname;
+        GibbonGeoIPCallback callback;
+        GibbonDatabase *database;
+        gpointer data;
+} GibbonArchiveLookupInfo;
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
@@ -47,12 +101,30 @@ struct _GibbonArchivePrivate {
 
         gchar *servers_directory;
         gchar *session_directory;
+
+        GibbonDatabase *db;
+
+        gchar *archive_directory;
+
+        GHashTable *droppers;
 };
 
 #define GIBBON_ARCHIVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate))
 
 G_DEFINE_TYPE (GibbonArchive, gibbon_archive, G_TYPE_OBJECT)
+
+static void gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                                 const gchar *hostname,
+                                                 guint port,
+                                                 const gchar *player1,
+                                                 const gchar *player2);
+
+static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
+                                       gpointer data);
+static void gibbon_archive_on_resolve_ip (GObject *resolver,
+                                          GAsyncResult *result,
+                                          gpointer data);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -61,9 +133,9 @@ gibbon_archive_init (GibbonArchive *self)
                 GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate);
 
         self->priv->app = NULL;
-
         self->priv->servers_directory = NULL;
-
+        self->priv->db = NULL;
+        self->priv->droppers = NULL;
 }
 
 static void
@@ -73,13 +145,15 @@ gibbon_archive_finalize (GObject *object)
 
         if (self->priv->servers_directory)
                 g_free (self->priv->servers_directory);
-        self->priv->servers_directory = NULL;
 
         if (self->priv->session_directory)
                 g_free (self->priv->session_directory);
-        self->priv->session_directory = NULL;
 
-        self->priv->app = NULL;
+        if (self->priv->droppers)
+                g_hash_table_destroy (self->priv->droppers);
+
+        if (self->priv->db)
+                g_object_unref (self->priv->db);
 
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
@@ -88,8 +162,20 @@ static void
 gibbon_archive_class_init (GibbonArchiveClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GError *error = NULL;
         
         g_type_class_add_private (klass, sizeof (GibbonArchivePrivate));
+
+        gibbon_archive_countries = g_hash_table_new_full (g_str_hash,
+                                                          g_str_equal,
+                                                          g_free, g_free);
+
+        gibbon_archive_re_ip = g_regex_new (GIBBON_ARCHIVE_RE_IP,
+                                            G_REGEX_OPTIMIZE, 0, &error);
+        if (!gibbon_archive_re_ip) {
+                g_error ("Compiling regular expression `%s' failed: %s!",
+                         GIBBON_ARCHIVE_RE_IP, error->message);
+        }
 
         object_class->finalize = gibbon_archive_finalize;
 }
@@ -100,21 +186,19 @@ gibbon_archive_new (GibbonApp *app)
         GibbonArchive *self;
         const gchar *documents_servers_directory;
         gboolean first_run = FALSE;
+        gchar *db_path;
+        mode_t mode;
 
         self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
 
         self->priv->app = app;
 
-        documents_servers_directory =
-                g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS);
-
-        if (!documents_servers_directory)
-                documents_servers_directory = g_get_home_dir ();
+        documents_servers_directory = g_get_user_data_dir ();
 
         if (!documents_servers_directory) {
                 gibbon_app_display_error (app,
-                                          _("Cannot determine documents"
-                                            " servers_directory!"));
+                                          _("Cannot determine user data"
+                                            " directory!"));
                 g_object_unref (self);
                 return NULL;
         }
@@ -125,8 +209,12 @@ gibbon_archive_new (GibbonApp *app)
         if (!g_file_test (self->priv->servers_directory, G_FILE_TEST_EXISTS))
                 first_run = TRUE;
 
-        /* FIXME! Use constants from sys/stat.h!  */
-        if (0 != g_mkdir_with_parents (self->priv->servers_directory, 0755)) {
+#ifdef G_OS_WIN32
+	mode = S_IRWXU;
+#else
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+        if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
                 gibbon_app_display_error (app,
                                           _("Failed to create"
                                             " servers_directory `%s': %s!"),
@@ -135,6 +223,19 @@ gibbon_archive_new (GibbonApp *app)
                 g_object_unref (self);
                 return NULL;
         }
+
+        db_path = g_build_filename (documents_servers_directory,
+                                    PACKAGE, "db.sqlite", NULL);
+        self->priv->db = gibbon_database_new (app, db_path);
+        g_free (db_path);
+
+        if (!self->priv->db) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        self->priv->droppers = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                      g_free, NULL);
 
         if (first_run)
                 gibbon_app_display_info (app,
@@ -147,19 +248,21 @@ gibbon_archive_new (GibbonApp *app)
         return self;
 }
 
-GibbonArchive *
-gibbon_archive_new_from_session_info (const gchar *host, guint port,
-                                      const gchar *login)
+void
+gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
+                         guint port, const gchar *login)
 {
-        GibbonArchive *self = gibbon_archive_new (NULL);
         gchar *session_directory;
         gchar *buf;
+        mode_t mode;
 
-        if (!self)
-                return NULL;
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (port > 0);
+        g_return_if_fail (login != NULL);
 
         session_directory = g_build_filename (self->priv->servers_directory,
-                                              host, NULL);
+                                              hostname, NULL);
         if (port != 4321) {
                 buf = g_strdup_printf ("%s_%u", session_directory, port);
                 g_free (session_directory);
@@ -167,38 +270,441 @@ gibbon_archive_new_from_session_info (const gchar *host, guint port,
         }
         buf = g_build_filename (session_directory, login, NULL);
         g_free (session_directory);
-        self->priv->session_directory = buf;
-
-        return self;
-}
-
-void
-gibbon_archive_on_login (GibbonArchive *self, GibbonConnection *connection)
-{
-        guint port;
-        const gchar *login;
-        const gchar *host;
-        gchar *session_directory;
-        gchar *buf;
-
-        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
-        g_return_if_fail (GIBBON_IS_CONNECTION (connection));
-
-        login = gibbon_connection_get_login (connection);
-        host = gibbon_connection_get_hostname (connection);
-        port = gibbon_connection_get_port (connection);
 
         if (self->priv->session_directory)
                 g_free (self->priv->session_directory);
-
-        session_directory = g_build_filename (self->priv->servers_directory,
-                                              host, NULL);
-        if (port != 4321) {
-                buf = g_strdup_printf ("%s_%u", session_directory, port);
-                g_free (session_directory);
-                session_directory = buf;
-        }
-        buf = g_build_filename (session_directory, login, NULL);
-        g_free (session_directory);
         self->priv->session_directory = buf;
+
+#ifdef G_OS_WIN32
+	mode = S_IRWXU;
+#else
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+        if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
+                gibbon_app_display_error (self->priv->app,
+                                          _("Failed to create"
+                                            " directory `%s': %s!\n\n"
+                                            "It will be impossible to save"
+                                            " your matches and other data."),
+                               self->priv->servers_directory,
+                               strerror (errno));
+        }
+
+        if (gibbon_database_get_server_id (self->priv->db, hostname, port)) {
+                (void) gibbon_database_get_user_id (self->priv->db,
+                                                    hostname, port, login);
+        }
+}
+
+void
+gibbon_archive_update_user_full (GibbonArchive *self,
+                                 const gchar *hostname, guint port,
+                                 const gchar *login, gdouble rating,
+                                 gint experience)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (login != NULL);
+
+        gibbon_database_update_user_full (self->priv->db,
+                                          hostname, port, login,
+                                          rating, experience);
+}
+
+void
+gibbon_archive_save_win (GibbonArchive *self,
+                         const gchar *hostname, guint port,
+                         const gchar *winner, const gchar *loser)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
+        g_return_if_fail (winner != NULL);
+        g_return_if_fail (loser != NULL);
+
+        gibbon_archive_remove_from_droppers (self, hostname, port, winner, loser);
+
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
+                                                winner, 1.0);
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
+                                                loser, 1.0);
+}
+
+void
+gibbon_archive_save_drop (GibbonArchive *self,
+                          const gchar *hostname, guint port,
+                          const gchar *dropper, const gchar *victim)
+{
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
+        g_return_if_fail (dropper != NULL);
+        g_return_if_fail (victim != NULL);
+
+        g_hash_table_insert (self->priv->droppers,
+                             g_strdup_printf ("%s:%u%s:%s",
+                                              hostname, port, dropper, victim),
+                             (gpointer) 1);
+
+        (void) gibbon_database_insert_activity (self->priv->db,
+                                                hostname, port,
+                                                dropper, -1.0);
+}
+
+void
+gibbon_archive_save_resume (GibbonArchive *self,
+                            const gchar *hostname, guint port,
+                            const gchar *player1, const gchar *player2)
+{
+        gchar *key;
+        enum GibbonClientType type;
+
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != 0);
+        g_return_if_fail (port != 0);
+        g_return_if_fail (port <= 65536);
+        g_return_if_fail (player1 != NULL);
+        g_return_if_fail (player2 != NULL);
+
+        key = g_alloca (strlen (hostname) + 5
+                        + strlen (player1) + strlen (player2) + 4);
+
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player1, player2);
+        if (g_hash_table_remove (self->priv->droppers, key)) {
+                type = gibbon_get_client_type ("", player2,
+                                               hostname, port);
+                if (type == GibbonClientBot) {
+                        (void) gibbon_database_void_activity (self->priv->db,
+                                                              hostname, port,
+                                                              player1, -1.0);
+                } else {
+                        (void) gibbon_database_insert_activity (self->priv->db,
+                                                                hostname, port,
+                                                                player1, 1.5);
+                }
+
+                return;
+        }
+
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player2, player1);
+        if (g_hash_table_remove (self->priv->droppers, key)) {
+                type = gibbon_get_client_type ("", player1,
+                                               hostname, port);
+                if (type == GibbonClientBot) {
+                        (void) gibbon_database_void_activity (self->priv->db,
+                                                              hostname, port,
+                                                              player2, -1.0);
+                } else {
+                        (void) gibbon_database_insert_activity (self->priv->db,
+                                                                hostname, port,
+                                                                player2, 1.5);
+                }
+
+                return;
+        }
+}
+
+static void
+gibbon_archive_remove_from_droppers (GibbonArchive *self,
+                                     const gchar *hostname, guint port,
+                                     const gchar *player1, const gchar *player2)
+{
+        gchar *key = g_alloca (strlen (hostname) + 5
+                               + strlen (player1) + strlen (player2) + 4);
+
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player1, player2);
+        (void) g_hash_table_remove (self->priv->droppers, key);
+        (void) sprintf (key, "%s:%u:%s:%s", hostname, port, player2, player1);
+        (void) g_hash_table_remove (self->priv->droppers, key);
+}
+
+gboolean
+gibbon_archive_get_reliability (GibbonArchive *self,
+                                const gchar *hostname, guint port,
+                                const gchar *login,
+                                gdouble *value, guint *confidence)
+{
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (port <= 65536, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (value != NULL, FALSE);
+        g_return_val_if_fail (confidence != NULL, FALSE);
+
+        return gibbon_database_get_reliability (self->priv->db,
+                                                hostname, port,
+                                                login, value, confidence);
+}
+
+GibbonCountry *
+gibbon_archive_get_country (const GibbonArchive *self,
+                            const gchar *_hostname,
+                            GibbonGeoIPCallback callback,
+                            gpointer data)
+{
+        const gchar *alpha2;
+        GibbonArchiveLookupInfo *info;
+        gchar *hostname;
+        GInetAddress *address;
+        GResolver *resolver;
+        gsize l;
+
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+
+        /*
+         * FIBS does not necessarily show all logged in users.  Thosse that
+         * suddenly pop up will have empty information.  This is hopefully
+         * healed later by issuing a rawwho command on that user.
+         */
+        if (!_hostname || !*_hostname)
+                return gibbon_country_new ("xy");
+
+        /*
+         * We do not bother normalizing the hostname.  It is the result of a
+         * reverse DNS lookup done by FIBS, and it will be at least
+         * unambiguous if not canonical.
+         *
+         * We also do not bother to use the extended lookup function here.
+         * We will store "xy" for unknown IPs or unknown locations, and
+         * a returned NULL means therefore that this IP is new.
+         */
+
+        alpha2 = g_hash_table_lookup (gibbon_archive_countries, _hostname);
+
+        if (!alpha2) {
+                /*
+                 * We immediately insert the fallback country in the hash
+                 * table in order to avoid parallel lookups of the same
+                 * hostname.  We rely on the callback updating the
+                 * country information of all rows.
+                 */
+                hostname = g_strdup (_hostname);
+
+                /*
+                 * First try to find out if it is a numerical IP address in
+                 * one of the private IP ranges.
+                 */
+                address = g_inet_address_new_from_string (_hostname);
+                if (address
+                    && (g_inet_address_get_is_site_local (address)
+                        || g_inet_address_get_is_loopback (address))) {
+                        g_object_unref (address);
+                        g_hash_table_insert (gibbon_archive_countries,
+                                             hostname, g_strdup ("xl"));
+                        return gibbon_country_new ("xl");
+                }
+                if (address)
+                        g_object_unref (address);
+
+                if (0 == g_strcmp0 (_hostname, "localhost")) {
+                        g_hash_table_insert (gibbon_archive_countries,
+                                             hostname, g_strdup ("xl"));
+                        return gibbon_country_new ("xl");
+                }
+
+                g_hash_table_insert (gibbon_archive_countries,
+                                     hostname, g_strdup ("xy"));
+                alpha2 = "xy";
+
+                info = g_malloc (sizeof *info);
+                info->hostname = hostname;
+                info->callback = callback;
+                info->database = self->priv->db;
+                info->data = data;
+
+                resolver = g_resolver_get_default ();
+                g_resolver_lookup_by_name_async (resolver,
+                                                 hostname,
+                                                 /* No need to cancel.  */
+                                                 NULL,
+                                                 gibbon_archive_on_resolve,
+                                                 info);
+
+                /*
+                 * Assume the tld until the lookup is done, but only if it is
+                 * a known one.
+                 *
+                 * FIXME! gibbon_country_new() should fall back to "xy" for
+                 * unknown countries.
+                 */
+                l = strlen (hostname);
+                if (l >= 4 && hostname[l - 3] == '.')
+                        alpha2 = hostname + l - 2;
+        }
+
+        return gibbon_country_new (alpha2);
+}
+
+static void
+gibbon_archive_on_resolve (GObject *oresolver, GAsyncResult *result,
+                           gpointer data)
+{
+        GibbonArchiveLookupInfo info = *(GibbonArchiveLookupInfo *) data;
+        GList *ips;
+        GInetAddress *address;
+        gsize address_size;
+        gsize i;
+        const guint8 *octets;
+        guint32 key;
+        gchar *alpha2;
+        GibbonCountry *country;
+        GMatchInfo *match_info;
+        gchar *xoctets[4];
+        gchar numerical_ip[16];
+        GResolver *resolver;
+
+        /*
+         * The hostname pointer is still in use as a hash key, we cannot
+         * g_free() it.
+         */
+        g_free (data);
+
+        ips = g_resolver_lookup_by_name_finish (G_RESOLVER (oresolver),
+                                                result, NULL);
+        g_object_unref (oresolver);
+
+        /*
+         * FIBS does a gratuitous reverse lookup on IP addresses.  But
+         * unfortunately a reverse lookup for the resolved IPs fails quite
+         * often, especially for IPs assigned by ISPs to their private
+         * clients.
+         *
+         * However, these names contain the numerical IP most of the time.
+         * If we can extract such an IP, and it resolves to our original
+         * name, we have worked around the problem and can still locate
+         * the IP geographically.
+         */
+        if (!ips) {
+                if (!g_regex_match (gibbon_archive_re_ip, info.hostname, 0,
+                                   &match_info))
+                        return;
+
+                for (i = 0; i < 4; ++i) {
+                        xoctets[i] = g_match_info_fetch (match_info, i + 1);
+                }
+                g_snprintf (numerical_ip, sizeof numerical_ip, "%s.%s.%s.%s",
+                            xoctets[0],
+                            xoctets[1],
+                            xoctets[2],
+                            xoctets[3]);
+                g_match_info_free (match_info);
+
+                address = g_inet_address_new_from_string (numerical_ip);
+
+                data = g_malloc (sizeof info);
+                memcpy (data, &info, sizeof info);
+                resolver = g_resolver_get_default ();
+                g_resolver_lookup_by_address_async (resolver,
+                                                    address,
+                                                    /* No need to cancel.  */
+                                                    NULL,
+                                                   gibbon_archive_on_resolve_ip,
+                                                    data);
+                return;
+        }
+
+        /*
+         * The address space stored in our GeoIP database should be
+         * exhaustive.  There is no point iterating over the list.  Picking
+         * the first, preferred address from the list is accepatble.
+         */
+        address = G_INET_ADDRESS (ips->data);
+
+        address_size = g_inet_address_get_native_size (address);
+        if (4 != address_size) {
+                g_resolver_free_addresses (ips);
+                g_return_if_fail (4 == address_size);
+        }
+
+        octets = g_inet_address_to_bytes (address);
+        key = 0;
+        for (i = 0; i < 4; ++i) {
+                key <<= 8;
+                key += octets[i];
+        }
+        g_resolver_free_addresses (ips);
+
+        alpha2 = gibbon_database_get_country (info.database, key);
+
+        country = gibbon_country_new (alpha2);
+        g_hash_table_insert (gibbon_archive_countries,
+                             g_strdup (info.hostname),
+                             g_strdup (gibbon_country_get_alpha2 (country)));
+
+        info.callback (info.data, info.hostname, country);
+}
+
+static void
+gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
+                              gpointer data)
+{
+        GibbonArchiveLookupInfo info = *(GibbonArchiveLookupInfo *) data;
+        gchar *hostname;
+        GMatchInfo *match_info;
+        gchar *xoctets[4];
+        gchar numerical_ip[16];
+        guint32 key;
+        GInetAddress *address;
+        gint i;
+        const guint8 *octets;
+        gchar *alpha2;
+        GibbonCountry *country;
+
+        /*
+         * The hostname pointer is still in use as a hash key, we cannot
+         * g_free() it.
+         */
+        g_free (data);
+
+        hostname = g_resolver_lookup_by_address_finish (G_RESOLVER (resolver),
+                                                        result, NULL);
+        g_object_unref (resolver);
+
+        if (g_strcmp0 (hostname, info.hostname))
+                return;
+        g_free (hostname);
+
+        /*
+         * FIXME! It is not exactly efficient to match again here!
+         */
+        if (!g_regex_match (gibbon_archive_re_ip, info.hostname, 0,
+                           &match_info)) {
+                g_critical ("Could not extract numerical IP from %s",
+                            info.hostname);
+                return;
+        }
+
+        for (i = 0; i < 4; ++i) {
+                xoctets[i] = g_match_info_fetch (match_info, i + 1);
+        }
+        g_snprintf (numerical_ip, sizeof numerical_ip, "%s.%s.%s.%s",
+                    xoctets[0],
+                    xoctets[1],
+                    xoctets[2],
+                    xoctets[3]);
+        g_match_info_free (match_info);
+        address = g_inet_address_new_from_string (numerical_ip);
+
+        octets = g_inet_address_to_bytes (address);
+        g_object_unref (address);
+
+        key = 0;
+        for (i = 0; i < 4; ++i) {
+                key <<= 8;
+                key += octets[i];
+        }
+
+        alpha2 = gibbon_database_get_country (info.database, key);
+
+        country = gibbon_country_new (alpha2);
+        g_hash_table_insert (gibbon_archive_countries,
+                             g_strdup (info.hostname),
+                             g_strdup (gibbon_country_get_alpha2 (country)));
+
+        info.callback (info.data, info.hostname, country);
 }

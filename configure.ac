@@ -36,6 +36,7 @@ AM_MAINTAINER_MODE
 AC_MSG_CHECKING([for MS-DOS])
 case "$host" in
 	*-*-mingw*)
+		AC_CHECK_TOOL(WINDRES, windres)
 		gibbon_native_msdos=yes
         	;;
 	*)
@@ -57,12 +58,25 @@ esac
 AC_MSG_RESULT([$platform_osx])
 AM_CONDITIONAL(OSX, test x$platform_osx = xyes)
 
+AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_msdos$platform_osx = xnono)
+
+AC_ARG_ENABLE(gtk3-migration,
+              AC_HELP_STRING([--enable-gtk3-migration],
+                             [Enable additional compiler flags to check for compatibility with gtk+-3.0 [default=no]]),
+              [gibbon_gtk_migration_pre_flight=$enableval])
+AM_CONDITIONAL(GIBBON_GTK_MIGRATION_PRE_FLIGHT, test "x$gibbon_gtk_migration_pre_flight" = "xyes")
+
 AC_CONFIG_HEADERS(config.h)
 
 LT_INIT
 
-AC_PATH_PROG(GCONFTOOL, gconftool-2)
 IT_PROG_INTLTOOL([0.40.6])
+
+AC_PATH_PROG(LWP_REQUEST, "lwp-request")
+AC_PATH_PROG(LYNX, "lynx")
+AC_PATH_PROG(LINKS, "links")
+AC_PATH_PROG(W3M, "w3m")
+AC_PATH_PROG(WGET, "wget")
 
 PKG_PROG_PKG_CONFIG
 
@@ -80,21 +94,27 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 
 AM_GLIB_GNU_GETTEXT([external])
 
-m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.13.0])
-m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.16.0])
-m4_define(gibbon_gconf_requirement, [gconf-2.0 >= 2.24.0])
+m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.26.0])
+m4_define(gibbon_librsvg_requirement, [librsvg-2.0 >= 2.32.1])
+m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.22.0])
+m4_define(gibbon_gconf_requirement, [gconf-2.0 >= 2.22.0])
 m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
+m4_define(gibbon_libpng_requirement, [libpng >= 0.23])
 m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
+m4_define(gibbon_sqlite3_requirement, [sqlite3 >= 3.6.19])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
+    gibbon_librsvg_requirement
     gibbon_gtk_requirement
     gibbon_gconf_requirement
     gibbon_gthread_requirement
+    gibbon_libpng_requirement
     gibbon_libxml_requirement
+    gibbon_sqlite3_requirement
 )
 
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
-GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ] gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_gthread_requirement [, ]gibbon_libxml_requirement["]
+GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ]gibbon_librsvg_requirement[, ]gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_gthread_requirement[, ]gibbon_libpng_requirement[, ]gibbon_libxml_requirement[, ]gibbon_sqlite3_requirement["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
@@ -126,7 +146,7 @@ GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
 
-AM_GCONF_SOURCE_2
+GLIB_GSETTINGS
 
 dnl gtk-doc 1.16 produces a failure for missing overview.xml after
 dnl "make distcheck".
@@ -140,6 +160,7 @@ GNOME_DOC_INIT([0.9.0],,
 AC_CONFIG_FILES([ 
     Makefile
     gcreate_class.pl
+    download_uri
     libgsgf/Makefile
     libgsgf/examples/Makefile
     libgsgf/tests/Makefile
@@ -149,17 +170,24 @@ AC_CONFIG_FILES([
     libsvg/Makefile
     libsvg-cairo/Makefile
     src/Makefile
+    src/gibbon.rc
     data/Makefile
     data/gibbon.desktop.in
     pixmaps/Makefile
     pixmaps/boards/Makefile
     pixmaps/icons/Makefile
+    pixmaps/icons/16x16/Makefile
+    pixmaps/icons/scalable/Makefile
+    pixmaps/flags/Makefile
+    pixmaps/flags/16x16/Makefile
     po/Makefile.in
     docs/Makefile
     docs/reference/Makefile
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
     help/Makefile
+    msdos/Makefile
+    msdos/gibbon.iss
     share/Makefile
     share/icons/Makefile
     share/icons/application/Makefile
@@ -170,6 +198,7 @@ AC_CONFIG_FILES([
     share/icons/application/48x48/Makefile
     share/icons/application/128x128/Makefile
     share/icons/application/256x256/Makefile
+    share/icons/application/scalable/Makefile
 ])
 AC_OUTPUT
 

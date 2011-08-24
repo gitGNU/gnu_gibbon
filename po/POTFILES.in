@@ -19,10 +19,10 @@
 # Please keep this file in alphabetical order.
 
 [encoding: UTF-8]
+data/bg.Gibbon.gschema.xml.in
 data/gibbon.desktop.in
 data/gibbon.desktop.in.in
-data/gibbon.schemas.in
-data/gibbon.xml
+data/gibbon.ui
 libgsgf/gsgf-collection.c
 libgsgf/gsgf-color.c
 libgsgf/gsgf-component.c
@@ -51,17 +51,41 @@ libgsgf/tests/test-number.c
 libgsgf/tests/test-real.c
 libgsgf/tests/test-really-empty.c
 libgsgf/tests/test-write-empty.c
-src/gibbon-account-dialog.c
+src/gibbon-action.c
 src/gibbon-app.c
 src/gibbon-archive.c
+src/gibbon-board.c
+src/gibbon.c
 src/gibbon-cairoboard.c
+src/gibbon-chat.c
 src/gibbon-chat-view.c
+src/gibbon-client-icons.c
+src/gibbon-clip.c
 src/gibbon-connection.c
 src/gibbon-connection-dialog.c
-src/gibbon-connector.c
+src/gibbon-country.c
+src/gibbon-database.c
+src/gibbon-fibs-command.c
+src/gibbon-fibs-message.c
+src/gibbon-game.c
 src/gibbon-game-chat.c
+src/gibbon-geo-ip-updater.c
 src/gibbon-help.c
+src/gibbon-inviter-list.c
+src/gibbon-inviter-list-view.c
+src/gibbon-java-fibs-importer.c
+src/gibbon-match.c
+src/gibbon-player-list.c
 src/gibbon-player-list-view.c
+src/gibbon-position.c
+src/gibbon-reliability.c
+src/gibbon-reliability-renderer.c
+src/gibbon-saved-info.c
+src/gibbon-server-console.c
 src/gibbon-session.c
-src/gibbon.c
+src/gibbon-settings.c
+src/gibbon-shouts.c
+src/gibbon-signal.c
+src/gibbon-util.c
+src/html-entities.c
 src/svg-util.c

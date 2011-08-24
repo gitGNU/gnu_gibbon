@@ -1,0 +1,45 @@
+#! /bin/sh
+
+#set -x
+
+lwp_request="@LWP_REQUEST@"
+lynx="@LYNX@"
+w3m="@W3M@"
+links="@LINKS@"
+wget="@WGET@"
+
+uri=$1
+if test "x$uri" = "x"; then
+        exec 1>&2
+        echo "Usage: $0 URI"
+        exit 1
+fi
+
+if test "x$wget" != "x"; then
+        exec "$wget" --quiet -O - "$uri"
+fi
+
+if test "x$w3m" != "x"; then
+        exec "$w3m" -dump_source "$uri"
+fi
+
+if test "x$lynx" != "x"; then
+        exec "$lynx" -source "$uri"
+fi
+
+if test "x$links" != "x"; then
+        exec "$links" -source "$uri"
+fi
+
+if test "x$lwp_request" != "x"; then
+        exec "$lwp_request" -m GET "$uri"
+fi
+
+exec 1>&2
+cat <<EOF
+None of the programs lwp-request, lynx, links, w3m or wget have been found
+on your system.  If you want to update the target file you have to
+download this URI manually:
+
+    $uri
+EOF

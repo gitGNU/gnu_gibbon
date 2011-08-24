@@ -236,19 +236,19 @@ LegalMove (int anBoardPre[28], int anBoardPost[28], int anRoll[2],
 
 /* End of Gary Wong's code.  */
 
-#define DEBUG_TEST_ENGINE 1
+#define DEBUG_TEST_ENGINE 0
 
 static void compare_results (GibbonPosition *position,
                              GibbonPosition *post_position,
                              GibbonMove *move,
-                             gint success, gint moves[8]);
+                             gint success, gint moves[8],
+                             GibbonPositionSide side);
 static void dump_position (const GibbonPosition *position);
 static void dump_move (const GibbonMove *move);
 static void translate_position (gint board[28], const GibbonPosition *position,
                                 GibbonPositionSide turn);
-static guint test_game (guint64 max_positions);
-static guint test_roll (GibbonPosition *position, guint64 max_positions);
-static gboolean game_over (const GibbonPosition *position);
+static void test_game (void);
+static void test_roll (GibbonPosition *position);
 static void move_checker (GibbonPosition *position, gint board[28],
                           guint die, GibbonPositionSide side);
 static void find_any_move (const GibbonPosition *position, gint board[28],
@@ -269,11 +269,12 @@ static void print_movement (gint board[28], gint from, gint die,
                             GibbonPositionSide turn);
 #endif
 
+static guint64 total_positions = 100000;
+static guint64 done_positions = 0;
+
 int
 main (int argc, char *argv[])
 {
-        guint64 num_positions = 1000;
-        guint64 i;
         guint64 random_seed = time (NULL);
         gboolean verbose = FALSE;
 
@@ -281,13 +282,13 @@ main (int argc, char *argv[])
 
         if (argc > 1) {
                 errno = 0;
-                num_positions = g_ascii_strtoull (argv[1], NULL, 10);
+                total_positions = g_ascii_strtoull (argv[1], NULL, 10);
                 if (errno) {
                         g_printerr ("Invalid number of positions `%s': %s!\n",
                                     argv[1], strerror (errno));
                         return -1;
                 }
-                g_print ("Testing %llu positions.\n", num_positions);
+                g_print ("Testing %llu positions.\n", total_positions);
                 verbose = TRUE;
         }
 
@@ -302,23 +303,20 @@ main (int argc, char *argv[])
         }
         srandom (random_seed);
 
-        for (i = 0; i < num_positions; /* empty */) {
-                i += test_game(num_positions - i);
-        }
+        while (done_positions < total_positions)
+                test_game ();
 
         return 0;
 }
 
-static guint
-test_game (guint64 max_positions)
+static void
+test_game (void)
 {
         GibbonPosition *position = gibbon_position_new ();
         GibbonPositionSide side = random () % 2
                         ? GIBBON_POSITION_SIDE_WHITE
                                         : GIBBON_POSITION_SIDE_BLACK;
-        guint num_positions = 0;
-
-        while (num_positions < max_positions) {
+        while (done_positions < total_positions) {
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
                         position->dice[0] = 1 + random () % 6;
                         position->dice[1] = 1 + random () % 6;
@@ -327,31 +325,27 @@ test_game (guint64 max_positions)
                         position->dice[1] = -6 + random () % 6;
                 }
 
-                if (game_over (position)) {
+                if (gibbon_position_game_over (position)) {
 #if (DEBUG_TEST_ENGINE)
                         g_printerr ("***** Game over! *****\n");
 #endif
                         break;
                 }
 
-                num_positions += test_roll (position,
-                                            max_positions - num_positions);
+                test_roll (position);
 
                 side = -side;
         }
 
         gibbon_position_free (position);
-
-        return num_positions;
 }
 
-static guint
-test_roll (GibbonPosition *position, guint64 max_positions)
+static void
+test_roll (GibbonPosition *position)
 {
         gboolean is_double = position->dice[0] == position->dice[1];
         guint max_movements = is_double ? 4 : 2;
         GibbonPosition *post_position;
-        guint num_positions = 0;
         guint i;
         GibbonPositionSide turn;
         gint dice[5], die;
@@ -381,7 +375,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
         dump_position (position);
 #endif
 
-        while (num_positions++ < max_positions) {
+        while (done_positions++ < total_positions) {
                 /* Swap the dice after every try.  The "reasonable" move
                  * generator always uses the dice in order.  In the
                  * "tricky" situations it would then fail to find a move.
@@ -401,7 +395,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
                 /* Half of the moves are more or less random, the other half
                  * more or less reasonable.
                  */
-                if (!(random () % 10)) {
+                if (!(random () & 0x1)) {
 #if (DEBUG_TEST_ENGINE)
                         if (turn == GIBBON_POSITION_SIDE_WHITE)
                                 g_printerr ("  ?? w: %u%u:", dice[0], dice[1]);
@@ -411,10 +405,12 @@ test_roll (GibbonPosition *position, guint64 max_positions)
                         find_any_move (position, board, post_position,
                                        turn, dice);
                 } else {
+#if (DEBUG_TEST_ENGINE)
                         if (turn == GIBBON_POSITION_SIDE_WHITE)
                                 g_printerr ("  !! w: %u%u:", dice[0], dice[1]);
                         else
                                 g_printerr ("  !! b: %u%u:", dice[0], dice[1]);
+#endif
                         find_good_move (position, board, post_position,
                                         turn, dice);
                 }
@@ -425,7 +421,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
                                                    turn);
                 legal = LegalMove (board, post_board, dice, moves);
                 compare_results (position, post_position, move,
-                                 legal, moves);
+                                 legal, moves, turn);
                 g_free (move);
                 if (legal) {
 #if (DEBUG_TEST_ENGINE)
@@ -442,7 +438,7 @@ test_roll (GibbonPosition *position, guint64 max_positions)
                 gibbon_position_free (post_position);
         }
 
-        return num_positions;
+        return;
 }
 
 /* This function moves a checker more or less randomly.
@@ -629,8 +625,6 @@ dump_move (const GibbonMove *move)
                 g_printerr (" %d/%d",
                             move->movements[i].from,
                             move->movements[i].to);
-                if (move->movements[i].num != 1)
-                        g_printerr ("(%u)", move->movements[i].num);
         }
         g_printerr ("\n");
 }
@@ -639,12 +633,11 @@ static void
 compare_results (GibbonPosition *position,
                 GibbonPosition *post_position,
                 GibbonMove *move,
-                gint success, gint moves[8])
+                gint success, gint moves[8],
+                GibbonPositionSide turn)
 {
         gboolean match = TRUE;
-        gint i;
 
-return;
         if (move->status == GIBBON_MOVE_LEGAL && !success)
                 match = FALSE;
         else if (move->status != GIBBON_MOVE_LEGAL && success)
@@ -653,10 +646,12 @@ return;
         if (match)
                 return;
 
-        g_printerr ("Legality checks differ:\n");
-        g_printerr ("Gary Wong: %s, Gibbon: %s\n",
+        g_printerr ("Legality checks differ after %llu/%llu positions:\n",
+                    done_positions, total_positions);
+        g_printerr ("Gary Wong: %s, Gibbon: %s (%d)\n",
                     success ? "legal" : "illegal",
-                    move->status == GIBBON_MOVE_LEGAL ? "legal" : "illegal");
+                    move->status == GIBBON_MOVE_LEGAL ? "legal" : "illegal",
+                    move->status);
 
         g_printerr ("Starting position:\n");
         dump_position (position);
@@ -665,15 +660,10 @@ return;
 
         if (success) {
                 g_printerr ("Move according to Gary Wong:");
-                for (i = 0; moves[i] && i < 8; i += 2) {
-                        g_printerr (" %u/%u", moves[i], moves[i + 1]);
-                }
-                g_printerr ("\n");
+                print_moves (moves, turn, position->dice);
         }
-        if (move->status == GIBBON_MOVE_LEGAL) {
-                g_printerr ("Move according to Gibbon:");
-                dump_move (move);
-        }
+        g_printerr ("Move according to Gibbon:");
+        dump_move (move);
 
         exit (1);
 }
@@ -730,47 +720,23 @@ translate_board (GibbonPosition *position, gint board[28],
         }
 }
 
-static gboolean
-game_over (const GibbonPosition *position)
-{
-        guint num_checkers =
-                gibbon_position_get_borne_off (position,
-                                               GIBBON_POSITION_SIDE_WHITE);
-
-        if (num_checkers >= 15)
-                return TRUE;
-
-        num_checkers =
-                gibbon_position_get_borne_off (position,
-                                               GIBBON_POSITION_SIDE_BLACK);
-
-        if (num_checkers >= 15)
-                return TRUE;
-
-        return FALSE;
-}
-
 static void
 print_moves (gint moves[8], GibbonPositionSide turn, gint dice[2])
 {
         gint i;
 
         if (turn == GIBBON_POSITION_SIDE_WHITE)
-                g_printerr ("W: %u%u", dice[0], dice[1]);
+                g_printerr ("W: %u%u", abs (dice[0]), abs (dice[1]));
         else
-                g_printerr ("B: %u%u", dice[0], dice[1]);
+                g_printerr ("B: %u%u", abs (dice[0]), abs (dice[1]));
 
         if (!*moves) {
                 g_printerr (" -\n");
                 return;
         }
 
-        if (turn == GIBBON_POSITION_SIDE_WHITE)
-                for (i = 0; moves[i] && i < 8; i += 2)
-                        g_printerr (" %d/%d", moves[i], moves[i + 1]);
-        else
-                for (i = 0; moves[i] && i < 8; i += 2)
-                        g_printerr (" %d/%d", 25 - moves[i], 25 - moves[i + 1]);
+        for (i = 0; moves[i] && i < 8; i += 2)
+                g_printerr (" %d/%d", moves[i], moves[i + 1]);
 
         g_printerr ("\n");
 }
@@ -806,14 +772,18 @@ find_any_move (const GibbonPosition *position, gint board[28],
                                       turn, dice);
 
         if (!num_movements) {
+#if (DEBUG_TEST_ENGINE)
                 g_printerr (" -\n");
+#endif
                 return;
         }
 
         for (i = 0; i < num_movements; ++i) {
                 move_checker (post_position, board, dice[i], turn);
         }
+#if (DEBUG_TEST_ENGINE)
         g_printerr ("\n");
+#endif
 }
 
 /* This is a mini backgammon engine.  It plays about the same level as "expert"
@@ -851,7 +821,10 @@ find_good_move (const GibbonPosition *position, gint _board[28],
 
         if (board[25]) {
                 /* Dancing.  */
+#if (DEBUG_TEST_ENGINE)
                 g_printerr ("\n");
+#endif
+                translate_board (post_position, board, turn);
                 return;
         }
 
@@ -872,7 +845,9 @@ find_good_move (const GibbonPosition *position, gint _board[28],
         while (*dice_pair)
                 find_good_movement (board, dice_pair++, turn);
 
+#if (DEBUG_TEST_ENGINE)
         g_printerr ("\n");
+#endif
 
         translate_board (post_position, board, turn);
 }
@@ -1068,8 +1043,10 @@ find_good_movement (gint board[28], gint dice[2],
                 if (to > 0 && board[to] < -1)
                         continue;
 
+#if (DEBUG_TEST_ENGINE)
                 g_printerr (" >>> Last resort <<< ");
                 print_movement (board, i, die, turn);
+#endif
                 --board[i];
 
                 if (to > 0 && board[to] == -1) {

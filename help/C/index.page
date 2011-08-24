@@ -1,0 +1,29 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="guide"
+      id="index">
+
+  <info>
+    <title type="link">Gibbon</title>
+    <title type="text">Gibbon</title>
+    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>    
+  </info>
+
+  <title>
+    <media type="image" mime="image/png" src="figures/gibbon-logo.png">
+      Gibbon logo
+    </media>
+    Gibbon 
+  </title>
+
+  <section id="getting_started" style="2column">
+    <title>Getting Started</title>
+  </section>
+</page>

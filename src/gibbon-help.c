@@ -22,7 +22,7 @@
 #include "gibbon-help.h"
 
 static const gchar *const authors[] = {
-                "Guido Flohr <guido@imperia.bg>",
+                "Guido Flohr <guido@imperia.net>",
                 NULL
 };
 

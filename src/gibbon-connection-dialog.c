@@ -32,46 +32,168 @@
 #include <errno.h>
 
 #include "gibbon-connection-dialog.h"
-#include "gibbon-prefs.h"
-#include "gibbon-signal.h"
+#include "gibbon-settings.h"
 
 typedef struct _GibbonConnectionDialogPrivate GibbonConnectionDialogPrivate;
 struct _GibbonConnectionDialogPrivate {
         GibbonApp *app;
-        GtkDialog *dialog;
 
-        GibbonSignal *cancel_signal;
-        GibbonSignal *destroy_signal;
-        GibbonSignal *connect_signal;
-        GibbonSignal *register_link_signal;
+        GSettings *settings;
+
+        GtkWidget *server_entry;
+        GtkWidget *port_entry;
+        GtkWidget *login_entry;
+        GtkWidget *save_password_button;
+        GtkWidget *password_entry;
+        GtkWidget *address_entry;
 };
 
 #define GIBBON_CONNECTION_DIALOG_PRIVATE(obj) \
         (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate))
 
-G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, GTK_TYPE_DIALOG)
 
-static void gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self);
-static void gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self);
-static void gibbon_connection_dialog_on_register_link (GibbonConnectionDialog
-                                                       *self,
-                                                       GtkLinkButton *emitter);
-static void gibbon_connection_dialog_disconnect_signals (GibbonConnectionDialog
-                                                         *self);
+static void gibbon_connection_dialog_on_register (GibbonConnectionDialog *self,
+                                                  GtkLinkButton *emitter);
+static void gibbon_connection_dialog_response (GtkDialog *dialog,
+                                               gint response);
+
 static void 
 gibbon_connection_dialog_init (GibbonConnectionDialog *self)
 {
+        GtkWidget *table;
+        GtkWidget *content_area;
+        gchar *str;
+        GtkWidget *link_button;
+
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate);
 
-        self->priv->app = NULL;
-        self->priv->dialog = NULL;
+        self->priv->settings =
+                        g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        g_settings_delay (self->priv->settings);
 
-        self->priv->cancel_signal = NULL;
-        self->priv->destroy_signal = NULL;
-        self->priv->connect_signal = NULL;
-        self->priv->register_link_signal = NULL;
+        gtk_container_set_border_width (GTK_CONTAINER (self), 5);
+
+        table = gtk_table_new (7, 2, FALSE);
+        content_area = gtk_dialog_get_content_area (GTK_DIALOG (self));
+        gtk_container_add (GTK_CONTAINER (content_area), GTK_WIDGET (table));
+
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   gtk_label_new (_("Server")),
+                                   0, 1, 0, 1);
+        self->priv->server_entry = gtk_entry_new ();
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->server_entry,
+                                   1, 2, 0, 1);
+        g_settings_bind_with_mapping (self->priv->settings,
+                                      GIBBON_PREFS_SERVER_HOST,
+                                      self->priv->server_entry, "text",
+                                      G_SETTINGS_BIND_DEFAULT,
+                                      NULL,
+                                      gibbon_settings_bind_trimmed_string,
+                                      NULL, NULL);
+
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   gtk_label_new (_("Port")),
+                                   0, 1, 1, 2);
+        self->priv->port_entry = gtk_entry_new ();
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->port_entry,
+                                   1, 2, 1, 2);
+        g_settings_bind_with_mapping (self->priv->settings,
+                                      GIBBON_PREFS_SERVER_PORT,
+                                      self->priv->port_entry, "text",
+                                      G_SETTINGS_BIND_DEFAULT,
+                                      gibbon_settings_bind_port_to_string,
+                                      gibbon_settings_bind_string_to_port,
+                                      NULL, NULL);
+
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   gtk_label_new (_("User name")),
+                                   0, 1, 2, 3);
+        self->priv->login_entry = gtk_entry_new ();
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->login_entry,
+                                   1, 2, 2, 3);
+        g_settings_bind_with_mapping (self->priv->settings,
+                                      GIBBON_PREFS_SERVER_LOGIN,
+                                      self->priv->login_entry, "text",
+                                      G_SETTINGS_BIND_DEFAULT,
+                                      NULL,
+                                      gibbon_settings_bind_trimmed_string,
+                                      NULL, NULL);
+
+        self->priv->save_password_button =
+                        gtk_check_button_new_with_label (_("Save password?"));
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->save_password_button,
+                                   0, 2, 3, 4);
+        g_settings_bind (self->priv->settings,
+                         GIBBON_PREFS_SERVER_SAVE_PASSWORD,
+                         self->priv->save_password_button,
+                         "active",
+                         G_SETTINGS_BIND_DEFAULT);
+
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   gtk_label_new (_("Password")),
+                                   0, 1, 4, 5);
+        self->priv->password_entry = gtk_entry_new ();
+        gtk_entry_set_visibility (GTK_ENTRY (self->priv->password_entry),
+                                  FALSE);
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->password_entry,
+                                   1, 2, 4, 5);
+        if (g_settings_get_boolean (self->priv->settings,
+                                    GIBBON_PREFS_SERVER_SAVE_PASSWORD)) {
+                g_settings_bind (self->priv->settings,
+                                 GIBBON_PREFS_SERVER_PASSWORD,
+                                 self->priv->password_entry, "text",
+                                 G_SETTINGS_BIND_DEFAULT);
+        } else {
+                str = g_settings_get_string (self->priv->settings,
+                                                GIBBON_PREFS_SERVER_PASSWORD);
+                if (*str)
+                        g_settings_set_string (self->priv->settings,
+                                               GIBBON_PREFS_SERVER_PASSWORD,
+                                               "");
+                g_free (str);
+
+                gtk_entry_set_text (GTK_ENTRY (self->priv->password_entry), "");
+        }
+
+        link_button = gtk_link_button_new_with_label (
+                        "http://fibs.com/javafibs/register.html",
+                        _("Register new account on fibs.com"));
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   link_button,
+                                   0, 2, 5, 6);
+        g_signal_connect_swapped (G_OBJECT (link_button), "clicked",
+                                  G_CALLBACK (gibbon_connection_dialog_on_register),
+                                  self);
+
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   gtk_label_new (_("E-mail (optional)")),
+                                   0, 1, 6, 7);
+        self->priv->address_entry = gtk_entry_new ();
+        gtk_table_attach_defaults (GTK_TABLE (table),
+                                   self->priv->address_entry,
+                                   1, 2, 6, 7);
+        g_settings_bind_with_mapping (self->priv->settings,
+                                      GIBBON_PREFS_SERVER_ADDRESS,
+                                      self->priv->address_entry, "text",
+                                      G_SETTINGS_BIND_DEFAULT,
+                                      NULL,
+                                      gibbon_settings_bind_trimmed_string,
+                                      NULL, NULL);
+
+        /*
+         * We set the okay button in the constructor, depending on the
+         * type of dialog we display.
+         */
+        gtk_dialog_add_button (GTK_DIALOG (self), GTK_STOCK_CANCEL,
+                               GTK_RESPONSE_CANCEL);
 }
 
 static void
@@ -79,13 +201,8 @@ gibbon_connection_dialog_finalize (GObject *object)
 {
         GibbonConnectionDialog *self = GIBBON_CONNECTION_DIALOG (object);
 
-        self->priv->app = NULL;
-
-        if (self->priv->dialog)
-                gtk_widget_hide (GTK_WIDGET (self->priv->dialog));
-        self->priv->dialog = NULL;
-
-        gibbon_connection_dialog_disconnect_signals (self);
+        if (self->priv->settings)
+                g_object_unref (self->priv->settings);
 
         G_OBJECT_CLASS (gibbon_connection_dialog_parent_class)->finalize(object);
 }
@@ -94,15 +211,18 @@ static void
 gibbon_connection_dialog_class_init (GibbonConnectionDialogClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GtkDialogClass *dialog_class = GTK_DIALOG_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonConnectionDialogPrivate));
+
+        dialog_class->response = gibbon_connection_dialog_response;
 
         object_class->finalize = gibbon_connection_dialog_finalize;
 }
 
 /**
  * gibbon_connection_dialog_new:
- * @app: The #GibbonApp.
+ * @just_conf: %TRUE, if this is just a configuration dialog..
  *
  * Creates a new #GibbonConnectionDialog.
  *
@@ -110,193 +230,41 @@ gibbon_connection_dialog_class_init (GibbonConnectionDialogClass *klass)
  * failure.
  */
 GibbonConnectionDialog *
-gibbon_connection_dialog_new (GibbonApp *app)
+gibbon_connection_dialog_new (GibbonApp *app, gboolean just_conf)
 {
         GibbonConnectionDialog *self =
                         g_object_new (GIBBON_TYPE_CONNECTION_DIALOG, NULL);
-        GObject *entry;
-        GObject *toggle;
-        gboolean save_password;
-        GibbonPrefs *prefs;
-        GObject *emitter;
 
         self->priv->app = app;
 
-        gibbon_app_set_state_connecting (app);
+        if (just_conf) {
+                gtk_dialog_add_button (GTK_DIALOG (self), GTK_STOCK_OK,
+                                       GTK_RESPONSE_OK);
+                gtk_window_set_title (GTK_WINDOW (self),
+                                      _("Account settings"));
+        } else {
+                gtk_dialog_add_button (GTK_DIALOG (self), GTK_STOCK_CONNECT,
+                                       GTK_RESPONSE_OK);
+                gtk_window_set_title (GTK_WINDOW (self),
+                                      _("Connection settings"));
+        }
+        gtk_dialog_set_default_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
 
-        prefs = gibbon_app_get_prefs (app);
-
-        entry = gibbon_app_find_object (app, "conn_entry_server",
-                                        GTK_TYPE_ENTRY);
-        gibbon_prefs_string_update_entry (prefs, GTK_ENTRY (entry),
-                                          GIBBON_PREFS_HOST);
-        entry = gibbon_app_find_object (app, "conn_entry_login",
-                                        GTK_TYPE_ENTRY);
-        gibbon_prefs_string_update_entry (prefs, GTK_ENTRY (entry),
-                                          GIBBON_PREFS_LOGIN);
-        entry = gibbon_app_find_object (app, "conn_entry_address",
-                                        GTK_TYPE_ENTRY);
-        gibbon_prefs_string_update_entry (prefs, GTK_ENTRY (entry),
-                                          GIBBON_PREFS_MAIL_ADDRESS);
-        toggle = gibbon_app_find_object (app, "conn_checkbutton_remember",
-                                         GTK_TYPE_CHECK_BUTTON);
-        gibbon_prefs_boolean_update_toggle_button (prefs,
-                                                   GTK_TOGGLE_BUTTON (toggle),
-                                                   GIBBON_PREFS_SAVE_PASSWORD);
-
-        save_password = gibbon_prefs_get_boolean (prefs,
-                                                  GIBBON_PREFS_SAVE_PASSWORD);
-
-        if (!save_password)
-                gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_PASSWORD,
-                                         NULL);
-
-        entry = gibbon_app_find_object (app, "conn_entry_password",
-                                        GTK_TYPE_ENTRY);
-        gibbon_prefs_string_update_entry (prefs, GTK_ENTRY (entry),
-                                          GIBBON_PREFS_PASSWORD);
-
-        emitter = gibbon_app_find_object (app, "conn_button_cancel",
-                                          GTK_TYPE_BUTTON);
-        self->priv->cancel_signal =
-                gibbon_signal_new (emitter, "clicked",
-                                G_CALLBACK (gibbon_connection_dialog_on_cancel),
-                                   G_OBJECT (self));
-
-        emitter = gibbon_app_find_object (app, "conn_button_connect",
-                                          GTK_TYPE_BUTTON);
-        self->priv->connect_signal =
-                gibbon_signal_new (emitter, "clicked",
-                               G_CALLBACK (gibbon_connection_dialog_on_connect),
-                                   G_OBJECT (self));
-
-        emitter = gibbon_app_find_object (app, "register_link",
-                                          GTK_TYPE_LINK_BUTTON);
-        self->priv->register_link_signal =
-                gibbon_signal_new (emitter, "clicked",
-                         G_CALLBACK (gibbon_connection_dialog_on_register_link),
-                                   G_OBJECT (self));
-
-        self->priv->dialog =
-                GTK_DIALOG (gibbon_app_find_object (app,
-                                                    "connection_dialog",
-                                                    GTK_TYPE_DIALOG));
-
-        self->priv->destroy_signal =
-                gibbon_signal_new (G_OBJECT (self->priv->dialog), "destroy",
-                                G_CALLBACK (gibbon_connection_dialog_on_cancel),
-                                   G_OBJECT (self));
-
-
-        gtk_widget_show (GTK_WIDGET (self->priv->dialog));
+        gtk_widget_show_all (GTK_WIDGET (self));
 
         return self;
 }
 
 static void
-gibbon_connection_dialog_on_cancel (GibbonConnectionDialog *self)
-{
-        gibbon_connection_dialog_disconnect_signals (self);
-
-        gibbon_app_disconnect (self->priv->app);
-}
-
-static void
-gibbon_connection_dialog_on_connect (GibbonConnectionDialog *self)
-{
-        const gchar *server;
-        const gchar *port;
-        const gchar *login;
-        const gchar *password;
-        const gchar *address;
-        GObject *check_button;
-        guint64 portno = 4321;
-        char *endptr;
-        GibbonApp *app;
-        GibbonPrefs *prefs;
-
-        app = self->priv->app;
-
-        server = gibbon_app_get_trimmed_entry_text (app, "conn_entry_server");
-        port = gibbon_app_get_trimmed_entry_text (app, "conn_entry_port");
-        login = gibbon_app_get_trimmed_entry_text (app, "conn_entry_login");
-        password = gibbon_app_get_entry_text (app, "conn_entry_password");
-        address = gibbon_app_get_entry_text (app, "conn_entry_address");
-
-        if (port[0] != '\000') {
-                errno = 0;
-                portno = g_ascii_strtoull (port, &endptr, 10);
-                if (errno) {
-                        gibbon_app_display_error (app,
-                                                  _("Invalid port `%s': %s."),
-                                                  port, g_strerror (errno));
-
-                        return;
-                }
-
-                if (*endptr != '\000' || portno > 65536) {
-                        gibbon_app_display_error (app,
-                                                  _("Invalid port number `%s'."),
-                                                  port);
-                        return;
-                }
-        }
-
-        if (login[0] == '\000') {
-                gibbon_app_display_error (app,
-                                          _("You have to specify your user "
-                                          "name (login)."));
-                return;
-        }
-
-        if (0 == g_strcmp0 ("guest", login)) {
-                gibbon_app_display_error (app,
-                                          _("Guest login is not supported."));
-                return;
-        }
-
-        if (password[0] == '\000') {
-                gibbon_app_display_error (app,
-                                          _("You have to specify a password."));
-                return;
-        }
-
-        prefs = gibbon_app_get_prefs (app);
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_HOST, server);
-        gibbon_prefs_set_int (prefs, GIBBON_PREFS_PORT, portno);
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_LOGIN, login);
-        gibbon_prefs_set_string (prefs, GIBBON_PREFS_MAIL_ADDRESS,
-                                 address);
-
-        check_button = gibbon_app_find_object (app,
-                                               "conn_checkbutton_remember",
-                                               GTK_TYPE_CHECK_BUTTON);
-        if (gibbon_prefs_boolean_read_toggle_button (prefs,
-                                         GTK_TOGGLE_BUTTON (check_button),
-                                         GIBBON_PREFS_SAVE_PASSWORD)) {
-                gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_PASSWORD,
-                                         password);
-        } else {
-                gibbon_prefs_set_string (prefs,
-                                         GIBBON_PREFS_PASSWORD,
-                                         NULL);
-        }
-
-        gibbon_connection_dialog_disconnect_signals (self);
-
-        gibbon_app_connect (app);
-}
-
-static void
-gibbon_connection_dialog_on_register_link (GibbonConnectionDialog *self,
-                                           GtkLinkButton *emitter)
+gibbon_connection_dialog_on_register (GibbonConnectionDialog *self,
+                                      GtkLinkButton *emitter)
 {
         GdkScreen *screen;
         GError *error;
         const gchar *uri = gtk_link_button_get_uri (emitter);
         GtkWidget *window = gibbon_app_get_window (self->priv->app);
+
+        g_printerr ("Register callback called!\n");
 
         if (gtk_widget_has_screen (window))
                 screen = gtk_widget_get_screen (window);
@@ -315,22 +283,48 @@ gibbon_connection_dialog_on_register_link (GibbonConnectionDialog *self,
         }
 }
 
+
 static void
-gibbon_connection_dialog_disconnect_signals (GibbonConnectionDialog *self)
+gibbon_connection_dialog_response (GtkDialog *dialog, gint response)
 {
-        if (self->priv->cancel_signal)
-                g_object_unref (self->priv->cancel_signal);
-        self->priv->cancel_signal = NULL;
+        GibbonConnectionDialog *self = GIBBON_CONNECTION_DIALOG (dialog);
+        gchar *saved_password;
+        const gchar *new_password;
 
-        if (self->priv->connect_signal)
-                g_object_unref (self->priv->connect_signal);
-        self->priv->connect_signal = NULL;
+        if (response != GTK_RESPONSE_OK) {
+                g_settings_revert (self->priv->settings);
+                return;
+        }
 
-        if (self->priv->destroy_signal)
-                g_object_unref (self->priv->destroy_signal);
-        self->priv->destroy_signal = NULL;
+        saved_password = g_settings_get_string (self->priv->settings,
+                                                GIBBON_PREFS_SERVER_PASSWORD);
+        if (g_settings_get_boolean (self->priv->settings,
+                                    GIBBON_PREFS_SERVER_SAVE_PASSWORD)) {
+                new_password =
+                    gtk_entry_get_text (GTK_ENTRY (self->priv->password_entry));
+                if (g_strcmp0 (new_password, saved_password))
+                        g_settings_set_string (self->priv->settings,
+                                               GIBBON_PREFS_SERVER_PASSWORD,
+                                               new_password);
+        } else if (saved_password && *saved_password) {
+                /*
+                 * We must unbind before we overwrite the string!
+                 */
+                g_settings_unbind (G_OBJECT (self->priv->password_entry),
+                                   "text");
+                g_settings_set_string (self->priv->settings,
+                                       GIBBON_PREFS_SERVER_PASSWORD,
+                                       "");
+        }
+        g_free (saved_password);
 
-        if  (self->priv->register_link_signal)
-                g_object_unref (self->priv->register_link_signal);
-        self->priv->register_link_signal = NULL;
+        g_settings_apply (self->priv->settings);
+}
+
+const gchar *
+gibbon_connection_dialog_get_password (const GibbonConnectionDialog *self)
+{
+        g_return_val_if_fail (GIBBON_IS_CONNECTION_DIALOG (self), NULL);
+
+        return gtk_entry_get_text (GTK_ENTRY (self->priv->password_entry));
 }

@@ -58,6 +58,8 @@ static gboolean gsgf_node_convert (GSGFComponent *self,
 static gboolean gsgf_node_cook (GSGFComponent *self, GSGFComponent **culprit,
                                 GError **error);
 
+static gint compare_property_ids (gconstpointer a, gconstpointer b);
+
 static void
 gsgf_node_init(GSGFNode *self)
 {
@@ -158,7 +160,7 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
         if (self->priv->properties) {
                 keys = g_hash_table_get_keys(self->priv->properties);
 
-                iter = g_list_sort(keys, (GCompareFunc) g_strcmp0);
+                iter = g_list_sort(keys, compare_property_ids);
 
                 while (iter) {
                         if (!g_output_stream_write_all(out, iter->data,
@@ -488,4 +490,38 @@ gsgf_node_set_property (GSGFNode *self,
                 return FALSE;
 
         return TRUE;
+}
+
+/*
+ * GNU Backgammon expects the FF and GM attributes at the head of the list. :-(
+ * We also write the CA and AP properties in the order that gnubg expects it.
+ */
+static gint
+compare_property_ids (gconstpointer _a, gconstpointer _b)
+{
+        const gchar *a = (const gchar *) _a;
+        const gchar *b = (const gchar *) _b;
+        gint retval = g_strcmp0 (a, b);
+
+        if (!retval)
+                return 0;
+
+        if (0 == g_strcmp0 (a, "FF"))
+                return -1;
+        if (0 == g_strcmp0 (b, "FF"))
+                return 1;
+        if (0 == g_strcmp0 (a, "GM"))
+                return -1;
+        if (0 == g_strcmp0 (b, "GM"))
+                return 1;
+        if (0 == g_strcmp0 (a, "CA"))
+                return -1;
+        if (0 == g_strcmp0 (b, "CA"))
+                return 1;
+        if (0 == g_strcmp0 (a, "AP"))
+                return -1;
+        if (0 == g_strcmp0 (b, "AP"))
+                return 1;
+
+        return retval;
 }

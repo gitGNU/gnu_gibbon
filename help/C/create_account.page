@@ -1,0 +1,49 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="create_account">
+  <info>
+    <link type="guide" xref="index#getting_started"/>
+    <desc>
+      Create a new account.
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Create a New Account</title>
+  <p>
+    Before you can connect (see <link xref="connect"/>) to <app>FIBS</app> you 
+    need an account.  Do not be shy creating an account! You do not have to
+    play immediately.  It is also not considered <link xref="do_not">bad
+    habit</link> to not respond to invites to matches or other contact
+    requests if you just want to look around first.
+  </p>
+  <p>
+    For obvious reasons, <app>FIBS</app> does not allow multiple accounts for 
+    the same person.  If you think you have a legitimate reason for
+    violating this rule, please contact the server administrator, for
+    <app>FIBS</app> this is
+    <link href="http://www.pattib.org/contact.shtml">Patti Beadles</link>,
+    prior to creating a new account.
+  </p>
+  <p>
+    If you want to create a new account on <app>FIBS</app>, please visit the
+    <link href="http://fibs.com/javafibs/register.html">registration
+    page</link> and follow the instructions you find there.  Clicking the
+    <gui>Connect</gui> button in the <link xref="main_toolbar">main
+    toolbar</link> or selecting 
+    <guiseq><gui>File</gui><gui>Connect</gui></guiseq>
+    will popup the connection dialog that allows you to invoke 
+    the same page by clicking on <gui>Get new account on fibs.com</gui>:
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/connect-register.png">
+      Create a new account via the connect dialog.
+    </media>
+  </p>
+</page>

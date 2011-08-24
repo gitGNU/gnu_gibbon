@@ -1,0 +1,127 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="droppers">
+  <info>
+    <link type="guide" xref="index"/>
+    <desc>
+      What are droppers?
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Droppers</title>
+  <p>
+    When playing on FIBS, you will often hear people complaing about
+    <em>droppers</em>.
+  </p>
+  <section id="what_are_droppers">
+    <title>What Are Droppers?</title>
+    <p>
+      The term dropper was actually coined for people that avoid losing a match
+      by quitting, for example by dropping the connection.  They probably do
+      that not out of pure frustration about losing but in order to preserve
+      a good rating.
+    </p>
+    <p>
+      Many players on FIBS and Gibbon use a broader sense of the term dropper.
+      Whenever somebody terminates a match prematurely, this is considered
+      a drop, an unfriendly act.  For the other party it is the same whether
+      somebody drops the connection in the middle of a match in a vain
+      effort to "correct" the own rating or because this somebody is called
+      to lunch or the boss comes in or because this somebody is playing
+      with an unstable internet connection.
+    </p>
+    <p>
+      In fact, Gibbon uses an even broader meaning of the term dropper.
+      Gibbon is a software, and cannot detect if somebody dropped a match
+      after warning the opponent about it.  This is not really considered
+      a shortcoming.  If your opponent asks you to quit a match because
+      some urgent stuff slipped in, many people will be polite enough
+      to accept it but that behavior is still annoying.  When Gibbon
+      records drops, it never takes such excuses into account, mostly
+      because as a software it does not even know about that excuse but also
+      because it considers such excuses irrelevant.  The software just
+      records the fact that somebody agreed on match of a certain length
+      and is later not able to finish that match.
+    </p>
+  </section>
+  <section id="measures_against_droppers">
+    <title>Measures Against Droppers</title>
+    <section id="gibbon_reliability">
+      <title>Reliabity Measurement</title>
+      <p>
+        The best measure against droppers is to avoid playing them.  And
+        the best strategy to detect droppers is to watch the activities
+        of all other players.  This is cumbersome for humans but Gibbon
+        does that automatically for you.
+      </p>
+      <p>
+        In the <link xref="players_list">players'</link> and <link
+        xref="inviters_list">inviters' list</xref> you will see colored
+        bar next to the player names.  A green bar signifies reliable
+        players, a red bar unreliable players.  Yellow and orange bars
+        are displayed for players on the verge of being reliable (yellow)
+        or being unreliable (orange).  The length of the bar gives you
+        an idea of how confident Gibbon is about that information.  The
+        longer the bar, the more data has been collected about the player
+        in question, and the more accurate the information will be.
+      </p>
+      <p>
+        Most of the time it is enough to just look at that bar.  Avoid
+        people without a green bar, unless you know them or have other
+        reasons.
+      </p>
+    </section>
+    <section id="saved_limit">
+      <title>Limit on Saved Matches</title>
+      <p>
+        Whenever a match is terminated prematurely, FIBS will save the
+        match, and it can be resumed later.  After a certain time
+        (about two weeks at the time of this writing), saved matches
+        will be wiped out from the database.
+      </p>
+      <p>
+        But before that, the number of saved matches is stored with
+        each user.  Gibbon displays the number of saved matches for
+        every player that invites you to a match.  You can also find
+        it out by issuing the command <command>show savedcount
+        playername</command> in the <link xref="server_console">server
+        console</link>.
+      </p>
+      <p>
+        Currently, FIBS imposes a hard limit on the possible number of
+        saved matches.  Whenever a player's saved count reaches 10, that
+        player can only resumve saved matches but cannot start new ones.
+      </p>
+    </section>
+    <section id="dropper_bots">
+      <title>Bots</title>
+      <p>
+        Two computer players on FIBS try to warn people about droppers.
+      </p>
+      <p>
+        One of them is <em>MissManners</em>.  Whenever somebody with a
+        high saved count logs in, MissManners will display a warning
+        about that in the <xref link="shout_area">shout area</xref>.
+        You should not invite such players to matches.
+      </p>
+      <p>
+        The other computer player is <em>RepBotNG</em> (for Reputation
+        Bot Next Generation).  You can <xref link="chat">chat</xref>
+        with RepBotNG like with a human player.  Telling RepBotNG
+        "help" will display more information.
+      </p>
+      <p>
+        Most of the time you will <command>ask</command> about another
+        player's reputation or <command>complain</command> about an
+        opponent or <command>vouch</command> for an opponent.
+      </p>
+    </section>
+  </section>
+</page>

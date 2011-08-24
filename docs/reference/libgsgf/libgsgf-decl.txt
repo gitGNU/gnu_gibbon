@@ -121,8 +121,8 @@ const GSGFNode *self
 GSGFNode *self, const gchar *id 
 </FUNCTION>
 <FUNCTION>
-<NAME>gsgf_node_get_property_cooked</NAME>
-<RETURNS>GSGFCookedValue  *</RETURNS>
+<NAME>gsgf_node_get_property_value</NAME>
+<RETURNS>GSGFValue  *</RETURNS>
 const GSGFNode *self, const gchar *id 
 </FUNCTION>
 <FUNCTION>
@@ -878,6 +878,8 @@ struct _GSGFFlavorClass
                                            gsize *bytes_written,
                                            GCancellable *cancellable,
                                            GError **error);
+
+        guint (*get_game_id) (const GSGFFlavor *flavor);
 };
 </STRUCT>
 <FUNCTION>

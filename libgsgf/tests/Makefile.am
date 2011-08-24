@@ -61,7 +61,7 @@ AM_CPPFLAGS = 				\
 check_PROGRAMS = $(TESTS_C)
 noinst_PROGRAMS = gsgf-write-back
 
-LDADD = $(GIBBON_LIBS) ../libgsgf.a
+LDADD = ../libgsgf.a $(GIBBON_LIBS) 
 
 test_convert_SOURCES = lib.c main.c test-convert.c
 test_compose_SOURCES = lib.c test-compose.c

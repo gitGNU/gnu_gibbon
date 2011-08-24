@@ -40,14 +40,19 @@ static const GOptionEntry options[] =
                   N_("DIRECTORY")
                 },
                 { "pixmaps-dir", 'b', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
-                  N_("Path to pixmaps directory"),
+                  N_("Path to pixmaps directory (developers only)"),
                   N_("DIRECTORY")
                 },
 	        { NULL }
 };
 
-static void init_i18n (void);
 static guint parse_command_line (int argc, char *argv[]);
+#ifdef G_OS_WIN32
+static void setup_path (const gchar *installdir);
+static void init_i18n (const gchar *installdir);
+#else
+static void init_i18n (void);
+#endif
 
 int
 main (int argc, char *argv[])
@@ -55,9 +60,16 @@ main (int argc, char *argv[])
         GibbonApp *app;
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
+#ifdef G_OS_WIN32
+        gchar *win32_dir =
+                g_win32_get_package_installation_directory_of_module (NULL);
 
+        init_i18n (win32_dir);                
+        setup_path (win32_dir);
+#else
         init_i18n ();
-        
+#endif
+
         if (!parse_command_line (argc, argv))
                 return 1;
         
@@ -67,28 +79,40 @@ main (int argc, char *argv[])
 	}
 
         gtk_init (&argc, &argv);
-        
+
         /* It is unsafe to guess that we are in a development environment
-         * just because there is a data/gibbon.xml file.  Rather require
+         * just because there is a data/gibbon.ui file.  Rather require
          * an option!
          */
         if (data_dir) {
                 builder_filename = g_build_filename (data_dir,
-                                                     PACKAGE ".xml",
+                                                     PACKAGE ".ui",
                                                      NULL);
         } else {
+#ifdef G_OS_WIN32
+                builder_filename = g_build_filename (win32_dir, "share", 
+                                                     PACKAGE,
+                                                     PACKAGE ".ui", NULL);
+#else
                 builder_filename = g_build_filename (GIBBON_DATADIR, PACKAGE,
-                                                     PACKAGE ".xml",
+                                                     PACKAGE ".ui",
                                                      NULL);
+#endif
         }
 
         if (!pixmaps_dir) {
                 pixmaps_dir = pixmaps_dir_buf
+#ifdef G_OS_WIN32
+                        = g_build_filename (win32_dir, "share",
+                                            "pixmaps", PACKAGE, NULL);
+#else
                         = g_build_filename (GIBBON_DATADIR,
                                             "pixmaps", PACKAGE, NULL);
+#endif
         }
 
-        app = gibbon_app_new (builder_filename, pixmaps_dir);
+        app = gibbon_app_new (builder_filename, pixmaps_dir,
+                              data_dir ? data_dir : GIBBON_DATADIR);
         if (!app)
                 return -1;
 
@@ -98,22 +122,32 @@ main (int argc, char *argv[])
 
         gtk_widget_show (gibbon_app_get_window (app));
         gtk_main ();
+
+        g_object_unref (app);
         
         return 0;
 }
 
 static void
+#ifdef G_OS_WIN32
+init_i18n (const gchar *installdir)
+#else
 init_i18n (void)
+#endif
 {
         gchar *locale_dir;
 
         setlocale(LC_ALL, "");
 
-        locale_dir = g_build_filename(GIBBON_DATADIR, "locale", NULL);
-        bindtextdomain(GETTEXT_PACKAGE, locale_dir);
-        g_free(locale_dir);
-        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-        textdomain(GETTEXT_PACKAGE);
+#ifdef G_OS_WIN32
+        locale_dir = g_build_filename (installdir, "share", "locale", NULL);
+#else
+        locale_dir = g_build_filename (GIBBON_DATADIR, "locale", NULL);
+#endif
+        bindtextdomain (GETTEXT_PACKAGE, locale_dir);
+        g_free (locale_dir);
+        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+        textdomain (GETTEXT_PACKAGE);
 }
  
 static guint 
@@ -130,12 +164,32 @@ parse_command_line (int argc, char *argv[])
         g_option_context_free (context);
 
         if (error) {
-                g_print ("%s\n%s\n",
-                         error->message,
-                         _("Run `%s --help' for more information!"));
+                g_printerr ("%s\n", error->message);
+                g_printerr (_("Run `%s --help' for more information!\n"),
+                            argv[0]);
                 g_error_free (error);
                 return 0;
         }
         
         return 1;
 }
+
+#ifdef G_OS_WIN32
+/*
+ * Under MS-DOS shared libraries are searched in $PATH.  We have to make sure
+ * that gconfd-2 finds its libraries.  
+ */
+void
+setup_path (const gchar *installdir)
+{
+        gchar *bin = g_build_filename (installdir, "bin", NULL);
+        gchar *path = g_build_path (";", bin, g_getenv ("PATH"), NULL);
+        
+        g_free (bin);
+        
+        if (!g_setenv ("PATH", path, TRUE))
+                g_printerr (_("Error setting PATH environment variable!\n"));
+        
+        g_free (path);
+}
+#endif

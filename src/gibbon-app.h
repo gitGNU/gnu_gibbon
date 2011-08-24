@@ -72,7 +72,10 @@ struct _GibbonAppClass
 
 GType gibbon_app_get_type (void) G_GNUC_CONST;
 
-GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir);
+gchar *gibbon_app_pixmaps_directory;
+
+GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir,
+                           const gchar *data_dir);
 void gibbon_app_display_error (const GibbonApp *self,
                                const gchar *message_format, ...);
 void gibbon_app_display_info (const GibbonApp *self,
@@ -81,12 +84,10 @@ GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,
                                  GType type);
 GtkWidget *gibbon_app_get_window (const GibbonApp *self);
 const gchar *gibbon_app_get_pixmaps_directory (const GibbonApp *app);
-struct _GibbonPrefs *gibbon_app_get_prefs (const GibbonApp *app);
 
 const gchar *gibbon_app_get_entry_text (const GibbonApp *self, const gchar *id);
 const gchar *gibbon_app_get_trimmed_entry_text (const GibbonApp *self,
                                                 const gchar *id);
-void gibbon_app_connect (GibbonApp *self);
 void gibbon_app_disconnect (GibbonApp *self);
 GtkImage *gibbon_app_load_scaled_image (const GibbonApp *self, 
                                         const gchar *path, 
@@ -94,11 +95,15 @@ GtkImage *gibbon_app_load_scaled_image (const GibbonApp *self,
 
 struct _GibbonServerConsole *gibbon_app_get_server_console (const GibbonApp
                                                             *self);
-struct _GibbonCairoboard *gibbon_app_get_board (const GibbonApp *self);
+struct _GibbonBoard *gibbon_app_get_board (const GibbonApp *self);
 struct _GibbonConnection *gibbon_app_get_connection (const GibbonApp *self);
 struct _GibbonSession *gibbon_app_get_session (const GibbonApp *self);
 struct _GibbonShouts *gibbon_app_get_shouts (const GibbonApp *self);
 struct _GibbonGameChat *gibbon_app_get_game_chat (const GibbonApp *self);
+struct _GibbonArchive *gibbon_app_get_archive (const GibbonApp *self);
+struct _GibbonPlayerList *gibbon_app_get_player_list (const GibbonApp *self);
+struct _GibbonInviterList *gibbon_app_get_inviter_list (const GibbonApp *self);
+struct _GibbonClientIcons *gibbon_app_get_client_icons (const GibbonApp *self);
 
 void gibbon_app_start_chat (GibbonApp *self, const gchar *peer);
 void gibbon_app_close_chat (GibbonApp *self, const gchar *peer);
@@ -107,6 +112,9 @@ void gibbon_app_show_message (GibbonApp *self, const gchar *peer,
 void gibbon_app_show_shout (GibbonApp *self, const GibbonFIBSMessage *message);
 void gibbon_app_show_game_chat (GibbonApp *self,
                                 const GibbonFIBSMessage *message);
+void gibbon_app_configure_player_menu (const GibbonApp *self,
+                                       const gchar *player,
+                                       GtkMenu *menu);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

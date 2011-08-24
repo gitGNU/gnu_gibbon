@@ -22,6 +22,9 @@
 
 #include <glib.h>
 
+#include "gibbon-util.h"
+#include "gibbon-country.h"
+
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_PLAYER_LIST             (gibbon_player_list_get_type ())
@@ -53,9 +56,14 @@ enum {
         GIBBON_PLAYER_LIST_COL_AVAILABLE,
         GIBBON_PLAYER_LIST_COL_RATING,
         GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+        GIBBON_PLAYER_LIST_COL_CLIENT,
+        GIBBON_PLAYER_LIST_COL_CLIENT_ICON,
+        GIBBON_PLAYER_LIST_COL_RELIABILITY,
         GIBBON_PLAYER_LIST_COL_OPPONENT,
         GIBBON_PLAYER_LIST_COL_WATCHING,
-        GIBBON_PLAYER_LIST_COL_CLIENT,
+        GIBBON_PLAYER_LIST_COL_HOSTNAME,
+        GIBBON_PLAYER_LIST_COL_COUNTRY,
+        GIBBON_PLAYER_LIST_COL_COUNTRY_ICON,
         GIBBON_PLAYER_LIST_COL_EMAIL,
         GIBBON_PLAYER_LIST_N_COLUMNS
 };
@@ -70,12 +78,30 @@ void gibbon_player_list_set (GibbonPlayerList *self,
                              gboolean available,
                              gdouble rating,
                              guint experience,
-                             gchar *opponent,
-                             gchar *watching,
-                             gchar *client,
-                             gchar *email);
+                             gdouble reliability,
+                             guint confidence,
+                             const gchar *opponent,
+                             const gchar *watching,
+                             const gchar *client,
+                             const GdkPixbuf *client_icon,
+                             const gchar *hostname,
+                             const GibbonCountry *country,
+                             const gchar *email);
 gboolean gibbon_player_list_exists (const GibbonPlayerList *self,
                                     const gchar *player_name);
+gchar *gibbon_player_list_get_opponent (const GibbonPlayerList *self,
+                                        const gchar *player_name);
+gboolean gibbon_player_list_get_available (const GibbonPlayerList *self,
+                                           const gchar *player_name);
+GtkListStore *gibbon_player_list_get_store (GibbonPlayerList *self);
+gboolean gibbon_player_list_get_iter (GibbonPlayerList *self,
+                                      const gchar *player_name,
+                                      GtkTreeIter *iter);
+void gibbon_player_list_remove (GibbonPlayerList *self,
+                                const gchar *player_name);
+void gibbon_player_list_update_country (GibbonPlayerList *self,
+                                        const gchar *hostname,
+                                        const GibbonCountry *country);
 
 G_END_DECLS
 

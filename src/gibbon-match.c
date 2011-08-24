@@ -126,7 +126,7 @@ gibbon_match_new ()
                                                    self->priv->flavor);
 
         game = gibbon_game_new (self, game_tree);
-        self->priv->games = g_list_append (self->priv->games, game);
+        self->priv->games = g_list_prepend (self->priv->games, game);
 
         return self;
 }
@@ -219,4 +219,12 @@ gibbon_match_get_black_player (const GibbonMatch *self)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
         return self->priv->black_player;
+}
+
+GibbonGame *
+gibbon_match_get_current_game (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->games->data;
 }

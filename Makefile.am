@@ -17,7 +17,10 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs help
+SUBDIRS = libgsgf libsvg libsvg-cairo src data pixmaps po share docs msdos
+if BUILD_HELP 
+SUBDIRS += help
+endif
 
 DISTCLEANFILES =		\
 	intltool-extract	\
@@ -26,7 +29,23 @@ DISTCLEANFILES =		\
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in
+noinst_HEADERS = gibbon-geo-ip-data.h
 
-.PHONY: ChangeLog
+geo_ipdir = $(datadir)/$(PACKAGE)
+geo_ip_DATA = ip2country.csv.gz
+
+# This target is meant for maintainer maintainers only.
+geo_ip:
+	$(SHELL) $(srcdir)/download_uri \
+		"http://gibbon.guido-flohr.net/ip2country.csv.gz" \
+			>$(srcdir)/ip2country.csv.gz.new \
+		&& mv -f $(srcdir)/ip2country.csv.gz.new \
+			$(srcdir)/ip2country.csv.gz \
+		&& $(SED) "s/@GIBBON_GEO_IP_DATA_UPDATE@/`date +%s`/" \
+			<$(srcdir)/gibbon-geo-ip-data.h.tmpl \
+			>$(srcdir)/gibbon-geo-ip-data.h
+
+EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
+	gcreate_class.pl.in gibbon-geo-ip-data.h.tmpl
+
+.PHONY: ChangeLog geo_ip

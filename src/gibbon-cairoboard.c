@@ -60,7 +60,23 @@ struct _GibbonCairoboardPrivate {
         GibbonApp *app;
 
         GibbonPosition *pos;
+
+        GibbonPosition *target;
+        GibbonMove *move;
+        guint animation_id;
+        gint animation_move_number;
+        GibbonPositionSide animation_side;
         
+        /* For each sub move we have these animations steps:
+         *    -1: Start.
+         *     0: Move the checker from the starting point.
+         *     1: Move a possible hit checker to the bar.
+         */
+        gint animation_step;
+        gint animation_promille;
+        GibbonPositionSide animation_floating;
+        gint animation_from, animation_to;
+
         GHashTable *ids;
 
         struct svg_component *board;
@@ -79,6 +95,9 @@ struct _GibbonCairoboardPrivate {
         struct svg_component *point24;
 };
 
+#define ANIMATION_STEP_WIDTH 75
+#define ANIMATION_TIMEOUT 10
+
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GIBBON_TYPE_CAIROBOARD,           \
                                       GibbonCairoboardPrivate))
@@ -90,6 +109,14 @@ G_DEFINE_TYPE_WITH_CODE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_A
 
 static void gibbon_cairoboard_set_position (GibbonBoard *self,
                                             GibbonPosition *pos);
+static const GibbonPosition *gibbon_cairoboard_get_position (const GibbonBoard
+                                                             *self);
+static void gibbon_cairoboard_animate_move (GibbonBoard *self,
+                                            const GibbonMove *move,
+                                            GibbonPositionSide side,
+                                            GibbonPosition *target_position);
+static void gibbon_cairoboard_cancel_animation (GibbonCairoboard *self);
+static gboolean gibbon_cairoboard_do_animation (GibbonCairoboard *self);
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -109,6 +136,8 @@ static void gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
+static void gibbon_draw_animation (GibbonCairoboard *board, cairo_t *cr);
+
 static void gibbon_cairoboard_draw_svg_component (GibbonCairoboard *board, 
                                                   cairo_t *cr,
                                                   struct svg_component *svg,
@@ -132,6 +161,8 @@ static gdouble gibbon_cairoboard_get_bar_y (GibbonCairoboard *self,
                                             GibbonPositionSide side);
 static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
                                              GibbonPositionSide side);
+static gboolean gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
+                                                   GdkEventButton *event);
 
 #ifdef M_PI
 # undef M_PI
@@ -149,6 +180,11 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
 
         self->priv->app = NULL;
         self->priv->pos = NULL;
+        self->priv->target = NULL;
+        self->priv->move = NULL;
+        self->priv->animation_id = 0;
+        self->priv->animation_move_number = 0;
+        self->priv->animation_floating = GIBBON_POSITION_SIDE_NONE;
 
         self->priv->board = NULL;
         self->priv->point12 = NULL;
@@ -177,6 +213,8 @@ static void
 gibbon_board_iface_init (GibbonBoardIface *iface)
 {
         iface->set_position = gibbon_cairoboard_set_position;
+        iface->get_position = gibbon_cairoboard_get_position;
+        iface->animate_move = gibbon_cairoboard_animate_move;
 }
 
 static void
@@ -185,8 +223,18 @@ gibbon_cairoboard_finalize (GObject *object)
         GibbonCairoboard *self = GIBBON_CAIROBOARD (object);
         size_t i;
 
+        gibbon_cairoboard_cancel_animation (self);
+
+        g_signal_handlers_disconnect_by_func (self, 
+                                              gibbon_cairoboard_on_button_press,
+                                              NULL);
+
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
+        if (self->priv->target)
+                gibbon_position_free (self->priv->target);
+        if (self->priv->move)
+                g_free (self->priv->move);
 
         if (self->priv->ids)
                 g_hash_table_destroy (self->priv->ids);
@@ -391,6 +439,12 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
 
         xmlFreeDoc (doc);
 
+        gtk_widget_add_events (GTK_WIDGET (self), 
+                               GDK_BUTTON_PRESS_MASK);
+        g_signal_connect (self, "button-press-event",
+                          G_CALLBACK (gibbon_cairoboard_on_button_press),
+                          NULL);
+
         return self;
 }
 
@@ -401,7 +455,7 @@ gibbon_cairoboard_expose (GtkWidget *widget, GdkEventExpose *event)
         
         g_return_val_if_fail (GIBBON_IS_CAIROBOARD (widget), FALSE);
         
-        cr = gdk_cairo_create (widget->window);
+        cr = gdk_cairo_create (gtk_widget_get_window (widget));
         
         cairo_rectangle (cr,
                          event->area.x, event->area.y,
@@ -411,7 +465,7 @@ gibbon_cairoboard_expose (GtkWidget *widget, GdkEventExpose *event)
         gibbon_cairoboard_draw (GIBBON_CAIROBOARD (widget), cr);
 
         cairo_destroy (cr);
-        
+
         return FALSE;
 }                                                
 
@@ -419,7 +473,7 @@ static void
 gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 {
         GtkWidget *widget;
-        GtkAllocation *allocation;
+        GtkAllocation allocation;
         gdouble widget_ratio;
         gdouble translate_x, translate_y, scale;
         gdouble aspect_ratio;
@@ -438,24 +492,24 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         aspect_ratio = (double) width / height;
         
         widget = GTK_WIDGET (self);
-        allocation = &widget->allocation;
+        gtk_widget_get_allocation (widget, &allocation);
         
-        if (!allocation->height)
+        if (!allocation.height)
                 return;
-        if (!allocation->width)
+        if (!allocation.width)
                 return;
         
-        widget_ratio = (gdouble) allocation->width / allocation->height;
+        widget_ratio = (gdouble) allocation.width / allocation.height;
 
         if (widget_ratio > aspect_ratio) {
-                scale = (gdouble) allocation->height / height; 
+                scale = (gdouble) allocation.height / height; 
                 translate_y = 0;
-                translate_x = (allocation->width 
+                translate_x = (allocation.width 
                                - scale * width) / 2;
         } else {
-                scale = (gdouble) allocation->width / width;
+                scale = (gdouble) allocation.width / width;
                 translate_x = 0;
-                translate_y = (allocation->height 
+                translate_y = (allocation.height 
                                - scale * height) / 2;
         }
 
@@ -463,8 +517,8 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         cairo_scale (cr, scale, scale);
 
         svg_cairo_set_viewport_dimension (self->priv->board->scr,
-                                          allocation->width,
-                                          allocation->height);
+                                          allocation.width,
+                                          allocation.height);
         svg_cairo_render (self->priv->board->scr, cr);
 
         gibbon_draw_dice (self, cr);
@@ -472,13 +526,15 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_WHITE);
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_BLACK);
-        
+
         gibbon_draw_home (self, cr, GIBBON_POSITION_SIDE_WHITE);
         gibbon_draw_home (self, cr, GIBBON_POSITION_SIDE_BLACK);
 
         for (i = 0; i < 24; ++i)
                 if (self->priv->pos->points[i])
                         gibbon_cairoboard_draw_point (self, cr, i);
+
+        gibbon_draw_animation (self, cr);
 }
 
 static void
@@ -525,7 +581,7 @@ gibbon_cairoboard_draw_bar (GibbonCairoboard *self, cairo_t *cr,
 static void
 gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
 {
-        guint checkers = 0;
+        gint checkers = 0;
         gint i;
         gdouble x, y;
         struct svg_component *checker;
@@ -534,7 +590,8 @@ gibbon_draw_home (GibbonCairoboard *self, cairo_t *cr, GibbonPositionSide side)
         g_return_if_fail (side);
 
         checkers = gibbon_position_get_borne_off (self->priv->pos, side);
-
+        if (self->priv->animation_floating == side)
+                --checkers;
         x = gibbon_cairoboard_get_home_x (self, side);
 
         if (side == GIBBON_POSITION_SIDE_WHITE) {
@@ -727,6 +784,114 @@ gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 }
 
 static void
+gibbon_draw_animation (GibbonCairoboard *self, cairo_t *cr)
+{
+        gdouble from_x, from_y;
+        gdouble to_x, to_y;
+        gdouble x, y;
+        gint from, to;
+        GibbonPositionSide side;
+        guint num_checkers;
+        struct svg_component *checker;
+        GibbonPosition *pos;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        side = self->priv->animation_floating;
+        pos = self->priv->pos;
+
+        if (!side)
+                return;
+
+        from = self->priv->animation_from;
+        to = self->priv->animation_to;
+
+        if (from == 0) {
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        from_x = gibbon_cairoboard_get_home_x (self, side);
+
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        from_y = checker->y +
+                                 (num_checkers + 0.5) * checker->height;
+                } else {
+                        from_x = gibbon_cairoboard_get_bar_x (self);
+                        from_y = gibbon_cairoboard_get_bar_y (self,
+                                                              pos->bar[1] + 1,
+                                                              pos->bar[1],
+                                                              side);
+                }
+        } else if (from == 25) {
+                if (side == GIBBON_POSITION_SIDE_BLACK) {
+                        from_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_b_home;
+                        from_y = checker->y +
+                                 (num_checkers + 0.5) * checker->height;
+                } else {
+                        from_x = gibbon_cairoboard_get_bar_x (self);
+                        from_y = gibbon_cairoboard_get_bar_y (self,
+                                                              pos->bar[0] + 1,
+                                                              pos->bar[0],
+                                                              side);
+                }
+        } else {
+                from_x = gibbon_cairoboard_get_flat_checker_x (self, from - 1);
+                num_checkers = abs (self->priv->pos->points[from - 1]) - 1;
+                from_y = gibbon_cairoboard_get_flat_checker_y (self, from - 1,
+                                                               num_checkers
+                                                               + 1);
+        }
+
+        if (to == 0) {
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        to_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        to_y = checker->y + 0.5 * checker->height;
+                } else {
+                        to_x = gibbon_cairoboard_get_bar_x (self);
+                        to_y = gibbon_cairoboard_get_bar_y (self,
+                                                            pos->bar[1] + 1,
+                                                            pos->bar[1],
+                                                            side);
+                }
+        } else if (to == 25) {
+                if (side == GIBBON_POSITION_SIDE_BLACK) {
+                        to_x = gibbon_cairoboard_get_home_x (self, side);
+                        num_checkers =
+                             gibbon_position_get_borne_off (self->priv->pos,
+                                                            side);
+                        checker = self->priv->checker_w_home;
+                        from_y = checker->y + 0.5 * checker->height;
+                } else {
+                        to_x = gibbon_cairoboard_get_bar_x (self);
+                        to_y = gibbon_cairoboard_get_bar_y (self,
+                                                            pos->bar[0] + 1,
+                                                            pos->bar[0],
+                                                            side);
+                }
+        } else {
+                to_x = gibbon_cairoboard_get_flat_checker_x (self, to - 1);
+                num_checkers = abs (self->priv->pos->points[to - 1]) - 1;
+                to_y = gibbon_cairoboard_get_flat_checker_y (self, to - 1,
+                                                             num_checkers
+                                                             + 1);
+        }
+
+        x = from_x + self->priv->animation_promille * ((to_x - from_x) / 1000);
+        y = from_y + self->priv->animation_promille * ((to_y - from_y) / 1000);
+
+        gibbon_cairoboard_draw_flat_checker (self, cr, x, y, side);
+}
+
+static void
 gibbon_cairoboard_set_position (GibbonBoard *_self,
                                 GibbonPosition *pos)
 {
@@ -737,11 +902,29 @@ gibbon_cairoboard_set_position (GibbonBoard *_self,
         
         self = GIBBON_CAIROBOARD (_self);
 
+        gibbon_cairoboard_cancel_animation (self);
+
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
         self->priv->pos = pos;
-        
+
         gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static const GibbonPosition *
+gibbon_cairoboard_get_position (const GibbonBoard *_self)
+{
+        GibbonCairoboard *self;
+
+        g_return_val_if_fail (GIBBON_IS_CAIROBOARD (_self), NULL);
+
+        self = GIBBON_CAIROBOARD (_self);
+
+        /* When animating towards a new position, fake the reply.  */
+        if (self->priv->target)
+                return self->priv->target;
+
+        return self->priv->pos;
 }
 
 static void
@@ -932,6 +1115,9 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         text = running && pos->game_info ? pos->game_info : "";
         svg_util_steal_text_params (self->priv->board, "game_info", text,
                                     1.0, 0, NULL);
+        text = pos->status ? pos->status : "";
+        svg_util_steal_text_params (self->priv->board, "status-bar", text,
+                                    1.0, 0, NULL);
 
         if (running) {
                 if (pos->match_length) {
@@ -992,4 +1178,290 @@ gibbon_cairoboard_set_info (GibbonCairoboard *self)
         svg_util_steal_text_params (self->priv->board, "pip2", text,
                                     1.0, 0, NULL);
         g_free (text);
+}
+
+static void
+gibbon_cairoboard_animate_move (GibbonBoard *_self, const GibbonMove *move,
+                                GibbonPositionSide side,
+                                GibbonPosition *target_position)
+{
+        GibbonCairoboard *self;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (_self));
+        g_return_if_fail (target_position != NULL);
+
+        self = GIBBON_CAIROBOARD (_self);
+
+        gibbon_cairoboard_cancel_animation (self);
+
+        self->priv->target = target_position;
+
+        self->priv->move = gibbon_position_alloc_move (move->number);
+        memcpy (self->priv->move, move,
+                sizeof move->number
+                + move->number * sizeof *move->movements
+                + sizeof move->status);
+
+        self->priv->animation_move_number = 0;
+        self->priv->animation_side = side;
+        self->priv->animation_step = 0;
+
+        self->priv->animation_id =
+                g_timeout_add (ANIMATION_TIMEOUT,
+                               (GSourceFunc) gibbon_cairoboard_do_animation,
+                               (gpointer) self);
+}
+
+static void
+gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
+{
+        if (!self->priv->target)
+                return;
+
+        gibbon_position_free (self->priv->pos);
+        self->priv->pos = self->priv->target;
+        self->priv->target = NULL;
+
+        g_free (self->priv->move);
+        self->priv->move = NULL;
+
+        if (self->priv->animation_id)
+                g_source_remove (self->priv->animation_id);
+        self->priv->animation_id = 0;
+
+        gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static gboolean
+gibbon_cairoboard_do_animation (GibbonCairoboard *self)
+{
+        gint move_number = self->priv->animation_move_number;
+        gint from, to;
+        GibbonMove *move = self->priv->move;
+        GibbonPosition *pos = self->priv->pos;
+        GibbonPositionSide side = self->priv->animation_side;
+
+#define stop_animation(s) { \
+        self->priv->animation_id = 0; \
+        gibbon_cairoboard_cancel_animation (s); \
+        return FALSE; \
+}
+
+        if (!move || move_number >= move->number || !side)
+                stop_animation (self);
+
+        /* Consistency checks first.  */
+        from = move->movements[move_number].from;
+        to = move->movements[move_number].to;
+        if (side == GIBBON_POSITION_SIDE_WHITE) {
+                if (from == 25) {
+                        if (!pos->bar[0])
+                                stop_animation (self);
+                } else if (from <= 0 || from > 25) {
+                        stop_animation (self);
+                } else if (pos->points[from - 1] <= 0) {
+                        stop_animation (self);
+                }
+                if (to < 0 || to > 24) {
+                        stop_animation (self);
+                } else if (pos->points[to - 1] < -1) {
+                        stop_animation (self);
+                }
+        } else {
+                if (from == 0) {
+                        if (!pos->bar[1])
+                                stop_animation (self);
+                } else if (from <= 0 || from > 25) {
+                        stop_animation (self);
+                } else if (pos->points[from - 1] >= 0) {
+                        stop_animation (self);
+                }
+                if (to < 1 || to > 25) {
+                        stop_animation (self);
+                } else if (pos->points[to - 1] > +1) {
+                                stop_animation (self);
+                }
+        }
+
+        if (self->priv->animation_step == 0) {
+                /* Checker starts floating.  */
+                self->priv->animation_step = 1;
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        if (from == 25)
+                                --pos->bar[0];
+                        --pos->points[from - 1];
+                } else {
+                        if (from == 0)
+                                --pos->bar[1];
+                        ++pos->points[from - 1];
+                }
+                self->priv->animation_floating = side;
+                self->priv->animation_from = from;
+                self->priv->animation_to = to;
+                self->priv->animation_promille = 0;
+        }
+
+        if (self->priv->animation_step == 1) {
+                /* Checker is floating.  */
+                self->priv->animation_promille += ANIMATION_STEP_WIDTH;
+                if (self->priv->animation_promille > 1000) {
+                        self->priv->animation_promille = 0;
+                        self->priv->animation_floating =
+                            GIBBON_POSITION_SIDE_NONE;
+                        self->priv->animation_step = 2;
+                }
+        }
+
+        if (self->priv->animation_step == 2) {
+                /* Checker landed.  */
+                self->priv->animation_promille = 0;
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        if (pos->points[to - 1] == -1) {
+                                /* Blot hit.  */
+                                pos->points[to - 1] = 1;
+                                self->priv->animation_step = 3;
+                                self->priv->animation_floating = -side;
+                                self->priv->animation_from = to;
+                                self->priv->animation_to = 0;
+                        } else {
+                                 if (to != 0)
+                                        ++pos->points[to - 1];
+                                 self->priv->animation_step = 4;
+                                 self->priv->animation_floating =
+                                         GIBBON_POSITION_SIDE_NONE;
+                        }
+                } else {
+                        if (pos->points[to - 1] == +1) {
+                                /* Blot hit.  */
+                                pos->points[to - 1] = -1;
+                                self->priv->animation_step = 3;
+                                self->priv->animation_floating = -side;
+                                self->priv->animation_from = to;
+                                self->priv->animation_to = 25;
+                        } else {
+                                if (to != 25)
+                                        --pos->points[to - 1];
+                                self->priv->animation_step = 4;
+                                self->priv->animation_floating =
+                                         GIBBON_POSITION_SIDE_NONE;
+                        }
+                }
+        }
+
+        if (self->priv->animation_step == 3) {
+                /* Hit checker is travelling to bar.  */
+                self->priv->animation_promille += ANIMATION_STEP_WIDTH;
+                if (self->priv->animation_promille > 1000) {
+                        if (side == GIBBON_POSITION_SIDE_WHITE)
+                                ++pos->bar[1];
+                        else
+                                ++pos->bar[0];
+                        self->priv->animation_promille = 0;
+                        self->priv->animation_floating =
+                            GIBBON_POSITION_SIDE_NONE;
+                        self->priv->animation_step = 4;
+                }
+        }
+
+        if (self->priv->animation_step > 3) {
+                ++self->priv->animation_move_number;
+                self->priv->animation_step = 0;
+                self->priv->animation_promille = 0;
+                self->priv->animation_floating = GIBBON_POSITION_SIDE_NONE;
+                if (self->priv->animation_move_number >= move->number) {
+                        stop_animation (self);
+                } else {
+                        return gibbon_cairoboard_do_animation (self);
+                }
+        }
+
+        gtk_widget_queue_draw (GTK_WIDGET (self));
+
+        return TRUE;
+}
+
+static gboolean 
+gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
+                                   GdkEventButton *event)
+{
+        gdouble x, y;
+        guint column;
+        guint point;
+        
+        x = event->x;
+        y = event->y;
+
+        /*
+         * These are the least probable cases but it is better to test them
+         * first because the borne-off checkers are more or less outside
+         * of the board.
+         */
+        if (x >= self->priv->checker_b_home->x
+            && x <= self->priv->checker_b_home->x
+                    + self->priv->checker_b_home->width
+            && y >= self->priv->checker_b_home->y
+            && y <= self->priv->checker_b_home->y
+                    + 15 * self->priv->checker_b_home->height) {
+                g_printerr ("Click in black home area ...\n");
+                return TRUE;
+        }
+
+        if (x >= self->priv->checker_w_home->x
+            && x <= self->priv->checker_w_home->x
+                    + self->priv->checker_w_home->width
+            && y <= self->priv->checker_w_home->y
+            && y >= self->priv->checker_w_home->y
+                    - 15 * self->priv->checker_w_home->height) {
+                g_printerr ("Click in white home area ...\n");
+                return TRUE;
+        }
+
+        /*
+         * First we test whether there is a remote possibility of a click in
+         * the active area of the board.
+         */
+        if (x < self->priv->point12->x
+            || x > self->priv->point24->x
+                   + self->priv->point24->width
+            || y < self->priv->point24->y
+            || y > self->priv->point12->y
+                   + self->priv->point12->height) {
+                return FALSE;
+        }
+
+        if (x <= self->priv->point12->x
+                 + 6 * self->priv->checker_w_flat->width
+                 && y >= self->priv->point24->y
+                 && y <= self->priv->point12->y + self->priv->point12->height) {
+                column = (x - self->priv->point12->x)
+                                / self->priv->checker_w_flat->width;
+                if (y <= self->priv->point24->y + self->priv->point12->height)
+                        point = 13 + column;
+                else if (y >= self->priv->point12->y)
+                        point = 12 - column;
+                else
+                        return FALSE;
+                g_printerr ("Click on point #%u\n", point);
+        } else if (x <= self->priv->point24->x
+                        - 5 * self->priv->checker_w_flat->width) {
+                g_printerr ("Click on bar ...\n");
+                return TRUE;
+        } else if (x <= self->priv->point24->x
+                        + self->priv->point24->width
+                        && y >= self->priv->point24->y
+                        && y <= self->priv->point12->y
+                                + self->priv->point12->height) {
+                column = (self->priv->point24->x
+                          + self->priv->point24->width - x)
+                          / self->priv->checker_w_flat->width;
+                if (y <= self->priv->point24->y + self->priv->point12->height)
+                        point = 24 - column;
+                else if (y >= self->priv->point12->y)
+                        point = 1 + column;
+                else
+                        return FALSE;
+                g_printerr ("Click on point #%u\n", point);
+        }
+
+        return TRUE;
 }

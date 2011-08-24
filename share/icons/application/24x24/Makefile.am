@@ -18,7 +18,7 @@
 icondir = $(datadir)/icons/hicolor/24x24/apps
 icon_DATA = gibbon.png
 
-gibbon.png: $(top_srcdir)/share/icons/gibbon.svg
-	rsvg-convert --width=24 --height=24 --output=$@ ../../gibbon.svg
+gibbon.png: $(top_srcdir)/share/icons/application/scalable/gibbon.svg
+	rsvg-convert --width=24 --height=24 --output=$@ ../scalable/gibbon.svg
 
 EXTRA_DIST = $(icon_DATA)

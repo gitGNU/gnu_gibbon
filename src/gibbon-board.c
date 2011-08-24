@@ -74,7 +74,7 @@ gibbon_board_set_position (GibbonBoard *self, GibbonPosition *position)
  *
  * Returns: the #GibbonPosition or %NULL for failure.
  */
-GibbonPosition *
+const GibbonPosition *
 gibbon_board_get_position (const GibbonBoard *self)
 {
         GibbonBoardIface *iface;
@@ -87,4 +87,31 @@ gibbon_board_get_position (const GibbonBoard *self)
         g_return_val_if_fail (iface->get_position, NULL);
 
         return (*iface->get_position) (self);
+}
+
+/**
+ * gibbon_board_animate_move:
+ * @self: The #GibbonBoard
+ * @move: The #GibbonMove to animate
+ * @side: The #GibbonPositionSide that is on move
+ * @target_position: The position to display at the end.
+ *
+ * Whereas @move gets copied, @target_position is hijacked!
+ */
+void
+gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
+                           GibbonPositionSide side,
+                           GibbonPosition *target_position)
+{
+        GibbonBoardIface *iface;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+        g_return_if_fail (move != NULL);
+
+        iface = GIBBON_BOARD_GET_IFACE (self);
+
+        g_return_if_fail (iface->animate_move);
+
+        return (*iface->animate_move) (self, move, side, target_position);
 }

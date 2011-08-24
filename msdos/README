@@ -1,0 +1,64 @@
+This directory contains stuff needed to build an executable installer
+image for MS-DOS ("Windows 32-bit").
+
+The MS-DOS port of Gibbon is currently maintained by yours truly,
+Guido Flohr (guido@imperia.net).  I am far from being an expert for
+this task.  You can contribute to Gibbon by taking over maintainership
+for this subdirectory of Gibbon.
+
+In order to build an executable installer image ("setup.exe") you
+have to do the following:
+
+1) Build the program the regular way with the old story of autoconfiscated
+   software:
+
+        ./configure
+        make
+        make check
+        make install
+
+   You need MinGW for this.  Additionally you have to installer Gtk+
+   (http://www.gtk.org/) including all dependencies and developer files 
+   and SQLite3 (http://www.sqlite.org/).  I had to build and install
+   SQLite by hand.  Contact me if you have problems with that.
+
+   If you have checked out the sources via Git, you must first run
+   the script "autogen.sh".  That will compile "configure" and set up
+   the other missing stuff.  Running "autogen.sh" will probably fail
+   if your version of Glib is older than 2.28.8 because the m4 macro
+   definitions for GLIB_GSETTINGS are missing.
+
+2) Try everything out by running Gibbon from a command prompt.
+
+3) Download Inno Setup, a software designed for creating executable
+   installers.  The web page of Inno Setup is
+   http://www.jrsoftware.org/isinfo.php.
+
+4) Either the Inno Setup compiler (ISCC.exe) must be in your PATH
+   or you have to create a file build-installer.sh.include in
+   this directory.  The file must set the shell variable "ISCC" to
+   the complete path name of that program.  For example:
+
+        ICSS="/c/Program Files (x86)/Inno Setup 5/ISCC.exe"
+
+   The file will be sourced if present by the script that builds the
+   installer.
+
+5) Inspect the build script "build-installer.sh".  It makes several
+   assumptions about your setup:
+
+   - MinGW must be installed in C:\MinGW (translated to "/c/MinGW").
+   - all libraries (Gtk+, SQLite, ...) must be installed with the
+     same prefix (run their configure script with --prefix=/c/MinGW)
+   - Gibbon must be installed in "/local" (this is the default under
+     MinGW)
+
+   If your setup differs, you can play around with the variables
+   "mingw_prefix" and "gibbon_prefix" and override them in
+   "build-installer.sh.include" (see above for the path to ISCC.exe).
+
+6) Run the script "build-installer.sh".  It must be run from _this_ (!)
+   directory.  If you plan to build installers for Gibbon on a
+   regular basis you should consider re-writing the script.
+
+Send your questions to me (Guido Flohr <guido@imperia.net>).

@@ -54,7 +54,7 @@ typedef enum {
  *          for number.  The absolute value gives the number of checkers on
  *          that point.  A negative value means that this point is occupied
  *          by black, a positive value means that it is occupied by white.
- * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
+a * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
  *       number of black checkers on the bar.  For consistency, black's
  *       checkers are negative, white's checkers are positive.  Yes, and
  *       for consistency this should be called bars not bar but that sounds
@@ -72,6 +72,7 @@ typedef enum {
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
  * @match_length: Length of the match of 0 for unlimited.
  * @game_info: Free-form string describing the game ("Crawford", ...).
+ * @status: Free-form string describing the status ("It's your move", ...).
  *
  * A boxed type representing a backgammon position.
  *
@@ -91,29 +92,22 @@ typedef enum {
 typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
 {
-        gchar *players[2];
+        guint match_length;
+        guint scores[2];
 
-        gint match_length;
-        gint scores[2];
-
-        /*< private >*/
-        gint left_pad[6];
-
-        /*< public >*/
         gint points[24];
 
-        /*< private >*/
-        gint right_pad[6];
-
-        /*< public >*/
-        gint bar[2];
+        guint bar[2];
 
         gint dice[2];
 
-        gint cube;
+        guint cube;
         gboolean may_double[2];
 
+        gchar *players[2];
+
         gchar *game_info;
+        gchar *status;
 };
 
 /**
@@ -123,7 +117,7 @@ struct _GibbonPosition
  *        for black, X, or the player with negative checker counts.  0 and
  *        24 represent home and the bar accordingly.
  * @to: The end point for a move, see @from for semantics.
- * @num: How many checkers were moved?
+ * @die: The die value used for the move.
  *
  * Structure representing a single backgammon checker movement.
  */
@@ -132,7 +126,7 @@ struct _GibbonMovement
 {
         gint from;
         gint to;
-        gsize num;
+        gint die;
 };
 
 /**
@@ -140,8 +134,15 @@ struct _GibbonMovement
  * @GIBBON_MOVE_LEGAL: legal move
  * @GIBBON_MOVE_ILLEGAL: illegal move
  * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
- * @GIBBON_MOVE_OCCUPIED: one of the intermediate landing points was occupied,
- *                        probably never used
+ * @GIBBON_MOVE_BLOCKED: one of the intermediate landing points was occupied,
+ *                       never used here
+ * @GIBBON_MOVE_USE_ALL: at least one more checker can be moved
+ * @GIBBON_MOVE_USE_HIGHER: in doubt, you must use the higher value
+ * @GIBBON_MOVE_TRY_SWAP: two checkers can be moved by swapping the dice order
+ * @GIBOBN_MOVE_PREMATURE_BEAR_OFF: checker borne off with checkers outhside
+ *                                  home board
+ * @GIBBON_MOVE_ILLEGAL_WASTE: move higher before bearing off with waste
+ * @GIBBON_MOVE_DANCING: Must come in from the bar first
  *
  * Use these symbolic constants, when referring to one side of the board.
  */
@@ -149,7 +150,13 @@ typedef enum {
         GIBBON_MOVE_LEGAL = 0,
         GIBBON_MOVE_ILLEGAL = 1,
         GIBBON_MOVE_TOO_MANY_MOVES = 2,
-        GIBBON_MOVE_BLOCKED = 3
+        GIBBON_MOVE_BLOCKED = 3,
+        GIBBON_MOVE_USE_ALL = 4,
+        GIBBON_MOVE_USE_HIGHER = 5,
+        GIBBON_MOVE_TRY_SWAP = 6,
+        GIBBON_MOVE_PREMATURE_BEAR_OFF = 7,
+        GIBBON_MOVE_ILLEGAL_WASTE = 8,
+        GIBBON_MOVE_DANCING = 9
 } GibbonMoveError;
 
 /**
@@ -187,5 +194,27 @@ GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
                                         const GibbonPosition *after,
                                         GibbonPositionSide side);
 GibbonMove *gibbon_position_alloc_move (gsize num_movements);
+gboolean gibbon_position_equals_technically (const GibbonPosition *self,
+                                             const GibbonPosition *other);
+
+/* Apply a move to a position.  The function only does a plausability test,
+ * not a legality test.
+ *
+ * If reverse is true, assume the board is turned.
+ *
+ * White is considered to move from 23 to 0, black the other way round.  24
+ * is white's bar and black's home, 0 is black's bar and white's home.
+ */
+gboolean gibbon_position_apply_move (GibbonPosition *self,
+                                     const GibbonMove *move,
+                                     GibbonPositionSide side,
+                                     gboolean reverse);
+gboolean gibbon_position_game_over (const GibbonPosition *position);
+
+/* Free return value with g_free()!  */
+gchar *gibbon_position_format_move (GibbonPosition *self,
+                                    const GibbonMove *move,
+                                    GibbonPositionSide side,
+                                    gboolean reverse);
 
 #endif

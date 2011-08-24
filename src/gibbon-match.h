@@ -80,4 +80,6 @@ gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                                         GError **error);
 const gchar *gibbon_match_get_black_player (const GibbonMatch *self);
 
+struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
+
 #endif

@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-player-list.h"
+#include "gibbon-reliability.h"
 
 struct _GibbonPlayerListPrivate {
         GHashTable *hash;
@@ -33,13 +34,14 @@ struct GibbonPlayer {
         
         guint experience;
         gdouble rating;
+        gboolean use_backslash_u;
 };
 
 static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
 
 #define GIBBON_PLAYER_LIST_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-                                  GIBBON_TYPE_PLAYER_LIST,           \
-                                  GibbonPlayerListPrivate))
+                                       GIBBON_TYPE_PLAYER_LIST,           \
+                                       GibbonPlayerListPrivate))
                                              
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
@@ -68,12 +70,17 @@ gibbon_player_list_init (GibbonPlayerList *self)
 
         store = gtk_list_store_new (GIBBON_PLAYER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
-                                    G_TYPE_BOOLEAN,
+                                    G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
+                                    GDK_TYPE_PIXBUF,
+                                    GIBBON_TYPE_RELIABILITY,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    GIBBON_TYPE_COUNTRY,
+                                    GDK_TYPE_PIXBUF,
                                     G_TYPE_STRING);
         self->priv->store = store;
         
@@ -98,12 +105,9 @@ gibbon_player_list_finalize (GObject *object)
 
         if (self->priv->hash)
                 g_hash_table_destroy (self->priv->hash);
-        self->priv->hash = NULL;
         
         if (self->priv->model)
                 g_object_unref (self->priv->model);
-        self->priv->model = NULL;
-        self->priv->store = NULL;
 
         G_OBJECT_CLASS (gibbon_player_list_parent_class)->finalize (object);
 }
@@ -118,17 +122,27 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_NAME] = 
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_AVAILABLE] =
-                G_TYPE_BOOLEAN;
+                G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RATING] = 
                 G_TYPE_DOUBLE;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EXPERIENCE] = 
                 G_TYPE_UINT;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
+                G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT_ICON] =
+                GDK_TYPE_PIXBUF;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RELIABILITY] =
+                GIBBON_TYPE_RELIABILITY;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_OPPONENT] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_WATCHING] =
                 G_TYPE_STRING;
-        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_CLIENT] =
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_HOSTNAME] =
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY] =
+                GIBBON_TYPE_COUNTRY;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_COUNTRY_ICON] =
+                GDK_TYPE_PIXBUF;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_EMAIL] =
                 G_TYPE_STRING;
                 
@@ -166,16 +180,28 @@ gibbon_player_list_set (GibbonPlayerList *self,
                         gboolean available,
                         gdouble rating,
                         guint experience,
-                        gchar *opponent,
-                        gchar *watching,
-                        gchar *client,
-                        gchar *email)
+                        gdouble reliability,
+                        guint confidence,
+                        const gchar *opponent,
+                        const gchar *watching,
+                        const gchar *client,
+                        const GdkPixbuf *client_icon,
+                        const gchar *hostname,
+                        const GibbonCountry *country,
+                        const gchar *email)
 {
         struct GibbonPlayer *player;
-                        
+        const gchar *version_string = NULL;
+        const gchar *stock_id;
+        GibbonReliability rel;
+        const GdkPixbuf *country_icon;
+
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
         
+        rel.value = reliability;
+        rel.confidence = confidence;
+
         player = g_hash_table_lookup (self->priv->hash, name);
         if (!player) {
                 player = g_malloc0 (sizeof *player);
@@ -186,16 +212,48 @@ gibbon_player_list_set (GibbonPlayerList *self,
 
         player->rating = rating;
         player->experience = experience;
-        
+        player->use_backslash_u = FALSE;
+
+        if (client) {
+                if (strncmp ("BGOnline v", client, 10) == 0)
+                        version_string = client + 10;
+                else if (strncmp ("Padgammon v", client, 11) == 0)
+                        version_string = client + 11;
+
+                if (version_string) {
+                        if ((version_string[0] == '1'
+                             && version_string[1] == '.')
+                            || (version_string[0] == '2'
+                                && version_string[1] == '.'
+                                && version_string[2] == '0'))
+                                player->use_backslash_u = TRUE;
+                }
+        }
+
+        if (available) {
+                stock_id = GTK_STOCK_YES;
+        } else {
+                if (opponent && *opponent)
+                        stock_id = GTK_STOCK_NO;
+                else
+                        stock_id = GTK_STOCK_STOP;
+        }
+
+        country_icon = gibbon_country_get_pixbuf (country);
         gtk_list_store_set (self->priv->store,
                             &player->iter,
                             GIBBON_PLAYER_LIST_COL_NAME, name,
-                            GIBBON_PLAYER_LIST_COL_AVAILABLE, available,
+                            GIBBON_PLAYER_LIST_COL_AVAILABLE, stock_id,
                             GIBBON_PLAYER_LIST_COL_RATING, rating,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
+                            GIBBON_PLAYER_LIST_COL_RELIABILITY, &rel,
                             GIBBON_PLAYER_LIST_COL_OPPONENT, opponent,
                             GIBBON_PLAYER_LIST_COL_WATCHING, watching,
                             GIBBON_PLAYER_LIST_COL_CLIENT, client,
+                            GIBBON_PLAYER_LIST_COL_CLIENT_ICON, client_icon,
+                            GIBBON_PLAYER_LIST_COL_HOSTNAME, hostname,
+                            GIBBON_PLAYER_LIST_COL_COUNTRY, country,
+                            GIBBON_PLAYER_LIST_COL_COUNTRY_ICON, country_icon,
                             GIBBON_PLAYER_LIST_COL_EMAIL, email,
                             -1);
 }
@@ -252,4 +310,139 @@ gibbon_player_list_exists (const GibbonPlayerList *self, const gchar *name)
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
 
         return (gboolean) g_hash_table_lookup (self->priv->hash, name);
+}
+
+void
+gibbon_player_list_remove (GibbonPlayerList *self,
+                           const gchar *name)
+{
+        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
+                                                           name);
+        GtkTreeIter iter;
+
+        if (!player)
+                return;
+
+        iter = player->iter;
+
+        gtk_list_store_remove (self->priv->store, &iter);
+
+        (void) g_hash_table_remove (self->priv->hash, name);
+}
+
+gchar *
+gibbon_player_list_get_opponent (const GibbonPlayerList *self,
+                                 const gchar *name)
+{
+        struct GibbonPlayer *player = g_hash_table_lookup (self->priv->hash,
+                                                           name);
+        GtkTreeIter iter;
+        gchar *opponent;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), NULL);
+
+        if (!player)
+                return NULL;
+
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_PLAYER_LIST_COL_OPPONENT, &opponent,
+                            -1);
+
+        if (!*opponent) {
+                g_free (opponent);
+                return NULL;
+        }
+        return opponent;
+}
+
+gboolean
+gibbon_player_list_get_available (const GibbonPlayerList *self,
+                                  const gchar *name)
+{
+        struct GibbonPlayer *player;
+        GtkTreeIter iter;
+        gchar *status;
+        gboolean available;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        if (!player)
+                return FALSE;
+
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_PLAYER_LIST_COL_AVAILABLE, &status,
+                            -1);
+
+        if (g_strcmp0 ("gtk-yes", status))
+                available = FALSE;
+        else
+                available = TRUE;
+
+        return available;
+}
+
+GtkListStore *
+gibbon_player_list_get_store (GibbonPlayerList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), NULL);
+
+        return self->priv->store;
+}
+
+gboolean
+gibbon_player_list_get_iter (GibbonPlayerList *self, const gchar *name,
+                             GtkTreeIter *iter)
+{
+        struct GibbonPlayer *player;
+
+        g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        if (!player)
+                return FALSE;
+
+        *iter = player->iter;
+
+        return TRUE;
+}
+
+void
+gibbon_player_list_update_country (GibbonPlayerList *self,
+                                   const gchar *hostname,
+                                   const GibbonCountry *country)
+{
+        GtkTreeIter iter;
+        gboolean valid;
+        gchar *stored_hostname;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (GIBBON_IS_COUNTRY (country));
+
+        valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (self->priv->store),
+                                               &iter);
+        while (valid) {
+                gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                                    GIBBON_PLAYER_LIST_COL_HOSTNAME,
+                                    &stored_hostname,
+                                    -1);
+
+                if (0 == g_strcmp0 (hostname, stored_hostname)) {
+                        gtk_list_store_set (self->priv->store,
+                                            &iter,
+                                            GIBBON_PLAYER_LIST_COL_COUNTRY,
+                                            country,
+                                            GIBBON_PLAYER_LIST_COL_COUNTRY_ICON,
+                                            gibbon_country_get_pixbuf (country),
+                                            -1);
+                }
+                valid = gtk_tree_model_iter_next (
+                                GTK_TREE_MODEL (self->priv->store),
+                                &iter);
+        }
 }
