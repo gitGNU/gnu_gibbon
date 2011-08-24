@@ -412,6 +412,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                         retval = -1;
                 else
                         retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                self->priv->init_commands_sent = TRUE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
@@ -422,6 +423,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 else
                         retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
                 self->priv->saved_games_finished = TRUE;
+                self->priv->init_commands_sent = TRUE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
@@ -1591,8 +1593,6 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
 
         if (!self->priv->init_commands_sent
             && !self->priv->expect_toggles) {
-                self->priv->init_commands_sent = TRUE;
-
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
@@ -1602,12 +1602,12 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                                                          "address %s",
                                                          mail);
                         g_free (mail);
+                } else if (!self->priv->init_commands_sent) {
+                        gibbon_connection_queue_command (self->priv->connection,
+                                                         FALSE,
+                                                         "show saved");
                 }
                 g_object_unref (settings);
-                /*
-                 * FIXME! Send the "show saved" command after we received
-                 * feedback to the address command.
-                 */
         }
 
         if (0 == g_strcmp0 ("notify", key)) {
@@ -1710,6 +1710,13 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
+        if (!self->priv->init_commands_sent) {
+                self->priv->init_commands_sent = TRUE;
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "show saved");
+        }
+
         if  (self->priv->expect_address) {
                 self->priv->expect_address = FALSE;
                 return GIBBON_CLIP_CODE_SHOW_ADDRESS;
@@ -1722,6 +1729,13 @@ static gint
 gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
 {
         const gchar *address;
+
+        if (!self->priv->init_commands_sent) {
+                self->priv->init_commands_sent = TRUE;
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "show saved");
+        }
 
         /*
          * If the command was entered manually there is no need to display
