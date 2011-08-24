@@ -195,7 +195,8 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
                                                     " Should a new one be"
                                                     " downloaded (1-2 MB) from"
                                                     " the internet?",
-                                                    months), months);
+                                                    months),
+                                                    (unsigned long long) months);
                 } else {
                         question = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
                                                     "The database used for"
@@ -216,7 +217,8 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
                                                     " Should a new one be"
                                                     " downloaded (1-2 MB) from"
                                                     " the internet?",
-                                                    months), months);
+                                                    months),
+                                                    (unsigned long long) months);
                 }
 
                 self->priv->dialog = gtk_message_dialog_new (main_window,
