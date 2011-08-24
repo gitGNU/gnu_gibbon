@@ -102,6 +102,10 @@ static gint gibbon_session_handle_show_saved (GibbonSession *self,
                                               GSList *iter);
 static gint gibbon_session_handle_show_saved_count (GibbonSession *self,
                                                     GSList *iter);
+static gint gibbon_session_handle_show_address (GibbonSession *self,
+                                                GSList *iter);
+static gint gibbon_session_handle_address_error (GibbonSession *self,
+                                                 GSList *iter);
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
@@ -136,6 +140,7 @@ struct _GibbonSessionPrivate {
         GSList *expect_settings;
         GSList *expect_toggles;
         GSList *expect_saved_counts;
+        gboolean expect_address;
 
         GHashTable *saved_games;
         gboolean saved_games_finished;
@@ -196,6 +201,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->expect_toggles = iter;
 
         self->priv->expect_saved_counts = NULL;
+        self->priv->expect_address = TRUE;
 
         self->priv->saved_games =
                 g_hash_table_new_full (g_str_hash,
@@ -419,6 +425,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_SHOW_ADDRESS:
+                retval = gibbon_session_handle_show_address (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS:
+                retval = gibbon_session_handle_address_error (self, iter);
                 break;
         }
 
@@ -1693,6 +1705,39 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
                                              count);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
+}
+
+static gint
+gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
+{
+        if  (self->priv->expect_address) {
+                self->priv->expect_address = FALSE;
+                return GIBBON_CLIP_CODE_SHOW_ADDRESS;
+        }
+
+        return -1;
+}
+
+static gint
+gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
+{
+        const gchar *address;
+
+        /*
+         * If the command was entered manually there is no need to display
+         * an error message.  It is already visible in the server console.
+         */
+        if (!self->priv->expect_address)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &address))
+                return -1;
+
+        gibbon_app_display_error(self->priv->app,
+                                 _("The email address '%s' was rejected by"
+                                   " the server!"), address);
+
+        return GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS;
 }
 
 static gboolean
