@@ -116,6 +116,7 @@ static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
 static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
                                               const GibbonCountry *country);
+static gboolean gibbon_session_timeout (GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -141,6 +142,8 @@ struct _GibbonSessionPrivate {
         GSList *expect_toggles;
         GSList *expect_saved_counts;
         gboolean expect_address;
+
+        guint timeout_id;
 
         GHashTable *saved_games;
         gboolean saved_games_finished;
@@ -219,6 +222,9 @@ gibbon_session_finalize (GObject *object)
         GSList *iter;
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
+
+        if (self->priv->timeout_id)
+                g_source_remove (self->priv->timeout_id);
 
         if (self->priv->watching)
                 g_free (self->priv->watching);
@@ -639,6 +645,11 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "set");
+                self->priv->timeout_id =
+                        g_timeout_add (2000,
+                                       (GSourceFunc) gibbon_session_timeout,
+                                       (gpointer) self);
+
         }
 
         return GIBBON_CLIP_CODE_WHO_INFO_END;
@@ -1545,10 +1556,17 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                                               key))
                 retval = GIBBON_CLIP_CODE_SHOW_SETTING;
 
-        if (!self->priv->init_commands_sent && !self->priv->expect_settings)
+        if (!self->priv->init_commands_sent && !self->priv->expect_settings) {
+                /* Restart timer.  */
+                g_source_remove (self->priv->timeout_id);
+                self->priv->timeout_id =
+                        g_timeout_add (2000,
+                                       (GSourceFunc) gibbon_session_timeout,
+                                       (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "toggle");
+        }
 
         /* The only setting we are interested in is "boardstyle".  */
         if (0 == g_strcmp0 ("boardstyle", key)
@@ -1562,11 +1580,6 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                 gibbon_connection_queue_command (self->priv->connection,
                                                  TRUE,
                                                  "set boardstyle 3");
-                /*
-                 * FIXME! We have to queue a new "set" command and also
-                 * re-initialize the list expect_settings.  Only this
-                 * way we can be sure that the command gets executed.
-                 */
         }
 
         return retval;
@@ -1597,12 +1610,24 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
                 if (mail) {
+                        /* Restart timer.  */
+                        g_source_remove (self->priv->timeout_id);
+                        self->priv->timeout_id =
+                                g_timeout_add (2000,
+                                           (GSourceFunc) gibbon_session_timeout,
+                                               (gpointer) self);
                         gibbon_connection_queue_command (self->priv->connection,
                                                          FALSE,
                                                          "address %s",
                                                          mail);
                         g_free (mail);
                 } else if (!self->priv->init_commands_sent) {
+                        /* Restart timer.  */
+                        g_source_remove (self->priv->timeout_id);
+                        self->priv->timeout_id =
+                                g_timeout_add (2000,
+                                           (GSourceFunc) gibbon_session_timeout,
+                                               (gpointer) self);
                         gibbon_connection_queue_command (self->priv->connection,
                                                          FALSE,
                                                          "show saved");
@@ -1615,11 +1640,6 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         gibbon_connection_queue_command (self->priv->connection,
                                                          TRUE,
                                                          "toggle notify");
-                        /*
-                         * FIXME! We have to make sure that the toggle command
-                         * is successful.  Rather restart the entire
-                         * initialization procedure.
-                         */
                 }
         }
 
@@ -1712,6 +1732,12 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
         if (!self->priv->init_commands_sent) {
                 self->priv->init_commands_sent = TRUE;
+                /* Restart timer.  */
+                g_source_remove (self->priv->timeout_id);
+                self->priv->timeout_id =
+                        g_timeout_add (2000,
+                                       (GSourceFunc) gibbon_session_timeout,
+                                       (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "show saved");
@@ -1732,6 +1758,12 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
 
         if (!self->priv->init_commands_sent) {
                 self->priv->init_commands_sent = TRUE;
+                /* Restart timer.  */
+                g_source_remove (self->priv->timeout_id);
+                self->priv->timeout_id =
+                        g_timeout_add (2000,
+                                       (GSourceFunc) gibbon_session_timeout,
+                                       (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "show saved");
@@ -1911,4 +1943,23 @@ gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
 
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "show savedcount %s", who);
+}
+
+static gboolean
+gibbon_session_timeout (GibbonSession *self)
+{
+        if (self->priv->expect_settings) {
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "set");
+        } else if (self->priv->expect_toggles) {
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "toggle");
+        }
+
+        /*
+         * FIXME: If we expect a  saved count we should resent the command.
+         * But "show saved" or "address" are not important enough to do that.
+         */
+
+        return TRUE;
 }
