@@ -869,7 +869,7 @@ gibbon_draw_animation (GibbonCairoboard *self, cairo_t *cr)
                              gibbon_position_get_borne_off (self->priv->pos,
                                                             side);
                         checker = self->priv->checker_w_home;
-                        from_y = checker->y + 0.5 * checker->height;
+                        to_y = checker->y + 0.5 * checker->height;
                 } else {
                         to_x = gibbon_cairoboard_get_bar_x (self);
                         to_y = gibbon_cairoboard_get_bar_y (self,
