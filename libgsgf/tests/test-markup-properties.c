@@ -188,7 +188,8 @@ test_prop_AR (const GSGFNode *node)
 
         num_lines = gsgf_list_of_get_number_of_items (list_of);
         if (num_lines != 3) {
-                g_printerr ("Expected 3 lines, got %u.\n", num_lines);
+                g_printerr ("Expected 3 lines, got %llu.\n",
+                            (unsigned long long) num_lines);
                 return FALSE;
         }
 
@@ -198,32 +199,32 @@ test_prop_AR (const GSGFNode *node)
                 item = gsgf_compose_get_value (compose, 0);
                 if (!GSGF_IS_POINT_BACKGAMMON (item)) {
                         g_printerr ("Expected GSGFPointBackgammon for"
-                                    " item #0 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #0 of pair #%lld, not '%s':\n",
+                                    (long long) i, G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
                 got = gsgf_point_get_normalized_value (GSGF_POINT (item));
 
                 if (expect[i][0] != got) {
                         g_printerr ("Expected %d not %d for"
-                                    " item #0 of pair #%d.\n",
-                                    expect[i][0], got, i);
+                                    " item #0 of pair #%lld.\n",
+                                    expect[i][0], got, (unsigned long long) i);
                         return FALSE;
                 }
 
                 item = gsgf_compose_get_value (compose, 1);
                 if (!GSGF_IS_POINT_BACKGAMMON (item)) {
                         g_printerr ("Expected GSGFPointBackgammon for"
-                                    " item #1 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #1 of pair #%lld, not '%s':\n",
+                                    (long long) i, G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
                 got = gsgf_point_get_normalized_value (GSGF_POINT (item));
 
                 if (expect[i][1] != got) {
                         g_printerr ("Expected %d not %d for"
-                                    " item #1 of pair #%d.\n",
-                                    expect[i][1], got, i);
+                                    " item #1 of pair #%lld.\n",
+                                    expect[i][1], got, (long long) i);
                         return FALSE;
                 }
         }
@@ -285,24 +286,26 @@ test_prop_CR (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'CR': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'CR': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'CR': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'CR': Item #%llu is not a"
+                                    "GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'CR': Item #%u is not a %d"
+                        g_printerr ("Property 'CR': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }
@@ -400,24 +403,26 @@ test_prop_DD (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'DD': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'DD': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'DD': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'DD': Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'DD': Item #%u is not a %d"
+                        g_printerr ("Property 'DD': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }
@@ -454,8 +459,8 @@ test_prop_DD_empty (const GSGFNode *node)
 
         num_points = gsgf_list_of_get_number_of_items(list_of);
         if (num_points != 1) {
-                g_printerr ("Property 'DD': Expected one point, got %u!\n",
-                            num_points);
+                g_printerr ("Property 'DD': Expected one point, got %llu!\n",
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
@@ -504,7 +509,8 @@ test_prop_LB (const GSGFNode *node)
 
         num_pairs = gsgf_list_of_get_number_of_items (list_of);
         if (num_pairs != 2) {
-                g_printerr ("Expected 2 pairs, got %u.\n", num_pairs);
+                g_printerr ("Expected 2 pairs, got %llu.\n",
+                            (unsigned long long) num_pairs);
                 return FALSE;
         }
 
@@ -514,32 +520,35 @@ test_prop_LB (const GSGFNode *node)
                 item = gsgf_compose_get_value (compose, 0);
                 if (!GSGF_IS_POINT_BACKGAMMON (item)) {
                         g_printerr ("Expected GSGFPointBackgammon for"
-                                    " item #0 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #0 of pair #%lld, not '%s':\n",
+                                    (long long) i, G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
                 got_point = gsgf_point_get_normalized_value (GSGF_POINT (item));
 
                 if (expect[i].point != got_point) {
                         g_printerr ("Expected %d not %d for"
-                                    " item #0 of pair #%d.\n",
-                                    expect[i].point, got_point, i);
+                                    " item #0 of pair #%lld.\n",
+                                    expect[i].point, got_point,
+                                    (long long) i);
                         return FALSE;
                 }
 
                 item = gsgf_compose_get_value (compose, 1);
                 if (!GSGF_IS_SIMPLE_TEXT (item)) {
                         g_printerr ("Expected GSGFSimpleText for"
-                                    " item #1 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #1 of pair #%lld, not '%s':\n",
+                                    (long long) i,
+                                    G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
 
                 got_label = gsgf_text_get_value (GSGF_TEXT (item));
                 if (strcmp (expect[i].label, got_label)) {
                         g_printerr ("Expected '%s' not '%s' for"
-                                    " item #1 of pair #%d.\n",
-                                    expect[i].label, got_label, i);
+                                    " item #1 of pair #%lld.\n",
+                                    expect[i].label, got_label,
+                                    (long long) i);
                         return FALSE;
                 }
         }
@@ -595,7 +604,8 @@ test_prop_LN (const GSGFNode *node)
 
         num_lines = gsgf_list_of_get_number_of_items (list_of);
         if (num_lines != 3) {
-                g_printerr ("Expected 3 lines, got %u.\n", num_lines);
+                g_printerr ("Expected 3 lines, got %llu.\n",
+                            (unsigned long long) num_lines);
                 return FALSE;
         }
 
@@ -605,32 +615,33 @@ test_prop_LN (const GSGFNode *node)
                 item = gsgf_compose_get_value (compose, 0);
                 if (!GSGF_IS_POINT_BACKGAMMON (item)) {
                         g_printerr ("Expected GSGFPointBackgammon for"
-                                    " item #0 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #0 of pair #%lld, not '%s':\n",
+                                    (long long) i, G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
                 got = gsgf_point_get_normalized_value (GSGF_POINT (item));
 
                 if (expect[i][0] != got) {
                         g_printerr ("Expected %d not %d for"
-                                    " item #0 of pair #%d.\n",
-                                    expect[i][0], got, i);
+                                    " item #0 of pair #%lld.\n",
+                                    expect[i][0], got, (long long) i);
                         return FALSE;
                 }
 
                 item = gsgf_compose_get_value (compose, 1);
                 if (!GSGF_IS_POINT_BACKGAMMON (item)) {
                         g_printerr ("Expected GSGFPointBackgammon for"
-                                    " item #1 of pair #%d, not '%s':\n",
-                                    i, G_OBJECT_TYPE_NAME (item));
+                                    " item #1 of pair #%lld, not '%s':\n",
+                                    (long long) i, G_OBJECT_TYPE_NAME (item));
                         return FALSE;
                 }
                 got = gsgf_point_get_normalized_value (GSGF_POINT (item));
 
                 if (expect[i][1] != got) {
                         g_printerr ("Expected %d not %d for"
-                                    " item #1 of pair #%d.\n",
-                                    expect[i][1], got, i);
+                                    " item #1 of pair #%lld.\n",
+                                    expect[i][1], got,
+                                    (long long) i);
                         return FALSE;
                 }
         }
@@ -692,24 +703,26 @@ test_prop_MA (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'MA': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'MA': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'MA': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'MA': Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'MA': Item #%u is not a %d"
+                        g_printerr ("Property 'MA': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }
@@ -807,24 +820,26 @@ test_prop_SL (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'SL': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'SL': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'SL': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'SL': Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'SL': Item #%u is not a %d"
+                        g_printerr ("Property 'SL': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }
@@ -922,24 +937,26 @@ test_prop_SQ (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'SQ': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'SQ': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'SQ': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'SQ': Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'SQ': Item #%u is not a %d"
+                        g_printerr ("Property 'SQ': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }
@@ -1038,24 +1055,26 @@ test_prop_TR (const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                g_printerr ("Property 'TR': Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                g_printerr ("Property 'TR': Expected %llu points, got %llu!\n",
+                            (unsigned long long) expect_num_points,
+                            (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Property 'TR': Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Property 'TR': Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ("Property 'TR': Item #%u is not a %d"
+                        g_printerr ("Property 'TR': Item #%llu is not a %d"
                                     " point but a %d point!\n",
-                                    i, values[i], point);
+                                    (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }

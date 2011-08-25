@@ -158,8 +158,8 @@ test_regular_white_move(const GSGFNode *node)
         }
 
         if (2 != gsgf_move_backgammon_get_num_moves(move)) {
-                fprintf(stderr, "Expected two checker moves, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+                fprintf(stderr, "Expected two checker moves, got %lld!\n",
+                        (long long) gsgf_move_backgammon_get_num_moves(move));
                 return FALSE;
         }
 
@@ -231,8 +231,8 @@ test_regular_black_move(const GSGFNode *node)
         }
 
         if (4 != gsgf_move_backgammon_get_num_moves(move)) {
-                fprintf(stderr, "Expected four checker moves, got %d!\n",
-                                gsgf_move_backgammon_get_num_moves(move));
+                fprintf(stderr, "Expected four checker moves, got %lld!\n",
+                        (long long) gsgf_move_backgammon_get_num_moves(move));
                 return FALSE;
         }
 
@@ -409,7 +409,8 @@ test_prop_MN(const GSGFNode *node)
         move_number = GSGF_NUMBER(value);
         num = gsgf_number_get_value(move_number);
         if (123 != num) {
-                fprintf(stderr, "Property 'MN': expected 123, got %lld\n", num);
+                fprintf(stderr, "Property 'MN': expected 123, got %lld\n",
+                        (long long) num);
                 return FALSE;
         }
 

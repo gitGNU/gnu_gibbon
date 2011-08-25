@@ -1282,7 +1282,7 @@ gsgf_FG_new_from_raw (const GSGFRaw* raw, const GSGFFlavor *flavor,
         if (value < 0) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                              _("Negativ number not allowed: %lld"),
-                             value);
+                             (long long) value);
                 return FALSE;
         }
 
@@ -1522,11 +1522,11 @@ gsgf_list_of_lines_new_from_raw (const GSGFRaw* raw,
         const gchar *end_string;
         GSGFPoint *start_point;
         GSGFPoint *end_point;
-        gint start_normalized, end_normalized;
+        gint64 start_normalized, end_normalized;
         GSGFRaw *tmp_raw;
         GList *prev_points = NULL;
         GList *iter;
-        gint start_prev, end_prev;
+        gint64 start_prev, end_prev;
 
         num_pairs = gsgf_raw_get_number_of_values (raw);
         if (!num_pairs) {
@@ -1594,9 +1594,9 @@ gsgf_list_of_lines_new_from_raw (const GSGFRaw* raw,
 
                 iter = prev_points;
                 while (iter) {
-                		start_prev = (gint) iter->data;
+                		start_prev = (gint64) iter->data;
                 		iter = iter->next;
-                		end_prev = (gint) iter->data;
+                		end_prev = (gint64) iter->data;
                 		iter = iter->next;
                 		if (start_normalized == start_prev
                 		    && end_normalized == end_prev) {
@@ -1652,11 +1652,11 @@ gsgf_list_of_point_labels_new_from_raw (const GSGFRaw* raw,
         const gchar *end_string;
         GSGFPoint *start_point;
         GSGFSimpleText *end_label;
-        gint start_normalized;
+        gint64 start_normalized;
         GSGFRaw *tmp_raw;
         GList *prev_points = NULL;
         GList *iter;
-        gint start_prev;
+        gint64 start_prev;
 
         num_pairs = gsgf_raw_get_number_of_values (raw);
         if (!num_pairs) {
@@ -1717,7 +1717,7 @@ gsgf_list_of_point_labels_new_from_raw (const GSGFRaw* raw,
 
                 iter = prev_points;
                 while (iter) {
-                                start_prev = (gint) iter->data;
+                                start_prev = (gint64) iter->data;
                                 iter = iter->next;
                                 if (start_normalized == start_prev) {
                                                 g_object_unref (start_point);

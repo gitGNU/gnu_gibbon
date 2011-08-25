@@ -69,8 +69,11 @@ main(int argc, char *argv[])
                                 offset = end - current->raw;
                                 if (offset != current->offset) {
                                         fprintf (stderr,
-                                                 "Test %d: expected offset %d not %d\n",
-                                                 i + 1, current->offset, offset);
+                                                 "Test %d: expected offset"
+                                                 " %lld not %lld\n",
+                                                 i + 1,
+                                                 (long long) current->offset,
+                                                 (long long) offset);
                                         status = 1;
                                 }
                         }

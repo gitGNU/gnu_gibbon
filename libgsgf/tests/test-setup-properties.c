@@ -155,7 +155,8 @@ test_prop_AB(const GSGFNode *node)
 
         num_stones = gsgf_list_of_get_number_of_items(list_of);
         if (num_stones != 2) {
-                fprintf(stderr, "Expected two stones, got %u!\n", num_stones);
+                fprintf(stderr, "Expected two stones, got %llu!\n",
+                        (unsigned long long) num_stones);
                 return FALSE;
         }
 
@@ -216,7 +217,8 @@ test_prop_AW(const GSGFNode *node)
 
         num_stones = gsgf_list_of_get_number_of_items(list_of);
         if (num_stones != 3) {
-                fprintf(stderr, "Expected three stones, got %u!\n", num_stones);
+                fprintf(stderr, "Expected three stones, got %llu!\n",
+                        (unsigned long long) num_stones);
                 return FALSE;
         }
 
@@ -293,24 +295,26 @@ test_prop_AE(const GSGFNode *node)
         num_points = gsgf_list_of_get_number_of_items(list_of);
         expect_num_points = (sizeof values) / (sizeof *values);
         if (num_points != expect_num_points) {
-                fprintf(stderr, "Expected %u points, got %u!\n",
-                                expect_num_points, num_points);
+                fprintf(stderr, "Expected %llu points, got %llu!\n",
+                        (unsigned long long) expect_num_points,
+                        (unsigned long long) num_points);
                 return FALSE;
         }
 
         for (i = 0; i < expect_num_points; ++i) {
                 cooked_point = gsgf_list_of_get_nth_item(list_of, i);
                 if (!GSGF_IS_POINT_BACKGAMMON (cooked_point)) {
-                        g_printerr ("Item #%u is not a GSGFSPointBackgammon!\n",
-                                    i);
+                        g_printerr ("Item #%llu is not a"
+                                    " GSGFSPointBackgammon!\n",
+                                    (unsigned long long) i);
                         return FALSE;
                 }
                 point = gsgf_point_backgammon_get_point
                                 (GSGF_POINT_BACKGAMMON (cooked_point));
                 if (point != values[i]) {
-                        g_printerr ( "Item #%u is not a %d"
+                        g_printerr ( "Item #%llu is not a %d"
                                      " point but a %d point!\n",
-                                     i, values[i], point);
+                                     (unsigned long long) i, values[i], point);
                         return FALSE;
                 }
         }

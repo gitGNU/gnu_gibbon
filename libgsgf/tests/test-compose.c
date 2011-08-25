@@ -67,7 +67,8 @@ test_compose(void)
 
         i = gsgf_compose_get_number_of_values(compose);
         if (i != 3) {
-                fprintf(stderr, "Expected 3 values, got %d.\n", i);
+                fprintf(stderr, "Expected 3 values, got %lld.\n",
+                        (long long) i);
                 return -1;
         }
 

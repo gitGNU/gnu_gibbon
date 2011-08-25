@@ -80,7 +80,7 @@ test_success(void)
 
         if (got != expect) {
                 fprintf(stderr, "Expected %lld, got %lld.\n",
-                        expect, got);
+                        (long long) expect, (long long) got);
                 return -1;
         }
         g_object_unref(r);

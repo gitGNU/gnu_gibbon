@@ -107,7 +107,8 @@ test_prop_AP(const GSGFNode *node)
 
         length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(value));
         if (length != 2) {
-                fprintf(stderr, "Property 'AP': Expected 2 subvalues, got %u.\n", length);
+                fprintf(stderr, "Property 'AP': Expected 2 subvalues, got"
+                        " %llu.\n", (unsigned long long) length);
                 return FALSE;
         }
 
@@ -266,7 +267,8 @@ test_prop_SZ(const GSGFNode *node)
 
         length = gsgf_compose_get_number_of_values(GSGF_COMPOSE(value));
         if (length != 2) {
-                fprintf(stderr, "Property 'SZ': Expected 2 subvalues, got %u.\n", length);
+                fprintf(stderr, "Property 'SZ': Expected 2 subvalues, got"
+                       " %llu.\n", (unsigned long long) length);
                 return FALSE;
         }
 
@@ -281,7 +283,8 @@ test_prop_SZ(const GSGFNode *node)
         }
         int_value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
         if (24 != int_value) {
-                fprintf(stderr, "Expected 24, not %lld!\n", int_value);
+                fprintf(stderr, "Expected 24, not %lld!\n",
+                        (long long) int_value);
                 return FALSE;
         }
 
@@ -296,7 +299,8 @@ test_prop_SZ(const GSGFNode *node)
         }
         int_value = gsgf_number_get_value(GSGF_NUMBER(subvalue));
         if (1 != int_value) {
-                fprintf(stderr, "Expected 1, not %lld!\n", int_value);
+                fprintf(stderr, "Expected 1, not %lld!\n",
+                        (long long) int_value);
                 return FALSE;
         }
 
@@ -322,7 +326,8 @@ test_prop_XY(const GSGFNode *node)
 
         length = gsgf_raw_get_number_of_values(GSGF_RAW(value));
         if (length != 2) {
-                fprintf(stderr, "Expected 2 values for 'XY', got %u.\n", length);
+                fprintf(stderr, "Expected 2 values for 'XY', got %llu.\n",
+                        (unsigned long long) length);
                 return FALSE;
         }
 
