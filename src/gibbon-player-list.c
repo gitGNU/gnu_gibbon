@@ -309,7 +309,7 @@ gibbon_player_list_exists (const GibbonPlayerList *self, const gchar *name)
 {
         g_return_val_if_fail (GIBBON_IS_PLAYER_LIST (self), FALSE);
 
-        return (gboolean) g_hash_table_lookup (self->priv->hash, name);
+        return g_hash_table_lookup (self->priv->hash, name) ? FALSE : TRUE;
 }
 
 void

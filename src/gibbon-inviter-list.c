@@ -269,7 +269,7 @@ gibbon_inviter_list_exists (const GibbonInviterList *self, const gchar *name)
 {
         g_return_val_if_fail (GIBBON_IS_INVITER_LIST (self), FALSE);
 
-        return (gboolean) g_hash_table_lookup (self->priv->hash, name);
+        return g_hash_table_lookup (self->priv->hash, name) ? TRUE : FALSE;
 }
 
 void
