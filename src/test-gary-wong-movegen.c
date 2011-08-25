@@ -269,13 +269,13 @@ static void print_movement (gint board[28], gint from, gint die,
                             GibbonPositionSide turn);
 #endif
 
-static guint64 total_positions = 100000;
-static guint64 done_positions = 0;
+static unsigned long long total_positions = 100000;
+static unsigned long long done_positions = 0;
 
 int
 main (int argc, char *argv[])
 {
-        guint64 random_seed = time (NULL);
+        long long random_seed = time (NULL);
         gboolean verbose = FALSE;
 
         g_type_init ();
@@ -299,7 +299,7 @@ main (int argc, char *argv[])
                                     argv[2], strerror (errno));
                         return -1;
                 }
-                g_print ("Using %llu as random seed.\n", random_seed);
+                g_print ("Using %lld as random seed.\n", random_seed);
         }
         srandom (random_seed);
 

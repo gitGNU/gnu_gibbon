@@ -1253,9 +1253,9 @@ test_single_case (struct test_case *test_case)
 
         if (expect->type != GIBBON_CLIP_TYPE_END) {
                 expect_type = stringify_token_type (expect->type);
-                g_printerr ("%s: token #%u: expected `%s' (token type %s)"
+                g_printerr ("%s: token #%llu: expected `%s' (token type %s)"
                             " got nothing.\n",
-                            test_case->line, i + 1,
+                            test_case->line, (unsigned long long) i + 1,
                             expect->value, expect_type);
                 g_free (expect_type);
 
@@ -1285,10 +1285,10 @@ check_result (const gchar *line, gsize num, struct token_pair *token_pair,
             || g_strcmp0 (got_value, expect_value)) {
                 got_type = stringify_token_type (token_set->type);
                 expect_type = stringify_token_type (token_pair->type);
-                g_printerr ("%s: token #%u:"
+                g_printerr ("%s: token #%llu:"
                             " expected `%s' (token type %s),"
                             " got `%s' (token type %s).\n",
-                            line, num,
+                            line, (unsigned long long) num,
                             expect_value, expect_type,
                             got_value, got_type);
                 retval = FALSE;
@@ -1334,10 +1334,10 @@ stringify_token_value (struct GibbonClipTokenSet *token_set)
                         return NULL;
                 case GIBBON_CLIP_TYPE_UINT:
                         return g_strdup_printf ("%llu",
-                                                (guint64) token_set->v.i64);
+                                         (unsigned long long) token_set->v.i64);
                 case GIBBON_CLIP_TYPE_INT:
                         return g_strdup_printf ("%lld",
-                                                (gint64) token_set->v.i64);
+                                                (long long) token_set->v.i64);
                 case GIBBON_CLIP_TYPE_DOUBLE:
                         return g_strdup_printf ("%f",
                                                 (gdouble) token_set->v.d);
@@ -1351,7 +1351,7 @@ stringify_token_value (struct GibbonClipTokenSet *token_set)
                         return g_strdup (token_set->v.s);
                 case GIBBON_CLIP_TYPE_TIMESTAMP:
                         return g_strdup_printf ("%lld",
-                                                (gint64) token_set->v.i64);
+                                                (long long) token_set->v.i64);
         }
 
         return NULL;
