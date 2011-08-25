@@ -111,6 +111,7 @@ gboolean gsgf_flavor_get_cooked_value(const GSGFFlavor *self,
                                       const struct _GSGFRaw *raw,
                                       struct _GSGFCookedValue **cooked,
                                       GError **error);
+guint gsgf_flavor_get_game_id (const GSGFFlavor *self, GError **error);
 
 G_END_DECLS
 
