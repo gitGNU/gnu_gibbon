@@ -52,6 +52,7 @@
 #include "gibbon-session.h"
 #include "gibbon-client-icons.h"
 #include "gibbon-settings.h"
+#include "gibbon-register-dialog.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -98,6 +99,7 @@ static void gibbon_app_connect_signals(const GibbonApp *self);
 
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter);
+static void gibbon_app_on_register_request(GibbonApp *self);
 static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_connecting(GibbonApp *self,
                                      GibbonConnection *connection);
@@ -496,9 +498,98 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
 
 }
 
-static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
+static void
+gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
 {
         gtk_main_quit();
+}
+
+static void
+gibbon_app_on_register_request (GibbonApp *self)
+{
+        GibbonRegisterDialog *dialog;
+        gint response;
+        gchar *hostname;
+        guint port;
+        gchar *password;
+        GSettings *settings;
+        GVariant *variant;
+
+        if (self->priv->connection) {
+                gibbon_app_display_error (self,
+                                          _("You cannot register an account"
+                                            " while you are connected to a"
+                                            " server!"));
+                return;
+        }
+
+        dialog = gibbon_register_dialog_new (self);
+        response = gtk_dialog_run (GTK_DIALOG (dialog));
+        if (!gibbon_register_dialog_okay (dialog))
+                response = GTK_RESPONSE_CANCEL;
+        password = g_strdup (gibbon_register_dialog_get_password (dialog));
+
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+
+        if (response != GTK_RESPONSE_OK) {
+                g_free (password);
+                return;
+        }
+
+        /* Clean up opened connection dialog and stale connection objects.
+         * The latter should not happen.
+         */
+        gibbon_app_disconnect (self);
+        gibbon_app_set_state_connecting (self);
+
+        /*
+         * We have a little race here.  We read the login, hostname, and port
+         * from the GSettings, and not from the dialog.
+         */
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+
+        hostname = g_settings_get_string (settings,
+                                          GIBBON_PREFS_SERVER_HOST);
+
+        variant = g_settings_get_value (settings, GIBBON_PREFS_SERVER_PORT);
+        port = g_variant_get_uint16 (variant);
+        g_variant_unref (variant);
+
+        g_object_unref (settings);
+
+        self->priv->connection = gibbon_connection_new (self, hostname, port,
+                                                        "guest", password);
+        g_free (password);
+        g_free (hostname);
+        if (!self->priv->connection) {
+                gibbon_app_disconnect (self);
+                return;
+        }
+
+        self->priv->connecting_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "connecting",
+                        G_CALLBACK (gibbon_app_on_connecting),
+                        G_OBJECT (self));
+        self->priv->connected_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "connected",
+                        G_CALLBACK (gibbon_app_on_connected),
+                        G_OBJECT (self));
+        self->priv->logged_in_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection), "logged_in",
+                        G_CALLBACK (gibbon_app_on_logged_in),
+                        G_OBJECT (self));
+        self->priv->network_error_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection),
+                        "network-error",
+                        G_CALLBACK (gibbon_app_on_network_error),
+                        G_OBJECT (self));
+        self->priv->disconnected_signal = gibbon_signal_new (
+                        G_OBJECT (self->priv->connection),
+                        "disconnected", G_CALLBACK (gibbon_app_disconnect),
+                        G_OBJECT (self));
+
+        if (!gibbon_connection_connect (self->priv->connection))
+                gibbon_app_disconnect (self);
 }
 
 static void
@@ -516,8 +607,16 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         dialog = gibbon_connection_dialog_new (self, FALSE);
         response = gtk_dialog_run (GTK_DIALOG (dialog));
 
-        if (response != GTK_RESPONSE_OK) {
+        switch (response) {
+        case GTK_RESPONSE_OK:
+                break;
+        case GIBBON_CONNECTION_DIALOG_RESPONSE_REGISTER:
                 gtk_widget_destroy (GTK_WIDGET (dialog));
+                gibbon_app_on_register_request (self);
+                return;
+        default:
+                gtk_widget_destroy (GTK_WIDGET (dialog));
+                gibbon_app_on_register_request (self);
                 return;
         }
 
@@ -619,11 +718,6 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 
         if (!gibbon_connection_connect (self->priv->connection))
                 gibbon_app_disconnect (self);
-
-        /*
-         * TODO: Get rid of GibbonAccountDialog.
-         * TODO: Remove both dialogs from the Glade UI file.
-         */
 }
 
 void
