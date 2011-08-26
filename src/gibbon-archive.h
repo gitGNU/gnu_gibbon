@@ -103,4 +103,7 @@ struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
                                                    callback,
                                                    gpointer data);
 
+GSList *gibbon_archive_get_accounts (const GibbonArchive *self,
+                                     const gchar *hostname, guint port);
+
 #endif

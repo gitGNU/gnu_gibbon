@@ -708,3 +708,40 @@ gibbon_archive_on_resolve_ip (GObject *resolver, GAsyncResult *result,
 
         info.callback (info.data, info.hostname, country);
 }
+
+GSList *
+gibbon_archive_get_accounts (const GibbonArchive *self,
+                             const gchar *hostname, guint port)
+{
+        gchar *server_directory;
+        gchar *buf;
+        GDir *dir;
+        GSList *accounts = NULL;
+        const gchar *account;
+
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+        g_return_val_if_fail (hostname != NULL, NULL);
+        g_return_val_if_fail (port > 0, NULL);
+
+        server_directory = g_build_filename (self->priv->servers_directory,
+                                             hostname, NULL);
+        if (port != 4321) {
+                buf = g_strdup_printf ("%s_%u", server_directory, port);
+                g_free (server_directory);
+                server_directory = buf;
+        }
+
+        dir = g_dir_open (server_directory, 0, NULL);
+        g_free (buf);
+
+        if (!dir)
+                return NULL;
+
+        account = g_dir_read_name (dir);
+        while (account) {
+                accounts = g_slist_append (accounts, g_strdup (account));
+                account = g_dir_read_name (dir);
+        }
+
+        return accounts;
+}
