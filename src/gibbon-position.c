@@ -218,7 +218,7 @@ gibbon_position_free (GibbonPosition *self)
                 g_free (self->players[0]);
                 g_free (self->players[1]);
                 g_free (self->game_info);
-                g_free (self->game_info);
+                g_free (self->status);
                 g_free (self);
         }
 }
