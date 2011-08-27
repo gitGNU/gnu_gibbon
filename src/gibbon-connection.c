@@ -354,10 +354,16 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         gchar *head;
         gchar *ptr;
         gchar *line_end;
+        gchar *console_output;
         GibbonServerConsole *console;
         GibbonSession *session;
+        GibbonApp *app;
 
         if (!self || !GIBBON_IS_CONNECTION (self))
+                return;
+
+        app = self->priv->app;
+        if (!gibbon_app_get_connection (app))
                 return;
 
         if (self->priv->read_cancellable)
@@ -388,7 +394,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
 #define index(str, c) memchr (str, c, strlen (str))
 #endif
 
-        console = gibbon_app_get_server_console (self->priv->app);
+        console = gibbon_app_get_server_console (app);
 
         ptr = self->priv->in_buffer;
         while ((line_end = index (ptr, '\012')) != NULL) {
@@ -397,28 +403,45 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                         *(line_end - 1) = 0;
                 if (self->priv->state != WAIT_LOGIN_PROMPT) {
                         session = self->priv->session;
+                        /*
+                         * We need a copy of string because it could be
+                         * destroyed during handling the server output.
+                         */
+                        console_output = g_alloca (1 + strlen (ptr));
+                        strcpy (console_output, ptr);
                         clip_code = gibbon_session_process_server_line (session,
                                                                         ptr);
-                        if (clip_code == GIBBON_CLIP_CODE_WELCOME) {
-                                self->priv->state = WAIT_COMMANDS;
-                                g_signal_emit (self,
-                                               signals[LOGGED_IN],
-                                               0, self);
-                        }
                         if (clip_code >= 0) {
                                 /*
                                  * This is a recognized reply to a command.
                                  * FIBS is now ready to receive new commands.
                                  */
                                 if (clip_code > 0) {
-                                        self->priv->out_ready = TRUE;
+                                        /*
+                                         * Our connection may have been
+                                         * cancelled.
+                                         */
+                                        if (gibbon_app_get_connection (app))
+                                                self->priv->out_ready = TRUE;
                                         gibbon_connection_send_chunk (self);
                                 }
 
                                 gibbon_server_console_print_output (console,
-                                                                    ptr);
+                                                                console_output);
                         } else {
-                                gibbon_server_console_print_info (console, ptr);
+                                gibbon_server_console_print_info (console,
+                                                                console_output);
+                        }
+                        /*
+                         * Our handler may have destroyed the connection.
+                         */
+                        if (!GIBBON_IS_CONNECTION (self))
+                                return;
+                        if (clip_code == GIBBON_CLIP_CODE_WELCOME) {
+                                self->priv->state = WAIT_COMMANDS;
+                                g_signal_emit (self,
+                                               signals[LOGGED_IN],
+                                               0, self);
                         }
                 } else {
                         gibbon_server_console_print_info (console, ptr);
@@ -493,7 +516,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         /*
          * Our handler may have destroyed the connection.
          */
-        if (!GIBBON_IS_CONNECTION (self))
+        if (!gibbon_app_get_connection (app))
                 return;
 
         self->priv->read_cancellable = g_cancellable_new ();
