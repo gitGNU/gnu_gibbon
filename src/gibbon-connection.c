@@ -55,6 +55,8 @@ struct _GibbonConnectionPrivate {
         gchar *login;
         gchar *password;
 
+        gboolean guest_login;
+
         GCancellable *connect_cancellable;
         GCancellable *read_cancellable;
         GCancellable *write_cancellable;
@@ -266,6 +268,11 @@ gibbon_connection_new (GibbonApp *app, const gchar *hostname, guint16 port,
         if (!self->priv->port)
                 self->priv->port = GIBBON_CONNECTION_DEFAULT_PORT;
         self->priv->login = g_strdup (login);
+        if (0 == g_strcmp0 ("guest", login))
+                self->priv->guest_login = TRUE;
+        else
+                self->priv->guest_login = FALSE;
+
         self->priv->password = g_strdup (password);
 
         /*
@@ -425,28 +432,40 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         }
 
         if (self->priv->state == WAIT_LOGIN_PROMPT) {
-                if (strcmp (self->priv->in_buffer, "login: ") == 0) {
+                if (g_strcmp0 (self->priv->in_buffer, "login: ") == 0) {
                         gibbon_server_console_print_raw (console,
                                                          self->priv->in_buffer);
-                        package = g_strdup (PACKAGE);
-                        if (*package >= 'a' && *package <= 'z')
-                                *package -= 32;
                         self->priv->out_ready = TRUE;
-                        gibbon_connection_queue_command (self,
-                                        FALSE,
-                                        "login %s_%s 9999 %s %s",
-                                         package,
-                                         VERSION,
-                                         self->priv->login,
-                                         self->priv->password);
-                        g_free (package);
+                        if (self->priv->guest_login) {
+                                gibbon_connection_queue_command (self, FALSE,
+                                                                 "guest");
+                        } else {
+                                package = g_strdup (PACKAGE);
+                                if (*package >= 'a' && *package <= 'z')
+                                        *package -= 32;
+                                gibbon_connection_queue_command (self,
+                                                                 FALSE,
+                                                                 "login %s_%s"
+                                                                 " 1008 %s %s",
+                                                                 package,
+                                                                 VERSION,
+                                                                 self->priv->login,
+                                                                 self->priv->password);
+                                g_free (package);
+                        }
                         g_free (self->priv->in_buffer);
                         self->priv->in_buffer = g_strdup ("");
                         self->priv->state = WAIT_WELCOME;
-                        pretty_login = g_strdup_printf ("login %s_%s 9999 %s"
-                                                        " ********",
-                                                        PACKAGE, VERSION,
-                                                        self->priv->login);
+                        if (self->priv->guest_login) {
+                                pretty_login = g_strdup ("guest");
+                        } else {
+                                pretty_login = g_strdup_printf ("login %s_%s"
+                                                                " 1008 %s"
+                                                                " ********",
+                                                                PACKAGE,
+                                                                VERSION,
+                                                                self->priv->login);
+                        }
                         gibbon_server_console_print_login (console,
                                                            pretty_login);
                         g_free (pretty_login);
@@ -459,6 +478,23 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                         return;
                 }
         }
+
+        if (self->priv->guest_login) {
+                if (self->priv->in_buffer[0]
+                    && ' ' == self->priv->in_buffer[1]
+                    && !self->priv->in_buffer[2]) {
+                        gibbon_server_console_print_raw (console,
+                                                         self->priv->in_buffer);
+                        self->priv->out_ready = TRUE;
+                        gibbon_session_handle_prompt (self->priv->session);
+                }
+        }
+
+        /*
+         * Our handler may have destroyed the connection.
+         */
+        if (!GIBBON_IS_CONNECTION (self))
+                return;
 
         self->priv->read_cancellable = g_cancellable_new ();
         g_input_stream_read_async (input_stream,

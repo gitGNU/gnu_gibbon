@@ -53,6 +53,14 @@ typedef enum {
         GIBBON_SESSION_PLAYER_OTHER = 3
 } GibbonSessionPlayer;
 
+typedef enum {
+        GIBBON_SESSION_REGISTER_WAIT_INIT = 0,
+        GIBBON_SESSION_REGISTER_WAIT_PROMPT = 1,
+        GIBBON_SESSION_REGISTER_WAIT_PASSWORD_PROMPT = 2,
+        GIBBON_SESSION_REGISTER_WAIT_PASSWORD2_PROMPT = 3,
+        GIBBON_SESSION_REGISTER_WAIT_CONFIRMATION = 4
+} GibbonSessionRegisterState;
+
 struct GibbonSessionSavedCountCallbackInfo {
         GibbonSessionCallback callback;
         gchar *who;
@@ -117,6 +125,8 @@ static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
                                               const GibbonCountry *country);
 static gboolean gibbon_session_timeout (GibbonSession *self);
+static void gibbon_session_registration_error (GibbonSession *self,
+                                                 const gchar *msg);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -134,6 +144,9 @@ struct _GibbonSessionPrivate {
         GibbonInviterList *inviter_list;
 
         GibbonArchive *archive;
+
+        gboolean guest_login;
+        GibbonSessionRegisterState rstate;
 
         gboolean initialized;
         gboolean init_commands_sent;
@@ -170,6 +183,9 @@ gibbon_session_init (GibbonSession *self)
         self->priv->player_list = NULL;
         self->priv->inviter_list = NULL;
         self->priv->archive = NULL;
+
+        self->priv->guest_login = FALSE;
+        self->priv->rstate = GIBBON_SESSION_REGISTER_WAIT_INIT;
 
         self->priv->initialized = FALSE;
         self->priv->init_commands_sent = FALSE;
@@ -272,6 +288,9 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->player_list = gibbon_app_get_player_list (app);
         self->priv->inviter_list = gibbon_app_get_inviter_list (app);
 
+        if (!g_strcmp0 ("guest", gibbon_connection_get_login (connection)))
+                self->priv->guest_login = TRUE;
+
         self->priv->position = gibbon_position_new ();
 
         self->priv->archive = gibbon_app_get_archive (app);
@@ -289,6 +308,19 @@ gibbon_session_process_server_line (GibbonSession *self,
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
         g_return_val_if_fail (line != NULL, -1);
+
+        if (self->priv->guest_login) {
+                if (self->priv->rstate
+                    == GIBBON_SESSION_REGISTER_WAIT_PASSWORD_PROMPT) {
+                        if (0 == strncmp ("Your name will be ", line, 18))
+                                return -1;
+                        if (0 == strncmp ("Type in no password ", line, 20))
+                                return -1;
+                }
+                if (self->priv->rstate > GIBBON_SESSION_REGISTER_WAIT_PROMPT)
+                        gibbon_session_registration_error (self, line);
+                return -1;
+        }
 
         values = gibbon_clip_parse (line);
         if (!values)
@@ -1558,7 +1590,8 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
 
         if (!self->priv->init_commands_sent && !self->priv->expect_settings) {
                 /* Restart timer.  */
-                g_source_remove (self->priv->timeout_id);
+                if (self->priv->timeout_id)
+                        g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
                         g_timeout_add (2000,
                                        (GSourceFunc) gibbon_session_timeout,
@@ -1611,7 +1644,8 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                                               GIBBON_PREFS_SERVER_ADDRESS);
                 if (mail) {
                         /* Restart timer.  */
-                        g_source_remove (self->priv->timeout_id);
+                        if (self->priv->timeout_id)
+                                g_source_remove (self->priv->timeout_id);
                         self->priv->timeout_id =
                                 g_timeout_add (2000,
                                            (GSourceFunc) gibbon_session_timeout,
@@ -1623,7 +1657,8 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         g_free (mail);
                 } else if (!self->priv->init_commands_sent) {
                         /* Restart timer.  */
-                        g_source_remove (self->priv->timeout_id);
+                        if (self->priv->timeout_id)
+                                g_source_remove (self->priv->timeout_id);
                         self->priv->timeout_id =
                                 g_timeout_add (2000,
                                            (GSourceFunc) gibbon_session_timeout,
@@ -1733,7 +1768,8 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
         if (!self->priv->init_commands_sent) {
                 self->priv->init_commands_sent = TRUE;
                 /* Restart timer.  */
-                g_source_remove (self->priv->timeout_id);
+                if (self->priv->timeout_id)
+                        g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
                         g_timeout_add (2000,
                                        (GSourceFunc) gibbon_session_timeout,
@@ -1759,7 +1795,8 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
         if (!self->priv->init_commands_sent) {
                 self->priv->init_commands_sent = TRUE;
                 /* Restart timer.  */
-                g_source_remove (self->priv->timeout_id);
+                if (self->priv->timeout_id)
+                        g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
                         g_timeout_add (2000,
                                        (GSourceFunc) gibbon_session_timeout,
@@ -1948,7 +1985,24 @@ gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
 static gboolean
 gibbon_session_timeout (GibbonSession *self)
 {
-        if (self->priv->expect_settings) {
+        if (self->priv->guest_login) {
+                switch (self->priv->rstate) {
+                case GIBBON_SESSION_REGISTER_WAIT_INIT:
+                        /* Give another round.  */
+                        self->priv->rstate =
+                            GIBBON_SESSION_REGISTER_WAIT_PROMPT;
+                        break;
+                default:
+                        if (self->priv->timeout_id > 0)
+                                g_source_remove (self->priv->timeout_id);
+                        self->priv->timeout_id = 0;
+                        gibbon_app_display_error (self->priv->app, "%s",
+                                                  _("Timeout during"
+                                                    " during registration!"));
+                        gibbon_app_disconnect (self->priv->app);
+                        return FALSE;
+                }
+        } else if (self->priv->expect_settings) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "set");
         } else if (self->priv->expect_toggles) {
@@ -1962,4 +2016,101 @@ gibbon_session_timeout (GibbonSession *self)
          */
 
         return TRUE;
+}
+
+void
+gibbon_session_handle_prompt (GibbonSession *self)
+{
+        gchar *login;
+        GSettings *settings;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_if_fail (self->priv->guest_login);
+
+        if (!self->priv->guest_login) {
+                if (self->priv->timeout_id > 0)
+                        g_source_remove (self->priv->timeout_id);
+                self->priv->timeout_id = 0;
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("Unexpected reply from server!"));
+                gibbon_app_disconnect (self->priv->app);
+                return;
+        }
+
+        if (self->priv->rstate != GIBBON_SESSION_REGISTER_WAIT_INIT
+            && self->priv->rstate != GIBBON_SESSION_REGISTER_WAIT_PROMPT) {
+                if (self->priv->timeout_id > 0)
+                        g_source_remove (self->priv->timeout_id);
+                self->priv->timeout_id = 0;
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("Registration failed.  Please see"
+                                            " server console for details!"));
+                gibbon_app_disconnect (self->priv->app);
+                return;
+        }
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        login = g_settings_get_string (settings, GIBBON_PREFS_SERVER_LOGIN);
+        g_object_unref (settings);
+
+        /* Restart timer.  */
+        if (self->priv->timeout_id)
+                g_source_remove (self->priv->timeout_id);
+        self->priv->timeout_id =
+                g_timeout_add (2000,
+                               (GSourceFunc) gibbon_session_timeout,
+                               (gpointer) self);
+
+        self->priv->rstate = GIBBON_SESSION_REGISTER_WAIT_PASSWORD_PROMPT;
+
+        gibbon_connection_queue_command (self->priv->connection, TRUE,
+                                         "name %s", login);
+
+        g_free (login);
+}
+
+static void
+gibbon_session_registration_error (GibbonSession *self, const gchar *_line)
+{
+        gchar *line;
+        gchar *freeable;
+        gchar *expect;
+        GSettings *settings;
+        gchar *login;
+
+        if (self->priv->timeout_id > 0)
+                g_source_remove (self->priv->timeout_id);
+        self->priv->timeout_id = 0;
+
+        line = freeable = g_strdup (_line);
+
+        if (line[0] == '>' && line[1] == ' ')
+                line += 2;
+        if (line[0] == '*' && line[1] == '*' && line[2] == ' ')
+                line += 3;
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        login = g_settings_get_string (settings, GIBBON_PREFS_SERVER_LOGIN);
+        g_object_unref (settings);
+        expect = g_strdup_printf ("Please use another name. '%s' is"
+                                  " already used by someone else.", login);
+        g_free (login);
+        if (0 == g_strcmp0 (expect, line)) {
+                g_free (freeable);
+                line = freeable = g_strdup_printf (_("The name `%s' is"
+                                                     " already used by"
+                                                     " someone else on that"
+                                                     " server!"), login);
+        } else {
+                line = g_strdup_printf (_("Registration failure: %s"),
+                                        line);
+                g_free (freeable);
+                freeable = line;
+        }
+        g_free (expect);
+
+        gibbon_app_display_error (self->priv->app, "%s", line);
+        g_free (freeable);
+
+        gibbon_app_disconnect (self->priv->app);
 }

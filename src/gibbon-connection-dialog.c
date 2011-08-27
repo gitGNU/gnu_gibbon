@@ -55,7 +55,7 @@ struct _GibbonConnectionDialogPrivate {
 G_DEFINE_TYPE (GibbonConnectionDialog, gibbon_connection_dialog, GTK_TYPE_DIALOG)
 
 static void gibbon_connection_dialog_on_register (GibbonConnectionDialog *self,
-                                                  GtkLinkButton *emitter);
+                                                  GtkButton *emitter);
 static void gibbon_connection_dialog_response (GtkDialog *dialog,
                                                gint response);
 
@@ -65,7 +65,7 @@ gibbon_connection_dialog_init (GibbonConnectionDialog *self)
         GtkWidget *table;
         GtkWidget *content_area;
         gchar *str;
-        GtkWidget *link_button;
+        GtkWidget *register_button;
 
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_CONNECTION_DIALOG, GibbonConnectionDialogPrivate);
@@ -163,13 +163,10 @@ gibbon_connection_dialog_init (GibbonConnectionDialog *self)
                 gtk_entry_set_text (GTK_ENTRY (self->priv->password_entry), "");
         }
 
-        link_button = gtk_link_button_new_with_label (
-                        "http://fibs.com/javafibs/register.html",
-                        _("Register new account on fibs.com"));
-        gtk_table_attach_defaults (GTK_TABLE (table),
-                                   link_button,
+        register_button = gtk_button_new_with_label (_("Register new account"));
+        gtk_table_attach_defaults (GTK_TABLE (table), register_button,
                                    0, 2, 5, 6);
-        g_signal_connect_swapped (G_OBJECT (link_button), "clicked",
+        g_signal_connect_swapped (G_OBJECT (register_button), "clicked",
                                   G_CALLBACK (gibbon_connection_dialog_on_register),
                                   self);
 
@@ -257,30 +254,10 @@ gibbon_connection_dialog_new (GibbonApp *app, gboolean just_conf)
 
 static void
 gibbon_connection_dialog_on_register (GibbonConnectionDialog *self,
-                                      GtkLinkButton *emitter)
+                                      GtkButton *emitter)
 {
-        GdkScreen *screen;
-        GError *error;
-        const gchar *uri = gtk_link_button_get_uri (emitter);
-        GtkWidget *window = gibbon_app_get_window (self->priv->app);
-
-        g_printerr ("Register callback called!\n");
-
-        if (gtk_widget_has_screen (window))
-                screen = gtk_widget_get_screen (window);
-        else
-                screen = gdk_screen_get_default ();
-
-        gibbon_app_display_info (self->priv->app,
-                                 _("Please fill in the register form in"
-                                   " your browser!"));
-        error = NULL;
-        if (!gtk_show_uri (screen, uri,
-                           gtk_get_current_event_time (),
-                           &error)) {
-                gibbon_app_display_error (self->priv->app, "%s",
-                                          error->message);
-        }
+        gtk_dialog_response (GTK_DIALOG (self),
+                             GIBBON_CONNECTION_DIALOG_RESPONSE_REGISTER);
 }
 
 

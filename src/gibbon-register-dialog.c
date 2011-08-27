@@ -118,6 +118,14 @@ gibbon_register_dialog_init (GibbonRegisterDialog *self)
         gtk_table_attach_defaults (GTK_TABLE (table),
                                    self->priv->login_entry,
                                    1, 2, 2, 3);
+        g_settings_bind_with_mapping (self->priv->settings,
+                                      GIBBON_PREFS_SERVER_LOGIN,
+                                      self->priv->login_entry, "text",
+                                      G_SETTINGS_BIND_DEFAULT,
+                                      NULL,
+                                      gibbon_settings_bind_trimmed_string,
+                                      NULL, NULL);
+        gtk_entry_set_text (GTK_ENTRY (self->priv->login_entry), "");
 
         self->priv->save_password_button =
                         gtk_check_button_new_with_label (_("Save password?"));
@@ -153,9 +161,8 @@ gibbon_register_dialog_init (GibbonRegisterDialog *self)
                                                GIBBON_PREFS_SERVER_PASSWORD,
                                                "");
                 g_free (str);
-
-                gtk_entry_set_text (GTK_ENTRY (self->priv->password_entry), "");
         }
+        gtk_entry_set_text (GTK_ENTRY (self->priv->password_entry), "");
 
         gtk_table_attach_defaults (GTK_TABLE (table),
                                    gtk_label_new (_("Repeat password")),
@@ -258,6 +265,8 @@ gibbon_register_dialog_response (GtkDialog *dialog, gint response)
         }
 
         g_free (saved_password);
+
+        g_printerr ("Applying settings from register dialog.\n");
 
         g_settings_apply (self->priv->settings);
 }

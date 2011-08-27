@@ -24,6 +24,8 @@
 
 #include "gibbon-app.h"
 
+#define GIBBON_CONNECTION_DIALOG_RESPONSE_REGISTER 1
+
 #define GIBBON_TYPE_CONNECTION_DIALOG \
         (gibbon_connection_dialog_get_type ())
 #define GIBBON_CONNECTION_DIALOG(obj) \
