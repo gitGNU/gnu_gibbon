@@ -26,4 +26,4 @@ DOC_FIGURES =
 DOC_PAGES = index.page
 
 DOC_LINGUAS = de
-dist-hook: doc-dist-hook.
+dist-hook: doc-dist-hook
