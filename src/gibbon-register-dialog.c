@@ -266,8 +266,6 @@ gibbon_register_dialog_response (GtkDialog *dialog, gint response)
 
         g_free (saved_password);
 
-        g_printerr ("Applying settings from register dialog.\n");
-
         g_settings_apply (self->priv->settings);
 }
 
