@@ -33,7 +33,8 @@ gtkbuilder_DATA = $(PACKAGE).ui
 EXTRA_DIST = \
 	$(desktop_in_files) \
 	$(schemas_in_files) \
-	$(gtkbuilder_DATA)
+	$(gtkbuilder_DATA) \
+	$(gsettings_files)
 
 CLEANFILES = \
 	$(desktop_DATA) \
