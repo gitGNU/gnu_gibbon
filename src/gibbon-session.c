@@ -2094,10 +2094,10 @@ gibbon_session_registration_error (GibbonSession *self, const gchar *_line)
         g_object_unref (settings);
         expect = g_strdup_printf ("Please use another name. '%s' is"
                                   " already used by someone else.", login);
-        g_free (login);
         if (0 == g_strcmp0 (expect, line)) {
                 g_free (freeable);
-                line = freeable = g_strdup_printf (_("The name `%s' is"
+                line = freeable = g_strdup_printf (_("Please use another"
+                                                     " name.  The name `%s' is"
                                                      " already used by"
                                                      " someone else on that"
                                                      " server!"), login);
@@ -2107,6 +2107,7 @@ gibbon_session_registration_error (GibbonSession *self, const gchar *_line)
                 g_free (freeable);
                 freeable = line;
         }
+        g_free (login);
         g_free (expect);
 
         gibbon_app_display_error (self->priv->app, "%s", line);
