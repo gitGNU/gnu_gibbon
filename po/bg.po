@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido@imperia.net>\n"
 "POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-28 00:04+0300\n"
+"PO-Revision-Date: 2011-08-28 01:03+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
@@ -353,7 +353,7 @@ msgstr "%d:%d: Очакваше се %s"
 #: ../libgsgf/tests/test-write-empty.c:46
 #, c-format
 msgid "Attempt to write an empty collection"
-msgstr "Опит за се запише празна колекция"
+msgstr "Опит да се запише празна колекция"
 
 #: ../libgsgf/gsgf-color.c:130 ../libgsgf/gsgf-date.c:363
 #: ../libgsgf/gsgf-double.c:96 ../libgsgf/gsgf-empty.c:105
@@ -366,102 +366,103 @@ msgstr "Само една стойност е позволена за свойс
 #: ../libgsgf/gsgf-color.c:155
 #, c-format
 msgid "Unrecognized color identifier '%s'"
-msgstr ""
+msgstr "Непознат идентификатор на цвят „%s“"
 
 #: ../libgsgf/gsgf-compose.c:168 ../libgsgf/gsgf-list-of.c:160
 #: ../libgsgf/gsgf-raw.c:144
 #, c-format
 msgid "Attempt to write empty property"
-msgstr ""
+msgstr "Опит да се запише празно свойство"
 
 #: ../libgsgf/gsgf-date.c:121
 #, c-format
 msgid "Invalid year in date specification"
-msgstr ""
+msgstr "Неправилна година в указване на дата"
 
 #: ../libgsgf/gsgf-date.c:128 ../libgsgf/gsgf-date.c:163
 #, c-format
 msgid "Invalid date specification '%04d-%02d-%02d' or out of range"
 msgstr ""
+"Неправилно указвено на дата „%04d-%02d-%02d“ или извън допустимия диапазон"
 
 #: ../libgsgf/gsgf-date.c:319
 #, c-format
 msgid "Invalid date specification '%s' or out of range"
-msgstr ""
+msgstr "Неправилно указвено на дата „%s“ или извън допустимия диапазон"
 
 #: ../libgsgf/gsgf-date.c:330
 #, c-format
 msgid "Empty dates are not allowed"
-msgstr ""
+msgstr "Празни дати не са позволени"
 
 #: ../libgsgf/gsgf-double.c:103
 #, c-format
 msgid "SGF double must be 1 or 2, not '%s'"
-msgstr ""
+msgstr "„SGF double“ трябва де бъде 1 или 2, не „%s“"
 
 #: ../libgsgf/gsgf-empty.c:111
 #, c-format
 msgid "Empty value required"
-msgstr ""
+msgstr "Празна стойност необходима"
 
 #: ../libgsgf/gsgf-flavor.c:974 ../libgsgf/gsgf-flavor.c:982
 #: ../libgsgf/tests/test-non-unique-points.c:38
 #, c-format
 msgid "Property '%s': "
-msgstr ""
+msgstr "Свойство „%s“:"
 
 #: ../libgsgf/gsgf-flavor.c:1007 ../libgsgf/gsgf-flavor.c:1318
 #, c-format
 msgid "Value must be greater than 0 but is %lld"
-msgstr ""
+msgstr "Стойността трябва де бъде по-голяма от 0, но е само %lld"
 
 #: ../libgsgf/gsgf-flavor.c:1032 ../libgsgf/gsgf-flavor.c:1040
 #, c-format
 msgid "Property only allowed in root node"
-msgstr ""
+msgstr "Свойството само позволено в коренов възел"
 
 #: ../libgsgf/gsgf-flavor.c:1071
 #, c-format
 msgid ""
 "The properties 'DM', 'GB', 'GW', and 'UC' are mutually exclusive within one "
 "node"
-msgstr ""
+msgstr "Свойствите „DM“, „GB“, „GW“ и „UC“ са взаимоизключващи се в един възел"
 
 #: ../libgsgf/gsgf-flavor.c:1106
 #, c-format
 msgid ""
 "The properties 'BM', 'DO', 'IT', and 'TE' are mutually exclusive within one "
 "node"
-msgstr ""
+msgstr "Свойствите „BM“, „DO“, „IT“ и „TE“ са взаимоизключващи се в един възел"
 
 #: ../libgsgf/gsgf-flavor.c:1172
 #, c-format
 msgid ""
 "The properties '%s' and '%s' are not allowed on the same point within one "
 "node"
-msgstr ""
+msgstr "Свойствите „%s“ и „%s“ не са позволени в същата точка"
 
 #: ../libgsgf/gsgf-flavor.c:1222
 #, c-format
 msgid "Exactly one value required for property"
-msgstr ""
+msgstr "Точно една стойност е необходима за стойството"
 
 #: ../libgsgf/gsgf-flavor.c:1242 ../libgsgf/gsgf-flavor.c:1344
 #: ../libgsgf/gsgf-flavor.c:1547 ../libgsgf/gsgf-flavor.c:1677
 #, c-format
 msgid "Empty property"
-msgstr ""
+msgstr "Празно стойство"
 
 #: ../libgsgf/gsgf-flavor.c:1249
 #, c-format
 msgid "Empty version information"
-msgstr ""
+msgstr "Празна информация за версията"
 
 #: ../libgsgf/gsgf-flavor.c:1277 ../libgsgf/gsgf-number.c:138
 #: ../libgsgf/gsgf-real.c:130 ../libgsgf/gsgf-real.c:176
 #, c-format
 msgid "Invalid number '%s': %s"
-msgstr ""
+msgstr "Неправилно число „%s“: %s"
 
 #: ../libgsgf/gsgf-flavor.c:1284
 #, c-format
