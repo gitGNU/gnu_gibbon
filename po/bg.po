@@ -3,20 +3,19 @@
 # This file is distributed under the same license as the Gibbon package.
 # Guido Flohr <guido@imperia.net>, 2011.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-27 14:38+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-08-27 17:17+0300\n"
+"PO-Revision-Date: 2011-08-27 18:55+0300\n"
+"Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:1
 msgid "Can other players invite you to a match?"
@@ -24,7 +23,7 @@ msgstr ""
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:2
 msgid "E-mail address"
-msgstr ""
+msgstr "Адрес на е-поща"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:3
 msgid "E-mail address to display on the server."
@@ -36,7 +35,7 @@ msgstr ""
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:5
 msgid "Login"
-msgstr ""
+msgstr "Влизане"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:6
 msgid ""
@@ -49,13 +48,14 @@ msgid "Maximum saved commands"
 msgstr ""
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:8 ../src/gibbon-connection-dialog.c:140
+#: ../src/gibbon-register-dialog.c:142
 msgid "Password"
-msgstr ""
+msgstr "Парола"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:9 ../src/gibbon-connection-dialog.c:99
-#, fuzzy
+#: ../src/gibbon-register-dialog.c:100
 msgid "Port"
-msgstr "Португалия"
+msgstr "Порт"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:10
 msgid "Preferred match length"
@@ -82,9 +82,9 @@ msgid "Remember password?"
 msgstr ""
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:16 ../data/gibbon.ui.h:27
-#: ../src/gibbon-connection-dialog.c:84
+#: ../src/gibbon-connection-dialog.c:84 ../src/gibbon-register-dialog.c:85
 msgid "Server"
-msgstr ""
+msgstr "Сървър"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:17
 msgid "Should your password be stored on your hard disk?"
@@ -128,105 +128,105 @@ msgstr ""
 
 #: ../data/gibbon.ui.h:1
 msgid "Account"
-msgstr ""
+msgstr "Регистрация"
 
 #: ../data/gibbon.ui.h:2
-msgid "Aktualisieren"
-msgstr ""
+msgid "Chat"
+msgstr "Разговор"
 
 #: ../data/gibbon.ui.h:3
-msgid "Chat"
-msgstr ""
+msgid "Command"
+msgstr "Команда"
 
 #: ../data/gibbon.ui.h:4
-msgid "Command"
-msgstr ""
+msgid "Connect"
+msgstr "Свързване"
 
 #: ../data/gibbon.ui.h:5
-msgid "Connect"
-msgstr ""
-
-#: ../data/gibbon.ui.h:6
 msgid "FIBS options"
 msgstr ""
 
-#: ../data/gibbon.ui.h:7
+#: ../data/gibbon.ui.h:6
 msgid "Fullscreen"
-msgstr ""
+msgstr "На цял екран"
 
-#: ../data/gibbon.ui.h:8
+#: ../data/gibbon.ui.h:7
 msgid "Import settings and games from JavaFIBS"
 msgstr ""
 
-#: ../data/gibbon.ui.h:9
+#: ../data/gibbon.ui.h:8
 msgid "Introduction"
 msgstr ""
 
-#: ../data/gibbon.ui.h:10
+#: ../data/gibbon.ui.h:9
 msgid "Invite"
-msgstr ""
+msgstr "Покана"
+
+#: ../data/gibbon.ui.h:10
+msgid "Leave"
+msgstr "Напускане"
 
 #: ../data/gibbon.ui.h:11
-msgid "Leave"
-msgstr ""
-
-#: ../data/gibbon.ui.h:12
 msgid "Location of JavaFIBS"
 msgstr ""
 
-#: ../data/gibbon.ui.h:13
+#: ../data/gibbon.ui.h:12
 msgid "Look"
-msgstr ""
+msgstr "Изглед"
 
-#: ../data/gibbon.ui.h:14
+#: ../data/gibbon.ui.h:13
 msgid "Moves"
 msgstr ""
 
-#: ../data/gibbon.ui.h:15
+#: ../data/gibbon.ui.h:14
 msgid "Next game"
 msgstr ""
 
-#: ../data/gibbon.ui.h:16
+#: ../data/gibbon.ui.h:15
 msgid "Next move"
 msgstr ""
 
-#: ../data/gibbon.ui.h:17
+#: ../data/gibbon.ui.h:16
 msgid "Played matches"
 msgstr ""
 
-#: ../data/gibbon.ui.h:18
+#: ../data/gibbon.ui.h:17
 msgid "Players"
-msgstr ""
+msgstr "Плеъри"
 
-#: ../data/gibbon.ui.h:19
+#: ../data/gibbon.ui.h:18
 msgid ""
 "Please select the path where JavaFIBS is installed.  This directory must "
 "contain the subdirectories `matches' and `user'."
 msgstr ""
 
-#: ../data/gibbon.ui.h:20
+#: ../data/gibbon.ui.h:19
 msgid "Previous game"
 msgstr ""
 
-#: ../data/gibbon.ui.h:21
+#: ../data/gibbon.ui.h:20
 msgid "Previous move"
 msgstr ""
 
-#: ../data/gibbon.ui.h:22
+#: ../data/gibbon.ui.h:21
 msgid "Rating information"
 msgstr ""
 
-#: ../data/gibbon.ui.h:23
+#: ../data/gibbon.ui.h:22
 msgid "Ready"
-msgstr ""
+msgstr "Готов"
+
+#: ../data/gibbon.ui.h:23
+msgid "Record"
+msgstr "Запис"
 
 #: ../data/gibbon.ui.h:24
-msgid "Record"
-msgstr ""
+msgid "Refresh"
+msgstr "Обновяване"
 
 #: ../data/gibbon.ui.h:25
 msgid "Resign"
-msgstr ""
+msgstr "Отказване"
 
 #: ../data/gibbon.ui.h:26
 msgid "Select what you want to import from JavaFIBS:"
@@ -256,7 +256,7 @@ msgstr ""
 
 #: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
 msgid "Watch"
-msgstr ""
+msgstr "Кибичене"
 
 #: ../data/gibbon.ui.h:34
 msgid "What to import?"
@@ -268,11 +268,11 @@ msgstr ""
 
 #: ../data/gibbon.ui.h:36
 msgid "_File"
-msgstr ""
+msgstr "_Файл"
 
 #: ../data/gibbon.ui.h:37
 msgid "_Help"
-msgstr ""
+msgstr "_Помощ"
 
 #: ../data/gibbon.ui.h:38
 msgid "_Import from FIBS ..."
@@ -280,7 +280,7 @@ msgstr ""
 
 #: ../data/gibbon.ui.h:39
 msgid "_Options"
-msgstr ""
+msgstr "_Настройки"
 
 #: ../libgsgf/gsgf-collection.c:246 ../libgsgf/gsgf-collection.c:423
 msgid "'('"
@@ -627,7 +627,7 @@ msgstr ""
 
 #: ../src/gibbon-app.c:249
 msgid "Disconnected"
-msgstr ""
+msgstr "Изключен"
 
 #: ../src/gibbon-app.c:301
 msgid "Do you need to pass the option `--data-dir'?\n"
@@ -661,34 +661,35 @@ msgstr ""
 msgid "No user name given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:654
-msgid "Invalid login `guest'!"
-msgstr ""
+#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:330
+#, c-format
+msgid "The login `%s' is reserved!"
+msgstr "Името „%s“ е запазен!"
 
-#: ../src/gibbon-app.c:666
+#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:315
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr ""
 
-#: ../src/gibbon-app.c:677
+#: ../src/gibbon-app.c:679
 msgid "No password given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:859
+#: ../src/gibbon-app.c:861
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:875
+#: ../src/gibbon-app.c:877
 #, c-format
 msgid "Connected with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:894
+#: ../src/gibbon-app.c:896
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:954
+#: ../src/gibbon-app.c:956
 #, c-format
 msgid "Error loading image `%s': %s!"
 msgstr ""
@@ -699,8 +700,8 @@ msgstr ""
 
 #: ../src/gibbon-archive.c:219
 #, c-format
-msgid "Failed to create servers_directory `%s': %s!"
-msgstr ""
+msgid "Failed to create server directory `%s': %s!"
+msgstr "Неуспешно създаване на сървър папка: „%s“: %s!"
 
 #: ../src/gibbon-archive.c:242
 msgid ""
@@ -722,7 +723,7 @@ msgstr ""
 
 #: ../src/gibbon.c:40 ../src/gibbon.c:44
 msgid "DIRECTORY"
-msgstr ""
+msgstr "ПАПКА"
 
 #: ../src/gibbon.c:43
 msgid "Path to pixmaps directory (developers only)"
@@ -786,7 +787,7 @@ msgstr ""
 
 #: ../src/gibbon-chat-view.c:187
 msgid "Close tab"
-msgstr ""
+msgstr "Затваряне на подпрозореца"
 
 #: ../src/gibbon-chat-view.c:338
 msgid "Really close?"
@@ -798,18 +799,18 @@ msgstr ""
 
 #: ../src/gibbon-connection.c:500
 msgid "Authentication failed."
-msgstr ""
+msgstr "Удостоверяването се провали."
 
 #: ../src/gibbon-connection.c:622
 #, c-format
 msgid "Error connecting to `%s' port %u: %s.\n"
 msgstr ""
 
-#: ../src/gibbon-connection-dialog.c:114
+#: ../src/gibbon-connection-dialog.c:114 ../src/gibbon-register-dialog.c:115
 msgid "User name"
-msgstr ""
+msgstr "Потребителско име"
 
-#: ../src/gibbon-connection-dialog.c:129
+#: ../src/gibbon-connection-dialog.c:129 ../src/gibbon-register-dialog.c:131
 msgid "Save password?"
 msgstr ""
 
@@ -988,7 +989,7 @@ msgstr "Боливия"
 #. bq
 #: ../src/gibbon-country.c:816
 msgid "Bonaire, Saint Eustatius and Saba"
-msgstr ""
+msgstr "О-ви Бонер, Св. Евстатий и Саба"
 
 #. br
 #: ../src/gibbon-country.c:818
@@ -1226,7 +1227,7 @@ msgstr "Франция"
 #. fx
 #: ../src/gibbon-country.c:1038
 msgid "France, Metropolitan"
-msgstr ""
+msgstr "Франция, метрополитен"
 
 #. ga
 #: ../src/gibbon-country.c:1044
@@ -1392,7 +1393,7 @@ msgstr "Ирак"
 #. ir
 #: ../src/gibbon-country.c:1182
 msgid "Iran"
-msgstr ""
+msgstr "иранска"
 
 #. is
 #: ../src/gibbon-country.c:1184
@@ -1483,7 +1484,7 @@ msgstr "Казахстан"
 #. la
 #: ../src/gibbon-country.c:1304
 msgid "Laos"
-msgstr ""
+msgstr "лаоска"
 
 #. lb
 #: ../src/gibbon-country.c:1306
@@ -1533,7 +1534,7 @@ msgstr "Латвия"
 #. ly
 #: ../src/gibbon-country.c:1352
 msgid "Libya"
-msgstr ""
+msgstr "Либия"
 
 #. ma
 #: ../src/gibbon-country.c:1356
@@ -1548,7 +1549,7 @@ msgstr "Монако"
 #. md
 #: ../src/gibbon-country.c:1362
 msgid "Moldova"
-msgstr ""
+msgstr "Молдова"
 
 #. me
 #: ../src/gibbon-country.c:1364
@@ -1768,7 +1769,6 @@ msgstr "Пуерто Рико"
 
 #. ps
 #: ../src/gibbon-country.c:1548
-#, fuzzy
 msgid "Palestinian Territory"
 msgstr "Палестински територии"
 
@@ -1810,7 +1810,7 @@ msgstr "Сърбия"
 #. ru
 #: ../src/gibbon-country.c:1656
 msgid "Russia"
-msgstr ""
+msgstr "руска"
 
 #. rw
 #: ../src/gibbon-country.c:1660
@@ -1850,7 +1850,7 @@ msgstr "Сингапур"
 #. sh
 #: ../src/gibbon-country.c:1682
 msgid "Saint Helena, Ascension and Tristan da Cunha"
-msgstr ""
+msgstr "Света Елена, Възнесение и Тристан да Куня"
 
 #. si
 #: ../src/gibbon-country.c:1684
@@ -2121,14 +2121,9 @@ msgstr "Зимбабве"
 msgid "Invalid IP address"
 msgstr ""
 
-#: ../src/gibbon-database.c:247
+#: ../src/gibbon-database.c:247 ../src/gibbon-database.c:255
 #, c-format
 msgid "Error opening database `%s'!"
-msgstr ""
-
-#: ../src/gibbon-database.c:255
-#, c-format
-msgid "Error opening database `%s'"
 msgstr ""
 
 #: ../src/gibbon-database.c:270
@@ -2276,7 +2271,7 @@ msgstr ""
 
 #: ../src/gibbon-help.c:54
 msgid "translator-credits"
-msgstr ""
+msgstr "Радослав Иванов"
 
 #: ../src/gibbon-help.c:84
 #, c-format
@@ -2289,11 +2284,11 @@ msgstr ""
 
 #: ../src/gibbon-inviter-list-view.c:169
 msgid "Decline"
-msgstr ""
+msgstr "Отклоняване"
 
 #: ../src/gibbon-inviter-list-view.c:176
 msgid "Accept"
-msgstr ""
+msgstr "Приемане"
 
 #: ../src/gibbon-inviter-list-view.c:185
 msgid "Inviter"
@@ -2301,7 +2296,7 @@ msgstr ""
 
 #: ../src/gibbon-inviter-list-view.c:207 ../src/gibbon-player-list-view.c:228
 msgid "Rating"
-msgstr ""
+msgstr "Рейтинг"
 
 #: ../src/gibbon-inviter-list-view.c:219 ../src/gibbon-player-list-view.c:240
 msgid "Exp."
@@ -2314,11 +2309,11 @@ msgstr ""
 
 #: ../src/gibbon-inviter-list-view.c:248
 msgid "Saved"
-msgstr ""
+msgstr "Запазено"
 
 #: ../src/gibbon-inviter-list-view.c:270 ../src/gibbon-player-list-view.c:284
 msgid "Address"
-msgstr ""
+msgstr "Адрес"
 
 #: ../src/gibbon-inviter-list-view.c:459 ../src/gibbon-player-list-view.c:756
 msgid "good"
@@ -2342,19 +2337,19 @@ msgstr ""
 
 #: ../src/gibbon-inviter-list-view.c:473 ../src/gibbon-player-list-view.c:770
 msgid "unknown"
-msgstr ""
+msgstr "(неизвестно)"
 
 #: ../src/gibbon-player-list-view.c:196
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 #: ../src/gibbon-player-list-view.c:208
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: ../src/gibbon-player-list-view.c:270
 msgid "Opponent"
-msgstr ""
+msgstr "Противник"
 
 #: ../src/gibbon-player-list-view.c:277
 msgid "Watching"
@@ -2406,25 +2401,78 @@ msgstr ""
 
 #: ../src/gibbon-position.c:1076 ../src/gibbon-position.c:1081
 msgid "invalid"
-msgstr ""
+msgstr "невалидно"
 
 #: ../src/gibbon-reliability-renderer.c:114
 msgid "Reliability of a player"
 msgstr ""
 
-#: ../src/gibbon-session.c:517
-#, c-format
-msgid "Last login on %s from %s."
+#: ../src/gibbon-register-dialog.c:168
+#, fuzzy
+msgid "Repeat password"
+msgstr "Нова парола"
+
+#: ../src/gibbon-register-dialog.c:225
+#, fuzzy
+msgid "Register New Account"
+msgstr "Регистриране на нов акаунт за Gadu-Gadu"
+
+#: ../src/gibbon-register-dialog.c:304
+#, fuzzy
+msgid "You must specify a server name. In doubt try `fibs.com'."
+msgstr "Трябва да зададете шаблон и команда"
+
+#: ../src/gibbon-register-dialog.c:324
+#, fuzzy
+msgid "You must specify a user name!"
+msgstr "Трябва да укажете име на файла."
+
+#: ../src/gibbon-register-dialog.c:337
+#, fuzzy
+msgid "Your user name may not be longer than 20 characters!"
+msgstr "Името на филтъра не може да съдържа знака „:“"
+
+#: ../src/gibbon-register-dialog.c:349
+msgid ""
+"Your user name may only contain characters from A to Z, a to z, or the "
+"underscore ('_')!"
 msgstr ""
 
-#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:718
+#: ../src/gibbon-register-dialog.c:358
+#, fuzzy
+msgid "You must specify a password!"
+msgstr "Трябва да зададете шаблон"
+
+#: ../src/gibbon-register-dialog.c:365
+#, fuzzy
+msgid "Please repeat the password!"
+msgstr "Въведете паролата за сървъра-посредник"
+
+#: ../src/gibbon-register-dialog.c:371
+#, fuzzy
+msgid "Passwords do not match!"
+msgstr "Паролите не съвпадат."
+
+#: ../src/gibbon-register-dialog.c:380
+#, fuzzy, c-format
+msgid "You already have an account on that server:\n"
+msgid_plural "You alreaday have %llu accounts on that server:\n"
+msgstr[0] "Създаване на нова регистрация на сървъра"
+
+#: ../src/gibbon-register-dialog.c:399
+msgid ""
+"It is not allowed to have more than one account per person.  Register anyway?"
+msgstr ""
+
+#: ../src/gibbon-session.c:517
+#, fuzzy, c-format
+msgid "Last login on `%s' from `%s'."
+msgstr "Неуспех при възстановяване на „%s“ от „%s“: %s"
+
+#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:713
+#: ../src/gibbon-session.c:718
 #, c-format
 msgid "%s logged out!"
-msgstr ""
-
-#: ../src/gibbon-session.c:713
-#, c-format
-msgid "%s logged out."
 msgstr ""
 
 #: ../src/gibbon-session.c:759
@@ -2472,9 +2520,9 @@ msgid "Error applying move %s to position.\n"
 msgstr ""
 
 #: ../src/gibbon-session.c:1820
-#, c-format
-msgid "The email address '%s' was rejected by the server!"
-msgstr ""
+#, fuzzy, c-format
+msgid "The email address `%s' was rejected by the server!"
+msgstr "Потребителят отказа заявката за подписване"
 
 #: ../src/gibbon-session.c:1899
 msgid "Stop watching"
