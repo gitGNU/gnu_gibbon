@@ -46,6 +46,7 @@ geo_ip:
 			>$(srcdir)/gibbon-geo-ip-data.h
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
-	gcreate_class.pl.in gibbon-geo-ip-data.h.tmpl
+	gcreate_class.pl.in gibbon-geo-ip-data.h.tmpl \
+	ip2country.csv.gz
 
 .PHONY: ChangeLog geo_ip
