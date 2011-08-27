@@ -651,7 +651,9 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("Invalid login `guest'!"));
+                gibbon_app_display_error (self, _("The login `%s'"
+						  " is reserved!"),
+					  "guest");
                 return;
         }
 

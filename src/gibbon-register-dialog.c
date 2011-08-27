@@ -327,7 +327,8 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
 
         if (0 == g_strcmp0 (login, "guest")) {
                 gibbon_app_display_error (self->priv->app,
-                                          _("Invalid login `guest'!"));
+                                          _("The login `%s' is reserved!"),
+                                          "guest");
                 return FALSE;
         }
 

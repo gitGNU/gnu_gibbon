@@ -253,7 +253,7 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
 
                 gibbon_database_display_error (self,
                                                _("Error opening database"
-                                                 " `%s'"),
+                                                 " `%s'!"),
                                                path);
                 g_object_unref (self);
                 return NULL;

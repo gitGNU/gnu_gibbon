@@ -514,7 +514,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         last_login_str = ctime (&last_login.tv_sec);
         last_login_str[strlen (last_login_str) - 1] = 0;
                 
-        reply = g_strdup_printf (_("Last login on %s from %s."),
+        reply = g_strdup_printf (_("Last login on `%s' from `%s'."),
                                    last_login_str, last_from);
         console = gibbon_app_get_server_console (self->priv->app);
         gibbon_server_console_print_info (console, reply);
@@ -710,7 +710,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         } else if (0 == g_strcmp0 (name, self->priv->opponent)) {
                 g_free (self->priv->position->status);
                 self->priv->position->status =
-                    g_strdup_printf (_("%s logged out."), name);
+                    g_strdup_printf (_("%s logged out!"), name);
                 g_free (self->priv->opponent);
                 self->priv->opponent = NULL;
                 if (!self->priv->watching)
@@ -1817,7 +1817,7 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
                 return -1;
 
         gibbon_app_display_error(self->priv->app,
-                                 _("The email address '%s' was rejected by"
+                                 _("The email address `%s' was rejected by"
                                    " the server!"), address);
 
         return GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS;

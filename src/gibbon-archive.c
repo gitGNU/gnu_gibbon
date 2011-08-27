@@ -217,7 +217,7 @@ gibbon_archive_new (GibbonApp *app)
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
                 gibbon_app_display_error (app,
                                           _("Failed to create"
-                                            " servers_directory `%s': %s!"),
+                                            " server directory `%s': %s!"),
                                self->priv->servers_directory,
                                strerror (errno));
                 g_object_unref (self);
