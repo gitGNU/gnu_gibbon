@@ -1,0 +1,2593 @@
+# Bulgarian translations for Gibbon.
+# Copyright (C) 2009-2011 Guido Flohr 
+# This file is distributed under the same license as the Gibbon package.
+# Guido Flohr <guido@imperia.net>, 2011.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gibbon 0.1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-27 14:38+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Bulgarian <guido@imperia.net>\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=(n != 1);\n"
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:1
+msgid "Can other players invite you to a match?"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:2
+msgid "E-mail address"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:3
+msgid "E-mail address to display on the server."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:4
+msgid "List of commands that have been sent to the server recently."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:5
+msgid "Login"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:6
+msgid ""
+"Maximum number of server commands that should be remembered for auto-"
+"completion in the server console."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:7
+msgid "Maximum saved commands"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:8 ../src/gibbon-connection-dialog.c:140
+msgid "Password"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:9 ../src/gibbon-connection-dialog.c:99
+#, fuzzy
+msgid "Port"
+msgstr "Португалия"
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:10
+msgid "Preferred match length"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:11
+msgid "Preferred match length (-1 for unlimited)."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:12
+msgid "Prefix all server output with a high-resolution timestamp."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:13
+msgid "Ready to play"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:14
+msgid "Recent commands"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:15
+msgid "Remember password?"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:16 ../data/gibbon.ui.h:27
+#: ../src/gibbon-connection-dialog.c:84
+msgid "Server"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:17
+msgid "Should your password be stored on your hard disk?"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:18
+msgid "Show complete server communication in server console."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:19
+msgid "Show server communication"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:20
+msgid "Show timestamps"
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:21
+msgid "The port number of the server, normally 4321."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:22
+msgid "The server that you want to connect to, usually fibs.com."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:23
+msgid "Your password on the server."
+msgstr ""
+
+#: ../data/bg.Gibbon.gschema.xml.in.h:24
+msgid "Your username on the server."
+msgstr ""
+
+#: ../data/gibbon.desktop.in.h:1 ../data/gibbon.desktop.in.in.h:1
+msgid "Gibbon"
+msgstr ""
+
+#: ../data/gibbon.desktop.in.h:2 ../data/gibbon.desktop.in.in.h:2
+msgid "Play backgammon online on FIBS."
+msgstr ""
+
+#: ../data/gibbon.ui.h:1
+msgid "Account"
+msgstr ""
+
+#: ../data/gibbon.ui.h:2
+msgid "Aktualisieren"
+msgstr ""
+
+#: ../data/gibbon.ui.h:3
+msgid "Chat"
+msgstr ""
+
+#: ../data/gibbon.ui.h:4
+msgid "Command"
+msgstr ""
+
+#: ../data/gibbon.ui.h:5
+msgid "Connect"
+msgstr ""
+
+#: ../data/gibbon.ui.h:6
+msgid "FIBS options"
+msgstr ""
+
+#: ../data/gibbon.ui.h:7
+msgid "Fullscreen"
+msgstr ""
+
+#: ../data/gibbon.ui.h:8
+msgid "Import settings and games from JavaFIBS"
+msgstr ""
+
+#: ../data/gibbon.ui.h:9
+msgid "Introduction"
+msgstr ""
+
+#: ../data/gibbon.ui.h:10
+msgid "Invite"
+msgstr ""
+
+#: ../data/gibbon.ui.h:11
+msgid "Leave"
+msgstr ""
+
+#: ../data/gibbon.ui.h:12
+msgid "Location of JavaFIBS"
+msgstr ""
+
+#: ../data/gibbon.ui.h:13
+msgid "Look"
+msgstr ""
+
+#: ../data/gibbon.ui.h:14
+msgid "Moves"
+msgstr ""
+
+#: ../data/gibbon.ui.h:15
+msgid "Next game"
+msgstr ""
+
+#: ../data/gibbon.ui.h:16
+msgid "Next move"
+msgstr ""
+
+#: ../data/gibbon.ui.h:17
+msgid "Played matches"
+msgstr ""
+
+#: ../data/gibbon.ui.h:18
+msgid "Players"
+msgstr ""
+
+#: ../data/gibbon.ui.h:19
+msgid ""
+"Please select the path where JavaFIBS is installed.  This directory must "
+"contain the subdirectories `matches' and `user'."
+msgstr ""
+
+#: ../data/gibbon.ui.h:20
+msgid "Previous game"
+msgstr ""
+
+#: ../data/gibbon.ui.h:21
+msgid "Previous move"
+msgstr ""
+
+#: ../data/gibbon.ui.h:22
+msgid "Rating information"
+msgstr ""
+
+#: ../data/gibbon.ui.h:23
+msgid "Ready"
+msgstr ""
+
+#: ../data/gibbon.ui.h:24
+msgid "Record"
+msgstr ""
+
+#: ../data/gibbon.ui.h:25
+msgid "Resign"
+msgstr ""
+
+#: ../data/gibbon.ui.h:26
+msgid "Select what you want to import from JavaFIBS:"
+msgstr ""
+
+#: ../data/gibbon.ui.h:28
+msgid "Shouts"
+msgstr ""
+
+#: ../data/gibbon.ui.h:29
+msgid "Talk to opponent"
+msgstr ""
+
+#: ../data/gibbon.ui.h:30
+msgid "Talk to watchers"
+msgstr ""
+
+#: ../data/gibbon.ui.h:31
+msgid ""
+"This wizard will lead you through the import of your user data and saved "
+"matches from JavaFIBS."
+msgstr ""
+
+#: ../data/gibbon.ui.h:32
+msgid "User name and password"
+msgstr ""
+
+#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
+msgid "Watch"
+msgstr ""
+
+#: ../data/gibbon.ui.h:34
+msgid "What to import?"
+msgstr ""
+
+#: ../data/gibbon.ui.h:35
+msgid "_Extras"
+msgstr ""
+
+#: ../data/gibbon.ui.h:36
+msgid "_File"
+msgstr ""
+
+#: ../data/gibbon.ui.h:37
+msgid "_Help"
+msgstr ""
+
+#: ../data/gibbon.ui.h:38
+msgid "_Import from FIBS ..."
+msgstr ""
+
+#: ../data/gibbon.ui.h:39
+msgid "_Options"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:246 ../libgsgf/gsgf-collection.c:423
+msgid "'('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:257
+msgid "';'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:290
+msgid "property, ';', or '('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:302
+msgid "'['"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:316
+msgid "value or ']'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:343
+msgid "'[', ';', or '('"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:355
+msgid "']'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:392
+msgid "'[', ';', '(', ')', or property"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:413
+msgid "Trailing garbage"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:439 ../libgsgf/tests/test-empty.c:36
+#: ../libgsgf/tests/test-really-empty.c:36
+#, c-format
+msgid "Empty SGF collections are not allowed"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:530
+#, c-format
+msgid "%d:%d:Illegal binary character '#%d'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:538
+#, c-format
+msgid "%d:%d:Illegal character '%c'"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:665
+#, c-format
+msgid "%d:%d: Unexpected end of file"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:671
+#, c-format
+msgid "%d:%d: Expected %s"
+msgstr ""
+
+#: ../libgsgf/gsgf-collection.c:720 ../libgsgf/gsgf-game-tree.c:231
+#: ../libgsgf/tests/test-write-empty.c:46
+#, c-format
+msgid "Attempt to write an empty collection"
+msgstr ""
+
+#: ../libgsgf/gsgf-color.c:130 ../libgsgf/gsgf-date.c:363
+#: ../libgsgf/gsgf-double.c:96 ../libgsgf/gsgf-empty.c:105
+#: ../libgsgf/gsgf-number.c:126 ../libgsgf/gsgf-real.c:164
+#: ../libgsgf/gsgf-result.c:285
+#, c-format
+msgid "Only one value allowed for property"
+msgstr ""
+
+#: ../libgsgf/gsgf-color.c:155
+#, c-format
+msgid "Unrecognized color identifier '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-compose.c:168 ../libgsgf/gsgf-list-of.c:160
+#: ../libgsgf/gsgf-raw.c:144
+#, c-format
+msgid "Attempt to write empty property"
+msgstr ""
+
+#: ../libgsgf/gsgf-date.c:121
+#, c-format
+msgid "Invalid year in date specification"
+msgstr ""
+
+#: ../libgsgf/gsgf-date.c:128 ../libgsgf/gsgf-date.c:163
+#, c-format
+msgid "Invalid date specification '%04d-%02d-%02d' or out of range"
+msgstr ""
+
+#: ../libgsgf/gsgf-date.c:319
+#, c-format
+msgid "Invalid date specification '%s' or out of range"
+msgstr ""
+
+#: ../libgsgf/gsgf-date.c:330
+#, c-format
+msgid "Empty dates are not allowed"
+msgstr ""
+
+#: ../libgsgf/gsgf-double.c:103
+#, c-format
+msgid "SGF double must be 1 or 2, not '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-empty.c:111
+#, c-format
+msgid "Empty value required"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:974 ../libgsgf/gsgf-flavor.c:982
+#: ../libgsgf/tests/test-non-unique-points.c:38
+#, c-format
+msgid "Property '%s': "
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1007 ../libgsgf/gsgf-flavor.c:1318
+#, c-format
+msgid "Value must be greater than 0 but is %lld"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1032 ../libgsgf/gsgf-flavor.c:1040
+#, c-format
+msgid "Property only allowed in root node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1071
+#, c-format
+msgid ""
+"The properties 'DM', 'GB', 'GW', and 'UC' are mutually exclusive within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1106
+#, c-format
+msgid ""
+"The properties 'BM', 'DO', 'IT', and 'TE' are mutually exclusive within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1172
+#, c-format
+msgid ""
+"The properties '%s' and '%s' are not allowed on the same point within one "
+"node"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1222
+#, c-format
+msgid "Exactly one value required for property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1242 ../libgsgf/gsgf-flavor.c:1344
+#: ../libgsgf/gsgf-flavor.c:1547 ../libgsgf/gsgf-flavor.c:1677
+#, c-format
+msgid "Empty property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1249
+#, c-format
+msgid "Empty version information"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1277 ../libgsgf/gsgf-number.c:138
+#: ../libgsgf/gsgf-real.c:130 ../libgsgf/gsgf-real.c:176
+#, c-format
+msgid "Invalid number '%s': %s"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1284
+#, c-format
+msgid "Negativ number not allowed: %lld"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1291
+#, c-format
+msgid "Expected colon after number in '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1408 ../libgsgf/gsgf-flavor.c:1414
+#, c-format
+msgid "Only one move property (B or W) in node allowed"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1438
+#, c-format
+msgid "List of stones must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1468
+#, c-format
+msgid "List of points must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1534
+#, c-format
+msgid "List of point pairs must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1556 ../libgsgf/gsgf-flavor.c:1686
+#, c-format
+msgid "No end point"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1591
+#, c-format
+msgid "Start and end point must differ"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1607
+#, c-format
+msgid "Lines and arrows must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1625
+#, c-format
+msgid "Invalid points in property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1664
+#, c-format
+msgid "List of point labels must not be empty"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1727
+#, c-format
+msgid "Points must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1742
+#, c-format
+msgid "Invalid point labels in property"
+msgstr ""
+
+#: ../libgsgf/gsgf-flavor.c:1776 ../libgsgf/tests/test-non-unique-points.c:37
+#, c-format
+msgid "Points in list must be unique"
+msgstr ""
+
+#: ../libgsgf/gsgf-game-tree.c:448
+#, c-format
+msgid "Method cook() called on something that is not a GSGFComponent."
+msgstr ""
+
+#: ../libgsgf/gsgf-game-tree.c:553
+#, c-format
+msgid "Application name or version info missing."
+msgstr ""
+
+#: ../libgsgf/gsgf-game-tree.c:563
+#, c-format
+msgid ""
+"Application name or version info must not contain linefeeds or carriage "
+"returns."
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:124
+#, c-format
+msgid "Empty move"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
+#, c-format
+msgid "Invalid move syntax '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:176
+#, c-format
+msgid "Invalid move syntax"
+msgstr ""
+
+#: ../libgsgf/gsgf-node.c:222
+#, c-format
+msgid "Only upper case letters are allowed for property identifiers"
+msgstr ""
+
+#: ../libgsgf/gsgf-number.c:144 ../libgsgf/gsgf-real.c:122
+#: ../libgsgf/gsgf-real.c:182 ../libgsgf/tests/test-number.c:100
+#: ../libgsgf/tests/test-real.c:101 ../libgsgf/tests/test-real.c:119
+#, c-format
+msgid "Invalid number '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-number.c:150 ../libgsgf/gsgf-real.c:188
+#: ../libgsgf/tests/test-number.c:118
+#, c-format
+msgid "Trailing garbage after number in '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:140
+#, c-format
+msgid "Empty point"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:146
+#, c-format
+msgid "Invalid point syntax"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:155
+#, c-format
+msgid "Invalid point syntax '%s'"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:202
+#: ../libgsgf/gsgf-stone-backgammon.c:121
+#, c-format
+msgid "Empty stone"
+msgstr ""
+
+#: ../libgsgf/gsgf-point-backgammon.c:208
+#: ../libgsgf/gsgf-stone-backgammon.c:127
+#, c-format
+msgid "Invalid stone syntax"
+msgstr ""
+
+#: ../libgsgf/gsgf-real.c:338
+#, c-format
+msgid "Not a number"
+msgstr ""
+
+#: ../libgsgf/gsgf-simple-text.c:98 ../libgsgf/gsgf-text.c:133
+#, c-format
+msgid "Property without a value!"
+msgstr ""
+
+#: ../libgsgf/gsgf-simple-text.c:102
+#, c-format
+msgid "A simple text property may only have one value, not %u!"
+msgstr ""
+
+#: ../libgsgf/gsgf-text.c:137
+#, c-format
+msgid "A text property may only have one value, not %u!"
+msgstr ""
+
+#: ../src/gibbon-app.c:249
+msgid "Disconnected"
+msgstr ""
+
+#: ../src/gibbon-app.c:301
+msgid "Do you need to pass the option `--data-dir'?\n"
+msgstr ""
+
+#. TRANSLATORS: UI means user interface.
+#: ../src/gibbon-app.c:367
+#, c-format
+msgid "Object `%s' not found in UI definition!"
+msgstr ""
+
+#: ../src/gibbon-app.c:375
+#, c-format
+msgid "Object `%s' is not a GObject!"
+msgstr ""
+
+#: ../src/gibbon-app.c:384
+#, c-format
+msgid "Object `%s' is not of type `%s' but `%s'!"
+msgstr ""
+
+#: ../src/gibbon-app.c:520
+msgid "You cannot register an account while you are connected to a server!"
+msgstr ""
+
+#: ../src/gibbon-app.c:635
+msgid "No hostname given!"
+msgstr ""
+
+#: ../src/gibbon-app.c:646
+msgid "No user name given!"
+msgstr ""
+
+#: ../src/gibbon-app.c:654
+msgid "Invalid login `guest'!"
+msgstr ""
+
+#: ../src/gibbon-app.c:666
+msgid "Invalid port number! In doubt try the default port number 4321."
+msgstr ""
+
+#: ../src/gibbon-app.c:677
+msgid "No password given!"
+msgstr ""
+
+#: ../src/gibbon-app.c:859
+#, c-format
+msgid "Connecting with %s port %d."
+msgstr ""
+
+#: ../src/gibbon-app.c:875
+#, c-format
+msgid "Connected with %s port %d."
+msgstr ""
+
+#: ../src/gibbon-app.c:894
+#, c-format
+msgid "Logged in as %s on %s port %d."
+msgstr ""
+
+#: ../src/gibbon-app.c:954
+#, c-format
+msgid "Error loading image `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:200
+msgid "Cannot determine user data directory!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:219
+#, c-format
+msgid "Failed to create servers_directory `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:242
+msgid ""
+"You can import settings and saved games from your old client. Check the menu "
+"`Extras' to see if your old client software is supported!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:285
+#, c-format
+msgid ""
+"Failed to create directory `%s': %s!\n"
+"\n"
+"It will be impossible to save your matches and other data."
+msgstr ""
+
+#: ../src/gibbon.c:39
+msgid "Path to data directory (developers only)"
+msgstr ""
+
+#: ../src/gibbon.c:40 ../src/gibbon.c:44
+msgid "DIRECTORY"
+msgstr ""
+
+#: ../src/gibbon.c:43
+msgid "Path to pixmaps directory (developers only)"
+msgstr ""
+
+#: ../src/gibbon.c:159
+msgid "- Gtk+ frontend for FIBS"
+msgstr ""
+
+#: ../src/gibbon.c:168
+#, c-format
+msgid "Run `%s --help' for more information!\n"
+msgstr ""
+
+#: ../src/gibbon.c:191
+#, c-format
+msgid "Error setting PATH environment variable!\n"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:313
+#, c-format
+msgid ""
+"Error reading board definition `%s': %s.\n"
+"Do you need to pass the option `--pixmaps-dir'?\n"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:325
+#, c-format
+msgid "Error parsing board definition `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:965
+#, c-format
+msgid "Board definition `%s' does not have an element `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:1124
+#, c-format
+msgid "%u-point match"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:1127
+#, fuzzy
+msgid "Unlimited match"
+msgstr "САЩ"
+
+#: ../src/gibbon-cairoboard.c:1145 ../src/gibbon-cairoboard.c:1151
+#, c-format
+msgid "Score: %u (%u-away)"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:1157 ../src/gibbon-cairoboard.c:1161
+#, c-format
+msgid "Score: %u"
+msgstr ""
+
+#: ../src/gibbon-cairoboard.c:1171 ../src/gibbon-cairoboard.c:1176
+#, c-format
+msgid "Pips: %u (%+d)"
+msgstr ""
+
+#: ../src/gibbon-chat-view.c:187
+msgid "Close tab"
+msgstr ""
+
+#: ../src/gibbon-chat-view.c:338
+msgid "Really close?"
+msgstr ""
+
+#: ../src/gibbon-connection.c:382
+msgid "End-of-file while receiving data from server."
+msgstr ""
+
+#: ../src/gibbon-connection.c:500
+msgid "Authentication failed."
+msgstr ""
+
+#: ../src/gibbon-connection.c:622
+#, c-format
+msgid "Error connecting to `%s' port %u: %s.\n"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:114
+msgid "User name"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:129
+msgid "Save password?"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:166
+msgid "Register new account"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:174
+msgid "E-mail (optional)"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:241
+msgid "Account settings"
+msgstr ""
+
+#: ../src/gibbon-connection-dialog.c:246
+msgid "Connection settings"
+msgstr ""
+
+#. ad
+#: ../src/gibbon-country.c:738
+msgid "Andorra"
+msgstr "Андора"
+
+#. ae
+#: ../src/gibbon-country.c:740
+msgid "United Arab Emirates"
+msgstr "Обединени Арабски Емирства"
+
+#. af
+#: ../src/gibbon-country.c:742
+msgid "Afghanistan"
+msgstr "Афганистан"
+
+#. ag
+#: ../src/gibbon-country.c:744
+msgid "Antigua and Barbuda"
+msgstr "Антигуа и Барбуда"
+
+#. ai
+#: ../src/gibbon-country.c:748
+msgid "Anguilla"
+msgstr "Ангуила"
+
+#. al
+#: ../src/gibbon-country.c:754
+msgid "Albania"
+msgstr "Албания"
+
+#. am
+#: ../src/gibbon-country.c:756
+msgid "Armenia"
+msgstr "Армения"
+
+#. an
+#: ../src/gibbon-country.c:758
+msgid "Netherlands Antilles"
+msgstr "Холандски Антили"
+
+#. ao
+#: ../src/gibbon-country.c:760
+msgid "Angola"
+msgstr "Ангола"
+
+#. ap
+#: ../src/gibbon-country.c:762
+msgid "Asian Pacific Region"
+msgstr ""
+
+#. aq
+#: ../src/gibbon-country.c:764
+msgid "Antarctica"
+msgstr "Антарктика"
+
+#. ar
+#: ../src/gibbon-country.c:766
+msgid "Argentina"
+msgstr "Аржентина"
+
+#. as
+#: ../src/gibbon-country.c:768
+msgid "American Samoa"
+msgstr "Американско Самоа"
+
+#. at
+#: ../src/gibbon-country.c:770
+msgid "Austria"
+msgstr "Австрия"
+
+#. au
+#: ../src/gibbon-country.c:772
+msgid "Australia"
+msgstr "Австралия"
+
+#. aw
+#: ../src/gibbon-country.c:776
+msgid "Aruba"
+msgstr "Аруба"
+
+#. ax
+#: ../src/gibbon-country.c:778
+msgid "Aland Islands"
+msgstr "Аландски о-ви"
+
+#. az
+#: ../src/gibbon-country.c:782
+msgid "Azerbaijan"
+msgstr "Азербайджан"
+
+#. ba
+#: ../src/gibbon-country.c:784
+msgid "Bosnia and Herzegovina"
+msgstr "Босна и Херцеговина"
+
+#. bb
+#: ../src/gibbon-country.c:786
+msgid "Barbados"
+msgstr "Барбадос"
+
+#. bd
+#: ../src/gibbon-country.c:790
+msgid "Bangladesh"
+msgstr "Бангладеш"
+
+#. be
+#: ../src/gibbon-country.c:792
+msgid "Belgium"
+msgstr "Белгия"
+
+#. bf
+#: ../src/gibbon-country.c:794
+msgid "Burkina Faso"
+msgstr "Буркина Фасо"
+
+#. bg
+#: ../src/gibbon-country.c:796
+msgid "Bulgaria"
+msgstr "България"
+
+#. bh
+#: ../src/gibbon-country.c:798
+msgid "Bahrain"
+msgstr "Бахрейн"
+
+#. bi
+#: ../src/gibbon-country.c:800
+msgid "Burundi"
+msgstr "Бурунди"
+
+#. bj
+#: ../src/gibbon-country.c:802
+msgid "Benin"
+msgstr "Бенин"
+
+#. bl
+#: ../src/gibbon-country.c:806
+#, fuzzy
+msgid "Saint Barthelemy"
+msgstr "Saint Barthelemy"
+
+#. bm
+#: ../src/gibbon-country.c:808
+msgid "Bermuda"
+msgstr "Бермуда"
+
+#. bn
+#: ../src/gibbon-country.c:810
+msgid "Brunei Darussalam"
+msgstr "Бруней Дарусалам"
+
+#. bo
+#: ../src/gibbon-country.c:812
+msgid "Bolivia"
+msgstr "Боливия"
+
+#. bq
+#: ../src/gibbon-country.c:816
+msgid "Bonaire, Saint Eustatius and Saba"
+msgstr ""
+
+#. br
+#: ../src/gibbon-country.c:818
+msgid "Brazil"
+msgstr "Бразилия"
+
+#. bs
+#: ../src/gibbon-country.c:820
+msgid "Bahamas"
+msgstr "Бахами"
+
+#. bt
+#: ../src/gibbon-country.c:822
+msgid "Bhutan"
+msgstr "Бутан"
+
+#. bv
+#: ../src/gibbon-country.c:826
+msgid "Bouvet Island"
+msgstr "Остров Буве"
+
+#. bw
+#: ../src/gibbon-country.c:828
+msgid "Botswana"
+msgstr "Ботсуана"
+
+#. by
+#: ../src/gibbon-country.c:832
+msgid "Belarus"
+msgstr "Беларус"
+
+#. bz
+#: ../src/gibbon-country.c:834
+msgid "Belize"
+msgstr "Белиз"
+
+#. ca
+#: ../src/gibbon-country.c:836
+msgid "Canada"
+msgstr "Канада"
+
+#. cc
+#: ../src/gibbon-country.c:840
+msgid "Cocos (Keeling) Islands"
+msgstr "Кокосови (Кийлинг) острови"
+
+#. cd
+#: ../src/gibbon-country.c:842
+#, fuzzy
+msgid "Democratic Republic of the Congo"
+msgstr "Демократична Република Конго"
+
+#. cf
+#: ../src/gibbon-country.c:846
+msgid "Central African Republic"
+msgstr "Централноафриканска Република"
+
+#. cg
+#: ../src/gibbon-country.c:848
+msgid "Congo"
+msgstr "Конго"
+
+#. ch
+#: ../src/gibbon-country.c:850
+msgid "Switzerland"
+msgstr "Швейцария"
+
+#. ci
+#: ../src/gibbon-country.c:852
+msgid "Ivory Coast"
+msgstr ""
+
+#. ck
+#: ../src/gibbon-country.c:856
+msgid "Cook Islands"
+msgstr "Острови Кук"
+
+#. cl
+#: ../src/gibbon-country.c:858
+msgid "Chile"
+msgstr "Чили"
+
+#. cm
+#: ../src/gibbon-country.c:860
+msgid "Cameroon"
+msgstr "Камерун"
+
+#. cn
+#: ../src/gibbon-country.c:862
+msgid "China"
+msgstr "Китай"
+
+#. co
+#: ../src/gibbon-country.c:864
+msgid "Colombia"
+msgstr "Колумбия"
+
+#. cr
+#: ../src/gibbon-country.c:870
+msgid "Costa Rica"
+msgstr "Коста Рика"
+
+#. cu
+#: ../src/gibbon-country.c:876
+msgid "Cuba"
+msgstr "Куба"
+
+#. cv
+#: ../src/gibbon-country.c:878
+msgid "Cape Verde"
+msgstr "Кабо Верде"
+
+#. cw
+#: ../src/gibbon-country.c:880
+#, fuzzy
+msgid "Curacao"
+msgstr "Макао О.А.Р. на Китай"
+
+#. cx
+#: ../src/gibbon-country.c:882
+msgid "Christmas Island"
+msgstr "Остров Кристмас"
+
+#. cy
+#: ../src/gibbon-country.c:884
+msgid "Cyprus"
+msgstr "Кипър"
+
+#. cz
+#: ../src/gibbon-country.c:886
+msgid "Czech Republic"
+msgstr "Чешка Република"
+
+#. de
+#: ../src/gibbon-country.c:896
+msgid "Germany"
+msgstr "Германия"
+
+#. dj
+#: ../src/gibbon-country.c:906
+msgid "Djibouti"
+msgstr "Джибути"
+
+#. dk
+#: ../src/gibbon-country.c:908
+msgid "Denmark"
+msgstr "Дания"
+
+#. dm
+#: ../src/gibbon-country.c:912
+msgid "Dominica"
+msgstr "Доминика"
+
+#. do
+#: ../src/gibbon-country.c:916
+msgid "Dominican Republic"
+msgstr "Доминиканска Република"
+
+#. dz
+#: ../src/gibbon-country.c:938
+msgid "Algeria"
+msgstr "Алжир"
+
+#. ec
+#: ../src/gibbon-country.c:944
+msgid "Ecuador"
+msgstr "Еквадор"
+
+#. ee
+#: ../src/gibbon-country.c:948
+msgid "Estonia"
+msgstr "Естония"
+
+#. eg
+#: ../src/gibbon-country.c:952
+msgid "Egypt"
+msgstr "Египет"
+
+#. eh
+#: ../src/gibbon-country.c:954
+msgid "Western Sahara"
+msgstr "Западна Сахара"
+
+#. er
+#: ../src/gibbon-country.c:974
+msgid "Eritrea"
+msgstr "Еритрея"
+
+#. es
+#: ../src/gibbon-country.c:976
+msgid "Spain"
+msgstr "Испания"
+
+#. et
+#: ../src/gibbon-country.c:978
+msgid "Ethiopia"
+msgstr "Етиопия"
+
+#. eu
+#: ../src/gibbon-country.c:980
+msgid "European Union"
+msgstr ""
+
+#. fi
+#: ../src/gibbon-country.c:1008
+msgid "Finland"
+msgstr "Финландия"
+
+#. fj
+#: ../src/gibbon-country.c:1010
+msgid "Fiji"
+msgstr "Фиджи"
+
+#. fk
+#: ../src/gibbon-country.c:1012
+msgid "Falkland Islands (Malvinas)"
+msgstr "Фолклендски острови"
+
+#. fm
+#: ../src/gibbon-country.c:1016
+#, fuzzy
+msgid "Micronesia"
+msgstr "Индонезия"
+
+#. fo
+#: ../src/gibbon-country.c:1020
+msgid "Faroe Islands"
+msgstr "Фарьорски острови"
+
+#. fr
+#: ../src/gibbon-country.c:1026
+msgid "France"
+msgstr "Франция"
+
+#. fx
+#: ../src/gibbon-country.c:1038
+msgid "France, Metropolitan"
+msgstr ""
+
+#. ga
+#: ../src/gibbon-country.c:1044
+msgid "Gabon"
+msgstr "Габон"
+
+#. gb
+#: ../src/gibbon-country.c:1046
+msgid "United Kingdom"
+msgstr "Обединено кралство"
+
+#. gd
+#: ../src/gibbon-country.c:1050
+msgid "Grenada"
+msgstr "Гренада"
+
+#. ge
+#: ../src/gibbon-country.c:1052
+msgid "Georgia"
+msgstr "Грузия"
+
+#. gf
+#: ../src/gibbon-country.c:1054
+msgid "French Guiana"
+msgstr "Френска Гвиана"
+
+#. gg
+#: ../src/gibbon-country.c:1056
+msgid "Guernsey"
+msgstr "о. Гърнзи"
+
+#. gh
+#: ../src/gibbon-country.c:1058
+msgid "Ghana"
+msgstr "Гана"
+
+#. gi
+#: ../src/gibbon-country.c:1060
+msgid "Gibraltar"
+msgstr "Гибралтар"
+
+#. gl
+#: ../src/gibbon-country.c:1066
+msgid "Greenland"
+msgstr "Гренландия"
+
+#. gm
+#: ../src/gibbon-country.c:1068
+msgid "Gambia"
+msgstr "Гамбия"
+
+#. gn
+#: ../src/gibbon-country.c:1070
+msgid "Guinea"
+msgstr "Гвинея"
+
+#. gp
+#: ../src/gibbon-country.c:1074
+msgid "Guadeloupe"
+msgstr "Гваделупа"
+
+#. gq
+#: ../src/gibbon-country.c:1076
+msgid "Equatorial Guinea"
+msgstr "Екваториална Гвинея"
+
+#. gr
+#: ../src/gibbon-country.c:1078
+msgid "Greece"
+msgstr "Гърция"
+
+#. gs
+#: ../src/gibbon-country.c:1080
+msgid "South Georgia and the South Sandwich Islands"
+msgstr "Южна Джорджия и Южни Сандвичеви Острови"
+
+#. gt
+#: ../src/gibbon-country.c:1082
+msgid "Guatemala"
+msgstr "Гватемала"
+
+#. gu
+#: ../src/gibbon-country.c:1084
+msgid "Guam"
+msgstr "Гуам"
+
+#. gw
+#: ../src/gibbon-country.c:1088
+msgid "Guinea-Bissau"
+msgstr "Гвинея-Бисау"
+
+#. gy
+#: ../src/gibbon-country.c:1092
+msgid "Guyana"
+msgstr "Гвиана"
+
+#. hk
+#: ../src/gibbon-country.c:1116
+msgid "Hong Kong"
+msgstr "Хонг-Конг О.А.Р. на Китай"
+
+#. hm
+#: ../src/gibbon-country.c:1120
+#, fuzzy
+msgid "Heard Island and Mcdonald Islands"
+msgstr "Остров Хърд и Острови Макдоналд"
+
+#. hn
+#: ../src/gibbon-country.c:1122
+msgid "Honduras"
+msgstr "Хондурас"
+
+#. hr
+#: ../src/gibbon-country.c:1130
+msgid "Croatia"
+msgstr "Хърватска"
+
+#. ht
+#: ../src/gibbon-country.c:1134
+msgid "Haiti"
+msgstr "Хаити"
+
+#. hu
+#: ../src/gibbon-country.c:1136
+msgid "Hungary"
+msgstr "Унгария"
+
+#. id
+#: ../src/gibbon-country.c:1154
+msgid "Indonesia"
+msgstr "Индонезия"
+
+#. ie
+#: ../src/gibbon-country.c:1156
+msgid "Ireland"
+msgstr "Ирландия"
+
+#. il
+#: ../src/gibbon-country.c:1170
+msgid "Israel"
+msgstr "Израел"
+
+#. im
+#: ../src/gibbon-country.c:1172
+msgid "Isle of Man"
+msgstr "о.Ман"
+
+#. in
+#: ../src/gibbon-country.c:1174
+msgid "India"
+msgstr "Индия"
+
+#. io
+#: ../src/gibbon-country.c:1176
+msgid "British Indian Ocean Territory"
+msgstr "Британски територии в Индийския океан"
+
+#. iq
+#: ../src/gibbon-country.c:1180
+msgid "Iraq"
+msgstr "Ирак"
+
+#. ir
+#: ../src/gibbon-country.c:1182
+msgid "Iran"
+msgstr ""
+
+#. is
+#: ../src/gibbon-country.c:1184
+msgid "Iceland"
+msgstr "Исландия"
+
+#. it
+#: ../src/gibbon-country.c:1186
+msgid "Italy"
+msgstr "Италия"
+
+#. je
+#: ../src/gibbon-country.c:1208
+msgid "Jersey"
+msgstr "о. Джързи"
+
+#. jm
+#: ../src/gibbon-country.c:1224
+msgid "Jamaica"
+msgstr "Ямайка"
+
+#. jo
+#: ../src/gibbon-country.c:1228
+msgid "Jordan"
+msgstr "Йордания"
+
+#. jp
+#: ../src/gibbon-country.c:1230
+msgid "Japan"
+msgstr "Япония"
+
+#. ke
+#: ../src/gibbon-country.c:1260
+msgid "Kenya"
+msgstr "Кения"
+
+#. kg
+#: ../src/gibbon-country.c:1264
+msgid "Kyrgyzstan"
+msgstr "Киргизстан"
+
+#. kh
+#: ../src/gibbon-country.c:1266
+msgid "Cambodia"
+msgstr "Камбоджа"
+
+#. ki
+#: ../src/gibbon-country.c:1268
+msgid "Kiribati"
+msgstr "Кирибати"
+
+#. km
+#: ../src/gibbon-country.c:1276
+msgid "Comoros"
+msgstr "Комори"
+
+#. kn
+#: ../src/gibbon-country.c:1278
+msgid "Saint Kitts and Nevis"
+msgstr "Сейнт Китс и Невис"
+
+#. kp
+#: ../src/gibbon-country.c:1282
+msgid "North Korea"
+msgstr ""
+
+#. kr
+#: ../src/gibbon-country.c:1286
+#, fuzzy
+msgid "South Korea"
+msgstr "Южна Африка"
+
+#. kw
+#: ../src/gibbon-country.c:1296
+msgid "Kuwait"
+msgstr "Кувейт"
+
+#. ky
+#: ../src/gibbon-country.c:1300
+msgid "Cayman Islands"
+msgstr "Кайманови острови"
+
+#. kz
+#: ../src/gibbon-country.c:1302
+msgid "Kazakhstan"
+msgstr "Казахстан"
+
+#. la
+#: ../src/gibbon-country.c:1304
+msgid "Laos"
+msgstr ""
+
+#. lb
+#: ../src/gibbon-country.c:1306
+msgid "Lebanon"
+msgstr "Ливан"
+
+#. lc
+#: ../src/gibbon-country.c:1308
+msgid "Saint Lucia"
+msgstr "Сейнт Лусия"
+
+#. li
+#: ../src/gibbon-country.c:1320
+msgid "Liechtenstein"
+msgstr "Лихтенщайн"
+
+#. lk
+#: ../src/gibbon-country.c:1324
+msgid "Sri Lanka"
+msgstr "Шри Ланка"
+
+#. lr
+#: ../src/gibbon-country.c:1338
+msgid "Liberia"
+msgstr "Либерия"
+
+#. ls
+#: ../src/gibbon-country.c:1340
+msgid "Lesotho"
+msgstr "Лесото"
+
+#. lt
+#: ../src/gibbon-country.c:1342
+msgid "Lithuania"
+msgstr "Литва"
+
+#. lu
+#: ../src/gibbon-country.c:1344
+msgid "Luxembourg"
+msgstr "Люксембург"
+
+#. lv
+#: ../src/gibbon-country.c:1346
+msgid "Latvia"
+msgstr "Латвия"
+
+#. ly
+#: ../src/gibbon-country.c:1352
+msgid "Libya"
+msgstr ""
+
+#. ma
+#: ../src/gibbon-country.c:1356
+msgid "Morocco"
+msgstr "Мароко"
+
+#. mc
+#: ../src/gibbon-country.c:1360
+msgid "Monaco"
+msgstr "Монако"
+
+#. md
+#: ../src/gibbon-country.c:1362
+msgid "Moldova"
+msgstr ""
+
+#. me
+#: ../src/gibbon-country.c:1364
+msgid "Montenegro"
+msgstr "Черна Гора"
+
+#. mf
+#: ../src/gibbon-country.c:1366
+#, fuzzy
+msgid "Saint Martin (French part)"
+msgstr "Saint Martin"
+
+#. mg
+#: ../src/gibbon-country.c:1368
+msgid "Madagascar"
+msgstr "Мадагаскар"
+
+#. mh
+#: ../src/gibbon-country.c:1370
+msgid "Marshall Islands"
+msgstr "Маршалови Острови"
+
+#. mk
+#: ../src/gibbon-country.c:1376
+msgid "Macedonia"
+msgstr "Македония, Република"
+
+#. ml
+#: ../src/gibbon-country.c:1378
+msgid "Mali"
+msgstr "Мали"
+
+#. mm
+#: ../src/gibbon-country.c:1380
+msgid "Myanmar"
+msgstr "Мианмар"
+
+#. mn
+#: ../src/gibbon-country.c:1382
+msgid "Mongolia"
+msgstr "Монголия"
+
+#. mo
+#: ../src/gibbon-country.c:1384
+msgid "Macao"
+msgstr "Макао О.А.Р. на Китай"
+
+#. mp
+#: ../src/gibbon-country.c:1386
+msgid "Northern Mariana Islands"
+msgstr "Северни Мариански Острови"
+
+#. mq
+#: ../src/gibbon-country.c:1388
+msgid "Martinique"
+msgstr "Мартиника"
+
+#. mr
+#: ../src/gibbon-country.c:1390
+msgid "Mauritania"
+msgstr "Мавритания"
+
+#. ms
+#: ../src/gibbon-country.c:1392
+msgid "Montserrat"
+msgstr "Монсерат"
+
+#. mt
+#: ../src/gibbon-country.c:1394
+msgid "Malta"
+msgstr "Малта"
+
+#. mu
+#: ../src/gibbon-country.c:1396
+msgid "Mauritius"
+msgstr "Мавриций"
+
+#. mv
+#: ../src/gibbon-country.c:1398
+msgid "Maldives"
+msgstr "Малдиви"
+
+#. mw
+#: ../src/gibbon-country.c:1400
+msgid "Malawi"
+msgstr "Малави"
+
+#. mx
+#: ../src/gibbon-country.c:1402
+msgid "Mexico"
+msgstr "Мексико"
+
+#. my
+#: ../src/gibbon-country.c:1404
+msgid "Malaysia"
+msgstr "Малайзия"
+
+#. mz
+#: ../src/gibbon-country.c:1406
+msgid "Mozambique"
+msgstr "Мозамбик"
+
+#. na
+#: ../src/gibbon-country.c:1408
+msgid "Namibia"
+msgstr "Намибия"
+
+#. nc
+#: ../src/gibbon-country.c:1412
+msgid "New Caledonia"
+msgstr "Нова Каледония"
+
+#. ne
+#: ../src/gibbon-country.c:1416
+msgid "Niger"
+msgstr "Нигер"
+
+#. nf
+#: ../src/gibbon-country.c:1418
+msgid "Norfolk Island"
+msgstr "Остров Норфолк"
+
+#. ng
+#: ../src/gibbon-country.c:1420
+msgid "Nigeria"
+msgstr "Нигерия"
+
+#. ni
+#: ../src/gibbon-country.c:1424
+msgid "Nicaragua"
+msgstr "Никарагуа"
+
+#. nl
+#: ../src/gibbon-country.c:1430
+msgid "Netherlands"
+msgstr "Холандия"
+
+#. no
+#: ../src/gibbon-country.c:1436
+msgid "Norway"
+msgstr "Норвегия"
+
+#. np
+#: ../src/gibbon-country.c:1438
+msgid "Nepal"
+msgstr "Непал"
+
+#. nr
+#: ../src/gibbon-country.c:1442
+msgid "Nauru"
+msgstr "Науру"
+
+#. nu
+#: ../src/gibbon-country.c:1448
+msgid "Niue"
+msgstr "Ниуе"
+
+#. nz
+#: ../src/gibbon-country.c:1458
+msgid "New Zealand"
+msgstr "Нова Зеландия"
+
+#. om
+#: ../src/gibbon-country.c:1484
+msgid "Oman"
+msgstr "Оман"
+
+#. pa
+#: ../src/gibbon-country.c:1512
+msgid "Panama"
+msgstr "Панама"
+
+#. pe
+#: ../src/gibbon-country.c:1520
+msgid "Peru"
+msgstr "Перу"
+
+#. pf
+#: ../src/gibbon-country.c:1522
+msgid "French Polynesia"
+msgstr "Френска Полинезия"
+
+#. pg
+#: ../src/gibbon-country.c:1524
+msgid "Papua New Guinea"
+msgstr "Папуа Нова Гвинея"
+
+#. ph
+#: ../src/gibbon-country.c:1526
+msgid "Philippines"
+msgstr "Филипини"
+
+#. pk
+#: ../src/gibbon-country.c:1532
+msgid "Pakistan"
+msgstr "Пакистан"
+
+#. pl
+#: ../src/gibbon-country.c:1534
+msgid "Poland"
+msgstr "Полша"
+
+#. pm
+#: ../src/gibbon-country.c:1536
+msgid "Saint Pierre and Miquelon"
+msgstr "Сен Пиер и Мигелон"
+
+#. pn
+#: ../src/gibbon-country.c:1538
+msgid "Pitcairn"
+msgstr "Питкайрн"
+
+#. pr
+#: ../src/gibbon-country.c:1546
+msgid "Puerto Rico"
+msgstr "Пуерто Рико"
+
+#. ps
+#: ../src/gibbon-country.c:1548
+#, fuzzy
+msgid "Palestinian Territory"
+msgstr "Палестински територии"
+
+#. pt
+#: ../src/gibbon-country.c:1550
+msgid "Portugal"
+msgstr "Португалия"
+
+#. pw
+#: ../src/gibbon-country.c:1556
+msgid "Palau"
+msgstr "Палау"
+
+#. py
+#: ../src/gibbon-country.c:1560
+msgid "Paraguay"
+msgstr "Парагвай"
+
+#. qa
+#: ../src/gibbon-country.c:1564
+msgid "Qatar"
+msgstr "Катар"
+
+#. re
+#: ../src/gibbon-country.c:1624
+msgid "Reunion"
+msgstr "Реюниън"
+
+#. ro
+#: ../src/gibbon-country.c:1644
+msgid "Romania"
+msgstr "Румъния"
+
+#. rs
+#: ../src/gibbon-country.c:1652
+msgid "Serbia"
+msgstr "Сърбия"
+
+#. ru
+#: ../src/gibbon-country.c:1656
+msgid "Russia"
+msgstr ""
+
+#. rw
+#: ../src/gibbon-country.c:1660
+msgid "Rwanda"
+msgstr "Руанда"
+
+#. sa
+#: ../src/gibbon-country.c:1668
+msgid "Saudi Arabia"
+msgstr "Саудитска Арабия"
+
+#. sb
+#: ../src/gibbon-country.c:1670
+msgid "Solomon Islands"
+msgstr "Соломонови Острови"
+
+#. sc
+#: ../src/gibbon-country.c:1672
+msgid "Seychelles"
+msgstr "Сейшели"
+
+#. sd
+#: ../src/gibbon-country.c:1674
+msgid "Sudan"
+msgstr "Судан"
+
+#. se
+#: ../src/gibbon-country.c:1676
+msgid "Sweden"
+msgstr "Швеция"
+
+#. sg
+#: ../src/gibbon-country.c:1680
+msgid "Singapore"
+msgstr "Сингапур"
+
+#. sh
+#: ../src/gibbon-country.c:1682
+msgid "Saint Helena, Ascension and Tristan da Cunha"
+msgstr ""
+
+#. si
+#: ../src/gibbon-country.c:1684
+msgid "Slovenia"
+msgstr "Словения"
+
+#. sj
+#: ../src/gibbon-country.c:1686
+msgid "Svalbard and Jan Mayen"
+msgstr "Свалбард и Ян Майен"
+
+#. sk
+#: ../src/gibbon-country.c:1688
+msgid "Slovakia"
+msgstr "Словакия"
+
+#. sl
+#: ../src/gibbon-country.c:1690
+msgid "Sierra Leone"
+msgstr "Сиера Леоне"
+
+#. sm
+#: ../src/gibbon-country.c:1692
+msgid "San Marino"
+msgstr "Сан Марино"
+
+#. sn
+#: ../src/gibbon-country.c:1694
+msgid "Senegal"
+msgstr "Сенегал"
+
+#. so
+#: ../src/gibbon-country.c:1696
+msgid "Somalia"
+msgstr "Сомалия"
+
+#. sr
+#: ../src/gibbon-country.c:1702
+msgid "Suriname"
+msgstr "Суринам"
+
+#. ss
+#: ../src/gibbon-country.c:1704
+#, fuzzy
+msgid "South Sudan"
+msgstr "Судан"
+
+#. st
+#: ../src/gibbon-country.c:1706
+msgid "Sao Tome and Principe"
+msgstr "Сао Томе и Принципе"
+
+#. sv
+#: ../src/gibbon-country.c:1710
+msgid "El Salvador"
+msgstr "Ел Салвадор"
+
+#. sx
+#: ../src/gibbon-country.c:1714
+#, fuzzy
+msgid "Sint Maarten (Dutch part)"
+msgstr "Saint Martin"
+
+#. sy
+#: ../src/gibbon-country.c:1716
+msgid "Syrian Arab Republic"
+msgstr "Сирийска Арабска Република"
+
+#. sz
+#: ../src/gibbon-country.c:1718
+msgid "Swaziland"
+msgstr "Суазиленд"
+
+#. tc
+#: ../src/gibbon-country.c:1724
+msgid "Turks and Caicos Islands"
+msgstr "Острови Туркс и Кайкос"
+
+#. td
+#: ../src/gibbon-country.c:1726
+msgid "Chad"
+msgstr "Чад"
+
+#. tf
+#: ../src/gibbon-country.c:1730
+msgid "French Southern Territories"
+msgstr "Френски Южни Територии"
+
+#. tg
+#: ../src/gibbon-country.c:1732
+msgid "Togo"
+msgstr "Того"
+
+#. th
+#: ../src/gibbon-country.c:1734
+msgid "Thailand"
+msgstr "Тайланд"
+
+#. tj
+#: ../src/gibbon-country.c:1738
+msgid "Tajikistan"
+msgstr "Таджикистан"
+
+#. tk
+#: ../src/gibbon-country.c:1740
+msgid "Tokelau"
+msgstr "Токелау"
+
+#. tl
+#: ../src/gibbon-country.c:1742
+msgid "Timor-Leste"
+msgstr "Източен Тимор"
+
+#. tm
+#: ../src/gibbon-country.c:1744
+msgid "Turkmenistan"
+msgstr "Туркменистан"
+
+#. tn
+#: ../src/gibbon-country.c:1746
+msgid "Tunisia"
+msgstr "Тунис"
+
+#. to
+#: ../src/gibbon-country.c:1748
+msgid "Tonga"
+msgstr "Тонга"
+
+#. tr
+#: ../src/gibbon-country.c:1754
+msgid "Turkey"
+msgstr "Турция"
+
+#. tt
+#: ../src/gibbon-country.c:1758
+msgid "Trinidad and Tobago"
+msgstr "Тринидад и Тобаго"
+
+#. tv
+#: ../src/gibbon-country.c:1762
+msgid "Tuvalu"
+msgstr "Тувалу"
+
+#. tw
+#: ../src/gibbon-country.c:1764
+msgid "Taiwan, Province of China"
+msgstr "Тайван"
+
+#. tz
+#: ../src/gibbon-country.c:1770
+msgid "Tanzania, United Republic of"
+msgstr "Танзания"
+
+#. ua
+#: ../src/gibbon-country.c:1772
+msgid "Ukraine"
+msgstr "Украйна"
+
+#. ug
+#: ../src/gibbon-country.c:1784
+msgid "Uganda"
+msgstr "Уганда"
+
+#. um
+#: ../src/gibbon-country.c:1796
+msgid "United States Minor Outlying Islands"
+msgstr "САЩ - външни острови"
+
+#. us
+#: ../src/gibbon-country.c:1808
+msgid "United States"
+msgstr "САЩ"
+
+#. uy
+#: ../src/gibbon-country.c:1820
+msgid "Uruguay"
+msgstr "Уругвай"
+
+#. uz
+#: ../src/gibbon-country.c:1822
+msgid "Uzbekistan"
+msgstr "Узбекистан"
+
+#. va
+#: ../src/gibbon-country.c:1824
+msgid "Vatican"
+msgstr ""
+
+#. vc
+#: ../src/gibbon-country.c:1828
+msgid "Saint Vincent and the Grenadines"
+msgstr "Сейнт Винсънт и Гренадини"
+
+#. ve
+#: ../src/gibbon-country.c:1832
+msgid "Venezuela"
+msgstr "Венецуела"
+
+#. vg
+#: ../src/gibbon-country.c:1836
+#, fuzzy
+msgid "British Virgin Islands"
+msgstr "САЩ, Вирджински Острови"
+
+#. vi
+#: ../src/gibbon-country.c:1840
+#, fuzzy
+msgid "U.S. Virgin Islands"
+msgstr "САЩ, Вирджински Острови"
+
+#. vn
+#: ../src/gibbon-country.c:1850
+msgid "Vietnam"
+msgstr "Виетнам"
+
+#. vu
+#: ../src/gibbon-country.c:1864
+msgid "Vanuatu"
+msgstr "Вануату"
+
+#. wf
+#: ../src/gibbon-country.c:1886
+msgid "Wallis and Futuna"
+msgstr "Уолис и Футуна"
+
+#. ws
+#: ../src/gibbon-country.c:1912
+msgid "Samoa"
+msgstr "Самоа"
+
+#. xl
+#: ../src/gibbon-country.c:1950
+msgid "On the server network"
+msgstr ""
+
+#. xy
+#: ../src/gibbon-country.c:1976
+msgid "Unknown country"
+msgstr ""
+
+#. ye
+#: ../src/gibbon-country.c:1988
+msgid "Yemen"
+msgstr "Йемен"
+
+#. yt
+#: ../src/gibbon-country.c:2018
+msgid "Mayotte"
+msgstr "Мейот"
+
+#. za
+#: ../src/gibbon-country.c:2032
+msgid "South Africa"
+msgstr "Южна Африка"
+
+#. zm
+#: ../src/gibbon-country.c:2056
+msgid "Zambia"
+msgstr "Замбия"
+
+#. zw
+#: ../src/gibbon-country.c:2076
+msgid "Zimbabwe"
+msgstr "Зимбабве"
+
+#. zz
+#: ../src/gibbon-country.c:2082
+msgid "Invalid IP address"
+msgstr ""
+
+#: ../src/gibbon-database.c:247
+#, c-format
+msgid "Error opening database `%s'!"
+msgstr ""
+
+#: ../src/gibbon-database.c:255
+#, c-format
+msgid "Error opening database `%s'"
+msgstr ""
+
+#: ../src/gibbon-database.c:270
+msgid ""
+"Your sqlite installation seems to be crippled.  It does not support foreign "
+"key constraints.  This is not a bug in Gibbon!"
+msgstr ""
+
+#: ../src/gibbon-database.c:351
+msgid ""
+"Your database was created with a more recent version of Gibbon.  With a "
+"downgrade you will not lose data but you must repopulate your database which "
+"can be a time-consuming process.  It could be easier to just upgrade Gibbon "
+"instead.\n"
+"\n"
+"Do you want to downgrade the database?"
+msgstr ""
+
+#: ../src/gibbon-database.c:362
+msgid ""
+"Your database was created with an older version of Gibbon.  With the upgrade "
+"you will not lose data but you must repopulate your database which can be a "
+"time-consuming process.\n"
+"\n"
+"Proceed anyway?"
+msgstr ""
+
+#: ../src/gibbon-database.c:488
+msgid "You should now repopulate your database (menu `Options')."
+msgstr ""
+
+#: ../src/gibbon-database.c:531
+msgid "Internal error: Nested transaction."
+msgstr ""
+
+#: ../src/gibbon-database.c:561
+msgid "Internal error: Commit outside transaction."
+msgstr ""
+
+#: ../src/gibbon-database.c:589
+msgid "Internal error: Rollback outside transaction."
+msgstr ""
+
+#: ../src/gibbon-database.c:624
+msgid "Database failure"
+msgstr ""
+
+#. TRANSLATORS: The first string is a string
+#. * describing the error, the second one a
+#. * maybe cryptic database error message.
+#.
+#: ../src/gibbon-database.c:632
+#, c-format
+msgid "%s: %s."
+msgstr ""
+
+#: ../src/gibbon-database.c:734 ../src/gibbon-database.c:803
+#, c-format
+msgid "Unknown data type %d!"
+msgstr ""
+
+#. TRANSLATORS: This is the FIBS `say' command!
+#: ../src/gibbon-game-chat.c:185
+msgid "Say"
+msgstr ""
+
+#. TRANSLATORS: This is the FIBS `kibitz' command!
+#: ../src/gibbon-game-chat.c:187
+msgid "Kibitz"
+msgstr ""
+
+#. TRANSLATORS: This is the FIBS `whisper' command!
+#: ../src/gibbon-game-chat.c:189
+msgid "Whisper"
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:184
+#, c-format
+msgid ""
+"Your database used for locating other players geographically is more than "
+"one month old.  Should a new one be downloaded (1-2 MB) from the internet?"
+msgid_plural ""
+"Your database used for locating other players geographically is more than "
+"%llu months old.  Should a new one be downloaded (1-2 MB) from the internet?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/gibbon-geo-ip-updater.c:202
+#, c-format
+msgid ""
+"The database used for locating other players geographically that was "
+"installed with this program is more than one month old.  Should a new one be "
+"downloaded (1-2 MB) from the internet?"
+msgid_plural ""
+"The database used for locating other players geographically that was "
+"installed with this program is more than %llu months old.  Should a new one "
+"be downloaded (1-2 MB) from the internet?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/gibbon-geo-ip-updater.c:267
+msgid ""
+"The information about other players' geographic location will not be "
+"accurate."
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:290
+msgid "Update Geo IP database"
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:308
+#, c-format
+msgid "Opening `%s' ..."
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:351
+#, c-format
+msgid "Cannot open `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:360
+#, c-format
+msgid "Reading `%s'."
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:405
+#, c-format
+msgid "Error reading `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:682
+#, c-format
+msgid "%s: line %u: Parse error near `%s'!"
+msgstr ""
+
+#: ../src/gibbon-geo-ip-updater.c:688
+#, c-format
+msgid "%s: line %u: Unexpected end of line!"
+msgstr ""
+
+#: ../src/gibbon-help.c:31
+#, c-format
+msgid "%s is a program for playing backgammon online."
+msgstr ""
+
+#: ../src/gibbon-help.c:54
+msgid "translator-credits"
+msgstr ""
+
+#: ../src/gibbon-help.c:84
+#, c-format
+msgid "Error displaying help: %s!"
+msgstr ""
+
+#: ../src/gibbon-help.c:88
+msgid "Unknown error displaying help!"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:169
+msgid "Decline"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:176
+msgid "Accept"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:185
+msgid "Inviter"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:207 ../src/gibbon-player-list-view.c:228
+msgid "Rating"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:219 ../src/gibbon-player-list-view.c:240
+msgid "Exp."
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:239 ../src/gibbon-player-list-view.c:260
+#: ../src/gibbon-reliability-renderer.c:113
+msgid "Reliability"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:248
+msgid "Saved"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:270 ../src/gibbon-player-list-view.c:284
+msgid "Address"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:459 ../src/gibbon-player-list-view.c:756
+msgid "good"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:465 ../src/gibbon-player-list-view.c:762
+msgid "keep away"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:467 ../src/gibbon-player-list-view.c:764
+msgid "very certain"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:469 ../src/gibbon-player-list-view.c:766
+msgid "certain"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:471 ../src/gibbon-player-list-view.c:768
+msgid "uncertain"
+msgstr ""
+
+#: ../src/gibbon-inviter-list-view.c:473 ../src/gibbon-player-list-view.c:770
+msgid "unknown"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:196
+msgid "Name"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:208
+msgid "Status"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:270
+msgid "Opponent"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:277
+msgid "Watching"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:492
+#, c-format
+msgid "Invite %s to resume your saved match?"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:501
+#, c-format
+msgid "Invite %s"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:514
+#, c-format
+msgid "<b>Invite %s</b>"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:526
+msgid "Number of saved matches:"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:538
+msgid "Match length:"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:555
+msgid "unlimited"
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:733
+#, c-format
+msgid "<i>%s</i> does not want to play right now."
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:772
+#, c-format
+msgid ""
+"<b>Reliability of player <i>%s</i>:</b>\n"
+" %f (%s) with a measurement confidence  of %u (%s)."
+msgstr ""
+
+#: ../src/gibbon-player-list-view.c:781
+#, c-format
+msgid "<b>Reliability of player <i>%s</i></b>: unknown."
+msgstr ""
+
+#: ../src/gibbon-position.c:1076 ../src/gibbon-position.c:1081
+msgid "invalid"
+msgstr ""
+
+#: ../src/gibbon-reliability-renderer.c:114
+msgid "Reliability of a player"
+msgstr ""
+
+#: ../src/gibbon-session.c:517
+#, c-format
+msgid "Last login on %s from %s."
+msgstr ""
+
+#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:718
+#, c-format
+msgid "%s logged out!"
+msgstr ""
+
+#: ../src/gibbon-session.c:713
+#, c-format
+msgid "%s logged out."
+msgstr ""
+
+#: ../src/gibbon-session.c:759
+#, c-format
+msgid "User `%s' left you a message at %s: %s"
+msgstr ""
+
+#: ../src/gibbon-session.c:774
+#, c-format
+msgid "Your message for user `%s' has been delivered!"
+msgstr ""
+
+#: ../src/gibbon-session.c:790
+#, c-format
+msgid "User `%s' is not logged in.  Your message has been saved!"
+msgstr ""
+
+#: ../src/gibbon-session.c:1132
+msgid "Crawford game"
+msgstr ""
+
+#: ../src/gibbon-session.c:1346
+#, c-format
+msgid "You roll %u and %u."
+msgstr ""
+
+#: ../src/gibbon-session.c:1353 ../src/gibbon-session.c:1360
+#, c-format
+msgid "%s rolls %u and %u."
+msgstr ""
+
+#: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1432
+#, c-format
+msgid "%d%d: %s moves %s."
+msgstr ""
+
+#: ../src/gibbon-session.c:1426
+#, c-format
+msgid "%d%d: You move %s."
+msgstr ""
+
+#: ../src/gibbon-session.c:1458
+#, c-format
+msgid "Error applying move %s to position.\n"
+msgstr ""
+
+#: ../src/gibbon-session.c:1820
+#, c-format
+msgid "The email address '%s' was rejected by the server!"
+msgstr ""
+
+#: ../src/gibbon-session.c:1899
+msgid "Stop watching"
+msgstr ""
+
+#: ../src/gibbon-session.c:2000
+msgid "Timeout during during registration!"
+msgstr ""
+
+#: ../src/gibbon-session.c:2035
+msgid "Unexpected reply from server!"
+msgstr ""
+
+#: ../src/gibbon-session.c:2046
+msgid "Registration failed.  Please see server console for details!"
+msgstr ""
+
+#: ../src/gibbon-session.c:2099
+#, c-format
+msgid ""
+"Please use another name.  The name `%s' is already used by someone else on "
+"that server!"
+msgstr ""
+
+#: ../src/gibbon-session.c:2105
+#, c-format
+msgid "Registration failure: %s"
+msgstr ""
+
+#: ../src/svg-util.c:238 ../src/svg-util.c:997
+msgid "No error (this should not happen)!"
+msgstr ""
+
+#: ../src/svg-util.c:240 ../src/svg-util.c:999
+msgid "Out of memory!"
+msgstr ""
+
+#: ../src/svg-util.c:242 ../src/svg-util.c:1001
+msgid "Input/output error!"
+msgstr ""
+
+#: ../src/svg-util.c:244 ../src/svg-util.c:1003
+msgid "File not found!"
+msgstr ""
+
+#: ../src/svg-util.c:246 ../src/svg-util.c:1005
+msgid "Invalid value!"
+msgstr ""
+
+#: ../src/svg-util.c:248 ../src/svg-util.c:1007
+msgid "Invalid call!"
+msgstr ""
+
+#: ../src/svg-util.c:250 ../src/svg-util.c:1009
+msgid "Parse error!"
+msgstr ""
+
+#: ../src/svg-util.c:253 ../src/svg-util.c:1012
+msgid "Unknown error!"
+msgstr ""
+
+#: ../src/svg-util.c:276
+#, c-format
+msgid "Error creating libsvg-cairo context: %s\n"
+msgstr ""
+
+#: ../src/svg-util.c:285
+#, c-format
+msgid "Error initializing SVG parser: %s\n"
+msgstr ""
+
+#: ../src/svg-util.c:301 ../src/svg-util.c:357
+#, c-format
+msgid "Error parsing SVG file `%s': %s\n"
+msgstr ""
+
+#: ../src/svg-util.c:327
+#, c-format
+msgid "Error getting SVG dimensions of `%s': %s.\n"
+msgstr ""
+
+#~ msgid "Saint Helena"
+#~ msgstr "Света Елена"
+
+#~ msgid "Korea, Republic of"
+#~ msgstr "Корея, Южна"
+
+#~ msgid "Lao People's Democratic Republic"
+#~ msgstr "Народна Демократична Република Лаос"
+
+#~ msgid "Virgin Islands, British"
+#~ msgstr "Британски Вирджински Острови"
+
+#~ msgid "Cote D'Ivoire"
+#~ msgstr "Бряг на Слоновата кост"
+
+#~ msgid "Micronesia, Federated States of"
+#~ msgstr "Микронезия, Обединени Щати"
+
+#~ msgid "Russian Federation"
+#~ msgstr "Руска Федерация"
+
+#~ msgid "Iran, Islamic Republic of"
+#~ msgstr "Иран, Ислямска република"
+
+#~ msgid "Moldova, Republic of"
+#~ msgstr "Молдова, Република"
+
+#~ msgid "Holy See (Vatican City State)"
+#~ msgstr "Свещено море (Ватиканска държава)"
+
+#~ msgid "Korea, Democratic People's Republic of"
+#~ msgstr "Корея, Северна"
+
+#~ msgid "Libyan Arab Jamahiriya"
+#~ msgstr "Либийска Арабска Джамахирия"
