@@ -503,7 +503,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         }
 
         if (self->priv->guest_login) {
-                if (self->priv->in_buffer[0]
+                if ('>' == self->priv->in_buffer[0]
                     && ' ' == self->priv->in_buffer[1]
                     && !self->priv->in_buffer[2]) {
                         gibbon_server_console_print_raw (console,
