@@ -6,20 +6,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: Guido Flohr <guido@imperia.net>\n"
 "POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-27 18:55+0300\n"
+"PO-Revision-Date: 2011-08-27 19:43+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplural=2; plural=(n != 1)\n"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:1
 msgid "Can other players invite you to a match?"
-msgstr ""
+msgstr "Дали друг играчи могат да ви поканат?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:2
 msgid "E-mail address"
@@ -27,11 +27,11 @@ msgstr "Адрес на е-поща"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:3
 msgid "E-mail address to display on the server."
-msgstr ""
+msgstr "Адрес на е-поща да предупреждава на сървра."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:4
 msgid "List of commands that have been sent to the server recently."
-msgstr ""
+msgstr "Списък на скоро изпратени команди."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:5
 msgid "Login"
@@ -42,10 +42,11 @@ msgid ""
 "Maximum number of server commands that should be remembered for auto-"
 "completion in the server console."
 msgstr ""
+"Максимум брой на команди които се запаметяват за авотматично дописване."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:7
 msgid "Maximum saved commands"
-msgstr ""
+msgstr "Максимум брой запазени команди"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:8 ../src/gibbon-connection-dialog.c:140
 #: ../src/gibbon-register-dialog.c:142
@@ -59,27 +60,27 @@ msgstr "Порт"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:10
 msgid "Preferred match length"
-msgstr ""
+msgstr "Предпочитана дълбина на мачове"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:11
 msgid "Preferred match length (-1 for unlimited)."
-msgstr ""
+msgstr "Предпочитана дължина на мачове (-1 за неограниченно)"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:12
 msgid "Prefix all server output with a high-resolution timestamp."
-msgstr ""
+msgstr "Представка всяка комуникация със сървера с точното време."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:13
 msgid "Ready to play"
-msgstr ""
+msgstr "Готов за мач"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:14
 msgid "Recent commands"
-msgstr ""
+msgstr "Скоро изпратени команди"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:15
 msgid "Remember password?"
-msgstr ""
+msgstr "Дали се запомни паролата?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:16 ../data/gibbon.ui.h:27
 #: ../src/gibbon-connection-dialog.c:84 ../src/gibbon-register-dialog.c:85
@@ -88,11 +89,11 @@ msgstr "Сървър"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:17
 msgid "Should your password be stored on your hard disk?"
-msgstr ""
+msgstr "Дали паролата се запомни паролата на вашият хард диск?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:18
 msgid "Show complete server communication in server console."
-msgstr ""
+msgstr "Дали цялата комуникацията със сървъра се предупреждава в конзолата."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:19
 msgid "Show server communication"
@@ -1894,9 +1895,8 @@ msgstr "Суринам"
 
 #. ss
 #: ../src/gibbon-country.c:1704
-#, fuzzy
 msgid "South Sudan"
-msgstr "Судан"
+msgstr "Южен Судан"
 
 #. st
 #: ../src/gibbon-country.c:1706
@@ -1910,9 +1910,8 @@ msgstr "Ел Салвадор"
 
 #. sx
 #: ../src/gibbon-country.c:1714
-#, fuzzy
 msgid "Sint Maarten (Dutch part)"
-msgstr "Saint Martin"
+msgstr "Синт Мартен (нидерландска част)"
 
 #. sy
 #: ../src/gibbon-country.c:1716
@@ -2051,15 +2050,13 @@ msgstr "Венецуела"
 
 #. vg
 #: ../src/gibbon-country.c:1836
-#, fuzzy
 msgid "British Virgin Islands"
-msgstr "САЩ, Вирджински Острови"
+msgstr "Британски Вирджински Острови"
 
 #. vi
 #: ../src/gibbon-country.c:1840
-#, fuzzy
 msgid "U.S. Virgin Islands"
-msgstr "САЩ, Вирджински Острови"
+msgstr "Американски Вирджински Острови"
 
 #. vn
 #: ../src/gibbon-country.c:1850
@@ -2408,9 +2405,8 @@ msgid "Reliability of a player"
 msgstr ""
 
 #: ../src/gibbon-register-dialog.c:168
-#, fuzzy
 msgid "Repeat password"
-msgstr "Нова парола"
+msgstr "Повторете парола"
 
 #: ../src/gibbon-register-dialog.c:225
 #, fuzzy
