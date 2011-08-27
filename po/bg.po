@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido@imperia.net>\n"
 "POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-27 19:43+0300\n"
+"PO-Revision-Date: 2011-08-28 00:04+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
@@ -93,39 +93,39 @@ msgstr "Дали паролата се запомни паролата на ва
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:18
 msgid "Show complete server communication in server console."
-msgstr "Дали цялата комуникацията със сървъра се предупреждава в конзолата."
+msgstr "Показването на цялата комуникацията със сървъра в конзолата."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:19
 msgid "Show server communication"
-msgstr ""
+msgstr "Показването комуникацията със сървъра"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:20
 msgid "Show timestamps"
-msgstr ""
+msgstr "Показването на точното време"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:21
 msgid "The port number of the server, normally 4321."
-msgstr ""
+msgstr "Порт на сървъра, обикновено 4321."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:22
 msgid "The server that you want to connect to, usually fibs.com."
-msgstr ""
+msgstr "Сървърът за връската, обикновено fibs.com."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:23
 msgid "Your password on the server."
-msgstr ""
+msgstr "Паролата на този сървър."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:24
 msgid "Your username on the server."
-msgstr ""
+msgstr "Вашето потребителското име на този сървър."
 
 #: ../data/gibbon.desktop.in.h:1 ../data/gibbon.desktop.in.in.h:1
 msgid "Gibbon"
-msgstr ""
+msgstr "Гибон"
 
 #: ../data/gibbon.desktop.in.h:2 ../data/gibbon.desktop.in.in.h:2
 msgid "Play backgammon online on FIBS."
-msgstr ""
+msgstr "Играте табла онлайн на FIBS."
 
 #: ../data/gibbon.ui.h:1
 msgid "Account"
@@ -145,7 +145,7 @@ msgstr "Свързване"
 
 #: ../data/gibbon.ui.h:5
 msgid "FIBS options"
-msgstr ""
+msgstr "Опциони FIBS"
 
 #: ../data/gibbon.ui.h:6
 msgid "Fullscreen"
@@ -153,11 +153,11 @@ msgstr "На цял екран"
 
 #: ../data/gibbon.ui.h:7
 msgid "Import settings and games from JavaFIBS"
-msgstr ""
+msgstr "Внасянето на настройки и игри от JavaFIBS"
 
 #: ../data/gibbon.ui.h:8
 msgid "Introduction"
-msgstr ""
+msgstr "Въведение"
 
 #: ../data/gibbon.ui.h:9
 msgid "Invite"
@@ -169,7 +169,7 @@ msgstr "Напускане"
 
 #: ../data/gibbon.ui.h:11
 msgid "Location of JavaFIBS"
-msgstr ""
+msgstr "Местоположението на JavaFIBS"
 
 #: ../data/gibbon.ui.h:12
 msgid "Look"
@@ -177,19 +177,19 @@ msgstr "Изглед"
 
 #: ../data/gibbon.ui.h:13
 msgid "Moves"
-msgstr ""
+msgstr "Ходове"
 
 #: ../data/gibbon.ui.h:14
 msgid "Next game"
-msgstr ""
+msgstr "Следваща игра"
 
 #: ../data/gibbon.ui.h:15
 msgid "Next move"
-msgstr ""
+msgstr "Следващия ход"
 
 #: ../data/gibbon.ui.h:16
 msgid "Played matches"
-msgstr ""
+msgstr "Играни мачове"
 
 #: ../data/gibbon.ui.h:17
 msgid "Players"
@@ -200,18 +200,20 @@ msgid ""
 "Please select the path where JavaFIBS is installed.  This directory must "
 "contain the subdirectories `matches' and `user'."
 msgstr ""
+"Изберете местоположението на инсталацията на JavaFIBS. На това място трябва "
+"да има подпапките „matches“ и „user“."
 
 #: ../data/gibbon.ui.h:19
 msgid "Previous game"
-msgstr ""
+msgstr "Предишната игра"
 
 #: ../data/gibbon.ui.h:20
 msgid "Previous move"
-msgstr ""
+msgstr "Предишният ход"
 
 #: ../data/gibbon.ui.h:21
 msgid "Rating information"
-msgstr ""
+msgstr "Информация на рейтинг"
 
 #: ../data/gibbon.ui.h:22
 msgid "Ready"
@@ -231,29 +233,31 @@ msgstr "Отказване"
 
 #: ../data/gibbon.ui.h:26
 msgid "Select what you want to import from JavaFIBS:"
-msgstr ""
+msgstr "Изберета обекти за внасянето от JavaFIBS:"
 
 #: ../data/gibbon.ui.h:28
 msgid "Shouts"
-msgstr ""
+msgstr "Викове"
 
 #: ../data/gibbon.ui.h:29
 msgid "Talk to opponent"
-msgstr ""
+msgstr "Говорете противника"
 
 #: ../data/gibbon.ui.h:30
 msgid "Talk to watchers"
-msgstr ""
+msgstr "Говорете на кибици"
 
 #: ../data/gibbon.ui.h:31
 msgid ""
 "This wizard will lead you through the import of your user data and saved "
 "matches from JavaFIBS."
 msgstr ""
+"Този помощник ще ви води през внасянето на настройик и запазени игри от "
+"JavaFIBS."
 
 #: ../data/gibbon.ui.h:32
 msgid "User name and password"
-msgstr ""
+msgstr "Потребителско име и парола"
 
 #: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
 msgid "Watch"
@@ -261,11 +265,11 @@ msgstr "Кибичене"
 
 #: ../data/gibbon.ui.h:34
 msgid "What to import?"
-msgstr ""
+msgstr "Внасяне"
 
 #: ../data/gibbon.ui.h:35
 msgid "_Extras"
-msgstr ""
+msgstr "_Екстри"
 
 #: ../data/gibbon.ui.h:36
 msgid "_File"
@@ -277,7 +281,7 @@ msgstr "_Помощ"
 
 #: ../data/gibbon.ui.h:38
 msgid "_Import from FIBS ..."
-msgstr ""
+msgstr "_Внасяне от JavaFIBS ..."
 
 #: ../data/gibbon.ui.h:39
 msgid "_Options"
@@ -285,71 +289,71 @@ msgstr "_Настройки"
 
 #: ../libgsgf/gsgf-collection.c:246 ../libgsgf/gsgf-collection.c:423
 msgid "'('"
-msgstr ""
+msgstr "„(“"
 
 #: ../libgsgf/gsgf-collection.c:257
 msgid "';'"
-msgstr ""
+msgstr "„;“"
 
 #: ../libgsgf/gsgf-collection.c:290
 msgid "property, ';', or '('"
-msgstr ""
+msgstr "свойство, „;“ или „(“"
 
 #: ../libgsgf/gsgf-collection.c:302
 msgid "'['"
-msgstr ""
+msgstr "„[“"
 
 #: ../libgsgf/gsgf-collection.c:316
 msgid "value or ']'"
-msgstr ""
+msgstr "стойност или „]“"
 
 #: ../libgsgf/gsgf-collection.c:343
 msgid "'[', ';', or '('"
-msgstr ""
+msgstr "„[“m „;“ или „(“"
 
 #: ../libgsgf/gsgf-collection.c:355
 msgid "']'"
-msgstr ""
+msgstr "„]“"
 
 #: ../libgsgf/gsgf-collection.c:392
 msgid "'[', ';', '(', ')', or property"
-msgstr ""
+msgstr "„[“, „;“, „(“, „)“ или стойство"
 
 #: ../libgsgf/gsgf-collection.c:413
 msgid "Trailing garbage"
-msgstr ""
+msgstr "Крайен боклук"
 
 #: ../libgsgf/gsgf-collection.c:439 ../libgsgf/tests/test-empty.c:36
 #: ../libgsgf/tests/test-really-empty.c:36
 #, c-format
 msgid "Empty SGF collections are not allowed"
-msgstr ""
+msgstr "Празни SGF колекции не се позволяват"
 
 #: ../libgsgf/gsgf-collection.c:530
 #, c-format
 msgid "%d:%d:Illegal binary character '#%d'"
-msgstr ""
+msgstr "%d:%d: Невалиден двойчен знак „#%d“"
 
 #: ../libgsgf/gsgf-collection.c:538
 #, c-format
 msgid "%d:%d:Illegal character '%c'"
-msgstr ""
+msgstr "%d:%d: Невалиден знак „%c“"
 
 #: ../libgsgf/gsgf-collection.c:665
 #, c-format
 msgid "%d:%d: Unexpected end of file"
-msgstr ""
+msgstr "%d:%d: Преждевременно се стигна до знак „край на файл“"
 
 #: ../libgsgf/gsgf-collection.c:671
 #, c-format
 msgid "%d:%d: Expected %s"
-msgstr ""
+msgstr "%d:%d: Очакваше се %s"
 
 #: ../libgsgf/gsgf-collection.c:720 ../libgsgf/gsgf-game-tree.c:231
 #: ../libgsgf/tests/test-write-empty.c:46
 #, c-format
 msgid "Attempt to write an empty collection"
-msgstr ""
+msgstr "Опит за се запише празна колекция"
 
 #: ../libgsgf/gsgf-color.c:130 ../libgsgf/gsgf-date.c:363
 #: ../libgsgf/gsgf-double.c:96 ../libgsgf/gsgf-empty.c:105
@@ -357,7 +361,7 @@ msgstr ""
 #: ../libgsgf/gsgf-result.c:285
 #, c-format
 msgid "Only one value allowed for property"
-msgstr ""
+msgstr "Само една стойност е позволена за свойство"
 
 #: ../libgsgf/gsgf-color.c:155
 #, c-format
