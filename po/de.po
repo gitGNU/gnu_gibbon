@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-27 14:38+0300\n"
-"PO-Revision-Date: 2011-08-27 15:34+0300\n"
+"POT-Creation-Date: 2011-08-27 17:17+0300\n"
+"PO-Revision-Date: 2011-08-27 17:18+0300\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -25,9 +25,8 @@ msgid "E-mail address"
 msgstr "E-Mail-Adresse"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:3
-#, fuzzy
 msgid "E-mail address to display on the server."
-msgstr "E-Mail-Adresse, die auf dem Server angezeigt werden soll"
+msgstr "E-Mail-Adresse, die auf dem Server angezeigt werden soll."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:4
 msgid "List of commands that have been sent to the server recently."
@@ -42,46 +41,49 @@ msgid ""
 "Maximum number of server commands that should be remembered for auto-"
 "completion in the server console."
 msgstr ""
+"Maximalzahl der Kommands, die für die Autovervollständigung der "
+"Serverkonsole gespeichert werden soll."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:7
 msgid "Maximum saved commands"
-msgstr ""
+msgstr "Maximalzahl gespeicherte Kommandos"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:8 ../src/gibbon-connection-dialog.c:140
+#: ../src/gibbon-register-dialog.c:142
 msgid "Password"
 msgstr "Passwort"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:9 ../src/gibbon-connection-dialog.c:99
-#, fuzzy
+#: ../src/gibbon-register-dialog.c:100
 msgid "Port"
-msgstr "Portugal"
+msgstr "Port"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:10
 msgid "Preferred match length"
-msgstr ""
+msgstr "Bevorzugte Matchlänge"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:11
 msgid "Preferred match length (-1 for unlimited)."
-msgstr ""
+msgstr "Bevorzugte Matchlänge (-1 für unbegrenzt)."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:12
 msgid "Prefix all server output with a high-resolution timestamp."
-msgstr ""
+msgstr "Zeitstempel in hoher Auflösung vor allen Serverausgaben anzeigen."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:13
 msgid "Ready to play"
-msgstr ""
+msgstr "Bereit zu spielen"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:14
 msgid "Recent commands"
-msgstr ""
+msgstr "Letzte Kommandos"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:15
 msgid "Remember password?"
 msgstr "Passwort speichern?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:16 ../data/gibbon.ui.h:27
-#: ../src/gibbon-connection-dialog.c:84
+#: ../src/gibbon-connection-dialog.c:84 ../src/gibbon-register-dialog.c:85
 msgid "Server"
 msgstr "Server"
 
@@ -91,15 +93,15 @@ msgstr "Soll das Passwort auf der lokalen Festplatte gespeichert werden?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:18
 msgid "Show complete server communication in server console."
-msgstr ""
+msgstr "Komplette Serverkommunikation in der Serverkonsole anzeigen."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:19
 msgid "Show server communication"
-msgstr ""
+msgstr "Serverkommunikation anzeigen"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:20
 msgid "Show timestamps"
-msgstr ""
+msgstr "Zeitstempel anzeigen"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:21
 msgid "The port number of the server, normally 4321."
@@ -110,18 +112,16 @@ msgid "The server that you want to connect to, usually fibs.com."
 msgstr "Server, mit dem verbunden werden soll, normalerweise fibs.com."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:23
-#, fuzzy
 msgid "Your password on the server."
-msgstr "Passwort auf diesem Server."
+msgstr "Ihr Passwort auf diesem Server."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:24
-#, fuzzy
 msgid "Your username on the server."
-msgstr "Benutzername auf diesem Server."
+msgstr "Ihr Benutzername auf diesem Server."
 
 #: ../data/gibbon.desktop.in.h:1 ../data/gibbon.desktop.in.in.h:1
 msgid "Gibbon"
-msgstr ""
+msgstr "Gibbon"
 
 #: ../data/gibbon.desktop.in.h:2 ../data/gibbon.desktop.in.in.h:2
 msgid "Play backgammon online on FIBS."
@@ -129,144 +129,147 @@ msgstr "Backgammon online auf FIBS spielen."
 
 #: ../data/gibbon.ui.h:1
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: ../data/gibbon.ui.h:2
-msgid "Aktualisieren"
-msgstr ""
+msgid "Chat"
+msgstr "Chat"
 
 #: ../data/gibbon.ui.h:3
-msgid "Chat"
-msgstr ""
+msgid "Command"
+msgstr "Kommando"
 
 #: ../data/gibbon.ui.h:4
-msgid "Command"
-msgstr ""
-
-#: ../data/gibbon.ui.h:5
 msgid "Connect"
 msgstr "Verbinden"
 
-#: ../data/gibbon.ui.h:6
+#: ../data/gibbon.ui.h:5
 msgid "FIBS options"
-msgstr ""
+msgstr "FIBS-Optionen"
+
+#: ../data/gibbon.ui.h:6
+msgid "Fullscreen"
+msgstr "Vollbild"
 
 #: ../data/gibbon.ui.h:7
-msgid "Fullscreen"
-msgstr ""
+msgid "Import settings and games from JavaFIBS"
+msgstr "Einstellungen und Matches von JavaFIBS importieren"
 
 #: ../data/gibbon.ui.h:8
-msgid "Import settings and games from JavaFIBS"
-msgstr ""
+msgid "Introduction"
+msgstr "Einleitung"
 
 #: ../data/gibbon.ui.h:9
-msgid "Introduction"
-msgstr ""
+msgid "Invite"
+msgstr "Einladen"
 
 #: ../data/gibbon.ui.h:10
-msgid "Invite"
-msgstr ""
+msgid "Leave"
+msgstr "Verlassen"
 
 #: ../data/gibbon.ui.h:11
-msgid "Leave"
-msgstr ""
+msgid "Location of JavaFIBS"
+msgstr "Installationsort von JavaFIBS"
 
 #: ../data/gibbon.ui.h:12
-msgid "Location of JavaFIBS"
-msgstr ""
+msgid "Look"
+msgstr "Anschauen"
 
 #: ../data/gibbon.ui.h:13
-msgid "Look"
-msgstr ""
+msgid "Moves"
+msgstr "Züge"
 
 #: ../data/gibbon.ui.h:14
-msgid "Moves"
-msgstr ""
+msgid "Next game"
+msgstr "Nächstes Spiel"
 
 #: ../data/gibbon.ui.h:15
-msgid "Next game"
-msgstr ""
+msgid "Next move"
+msgstr "Nächster Zug"
 
 #: ../data/gibbon.ui.h:16
-msgid "Next move"
-msgstr ""
+msgid "Played matches"
+msgstr "Gespielte Matches"
 
 #: ../data/gibbon.ui.h:17
-msgid "Played matches"
-msgstr ""
+msgid "Players"
+msgstr "Spieler"
 
 #: ../data/gibbon.ui.h:18
-msgid "Players"
-msgstr ""
-
-#: ../data/gibbon.ui.h:19
 msgid ""
 "Please select the path where JavaFIBS is installed.  This directory must "
 "contain the subdirectories `matches' and `user'."
 msgstr ""
+"Wo wurde JavaFIBS installiert? Dieses Verzeichnis muss die\n"
+"Unterverzeichnisse „matches“ und „user“ enthalten."
+
+#: ../data/gibbon.ui.h:19
+msgid "Previous game"
+msgstr "Vorheriges Spiel"
 
 #: ../data/gibbon.ui.h:20
-msgid "Previous game"
-msgstr ""
+msgid "Previous move"
+msgstr "Vorheriger Zug"
 
 #: ../data/gibbon.ui.h:21
-msgid "Previous move"
-msgstr ""
+msgid "Rating information"
+msgstr "Ranglisteninformation"
 
 #: ../data/gibbon.ui.h:22
-msgid "Rating information"
-msgstr ""
+msgid "Ready"
+msgstr "Bereit"
 
 #: ../data/gibbon.ui.h:23
-msgid "Ready"
-msgstr ""
+msgid "Record"
+msgstr "Aufnahme"
 
 #: ../data/gibbon.ui.h:24
-msgid "Record"
-msgstr ""
+msgid "Refresh"
+msgstr "Aktualisieren"
 
 #: ../data/gibbon.ui.h:25
 msgid "Resign"
-msgstr ""
+msgstr "Aufgeben"
 
 #: ../data/gibbon.ui.h:26
 msgid "Select what you want to import from JavaFIBS:"
-msgstr ""
+msgstr "Bitte auswählen, was von JavaFIBS importiert werden soll:"
 
 #: ../data/gibbon.ui.h:28
 msgid "Shouts"
-msgstr ""
+msgstr "Lobby (Shouts)"
 
 #: ../data/gibbon.ui.h:29
 msgid "Talk to opponent"
-msgstr ""
+msgstr "Mit Gegner chatten"
 
 #: ../data/gibbon.ui.h:30
 msgid "Talk to watchers"
-msgstr ""
+msgstr "Mit Zuschauern chatten"
 
 #: ../data/gibbon.ui.h:31
 msgid ""
 "This wizard will lead you through the import of your user data and saved "
 "matches from JavaFIBS."
 msgstr ""
+"Dieser Assistent führt durch die Übernahme der Einstellungen und\n"
+"gespeicherten Matches von JavaFIBS."
 
 #: ../data/gibbon.ui.h:32
-#, fuzzy
 msgid "User name and password"
-msgstr "Passwort speichern"
+msgstr "Anmeldename und Passwort"
 
 #: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
 msgid "Watch"
-msgstr ""
+msgstr "Beobachten"
 
 #: ../data/gibbon.ui.h:34
 msgid "What to import?"
-msgstr ""
+msgstr "Was soll übernommen werden?"
 
 #: ../data/gibbon.ui.h:35
 msgid "_Extras"
-msgstr ""
+msgstr "_Extras"
 
 #: ../data/gibbon.ui.h:36
 msgid "_File"
@@ -274,15 +277,15 @@ msgstr "_Datei"
 
 #: ../data/gibbon.ui.h:37
 msgid "_Help"
-msgstr ""
+msgstr "_Hilfe"
 
 #: ../data/gibbon.ui.h:38
 msgid "_Import from FIBS ..."
-msgstr ""
+msgstr "_Import von FIBS ..."
 
 #: ../data/gibbon.ui.h:39
 msgid "_Options"
-msgstr ""
+msgstr "_Optionen"
 
 #: ../libgsgf/gsgf-collection.c:246 ../libgsgf/gsgf-collection.c:423
 msgid "'('"
@@ -358,64 +361,64 @@ msgstr "Versuch eine leere Collection zu schreiben"
 #: ../libgsgf/gsgf-result.c:285
 #, c-format
 msgid "Only one value allowed for property"
-msgstr ""
+msgstr "Nur ein Wert pro Eigenschaft erlaubt"
 
 #: ../libgsgf/gsgf-color.c:155
 #, c-format
 msgid "Unrecognized color identifier '%s'"
-msgstr ""
+msgstr "Unzulässiger Farbbezeichner „%s“"
 
 #: ../libgsgf/gsgf-compose.c:168 ../libgsgf/gsgf-list-of.c:160
 #: ../libgsgf/gsgf-raw.c:144
 #, c-format
 msgid "Attempt to write empty property"
-msgstr ""
+msgstr "Versuch, eine leere Eigenschaft zu schreiben"
 
 #: ../libgsgf/gsgf-date.c:121
 #, c-format
 msgid "Invalid year in date specification"
-msgstr ""
+msgstr "Fehlerhaftes Jahr in Datumsangabe"
 
 #: ../libgsgf/gsgf-date.c:128 ../libgsgf/gsgf-date.c:163
 #, c-format
 msgid "Invalid date specification '%04d-%02d-%02d' or out of range"
-msgstr ""
+msgstr "Unzulässige Datumsangabe „%04d-%02d-%02d“ oder Bereichsüberschreitung"
 
 #: ../libgsgf/gsgf-date.c:319
 #, c-format
 msgid "Invalid date specification '%s' or out of range"
-msgstr ""
+msgstr "Unzulässige Datumsangabe „%s“ oder Bereichsüberschreitung"
 
 #: ../libgsgf/gsgf-date.c:330
-#, fuzzy, c-format
+#, c-format
 msgid "Empty dates are not allowed"
-msgstr "Leere SGF-Collections sind nicht erlaubt"
+msgstr "Leere Datumsangaben sind nicht erlaubt"
 
 #: ../libgsgf/gsgf-double.c:103
 #, c-format
 msgid "SGF double must be 1 or 2, not '%s'"
-msgstr ""
+msgstr "SGF-Double muss 1 oder 2 sein, nicht „%s“"
 
 #: ../libgsgf/gsgf-empty.c:111
 #, c-format
 msgid "Empty value required"
-msgstr ""
+msgstr "Leerer Wert erforderlich"
 
 #: ../libgsgf/gsgf-flavor.c:974 ../libgsgf/gsgf-flavor.c:982
 #: ../libgsgf/tests/test-non-unique-points.c:38
 #, c-format
 msgid "Property '%s': "
-msgstr ""
+msgstr "Eigenschaft „%s“: "
 
 #: ../libgsgf/gsgf-flavor.c:1007 ../libgsgf/gsgf-flavor.c:1318
 #, c-format
 msgid "Value must be greater than 0 but is %lld"
-msgstr ""
+msgstr "Wert muss größer als 0 sein, aber ist %lld"
 
 #: ../libgsgf/gsgf-flavor.c:1032 ../libgsgf/gsgf-flavor.c:1040
 #, c-format
 msgid "Property only allowed in root node"
-msgstr ""
+msgstr "Eigentschaft nur in Wurzelknoten erlaubt"
 
 #: ../libgsgf/gsgf-flavor.c:1071
 #, c-format
@@ -423,6 +426,8 @@ msgid ""
 "The properties 'DM', 'GB', 'GW', and 'UC' are mutually exclusive within one "
 "node"
 msgstr ""
+"Die Eigenschaften „DM“, „GB“, „GW“ und „UC” dürfen nur einmal innerhalb "
+"eines Knotens verwendet werden"
 
 #: ../libgsgf/gsgf-flavor.c:1106
 #, c-format
@@ -430,6 +435,8 @@ msgid ""
 "The properties 'BM', 'DO', 'IT', and 'TE' are mutually exclusive within one "
 "node"
 msgstr ""
+"Die Eigenschaften „BM“, „DO“, „IT“ und „TE” dürfen nur einmal innerhalb "
+"eines Knotens verwendet werden"
 
 #: ../libgsgf/gsgf-flavor.c:1172
 #, c-format
@@ -437,6 +444,8 @@ msgid ""
 "The properties '%s' and '%s' are not allowed on the same point within one "
 "node"
 msgstr ""
+"Die Eigenschaften „%s“ und „%s“ sind nicht auf dem selben Punkt innerhalb "
+"eines Knotens verwendet werden"
 
 #: ../libgsgf/gsgf-flavor.c:1222
 #, c-format
@@ -447,98 +456,100 @@ msgstr "Genau ein Wert für diese Eigenschaft (property) erforderlich"
 #: ../libgsgf/gsgf-flavor.c:1547 ../libgsgf/gsgf-flavor.c:1677
 #, c-format
 msgid "Empty property"
-msgstr ""
+msgstr "Leere Eigenschaft"
 
 #: ../libgsgf/gsgf-flavor.c:1249
 #, c-format
 msgid "Empty version information"
-msgstr ""
+msgstr "Leere Versionsinformation"
 
 #: ../libgsgf/gsgf-flavor.c:1277 ../libgsgf/gsgf-number.c:138
 #: ../libgsgf/gsgf-real.c:130 ../libgsgf/gsgf-real.c:176
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid number '%s': %s"
-msgstr "Ungültige Portnummer »%s«."
+msgstr "Fehlerhafte Zahl »%s«: %s."
 
 #: ../libgsgf/gsgf-flavor.c:1284
 #, c-format
 msgid "Negativ number not allowed: %lld"
-msgstr ""
+msgstr "Negative Zahl nicht erlaubt: %lld"
 
 #: ../libgsgf/gsgf-flavor.c:1291
 #, c-format
 msgid "Expected colon after number in '%s'"
-msgstr ""
+msgstr "Doppelpunkt nach Zahl in „%s“ erwartet"
 
 #: ../libgsgf/gsgf-flavor.c:1408 ../libgsgf/gsgf-flavor.c:1414
 #, c-format
 msgid "Only one move property (B or W) in node allowed"
-msgstr ""
+msgstr "Nur eine Zugeigenschaft (B oder W) in Knoten erlaubt"
 
 #: ../libgsgf/gsgf-flavor.c:1438
 #, c-format
 msgid "List of stones must not be empty"
-msgstr ""
+msgstr "Eine Liste von Steinen darf nicht leer sein"
 
 #: ../libgsgf/gsgf-flavor.c:1468
 #, c-format
 msgid "List of points must not be empty"
-msgstr ""
+msgstr "Liste von Punkten darf nicht leer sein"
 
 #: ../libgsgf/gsgf-flavor.c:1534
 #, c-format
 msgid "List of point pairs must not be empty"
-msgstr ""
+msgstr "Liste von Punktpaaren darf nicht leer sein"
 
 #: ../libgsgf/gsgf-flavor.c:1556 ../libgsgf/gsgf-flavor.c:1686
 #, c-format
 msgid "No end point"
-msgstr ""
+msgstr "Kein Endpunkt"
 
 #: ../libgsgf/gsgf-flavor.c:1591
 #, c-format
 msgid "Start and end point must differ"
-msgstr ""
+msgstr "Start und Endpunkt müssen sich unterscheiden"
 
 #: ../libgsgf/gsgf-flavor.c:1607
 #, c-format
 msgid "Lines and arrows must be unique"
-msgstr ""
+msgstr "Linien und Pfeile müssen eindeutig sein"
 
 #: ../libgsgf/gsgf-flavor.c:1625
 #, c-format
 msgid "Invalid points in property"
-msgstr ""
+msgstr "Fehlerhafte Punkte in Eigenschaft"
 
 #: ../libgsgf/gsgf-flavor.c:1664
 #, c-format
 msgid "List of point labels must not be empty"
-msgstr ""
+msgstr "Liste von Punktbeschriftungen darf nicht leer sein"
 
 #: ../libgsgf/gsgf-flavor.c:1727
 #, c-format
 msgid "Points must be unique"
-msgstr ""
+msgstr "Punkte müssen eindeutig sein"
 
 #: ../libgsgf/gsgf-flavor.c:1742
 #, c-format
 msgid "Invalid point labels in property"
-msgstr ""
+msgstr "Unzulässige Punktbeschriftungen in Eigenschaft"
 
 #: ../libgsgf/gsgf-flavor.c:1776 ../libgsgf/tests/test-non-unique-points.c:37
 #, c-format
 msgid "Points in list must be unique"
-msgstr ""
+msgstr "Punkte in Liste müssen eindeutig sein"
 
 #: ../libgsgf/gsgf-game-tree.c:448
 #, c-format
 msgid "Method cook() called on something that is not a GSGFComponent."
 msgstr ""
+"Methode cook() wurde für etwas aufgerufen, das nicht vom Typ GSGFComponent "
+"ist."
 
 #: ../libgsgf/gsgf-game-tree.c:553
 #, c-format
 msgid "Application name or version info missing."
-msgstr ""
+msgstr "Applikationsname oder Versionsangabe fehlt."
 
 #: ../libgsgf/gsgf-game-tree.c:563
 #, c-format
@@ -546,173 +557,182 @@ msgid ""
 "Application name or version info must not contain linefeeds or carriage "
 "returns."
 msgstr ""
+"Applikationsname oder Versionsangabe darf weder Zeilenumbrüche noch "
+"Wagenrückläufe enthlaten."
 
 #: ../libgsgf/gsgf-move-backgammon.c:124
 #, c-format
 msgid "Empty move"
-msgstr ""
+msgstr "Leerer Zug"
 
 #: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid move syntax '%s'"
-msgstr "Ungültige Portnummer »%s«."
+msgstr "Fehlerhafte Zugsyntax »%s«."
 
 # 80%
 #: ../libgsgf/gsgf-move-backgammon.c:176
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid move syntax"
-msgstr "Ungültiger Port »%s«: %s."
+msgstr "Fehlerhafte Zugsyntax"
 
 #: ../libgsgf/gsgf-node.c:222
 #, c-format
 msgid "Only upper case letters are allowed for property identifiers"
 msgstr ""
+"Bezeichner für Eigenschaften dürfen nur die Großbuchstaben A-Z enthalten"
 
 #: ../libgsgf/gsgf-number.c:144 ../libgsgf/gsgf-real.c:122
 #: ../libgsgf/gsgf-real.c:182 ../libgsgf/tests/test-number.c:100
 #: ../libgsgf/tests/test-real.c:101 ../libgsgf/tests/test-real.c:119
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid number '%s'"
-msgstr "Ungültige Portnummer »%s«."
+msgstr "Fehlerhafte Zahl »%s«"
 
 #: ../libgsgf/gsgf-number.c:150 ../libgsgf/gsgf-real.c:188
 #: ../libgsgf/tests/test-number.c:118
 #, c-format
 msgid "Trailing garbage after number in '%s'"
-msgstr ""
+msgstr "Unsinn nach Zahl in „%s“"
 
 #: ../libgsgf/gsgf-point-backgammon.c:140
 #, c-format
 msgid "Empty point"
-msgstr ""
+msgstr "Leerer Punkt"
 
 #: ../libgsgf/gsgf-point-backgammon.c:146
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid point syntax"
-msgstr "Ungültiger Port »%s«: %s."
+msgstr "Fehlerhafte Punktsyntax"
 
 #: ../libgsgf/gsgf-point-backgammon.c:155
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid point syntax '%s'"
-msgstr "Ungültige Portnummer »%s«."
+msgstr "Fehlerhafte Punktsyntax »%s«."
 
 #: ../libgsgf/gsgf-point-backgammon.c:202
 #: ../libgsgf/gsgf-stone-backgammon.c:121
 #, c-format
 msgid "Empty stone"
-msgstr ""
+msgstr "Leerer Stein"
 
 # 80%
 #: ../libgsgf/gsgf-point-backgammon.c:208
 #: ../libgsgf/gsgf-stone-backgammon.c:127
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid stone syntax"
-msgstr "Ungültiger Port »%s«: %s."
+msgstr "Fehlerhafte Stein-Syntax"
 
 #: ../libgsgf/gsgf-real.c:338
 #, c-format
 msgid "Not a number"
-msgstr ""
+msgstr "Keine Zahl"
 
 #: ../libgsgf/gsgf-simple-text.c:98 ../libgsgf/gsgf-text.c:133
 #, c-format
 msgid "Property without a value!"
-msgstr ""
+msgstr "Eigenschaft ohne Wert!"
 
 #: ../libgsgf/gsgf-simple-text.c:102
 #, c-format
 msgid "A simple text property may only have one value, not %u!"
-msgstr ""
+msgstr "Eine einfache Texteigenschaft darf nur einen Wert enthalten, nicht %u!"
 
 #: ../libgsgf/gsgf-text.c:137
 #, c-format
 msgid "A text property may only have one value, not %u!"
-msgstr ""
+msgstr "Eine Texteigenschaft darf nur einen Wert enthalten, nicht %u!"
 
 #: ../src/gibbon-app.c:249
 msgid "Disconnected"
 msgstr "Nicht verbunden"
 
 #: ../src/gibbon-app.c:301
-#, fuzzy
 msgid "Do you need to pass the option `--data-dir'?\n"
-msgstr "Vielleicht muss die Option »--ui-file« verwendet werden?\n"
+msgstr "Vielleicht müssen Sie die Option »--ui-dir« angebegn?\n"
 
 #. TRANSLATORS: UI means user interface.
 #: ../src/gibbon-app.c:367
 #, c-format
 msgid "Object `%s' not found in UI definition!"
 msgstr ""
+"Objekt „%s“ wurde nicht in der Definitionsdatei für die "
+"Benutzerschnittstelle gefunden!"
 
 #: ../src/gibbon-app.c:375
 #, c-format
 msgid "Object `%s' is not a GObject!"
-msgstr ""
+msgstr "Objekt „%s“ ist kein GObject!"
 
 #: ../src/gibbon-app.c:384
 #, c-format
 msgid "Object `%s' is not of type `%s' but `%s'!"
-msgstr ""
+msgstr "Object „%s“ ist nicht vom Typ „%s“, sondern „%s“!"
 
 #: ../src/gibbon-app.c:520
 msgid "You cannot register an account while you are connected to a server!"
 msgstr ""
+"Es kann kein neuer Zugang registriert werden, während eine Verbindung zu "
+"einem Server besteht!"
 
 #: ../src/gibbon-app.c:635
 msgid "No hostname given!"
-msgstr ""
+msgstr "Kein Servername angegeben!"
 
 #: ../src/gibbon-app.c:646
 msgid "No user name given!"
-msgstr ""
+msgstr "Kein Benutzername angegeben!"
 
-#: ../src/gibbon-app.c:654
-#, fuzzy
-msgid "Invalid login `guest'!"
-msgstr "Ungültiger Port »%s«: %s."
+#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:330
+#, c-format
+msgid "The login `%s' is reserved!"
+msgstr "Der Anmeldename „%s“ ist reserviert!"
 
-#: ../src/gibbon-app.c:666
+#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:315
 msgid "Invalid port number! In doubt try the default port number 4321."
-msgstr ""
+msgstr "Fehlerhafte Portnummer. Probieren Sie es im Zweifel mit 4321."
 
-#: ../src/gibbon-app.c:677
+#: ../src/gibbon-app.c:679
 msgid "No password given!"
-msgstr ""
+msgstr "Kein Passwort angegeben!"
 
-#: ../src/gibbon-app.c:859
-#, fuzzy, c-format
+#: ../src/gibbon-app.c:861
+#, c-format
 msgid "Connecting with %s port %d."
-msgstr "Verbinde als %s mit Port %u auf %s."
+msgstr "Verbindungsaufbaut mit %s auf Port %d."
 
-#: ../src/gibbon-app.c:875
-#, fuzzy, c-format
+#: ../src/gibbon-app.c:877
+#, c-format
 msgid "Connected with %s port %d."
-msgstr "Verbinde als %s mit Port %u auf %s."
+msgstr "Mit %s auf Port %d verbunden."
 
-#: ../src/gibbon-app.c:894
-#, fuzzy, c-format
+#: ../src/gibbon-app.c:896
+#, c-format
 msgid "Logged in as %s on %s port %d."
-msgstr "Verbinde als %s mit Port %u auf %s."
+msgstr "Als %s auf %s Port %d angemeldet."
 
-#: ../src/gibbon-app.c:954
-#, fuzzy, c-format
+#: ../src/gibbon-app.c:956
+#, c-format
 msgid "Error loading image `%s': %s!"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+msgstr "Fehler beim Laden des Bildes „%s“: %s!"
 
 #: ../src/gibbon-archive.c:200
 msgid "Cannot determine user data directory!"
-msgstr ""
+msgstr "Das Benutzerdaten-Verzeichnis kann nicht ermittelt werden!"
 
 #: ../src/gibbon-archive.c:219
-#, fuzzy, c-format
-msgid "Failed to create servers_directory `%s': %s!"
-msgstr "Verbindungsthread konnte nicht erzeugt werden: %s."
+#, c-format
+msgid "Failed to create server directory `%s': %s!"
+msgstr "Fehler bei der Erzeugung des Serververzeichnisses „%s“: %s!"
 
 #: ../src/gibbon-archive.c:242
 msgid ""
 "You can import settings and saved games from your old client. Check the menu "
 "`Extras' to see if your old client software is supported!"
 msgstr ""
+"Gespeicherte Spiele und Einstellungen können von Ihrer alten Programm "
+"übernommen werden. Sehen Sie im Menü „Extras“ nach, ob Ihre alte Software "
+"unterstützt wird!"
 
 #: ../src/gibbon-archive.c:285
 #, c-format
@@ -721,122 +741,122 @@ msgid ""
 "\n"
 "It will be impossible to save your matches and other data."
 msgstr ""
+"Das Verzeichnis „%s“ konnte nicht erzeugt werden: %s!\n"
+"\n"
+"Es wird nicht möglich sein, gespielte Matches und weitere Daten "
+"abzuspeichern."
 
 #: ../src/gibbon.c:39
-#, fuzzy
 msgid "Path to data directory (developers only)"
-msgstr "Alternative Benutzerschnittstellendatei verwenden (nur für Entwickler)"
+msgstr "Pfad zum Datenverzeichnis (nur für Entwickler)"
 
 #: ../src/gibbon.c:40 ../src/gibbon.c:44
 msgid "DIRECTORY"
-msgstr ""
+msgstr "VERZEICHNIS"
 
 #: ../src/gibbon.c:43
-#, fuzzy
 msgid "Path to pixmaps directory (developers only)"
-msgstr "Alternative Benutzerschnittstellendatei verwenden (nur für Entwickler)"
+msgstr "Pfad zum Pixmaps-Verzeichnis (nur für Entwickler)"
 
 #: ../src/gibbon.c:159
 msgid "- Gtk+ frontend for FIBS"
 msgstr "- Gtk+-Frontend für FIBS"
 
 #: ../src/gibbon.c:168
-#, fuzzy, c-format
+#, c-format
 msgid "Run `%s --help' for more information!\n"
-msgstr "»%s --help« bietet mehr Informationen!"
+msgstr "„%s --help“ gibt mehr Informationen!\n"
 
 #: ../src/gibbon.c:191
 #, c-format
 msgid "Error setting PATH environment variable!\n"
-msgstr ""
+msgstr "Fehler beim Setz der Umgebungsvariablen „PATH“!\n"
 
 #: ../src/gibbon-cairoboard.c:313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading board definition `%s': %s.\n"
 "Do you need to pass the option `--pixmaps-dir'?\n"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+msgstr ""
+"Fehler beim Laden der Brett-Definition „%s“: %s:\n"
+"Haben Sie die Option „--pixmaps-dir“ vergessen?\n"
 
 #: ../src/gibbon-cairoboard.c:325
-#, fuzzy, c-format
+#, c-format
 msgid "Error parsing board definition `%s'.\n"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+msgstr "Fehler beim Laden der Brett-Definition „%s“.\n"
 
 #: ../src/gibbon-cairoboard.c:965
 #, c-format
 msgid "Board definition `%s' does not have an element `%s'.\n"
-msgstr ""
+msgstr "Brettdefinition „%s“ hat kein Element „%s“.\n"
 
 #: ../src/gibbon-cairoboard.c:1124
 #, c-format
 msgid "%u-point match"
-msgstr ""
+msgstr "%u-Punkte-Match"
 
 #: ../src/gibbon-cairoboard.c:1127
-#, fuzzy
 msgid "Unlimited match"
-msgstr "Vereinigte Staaten von Amerika"
+msgstr "Unbegrenztes Match"
 
 #: ../src/gibbon-cairoboard.c:1145 ../src/gibbon-cairoboard.c:1151
 #, c-format
 msgid "Score: %u (%u-away)"
-msgstr ""
+msgstr "Spielstand: %u (%u entfernt)"
 
 #: ../src/gibbon-cairoboard.c:1157 ../src/gibbon-cairoboard.c:1161
 #, c-format
 msgid "Score: %u"
-msgstr ""
+msgstr "Spielstand: %u"
 
 #: ../src/gibbon-cairoboard.c:1171 ../src/gibbon-cairoboard.c:1176
 #, c-format
 msgid "Pips: %u (%+d)"
-msgstr ""
+msgstr "Augen: %u (%+d)"
 
 #: ../src/gibbon-chat-view.c:187
 msgid "Close tab"
-msgstr ""
+msgstr "Reiter schließen"
 
 #: ../src/gibbon-chat-view.c:338
 msgid "Really close?"
-msgstr ""
+msgstr "Wirklich schließen?"
 
 #: ../src/gibbon-connection.c:382
-#, fuzzy
 msgid "End-of-file while receiving data from server."
-msgstr "Fehler beim Empfangen von Daten vom Server: %s.\n"
+msgstr "Dateiende beim Lesen von Daten vom Server."
 
 #: ../src/gibbon-connection.c:500
 msgid "Authentication failed."
-msgstr ""
+msgstr "Anmeldung fehlgeschlagen."
 
 #: ../src/gibbon-connection.c:622
-#, fuzzy, c-format
+#, c-format
 msgid "Error connecting to `%s' port %u: %s.\n"
-msgstr "Verbinde als %s mit Port %u auf %s."
+msgstr "Fehler beim Verbindungsaufbau mit „%s“ auf Port %u: %s.\n"
 
-#: ../src/gibbon-connection-dialog.c:114
+#: ../src/gibbon-connection-dialog.c:114 ../src/gibbon-register-dialog.c:115
 msgid "User name"
-msgstr ""
+msgstr "Anmeldename"
 
-#: ../src/gibbon-connection-dialog.c:129
-#, fuzzy
+#: ../src/gibbon-connection-dialog.c:129 ../src/gibbon-register-dialog.c:131
 msgid "Save password?"
 msgstr "Passwort speichern?"
 
 #: ../src/gibbon-connection-dialog.c:166
 msgid "Register new account"
-msgstr ""
+msgstr "Neues Konto einrichten"
 
 #: ../src/gibbon-connection-dialog.c:174
 msgid "E-mail (optional)"
-msgstr ""
+msgstr "E-Mail (optional)"
 
 #: ../src/gibbon-connection-dialog.c:241
 msgid "Account settings"
-msgstr ""
+msgstr "Kontoeinstellungen"
 
 #: ../src/gibbon-connection-dialog.c:246
-#, fuzzy
 msgid "Connection settings"
 msgstr "Verbindungsdaten"
 
@@ -888,7 +908,7 @@ msgstr "Angola"
 #. ap
 #: ../src/gibbon-country.c:762
 msgid "Asian Pacific Region"
-msgstr ""
+msgstr "Asiatisch-pazifische Region"
 
 #. aq
 #: ../src/gibbon-country.c:764
@@ -977,7 +997,6 @@ msgstr "Benin"
 
 #. bl
 #: ../src/gibbon-country.c:806
-#, fuzzy
 msgid "Saint Barthelemy"
 msgstr "Saint-Barthélemy"
 
@@ -999,7 +1018,7 @@ msgstr "Bolivien"
 #. bq
 #: ../src/gibbon-country.c:816
 msgid "Bonaire, Saint Eustatius and Saba"
-msgstr ""
+msgstr "Bonaire, Sint Eustatius und Saba"
 
 #. br
 #: ../src/gibbon-country.c:818
@@ -1048,9 +1067,8 @@ msgstr "Kokosinseln"
 
 #. cd
 #: ../src/gibbon-country.c:842
-#, fuzzy
 msgid "Democratic Republic of the Congo"
-msgstr "Kongo, Demokratische Republik"
+msgstr "Demokratische Republik Kongo"
 
 #. cf
 #: ../src/gibbon-country.c:846
@@ -1070,7 +1088,7 @@ msgstr "Schweiz"
 #. ci
 #: ../src/gibbon-country.c:852
 msgid "Ivory Coast"
-msgstr ""
+msgstr "Elfenbeinküste"
 
 #. ck
 #: ../src/gibbon-country.c:856
@@ -1114,9 +1132,8 @@ msgstr "Kap Verde"
 
 #. cw
 #: ../src/gibbon-country.c:880
-#, fuzzy
 msgid "Curacao"
-msgstr "Macao"
+msgstr "Curaçao"
 
 #. cx
 #: ../src/gibbon-country.c:882
@@ -1201,7 +1218,7 @@ msgstr "Äthiopien"
 #. eu
 #: ../src/gibbon-country.c:980
 msgid "European Union"
-msgstr ""
+msgstr "Europäische Union"
 
 #. fi
 #: ../src/gibbon-country.c:1008
@@ -1220,9 +1237,8 @@ msgstr "Falklandinseln"
 
 #. fm
 #: ../src/gibbon-country.c:1016
-#, fuzzy
 msgid "Micronesia"
-msgstr "Indonesien"
+msgstr "Mikronesien"
 
 #. fo
 #: ../src/gibbon-country.c:1020
@@ -1237,7 +1253,7 @@ msgstr "Frankreich"
 #. fx
 #: ../src/gibbon-country.c:1038
 msgid "France, Metropolitan"
-msgstr ""
+msgstr "metropolitanes Frankreich"
 
 #. ga
 #: ../src/gibbon-country.c:1044
@@ -1341,7 +1357,6 @@ msgstr "Hongkong"
 
 #. hm
 #: ../src/gibbon-country.c:1120
-#, fuzzy
 msgid "Heard Island and Mcdonald Islands"
 msgstr "Heard- und McDonald-Inseln"
 
@@ -1403,7 +1418,7 @@ msgstr "Irak"
 #. ir
 #: ../src/gibbon-country.c:1182
 msgid "Iran"
-msgstr ""
+msgstr "Iran"
 
 #. is
 #: ../src/gibbon-country.c:1184
@@ -1468,13 +1483,12 @@ msgstr "St. Kitts und Nevis"
 #. kp
 #: ../src/gibbon-country.c:1282
 msgid "North Korea"
-msgstr ""
+msgstr "Nordkorea"
 
 #. kr
 #: ../src/gibbon-country.c:1286
-#, fuzzy
 msgid "South Korea"
-msgstr "Südafrika"
+msgstr "Südkorea"
 
 #. kw
 #: ../src/gibbon-country.c:1296
@@ -1494,7 +1508,7 @@ msgstr "Kasachstan"
 #. la
 #: ../src/gibbon-country.c:1304
 msgid "Laos"
-msgstr ""
+msgstr "Laos"
 
 #. lb
 #: ../src/gibbon-country.c:1306
@@ -1544,7 +1558,7 @@ msgstr "Lettland"
 #. ly
 #: ../src/gibbon-country.c:1352
 msgid "Libya"
-msgstr ""
+msgstr "Libyen"
 
 #. ma
 #: ../src/gibbon-country.c:1356
@@ -1559,7 +1573,7 @@ msgstr "Monaco"
 #. md
 #: ../src/gibbon-country.c:1362
 msgid "Moldova"
-msgstr ""
+msgstr "Moldawien"
 
 #. me
 #: ../src/gibbon-country.c:1364
@@ -1568,7 +1582,6 @@ msgstr "Montenegro"
 
 #. mf
 #: ../src/gibbon-country.c:1366
-#, fuzzy
 msgid "Saint Martin (French part)"
 msgstr "Saint-Martin (franz. Teil)"
 
@@ -1779,7 +1792,6 @@ msgstr "Puerto Rico"
 
 #. ps
 #: ../src/gibbon-country.c:1548
-#, fuzzy
 msgid "Palestinian Territory"
 msgstr "Palastinensische Autonomiegebiete"
 
@@ -1821,7 +1833,7 @@ msgstr "Serbien"
 #. ru
 #: ../src/gibbon-country.c:1656
 msgid "Russia"
-msgstr ""
+msgstr "Russland"
 
 #. rw
 #: ../src/gibbon-country.c:1660
@@ -1861,7 +1873,7 @@ msgstr "Singapur"
 #. sh
 #: ../src/gibbon-country.c:1682
 msgid "Saint Helena, Ascension and Tristan da Cunha"
-msgstr ""
+msgstr "St. Helena, Ascension und Tristan da Cunha"
 
 #. si
 #: ../src/gibbon-country.c:1684
@@ -1905,9 +1917,8 @@ msgstr "Suriname"
 
 #. ss
 #: ../src/gibbon-country.c:1704
-#, fuzzy
 msgid "South Sudan"
-msgstr "Sudan"
+msgstr "Südsudan"
 
 #. st
 #: ../src/gibbon-country.c:1706
@@ -1921,9 +1932,8 @@ msgstr "El Salvador"
 
 #. sx
 #: ../src/gibbon-country.c:1714
-#, fuzzy
 msgid "Sint Maarten (Dutch part)"
-msgstr "Saint-Martin (franz. Teil)"
+msgstr "Sint Maarten (niederl. Teil)"
 
 #. sy
 #: ../src/gibbon-country.c:1716
@@ -2048,7 +2058,7 @@ msgstr "Usbekistan"
 #. va
 #: ../src/gibbon-country.c:1824
 msgid "Vatican"
-msgstr ""
+msgstr "Vatikanstadt"
 
 #. vc
 #: ../src/gibbon-country.c:1828
@@ -2062,13 +2072,11 @@ msgstr "Venezuela"
 
 #. vg
 #: ../src/gibbon-country.c:1836
-#, fuzzy
 msgid "British Virgin Islands"
-msgstr "Amerikanische Jungferninseln"
+msgstr "Britische Jungferninseln"
 
 #. vi
 #: ../src/gibbon-country.c:1840
-#, fuzzy
 msgid "U.S. Virgin Islands"
 msgstr "Amerikanische Jungferninseln"
 
@@ -2095,12 +2103,12 @@ msgstr "Samoa"
 #. xl
 #: ../src/gibbon-country.c:1950
 msgid "On the server network"
-msgstr ""
+msgstr "Im Servernetzwerk"
 
 #. xy
 #: ../src/gibbon-country.c:1976
 msgid "Unknown country"
-msgstr ""
+msgstr "Unbekanntes Land"
 
 #. ye
 #: ../src/gibbon-country.c:1988
@@ -2129,25 +2137,21 @@ msgstr "Simbabwe"
 
 #. zz
 #: ../src/gibbon-country.c:2082
-#, fuzzy
 msgid "Invalid IP address"
-msgstr "E-Mail-Adresse"
+msgstr "Fehlerhafte IP-Adresse"
 
-#: ../src/gibbon-database.c:247
-#, fuzzy, c-format
+#: ../src/gibbon-database.c:247 ../src/gibbon-database.c:255
+#, c-format
 msgid "Error opening database `%s'!"
-msgstr "Fehler beim Senden von Daten zum Server: %s.\n"
-
-#: ../src/gibbon-database.c:255
-#, fuzzy, c-format
-msgid "Error opening database `%s'"
-msgstr "Fehler beim Senden von Daten zum Server: %s.\n"
+msgstr "Fehler beim Öffnen der Datenbank „%s“!"
 
 #: ../src/gibbon-database.c:270
 msgid ""
 "Your sqlite installation seems to be crippled.  It does not support foreign "
 "key constraints.  This is not a bug in Gibbon!"
 msgstr ""
+"Ihre SQLite-Installation scheint zu stark eingeschränkt zu sein. Sie "
+"unterstützt keine Fremdschlüssel. Dies ist kein Fehler in Gibbon!"
 
 #: ../src/gibbon-database.c:351
 msgid ""
@@ -2158,6 +2162,13 @@ msgid ""
 "\n"
 "Do you want to downgrade the database?"
 msgstr ""
+"Ihre Datenbank wurde mit einer neueren Version von Gibbon erzeugt. Wird die "
+"Datenbank zurückgesetzt, gehen keine Daten verloren. Die Datenbank muss "
+"jedoch neu gefüllt werden, was eine gewissen Zeit in Anspruch nehmen kann. "
+"Es könnte einfacher sein, stattdessen einfach Gibbon auf diesem Rechner zu "
+"aktualisieren.\n"
+"\n"
+"Soll die Datenbank zurückgesetzt werden?"
 
 #: ../src/gibbon-database.c:362
 msgid ""
@@ -2167,26 +2178,31 @@ msgid ""
 "\n"
 "Proceed anyway?"
 msgstr ""
+"Ihre Datenbank wurde mit einer älteren Version von Gibbon erzeugt. Bei einer "
+"Aktualisierung der Datenbank gehen keine Daten verloren, aber die Datenbank "
+"muss neu gefüllt werden, was eine gewissen Zeit in Anspruch nehmen kann.\n"
+"\n"
+"Dennoch fortfahren?"
 
 #: ../src/gibbon-database.c:488
 msgid "You should now repopulate your database (menu `Options')."
-msgstr ""
+msgstr "Die Datenbank sollte jetzt neu gefüllt werden (Menü „Optionen“)."
 
 #: ../src/gibbon-database.c:531
 msgid "Internal error: Nested transaction."
-msgstr ""
+msgstr "Interner Fehler: Verschachtelte Transaktion."
 
 #: ../src/gibbon-database.c:561
 msgid "Internal error: Commit outside transaction."
-msgstr ""
+msgstr "Interner Fehler: Commit außerhalb einer Transaktion."
 
 #: ../src/gibbon-database.c:589
 msgid "Internal error: Rollback outside transaction."
-msgstr ""
+msgstr "Interner Fehler: Rollback außerhalb Transaktion."
 
 #: ../src/gibbon-database.c:624
 msgid "Database failure"
-msgstr ""
+msgstr "Datenbankfehler"
 
 #. TRANSLATORS: The first string is a string
 #. * describing the error, the second one a
@@ -2195,27 +2211,27 @@ msgstr ""
 #: ../src/gibbon-database.c:632
 #, c-format
 msgid "%s: %s."
-msgstr ""
+msgstr "%s: %s."
 
 #: ../src/gibbon-database.c:734 ../src/gibbon-database.c:803
 #, c-format
 msgid "Unknown data type %d!"
-msgstr ""
+msgstr "Unbekannter Datentyp %d!"
 
 #. TRANSLATORS: This is the FIBS `say' command!
 #: ../src/gibbon-game-chat.c:185
 msgid "Say"
-msgstr ""
+msgstr "Sagen"
 
 #. TRANSLATORS: This is the FIBS `kibitz' command!
 #: ../src/gibbon-game-chat.c:187
 msgid "Kibitz"
-msgstr ""
+msgstr "Kibitzen"
 
 #. TRANSLATORS: This is the FIBS `whisper' command!
 #: ../src/gibbon-game-chat.c:189
 msgid "Whisper"
-msgstr ""
+msgstr "Flüstern"
 
 #: ../src/gibbon-geo-ip-updater.c:184
 #, c-format
@@ -2226,7 +2242,13 @@ msgid_plural ""
 "Your database used for locating other players geographically is more than "
 "%llu months old.  Should a new one be downloaded (1-2 MB) from the internet?"
 msgstr[0] ""
+"Ihre Datenbank für die geographische Lokalisierung anderer Spieler ist mehr "
+"als einen Monat alt. Sollen neue Daten (1-2 MB) aus dem Internet geladen "
+"werden?"
 msgstr[1] ""
+"Ihre Datenbank für die geographische Lokalisierung anderer Spieler ist mehr "
+"als %llu Monate alt. Sollen neue Daten (1-2 MB) aus dem Internet geladen "
+"werden?"
 
 #: ../src/gibbon-geo-ip-updater.c:202
 #, c-format
@@ -2239,170 +2261,178 @@ msgid_plural ""
 "installed with this program is more than %llu months old.  Should a new one "
 "be downloaded (1-2 MB) from the internet?"
 msgstr[0] ""
+"Ihre Datenbank für die geographische Lokalisierung anderer Spieler, die mit "
+"Gibbon installiert wurde, ist mehr als einen Monat alt. Sollen neue Daten "
+"(1-2 MB) aus dem Internet geladen werden?"
 msgstr[1] ""
+"Ihre Datenbank für die geographische Lokalisierung anderer Spieler, die mit "
+"Gibbon installiert wurde, ist mehr als %llu Monate alt. Sollen neue Daten "
+"(1-2 MB) aus dem Internet geladen werden?"
 
 #: ../src/gibbon-geo-ip-updater.c:267
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
 msgstr ""
+"Die Information über die geographische Position anderer Spieler wird ungenau "
+"sein."
 
 #: ../src/gibbon-geo-ip-updater.c:290
 msgid "Update Geo IP database"
-msgstr ""
+msgstr "Geo-IP-Datenbank aktualisieren"
 
 #: ../src/gibbon-geo-ip-updater.c:308
 #, c-format
 msgid "Opening `%s' ..."
-msgstr ""
+msgstr "Offne „%s“ ..."
 
 #: ../src/gibbon-geo-ip-updater.c:351
 #, c-format
 msgid "Cannot open `%s': %s!"
-msgstr ""
+msgstr "„%s“ kann nicht geöffnet werden: %s!"
 
 #: ../src/gibbon-geo-ip-updater.c:360
 #, c-format
 msgid "Reading `%s'."
-msgstr ""
+msgstr "„%s“ wird gelesen."
 
 #: ../src/gibbon-geo-ip-updater.c:405
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading `%s': %s!"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+msgstr "Fehler beim Lesen von „%s“: %s!"
 
 #: ../src/gibbon-geo-ip-updater.c:682
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
-msgstr ""
+msgstr "%s: Zeile %u: Parserfehler in der Nähe von „%s“!"
 
 #: ../src/gibbon-geo-ip-updater.c:688
-#, fuzzy, c-format
+#, c-format
 msgid "%s: line %u: Unexpected end of line!"
-msgstr "%d:%d: Unerwartetes Dateiende"
+msgstr "%s: Zeile %u: Unerwartetes Dateiende!"
 
 #: ../src/gibbon-help.c:31
 #, c-format
 msgid "%s is a program for playing backgammon online."
-msgstr ""
+msgstr "%s ist ein Spiel, mit dem online Backgammon gespielt werden kann."
 
 #: ../src/gibbon-help.c:54
 msgid "translator-credits"
-msgstr ""
+msgstr "Guido Flohr <guido@imperi.net>"
 
 #: ../src/gibbon-help.c:84
 #, c-format
 msgid "Error displaying help: %s!"
-msgstr ""
+msgstr "Fehler beim Anzeigen der Hilfe: %s!"
 
 #: ../src/gibbon-help.c:88
 msgid "Unknown error displaying help!"
-msgstr ""
+msgstr "Unbekannter Fehler beim Anzeigen der Hilfe!"
 
 #: ../src/gibbon-inviter-list-view.c:169
 msgid "Decline"
-msgstr ""
+msgstr "Ablehnen"
 
 #: ../src/gibbon-inviter-list-view.c:176
 msgid "Accept"
-msgstr ""
+msgstr "Annehmen"
 
 #: ../src/gibbon-inviter-list-view.c:185
 msgid "Inviter"
-msgstr ""
+msgstr "Einladender"
 
 #: ../src/gibbon-inviter-list-view.c:207 ../src/gibbon-player-list-view.c:228
 msgid "Rating"
-msgstr ""
+msgstr "Einstufung"
 
 #: ../src/gibbon-inviter-list-view.c:219 ../src/gibbon-player-list-view.c:240
 msgid "Exp."
-msgstr ""
+msgstr "Erf."
 
 #: ../src/gibbon-inviter-list-view.c:239 ../src/gibbon-player-list-view.c:260
 #: ../src/gibbon-reliability-renderer.c:113
 msgid "Reliability"
-msgstr ""
+msgstr "Zuverlässigkeit"
 
 #: ../src/gibbon-inviter-list-view.c:248
 msgid "Saved"
-msgstr ""
+msgstr "Gespeichert"
 
 #: ../src/gibbon-inviter-list-view.c:270 ../src/gibbon-player-list-view.c:284
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: ../src/gibbon-inviter-list-view.c:459 ../src/gibbon-player-list-view.c:756
 msgid "good"
-msgstr ""
+msgstr "gut"
 
 #: ../src/gibbon-inviter-list-view.c:465 ../src/gibbon-player-list-view.c:762
 msgid "keep away"
-msgstr ""
+msgstr "wegbleiben"
 
 #: ../src/gibbon-inviter-list-view.c:467 ../src/gibbon-player-list-view.c:764
 msgid "very certain"
-msgstr ""
+msgstr "sehr sicher"
 
 #: ../src/gibbon-inviter-list-view.c:469 ../src/gibbon-player-list-view.c:766
 msgid "certain"
-msgstr ""
+msgstr "sicher"
 
 #: ../src/gibbon-inviter-list-view.c:471 ../src/gibbon-player-list-view.c:768
 msgid "uncertain"
-msgstr ""
+msgstr "unsicher"
 
 #: ../src/gibbon-inviter-list-view.c:473 ../src/gibbon-player-list-view.c:770
 msgid "unknown"
-msgstr ""
+msgstr "unbekannt"
 
 #: ../src/gibbon-player-list-view.c:196
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: ../src/gibbon-player-list-view.c:208
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: ../src/gibbon-player-list-view.c:270
 msgid "Opponent"
-msgstr ""
+msgstr "Gegner"
 
 #: ../src/gibbon-player-list-view.c:277
 msgid "Watching"
-msgstr ""
+msgstr "Beobachtet"
 
 #: ../src/gibbon-player-list-view.c:492
 #, c-format
 msgid "Invite %s to resume your saved match?"
-msgstr ""
+msgstr "Einladung für %s aussprechen, um gespeichertes Match fortzusetzen?"
 
 #: ../src/gibbon-player-list-view.c:501
 #, c-format
 msgid "Invite %s"
-msgstr ""
+msgstr "%s einladen"
 
 #: ../src/gibbon-player-list-view.c:514
 #, c-format
 msgid "<b>Invite %s</b>"
-msgstr ""
+msgstr "<b>%s einladen</b>"
 
 #: ../src/gibbon-player-list-view.c:526
 msgid "Number of saved matches:"
-msgstr ""
+msgstr "Anzahl gespeicherter Matches:"
 
 #: ../src/gibbon-player-list-view.c:538
 msgid "Match length:"
-msgstr ""
+msgstr "Matchlänge:"
 
 #: ../src/gibbon-player-list-view.c:555
 msgid "unlimited"
-msgstr ""
+msgstr "unbegrenzt"
 
 #: ../src/gibbon-player-list-view.c:733
 #, c-format
 msgid "<i>%s</i> does not want to play right now."
-msgstr ""
+msgstr "<i>%s</i> möchte im Moment nicht spielen."
 
 #: ../src/gibbon-player-list-view.c:772
 #, c-format
@@ -2410,99 +2440,155 @@ msgid ""
 "<b>Reliability of player <i>%s</i>:</b>\n"
 " %f (%s) with a measurement confidence  of %u (%s)."
 msgstr ""
+"<b>Zuverlässigkeit von Spieler <i>%s</i>:</b>\n"
+" %f (%s) mit einer Konfidenz von %u (%s)."
 
 #: ../src/gibbon-player-list-view.c:781
 #, c-format
 msgid "<b>Reliability of player <i>%s</i></b>: unknown."
-msgstr ""
+msgstr "<b>Zuverlässigkeit von Spieler <i>%s</i></b>: Unbekannt."
 
 #: ../src/gibbon-position.c:1076 ../src/gibbon-position.c:1081
 msgid "invalid"
-msgstr ""
+msgstr "fehlerhaft"
 
 #: ../src/gibbon-reliability-renderer.c:114
 msgid "Reliability of a player"
+msgstr "Zuverlässigkeit eines Spielers"
+
+#: ../src/gibbon-register-dialog.c:168
+msgid "Repeat password"
+msgstr "Passwort wiederholen"
+
+#: ../src/gibbon-register-dialog.c:225
+msgid "Register New Account"
+msgstr "Neues Konto registrieren"
+
+#: ../src/gibbon-register-dialog.c:304
+msgid "You must specify a server name. In doubt try `fibs.com'."
 msgstr ""
+"Sie müssen einen Servernamen angeben. Versuchen Sie es im Zweifelsfall mit "
+"„fibs.com“."
+
+#: ../src/gibbon-register-dialog.c:324
+msgid "You must specify a user name!"
+msgstr "Sie müssen einen Kein Anmeldenamen angegeben."
+
+#: ../src/gibbon-register-dialog.c:337
+msgid "Your user name may not be longer than 20 characters!"
+msgstr "Ihr Anmeldename darf nicht länger als 20 Zeichen sein!"
+
+#: ../src/gibbon-register-dialog.c:349
+msgid ""
+"Your user name may only contain characters from A to Z, a to z, or the "
+"underscore ('_')!"
+msgstr ""
+"Ihr Benutzernamen darf nur die Zeichen A-Z, a-z und den Unterstrich („_“) "
+"enthalten!"
+
+#: ../src/gibbon-register-dialog.c:358
+msgid "You must specify a password!"
+msgstr "Sie müssen ein Passwort angegeben!"
+
+#: ../src/gibbon-register-dialog.c:365
+msgid "Please repeat the password!"
+msgstr "Bitte wiederholen Sie das Passwort!"
+
+#: ../src/gibbon-register-dialog.c:371
+msgid "Passwords do not match!"
+msgstr "Die Passwörter stimmen nicht überein!"
+
+#: ../src/gibbon-register-dialog.c:380
+#, c-format
+msgid "You already have an account on that server:\n"
+msgid_plural "You alreaday have %llu accounts on that server:\n"
+msgstr[0] "Sie haben bereits ein Konto auf diesem Server:\n"
+msgstr[1] "Sie haben bereits %llu Konten auf diesem Server:\n"
+
+#: ../src/gibbon-register-dialog.c:399
+msgid ""
+"It is not allowed to have more than one account per person.  Register anyway?"
+msgstr ""
+"Mehr als ein Konto auf einem Server ist nicht erlaubt. Dennoch mit der "
+"Registrierung fortfahren?"
 
 #: ../src/gibbon-session.c:517
 #, c-format
-msgid "Last login on %s from %s."
-msgstr ""
+msgid "Last login on `%s' from `%s'."
+msgstr "Letztes Login auf „%s“ von „%s“."
 
-#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:718
+#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:713
+#: ../src/gibbon-session.c:718
 #, c-format
 msgid "%s logged out!"
-msgstr ""
-
-#: ../src/gibbon-session.c:713
-#, c-format
-msgid "%s logged out."
-msgstr ""
+msgstr "%s hat sich abgemeldet!"
 
 #: ../src/gibbon-session.c:759
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
-msgstr ""
+msgstr "„%s“ hat Ihnen am %s eine Nachricht hinterlassen: %s"
 
 #: ../src/gibbon-session.c:774
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
-msgstr ""
+msgstr "Ihre Nachricht an „%s“ wurde ausgeliefert!"
 
 #: ../src/gibbon-session.c:790
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
-msgstr ""
+msgstr "„%s“ ist nicht angemeldet. Ihre Nachricht wurde gespeichert!"
 
 #: ../src/gibbon-session.c:1132
 msgid "Crawford game"
-msgstr ""
+msgstr "Crawford-Spiel"
 
 #: ../src/gibbon-session.c:1346
 #, c-format
 msgid "You roll %u and %u."
-msgstr ""
+msgstr "Sie haben %u und %u gewürfelt."
 
 #: ../src/gibbon-session.c:1353 ../src/gibbon-session.c:1360
 #, c-format
 msgid "%s rolls %u and %u."
-msgstr ""
+msgstr "„%s“ hat %u und %u gewürfelt."
 
 #: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1432
 #, c-format
 msgid "%d%d: %s moves %s."
-msgstr ""
+msgstr "%d%d: %s hat %s gezogen."
 
 #: ../src/gibbon-session.c:1426
 #, c-format
 msgid "%d%d: You move %s."
-msgstr ""
+msgstr "%d%d: Sie haben %s gezogen."
 
 #: ../src/gibbon-session.c:1458
 #, c-format
 msgid "Error applying move %s to position.\n"
-msgstr ""
+msgstr "Fehler bei der Ausführung des Zuges %s in der aktuellen Position.\n"
 
 #: ../src/gibbon-session.c:1820
-#, fuzzy, c-format
-msgid "The email address '%s' was rejected by the server!"
-msgstr "E-Mail-Adresse, die auf dem Server angezeigt werden soll"
+#, c-format
+msgid "The email address `%s' was rejected by the server!"
+msgstr "Die E-Mail-Adresse „%s“ wurde vom Server zurückgewiesen!"
 
 #: ../src/gibbon-session.c:1899
 msgid "Stop watching"
-msgstr ""
+msgstr "Beobachten beenden"
 
 #: ../src/gibbon-session.c:2000
 msgid "Timeout during during registration!"
-msgstr ""
+msgstr "Zeitüberschreitung während der Registrierung!"
 
 #: ../src/gibbon-session.c:2035
 msgid "Unexpected reply from server!"
-msgstr ""
+msgstr "Unerwartete Antwort vom Server!"
 
 #: ../src/gibbon-session.c:2046
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
+"Registrierung fehlgeschlagen. Bitte schauen Sie für Einzelheiten in der "
+"Serverkonsole nach!"
 
 #: ../src/gibbon-session.c:2099
 #, c-format
@@ -2510,152 +2596,62 @@ msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
+"Bitte wählen Sie einen anderen Namen. Der Name „%s“ wird bereits von jemand "
+"anderem auf diesem Server verwendet!"
 
 #: ../src/gibbon-session.c:2105
 #, c-format
 msgid "Registration failure: %s"
-msgstr ""
+msgstr "Registrierung fehlgeschlagen: %s"
 
 #: ../src/svg-util.c:238 ../src/svg-util.c:997
 msgid "No error (this should not happen)!"
-msgstr ""
+msgstr "Kein Fehler (das sollte nicht passieren ...)!"
 
 #: ../src/svg-util.c:240 ../src/svg-util.c:999
 msgid "Out of memory!"
-msgstr ""
+msgstr "Virtueller Speicher erschöpft!"
 
 #: ../src/svg-util.c:242 ../src/svg-util.c:1001
 msgid "Input/output error!"
-msgstr ""
+msgstr "Ein-/Ausgabefehler!"
 
 #: ../src/svg-util.c:244 ../src/svg-util.c:1003
 msgid "File not found!"
-msgstr ""
+msgstr "Datei nicht gefunden!"
 
 #: ../src/svg-util.c:246 ../src/svg-util.c:1005
 msgid "Invalid value!"
-msgstr ""
+msgstr "Fehlerhafter Wert!"
 
 #: ../src/svg-util.c:248 ../src/svg-util.c:1007
 msgid "Invalid call!"
-msgstr ""
+msgstr "Fehlerhafter Aufruf!"
 
 #: ../src/svg-util.c:250 ../src/svg-util.c:1009
 msgid "Parse error!"
-msgstr ""
+msgstr "Parsefehler!"
 
 #: ../src/svg-util.c:253 ../src/svg-util.c:1012
 msgid "Unknown error!"
-msgstr ""
+msgstr "Unbekannter Fehler!"
 
 #: ../src/svg-util.c:276
 #, c-format
 msgid "Error creating libsvg-cairo context: %s\n"
-msgstr ""
+msgstr "Fehler bei der Erzeugung des libsvg-cairo-Kontexts: %s\n"
 
 #: ../src/svg-util.c:285
 #, c-format
 msgid "Error initializing SVG parser: %s\n"
-msgstr ""
+msgstr "Fehler bei der Initialisierung des SVG-Parsers: %s\n"
 
 #: ../src/svg-util.c:301 ../src/svg-util.c:357
-#, fuzzy, c-format
+#, c-format
 msgid "Error parsing SVG file `%s': %s\n"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
+msgstr "Fehler beim Parsen der SVG-Datei „%s“: %s.\n"
 
 #: ../src/svg-util.c:327
-#, fuzzy, c-format
+#, c-format
 msgid "Error getting SVG dimensions of `%s': %s.\n"
-msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
-
-#~ msgid "Gtk+ frontend for the First Internet Backgammon Server FIBS"
-#~ msgstr "Gtk+-Frontend für den First Internet Backgammon Server FIBS"
-
-#, fuzzy
-#~ msgid "Error receiving data from server: %s."
-#~ msgstr "Fehler beim Empfangen von Daten vom Server: %s.\n"
-
-#~ msgid "Error resolving address for %s: %s.\n"
-#~ msgstr "Fehler beim Auflösen der Adresse für %s: %s.\n"
-
-#~ msgid "FILENAME"
-#~ msgstr "DATEINAME"
-
-#~ msgid "Invalid port `%s': %s."
-#~ msgstr "Ungültiger Port »%s«: %s."
-
-#~ msgid "Invalid port number '%s'."
-#~ msgstr "Ungültige Portnummer »%s«."
-
-#~ msgid "You have to specify your user name (login)."
-#~ msgstr "Kein Benutzername (Login) angegeben."
-
-#~ msgid "Guest login is not supported."
-#~ msgstr "Gastlogin wird nicht unterstützt."
-
-#~ msgid "You have to specify a password."
-#~ msgstr "Kein Passwort angegeben."
-
-#~ msgid "Internal error: Cannot find widget `%s'!\n"
-#~ msgstr "Interner Fehler: Widget »%s« nicht gefunden!\n"
-
-#~ msgid "Resolving address for %s."
-#~ msgstr "Adresse für %s wird aufgelöst."
-
-#, fuzzy
-#~ msgid "Log in as %s on %s, port %u."
-#~ msgstr "Verbinde als %s mit Port %u auf %s."
-
-#~ msgid "Get new account on fibs.com"
-#~ msgstr "Neues Konto auf fibs.com einrichten"
-
-#~ msgid ""
-#~ "Kibitz\n"
-#~ "Say\n"
-#~ "Whisper"
-#~ msgstr ""
-#~ "Kibitzen\n"
-#~ "Sagen\n"
-#~ "Flüstern"
-
-#~ msgid "_Connect"
-#~ msgstr "_Verbinden"
-
-#~ msgid "fibs.com"
-#~ msgstr "fibs.com"
-
-#~ msgid "Saint Helena"
-#~ msgstr "St. Helena"
-
-#~ msgid "Korea, Republic of"
-#~ msgstr "Korea, Republik (Südkorea)"
-
-#~ msgid "Lao People's Democratic Republic"
-#~ msgstr "Laos, Demokratische Volksrepublik"
-
-#~ msgid "Virgin Islands, British"
-#~ msgstr "Britische Jungferninseln"
-
-#~ msgid "Cote D'Ivoire"
-#~ msgstr "Elfenbeinküste"
-
-#~ msgid "Micronesia, Federated States of"
-#~ msgstr "Mikronesien"
-
-#~ msgid "Russian Federation"
-#~ msgstr "Russische Föderation"
-
-#~ msgid "Iran, Islamic Republic of"
-#~ msgstr "Iran, Islamische Republik"
-
-#~ msgid "Moldova, Republic of"
-#~ msgstr "Moldawien"
-
-#~ msgid "Holy See (Vatican City State)"
-#~ msgstr "Vatikanstadt"
-
-#~ msgid "Korea, Democratic People's Republic of"
-#~ msgstr "Korea, Demokratische Volksrepublik (Nordkorea)"
-
-#~ msgid "Libyan Arab Jamahiriya"
-#~ msgstr "Libysch-Arabische Dschamahirija (Libyen)"
+msgstr "Fehler bei der Ermittlung der SVG-Dimension von „%s“: %s.\n"
