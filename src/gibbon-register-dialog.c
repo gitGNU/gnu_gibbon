@@ -296,26 +296,6 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
         GtkWidget *dialog;
         gint response;
 
-        hostname = gtk_entry_get_text (GTK_ENTRY (self->priv->server_entry));
-        if (!hostname || !*hostname) {
-                gibbon_app_display_error (self->priv->app,
-                                          _("You must specify a server name."
-                                          " In doubt try `fibs.com'."));
-                return FALSE;
-        }
-
-        variant = g_settings_get_value (self->priv->settings,
-                                        GIBBON_PREFS_SERVER_PORT);
-        port = g_variant_get_uint16 (variant);
-        g_variant_unref (variant);
-        if (!port) {
-                gibbon_app_display_error (self->priv->app,
-                                         _("Invalid port number!"
-                                           " In doubt try the default"
-                                           " port number 4321."));
-                return FALSE;
-        }
-
         login = gtk_entry_get_text (GTK_ENTRY (self->priv->login_entry));
         if (!login || !*login) {
                 gibbon_app_display_error (self->priv->app,
@@ -367,6 +347,27 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
         if (g_strcmp0 (password, password2)) {
                 gibbon_app_display_error (self->priv->app,
                                           _("Passwords do not match!"));
+                return FALSE;
+        }
+
+        variant = g_settings_get_value (self->priv->settings,
+                                        GIBBON_PREFS_SERVER_PORT);
+        port = g_variant_get_uint16 (variant);
+        g_variant_unref (variant);
+
+        hostname = gtk_entry_get_text (GTK_ENTRY (self->priv->server_entry));
+        if (!hostname || !*hostname) {
+                gibbon_app_display_error (self->priv->app,
+                                          _("You must specify a server name."
+                                          " In doubt try `fibs.com'."));
+                return FALSE;
+        }
+
+        if (!port) {
+                gibbon_app_display_error (self->priv->app,
+                                         _("Invalid port number!"
+                                           " In doubt try the default"
+                                           " port number 4321."));
                 return FALSE;
         }
 
