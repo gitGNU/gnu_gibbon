@@ -65,6 +65,8 @@ const gchar *gibbon_connection_get_login (const GibbonConnection *connection);
 void gibbon_connection_queue_command (GibbonConnection *connection,
                                       gboolean is_manual,
                                       const gchar *command, ...);
+void gibbon_connection_send_password (GibbonConnection *connection,
+                                      gboolean display);
 struct _GibbonSession *gibbon_connection_get_session (const GibbonConnection
                                                       *self);
 G_END_DECLS

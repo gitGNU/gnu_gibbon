@@ -56,6 +56,7 @@ GibbonSession *gibbon_session_new (GibbonApp *app,
 gint gibbon_session_process_server_line (GibbonSession *self,
                                          const gchar *line);
 void gibbon_session_handle_prompt (GibbonSession *self);
+void gibbon_session_handle_pw_prompt (GibbonSession *self);
 void gibbon_session_configure_player_menu (const GibbonSession *self,
                                            const gchar *player,
                                            GtkMenu *menu);

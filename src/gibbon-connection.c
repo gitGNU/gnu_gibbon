@@ -67,8 +67,8 @@ struct _GibbonConnectionPrivate {
         
         gchar *error;
         
-#define GIBBON_CONNECTION_CHUNK_SIZE 4096
-        gchar read_buf[GIBBON_CONNECTION_CHUNK_SIZE];
+#define GIBBON_CONNECTION_CHUNK_SIZE 8192
+        guchar read_buf[GIBBON_CONNECTION_CHUNK_SIZE];
         gchar *in_buffer;
         GList *out_queue;
         gboolean out_ready;
@@ -358,6 +358,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonServerConsole *console;
         GibbonSession *session;
         GibbonApp *app;
+        gsize offset;
 
         if (!self || !GIBBON_IS_CONNECTION (self))
                 return;
@@ -387,10 +388,24 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         /* The input fifo is not exactly efficient.  */
         head = self->priv->in_buffer;
         self->priv->read_buf[bytes_read] = 0;
-        self->priv->in_buffer = g_strconcat (head, self->priv->read_buf, NULL);
+
+        /*
+         * FIBS sends telnet sequences for turning echoing on and off.
+         */
+        if (self->priv->read_buf[0] == 255
+            && (self->priv->read_buf[1] == 251
+                || self->priv->read_buf[1] == 252)
+            && self->priv->read_buf[2] == 1) {
+                offset = 3;
+        } else {
+                offset = 0;
+        }
+        self->priv->in_buffer = g_strconcat (head,
+                                             self->priv->read_buf + offset,
+                                             NULL);
         g_free (head);
-        
-#ifndef HAVE_INDEX
+
+        #ifndef HAVE_INDEX
 #define index(str, c) memchr (str, c, strlen (str))
 #endif
 
@@ -448,6 +463,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                 }
                 ptr = line_end + 1;
         }
+
         if (ptr != self->priv->in_buffer) {
                 head = self->priv->in_buffer;
                 self->priv->in_buffer = g_strdup (ptr);
@@ -509,7 +525,25 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                         gibbon_server_console_print_raw (console,
                                                          self->priv->in_buffer);
                         self->priv->out_ready = TRUE;
+                        g_free (self->priv->in_buffer);
+                        self->priv->in_buffer = g_strdup ("");
                         gibbon_session_handle_prompt (self->priv->session);
+                } else if (0 == g_strcmp0 ("Please give your password: ",
+                                           self->priv->in_buffer)) {
+                        gibbon_server_console_print_raw (console,
+                                                         self->priv->in_buffer);
+                        self->priv->out_ready = TRUE;
+                        g_free (self->priv->in_buffer);
+                        self->priv->in_buffer = g_strdup ("");
+                        gibbon_session_handle_pw_prompt (self->priv->session);
+                } else if (0 == g_strcmp0 ("Please retype your password: ",
+                                           self->priv->in_buffer)) {
+                        gibbon_server_console_print_raw (console,
+                                                         self->priv->in_buffer);
+                        self->priv->out_ready = TRUE;
+                        g_free (self->priv->in_buffer);
+                        self->priv->in_buffer = g_strdup ("");
+                        gibbon_session_handle_pw_prompt (self->priv->session);
                 }
         }
 
@@ -733,4 +767,20 @@ gibbon_connection_get_session (const GibbonConnection *self)
         g_return_val_if_fail (GIBBON_IS_CONNECTION (self), NULL);
 
         return self->priv->session;
+}
+
+void
+gibbon_connection_send_password (GibbonConnection *self,
+                                 gboolean display)
+{
+        GibbonServerConsole *console;
+
+        g_return_if_fail (GIBBON_IS_CONNECTION (self));
+
+        gibbon_connection_queue_command (self, FALSE, "%s",
+                                         self->priv->password);
+        if (display) {
+                console = gibbon_app_get_server_console (self->priv->app);
+                gibbon_server_console_print_login (console, "********");
+        }
 }
