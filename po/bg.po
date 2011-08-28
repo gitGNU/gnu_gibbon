@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido@imperia.net>\n"
 "POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-28 01:03+0300\n"
+"PO-Revision-Date: 2011-08-28 01:06+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
@@ -1044,7 +1044,6 @@ msgstr "Кокосови (Кийлинг) острови"
 
 #. cd
 #: ../src/gibbon-country.c:842
-#, fuzzy
 msgid "Democratic Republic of the Congo"
 msgstr "Демократична Република Конго"
 
@@ -1337,7 +1336,6 @@ msgstr "Хонг-Конг О.А.Р. на Китай"
 
 #. hm
 #: ../src/gibbon-country.c:1120
-#, fuzzy
 msgid "Heard Island and Mcdonald Islands"
 msgstr "Остров Хърд и Острови Макдоналд"
 
