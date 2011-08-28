@@ -732,7 +732,6 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
         }
 
         dir = g_dir_open (server_directory, 0, NULL);
-        g_free (buf);
 
         if (!dir)
                 return NULL;
