@@ -527,7 +527,7 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
                                                         ctx->error,
                                                         GSGF_ERROR,
                                                         GSGF_ERROR_SYNTAX,
-                                                        _("%d:%d:Illegal binary character '#%d'"),
+                                                        _("%d:%d: Illegal binary character '#%d'"),
                                                         ctx->start_lineno,
                                                         ctx->start_colno, c);
                                 else
@@ -535,7 +535,7 @@ static gint gsgf_yylex(GSGFParserContext *ctx, GString **value)
                                                         ctx->error,
                                                         GSGF_ERROR,
                                                         GSGF_ERROR_SYNTAX,
-                                                        _("%d:%d:Illegal character '%c'"),
+                                                        _("%d:%d: Illegal character '%c'"),
                                                         ctx->start_lineno,
                                                         ctx->start_colno, c);
                                 return -1;
