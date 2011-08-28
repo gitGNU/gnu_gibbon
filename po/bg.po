@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
-"Report-Msgid-Bugs-To: Guido Flohr <guido@imperia.net>\n"
-"POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-28 01:06+0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-28 23:00+0300\n"
+"PO-Revision-Date: 2011-08-28 22:52+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
@@ -259,7 +259,7 @@ msgstr ""
 msgid "User name and password"
 msgstr "Потребителско име и парола"
 
-#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
+#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1914
 msgid "Watch"
 msgstr "Кибичене"
 
@@ -330,13 +330,13 @@ msgid "Empty SGF collections are not allowed"
 msgstr "Празни SGF колекции не се позволяват"
 
 #: ../libgsgf/gsgf-collection.c:530
-#, c-format
-msgid "%d:%d:Illegal binary character '#%d'"
+#, fuzzy, c-format
+msgid "%d:%d: Illegal binary character '#%d'"
 msgstr "%d:%d: Невалиден двойчен знак „#%d“"
 
 #: ../libgsgf/gsgf-collection.c:538
-#, c-format
-msgid "%d:%d:Illegal character '%c'"
+#, fuzzy, c-format
+msgid "%d:%d: Illegal character '%c'"
 msgstr "%d:%d: Невалиден знак „%c“"
 
 #: ../libgsgf/gsgf-collection.c:665
@@ -467,52 +467,52 @@ msgstr "Неправилно число „%s“: %s"
 #: ../libgsgf/gsgf-flavor.c:1284
 #, c-format
 msgid "Negativ number not allowed: %lld"
-msgstr ""
+msgstr "не е разрешено отрицателно число: %lld"
 
 #: ../libgsgf/gsgf-flavor.c:1291
 #, c-format
 msgid "Expected colon after number in '%s'"
-msgstr ""
+msgstr "Очаква се двоеточие след число в „%s“"
 
 #: ../libgsgf/gsgf-flavor.c:1408 ../libgsgf/gsgf-flavor.c:1414
 #, c-format
 msgid "Only one move property (B or W) in node allowed"
-msgstr ""
+msgstr "Само едно свойство („B“ или „W“) позволено въз възел"
 
 #: ../libgsgf/gsgf-flavor.c:1438
 #, c-format
 msgid "List of stones must not be empty"
-msgstr ""
+msgstr "Списък на пулове не трябва да бъде празен"
 
 #: ../libgsgf/gsgf-flavor.c:1468
 #, c-format
 msgid "List of points must not be empty"
-msgstr ""
+msgstr "Списък на точки не трябва да бъде празен"
 
 #: ../libgsgf/gsgf-flavor.c:1534
 #, c-format
 msgid "List of point pairs must not be empty"
-msgstr ""
+msgstr "Списък на двойки от точки не трябва де бъде празен"
 
 #: ../libgsgf/gsgf-flavor.c:1556 ../libgsgf/gsgf-flavor.c:1686
 #, c-format
 msgid "No end point"
-msgstr ""
+msgstr "Няма крайна точка"
 
 #: ../libgsgf/gsgf-flavor.c:1591
 #, c-format
 msgid "Start and end point must differ"
-msgstr ""
+msgstr "Началната и крайната точка трябва да бъдат различни"
 
 #: ../libgsgf/gsgf-flavor.c:1607
 #, c-format
 msgid "Lines and arrows must be unique"
-msgstr ""
+msgstr "Редове и стрелки трябва да бъдат уникални"
 
 #: ../libgsgf/gsgf-flavor.c:1625
 #, c-format
 msgid "Invalid points in property"
-msgstr ""
+msgstr "Невалидни точки в свойство"
 
 #: ../libgsgf/gsgf-flavor.c:1664
 #, c-format
@@ -667,12 +667,12 @@ msgstr ""
 msgid "No user name given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:330
+#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:309
 #, c-format
 msgid "The login `%s' is reserved!"
 msgstr "Името „%s“ е запазен!"
 
-#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:315
+#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:390
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr ""
 
@@ -799,15 +799,15 @@ msgstr "Затваряне на подпрозореца"
 msgid "Really close?"
 msgstr ""
 
-#: ../src/gibbon-connection.c:382
+#: ../src/gibbon-connection.c:383
 msgid "End-of-file while receiving data from server."
 msgstr ""
 
-#: ../src/gibbon-connection.c:500
+#: ../src/gibbon-connection.c:516
 msgid "Authentication failed."
 msgstr "Удостоверяването се провали."
 
-#: ../src/gibbon-connection.c:622
+#: ../src/gibbon-connection.c:656
 #, c-format
 msgid "Error connecting to `%s' port %u: %s.\n"
 msgstr ""
@@ -2416,139 +2416,160 @@ msgstr "Повторете парола"
 msgid "Register New Account"
 msgstr "Регистриране на нов акаунт за Gadu-Gadu"
 
-#: ../src/gibbon-register-dialog.c:304
-#, fuzzy
-msgid "You must specify a server name. In doubt try `fibs.com'."
-msgstr "Трябва да зададете шаблон и команда"
-
-#: ../src/gibbon-register-dialog.c:324
+#: ../src/gibbon-register-dialog.c:303
 #, fuzzy
 msgid "You must specify a user name!"
 msgstr "Трябва да укажете име на файла."
 
-#: ../src/gibbon-register-dialog.c:337
+#: ../src/gibbon-register-dialog.c:317
 #, fuzzy
 msgid "Your user name may not be longer than 20 characters!"
 msgstr "Името на филтъра не може да съдържа знака „:“"
 
-#: ../src/gibbon-register-dialog.c:349
+#: ../src/gibbon-register-dialog.c:322
+#, fuzzy
+msgid "Your user name must have at least 3 characters!"
+msgstr "Името на филтъра не може да съдържа знака „:“"
+
+#: ../src/gibbon-register-dialog.c:334
 msgid ""
 "Your user name may only contain characters from A to Z, a to z, or the "
 "underscore ('_')!"
 msgstr ""
 
-#: ../src/gibbon-register-dialog.c:358
+#: ../src/gibbon-register-dialog.c:343
 #, fuzzy
 msgid "You must specify a password!"
 msgstr "Трябва да зададете шаблон"
 
-#: ../src/gibbon-register-dialog.c:365
+#: ../src/gibbon-register-dialog.c:350
+#, fuzzy
+msgid "Your password must have at least 4 characters!"
+msgstr "Името на филтъра не може да съдържа знака „:“"
+
+#: ../src/gibbon-register-dialog.c:357
+msgid "Your password must not contain a colon (`:')!"
+msgstr ""
+
+#: ../src/gibbon-register-dialog.c:366
 #, fuzzy
 msgid "Please repeat the password!"
 msgstr "Въведете паролата за сървъра-посредник"
 
-#: ../src/gibbon-register-dialog.c:371
+#: ../src/gibbon-register-dialog.c:372
 #, fuzzy
 msgid "Passwords do not match!"
 msgstr "Паролите не съвпадат."
 
-#: ../src/gibbon-register-dialog.c:380
+#: ../src/gibbon-register-dialog.c:379
+#, fuzzy
+msgid "You must specify a server name. In doubt try `fibs.com'."
+msgstr "Трябва да зададете шаблон и команда"
+
+#: ../src/gibbon-register-dialog.c:401
 #, fuzzy, c-format
 msgid "You already have an account on that server:\n"
 msgid_plural "You alreaday have %llu accounts on that server:\n"
 msgstr[0] "Създаване на нова регистрация на сървъра"
 
-#: ../src/gibbon-register-dialog.c:399
+#: ../src/gibbon-register-dialog.c:420
 msgid ""
 "It is not allowed to have more than one account per person.  Register anyway?"
 msgstr ""
 
-#: ../src/gibbon-session.c:517
+#: ../src/gibbon-session.c:529
 #, fuzzy, c-format
 msgid "Last login on `%s' from `%s'."
 msgstr "Неуспех при възстановяване на „%s“ от „%s“: %s"
 
-#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:713
-#: ../src/gibbon-session.c:718
+#: ../src/gibbon-session.c:717 ../src/gibbon-session.c:725
+#: ../src/gibbon-session.c:730
 #, c-format
 msgid "%s logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:759
+#: ../src/gibbon-session.c:771
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr ""
 
-#: ../src/gibbon-session.c:774
+#: ../src/gibbon-session.c:786
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr ""
 
-#: ../src/gibbon-session.c:790
+#: ../src/gibbon-session.c:802
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1132
+#: ../src/gibbon-session.c:1144
 msgid "Crawford game"
 msgstr ""
 
-#: ../src/gibbon-session.c:1346
+#: ../src/gibbon-session.c:1358
 #, c-format
 msgid "You roll %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1353 ../src/gibbon-session.c:1360
+#: ../src/gibbon-session.c:1365 ../src/gibbon-session.c:1372
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1432
+#: ../src/gibbon-session.c:1431 ../src/gibbon-session.c:1444
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:1426
+#: ../src/gibbon-session.c:1438
 #, c-format
 msgid "%d%d: You move %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:1458
+#: ../src/gibbon-session.c:1470
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:1820
+#: ../src/gibbon-session.c:1832
 #, fuzzy, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr "Потребителят отказа заявката за подписване"
 
-#: ../src/gibbon-session.c:1899
+#: ../src/gibbon-session.c:1911
 msgid "Stop watching"
 msgstr ""
 
-#: ../src/gibbon-session.c:2000
+#: ../src/gibbon-session.c:2012
 msgid "Timeout during during registration!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2035
+#: ../src/gibbon-session.c:2047 ../src/gibbon-session.c:2095
 msgid "Unexpected reply from server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2046
+#: ../src/gibbon-session.c:2058 ../src/gibbon-session.c:2110
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2099
+#: ../src/gibbon-session.c:2154
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2105
+#: ../src/gibbon-session.c:2160
 #, c-format
-msgid "Registration failure: %s"
+msgid "Registration failure (state %d): %s"
+msgstr ""
+
+#: ../src/gibbon-session.c:2195
+msgid ""
+"Registration successful! Please do not forget your password! It cannot be "
+"recovered.\n"
+"You have to connect to the server again to start playing."
 msgstr ""
 
 #: ../src/svg-util.c:238 ../src/svg-util.c:997
