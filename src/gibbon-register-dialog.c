@@ -295,6 +295,7 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
         GtkWidget *window;
         GtkWidget *dialog;
         gint response;
+        guint64 length;
 
         login = gtk_entry_get_text (GTK_ENTRY (self->priv->login_entry));
         if (!login || !*login) {
@@ -310,10 +311,16 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
                 return FALSE;
         }
 
-        if (20 < strlen (login)) {
+        length = strlen (login);
+        if (20 < length) {
                 gibbon_app_display_error (self->priv->app,
                                           _("Your user name may not be longer"
                                             " than 20 characters!"));
+                return FALSE;
+        } else if (3 > length) {
+                gibbon_app_display_error (self->priv->app,
+                                          _("Your user name must have at least"
+                                            " 3 characters!"));
                 return FALSE;
         }
         for (i = 0; i < 20; ++i) {
@@ -337,6 +344,22 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
                 return FALSE;
         }
 
+        length = strlen (password);
+        if (4 > length) {
+                gibbon_app_display_error (self->priv->app,
+                                          _("Your password must have at least"
+                                            " 4 characters!"));
+                return FALSE;
+        }
+        for (i = 0; i < length; ++i) {
+                if (password[i] == ':') {
+                        gibbon_app_display_error (self->priv->app, "%s",
+                                                  _("Your password must not"
+                                                    " contain a colon (`:')!"));
+                        return FALSE;
+                }
+        }
+
         password2 = gtk_entry_get_text (GTK_ENTRY (self->priv->password_entry2));
         if (!password2 || !*password2) {
                 gibbon_app_display_error (self->priv->app,
@@ -350,11 +373,6 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
                 return FALSE;
         }
 
-        variant = g_settings_get_value (self->priv->settings,
-                                        GIBBON_PREFS_SERVER_PORT);
-        port = g_variant_get_uint16 (variant);
-        g_variant_unref (variant);
-
         hostname = gtk_entry_get_text (GTK_ENTRY (self->priv->server_entry));
         if (!hostname || !*hostname) {
                 gibbon_app_display_error (self->priv->app,
@@ -363,6 +381,10 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
                 return FALSE;
         }
 
+        variant = g_settings_get_value (self->priv->settings,
+                                        GIBBON_PREFS_SERVER_PORT);
+        port = g_variant_get_uint16 (variant);
+        g_variant_unref (variant);
         if (!port) {
                 gibbon_app_display_error (self->priv->app,
                                          _("Invalid port number!"
