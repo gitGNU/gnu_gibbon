@@ -92,26 +92,26 @@ struct _GibbonAppPrivate {
 
 G_DEFINE_TYPE (GibbonApp, gibbon_app, G_TYPE_OBJECT)
 
-static GtkBuilder *gibbon_app_get_builder(GibbonApp *self, const gchar *path);
-static GibbonCairoboard *gibbon_app_init_board(GibbonApp *self,
-                                               const gchar *board_filename);
-static void gibbon_app_connect_signals(const GibbonApp *self);
+static GtkBuilder *gibbon_app_get_builder (GibbonApp *self, const gchar *path);
+static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
+                                                const gchar *board_filename);
+static void gibbon_app_connect_signals (const GibbonApp *self);
 
 /* Signal handlers.  */
-static void gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter);
-static void gibbon_app_on_register_request(GibbonApp *self);
-static void gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter);
-static void gibbon_app_on_connecting(GibbonApp *self,
+static void gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter);
+static void gibbon_app_on_register_request (GibbonApp *self);
+static void gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter);
+static void gibbon_app_on_connecting (GibbonApp *self,
+                                      GibbonConnection *connection);
+static void gibbon_app_on_connected (GibbonApp *self,
                                      GibbonConnection *connection);
-static void gibbon_app_on_connected(GibbonApp *self,
-                                    GibbonConnection *connection);
-static void gibbon_app_on_logged_in(GibbonApp *self,
-                                    GibbonConnection *connection);
-static void
-                gibbon_app_on_network_error(GibbonApp *self,
-                                            const gchar *error_msg);
-static void gibbon_app_on_account_prefs(GibbonApp *self);
-static void gibbon_app_set_icon(const GibbonApp *self, const gchar *directory);
+static void gibbon_app_on_logged_in (GibbonApp *self,
+                                     GibbonConnection *connection);
+static void gibbon_app_on_network_error (GibbonApp *self,
+                                         const gchar *error_msg);
+static void gibbon_app_on_account_prefs (GibbonApp *self);
+static void gibbon_app_on_toggle_ready (GibbonApp *self);
+static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -472,6 +472,12 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_app_disconnect),
                         (gpointer) self);
 
+        obj = gibbon_app_find_object(self, "toolbar-ready-button",
+                        GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_toggle_ready),
+                                  (gpointer) self);
+
         obj = gibbon_app_find_object(self, "window", GTK_TYPE_WINDOW);
         g_signal_connect_swapped (obj, "destroy",
                         G_CALLBACK (gibbon_app_on_quit_request),
@@ -736,7 +742,7 @@ gibbon_app_set_state_disconnected(GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
         gtk_widget_set_visible(GTK_WIDGET (obj), FALSE);
 
-        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+        obj = gibbon_app_find_object(self, "toolbar-ready-button",
                         GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
@@ -775,7 +781,7 @@ gibbon_app_set_state_connecting(GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         gtk_widget_set_visible(GTK_WIDGET (obj), TRUE);
 
-        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+        obj = gibbon_app_find_object(self, "toolbar-ready-button",
                         GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
@@ -915,7 +921,7 @@ static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
         gtk_editable_set_editable(GTK_EDITABLE (obj), TRUE);
 
-        obj = gibbon_app_find_object(self, "toolbar_ready_button",
+        obj = gibbon_app_find_object(self, "toolbar-ready-button",
                         GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 
@@ -1158,4 +1164,61 @@ gibbon_app_get_client_icons(const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->client_icons;
+}
+
+void
+gibbon_app_set_state_available (const GibbonApp *self)
+{
+        GtkWidget *ready_button;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+
+        ready_button = gibbon_app_find_widget (self, "toolbar-ready-button",
+                                               GTK_TYPE_TOOL_BUTTON);
+
+        gtk_tool_button_set_label (GTK_TOOL_BUTTON (ready_button), _("Ready"));
+        gtk_tool_button_set_stock_id (GTK_TOOL_BUTTON (ready_button),
+                                      GTK_STOCK_YES);
+        gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (ready_button),
+                                        _("Click to set yourself busy."));
+}
+
+void
+gibbon_app_set_state_busy (const GibbonApp *self)
+{
+        GtkWidget *ready_button;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+
+        ready_button = gibbon_app_find_widget (self, "toolbar-ready-button",
+                                               GTK_TYPE_TOOL_BUTTON);
+
+        gtk_tool_button_set_label (GTK_TOOL_BUTTON (ready_button), _("Busy"));
+        gtk_tool_button_set_stock_id (GTK_TOOL_BUTTON (ready_button),
+                                      GTK_STOCK_STOP);
+        gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (ready_button),
+                                        _("Click to set yourself ready to"
+                                          " play."));
+}
+
+static void
+gibbon_app_on_toggle_ready (GibbonApp *self)
+{
+        GtkWidget *button;
+        const gchar *stock_id;
+        GibbonSession *session;
+
+        session = gibbon_connection_get_session (self->priv->connection);
+        g_return_if_fail (GIBBON_IS_SESSION (session));
+
+        button = gibbon_app_find_widget (self, "toolbar-ready-button",
+                                         GTK_TYPE_TOOL_BUTTON);
+        stock_id = gtk_tool_button_get_stock_id (GTK_TOOL_BUTTON (button));
+        if (0 == g_strcmp0 (GTK_STOCK_YES, stock_id)) {
+                gibbon_app_set_state_busy (self);
+                gibbon_session_set_available (session, FALSE);
+        } else {
+                gibbon_app_set_state_available (self);
+                gibbon_session_set_available (session, TRUE);
+        }
 }

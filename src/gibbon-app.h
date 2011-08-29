@@ -82,6 +82,8 @@ void gibbon_app_display_info (const GibbonApp *self,
                               const gchar *message_format, ...);
 GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,
                                  GType type);
+#define gibbon_app_find_widget(self, id, type) \
+        GTK_WIDGET (gibbon_app_find_object (self, id, type))
 GtkWidget *gibbon_app_get_window (const GibbonApp *self);
 const gchar *gibbon_app_get_pixmaps_directory (const GibbonApp *app);
 
@@ -115,6 +117,8 @@ void gibbon_app_show_game_chat (GibbonApp *self,
 void gibbon_app_configure_player_menu (const GibbonApp *self,
                                        const gchar *player,
                                        GtkMenu *menu);
+void gibbon_app_set_state_available (const GibbonApp *self);
+void gibbon_app_set_state_busy (const GibbonApp *self);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);

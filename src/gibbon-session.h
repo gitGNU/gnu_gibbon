@@ -66,6 +66,7 @@ const struct _GibbonSavedInfo *
 void gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
                                      GibbonSessionCallback callback,
                                      GObject *object, gpointer data);
+void gibbon_session_set_available (GibbonSession *self, gboolean available);
 
 G_END_DECLS
 

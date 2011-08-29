@@ -135,6 +135,7 @@ struct _GibbonSessionPrivate {
 
         gchar *watching;
         gchar *opponent;
+        gboolean available;
 
         /* This is the approved position.   It is the result of a "board"
          * message, or of a move, roll, or other game play action made.
@@ -179,6 +180,7 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->connection = NULL;
         self->priv->watching = NULL;
+        self->priv->available = FALSE;
         self->priv->opponent = NULL;
         self->priv->position = NULL;
         self->priv->player_list = NULL;
@@ -286,6 +288,11 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->connection = connection;
         self->priv->app = app;
 
+        if (self->priv->available) {
+                gibbon_app_set_state_available (app);
+        } else {
+                gibbon_app_set_state_busy (app);
+        }
         self->priv->player_list = gibbon_app_get_player_list (app);
         self->priv->inviter_list = gibbon_app_get_inviter_list (app);
 
@@ -1688,6 +1695,13 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                                                          TRUE,
                                                          "toggle notify");
                 }
+        } else if (0 == g_strcmp0 ("ready", key)) {
+                self->priv->available = value;
+                if (value) {
+                        gibbon_app_set_state_available (self->priv->app);
+                } else {
+                        gibbon_app_set_state_busy (self->priv->app);
+                }
         }
 
         return retval;
@@ -2199,4 +2213,26 @@ gibbon_session_registration_success (GibbonSession *self)
                                    "You have to connect to the server again to"
                                    " start playing."));
         gibbon_app_disconnect (self->priv->app);
+}
+
+void
+gibbon_session_set_available (GibbonSession *self, gboolean available)
+{
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        self->priv->available = available;
+
+        /*
+         * The toggle commands are a major nuisance on FIBS because they
+         * require to know the current state beforehand.  The protocol with
+         * FIBS being very dodgy this is an impossible task.  The right
+         * strategy would be to keep two variable for both toggles.  One
+         * - reliable - that stores the wanted state, and another one that
+         * stores the - presumably - real state.  And then, these two must
+         * be synchronized.
+         */
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "toggle ready");
+        self->priv->expect_toggles =
+                g_slist_prepend (self->priv->expect_toggles, "ready");
 }
