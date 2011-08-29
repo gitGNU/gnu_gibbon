@@ -526,7 +526,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         last_login_str = ctime (&last_login.tv_sec);
         last_login_str[strlen (last_login_str) - 1] = 0;
                 
-        reply = g_strdup_printf (_("Last login on `%s' from `%s'."),
+        reply = g_strdup_printf (_("Last login on %s from `%s'."),
                                    last_login_str, last_from);
         console = gibbon_app_get_server_console (self->priv->app);
         gibbon_server_console_print_info (console, reply);
