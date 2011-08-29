@@ -616,7 +616,6 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 return;
         default:
                 gtk_widget_destroy (GTK_WIDGET (dialog));
-                gibbon_app_on_register_request (self);
                 return;
         }
 
