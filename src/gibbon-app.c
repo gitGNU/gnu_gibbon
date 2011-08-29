@@ -1016,12 +1016,16 @@ gibbon_app_get_game_chat(const GibbonApp *self)
 static void gibbon_app_on_account_prefs(GibbonApp *self)
 {
         GibbonConnectionDialog *dialog;
+        guint response;
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
         dialog = gibbon_connection_dialog_new (self, TRUE);
-        gtk_dialog_run (GTK_DIALOG (dialog));
+        response = gtk_dialog_run (GTK_DIALOG (dialog));
         gtk_widget_destroy (GTK_WIDGET (dialog));
+
+        if (response == GIBBON_CONNECTION_DIALOG_RESPONSE_REGISTER)
+                gibbon_app_on_register_request (self);
 }
 
 void gibbon_app_start_chat(GibbonApp *self, const gchar *who)
