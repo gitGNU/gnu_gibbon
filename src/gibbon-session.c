@@ -1875,7 +1875,7 @@ gibbon_session_configure_player_menu (const GibbonSession *self,
         gboolean am_playing;
         GObject *item;
         gboolean sensitive;
-        gboolean is_occupied = FALSE;
+        gboolean is_available = TRUE;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
         g_return_if_fail (player != NULL);
@@ -1889,15 +1889,19 @@ gibbon_session_configure_player_menu (const GibbonSession *self,
 
         am_playing = self->priv->opponent && !self->priv->watching;
 
-        if (!is_self
+        /*
+         * The check for self->priv->ready prevents a gratuitous lookup
+         * of the other player's state.
+         */
+        if (!is_self && self->priv->available
             && !gibbon_player_list_get_available (self->priv->player_list,
                                                   player))
-                        is_occupied = TRUE;
+                        is_available = FALSE;
 
         item = gibbon_app_find_object (self->priv->app,
                                        "invite_player_menu_item",
                                        GTK_TYPE_MENU_ITEM);
-        if (is_self || am_playing || is_occupied)
+        if (is_self || am_playing || !self->priv->available || !is_available)
                 sensitive = FALSE;
         else
                 sensitive = TRUE;
