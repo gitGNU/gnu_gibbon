@@ -215,6 +215,8 @@ static gboolean gibbon_clip_extract_double (const gchar *str, gdouble *result,
                                             gdouble lower, gdouble upper);
 static gboolean gibbon_clip_chomp (gchar *str, gchar c);
 
+static gboolean gibbon_clip_toggle_ready (GSList **result, gboolean ready);
+
 GSList *
 gibbon_clip_parse (const gchar *line)
 {
@@ -1531,6 +1533,24 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                     && 0 == g_strcmp0 ("log", tokens[7])
                     && 0 == g_strcmp0 ("in.", tokens[8]))
                     return gibbon_clip_parse_toggle ("notify", TRUE, result);
+        } else if (0 == g_strcmp0 ("You're", tokens[1])) {
+                if (0 == g_strcmp0 ("now", tokens[2])
+                    && 0 == g_strcmp0 ("ready", tokens[3])
+                    && 0 == g_strcmp0 ("to", tokens[4])
+                    && 0 == g_strcmp0 ("invite", tokens[5])
+                    && 0 == g_strcmp0 ("or", tokens[6])
+                    && 0 == g_strcmp0 ("join", tokens[7])
+                    && 0 == g_strcmp0 ("someone.", tokens[8])) {
+                        return gibbon_clip_toggle_ready (result, TRUE);
+                }
+                if (0 == g_strcmp0 ("now", tokens[2])
+                    && 0 == g_strcmp0 ("refusing", tokens[3])
+                    && 0 == g_strcmp0 ("to", tokens[4])
+                    && 0 == g_strcmp0 ("play", tokens[5])
+                    && 0 == g_strcmp0 ("with", tokens[6])
+                    && 0 == g_strcmp0 ("someone.", tokens[7])) {
+                        return gibbon_clip_toggle_ready (result, FALSE);
+                }
         }
 
         if (0 == g_strcmp0 ("is", tokens[2])) {
@@ -2060,3 +2080,17 @@ gibbon_clip_get_double (GSList **list, enum GibbonClipType type,
 
         return TRUE;
 }
+
+static gboolean
+gibbon_clip_toggle_ready (GSList **result, gboolean ready)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_SHOW_TOGGLE);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
+                                            "ready");
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN,
+                                         ready);
+
+        return TRUE;
+}
+

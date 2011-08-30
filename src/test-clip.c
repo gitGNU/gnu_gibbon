@@ -935,6 +935,26 @@ struct test_case test_toggles13 = {
                 }
 };
 
+struct test_case test_toggles13a = {
+                "** You're now ready to invite or join someone.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "ready" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_toggles13b = {
+                "** You're now refusing to play with someone.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "ready" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_toggles14 = {
                 "report   NO",
                 {
@@ -1183,6 +1203,8 @@ struct test_case *test_cases[] = {
                 &test_toggles11,
                 &test_toggles12,
                 &test_toggles13,
+                &test_toggles13a,
+                &test_toggles13b,
                 &test_toggles14,
                 &test_toggles15,
                 &test_toggles16,
