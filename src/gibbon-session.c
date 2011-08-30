@@ -2222,15 +2222,6 @@ gibbon_session_set_available (GibbonSession *self, gboolean available)
 
         self->priv->available = available;
 
-        /*
-         * The toggle commands are a major nuisance on FIBS because they
-         * require to know the current state beforehand.  The protocol with
-         * FIBS being very dodgy this is an impossible task.  The right
-         * strategy would be to keep two variable for both toggles.  One
-         * - reliable - that stores the wanted state, and another one that
-         * stores the - presumably - real state.  And then, these two must
-         * be synchronized.
-         */
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "toggle ready");
         self->priv->expect_toggles =
