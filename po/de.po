@@ -2515,7 +2515,7 @@ msgstr ""
 #: ../src/gibbon-session.c:517
 #, c-format
 msgid "Last login on `%s' from `%s'."
-msgstr "Letztes Login auf „%s“ von „%s“."
+msgstr "Letztes Login am %s von „%s“ aus."
 
 #: ../src/gibbon-session.c:705 ../src/gibbon-session.c:713
 #: ../src/gibbon-session.c:718
