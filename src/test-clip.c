@@ -642,7 +642,7 @@ struct test_case test_between05 = {
 };
 
 struct test_case test_between06 = {
-                "** gflohr is already playing with someone else.",
+                "** Error: gflohr is already playing with someone else.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
@@ -666,13 +666,12 @@ struct test_case test_between07 = {
 };
 
 struct test_case test_between08 = {
-                "** gflohr didn't invite you.",
+                "** Error: can't find player gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_STRING,
-                                  "User `gflohr' is already playing with"
-                                  " someone else!"},
+                                  "Cannot find player `gflohr'!" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -680,7 +679,7 @@ struct test_case test_between08 = {
 struct test_case test_between09 = {
                 "** You can't play two games at once",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                   "You cannot play two matches at once!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
