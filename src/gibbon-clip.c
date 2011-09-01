@@ -1598,7 +1598,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[8]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_CODE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_STRING,
                                                     _("You cannot play two"
