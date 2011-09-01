@@ -48,6 +48,9 @@ struct _GibbonInviterListViewPrivate {
 
         GibbonSignal *tell_handler;
 
+        GtkTreeViewColumn *accept_column;
+        GtkTreeViewColumn *decline_column;
+
         GtkTreeViewColumn *client_column;
         GtkTreeViewColumn *reliability_column;
         GtkTreeViewColumn *country_column;
@@ -95,6 +98,9 @@ gibbon_inviter_list_view_init (GibbonInviterListView *self)
 
         self->priv->button_pressed_handler = NULL;
         self->priv->tell_handler = NULL;
+
+        self->priv->accept_column = NULL;
+        self->priv->decline_column = NULL;
 
         self->priv->reliability_column = NULL;
         self->priv->country_column = NULL;
@@ -165,19 +171,22 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                                                    "inviter-view",
                                                    GTK_TYPE_TREE_VIEW));
 
-        col = gtk_tree_view_column_new ();
-        gtk_tree_view_column_set_title (col, _("Decline"));
+        self->priv->decline_column = gtk_tree_view_column_new ();
+        gtk_tree_view_column_set_title (self->priv->decline_column,
+                                        _("Decline"));
         renderer = gtk_cell_renderer_pixbuf_new ();
-        gtk_tree_view_column_pack_start (col, renderer, TRUE);
+        gtk_tree_view_column_pack_start (self->priv->decline_column, renderer,
+                                         TRUE);
         g_object_set (G_OBJECT (renderer), "stock-id", "gtk-close", NULL);
-        gtk_tree_view_insert_column (view, col, -1);
+        gtk_tree_view_insert_column (view, self->priv->decline_column, -1);
 
-        col = gtk_tree_view_column_new ();
-        gtk_tree_view_column_set_title (col, _("Accept"));
+        self->priv->accept_column = gtk_tree_view_column_new ();
+        gtk_tree_view_column_set_title (self->priv->accept_column, _("Accept"));
         renderer = gtk_cell_renderer_pixbuf_new ();
-        gtk_tree_view_column_pack_start (col, renderer, TRUE);
+        gtk_tree_view_column_pack_start (self->priv->accept_column, renderer,
+                                         TRUE);
         g_object_set (G_OBJECT (renderer), "stock-id", "gtk-ok", NULL);
-        gtk_tree_view_insert_column (view, col, -1);
+        gtk_tree_view_insert_column (view, self->priv->accept_column, -1);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -314,14 +323,17 @@ print2digits (GtkTreeViewColumn *tree_column,
 
 static gboolean
 gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
-                                           GdkEventButton *event)
+                                            GdkEventButton *event)
 {
         GtkTreeSelection *selection;
         GtkTreePath *path;
         GtkTreeView *view;
         GObject *inviter_menu;
+        GibbonSession *session;
+        gchar *who;
 
-        if (event->type != GDK_BUTTON_PRESS  ||  event->button != 3)
+        if (event->type != GDK_BUTTON_PRESS
+            || !(event->button == 1 || event->button == 3))
                 return FALSE;
 
         view = self->priv->inviters_view;
@@ -336,15 +348,31 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
                 }
         }
 
-        inviter_menu = gibbon_app_find_object (self->priv->app, "inviter_menu",
-                                              GTK_TYPE_MENU);
+        if (event->button == 1) {
+                session = gibbon_app_get_session (self->priv->app);
+                who = gibbon_inviter_list_view_row_name (self);
+                if (event->x <= self->priv->decline_column->width) {
+                        gibbon_session_reply_to_invite (session, who, FALSE);
+                } else if (event->x <= self->priv->decline_column->width
+                                       + self->priv->accept_column->width) {
+                        gibbon_session_reply_to_invite (session, who, TRUE);
+                } else {
+                        g_free (who);
+                        return FALSE;
+                }
+                g_free (who);
+        } else {
+                inviter_menu = gibbon_app_find_object (self->priv->app,
+                                                       "inviter_menu",
+                                                       GTK_TYPE_MENU);
 
-        gtk_widget_show_all (GTK_WIDGET (inviter_menu));
+                gtk_widget_show_all (GTK_WIDGET (inviter_menu));
 
-        gtk_menu_popup (GTK_MENU (inviter_menu),
-                        NULL, NULL, NULL, NULL,
-                        (event != NULL) ? event->button : 0,
-                           gdk_event_get_time ((GdkEvent*) event));
+                gtk_menu_popup (GTK_MENU (inviter_menu),
+                                NULL, NULL, NULL, NULL,
+                                (event != NULL) ? event->button : 0,
+                                gdk_event_get_time ((GdkEvent*) event));
+        }
 
         return TRUE;
 }

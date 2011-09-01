@@ -2231,3 +2231,68 @@ gibbon_session_set_available (GibbonSession *self, gboolean available)
         self->priv->expect_toggles =
                 g_slist_prepend (self->priv->expect_toggles, "ready");
 }
+
+void
+gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
+                                gboolean reply)
+{
+        GtkWidget *dialog;
+        GtkWidget *window;
+        GtkWidget *entry;
+        GtkWidget *content_area;
+        gint response;
+        const gchar *message;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+        g_return_if_fail (who != NULL);
+        g_return_if_fail (*who);
+
+        gibbon_inviter_list_remove (self->priv->inviter_list, who);
+
+        if (reply) {
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "join %s", who);
+                return;
+        }
+
+        window = gibbon_app_get_window (self->priv->app);
+
+        dialog = gtk_dialog_new_with_buttons (_("Decline Invitation"),
+                                              GTK_WINDOW (window),
+                                              GTK_DIALOG_MODAL
+                                              | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                              _("Decline with message"),
+                                              GTK_RESPONSE_OK,
+                                              _("Ignore"),
+                                              GTK_RESPONSE_CANCEL,
+                                              NULL);
+        gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+                                         GTK_RESPONSE_OK);
+
+        /*
+         * TODO: We should store a list of recently sent decline messages and
+         * allow the user to select one.
+         */
+        entry = gtk_entry_new ();
+        gtk_entry_set_text (GTK_ENTRY (entry),
+                            _("Not now.  Thanks for the invitation!"));
+
+        content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+        gtk_box_pack_start (GTK_BOX (content_area),
+                            GTK_WIDGET (entry), TRUE, TRUE, 0);
+
+        gtk_widget_show_all (dialog);
+
+        response = gtk_dialog_run (GTK_DIALOG (dialog));
+        if (response == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy (dialog);
+                return;
+        }
+
+        message = gtk_entry_get_text (GTK_ENTRY (entry));
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "tellx %s %s", who, message);
+
+        gtk_widget_destroy (dialog);
+}
