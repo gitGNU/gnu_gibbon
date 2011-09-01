@@ -1642,6 +1642,27 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
                 return TRUE;
         }
 
+        if (0 == g_strcmp0 ("can't", tokens[2])
+            && 0 == g_strcmp0 ("find", tokens[3])
+            && 0 == g_strcmp0 ("player", tokens[4])
+            && tokens[5]
+            && !tokens[6]) {
+                msg = g_strdup_printf (_("Player `%s' is not logged in!"),
+                                       tokens[5]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[5]);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    msg);
+                g_free (msg);
+
+                return TRUE;
+        }
+
         return FALSE;
 }
 

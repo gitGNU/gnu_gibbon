@@ -100,6 +100,8 @@ static gint gibbon_session_handle_invitation (GibbonSession *self,
                                               GSList *iter);
 static gint gibbon_session_handle_youre_watching (GibbonSession *self,
                                                   GSList *iter);
+static gint gibbon_session_handle_invite_error (GibbonSession *self,
+                                                GSList *iter);
 static gint gibbon_session_handle_win_match (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_resume_match (GibbonSession *self,
                                                 GSList *iter);
@@ -445,6 +447,10 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_INVITE_SUCCESS:
                 /* Ignored.  */
                 retval = GIBBON_CLIP_CODE_INVITE_SUCCESS;
+                break;
+        case GIBBON_CLIP_CODE_INVITE_ERROR:
+                /* Ignored.  */
+                retval = gibbon_session_handle_invite_error (self, iter);
                 break;
         case GIBBON_CLIP_CODE_START_MATCH:
                 retval = GIBBON_CLIP_CODE_START_MATCH;
@@ -1237,7 +1243,24 @@ gibbon_session_handle_youre_watching (GibbonSession *self, GSList *iter)
         g_free (self->priv->opponent);
         self->priv->opponent = NULL;
 
-        return TRUE;
+        return GIBBON_CLIP_CODE_YOURE_WATCHING;
+}
+
+static gint
+gibbon_session_handle_invite_error (GibbonSession *self, GSList *iter)
+{
+        const gchar *player;
+        const gchar *message;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+                return -1;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &message))
+                return -1;
+
+        gibbon_inviter_list_remove (self->priv->inviter_list, player);
+        gibbon_app_display_error (self->priv->app, "%s", message);
+
+        return GIBBON_CLIP_CODE_INVITE_ERROR;
 }
 
 static gchar *

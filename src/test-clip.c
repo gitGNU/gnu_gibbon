@@ -671,7 +671,7 @@ struct test_case test_between08 = {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_STRING,
-                                  "Cannot find player `gflohr'!" },
+                                  "Player `gflohr' is not logged in!" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
