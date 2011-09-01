@@ -562,6 +562,25 @@ struct test_case test_moves06 = {
                 }
 };
 
+struct test_case test_game_start00 = {
+                "Starting a new game with gflohr.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "204" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_game_start01 = {
+                "You are now playing with gflohr."
+                " Your running match was loaded.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "204" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
@@ -587,6 +606,83 @@ struct test_case test_between02 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "302" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between03 = {
+                "** You are now playing a 5 point match with gflohr",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "303" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between04 = {
+                "** You are now playing an unlimited match with gflohr",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "303" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between05 = {
+                "** gflohr is refusing games.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "User `gflohr' is now refusing matches!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between06 = {
+                "** gflohr is already playing with someone else.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "User `gflohr' is already playing with"
+                                  " someone else!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between07 = {
+                "** gflohr didn't invite you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "User `gflohr' is already playing with"
+                                  " someone else!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between08 = {
+                "** gflohr didn't invite you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "User `gflohr' is already playing with"
+                                  " someone else!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between09 = {
+                "** You can't play two games at once",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "304" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "You cannot play two matches at once!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1121,10 +1217,21 @@ struct test_case test_address01 = {
 struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
-                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_UINT, "101" },
                                 { GIBBON_CLIP_TYPE_STRING, "http://foobar" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
         }
+};
+
+struct test_case test_error00 = {
+                "** ERROR: Saved match is corrupt. Please start another one.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                  "Your saved match was corrupted on server. "
+                                  " Please start a new one!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
 };
 
 struct test_case *test_cases[] = {
@@ -1163,10 +1270,19 @@ struct test_case *test_cases[] = {
                 &test_moves04,
                 &test_moves05,
                 &test_moves06,
+                &test_game_start00,
+                &test_game_start01,
 
                 &test_between00,
                 &test_between01,
                 &test_between02,
+                &test_between03,
+                &test_between04,
+                &test_between05,
+                &test_between06,
+                &test_between07,
+                &test_between08,
+                &test_between09,
 
                 &test_various00,
                 &test_various01,
@@ -1223,7 +1339,9 @@ struct test_case *test_cases[] = {
                 &test_saved08,
 
                 &test_address01,
-                &test_address02
+                &test_address02,
+
+                &test_error00,
 };
 
 static gboolean test_single_case (struct test_case *test_case);
