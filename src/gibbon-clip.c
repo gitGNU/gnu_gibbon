@@ -204,6 +204,9 @@ static gboolean gibbon_clip_parse_you (const gchar *line,
 static gboolean gibbon_clip_parse_2stars_you (const gchar *line,
                                               gchar **tokens,
                                               GSList **result);
+static gboolean gibbon_clip_parse_2stars_error (const gchar *line,
+                                                gchar **tokens,
+                                                GSList **result);
 static gboolean gibbon_clip_parse_start_game (const gchar *line,
                                               gchar **tokens,
                                               GSList **result);
@@ -1610,14 +1613,48 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
 }
 
 static gboolean
+gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
+                                GSList **result)
+{
+        gchar *msg;
+
+        if (tokens[2]
+            && 0 == g_strcmp0 ("is", tokens[3])
+            && 0 == g_strcmp0 ("already", tokens[4])
+            && 0 == g_strcmp0 ("playing", tokens[5])
+            && 0 == g_strcmp0 ("with", tokens[6])
+            && 0 == g_strcmp0 ("someone", tokens[7])
+            && 0 == g_strcmp0 ("else.", tokens[8])
+            && !tokens[9]) {
+                msg = g_strdup_printf (_("User `%s' is already playing with"
+                                         " someone else!"), tokens[2]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[2]);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    msg);
+                g_free (msg);
+
+                return TRUE;
+        }
+
+        return FALSE;
+}
+
+static gboolean
 gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                            GSList **result)
 {
         gchar *str;
 
-        if (0 == g_strcmp0 ("You", tokens[1])) {
+        if (0 == g_strcmp0 ("You", tokens[1]))
                 return gibbon_clip_parse_2stars_you (line, tokens, result);
-        }
+        else if (0 == g_strcmp0 ("Error:", tokens[1]))
+                return gibbon_clip_parse_2stars_error (line, tokens, result);
 
         if (0 == g_strcmp0 ("You'll", tokens[1])) {
                 if (0 == g_strcmp0 ("be", tokens[2])
