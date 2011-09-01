@@ -636,7 +636,7 @@ struct test_case test_between05 = {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_STRING,
-                                  "User `gflohr' is now refusing matches!"},
+                                  "Player `gflohr' is now refusing matches!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -647,7 +647,7 @@ struct test_case test_between06 = {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_STRING,
-                                  "User `gflohr' is already playing with"
+                                  "Player `gflohr' is already playing with"
                                   " someone else!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
@@ -659,7 +659,7 @@ struct test_case test_between07 = {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_STRING,
-                                  "User `gflohr' is already playing with"
+                                  "Player `gflohr' is already playing with"
                                   " someone else!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }

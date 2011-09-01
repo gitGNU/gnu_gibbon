@@ -1626,7 +1626,7 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
             && 0 == g_strcmp0 ("someone", tokens[7])
             && 0 == g_strcmp0 ("else.", tokens[8])
             && !tokens[9]) {
-                msg = g_strdup_printf (_("User `%s' is already playing with"
+                msg = g_strdup_printf (_("Player `%s' is already playing with"
                                          " someone else!"), tokens[2]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
@@ -1730,7 +1730,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
             && 0 == g_strcmp0 ("invite", tokens[3])
             && 0 == g_strcmp0 ("you.", tokens[4])
             && !tokens[5]) {
-                str = g_strdup_printf (_("User `%s' is already playing with"
+                str = g_strdup_printf (_("Player `%s' is already playing with"
                                          " someone else!"),
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
@@ -1753,7 +1753,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
             && 0 == g_strcmp0 ("someone", tokens[6])
             && 0 == g_strcmp0 ("else.", tokens[7])
             && !tokens[8]) {
-                str = g_strdup_printf (_("User `%s' is already playing with"
+                str = g_strdup_printf (_("Player `%s' is already playing with"
                                          " someone else!"),
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
@@ -1773,7 +1773,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
             && 0 == g_strcmp0 ("refusing", tokens[3])
             && 0 == g_strcmp0 ("games.", tokens[4])
             && !tokens[5]) {
-                str = g_strdup_printf (_("User `%s' is now refusing matches!"),
+                str = g_strdup_printf (_("Player `%s' is now refusing matches!"),
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
