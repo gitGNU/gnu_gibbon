@@ -429,8 +429,8 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_MOVES:
                 retval = gibbon_session_handle_moves (self, iter);
                 break;
-        /* Ignored.  */
         case GIBBON_CLIP_CODE_START_GAME:
+                /* Ignored.  */
                 retval = GIBBON_CLIP_CODE_START_GAME;
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
@@ -441,6 +441,10 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_YOURE_WATCHING:
                 retval = gibbon_session_handle_youre_watching (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_INVITE_SUCCESS:
+                /* Ignored.  */
+                retval = GIBBON_CLIP_CODE_INVITE_SUCCESS;
                 break;
         case GIBBON_CLIP_CODE_START_MATCH:
                 retval = GIBBON_CLIP_CODE_START_MATCH;
