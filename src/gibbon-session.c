@@ -449,7 +449,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = GIBBON_CLIP_CODE_INVITE_SUCCESS;
                 break;
         case GIBBON_CLIP_CODE_INVITE_ERROR:
-                /* Ignored.  */
                 retval = gibbon_session_handle_invite_error (self, iter);
                 break;
         case GIBBON_CLIP_CODE_START_MATCH:
@@ -1254,7 +1253,7 @@ gibbon_session_handle_invite_error (GibbonSession *self, GSList *iter)
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
                 return -1;
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &message))
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
                 return -1;
 
         gibbon_inviter_list_remove (self->priv->inviter_list, player);
