@@ -91,6 +91,7 @@ static gint gibbon_session_clip_you_say (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_error (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
@@ -412,6 +413,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_YOU_KIBITZ:
                 retval = gibbon_session_clip_you_kibitz (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ERROR:
+                retval = gibbon_session_handle_error (self, iter);
                 break;
         case GIBBON_CLIP_CODE_BOARD:
                 retval = gibbon_session_handle_board (self, iter);
@@ -1178,6 +1182,19 @@ bail_out_board:
         gibbon_position_free (pos);
 
         return retval;
+}
+
+static gboolean
+gibbon_session_handle_error (GibbonSession *self, GSList *iter)
+{
+        const gchar *message;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        gibbon_app_display_error (self->priv->app, "%s", message);
+
+        return GIBBON_CLIP_CODE_ERROR;
 }
 
 static gboolean
