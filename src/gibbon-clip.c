@@ -198,6 +198,15 @@ static gboolean gibbon_clip_parse_saved_count (const gchar *line,
 static gboolean gibbon_clip_parse_show_address (const gchar *line,
                                                 gchar **tokens,
                                                 GSList **result);
+static gboolean gibbon_clip_parse_you (const gchar *line,
+                                       gchar **tokens,
+                                       GSList **result);
+static gboolean gibbon_clip_parse_2stars_you (const gchar *line,
+                                              gchar **tokens,
+                                              GSList **result);
+static gboolean gibbon_clip_parse_start_game (const gchar *line,
+                                              gchar **tokens,
+                                              GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -377,6 +386,14 @@ gibbon_clip_parse (const gchar *line)
                                         gibbon_clip_parse_start_settings (line,
                                                                        tokens,
                                                                        &result);
+                        else if (0 == g_strcmp0 ("Starting", tokens[0])
+                                 && 0 == g_strcmp0 ("a", tokens[1])
+                                 && 0 == g_strcmp0 ("new", tokens[2])
+                                 && 0 == g_strcmp0 ("game", tokens[3])
+                                 && 0 == g_strcmp0 ("with", tokens[4]))
+                                success = gibbon_clip_parse_start_game (line,
+                                                                        tokens,
+                                                                       &result);
                         break;
                 case 'T':
                         if (0 == g_strcmp0 ("The", tokens[0])
@@ -401,7 +418,11 @@ gibbon_clip_parse (const gchar *line)
                                                                       &result);
                                 break;
                 case 'Y':
-                        if (0 == g_strcmp0 ("You're", tokens[0])
+                        if (0 == g_strcmp0 ("You", tokens[0]))
+                                success = gibbon_clip_parse_you (line,
+                                                                 tokens,
+                                                                 &result);
+                        else if (0 == g_strcmp0 ("You're", tokens[0])
                             && 0 == g_strcmp0 ("now", tokens[1])
                             && 0 == g_strcmp0 ("watching", tokens[2]))
                                 success =
@@ -1507,21 +1528,95 @@ gibbon_clip_parse_toggle1 (const gchar *line, gchar **tokens,
         return gibbon_clip_parse_toggle (tokens[0], value, result);
 }
 
+static gboolean
+gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
+                              GSList **result)
+{
+        gint64 match_length;
+
+        if (0 == g_strcmp0 ("won't", tokens[2])
+            && 0 == g_strcmp0 ("be", tokens[3])
+            && 0 == g_strcmp0 ("notified", tokens[4])
+            && 0 == g_strcmp0 ("when", tokens[5])
+            && 0 == g_strcmp0 ("new", tokens[6])
+            && 0 == g_strcmp0 ("users", tokens[7])
+            && 0 == g_strcmp0 ("log", tokens[8])
+            && 0 == g_strcmp0 ("in.", tokens[9]))
+            return gibbon_clip_parse_toggle ("notify", FALSE, result);
+
+        if (0 == g_strcmp0 ("are", tokens[2])
+            && 0 == g_strcmp0 ("now", tokens[3])
+            && 0 == g_strcmp0 ("playing", tokens[4])
+            && 0 == g_strcmp0 ("an", tokens[5])
+            && 0 == g_strcmp0 ("unlimited", tokens[6])
+            && 0 == g_strcmp0 ("match", tokens[7])
+            && 0 == g_strcmp0 ("with", tokens[8])
+            && tokens[9]
+            && !tokens[10]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                               GIBBON_CLIP_CODE_INVITE_SUCCESS);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[9]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 0);
+                return TRUE;
+        }
+
+        if (0 == g_strcmp0 ("are", tokens[2])
+            && 0 == g_strcmp0 ("now", tokens[3])
+            && 0 == g_strcmp0 ("playing", tokens[4])
+            && 0 == g_strcmp0 ("a", tokens[5])
+            && 0 == g_strcmp0 ("point", tokens[7])
+            && 0 == g_strcmp0 ("match", tokens[8])
+            && 0 == g_strcmp0 ("with", tokens[9])
+            && tokens[10]
+            && !tokens[11]) {
+                if (!gibbon_clip_extract_integer (tokens[6], &match_length,
+                                                  1, G_MAXUINT))
+                        return FALSE;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                               GIBBON_CLIP_CODE_INVITE_SUCCESS);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[10]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 match_length);
+                return TRUE;
+        }
+
+        if (0 == g_strcmp0 ("can't", tokens[2])
+            && 0 == g_strcmp0 ("play", tokens[3])
+            && 0 == g_strcmp0 ("two", tokens[4])
+            && 0 == g_strcmp0 ("games", tokens[5])
+            && 0 == g_strcmp0 ("at", tokens[6])
+            && 0 == g_strcmp0 ("once", tokens[7])
+            && !tokens[8]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    _("You cannot play two"
+                                                      " matches at once!"));
+                return TRUE;
+        }
+
+        return FALSE;
+}
 
 static gboolean
 gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                            GSList **result)
 {
+        gchar *str;
+
         if (0 == g_strcmp0 ("You", tokens[1])) {
-                if (0 == g_strcmp0 ("won't", tokens[2])
-                    && 0 == g_strcmp0 ("be", tokens[3])
-                    && 0 == g_strcmp0 ("notified", tokens[4])
-                    && 0 == g_strcmp0 ("when", tokens[5])
-                    && 0 == g_strcmp0 ("new", tokens[6])
-                    && 0 == g_strcmp0 ("users", tokens[7])
-                    && 0 == g_strcmp0 ("log", tokens[8])
-                    && 0 == g_strcmp0 ("in.", tokens[9]))
-                    return gibbon_clip_parse_toggle ("notify", FALSE, result);
+                return gibbon_clip_parse_2stars_you (line, tokens, result);
         }
 
         if (0 == g_strcmp0 ("You'll", tokens[1])) {
@@ -1551,6 +1646,88 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                     && 0 == g_strcmp0 ("someone.", tokens[7])) {
                         return gibbon_clip_toggle_ready (result, FALSE);
                 }
+        } else if (0 == g_strcmp0 ("ERROR:", tokens[1])
+                   && 0 == g_strcmp0 ("Saved", tokens[2])
+                   && 0 == g_strcmp0 ("match", tokens[3])
+                   && 0 == g_strcmp0 ("is", tokens[4])
+                   && 0 == g_strcmp0 ("corrupt.", tokens[5])
+                   && 0 == g_strcmp0 ("Please", tokens[6])
+                   && 0 == g_strcmp0 ("start", tokens[7])
+                   && 0 == g_strcmp0 ("another", tokens[8])
+                   && 0 == g_strcmp0 ("one.", tokens[9])
+                   && !tokens[10]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    _("Your saved match was"
+                                                      " corrupted on server. "
+                                                      " Please start a"
+                                                      " new one!"));
+                return TRUE;
+        }
+
+        if (0 == g_strcmp0 ("didn't", tokens[2])
+            && 0 == g_strcmp0 ("invite", tokens[3])
+            && 0 == g_strcmp0 ("you.", tokens[4])
+            && !tokens[5]) {
+                str = g_strdup_printf (_("User `%s' is already playing with"
+                                         " someone else!"),
+                                        tokens[1]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[1]);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    str);
+                g_free (str);
+                return TRUE;
+        }
+
+        if (0 == g_strcmp0 ("is", tokens[2])
+            && 0 == g_strcmp0 ("already", tokens[3])
+            && 0 == g_strcmp0 ("playing", tokens[4])
+            && 0 == g_strcmp0 ("with", tokens[5])
+            && 0 == g_strcmp0 ("someone", tokens[6])
+            && 0 == g_strcmp0 ("else.", tokens[7])
+            && !tokens[8]) {
+                str = g_strdup_printf (_("User `%s' is already playing with"
+                                         " someone else!"),
+                                        tokens[1]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[1]);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    str);
+                g_free (str);
+                return TRUE;
+        }
+
+        if (0 == g_strcmp0 ("is", tokens[2])
+            && 0 == g_strcmp0 ("refusing", tokens[3])
+            && 0 == g_strcmp0 ("games.", tokens[4])
+            && !tokens[5]) {
+                str = g_strdup_printf (_("User `%s' is now refusing matches!"),
+                                        tokens[1]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[1]);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    str);
+                g_free (str);
+                return TRUE;
         }
 
         if (0 == g_strcmp0 ("is", tokens[2])) {
@@ -1638,6 +1815,22 @@ gibbon_clip_parse_show_saved (const gchar *line, gchar **tokens,
 }
 
 static gboolean
+gibbon_clip_parse_start_game (const gchar *line, gchar **tokens,
+                              GSList **result)
+{
+        if (!tokens[5])
+                return FALSE;
+
+        gibbon_clip_chomp (tokens[5], '.');
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_START_GAME);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[5]);
+
+        return TRUE;
+}
+
+static gboolean
 gibbon_clip_parse_saved_count (const gchar *line, gchar **tokens,
                                GSList **result)
 {
@@ -1688,6 +1881,34 @@ gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
 
         return TRUE;
 }
+
+static gboolean gibbon_clip_parse_you (const gchar *line,
+                                       gchar **tokens,
+                                       GSList **result)
+{
+        if (0 == g_strcmp0 ("are", tokens[1])
+            && 0 == g_strcmp0 ("now", tokens[2])
+            && 0 == g_strcmp0 ("playing", tokens[3])
+            && 0 == g_strcmp0 ("with", tokens[4])
+            && tokens[5]
+            && 0 == g_strcmp0 ("Your", tokens[6])
+            && 0 == g_strcmp0 ("running", tokens[7])
+            && 0 == g_strcmp0 ("match", tokens[8])
+            && 0 == g_strcmp0 ("was", tokens[9])
+            && 0 == g_strcmp0 ("loaded.", tokens[10])
+            && !tokens[11]) {
+                gibbon_clip_chomp (tokens[5], '.');
+                *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                                  GIBBON_CLIP_CODE_START_GAME);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[5]);
+                return TRUE;
+        }
+
+        return FALSE;
+}
+
 
 static gboolean
 gibbon_clip_parse_not_email_address (gchar *quoted_address,

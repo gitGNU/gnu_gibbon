@@ -49,19 +49,24 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_YOU_WHISPER = 18,
                         GIBBON_CLIP_CODE_YOU_KIBITZ = 19,
 
-                        /* Double asterisk messages.  */
-                        GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS = 100,
+                        /* Error messages.  */
+                        GIBBON_CLIP_CODE_ERROR = 100,
+                        GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS = 101,
 
                         /* Game play.  */
                         GIBBON_CLIP_CODE_BOARD = 200,
                         GIBBON_CLIP_CODE_BAD_BOARD = 201,
                         GIBBON_CLIP_CODE_ROLLS = 202,
                         GIBBON_CLIP_CODE_MOVES = 203,
+                        GIBBON_CLIP_CODE_START_GAME = 204,
+                        GIBBON_CLIP_CODE_START_GAME_ERROR = 205,
 
                         /* Between game action.  */
                         GIBBON_CLIP_CODE_INVITATION = 300,
                         GIBBON_CLIP_CODE_TYPE_JOIN = 301,
                         GIBBON_CLIP_CODE_YOURE_WATCHING = 302,
+                        GIBBON_CLIP_CODE_INVITE_SUCCESS = 303,
+                        GIBBON_CLIP_CODE_INVITE_ERROR = 304,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
