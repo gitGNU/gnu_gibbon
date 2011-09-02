@@ -210,6 +210,9 @@ static gboolean gibbon_clip_parse_2stars_error (const gchar *line,
 static gboolean gibbon_clip_parse_start_game (const gchar *line,
                                               gchar **tokens,
                                               GSList **result);
+static gboolean gibbon_clip_parse_type_join (const gchar *line,
+                                             gchar **tokens,
+                                             GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -406,6 +409,15 @@ gibbon_clip_parse (const gchar *line)
                             && !tokens[4])
                                 success =
                                         gibbon_clip_parse_start_toggles (line,
+                                                                       tokens,
+                                                                       &result);
+                        else if (0 == g_strcmp0 ("Type", tokens[0])
+                                 && 0 == g_strcmp0 ("'join", tokens[1])
+                                 && tokens[2]
+                                 && 0 == g_strcmp0 ("to", tokens[3])
+                                 && 0 == g_strcmp0 ("accept.", tokens[4])
+                                 && !tokens[5])
+                                success = gibbon_clip_parse_type_join (line,
                                                                        tokens,
                                                                        &result);
                         break;
@@ -1987,6 +1999,22 @@ static gboolean gibbon_clip_parse_you (const gchar *line,
         return FALSE;
 }
 
+static gboolean gibbon_clip_parse_type_join (const gchar *line,
+                                             gchar **tokens,
+                                             GSList **result)
+{
+        char *opponent = tokens[2];
+
+        gibbon_clip_chomp (opponent, '\'');
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_TYPE_JOIN);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_NAME,
+                                            opponent);
+
+        return TRUE;
+}
 
 static gboolean
 gibbon_clip_parse_not_email_address (gchar *quoted_address,
