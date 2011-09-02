@@ -602,6 +602,25 @@ struct test_case test_between01 = {
 };
 
 struct test_case test_between02 = {
+                "GibbonTestA wants to resume a saved match with you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "300" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "-1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between03 = {
+                "Type 'join GibbonTestA' to accept.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "301" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between04 = {
                 "You're now watching gflohr.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "302" },
@@ -610,7 +629,7 @@ struct test_case test_between02 = {
                 }
 };
 
-struct test_case test_between03 = {
+struct test_case test_between05 = {
                 "** You are now playing a 5 point match with gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -620,7 +639,7 @@ struct test_case test_between03 = {
                 }
 };
 
-struct test_case test_between04 = {
+struct test_case test_between06 = {
                 "** You are now playing an unlimited match with gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -630,7 +649,7 @@ struct test_case test_between04 = {
                 }
 };
 
-struct test_case test_between05 = {
+struct test_case test_between07 = {
                 "** gflohr is refusing games.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -641,7 +660,7 @@ struct test_case test_between05 = {
                 }
 };
 
-struct test_case test_between06 = {
+struct test_case test_between08 = {
                 "** Error: gflohr is already playing with someone else.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -653,7 +672,7 @@ struct test_case test_between06 = {
                 }
 };
 
-struct test_case test_between07 = {
+struct test_case test_between09 = {
                 "** gflohr didn't invite you.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -665,7 +684,7 @@ struct test_case test_between07 = {
                 }
 };
 
-struct test_case test_between08 = {
+struct test_case test_between10 = {
                 "** Error: can't find player gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -676,7 +695,7 @@ struct test_case test_between08 = {
                 }
 };
 
-struct test_case test_between09 = {
+struct test_case test_between11 = {
                 "** You can't play two games at once",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
@@ -1111,7 +1130,7 @@ struct test_case test_toggles19 = {
 };
 
 struct test_case test_saved00 = {
-        "  opponent          matchlength   score (user's points first)",
+        "  opponent          matchlength   score (your points first)",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "408" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -1282,6 +1301,8 @@ struct test_case *test_cases[] = {
                 &test_between07,
                 &test_between08,
                 &test_between09,
+                &test_between10,
+                &test_between11,
 
                 &test_various00,
                 &test_various01,
