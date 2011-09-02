@@ -586,7 +586,7 @@ struct test_case test_between00 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
                                 { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
-                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_INT, "5" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -596,7 +596,7 @@ struct test_case test_between01 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
                                 { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
-                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -606,7 +606,7 @@ struct test_case test_between02 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
                                 { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
-                                { GIBBON_CLIP_TYPE_UINT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };

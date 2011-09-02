@@ -1541,7 +1541,7 @@ static gboolean
 gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
 {
         const gchar *opponent;
-        guint length;
+        gint length;
         GtkListStore *store;
         GtkTreeIter tree_iter;
         GibbonPlayerList *pl;
@@ -1565,7 +1565,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                      &opponent))
                 return -1;
 
-        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &length))
                 return -1;
 

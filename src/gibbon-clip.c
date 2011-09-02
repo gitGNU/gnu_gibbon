@@ -1249,8 +1249,27 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                                                           GIBBON_CLIP_TYPE_NAME,
                                                             tokens[0]);
                         *result = gibbon_clip_alloc_int (*result,
-                                                         GIBBON_CLIP_TYPE_UINT,
+                                                         GIBBON_CLIP_TYPE_INT,
                                                          0);
+                        return TRUE;
+                }
+                if (0 == g_strcmp0 ("wants", tokens[1])
+                    && 0 == g_strcmp0 ("to", tokens[2])
+                    && 0 == g_strcmp0 ("resume", tokens[3])
+                    && 0 == g_strcmp0 ("a", tokens[4])
+                    && 0 == g_strcmp0 ("saved", tokens[5])
+                    && 0 == g_strcmp0 ("match", tokens[6])
+                    && 0 == g_strcmp0 ("with", tokens[7])
+                    && 0 == g_strcmp0 ("you.", tokens[8])) {
+                        *result = gibbon_clip_alloc_int (*result,
+                                                         GIBBON_CLIP_TYPE_UINT,
+                                                         GIBBON_CLIP_CODE_INVITATION);
+                        *result = gibbon_clip_alloc_string (*result,
+                                                          GIBBON_CLIP_TYPE_NAME,
+                                                            tokens[0]);
+                        *result = gibbon_clip_alloc_int (*result,
+                                                         GIBBON_CLIP_TYPE_INT,
+                                                         -1);
                         return TRUE;
                 }
                 break;
@@ -1260,6 +1279,7 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                     && 0 == g_strcmp0 ("play", tokens[3])
                     /* This is "a" not "an" even for 8 and 11! */
                     && 0 == g_strcmp0 ("a", tokens[4])
+                    && tokens[5]
                     && 0 == g_strcmp0 ("point", tokens[6])
                     && 0 == g_strcmp0 ("match", tokens[7])
                     && 0 == g_strcmp0 ("with", tokens[8])
@@ -1274,7 +1294,7 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                                                           GIBBON_CLIP_TYPE_NAME,
                                                             tokens[0]);
                         *result = gibbon_clip_alloc_int (*result,
-                                                         GIBBON_CLIP_TYPE_UINT,
+                                                         GIBBON_CLIP_TYPE_INT,
                                                          length);
                         return TRUE;
                 }
