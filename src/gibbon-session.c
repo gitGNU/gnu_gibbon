@@ -2222,8 +2222,7 @@ gibbon_session_registration_error (GibbonSession *self, const gchar *_line)
                                                      " someone else on that"
                                                      " server!"), login);
         } else {
-                line = g_strdup_printf (_("Registration failure (state %d): %s"),
-                                        self->priv->rstate, line);
+                line = g_strdup_printf (_("Registration failure: %s!"), line);
                 g_free (freeable);
                 freeable = line;
         }
@@ -2322,8 +2321,11 @@ gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
          * allow the user to select one.
          */
         entry = gtk_entry_new ();
+        /*
+         * This string is not translated on purpose!
+         */
         gtk_entry_set_text (GTK_ENTRY (entry),
-                            _("Not now.  Thanks for the invitation!"));
+                            "Not now.  Thanks for the invitation!");
 
         content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
         gtk_box_pack_start (GTK_BOX (content_area),
