@@ -28,6 +28,9 @@ have to do the following:
    if your version of Glib is older than 2.28.8 because the m4 macro
    definitions for GLIB_GSETTINGS are missing.
 
+1a) Read 1) above again! Did you remember to run "make install"
+    before you can build a (new) installer?
+
 2) Try everything out by running Gibbon from a command prompt.
 
 3) Download Inno Setup, a software designed for creating executable
