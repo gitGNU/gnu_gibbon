@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-28 23:00+0300\n"
-"PO-Revision-Date: 2011-08-28 22:52+0300\n"
+"POT-Creation-Date: 2011-09-03 08:27+0300\n"
+"PO-Revision-Date: 2011-09-03 08:49+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
 "Language: bg\n"
@@ -215,7 +215,7 @@ msgstr "Предишният ход"
 msgid "Rating information"
 msgstr "Информация на рейтинг"
 
-#: ../data/gibbon.ui.h:22
+#: ../data/gibbon.ui.h:22 ../src/gibbon-app.c:1179
 msgid "Ready"
 msgstr "Готов"
 
@@ -259,7 +259,7 @@ msgstr ""
 msgid "User name and password"
 msgstr "Потребителско име и парола"
 
-#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1914
+#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1979
 msgid "Watch"
 msgstr "Кибичене"
 
@@ -330,12 +330,12 @@ msgid "Empty SGF collections are not allowed"
 msgstr "Празни SGF колекции не се позволяват"
 
 #: ../libgsgf/gsgf-collection.c:530
-#, fuzzy, c-format
+#, c-format
 msgid "%d:%d: Illegal binary character '#%d'"
 msgstr "%d:%d: Невалиден двойчен знак „#%d“"
 
 #: ../libgsgf/gsgf-collection.c:538
-#, fuzzy, c-format
+#, c-format
 msgid "%d:%d: Illegal character '%c'"
 msgstr "%d:%d: Невалиден знак „%c“"
 
@@ -517,32 +517,34 @@ msgstr "Невалидни точки в свойство"
 #: ../libgsgf/gsgf-flavor.c:1664
 #, c-format
 msgid "List of point labels must not be empty"
-msgstr ""
+msgstr "Списък на етикети към точки не трябва де бъде празен"
 
 #: ../libgsgf/gsgf-flavor.c:1727
 #, c-format
 msgid "Points must be unique"
-msgstr ""
+msgstr "Точки трябва да бъдат уникални"
 
 #: ../libgsgf/gsgf-flavor.c:1742
 #, c-format
 msgid "Invalid point labels in property"
-msgstr ""
+msgstr "Невалиден етикет към точка в стойност"
 
 #: ../libgsgf/gsgf-flavor.c:1776 ../libgsgf/tests/test-non-unique-points.c:37
 #, c-format
 msgid "Points in list must be unique"
-msgstr ""
+msgstr "Точки в списък трябва да бъдат уникални"
 
 #: ../libgsgf/gsgf-game-tree.c:448
 #, c-format
 msgid "Method cook() called on something that is not a GSGFComponent."
 msgstr ""
+"Метод „cook()“ извикан за нещо, което не е един компонента "
+"„GSGF“ („GSGFComponent“)."
 
 #: ../libgsgf/gsgf-game-tree.c:553
 #, c-format
 msgid "Application name or version info missing."
-msgstr ""
+msgstr "Името на пгрограма или данните за версия липсват"
 
 #: ../libgsgf/gsgf-game-tree.c:563
 #, c-format
@@ -550,76 +552,78 @@ msgid ""
 "Application name or version info must not contain linefeeds or carriage "
 "returns."
 msgstr ""
+"Името на пгрограма и данните за версия не трявбва да съдържа кодове за "
+"връщане на курсова или нов ред."
 
 #: ../libgsgf/gsgf-move-backgammon.c:124
 #, c-format
 msgid "Empty move"
-msgstr ""
+msgstr "Прасен ход"
 
 #: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
 #, c-format
 msgid "Invalid move syntax '%s'"
-msgstr ""
+msgstr "Невалиден синтаксис „%s“ за ход"
 
 #: ../libgsgf/gsgf-move-backgammon.c:176
 #, c-format
 msgid "Invalid move syntax"
-msgstr ""
+msgstr "Невалиден синтаксис за ход"
 
 #: ../libgsgf/gsgf-node.c:222
 #, c-format
 msgid "Only upper case letters are allowed for property identifiers"
-msgstr ""
+msgstr "Само главни букви са разрешени за идентификатори на стойности"
 
 #: ../libgsgf/gsgf-number.c:144 ../libgsgf/gsgf-real.c:122
 #: ../libgsgf/gsgf-real.c:182 ../libgsgf/tests/test-number.c:100
 #: ../libgsgf/tests/test-real.c:101 ../libgsgf/tests/test-real.c:119
 #, c-format
 msgid "Invalid number '%s'"
-msgstr ""
+msgstr "Невалиден номер „%s“"
 
 #: ../libgsgf/gsgf-number.c:150 ../libgsgf/gsgf-real.c:188
 #: ../libgsgf/tests/test-number.c:118
 #, c-format
 msgid "Trailing garbage after number in '%s'"
-msgstr ""
+msgstr "Боклук след номера в „%s“"
 
 #: ../libgsgf/gsgf-point-backgammon.c:140
 #, c-format
 msgid "Empty point"
-msgstr ""
+msgstr "Празна точка"
 
 #: ../libgsgf/gsgf-point-backgammon.c:146
 #, c-format
 msgid "Invalid point syntax"
-msgstr ""
+msgstr "Невалиден синтаксис за точка"
 
 #: ../libgsgf/gsgf-point-backgammon.c:155
 #, c-format
 msgid "Invalid point syntax '%s'"
-msgstr ""
+msgstr "Невалиден синтаксис „%s“ за точка"
 
 #: ../libgsgf/gsgf-point-backgammon.c:202
 #: ../libgsgf/gsgf-stone-backgammon.c:121
 #, c-format
 msgid "Empty stone"
-msgstr ""
+msgstr "Невалиден камък"
 
 #: ../libgsgf/gsgf-point-backgammon.c:208
 #: ../libgsgf/gsgf-stone-backgammon.c:127
 #, c-format
 msgid "Invalid stone syntax"
-msgstr ""
+msgstr "Невалиден синтаксис за камък"
 
 #: ../libgsgf/gsgf-real.c:338
 #, c-format
 msgid "Not a number"
-msgstr ""
+msgstr "Не е номер"
 
 #: ../libgsgf/gsgf-simple-text.c:98 ../libgsgf/gsgf-text.c:133
 #, c-format
 msgid "Property without a value!"
-msgstr ""
+msgstr "Празна стойност"
 
 #: ../libgsgf/gsgf-simple-text.c:102
 #, c-format
@@ -655,49 +659,61 @@ msgstr ""
 msgid "Object `%s' is not of type `%s' but `%s'!"
 msgstr ""
 
-#: ../src/gibbon-app.c:520
+#: ../src/gibbon-app.c:526
 msgid "You cannot register an account while you are connected to a server!"
 msgstr ""
 
-#: ../src/gibbon-app.c:635
+#: ../src/gibbon-app.c:640
 msgid "No hostname given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:646
+#: ../src/gibbon-app.c:651
 msgid "No user name given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:309
+#: ../src/gibbon-app.c:659 ../src/gibbon-register-dialog.c:309
 #, c-format
 msgid "The login `%s' is reserved!"
 msgstr "Името „%s“ е запазен!"
 
-#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:390
+#: ../src/gibbon-app.c:673 ../src/gibbon-register-dialog.c:390
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr ""
 
-#: ../src/gibbon-app.c:679
+#: ../src/gibbon-app.c:684
 msgid "No password given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:861
+#: ../src/gibbon-app.c:866
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:877
+#: ../src/gibbon-app.c:882
 #, c-format
 msgid "Connected with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:896
+#: ../src/gibbon-app.c:901
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:956
+#: ../src/gibbon-app.c:961
 #, c-format
 msgid "Error loading image `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-app.c:1183
+msgid "Click to set yourself busy."
+msgstr ""
+
+#: ../src/gibbon-app.c:1196
+msgid "Busy"
+msgstr ""
+
+#: ../src/gibbon-app.c:1200
+msgid "Click to set yourself ready to play."
 msgstr ""
 
 #: ../src/gibbon-archive.c:200
@@ -797,6 +813,30 @@ msgstr "Затваряне на подпрозореца"
 
 #: ../src/gibbon-chat-view.c:338
 msgid "Really close?"
+msgstr ""
+
+#: ../src/gibbon-clip.c:1639
+msgid "You cannot play two matches at once!"
+msgstr ""
+
+#: ../src/gibbon-clip.c:1661 ../src/gibbon-clip.c:1765
+#: ../src/gibbon-clip.c:1788
+#, c-format
+msgid "Player `%s' is already playing with someone else!"
+msgstr ""
+
+#: ../src/gibbon-clip.c:1682
+#, c-format
+msgid "Player `%s' is not logged in!"
+msgstr ""
+
+#: ../src/gibbon-clip.c:1754
+msgid "Your saved match was corrupted on server.  Please start a new one!"
+msgstr ""
+
+#: ../src/gibbon-clip.c:1808
+#, c-format
+msgid "Player `%s' is now refusing matches!"
 msgstr ""
 
 #: ../src/gibbon-connection.c:383
@@ -2282,60 +2322,60 @@ msgstr ""
 msgid "Unknown error displaying help!"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:169
+#: ../src/gibbon-inviter-list-view.c:176
 msgid "Decline"
 msgstr "Отклоняване"
 
-#: ../src/gibbon-inviter-list-view.c:176
+#: ../src/gibbon-inviter-list-view.c:184
 msgid "Accept"
 msgstr "Приемане"
 
-#: ../src/gibbon-inviter-list-view.c:185
+#: ../src/gibbon-inviter-list-view.c:194
 msgid "Inviter"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:207 ../src/gibbon-player-list-view.c:228
+#: ../src/gibbon-inviter-list-view.c:216 ../src/gibbon-player-list-view.c:228
 msgid "Rating"
 msgstr "Рейтинг"
 
-#: ../src/gibbon-inviter-list-view.c:219 ../src/gibbon-player-list-view.c:240
+#: ../src/gibbon-inviter-list-view.c:228 ../src/gibbon-player-list-view.c:240
 msgid "Exp."
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:239 ../src/gibbon-player-list-view.c:260
+#: ../src/gibbon-inviter-list-view.c:248 ../src/gibbon-player-list-view.c:260
 #: ../src/gibbon-reliability-renderer.c:113
 msgid "Reliability"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:248
+#: ../src/gibbon-inviter-list-view.c:257
 msgid "Saved"
 msgstr "Запазено"
 
-#: ../src/gibbon-inviter-list-view.c:270 ../src/gibbon-player-list-view.c:284
+#: ../src/gibbon-inviter-list-view.c:279 ../src/gibbon-player-list-view.c:284
 msgid "Address"
 msgstr "Адрес"
 
-#: ../src/gibbon-inviter-list-view.c:459 ../src/gibbon-player-list-view.c:756
+#: ../src/gibbon-inviter-list-view.c:487 ../src/gibbon-player-list-view.c:756
 msgid "good"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:465 ../src/gibbon-player-list-view.c:762
+#: ../src/gibbon-inviter-list-view.c:493 ../src/gibbon-player-list-view.c:762
 msgid "keep away"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:467 ../src/gibbon-player-list-view.c:764
+#: ../src/gibbon-inviter-list-view.c:495 ../src/gibbon-player-list-view.c:764
 msgid "very certain"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:469 ../src/gibbon-player-list-view.c:766
+#: ../src/gibbon-inviter-list-view.c:497 ../src/gibbon-player-list-view.c:766
 msgid "certain"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:471 ../src/gibbon-player-list-view.c:768
+#: ../src/gibbon-inviter-list-view.c:499 ../src/gibbon-player-list-view.c:768
 msgid "uncertain"
 msgstr ""
 
-#: ../src/gibbon-inviter-list-view.c:473 ../src/gibbon-player-list-view.c:770
+#: ../src/gibbon-inviter-list-view.c:501 ../src/gibbon-player-list-view.c:770
 msgid "unknown"
 msgstr "(неизвестно)"
 
@@ -2477,99 +2517,111 @@ msgid ""
 "It is not allowed to have more than one account per person.  Register anyway?"
 msgstr ""
 
-#: ../src/gibbon-session.c:529
+#: ../src/gibbon-session.c:553
 #, fuzzy, c-format
-msgid "Last login on `%s' from `%s'."
+msgid "Last login on %s from `%s'."
 msgstr "Неуспех при възстановяване на „%s“ от „%s“: %s"
 
-#: ../src/gibbon-session.c:717 ../src/gibbon-session.c:725
-#: ../src/gibbon-session.c:730
+#: ../src/gibbon-session.c:741 ../src/gibbon-session.c:749
+#: ../src/gibbon-session.c:754
 #, c-format
 msgid "%s logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:771
+#: ../src/gibbon-session.c:795
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr ""
 
-#: ../src/gibbon-session.c:786
+#: ../src/gibbon-session.c:810
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr ""
 
-#: ../src/gibbon-session.c:802
+#: ../src/gibbon-session.c:826
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1144
+#: ../src/gibbon-session.c:1168
 msgid "Crawford game"
 msgstr ""
 
-#: ../src/gibbon-session.c:1358
+#: ../src/gibbon-session.c:1412
 #, c-format
 msgid "You roll %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1365 ../src/gibbon-session.c:1372
+#: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1426
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1431 ../src/gibbon-session.c:1444
+#: ../src/gibbon-session.c:1485 ../src/gibbon-session.c:1498
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:1438
+#: ../src/gibbon-session.c:1492
 #, c-format
 msgid "%d%d: You move %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:1470
+#: ../src/gibbon-session.c:1524
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:1832
+#: ../src/gibbon-session.c:1893
 #, fuzzy, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr "Потребителят отказа заявката за подписване"
 
-#: ../src/gibbon-session.c:1911
+#: ../src/gibbon-session.c:1976
 msgid "Stop watching"
 msgstr ""
 
-#: ../src/gibbon-session.c:2012
+#: ../src/gibbon-session.c:2077
 msgid "Timeout during during registration!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2047 ../src/gibbon-session.c:2095
+#: ../src/gibbon-session.c:2112 ../src/gibbon-session.c:2160
 msgid "Unexpected reply from server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2058 ../src/gibbon-session.c:2110
+#: ../src/gibbon-session.c:2123 ../src/gibbon-session.c:2175
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2154
+#: ../src/gibbon-session.c:2219
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2160
+#: ../src/gibbon-session.c:2225
 #, c-format
-msgid "Registration failure (state %d): %s"
+msgid "Registration failure: %s!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2195
+#: ../src/gibbon-session.c:2259
 msgid ""
 "Registration successful! Please do not forget your password! It cannot be "
 "recovered.\n"
 "You have to connect to the server again to start playing."
+msgstr ""
+
+#: ../src/gibbon-session.c:2307
+msgid "Decline Invitation"
+msgstr ""
+
+#: ../src/gibbon-session.c:2311
+msgid "Decline with message"
+msgstr ""
+
+#: ../src/gibbon-session.c:2313
+msgid "Ignore"
 msgstr ""
 
 #: ../src/svg-util.c:238 ../src/svg-util.c:997
