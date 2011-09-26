@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-27 17:17+0300\n"
-"PO-Revision-Date: 2011-08-27 17:18+0300\n"
+"POT-Creation-Date: 2011-09-03 08:27+0300\n"
+"PO-Revision-Date: 2011-09-03 08:27+0300\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -215,7 +215,7 @@ msgstr "Vorheriger Zug"
 msgid "Rating information"
 msgstr "Ranglisteninformation"
 
-#: ../data/gibbon.ui.h:22
+#: ../data/gibbon.ui.h:22 ../src/gibbon-app.c:1179
 msgid "Ready"
 msgstr "Bereit"
 
@@ -259,7 +259,7 @@ msgstr ""
 msgid "User name and password"
 msgstr "Anmeldename und Passwort"
 
-#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1902
+#: ../data/gibbon.ui.h:33 ../src/gibbon-session.c:1979
 msgid "Watch"
 msgstr "Beobachten"
 
@@ -331,13 +331,13 @@ msgstr "Leere SGF-Collections sind nicht erlaubt"
 
 #: ../libgsgf/gsgf-collection.c:530
 #, c-format
-msgid "%d:%d:Illegal binary character '#%d'"
-msgstr "%d:%d:Illegalaler binärer Buchstabe '#%d'"
+msgid "%d:%d: Illegal binary character '#%d'"
+msgstr "%d:%d: Illegales binäres Zeichen '#%d'"
 
 #: ../libgsgf/gsgf-collection.c:538
 #, c-format
-msgid "%d:%d:Illegal character '%c'"
-msgstr "%d:%d:Illegales Zeichen »%c«"
+msgid "%d:%d: Illegal character '%c'"
+msgstr "%d:%d: Illegales Zeichen »%c«"
 
 #: ../libgsgf/gsgf-collection.c:665
 #, c-format
@@ -669,52 +669,64 @@ msgstr "Objekt „%s“ ist kein GObject!"
 msgid "Object `%s' is not of type `%s' but `%s'!"
 msgstr "Object „%s“ ist nicht vom Typ „%s“, sondern „%s“!"
 
-#: ../src/gibbon-app.c:520
+#: ../src/gibbon-app.c:526
 msgid "You cannot register an account while you are connected to a server!"
 msgstr ""
 "Es kann kein neuer Zugang registriert werden, während eine Verbindung zu "
 "einem Server besteht!"
 
-#: ../src/gibbon-app.c:635
+#: ../src/gibbon-app.c:640
 msgid "No hostname given!"
 msgstr "Kein Servername angegeben!"
 
-#: ../src/gibbon-app.c:646
+#: ../src/gibbon-app.c:651
 msgid "No user name given!"
 msgstr "Kein Benutzername angegeben!"
 
-#: ../src/gibbon-app.c:654 ../src/gibbon-register-dialog.c:330
+#: ../src/gibbon-app.c:659 ../src/gibbon-register-dialog.c:309
 #, c-format
 msgid "The login `%s' is reserved!"
 msgstr "Der Anmeldename „%s“ ist reserviert!"
 
-#: ../src/gibbon-app.c:668 ../src/gibbon-register-dialog.c:315
+#: ../src/gibbon-app.c:673 ../src/gibbon-register-dialog.c:390
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr "Fehlerhafte Portnummer. Probieren Sie es im Zweifel mit 4321."
 
-#: ../src/gibbon-app.c:679
+#: ../src/gibbon-app.c:684
 msgid "No password given!"
 msgstr "Kein Passwort angegeben!"
 
-#: ../src/gibbon-app.c:861
+#: ../src/gibbon-app.c:866
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr "Verbindungsaufbaut mit %s auf Port %d."
 
-#: ../src/gibbon-app.c:877
+#: ../src/gibbon-app.c:882
 #, c-format
 msgid "Connected with %s port %d."
 msgstr "Mit %s auf Port %d verbunden."
 
-#: ../src/gibbon-app.c:896
+#: ../src/gibbon-app.c:901
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr "Als %s auf %s Port %d angemeldet."
 
-#: ../src/gibbon-app.c:956
+#: ../src/gibbon-app.c:961
 #, c-format
 msgid "Error loading image `%s': %s!"
 msgstr "Fehler beim Laden des Bildes „%s“: %s!"
+
+#: ../src/gibbon-app.c:1183
+msgid "Click to set yourself busy."
+msgstr "Auf „beschäftigt“ setzen"
+
+#: ../src/gibbon-app.c:1196
+msgid "Busy"
+msgstr "Beschäftigt"
+
+#: ../src/gibbon-app.c:1200
+msgid "Click to set yourself ready to play."
+msgstr "Auf „bereit zu spielen“ setzen"
 
 #: ../src/gibbon-archive.c:200
 msgid "Cannot determine user data directory!"
@@ -823,15 +835,41 @@ msgstr "Reiter schließen"
 msgid "Really close?"
 msgstr "Wirklich schließen?"
 
-#: ../src/gibbon-connection.c:382
+#: ../src/gibbon-clip.c:1639
+msgid "You cannot play two matches at once!"
+msgstr "Sie können nicht zwei Matches auf einmal spielen!"
+
+#: ../src/gibbon-clip.c:1661 ../src/gibbon-clip.c:1765
+#: ../src/gibbon-clip.c:1788
+#, c-format
+msgid "Player `%s' is already playing with someone else!"
+msgstr "„%s“ spielt bereits mit jemand anderem!"
+
+#: ../src/gibbon-clip.c:1682
+#, c-format
+msgid "Player `%s' is not logged in!"
+msgstr "„%s“ ist nicht eingeloggt!"
+
+#: ../src/gibbon-clip.c:1754
+msgid "Your saved match was corrupted on server.  Please start a new one!"
+msgstr ""
+"Die Daten Ihres gespeicherten Matches sind auf dem Server beschädigt worden. "
+"Bitte starten Sie ein neues!"
+
+#: ../src/gibbon-clip.c:1808
+#, c-format
+msgid "Player `%s' is now refusing matches!"
+msgstr "„%s“ lehnt jetzt Einladungen zu Matches ab!"
+
+#: ../src/gibbon-connection.c:383
 msgid "End-of-file while receiving data from server."
 msgstr "Dateiende beim Lesen von Daten vom Server."
 
-#: ../src/gibbon-connection.c:500
+#: ../src/gibbon-connection.c:516
 msgid "Authentication failed."
 msgstr "Anmeldung fehlgeschlagen."
 
-#: ../src/gibbon-connection.c:622
+#: ../src/gibbon-connection.c:656
 #, c-format
 msgid "Error connecting to `%s' port %u: %s.\n"
 msgstr "Fehler beim Verbindungsaufbau mit „%s“ auf Port %u: %s.\n"
@@ -2329,60 +2367,60 @@ msgstr "Fehler beim Anzeigen der Hilfe: %s!"
 msgid "Unknown error displaying help!"
 msgstr "Unbekannter Fehler beim Anzeigen der Hilfe!"
 
-#: ../src/gibbon-inviter-list-view.c:169
+#: ../src/gibbon-inviter-list-view.c:176
 msgid "Decline"
 msgstr "Ablehnen"
 
-#: ../src/gibbon-inviter-list-view.c:176
+#: ../src/gibbon-inviter-list-view.c:184
 msgid "Accept"
 msgstr "Annehmen"
 
-#: ../src/gibbon-inviter-list-view.c:185
+#: ../src/gibbon-inviter-list-view.c:194
 msgid "Inviter"
 msgstr "Einladender"
 
-#: ../src/gibbon-inviter-list-view.c:207 ../src/gibbon-player-list-view.c:228
+#: ../src/gibbon-inviter-list-view.c:216 ../src/gibbon-player-list-view.c:228
 msgid "Rating"
 msgstr "Einstufung"
 
-#: ../src/gibbon-inviter-list-view.c:219 ../src/gibbon-player-list-view.c:240
+#: ../src/gibbon-inviter-list-view.c:228 ../src/gibbon-player-list-view.c:240
 msgid "Exp."
 msgstr "Erf."
 
-#: ../src/gibbon-inviter-list-view.c:239 ../src/gibbon-player-list-view.c:260
+#: ../src/gibbon-inviter-list-view.c:248 ../src/gibbon-player-list-view.c:260
 #: ../src/gibbon-reliability-renderer.c:113
 msgid "Reliability"
 msgstr "Zuverlässigkeit"
 
-#: ../src/gibbon-inviter-list-view.c:248
+#: ../src/gibbon-inviter-list-view.c:257
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: ../src/gibbon-inviter-list-view.c:270 ../src/gibbon-player-list-view.c:284
+#: ../src/gibbon-inviter-list-view.c:279 ../src/gibbon-player-list-view.c:284
 msgid "Address"
 msgstr "Adresse"
 
-#: ../src/gibbon-inviter-list-view.c:459 ../src/gibbon-player-list-view.c:756
+#: ../src/gibbon-inviter-list-view.c:487 ../src/gibbon-player-list-view.c:756
 msgid "good"
 msgstr "gut"
 
-#: ../src/gibbon-inviter-list-view.c:465 ../src/gibbon-player-list-view.c:762
+#: ../src/gibbon-inviter-list-view.c:493 ../src/gibbon-player-list-view.c:762
 msgid "keep away"
 msgstr "wegbleiben"
 
-#: ../src/gibbon-inviter-list-view.c:467 ../src/gibbon-player-list-view.c:764
+#: ../src/gibbon-inviter-list-view.c:495 ../src/gibbon-player-list-view.c:764
 msgid "very certain"
 msgstr "sehr sicher"
 
-#: ../src/gibbon-inviter-list-view.c:469 ../src/gibbon-player-list-view.c:766
+#: ../src/gibbon-inviter-list-view.c:497 ../src/gibbon-player-list-view.c:766
 msgid "certain"
 msgstr "sicher"
 
-#: ../src/gibbon-inviter-list-view.c:471 ../src/gibbon-player-list-view.c:768
+#: ../src/gibbon-inviter-list-view.c:499 ../src/gibbon-player-list-view.c:768
 msgid "uncertain"
 msgstr "unsicher"
 
-#: ../src/gibbon-inviter-list-view.c:473 ../src/gibbon-player-list-view.c:770
+#: ../src/gibbon-inviter-list-view.c:501 ../src/gibbon-player-list-view.c:770
 msgid "unknown"
 msgstr "unbekannt"
 
@@ -2464,21 +2502,19 @@ msgstr "Passwort wiederholen"
 msgid "Register New Account"
 msgstr "Neues Konto registrieren"
 
-#: ../src/gibbon-register-dialog.c:304
-msgid "You must specify a server name. In doubt try `fibs.com'."
-msgstr ""
-"Sie müssen einen Servernamen angeben. Versuchen Sie es im Zweifelsfall mit "
-"„fibs.com“."
-
-#: ../src/gibbon-register-dialog.c:324
+#: ../src/gibbon-register-dialog.c:303
 msgid "You must specify a user name!"
 msgstr "Sie müssen einen Kein Anmeldenamen angegeben."
 
-#: ../src/gibbon-register-dialog.c:337
+#: ../src/gibbon-register-dialog.c:317
 msgid "Your user name may not be longer than 20 characters!"
 msgstr "Ihr Anmeldename darf nicht länger als 20 Zeichen sein!"
 
-#: ../src/gibbon-register-dialog.c:349
+#: ../src/gibbon-register-dialog.c:322
+msgid "Your user name must have at least 3 characters!"
+msgstr "Ihr Anmeldename muss mindestens drei Zeichen lang sein!"
+
+#: ../src/gibbon-register-dialog.c:334
 msgid ""
 "Your user name may only contain characters from A to Z, a to z, or the "
 "underscore ('_')!"
@@ -2486,111 +2522,125 @@ msgstr ""
 "Ihr Benutzernamen darf nur die Zeichen A-Z, a-z und den Unterstrich („_“) "
 "enthalten!"
 
-#: ../src/gibbon-register-dialog.c:358
+#: ../src/gibbon-register-dialog.c:343
 msgid "You must specify a password!"
 msgstr "Sie müssen ein Passwort angegeben!"
 
-#: ../src/gibbon-register-dialog.c:365
+#: ../src/gibbon-register-dialog.c:350
+msgid "Your password must have at least 4 characters!"
+msgstr "Ihr Passwort muss mindestens vier Zeichen haben!"
+
+#: ../src/gibbon-register-dialog.c:357
+msgid "Your password must not contain a colon (`:')!"
+msgstr "Das Passwort darf keinen Doppelpunkt enthalten!"
+
+#: ../src/gibbon-register-dialog.c:366
 msgid "Please repeat the password!"
 msgstr "Bitte wiederholen Sie das Passwort!"
 
-#: ../src/gibbon-register-dialog.c:371
+#: ../src/gibbon-register-dialog.c:372
 msgid "Passwords do not match!"
 msgstr "Die Passwörter stimmen nicht überein!"
 
-#: ../src/gibbon-register-dialog.c:380
+#: ../src/gibbon-register-dialog.c:379
+msgid "You must specify a server name. In doubt try `fibs.com'."
+msgstr ""
+"Sie müssen einen Servernamen angeben. Versuchen Sie es im Zweifelsfall mit "
+"„fibs.com“."
+
+#: ../src/gibbon-register-dialog.c:401
 #, c-format
 msgid "You already have an account on that server:\n"
 msgid_plural "You alreaday have %llu accounts on that server:\n"
 msgstr[0] "Sie haben bereits ein Konto auf diesem Server:\n"
 msgstr[1] "Sie haben bereits %llu Konten auf diesem Server:\n"
 
-#: ../src/gibbon-register-dialog.c:399
+#: ../src/gibbon-register-dialog.c:420
 msgid ""
 "It is not allowed to have more than one account per person.  Register anyway?"
 msgstr ""
 "Mehr als ein Konto auf einem Server ist nicht erlaubt. Dennoch mit der "
 "Registrierung fortfahren?"
 
-#: ../src/gibbon-session.c:517
+#: ../src/gibbon-session.c:553
 #, c-format
-msgid "Last login on `%s' from `%s'."
+msgid "Last login on %s from `%s'."
 msgstr "Letztes Login am %s von „%s“ aus."
 
-#: ../src/gibbon-session.c:705 ../src/gibbon-session.c:713
-#: ../src/gibbon-session.c:718
+#: ../src/gibbon-session.c:741 ../src/gibbon-session.c:749
+#: ../src/gibbon-session.c:754
 #, c-format
 msgid "%s logged out!"
 msgstr "%s hat sich abgemeldet!"
 
-#: ../src/gibbon-session.c:759
+#: ../src/gibbon-session.c:795
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr "„%s“ hat Ihnen am %s eine Nachricht hinterlassen: %s"
 
-#: ../src/gibbon-session.c:774
+#: ../src/gibbon-session.c:810
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr "Ihre Nachricht an „%s“ wurde ausgeliefert!"
 
-#: ../src/gibbon-session.c:790
+#: ../src/gibbon-session.c:826
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr "„%s“ ist nicht angemeldet. Ihre Nachricht wurde gespeichert!"
 
-#: ../src/gibbon-session.c:1132
+#: ../src/gibbon-session.c:1168
 msgid "Crawford game"
 msgstr "Crawford-Spiel"
 
-#: ../src/gibbon-session.c:1346
+#: ../src/gibbon-session.c:1412
 #, c-format
 msgid "You roll %u and %u."
 msgstr "Sie haben %u und %u gewürfelt."
 
-#: ../src/gibbon-session.c:1353 ../src/gibbon-session.c:1360
+#: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1426
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr "„%s“ hat %u und %u gewürfelt."
 
-#: ../src/gibbon-session.c:1419 ../src/gibbon-session.c:1432
+#: ../src/gibbon-session.c:1485 ../src/gibbon-session.c:1498
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr "%d%d: %s hat %s gezogen."
 
-#: ../src/gibbon-session.c:1426
+#: ../src/gibbon-session.c:1492
 #, c-format
 msgid "%d%d: You move %s."
 msgstr "%d%d: Sie haben %s gezogen."
 
-#: ../src/gibbon-session.c:1458
+#: ../src/gibbon-session.c:1524
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr "Fehler bei der Ausführung des Zuges %s in der aktuellen Position.\n"
 
-#: ../src/gibbon-session.c:1820
+#: ../src/gibbon-session.c:1893
 #, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr "Die E-Mail-Adresse „%s“ wurde vom Server zurückgewiesen!"
 
-#: ../src/gibbon-session.c:1899
+#: ../src/gibbon-session.c:1976
 msgid "Stop watching"
 msgstr "Beobachten beenden"
 
-#: ../src/gibbon-session.c:2000
+#: ../src/gibbon-session.c:2077
 msgid "Timeout during during registration!"
 msgstr "Zeitüberschreitung während der Registrierung!"
 
-#: ../src/gibbon-session.c:2035
+#: ../src/gibbon-session.c:2112 ../src/gibbon-session.c:2160
 msgid "Unexpected reply from server!"
 msgstr "Unerwartete Antwort vom Server!"
 
-#: ../src/gibbon-session.c:2046
+#: ../src/gibbon-session.c:2123 ../src/gibbon-session.c:2175
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 "Registrierung fehlgeschlagen. Bitte schauen Sie für Einzelheiten in der "
 "Serverkonsole nach!"
 
-#: ../src/gibbon-session.c:2099
+#: ../src/gibbon-session.c:2219
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
@@ -2599,10 +2649,32 @@ msgstr ""
 "Bitte wählen Sie einen anderen Namen. Der Name „%s“ wird bereits von jemand "
 "anderem auf diesem Server verwendet!"
 
-#: ../src/gibbon-session.c:2105
+#: ../src/gibbon-session.c:2225
 #, c-format
-msgid "Registration failure: %s"
-msgstr "Registrierung fehlgeschlagen: %s"
+msgid "Registration failure: %s!"
+msgstr "Registrierung fehlgeschlagen: %s!"
+
+#: ../src/gibbon-session.c:2259
+msgid ""
+"Registration successful! Please do not forget your password! It cannot be "
+"recovered.\n"
+"You have to connect to the server again to start playing."
+msgstr ""
+"Registrierung erfolgreich! Bitte merken Sie Sich Ihr Passwort! Es kann nicht "
+"wiederhergestellt werden.\n"
+"Verbinden Sie Sich jetzt mit dem Server, um mit dem Spielen zu beginnen."
+
+#: ../src/gibbon-session.c:2307
+msgid "Decline Invitation"
+msgstr "Einladung ablehnen"
+
+#: ../src/gibbon-session.c:2311
+msgid "Decline with message"
+msgstr "Einladung mit Nachricht ablehnen"
+
+#: ../src/gibbon-session.c:2313
+msgid "Ignore"
+msgstr "Ignorieren"
 
 #: ../src/svg-util.c:238 ../src/svg-util.c:997
 msgid "No error (this should not happen)!"
