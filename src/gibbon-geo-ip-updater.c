@@ -240,7 +240,7 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
                 }
         }
 
-#define GEO_IP_DEFAULT_URI "http://gibbon.guido-flohr.net/ip2country.csv.gz"
+#define GEO_IP_DEFAULT_URI "http://software77.net/geo-ip/?DL=1"
         if (download) {
                 self->priv->file = g_file_new_for_uri (GEO_IP_DEFAULT_URI);
                 self->priv->uri = g_strdup (GEO_IP_DEFAULT_URI);
