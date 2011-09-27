@@ -111,6 +111,7 @@ static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
 static void gibbon_app_on_account_prefs (GibbonApp *self);
 static void gibbon_app_on_toggle_ready (GibbonApp *self);
+static void gibbon_app_on_board_refresh (GibbonApp *self);
 static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
@@ -443,9 +444,8 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_app_on_quit_request),
                         (gpointer) self);
 
-        obj
-                        = gibbon_app_find_object(self, "quit_menu_item",
-                                        GTK_TYPE_MENU_ITEM);
+        obj = gibbon_app_find_object(self, "quit_menu_item",
+                                     GTK_TYPE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
                         G_CALLBACK (gibbon_app_on_quit_request),
                         (gpointer) self);
@@ -502,6 +502,11 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_help_show_about),
                         (gpointer) self);
 
+        obj = gibbon_app_find_object(self, "board-refresh",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_refresh),
+                                  (gpointer) self);
 }
 
 static void
@@ -728,7 +733,13 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 }
 
 void
-gibbon_app_set_state_disconnected(GibbonApp *self)
+gibbon_app_on_board_refresh (GibbonApp *self)
+{
+        g_printerr ("Refreshing board ...\n");
+}
+
+void
+gibbon_app_set_state_disconnected (GibbonApp *self)
 {
         GObject* obj;
 
@@ -792,6 +803,21 @@ gibbon_app_set_state_connecting(GibbonApp *self)
         obj = gibbon_app_find_object(self, "disconnect_menu_item",
                         GTK_TYPE_IMAGE_MENU_ITEM);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+}
+
+void
+gibbon_app_set_state_playing (const GibbonApp *self)
+{
+}
+
+void
+gibbon_app_set_state_watching (const GibbonApp *self)
+{
+}
+
+void
+gibbon_app_set_state_board_inactive (const GibbonApp *self)
+{
 }
 
 const gchar *
