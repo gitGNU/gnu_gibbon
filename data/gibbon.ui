@@ -219,6 +219,18 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -646,7 +658,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-refresh">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Refresh board</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Refresh</property>
                             <property name="use_underline">True</property>
@@ -660,7 +674,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-fullscreen">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Fullscreen</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Fullscreen</property>
                             <property name="use_underline">True</property>
@@ -684,7 +700,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-resign">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Resign</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Resign</property>
                             <property name="use_underline">True</property>
@@ -708,7 +726,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-record">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Record match</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Record</property>
                             <property name="use_underline">True</property>
@@ -722,7 +742,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-game-back">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Goto beginning of match</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Previous game</property>
                             <property name="use_underline">True</property>
@@ -736,7 +758,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-move-back">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Go back one half roll</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Previous move</property>
                             <property name="use_underline">True</property>
@@ -750,7 +774,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-next-move">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Forward one half roll</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Next move</property>
                             <property name="use_underline">True</property>
@@ -764,7 +790,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-next-game">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Go to end of match</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Next game</property>
                             <property name="use_underline">True</property>
@@ -788,7 +816,9 @@
                         <child>
                           <object class="GtkToolButton" id="board-leave">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Leave match</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Leave</property>
                             <property name="use_underline">True</property>
