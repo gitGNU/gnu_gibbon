@@ -45,3 +45,5 @@
 - In the shout room, make TAB-expansion work on know user names.
 - Write a GSettings mapping functions for hostnames that turns the entry
   into a canonical form.
+- No need to send a "toggle" command after connect.  All toggles are sent
+  by the server after login.
