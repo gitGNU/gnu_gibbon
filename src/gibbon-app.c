@@ -855,11 +855,11 @@ gibbon_app_set_state_playing (const GibbonApp *self)
 void
 gibbon_app_set_state_watching (const GibbonApp *self)
 {
-}
+        GObject *obj;
 
-void
-gibbon_app_set_state_board_inactive (const GibbonApp *self)
-{
+        obj = gibbon_app_find_object (self, "board-refresh",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
 
 const gchar *

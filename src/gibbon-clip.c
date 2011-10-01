@@ -180,6 +180,9 @@ static gboolean gibbon_clip_parse_toggle (const gchar *key, gboolean value,
 static gboolean gibbon_clip_parse_toggle1 (const gchar *line,
                                            gchar **tokens,
                                            GSList **result);
+static gboolean gibbon_clip_parse_player (const gchar *line,
+                                          gchar **tokens,
+                                          GSList **result);
 static gboolean gibbon_clip_parse_2stars (const gchar *line,
                                           gchar **tokens,
                                           GSList **result);
@@ -382,6 +385,12 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_toggle1 (line,
                                                                      tokens,
                                                                      &result);
+                        break;
+                case 'P':
+                        if (0 == g_strcmp0 ("Player", first))
+                                success = gibbon_clip_parse_player (line,
+                                                                    tokens,
+                                                                    &result);
                         break;
                 case 'S':
                         if (0 == g_strcmp0 ("Settings", tokens[0])
@@ -1561,6 +1570,33 @@ gibbon_clip_parse_toggle1 (const gchar *line, gchar **tokens,
                 return FALSE;
 
         return gibbon_clip_parse_toggle (tokens[0], value, result);
+}
+
+static gboolean
+gibbon_clip_parse_player (const gchar *line, gchar **tokens,
+                           GSList **result)
+{
+        if (tokens[1]
+            && 0 == g_strcmp0 ("has", tokens[2])
+            && 0 == g_strcmp0 ("joined", tokens[3])
+            && 0 == g_strcmp0 ("you", tokens[4])
+            && 0 == g_strcmp0 ("for", tokens[5])
+            && 0 == g_strcmp0 ("an", tokens[6])
+            && 0 == g_strcmp0 ("unlimited", tokens[7])
+            && 0 == g_strcmp0 ("match.", tokens[8])
+            && !tokens[9]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[1]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT, 0);
+                return TRUE;
+        }
+
+        return FALSE;
 }
 
 static gboolean
