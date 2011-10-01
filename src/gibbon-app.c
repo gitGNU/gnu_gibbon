@@ -112,6 +112,7 @@ static void gibbon_app_on_network_error (GibbonApp *self,
 static void gibbon_app_on_account_prefs (GibbonApp *self);
 static void gibbon_app_on_toggle_ready (GibbonApp *self);
 static void gibbon_app_on_board_refresh (GibbonApp *self);
+static void gibbon_app_on_board_leave (GibbonApp *self);
 static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
@@ -507,6 +508,13 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_refresh),
                                   (gpointer) self);
+
+
+        obj = gibbon_app_find_object(self, "board-leave",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_leave),
+                                  (gpointer) self);
 }
 
 static void
@@ -740,6 +748,30 @@ gibbon_app_on_board_refresh (GibbonApp *self)
 }
 
 void
+gibbon_app_on_board_leave (GibbonApp *self)
+{
+        GtkWidget *dialog;
+        gint response;
+
+        dialog = gtk_message_dialog_new (GTK_WINDOW (self->priv->window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_QUESTION,
+                                         GTK_BUTTONS_YES_NO, "%s",
+                                         _("Leaving in the middle of a game"
+                                           " is normally considered bad"
+                                           " behavior.  Do you really want to"
+                                           " leave?"));
+
+        response = gtk_dialog_run(GTK_DIALOG (dialog));
+
+        gtk_widget_destroy(GTK_WIDGET (dialog));
+
+        if (response == GTK_RESPONSE_YES)
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "leave");
+}
+
+void
 gibbon_app_set_state_disconnected (GibbonApp *self)
 {
         GObject* obj;
@@ -812,6 +844,10 @@ gibbon_app_set_state_playing (const GibbonApp *self)
         GObject *obj;
 
         obj = gibbon_app_find_object (self, "board-refresh",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object (self, "board-leave",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
