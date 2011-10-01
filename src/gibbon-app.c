@@ -776,6 +776,8 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
 {
         GObject* obj;
 
+        gibbon_app_set_state_not_playing (self);
+
         obj = gibbon_app_find_object(self, "toolbar_connect_button",
                         GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
@@ -860,6 +862,21 @@ gibbon_app_set_state_watching (const GibbonApp *self)
         obj = gibbon_app_find_object (self, "board-refresh",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+}
+
+
+void
+gibbon_app_set_state_not_playing (const GibbonApp *self)
+{
+        GObject *obj;
+
+        obj = gibbon_app_find_object (self, "board-refresh",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "board-leave",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 }
 
 const gchar *
