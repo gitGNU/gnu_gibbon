@@ -1624,6 +1624,20 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
                 return TRUE;
         }
 
+        if (0 == g_strcmp0 ("terminated", tokens[2])
+            && 0 == g_strcmp0 ("the", tokens[3])
+            && 0 == g_strcmp0 ("game.", tokens[4])
+            && 0 == g_strcmp0 ("The", tokens[5])
+            && 0 == g_strcmp0 ("game", tokens[6])
+            && 0 == g_strcmp0 ("was", tokens[7])
+            && 0 == g_strcmp0 ("saved.", tokens[8])
+            && !tokens[9]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_LEFT_GAME);
+                return TRUE;
+        }
+
         if (0 == g_strcmp0 ("can't", tokens[2])
             && 0 == g_strcmp0 ("play", tokens[3])
             && 0 == g_strcmp0 ("two", tokens[4])
