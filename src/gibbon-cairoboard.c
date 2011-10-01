@@ -109,8 +109,7 @@ G_DEFINE_TYPE_WITH_CODE (GibbonCairoboard, gibbon_cairoboard, GTK_TYPE_DRAWING_A
 
 static void gibbon_cairoboard_set_position (GibbonBoard *self,
                                             GibbonPosition *pos);
-static const GibbonPosition *gibbon_cairoboard_get_position (const GibbonBoard
-                                                             *self);
+static GibbonPosition *gibbon_cairoboard_get_position (const GibbonBoard *self);
 static void gibbon_cairoboard_animate_move (GibbonBoard *self,
                                             const GibbonMove *move,
                                             GibbonPositionSide side,
@@ -906,12 +905,12 @@ gibbon_cairoboard_set_position (GibbonBoard *_self,
 
         if (self->priv->pos)
                 gibbon_position_free (self->priv->pos);
-        self->priv->pos = pos;
+        self->priv->pos = gibbon_position_copy (pos);
 
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-static const GibbonPosition *
+static GibbonPosition *
 gibbon_cairoboard_get_position (const GibbonBoard *_self)
 {
         GibbonCairoboard *self;
@@ -1388,6 +1387,9 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         guint column;
         guint point;
         
+        if (event->button != 1 && event->button != 3)
+                return FALSE;
+
         x = event->x;
         y = event->y;
 
@@ -1442,6 +1444,8 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                 else
                         return FALSE;
                 g_printerr ("Click on point #%u\n", point);
+                gibbon_board_process_point_click (GIBBON_BOARD (self),
+                                                  point, event->button);
         } else if (x <= self->priv->point24->x
                         - 5 * self->priv->checker_w_flat->width) {
                 g_printerr ("Click on bar ...\n");
@@ -1461,6 +1465,8 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                 else
                         return FALSE;
                 g_printerr ("Click on point #%u\n", point);
+                gibbon_board_process_point_click (GIBBON_BOARD (self),
+                                                  point, event->button);
         }
 
         return TRUE;

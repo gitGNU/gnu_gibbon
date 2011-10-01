@@ -74,7 +74,7 @@ gibbon_board_set_position (GibbonBoard *self, GibbonPosition *position)
  *
  * Returns: the #GibbonPosition or %NULL for failure.
  */
-const GibbonPosition *
+GibbonPosition *
 gibbon_board_get_position (const GibbonBoard *self)
 {
         GibbonBoardIface *iface;
@@ -105,7 +105,6 @@ gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
 {
         GibbonBoardIface *iface;
 
-        g_return_if_fail (self != NULL);
         g_return_if_fail (GIBBON_IS_BOARD (self));
         g_return_if_fail (move != NULL);
 
@@ -114,4 +113,23 @@ gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
         g_return_if_fail (iface->animate_move);
 
         return (*iface->animate_move) (self, move, side, target_position);
+}
+
+void
+gibbon_board_process_point_click (GibbonBoard *self, guint point,
+                                  gint button)
+{
+        GibbonPosition *pos;
+        GibbonPositionSide turn;
+
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+        g_return_if_fail (point > 1);
+        g_return_if_fail (point <= 24);
+
+        pos = gibbon_board_get_position (self);
+
+        turn = gibbon_position_on_move (pos);
+
+        if (turn != GIBBON_POSITION_SIDE_WHITE)
+                return;
 }
