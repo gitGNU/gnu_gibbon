@@ -438,6 +438,10 @@ gibbon_session_process_server_line (GibbonSession *self,
                 /* Ignored.  */
                 retval = GIBBON_CLIP_CODE_START_GAME;
                 break;
+        case GIBBON_CLIP_CODE_LEFT_GAME:
+                gibbon_app_set_state_not_playing (self->priv->app);
+                retval = GIBBON_CLIP_CODE_LEFT_GAME;
+                break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
                 break;
@@ -748,6 +752,9 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 self->priv->watching = NULL;
                 g_free (self->priv->opponent);
                 self->priv->opponent = NULL;
+                gibbon_app_display_info (self->priv->app,
+                                         _("Player `%s' logged out!"),
+                                         name);
         } else if (0 == g_strcmp0 (name, self->priv->opponent)) {
                 g_free (self->priv->position->status);
                 self->priv->position->status =
@@ -756,7 +763,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 self->priv->opponent = NULL;
                 if (!self->priv->watching)
                         gibbon_app_display_info (self->priv->app,
-                                                 _("%s logged out!"),
+                                                 _("Player `%s' logged out!"),
                                                  name);
         }
 
@@ -1124,6 +1131,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &pos->match_length))
                 goto bail_out_board;
+        if (pos->match_length > 99)
+                pos->match_length = 0;
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &pos->scores[0]))
@@ -1187,7 +1196,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                            gibbon_board_get_position (board))) {
                 gibbon_position_free (pos);
         } else {
-                gibbon_board_set_position (GIBBON_BOARD (board), pos);
+                gibbon_board_set_position (board, pos);
         }
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
@@ -1254,6 +1263,14 @@ static gint
 gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
+        const gchar *player;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+                return -1;
+
+        g_free (self->priv->opponent);
+        g_free (self->priv->watching);
+        self->priv->opponent = g_strdup (player);
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
@@ -1288,6 +1305,14 @@ static gint
 gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
+        const gchar *player;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+                return -1;
+
+        g_free (self->priv->opponent);
+        g_free (self->priv->watching);
+        self->priv->opponent = g_strdup (player);
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
