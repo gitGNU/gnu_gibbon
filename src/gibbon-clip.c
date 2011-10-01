@@ -1590,7 +1590,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[10]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                               GIBBON_CLIP_CODE_INVITE_SUCCESS);
+                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[9]);
@@ -1614,7 +1614,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
                         return FALSE;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                               GIBBON_CLIP_CODE_INVITE_SUCCESS);
+                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[10]);
@@ -1717,6 +1717,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                            GSList **result)
 {
         gchar *str;
+        gint64 match_length;
 
         if (0 == g_strcmp0 ("You", tokens[1]))
                 return gibbon_clip_parse_2stars_you (line, tokens, result);
@@ -1769,6 +1770,30 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                                       " corrupted on server. "
                                                       " Please start a"
                                                       " new one!"));
+                return TRUE;
+        } else if (0 == g_strcmp0 ("Player", tokens[1])
+                   && tokens[2]
+                   && 0 == g_strcmp0 ("has", tokens[3])
+                   && 0 == g_strcmp0 ("joined", tokens[4])
+                   && 0 == g_strcmp0 ("you", tokens[5])
+                   && 0 == g_strcmp0 ("for", tokens[6])
+                   && 0 == g_strcmp0 ("a", tokens[7])
+                   && tokens[8]
+                   && 0 == g_strcmp0 ("point", tokens[9])
+                   && 0 == g_strcmp0 ("match.", tokens[10])
+                   && !tokens[11]) {
+                if (!gibbon_clip_extract_integer (tokens[8], &match_length,
+                                                  1, G_MAXUINT))
+                        return FALSE;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[2]);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 match_length);
                 return TRUE;
         }
 
@@ -2003,7 +2028,7 @@ static gboolean gibbon_clip_parse_you (const gchar *line,
             && !tokens[11]) {
                 gibbon_clip_chomp (tokens[5], '.');
                 *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                                  GIBBON_CLIP_CODE_START_GAME);
+                                                 GIBBON_CLIP_CODE_RESUME);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[5]);

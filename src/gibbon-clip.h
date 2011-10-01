@@ -65,8 +65,9 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_INVITATION = 300,
                         GIBBON_CLIP_CODE_TYPE_JOIN = 301,
                         GIBBON_CLIP_CODE_YOURE_WATCHING = 302,
-                        GIBBON_CLIP_CODE_INVITE_SUCCESS = 303,
+                        GIBBON_CLIP_CODE_NOW_PLAYING = 303,
                         GIBBON_CLIP_CODE_INVITE_ERROR = 304,
+                        GIBBON_CLIP_CODE_RESUME = 305,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
