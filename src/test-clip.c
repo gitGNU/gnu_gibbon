@@ -571,16 +571,6 @@ struct test_case test_game_start00 = {
                 }
 };
 
-struct test_case test_game_start01 = {
-                "You are now playing with gflohr."
-                " Your running match was loaded.",
-                {
-                                { GIBBON_CLIP_TYPE_UINT, "204" },
-                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
-                                { GIBBON_CLIP_TYPE_END, NULL }
-                }
-};
-
 struct test_case test_game_left = {
                 "** You terminated the game. The game was saved.",
                 {
@@ -709,6 +699,46 @@ struct test_case test_between11 = {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                   "You cannot play two matches at once!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between12 = {
+                "** Player gflohr has joined you for a 5 point match.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "303" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_between13 = {
+                "Player gflohr has joined you for an unlimited match.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "303" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_resume00 = {
+                "You are now playing with gflohr."
+                " Your running match was loaded.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "305" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_resume01 = {
+                "gflohr has joined you."
+                " Your running match was loaded.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "305" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1297,7 +1327,6 @@ struct test_case *test_cases[] = {
                 &test_moves05,
                 &test_moves06,
                 &test_game_start00,
-                &test_game_start01,
                 &test_game_left,
 
                 &test_between00,
@@ -1312,6 +1341,10 @@ struct test_case *test_cases[] = {
                 &test_between09,
                 &test_between10,
                 &test_between11,
+                &test_between12,
+                &test_between13,
+
+                &test_resume00,
 
                 &test_various00,
                 &test_various01,
