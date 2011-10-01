@@ -61,7 +61,8 @@ static struct GibbonUtilBotInfo {
                 { "fibs.com", 4321, "GammonBot_XVII" },
                 { "fibs.com", 4321, "GammonBot_XVIII" },
                 { "fibs.com", 4321, "GammonBot_XX" },
-                { "fibs.com", 4321, "MonteCarlo" }
+                { "fibs.com", 4321, "MonteCarlo" },
+                { "fibs.com", 4321, "PhaedrusBot" }
 };
 
 static struct GibbonUtilBotInfo daemons[] = {
