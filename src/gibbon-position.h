@@ -54,7 +54,7 @@ typedef enum {
  *          for number.  The absolute value gives the number of checkers on
  *          that point.  A negative value means that this point is occupied
  *          by black, a positive value means that it is occupied by white.
-a * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
+ * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
  *       number of black checkers on the bar.  For consistency, black's
  *       checkers are negative, white's checkers are positive.  Yes, and
  *       for consistency this should be called bars not bar but that sounds
@@ -210,6 +210,7 @@ gboolean gibbon_position_apply_move (GibbonPosition *self,
                                      GibbonPositionSide side,
                                      gboolean reverse);
 gboolean gibbon_position_game_over (const GibbonPosition *position);
+GibbonPositionSide gibbon_position_on_move (const GibbonPosition *position);
 
 /* Free return value with g_free()!  */
 gchar *gibbon_position_format_move (GibbonPosition *self,

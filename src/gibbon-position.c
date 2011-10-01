@@ -1214,3 +1214,40 @@ gibbon_position_format_move (GibbonPosition *self,
 
         return new_buf;
 }
+
+GibbonPositionSide
+gibbon_position_on_move (const GibbonPosition *self)
+{
+        g_return_val_if_fail (self != NULL, GIBBON_POSITION_SIDE_NONE);
+
+        if (!self->dice[0] || !self->dice[1])
+                return GIBBON_POSITION_SIDE_NONE;
+
+        if (self->dice[0] == -self->dice[1])
+                return GIBBON_POSITION_SIDE_NONE;
+
+        if (self->dice[0] < -6 || self->dice[1] < -6)
+                return GIBBON_POSITION_SIDE_NONE;
+
+        if (self->dice[0] > 6 || self->dice[1] > 6)
+                return GIBBON_POSITION_SIDE_NONE;
+
+        if (self->dice[0] > 0 && self->dice[1] > 0)
+                return GIBBON_POSITION_SIDE_WHITE;
+
+        if (self->dice[0] < 0 && self->dice[1] < 0)
+                return GIBBON_POSITION_SIDE_BLACK;
+
+        if (self->dice[0] < 0) {
+                if (self->dice[0] < -self->dice[1])
+                        return GIBBON_POSITION_SIDE_BLACK;
+                else
+                        return GIBBON_POSITION_SIDE_WHITE;
+        }
+
+        if (self->dice[0] > -self->dice[1])
+                return GIBBON_POSITION_SIDE_WHITE;
+        else
+                return GIBBON_POSITION_SIDE_BLACK;
+
+}
