@@ -735,7 +735,8 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
 void
 gibbon_app_on_board_refresh (GibbonApp *self)
 {
-        g_printerr ("Refreshing board ...\n");
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "board");
 }
 
 void
@@ -808,6 +809,11 @@ gibbon_app_set_state_connecting(GibbonApp *self)
 void
 gibbon_app_set_state_playing (const GibbonApp *self)
 {
+        GObject *obj;
+
+        obj = gibbon_app_find_object (self, "board-refresh",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
 
 void

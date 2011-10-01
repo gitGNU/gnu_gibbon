@@ -96,6 +96,8 @@ static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_moves (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_start_game (GibbonSession *self,
+                                              GSList *iter);
 static gint gibbon_session_handle_invitation (GibbonSession *self,
                                               GSList *iter);
 static gint gibbon_session_handle_youre_watching (GibbonSession *self,
@@ -432,8 +434,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_moves (self, iter);
                 break;
         case GIBBON_CLIP_CODE_START_GAME:
-                /* Ignored.  */
-                retval = GIBBON_CLIP_CODE_START_GAME;
+                retval = gibbon_session_handle_start_game (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
@@ -1535,6 +1536,17 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                    gibbon_position_copy (self->priv->position));
 
         return GIBBON_CLIP_CODE_MOVES;
+}
+
+static gboolean
+gibbon_session_handle_start_game (GibbonSession *self, GSList *iter)
+{
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "board");
+
+        gibbon_app_set_state_playing (self->priv->app);
+
+        return GIBBON_CLIP_CODE_START_GAME;
 }
 
 static gboolean
