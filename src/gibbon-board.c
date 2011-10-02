@@ -115,6 +115,26 @@ gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
         return (*iface->animate_move) (self, move, side, target_position);
 }
 
+/**
+ * gibbon_board_redraw:
+ * @self: The #GibbonBoard
+ *
+ * Redraw the board after it has been modified!
+ */
+void
+gibbon_board_redraw (const GibbonBoard *self)
+{
+        GibbonBoardIface *iface;
+
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+
+        iface = GIBBON_BOARD_GET_IFACE (self);
+
+        g_return_if_fail (iface->redraw);
+
+        return (*iface->redraw) (self);
+}
+
 void
 gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                   gint button)
@@ -181,6 +201,8 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
         pos->unused_dice[1] = pos->unused_dice[2];
         pos->unused_dice[2] = pos->unused_dice[3];
         pos->unused_dice[3] = 0;
+
+        gibbon_board_redraw (self);
 
         return;
 

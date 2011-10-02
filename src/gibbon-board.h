@@ -46,9 +46,7 @@ typedef struct _GibbonBoard GibbonBoard;
 /**
  * GibbonBoardIface:
  * @g_iface: The parent interface.
- * @set_position: Transfer a #GibbonPosition to the #GibbonBoard.  The
- *                #GibbonPosition is now owned by the #GibbonPosition.  Do
- *                not gibbon_position_free() it yourself.
+ * @set_position: Transfer a #GibbonPosition to the #GibbonBoard.
  *
  * Visual representation of a backgammon position.  It is the view for the
  * model #GibbonPosition.
@@ -63,6 +61,7 @@ struct _GibbonBoardIface
         void (*animate_move) (GibbonBoard *self, const GibbonMove *move,
                               GibbonPositionSide side,
                               GibbonPosition *target_position);
+        void (*redraw) (const GibbonBoard *self);
 };
 
 GType gibbon_board_get_type (void) G_GNUC_CONST;
@@ -72,6 +71,7 @@ GibbonPosition *gibbon_board_get_position (const GibbonBoard *board);
 void gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
                                 GibbonPositionSide side,
                                 GibbonPosition *target_position);
+void gibbon_board_redraw (const GibbonBoard *self);
 void gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                        gint button);
 
