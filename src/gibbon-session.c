@@ -1094,6 +1094,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         const gchar *str;
         gint retval = -1;
+        GibbonPositionSide turn;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -1181,6 +1182,17 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
             && !pos->may_double[1]) {
                 pos->game_info = g_strdup (_("Crawford game"));
         }
+
+        turn = gibbon_position_on_move (pos);
+        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+                pos->unused_dice[0] = abs (pos->dice[0]);
+                pos->unused_dice[1] = abs (pos->dice[1]);
+        } else if (turn == GIBBON_POSITION_SIDE_BLACK) {
+                pos->unused_dice[0] = -abs (pos->dice[0]);
+                pos->unused_dice[1] = -abs (pos->dice[1]);
+        }
+        if (pos->dice[0] == pos->dice[1])
+                pos->unused_dice[2] = pos->unused_dice[3] = pos->unused_dice[0];
 
         if (gibbon_position_equals_technically (pos, self->priv->position)) {
                 g_printerr ("Session positions are equal.\n");

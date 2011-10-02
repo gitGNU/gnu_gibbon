@@ -73,6 +73,9 @@ typedef enum {
  * @match_length: Length of the match of 0 for unlimited.
  * @game_info: Free-form string describing the game ("Crawford", ...).
  * @status: Free-form string describing the status ("It's your move", ...).
+ * @unused_dice: Can be filled with the dice not yet used in this roll.
+ *               They should be normalized, i.e. all positive for white or all
+ *               negative for black, even for the opening roll.
  *
  * A boxed type representing a backgammon position.
  *
@@ -108,6 +111,8 @@ struct _GibbonPosition
 
         gchar *game_info;
         gchar *status;
+
+        gint unused_dice[4];
 };
 
 /**
