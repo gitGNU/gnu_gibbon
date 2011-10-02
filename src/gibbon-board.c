@@ -121,6 +121,8 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
 {
         GibbonPosition *pos;
         GibbonPositionSide turn;
+        guint pips;
+        gint i;
 
         g_return_if_fail (GIBBON_IS_BOARD (self));
         g_return_if_fail (point > 1);
@@ -131,6 +133,14 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
          * cases here.
          */
         pos = gibbon_board_get_position (self);
+
+        /* Any dice left? */
+        if (!pos->unused_dice[0])
+                return;
+
+        /* Only one die left? */
+        if (!pos->unused_dice[1])
+                button = 1;
 
         turn = gibbon_position_on_move (pos);
 
@@ -145,6 +155,41 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
         if (pos->points[point - 1] <= 0)
                 return;
 
-        /* Bear-off or regular move? */
+        pips = button == 1 ? pos->unused_dice[0] : pos->unused_dice[1];
 
+        if (point - pips < 1) {
+                /* This is a bear-off.  */
+                for (i = point; i < 24; ++i)
+                        if (pos->points[i] > 0)
+                                goto bail_out_point_click;
+                --pos->points[point - 1];
+        } else {
+                g_printerr ("Occupied?\n");
+                /* Occupied? */
+                if (pos->points[point - 1 - pips] < -1)
+                        goto bail_out_point_click;
+                g_printerr ("Hit?\n");
+                if (pos->points[point - 1 - pips] == -1)
+                        pos->points[point - 1 - pips] = 0;
+                --pos->points[point - 1];
+                ++pos->points[point - 1 - pips];
+        }
+
+        /* Delete used die and move the rest.  */
+        if (button == 1)
+                pos->unused_dice[0] = pos->unused_dice[1];
+        pos->unused_dice[1] = pos->unused_dice[2];
+        pos->unused_dice[2] = pos->unused_dice[3];
+        pos->unused_dice[3] = 0;
+
+        return;
+
+bail_out_point_click:
+        /*
+         * If it was not a legal move with the left die it could still be
+         * one for the right die.
+         */
+        if (button == 1 && pos->unused_dice[1]
+            && pos->unused_dice[0] != pos->unused_dice[1])
+                gibbon_board_process_point_click (self, point, 3);
 }
