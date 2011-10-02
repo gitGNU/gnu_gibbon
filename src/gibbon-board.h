@@ -72,7 +72,7 @@ GibbonPosition *gibbon_board_get_position (const GibbonBoard *board);
 void gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
                                 GibbonPositionSide side,
                                 GibbonPosition *target_position);
-void gibbon_board_process_point_click (GibbonBoard *self, guint point,
+void gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                        gint button);
 
 #endif

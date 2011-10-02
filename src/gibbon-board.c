@@ -116,7 +116,7 @@ gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
 }
 
 void
-gibbon_board_process_point_click (GibbonBoard *self, guint point,
+gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                   gint button)
 {
         GibbonPosition *pos;
@@ -126,10 +126,25 @@ gibbon_board_process_point_click (GibbonBoard *self, guint point,
         g_return_if_fail (point > 1);
         g_return_if_fail (point <= 24);
 
+        /*
+         * This is an inpartial legality check.  We only handle the trivial
+         * cases here.
+         */
         pos = gibbon_board_get_position (self);
 
         turn = gibbon_position_on_move (pos);
 
         if (turn != GIBBON_POSITION_SIDE_WHITE)
                 return;
+
+        /* Any checkers on the bar?  */
+        if (pos->bar[0])
+                return;
+
+        /* Are there checkers to move?  */
+        if (pos->points[point - 1] <= 0)
+                return;
+
+        /* Bear-off or regular move? */
+
 }
