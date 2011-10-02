@@ -47,3 +47,5 @@
   into a canonical form.
 - No need to send a "toggle" command after connect.  All toggles are sent
   by the server after login.
+- Implement some sort of auto-idle that sets you to `not ready' after some
+  time of inactivity.
