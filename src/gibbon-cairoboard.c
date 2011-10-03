@@ -162,6 +162,7 @@ static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
                                              GibbonPositionSide side);
 static gboolean gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                                    GdkEventButton *event);
+static void gibbon_cairoboard_redraw (const GibbonBoard *self);
 
 #ifdef M_PI
 # undef M_PI
@@ -214,6 +215,7 @@ gibbon_board_iface_init (GibbonBoardIface *iface)
         iface->set_position = gibbon_cairoboard_set_position;
         iface->get_position = gibbon_cairoboard_get_position;
         iface->animate_move = gibbon_cairoboard_animate_move;
+        iface->redraw = gibbon_cairoboard_redraw;
 }
 
 static void
@@ -1470,4 +1472,10 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         }
 
         return TRUE;
+}
+
+static void
+gibbon_cairoboard_redraw (const GibbonBoard *self)
+{
+        gtk_widget_queue_draw (GTK_WIDGET (self));
 }
