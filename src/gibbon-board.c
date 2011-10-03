@@ -184,11 +184,9 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                 goto bail_out_point_click;
                 --pos->points[point - 1];
         } else {
-                g_printerr ("Occupied?\n");
                 /* Occupied? */
                 if (pos->points[point - 1 - pips] < -1)
                         goto bail_out_point_click;
-                g_printerr ("Hit?\n");
                 if (pos->points[point - 1 - pips] == -1)
                         pos->points[point - 1 - pips] = 0;
                 --pos->points[point - 1];
