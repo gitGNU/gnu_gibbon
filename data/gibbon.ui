@@ -228,6 +228,9 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -669,15 +672,31 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToolButton" id="board-fullscreen">
+                          <object class="GtkToolButton" id="board-undo">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Fullscreen</property>
+                            <property name="tooltip_text" translatable="yes">Undo checker movements</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="label" translatable="yes">Fullscreen</property>
+                            <property name="label" translatable="yes">Undo</property>
                             <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-fullscreen</property>
+                            <property name="stock_id">gtk-undo</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="board-resign">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Resign</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">Resign</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-help</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -695,15 +714,15 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToolButton" id="board-resign">
+                          <object class="GtkToolButton" id="board-fullscreen">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Resign</property>
+                            <property name="tooltip_text" translatable="yes">Fullscreen</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="label" translatable="yes">Resign</property>
+                            <property name="label" translatable="yes">Fullscreen</property>
                             <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-help</property>
+                            <property name="stock_id">gtk-fullscreen</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
