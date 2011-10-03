@@ -97,7 +97,6 @@ AM_GLIB_GNU_GETTEXT([external])
 m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.26.0])
 m4_define(gibbon_librsvg_requirement, [librsvg-2.0 >= 2.32.1])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.22.0])
-m4_define(gibbon_gconf_requirement, [gconf-2.0 >= 2.22.0])
 m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
 m4_define(gibbon_libpng_requirement, [libpng >= 0.23])
 m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
@@ -106,7 +105,6 @@ m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_librsvg_requirement
     gibbon_gtk_requirement
-    gibbon_gconf_requirement
     gibbon_gthread_requirement
     gibbon_libpng_requirement
     gibbon_libxml_requirement
@@ -114,7 +112,7 @@ m4_define(gibbon_requirements,
 )
 
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
-GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ]gibbon_librsvg_requirement[, ]gibbon_gtk_requirement[, ]gibbon_gconf_requirement[, ]gibbon_gthread_requirement[, ]gibbon_libpng_requirement[, ]gibbon_libxml_requirement[, ]gibbon_sqlite3_requirement["]
+GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ]gibbon_librsvg_requirement[, ]gibbon_gtk_requirement[, ]gibbon_gthread_requirement[, ]gibbon_libpng_requirement[, ]gibbon_libxml_requirement[, ]gibbon_sqlite3_requirement["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
