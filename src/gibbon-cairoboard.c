@@ -28,6 +28,11 @@
 #include "svg-util.h"
 #include "gibbon-board.h"
 
+enum {
+        DICE_PICKED_UP,
+        LAST_SIGNAL
+};
+
 /* This lookup table determines, iff and where to draw a certain checker.
  * The index is the number of checkers, the first number is the position
  * in steps of 0.5 checker widths, the third one is the maximum number
@@ -164,6 +169,8 @@ static gboolean gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                                    GdkEventButton *event);
 static void gibbon_cairoboard_redraw (const GibbonBoard *self);
 
+static guint gibbon_cairoboard_signals[LAST_SIGNAL] = { 0 };
+
 #ifdef M_PI
 # undef M_PI
 #endif
@@ -283,7 +290,7 @@ gibbon_cairoboard_finalize (GObject *object)
 static void
 gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 {
-        GtkDrawingAreaClass* parent_class = GTK_DRAWING_AREA_CLASS (klass);
+        GtkDrawingAreaClass *parent_class = GTK_DRAWING_AREA_CLASS (klass);
 
         g_type_class_add_private (klass, sizeof (GibbonCairoboardPrivate));
 
@@ -293,6 +300,14 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
         G_OBJECT_CLASS (parent_class)->finalize = gibbon_cairoboard_finalize;
         GTK_WIDGET_CLASS (parent_class)->expose_event = 
                 gibbon_cairoboard_expose;
+
+        gibbon_cairoboard_signals[DICE_PICKED_UP] =
+                        g_signal_new ("dice-picked-up",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
 }
 
 GibbonCairoboard *
@@ -1445,7 +1460,7 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                         point = 12 - column;
                 else
                         return FALSE;
-                g_printerr ("Click on point #%u\n", point);
+
                 gibbon_board_process_point_click (GIBBON_BOARD (self),
                                                   point, event->button);
         } else if (x <= self->priv->point24->x
@@ -1464,9 +1479,28 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                         point = 24 - column;
                 else if (y >= self->priv->point12->y)
                         point = 1 + column;
-                else
+                else if (y >= self->priv->point24->y
+                              + self->priv->point24->height
+                              + 10
+                         && y <= self->priv->point12->y + 15) {
+                        /*
+                         * We give an extra offset of 15 pixels here because
+                         * the click is `dangerous', and it shouldn't be too
+                         * close to a click on a point.
+                         *
+                         * There is no danger of confusing picking up of the
+                         * dice with a click on the bar.  If the user
+                         * mistakenly picked up the dice, when he meant a
+                         * click on the bar, the legality checker will undo
+                         * the error for us.
+                         */
+                        g_signal_emit (self,
+                                      gibbon_cairoboard_signals[DICE_PICKED_UP],
+                                      0, self);
+                        return TRUE;
+                } else {
                         return FALSE;
-                g_printerr ("Click on point #%u\n", point);
+                }
                 gibbon_board_process_point_click (GIBBON_BOARD (self),
                                                   point, event->button);
         }
