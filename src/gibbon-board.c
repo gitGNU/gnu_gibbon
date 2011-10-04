@@ -145,7 +145,7 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
         gint i;
 
         g_return_if_fail (GIBBON_IS_BOARD (self));
-        g_return_if_fail (point > 1);
+        g_return_if_fail (point >= 1);
         g_return_if_fail (point <= 24);
 
         /*
