@@ -1251,3 +1251,45 @@ gibbon_position_on_move (const GibbonPosition *self)
                 return GIBBON_POSITION_SIDE_BLACK;
 
 }
+
+gchar *
+gibbon_position_fibs_move (GibbonPosition *self,
+                             const GibbonMove *move,
+                             GibbonPositionSide side,
+                             gboolean reverse)
+{
+        GString *string = g_string_new ("");
+        const GibbonMovement *movement;
+        gchar *result;
+        guint i;
+
+        for (i = 0; i < move->number; ++i) {
+                if (i) string = g_string_append_c (string, ' ');
+
+                movement = move->movements + i;
+
+                if (movement->from == 0 || movement->from == 25)
+                        string = g_string_append (string, "bar");
+                else if (reverse)
+                        g_string_append_printf (string, "%d",
+                                                25 - movement->from);
+                else
+                        g_string_append_printf (string, "%d",
+                                                movement->from);
+                string = g_string_append_c (string, '-');
+
+                if (movement->to == 0 || movement->to == 25)
+                        string = g_string_append (string, "off");
+                else if (reverse)
+                        g_string_append_printf (string, "%d",
+                                                25 - movement->to);
+                else
+                        g_string_append_printf (string, "%d",
+                                                movement->to);
+        }
+
+        result = string->str;
+        g_string_free (string, FALSE);
+
+        return result;
+}

@@ -222,5 +222,9 @@ gchar *gibbon_position_format_move (GibbonPosition *self,
                                     const GibbonMove *move,
                                     GibbonPositionSide side,
                                     gboolean reverse);
+gchar *gibbon_position_fibs_move (GibbonPosition *self,
+                                  const GibbonMove *move,
+                                  GibbonPositionSide side,
+                                  gboolean reverse);
 
 #endif
