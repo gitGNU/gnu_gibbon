@@ -134,6 +134,7 @@ static gboolean gibbon_session_timeout (GibbonSession *self);
 static void gibbon_session_registration_error (GibbonSession *self,
                                                  const gchar *msg);
 static void gibbon_session_registration_success (GibbonSession *self);
+static void gibbon_session_on_dice_picked_up (const GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -147,6 +148,7 @@ struct _GibbonSessionPrivate {
          * message, or of a move, roll, or other game play action made.
          */
         GibbonPosition *position;
+        gboolean direction;
 
         GibbonPlayerList *player_list;
         GibbonInviterList *inviter_list;
@@ -168,6 +170,8 @@ struct _GibbonSessionPrivate {
 
         GHashTable *saved_games;
         gboolean saved_games_finished;
+
+        guint dice_picked_up_handler;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -237,6 +241,8 @@ gibbon_session_init (GibbonSession *self)
                                        g_free,
                                        (GDestroyNotify) gibbon_saved_info_free);
         self->priv->saved_games_finished = FALSE;
+
+        self->priv->dice_picked_up_handler = 0;
 }
 
 static void
@@ -247,6 +253,10 @@ gibbon_session_finalize (GObject *object)
         GSList *iter;
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
+
+        if (self->priv->dice_picked_up_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (self->priv->app),
+                                             self->priv->dice_picked_up_handler);
 
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
@@ -290,6 +300,7 @@ GibbonSession *
 gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
+        GibbonBoard *board;
 
         self->priv->connection = connection;
         self->priv->app = app;
@@ -308,6 +319,12 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->position = gibbon_position_new ();
 
         self->priv->archive = gibbon_app_get_archive (app);
+
+        board = gibbon_app_get_board (self->priv->app);
+        self->priv->dice_picked_up_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "dice-picked-up",
+                                  G_CALLBACK (gibbon_session_on_dice_picked_up),
+                                          G_OBJECT (self));
 
         return self;
 }
@@ -1854,6 +1871,8 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         info = gibbon_saved_info_new (opponent, match_length,
                                       scores[0], scores[1]);
 
+        g_printerr ("Inserting %u point match against %s (%d-%d).\n",
+                    match_length, opponent, scores[0], scores[1]);
         g_hash_table_insert (self->priv->saved_games,
                              (gpointer) opponent, (gpointer) info);
 
@@ -2422,4 +2441,97 @@ gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
                                          "tellx %s %s", who, message);
 
         gtk_widget_destroy (dialog);
+}
+
+static void
+gibbon_session_on_dice_picked_up (const GibbonSession *self)
+{
+        GibbonPosition *new_pos;
+        GibbonBoard *board;
+        GibbonMove *move;
+        gchar *fibs_move;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (GIBBON_POSITION_SIDE_WHITE
+            != gibbon_position_on_move (self->priv->position))
+                return;
+
+        if (!self->priv->position->dice[0])
+                return;
+
+        board = gibbon_app_get_board (self->priv->app);
+        new_pos = gibbon_board_get_position (board);
+
+        move = gibbon_position_check_move (self->priv->position, new_pos,
+                                           GIBBON_POSITION_SIDE_WHITE);
+
+        switch (move->status) {
+        case GIBBON_MOVE_LEGAL:
+                break;
+        case GIBBON_MOVE_ILLEGAL:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("Illegal move!"));
+                break;
+        case GIBBON_MOVE_TOO_MANY_MOVES:
+                /* Cannot happen.  */
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You moved too many checkers!"));
+                break;
+        case GIBBON_MOVE_BLOCKED:
+                /* Cannot happen.  */
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You cannot move to a point that"
+                                            " is blocked by two or more of"
+                                            " your opponent's checkers!"));
+                break;
+        case GIBBON_MOVE_USE_ALL:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You have to use both dice!"));
+                break;
+        case GIBBON_MOVE_USE_HIGHER:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You have to use the higher die"
+                                            " if possible!"));
+                break;
+        case GIBBON_MOVE_TRY_SWAP:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You have to use both dice if"
+                                            " possible (hint: try to use"
+                                            " the other die first)!"));
+                break;
+        case GIBBON_MOVE_PREMATURE_BEAR_OFF:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You must move all checkers into"
+                                            " your home board before you can"
+                                            " start bearing-off!"));
+                break;
+        case GIBBON_MOVE_ILLEGAL_WASTE:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You must move your checkers from"
+                                            " the higher points first!"));
+                break;
+        case GIBBON_MOVE_DANCING:
+                gibbon_app_display_error (self->priv->app, "%s",
+                                          _("You must bring in checkers from"
+                                            " the bar first!"));
+                break;
+        }
+
+        if (move->status != GIBBON_MOVE_LEGAL) {
+                gibbon_board_set_position (board, self->priv->position);
+                return;
+        }
+
+        fibs_move = gibbon_position_fibs_move (self->priv->position,
+                                               move,
+                                               GIBBON_POSITION_SIDE_WHITE,
+                                               self->priv->direction);
+        g_printerr ("move %s\n", fibs_move);
+        g_free (fibs_move);
 }
