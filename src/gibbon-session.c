@@ -2524,6 +2524,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         }
 
         if (move->status != GIBBON_MOVE_LEGAL) {
+                g_free (move);
                 gibbon_board_set_position (board, self->priv->position);
                 return;
         }
@@ -2531,7 +2532,14 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         fibs_move = gibbon_position_fibs_move (self->priv->position,
                                                move,
                                                GIBBON_POSITION_SIDE_WHITE,
-                                               self->priv->direction);
-        g_printerr ("move %s\n", fibs_move);
+                                               !self->priv->direction);
+        g_free (move);
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "move %s", fibs_move);
         g_free (fibs_move);
+
+        new_pos->dice[0] = 0;
+        new_pos->dice[1] = 0;
+        self->priv->position = gibbon_position_copy (new_pos);
+        gibbon_board_set_position (board, new_pos);
 }
