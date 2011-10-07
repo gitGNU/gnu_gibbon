@@ -1295,7 +1295,7 @@ gibbon_position_fibs_move (GibbonPosition *self,
 }
 
 void
-gibbon_session_dump_position (const GibbonPosition *self)
+gibbon_position_dump_position (const GibbonPosition *self)
 {
         gint i;
 

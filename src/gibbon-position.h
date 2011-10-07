@@ -201,7 +201,7 @@ GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
 GibbonMove *gibbon_position_alloc_move (gsize num_movements);
 gboolean gibbon_position_equals_technically (const GibbonPosition *self,
                                              const GibbonPosition *other);
-void gibbon_session_dump_position (const GibbonPosition *self);
+void gibbon_position_dump_position (const GibbonPosition *self);
 
 /* Apply a move to a position.  The function only does a plausability test,
  * not a legality test.
