@@ -2462,8 +2462,11 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
             != gibbon_position_on_move (self->priv->position))
                 return;
 
-        if (!self->priv->position->dice[0])
+        if (!self->priv->position->dice[0]) {
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "roll");
                 return;
+        }
 
         board = gibbon_app_get_board (self->priv->app);
         new_pos = gibbon_board_get_position (board);
