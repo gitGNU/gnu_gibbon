@@ -1166,9 +1166,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
                                           &pos->points[i]))
                         goto bail_out_board;
-                g_printerr (" %d", pos->points[i]);
         }
-        g_printerr ("!\n");
 
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
                                   &pos->dice[0]))
@@ -1806,7 +1804,7 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
-                if (mail) {
+                if (mail && !self->priv->expect_address) {
                         /* Restart timer.  */
                         if (self->priv->timeout_id)
                                 g_source_remove (self->priv->timeout_id);
@@ -1937,7 +1935,6 @@ static gint
 gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
         if (!self->priv->init_commands_sent) {
-                self->priv->init_commands_sent = TRUE;
                 /* Restart timer.  */
                 if (self->priv->timeout_id)
                         g_source_remove (self->priv->timeout_id);
