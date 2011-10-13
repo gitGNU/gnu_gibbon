@@ -68,12 +68,6 @@ struct GibbonSessionSavedCountCallbackInfo {
         gpointer data;
 };
 
-#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-static void gibbon_session_dump_position (const GibbonSession *self,
-                                          const GibbonPosition *pos);
-#endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
-
-
 #define GIBBON_SESSION_REPLY_TIMEOUT 2000
 
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
@@ -1230,7 +1224,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         }
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-        gibbon_session_dump_position (self, self->priv->position);
+        gibbon_position_dump_position (self->priv->position);
 #endif
 
         return GIBBON_CLIP_CODE_BOARD;
@@ -1387,61 +1381,6 @@ gibbon_session_decode_client (GibbonSession *self, const gchar *client)
                 return retval;
         }
 }
-
-#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-static void
-gibbon_session_dump_position (const GibbonSession *self,
-                              const GibbonPosition *pos)
-{
-        gint i;
-
-        g_printerr ("=== Position ===\n");
-        g_printerr ("Opponent: %s, %d/%d points, %u pips\n",
-                    pos->players[1], pos->scores[1], pos->match_length,
-                    gibbon_position_get_pip_count (pos,
-                                                   GIBBON_POSITION_SIDE_BLACK));
-        g_printerr ("\
-  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
-        g_printerr ("  |");
-        for (i = 12; i < 18; ++i)
-                if (pos->points[i])
-                        g_printerr ("%+3d", pos->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" |%+3d|", pos->bar[1]);
-        for (i = 18; i < 24; ++i)
-                if (pos->points[i])
-                        g_printerr ("%+3d", pos->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" | May double: %s\n", pos->may_double[1] ? "yes" : "no");
-        g_printerr (" v| dice: %+d : %+d     ",
-                    pos->dice[0], pos->dice[1]);
-        g_printerr ("|BAR|                   | ");
-        g_printerr (" Cube: %d\n", pos->cube);
-        g_printerr ("  |");
-        for (i = 11; i >= 6; --i)
-                if (pos->points[i])
-                        g_printerr ("%+3d", pos->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" |%+3d|", pos->bar[0]);
-        for (i = 5; i >= 0; --i)
-                if (pos->points[i])
-                        g_printerr ("%+3d", pos->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" | May double: %s\n", pos->may_double[0] ? "yes" : "no");
-        g_printerr ("\
-  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
-        g_printerr ("Player: %s, %d/%d points, %u pips\n",
-                    pos->players[0], pos->scores[0], pos->match_length,
-                    gibbon_position_get_pip_count (pos,
-                                                   GIBBON_POSITION_SIDE_WHITE));
-        g_printerr ("Game info: %s\n", pos->game_info);
-        g_printerr ("Status: %s\n", pos->status);
-}
-#endif
 
 static gboolean
 gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
