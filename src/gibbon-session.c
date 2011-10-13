@@ -1871,10 +1871,8 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         info = gibbon_saved_info_new (opponent, match_length,
                                       scores[0], scores[1]);
 
-        g_printerr ("Inserting %u point match against %s (%d-%d).\n",
-                    match_length, opponent, scores[0], scores[1]);
         g_hash_table_insert (self->priv->saved_games,
-                             (gpointer) opponent, (gpointer) info);
+                             (gpointer) g_strdup (opponent), (gpointer) info);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED;
 }
