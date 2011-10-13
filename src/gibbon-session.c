@@ -1664,6 +1664,9 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         g_free (hostname);
         g_free (email);
 
+        gibbon_inviter_list_set_match_length (self->priv->inviter_list,
+                                              opponent, length);
+
         /* Get the saved count.  */
         gibbon_connection_queue_command (self->priv->connection,
                                          FALSE,

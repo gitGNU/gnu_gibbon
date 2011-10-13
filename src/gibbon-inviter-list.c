@@ -33,6 +33,7 @@ struct GibbonInviter {
         GtkTreeIter iter;
         
         gint saved_count;
+        gint match_length;
 };
 
 static GType gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_N_COLUMNS];
@@ -208,7 +209,6 @@ gibbon_inviter_list_set (GibbonInviterList *self,
         gtk_list_store_set (self->priv->store,
                             &inviter->iter,
                             GIBBON_INVITER_LIST_COL_NAME, name,
-                            GIBBON_INVITER_LIST_COL_LENGTH, "???",
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
@@ -309,7 +309,6 @@ gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
         return player->saved_count;
 }
 
-
 void
 gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                                      const gchar *name, gint count)
@@ -337,6 +336,52 @@ gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                             GIBBON_INVITER_LIST_COL_UPDATING_SAVEDCOUNT,
                                     stringified ? FALSE : TRUE,
                             -1);
+        g_free (stringified);
+}
+
+gint
+gibbon_inviter_list_get_match_length (const GibbonInviterList *self,
+                                      const gchar *name)
+{
+        struct GibbonInviter *player;
+
+        g_return_val_if_fail (GIBBON_IS_INVITER_LIST (self), -1);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        if (!player)
+                return -2;
+
+        return player->match_length;
+}
+
+void
+gibbon_inviter_list_set_match_length (GibbonInviterList *self,
+                                      const gchar *name, gint length)
+{
+        gchar *stringified;
+
+        struct GibbonInviter *player;
+
+        g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        g_return_if_fail (player != NULL);
+
+        player->match_length = length;
+
+        if (length < 0) {
+                stringified = g_strdup (_("resume"));
+        } else if (length == 0) {
+                stringified = g_strdup_printf ("\xe2\x88\x9e");
+        } else {
+                stringified = g_strdup_printf ("%d", length);
+        }
+
+        gtk_list_store_set (self->priv->store,
+                            &player->iter,
+                            GIBBON_INVITER_LIST_COL_LENGTH, stringified,
+                            -1);
+        g_free (stringified);
 }
 
 void
