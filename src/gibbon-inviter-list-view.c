@@ -172,8 +172,6 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                                                    GTK_TYPE_TREE_VIEW));
 
         self->priv->decline_column = gtk_tree_view_column_new ();
-        gtk_tree_view_column_set_title (self->priv->decline_column,
-                                        _("Decline"));
         renderer = gtk_cell_renderer_pixbuf_new ();
         gtk_tree_view_column_pack_start (self->priv->decline_column, renderer,
                                          TRUE);
@@ -181,7 +179,6 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         gtk_tree_view_insert_column (view, self->priv->decline_column, -1);
 
         self->priv->accept_column = gtk_tree_view_column_new ();
-        gtk_tree_view_column_set_title (self->priv->accept_column, _("Accept"));
         renderer = gtk_cell_renderer_pixbuf_new ();
         gtk_tree_view_column_pack_start (self->priv->accept_column, renderer,
                                          TRUE);
@@ -199,6 +196,14 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+
+        colno = gtk_tree_view_insert_column_with_attributes (
+                view,
+                -1,
+                NULL,
+                gtk_cell_renderer_text_new (),
+                "text", GIBBON_INVITER_LIST_COL_LENGTH,
+                NULL);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,

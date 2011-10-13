@@ -494,9 +494,9 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 reply = gtk_dialog_run (GTK_DIALOG (dialog));
                 gtk_widget_destroy (dialog);
 
-                if (reply == GTK_RESPONSE_YES) {
-                        g_printerr ("invite %s resume\n", who);
-                }
+                if (reply == GTK_RESPONSE_YES)
+                        gibbon_connection_queue_command (connection, FALSE,
+                                                         "invite %s", who);
         } else {
                 message = g_strdup_printf (_("Invite %s"), who);
                 dialog = gtk_dialog_new_with_buttons (message,

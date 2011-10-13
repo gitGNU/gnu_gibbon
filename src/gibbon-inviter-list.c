@@ -68,6 +68,7 @@ gibbon_inviter_list_init (GibbonInviterList *self)
 
         store = gtk_list_store_new (GIBBON_INVITER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
                                     G_TYPE_DOUBLE,
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
@@ -117,6 +118,8 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
         g_type_class_add_private (klass, sizeof (GibbonInviterListPrivate));
 
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_NAME] = 
+                G_TYPE_STRING;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_LENGTH] =
                 G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_RATING] = 
                 G_TYPE_DOUBLE;
@@ -205,6 +208,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
         gtk_list_store_set (self->priv->store,
                             &inviter->iter,
                             GIBBON_INVITER_LIST_COL_NAME, name,
+                            GIBBON_INVITER_LIST_COL_LENGTH, g_strdup("???"),
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
