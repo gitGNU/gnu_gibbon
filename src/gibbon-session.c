@@ -73,6 +73,9 @@ static void gibbon_session_dump_position (const GibbonSession *self,
                                           const GibbonPosition *pos);
 #endif /* #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE */
 
+
+#define GIBBON_SESSION_REPLY_TIMEOUT 2000
+
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info_end (GibbonSession *self,
@@ -740,7 +743,7 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                                                  FALSE,
                                                  "set");
                 self->priv->timeout_id =
-                        g_timeout_add (2000,
+                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                        (GSourceFunc) gibbon_session_timeout,
                                        (gpointer) self);
 
@@ -1754,7 +1757,7 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                 if (self->priv->timeout_id)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
-                        g_timeout_add (2000,
+                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                        (GSourceFunc) gibbon_session_timeout,
                                        (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
@@ -1808,7 +1811,7 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         if (self->priv->timeout_id)
                                 g_source_remove (self->priv->timeout_id);
                         self->priv->timeout_id =
-                                g_timeout_add (2000,
+                                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                            (GSourceFunc) gibbon_session_timeout,
                                                (gpointer) self);
                         gibbon_connection_queue_command (self->priv->connection,
@@ -1821,7 +1824,7 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                         if (self->priv->timeout_id)
                                 g_source_remove (self->priv->timeout_id);
                         self->priv->timeout_id =
-                                g_timeout_add (2000,
+                                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                            (GSourceFunc) gibbon_session_timeout,
                                                (gpointer) self);
                         gibbon_connection_queue_command (self->priv->connection,
@@ -1939,7 +1942,7 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
                 if (self->priv->timeout_id)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
-                        g_timeout_add (2000,
+                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                        (GSourceFunc) gibbon_session_timeout,
                                        (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
@@ -1966,7 +1969,7 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
                 if (self->priv->timeout_id)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id =
-                        g_timeout_add (2000,
+                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                        (GSourceFunc) gibbon_session_timeout,
                                        (gpointer) self);
                 gibbon_connection_queue_command (self->priv->connection,
@@ -2229,7 +2232,7 @@ gibbon_session_handle_prompt (GibbonSession *self)
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
         self->priv->timeout_id =
-                g_timeout_add (2000,
+                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                (GSourceFunc) gibbon_session_timeout,
                                (gpointer) self);
 
@@ -2277,7 +2280,7 @@ gibbon_session_handle_pw_prompt (GibbonSession *self)
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
         self->priv->timeout_id =
-                g_timeout_add (2000,
+                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
                                (GSourceFunc) gibbon_session_timeout,
                                (gpointer) self);
 
