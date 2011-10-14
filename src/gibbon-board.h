@@ -56,8 +56,8 @@ struct _GibbonBoardIface
 {
         GTypeInterface g_iface;
 
-        void (*set_position) (GibbonBoard *self, GibbonPosition *pos);
-        GibbonPosition *(*get_position) (const GibbonBoard *self);
+        void (*set_position) (GibbonBoard *self, const GibbonPosition *pos);
+        const GibbonPosition *(*get_position) (const GibbonBoard *self);
         void (*animate_move) (GibbonBoard *self, const GibbonMove *move,
                               GibbonPositionSide side,
                               GibbonPosition *target_position);
@@ -66,8 +66,9 @@ struct _GibbonBoardIface
 
 GType gibbon_board_get_type (void) G_GNUC_CONST;
 
-void gibbon_board_set_position (GibbonBoard *board, GibbonPosition *position);
-GibbonPosition *gibbon_board_get_position (const GibbonBoard *board);
+void gibbon_board_set_position (GibbonBoard *board, const GibbonPosition
+                                *position);
+const GibbonPosition *gibbon_board_get_position (const GibbonBoard *board);
 void gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
                                 GibbonPositionSide side,
                                 GibbonPosition *target_position);

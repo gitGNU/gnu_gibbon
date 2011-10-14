@@ -68,7 +68,7 @@ struct GibbonSessionSavedCountCallbackInfo {
         gpointer data;
 };
 
-#define GIBBON_SESSION_REPLY_TIMEOUT 2000
+#define GIBBON_SESSION_REPLY_TIMEOUT 8000
 
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
@@ -2386,7 +2386,7 @@ gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
 static void
 gibbon_session_on_dice_picked_up (const GibbonSession *self)
 {
-        GibbonPosition *new_pos;
+        const GibbonPosition *new_pos;
         GibbonBoard *board;
         GibbonMove *move;
         gchar *fibs_move;
@@ -2481,8 +2481,8 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
                                          "move %s", fibs_move);
         g_free (fibs_move);
 
-        new_pos->dice[0] = 0;
-        new_pos->dice[1] = 0;
         self->priv->position = gibbon_position_copy (new_pos);
-        gibbon_board_set_position (board, new_pos);
+        self->priv->position->dice[0] = 0;
+        self->priv->position->dice[1] = 0;
+        gibbon_board_set_position (board, self->priv->position);
 }
