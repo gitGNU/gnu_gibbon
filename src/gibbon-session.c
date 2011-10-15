@@ -1134,10 +1134,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 self->priv->watching = NULL;
         }
         
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
-                                     (const gchar **) &pos->players[1]))
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &str))
                 goto bail_out_board;
 
+        pos->players[1] = g_strdup (str);
         if (g_strcmp0 (self->priv->opponent, pos->players[1])) {
                 g_free (self->priv->opponent);
                 self->priv->opponent = g_strdup (pos->players[1]);
