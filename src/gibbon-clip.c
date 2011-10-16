@@ -216,6 +216,9 @@ static gboolean gibbon_clip_parse_start_game (const gchar *line,
 static gboolean gibbon_clip_parse_type_join (const gchar *line,
                                              gchar **tokens,
                                              GSList **result);
+static gboolean gibbon_clip_parse_joined_you (const gchar *line,
+                                              gchar **tokens,
+                                              GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -483,6 +486,18 @@ gibbon_clip_parse (const gchar *line)
                             && !tokens[5])
                                 success = gibbon_clip_parse_saved_count (line,
                                                                          tokens,
+                                                                       &result);
+                        else if (0 == g_strcmp0 ("has", tokens[1])
+                            && 0 == g_strcmp0 ("joined", tokens[2])
+                            && 0 == g_strcmp0 ("you.", tokens[3])
+                            && 0 == g_strcmp0 ("Your", tokens[4])
+                            && 0 == g_strcmp0 ("running", tokens[5])
+                            && 0 == g_strcmp0 ("match", tokens[6])
+                            && 0 == g_strcmp0 ("was", tokens[7])
+                            && 0 == g_strcmp0 ("loaded.", tokens[8])
+                            && !tokens[9])
+                                success = gibbon_clip_parse_joined_you (line,
+                                                                        tokens,
                                                                        &result);
                         break;
                 case 'm':
@@ -2084,6 +2099,21 @@ static gboolean gibbon_clip_parse_type_join (const gchar *line,
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          GIBBON_CLIP_CODE_TYPE_JOIN);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_NAME,
+                                            opponent);
+
+        return TRUE;
+}
+
+static gboolean gibbon_clip_parse_joined_you (const gchar *line,
+                                              gchar **tokens,
+                                              GSList **result)
+{
+        char *opponent = tokens[0];
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_RESUME);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             opponent);
