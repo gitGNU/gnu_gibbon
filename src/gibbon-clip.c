@@ -219,6 +219,9 @@ static gboolean gibbon_clip_parse_type_join (const gchar *line,
 static gboolean gibbon_clip_parse_joined_you (const gchar *line,
                                               gchar **tokens,
                                               GSList **result);
+static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
+                                                    gchar **tokens,
+                                                    GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -382,6 +385,9 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_toggle1 (line,
                                                                      tokens,
                                                                      &result);
+                        else if (0 == g_strcmp0 ("turn:", first))
+                                success = gibbon_clip_parse_resume_info_turn (
+                                                line, tokens, &result);
                         break;
                 case 'w':
                         if (0 == g_strcmp0 ("wrap", first))
@@ -2117,6 +2123,24 @@ static gboolean gibbon_clip_parse_joined_you (const gchar *line,
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             opponent);
+
+        return TRUE;
+}
+
+static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
+                                                    gchar **tokens,
+                                                    GSList **result)
+{
+        char *who = tokens[1];
+
+        if (tokens[2])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_RESUME_INFO_TURN);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_NAME,
+                                            who);
 
         return TRUE;
 }
