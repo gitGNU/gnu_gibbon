@@ -146,6 +146,7 @@ struct _GibbonSessionPrivate {
          */
         GibbonPosition *position;
         gboolean direction;
+        GibbonPositionSide turn;
 
         GibbonPlayerList *player_list;
         GibbonInviterList *inviter_list;
@@ -190,6 +191,8 @@ gibbon_session_init (GibbonSession *self)
         self->priv->available = FALSE;
         self->priv->opponent = NULL;
         self->priv->position = NULL;
+        self->priv->direction = FALSE;
+        self->priv->turn = GIBBON_POSITION_SIDE_NONE;
         self->priv->player_list = NULL;
         self->priv->inviter_list = NULL;
         self->priv->archive = NULL;
@@ -473,6 +476,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_RESUME:
                 retval = gibbon_session_handle_resume (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_RESUME_INFO_TURN:
+        case GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH:
+        case GIBBON_CLIP_CODE_RESUME_INFO_POINTS:
+                /* Ignored.  */
+                retval = code;
                 break;
         case GIBBON_CLIP_CODE_START_MATCH:
                 retval = GIBBON_CLIP_CODE_START_MATCH;
