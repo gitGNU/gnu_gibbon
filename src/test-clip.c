@@ -318,6 +318,8 @@ struct test_case test_board00 =  {
                                 { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_INT, "0" },
+                                /* Turn.  */
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
                                 /* Dice.  */
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
@@ -373,6 +375,8 @@ struct test_case test_board01 =  {
                                 { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_INT, "-2" },
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
+                                /* Turn.  */
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
                                 /* Dice.  */
                                 { GIBBON_CLIP_TYPE_INT, "-6" },
                                 { GIBBON_CLIP_TYPE_INT, "-2" },

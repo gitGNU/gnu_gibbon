@@ -1057,6 +1057,9 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 
         /* Dice.  */
         if (turn == color) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 GIBBON_POSITION_SIDE_WHITE);
                 if (!gibbon_clip_extract_integer (tokens[33], &i64,
                                                   0, 6))
                         goto bail_out_board;
@@ -1070,6 +1073,9 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  i64);
         } else if (turn) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 GIBBON_POSITION_SIDE_BLACK);
                 if (!gibbon_clip_extract_integer (tokens[35], &i64,
                                                   0, 6))
                         goto bail_out_board;
@@ -1083,6 +1089,9 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  -i64);
         } else {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 GIBBON_POSITION_SIDE_NONE);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  0);
