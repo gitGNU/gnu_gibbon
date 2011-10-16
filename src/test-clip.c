@@ -756,7 +756,7 @@ struct test_case test_resume03 = {
                 "match length: 42",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "307" },
-                                { GIBBON_CLIP_TYPE_UINT, 42 },
+                                { GIBBON_CLIP_TYPE_UINT, "42" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
