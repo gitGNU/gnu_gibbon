@@ -68,6 +68,9 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_NOW_PLAYING = 303,
                         GIBBON_CLIP_CODE_INVITE_ERROR = 304,
                         GIBBON_CLIP_CODE_RESUME = 305,
+                        GIBBON_CLIP_CODE_RESUME_INFO_TURN = 306,
+                        GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH = 307,
+                        GIBBON_CLIP_CODE_RESUME_INFO_POINTS = 308,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
