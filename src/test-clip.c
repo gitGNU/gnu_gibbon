@@ -756,6 +756,16 @@ static struct test_case test_between13 = {
                 }
 };
 
+static struct test_case test_between14 = {
+                "Type 'join' if you want to play the next game,"
+                " type 'leave' if you don't.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "308" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+
 static struct test_case test_resume00 = {
                 "You are now playing with gflohr."
                 " Your running match was loaded.",
@@ -1416,6 +1426,7 @@ static struct test_case *test_cases[] = {
                 &test_between11,
                 &test_between12,
                 &test_between13,
+                &test_between14,
 
                 &test_resume00,
                 &test_resume01,
