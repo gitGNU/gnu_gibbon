@@ -222,6 +222,9 @@ static gboolean gibbon_clip_parse_joined_you (const gchar *line,
 static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
                                                     gchar **tokens,
                                                     GSList **result);
+static gboolean gibbon_clip_parse_resume_info_match_length (const gchar *line,
+                                                            gchar **tokens,
+                                                            GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -323,6 +326,11 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_toggle1 (line,
                                                                      tokens,
                                                                      &result);
+                        else if (0 == g_strcmp0 ("match", first)
+                                 && 0 == g_strcmp0 ("length:", tokens[1]))
+                          success = gibbon_clip_parse_resume_info_match_length (
+                                          line, tokens, &result);
+                            g_printerr ("Successfully parsed match length\n");
                         break;
                 case 'n':
                         if (0 == g_strcmp0 ("notify", first))
@@ -2141,6 +2149,28 @@ static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             who);
+
+        return TRUE;
+}
+
+static gboolean gibbon_clip_parse_resume_info_match_length (const gchar *line,
+                                                            gchar **tokens,
+                                                            GSList **result)
+{
+        gint64 length;
+
+        if (!gibbon_clip_extract_integer (tokens[2], &length,
+                                          1, G_MAXUINT))
+                return FALSE;
+
+        if (tokens[3])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                     GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH);
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         length);
 
         return TRUE;
 }
