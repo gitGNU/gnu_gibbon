@@ -1466,7 +1466,8 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                                   point, event->button);
         } else if (x <= self->priv->point24->x
                         - 5 * self->priv->checker_w_flat->width) {
-                g_printerr ("Click on bar ...\n");
+                gibbon_board_process_bar_click (GIBBON_BOARD (self),
+                                                event->button);
                 return TRUE;
         } else if (x <= self->priv->point24->x
                         + self->priv->point24->width
