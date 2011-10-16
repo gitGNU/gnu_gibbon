@@ -461,7 +461,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 gibbon_app_set_state_not_playing (self->priv->app);
                 retval = GIBBON_CLIP_CODE_LEFT_GAME;
                 break;
-        case GIBBON_CLIP_CODE_YOU_CANNOT_MOVE:
+        case GIBBON_CLIP_CODE_CANNOT_MOVE:
                 retval = gibbon_session_handle_cannot_move (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
@@ -1962,7 +1962,7 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
-        return GIBBON_CLIP_CODE_YOU_CANNOT_MOVE;
+        return GIBBON_CLIP_CODE_CANNOT_MOVE;
 }
 
 static gboolean

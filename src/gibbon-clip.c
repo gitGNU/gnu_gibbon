@@ -231,6 +231,9 @@ static gboolean gibbon_clip_parse_resume_info_unlimited (const gchar *line,
 static gboolean gibbon_clip_parse_resume_info_points (const gchar *line,
                                                       gchar **tokens,
                                                       GSList **result);
+static gboolean gibbon_clip_parse_cannot_move (const gchar *line,
+                                               gchar **tokens,
+                                               GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -509,6 +512,14 @@ gibbon_clip_parse (const gchar *line)
                         if (0 == g_strcmp0 ("and", tokens[1]))
                                 success = gibbon_clip_parse_and (line, tokens,
                                                                  &result);
+                        break;
+                case 'c':
+                        if (0 == g_strcmp0 ("can't", tokens[1])
+                            && 0 == g_strcmp0 ("move.", tokens[2])
+                            && !tokens[3])
+                                success = gibbon_clip_parse_cannot_move (line,
+                                                                         tokens,
+                                                                       &result);
                         break;
                 case 'h':
                         if (0 == g_strcmp0 ("has", tokens[1])
@@ -1439,6 +1450,18 @@ gibbon_clip_parse_moves (const gchar *line, gchar **tokens, GSList **result)
 }
 
 static gboolean
+gibbon_clip_parse_cannot_move (const gchar *line, gchar **tokens,
+                               GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_CANNOT_MOVE);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        return TRUE;
+}
+
+static gboolean
 gibbon_clip_parse_start_settings (const gchar *line, gchar **tokens,
                                   GSList **result)
 {
@@ -2117,11 +2140,9 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
                 return gibbon_clip_parse_rolls (line, tokens, result);
 
         if (0 == g_strcmp0 ("can't", tokens[1])
-            && 0 == g_strcmp0 ("move.", tokens[2])) {
-                *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                              GIBBON_CLIP_CODE_YOU_CANNOT_MOVE);
-                return TRUE;
-        }
+            && 0 == g_strcmp0 ("move.", tokens[2])
+            && !tokens[3])
+                return gibbon_clip_parse_cannot_move (line, tokens, result);
 
         if (0 == g_strcmp0 ("are", tokens[1])
             && 0 == g_strcmp0 ("now", tokens[2])
