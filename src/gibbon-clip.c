@@ -2094,9 +2094,8 @@ gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_you (const gchar *line,
-                                       gchar **tokens,
-                                       GSList **result)
+static gboolean
+gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
 {
         if (0 == g_strcmp0 ("are", tokens[1])
             && 0 == g_strcmp0 ("now", tokens[2])
@@ -2121,9 +2120,8 @@ static gboolean gibbon_clip_parse_you (const gchar *line,
         return FALSE;
 }
 
-static gboolean gibbon_clip_parse_type_join (const gchar *line,
-                                             gchar **tokens,
-                                             GSList **result)
+static gboolean
+gibbon_clip_parse_type_join (const gchar *line, gchar **tokens, GSList **result)
 {
         char *opponent = tokens[2];
 
@@ -2138,9 +2136,9 @@ static gboolean gibbon_clip_parse_type_join (const gchar *line,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_joined_you (const gchar *line,
-                                              gchar **tokens,
-                                              GSList **result)
+static gboolean
+gibbon_clip_parse_joined_you (const gchar *line, gchar **tokens,
+                              GSList **result)
 {
         char *opponent = tokens[0];
 
@@ -2153,9 +2151,9 @@ static gboolean gibbon_clip_parse_joined_you (const gchar *line,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
-                                                    gchar **tokens,
-                                                    GSList **result)
+static gboolean
+gibbon_clip_parse_resume_info_turn (const gchar *line, gchar **tokens,
+                                    GSList **result)
 {
         char *who = tokens[1];
 
@@ -2171,9 +2169,9 @@ static gboolean gibbon_clip_parse_resume_info_turn (const gchar *line,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_resume_info_match_length (const gchar *line,
-                                                            gchar **tokens,
-                                                            GSList **result)
+static gboolean
+gibbon_clip_parse_resume_info_match_length (const gchar *line, gchar **tokens,
+                                            GSList **result)
 {
         gint64 length;
 
@@ -2193,9 +2191,9 @@ static gboolean gibbon_clip_parse_resume_info_match_length (const gchar *line,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_resume_info_unlimited (const gchar *line,
-                                                         gchar **tokens,
-                                                         GSList **result)
+static gboolean
+gibbon_clip_parse_resume_info_unlimited (const gchar *line, gchar **tokens,
+                                         GSList **result)
 {
         if (tokens[2])
                 return FALSE;
@@ -2209,9 +2207,9 @@ static gboolean gibbon_clip_parse_resume_info_unlimited (const gchar *line,
         return TRUE;
 }
 
-static gboolean gibbon_clip_parse_resume_info_points (const gchar *line,
-                                                      gchar **tokens,
-                                                      GSList **result)
+static gboolean
+gibbon_clip_parse_resume_info_points (const gchar *line, gchar **tokens,
+                                      GSList **result)
 {
         gint64 points;
         gchar *name;
