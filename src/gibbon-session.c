@@ -68,7 +68,7 @@ struct GibbonSessionSavedCountCallbackInfo {
         gpointer data;
 };
 
-#define GIBBON_SESSION_REPLY_TIMEOUT 8000
+#define GIBBON_SESSION_REPLY_TIMEOUT 2500
 
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
@@ -1349,7 +1349,7 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
                                          "board");
         gibbon_app_set_state_playing (self->priv->app);
 
-        return GIBBON_CLIP_CODE_NOW_PLAYING;
+        return GIBBON_CLIP_CODE_RESUME;
 }
 
 static gchar *
