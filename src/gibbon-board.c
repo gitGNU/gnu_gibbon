@@ -142,7 +142,7 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
         const GibbonPosition *pos;
         GibbonPosition *new_pos = NULL;
         GibbonPositionSide turn;
-        guint pips;
+        gint pips;
         gint i;
 
         g_return_if_fail (GIBBON_IS_BOARD (self));
@@ -181,9 +181,13 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
 
         if (point - pips < 1) {
                 /* This is a bear-off.  */
-                for (i = point; i < 24; ++i)
+                for (i = 6; i < 24; ++i)
                         if (new_pos->points[i] > 0)
                                 goto bail_out_point_click;
+                if (point != pips)
+                        for (i = point; i < 6; ++i)
+                                if (new_pos->points[i] > 0)
+                                        goto bail_out_point_click;
                 --new_pos->points[point - 1];
         } else {
                 /* Occupied? */
