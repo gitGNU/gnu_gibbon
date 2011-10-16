@@ -1345,6 +1345,7 @@ struct test_case *test_cases[] = {
                 &test_between13,
 
                 &test_resume00,
+                &test_resume01,
 
                 &test_various00,
                 &test_various01,
