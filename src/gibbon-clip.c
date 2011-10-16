@@ -237,6 +237,8 @@ static gboolean gibbon_clip_parse_cannot_move (const gchar *line,
 static gboolean gibbon_clip_parse_resume_unlimited (const gchar *line,
                                                     gchar **tokens,
                                                     GSList **result);
+static gboolean gibbon_clip_parse_resigned (const gchar *line, gchar **tokens,
+                                            GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -541,6 +543,13 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_cannot_move (line,
                                                                          tokens,
                                                                        &result);
+                        break;
+                case 'g':
+                        if (0 == g_strcmp0 ("gives", tokens[1])
+                            && 0 == g_strcmp0 ("up.", tokens[2]))
+                                success = gibbon_clip_parse_resigned (line,
+                                                                      tokens,
+                                                                      &result);
                         break;
                 case 'h':
                         if (0 == g_strcmp0 ("has", tokens[1])
@@ -2349,6 +2358,47 @@ gibbon_clip_parse_not_email_address (gchar *quoted_address,
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             quoted_address + 1);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_resigned (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 points;
+
+        if (g_strcmp0 ("give", tokens[1])
+            && g_strcmp0 ("gives", tokens[1]))
+                return FALSE;
+
+        if (g_strcmp0 ("up.", tokens[2]))
+                return FALSE;
+
+        if (!tokens[3])
+                return FALSE;
+
+        if (g_strcmp0 ("win", tokens[4])
+            && g_strcmp0 ("wins", tokens[4]))
+                return FALSE;
+
+        if (!gibbon_clip_extract_integer (tokens[5], &points,
+                                          1, G_MAXUINT))
+                return FALSE;
+
+        if (g_strcmp0 ("point.", tokens[6])
+            && g_strcmp0 ("points.", tokens[6]))
+                return FALSE;
+
+        if (tokens[7])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_WIN_GAME);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[3]);
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         points);
 
         return TRUE;
 }
