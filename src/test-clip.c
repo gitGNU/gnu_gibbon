@@ -35,14 +35,14 @@ struct test_case {
         struct token_pair tokens[];
 };
 
-struct test_case test_clip00 = {
+static struct test_case test_clip00 = {
                 "| This is part of the motto of the day. |",
                 {
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
 
-struct test_case test_clip01 = {
+static struct test_case test_clip01 = {
                 "1 gflohr 1306865048 gibbon.example.com",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
@@ -54,7 +54,7 @@ struct test_case test_clip01 = {
                 }
 };
 
-struct test_case test_clip01a = {
+static struct test_case test_clip01a = {
                 "1 GibbonTestA 1308476373 95.87.204.192",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
@@ -66,7 +66,7 @@ struct test_case test_clip01a = {
                 }
 };
 
-struct test_case test_clip02 = {
+static struct test_case test_clip02 = {
                 "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
                 " Europe/Sofia",
                 {
@@ -96,7 +96,7 @@ struct test_case test_clip02 = {
                 }
 };
 
-struct test_case test_clip03 = {
+static struct test_case test_clip03 = {
                 "3",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "3" },
@@ -104,7 +104,7 @@ struct test_case test_clip03 = {
                 }
 };
 
-struct test_case test_clip04 = {
+static struct test_case test_clip04 = {
                 "4",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "4" },
@@ -112,7 +112,7 @@ struct test_case test_clip04 = {
                 }
 };
 
-struct test_case test_clip05 = {
+static struct test_case test_clip05 = {
                 "5 gflohr barrack - 0 0 1418.61 1914 23 1306926526"
                 " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
                 {
@@ -134,7 +134,7 @@ struct test_case test_clip05 = {
                 }
 };
 
-struct test_case test_clip06 = {
+static struct test_case test_clip06 = {
                 "6",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "6" },
@@ -142,7 +142,7 @@ struct test_case test_clip06 = {
                 }
 };
 
-struct test_case test_clip07 = {
+static struct test_case test_clip07 = {
                 "7 gflohr gflohr logs in.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "7" },
@@ -152,7 +152,7 @@ struct test_case test_clip07 = {
                 }
 };
 
-struct test_case test_clip08 = {
+static struct test_case test_clip08 = {
                 "8 gflohr gflohr drops connection.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "8" },
@@ -163,7 +163,7 @@ struct test_case test_clip08 = {
                 }
 };
 
-struct test_case test_clip09 = {
+static struct test_case test_clip09 = {
                 "9 gflohr -1306935184    Be back at 20 p.m.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "9" },
@@ -175,7 +175,7 @@ struct test_case test_clip09 = {
                 }
 };
 
-struct test_case test_clip10 = {
+static struct test_case test_clip10 = {
                 "10 gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "10" },
@@ -184,7 +184,7 @@ struct test_case test_clip10 = {
                 }
 };
 
-struct test_case test_clip11 = {
+static struct test_case test_clip11 = {
                 "11 gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "11" },
@@ -193,7 +193,7 @@ struct test_case test_clip11 = {
                 }
 };
 
-struct test_case test_clip12 = {
+static struct test_case test_clip12 = {
                 "12 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "12" },
@@ -204,7 +204,7 @@ struct test_case test_clip12 = {
                 }
 };
 
-struct test_case test_clip13 = {
+static struct test_case test_clip13 = {
                 "13 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "13" },
@@ -215,7 +215,7 @@ struct test_case test_clip13 = {
                 }
 };
 
-struct test_case test_clip14 = {
+static struct test_case test_clip14 = {
                 "14 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "14" },
@@ -226,7 +226,7 @@ struct test_case test_clip14 = {
                 }
 };
 
-struct test_case test_clip15 = {
+static struct test_case test_clip15 = {
                 "15 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "15" },
@@ -237,7 +237,7 @@ struct test_case test_clip15 = {
                 }
 };
 
-struct test_case test_clip16 = {
+static struct test_case test_clip16 = {
                 "16 gflohr Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "16" },
@@ -248,7 +248,7 @@ struct test_case test_clip16 = {
                 }
 };
 
-struct test_case test_clip17 = {
+static struct test_case test_clip17 = {
                 "17 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "17" },
@@ -258,7 +258,7 @@ struct test_case test_clip17 = {
                 }
 };
 
-struct test_case test_clip18 = {
+static struct test_case test_clip18 = {
                 "18 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "18" },
@@ -268,7 +268,7 @@ struct test_case test_clip18 = {
                 }
 };
 
-struct test_case test_clip19 = {
+static struct test_case test_clip19 = {
                 "19 Hello world.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "19" },
@@ -278,7 +278,7 @@ struct test_case test_clip19 = {
                 }
 };
 
-struct test_case test_board00 =  {
+static struct test_case test_board00 =  {
                 "board:joe_white:black_jack:7:5:0:0:0:2:-1:0:-1:4:0:2:0:0:0:-2"
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
                 ":0:0:0:2:6:0:0",
@@ -335,7 +335,7 @@ struct test_case test_board00 =  {
                 }
 };
 
-struct test_case test_board01 =  {
+static struct test_case test_board01 =  {
                 "board:joe_white:black_jack:1:0:0:0:6:2:0:2:0:0:0:0:0:-1:0:0"
                 ":-2:0:0:0:0:0:0:-3:-1:-3:-1:-4:0:1:0:0:6:2:1:1:1:0:-1:1:25:0"
                 ":0:5:0:0:2:4:0:0",
@@ -392,7 +392,7 @@ struct test_case test_board01 =  {
                 }
 };
 
-struct test_case test_bad_board00 =  {
+static struct test_case test_bad_board00 =  {
                 "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
                 ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
                 ":0:0:05 anotherplayer - - 0 0 1439.79 1262 410 1041251697"
@@ -413,7 +413,7 @@ struct test_case test_bad_board00 =  {
                 }
 };
 
-struct test_case test_bad_board01 =  {
+static struct test_case test_bad_board01 =  {
                 "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
                 ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
                 ":0:0:15 anotherplayer - - 0 0 1439.79 1262 410 1041251697"
@@ -434,7 +434,7 @@ struct test_case test_bad_board01 =  {
                 }
 };
 
-struct test_case test_bad_board02 =  {
+static struct test_case test_bad_board02 =  {
                 "board:You:someplayer:3:0:0:0:-2:0:0:0:0:5:0:3:0:0:0:-5:5:0:0"
                 ":0:-3:0:-5:0:0:0:0:2:0:1:6:2:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2"
                 ":0:0:1Some arbitrary other message",
@@ -453,7 +453,7 @@ struct test_case test_bad_board02 =  {
                 }
 };
 
-struct test_case test_rolls00 = {
+static struct test_case test_rolls00 = {
                 "gflohr rolls 3 and 1.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "202" },
@@ -464,7 +464,7 @@ struct test_case test_rolls00 = {
                 }
 };
 
-struct test_case test_rolls01 = {
+static struct test_case test_rolls01 = {
                 "You roll 6 and 6.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "202" },
@@ -475,7 +475,7 @@ struct test_case test_rolls01 = {
                 }
 };
 
-struct test_case test_moves00 = {
+static struct test_case test_moves00 = {
                 "gflohr moves 8-5 6-5 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -489,7 +489,7 @@ struct test_case test_moves00 = {
                 }
 };
 
-struct test_case test_moves01 = {
+static struct test_case test_moves01 = {
                 "gflohr moves 17-20 19-20 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -503,7 +503,7 @@ struct test_case test_moves01 = {
                 }
 };
 
-struct test_case test_moves02 = {
+static struct test_case test_moves02 = {
                 "gflohr moves 17-20 17-20 19-20 19-20 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -521,7 +521,7 @@ struct test_case test_moves02 = {
                 }
 };
 
-struct test_case test_moves03 = {
+static struct test_case test_moves03 = {
                 "gflohr moves bar-24 bar-22 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -535,7 +535,7 @@ struct test_case test_moves03 = {
                 }
 };
 
-struct test_case test_moves04 = {
+static struct test_case test_moves04 = {
                 "gflohr moves bar-1 bar-3 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -549,7 +549,7 @@ struct test_case test_moves04 = {
                 }
 };
 
-struct test_case test_moves05 = {
+static struct test_case test_moves05 = {
                 "gflohr moves 24-off 22-off .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -563,7 +563,7 @@ struct test_case test_moves05 = {
                 }
 };
 
-struct test_case test_moves06 = {
+static struct test_case test_moves06 = {
                 "gflohr moves 1-off 3-off .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "203" },
@@ -577,7 +577,7 @@ struct test_case test_moves06 = {
                 }
 };
 
-struct test_case test_game_start00 = {
+static struct test_case test_game_start00 = {
                 "Starting a new game with gflohr.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "204" },
@@ -586,7 +586,7 @@ struct test_case test_game_start00 = {
                 }
 };
 
-struct test_case test_game_left = {
+static struct test_case test_game_left = {
                 "** You terminated the game. The game was saved.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "205" },
@@ -594,7 +594,7 @@ struct test_case test_game_left = {
                 }
 };
 
-struct test_case test_between00 = {
+static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
@@ -604,7 +604,7 @@ struct test_case test_between00 = {
                 }
 };
 
-struct test_case test_between01 = {
+static struct test_case test_between01 = {
                 "GibbonTestA wants to play an unlimited match with you.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
@@ -614,7 +614,7 @@ struct test_case test_between01 = {
                 }
 };
 
-struct test_case test_between02 = {
+static struct test_case test_between02 = {
                 "GibbonTestA wants to resume a saved match with you.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "300" },
@@ -624,7 +624,7 @@ struct test_case test_between02 = {
                 }
 };
 
-struct test_case test_between03 = {
+static struct test_case test_between03 = {
                 "Type 'join GibbonTestA' to accept.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "301" },
@@ -633,7 +633,7 @@ struct test_case test_between03 = {
                 }
 };
 
-struct test_case test_between04 = {
+static struct test_case test_between04 = {
                 "You're now watching gflohr.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "302" },
@@ -642,7 +642,7 @@ struct test_case test_between04 = {
                 }
 };
 
-struct test_case test_between05 = {
+static struct test_case test_between05 = {
                 "** You are now playing a 5 point match with gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -652,7 +652,7 @@ struct test_case test_between05 = {
                 }
 };
 
-struct test_case test_between06 = {
+static struct test_case test_between06 = {
                 "** You are now playing an unlimited match with gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -662,7 +662,7 @@ struct test_case test_between06 = {
                 }
 };
 
-struct test_case test_between07 = {
+static struct test_case test_between07 = {
                 "** gflohr is refusing games.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -673,7 +673,7 @@ struct test_case test_between07 = {
                 }
 };
 
-struct test_case test_between08 = {
+static struct test_case test_between08 = {
                 "** Error: gflohr is already playing with someone else.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -685,7 +685,7 @@ struct test_case test_between08 = {
                 }
 };
 
-struct test_case test_between09 = {
+static struct test_case test_between09 = {
                 "** gflohr didn't invite you.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -697,7 +697,7 @@ struct test_case test_between09 = {
                 }
 };
 
-struct test_case test_between10 = {
+static struct test_case test_between10 = {
                 "** Error: can't find player gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "304" },
@@ -708,7 +708,7 @@ struct test_case test_between10 = {
                 }
 };
 
-struct test_case test_between11 = {
+static struct test_case test_between11 = {
                 "** You can't play two games at once",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
@@ -718,7 +718,7 @@ struct test_case test_between11 = {
                 }
 };
 
-struct test_case test_between12 = {
+static struct test_case test_between12 = {
                 "** Player gflohr has joined you for a 5 point match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -728,7 +728,7 @@ struct test_case test_between12 = {
                 }
 };
 
-struct test_case test_between13 = {
+static struct test_case test_between13 = {
                 "Player gflohr has joined you for an unlimited match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "303" },
@@ -738,7 +738,7 @@ struct test_case test_between13 = {
                 }
 };
 
-struct test_case test_resume00 = {
+static struct test_case test_resume00 = {
                 "You are now playing with gflohr."
                 " Your running match was loaded.",
                 {
@@ -748,7 +748,7 @@ struct test_case test_resume00 = {
                 }
 };
 
-struct test_case test_resume01 = {
+static struct test_case test_resume01 = {
                 "gflohr has joined you."
                 " Your running match was loaded.",
                 {
@@ -758,7 +758,7 @@ struct test_case test_resume01 = {
                 }
 };
 
-struct test_case test_resume02 = {
+static struct test_case test_resume02 = {
                 "turn: gflohr",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "306" },
@@ -767,7 +767,7 @@ struct test_case test_resume02 = {
                 }
 };
 
-struct test_case test_resume03 = {
+static struct test_case test_resume03 = {
                 "match length: 42",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "307" },
@@ -776,7 +776,7 @@ struct test_case test_resume03 = {
                 }
 };
 
-struct test_case test_resume04 = {
+static struct test_case test_resume04 = {
                 "unlimited match",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "307" },
@@ -785,7 +785,7 @@ struct test_case test_resume04 = {
                 }
 };
 
-struct test_case test_resume05 = {
+static struct test_case test_resume05 = {
                 "points for user gflohr: 3",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "308" },
@@ -795,7 +795,7 @@ struct test_case test_resume05 = {
                 }
 };
 
-struct test_case test_various00 = {
+static struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "400" },
@@ -806,7 +806,7 @@ struct test_case test_various00 = {
                 }
 };
 
-struct test_case test_various01 = {
+static struct test_case test_various01 = {
                 "gflohr and GibbonTestA start an unlimited match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "400" },
@@ -817,7 +817,7 @@ struct test_case test_various01 = {
                 }
 };
 
-struct test_case test_various02 = {
+static struct test_case test_various02 = {
                 "gflohr wins a 7 point match against GibbonTestA  8-3 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "401" },
@@ -830,7 +830,7 @@ struct test_case test_various02 = {
                 }
 };
 
-struct test_case test_various02a = {
+static struct test_case test_various02a = {
                 "gflohr wins a 1 point match against GibbonTestA  1-0 .",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "401" },
@@ -843,7 +843,7 @@ struct test_case test_various02a = {
                 }
 };
 
-struct test_case test_various03 = {
+static struct test_case test_various03 = {
                 "gflohr and GibbonTestA are resuming their 7-point match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "402" },
@@ -854,7 +854,7 @@ struct test_case test_various03 = {
                 }
 };
 
-struct test_case test_various04 = {
+static struct test_case test_various04 = {
                 "gflohr and GibbonTestA are resuming their unlimited match.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "402" },
@@ -865,7 +865,7 @@ struct test_case test_various04 = {
                 }
 };
 
-struct test_case test_various05 = {
+static struct test_case test_various05 = {
                 "   ",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "403" },
@@ -873,7 +873,7 @@ struct test_case test_various05 = {
                 }
 };
 
-struct test_case test_settings00 = {
+static struct test_case test_settings00 = {
                 "Settings of variables:",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "404" },
@@ -881,7 +881,7 @@ struct test_case test_settings00 = {
                 }
 };
 
-struct test_case test_settings01 = {
+static struct test_case test_settings01 = {
                 "boardstyle: 3",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -891,7 +891,7 @@ struct test_case test_settings01 = {
                 }
 };
 
-struct test_case test_settings02 = {
+static struct test_case test_settings02 = {
                 "linelength: 0",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -901,7 +901,7 @@ struct test_case test_settings02 = {
                 }
 };
 
-struct test_case test_settings03 = {
+static struct test_case test_settings03 = {
                 "pagelength: 0",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -911,7 +911,7 @@ struct test_case test_settings03 = {
                 }
 };
 
-struct test_case test_settings04 = {
+static struct test_case test_settings04 = {
                 "redoubles: none",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -921,7 +921,7 @@ struct test_case test_settings04 = {
                 }
 };
 
-struct test_case test_settings05 = {
+static struct test_case test_settings05 = {
                 "sortwho: login",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -931,7 +931,7 @@ struct test_case test_settings05 = {
                 }
 };
 
-struct test_case test_settings06 = {
+static struct test_case test_settings06 = {
                 "timezone: UTC",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -941,7 +941,7 @@ struct test_case test_settings06 = {
                 }
 };
 
-struct test_case test_settings07 = {
+static struct test_case test_settings07 = {
                 "Value of 'boardstyle' set to 3.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -951,7 +951,7 @@ struct test_case test_settings07 = {
                 }
 };
 
-struct test_case test_settings08 = {
+static struct test_case test_settings08 = {
                 "Value of 'linelength' set to 0.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -961,7 +961,7 @@ struct test_case test_settings08 = {
                 }
 };
 
-struct test_case test_settings09 = {
+static struct test_case test_settings09 = {
                 "Value of 'pagelength' set to 0.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -971,7 +971,7 @@ struct test_case test_settings09 = {
                 }
 };
 
-struct test_case test_settings10 = {
+static struct test_case test_settings10 = {
                 "Value of 'redoubles' set to none.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -981,7 +981,7 @@ struct test_case test_settings10 = {
                 }
 };
 
-struct test_case test_settings11 = {
+static struct test_case test_settings11 = {
                 "Value of 'sortwho' set to login.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -991,7 +991,7 @@ struct test_case test_settings11 = {
                 }
 };
 
-struct test_case test_settings12 = {
+static struct test_case test_settings12 = {
                 "Value of 'timezone' set to UTC.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "405" },
@@ -1001,7 +1001,7 @@ struct test_case test_settings12 = {
                 }
 };
 
-struct test_case test_toggles00 = {
+static struct test_case test_toggles00 = {
                 "The current settings are:",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "406" },
@@ -1009,7 +1009,7 @@ struct test_case test_toggles00 = {
                 }
 };
 
-struct test_case test_toggles01 = {
+static struct test_case test_toggles01 = {
                 "allowpip   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1019,7 +1019,7 @@ struct test_case test_toggles01 = {
                 }
 };
 
-struct test_case test_toggles02 = {
+static struct test_case test_toggles02 = {
                 "autoboard   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1029,7 +1029,7 @@ struct test_case test_toggles02 = {
                 }
 };
 
-struct test_case test_toggles03 = {
+static struct test_case test_toggles03 = {
                 "autodouble   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1039,7 +1039,7 @@ struct test_case test_toggles03 = {
                 }
 };
 
-struct test_case test_toggles04 = {
+static struct test_case test_toggles04 = {
                 "automove   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1049,7 +1049,7 @@ struct test_case test_toggles04 = {
                 }
 };
 
-struct test_case test_toggles05 = {
+static struct test_case test_toggles05 = {
                 "bell   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1059,7 +1059,7 @@ struct test_case test_toggles05 = {
                 }
 };
 
-struct test_case test_toggles06 = {
+static struct test_case test_toggles06 = {
                 "crawford   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1069,7 +1069,7 @@ struct test_case test_toggles06 = {
                 }
 };
 
-struct test_case test_toggles07 = {
+static struct test_case test_toggles07 = {
                 "double   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1079,7 +1079,7 @@ struct test_case test_toggles07 = {
                 }
 };
 
-struct test_case test_toggles08 = {
+static struct test_case test_toggles08 = {
                 "greedy   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1089,7 +1089,7 @@ struct test_case test_toggles08 = {
                 }
 };
 
-struct test_case test_toggles09 = {
+static struct test_case test_toggles09 = {
                 "moreboards   YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1099,7 +1099,7 @@ struct test_case test_toggles09 = {
                 }
 };
 
-struct test_case test_toggles10 = {
+static struct test_case test_toggles10 = {
                 "moves   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1109,7 +1109,7 @@ struct test_case test_toggles10 = {
                 }
 };
 
-struct test_case test_toggles11 = {
+static struct test_case test_toggles11 = {
                 "notify  YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1119,7 +1119,7 @@ struct test_case test_toggles11 = {
                 }
 };
 
-struct test_case test_toggles12 = {
+static struct test_case test_toggles12 = {
                 "ratings   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1129,7 +1129,7 @@ struct test_case test_toggles12 = {
                 }
 };
 
-struct test_case test_toggles13 = {
+static struct test_case test_toggles13 = {
                 "ready   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1139,7 +1139,7 @@ struct test_case test_toggles13 = {
                 }
 };
 
-struct test_case test_toggles13a = {
+static struct test_case test_toggles13a = {
                 "** You're now ready to invite or join someone.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1149,7 +1149,7 @@ struct test_case test_toggles13a = {
                 }
 };
 
-struct test_case test_toggles13b = {
+static struct test_case test_toggles13b = {
                 "** You're now refusing to play with someone.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1159,7 +1159,7 @@ struct test_case test_toggles13b = {
                 }
 };
 
-struct test_case test_toggles14 = {
+static struct test_case test_toggles14 = {
                 "report   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1169,7 +1169,7 @@ struct test_case test_toggles14 = {
                 }
 };
 
-struct test_case test_toggles15 = {
+static struct test_case test_toggles15 = {
                 "silent   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1179,7 +1179,7 @@ struct test_case test_toggles15 = {
                 }
 };
 
-struct test_case test_toggles16 = {
+static struct test_case test_toggles16 = {
                 "telnet  YES",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1189,7 +1189,7 @@ struct test_case test_toggles16 = {
                 }
 };
 
-struct test_case test_toggles17 = {
+static struct test_case test_toggles17 = {
                 "wrap   NO",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1199,7 +1199,7 @@ struct test_case test_toggles17 = {
                 }
 };
 
-struct test_case test_toggles18 = {
+static struct test_case test_toggles18 = {
                 "** You won't be notified when new users log in.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1209,7 +1209,7 @@ struct test_case test_toggles18 = {
                 }
 };
 
-struct test_case test_toggles19 = {
+static struct test_case test_toggles19 = {
                 "** You'll be notified when new users log in.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "407" },
@@ -1219,7 +1219,7 @@ struct test_case test_toggles19 = {
                 }
 };
 
-struct test_case test_saved00 = {
+static struct test_case test_saved00 = {
         "  opponent          matchlength   score (your points first)",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "408" },
@@ -1227,7 +1227,7 @@ struct test_case test_saved00 = {
         }
 };
 
-struct test_case test_saved01 = {
+static struct test_case test_saved01 = {
         "  GammonBot_VII           5                0 -  0",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "409" },
@@ -1239,7 +1239,7 @@ struct test_case test_saved01 = {
         }
 };
 
-struct test_case test_saved02 = {
+static struct test_case test_saved02 = {
         " *BlunderBot_VI           3                1 -  0",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "409" },
@@ -1251,7 +1251,7 @@ struct test_case test_saved02 = {
         }
 };
 
-struct test_case test_saved03 = {
+static struct test_case test_saved03 = {
         "**bonehead                3                1 -  2",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "409" },
@@ -1263,7 +1263,7 @@ struct test_case test_saved03 = {
         }
 };
 
-struct test_case test_saved04 = {
+static struct test_case test_saved04 = {
         "no saved games.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "410" },
@@ -1271,7 +1271,7 @@ struct test_case test_saved04 = {
         }
 };
 
-struct test_case test_saved05 = {
+static struct test_case test_saved05 = {
         "  deadbeef                unlimited         1 -  2",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "409" },
@@ -1283,7 +1283,7 @@ struct test_case test_saved05 = {
         }
 };
 
-struct test_case test_saved06 = {
+static struct test_case test_saved06 = {
         "deadbeef has no saved games.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "411" },
@@ -1293,7 +1293,7 @@ struct test_case test_saved06 = {
         }
 };
 
-struct test_case test_saved07 = {
+static struct test_case test_saved07 = {
         "deadbeef has 12 saved games.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "411" },
@@ -1303,7 +1303,7 @@ struct test_case test_saved07 = {
         }
 };
 
-struct test_case test_saved08 = {
+static struct test_case test_saved08 = {
         "deadbeef has 1 saved game.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "411" },
@@ -1313,7 +1313,7 @@ struct test_case test_saved08 = {
         }
 };
 
-struct test_case test_address01 = {
+static struct test_case test_address01 = {
         "Your email address is 'gibbon@example.com'.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "412" },
@@ -1322,7 +1322,7 @@ struct test_case test_address01 = {
         }
 };
 
-struct test_case test_address02 = {
+static struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
                                 { GIBBON_CLIP_TYPE_UINT, "101" },
@@ -1331,7 +1331,7 @@ struct test_case test_address02 = {
         }
 };
 
-struct test_case test_error00 = {
+static struct test_case test_error00 = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
@@ -1342,7 +1342,7 @@ struct test_case test_error00 = {
                 }
 };
 
-struct test_case *test_cases[] = {
+static struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
                 &test_clip01a,
