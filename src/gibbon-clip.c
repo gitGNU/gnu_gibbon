@@ -228,6 +228,9 @@ static gboolean gibbon_clip_parse_resume_info_match_length (const gchar *line,
 static gboolean gibbon_clip_parse_resume_info_unlimited (const gchar *line,
                                                          gchar **tokens,
                                                          GSList **result);
+static gboolean gibbon_clip_parse_resume_info_points (const gchar *line,
+                                                      gchar **tokens,
+                                                      GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -340,8 +343,9 @@ gibbon_clip_parse (const gchar *line)
                                                                      tokens,
                                                                      &result);
                         else if (0 == g_strcmp0 ("no", first)
-                                 || 0 == g_strcmp0 ("saved", tokens[1])
-                                 || 0 == g_strcmp0 ("games.", tokens[2]))
+                                 && 0 == g_strcmp0 ("saved", tokens[1])
+                                 && 0 == g_strcmp0 ("games.", tokens[2])
+                                 && !tokens[3])
                                 success = gibbon_clip_parse_show_saved_none (line,
                                                                          tokens,
                                                                        &result);
@@ -363,6 +367,11 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_setting1 (line,
                                                                       tokens,
                                                                       &result);
+                        else if (0 == g_strcmp0 ("points", first)
+                                 && 0 == g_strcmp0 ("for", tokens[1])
+                                 && 0 == g_strcmp0 ("user", tokens[2]))
+                                success = gibbon_clip_parse_resume_info_points (
+                                                line, tokens, &result);
                         break;
                 case 'r':
                         if (0 == g_strcmp0 ("redoubles:", first))
@@ -2196,6 +2205,35 @@ static gboolean gibbon_clip_parse_resume_info_unlimited (const gchar *line,
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          0);
+
+        return TRUE;
+}
+
+static gboolean gibbon_clip_parse_resume_info_points (const gchar *line,
+                                                      gchar **tokens,
+                                                      GSList **result)
+{
+        gint64 points;
+        gchar *name;
+
+        if (!gibbon_clip_extract_integer (tokens[4], &points,
+                                          1, G_MAXUINT))
+                return FALSE;
+
+        if (tokens[5])
+                return FALSE;
+
+        name = tokens[3];
+        gibbon_clip_chomp (name, ':');
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_RESUME_INFO_POINTS);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_NAME,
+                                            name);
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         points);
 
         return TRUE;
 }
