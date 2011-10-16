@@ -234,6 +234,9 @@ static gboolean gibbon_clip_parse_resume_info_points (const gchar *line,
 static gboolean gibbon_clip_parse_cannot_move (const gchar *line,
                                                gchar **tokens,
                                                GSList **result);
+static gboolean gibbon_clip_parse_resume_unlimited (const gchar *line,
+                                                    gchar **tokens,
+                                                    GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -467,6 +470,24 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_type_join (line,
                                                                        tokens,
                                                                        &result);
+                        else if (0 == g_strcmp0 ("Type", tokens[0])
+                                 && 0 == g_strcmp0 ("'join'", tokens[1])
+                                 && 0 == g_strcmp0 ("if", tokens[2])
+                                 && 0 == g_strcmp0 ("you", tokens[3])
+                                 && 0 == g_strcmp0 ("want", tokens[4])
+                                 && 0 == g_strcmp0 ("to", tokens[5])
+                                 && 0 == g_strcmp0 ("play", tokens[6])
+                                 && 0 == g_strcmp0 ("the", tokens[7])
+                                 && 0 == g_strcmp0 ("next", tokens[8])
+                                 && 0 == g_strcmp0 ("game,", tokens[9])
+                                 && 0 == g_strcmp0 ("type", tokens[10])
+                                 && 0 == g_strcmp0 ("'leave'", tokens[11])
+                                 && 0 == g_strcmp0 ("if", tokens[12])
+                                 && 0 == g_strcmp0 ("you", tokens[13])
+                                 && 0 == g_strcmp0 ("don't.", tokens[14])
+                                 && !tokens[15])
+                                success = gibbon_clip_parse_resume_unlimited (
+                                                line, tokens, &result);
                         break;
                 case 'V':
                         if (0 == g_strcmp0 ("Value", first)
@@ -1458,6 +1479,16 @@ gibbon_clip_parse_cannot_move (const gchar *line, gchar **tokens,
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_resume_unlimited (const gchar *line, gchar **tokens,
+                                    GSList **result)
+{
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_RESUME_UNLIMITED);
+
         return TRUE;
 }
 

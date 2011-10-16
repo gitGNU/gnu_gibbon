@@ -72,6 +72,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_RESUME_INFO_TURN = 306,
                         GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH = 307,
                         GIBBON_CLIP_CODE_RESUME_INFO_POINTS = 308,
+                        GIBBON_CLIP_CODE_RESUME_UNLIMITED = 309,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
