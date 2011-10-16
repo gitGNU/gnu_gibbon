@@ -465,12 +465,12 @@ static struct test_case test_rolls00 = {
 };
 
 static struct test_case test_rolls01 = {
-                "You roll 6 and 6.",
+                "You roll 6 and 4.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "202" },
                                 { GIBBON_CLIP_TYPE_NAME, "You" },
-                                { GIBBON_CLIP_TYPE_UINT, "3" },
-                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "6" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
