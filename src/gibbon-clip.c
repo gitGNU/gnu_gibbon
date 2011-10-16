@@ -2287,6 +2287,9 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
                 return TRUE;
         }
 
+        if (0 == g_strcmp0 ("win", tokens[1]))
+                return gibbon_clip_parse_wins_game (line, tokens, result);
+
         if (0 == g_strcmp0 ("accept", tokens[1]))
                 return gibbon_clip_parse_accepts (line, tokens, result);
 
