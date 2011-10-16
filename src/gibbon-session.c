@@ -117,6 +117,8 @@ static gint gibbon_session_handle_show_address (GibbonSession *self,
                                                 GSList *iter);
 static gint gibbon_session_handle_address_error (GibbonSession *self,
                                                  GSList *iter);
+static gint gibbon_session_handle_cannot_move (GibbonSession *self,
+                                               GSList *iter);
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
@@ -458,6 +460,9 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_LEFT_GAME:
                 gibbon_app_set_state_not_playing (self->priv->app);
                 retval = GIBBON_CLIP_CODE_LEFT_GAME;
+                break;
+        case GIBBON_CLIP_CODE_YOU_CANNOT_MOVE:
+                retval = gibbon_session_handle_cannot_move (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
@@ -1462,13 +1467,14 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         if (0 == g_strcmp0 ("You", who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
+                g_free (self->priv->position->status);
                 self->priv->position->status =
                         g_strdup_printf (_("You roll %u and %u."),
                                          dice[0], dice[1]);
         } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
                 self->priv->position->dice[0] = -dice[0];
                 self->priv->position->dice[1] = -dice[1];
-                g_free (self->priv->position->game_info);
+                g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (_("%s rolls %u and %u."),
                                                  self->priv->opponent,
@@ -1476,6 +1482,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
+                g_free (self->priv->position->status);
                 self->priv->position->status =
                         g_strdup_printf (_("%s rolls %u and %u."),
                                          self->priv->watching,
@@ -1485,7 +1492,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         }
 
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
-                                   gibbon_position_copy (self->priv->position));
+                                   self->priv->position);
 
         return GIBBON_CLIP_CODE_ROLLS;
 }
@@ -1586,7 +1593,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
-                                   gibbon_position_copy (self->priv->position));
+                                   self->priv->position);
 
         return GIBBON_CLIP_CODE_MOVES;
 }
@@ -1950,6 +1957,20 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
                                    " the server!"), address);
 
         return GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS;
+}
+
+static gint
+gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
+{
+        self->priv->turn = GIBBON_POSITION_SIDE_BLACK;
+
+        g_free (self->priv->position->status);
+        self->priv->position->status = g_strdup (_("You cannot move!"));
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
+
+        return GIBBON_CLIP_CODE_YOU_CANNOT_MOVE;
 }
 
 static gboolean
@@ -2417,8 +2438,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         if (!self->priv->opponent)
                 return;
 
-        if (GIBBON_POSITION_SIDE_WHITE
-            != gibbon_position_on_move (self->priv->position))
+        if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
                 return;
 
         if (!self->priv->position->dice[0]) {
