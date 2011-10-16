@@ -1393,8 +1393,16 @@ gibbon_clip_parse_wins_game (const gchar *line, gchar **tokens, GSList **result)
             && g_strcmp0 ("points.", tokens[7]))
                 return FALSE;
 
-        if (tokens[8])
-                return FALSE;
+        if (tokens[8]) {
+                if (g_strcmp0 ("Congratulations!", tokens[8])
+                    && g_strcmp0 ("Sorry.", tokens[8]))
+                        g_printerr ("Huh?\n");
+                if (g_strcmp0 ("Congratulations!", tokens[8])
+                    && g_strcmp0 ("Sorry.", tokens[8]))
+                        return FALSE;
+                if (tokens[9])
+                        return FALSE;
+        }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          GIBBON_CLIP_CODE_WIN_GAME);
