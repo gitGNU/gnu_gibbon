@@ -1954,10 +1954,28 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
 {
-        self->priv->turn = GIBBON_POSITION_SIDE_BLACK;
+        const gchar *who;
 
-        g_free (self->priv->position->status);
-        self->priv->position->status = g_strdup (_("You cannot move!"));
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        if (0 == g_strcmp0 (self->priv->opponent, who)) {
+                self->priv->turn = GIBBON_POSITION_SIDE_WHITE;
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                                g_strdup_printf (_("%s cannot move!"), who);
+        } else if (0 == g_strcmp0 (self->priv->watching, who)) {
+                self->priv->turn = GIBBON_POSITION_SIDE_BLACK;
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                                g_strdup_printf (_("%s cannot move!"), who);
+        } else if (0 == g_strcmp0 ("You", who)) {
+                self->priv->turn = GIBBON_POSITION_SIDE_WHITE;
+                g_free (self->priv->position->status);
+                self->priv->position->status = g_strdup (_("You cannot move!"));
+        } else {
+                return -1;
+        }
 
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
@@ -2433,7 +2451,12 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
                 return;
 
-        if (!self->priv->position->dice[0]) {
+        /*
+         * If it is our turn, and the dice are 0, we have to roll or double.
+         * If the opponent cannot move, then the value on the dice will be
+         * negative, and we also have to roll or double.
+         */
+        if (self->priv->position->dice[0] <= 0) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "roll");
                 return;
