@@ -1451,8 +1451,17 @@ gibbon_clip_parse_rolls (const gchar *line, gchar **tokens, GSList **result)
 static gboolean
 gibbon_clip_parse_moves (const gchar *line, gchar **tokens, GSList **result)
 {
-        gint64 num_movements = g_strv_length (tokens) - 3;
+        gint64 num_tokens = g_strv_length (tokens);
+        gint64 num_movements = num_tokens - 2;
         gint i;
+
+        /*
+         * Remove a possibly trailing full stop.  This is sometimes appended,
+         * separated by a space, sometimes it is not.
+         */
+        if (tokens[num_tokens - 1][0] == '.'
+            && tokens[num_tokens - 1][1] == 0)
+                --num_movements;
 
         if (num_movements < 1 || num_movements > 4)
                 return FALSE;

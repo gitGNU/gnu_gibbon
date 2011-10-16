@@ -577,6 +577,18 @@ static struct test_case test_moves06 = {
                 }
 };
 
+static struct test_case test_moves07 = {
+                "GibbonTestB moves 2-off",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "203" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestB" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_game_start00 = {
                 "Starting a new game with gflohr.",
                 {
@@ -1406,6 +1418,7 @@ static struct test_case *test_cases[] = {
                 &test_moves04,
                 &test_moves05,
                 &test_moves06,
+                &test_moves07,
                 &test_game_start00,
                 &test_game_left,
                 &test_cannot_move00,
