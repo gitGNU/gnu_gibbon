@@ -765,7 +765,7 @@ struct test_case test_resume04 = {
                 "unlimited match",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "307" },
-                                { GIBBON_CLIP_TYPE_UINT, 0 },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
