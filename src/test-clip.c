@@ -594,6 +594,14 @@ static struct test_case test_game_left = {
                 }
 };
 
+static struct test_case test_you_cannot_move = {
+                "You can't move.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "206" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
@@ -1381,6 +1389,7 @@ static struct test_case *test_cases[] = {
                 &test_moves06,
                 &test_game_start00,
                 &test_game_left,
+                &test_you_cannot_move,
 
                 &test_between00,
                 &test_between01,
