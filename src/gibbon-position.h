@@ -71,11 +71,11 @@ typedef enum {
  * @scores: white and black score (white first).
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
  * @match_length: Length of the match of 0 for unlimited.
- * @game_info: Free-form string describing the game ("Crawford", ...).
- * @status: Free-form string describing the status ("It's your move", ...).
  * @unused_dice: Can be filled with the dice not yet used in this roll.
  *               They should be normalized, i.e. all positive for white or all
  *               negative for black, even for the opening roll.
+ * @game_info: Free-form string describing the game ("Crawford", ...).
+ * @status: Free-form string describing the status ("It's your move", ...).
  *
  * A boxed type representing a backgammon position.
  *
@@ -107,12 +107,12 @@ struct _GibbonPosition
         guint cube;
         gboolean may_double[2];
 
+        gint unused_dice[4];
+
         gchar *players[2];
 
         gchar *game_info;
         gchar *status;
-
-        gint unused_dice[4];
 };
 
 /**
