@@ -2113,6 +2113,9 @@ gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
 static gboolean
 gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
 {
+        if (0 == g_strcmp0 ("roll", tokens[1]))
+                return gibbon_clip_parse_rolls (line, tokens, result);
+
         if (0 == g_strcmp0 ("are", tokens[1])
             && 0 == g_strcmp0 ("now", tokens[2])
             && 0 == g_strcmp0 ("playing", tokens[3])
