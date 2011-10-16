@@ -75,5 +75,6 @@ void gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
 void gibbon_board_redraw (const GibbonBoard *self);
 void gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                        gint button);
+void gibbon_board_process_bar_click (GibbonBoard *self, gint button);
 
 #endif

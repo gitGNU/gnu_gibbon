@@ -164,7 +164,6 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
                 button = 1;
 
         turn = gibbon_position_on_move (pos);
-
         if (turn != GIBBON_POSITION_SIDE_WHITE)
                 return;
 
@@ -220,4 +219,75 @@ bail_out_point_click:
         if (button == 1 && pos->unused_dice[1]
             && pos->unused_dice[0] != pos->unused_dice[1])
                 gibbon_board_process_point_click (self, point, 3);
+}
+
+void
+gibbon_board_process_bar_click (GibbonBoard *self, gint button)
+{
+        const GibbonPosition *pos;
+        GibbonPosition *new_pos = NULL;
+        GibbonPositionSide turn;
+        gint pips;
+
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+
+        /*
+         * This is an impartial legality check.  We only handle the trivial
+         * cases here.
+         */
+        pos = gibbon_board_get_position (self);
+
+        /* Any dice left? */
+        if (!pos->unused_dice[0])
+                return;
+
+        /* Only one die left? */
+        if (!pos->unused_dice[1])
+                button = 1;
+
+        turn = gibbon_position_on_move (pos);
+
+        if (turn != GIBBON_POSITION_SIDE_WHITE)
+                return;
+
+        /* Any checkers on the bar?  */
+        if (!pos->bar[0])
+                return;
+
+        new_pos = gibbon_position_copy (pos);
+
+        pips = button == 1 ? new_pos->unused_dice[0] : new_pos->unused_dice[1];
+
+        /* Occupied? */
+        if (new_pos->points[24 - pips] < -1)
+                goto bail_out_bar_click;
+        if (new_pos->points[24 - pips] == -1) {
+                new_pos->points[24 - pips] = 0;
+                ++new_pos->bar[1];
+        }
+        --new_pos->bar[0];
+        ++new_pos->points[24 - pips];
+
+        /* Delete used die and move the rest.  */
+        if (button == 1)
+                new_pos->unused_dice[0] = new_pos->unused_dice[1];
+        new_pos->unused_dice[1] = new_pos->unused_dice[2];
+        new_pos->unused_dice[2] = new_pos->unused_dice[3];
+        new_pos->unused_dice[3] = 0;
+
+        gibbon_board_set_position (self, new_pos);
+        gibbon_position_free (new_pos);
+        gibbon_board_redraw (self);
+
+        return;
+
+bail_out_bar_click:
+        /*
+         * If it was not a legal move with the left die it could still be
+         * one for the right die.
+         */
+        gibbon_position_free (new_pos);
+        if (button == 1 && pos->unused_dice[1]
+            && pos->unused_dice[0] != pos->unused_dice[1])
+                gibbon_board_process_bar_click (self, 3);
 }
