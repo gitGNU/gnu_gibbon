@@ -2282,6 +2282,10 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
         if (0 == g_strcmp0 ("accept", tokens[1]))
                 return gibbon_clip_parse_accepts (line, tokens, result);
 
+        if (0 == g_strcmp0 ("give", tokens[1])
+            && 0 == g_strcmp0 ("up.", tokens[2]))
+                return gibbon_clip_parse_resigned (line, tokens, result);
+
         return FALSE;
 }
 
