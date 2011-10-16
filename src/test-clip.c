@@ -834,6 +834,166 @@ static struct test_case test_between14 = {
                 }
 };
 
+static struct test_case test_between15 = {
+                "You win the game and get 1 point. Congratulations!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between16 = {
+                "You win the game and get 4 points. Congratulations!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between17 = {
+                "GibbonTestA wins the game and gets 1 point. Sorry.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between18 = {
+                "GibbonTestA wins the game and gets 4 points. Sorry.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between19 = {
+                "GibbonTestA gives up. You win 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between20 = {
+                "GibbonTestA gives up. You win 2 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between21 = {
+                "You give up. GibbonTestA wins 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between22 = {
+                "You give up. GibbonTestA wins 2 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between23 = {
+                "You accept and win 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between24 = {
+                "You accept and win 2 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between25 = {
+                "GibbonTestA accepts and wins 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between26 = {
+                "GibbonTestA accepts and wins 2 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between27 = {
+                "GibbonTestA wins the game and gets 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between28 = {
+                "GibbonTestA wins the game and gets 4 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between29 = {
+                "GibbonTestB gives up. GibbonTestA wins 1 point.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between30 = {
+                "GibbonTestB gives up. GibbonTestA win 2 points.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "310" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
@@ -1439,6 +1599,22 @@ static struct test_case *test_cases[] = {
                 &test_between12,
                 &test_between13,
                 &test_between14,
+                &test_between15,
+                &test_between16,
+                &test_between17,
+                &test_between18,
+                &test_between19,
+                &test_between20,
+                &test_between21,
+                &test_between22,
+                &test_between23,
+                &test_between24,
+                &test_between25,
+                &test_between26,
+                &test_between27,
+                &test_between28,
+                &test_between29,
+                &test_between30,
 
                 &test_resume00,
                 &test_resume01,
