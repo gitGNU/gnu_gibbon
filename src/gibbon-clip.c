@@ -1082,6 +1082,13 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_INT,
                                                  -i64);
+        } else {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 0);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_INT,
+                                                 0);
         }
 
         /* Cube.  */
