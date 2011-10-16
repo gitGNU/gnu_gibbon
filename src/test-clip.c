@@ -775,7 +775,7 @@ struct test_case test_resume05 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "308" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
-                                { GIBBON_CLIP_TYPE_UINT, 3 },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
