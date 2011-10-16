@@ -762,7 +762,7 @@ struct test_case test_resume03 = {
 };
 
 struct test_case test_resume04 = {
-                "match length: unlimited",
+                "unlimited match",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "307" },
                                 { GIBBON_CLIP_TYPE_UINT, 0 },
