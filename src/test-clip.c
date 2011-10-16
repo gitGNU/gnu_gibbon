@@ -743,6 +743,43 @@ struct test_case test_resume01 = {
                 }
 };
 
+struct test_case test_resume02 = {
+                "turn: gflohr",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "306" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_resume03 = {
+                "match length: 42",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "307" },
+                                { GIBBON_CLIP_TYPE_UINT, 42 },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_resume04 = {
+                "match length: unlimited",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "307" },
+                                { GIBBON_CLIP_TYPE_UINT, 0 },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+struct test_case test_resume05 = {
+                "points for user gflohr: 3",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "308" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_UINT, 3 },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
@@ -1346,6 +1383,10 @@ struct test_case *test_cases[] = {
 
                 &test_resume00,
                 &test_resume01,
+                &test_resume02,
+                &test_resume03,
+                &test_resume04,
+                &test_resume05,
 
                 &test_various00,
                 &test_various01,
