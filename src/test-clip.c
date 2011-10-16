@@ -994,6 +994,32 @@ static struct test_case test_between30 = {
                 }
 };
 
+static struct test_case test_between31 = {
+                "score in 7 point match: GibbonTestA-3 GibbonTestB-5",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "311" },
+                                { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestB" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between32 = {
+                "score in unlimited match: GibbonTestA-3 GibbonTestB-5",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "311" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "3" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestB" },
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
@@ -1615,6 +1641,8 @@ static struct test_case *test_cases[] = {
                 &test_between28,
                 &test_between29,
                 &test_between30,
+                &test_between31,
+                &test_between32,
 
                 &test_resume00,
                 &test_resume01,
