@@ -2116,6 +2116,13 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
         if (0 == g_strcmp0 ("roll", tokens[1]))
                 return gibbon_clip_parse_rolls (line, tokens, result);
 
+        if (0 == g_strcmp0 ("can't", tokens[1])
+            && 0 == g_strcmp0 ("move.", tokens[2])) {
+                *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                              GIBBON_CLIP_CODE_YOU_CANNOT_MOVE);
+                return TRUE;
+        }
+
         if (0 == g_strcmp0 ("are", tokens[1])
             && 0 == g_strcmp0 ("now", tokens[2])
             && 0 == g_strcmp0 ("playing", tokens[3])
