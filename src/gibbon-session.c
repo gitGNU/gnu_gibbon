@@ -1122,7 +1122,6 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         const gchar *str;
         gint retval = -1;
-        GibbonPositionSide turn;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -1213,17 +1212,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 pos->game_info = g_strdup (_("Crawford game"));
         }
 
-        /*
-         * This is not necessarily the same as self->priv->turn.  If both
-         * dice are zero, self->priv->turn shows who should roll the dice,
-         * but the turn extracted from the position will be unset
-         * (GIBBON_POSITION_SIDE_NONE).
-         */
-        turn = gibbon_position_on_move (pos);
-        if (turn == GIBBON_POSITION_SIDE_WHITE) {
+        if (self->priv->turn == GIBBON_POSITION_SIDE_WHITE) {
                 pos->unused_dice[0] = abs (pos->dice[0]);
                 pos->unused_dice[1] = abs (pos->dice[1]);
-        } else if (turn == GIBBON_POSITION_SIDE_BLACK) {
+        } else if (self->priv->turn == GIBBON_POSITION_SIDE_BLACK) {
                 pos->unused_dice[0] = -abs (pos->dice[0]);
                 pos->unused_dice[1] = -abs (pos->dice[1]);
         }
