@@ -2580,7 +2580,7 @@ gibbon_clip_parse_score (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SCORE);
+                                         GIBBON_CLIP_CODE_GAME_SCORE);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          length);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -2627,7 +2627,7 @@ gibbon_clip_parse_score_unlimited (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SCORE);
+                                         GIBBON_CLIP_CODE_GAME_SCORE);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          0);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,

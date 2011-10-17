@@ -503,12 +503,12 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_START_MATCH:
                 retval = GIBBON_CLIP_CODE_START_MATCH;
                 break;
-        case GIBBON_CLIP_CODE_SCORE:
+        case GIBBON_CLIP_CODE_GAME_SCORE:
                 /*
                  * Ignored.  We know the score already from the previous
                  * win message.
                  */
-                retval = GIBBON_CLIP_CODE_SCORE;
+                retval = GIBBON_CLIP_CODE_GAME_SCORE;
                 break;
         case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
