@@ -246,6 +246,9 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -734,6 +737,7 @@
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_markup">Accept doubling cube or resignation</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Annehmen</property>
                             <property name="use_underline">True</property>
@@ -749,6 +753,7 @@
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_markup">Drop doubling cube or reject resignation</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Reject</property>
                             <property name="use_underline">True</property>
@@ -764,6 +769,7 @@
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_markup">Turn the doubling cube</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Double</property>
                             <property name="use_underline">True</property>
