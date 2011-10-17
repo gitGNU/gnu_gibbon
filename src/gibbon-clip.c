@@ -2553,10 +2553,46 @@ gibbon_clip_parse_accepts (const gchar *line, gchar **tokens, GSList **result)
 static gboolean
 gibbon_clip_parse_score (const gchar *line, gchar **tokens, GSList **result)
 {
+        gint64 length;
+        gchar *score1_ptr, *score2_ptr;
+        gint64 score1, score2;
+
         if (0 == g_strcmp0 (tokens[2], "unlimited"))
                 return gibbon_clip_parse_score_unlimited (line, tokens, result);
 
-        return FALSE;
+        if (!gibbon_clip_extract_integer (tokens[2], &length,
+                                          1, G_MAXUINT))
+                return FALSE;
+
+        score1_ptr = rindex (tokens[5], '-');
+        *score1_ptr++ = 0;
+        if (!gibbon_clip_extract_integer (score1_ptr, &score1,
+                                          0, G_MAXUINT))
+                return FALSE;
+
+        score2_ptr = rindex (tokens[6], '-');
+        *score2_ptr++ = 0;
+        if (!gibbon_clip_extract_integer (score2_ptr, &score2,
+                                          0, G_MAXUINT))
+                return FALSE;
+
+        if (tokens[7])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_SCORE);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         length);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[5]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         score1);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[6]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         score2);
+
+        return TRUE;
 }
 
 static gboolean
@@ -2585,6 +2621,9 @@ gibbon_clip_parse_score_unlimited (const gchar *line, gchar **tokens,
         *score2_ptr++ = 0;
         if (!gibbon_clip_extract_integer (score2_ptr, &score2,
                                           0, G_MAXUINT))
+                return FALSE;
+
+        if (tokens[6])
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
