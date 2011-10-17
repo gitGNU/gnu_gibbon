@@ -231,6 +231,18 @@
       <placeholder/>
     </child>
     <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -688,6 +700,17 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkSeparatorToolItem" id="toolbutton5">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkToolButton" id="board-resign">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
@@ -697,6 +720,48 @@
                             <property name="label" translatable="yes">Resign</property>
                             <property name="use_underline">True</property>
                             <property name="stock_id">gtk-help</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="board-accept">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">Annehmen</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-ok</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="board-reject">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">Reject</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-cancel</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="board-double">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">Double</property>
+                            <property name="use_underline">True</property>
+                            <property name="stock_id">gtk-add</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
