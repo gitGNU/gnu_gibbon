@@ -74,6 +74,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_RESUME_INFO_POINTS = 308,
                         GIBBON_CLIP_CODE_RESUME_UNLIMITED = 309,
                         GIBBON_CLIP_CODE_WIN_GAME = 310,
+                        GIBBON_CLIP_CODE_SCORE = 311,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,

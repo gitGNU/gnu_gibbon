@@ -247,7 +247,11 @@ static gboolean gibbon_clip_parse_resigned (const gchar *line, gchar **tokens,
 static gboolean gibbon_clip_parse_accepts (const gchar *line,
                                            gchar **tokens,
                                            GSList **result);
-
+static gboolean gibbon_clip_parse_score (const gchar *line, gchar **tokens,
+                                         GSList **result);
+static gboolean gibbon_clip_parse_score_unlimited (const gchar *line,
+                                                   gchar **tokens,
+                                                   GSList **result);
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
@@ -265,6 +269,26 @@ static gboolean gibbon_clip_extract_double (const gchar *str, gdouble *result,
 static gboolean gibbon_clip_chomp (gchar *str, gchar c);
 
 static gboolean gibbon_clip_toggle_ready (GSList **result, gboolean ready);
+
+#ifndef HAVE_INDEX
+# define index(str, c) memchr (str, c, strlen (str))
+#endif
+#ifndef HAVE_RINDEX
+static gchar *
+rindex (const gchar *s, gint c)
+{
+        gchar *retval = NULL;
+        gchar *ptr = s;
+
+        while (*ptr) {
+                if (*ptr == c)
+                        retval = ptr;
+                ++ptr;
+        }
+
+        return retval;
+}
+#endif
 
 GSList *
 gibbon_clip_parse (const gchar *line)
@@ -410,6 +434,11 @@ gibbon_clip_parse (const gchar *line)
                                 success = gibbon_clip_parse_toggle1 (line,
                                                                      tokens,
                                                                      &result);
+                        else if (0 == g_strcmp0 ("score", first)
+                                 && 0 == g_strcmp0 ("in", tokens[1]))
+                                success = gibbon_clip_parse_score (line,
+                                                                   tokens,
+                                                                   &result);
                         break;
                 case 't':
                         if (0 == g_strcmp0 ("timezone:", first))
@@ -1247,9 +1276,6 @@ gibbon_clip_parse_resuming (const gchar *line, gchar **tokens,
         if (0 == g_strcmp0 ("unlimited", tokens[6])) {
                 length = 0;
         } else {
-#ifndef HAVE_INDEX
-# define index(str, c) memchr (str, c, strlen (str))
-#endif
                 ptr = index (tokens[6], '-');
                 if (!ptr)
                         return FALSE;
@@ -2520,6 +2546,59 @@ gibbon_clip_parse_accepts (const gchar *line, gchar **tokens, GSList **result)
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          points);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_score (const gchar *line, gchar **tokens, GSList **result)
+{
+        if (0 == g_strcmp0 (tokens[2], "unlimited"))
+                return gibbon_clip_parse_score_unlimited (line, tokens, result);
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_clip_parse_score_unlimited (const gchar *line, gchar **tokens,
+                                   GSList **result)
+{
+        gchar *score1_ptr, *score2_ptr;
+        gint64 score1, score2;
+
+        if (g_strcmp0 ("match:", tokens[3]))
+                return FALSE;
+
+        if (!tokens[4] && !tokens[5])
+                return FALSE;
+
+        if (tokens[6])
+                return FALSE;
+
+        score1_ptr = rindex (tokens[4], '-');
+        *score1_ptr++ = 0;
+        if (!gibbon_clip_extract_integer (score1_ptr, &score1,
+                                          0, G_MAXUINT))
+                return FALSE;
+
+        score2_ptr = rindex (tokens[5], '-');
+        *score2_ptr++ = 0;
+        if (!gibbon_clip_extract_integer (score2_ptr, &score2,
+                                          0, G_MAXUINT))
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_SCORE);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         0);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[4]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         score1);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[5]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         score2);
 
         return TRUE;
 }
