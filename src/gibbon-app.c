@@ -503,7 +503,7 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_help_show_about),
                         (gpointer) self);
 
-        obj = gibbon_app_find_object(self, "board-refresh",
+        obj = gibbon_app_find_object(self, "refresh",
                                      GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_refresh),
@@ -849,6 +849,10 @@ gibbon_app_set_state_playing (const GibbonApp *self)
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 
+        obj = gibbon_app_find_object (self, "board-undo",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+
         obj = gibbon_app_find_object (self, "board-leave",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
@@ -873,6 +877,10 @@ gibbon_app_set_state_not_playing (const GibbonApp *self)
         obj = gibbon_app_find_object (self, "board-refresh",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "board-undo",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 
         obj = gibbon_app_find_object (self, "board-leave",
                                       GTK_TYPE_TOOL_BUTTON);
