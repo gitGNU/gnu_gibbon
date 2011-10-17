@@ -119,6 +119,7 @@ static gint gibbon_session_handle_address_error (GibbonSession *self,
                                                  GSList *iter);
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
                                                GSList *iter);
+static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
@@ -487,6 +488,17 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_RESUME_INFO_POINTS:
                 /* Ignored.  */
                 retval = code;
+                break;
+        case GIBBON_CLIP_CODE_RESUME_UNLIMITED:
+                /*
+                 * We always assume that player wants to continue.  There is
+                 * no way to terminated an unlimited match, anyway.
+                 */
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE, "join");
+                retval = GIBBON_CLIP_CODE_RESUME_UNLIMITED;
+        case GIBBON_CLIP_CODE_WIN_GAME:
+                retval = gibbon_session_handle_win_game (self, iter);
                 break;
         case GIBBON_CLIP_CODE_START_MATCH:
                 retval = GIBBON_CLIP_CODE_START_MATCH;
@@ -1981,6 +1993,48 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                                    self->priv->position);
 
         return GIBBON_CLIP_CODE_CANNOT_MOVE;
+}
+
+static gint
+gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+        guint points;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &points))
+                return -1;
+
+        if (0 == g_strcmp0 (who, self->priv->opponent)) {
+                self->priv->position->scores[1] += points;
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                                g_strdup_printf (_("%s has won the game"
+                                                   " and %d points!"),
+                                                 who, points);
+        } else if (0 == g_strcmp0 (who, "You")) {
+                self->priv->position->scores[0] += points;
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                                g_strdup_printf (_("You have won the game"
+                                                   " and %d points!"),
+                                                 points);
+        } else if (0 == g_strcmp0 (who, self->priv->watching)) {
+                self->priv->position->scores[0] += points;
+                g_free (self->priv->position->status);
+                self->priv->position->status =
+                                g_strdup_printf (_("%s has won the game"
+                                                   " and %d points!"),
+                                                 who, points);
+        } else {
+                return -1;
+        }
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
+
+        return GIBBON_CLIP_CODE_WIN_GAME;
 }
 
 static gboolean
