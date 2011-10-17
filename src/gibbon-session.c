@@ -2601,3 +2601,14 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         self->priv->position->dice[1] = 0;
         gibbon_board_set_position (board, self->priv->position);
 }
+
+void
+gibbon_session_reset_position (GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}

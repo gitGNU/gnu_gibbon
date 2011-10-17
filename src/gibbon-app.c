@@ -113,6 +113,7 @@ static void gibbon_app_on_account_prefs (GibbonApp *self);
 static void gibbon_app_on_toggle_ready (GibbonApp *self);
 static void gibbon_app_on_board_refresh (GibbonApp *self);
 static void gibbon_app_on_board_leave (GibbonApp *self);
+static void gibbon_app_on_board_undo (GibbonApp *self);
 static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
@@ -503,12 +504,17 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_help_show_about),
                         (gpointer) self);
 
-        obj = gibbon_app_find_object(self, "refresh",
+        obj = gibbon_app_find_object(self, "board-refresh",
                                      GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_refresh),
                                   (gpointer) self);
 
+        obj = gibbon_app_find_object(self, "board-undo",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_undo),
+                                  (gpointer) self);
 
         obj = gibbon_app_find_object(self, "board-leave",
                                      GTK_TYPE_TOOL_BUTTON);
@@ -748,6 +754,16 @@ gibbon_app_on_board_refresh (GibbonApp *self)
 }
 
 void
+gibbon_app_on_board_undo (GibbonApp *self)
+{
+        GibbonSession *session = gibbon_connection_get_session(
+                        self->priv->connection);
+
+        if (session)
+                gibbon_session_reset_position (session);
+}
+
+void
 gibbon_app_on_board_leave (GibbonApp *self)
 {
         GtkWidget *dialog;
@@ -880,7 +896,7 @@ gibbon_app_set_state_not_playing (const GibbonApp *self)
 
         obj = gibbon_app_find_object (self, "board-undo",
                                       GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object (self, "board-leave",
                                       GTK_TYPE_TOOL_BUTTON);

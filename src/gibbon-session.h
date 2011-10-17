@@ -69,6 +69,7 @@ void gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
 void gibbon_session_set_available (GibbonSession *self, gboolean available);
 void gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
                                      gboolean reply);
+void gibbon_session_reset_position (GibbonSession *self);
 
 G_END_DECLS
 
