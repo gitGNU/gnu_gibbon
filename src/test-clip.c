@@ -642,6 +642,24 @@ static struct test_case test_doubling01 = {
                 }
 };
 
+static struct test_case test_doubling02 = {
+                "You accept the double.  The cube shows 2.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "208" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_doubling03 = {
+                "GibbonTestA accepts the double.  The cube shows 2.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "208" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
@@ -1629,6 +1647,8 @@ static struct test_case *test_cases[] = {
                 &test_cannot_move01,
                 &test_doubling00,
                 &test_doubling01,
+                &test_doubling02,
+                &test_doubling03,
 
                 &test_between00,
                 &test_between01,
