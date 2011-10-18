@@ -624,6 +624,24 @@ static struct test_case test_cannot_move01 = {
                 }
 };
 
+static struct test_case test_doubling00 = {
+                "You double. Please wait for GibbonTestA to accept or reject.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "207" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_doubling01 = {
+                "GibbonTestA doubles. Type 'accept' or 'reject'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "207" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
@@ -1609,6 +1627,8 @@ static struct test_case *test_cases[] = {
                 &test_game_left,
                 &test_cannot_move00,
                 &test_cannot_move01,
+                &test_doubling00,
+                &test_doubling01,
 
                 &test_between00,
                 &test_between01,
