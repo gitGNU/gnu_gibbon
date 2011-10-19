@@ -252,6 +252,9 @@ static gboolean gibbon_clip_parse_score (const gchar *line, gchar **tokens,
 static gboolean gibbon_clip_parse_score_unlimited (const gchar *line,
                                                    gchar **tokens,
                                                    GSList **result);
+static gboolean gibbon_clip_parse_you_double (const gchar *quoted, gchar **tokens,
+                                              GSList **result);
+
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
 static gboolean gibbon_clip_parse_movement (gchar *string, GSList **result);
@@ -2313,6 +2316,9 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
                 return TRUE;
         }
 
+        if (0 == g_strcmp0 ("double.", tokens[1]))
+                return gibbon_clip_parse_you_double (line, tokens, result);
+
         if (0 == g_strcmp0 ("win", tokens[1]))
                 return gibbon_clip_parse_wins_game (line, tokens, result);
 
@@ -2638,6 +2644,48 @@ gibbon_clip_parse_score_unlimited (const gchar *line, gchar **tokens,
                                             tokens[5]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          score2);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_you_double (const gchar *line, gchar **tokens,
+                              GSList **result)
+{
+        if (g_strcmp0 ("double.", tokens[1]))
+                return FALSE;
+
+        if (g_strcmp0 ("Please", tokens[2]))
+                return FALSE;
+
+        if (g_strcmp0 ("wait", tokens[3]))
+                return FALSE;
+
+        if (g_strcmp0 ("for", tokens[4]))
+                return FALSE;
+
+        if (!tokens[5])
+                return FALSE;
+
+        if (g_strcmp0 ("to", tokens[6]))
+                return FALSE;
+
+        if (g_strcmp0 ("accept", tokens[7]))
+                return FALSE;
+
+        if (g_strcmp0 ("or", tokens[8]))
+                return FALSE;
+
+        if (g_strcmp0 ("reject.", tokens[9]))
+                return FALSE;
+
+        if (tokens[10])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_DOUBLES);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            "You");
 
         return TRUE;
 }
