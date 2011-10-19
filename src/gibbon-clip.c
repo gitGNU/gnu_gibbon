@@ -252,8 +252,12 @@ static gboolean gibbon_clip_parse_score (const gchar *line, gchar **tokens,
 static gboolean gibbon_clip_parse_score_unlimited (const gchar *line,
                                                    gchar **tokens,
                                                    GSList **result);
-static gboolean gibbon_clip_parse_you_double (const gchar *quoted, gchar **tokens,
+static gboolean gibbon_clip_parse_you_double (const gchar *quoted,
+                                              gchar **tokens,
                                               GSList **result);
+static gboolean gibbon_clip_parse_she_doubles (const gchar *quoted,
+                                               gchar **tokens,
+                                               GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -585,6 +589,12 @@ gibbon_clip_parse (const gchar *line)
                             && 0 == g_strcmp0 ("move.", tokens[2])
                             && !tokens[3])
                                 success = gibbon_clip_parse_cannot_move (line,
+                                                                         tokens,
+                                                                       &result);
+                        break;
+                case 'd':
+                        if (0 == g_strcmp0 ("doubles.", tokens[1]))
+                                success = gibbon_clip_parse_she_doubles (line,
                                                                          tokens,
                                                                        &result);
                         break;
@@ -2686,6 +2696,33 @@ gibbon_clip_parse_you_double (const gchar *line, gchar **tokens,
                                          GIBBON_CLIP_CODE_DOUBLES);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             "You");
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_she_doubles (const gchar *line, gchar **tokens,
+                               GSList **result)
+{
+        if (g_strcmp0 ("Type", tokens[2]))
+                return FALSE;
+
+        if (g_strcmp0 ("'accept'", tokens[3]))
+                return FALSE;
+
+        if (g_strcmp0 ("or", tokens[4]))
+                return FALSE;
+
+        if (g_strcmp0 ("'reject'.", tokens[5]))
+                return FALSE;
+
+        if (tokens[6])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_DOUBLES);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
 
         return TRUE;
 }
