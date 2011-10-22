@@ -647,15 +647,17 @@ static struct test_case test_doubling02 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "208" },
                                 { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
 
 static struct test_case test_doubling03 = {
-                "GibbonTestA accepts the double.  The cube shows 2.",
+                "GibbonTestA accepts the double.  The cube shows 4.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "208" },
                                 { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
