@@ -258,6 +258,9 @@ static gboolean gibbon_clip_parse_you_double (const gchar *quoted,
 static gboolean gibbon_clip_parse_she_doubles (const gchar *quoted,
                                                gchar **tokens,
                                                GSList **result);
+static gboolean gibbon_clip_parse_accepts_double (const gchar *quoted,
+                                                  gchar **tokens,
+                                                  GSList **result);
 
 static gboolean gibbon_clip_parse_not_email_address (gchar *quoted,
                                                      GSList **result);
@@ -2534,6 +2537,10 @@ gibbon_clip_parse_accepts (const gchar *line, gchar **tokens, GSList **result)
 {
         gint64 points;
 
+        if (!g_strcmp0 ("the", tokens[2])
+            && !g_strcmp0 ("double.", tokens[3]))
+                return gibbon_clip_parse_accepts_double (line, tokens, result);
+
         if (g_strcmp0 ("accept", tokens[1])
             && g_strcmp0 ("accepts", tokens[1]))
                 return FALSE;
@@ -2723,6 +2730,40 @@ gibbon_clip_parse_she_doubles (const gchar *line, gchar **tokens,
                                          GIBBON_CLIP_CODE_DOUBLES);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_accepts_double (const gchar *line, gchar **tokens,
+                                  GSList **result)
+{
+        gint64 cube;
+
+        if (g_strcmp0 ("The", tokens[4]))
+                return FALSE;
+
+        if (g_strcmp0 ("cube", tokens[5]))
+                return FALSE;
+
+        if (g_strcmp0 ("shows", tokens[6]))
+                return FALSE;
+
+        if (!tokens[7])
+                return FALSE;
+        gibbon_clip_chomp (tokens[7], '.');
+        if (!gibbon_clip_extract_integer (tokens[7], &cube, 2, G_MAXINT))
+                return FALSE;
+
+        if (tokens[8])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_ACCEPTS_DOUBLE);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         cube);
 
         return TRUE;
 }

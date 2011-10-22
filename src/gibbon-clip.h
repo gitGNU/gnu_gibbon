@@ -62,6 +62,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_LEFT_GAME = 205,
                         GIBBON_CLIP_CODE_CANNOT_MOVE = 206,
                         GIBBON_CLIP_CODE_DOUBLES = 207,
+                        GIBBON_CLIP_CODE_ACCEPTS_DOUBLE = 208,
 
                         /* Between game action.  */
                         GIBBON_CLIP_CODE_INVITATION = 300,
