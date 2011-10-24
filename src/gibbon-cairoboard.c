@@ -29,7 +29,7 @@
 #include "gibbon-board.h"
 
 enum {
-        DICE_PICKED_UP,
+        GIBBON_CAIROBOARD_DICE_PICKED_UP,
         LAST_SIGNAL
 };
 
@@ -304,7 +304,7 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
         GTK_WIDGET_CLASS (parent_class)->expose_event = 
                 gibbon_cairoboard_expose;
 
-        gibbon_cairoboard_signals[DICE_PICKED_UP] =
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_DICE_PICKED_UP] =
                         g_signal_new ("dice-picked-up",
                                       G_TYPE_FROM_CLASS (klass),
                                       G_SIGNAL_RUN_FIRST,
@@ -1406,6 +1406,7 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         gdouble x, y;
         guint column;
         guint point;
+        guint signo;
         
         if (event->type == GDK_2BUTTON_PRESS)
                 return gibbon_cairoboard_on_2button_press (self, event);
@@ -1504,9 +1505,9 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                          * click on the bar, the legality checker will undo
                          * the error for us.
                          */
-                        g_signal_emit (self,
-                                      gibbon_cairoboard_signals[DICE_PICKED_UP],
-                                      0, self);
+                        signo = GIBBON_CAIROBOARD_DICE_PICKED_UP;
+                        g_signal_emit (self, gibbon_cairoboard_signals[signo],
+                                       0, self);
                         return TRUE;
                 } else {
                         return FALSE;
