@@ -168,6 +168,8 @@ static gdouble gibbon_cairoboard_get_home_x (GibbonCairoboard *self,
                                              GibbonPositionSide side);
 static gboolean gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                                    GdkEventButton *event);
+static gboolean gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
+                                                    GdkEventButton *event);
 static void gibbon_cairoboard_redraw (const GibbonBoard *self);
 
 static guint gibbon_cairoboard_signals[LAST_SIGNAL] = { 0 };
@@ -1405,9 +1407,15 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         guint column;
         guint point;
         
+        if (event->type == GDK_2BUTTON_PRESS)
+                return gibbon_cairoboard_on_2button_press (self, event);
+
         if (event->button != 1 && event->button != 3)
                 return FALSE;
 
+        /*
+         * FIXME! This needs to be translated!
+         */
         x = event->x;
         y = event->y;
 
@@ -1508,6 +1516,45 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         }
 
         return TRUE;
+}
+
+
+static gboolean
+gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
+                                    GdkEventButton *event)
+{
+        gdouble x, y;
+        struct svg_component *cube;
+
+        if (event->button != 1)
+                return FALSE;
+
+        x = event->x;
+        y = event->y;
+
+        cube = self->priv->cube;
+        if (x >= cube->x && x <= cube->x + cube->width) {
+                /* Centered cube? */
+                if (y >= cube->y && y <= cube->y + cube->height) {
+                        g_printerr ("Centered cube!\n");
+                        return TRUE;
+                }
+                if (y >= self->priv->checker_b_home->y
+                    && y <= self->priv->checker_b_home->y + cube->height) {
+                        g_printerr ("Black cube!\n");
+                        return TRUE;
+                }
+                if (y <= self->priv->checker_w_home->y
+                         + self->priv->checker_w_home->height
+                    && y >= self->priv->checker_w_home->y
+                            + self->priv->checker_w_home->height
+                            - cube->height) {
+                        g_printerr ("White cube!\n");
+                        return TRUE;
+                }
+        }
+
+        return FALSE;
 }
 
 static void
