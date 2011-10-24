@@ -30,6 +30,7 @@
 
 enum {
         GIBBON_CAIROBOARD_DICE_PICKED_UP,
+        GIBBON_CAIROBOARD_DOUBLED,
         LAST_SIGNAL
 };
 
@@ -306,6 +307,15 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 
         gibbon_cairoboard_signals[GIBBON_CAIROBOARD_DICE_PICKED_UP] =
                         g_signal_new ("dice-picked-up",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_DOUBLED] =
+                        g_signal_new ("doubled",
                                       G_TYPE_FROM_CLASS (klass),
                                       G_SIGNAL_RUN_FIRST,
                                       0, NULL, NULL,
@@ -1526,6 +1536,7 @@ gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
 {
         gdouble x, y;
         struct svg_component *cube;
+        guint signo;
 
         if (event->button != 1)
                 return FALSE;
@@ -1537,6 +1548,9 @@ gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
         if (x >= cube->x && x <= cube->x + cube->width) {
                 /* Centered cube? */
                 if (y >= cube->y && y <= cube->y + cube->height) {
+                        signo = GIBBON_CAIROBOARD_DOUBLED;
+                        g_signal_emit (self, gibbon_cairoboard_signals[signo],
+                                       0, self);
                         return TRUE;
                 }
 
@@ -1550,6 +1564,9 @@ gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
                     && y >= self->priv->checker_w_home->y
                             + self->priv->checker_w_home->height
                             - cube->height) {
+                        signo = GIBBON_CAIROBOARD_DOUBLED;
+                        g_signal_emit (self, gibbon_cairoboard_signals[signo],
+                                       0, self);
                         return TRUE;
                 }
         }
