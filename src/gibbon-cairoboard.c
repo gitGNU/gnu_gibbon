@@ -1536,20 +1536,19 @@ gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
         if (x >= cube->x && x <= cube->x + cube->width) {
                 /* Centered cube? */
                 if (y >= cube->y && y <= cube->y + cube->height) {
-                        g_printerr ("Centered cube!\n");
                         return TRUE;
                 }
-                if (y >= self->priv->checker_b_home->y
-                    && y <= self->priv->checker_b_home->y + cube->height) {
-                        g_printerr ("Black cube!\n");
-                        return TRUE;
-                }
+
+                /*
+                 * We ignore double-clicks on black's cube since we are
+                 * always white.
+                 */
+
                 if (y <= self->priv->checker_w_home->y
                          + self->priv->checker_w_home->height
                     && y >= self->priv->checker_w_home->y
                             + self->priv->checker_w_home->height
                             - cube->height) {
-                        g_printerr ("White cube!\n");
                         return TRUE;
                 }
         }
