@@ -109,7 +109,7 @@ struct _GibbonPosition
 
         guint cube;
         gboolean may_double[2];
-        gboolean cube_turned;
+        GibbonPositionSide cube_turned;
 
         gint unused_dice[4];
 
