@@ -70,8 +70,9 @@ typedef enum {
  * @match_length: length of the match.
  * @scores: white and black score (white first).
  * @may_double: %TRUE if respective player may double, %FALSE otherwise.
- * @cube_turned: %TRUE if one of the players just offered a double, %FALSE
- *               otherwise.
+ * @cube_turned: %GIBBON_POSITION_SIDE_WHITE if white has turned the cube,
+ *               %GIBBON_POSITION_SIDE_BLACK if black has turned the cube,
+ *               %GIBBON_POSITION_SIDE_NONE otherwise.
  * @match_length: Length of the match of 0 for unlimited.
  * @unused_dice: Can be filled with the dice not yet used in this roll.
  *               They should be normalized, i.e. all positive for white or all
