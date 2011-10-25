@@ -135,6 +135,7 @@ static void gibbon_session_registration_error (GibbonSession *self,
                                                  const gchar *msg);
 static void gibbon_session_registration_success (GibbonSession *self);
 static void gibbon_session_on_dice_picked_up (const GibbonSession *self);
+static void gibbon_session_on_cube_turned (const GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -173,6 +174,7 @@ struct _GibbonSessionPrivate {
         gboolean saved_games_finished;
 
         guint dice_picked_up_handler;
+        guint cube_turned_handler;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -246,6 +248,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->saved_games_finished = FALSE;
 
         self->priv->dice_picked_up_handler = 0;
+        self->priv->cube_turned_handler = 0;
 }
 
 static void
@@ -258,8 +261,13 @@ gibbon_session_finalize (GObject *object)
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
         if (self->priv->dice_picked_up_handler)
-                g_signal_handler_disconnect (gibbon_app_get_board (self->priv->app),
-                                             self->priv->dice_picked_up_handler);
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                            self->priv->dice_picked_up_handler);
+        if (self->priv->cube_turned_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                             self->priv->cube_turned_handler);
 
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
@@ -327,6 +335,10 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->dice_picked_up_handler =
                 g_signal_connect_swapped (G_OBJECT (board), "dice-picked-up",
                                   G_CALLBACK (gibbon_session_on_dice_picked_up),
+                                          G_OBJECT (self));
+        self->priv->cube_turned_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "dice-picked-up",
+                                  G_CALLBACK (gibbon_session_on_cube_turned),
                                           G_OBJECT (self));
 
         return self;
@@ -2599,6 +2611,29 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         self->priv->position = gibbon_position_copy (new_pos);
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
+        gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_on_cube_turned (const GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
+                return;
+        if (!self->priv->position->may_double[0])
+                return;
+        self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "double");
+        board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (board, self->priv->position);
 }
 
