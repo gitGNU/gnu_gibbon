@@ -697,10 +697,12 @@ static void
 gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 {
         gdouble x, y;
+        gdouble left, right;
         gdouble saved_size;
-        gchar *cube_value;
+        gchar *cube_label;
         gdouble scale;
         gdouble top, bottom;
+        gint cube_value;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
@@ -708,32 +710,47 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
         bottom = self->priv->checker_b_home->y
                  + self->priv->checker_b_home->height;
 
-        if (self->priv->pos->may_double[0]) {
+        if (self->priv->pos->cube_turned != GIBBON_POSITION_SIDE_NONE) {
+                if (self->priv->pos->cube_turned
+                    == GIBBON_POSITION_SIDE_WHITE) {
+                        right = self->priv->point24->x
+                                        + self->priv->point24->width;
+                        left = right - 6 * self->priv->point24->width;
+                } else {
+                        left = self->priv->point12->x;
+                        right = left + 6 * self->priv->point12->width;
+                }
+                x = 0.5 * (left + right);
+                y = 0.5 * (top + bottom);
+                cube_value = self->priv->pos->cube << 1;
+        } else if (self->priv->pos->may_double[0]) {
+                x = self->priv->cube->x + 0.5 * self->priv->cube->width;
                 if (self->priv->pos->may_double[1])
                         y = 0.5 * (top + bottom);
                 else
                         y = top + 0.5 * self->priv->cube->height;
+                cube_value = self->priv->pos->cube;
         } else if (self->priv->pos->may_double[1]) {
+                x = self->priv->cube->x + 0.5 * self->priv->cube->width;
                 y = bottom - 0.5 * self->priv->cube->height;
-
+                cube_value = self->priv->pos->cube;
         } else {
                 return;
         }
 
-        x = self->priv->cube->x + 0.5 * self->priv->cube->width;
 
-        cube_value = g_strdup_printf ("%d", self->priv->pos->cube);
-        if (strlen (cube_value) > 2)
-                scale = 2.0 / (gdouble) strlen (cube_value);
+        cube_label = g_strdup_printf ("%d", cube_value);
+        if (strlen (cube_label) > 2)
+                scale = 2.0 / (gdouble) strlen (cube_label);
         else
                 scale = 1.0;
         g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
                                                       "cube-value",
-                                                      cube_value, scale, 0,
+                                                      cube_label, scale, 0,
                                                       &saved_size));
 
         gibbon_cairoboard_draw_svg_component (self, cr, self->priv->cube, x, y);
-        g_free (cube_value);
+        g_free (cube_label);
 
         g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
                                                       "cube-value",
