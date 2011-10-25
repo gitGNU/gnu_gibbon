@@ -724,12 +724,14 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
                 y = 0.5 * (top + bottom);
                 cube_value = self->priv->pos->cube << 1;
         } else if (self->priv->pos->may_double[0]) {
-                x = self->priv->cube->x + 0.5 * self->priv->cube->width;
-                if (self->priv->pos->may_double[1])
-                        y = 0.5 * (top + bottom);
-                else
-                        y = top + 0.5 * self->priv->cube->height;
                 cube_value = self->priv->pos->cube;
+                x = self->priv->cube->x + 0.5 * self->priv->cube->width;
+                if (self->priv->pos->may_double[1]) {
+                        y = 0.5 * (top + bottom);
+                        cube_value = 2;
+                } else {
+                        y = top + 0.5 * self->priv->cube->height;
+                }
         } else if (self->priv->pos->may_double[1]) {
                 x = self->priv->cube->x + 0.5 * self->priv->cube->width;
                 y = bottom - 0.5 * self->priv->cube->height;
