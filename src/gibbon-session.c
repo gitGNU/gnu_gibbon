@@ -337,7 +337,7 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
                                   G_CALLBACK (gibbon_session_on_dice_picked_up),
                                           G_OBJECT (self));
         self->priv->cube_turned_handler =
-                g_signal_connect_swapped (G_OBJECT (board), "dice-picked-up",
+                g_signal_connect_swapped (G_OBJECT (board), "cube-turned",
                                   G_CALLBACK (gibbon_session_on_cube_turned),
                                           G_OBJECT (self));
 
@@ -1269,6 +1269,13 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         } else {
                 gibbon_board_set_position (board, pos);
         }
+
+        if (pos->may_double[0]
+            && !pos->dice[0]
+            && self->priv->turn == GIBBON_POSITION_SIDE_WHITE)
+                gibbon_app_set_state_may_double (self->priv->app, TRUE);
+        else
+                gibbon_app_set_state_may_double (self->priv->app, FALSE);
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
         gibbon_position_dump_position (self->priv->position);
@@ -2629,6 +2636,8 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
         if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
                 return;
         if (!self->priv->position->may_double[0])
+                return;
+        if (self->priv->position->dice[0])
                 return;
         self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
         gibbon_connection_queue_command (self->priv->connection, FALSE,
