@@ -917,6 +917,16 @@ gibbon_app_set_state_expect_response (const GibbonApp *self, gboolean state)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), state);
 }
 
+void
+gibbon_app_set_state_may_double (const GibbonApp *self, gboolean state)
+{
+        GObject *obj;
+
+        obj = gibbon_app_find_object (self, "board-double",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), state);
+}
+
 const gchar *
 gibbon_app_get_entry_text(const GibbonApp *self, const gchar *id)
 {

@@ -128,5 +128,6 @@ void gibbon_app_set_state_watching (const GibbonApp *self);
 void gibbon_app_set_state_not_playing (const GibbonApp *self);
 void gibbon_app_set_state_expect_response (const GibbonApp *self,
                                            gboolean state);
+void gibbon_app_set_state_may_double (const GibbonApp *self, gboolean state);
 
 #endif
