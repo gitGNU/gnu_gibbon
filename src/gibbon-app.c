@@ -316,24 +316,28 @@ void gibbon_app_display_error(const GibbonApp* self, const gchar *headline,
         va_list args;
         gchar *message;
         GtkWidget *dialog;
-        gchar *_headline;
 
         va_start (args, message_format);
         message = g_strdup_vprintf(message_format, args);
         va_end (args);
 
         if (headline)
-                _headline = g_strdup_printf("<span weight='bold'"
-                                " size='larger'>%s</span>\n", headline);
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                "<span weight='bold' size='larger'>"
+                                "%s</span>\n%s",
+                                headline, message);
         else
-                _headline = "";
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                "%s", message);
 
-        dialog = gtk_message_dialog_new(GTK_WINDOW (self->priv->window),
-                        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR,
-                        GTK_BUTTONS_CLOSE, "%s%s", _headline, message);
-
-        if (headline)
-                free(_headline);
         g_free(message);
 
         gtk_dialog_run(GTK_DIALOG (dialog));
@@ -347,24 +351,28 @@ void gibbon_app_display_info(const GibbonApp *self, const gchar *headline,
         va_list args;
         gchar *message;
         GtkWidget *dialog;
-        gchar *_headline;
 
         va_start (args, message_format);
         message = g_strdup_vprintf(message_format, args);
         va_end (args);
 
         if (headline)
-                _headline = g_strdup_printf("<span weight='bold'"
-                                " size='larger'>%s</span>\n", headline);
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                "<span weight='bold' size='larger'>"
+                                "%s</span>\n%s",
+                                headline, message);
         else
-                _headline = "";
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                "%s", message);
 
-        dialog = gtk_message_dialog_new(GTK_WINDOW (self->priv->window),
-                        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO,
-                        GTK_BUTTONS_CLOSE, "%s%s", _headline, message);
-
-        if (headline)
-                free(_headline);
         g_free(message);
 
         gtk_dialog_run(GTK_DIALOG (dialog));
