@@ -338,7 +338,7 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
 
         error = NULL;
         if (!g_file_get_contents (filename, &data, NULL, &error)) {
-                gibbon_app_display_error (app,
+                gibbon_app_display_error (app, NULL,
                                           _("Error reading board definition"
                                             " `%s': %s.\nDo you need to pass"
                                             " the option `--pixmaps-dir'?\n"),
@@ -350,7 +350,7 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
         
         doc = xmlReadMemory (data, strlen (data), filename, NULL, 0);
         if (doc == NULL) {
-                gibbon_app_display_error (app,
+                gibbon_app_display_error (app, NULL,
                                           _("Error parsing board definition"
                                             " `%s'.\n"),
                                           filename);
@@ -1009,7 +1009,7 @@ gibbon_cairoboard_get_component (GibbonCairoboard *self,
                 g_hash_table_lookup (self->priv->ids, (const xmlChar *) id);
 
         if (!node) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Board definition `%s' does not"
                                             " have an element `%s'.\n"),
                                           filename, id);

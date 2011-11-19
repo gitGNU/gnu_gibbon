@@ -263,7 +263,7 @@ gibbon_geo_ip_updater_on_response (GibbonGeoIPUpdater *self,
                 self->priv->cancellable = NULL;
         }
         gtk_widget_hide (self->priv->dialog);
-        gibbon_app_display_info (self->priv->app, "%s",
+        gibbon_app_display_info (self->priv->app, NULL, "%s",
                                  _("The information about other"
                                    " players' geographic location"
                                    " will not be accurate."));
@@ -347,7 +347,7 @@ gibbon_geo_ip_updater_on_open (GFile *file, GAsyncResult *res,
         self->priv->file = NULL;
         if (!fstream) {
                 gtk_widget_hide (self->priv->dialog);
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Cannot open `%s': %s!"),
                                           self->priv->uri, error->message);
                 g_error_free (error);
@@ -401,7 +401,7 @@ gibbon_geo_ip_updater_on_read (GInputStream *stream, GAsyncResult *res,
         read_bytes = g_input_stream_read_finish (stream, res, &error);
         if (read_bytes < 0) {
                 gtk_widget_hide (self->priv->dialog);
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Error reading `%s': %s!"),
                                           self->priv->uri, error->message);
                 g_error_free (error);
@@ -678,13 +678,13 @@ gibbon_geo_ip_updater_parse (GibbonGeoIPUpdater *self, const gchar *line_start,
 parse_error:
         gtk_widget_hide (self->priv->dialog);
         if (*ptr)
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("%s: line %u: Parse error near"
                                             " `%s'!"),
                                            self->priv->uri,
                                            self->priv->lineno, ptr);
         else
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("%s: line %u: Unexpected end of"
                                             " line!"),
                                            self->priv->uri, self->priv->lineno);

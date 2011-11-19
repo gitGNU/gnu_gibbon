@@ -1100,7 +1100,7 @@ static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
 
 static void gibbon_app_on_network_error(GibbonApp *self, const gchar *message)
 {
-        gibbon_app_display_error(self, "%s", message);
+        gibbon_app_display_error(self, NULL, "%s", message);
         gibbon_app_disconnect(self);
 }
 
@@ -1119,7 +1119,7 @@ gibbon_app_load_scaled_image(const GibbonApp *self, const gchar *path,
 
         if (!pixbuf) {
                 gibbon_app_display_error(
-                                self,
+                                self, NULL,
                                 _("Error loading image `%s': %s!"),
                                 path, error->message);
                 return NULL;
