@@ -1220,6 +1220,11 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
                                          i64);
 
+        /* Direction.  */
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_BOOLEAN,
+                                         direction == -1);
+
         /* Checkers on bar.  */
         if (!gibbon_clip_extract_integer (tokens[47], &i64,
                                           0, 15))

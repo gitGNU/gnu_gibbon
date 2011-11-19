@@ -1233,6 +1233,9 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                       &pos->may_double[1]))
                 goto bail_out_board;
 
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &self->priv->direction));
+
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &pos->bar[0]))
                 goto bail_out_board;
