@@ -1505,6 +1505,8 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         if (0 == g_strcmp0 ("You", who)) {
                 self->priv->position->dice[0] = dice[0];
                 self->priv->position->dice[1] = dice[1];
+                self->priv->position->unused_dice[0] = dice[0];
+                self->priv->position->unused_dice[1] = dice[1];
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                         g_strdup_printf (_("You roll %u and %u."),
