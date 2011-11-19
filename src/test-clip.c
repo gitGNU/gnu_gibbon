@@ -281,7 +281,7 @@ static struct test_case test_clip19 = {
 static struct test_case test_error = {
                 "** Funny new message!",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "101" },
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                 "Funny new message!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }

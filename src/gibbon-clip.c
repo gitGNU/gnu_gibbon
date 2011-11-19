@@ -2158,7 +2158,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_ERROR);
+                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             line + 3);
