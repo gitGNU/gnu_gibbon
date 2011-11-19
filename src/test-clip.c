@@ -278,6 +278,16 @@ static struct test_case test_clip19 = {
                 }
 };
 
+static struct test_case test_error = {
+                "** Funny new message!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                "Funny new message!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                },
+};
+
 static struct test_case test_board00 =  {
                 "board:joe_white:black_jack:7:5:0:0:0:2:-1:0:-1:4:0:2:0:0:0:-2"
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
@@ -1627,6 +1637,8 @@ static struct test_case *test_cases[] = {
                 &test_clip17,
                 &test_clip18,
                 &test_clip19,
+
+                &test_error,
 
                 &test_board00,
                 &test_board01,
