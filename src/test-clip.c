@@ -278,12 +278,32 @@ static struct test_case test_clip19 = {
                 }
 };
 
-static struct test_case test_error = {
+static struct test_case test_error00 = {
                 "** Funny new message!",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "100" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                 "Funny new message!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                },
+};
+
+static struct test_case test_error01 = {
+                "** Error: something new went wrong!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                "Error: something new went wrong!"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                },
+};
+
+static struct test_case test_error02 = {
+                "** You see a funny new message!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                "You see a funny new message!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 },
 };
@@ -1604,7 +1624,7 @@ static struct test_case test_address02 = {
         }
 };
 
-static struct test_case test_error00 = {
+static struct test_case test_corrupt = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "101" },
@@ -1638,7 +1658,9 @@ static struct test_case *test_cases[] = {
                 &test_clip18,
                 &test_clip19,
 
-                &test_error,
+                &test_error00,
+                &test_error01,
+                &test_error02,
 
                 &test_board00,
                 &test_board01,
@@ -1762,7 +1784,7 @@ static struct test_case *test_cases[] = {
                 &test_address01,
                 &test_address02,
 
-                &test_error00,
+                &test_corrupt
 };
 
 static gboolean test_single_case (struct test_case *test_case);

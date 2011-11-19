@@ -1942,7 +1942,15 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
                 return TRUE;
         }
 
-        return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_STRING,
+                                            line + 3);
+
+        return TRUE;
 }
 
 static gboolean
@@ -1996,7 +2004,15 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
                 return TRUE;
         }
 
-        return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_STRING,
+                                            line + 3);
+
+        return TRUE;
 }
 
 static gboolean
