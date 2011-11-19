@@ -266,7 +266,7 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
          * function coded.
          */
         if (!gibbon_database_sql_do (self, "PRAGMA foreign_keys = ON")) {
-                gibbon_app_display_error (app,
+                gibbon_app_display_error (app, NULL,
                                           _("Your sqlite installation seems"
                                             " to be crippled.  It does not"
                                             " support foreign key constraints. "
@@ -484,7 +484,7 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first && !new_database)
-                gibbon_app_display_info (self->priv->app,
+                gibbon_app_display_info (self->priv->app, NULL,
                                          _("You should now repopulate your"
                                            " database (menu `Options')."));
 
@@ -527,9 +527,8 @@ static gboolean
 gibbon_database_begin_transaction (GibbonDatabase *self)
 {
         if (self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app,
-                                          _("Internal error: Nested"
-                                            " transaction."));
+                gibbon_app_display_error (self->priv->app, _("Internal error"),
+                                          _("Nested transaction."));
                 return FALSE;
         }
         self->priv->in_transaction = TRUE;
@@ -557,9 +556,9 @@ static gboolean
 gibbon_database_commit (GibbonDatabase *self)
 {
         if (!self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app,
-                                          _("Internal error: Commit"
-                                            " outside transaction."));
+                gibbon_app_display_error (self->priv->app, _("Internal error"),
+                                          "%s",
+                                          _("Commit outside transaction."));
                 return FALSE;
         }
         self->priv->in_transaction = FALSE;
@@ -585,9 +584,9 @@ static gboolean
 gibbon_database_rollback (GibbonDatabase *self)
 {
         if (!self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app,
-                                          _("Internal error: Rollback"
-                                            " outside transaction."));
+                gibbon_app_display_error (self->priv->app, _("Internal error"),
+                                          "%s",
+                                          _("Rollback outside transaction."));
                 return FALSE;
         }
         self->priv->in_transaction = FALSE;
@@ -731,6 +730,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                 break;
                         default:
                                 gibbon_app_display_error (self->priv->app,
+                                                          NULL,
                                                           _("Unknown data"
                                                             " type %d!"),
                                                             type);
@@ -800,6 +800,7 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                                 break;
                         default:
                                 gibbon_app_display_error (self->priv->app,
+                                                          NULL,
                                                           _("Unknown data"
                                                             " type %d!"),
                                                             type);

@@ -299,13 +299,13 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
 
         login = gtk_entry_get_text (GTK_ENTRY (self->priv->login_entry));
         if (!login || !*login) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("You must specify a user name!"));
                 return FALSE;
         }
 
         if (0 == g_strcmp0 (login, "guest")) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("The login `%s' is reserved!"),
                                           "guest");
                 return FALSE;
@@ -313,12 +313,12 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
 
         length = strlen (login);
         if (20 < length) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Your user name may not be longer"
                                             " than 20 characters!"));
                 return FALSE;
         } else if (3 > length) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Your user name must have at least"
                                             " 3 characters!"));
                 return FALSE;
@@ -330,7 +330,7 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
                         || (login[i] >= 'A' && login[i] <= 'Z')
                         || login[i] == '_')
                         continue;
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Your user name may only contain"
                                             " characters from A to Z, a to z,"
                                             " or the underscore ('_')!"));
@@ -339,21 +339,21 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
 
         password = gtk_entry_get_text (GTK_ENTRY (self->priv->password_entry));
         if (!password || !*password) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("You must specify a password!"));
                 return FALSE;
         }
 
         length = strlen (password);
         if (4 > length) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Your password must have at least"
                                             " 4 characters!"));
                 return FALSE;
         }
         for (i = 0; i < length; ++i) {
                 if (password[i] == ':') {
-                        gibbon_app_display_error (self->priv->app, "%s",
+                        gibbon_app_display_error (self->priv->app, NULL, "%s",
                                                   _("Your password must not"
                                                     " contain a colon (`:')!"));
                         return FALSE;
@@ -362,20 +362,20 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
 
         password2 = gtk_entry_get_text (GTK_ENTRY (self->priv->password_entry2));
         if (!password2 || !*password2) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Please repeat the password!"));
                 return FALSE;
         }
 
         if (g_strcmp0 (password, password2)) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Passwords do not match!"));
                 return FALSE;
         }
 
         hostname = gtk_entry_get_text (GTK_ENTRY (self->priv->server_entry));
         if (!hostname || !*hostname) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("You must specify a server name."
                                           " In doubt try `fibs.com'."));
                 return FALSE;
@@ -386,7 +386,7 @@ gibbon_register_dialog_check (const GibbonRegisterDialog *self)
         port = g_variant_get_uint16 (variant);
         g_variant_unref (variant);
         if (!port) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                          _("Invalid port number!"
                                            " In doubt try the default"
                                            " port number 4321."));

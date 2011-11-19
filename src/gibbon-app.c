@@ -310,21 +310,30 @@ gibbon_app_get_builder(GibbonApp *self, const gchar *path)
         return builder;
 }
 
-void gibbon_app_display_error(const GibbonApp* self,
+void gibbon_app_display_error(const GibbonApp* self, const gchar *headline,
                               const gchar *message_format, ...)
 {
         va_list args;
         gchar *message;
         GtkWidget *dialog;
+        gchar *_headline;
 
         va_start (args, message_format);
         message = g_strdup_vprintf(message_format, args);
         va_end (args);
 
+        if (headline)
+                _headline = g_strdup_printf("<span weight='bold'"
+                                " size='larger'>%s</span>\n", headline);
+        else
+                _headline = "";
+
         dialog = gtk_message_dialog_new(GTK_WINDOW (self->priv->window),
                         GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR,
-                        GTK_BUTTONS_CLOSE, "%s", message);
+                        GTK_BUTTONS_CLOSE, "%s%s", _headline, message);
 
+        if (headline)
+                free(_headline);
         g_free(message);
 
         gtk_dialog_run(GTK_DIALOG (dialog));
@@ -332,21 +341,30 @@ void gibbon_app_display_error(const GibbonApp* self,
         gtk_widget_destroy(GTK_WIDGET (dialog));
 }
 
-void gibbon_app_display_info(const GibbonApp *self,
+void gibbon_app_display_info(const GibbonApp *self, const gchar *headline,
                              const gchar *message_format, ...)
 {
         va_list args;
         gchar *message;
         GtkWidget *dialog;
+        gchar *_headline;
 
         va_start (args, message_format);
         message = g_strdup_vprintf(message_format, args);
         va_end (args);
 
+        if (headline)
+                _headline = g_strdup_printf("<span weight='bold'"
+                                " size='larger'>%s</span>\n", headline);
+        else
+                _headline = "";
+
         dialog = gtk_message_dialog_new(GTK_WINDOW (self->priv->window),
                         GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO,
-                        GTK_BUTTONS_CLOSE, "%s", message);
+                        GTK_BUTTONS_CLOSE, "%s%s", _headline, message);
 
+        if (headline)
+                free(_headline);
         g_free(message);
 
         gtk_dialog_run(GTK_DIALOG (dialog));
@@ -541,7 +559,7 @@ gibbon_app_on_register_request (GibbonApp *self)
         GVariant *variant;
 
         if (self->priv->connection) {
-                gibbon_app_display_error (self,
+                gibbon_app_display_error (self, NULL,
                                           _("You cannot register an account"
                                             " while you are connected to a"
                                             " server!"));
@@ -656,7 +674,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (password);
                 g_free (hostname);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("No hostname given!"));
+                gibbon_app_display_error (self, NULL, _("No hostname given!"));
                 return;
         }
 
@@ -667,7 +685,7 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("No user name given!"));
+                gibbon_app_display_error (self, NULL, _("No user name given!"));
                 return;
         }
         if (0 == g_strcmp0 (login, "guest")) {
@@ -689,9 +707,10 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("Invalid port number!"
-                                                  " In doubt try the default"
-                                                  " port number 4321."));
+                gibbon_app_display_error (self, NULL,
+                                          _("Invalid port number!"
+                                            " In doubt try the default"
+                                            " port number 4321."));
                 return;
         }
 
@@ -700,7 +719,8 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("No password given!"));
+                gibbon_app_display_error (self, NULL,
+                                          _("No password given!"));
                 return;
         }
 

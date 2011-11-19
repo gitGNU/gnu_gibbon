@@ -196,7 +196,7 @@ gibbon_archive_new (GibbonApp *app)
         documents_servers_directory = g_get_user_data_dir ();
 
         if (!documents_servers_directory) {
-                gibbon_app_display_error (app,
+                gibbon_app_display_error (app, NULL,
                                           _("Cannot determine user data"
                                             " directory!"));
                 g_object_unref (self);
@@ -238,7 +238,7 @@ gibbon_archive_new (GibbonApp *app)
                                                       g_free, NULL);
 
         if (first_run)
-                gibbon_app_display_info (app,
+                gibbon_app_display_info (app, NULL,
                                          _("You can import settings and saved"
                                            " games from your old client."
                                            " Check the menu `Extras' to see if"
