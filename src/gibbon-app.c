@@ -300,7 +300,7 @@ gibbon_app_get_builder(GibbonApp *self, const gchar *path)
         GError *error = NULL;
 
         if (!gtk_builder_add_from_file(builder, path, &error)) {
-                gibbon_app_display_error(self, "%s.\n%s", error->message,
+                gibbon_app_display_error(self, NULL, "%s.\n%s", error->message,
                                 _("Do you need to pass the"
                                                 " option `--data-dir'?\n"));
                 g_object_unref(G_OBJECT (builder));
@@ -393,14 +393,15 @@ gibbon_app_find_object(const GibbonApp *self, const gchar *id, GType type)
 
         if (!obj) {
                 /* TRANSLATORS: UI means user interface.  */
-                gibbon_app_display_error(self, _("Object `%s' not found in UI"
+                gibbon_app_display_error(self, NULL,
+                                _("Object `%s' not found in UI"
                                 " definition!"), id);
                 exit(-1);
         }
 
         if (!G_IS_OBJECT (obj)) {
                 gibbon_app_display_error(
-                                self,
+                                self, NULL,
                                 _("Object `%s' is not a GObject!"),
                                 id);
                 exit(-1);
@@ -409,7 +410,7 @@ gibbon_app_find_object(const GibbonApp *self, const gchar *id, GType type)
         if (!G_TYPE_CHECK_INSTANCE_TYPE (obj, type)) {
                 got_type = G_OBJECT_TYPE (obj);
                 gibbon_app_display_error(
-                                self,
+                                self, NULL,
                                 _("Object `%s' is not of type `%s'"
                                                 " but `%s'!"), id, g_type_name(
                                                 type), g_type_name(got_type));
@@ -701,8 +702,8 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
                 g_free (hostname);
                 g_free (login);
                 g_object_unref (settings);
-                gibbon_app_display_error (self, _("The login `%s'"
-						  " is reserved!"),
+                gibbon_app_display_error (self, NULL,
+                                          _("The login `%s' is reserved!"),
 					  "guest");
                 return;
         }

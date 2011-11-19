@@ -243,7 +243,7 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
 
         if (SQLITE_OK != sqlite3_open (path, &dbh)) {
                 if (!dbh) {
-                        gibbon_app_display_error (app,
+                        gibbon_app_display_error (app, NULL,
                                                   _("Error opening database"
                                                     " `%s'!"),
                                                   path);
@@ -623,12 +623,8 @@ gibbon_database_display_error (GibbonDatabase *self, const gchar *msg_fmt, ...)
                 message = g_strdup (_("Database failure"));
         }
 
-        gibbon_app_display_error (self->priv->app,
-                                  /* TRANSLATORS: The first string is a string
-                                   * describing the error, the second one a
-                                   * maybe cryptic database error message.
-                                   */
-                                  (_("%s: %s.")),
+        gibbon_app_display_error (self->priv->app, message,
+                                  ("%s"),
                                   message,
                                   sqlite3_errmsg (self->priv->dbh));
 

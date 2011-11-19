@@ -1305,7 +1305,7 @@ gibbon_session_handle_error (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
                 return -1;
 
-        gibbon_app_display_error (self->priv->app, "%s", message);
+        gibbon_app_display_error (self->priv->app, NULL, "%s", message);
 
         return GIBBON_CLIP_CODE_ERROR;
 }
@@ -1382,7 +1382,7 @@ gibbon_session_handle_invite_error (GibbonSession *self, GSList *iter)
                 return -1;
 
         gibbon_inviter_list_remove (self->priv->inviter_list, player);
-        gibbon_app_display_error (self->priv->app, "%s", message);
+        gibbon_app_display_error (self->priv->app, NULL, "%s", message);
 
         return GIBBON_CLIP_CODE_INVITE_ERROR;
 }
@@ -1990,7 +1990,7 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &address))
                 return -1;
 
-        gibbon_app_display_error(self->priv->app,
+        gibbon_app_display_error(self->priv->app, NULL,
                                  _("The email address `%s' was rejected by"
                                    " the server!"), address);
 
@@ -2262,7 +2262,7 @@ gibbon_session_timeout (GibbonSession *self)
                         if (self->priv->timeout_id > 0)
                                 g_source_remove (self->priv->timeout_id);
                         self->priv->timeout_id = 0;
-                        gibbon_app_display_error (self->priv->app, "%s",
+                        gibbon_app_display_error (self->priv->app, NULL, "%s",
                                                   _("Timeout during"
                                                     " during registration!"));
                         gibbon_app_disconnect (self->priv->app);
@@ -2297,7 +2297,7 @@ gibbon_session_handle_prompt (GibbonSession *self)
                 if (self->priv->timeout_id > 0)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id = 0;
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("Unexpected reply from server!"));
                 gibbon_app_disconnect (self->priv->app);
                 return;
@@ -2308,7 +2308,7 @@ gibbon_session_handle_prompt (GibbonSession *self)
                 if (self->priv->timeout_id > 0)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id = 0;
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("Registration failed.  Please see"
                                             " server console for details!"));
                 gibbon_app_disconnect (self->priv->app);
@@ -2345,7 +2345,7 @@ gibbon_session_handle_pw_prompt (GibbonSession *self)
                 if (self->priv->timeout_id > 0)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id = 0;
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("Unexpected reply from server!"));
                 gibbon_app_disconnect (self->priv->app);
                 return;
@@ -2360,7 +2360,7 @@ gibbon_session_handle_pw_prompt (GibbonSession *self)
                 if (self->priv->timeout_id > 0)
                         g_source_remove (self->priv->timeout_id);
                 self->priv->timeout_id = 0;
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("Registration failed.  Please see"
                                             " server console for details!"));
                 gibbon_app_disconnect (self->priv->app);
@@ -2418,7 +2418,7 @@ gibbon_session_registration_error (GibbonSession *self, const gchar *_line)
         g_free (login);
         g_free (expect);
 
-        gibbon_app_display_error (self->priv->app, "%s", line);
+        gibbon_app_display_error (self->priv->app, NULL, "%s", line);
         g_free (freeable);
 
         gibbon_app_disconnect (self->priv->app);
@@ -2574,49 +2574,49 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         case GIBBON_MOVE_LEGAL:
                 break;
         case GIBBON_MOVE_ILLEGAL:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("Illegal move!"));
                 break;
         case GIBBON_MOVE_TOO_MANY_MOVES:
                 /* Cannot happen.  */
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You moved too many checkers!"));
                 break;
         case GIBBON_MOVE_BLOCKED:
                 /* Cannot happen.  */
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You cannot move to a point that"
                                             " is blocked by two or more of"
                                             " your opponent's checkers!"));
                 break;
         case GIBBON_MOVE_USE_ALL:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You have to use both dice!"));
                 break;
         case GIBBON_MOVE_USE_HIGHER:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You have to use the higher die"
                                             " if possible!"));
                 break;
         case GIBBON_MOVE_TRY_SWAP:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You have to use both dice if"
                                             " possible (hint: try to use"
                                             " the other die first)!"));
                 break;
         case GIBBON_MOVE_PREMATURE_BEAR_OFF:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You must move all checkers into"
                                             " your home board before you can"
                                             " start bearing-off!"));
                 break;
         case GIBBON_MOVE_ILLEGAL_WASTE:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You must move your checkers from"
                                             " the higher points first!"));
                 break;
         case GIBBON_MOVE_DANCING:
-                gibbon_app_display_error (self->priv->app, "%s",
+                gibbon_app_display_error (self->priv->app, NULL, "%s",
                                           _("You must bring in checkers from"
                                             " the bar first!"));
                 break;
