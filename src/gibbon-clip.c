@@ -2156,7 +2156,14 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                                                 result);
         }
 
-        return FALSE;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_ERROR);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_STRING,
+                                            line + 3);
+
+        return TRUE;
 }
 
 static gboolean
