@@ -215,7 +215,7 @@ gibbon_archive_new (GibbonApp *app)
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
-                gibbon_app_display_error (app,
+                gibbon_app_display_error (app, NULL,
                                           _("Failed to create"
                                             " server directory `%s': %s!"),
                                self->priv->servers_directory,
@@ -281,7 +281,7 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
-                gibbon_app_display_error (self->priv->app,
+                gibbon_app_display_error (self->priv->app, NULL,
                                           _("Failed to create"
                                             " directory `%s': %s!\n\n"
                                             "It will be impossible to save"
