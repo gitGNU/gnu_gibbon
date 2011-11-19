@@ -281,7 +281,7 @@ static struct test_case test_clip19 = {
 static struct test_case test_error = {
                 "** Funny new message!",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_UINT, "101" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                 "Funny new message!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -789,7 +789,7 @@ static struct test_case test_between10 = {
 static struct test_case test_between11 = {
                 "** You can't play two games at once",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_UINT, "101" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                   "You cannot play two matches at once!"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -1598,7 +1598,7 @@ static struct test_case test_address01 = {
 static struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
-                                { GIBBON_CLIP_TYPE_UINT, "101" },
+                                { GIBBON_CLIP_TYPE_UINT, "102" },
                                 { GIBBON_CLIP_TYPE_STRING, "http://foobar" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
         }
@@ -1607,7 +1607,7 @@ static struct test_case test_address02 = {
 static struct test_case test_error00 = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "100" },
+                                { GIBBON_CLIP_TYPE_UINT, "101" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                   "Your saved match was corrupted on server. "
                                   " Please start a new one!"},
