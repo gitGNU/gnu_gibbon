@@ -816,7 +816,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 self->priv->watching = NULL;
                 g_free (self->priv->opponent);
                 self->priv->opponent = NULL;
-                gibbon_app_display_info (self->priv->app,
+                gibbon_app_display_info (self->priv->app, NULL,
                                          _("Player `%s' logged out!"),
                                          name);
         } else if (0 == g_strcmp0 (name, self->priv->opponent)) {
@@ -826,7 +826,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 g_free (self->priv->opponent);
                 self->priv->opponent = NULL;
                 if (!self->priv->watching)
-                        gibbon_app_display_info (self->priv->app,
+                        gibbon_app_display_info (self->priv->app, NULL,
                                                  _("Player `%s' logged out!"),
                                                  name);
         }
@@ -867,7 +867,7 @@ gibbon_session_clip_message (GibbonSession *self, GSList *iter)
        last_login_str = ctime (&last_login.tv_sec);
        last_login_str[strlen (last_login_str) - 1] = 0;
 
-       gibbon_app_display_info (self->priv->app,
+       gibbon_app_display_info (self->priv->app, NULL,
                                 _("User `%s' left you a message at %s: %s"),
                                 sender, last_login_str, message);
 
@@ -882,7 +882,7 @@ gibbon_session_clip_message_delivered (GibbonSession *self, GSList *iter)
        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
                return -1;
 
-       gibbon_app_display_info (self->priv->app,
+       gibbon_app_display_info (self->priv->app, NULL,
                                 _("Your message for user `%s' has been"
                                   " delivered!"),
                                 recipient);
@@ -898,7 +898,7 @@ gibbon_session_clip_message_saved (GibbonSession *self, GSList *iter)
        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &recipient))
                return -1;
 
-       gibbon_app_display_info (self->priv->app,
+       gibbon_app_display_info (self->priv->app, NULL,
                                 _("User `%s' is not logged in.  Your message"
                                   " has been saved!"),
                                 recipient);
@@ -2444,10 +2444,11 @@ gibbon_session_registration_success (GibbonSession *self)
         gibbon_archive_on_login (self->priv->archive, hostname, port, login);
         g_free (login);
 
-        gibbon_app_display_info (self->priv->app, "%s",
-                                 _("Registration successful! Please do not"
-                                   " forget your password! It cannot be"
-                                   " recovered."
+        gibbon_app_display_info (self->priv->app,
+                                 _("Registration successful!"),
+                                 "%s",
+                                 _("Please do not forget your password! It@"
+                                   " cannot be recovered."
                                    "\n"
                                    "You have to connect to the server again to"
                                    " start playing."));
