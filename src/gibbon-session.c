@@ -120,6 +120,8 @@ static gint gibbon_session_handle_address_error (GibbonSession *self,
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
                                                GSList *iter);
 static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_unknown_message (GibbonSession *self,
+                                                   GSList *iter);
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
@@ -450,6 +452,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_YOU_KIBITZ:
                 retval = gibbon_session_clip_you_kibitz (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_UNKNOWN_MESSAGE:
+                retval = gibbon_session_handle_unknown_message (self, iter);
                 break;
         case GIBBON_CLIP_CODE_ERROR:
                 retval = gibbon_session_handle_error (self, iter);
@@ -2061,6 +2066,20 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                    self->priv->position);
 
         return GIBBON_CLIP_CODE_WIN_GAME;
+}
+
+static gint
+gibbon_session_handle_unknown_message (GibbonSession *self, GSList *iter)
+{
+        const gchar *msg;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &msg))
+                                     return -1;
+        gibbon_app_display_error (self->priv->app,
+                                  _("Message from server"),
+                                  "%s", msg);
+
+        return GIBBON_CLIP_CODE_UNKNOWN_MESSAGE;
 }
 
 static gboolean
