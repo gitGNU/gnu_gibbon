@@ -119,6 +119,7 @@ static gint gibbon_session_handle_address_error (GibbonSession *self,
                                                  GSList *iter);
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
                                                GSList *iter);
+static gint gibbon_session_handle_doubles (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_unknown_message (GibbonSession *self,
                                                    GSList *iter);
@@ -481,6 +482,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_CANNOT_MOVE:
                 retval = gibbon_session_handle_cannot_move (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_DOUBLES:
+                retval = gibbon_session_handle_doubles (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
@@ -2029,6 +2033,27 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                                    self->priv->position);
 
         return GIBBON_CLIP_CODE_CANNOT_MOVE;
+}
+
+static gint
+gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        if (0 == g_strcmp0 (self->priv->opponent, who)) {
+                g_printerr ("Your opponent doubles!\n");
+        } else if (0 == g_strcmp0 (self->priv->watching, who)) {
+                g_printerr ("Your watchee doubles!\n");
+        } else if (0 == g_strcmp0 ("You", who)) {
+                g_printerr ("You double!\n");
+        } else {
+                return -1;
+        }
+
+        return GIBBON_CLIP_CODE_DOUBLES;
 }
 
 static gint
