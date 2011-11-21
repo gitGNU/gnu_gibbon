@@ -1162,7 +1162,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         const gchar *str;
         gint retval = -1;
-        gboolean was_doubled;
+        gboolean is_crawford = FALSE;
         gboolean post_crawford;
 
         pos = gibbon_position_new ();
@@ -1240,10 +1240,6 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 goto bail_out_board;
 
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &was_doubled))
-                goto bail_out_board;
-
-        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
                                       &self->priv->direction));
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
@@ -1256,15 +1252,29 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
                                       &post_crawford));
 
-        if (!post_crawford && pos->match_length
+        if (pos->match_length
             && (pos->scores[0] == pos->match_length - 1
-                || pos->scores[1] == pos->match_length - 1)
-            && pos->may_double[0]
-            && pos->may_double[1]) {
+                || pos->scores[1] == pos->match_length - 1)) {
+            if (post_crawford) {
                 pos->game_info = g_strdup (_("Crawford game"));
+                is_crawford = TRUE;
+            } else {
+                pos->game_info = g_strdup (_("Post-Crawford game"));
+            }
         }
 
-        if (was_doubled) {
+        /*
+         * If one of the opponents turned the cube, the value of both dice
+         * is 0 (of course), and FIBS will set the may_double flag of both
+         * players to false.
+         *
+         * One of the check for Crawford or the may_double flags is redundant,
+         * at least with FIBS, because FIBS will set the may_double flags
+         * for both players to TRUE during the Crawford game.
+         */
+        if (!is_crawford
+            && !pos->dice[0] && !pos->dice[1]
+            && !pos->may_double[0] && !pos->may_double[1]) {
                 pos->cube_turned = self->priv->turn;
         } else if (self->priv->turn == GIBBON_POSITION_SIDE_WHITE) {
                 pos->unused_dice[0] = abs (pos->dice[0]);

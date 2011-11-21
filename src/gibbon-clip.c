@@ -1220,14 +1220,6 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
                                          i64);
 
-        /* Was doubled?  */
-        if (!gibbon_clip_extract_integer (tokens[40], &i64,
-                                          0, 1))
-                goto bail_out_board;
-        *result = gibbon_clip_alloc_int (*result,
-                                         GIBBON_CLIP_TYPE_BOOLEAN,
-                                         i64);
-
         /* Direction.  */
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_BOOLEAN,
