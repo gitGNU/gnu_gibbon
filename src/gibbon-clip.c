@@ -1247,6 +1247,14 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
                                          GIBBON_CLIP_TYPE_UINT,
                                          i64);
 
+        /* Post-Crawford.  */
+        if (!gibbon_clip_extract_integer (tokens[51], &i64,
+                                          0, 1))
+                goto bail_out_board;
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_BOOLEAN,
+                                         i64);
+
         retval = TRUE;
 
 bail_out_board:

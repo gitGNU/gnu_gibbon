@@ -1163,6 +1163,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         const gchar *str;
         gint retval = -1;
         gboolean was_doubled;
+        gboolean post_crawford;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -1252,11 +1253,14 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                    &pos->bar[1]))
                 goto bail_out_board;
         
-        if (pos->match_length &&
-            (pos->scores[0] == pos->match_length - 1
-             || pos->scores[1] == pos->match_length - 1)
-            && !pos->may_double[0]
-            && !pos->may_double[1]) {
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &post_crawford));
+
+        if (!post_crawford && pos->match_length
+            && (pos->scores[0] == pos->match_length - 1
+                || pos->scores[1] == pos->match_length - 1)
+            && pos->may_double[0]
+            && pos->may_double[1]) {
                 pos->game_info = g_strdup (_("Crawford game"));
         }
 
