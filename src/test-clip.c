@@ -365,6 +365,8 @@ static struct test_case test_board00 =  {
                                 /* Player's and opponent's bar.  */
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* Post-Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -426,6 +428,71 @@ static struct test_case test_board01 =  {
                                 /* Player's and opponent's bar.  */
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* Post-Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_board02 =  {
+                "board:joe_white:black_jack:2:1:1:0:0:0:-1:3:3:2:0:3:0:0:2:0:2"
+                ":0:0:0:-1:-1:-2:-2:-2:-4:-2:0:0:1:5:1:0:0:2:0:1:0:1:-1:0:25:0"
+                ":0:0:0:2:0:1:0",
+                {
+                                /* Board.  */
+                                { GIBBON_CLIP_TYPE_UINT, "200" },
+                                /* Player and opponent.  */
+                                { GIBBON_CLIP_TYPE_NAME, "joe_white" },
+                                { GIBBON_CLIP_TYPE_NAME, "black_jack" },
+                                /* Match length.  */
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                /* Score.  */
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                /* Position.  */
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "3" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "-4" },
+                                { GIBBON_CLIP_TYPE_INT, "-2" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
+                                /* Turn.  */
+                                { GIBBON_CLIP_TYPE_INT, "1" },
+                                /* Dice.  */
+                                { GIBBON_CLIP_TYPE_INT, "5" },
+                                { GIBBON_CLIP_TYPE_INT, "1" },
+                                /* Cube.  */
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                /* Player and opponent may double? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                /* Just doubled? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                /* Playing direction.  */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                /* Player's and opponent's bar.  */
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* Post-Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1672,6 +1739,7 @@ static struct test_case *test_cases[] = {
 
                 &test_board00,
                 &test_board01,
+                &test_board02,
                 &test_bad_board00,
                 &test_bad_board01,
                 &test_bad_board02,
