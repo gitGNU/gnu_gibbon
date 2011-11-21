@@ -358,8 +358,6 @@ static struct test_case test_board00 =  {
                                 /* Player and opponent may double? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
-                                /* Just doubled? */
-                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 /* Playing direction.  */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 /* Player's and opponent's bar.  */
@@ -421,8 +419,6 @@ static struct test_case test_board01 =  {
                                 /* Player and opponent may double? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
-                                /* Just doubled? */
-                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 /* Playing direction.  */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 /* Player's and opponent's bar.  */
@@ -484,8 +480,6 @@ static struct test_case test_board02 =  {
                                 /* Player and opponent may double? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
-                                /* Just doubled? */
-                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 /* Playing direction.  */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 /* Player's and opponent's bar.  */
