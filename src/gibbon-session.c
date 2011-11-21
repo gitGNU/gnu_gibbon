@@ -1162,6 +1162,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         const gchar *str;
         gint retval = -1;
+        gboolean was_doubled;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -1238,6 +1239,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 goto bail_out_board;
 
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &was_doubled))
+                goto bail_out_board;
+
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
                                       &self->priv->direction));
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
@@ -1255,7 +1260,9 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 pos->game_info = g_strdup (_("Crawford game"));
         }
 
-        if (self->priv->turn == GIBBON_POSITION_SIDE_WHITE) {
+        if (was_doubled) {
+                pos->cube_turned = self->priv->turn;
+        } else if (self->priv->turn == GIBBON_POSITION_SIDE_WHITE) {
                 pos->unused_dice[0] = abs (pos->dice[0]);
                 pos->unused_dice[1] = abs (pos->dice[1]);
         } else if (self->priv->turn == GIBBON_POSITION_SIDE_BLACK) {
@@ -2044,14 +2051,17 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
                 return -1;
 
         if (0 == g_strcmp0 (self->priv->opponent, who)) {
-                g_printerr ("Your opponent doubles!\n");
+                self->priv->position->cube_turned = GIBBON_POSITION_SIDE_BLACK;
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
-                g_printerr ("Your watchee doubles!\n");
+                self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
         } else if (0 == g_strcmp0 ("You", who)) {
-                g_printerr ("You double!\n");
+                self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
         } else {
                 return -1;
         }
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
 
         return GIBBON_CLIP_CODE_DOUBLES;
 }
