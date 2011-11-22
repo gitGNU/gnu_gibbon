@@ -2753,3 +2753,17 @@ gibbon_session_reset_position (GibbonSession *self)
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (board, self->priv->position);
 }
+
+void
+gibbon_session_accept_request (GibbonSession *self)
+{
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "accept");
+}
+
+void
+gibbon_session_reject_request (GibbonSession *self)
+{
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "reject");
+}

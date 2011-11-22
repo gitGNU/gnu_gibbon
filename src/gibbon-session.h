@@ -25,11 +25,18 @@
 G_BEGIN_DECLS
 
 #define GIBBON_TYPE_SESSION             (gibbon_session_get_type ())
-#define GIBBON_SESSION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIBBON_TYPE_SESSION, GibbonSession))
-#define GIBBON_SESSION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GIBBON_TYPE_SESSION, GibbonSessionClass))
-#define GIBBON_IS_SESSION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIBBON_TYPE_SESSION))
-#define GIBBON_IS_SESSION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), GIBBON_TYPE_SESSION))
-#define GIBBON_SESSION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GIBBON_TYPE_SESSION, GibbonSessionClass))
+#define GIBBON_SESSION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                                         GIBBON_TYPE_SESSION, GibbonSession))
+#define GIBBON_SESSION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), \
+                                         GIBBON_TYPE_SESSION, \
+                                         GibbonSessionClass))
+#define GIBBON_IS_SESSION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                                         GIBBON_TYPE_SESSION))
+#define GIBBON_IS_SESSION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                                         GIBBON_TYPE_SESSION))
+#define GIBBON_SESSION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                                         GIBBON_TYPE_SESSION, \
+                                         GibbonSessionClass))
 
 typedef struct _GibbonSessionClass   GibbonSessionClass;
 typedef struct _GibbonSession        GibbonSession;
@@ -70,6 +77,8 @@ void gibbon_session_set_available (GibbonSession *self, gboolean available);
 void gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
                                      gboolean reply);
 void gibbon_session_reset_position (GibbonSession *self);
+void gibbon_session_accept_request (GibbonSession *self);
+void gibbon_session_reject_request (GibbonSession *self);
 
 G_END_DECLS
 
