@@ -1255,10 +1255,17 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (pos->match_length
             && (pos->scores[0] == pos->match_length - 1
                 || pos->scores[1] == pos->match_length - 1)) {
-            if (post_crawford) {
+            if (!post_crawford) {
                 pos->game_info = g_strdup (_("Crawford game"));
                 is_crawford = TRUE;
             } else {
+                /*
+                 * If we are playing without the Crawford rule this is
+                 * not really accurate as we will display "Post Crawford" for
+                 * the game already, that would be the Crawford game.  But
+                 * after all, almost nobody plays without the Crawford rule
+                 * and we ignore that problem.
+                 */
                 pos->game_info = g_strdup (_("Post-Crawford game"));
             }
         }
