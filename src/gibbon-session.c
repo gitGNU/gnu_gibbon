@@ -2087,6 +2087,8 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
 
         if (0 == g_strcmp0 (self->priv->opponent, who)) {
                 self->priv->position->cube_turned = GIBBON_POSITION_SIDE_BLACK;
+                if (!self->priv->watching)
+                        gibbon_app_set_state_expect_response (self->priv->app);
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
                 self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
         } else if (0 == g_strcmp0 ("You", who)) {
