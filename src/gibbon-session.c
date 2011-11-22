@@ -2035,6 +2035,8 @@ static gint
 gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
+        gboolean must_fade = FALSE;
+        GibbonBoard *board;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -2044,6 +2046,8 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (_("%s cannot move!"), who);
+                if (!self->priv->watching)
+                        must_fade = TRUE;
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
                 self->priv->turn = GIBBON_POSITION_SIDE_BLACK;
                 g_free (self->priv->position->status);
@@ -2057,8 +2061,18 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
-                                   self->priv->position);
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+        if (must_fade) {
+                gibbon_board_fade_out_dice (board);
+                /*
+                 * We anticipate the board change already.
+                 */
+                self->priv->position->dice[0] = 0;
+                self->priv->position->dice[1] = 0;
+                self->priv->position->unused_dice[0] = 0;
+                self->priv->position->unused_dice[1] = 0;
+        }
 
         return GIBBON_CLIP_CODE_CANNOT_MOVE;
 }
