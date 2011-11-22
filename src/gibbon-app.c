@@ -114,6 +114,8 @@ static void gibbon_app_on_toggle_ready (GibbonApp *self);
 static void gibbon_app_on_board_refresh (GibbonApp *self);
 static void gibbon_app_on_board_leave (GibbonApp *self);
 static void gibbon_app_on_board_undo (GibbonApp *self);
+static void gibbon_app_on_board_accept (GibbonApp *self);
+static void gibbon_app_on_board_reject (GibbonApp *self);
 static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 static GibbonApp *singleton = NULL;
@@ -548,6 +550,18 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_leave),
                                   (gpointer) self);
+
+        obj = gibbon_app_find_object(self, "board-accept",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_accept),
+                                  (gpointer) self);
+
+        obj = gibbon_app_find_object(self, "board-reject",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_reject),
+                                  (gpointer) self);
 }
 
 static void
@@ -814,6 +828,26 @@ gibbon_app_on_board_leave (GibbonApp *self)
         if (response == GTK_RESPONSE_YES)
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "leave");
+}
+
+void
+gibbon_app_on_board_accept (GibbonApp *self)
+{
+        GibbonSession *session = gibbon_connection_get_session(
+                        self->priv->connection);
+
+        if (session)
+                gibbon_session_accept_request (session);
+}
+
+void
+gibbon_app_on_board_reject (GibbonApp *self)
+{
+        GibbonSession *session = gibbon_connection_get_session(
+                        self->priv->connection);
+
+        if (session)
+                gibbon_session_reject_request (session);
 }
 
 void
