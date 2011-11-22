@@ -103,6 +103,7 @@ struct _GibbonCairoboardPrivate {
 
 #define ANIMATION_STEP_WIDTH 75
 #define ANIMATION_TIMEOUT 10
+#define DICE_FADE_OUT_TIMEOUT 750
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                       GIBBON_TYPE_CAIROBOARD,           \
@@ -121,8 +122,10 @@ static void gibbon_cairoboard_animate_move (GibbonBoard *self,
                                             const GibbonMove *move,
                                             GibbonPositionSide side,
                                             GibbonPosition *target_position);
+static void gibbon_cairoboard_fade_out_dice (GibbonBoard *self);
 static void gibbon_cairoboard_cancel_animation (GibbonCairoboard *self);
 static gboolean gibbon_cairoboard_do_animation (GibbonCairoboard *self);
+static gboolean gibbon_cairoboard_hide_dice (GibbonCairoboard *self);
 
 static gboolean gibbon_cairoboard_expose (GtkWidget *object, 
                                           GdkEventExpose *event);
@@ -226,6 +229,7 @@ gibbon_board_iface_init (GibbonBoardIface *iface)
         iface->set_position = gibbon_cairoboard_set_position;
         iface->get_position = gibbon_cairoboard_get_position;
         iface->animate_move = gibbon_cairoboard_animate_move;
+        iface->fade_out_dice = gibbon_cairoboard_fade_out_dice;
         iface->redraw = gibbon_cairoboard_redraw;
 }
 
@@ -1261,6 +1265,29 @@ gibbon_cairoboard_animate_move (GibbonBoard *_self, const GibbonMove *move,
 }
 
 static void
+gibbon_cairoboard_fade_out_dice (GibbonBoard *_self)
+{
+        GibbonCairoboard *self;
+        GibbonPosition *target_position;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (_self));
+
+        self = GIBBON_CAIROBOARD (_self);
+
+        gibbon_cairoboard_cancel_animation (self);
+
+        target_position = gibbon_position_copy (self->priv->pos);
+        target_position->dice[0] = 0;
+        target_position->dice[1] = 0;
+        self->priv->target = target_position;
+
+        self->priv->animation_id =
+                g_timeout_add (DICE_FADE_OUT_TIMEOUT,
+                               (GSourceFunc) gibbon_cairoboard_hide_dice,
+                                (gpointer) self);
+}
+
+static void
 gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
 {
         if (!self->priv->target)
@@ -1426,6 +1453,15 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
         gtk_widget_queue_draw (GTK_WIDGET (self));
 
         return TRUE;
+}
+
+static gboolean
+gibbon_cairoboard_hide_dice (GibbonCairoboard *self)
+{
+        self->priv->animation_id = 0;
+        gibbon_cairoboard_cancel_animation (self);
+
+        return FALSE;
 }
 
 static gboolean 

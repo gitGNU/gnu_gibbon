@@ -116,6 +116,26 @@ gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
 }
 
 /**
+ * gibbon_board_fade_out_dice:
+ * @self: The #GibbonBoard
+ *
+ * Hide the dice after a short time.
+ */
+void
+gibbon_board_fade_out_dice (GibbonBoard *self)
+{
+        GibbonBoardIface *iface;
+
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+
+        iface = GIBBON_BOARD_GET_IFACE (self);
+
+        g_return_if_fail (iface->fade_out_dice);
+
+        return (*iface->fade_out_dice) (self);
+}
+
+/**
  * gibbon_board_redraw:
  * @self: The #GibbonBoard
  *

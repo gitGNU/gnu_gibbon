@@ -61,6 +61,7 @@ struct _GibbonBoardIface
         void (*animate_move) (GibbonBoard *self, const GibbonMove *move,
                               GibbonPositionSide side,
                               GibbonPosition *target_position);
+        void (*fade_out_dice) (GibbonBoard *self);
         void (*redraw) (const GibbonBoard *self);
 };
 
@@ -72,6 +73,7 @@ const GibbonPosition *gibbon_board_get_position (const GibbonBoard *board);
 void gibbon_board_animate_move (GibbonBoard *self, const GibbonMove *move,
                                 GibbonPositionSide side,
                                 GibbonPosition *target_position);
+void gibbon_board_fade_out_dice (GibbonBoard *self);
 void gibbon_board_redraw (const GibbonBoard *self);
 void gibbon_board_process_point_click (GibbonBoard *self, gint point,
                                        gint button);
