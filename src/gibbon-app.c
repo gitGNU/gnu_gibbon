@@ -933,17 +933,17 @@ gibbon_app_set_state_not_playing (const GibbonApp *self)
 }
 
 void
-gibbon_app_set_state_expect_response (const GibbonApp *self, gboolean state)
+gibbon_app_set_state_expect_response (const GibbonApp *self)
 {
         GObject *obj;
 
         obj = gibbon_app_find_object (self, "board-accept",
                                       GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), state);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 
         obj = gibbon_app_find_object (self, "board-reject",
                                       GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), state);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
 
 void
