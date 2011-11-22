@@ -31,6 +31,8 @@
 enum {
         GIBBON_CAIROBOARD_DICE_PICKED_UP,
         GIBBON_CAIROBOARD_CUBE_TURNED,
+        GIBBON_CAIROBOARD_CUBE_TAKEN,
+        GIBBON_CAIROBOARD_CUBE_DROPPED,
         LAST_SIGNAL
 };
 
@@ -317,9 +319,24 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
                                       g_cclosure_marshal_VOID__VOID,
                                       G_TYPE_NONE, 0);
 
-
         gibbon_cairoboard_signals[GIBBON_CAIROBOARD_CUBE_TURNED] =
                         g_signal_new ("cube-turned",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_CUBE_TAKEN] =
+                        g_signal_new ("cube-taken",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_CUBE_DROPPED] =
+                        g_signal_new ("cube-dropped",
                                       G_TYPE_FROM_CLASS (klass),
                                       G_SIGNAL_RUN_FIRST,
                                       0, NULL, NULL,
@@ -1469,6 +1486,7 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                    GdkEventButton *event)
 {
         gdouble x, y;
+        gdouble cx, cy, left, right, top, bottom;
         guint column;
         guint point;
         guint signo;
@@ -1523,7 +1541,30 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                 return FALSE;
         }
 
-        if (x <= self->priv->point12->x
+        if (self->priv->pos->cube_turned) {
+                if (GIBBON_POSITION_SIDE_WHITE == self->priv->pos->cube_turned)
+                        return FALSE;
+                left = self->priv->point12->x;
+                right = left + 6 * self->priv->point12->width;
+                cx = 0.5 * (left + right);
+                top = self->priv->checker_w_home->y;
+                bottom = self->priv->checker_b_home->y
+                         + self->priv->checker_b_home->height;
+                cy = 0.5 * (top + bottom);
+                if (x >= cx - self->priv->cube->width / 2 - 3
+                    && x <= cx + self->priv->cube->width / 2 + 3
+                    && y >= cy - self->priv->cube->height / 2 - 3
+                    && y <= cy + self->priv->cube->height / 2 + 3) {
+                        if (event->button == 1)
+                                signo = GIBBON_CAIROBOARD_CUBE_TAKEN;
+                        else
+                                signo = GIBBON_CAIROBOARD_CUBE_DROPPED;
+                        g_signal_emit (self, gibbon_cairoboard_signals[signo],
+                                       0, self);
+                        return TRUE;
+                }
+                return FALSE;
+        } else if (x <= self->priv->point12->x
                  + 6 * self->priv->checker_w_flat->width
                  && y >= self->priv->point24->y
                  && y <= self->priv->point12->y + self->priv->point12->height) {
