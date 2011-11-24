@@ -277,5 +277,21 @@
                   dominant-baseline="central"
                   >1</text>
         </g>
+        <g id="flag">
+            <rect stroke="#aaaaaa" stroke-width="1" fill="#dddddd"
+                  rx="1" ry="1" width="40" height="30"
+                  x="210" y="175"/>
+            <rect stroke="#222222" stroke-width="1" fill="#332200"
+                  rx="1" ry="1"  width="5" height="65"
+                  x="205" y="170"/>
+            <text x="230" y="190" id="flag-value"
+                  text-anchor="middle"
+                  font-size="20px"
+                  color="111111"
+                  font-family="Arial"
+                  font-weight="bold"
+                  dominant-baseline="central"
+                  >1</text>
+        </g>
     </g>
 </svg>
