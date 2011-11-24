@@ -122,6 +122,8 @@ static gint gibbon_session_handle_cannot_move (GibbonSession *self,
 static gint gibbon_session_handle_doubles (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_accepts_double (GibbonSession *self,
                                                   GSList *iter);
+static gint gibbon_session_handle_resigns (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_rejects (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_unknown_message (GibbonSession *self,
                                                    GSList *iter);
@@ -490,6 +492,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_ACCEPTS_DOUBLE:
                 retval = gibbon_session_handle_accepts_double (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_RESIGNS:
+                retval = gibbon_session_handle_resigns (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_REJECTS_RESIGNATION:
+                retval = gibbon_session_handle_rejects (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
@@ -2139,6 +2147,55 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
                                    self->priv->position);
 
         return GIBBON_CLIP_CODE_DOUBLES;
+}
+
+static gint
+gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+        guint resignation;
+        guint points;
+
+        if (!self->priv->position->cube)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &points))
+                return -1;
+
+        resignation = points / self->priv->position->cube;
+        if (resignation < 0 || resignation > 3)
+                return -1;
+        if (resignation * self->priv->position->cube != points)
+                return -1;
+
+        if (0 == g_strcmp0 ("You", who)) {
+                self->priv->position->resigned = points;
+        } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
+                self->priv->position->resigned = -points;
+        } else if (0 == g_strcmp0 (self->priv->watching, who)) {
+                self->priv->position->resigned = points;
+        } else {
+                return -1;
+        }
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
+
+        return GIBBON_CLIP_CODE_RESIGNS;
+}
+
+static gint
+gibbon_session_handle_rejects (GibbonSession *self, GSList *iter)
+{
+        self->priv->position->resigned = 0;
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
+
+        return GIBBON_CLIP_CODE_REJECTS_RESIGNATION;
 }
 
 static gint
