@@ -761,6 +761,66 @@ static struct test_case test_doubling03 = {
                 }
 };
 
+static struct test_case test_resign00 = {
+                "GibbonTestA wants to resign. You will win 1 point."
+                " Type 'accept' or 'reject'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "209" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_resign01 = {
+                "GibbonTestA wants to resign. You will win 6 points."
+                " Type 'accept' or 'reject'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "209" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "6" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_resign02 = {
+                "You want to resign. GibbonTestA will win 1 point."
+                " Type 'accept' or 'reject'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "209" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_resign03 = {
+                "You want to resign. GibbonTestA will win 4 points."
+                " Type 'accept' or 'reject'.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "209" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_resign04 = {
+                "You reject. The game continues.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "210" },                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_resign05 = {
+                "GibbonTestA rejects. The game continues.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "210" },                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
@@ -1789,6 +1849,13 @@ static struct test_case *test_cases[] = {
                 &test_between30,
                 &test_between31,
                 &test_between32,
+
+                &test_resign00,
+                &test_resign01,
+                &test_resign02,
+                &test_resign03,
+                &test_resign04,
+                &test_resign05,
 
                 &test_resume00,
                 &test_resume01,
