@@ -117,7 +117,6 @@ struct _GibbonPosition
         gboolean may_double[2];
         GibbonPositionSide cube_turned;
 
-
         gint unused_dice[4];
 
         gchar *players[2];
