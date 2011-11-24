@@ -906,9 +906,9 @@ gibbon_draw_cup (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         position = self->priv->pos;
-        if (position->dice[0] <= 0)
+        if (position->dice[0])
                 return;
-        if (position->dice[1] <= 0)
+        if (position->dice[1])
                 return;
 
         top = self->priv->checker_w_home->y;
