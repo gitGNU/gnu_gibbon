@@ -120,6 +120,8 @@ static gint gibbon_session_handle_address_error (GibbonSession *self,
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
                                                GSList *iter);
 static gint gibbon_session_handle_doubles (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_accepts_double (GibbonSession *self,
+                                                  GSList *iter);
 static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_unknown_message (GibbonSession *self,
                                                    GSList *iter);
@@ -485,6 +487,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_DOUBLES:
                 retval = gibbon_session_handle_doubles (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ACCEPTS_DOUBLE:
+                retval = gibbon_session_handle_accepts_double (self, iter);
                 break;
         case GIBBON_CLIP_CODE_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
@@ -2097,6 +2102,39 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
+                                   self->priv->position);
+
+        return GIBBON_CLIP_CODE_DOUBLES;
+}
+
+static gint
+gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        self->priv->position->cube_turned = GIBBON_POSITION_SIDE_NONE;
+
+        g_free (self->priv->position->status);
+        if (0 == g_strcmp0 (self->priv->opponent, who)) {
+                self->priv->position->status =
+                    g_strdup_printf ("Opponent %s accepted the cube.",
+                                     self->priv->opponent);
+        } else if (0 == g_strcmp0 (self->priv->watching, who)) {
+                self->priv->position->status =
+                    g_strdup_printf ("Player %s accepted the cube.",
+                                     self->priv->watching);
+        } else if (0 == g_strcmp0 ("You", who)) {
+                self->priv->position->status =
+                    g_strdup_printf ("You accepted the cube.");
+        } else {
+                return -1;
+        }
+
+        self->priv->position->cube <<= 1;
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
