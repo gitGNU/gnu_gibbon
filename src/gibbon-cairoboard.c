@@ -104,6 +104,7 @@ struct _GibbonCairoboardPrivate {
         struct svg_component *black_dice[6];
         struct svg_component *cube;
         struct svg_component *flag;
+        struct svg_component *cup;
 
         struct svg_component *point12;
         struct svg_component *point24;
@@ -153,6 +154,7 @@ static void gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
 
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_flag (GibbonCairoboard *board, cairo_t *cr);
+static void gibbon_draw_cup (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_animation (GibbonCairoboard *board, cairo_t *cr);
 
@@ -232,6 +234,7 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         }
         self->priv->cube = NULL;
         self->priv->flag = NULL;
+        self->priv->cup = NULL;
 
         return;
 }
@@ -304,6 +307,8 @@ gibbon_cairoboard_finalize (GObject *object)
                 svg_util_free_component (self->priv->cube);
         if (self->priv->flag)
                 svg_util_free_component (self->priv->flag);
+        if (self->priv->cup)
+                svg_util_free_component (self->priv->cup);
 
         self->priv->app = NULL;
 
@@ -527,6 +532,15 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
                 return NULL;
         }
 
+        self->priv->cup = gibbon_cairoboard_get_component (self, "cup",
+                                                           TRUE, doc,
+                                                           filename);
+        if (!self->priv->cup) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
         if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc,
                                       filename, &self->priv->board, TRUE)) {
             g_object_ref_sink (self);
@@ -625,6 +639,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gibbon_draw_dice (self, cr);
         gibbon_draw_cube (self, cr);
         gibbon_draw_flag (self, cr);
+        gibbon_draw_cup (self, cr);
 
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_WHITE);
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_BLACK);
@@ -878,6 +893,35 @@ gibbon_draw_flag (GibbonCairoboard *self, cairo_t *cr)
                                                       NULL, 0,
                                                       saved_size,
                                                       NULL));
+}
+
+static void
+gibbon_draw_cup (GibbonCairoboard *self, cairo_t *cr)
+{
+        gdouble x, y;
+        gdouble left, right;
+        gdouble top, bottom;
+        GibbonPosition *position;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        position = self->priv->pos;
+        if (position->dice[0] <= 0)
+                return;
+        if (position->dice[1] <= 0)
+                return;
+
+        top = self->priv->checker_w_home->y;
+        bottom = self->priv->checker_b_home->y
+                 + self->priv->checker_b_home->height;
+        right = self->priv->point24->x
+                        + self->priv->point24->width;
+        left = right - 6 * self->priv->point24->width;
+
+        x = 0.5 * (left + right);
+        y = 0.5 * (top + bottom);
+
+        gibbon_cairoboard_draw_svg_component (self, cr, self->priv->cup, x, y);
 }
 
 static void
