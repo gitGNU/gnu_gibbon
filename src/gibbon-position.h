@@ -73,16 +73,16 @@ typedef enum {
  * @cube_turned: %GIBBON_POSITION_SIDE_WHITE if white has turned the cube,
  *               %GIBBON_POSITION_SIDE_BLACK if black has turned the cube,
  *               %GIBBON_POSITION_SIDE_NONE otherwise.
+ * @match_length: Length of the match of 0 for unlimited.
+ * @unused_dice: Can be filled with the dice not yet used in this roll.
+ *               They should be normalized, i.e. all positive for white or all
+ *               negative for black, even for the opening roll.
  * @resigned: 1 if white resigned normally
  *            2 if white resigned with a gammon
  *            3 if white resigned with a backgammon
  *           -1 if black resigned normally
  *           -2 if black resigned with a gammon
  *           -3 if black resigned with a backgammon
- * @match_length: Length of the match of 0 for unlimited.
- * @unused_dice: Can be filled with the dice not yet used in this roll.
- *               They should be normalized, i.e. all positive for white or all
- *               negative for black, even for the opening roll.
  * @game_info: Free-form string describing the game ("Crawford", ...).
  * @status: Free-form string describing the status ("It's your move", ...).
  *
@@ -117,11 +117,12 @@ struct _GibbonPosition
         gboolean may_double[2];
         GibbonPositionSide cube_turned;
 
-        gint resigned;
 
         gint unused_dice[4];
 
         gchar *players[2];
+
+        gint resigned;
 
         gchar *game_info;
         gchar *status;

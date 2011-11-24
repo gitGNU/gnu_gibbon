@@ -75,9 +75,10 @@ GibbonPosition initial = {
                 { 0, 0 },
                 { 0, 0 },
                 1,
-                { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE, 5,
+                { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE,
                 { 0, 0, 0, 0 },
                 { NULL, NULL },
+                0,
                 NULL,
                 NULL
 };
