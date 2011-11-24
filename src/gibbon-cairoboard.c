@@ -33,6 +33,9 @@ enum {
         GIBBON_CAIROBOARD_CUBE_TURNED,
         GIBBON_CAIROBOARD_CUBE_TAKEN,
         GIBBON_CAIROBOARD_CUBE_DROPPED,
+        GIBBON_CAIROBOARD_RESIGNED,
+        GIBBON_CAIROBOARD_RESIGNATION_ACCEPTED,
+        GIBBON_CAIROBOARD_RESIGNATION_REJECTED,
         LAST_SIGNAL
 };
 
@@ -85,6 +88,8 @@ struct _GibbonCairoboardPrivate {
         GibbonPositionSide animation_floating;
         gint animation_from, animation_to;
 
+        gdouble translate_x, translate_y, scale;
+
         GHashTable *ids;
 
         struct svg_component *board;
@@ -98,6 +103,7 @@ struct _GibbonCairoboardPrivate {
         struct svg_component *white_dice[6];
         struct svg_component *black_dice[6];
         struct svg_component *cube;
+        struct svg_component *flag;
 
         struct svg_component *point12;
         struct svg_component *point24;
@@ -146,6 +152,7 @@ static void gibbon_cairoboard_draw_die (GibbonCairoboard *self, cairo_t *cr,
                                         gint value, guint die_pos);
 
 static void gibbon_draw_cube (GibbonCairoboard *board, cairo_t *cr);
+static void gibbon_draw_flag (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_dice (GibbonCairoboard *board, cairo_t *cr);
 static void gibbon_draw_animation (GibbonCairoboard *board, cairo_t *cr);
 
@@ -202,6 +209,9 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
         self->priv->animation_move_number = 0;
         self->priv->animation_floating = GIBBON_POSITION_SIDE_NONE;
 
+        self->priv->translate_x = self->priv->translate_y = 0;
+        self->priv->scale = 1;
+
         self->priv->board = NULL;
         self->priv->point12 = NULL;
         self->priv->point24 = NULL;
@@ -220,7 +230,8 @@ gibbon_cairoboard_init (GibbonCairoboard *self)
              ++i) {
             self->priv->black_dice[i] = NULL;
         }
-        self->priv->cube = 0;
+        self->priv->cube = NULL;
+        self->priv->flag = NULL;
 
         return;
 }
@@ -291,6 +302,8 @@ gibbon_cairoboard_finalize (GObject *object)
         }
         if (self->priv->cube)
                 svg_util_free_component (self->priv->cube);
+        if (self->priv->flag)
+                svg_util_free_component (self->priv->flag);
 
         self->priv->app = NULL;
 
@@ -342,6 +355,31 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
                                       0, NULL, NULL,
                                       g_cclosure_marshal_VOID__VOID,
                                       G_TYPE_NONE, 0);
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_RESIGNED] =
+                        g_signal_new ("resigned",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_RESIGNATION_ACCEPTED] =
+                        g_signal_new ("resignation-accepted",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
+        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_RESIGNATION_REJECTED] =
+                        g_signal_new ("resignation-rejected",
+                                      G_TYPE_FROM_CLASS (klass),
+                                      G_SIGNAL_RUN_FIRST,
+                                      0, NULL, NULL,
+                                      g_cclosure_marshal_VOID__VOID,
+                                      G_TYPE_NONE, 0);
+
 }
 
 GibbonCairoboard *
@@ -480,6 +518,15 @@ gibbon_cairoboard_new (GibbonApp *app, const gchar *filename)
                 return NULL;
         }
 
+        self->priv->flag = gibbon_cairoboard_get_component (self, "flag",
+                                                            TRUE, doc,
+                                                            filename);
+        if (!self->priv->flag) {
+                xmlFree (doc);
+                g_object_ref_sink (self);
+                return NULL;
+        }
+
         if (!svg_util_get_dimensions (xmlDocGetRootElement (doc), doc,
                                       filename, &self->priv->board, TRUE)) {
             g_object_ref_sink (self);
@@ -563,6 +610,10 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
                                - scale * height) / 2;
         }
 
+        self->priv->translate_x = translate_x;
+        self->priv->translate_y = translate_y;
+        self->priv->scale = 1;
+
         cairo_translate (cr, translate_x, translate_y);
         cairo_scale (cr, scale, scale);
 
@@ -573,6 +624,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 
         gibbon_draw_dice (self, cr);
         gibbon_draw_cube (self, cr);
+        gibbon_draw_flag (self, cr);
 
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_WHITE);
         gibbon_cairoboard_draw_bar (self, cr, GIBBON_POSITION_SIDE_BLACK);
@@ -777,6 +829,52 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 
         g_return_if_fail (svg_util_steal_text_params (self->priv->cube,
                                                       "cube-value",
+                                                      NULL, 0,
+                                                      saved_size,
+                                                      NULL));
+}
+
+static void
+gibbon_draw_flag (GibbonCairoboard *self, cairo_t *cr)
+{
+        gdouble x, y;
+        gdouble left, right;
+        gdouble saved_size;
+        gchar *flag_label;
+        gdouble top, bottom;
+        guint flag_value;
+
+        g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
+
+        top = self->priv->checker_w_home->y;
+        bottom = self->priv->checker_b_home->y
+                 + self->priv->checker_b_home->height;
+
+        if (self->priv->pos->resigned > 0) {
+                right = self->priv->point24->x
+                                + self->priv->point24->width;
+                left = right - 6 * self->priv->point24->width;
+        } else if (self->priv->pos->resigned < 0) {
+                left = self->priv->point12->x;
+                right = left + 6 * self->priv->point12->width;
+        } else {
+                return;
+        }
+
+        x = 0.5 * (left + right);
+        y = 0.5 * (top + bottom);
+
+        flag_value = abs (self->priv->pos->resigned);
+        flag_label = g_strdup_printf ("%d", flag_value);
+        g_return_if_fail (svg_util_steal_text_params (self->priv->flag,
+                                                      "flag-value",
+                                                      flag_label, 1.0, 0,
+                                                      &saved_size));
+        gibbon_cairoboard_draw_svg_component (self, cr, self->priv->flag, x, y);
+        g_free (flag_label);
+
+        g_return_if_fail (svg_util_steal_text_params (self->priv->flag,
+                                                      "flag-value",
                                                       NULL, 0,
                                                       saved_size,
                                                       NULL));
@@ -1497,11 +1595,12 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         if (event->button != 1 && event->button != 3)
                 return FALSE;
 
-        /*
-         * FIXME! This needs to be translated!
-         */
-        x = event->x;
-        y = event->y;
+        x = event->x - self->priv->translate_x;
+        y = event->y - self->priv->translate_y;
+        if (self->priv->scale) {
+                x /= self->priv->scale;
+                y /= self->priv->scale;
+        }
 
         /*
          * These are the least probable cases but it is better to test them
