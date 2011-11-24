@@ -247,6 +247,9 @@ static gboolean gibbon_clip_parse_resigned (const gchar *line, gchar **tokens,
 static gboolean gibbon_clip_parse_accepts (const gchar *line,
                                            gchar **tokens,
                                            GSList **result);
+static gboolean gibbon_clip_parse_resigns (const gchar *line,
+                                           gchar **tokens,
+                                           GSList **result);
 static gboolean gibbon_clip_parse_score (const gchar *line, gchar **tokens,
                                          GSList **result);
 static gboolean gibbon_clip_parse_score_unlimited (const gchar *line,
@@ -1553,6 +1556,13 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                         return TRUE;
                 }
                 break;
+        case 13:
+                if (0 == g_strcmp0 ("wants", tokens[1])
+                    && 0 == g_strcmp0 ("to", tokens[2])
+                    && 0 == g_strcmp0 ("resign.", tokens[3])) {
+                        return gibbon_clip_parse_resigns (line, tokens, result);
+                }
+                break;
         }
 
         return FALSE;
@@ -2374,6 +2384,9 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
         if (0 == g_strcmp0 ("accept", tokens[1]))
                 return gibbon_clip_parse_accepts (line, tokens, result);
 
+        if (0 == g_strcmp0 ("want", tokens[1]))
+                return gibbon_clip_parse_resigns (line, tokens, result);
+
         if (0 == g_strcmp0 ("give", tokens[1])
             && 0 == g_strcmp0 ("up.", tokens[2]))
                 return gibbon_clip_parse_resigned (line, tokens, result);
@@ -2601,6 +2614,46 @@ gibbon_clip_parse_accepts (const gchar *line, gchar **tokens, GSList **result)
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          GIBBON_CLIP_CODE_WIN_GAME);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         points);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_resigns (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 points;
+
+        if (g_strcmp0 ("to", tokens[2]))
+                return FALSE;
+
+        if (g_strcmp0 ("resign.", tokens[3]))
+                return FALSE;
+
+        if (!tokens[4])
+                return FALSE;
+
+        if (g_strcmp0 ("will", tokens[5]))
+                return FALSE;
+
+        if (g_strcmp0 ("win", tokens[6]))
+                return FALSE;
+
+        if (!g_strcmp0 ("1", tokens[7]))
+                points = 1;
+        else if (!gibbon_clip_extract_integer (tokens[7], &points,
+                                          1, G_MAXINT))
+                return FALSE;
+
+        if (g_strcmp0 ("point.", tokens[8])
+            && g_strcmp0 ("points.", tokens[8]))
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_RESIGNS);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
