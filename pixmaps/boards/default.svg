@@ -293,5 +293,14 @@
                   dominant-baseline="central"
                   >1</text>
         </g>
+        <g id="cup">
+	    <polygon points="335,210 330,170 370,170 365,210" fill="#221100"/>
+            <ellipse fill="#221100"
+                     cx="350" cy="210" rx="15" ry="4"/>
+            <ellipse fill="#332200"
+                     cx="350" cy="170" rx="20" ry="4"/>
+            <ellipse fill="#600000"
+                     cx="350" cy="170" rx="18" ry="3"/>
+        </g>
     </g>
 </svg>
