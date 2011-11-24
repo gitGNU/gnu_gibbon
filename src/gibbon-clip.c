@@ -250,6 +250,9 @@ static gboolean gibbon_clip_parse_accepts (const gchar *line,
 static gboolean gibbon_clip_parse_resigns (const gchar *line,
                                            gchar **tokens,
                                            GSList **result);
+static gboolean gibbon_clip_parse_rejects (const gchar *line,
+                                           gchar **tokens,
+                                           GSList **result);
 static gboolean gibbon_clip_parse_score (const gchar *line, gchar **tokens,
                                          GSList **result);
 static gboolean gibbon_clip_parse_score_unlimited (const gchar *line,
@@ -642,6 +645,10 @@ gibbon_clip_parse (const gchar *line)
                         if (0 == g_strcmp0 ("rolls", tokens[1]))
                                 success = gibbon_clip_parse_rolls (line, tokens,
                                                                    &result);
+                        else if (0 == g_strcmp0 ("rejects.", tokens[1]))
+                                success = gibbon_clip_parse_rejects (line,
+                                                                     tokens,
+                                                                     &result);
                         break;
                 case 'w':
                         if (0 == g_strcmp0 ("wins", tokens[1]))
@@ -2391,6 +2398,9 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
             && 0 == g_strcmp0 ("up.", tokens[2]))
                 return gibbon_clip_parse_resigned (line, tokens, result);
 
+        if (0 == g_strcmp0 ("reject.", tokens[1]))
+                return gibbon_clip_parse_rejects (line, tokens, result);
+
         return FALSE;
 }
 
@@ -2658,6 +2668,27 @@ gibbon_clip_parse_resigns (const gchar *line, gchar **tokens, GSList **result)
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          points);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_clip_parse_rejects (const gchar *line, gchar **tokens, GSList **result)
+{
+        if (g_strcmp0 ("The", tokens[2]))
+                return FALSE;
+
+        if (g_strcmp0 ("game", tokens[3]))
+                return FALSE;
+
+        if (g_strcmp0 ("continues.", tokens[4]))
+                return FALSE;
+
+        if (tokens[5])
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_REJECTS_RESIGNATION);
 
         return TRUE;
 }
