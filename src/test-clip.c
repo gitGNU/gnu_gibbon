@@ -808,7 +808,7 @@ static struct test_case test_resign03 = {
 static struct test_case test_resign04 = {
                 "You reject. The game continues.",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "210" },                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "210" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -816,7 +816,7 @@ static struct test_case test_resign04 = {
 static struct test_case test_resign05 = {
                 "GibbonTestA rejects. The game continues.",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "210" },                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "210" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
