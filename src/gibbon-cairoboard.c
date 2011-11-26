@@ -33,7 +33,6 @@ enum {
         GIBBON_CAIROBOARD_CUBE_TURNED,
         GIBBON_CAIROBOARD_CUBE_TAKEN,
         GIBBON_CAIROBOARD_CUBE_DROPPED,
-        GIBBON_CAIROBOARD_RESIGNED,
         GIBBON_CAIROBOARD_RESIGNATION_ACCEPTED,
         GIBBON_CAIROBOARD_RESIGNATION_REJECTED,
         LAST_SIGNAL
@@ -355,14 +354,6 @@ gibbon_cairoboard_class_init (GibbonCairoboardClass *klass)
 
         gibbon_cairoboard_signals[GIBBON_CAIROBOARD_CUBE_DROPPED] =
                         g_signal_new ("cube-dropped",
-                                      G_TYPE_FROM_CLASS (klass),
-                                      G_SIGNAL_RUN_FIRST,
-                                      0, NULL, NULL,
-                                      g_cclosure_marshal_VOID__VOID,
-                                      G_TYPE_NONE, 0);
-
-        gibbon_cairoboard_signals[GIBBON_CAIROBOARD_RESIGNED] =
-                        g_signal_new ("resigned",
                                       G_TYPE_FROM_CLASS (klass),
                                       G_SIGNAL_RUN_FIRST,
                                       0, NULL, NULL,
@@ -1704,6 +1695,28 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
                                 signo = GIBBON_CAIROBOARD_CUBE_TAKEN;
                         else
                                 signo = GIBBON_CAIROBOARD_CUBE_DROPPED;
+                        g_signal_emit (self, gibbon_cairoboard_signals[signo],
+                                       0, self);
+                        return TRUE;
+                }
+                return FALSE;
+        } else if (self->priv->pos->resigned < 0) {
+                right = self->priv->point24->x
+                                + self->priv->point24->width;
+                left = right - 6 * self->priv->point24->width;
+                cx = 0.5 * (left + right);
+                top = self->priv->checker_w_home->y;
+                bottom = self->priv->checker_b_home->y
+                         + self->priv->checker_b_home->height;
+                cy = 0.5 * (top + bottom);
+                if (x >= cx - self->priv->flag->width / 2 - 3
+                    && x <= cx + self->priv->flag->width / 2 + 3
+                    && y >= cy - self->priv->flag->height / 2 - 3
+                    && y <= cy + self->priv->flag->height / 2 + 3) {
+                        if (event->button == 1)
+                                signo = GIBBON_CAIROBOARD_RESIGNATION_ACCEPTED;
+                        else
+                                signo = GIBBON_CAIROBOARD_RESIGNATION_REJECTED;
                         g_signal_emit (self, gibbon_cairoboard_signals[signo],
                                        0, self);
                         return TRUE;
