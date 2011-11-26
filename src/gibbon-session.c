@@ -157,7 +157,6 @@ struct _GibbonSessionPrivate {
          */
         GibbonPosition *position;
         gboolean direction;
-        GibbonPositionSide turn;
 
         GibbonPlayerList *player_list;
         GibbonInviterList *inviter_list;
@@ -204,7 +203,6 @@ gibbon_session_init (GibbonSession *self)
         self->priv->opponent = NULL;
         self->priv->position = NULL;
         self->priv->direction = FALSE;
-        self->priv->turn = GIBBON_POSITION_SIDE_NONE;
         self->priv->player_list = NULL;
         self->priv->inviter_list = NULL;
         self->priv->archive = NULL;
@@ -1231,7 +1229,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         }
 
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &self->priv->turn))
+                                  &self->priv->position->turn))
                 goto bail_out_board;
 
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
@@ -1295,11 +1293,11 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (!is_crawford
             && !pos->dice[0] && !pos->dice[1]
             && !pos->may_double[0] && !pos->may_double[1]) {
-                pos->cube_turned = self->priv->turn;
-        } else if (self->priv->turn == GIBBON_POSITION_SIDE_WHITE) {
+                pos->cube_turned = self->priv->position->turn;
+        } else if (self->priv->position->turn == GIBBON_POSITION_SIDE_WHITE) {
                 pos->unused_dice[0] = abs (pos->dice[0]);
                 pos->unused_dice[1] = abs (pos->dice[1]);
-        } else if (self->priv->turn == GIBBON_POSITION_SIDE_BLACK) {
+        } else if (self->priv->position->turn == GIBBON_POSITION_SIDE_BLACK) {
                 pos->unused_dice[0] = -abs (pos->dice[0]);
                 pos->unused_dice[1] = -abs (pos->dice[1]);
         }
@@ -1325,7 +1323,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 
         if (pos->may_double[0]
             && !pos->dice[0]
-            && self->priv->turn == GIBBON_POSITION_SIDE_WHITE)
+            && self->priv->position->turn == GIBBON_POSITION_SIDE_WHITE)
                 gibbon_app_set_state_may_double (self->priv->app, TRUE);
         else
                 gibbon_app_set_state_may_double (self->priv->app, FALSE);
@@ -2055,19 +2053,19 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                 return -1;
 
         if (0 == g_strcmp0 (self->priv->opponent, who)) {
-                self->priv->turn = GIBBON_POSITION_SIDE_WHITE;
+                self->priv->position->turn = GIBBON_POSITION_SIDE_WHITE;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (_("%s cannot move!"), who);
                 if (!self->priv->watching)
                         must_fade = TRUE;
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
-                self->priv->turn = GIBBON_POSITION_SIDE_BLACK;
+                self->priv->position->turn = GIBBON_POSITION_SIDE_BLACK;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (_("%s cannot move!"), who);
         } else if (0 == g_strcmp0 ("You", who)) {
-                self->priv->turn = GIBBON_POSITION_SIDE_WHITE;
+                self->priv->position->turn = GIBBON_POSITION_SIDE_WHITE;
                 g_free (self->priv->position->status);
                 self->priv->position->status = g_strdup (_("You cannot move!"));
         } else {
@@ -2720,7 +2718,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         if (!self->priv->opponent)
                 return;
 
-        if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
+        if (GIBBON_POSITION_SIDE_WHITE != self->priv->position->turn)
                 return;
 
         /*
@@ -2825,7 +2823,7 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
         if (!self->priv->opponent)
                 return;
 
-        if (GIBBON_POSITION_SIDE_WHITE != self->priv->turn)
+        if (GIBBON_POSITION_SIDE_WHITE != self->priv->position->turn)
                 return;
         if (!self->priv->position->may_double[0])
                 return;
