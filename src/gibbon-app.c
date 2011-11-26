@@ -113,6 +113,7 @@ static void gibbon_app_on_account_prefs (GibbonApp *self);
 static void gibbon_app_on_toggle_ready (GibbonApp *self);
 static void gibbon_app_on_board_refresh (GibbonApp *self);
 static void gibbon_app_on_board_leave (GibbonApp *self);
+static void gibbon_app_on_board_resign (GibbonApp *self);
 static void gibbon_app_on_board_undo (GibbonApp *self);
 static void gibbon_app_on_board_accept (GibbonApp *self);
 static void gibbon_app_on_board_reject (GibbonApp *self);
@@ -545,6 +546,12 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                                   G_CALLBACK (gibbon_app_on_board_undo),
                                   (gpointer) self);
 
+        obj = gibbon_app_find_object(self, "board-resign",
+                                     GTK_TYPE_TOOL_BUTTON);
+        g_signal_connect_swapped (obj, "clicked",
+                                  G_CALLBACK (gibbon_app_on_board_resign),
+                                  (gpointer) self);
+
         obj = gibbon_app_find_object(self, "board-leave",
                                      GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
@@ -807,6 +814,93 @@ gibbon_app_on_board_undo (GibbonApp *self)
 }
 
 void
+gibbon_app_on_board_resign (GibbonApp *self)
+{
+        GtkWidget *dialog;
+        gint cube;
+        gint result;
+        GtkWidget *ca;
+        GtkWidget *rb1, *rb2, *rb3;
+        GSList *group = NULL;
+        gchar *label;
+        guint selected;
+        GibbonSession *session;
+        const GibbonPosition *position;
+
+        session = gibbon_connection_get_session (self->priv->connection);
+        if (!session)
+                return;
+
+        position = gibbon_session_get_position (session);
+        if (!position)
+                return;
+
+        cube = position->cube;
+
+        dialog = gtk_dialog_new_with_buttons (_("Resign"),
+                                              GTK_WINDOW (self->priv->window),
+                                              GTK_DIALOG_MODAL
+                                              | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                              GTK_STOCK_OK,
+                                              GTK_RESPONSE_ACCEPT,
+                                              GTK_STOCK_CANCEL,
+                                              GTK_RESPONSE_REJECT,
+                                              NULL);
+
+        ca = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+
+        label = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                              "_normal (one point)",
+                                              "_normal (%d points)",
+                                              cube),
+                                 cube);
+        rb1 = gtk_radio_button_new_with_mnemonic (group, label);
+        g_free (label);
+        gtk_box_pack_start (GTK_BOX (ca), rb1, TRUE, TRUE, 0);
+        group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (rb1));
+        label = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                              "_gammon (one point)",
+                                              "_gammon (%d points)",
+                                              cube * 2),
+                                 cube * 2);
+        rb2 = gtk_radio_button_new_with_mnemonic (group, label);
+        g_free (label);
+        gtk_box_pack_start (GTK_BOX (ca), rb2, TRUE, TRUE, 0);
+        group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (rb2));
+        label = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                              "_backgammon (one point)",
+                                              "_backgammon (%d points)",
+                                              cube * 3),
+                                 cube * 3);
+        rb3 = gtk_radio_button_new_with_mnemonic (group, label);
+        g_free (label);
+        gtk_box_pack_start (GTK_BOX (ca), rb3, TRUE, TRUE, 0);
+
+        gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+                                         GTK_RESPONSE_ACCEPT);
+
+        gtk_widget_show_all (dialog);
+
+        result = gtk_dialog_run (GTK_DIALOG (dialog));
+
+        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (rb1)))
+                selected = 1;
+        else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (rb2)))
+                selected = 2;
+        else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (rb3)))
+                selected = 3;
+        else
+                selected = 1;
+
+        gtk_widget_destroy (dialog);
+
+        if (result != GTK_RESPONSE_ACCEPT)
+                return;
+
+        gibbon_session_resign (session, selected);
+}
+
+void
 gibbon_app_on_board_leave (GibbonApp *self)
 {
         GtkWidget *dialog;
@@ -935,6 +1029,10 @@ gibbon_app_set_state_playing (const GibbonApp *self)
         obj = gibbon_app_find_object (self, "board-leave",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+
+        obj = gibbon_app_find_object (self, "board-resign",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
 
 void
@@ -962,6 +1060,10 @@ gibbon_app_set_state_not_playing (const GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object (self, "board-leave",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "board-resign",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 }
@@ -1326,7 +1428,8 @@ void gibbon_app_configure_player_menu(const GibbonApp *self,
                         self->priv->connection), player, menu);
 }
 
-static void gibbon_app_set_icon(const GibbonApp *self, const gchar *data_dir)
+static void
+gibbon_app_set_icon (const GibbonApp *self, const gchar *data_dir)
 {
         GList *list = NULL;
         gint i;
