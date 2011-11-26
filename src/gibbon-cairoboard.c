@@ -800,7 +800,7 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
 
         if (self->priv->pos->cube_turned != GIBBON_POSITION_SIDE_NONE) {
                 if (self->priv->pos->cube_turned
-                    == GIBBON_POSITION_SIDE_WHITE) {
+                    == GIBBON_POSITION_SIDE_BLACK) {
                         right = self->priv->point24->x
                                         + self->priv->point24->width;
                         left = right - 6 * self->priv->point24->width;
@@ -865,11 +865,11 @@ gibbon_draw_flag (GibbonCairoboard *self, cairo_t *cr)
         bottom = self->priv->checker_b_home->y
                  + self->priv->checker_b_home->height;
 
-        if (self->priv->pos->resigned > 0) {
+        if (self->priv->pos->resigned < 0) {
                 right = self->priv->point24->x
                                 + self->priv->point24->width;
                 left = right - 6 * self->priv->point24->width;
-        } else if (self->priv->pos->resigned < 0) {
+        } else if (self->priv->pos->resigned > 0) {
                 left = self->priv->point12->x;
                 right = left + 6 * self->priv->point12->width;
         } else {
@@ -1689,8 +1689,8 @@ gibbon_cairoboard_on_button_press (GibbonCairoboard *self,
         if (self->priv->pos->cube_turned) {
                 if (GIBBON_POSITION_SIDE_WHITE == self->priv->pos->cube_turned)
                         return FALSE;
-                left = self->priv->point12->x;
-                right = left + 6 * self->priv->point12->width;
+                right = self->priv->point24->x + self->priv->point24->width;
+                left = right - 6 * self->priv->point24->width;
                 cx = 0.5 * (left + right);
                 top = self->priv->checker_w_home->y;
                 bottom = self->priv->checker_b_home->y
