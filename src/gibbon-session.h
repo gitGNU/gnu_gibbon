@@ -79,6 +79,9 @@ void gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
 void gibbon_session_reset_position (GibbonSession *self);
 void gibbon_session_accept_request (GibbonSession *self);
 void gibbon_session_reject_request (GibbonSession *self);
+const struct _GibbonPosition *gibbon_session_get_position (const GibbonSession
+                                                           *self);
+void gibbon_session_resign (GibbonSession *self, guint value);
 
 G_END_DECLS
 

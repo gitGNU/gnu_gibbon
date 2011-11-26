@@ -2860,3 +2860,44 @@ gibbon_session_reject_request (GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "reject");
 }
+
+const GibbonPosition *
+gibbon_session_get_position (const GibbonSession *self)
+{
+        g_return_val_if_fail (GIBBON_IS_SESSION (self), NULL);
+
+        return self->priv->position;
+}
+
+void
+gibbon_session_resign (GibbonSession *self, guint value)
+{
+        GibbonBoard *board;
+        const gchar *value_string;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        self->priv->position->resigned = value;
+        switch (value) {
+                case 1:
+                default:
+                        value_string = "normal";
+                        break;
+                case 2:
+                        value_string = "gammon";
+                        break;
+                case 3:
+                        value_string = "backgammon";
+                        break;
+        }
+
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "resign %s", value_string);
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}
