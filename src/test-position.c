@@ -286,6 +286,23 @@ test_compare (void)
         g_free (def->status);
         def->status = NULL;
 
+        def->resigned = 3;
+        if (!gibbon_position_equals_technically (ref, def)) {
+                /*
+                 * We consider positions with and without a resignation
+                 * flag as technically equals.  FIBS does not store an
+                 * unreplied resignation in the board state.  We must
+                 * therefore make sure that a new board state sent by
+                 * FIBS will not be considered a new position because
+                 * in the position that we calculate from the board state
+                 * the flag will not be set.
+                 */
+                g_printerr ("Positions with and without resignation differ"
+                            " but they should not.\n");
+                retval = FALSE;
+        }
+        def->resigned = 0;
+
         if (!gibbon_position_equals_technically (ref, def)) {
                 g_printerr ("Test case for compare function must be fixed.\n");
                 retval = FALSE;
