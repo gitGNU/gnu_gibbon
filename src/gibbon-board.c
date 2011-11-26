@@ -161,7 +161,6 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
 {
         const GibbonPosition *pos;
         GibbonPosition *new_pos = NULL;
-        GibbonPositionSide turn;
         gint pips;
         gint i;
 
@@ -183,8 +182,7 @@ gibbon_board_process_point_click (GibbonBoard *self, gint point,
         if (!pos->unused_dice[1])
                 button = 1;
 
-        turn = gibbon_position_on_move (pos);
-        if (turn != GIBBON_POSITION_SIDE_WHITE)
+        if (pos->turn != GIBBON_POSITION_SIDE_WHITE)
                 return;
 
         /* Any checkers on the bar?  */
@@ -250,7 +248,6 @@ gibbon_board_process_bar_click (GibbonBoard *self, gint button)
 {
         const GibbonPosition *pos;
         GibbonPosition *new_pos = NULL;
-        GibbonPositionSide turn;
         gint pips;
 
         g_return_if_fail (GIBBON_IS_BOARD (self));
@@ -269,9 +266,7 @@ gibbon_board_process_bar_click (GibbonBoard *self, gint button)
         if (!pos->unused_dice[1])
                 button = 1;
 
-        turn = gibbon_position_on_move (pos);
-
-        if (turn != GIBBON_POSITION_SIDE_WHITE)
+        if (pos->turn != GIBBON_POSITION_SIDE_WHITE)
                 return;
 
         /* Any checkers on the bar?  */
