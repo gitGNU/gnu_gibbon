@@ -117,7 +117,7 @@ AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
 AC_CHECK_LIB(socket, connect)
-AC_CHECK_LIB(jpeg, jpeg_destroy_decompress, 
+AC_CHECK_LIB(jpeg, jpeg_start_decompress, 
     test_jpeg=ok,
     AC_MSG_ERROR([jpeg library not found]))
 
