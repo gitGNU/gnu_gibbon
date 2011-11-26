@@ -906,6 +906,8 @@ gibbon_draw_cup (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         position = self->priv->pos;
+        if (position->turn != GIBBON_POSITION_SIDE_WHITE)
+                return;
         if (position->dice[0])
                 return;
         if (position->dice[1])
