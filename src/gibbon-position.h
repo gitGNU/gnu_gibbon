@@ -54,7 +54,6 @@ typedef enum {
  *          for number.  The absolute value gives the number of checkers on
  *          that point.  A negative value means that this point is occupied
  *          by black, a positive value means that it is occupied by white.
- * @turn: whose turn is it?
  * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
  *       number of black checkers on the bar.  For consistency, black's
  *       checkers are negative, white's checkers are positive.  Yes, and
@@ -78,6 +77,7 @@ typedef enum {
  * @unused_dice: Can be filled with the dice not yet used in this roll.
  *               They should be normalized, i.e. all positive for white or all
  *               negative for black, even for the opening roll.
+ * @turn: whose turn is it?
  * @resigned: 1 if white resigned normally
  *            2 if white resigned with a gammon
  *            3 if white resigned with a backgammon
@@ -108,8 +108,6 @@ struct _GibbonPosition
         guint match_length;
         guint scores[2];
 
-        GibbonPositionSide turn;
-
         gint points[24];
 
         guint bar[2];
@@ -123,6 +121,8 @@ struct _GibbonPosition
         gint unused_dice[4];
 
         gchar *players[2];
+
+        GibbonPositionSide turn;
 
         gint resigned;
 

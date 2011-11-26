@@ -70,7 +70,6 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
 GibbonPosition initial = {
                 0,
                 { 0, 0 },
-                GIBBON_POSITION_SIDE_NONE,
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
                    5,  0,  0,  0, -3,  0, -5,  0,  0,  0,  0,  2 },
                 { 0, 0 },
@@ -79,6 +78,7 @@ GibbonPosition initial = {
                 { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE,
                 { 0, 0, 0, 0 },
                 { NULL, NULL },
+                GIBBON_POSITION_SIDE_NONE,
                 0,
                 NULL,
                 NULL

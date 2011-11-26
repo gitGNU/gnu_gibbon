@@ -300,9 +300,9 @@ test_compare (void)
         def->resigned = 0;
 
         def->turn = GIBBON_POSITION_SIDE_BLACK;
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Turn changed but positions do not differ"
-                            " technically.\n");
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions do differ technically after turn"
+                            " changed but they should not.\n");
                 retval = FALSE;
         }
         def->turn = GIBBON_POSITION_SIDE_NONE;
