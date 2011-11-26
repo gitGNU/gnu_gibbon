@@ -303,6 +303,14 @@ test_compare (void)
         }
         def->resigned = 0;
 
+        def->turn = GIBBON_POSITION_SIDE_BLACK;
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Turn changed but positions do not differ"
+                            " technically.\n");
+                retval = FALSE;
+        }
+        def->turn = GIBBON_POSITION_SIDE_NONE;
+
         if (!gibbon_position_equals_technically (ref, def)) {
                 g_printerr ("Test case for compare function must be fixed.\n");
                 retval = FALSE;
