@@ -53,3 +53,6 @@
 - Check that the FIBS spanner bug as in "someplayer accepts the double. The 
   cube shows 2.13 anotherplayer Anybody for a 5 point match?" is also handled 
   correctly.
+- IMPORTANT: If a saved match was an unlimited one, only optionally allow
+  resuming it but display the normal match length selection.  Otherwise,
+  both opponents have to wait until the match expires.
