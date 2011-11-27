@@ -49,6 +49,7 @@ typedef enum {
  *           %NULL representing unknown.  If you use gibbon_position_free()
  *           for disposing the object the pointers used will be passed
  *           to g_free()!
+ * @turn: whose turn is it?
  * @points: points[0] is the ace point for white, and the 24 point for
  *          black; points[23] is the ace point for black, and the 24 point
  *          for number.  The absolute value gives the number of checkers on
@@ -77,7 +78,6 @@ typedef enum {
  * @unused_dice: Can be filled with the dice not yet used in this roll.
  *               They should be normalized, i.e. all positive for white or all
  *               negative for black, even for the opening roll.
- * @turn: whose turn is it?
  * @resigned: 1 if white resigned normally
  *            2 if white resigned with a gammon
  *            3 if white resigned with a backgammon
@@ -108,6 +108,8 @@ struct _GibbonPosition
         guint match_length;
         guint scores[2];
 
+        GibbonPositionSide turn;
+
         gint points[24];
 
         guint bar[2];
@@ -121,8 +123,6 @@ struct _GibbonPosition
         gint unused_dice[4];
 
         gchar *players[2];
-
-        GibbonPositionSide turn;
 
         gint resigned;
 
