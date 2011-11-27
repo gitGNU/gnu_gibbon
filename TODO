@@ -49,16 +49,4 @@
   by the server after login.
 - Implement some sort of auto-idle that sets you to `not ready' after some
   time of inactivity.
-- When resuming a match, where the player has turned the cube, the cube is not 
-  visible because the "was doubled" field is not set.  The same happens, when a
-  new board is requested from the server because we currently cannot find out
-  whether the cube has been turned from the board state alone.
-- Visualize the current state of the game.  The states are "must roll
-  or double", "must roll", "must move", "waiting for opponent to roll", 
-  "waiting for opponent to move", "waiting for opponent to accept or reject 
-  (double or resignation)", and "must accept or reject (double or 
-  resignation)".
-- board:You:GibbonTestB:2:1:0:0:0:2:2:2:3:4:0:0:0:0:0:0:0:0:0:0:0:-3:-6:2:-2:-2:-2:0:0:1:3:6:0:0:1:1:1:0:1:-1:0:25:0:0:0:0:2:6:0:0
-
-In this situation, Gibbon won't let white move 20-14 6-3, resp. 5-11 19-22.
 - FIBS messages (** ...) should be displayed in a non-modal dialog.
