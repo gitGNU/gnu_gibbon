@@ -56,3 +56,5 @@
 - IMPORTANT: If a saved match was an unlimited one, only optionally allow
   resuming it but display the normal match length selection.  Otherwise,
   both opponents have to wait until the match expires.
+- After pasch, we can only move two pieces
+- Intermediate points in animation are messed up
