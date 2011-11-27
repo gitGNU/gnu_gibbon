@@ -1338,10 +1338,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
             && !pos->dice[0] && !pos->dice[1]
             && !pos->may_double[0] && !pos->may_double[1]) {
                 pos->cube_turned = self->priv->position->turn;
-        } else if (self->priv->position->turn == GIBBON_POSITION_SIDE_WHITE) {
+        } else if (pos->turn == GIBBON_POSITION_SIDE_WHITE) {
                 pos->unused_dice[0] = abs (pos->dice[0]);
                 pos->unused_dice[1] = abs (pos->dice[1]);
-        } else if (self->priv->position->turn == GIBBON_POSITION_SIDE_BLACK) {
+        } else if (pos->turn == GIBBON_POSITION_SIDE_BLACK) {
                 pos->unused_dice[0] = -abs (pos->dice[0]);
                 pos->unused_dice[1] = -abs (pos->dice[1]);
         }
@@ -1360,9 +1360,12 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,
                                            gibbon_board_get_position (board))) {
+                g_printerr ("Discarding already know position\n");
                 gibbon_position_free (pos);
         } else {
+                g_printerr ("Setting new board position\n");
                 gibbon_board_set_position (board, pos);
+                gibbon_position_free (pos);
         }
 
         if (pos->may_double[0]
@@ -2750,10 +2753,12 @@ gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
 static void
 gibbon_session_on_dice_picked_up (const GibbonSession *self)
 {
-        const GibbonPosition *new_pos;
+        const GibbonPosition *pos;
+        GibbonPosition *new_pos;
         GibbonBoard *board;
         GibbonMove *move;
         gchar *fibs_move;
+        gint tmp;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
 
@@ -2777,10 +2782,33 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         }
 
         board = gibbon_app_get_board (self->priv->app);
-        new_pos = gibbon_board_get_position (board);
+        pos = gibbon_board_get_position (board);
 
-        move = gibbon_position_check_move (self->priv->position, new_pos,
+        move = gibbon_position_check_move (self->priv->position, pos,
                                            GIBBON_POSITION_SIDE_WHITE);
+
+        /*
+         * If not all dice were used, and the move was not legal, we assume
+         * that the user wants to switch the dice.
+         *
+         * We only store the position with the switched dice with the board.
+         * Triggering an undo will restore the original state of the dice.
+         */
+        if (move->status != GIBBON_MOVE_LEGAL && pos->unused_dice[0]) {
+                g_free (move);
+                new_pos = gibbon_position_copy (pos);
+                tmp = pos->dice[0];
+                new_pos->dice[0] = new_pos->dice[1];
+                new_pos->dice[1] = tmp;
+                if (new_pos->unused_dice[1]) {
+                        tmp = pos->unused_dice[0];
+                        new_pos->unused_dice[0] = new_pos->unused_dice[1];
+                        new_pos->unused_dice[1] = tmp;
+                }
+                gibbon_board_set_position (board, new_pos);
+                gibbon_position_free (new_pos);
+                return;
+        }
 
         switch (move->status) {
         case GIBBON_MOVE_LEGAL:
@@ -2849,7 +2877,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
                                          "move %s", fibs_move);
         g_free (fibs_move);
 
-        self->priv->position = gibbon_position_copy (new_pos);
+        self->priv->position = gibbon_position_copy (pos);
         self->priv->position->turn = GIBBON_POSITION_SIDE_BLACK;
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
