@@ -1724,6 +1724,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
+        self->priv->position->turn = -self->priv->position->turn;
 
         board = gibbon_app_get_board (self->priv->app);
         if (0 == g_strcmp0 ("You", player)) {
@@ -1732,7 +1733,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         } else {
                 target_position = gibbon_position_copy (self->priv->position);
                 gibbon_board_animate_move (board, move,
-                                           GIBBON_POSITION_SIDE_WHITE,
+                                           -self->priv->position->turn,
                                            target_position);
         }
 
