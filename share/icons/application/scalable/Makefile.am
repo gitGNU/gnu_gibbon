@@ -18,4 +18,4 @@
 icondir = $(datadir)/icons/hicolor/scalable/apps
 icon_DATA = gibbon.svg
 
-EXTRA_DIST = $(icon_DATA)
+EXTRA_DIST = $(icon_DATA) LICENSE

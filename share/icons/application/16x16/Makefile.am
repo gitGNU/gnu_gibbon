@@ -21,4 +21,4 @@ icon_DATA = gibbon.png
 gibbon.png: $(top_srcdir)/share/icons/application/scalable/gibbon.svg
 	rsvg-convert --width=16 --height=16 --output=$@ ../scalable/gibbon.svg
 
-EXTRA_DIST = $(icon_DATA)
+EXTRA_DIST = $(icon_DATA) LICENSE

@@ -16,5 +16,3 @@
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS = application
-
-EXTRA_DIST =

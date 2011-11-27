@@ -261,4 +261,4 @@ pixmap_DATA = \
 	zm.png \
 	zw.png
 
-EXTRA_DIST = $(pixmap_DATA)
+EXTRA_DIST = $(pixmap_DATA) LICENSE

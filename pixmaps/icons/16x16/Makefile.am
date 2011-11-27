@@ -18,4 +18,4 @@
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons/16x16
 pixmap_DATA = cellphone.png computer.png robot.png gibbon.png
 
-EXTRA_DIST = $(pixmap_DATA)
+EXTRA_DIST = $(pixmap_DATA) LICENSE

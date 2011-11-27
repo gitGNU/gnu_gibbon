@@ -23,4 +23,4 @@ pixmap_DATA = \
 	whisper.svg \
 	white_flag.svg
 
-EXTRA_DIST = $(pixmap_DATA)
+EXTRA_DIST = $(pixmap_DATA) LICENSE

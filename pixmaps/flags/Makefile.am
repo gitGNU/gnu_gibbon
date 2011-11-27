@@ -17,4 +17,4 @@
 
 SUBDIRS = 16x16
 
-EXTRA_DIST = xy.svg
+EXTRA_DIST = xy.svg LICENSE

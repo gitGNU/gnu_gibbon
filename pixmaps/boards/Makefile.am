@@ -19,4 +19,4 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/boards
 pixmap_DATA = \
 	default.svg
 
-EXTRA_DIST = $(pixmap_DATA)
+EXTRA_DIST = $(pixmap_DATA) LICENSE
