@@ -1668,7 +1668,8 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         }
 
         pretty_move = gibbon_position_format_move (self->priv->position, move,
-                                                   side, FALSE);
+                                                   side,
+                                                   !self->priv->direction);
         g_free (self->priv->position->status);
         self->priv->position->status = NULL;
         dice = self->priv->position->dice;
@@ -1698,7 +1699,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         }
 
         if (!gibbon_position_apply_move (self->priv->position, move,
-                                         side, FALSE)) {
+                                         side, !self->priv->direction)) {
                 g_critical ("Error applying move %s to position.",
                             pretty_move);
                 g_critical ("Parsed numbers:");
