@@ -143,8 +143,8 @@ static void gibbon_session_registration_error (GibbonSession *self,
 static void gibbon_session_registration_success (GibbonSession *self);
 static void gibbon_session_on_dice_picked_up (const GibbonSession *self);
 static void gibbon_session_on_cube_turned (const GibbonSession *self);
-static void gibbon_session_on_cube_accepted (const GibbonSession *self);
-static void gibbon_session_on_cube_rejected (const GibbonSession *self);
+static void gibbon_session_on_cube_taken (const GibbonSession *self);
+static void gibbon_session_on_cube_dropped (const GibbonSession *self);
 static void gibbon_session_on_resignation_accepted (const GibbonSession *self);
 static void gibbon_session_on_resignation_rejected (const GibbonSession *self);
 
@@ -185,8 +185,8 @@ struct _GibbonSessionPrivate {
 
         guint dice_picked_up_handler;
         guint cube_turned_handler;
-        guint cube_accepted_handler;
-        guint cube_rejected_handler;
+        guint cube_taken_handler;
+        guint cube_dropped_handler;
         guint resignation_accepted_handler;
         guint resignation_rejected_handler;
 };
@@ -262,8 +262,8 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->dice_picked_up_handler = 0;
         self->priv->cube_turned_handler = 0;
-        self->priv->cube_accepted_handler = 0;
-        self->priv->cube_rejected_handler = 0;
+        self->priv->cube_taken_handler = 0;
+        self->priv->cube_dropped_handler = 0;
         self->priv->resignation_accepted_handler = 0;
         self->priv->resignation_rejected_handler = 0;
 }
@@ -285,14 +285,14 @@ gibbon_session_finalize (GObject *object)
                 g_signal_handler_disconnect (gibbon_app_get_board (
                                              self->priv->app),
                                              self->priv->cube_turned_handler);
-        if (self->priv->cube_accepted_handler)
+        if (self->priv->cube_taken_handler)
                 g_signal_handler_disconnect (gibbon_app_get_board (
                                              self->priv->app),
-                                             self->priv->cube_accepted_handler);
-        if (self->priv->cube_rejected_handler)
+                                             self->priv->cube_taken_handler);
+        if (self->priv->cube_dropped_handler)
                 g_signal_handler_disconnect (gibbon_app_get_board (
                                              self->priv->app),
-                                             self->priv->cube_rejected_handler);
+                                             self->priv->cube_dropped_handler);
         if (self->priv->resignation_accepted_handler)
                 g_signal_handler_disconnect (gibbon_app_get_board (
                                              self->priv->app),
@@ -373,13 +373,13 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
                 g_signal_connect_swapped (G_OBJECT (board), "cube-turned",
                                   G_CALLBACK (gibbon_session_on_cube_turned),
                                           G_OBJECT (self));
-        self->priv->cube_accepted_handler =
-                g_signal_connect_swapped (G_OBJECT (board), "cube-accepted",
-                                  G_CALLBACK (gibbon_session_on_cube_accepted),
+        self->priv->cube_taken_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "cube-taken",
+                                  G_CALLBACK (gibbon_session_on_cube_taken),
                                           G_OBJECT (self));
-        self->priv->cube_rejected_handler =
-                g_signal_connect_swapped (G_OBJECT (board), "cube-rejected",
-                                  G_CALLBACK (gibbon_session_on_cube_rejected),
+        self->priv->cube_dropped_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "cube-dropped",
+                                  G_CALLBACK (gibbon_session_on_cube_dropped),
                                           G_OBJECT (self));
         self->priv->resignation_accepted_handler =
              g_signal_connect_swapped (G_OBJECT (board), "resignation-accepted",
@@ -2881,7 +2881,7 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
 }
 
 static void
-gibbon_session_on_cube_accepted (const GibbonSession *self)
+gibbon_session_on_cube_taken (const GibbonSession *self)
 {
         GibbonBoard *board;
 
@@ -2904,7 +2904,7 @@ gibbon_session_on_cube_accepted (const GibbonSession *self)
 }
 
 static void
-gibbon_session_on_cube_rejected (const GibbonSession *self)
+gibbon_session_on_cube_dropped (const GibbonSession *self)
 {
         GibbonBoard *board;
 
