@@ -143,6 +143,10 @@ static void gibbon_session_registration_error (GibbonSession *self,
 static void gibbon_session_registration_success (GibbonSession *self);
 static void gibbon_session_on_dice_picked_up (const GibbonSession *self);
 static void gibbon_session_on_cube_turned (const GibbonSession *self);
+static void gibbon_session_on_cube_accepted (const GibbonSession *self);
+static void gibbon_session_on_cube_rejected (const GibbonSession *self);
+static void gibbon_session_on_resignation_accepted (const GibbonSession *self);
+static void gibbon_session_on_resignation_rejected (const GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -181,6 +185,10 @@ struct _GibbonSessionPrivate {
 
         guint dice_picked_up_handler;
         guint cube_turned_handler;
+        guint cube_accepted_handler;
+        guint cube_rejected_handler;
+        guint resignation_accepted_handler;
+        guint resignation_rejected_handler;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -254,6 +262,10 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->dice_picked_up_handler = 0;
         self->priv->cube_turned_handler = 0;
+        self->priv->cube_accepted_handler = 0;
+        self->priv->cube_rejected_handler = 0;
+        self->priv->resignation_accepted_handler = 0;
+        self->priv->resignation_rejected_handler = 0;
 }
 
 static void
@@ -273,6 +285,22 @@ gibbon_session_finalize (GObject *object)
                 g_signal_handler_disconnect (gibbon_app_get_board (
                                              self->priv->app),
                                              self->priv->cube_turned_handler);
+        if (self->priv->cube_accepted_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                             self->priv->cube_accepted_handler);
+        if (self->priv->cube_rejected_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                             self->priv->cube_rejected_handler);
+        if (self->priv->resignation_accepted_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                      self->priv->resignation_accepted_handler);
+        if (self->priv->resignation_rejected_handler)
+                g_signal_handler_disconnect (gibbon_app_get_board (
+                                             self->priv->app),
+                                      self->priv->resignation_rejected_handler);
 
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
@@ -344,6 +372,22 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->cube_turned_handler =
                 g_signal_connect_swapped (G_OBJECT (board), "cube-turned",
                                   G_CALLBACK (gibbon_session_on_cube_turned),
+                                          G_OBJECT (self));
+        self->priv->cube_accepted_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "cube-accepted",
+                                  G_CALLBACK (gibbon_session_on_cube_accepted),
+                                          G_OBJECT (self));
+        self->priv->cube_rejected_handler =
+                g_signal_connect_swapped (G_OBJECT (board), "cube-rejected",
+                                  G_CALLBACK (gibbon_session_on_cube_rejected),
+                                          G_OBJECT (self));
+        self->priv->resignation_accepted_handler =
+             g_signal_connect_swapped (G_OBJECT (board), "resignation-accepted",
+                            G_CALLBACK (gibbon_session_on_resignation_accepted),
+                                          G_OBJECT (self));
+        self->priv->resignation_rejected_handler =
+             g_signal_connect_swapped (G_OBJECT (board), "resignation-rejected",
+                            G_CALLBACK (gibbon_session_on_resignation_rejected),
                                           G_OBJECT (self));
 
         return self;
@@ -2832,6 +2876,94 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
         self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "double");
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_on_cube_accepted (const GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (GIBBON_POSITION_SIDE_BLACK != self->priv->position->turn)
+                return;
+        if (GIBBON_POSITION_SIDE_BLACK != self->priv->position->cube_turned)
+                return;
+        self->priv->position->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "accept");
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_on_cube_rejected (const GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (GIBBON_POSITION_SIDE_BLACK != self->priv->position->turn)
+                return;
+        if (GIBBON_POSITION_SIDE_BLACK != self->priv->position->cube_turned)
+                return;
+        self->priv->position->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "reject");
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_on_resignation_accepted (const GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (self->priv->position->resigned >= 0)
+                return;
+        self->priv->position->resigned = 0;
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "accept");
+        board = gibbon_app_get_board (self->priv->app);
+        gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_on_resignation_rejected (const GibbonSession *self)
+{
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_SESSION (self));
+
+        if (self->priv->watching)
+                return;
+        if (!self->priv->opponent)
+                return;
+
+        if (self->priv->position->resigned >= 0)
+                return;
+        self->priv->position->resigned = 0;
+        gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                         "reject");
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (board, self->priv->position);
 }
