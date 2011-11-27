@@ -952,12 +952,12 @@ gibbon_position_equals_technically (const GibbonPosition *self,
 }
 
 gboolean
-gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
+gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
                             GibbonPositionSide side, gboolean reverse)
 {
         gint m, c;
         gint i, from, to;
-        const GibbonMovement *movement;
+        GibbonMovement *movement;
         gboolean from_bar, bear_off;
         guint *my_bar, *her_bar;
 
@@ -976,6 +976,12 @@ gibbon_position_apply_move (GibbonPosition *self, const GibbonMove *move,
                 from = m * movement->from + c;
 
                 to = m * movement->to + c;
+
+                /*
+                 * Normalize the move on the fly.
+                 */
+                movement->from = from + 1;
+                movement->to = to + 1;
 
                 from_bar = bear_off = FALSE;
 

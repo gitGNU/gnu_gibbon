@@ -221,13 +221,14 @@ void gibbon_position_dump_position (const GibbonPosition *self);
 /* Apply a move to a position.  The function only does a plausability test,
  * not a legality test.
  *
- * If reverse is true, assume the board is turned.
+ * If reverse is true, assume the board is turned.  The move will then
+ * get updated accordingly.
  *
  * White is considered to move from 23 to 0, black the other way round.  24
  * is white's bar and black's home, 0 is black's bar and white's home.
  */
 gboolean gibbon_position_apply_move (GibbonPosition *self,
-                                     const GibbonMove *move,
+                                     GibbonMove *move,
                                      GibbonPositionSide side,
                                      gboolean reverse);
 gboolean gibbon_position_game_over (const GibbonPosition *position);
