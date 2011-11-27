@@ -1273,7 +1273,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         }
 
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
-                                  &self->priv->position->turn))
+                                  &pos->turn))
                 goto bail_out_board;
 
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
@@ -1352,10 +1352,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 g_printerr ("Session positions are equal.\n");
         } else {
                 g_printerr ("Session positions are not equal.\n");
-                if (self->priv->position)
-                        gibbon_position_free (self->priv->position);
-                self->priv->position = gibbon_position_copy (pos);
         }
+        if (self->priv->position)
+                gibbon_position_free (self->priv->position);
+        self->priv->position = gibbon_position_copy (pos);
 
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,
