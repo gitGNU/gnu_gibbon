@@ -1627,7 +1627,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         return GIBBON_CLIP_CODE_ROLLS;
 }
 
-static gboolean
+static gint
 gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 {
         GibbonMove *move;
@@ -1638,8 +1638,10 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         gint *dice;
         const gchar *player;
         guint num_moves;
+        GibbonBoard *board;
+        GibbonPosition *target_position;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &player))
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
                 return -1;
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &num_moves))
@@ -1715,15 +1717,23 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                     g_strdup_printf (_("Error applying move %s to position.\n"),
                                      pretty_move);
                 g_free (pretty_move);
-                return FALSE;
+                return -1;
         }
-
         g_free (pretty_move);
 
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
-        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
-                                   self->priv->position);
+
+        board = gibbon_app_get_board (self->priv->app);
+        if (0 == g_strcmp0 ("You", player)) {
+                gibbon_board_set_position (board,
+                                           self->priv->position);
+        } else {
+                target_position = gibbon_position_copy (self->priv->position);
+                gibbon_board_animate_move (board, move,
+                                           GIBBON_POSITION_SIDE_WHITE,
+                                           target_position);
+        }
 
         return GIBBON_CLIP_CODE_MOVES;
 }
