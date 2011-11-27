@@ -2850,6 +2850,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         g_free (fibs_move);
 
         self->priv->position = gibbon_position_copy (new_pos);
+        self->priv->position->turn = GIBBON_POSITION_SIDE_BLACK;
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
         gibbon_board_set_position (board, self->priv->position);
