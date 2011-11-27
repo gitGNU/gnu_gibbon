@@ -110,7 +110,7 @@ struct _GibbonCairoboardPrivate {
 };
 
 #define ANIMATION_STEP_WIDTH 75
-#define ANIMATION_TIMEOUT 10
+#define ANIMATION_TIMEOUT 20
 #define DICE_FADE_OUT_TIMEOUT 750
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -1002,10 +1002,10 @@ gibbon_draw_animation (GibbonCairoboard *self, cairo_t *cr)
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
         side = self->priv->animation_floating;
-        pos = self->priv->pos;
-
         if (!side)
                 return;
+
+        pos = self->priv->pos;
 
         from = self->priv->animation_from;
         to = self->priv->animation_to;
@@ -1456,6 +1456,8 @@ gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
                 g_source_remove (self->priv->animation_id);
         self->priv->animation_id = 0;
 
+        self->priv->animation_floating = GIBBON_POSITION_SIDE_NONE;
+
         gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
@@ -1480,47 +1482,26 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
         /* Consistency checks first.  */
         from = move->movements[move_number].from;
         to = move->movements[move_number].to;
-        if (side == GIBBON_POSITION_SIDE_WHITE) {
-                if (from == 25) {
-                        if (!pos->bar[0])
-                                stop_animation (self);
-                } else if (from <= 0 || from > 25) {
-                        stop_animation (self);
-                } else if (pos->points[from - 1] <= 0) {
-                        stop_animation (self);
-                }
-                if (to < 0 || to > 24) {
-                        stop_animation (self);
-                } else if (pos->points[to - 1] < -1) {
-                        stop_animation (self);
-                }
-        } else {
-                if (from == 0) {
-                        if (!pos->bar[1])
-                                stop_animation (self);
-                } else if (from <= 0 || from > 25) {
-                        stop_animation (self);
-                } else if (pos->points[from - 1] >= 0) {
-                        stop_animation (self);
-                }
-                if (to < 1 || to > 25) {
-                        stop_animation (self);
-                } else if (pos->points[to - 1] > +1) {
-                                stop_animation (self);
-                }
-        }
 
         if (self->priv->animation_step == 0) {
                 /* Checker starts floating.  */
                 self->priv->animation_step = 1;
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
-                        if (from == 25)
-                                --pos->bar[0];
-                        --pos->points[from - 1];
+                        if (from == 25) {
+                                if (!pos->bar[0]--)
+                                        stop_animation (self);
+                        } else {
+                                if (!pos->points[from - 1]--)
+                                        stop_animation (self);
+                        }
                 } else {
-                        if (from == 0)
-                                --pos->bar[1];
-                        ++pos->points[from - 1];
+                        if (from == 0) {
+                                if (!pos->bar[1]--)
+                                        stop_animation (self);
+                        } else {
+                                if (!pos->points[from - 1]--)
+                                        stop_animation (self);
+                        }
                 }
                 self->priv->animation_floating = side;
                 self->priv->animation_from = from;
