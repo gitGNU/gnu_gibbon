@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+These files are part of Gibbon, a graphical frontend to the First Internet
+Backgammon Server FIBS.
+Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
+
+Gibbon is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Gibbon is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
 "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
