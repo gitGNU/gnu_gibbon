@@ -110,7 +110,7 @@ struct _GibbonCairoboardPrivate {
 };
 
 #define ANIMATION_STEP_WIDTH 75
-#define ANIMATION_TIMEOUT 20
+#define ANIMATION_TIMEOUT 25
 #define DICE_FADE_OUT_TIMEOUT 750
 
 #define GIBBON_CAIROBOARD_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -1479,7 +1479,6 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
         if (!move || move_number >= move->number || !side)
                 stop_animation (self);
 
-        /* Consistency checks first.  */
         from = move->movements[move_number].from;
         to = move->movements[move_number].to;
 
@@ -1499,7 +1498,12 @@ gibbon_cairoboard_do_animation (GibbonCairoboard *self)
                                 if (!pos->bar[1]--)
                                         stop_animation (self);
                         } else {
-                                if (!pos->points[from - 1]--)
+                                /*
+                                 * Yes, increment, not decrement! We are moving
+                                 * black's checkers here and they have negative
+                                 * counts!
+                                 */
+                                if (!pos->points[from - 1]++)
                                         stop_animation (self);
                         }
                 }
