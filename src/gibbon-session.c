@@ -1663,7 +1663,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                           &movement->from))
                         return -1;
                 if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                          &movement->from))
+                                          &movement->to))
                         return -1;
         }
 
