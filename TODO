@@ -50,3 +50,6 @@
 - Implement some sort of auto-idle that sets you to `not ready' after some
   time of inactivity.
 - FIBS messages (** ...) should be displayed in a non-modal dialog.
+- Check that the FIBS spanner bug as in "someplayer accepts the double. The 
+  cube shows 2.13 anotherplayer Anybody for a 5 point match?" is also handled 
+  correctly.
