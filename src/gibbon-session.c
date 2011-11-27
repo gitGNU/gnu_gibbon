@@ -1348,11 +1348,6 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (pos->dice[0] == pos->dice[1])
                 pos->unused_dice[2] = pos->unused_dice[3] = pos->unused_dice[0];
 
-        if (gibbon_position_equals_technically (pos, self->priv->position)) {
-                g_printerr ("Session positions are equal.\n");
-        } else {
-                g_printerr ("Session positions are not equal.\n");
-        }
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
         self->priv->position = gibbon_position_copy (pos);
@@ -1360,10 +1355,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         board = gibbon_app_get_board (self->priv->app);
         if (gibbon_position_equals_technically (pos,
                                            gibbon_board_get_position (board))) {
-                g_printerr ("Discarding already know position\n");
                 gibbon_position_free (pos);
         } else {
-                g_printerr ("Setting new board position\n");
                 gibbon_board_set_position (board, pos);
                 gibbon_position_free (pos);
         }
@@ -1601,6 +1594,10 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 self->priv->position->status =
                         g_strdup_printf (_("You roll %u and %u."),
                                          dice[0], dice[1]);
+                if (dice[0] == dice[1])
+                        self->priv->position->unused_dice[2]
+                        = self->priv->position->unused_dice[3]
+                        = dice[0];
         } else if (0 == g_strcmp0 (self->priv->opponent, who)) {
                 self->priv->position->dice[0] = -dice[0];
                 self->priv->position->dice[1] = -dice[1];
