@@ -57,3 +57,7 @@
   resuming it but display the normal match length selection.  Otherwise,
   both opponents have to wait until the match expires.
 - Handle "wait for ... to join, too" and make sure that there is no deadlock if   both parties use Gibbon.
+- If inviter is unknown (FIBS didn't send any who info about the inviter),
+  then the invitiation shortly appears in the inviter list but then disappears
+  until the invitation is repeated.
+- The invitation list is not emptied, when a new match starts.
