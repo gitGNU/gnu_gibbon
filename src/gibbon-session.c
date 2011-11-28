@@ -793,24 +793,20 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                 client, client_icon,
                                 hostname, country, email);
 
+        if (opponent && *opponent) {
+                gibbon_inviter_list_remove (self->priv->inviter_list, who);
+                gibbon_inviter_list_remove (self->priv->inviter_list, opponent);
+        }
+
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
-                if (opponent) {
-                        gibbon_inviter_list_remove (self->priv->inviter_list,
-                                                    who);
-                } else {
-                        gibbon_inviter_list_set (self->priv->inviter_list, who,
-                                                 rating, experience,
-                                                 reliability, confidence,
-                                                 client, client_icon,
-                                                 hostname, country,
-                                                 email);
-                }
+                gibbon_inviter_list_set (self->priv->inviter_list, who,
+                                         rating, experience,
+                                         reliability, confidence,
+                                         client, client_icon,
+                                         hostname, country, email);
         }
 
         g_free (client);
-
-        if (opponent && *opponent)
-                gibbon_inviter_list_remove (self->priv->inviter_list, who);
 
         if (!g_strcmp0 (who, account)) {
                 if (!opponent[0])
