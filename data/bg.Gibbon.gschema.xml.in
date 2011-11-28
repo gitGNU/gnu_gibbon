@@ -21,6 +21,11 @@
       <_summary>Show timestamps</_summary>
       <_description>Prefix all server output with a high-resolution timestamp.</_description>
     </key>
+    <key name="logfile" type="s">
+      <default>''</default>
+      <_summary>Log communication</_summary>
+      <_description>Log all communication to a file.  The pid of the process will be automatically appended to the filename.</_description>
+    </key>
   </schema>
   <schema id="bg.Gibbon.preferences.match"
           path="/apps/gibbon/preferences/match/">
