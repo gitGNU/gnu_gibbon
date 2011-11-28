@@ -28,8 +28,12 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include <time.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
 #include "gibbon-settings.h"
 #include "gibbon-server-console.h"
@@ -365,6 +369,11 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         GTimeVal timeval;
         gchar *timestamp;
         GSettings *settings;
+        gchar *logfile;
+        gchar *full_logfile;
+        FILE *log;
+        const gchar *_prefix;
+        gchar *_linefeed;
 
         length = gtk_text_buffer_get_char_count (buffer);
         gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
@@ -389,7 +398,6 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                 gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
                 g_free (timestamp);
         }
-        g_object_unref (settings);
 
         if (prefix)
                 gtk_text_buffer_insert_at_cursor (buffer, prefix, -1);
@@ -405,6 +413,24 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         gtk_text_view_scroll_to_mark (self->priv->text_view,
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
+
+        logfile = g_settings_get_string (settings,
+                                         GIBBON_PREFS_DEBUG_LOGFILE);
+        if (logfile && *logfile) {
+                _prefix = prefix ? prefix : "";
+                _linefeed = linefeed ? "\n" : "";
+                full_logfile = g_strdup_printf ("%s.%llu", logfile,
+                                                (unsigned long long) getpid ());
+                log = g_fopen (full_logfile, "a");
+                if (!log || !fprintf (log, "%s%s%s", _prefix, string, _linefeed)
+                    || fclose (log)) {
+                        g_critical(_("Unable to write to logfile `%s': %s.\n"),
+                                   full_logfile, strerror (errno));
+                }
+        }
+        g_free (logfile);
+
+        g_object_unref (settings);
 }
 
 void

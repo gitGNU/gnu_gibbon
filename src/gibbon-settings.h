@@ -43,6 +43,7 @@
 #define GIBBON_PREFS_DEBUG_SCHEMA GIBBON_PREFS_SCHEMA ".debugging"
 #define GIBBON_PREFS_DEBUG_TIMESTAMPS "timestamps"
 #define GIBBON_PREFS_DEBUG_FIBS "server-communication"
+#define GIBBON_PREFS_DEBUG_LOGFILE "logfile"
 
 #define GIBBON_PREFS_MATCH_SCHEMA GIBBON_PREFS_SCHEMA ".match"
 #define GIBBON_PREFS_MATCH_LENGTH "length"
