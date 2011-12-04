@@ -21,9 +21,16 @@ AUTOMAKE_OPTIONS = -Wno-portability
 include $(top_srcdir)/gnome-doc-utils.make
 
 DOC_ID = gibbon
-DOC_FIGURES = 
+DOC_FIGURES = connect-register.png \
+	      gibbon-logo.png
 
-DOC_PAGES = index.page
+DOC_PAGES = bugreports.page \
+	    connect.page \
+	    create_account.page \
+	    do_not.page \
+	    droppers.page \
+	    index.page \
+	    introduction.page
 
 DOC_LINGUAS = de
 dist-hook: doc-dist-hook
