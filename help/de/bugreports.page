@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="bugreports" xml:lang="de">
+  <info>
+    <link type="guide" xref="index"/>
+    <desc>
+      Reporting bugs for <app>Gibbon</app> or this documentation.
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Reporting Bugs</title>
+  <p>
+    Short of a real bug-reporting system, please report bugs to
+    <link href="mailto:guido@imperia.net">Guido Flohr
+    &lt;guido@imperia.net&gt;</link>.
+  </p>
+</page>

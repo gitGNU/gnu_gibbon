@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="introduction" xml:lang="de">
+  <info>
+    <link type="guide" xref="index"/>
+    <desc>
+      Introduction to 
+      <link href="http://gibbon.guido-flohr.net/"><app>Gibbon</app></link>,
+      <link href="http://www.fibs.com/"><app>FIBS</app></link>,
+      and this documentation.
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Einleitung</title>
+  <p>
+    <app>Gibbon</app> is a program that allows you to play backgammon online 
+    against other players, both humans and computer players, on the
+    <link href="http://www.fibs.com/"><app>First Internet Backgammon 
+    Server (FIBS)</app></link>.  You can use <app>Gibbon</app> to also
+    play on other servers that use the 
+    <link href="http://www.fibs.com/fibs_interface.html">FIBS Client
+    Protocol</link>.  At the time of this writing the only alternative
+    public server is 
+    <link href="http://www.tigergammon.com/">TigerGammon</link>.
+    <app>Gibbon</app> will work with all servers that are compatible
+    with FIBS but this documentation and the program itself will often
+    assume that you are playing on FIBS.
+  </p>
+  <p>
+    <app>FIBS</app> does not only provide online backgammon opponents
+    but also an active community of users.  <app>Gibbon</app> allows
+    you to take part in all aspects of this community like chatting
+    with other users, taking part in tournaments held on <app>FIBS</app>,
+    or comparing your own skills with those of other players by
+    comparing your own 
+    <link href="http://www.fibs.com/ratings.html">FIBS rating</link>
+    with that of other FIBSters.
+  </p>
+  <p>
+    <app>Gibbon</app> is not yet ready.  You may find features that
+    are not yet covered in this documentation, and you may find features
+    documented here that do not work, or that do not work as expected.
+    An attempt is made to keep the software synchronized with this
+    documentation but this may fail.  If you find a discrepancy, or
+    find factual errors, misspellings, typos, or any other shortcomings
+    in this documentation (or the software itself) feel free to file a bug 
+    report.  All feedback is welcome.
+  </p>
+  <p>
+    <app>Gibbon</app> should work on many different computer platforms.
+    Do not be surprised if features presented in this documentation look
+    different on your computer.  The overall presentation will be close
+    enough for you to recognize it.
+  </p>
+</page>

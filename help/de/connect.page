@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="connect" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#getting_started"/>
+    <desc>
+      Connect to a backgammon server.
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Connecting To a Server</title>
+  <p>
+    Once you have <link xref="starting">started</link> <app>Gibbon</app>,
+    you can initiate a connection to a server by clicking the
+    <gui style="button">Connect</gui> button in the <link xref="main_toolbar">main toolbar</link>.  Alternatively, you can
+    use the <guiseq><gui>File</gui><gui>Connect</gui></guiseq> menu
+    entry:
+  </p>
+  <p>
+    
+  </p>
+</page>
