@@ -1983,6 +1983,8 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
 
         g_hash_table_insert (self->priv->saved_games,
                              (gpointer) g_strdup (opponent), (gpointer) info);
+        gibbon_player_list_update_has_saved (self->priv->player_list,
+                                             opponent, TRUE);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED;
 }
