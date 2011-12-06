@@ -180,7 +180,7 @@ free_player (gpointer _player)
 void
 gibbon_player_list_set (GibbonPlayerList *self, 
                         const gchar *name,
-                        gboolean saved,
+                        gboolean has_saved,
                         gboolean available,
                         gdouble rating,
                         guint experience,
@@ -199,7 +199,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
         const gchar *stock_id;
         GibbonReliability rel;
         const GdkPixbuf *country_icon;
-        gint name_weight = saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
+        gint name_weight = has_saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
@@ -451,4 +451,26 @@ gibbon_player_list_update_country (GibbonPlayerList *self,
                                 GTK_TREE_MODEL (self->priv->store),
                                 &iter);
         }
+}
+
+void
+gibbon_player_list_update_has_saved (GibbonPlayerList *self, const gchar *who,
+                                     gboolean has_saved)
+{
+        GtkTreeIter iter;
+        gint weight;
+
+        g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
+        g_return_if_fail (who != NULL);
+
+        /*
+         * Silently fail, if player is not known.
+         */
+        if (!gibbon_player_list_get_iter (self, who, &iter))
+                return;
+
+        weight = has_saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
+        gtk_list_store_set (self->priv->store, &iter,
+                            GIBBON_PLAYER_LIST_COL_NAME_WEIGHT, weight,
+                           -1);
 }

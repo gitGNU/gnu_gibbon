@@ -76,6 +76,7 @@ void gibbon_player_list_connect_view (GibbonPlayerList *self,
 void gibbon_player_list_clear (GibbonPlayerList *self);
 void gibbon_player_list_set (GibbonPlayerList *self, 
                              const gchar *player_name,
+                             gboolean has_saved,
                              gboolean available,
                              gdouble rating,
                              guint experience,
@@ -103,7 +104,9 @@ void gibbon_player_list_remove (GibbonPlayerList *self,
 void gibbon_player_list_update_country (GibbonPlayerList *self,
                                         const gchar *hostname,
                                         const GibbonCountry *country);
-
+void gibbon_player_list_update_has_saved (GibbonPlayerList *self,
+                                          const gchar *who,
+                                          gboolean has_saved);
 G_END_DECLS
 
 #endif
