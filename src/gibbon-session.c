@@ -718,6 +718,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         const gchar *account;
         guint port;
         const gchar *server;
+        gboolean has_saved;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -786,8 +787,11 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                               gibbon_session_on_geo_ip_resolve,
                                               self);
 
+        has_saved = g_hash_table_lookup (self->priv->saved_games, who) ?
+                        TRUE : FALSE;
+
         gibbon_player_list_set (self->priv->player_list,
-                                who, available, rating, experience,
+                                who, has_saved, available, rating, experience,
                                 reliability, confidence,
                                 opponent, watching,
                                 client, client_icon,

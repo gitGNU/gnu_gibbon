@@ -70,6 +70,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
 
         store = gtk_list_store_new (GIBBON_PLAYER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
+                                    G_TYPE_UINT,
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE, 
                                     G_TYPE_UINT,
@@ -121,6 +122,8 @@ gibbon_player_list_class_init (GibbonPlayerListClass *klass)
 
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_NAME] = 
                 G_TYPE_STRING;
+        gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_NAME_WEIGHT] =
+                G_TYPE_INT;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_AVAILABLE] =
                 G_TYPE_STRING;
         gibbon_player_list_column_types[GIBBON_PLAYER_LIST_COL_RATING] = 
@@ -177,6 +180,7 @@ free_player (gpointer _player)
 void
 gibbon_player_list_set (GibbonPlayerList *self, 
                         const gchar *name,
+                        gboolean saved,
                         gboolean available,
                         gdouble rating,
                         guint experience,
@@ -195,6 +199,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
         const gchar *stock_id;
         GibbonReliability rel;
         const GdkPixbuf *country_icon;
+        gint name_weight = saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
 
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (name);
@@ -243,6 +248,7 @@ gibbon_player_list_set (GibbonPlayerList *self,
         gtk_list_store_set (self->priv->store,
                             &player->iter,
                             GIBBON_PLAYER_LIST_COL_NAME, name,
+                            GIBBON_PLAYER_LIST_COL_NAME_WEIGHT, name_weight,
                             GIBBON_PLAYER_LIST_COL_AVAILABLE, stock_id,
                             GIBBON_PLAYER_LIST_COL_RATING, rating,
                             GIBBON_PLAYER_LIST_COL_EXPERIENCE, experience,
