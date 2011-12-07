@@ -71,6 +71,8 @@ static gboolean gibbon_inviter_list_view_on_button_pressed (GibbonInviterListVie
                                                            *event);
 static gchar *gibbon_inviter_list_view_row_name (const GibbonInviterListView
                                                 *self);
+static gint gibbon_inviter_list_view_row_length (const GibbonInviterListView
+                                                 *self);
 static void gibbon_inviter_list_view_on_tell (const GibbonInviterListView *self);
 static gboolean gibbon_inviter_list_view_on_query_tooltip (GtkWidget *widget,
                                                           gint x, gint y,
@@ -337,6 +339,7 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
         GObject *inviter_menu;
         GibbonSession *session;
         gchar *who;
+        gint64 length;
 
         if (event->type != GDK_BUTTON_PRESS
             || !(event->button == 1 || event->button == 3))
@@ -357,6 +360,7 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
         if (event->button == 1) {
                 session = gibbon_app_get_session (self->priv->app);
                 who = gibbon_inviter_list_view_row_name (self);
+                length = gibbon_inviter_list_view_row_length (self);
                 if (event->x <= self->priv->decline_column->width) {
                         gibbon_session_reply_to_invite (session, who, FALSE);
                 } else if (event->x <= self->priv->decline_column->width
@@ -424,6 +428,56 @@ gibbon_inviter_list_view_row_name (const GibbonInviterListView *self)
         g_list_free (selected_rows);
 
         return who;
+}
+
+static gint
+gibbon_inviter_list_view_row_length (const GibbonInviterListView *self)
+{
+        GtkTreeSelection *selection;
+        gint num_rows;
+        GList *selected_rows;
+        GList *first;
+        GtkTreePath *path;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        gchar *length_string = NULL;
+        guint64 length;
+
+        g_return_val_if_fail (GIBBON_IS_INVITER_LIST_VIEW (self), -1);
+
+        selection = gtk_tree_view_get_selection (self->priv->inviters_view);
+        num_rows = gtk_tree_selection_count_selected_rows (selection);
+
+        /* Should actually not happen.  */
+        if (num_rows != 1)
+                return -1;
+
+        selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+        if (!selected_rows)
+                return -1;
+
+        first = g_list_first (selected_rows);
+        if (first && first->data) {
+                path = (GtkTreePath *) first->data;
+                model = gtk_tree_view_get_model (self->priv->inviters_view);
+
+                if (gtk_tree_model_get_iter (model, &iter, path)) {
+                        gtk_tree_model_get (model, &iter,
+                                            GIBBON_INVITER_LIST_COL_LENGTH,
+                                            &length_string,
+                                            -1);
+                }
+        }
+
+        g_list_foreach (selected_rows, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected_rows);
+
+        if (!length_string)
+                return -1;
+
+        length = g_ascii_strtoull (length_string, NULL, 10);
+
+        return (gint) length;
 }
 
 static void
