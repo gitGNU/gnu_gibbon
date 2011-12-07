@@ -315,6 +315,28 @@ gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
         return player->saved_count;
 }
 
+gboolean
+gibbon_inviter_list_get_has_saved (const GibbonInviterList *self,
+                                   const gchar *name)
+{
+        struct GibbonInviter *player;
+        GtkTreeIter iter;
+        gint weight;
+
+        g_return_val_if_fail (GIBBON_IS_INVITER_LIST (self), FALSE);
+        g_return_val_if_fail (name != NULL, FALSE);
+
+        player = g_hash_table_lookup (self->priv->hash, name);
+        g_return_val_if_fail (player != NULL, FALSE);
+        iter = player->iter;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->store), &iter,
+                            GIBBON_INVITER_LIST_COL_NAME_WEIGHT, &weight,
+                           -1);
+
+        return weight == PANGO_WEIGHT_BOLD;
+}
+
 void
 gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                                      const gchar *name, gint count)

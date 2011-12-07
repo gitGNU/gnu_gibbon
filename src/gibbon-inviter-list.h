@@ -91,6 +91,8 @@ void gibbon_inviter_list_remove (GibbonInviterList *self,
                                 const gchar *inviter_name);
 gint gibbon_inviter_list_get_saved_count (const GibbonInviterList *self,
                                           const gchar *inviter_name);
+gboolean gibbon_inviter_list_get_has_saved (const GibbonInviterList *self,
+                                            const gchar *inviter_name);
 void gibbon_inviter_list_set_saved_count (GibbonInviterList *self,
                                           const gchar *inviter_name,
                                           gint count);

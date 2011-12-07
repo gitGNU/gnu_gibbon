@@ -719,6 +719,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         guint port;
         const gchar *server;
         gboolean has_saved;
+        GibbonSavedInfo *saved_info;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -787,8 +788,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
                                               gibbon_session_on_geo_ip_resolve,
                                               self);
 
-        has_saved = g_hash_table_lookup (self->priv->saved_games, who) ?
-                        TRUE : FALSE;
+        saved_info = g_hash_table_lookup (self->priv->saved_games, who);
+        has_saved = saved_info ? TRUE : FALSE;
 
         gibbon_player_list_set (self->priv->player_list,
                                 who, has_saved, available, rating, experience,
@@ -803,8 +804,14 @@ gibbon_session_clip_who_info (GibbonSession *self,
         }
 
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
-                g_printerr ("%s is an inviter, saved game: %s\n",
-                            who, has_saved ? "yes" : "no");
+                /*
+                 * If we have a saved unlimited match with that player, and
+                 * we are now invited to a match of fixed lenght, we must
+                 * take care not to overwrite the existing state that we
+                 * calculated when receiving the invitation.
+                 */
+                has_saved = gibbon_inviter_list_get_has_saved (
+                                self->priv->inviter_list, who);
                 gibbon_inviter_list_set (self->priv->inviter_list, who,
                                          has_saved, rating, experience,
                                          reliability, confidence,
@@ -1764,6 +1771,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         guint port;
         const gchar *server;
         GibbonConnection *connection;
+        GibbonSavedInfo *saved_info;
         gboolean has_saved;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
@@ -1818,9 +1826,13 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         client_icons = gibbon_app_get_client_icons (self->priv->app);
         client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
 
-        has_saved = g_hash_table_lookup (self->priv->saved_games, opponent) ?
-                        TRUE : FALSE;
+        saved_info = g_hash_table_lookup (self->priv->saved_games, opponent);
 
+        if (saved_info && length < 0) {
+                has_saved = TRUE;
+        } else {
+                has_saved = FALSE;
+        }
         gibbon_inviter_list_set (self->priv->inviter_list,
                                  opponent,
                                  has_saved,
