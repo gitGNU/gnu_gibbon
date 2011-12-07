@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="kibitz" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#game-chat"/>
+    <link type="guide" xref="index#watching"/>
+    <desc>
+      Talking to both other spectators (watchers) and
+      the players
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Talking to Everybody At The Board (<cmd>kibitz</cmd>)</title>
+  <p>
+    If you want to talk to everybody on the board, that is the players
+    themselves and possible spectators you have to select both the
+    <gui style="button">say</gui> and the <gui style="button">whisper</gui>
+    button while typing text into the
+    <link xref="game-chat-area">game chat area</link>.
+  </p>
+  <p>
+    If you are currently playing, both your opponent and spectators
+    will see your message.  If you are <link xref="watching">watching</link>
+    both players and possible other spectators will see your message.
+  </p>
+</page>

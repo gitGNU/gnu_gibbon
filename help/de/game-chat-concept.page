@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="game-chat-concept" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#game-chat"/>
+    <link type="seealso" xref="index#kibitz"/>
+    <link type="seealso" xref="index#whisper"/>
+    <link type="seealso" xref="index#say"/>
+    <link type="seealso" xref="index#tell"/>
+    <link type="seealso" xref="index#shout"/>
+    <desc>
+      How Chatting During the Game is Handled in <app>Gibbon</app>
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Concepts</title>
+  <p>
+    As opposed to <link xref="tell">private chats</link> or
+    <link xref="shout">lobby shouts</link>, all communication
+    during a game is displayed in the so called
+    game chat area below the board.
+  </p>
+  <p>
+    Possible participants in the communication at the board
+    are the two opponents and possible spectators.  When you
+    are currently playing yourself, you can talk to your
+    opponent, or the spectators, or both. When you are watching,
+    you have the choice of addressing the either other spectators
+    only, or the spectators and the players.
+  </p>
+  <p>
+    Two buttons at the top of the game chat area visualize your
+    current choice:
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/say.png">
+      Players/opponents as recipients
+    </media>
+  </p>
+  <p>
+    This is the <gui style="button">say</gui> button.  If it
+    is selected, it means that your message should go to the
+    players.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/whisper.png">
+      Other spectators as recipients
+    </media>
+  </p>
+  <p>
+    This is the <gui style="button">whisper</gui> button.  If it
+    is selected, it means that your message should go to the
+    spectators.
+  </p>
+  <p>
+    Not all combinations make sense in all situations.  For example,
+    when nobody is <link xref="watching">watching</link> there is
+    no point in talking to spectators.
+  </p>
+  <p>
+    When you are more comfortable with a command like approach, you
+    can also use a drop down next to the message entry.  It has the
+    labels <gui style="label">Say</gui> for addressing your opponent only,
+    <gui style="label">Kibitz</gui> for everybody, and <gui style="label">Whisper</gui>
+    for spectators only.
+  </p>
+</page>

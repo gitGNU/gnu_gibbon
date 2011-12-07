@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="swapping-dice" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#playing"/>
+    <link type="seealso" xref="checker-movement"/>
+    <link type="seealso" xref="rolling-dice"/>
+    <desc>
+      How To Change the Order Of The Dice
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Swapping the Dice</title>
+  <p>
+    You can swap the dice by left-clicking on them.
+  </p>
+</page>

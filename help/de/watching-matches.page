@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="say" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#watching"/>
+    <desc>
+      Watching Other People Play
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Watching</title>
+  <p>
+    If you are interested in how other people are doing you
+    can either peep at the current state of their ongoing
+    match, or you can permanently follow another player
+    and see all of his games.
+  </p>
+  <p>
+    Either way, you have to go to the <link xref="players-list">
+    players list</link> and right-click the row with the
+    player you are interested in.
+  </p>
+  <p>
+    If you select <gui style="label">Look</gui>, the board will
+    display the board that this player is currently looking at.
+  </p>
+  <p>
+    If you select <gui style="label">Watch</gui> instead, the board will
+    permanently display the board state of the ongoing match of that
+    user.  You will see the dice rolled, cube actions, and
+    resignations.
+  </p>
+  <p>
+    If you want to stop watching a player, got again to the
+    <link xref="players-list">players flist</link>, right-click the
+    player, and select <gui style="label">Unwatch</gui>.
+  </p>
+  <p>
+    If you start a match yourself, you automatically stop watching.
+  </p>
+  <p>
+    Please note that both players are notified, when you start
+    or stop watching them.
+  </p>
+  <p>
+    You should also know that both players can prevent you
+    from watching them or looking at their current board.
+  </p>
+</page>

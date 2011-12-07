@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="doubling" xml:lang="de">
+  <info>
+    <link type="guide" xref="index#playing"/>
+    <link type="seealso" xref="rolling-dice"/>
+    <desc>
+      Using the Doubling Cube
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Doubling</title>
+  <section id="turning-cube">
+    <title>Doubling Your Opponent</title>
+    <subtitle>Turning the Cube</subtitle>
+    <p>
+      When you see the doubling cube, and it is not located
+      at your opponent's side of the board, you can turn the
+      cube against her and double the stakes.
+    </p>
+    <p>
+      You can turn the cube by
+    </p>
+    <list>
+      <item><p>by double-clicking the cube</p></item>
+      <item><p>by clicking the <gui style="button">plus button</gui> in the <link xref="board-toolbar">board toolbar</link></p></item>
+    </list>
+    <p>
+      The cube will now appear in the middle of the board.
+    </p>
+    <p>
+      Your opponent now either has to accept the cube, and
+      continue at twice the stakes, or give up, and lose
+      the number of points the cube showed before you doubled.
+    </p>
+  </section>
+
+  <section id="answering-cube">
+    <title>Getting Doubled</title>
+    <subtitle>Answering to the Cube</subtitle>
+    <p>
+      If your opponent doubled you, the doubling cube will
+      appear in the middle of the board, showing the new 
+      stakes.
+    </p>
+    <p>
+      Your now either have to accept the cube, and
+      continue at twice the stakes, or give up, and lose
+      the number of points the cube showed before the cube
+      was turned.
+    </p>
+    <p>
+      You can accept the cube
+    </p>
+    <list>
+      <item><p>by double-clicking it</p></item>
+      <item><p>by clicking the <gui style="button">accept button</gui> 
+         in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
+    </list>
+    <p>
+      You can refuse the cube
+    </p>
+    <list>
+      <item><p>by right-clicking it</p></item>
+      <item><p>by clicking the <gui style="button">refuse button</gui> 
+         in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
+    </list>
+    <p>
+      If you accepted the cube, it will now be shown on your side
+      of the board.  If you refused it, the game ends.
+    </p>
+  </section>
+</page>
