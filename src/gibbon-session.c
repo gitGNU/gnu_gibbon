@@ -2720,20 +2720,48 @@ gibbon_session_set_available (GibbonSession *self, gboolean available)
 
 void
 gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
-                                gboolean reply)
+                                gboolean reply, guint match_length)
 {
         GtkWidget *dialog;
-        GtkWidget *window;
+        GtkWidget *window = NULL;
         GtkWidget *entry;
         GtkWidget *content_area;
         gint response;
         const gchar *message;
+        GibbonSavedInfo *saved_info;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
         g_return_if_fail (who != NULL);
         g_return_if_fail (*who);
 
         gibbon_inviter_list_remove (self->priv->inviter_list, who);
+
+        if (reply
+            && (saved_info = g_hash_table_lookup (self->priv->saved_games,
+                                                  who))
+            && !saved_info->match_length && match_length) {
+                window = gibbon_app_get_window (self->priv->app);
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_YES_NO,
+                                "<span weight='bold' size='larger'>"
+                                "%s</span>\n%s",
+                                _("This will end your saved match!"),
+                                _("You still have a saved match of unlimited"
+                                  " length with that player.  If you accept"
+                                  " the invitation, your saved match will be"
+                                  " terminated.\n"
+                                  "Do you really want to accept the"
+                                  " invitation?"));
+                gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+                                                 GTK_RESPONSE_NO);
+                response = gtk_dialog_run (GTK_DIALOG (dialog));
+                gtk_widget_destroy (dialog);
+                if (response == GTK_RESPONSE_NO)
+                        return;
+        }
 
         if (reply) {
                 gibbon_connection_queue_command (self->priv->connection,
@@ -2742,7 +2770,8 @@ gibbon_session_reply_to_invite (GibbonSession *self, const gchar *who,
                 return;
         }
 
-        window = gibbon_app_get_window (self->priv->app);
+        if (!window)
+                window = gibbon_app_get_window (self->priv->app);
 
         dialog = gtk_dialog_new_with_buttons (_("Decline Invitation"),
                                               GTK_WINDOW (window),

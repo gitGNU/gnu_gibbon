@@ -362,10 +362,12 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
                 who = gibbon_inviter_list_view_row_name (self);
                 length = gibbon_inviter_list_view_row_length (self);
                 if (event->x <= self->priv->decline_column->width) {
-                        gibbon_session_reply_to_invite (session, who, FALSE);
+                        gibbon_session_reply_to_invite (session, who, FALSE,
+                                                        length);
                 } else if (event->x <= self->priv->decline_column->width
                                        + self->priv->accept_column->width) {
-                        gibbon_session_reply_to_invite (session, who, TRUE);
+                        gibbon_session_reply_to_invite (session, who, TRUE,
+                                                        length);
                 } else {
                         g_free (who);
                         return FALSE;
