@@ -485,6 +485,39 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
         session = gibbon_app_get_session (self->priv->app);
         saved_info = gibbon_session_get_saved (session, who);
 
+        if (saved_info && !saved_info->match_length) {
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (main_window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_NONE,
+                                "<span weight='bold' size='larger'>"
+                                "%s</span>\n%s",
+                                _("New match or resume?"),
+                                _("You still have a saved match of unlimited"
+                                  " length with that player.  You can either"
+                                  " resume your saved match or start a new"
+                                  " match.  The latter will terminate your"
+                                  " saved match.\n"));
+                gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+                                        _("Cancel"),
+                                        GTK_RESPONSE_CANCEL,
+                                        _("Resume unlimited match"), 1,
+                                        _("Start new match"), 2,
+                                        NULL);
+                reply = gtk_dialog_run (GTK_DIALOG (dialog));
+                gtk_widget_destroy (dialog);
+                if (reply == GTK_RESPONSE_CANCEL) {
+                        return;
+                } else if (reply == 1) {
+                        gibbon_connection_queue_command (connection, FALSE,
+                                                         "invite %s", who);
+                        return;
+                } else {
+                        saved_info = NULL;
+                }
+        }
+
         if (saved_info) {
                 dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
