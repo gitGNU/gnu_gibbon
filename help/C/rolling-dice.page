@@ -1,0 +1,35 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="rolling-dice">
+  <info>
+    <link type="guide" xref="index#playing"/>
+    <link type="seealso" xref="checker-movement"/>
+    <link type="seealso" xref="swapping-dice"/>
+    <link type="seealso" xref="doubling"/>
+    <desc>
+      How To Roll the Dice
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Rolling the Dice</title>
+  <p>
+    When you can roll the dice, you see a little dice cup
+    on the board.  Left-clicking it, will roll the dice. 
+  </p>
+  <p>
+    The cup's function is mainly to remind you that you may
+    have a chance of <link xref="doubling"/> your
+    opponent instead.
+  </p>
+  <p>
+    In situations where you cannot double, the server will
+    usually roll the dice on your behalf automatically.
+  </p>
+</page>

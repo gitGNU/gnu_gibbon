@@ -14,7 +14,7 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Create Commons Share Alike 3.0</p>
+      <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
@@ -23,7 +23,7 @@
     <app>Gibbon</app> is a program that allows you to play backgammon online 
     against other players, both humans and computer players, on the
     <link href="http://www.fibs.com/"><app>First Internet Backgammon 
-    Server (FIBS)</app></link>.  You can use <app>Gibbon</app> to also
+    Server (FIBS)</app></link>.  You can also use <app>Gibbon</app> to
     play on other servers that use the 
     <link href="http://www.fibs.com/fibs_interface.html">FIBS Client
     Protocol</link>.  At the time of this writing the only alternative
@@ -51,7 +51,7 @@
     documentation but this may fail.  If you find a discrepancy, or
     find factual errors, misspellings, typos, or any other shortcomings
     in this documentation (or the software itself) feel free to file a bug 
-    report.  All feedback is welcome.
+    report, see <link xref="bugreports"/>.  All feedback is welcome.
   </p>
   <p>
     <app>Gibbon</app> should work on many different computer platforms.

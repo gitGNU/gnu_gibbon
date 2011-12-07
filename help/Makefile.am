@@ -24,13 +24,26 @@ DOC_ID = gibbon
 DOC_FIGURES = connect-register.png \
 	      gibbon-logo.png
 
-DOC_PAGES = bugreports.page \
-	    connect.page \
-	    create_account.page \
-	    do_not.page \
-	    droppers.page \
-	    index.page \
-	    introduction.page
+DOC_PAGES = \
+	bugreports.page \
+	cannot-invite.page \
+	checker-movement.page \
+	connect.page \
+	create-account.page \
+	do-not.page \
+	doubling.page \
+	droppers.page \
+	game-chat-concept.page \
+	index.page \
+	introduction.page \
+	invite.page \
+	kibitz.page \
+	resigning.page \
+	rolling-dice.page \
+	say.page \
+	swapping-dice.page \
+	watching-matches.page \
+	whisper.page
 
 DOC_LINGUAS = de
 dist-hook: doc-dist-hook

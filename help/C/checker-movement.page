@@ -1,0 +1,43 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="checker-movement">
+  <info>
+    <link type="guide" xref="index#playing"/>
+    <link type="seealso" xref="finishing-a-move"/>
+    <link type="seealso" xref="rolling-dice"/>
+    <link type="seealso" xref="swapping-dice"/>
+    <desc>
+      How To Move The Checkers Around On the Board
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Moving The Checkers</title>
+  <p>
+    After you have rolled the dice, see <link xref="rolling-dice"/>,
+    you must move your checkers.
+  </p>
+  <p>
+    The most basic way to do this is to click on a checker you
+    want to move.  Left-clicking the checker will use the left
+    die, right-clicking will use the right die.
+  </p>
+  <p>
+    If you left-click, but the left die cannot be used 
+    <app>Gibbon</app> will check, whether you can use the, right
+    die instead. That means that it is always possible to do
+    the entire move with the left mouse button if you obey the
+    order of the dice.
+  </p>
+  <p>
+    If you cannot move, there is nothing to do for you.  The
+    dice you rolled will vanish after a short period of time, and
+    your opponent continues.
+  </p>
+</page>

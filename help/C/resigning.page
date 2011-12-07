@@ -1,0 +1,65 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="resigning">
+  <info>
+    <link type="guide" xref="index#playing"/>
+    <desc>
+      How to Resign And Answer to Resignations
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Resigning</title>
+  <section id="you-resign">
+    <title>You Resign</title>
+    <p>You can resign the current game anytime during a match.  You do this
+       by clicking the <gui style="button">white flag button</gui> in the <link
+         xref="board-toolbar">board toolbar</link>.
+    </p>
+    <p>
+      You will then be asked how you want to resign.  With a normal resignation
+      you will lose the current value of the cube.  A gammon resignation loses
+      twice the value of the cube, a backgammon resignation three times the value
+      of the cube.
+    </p>
+    <p>
+      Your opponent does not have to accept your resignation.  In that case
+      the game goes on or you have to offer another resignation.
+    </p>
+    <p>
+      If the resignation was accepted the current game finishes.
+    </p>
+    <p>
+      Please note that it is considered good manners to offer a resignation, when
+      the output of the game is clear.  On the other hand, it is considered
+      rude behavior to force your opponent to resign or to resign with a
+      certain value.  Please keep in mind that your opponent may not be able
+      to see that the outcome of a game or match is already determined! And
+      do not forget the remote possibility that your own judgement about the state
+      of the game is wrong!
+    </p>
+  </section>
+
+  <section id="opponent-resigns">
+    <title>Answering To a Resignation</title>
+    <p>
+      If your opponent resigned, a dialog box will pop up showing you
+      the details.  You will see how (normal, gammon, backgammon) the
+      opponent resigned, and how many points you will win by accepting
+      the resignation.
+    </p>
+    <p>
+      You can accept or reject the resignation.
+    </p>
+    <p>
+      If you think that the resignation is not correct, you can inform
+      your opponent politely.  But please do not force anybody.
+    </p>
+  </section>
+</page>

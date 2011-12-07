@@ -2,7 +2,7 @@
       type="topic"
       id="droppers">
   <info>
-    <link type="guide" xref="index"/>
+    <link type="guide" xref="index#misc"/>
     <desc>
       What are droppers?
     </desc>
@@ -11,7 +11,7 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Create Commons Share Alike 3.0</p>
+      <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
@@ -20,7 +20,7 @@
     When playing on FIBS, you will often hear people complaing about
     <em>droppers</em>.
   </p>
-  <section id="what_are_droppers">
+  <section id="what-are-droppers">
     <title>What Are Droppers?</title>
     <p>
       The term dropper was actually coined for people that avoid losing a match
@@ -47,13 +47,13 @@
       records drops, it never takes such excuses into account, mostly
       because as a software it does not even know about that excuse but also
       because it considers such excuses irrelevant.  The software just
-      records the fact that somebody agreed on match of a certain length
+      records the fact that somebody agreed on a match of a certain length
       and is later not able to finish that match.
     </p>
   </section>
-  <section id="measures_against_droppers">
+  <section id="measures-against-droppers">
     <title>Measures Against Droppers</title>
-    <section id="gibbon_reliability">
+    <section id="gibbon-reliability">
       <title>Reliabity Measurement</title>
       <p>
         The best measure against droppers is to avoid playing them.  And
@@ -62,8 +62,8 @@
         does that automatically for you.
       </p>
       <p>
-        In the <link xref="players_list">players'</link> and <link
-        xref="inviters_list">inviters' list</link> you will see colored
+        In the <link xref="players-list">players'</link> and <link
+        xref="inviters-list">inviters' list</link> you will see a colored
         bar next to the player names.  A green bar signifies reliable
         players, a red bar unreliable players.  Yellow and orange bars
         are displayed for players on the verge of being reliable (yellow)
@@ -78,7 +78,7 @@
         reasons.
       </p>
     </section>
-    <section id="saved_limit">
+    <section id="saved-limit">
       <title>Limit on Saved Matches</title>
       <p>
         Whenever a match is terminated prematurely, FIBS will save the
@@ -90,8 +90,8 @@
         But before that, the number of saved matches is stored with
         each user.  Gibbon displays the number of saved matches for
         every player that invites you to a match.  You can also find
-        it out by issuing the command <command>show savedcount
-        playername</command> in the <link xref="server_console">server
+        it out by issuing the command <cmd>show savedcount
+        playername</cmd> in the <link xref="server-console">server
         console</link>.
       </p>
       <p>
@@ -100,7 +100,7 @@
         player can only resumve saved matches but cannot start new ones.
       </p>
     </section>
-    <section id="dropper_bots">
+    <section id="dropper-bots">
       <title>Bots</title>
       <p>
         Two computer players on FIBS try to warn people about droppers.
@@ -108,19 +108,19 @@
       <p>
         One of them is <em>MissManners</em>.  Whenever somebody with a
         high saved count logs in, MissManners will display a warning
-        about that in the <xref link="shout_area">shout area</xref>.
+        about that in the <link xref="shout-area">shout area</link>.
         You should not invite such players to matches.
       </p>
       <p>
         The other computer player is <em>RepBotNG</em> (for Reputation
-        Bot Next Generation).  You can <xref link="chat">chat</xref>
+        Bot Next Generation).  You can <link xref="chat">chat</link>
         with RepBotNG like with a human player.  Telling RepBotNG
         "help" will display more information.
       </p>
       <p>
-        Most of the time you will <command>ask</command> about another
-        player's reputation or <command>complain</command> about an
-        opponent or <command>vouch</command> for an opponent.
+        Most of the time you will <cmd>ask</cmd> about another
+        player's reputation or <cmd>complain</cmd> about an
+        opponent or <cmd>vouch</cmd> for an opponent.
       </p>
     </section>
   </section>

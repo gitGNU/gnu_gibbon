@@ -1,0 +1,34 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="whisper">
+  <info>
+    <link type="guide" xref="index#game-chat"/>
+    <link type="guide" xref="index#watching"/>
+    <desc>
+      Talking to other spectators (watchers) but not
+      the players
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Talking to Other Spectators (<cmd>whisper</cmd>)</title>
+  <p>
+    If you only want to talk to other people <link xref="watching">watching</link>
+    the same game as you but not to the players themselves, you should
+    “whisper”.  You can do this  by typing text into the
+    <link xref="game-chat-area">game chat area</link> and
+    only selecting the <gui style="button">whisper</gui>
+    button.
+  </p>
+  <p>
+    This will only work while you are <link xref="watching">watching</link>.
+    If you are the only one watching a match, this feature is not
+    particularly useful.
+  </p>
+</page>

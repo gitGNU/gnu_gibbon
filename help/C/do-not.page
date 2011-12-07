@@ -1,8 +1,10 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
-      id="do_not">
+      id="do-not">
   <info>
-    <link type="guide" xref="index"/>
+    <link type="guide" xref="index#misc"/>
+    <link type="seealso" xref="create-account"/>
+    <link type="seealso" xref="droppers"/>
     <desc>
       Things You should not do on FIBS.
     </desc>
@@ -11,7 +13,7 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Create Commons Share Alike 3.0</p>
+      <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
@@ -20,7 +22,7 @@
     There are a few things that you should not do on FIBS or any other
     backgammon server.
   </p>
-  <section id="multiple_accounts">
+  <section id="multiple-accounts">
     <title>Multiple Accounts</title>
     <p>
       Multiple accounts on the same server violate the server terms
@@ -28,10 +30,10 @@
       violating this rule, please contact the server administrator, for
       <app>FIBS</app> this is
       <link href="http://www.pattib.org/contact.shtml">Patti Beadles</link>,
-      prior to creating a new account
+      prior to creating a new account.
     </p>
   </section>
-  <section id="drop_matches">
+  <section id="drop-matches">
     <title>Drop Matches or Refuse Resumes</title>
     <p>
       Before you start a match or accept an invitation you should make
@@ -53,7 +55,7 @@
       decide yourself.
     </p>
   </section>
-  <section id="rude_language">
+  <section id="rude-language">
     <title>Bad Behavior and Rude Language</title>
     <p>
       Be polite to other people!

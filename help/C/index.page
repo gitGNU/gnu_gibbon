@@ -23,7 +23,25 @@
     Gibbon 
   </title>
 
-  <section id="getting_started" style="2column">
+  <section id="getting-started" style="2column">
     <title>Getting Started</title>
+  </section>
+  <section id="playing" style="2column">
+    <title>Playing</title>
+    <section id="game-chat" style="2column">
+      <title>Chatting During the Game</title>
+    </section>
+  </section>
+  <section id="watching" style="2column">
+    <title>Watching</title>
+  </section>
+  <section id="troubleshooting" style="2column">
+    <title>Help and Troubleshooting</title>
+    <section id="faq" style="2column">
+      <title>Frequently Asked Questions</title>
+    </section>
+  </section>
+  <section id="misc" style="2column">
+    <title>Miscellaneous</title>
   </section>
 </page>
