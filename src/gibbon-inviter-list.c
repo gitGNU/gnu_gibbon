@@ -384,7 +384,7 @@ gibbon_inviter_list_get_match_length (const GibbonInviterList *self,
 
 void
 gibbon_inviter_list_set_match_length (GibbonInviterList *self,
-                                      const gchar *name, gint length)
+                                      const gchar *name, guint length)
 {
         gchar *stringified;
 
@@ -397,9 +397,7 @@ gibbon_inviter_list_set_match_length (GibbonInviterList *self,
 
         player->match_length = length;
 
-        if (length < 0) {
-                stringified = g_strdup (_("resume"));
-        } else if (length == 0) {
+        if (length == 0) {
                 stringified = g_strdup_printf ("\xe2\x88\x9e");
         } else {
                 stringified = g_strdup_printf ("%d", length);

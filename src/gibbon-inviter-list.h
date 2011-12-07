@@ -100,7 +100,7 @@ gint gibbon_inviter_list_get_match_length (const GibbonInviterList *self,
                                            const gchar *inviter_name);
 void gibbon_inviter_list_set_match_length (GibbonInviterList *self,
                                            const gchar *inviter_name,
-                                           gint count);
+                                           guint length);
 void gibbon_inviter_list_update_country (GibbonInviterList *self,
                                          const gchar *hostname,
                                          const GibbonCountry *country);
