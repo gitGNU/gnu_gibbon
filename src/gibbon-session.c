@@ -803,8 +803,10 @@ gibbon_session_clip_who_info (GibbonSession *self,
         }
 
         if  (gibbon_inviter_list_exists (self->priv->inviter_list, who)) {
+                g_printerr ("%s is an inviter, saved game: %s\n",
+                            who, has_saved ? "yes" : "no");
                 gibbon_inviter_list_set (self->priv->inviter_list, who,
-                                         rating, experience,
+                                         has_saved, rating, experience,
                                          reliability, confidence,
                                          client, client_icon,
                                          hostname, country, email);
@@ -1762,6 +1764,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         guint port;
         const gchar *server;
         GibbonConnection *connection;
+        gboolean has_saved;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
                                      &opponent))
@@ -1815,8 +1818,12 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         client_icons = gibbon_app_get_client_icons (self->priv->app);
         client_icon = gibbon_client_icons_get_icon (client_icons, client_type);
 
+        has_saved = g_hash_table_lookup (self->priv->saved_games, opponent) ?
+                        TRUE : FALSE;
+
         gibbon_inviter_list_set (self->priv->inviter_list,
                                  opponent,
+                                 has_saved,
                                  rating,
                                  experience,
                                  reliability,
@@ -1985,6 +1992,8 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
                              (gpointer) g_strdup (opponent), (gpointer) info);
         gibbon_player_list_update_has_saved (self->priv->player_list,
                                              opponent, TRUE);
+        gibbon_inviter_list_update_has_saved (self->priv->inviter_list,
+                                              opponent, TRUE);
 
         return GIBBON_CLIP_CODE_SHOW_SAVED;
 }

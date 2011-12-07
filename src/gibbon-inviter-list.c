@@ -69,6 +69,7 @@ gibbon_inviter_list_init (GibbonInviterList *self)
 
         store = gtk_list_store_new (GIBBON_INVITER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
+                                    G_TYPE_INT,
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE,
                                     G_TYPE_UINT,
@@ -120,6 +121,8 @@ gibbon_inviter_list_class_init (GibbonInviterListClass *klass)
 
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_NAME] = 
                 G_TYPE_STRING;
+        gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_NAME_WEIGHT] =
+                G_TYPE_INT;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_LENGTH] =
                 G_TYPE_STRING;
         gibbon_inviter_list_column_types[GIBBON_INVITER_LIST_COL_RATING] = 
@@ -176,6 +179,7 @@ free_inviter (gpointer _inviter)
 void
 gibbon_inviter_list_set (GibbonInviterList *self, 
                         const gchar *name,
+                        gboolean has_saved,
                         gdouble rating,
                         guint experience,
                         gdouble reliability,
@@ -189,6 +193,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
         struct GibbonInviter *inviter;
         GibbonReliability rel;
         const GdkPixbuf *country_icon;
+        gint name_weight = has_saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
 
         g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
         g_return_if_fail (name);
@@ -209,6 +214,7 @@ gibbon_inviter_list_set (GibbonInviterList *self,
         gtk_list_store_set (self->priv->store,
                             &inviter->iter,
                             GIBBON_INVITER_LIST_COL_NAME, name,
+                            GIBBON_INVITER_LIST_COL_NAME_WEIGHT, name_weight,
                             GIBBON_INVITER_LIST_COL_RATING, rating,
                             GIBBON_INVITER_LIST_COL_EXPERIENCE, experience,
                             GIBBON_INVITER_LIST_COL_CLIENT, client,
@@ -418,4 +424,29 @@ gibbon_inviter_list_update_country (GibbonInviterList *self,
                                 GTK_TREE_MODEL (self->priv->store),
                                 &iter);
         }
+}
+
+void
+gibbon_inviter_list_update_has_saved (GibbonInviterList *self, const gchar *who,
+                                      gboolean has_saved)
+{
+        struct GibbonInviter *player;
+        GtkTreeIter iter;
+        gint weight;
+
+        g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
+        g_return_if_fail (who != NULL);
+
+        /*
+         * Silently fail, if player is not known.
+         */
+        player = g_hash_table_lookup (self->priv->hash, who);
+        if (!player)
+                return;
+        iter = player->iter;
+
+        weight = has_saved ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
+        gtk_list_store_set (self->priv->store, &iter,
+                            GIBBON_INVITER_LIST_COL_NAME_WEIGHT, weight,
+                           -1);
 }

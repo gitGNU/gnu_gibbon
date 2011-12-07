@@ -52,6 +52,7 @@ struct _GibbonInviterList
 
 enum {
         GIBBON_INVITER_LIST_COL_NAME = 0,
+        GIBBON_INVITER_LIST_COL_NAME_WEIGHT,
         GIBBON_INVITER_LIST_COL_LENGTH,
         GIBBON_INVITER_LIST_COL_RATING,
         GIBBON_INVITER_LIST_COL_EXPERIENCE,
@@ -74,6 +75,7 @@ void gibbon_inviter_list_connect_view (GibbonInviterList *self,
 void gibbon_inviter_list_clear (GibbonInviterList *self);
 void gibbon_inviter_list_set (GibbonInviterList *self, 
                               const gchar *inviter_name,
+                              gboolean has_saved,
                               gdouble rating,
                               guint experience,
                               gdouble reliability,
@@ -100,6 +102,9 @@ void gibbon_inviter_list_set_match_length (GibbonInviterList *self,
 void gibbon_inviter_list_update_country (GibbonInviterList *self,
                                          const gchar *hostname,
                                          const GibbonCountry *country);
+void gibbon_inviter_list_update_has_saved (GibbonInviterList *self,
+                                           const gchar *who,
+                                           gboolean has_saved);
 
 G_END_DECLS
 
