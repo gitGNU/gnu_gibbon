@@ -81,8 +81,8 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
                                 GDK_CURRENT_TIME, &error);
 
         if (error) {
-                gibbon_app_display_error (app, _("Error displaying help"),
-                                          "%s", error->message);
+                gibbon_app_display_error (app, _("Error displaying help:"
+						 " %s"), error->message);
         } else if (!success) {
                 gibbon_app_display_error (app, NULL,
                                           "%s",

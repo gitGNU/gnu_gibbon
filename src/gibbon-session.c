@@ -2294,23 +2294,41 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                 self->priv->position->scores[1] += points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
-                                g_strdup_printf (_("%s has won the game"
-                                                   " and %d points!"),
-                                                 who, points);
+                                g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                              "%s has won the"
+                                                              " game and one"
+                                                              " point!",
+                                                              "%s has won the"
+                                                              " game and %d"
+                                                              " points!",
+                                                              points),
+                                                              who, points);
         } else if (0 == g_strcmp0 (who, "You")) {
                 self->priv->position->scores[0] += points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
-                                g_strdup_printf (_("You have won the game"
-                                                   " and %d points!"),
-                                                 points);
+                                g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                              "You have won the"
+                                                              " game and one"
+                                                              " point!",
+                                                              "You have won the"
+                                                              " game and %d"
+                                                              " points!",
+                                                              points),
+                                                              points);
         } else if (0 == g_strcmp0 (who, self->priv->watching)) {
                 self->priv->position->scores[0] += points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
-                                g_strdup_printf (_("%s has won the game"
-                                                   " and %d points!"),
-                                                 who, points);
+                                g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                              "%s has won the"
+                                                              " game and one"
+                                                              " point!",
+                                                              "%s has won the"
+                                                              " game and %d"
+                                                              " points!",
+                                                              points),
+                                                              who, points);
         } else {
                 return -1;
         }
@@ -2697,7 +2715,7 @@ gibbon_session_registration_success (GibbonSession *self)
         gibbon_app_display_info (self->priv->app,
                                  _("Registration successful!"),
                                  "%s",
-                                 _("Please do not forget your password! It@"
+                                 _("Please do not forget your password! It"
                                    " cannot be recovered."
                                    "\n"
                                    "You have to connect to the server again to"
@@ -2900,8 +2918,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
                 break;
         case GIBBON_MOVE_USE_HIGHER:
                 gibbon_app_display_error (self->priv->app, NULL, "%s",
-                                          _("You have to use the higher die"
-                                            " if possible!"));
+                                          _("You have to use the higher die!"));
                 break;
         case GIBBON_MOVE_TRY_SWAP:
                 gibbon_app_display_error (self->priv->app, NULL, "%s",

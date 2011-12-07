@@ -739,7 +739,7 @@
                             <property name="can_focus">False</property>
                             <property name="tooltip_markup">Accept doubling cube or resignation</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="label" translatable="yes">Annehmen</property>
+                            <property name="label" translatable="yes">Accept</property>
                             <property name="use_underline">True</property>
                             <property name="stock_id">gtk-ok</property>
                           </object>
