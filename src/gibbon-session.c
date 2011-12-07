@@ -1850,6 +1850,8 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         g_free (hostname);
         g_free (email);
 
+        if (length < 0)
+                length = 0;
         gibbon_inviter_list_set_match_length (self->priv->inviter_list,
                                               opponent, length);
 
