@@ -1,5 +1,4 @@
 POTFILES
 Makefile.in.in
 *.gmo
-gibbon.pot
 !missing
