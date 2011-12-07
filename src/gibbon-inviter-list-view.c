@@ -191,6 +191,7 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 _("Inviter"),
                 gtk_cell_renderer_text_new (),
                 "text", GIBBON_INVITER_LIST_COL_NAME,
+                "weight", GIBBON_INVITER_LIST_COL_NAME_WEIGHT,
                 NULL);
         col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
