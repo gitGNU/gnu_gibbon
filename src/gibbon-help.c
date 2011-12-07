@@ -53,7 +53,7 @@ gibbon_help_show_about (GObject *emitter, const GibbonApp *app)
                                "copyright", copyright,
                                "translator-credits", _("translator-credits"),
                                "version", VERSION,
-                               "website", "http://gibbon.guido-flohr.net/",
+                               "website", "http://www.gibbon.bg/",
                                "logo", logo,
                                NULL);
 

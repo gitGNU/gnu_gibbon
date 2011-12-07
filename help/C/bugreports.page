@@ -17,8 +17,12 @@
 
   <title>Reporting Bugs</title>
   <p>
-    Short of a real bug-reporting system, please report bugs to
-    <link href="mailto:guido@imperia.net">Guido Flohr
-    &lt;guido@imperia.net&gt;</link>.
+    Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon.
+    Search for “Bug Tracker” if you cannot find the submit link.
+  </p>
+  <p>
+    The bug tracking system allows “voting” for bugs. Every registered user 
+    has up to 100 votes and can distribute them to open bugs. Bugs with a 
+    higher number of votes are usually prioritized higher.
   </p>
 </page>
