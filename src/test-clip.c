@@ -1764,6 +1764,24 @@ static struct test_case test_corrupt = {
                 }
 };
 
+static struct test_case test_heard_you00 = {
+                "** 1 user heard you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "500" },
+                                { GIBBON_CLIP_TYPE_UINT, "1" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_heard_you01 = {
+                "** 42 users heard you.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "500" },
+                                { GIBBON_CLIP_TYPE_UINT, "42" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01,
@@ -1921,7 +1939,10 @@ static struct test_case *test_cases[] = {
                 &test_address01,
                 &test_address02,
 
-                &test_corrupt
+                &test_corrupt,
+
+                &test_heard_you00,
+                &test_heard_you01
 };
 
 static gboolean test_single_case (struct test_case *test_case);
