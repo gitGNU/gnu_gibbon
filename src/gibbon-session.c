@@ -640,6 +640,10 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS:
                 retval = gibbon_session_handle_address_error (self, iter);
                 break;
+        case GIBBON_CLIP_CODE_HEARD_YOU:
+                /* Ignored.  */
+                retval = code;
+                break;
         }
 
         gibbon_clip_free_result (values);
