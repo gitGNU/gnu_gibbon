@@ -212,6 +212,9 @@ static gboolean gibbon_clip_parse_you (const gchar *line,
 static gboolean gibbon_clip_parse_2stars_you (const gchar *line,
                                               gchar **tokens,
                                               GSList **result);
+static gboolean gibbon_clip_parse_2stars_number (const gchar *line,
+                                                 gchar **tokens,
+                                                 GSList **result);
 static gboolean gibbon_clip_parse_2stars_error (const gchar *line,
                                                 gchar **tokens,
                                                 GSList **result);
@@ -1984,6 +1987,45 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
 }
 
 static gboolean
+gibbon_clip_parse_2stars_number (const gchar *line, gchar **tokens,
+                                 GSList **result)
+{
+        guint64 number;
+        gchar *endptr;
+
+        errno = 0;
+        number = g_ascii_strtoull (tokens[1], &endptr, 10);
+
+        if (errno)
+                return FALSE;
+        if (number == 0 && endptr == tokens[1])
+                return FALSE;
+
+        if ((0 == g_strcmp0 (tokens[2], "users")
+            || 0 == g_strcmp0 (tokens[2], "user"))
+            && 0 == g_strcmp0 (tokens[3], "heard")
+            && 0 == g_strcmp0 (tokens[4], "you.")
+            && !tokens[5]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_HEARD_YOU);
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 number);
+                return TRUE;
+        }
+
+        *result = gibbon_clip_alloc_int (*result,
+                                         GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+        *result = gibbon_clip_alloc_string (*result,
+                                            GIBBON_CLIP_TYPE_STRING,
+                                            line + 3);
+
+        return TRUE;
+}
+
+static gboolean
 gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
                                 GSList **result)
 {
@@ -2054,6 +2096,8 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
 
         if (0 == g_strcmp0 ("You", tokens[1]))
                 return gibbon_clip_parse_2stars_you (line, tokens, result);
+        else if (tokens[1][0] >= '1' && tokens[1][0] <= '9')
+                return gibbon_clip_parse_2stars_number (line, tokens, result);
         else if (0 == g_strcmp0 ("Error:", tokens[1]))
                 return gibbon_clip_parse_2stars_error (line, tokens, result);
 

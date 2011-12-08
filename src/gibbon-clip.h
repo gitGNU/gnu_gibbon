@@ -94,7 +94,10 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_SHOW_SAVED = 409,
                         GIBBON_CLIP_CODE_SHOW_SAVED_NONE = 410,
                         GIBBON_CLIP_CODE_SHOW_SAVED_COUNT = 411,
-                        GIBBON_CLIP_CODE_SHOW_ADDRESS = 412
+                        GIBBON_CLIP_CODE_SHOW_ADDRESS = 412,
+
+                        /* Less important messages with two leading stars.  */
+                        GIBBON_CLIP_CODE_HEARD_YOU = 500
 };
 
 enum GibbonClipType {
