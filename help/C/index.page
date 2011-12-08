@@ -35,6 +35,9 @@
   <section id="watching" style="2column">
     <title>Watching</title>
   </section>
+  <section id="gui" style="2column">
+    <title>The User Interface</title>
+  </section>
   <section id="troubleshooting" style="2column">
     <title>Help and Troubleshooting</title>
     <section id="faq" style="2column">

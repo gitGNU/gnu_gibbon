@@ -1,0 +1,139 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="board-toolbar">
+  <info>
+    <link type="guide" xref="index#gui"/>
+    <desc>
+      The small toolbar above the board
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Board Toolbar</title>
+  <p>
+    The small toolbar above the board contains controls 
+    that are useful while <link xref="playing">playing</link>
+    or <link xref="watching">watching</link>
+  </p>
+  <media type="image" mime="src/png" src="figures/board-toolbar.png">
+    The Board Toolbar
+  </media>
+  <p>
+    All buttons will display a tooltip explaining their functions, when
+    you leave the mouse pointer over them for a short period of time.
+    The buttons from left to right are:
+  </p>
+  <list type="numbered">
+    <item>
+      <p>Refresh Board</p>
+      <p>
+        Use this button if you have the impression that the communication
+        with the server hangs.  It will request a new board state from the
+        server and update the board accordingly.
+      </p>
+    </item>
+    <item id="undo-moves">
+      <p>Undo Moves</p>
+      <p>
+        Move all checkers to their original places.
+      </p>
+    </item>
+    <item>
+      <p>Resign</p>
+      <p>
+        Display a dialog that allows you to choose the correct 
+        <link xref="resigning">resignation</link>.
+      </p>
+    </item>
+    <item>
+      <p>Accept</p>
+      <p>
+        Accept a proposal from your opponent.  That is either a 
+        <link xref="doubling">double</link> or a
+        <link xref="resigning">resignation</link>.
+      </p>
+    </item>
+    <item>
+      <p>Reject</p>
+      <p>
+        Reject a proposal from your opponent.  That is either a 
+        <link xref="doubling">double</link> or a
+        <link xref="resigning">resignation</link>.
+      </p>
+    </item>
+    <item>
+      <p>Double</p>
+      <p>
+        Offer a <link xref="doubling">double</link> to your opponent.
+      </p>
+    </item>
+    <item>
+      <p>Fullscreen</p>
+      <p>
+        Switch to fullscreen mode.  
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Record the Match</p>
+      <p>
+        This is a toggle button.  When activated, the current match is
+        recorded.  
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Previous Game</p>
+      <p>
+        Got to the previous game in the match. Clicking the 
+        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Moves</gui></link> button will bring you back to the current position.
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Previous Move</p>
+      <p>
+        Got to the previous (half!) move in the match. Clicking the 
+        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Moves</gui></link> button will bring you back to the current position.
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Previous Move</p>
+      <p>
+        Got to the next (half!) move in the match. Clicking the 
+        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Moves</gui></link> button will bring you back to the current position.
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Next Game</p>
+      <p>
+        Got to the next game in the match. Clicking the 
+        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Moves</gui></link> button will bring you back to the current position.
+        <em>This is not yet implemented!</em>
+      </p>
+    </item>
+    <item>
+      <p>Leave Game</p>
+      <p>
+        Leave the current game. Please do not make a habit of that. See
+        <link xref="do-not#drop-matches"/> for details. 
+      </p>
+      <p>
+        The server will save your running match, and you can resume it
+        to a later point in time.
+      </p>
+    </item>
+  </list>
+</page>
