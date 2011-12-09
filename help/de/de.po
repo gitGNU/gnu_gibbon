@@ -20,7 +20,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-09 17:19+0200\n"
+"POT-Creation-Date: 2011-12-09 17:53+0200\n"
 "PO-Revision-Date: 2011-12-09 14:54+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
@@ -30,249 +30,952 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplural-2; plural=(n != 1);\n"
 
-#: C/whisper.page:7(desc)
-msgid "Talking to other spectators (watchers) but not the players"
-msgstr "Mit anderen Zuschauern sprechen, aber nicht mit den Spielern"
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr ""
 
-#: C/whisper.page:12(name) C/watching-matches.page:10(name)
-#: C/swapping-dice.page:12(name) C/say.page:11(name)
-#: C/rolling-dice.page:13(name) C/resigning.page:10(name)
-#: C/kibitz.page:12(name) C/invite.page:12(name) C/introduction.page:13(name)
-#: C/index.page:11(name) C/game-chat-concept.page:15(name)
-#: C/droppers.page:10(name) C/doubling.page:11(name) C/do-not.page:12(name)
-#: C/create-account.page:10(name) C/connect.page:10(name)
-#: C/checker-movement.page:13(name) C/cannot-invite.page:11(name)
-#: C/bugreports.page:10(name) C/board-toolbar.page:10(name)
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/board-toolbar.page:24(media)
+msgctxt "_"
+msgid ""
+"external ref='figures/board-toolbar.png' "
+"md5='b2dd73313901e80559ca223ffcc3d9a9'"
+msgstr ""
+
+#: C/board-toolbar.page:6(info/desc)
+msgid "The small toolbar above the board"
+msgstr ""
+
+#: C/board-toolbar.page:10(credit/name) C/bugreports.page:10(credit/name)
+#: C/cannot-invite.page:11(credit/name)
+#: C/checker-movement.page:13(credit/name) C/connect.page:10(credit/name)
+#: C/create-account.page:10(credit/name) C/do-not.page:12(credit/name)
+#: C/doubling.page:11(credit/name) C/droppers.page:10(credit/name)
+#: C/game-chat-concept.page:15(credit/name) C/index.page:11(credit/name)
+#: C/introduction.page:13(credit/name) C/invite.page:12(credit/name)
+#: C/kibitz.page:12(credit/name) C/resigning.page:10(credit/name)
+#: C/rolling-dice.page:13(credit/name) C/say.page:11(credit/name)
+#: C/swapping-dice.page:12(credit/name)
+#: C/watching-matches.page:10(credit/name) C/whisper.page:12(credit/name)
 msgid "Guido Flohr"
 msgstr "Guido Flohr"
 
-#: C/whisper.page:13(email) C/watching-matches.page:11(email)
-#: C/swapping-dice.page:13(email) C/say.page:12(email)
-#: C/rolling-dice.page:14(email) C/resigning.page:11(email)
-#: C/kibitz.page:13(email) C/invite.page:13(email)
-#: C/introduction.page:14(email) C/index.page:12(email)
-#: C/game-chat-concept.page:16(email) C/droppers.page:11(email)
-#: C/doubling.page:12(email) C/do-not.page:13(email)
-#: C/create-account.page:11(email) C/connect.page:11(email)
-#: C/checker-movement.page:14(email) C/cannot-invite.page:12(email)
-#: C/bugreports.page:11(email) C/board-toolbar.page:11(email)
-msgid "guido@imperia.net"
-msgstr "guido@imperia.net"
-
-#: C/whisper.page:16(p) C/watching-matches.page:14(p)
-#: C/swapping-dice.page:16(p) C/say.page:15(p) C/rolling-dice.page:17(p)
-#: C/resigning.page:14(p) C/kibitz.page:16(p) C/invite.page:16(p)
-#: C/introduction.page:17(p) C/index.page:15(p) C/game-chat-concept.page:19(p)
-#: C/droppers.page:14(p) C/doubling.page:15(p) C/do-not.page:16(p)
-#: C/create-account.page:14(p) C/connect.page:14(p)
-#: C/checker-movement.page:17(p) C/cannot-invite.page:15(p)
-#: C/bugreports.page:14(p) C/board-toolbar.page:14(p)
+#: C/board-toolbar.page:14(license/p) C/bugreports.page:14(license/p)
+#: C/cannot-invite.page:15(license/p) C/checker-movement.page:17(license/p)
+#: C/connect.page:14(license/p) C/create-account.page:14(license/p)
+#: C/do-not.page:16(license/p) C/doubling.page:15(license/p)
+#: C/droppers.page:14(license/p) C/game-chat-concept.page:19(license/p)
+#: C/index.page:15(license/p) C/introduction.page:17(license/p)
+#: C/invite.page:16(license/p) C/kibitz.page:16(license/p)
+#: C/resigning.page:14(license/p) C/rolling-dice.page:17(license/p)
+#: C/say.page:15(license/p) C/swapping-dice.page:16(license/p)
+#: C/watching-matches.page:14(license/p) C/whisper.page:16(license/p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Create Commons Share Alike 3.0"
 
-#: C/whisper.page:20(title)
-msgid "Talking to Other Spectators (<cmd>whisper</cmd>)"
-msgstr "Mit anderen Zuschauern sprechen (<cmd>whisper</cmd>)"
+#: C/board-toolbar.page:18(page/title) C/board-toolbar.page:24(page/media)
+msgid "The Board Toolbar"
+msgstr ""
 
-#: C/whisper.page:21(p)
+#: C/board-toolbar.page:19(page/p)
+msgid ""
+"The small toolbar above the board contains controls that are useful while "
+"<link xref=\"index#playing\">playing</link> or <link xref=\"index#watching"
+"\">watching</link>"
+msgstr ""
+
+#: C/board-toolbar.page:27(page/p)
+msgid ""
+"All buttons will display a tooltip explaining their functions, when you "
+"leave the mouse pointer over them for a short period of time. The buttons "
+"from left to right are:"
+msgstr ""
+
+#: C/board-toolbar.page:34(item/p)
+msgid "Refresh Board"
+msgstr ""
+
+#: C/board-toolbar.page:35(item/p)
+msgid ""
+"Use this button if you have the impression that the communication with the "
+"server hangs. It will request a new board state from the server and update "
+"the board accordingly."
+msgstr ""
+
+#: C/board-toolbar.page:42(item/p)
+msgid "Undo Moves"
+msgstr ""
+
+#: C/board-toolbar.page:43(item/p)
+msgid "Move all checkers to their original places."
+msgstr ""
+
+#: C/board-toolbar.page:48(item/p)
+#, fuzzy
+msgid "Resign"
+msgstr "Aufgeben"
+
+#: C/board-toolbar.page:49(item/p)
+msgid ""
+"Display a dialog that allows you to choose the correct <link xref=\"resigning"
+"\">resignation</link>."
+msgstr ""
+
+#: C/board-toolbar.page:55(item/p)
+msgid "Accept"
+msgstr ""
+
+#: C/board-toolbar.page:56(item/p)
+msgid ""
+"Accept a proposal from your opponent. That is either a <link xref=\"doubling"
+"\">double</link> or a <link xref=\"resigning\">resignation</link>."
+msgstr ""
+
+#: C/board-toolbar.page:63(item/p)
+msgid "Reject"
+msgstr ""
+
+#: C/board-toolbar.page:64(item/p)
+msgid ""
+"Reject a proposal from your opponent. That is either a <link xref=\"doubling"
+"\">double</link> or a <link xref=\"resigning\">resignation</link>."
+msgstr ""
+
+#: C/board-toolbar.page:71(item/p)
+msgid "Double"
+msgstr ""
+
+#: C/board-toolbar.page:72(item/p)
+msgid "Offer a <link xref=\"doubling\">double</link> to your opponent."
+msgstr ""
+
+#: C/board-toolbar.page:77(item/p)
+msgid "Fullscreen"
+msgstr ""
+
+#: C/board-toolbar.page:78(item/p)
+msgid "Switch to fullscreen mode. <em>This is not yet implemented!</em>"
+msgstr ""
+
+#: C/board-toolbar.page:84(item/p)
+msgid "Record the Match"
+msgstr ""
+
+#: C/board-toolbar.page:85(item/p)
+msgid ""
+"This is a toggle button. When activated, the current match is recorded. "
+"<em>This is not yet implemented!</em>"
+msgstr ""
+
+#: C/board-toolbar.page:92(item/p)
+msgid "Previous Game"
+msgstr ""
+
+#: C/board-toolbar.page:93(item/p)
+msgid ""
+"Got to the previous game in the match. Clicking the <link xref=\"board-"
+"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
+"will bring you back to the current position. <em>This is not yet implemented!"
+"</em>"
+msgstr ""
+
+#: C/board-toolbar.page:101(item/p)
+msgid "Previous Move"
+msgstr ""
+
+#: C/board-toolbar.page:102(item/p)
+msgid ""
+"Got to the previous (half!) move in the match. Clicking the <link xref="
+"\"board-toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> "
+"button will bring you back to the current position. <em>This is not yet "
+"implemented!</em>"
+msgstr ""
+
+#: C/board-toolbar.page:110(item/p)
+msgid "Next Move"
+msgstr ""
+
+#: C/board-toolbar.page:111(item/p)
+msgid ""
+"Got to the next (half!) move in the match. Clicking the <link xref=\"board-"
+"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
+"will bring you back to the current position. <em>This is not yet implemented!"
+"</em>"
+msgstr ""
+
+#: C/board-toolbar.page:119(item/p)
+msgid "Next Game"
+msgstr ""
+
+#: C/board-toolbar.page:120(item/p)
+msgid ""
+"Got to the next game in the match. Clicking the <link xref=\"board-"
+"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
+"will bring you back to the current position. <em>This is not yet implemented!"
+"</em>"
+msgstr ""
+
+#: C/board-toolbar.page:128(item/p)
+msgid "Leave Game"
+msgstr ""
+
+#: C/board-toolbar.page:129(item/p)
+msgid ""
+"Leave the current game. Please do not make a habit of that. See <link xref="
+"\"do-not#drop-matches\"/> for details."
+msgstr ""
+
+#: C/board-toolbar.page:133(item/p)
+msgid ""
+"The server will save your running match, and you can resume it to a later "
+"point in time."
+msgstr ""
+
+#: C/bugreports.page:6(info/desc)
+msgid "Reporting bugs for <app>Gibbon</app> or this documentation."
+msgstr ""
+
+#: C/bugreports.page:18(page/title)
+msgid "Reporting Bugs"
+msgstr ""
+
+#: C/bugreports.page:19(page/p)
+msgid ""
+"Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon. Search "
+"for “Bug Tracker” if you cannot find the submit link."
+msgstr ""
+
+#: C/bugreports.page:23(page/p)
+msgid ""
+"The bug tracking system allows “voting” for bugs. Every registered user has "
+"up to 100 votes and can distribute them to open bugs. Bugs with a higher "
+"number of votes are usually prioritized higher."
+msgstr ""
+
+#: C/cannot-invite.page:4(page/title)
+msgid "I Cannot Invite Anybody"
+msgstr ""
+
+#: C/cannot-invite.page:7(info/desc)
+msgid "Please check your own status. You must set it to “available”."
+msgstr ""
+
+#: C/checker-movement.page:9(info/desc)
+msgid "How To Move The Checkers Around On the Board"
+msgstr ""
+
+#: C/checker-movement.page:21(page/title)
+msgid "Moving The Checkers"
+msgstr ""
+
+#: C/checker-movement.page:22(page/p)
+msgid ""
+"After you have rolled the dice, see <link xref=\"rolling-dice\"/>, you must "
+"move your checkers."
+msgstr ""
+
+#: C/checker-movement.page:26(page/p)
+msgid ""
+"The most basic way to do this is to click on a checker you want to move. "
+"Left-clicking the checker will use the left die, right-clicking will use the "
+"right die."
+msgstr ""
+
+#: C/checker-movement.page:31(page/p)
+msgid ""
+"If you left-click, but the left die cannot be used <app>Gibbon</app> will "
+"check, whether you can use the, right die instead. That means that it is "
+"always possible to do the entire move with the left mouse button if you obey "
+"the order of the dice."
+msgstr ""
+
+#: C/checker-movement.page:38(page/p)
+msgid ""
+"If you cannot move, there is nothing to do for you. The dice you rolled will "
+"vanish after a short period of time, and your opponent continues."
+msgstr ""
+
+#: C/connect.page:6(info/desc)
+msgid "Connect to a backgammon server."
+msgstr ""
+
+#: C/connect.page:18(page/title)
+msgid "Connecting To a Server"
+msgstr ""
+
+#: C/connect.page:19(page/p)
+msgid ""
+"Once you have <link xref=\"starting\">started</link> <app>Gibbon</app>, you "
+"can initiate a connection to a server by clicking the <gui style=\"button"
+"\">Connect</gui> button in the <link xref=\"main-toolbar\">main toolbar</"
+"link>. Alternatively, you can use the <guiseq><gui>File</gui><gui>Connect</"
+"gui></guiseq> menu entry:"
+msgstr ""
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/create-account.page:45(media)
+msgctxt "_"
+msgid ""
+"external ref='figures/connect-register.png' "
+"md5='2c6fa2d9d41f444b8f5cc670388bfdfb'"
+msgstr ""
+
+#: C/create-account.page:6(info/desc)
+msgid "Create a new account."
+msgstr ""
+
+#: C/create-account.page:18(page/title)
+msgid "Create a New Account"
+msgstr ""
+
+#: C/create-account.page:19(page/p)
+msgid ""
+"Before you can connect (see <link xref=\"connect\"/>) to <app>FIBS</app> you "
+"need an account. Do not be shy creating an account! You do not have to play "
+"immediately. It is also not considered <link xref=\"do-not\">bad habit</"
+"link> to not respond to invites to matches or other contact requests if you "
+"just want to look around first."
+msgstr ""
+
+#: C/create-account.page:26(page/p)
+msgid ""
+"For obvious reasons, <app>FIBS</app> does not allow multiple accounts for "
+"the same person. If you think you have a legitimate reason for violating "
+"this rule, please contact the server administrator, for <app>FIBS</app> this "
+"is <link href=\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>, "
+"prior to creating a new account."
+msgstr ""
+
+#: C/create-account.page:34(page/p)
+msgid ""
+"If you want to create a new account on <app>FIBS</app>, please visit the "
+"<link href=\"http://fibs.com/javafibs/register.html\">registration page</"
+"link> and follow the instructions you find there. Clicking the <gui>Connect</"
+"gui> button in the <link xref=\"main-toolbar\">main toolbar</link> or "
+"selecting <guiseq><gui>File</gui><gui>Connect</gui></guiseq> will popup the "
+"connection dialog that allows you to invoke the same page by clicking on "
+"<gui>Get new account on fibs.com</gui>:"
+msgstr ""
+
+#: C/create-account.page:44(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/connect-register.png\"> "
+"Create a new account via the connect dialog. </media>"
+msgstr ""
+
+#: C/do-not.page:8(info/desc)
+msgid "Things You should not do on FIBS."
+msgstr ""
+
+#: C/do-not.page:20(page/title)
+msgid "Things You Should Not Do"
+msgstr ""
+
+#: C/do-not.page:21(page/p)
+msgid ""
+"There are a few things that you should not do on FIBS or any other "
+"backgammon server."
+msgstr ""
+
+#: C/do-not.page:26(section/title)
+msgid "Multiple Accounts"
+msgstr ""
+
+#: C/do-not.page:27(section/p)
+msgid ""
+"Multiple accounts on the same server violate the server terms and "
+"conditions. If you think you have a legitimate reason for violating this "
+"rule, please contact the server administrator, for <app>FIBS</app> this is "
+"<link href=\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>, "
+"prior to creating a new account."
+msgstr ""
+
+#: C/do-not.page:37(section/title)
+msgid "Drop Matches or Refuse Resumes"
+msgstr ""
+
+#: C/do-not.page:38(section/p)
+msgid ""
+"Before you start a match or accept an invitation you should make sure that "
+"you have enough to time to play it to an end. Otherwise consider playing a "
+"<link xres=\"bot\">computer player</link> instead. If you absolutely have to "
+"prematurely leave a match you should always tell your opponent first and may "
+"arrange for a resume."
+msgstr ""
+
+#: C/do-not.page:45(section/p)
+msgid ""
+"You should consider that the server stores data about your saved matches and "
+"this information is visible to other players. If you have a lot of saved "
+"matches your reputation will therefore get bad."
+msgstr ""
+
+#: C/do-not.page:51(section/p)
+msgid ""
+"If somebody invites you to resume a saved match that you have terminated "
+"before you should always try to accept that invitation. If the other person "
+"was responsible for the incident you can decide yourself."
+msgstr ""
+
+#: C/do-not.page:59(section/title)
+msgid "Bad Behavior and Rude Language"
+msgstr ""
+
+#: C/do-not.page:60(section/p)
+msgid "Be polite to other people!"
+msgstr ""
+
+#: C/doubling.page:7(info/desc)
+msgid "Using the Doubling Cube"
+msgstr ""
+
+#: C/doubling.page:19(page/title)
+msgid "Doubling"
+msgstr ""
+
+#: C/doubling.page:21(section/title)
+msgid "Doubling Your Opponent"
+msgstr ""
+
+#: C/doubling.page:22(section/subtitle)
+msgid "Turning the Cube"
+msgstr ""
+
+#: C/doubling.page:23(section/p)
+msgid ""
+"When you see the doubling cube, and it is not located at your opponent's "
+"side of the board, you can turn the cube against her and double the stakes."
+msgstr ""
+
+#: C/doubling.page:28(section/p)
+msgid "You can turn the cube by"
+msgstr ""
+
+#: C/doubling.page:32(item/p)
+msgid "by double-clicking the cube"
+msgstr ""
+
+#: C/doubling.page:33(item/p)
 #, fuzzy
 msgid ""
-"If you only want to talk to other people <link xref=\"index#watching"
-"\">watching</link> the same game as you but not to the players themselves, "
-"you should “whisper”. You can do this by typing text into the <link xref="
-"\"game-chat-concept\">game chat area</link> and only selecting the <gui "
-"style=\"button\">whisper</gui> button."
+"by clicking the <link xref=\"board-toolbar#accept\"><gui style=\"button"
+"\">double</gui></link> button in the <link xref=\"board-toolbar\">board "
+"toolbar</link>."
 msgstr ""
-"Wenn nur die Menschen, die ebenfalls dem aktuellen Spiel <link xref="
-"\"watching\">zuschauen</link>, Ihre Nachricht sehen sollen, müssen Sie "
-"„flüstern“. Sie erreichen das, indem Sie Text in den <link xref=\"game-chat-"
-"area\">Spiel-Chatbereich<link> eingeben, und dabei nur den <gui style="
-"\"button\">Flüsterbutton</gui> anwählen."
+"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
+"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
+"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
+"link>."
 
-#: C/whisper.page:29(p)
+#: C/doubling.page:37(section/p)
+msgid "The cube will now appear in the middle of the board."
+msgstr ""
+
+#: C/doubling.page:40(section/p)
+msgid ""
+"Your opponent now either has to accept the cube, and continue at twice the "
+"stakes, or give up, and lose the number of points the cube showed before you "
+"doubled."
+msgstr ""
+
+#: C/doubling.page:48(section/title)
+msgid "Getting Doubled"
+msgstr ""
+
+#: C/doubling.page:49(section/subtitle)
+msgid "Answering to the Cube"
+msgstr ""
+
+#: C/doubling.page:50(section/p)
+msgid ""
+"If your opponent doubled you, the doubling cube will appear in the middle of "
+"the board, showing the new stakes."
+msgstr ""
+
+#: C/doubling.page:55(section/p)
+msgid ""
+"Your now either have to accept the cube, and continue at twice the stakes, "
+"or give up, and lose the number of points the cube showed before the cube "
+"was turned."
+msgstr ""
+
+#: C/doubling.page:61(section/p)
+msgid "You can accept the cube"
+msgstr ""
+
+#: C/doubling.page:65(item/p)
+msgid "by double-clicking it"
+msgstr ""
+
+#: C/doubling.page:66(item/p)
 #, fuzzy
 msgid ""
-"This will only work while you are <link xref=\"index#watching\">watching</"
-"link>. If you are the only one watching a match, this feature is not "
-"particularly useful."
+"by clicking the <link xref=\"board-toolbar#accept\"><gui style=\"button"
+"\">accept button</gui></link> in the <link xref=\"board-toolbar\"><gui style="
+"\"button\">board toolbar</gui></link>."
 msgstr ""
-"Das funktioniert allerdings nur, während Sie <link xref=\"watching"
-"\">zuschauen</link>. Falls Sie die einzige Person sind, die dem Spiel "
-"zuschaut, ist die Funktion natürlich nicht sehr nützlich."
+"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
+"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
+"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
+"link>."
 
-#: C/watching-matches.page:6(desc)
-msgid "Watching Other People Play"
-msgstr "Anderen beim Spielen zuschauen"
+#: C/doubling.page:70(section/p)
+msgid "You can refuse the cube"
+msgstr ""
 
-#: C/watching-matches.page:18(title) C/index.page:36(title)
+#: C/doubling.page:74(item/p)
+msgid "by right-clicking it"
+msgstr ""
+
+#: C/doubling.page:75(item/p)
+#, fuzzy
+msgid ""
+"by clicking the <link xref=\"board-toolbar#reject\"><gui style=\"button"
+"\">reject button</gui></link> in the <gui><link xref=\"board-toolbar\">board "
+"toolbar</link></gui>"
+msgstr ""
+"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
+"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
+"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
+"link>."
+
+#: C/doubling.page:79(section/p)
+msgid ""
+"If you accepted the cube, it will now be shown on your side of the board. If "
+"you refused it, the game ends."
+msgstr ""
+
+#: C/droppers.page:6(info/desc)
+msgid "What are droppers?"
+msgstr ""
+
+#: C/droppers.page:18(page/title)
+msgid "Droppers"
+msgstr ""
+
+#: C/droppers.page:19(page/p)
+msgid ""
+"When playing on FIBS, you will often hear people complaing about "
+"<em>droppers</em>."
+msgstr ""
+
+#: C/droppers.page:24(section/title)
+msgid "What Are Droppers?"
+msgstr ""
+
+#: C/droppers.page:25(section/p)
+msgid ""
+"The term dropper was actually coined for people that avoid losing a match by "
+"quitting, for example by dropping the connection. They probably do that not "
+"out of pure frustration about losing but in order to preserve a good rating."
+msgstr ""
+
+#: C/droppers.page:31(section/p)
+msgid ""
+"Many players on FIBS and Gibbon use a broader sense of the term dropper. "
+"Whenever somebody terminates a match prematurely, this is considered a drop, "
+"an unfriendly act. For the other party it is the same whether somebody drops "
+"the connection in the middle of a match in a vain effort to \"correct\" the "
+"own rating or because this somebody is called to lunch or the boss comes in "
+"or because this somebody is playing with an unstable internet connection."
+msgstr ""
+
+#: C/droppers.page:40(section/p)
+msgid ""
+"In fact, Gibbon uses an even broader meaning of the term dropper. Gibbon is "
+"a software, and cannot detect if somebody dropped a match after warning the "
+"opponent about it. This is not really considered a shortcoming. If your "
+"opponent asks you to quit a match because some urgent stuff slipped in, many "
+"people will be polite enough to accept it but that behavior is still "
+"annoying. When Gibbon records drops, it never takes such excuses into "
+"account, mostly because as a software it does not even know about that "
+"excuse but also because it considers such excuses irrelevant. The software "
+"just records the fact that somebody agreed on a match of a certain length "
+"and is later not able to finish that match."
+msgstr ""
+
+#: C/droppers.page:55(section/title)
+msgid "Measures Against Droppers"
+msgstr ""
+
+#: C/droppers.page:57(section/title)
+msgid "Reliabity Measurement"
+msgstr ""
+
+#: C/droppers.page:58(section/p)
+msgid ""
+"The best measure against droppers is to avoid playing them. And the best "
+"strategy to detect droppers is to watch the activities of all other players. "
+"This is cumbersome for humans but Gibbon does that automatically for you."
+msgstr ""
+
+#: C/droppers.page:64(section/p)
+msgid ""
+"In the <link xref=\"players-list\">players'</link> and <link xref=\"inviters-"
+"list\">inviters' list</link> you will see a colored bar next to the player "
+"names. A green bar signifies reliable players, a red bar unreliable players. "
+"Yellow and orange bars are displayed for players on the verge of being "
+"reliable (yellow) or being unreliable (orange). The length of the bar gives "
+"you an idea of how confident Gibbon is about that information. The longer "
+"the bar, the more data has been collected about the player in question, and "
+"the more accurate the information will be."
+msgstr ""
+
+#: C/droppers.page:75(section/p)
+msgid ""
+"Most of the time it is enough to just look at that bar. Avoid people without "
+"a green bar, unless you know them or have other reasons."
+msgstr ""
+
+#: C/droppers.page:82(section/title)
+msgid "Limit on Saved Matches"
+msgstr ""
+
+#: C/droppers.page:83(section/p)
+msgid ""
+"Whenever a match is terminated prematurely, FIBS will save the match, and it "
+"can be resumed later. After a certain time (about two weeks at the time of "
+"this writing), saved matches will be wiped out from the database."
+msgstr ""
+
+#: C/droppers.page:89(section/p)
+msgid ""
+"But before that, the number of saved matches is stored with each user. "
+"Gibbon displays the number of saved matches for every player that invites "
+"you to a match. You can also find it out by issuing the command <cmd>show "
+"savedcount playername</cmd> in the <link xref=\"server-console\">server "
+"console</link>."
+msgstr ""
+
+#: C/droppers.page:97(section/p)
+msgid ""
+"Currently, FIBS imposes a hard limit on the possible number of saved "
+"matches. Whenever a player's saved count reaches 10, that player can only "
+"resumve saved matches but cannot start new ones."
+msgstr ""
+
+#: C/droppers.page:104(section/title)
+msgid "Bots"
+msgstr ""
+
+#: C/droppers.page:105(section/p)
+msgid "Two computer players on FIBS try to warn people about droppers."
+msgstr ""
+
+#: C/droppers.page:108(section/p)
+msgid ""
+"One of them is <em>MissManners</em>. Whenever somebody with a high saved "
+"count logs in, MissManners will display a warning about that in the <link "
+"xref=\"shout-area\">shout area</link>. You should not invite such players to "
+"matches."
+msgstr ""
+
+#: C/droppers.page:114(section/p)
+msgid ""
+"The other computer player is <em>RepBotNG</em> (for Reputation Bot Next "
+"Generation). You can <link xref=\"chat\">chat</link> with RepBotNG like with "
+"a human player. Telling RepBotNG \"help\" will display more information."
+msgstr ""
+
+#: C/droppers.page:120(section/p)
+msgid ""
+"Most of the time you will <cmd>ask</cmd> about another player's reputation "
+"or <cmd>complain</cmd> about an opponent or <cmd>vouch</cmd> for an opponent."
+msgstr ""
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/game-chat-concept.page:31(media)
+msgctxt "_"
+msgid ""
+"external ref='figures/game-chat.png' md5='e029de2a937eade8e32f4a2c2e22ca4a'"
+msgstr ""
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/game-chat-concept.page:48(media)
+msgctxt "_"
+msgid "external ref='figures/say.png' md5='78c6133069feba2b3bd098e0fd8d3329'"
+msgstr ""
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/game-chat-concept.page:58(media)
+msgctxt "_"
+msgid ""
+"external ref='figures/whisper.png' md5='f0e3b5cca4e0918aa255cfbbcd4f2fe1'"
+msgstr ""
+
+#: C/game-chat-concept.page:11(info/desc)
+msgid "How Chatting During the Game is Handled in <app>Gibbon</app>"
+msgstr ""
+
+#: C/game-chat-concept.page:23(page/title)
+msgid "Concepts"
+msgstr ""
+
+#: C/game-chat-concept.page:24(page/p)
+msgid ""
+"As opposed to <link xref=\"tell\">private chats</link> or <link xref=\"shout"
+"\">lobby shouts</link>, all communication during a game is displayed in the "
+"so called game chat area below the board."
+msgstr ""
+
+#: C/game-chat-concept.page:30(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/game-chat.png\"> The "
+"game chat area </media>"
+msgstr ""
+
+#: C/game-chat-concept.page:35(page/p)
+msgid ""
+"Possible participants in the communication at the board are the two "
+"opponents and possible spectators. When you are currently playing yourself, "
+"you can talk to your opponent, or the spectators, or both. When you are "
+"watching, you have the choice of addressing the either other spectators "
+"only, or the spectators and the players."
+msgstr ""
+
+#: C/game-chat-concept.page:43(page/p)
+msgid ""
+"Two buttons at the top of the game chat area visualize your current choice:"
+msgstr ""
+
+#: C/game-chat-concept.page:47(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/say.png\"> Players/"
+"opponents as recipients </media>"
+msgstr ""
+
+#: C/game-chat-concept.page:52(page/p)
+msgid ""
+"This is the <gui style=\"button\">say</gui> button. If it is selected, it "
+"means that your message should go to the players."
+msgstr ""
+
+#: C/game-chat-concept.page:57(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/whisper.png\"> Other "
+"spectators as recipients </media>"
+msgstr ""
+
+#: C/game-chat-concept.page:62(page/p)
+msgid ""
+"This is the <gui style=\"button\">whisper</gui> button. If it is selected, "
+"it means that your message should go to the spectators."
+msgstr ""
+
+#: C/game-chat-concept.page:67(page/p)
+msgid ""
+"Not all combinations make sense in all situations. For example, when nobody "
+"is <link xref=\"watching\">watching</link> there is no point in talking to "
+"spectators."
+msgstr ""
+
+#: C/game-chat-concept.page:72(page/p)
+msgid ""
+"When you are more comfortable with a command like approach, you can also use "
+"a drop down next to the message entry. It has the labels <gui style=\"label"
+"\">Say</gui> for addressing your opponent only, <gui style=\"label\">Kibitz</"
+"gui> for everybody, and <gui style=\"label\">Whisper</gui> for spectators "
+"only."
+msgstr ""
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.page:20(media)
+msgctxt "_"
+msgid ""
+"external ref='figures/gibbon-logo.png' md5='90767fd19bd5d82060c4a38ddecfdf77'"
+msgstr ""
+
+#: C/index.page:7(info/title)
+msgctxt "link"
+msgid "Gibbon"
+msgstr ""
+
+#: C/index.page:8(info/title)
+msgctxt "text"
+msgid "Gibbon"
+msgstr ""
+
+#: C/index.page:19(page/title)
+msgid ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/gibbon-logo.png\"> "
+"Gibbon logo </media> Gibbon"
+msgstr ""
+
+#: C/index.page:27(section/title)
+msgid "Getting Started"
+msgstr ""
+
+#: C/index.page:30(section/title)
+msgid "Playing"
+msgstr ""
+
+#: C/index.page:32(section/title)
+msgid "Chatting During the Game"
+msgstr ""
+
+#: C/index.page:36(section/title) C/watching-matches.page:18(page/title)
 msgid "Watching"
 msgstr "Zuschauen"
 
-#: C/watching-matches.page:19(p)
+#: C/index.page:39(section/title)
+msgid "The User Interface"
+msgstr ""
+
+#: C/index.page:42(section/title)
+msgid "Help and Troubleshooting"
+msgstr ""
+
+#: C/index.page:44(section/title)
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: C/index.page:48(section/title)
+msgid "Miscellaneous"
+msgstr ""
+
+#: C/introduction.page:6(info/desc)
 msgid ""
-"If you are interested in how other people are doing you can either peep at "
-"the current state of their ongoing match, or you can permanently follow "
-"another player and see all of his games."
+"Introduction to <link href=\"http://www.gibbon.bg/\"><app>Gibbon</app></"
+"link>, <link href=\"http://www.fibs.com/\"><app>FIBS</app></link>, and this "
+"documentation."
 msgstr ""
-"Falls Sie Sich dafür interessieren, was die anderen Leute auf dem Server "
-"gerade tun, können Sie entweder einen einmaligen Blick auf deren laufende "
-"Spiele werfen, oder aber einer bestimmten Spielerin oder einem bestimmten "
-"Spieler „folgen“, und alle Spiele dieser Person verfolgen."
 
-#: C/watching-matches.page:25(p)
-#, fuzzy
+#: C/introduction.page:21(page/title)
+msgid "Introduction"
+msgstr ""
+
+#: C/introduction.page:22(page/p)
 msgid ""
-"Either way, you have to go to the <link xref=\"players-list\"> players list</"
-"link> and right-click the row with the player you are interested in."
+"<app>Gibbon</app> is a program that allows you to play backgammon online "
+"against other players, both humans and computer players, on the <link href="
+"\"http://www.fibs.com/\"><app>First Internet Backgammon Server (FIBS)</app></"
+"link>. You can also use <app>Gibbon</app> to play on other servers that use "
+"the <link href=\"http://www.fibs.com/fibs_interface.html\">FIBS Client "
+"Protocol</link>. At the time of this writing the only alternative public "
+"server is <link href=\"http://www.tigergammon.com/\">TigerGammon</link>. "
+"<app>Gibbon</app> will work with all servers that are compatible with FIBS "
+"but this documentation and the program itself will often assume that you are "
+"playing on FIBS."
 msgstr ""
-"In jedem Fall müssen Sie dafür zur <link xref=\"players-list\">Spielerliste</"
-"link> gehen, und einen Rechtsklick auf die entsprechende Zeile ausführen."
 
-#: C/watching-matches.page:30(p)
-#, fuzzy
+#: C/introduction.page:36(page/p)
 msgid ""
-"If you select <gui style=\"label\">Look</gui>, the board will display the "
-"board that this player is currently looking at."
+"<app>FIBS</app> does not only provide online backgammon opponents but also "
+"an active community of users. <app>Gibbon</app> allows you to take part in "
+"all aspects of this community like chatting with other users, taking part in "
+"tournaments held on <app>FIBS</app>, or comparing your own skills with those "
+"of other players by comparing your own <link href=\"http://www.fibs.com/"
+"ratings.html\">FIBS rating</link> with that of other FIBSters."
 msgstr ""
-"Wenn Sie im daraufhin erscheinenden Kontextmenü <gui style=\"label"
-"\">Anschauen</gui> auswählen, wird der aktuelle Spielstand auf Ihrem Brett "
-"angezeigt."
 
-#: C/watching-matches.page:34(p)
-#, fuzzy
+#: C/introduction.page:46(page/p)
 msgid ""
-"If you select <gui style=\"label\">Watch</gui> instead, the board will "
-"permanently display the board state of the ongoing match of that user. You "
-"will see the dice rolled, cube actions, and resignations."
+"<app>Gibbon</app> is not yet ready. You may find features that are not yet "
+"covered in this documentation, and you may find features documented here "
+"that do not work, or that do not work as expected. An attempt is made to "
+"keep the software synchronized with this documentation but this may fail. If "
+"you find a discrepancy, or find factual errors, misspellings, typos, or any "
+"other shortcomings in this documentation (or the software itself) feel free "
+"to file a bug report, see <link xref=\"bugreports\"/>. All feedback is "
+"welcome."
 msgstr ""
-"Wenn Sie hingegen <gui style=\"label\">Beobachten</gui> auswählen, wird auf "
-"Ihrem Brett ständig der aktuelle Spielstand dargestellt."
 
-#: C/watching-matches.page:40(p)
-#, fuzzy
+#: C/introduction.page:56(page/p)
 msgid ""
-"If you want to stop watching a player, got again to the <link xref=\"players-"
-"list\">players flist</link>, right-click the player, and select <gui style="
-"\"label\">Unwatch</gui>."
+"<app>Gibbon</app> should work on many different computer platforms. Do not "
+"be surprised if features presented in this documentation look different on "
+"your computer. The overall presentation will be close enough for you to "
+"recognize it."
 msgstr ""
-"Wenn Sie nicht weiter zuschauen wollen, klicken Sie erneut mit rechts auf "
-"den Namen in der <link xref=\"players-list\">Spielerliste</link>, und wählen "
-"Sie <gui style=\"label\">Nicht mehr beobachten</gui> aus."
 
-#: C/watching-matches.page:45(p)
-msgid "If you start a match yourself, you automatically stop watching."
+#: C/invite.page:8(info/desc)
+msgid "Inviting To A Match"
 msgstr ""
-"Sobald Sie selber ein Match beginnen, hören Sie automatisch auf, anderen "
-"zuzuschauen."
 
-#: C/watching-matches.page:48(p)
+#: C/invite.page:20(page/title)
+msgid "Inviting Other Players To A Match"
+msgstr ""
+
+#: C/invite.page:21(page/p)
 msgid ""
-"Please note that both players are notified, when you start or stop watching "
-"them."
+"The <link xref=\"players-list\">players' list</link> shows everybody that is "
+"currently logged in. You can invite anybody to a match, that is currently "
+"not playing, and is available for a match."
 msgstr ""
-"Bitte beachten Sie, dass beide Spieler benachrichtigt werden, wenn Sie "
-"beginnen oder aufhören, Ihnen zuzuschauen."
 
-#: C/watching-matches.page:52(p)
+#: C/invite.page:27(page/p)
 msgid ""
-"You should also know that both players can prevent you from watching them or "
-"looking at their current board."
+"You invite a player by either double-clicking the corresponding line in the "
+"<link xref=\"players-list\">players' list</link> or by invoking the context "
+"menu (right-click or modifier key plus click) on the player's name."
 msgstr ""
-"Es ist auch möglich, dass andere Spielerinnen und Spieler Sie davon "
-"ausschließen, deren Spielstand zu sehen, oder ihnen zuzuschauen."
 
-#: C/swapping-dice.page:8(desc)
-msgid "How To Change the Order Of The Dice"
-msgstr "Wie sich die Reihenfolge der Würfel verändern lässt"
-
-#: C/swapping-dice.page:20(title)
-msgid "Swapping the Dice"
-msgstr "Würfel vertauschen"
-
-#: C/swapping-dice.page:21(p)
-msgid "You can swap the dice by left-clicking on them."
-msgstr ""
-"Sie können die beiden Würfel jederzeit vertauschen, indem Sie mit der linken "
-"Maustaste darauf klicken."
-
-#: C/say.page:7(desc)
-msgid "Talking to your opponent during the game"
-msgstr "Mit der Gegnerin der dem Gegner während des Spiels sprechen"
-
-#: C/say.page:19(title)
-msgid "Talking to Your Opponent (<cmd>say</cmd>)"
-msgstr "Mit dem Gegner sprechen (<cmd>say</cmd>)"
-
-#: C/say.page:20(p)
-#, fuzzy
+#: C/invite.page:33(page/p)
 msgid ""
-"You can chat with your opponent by typing text into the <link xref=\"game-"
-"chat-concept\">game chat area</link> and only selecting the <gui style="
-"\"button\">say</gui> button."
+"Before the invitation is sent, you can select the desired length of the "
+"match. You should avoid invitations for <link xref=\"unlimited-matches"
+"\">unlimited matches</link> unless you know what you are doing. The reason "
+"is that it is difficult to get out of an unlimited match, both for you and "
+"your opponent. See <link xref=\"unlimited-matches\"/> for more information."
 msgstr ""
-"Sie können mit Ihrer Gegnerin oder Ihrem Gegner während des Spiels chatten, "
-"indem Sie Text in den <link xref=\"game-chat-area\">Spiel-Chatbereich<link> "
-"eingeben, und dabei nur den <gui style=\"button\">„Sag“-Button</gui> "
-"anwählen."
 
-#: C/say.page:26(p)
-#, fuzzy
+#: C/kibitz.page:7(info/desc)
+msgid "Talking to both other spectators (watchers) and the players"
+msgstr "Sowohl mit anderen Zuschauern als auch mit den Spielern chatten"
+
+#: C/kibitz.page:20(page/title)
+msgid "Talking to Everybody At The Board (<cmd>kibitz</cmd>)"
+msgstr "Mit allen am Brett sprechen (<cmd>kibitz</cmd>)"
+
+#: C/kibitz.page:21(page/p)
 msgid ""
-"Please note that it is not possible to talk directly to one of the players "
-"while <link xref=\"index#watching\">watching</link> somebody else."
+"If you want to talk to everybody on the board, that is the players "
+"themselves and possible spectators you have to select both the <gui style="
+"\"button\">say</gui> and the <gui style=\"button\">whisper</gui> button "
+"while typing text into the <link xref=\"game-chat-area\">game chat area</"
+"link>."
 msgstr ""
-"Bitte beachten Sie, dass es nicht möglich ist, während Sie <link xref="
-"\"watching\">zuschauen</link> direkt mit einer der Spielerinnen oder einem "
-"der Spieler zu sprechen."
 
-#: C/rolling-dice.page:9(desc)
-msgid "How To Roll the Dice"
-msgstr "Wie gewürfelt wird"
-
-#: C/rolling-dice.page:21(title)
-msgid "Rolling the Dice"
-msgstr "Würfeln"
-
-#: C/rolling-dice.page:22(p)
+#: C/kibitz.page:28(page/p)
 msgid ""
-"When you can roll the dice, you see a little dice cup on the board. Left-"
-"clicking it, will roll the dice."
+"If you are currently playing, both your opponent and spectators will see "
+"your message. If you are <link xref=\"watching\">watching</link> both "
+"players and possible other spectators will see your message."
 msgstr ""
-"Sobald Sie an der Reihe sind und würfeln dürfe, sehen Sie einen kleinen "
-"Würfelbecher auf dem Brett. Durch einen Klick mit der linken Maustaste "
-"würfeln Sie."
 
-#: C/rolling-dice.page:26(p)
-msgid ""
-"The cup's function is mainly to remind you that you may have a chance of "
-"<link xref=\"doubling\"/> your opponent instead."
-msgstr ""
-"Der Sinn des Bechers besteht hauptsächlich darin, Sie daran zu erinnern, "
-"dass Sie eventuell auch die Möglichkeit haben, Ihre Gegnerin bzw. Ihren "
-"Gegner zu <link xref=\"doubling\">doppeln</link>."
-
-#: C/rolling-dice.page:31(p)
-msgid ""
-"In situations where you cannot double, the server will usually roll the dice "
-"on your behalf automatically."
-msgstr ""
-"In Situationen, in denen Sie nicht doppeln dürfen, würfelt der Server in der "
-"Regel automatisch für Sie."
-
-#: C/resigning.page:6(desc)
+#: C/resigning.page:6(info/desc)
 msgid "How to Resign And Answer to Resignations"
 msgstr ""
 "Wie man aufgibt, oder auf die Aufgabe der Gegnerin oder des Gegners antwortet"
 
-#: C/resigning.page:18(title)
+#: C/resigning.page:18(page/title)
 msgid "Resigning"
 msgstr "Aufgeben"
 
-#: C/resigning.page:20(title)
+#: C/resigning.page:20(section/title)
 msgid "You Resign"
 msgstr "Sie geben auf"
 
-#: C/resigning.page:21(p)
+#: C/resigning.page:21(section/p)
 #, fuzzy
 msgid ""
 "You can resign the current game anytime during a match. You do this by "
@@ -284,7 +987,7 @@ msgstr ""
 "gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
 "link>."
 
-#: C/resigning.page:26(p)
+#: C/resigning.page:26(section/p)
 msgid ""
 "You will then be asked how you want to resign. With a normal resignation you "
 "will lose the current value of the cube. A gammon resignation loses twice "
@@ -296,7 +999,7 @@ msgstr ""
 "einer Gammon-Aufgabe verlieren Sie den doppelten Wert des Dopplerwürfels, "
 "mit einer Backgammon-Aufgabe den dreifachen Wert des Dopplerwürfels."
 
-#: C/resigning.page:32(p)
+#: C/resigning.page:32(section/p)
 msgid ""
 "Your opponent does not have to accept your resignation. In that case the "
 "game goes on or you have to offer another resignation."
@@ -305,11 +1008,11 @@ msgstr ""
 "akzeptieren. In diesem Fall wird das Spiel einfach fortgesetzt, oder Sie "
 "müssen erneut aufgeben."
 
-#: C/resigning.page:36(p)
+#: C/resigning.page:36(section/p)
 msgid "If the resignation was accepted the current game finishes."
 msgstr "Wird die Aufgabe hingegen akzeptiert, wird das aktuelle Spiel beendet."
 
-#: C/resigning.page:39(p)
+#: C/resigning.page:39(section/p)
 msgid ""
 "Please note that it is considered good manners to offer a resignation, when "
 "the output of the game is clear. On the other hand, it is considered rude "
@@ -328,11 +1031,11 @@ msgstr ""
 "unwahrscheinlichen Fall, dass Sie mit Ihrer Einschätzung zum Spielstand "
 "einfach selber falsch liegen."
 
-#: C/resigning.page:51(title)
+#: C/resigning.page:51(section/title)
 msgid "Answering To a Resignation"
 msgstr "Auf eine Aufgabe antworten"
 
-#: C/resigning.page:52(p)
+#: C/resigning.page:52(section/p)
 msgid ""
 "If your opponent resigned, a dialog box will pop up showing you the details. "
 "You will see how (normal, gammon, backgammon) the opponent resigned, and how "
@@ -342,11 +1045,11 @@ msgstr ""
 "Details. Sie sehen in welcher Höhe (normal, Gammon, Backgammon) die Aufgabe "
 "angeboten wird, und wieviele Punkt Sie durch Annahme gewinnen."
 
-#: C/resigning.page:58(p)
+#: C/resigning.page:58(section/p)
 msgid "You can accept or reject the resignation."
 msgstr "Sie können die Aufgabe akzeptieren oder ablehnen."
 
-#: C/resigning.page:61(p)
+#: C/resigning.page:61(section/p)
 msgid ""
 "If you think that the resignation is not correct, you can inform your "
 "opponent politely. But please do not force anybody."
@@ -355,870 +1058,197 @@ msgstr ""
 "können Sie diese Ihrem Gegenüber höflich mitteilen. Aber bitte bedrängen Sie "
 "niemanden!"
 
-#: C/kibitz.page:7(desc)
-msgid "Talking to both other spectators (watchers) and the players"
-msgstr "Sowohl mit anderen Zuschauern als auch mit den Spielern chatten"
+#: C/rolling-dice.page:9(info/desc)
+msgid "How To Roll the Dice"
+msgstr "Wie gewürfelt wird"
 
-#: C/kibitz.page:20(title)
-msgid "Talking to Everybody At The Board (<cmd>kibitz</cmd>)"
-msgstr "Mit allen am Brett sprechen (<cmd>kibitz</cmd>)"
+#: C/rolling-dice.page:21(page/title)
+msgid "Rolling the Dice"
+msgstr "Würfeln"
 
-#: C/kibitz.page:21(p)
+#: C/rolling-dice.page:22(page/p)
 msgid ""
-"If you want to talk to everybody on the board, that is the players "
-"themselves and possible spectators you have to select both the <gui style="
-"\"button\">say</gui> and the <gui style=\"button\">whisper</gui> button "
-"while typing text into the <link xref=\"game-chat-area\">game chat area</"
-"link>."
+"When you can roll the dice, you see a little dice cup on the board. Left-"
+"clicking it, will roll the dice."
 msgstr ""
+"Sobald Sie an der Reihe sind und würfeln dürfe, sehen Sie einen kleinen "
+"Würfelbecher auf dem Brett. Durch einen Klick mit der linken Maustaste "
+"würfeln Sie."
 
-#: C/kibitz.page:28(p)
+#: C/rolling-dice.page:26(page/p)
 msgid ""
-"If you are currently playing, both your opponent and spectators will see "
-"your message. If you are <link xref=\"watching\">watching</link> both "
-"players and possible other spectators will see your message."
+"The cup's function is mainly to remind you that you may have a chance of "
+"<link xref=\"doubling\"/> your opponent instead."
 msgstr ""
+"Der Sinn des Bechers besteht hauptsächlich darin, Sie daran zu erinnern, "
+"dass Sie eventuell auch die Möglichkeit haben, Ihre Gegnerin bzw. Ihren "
+"Gegner zu <link xref=\"doubling\">doppeln</link>."
 
-#: C/invite.page:8(desc)
-msgid "Inviting To A Match"
-msgstr ""
-
-#: C/invite.page:20(title)
-msgid "Inviting Other Players To A Match"
-msgstr ""
-
-#: C/invite.page:21(p)
+#: C/rolling-dice.page:31(page/p)
 msgid ""
-"The <link xref=\"players-list\">players' list</link> shows everybody that is "
-"currently logged in. You can invite anybody to a match, that is currently "
-"not playing, and is available for a match."
+"In situations where you cannot double, the server will usually roll the dice "
+"on your behalf automatically."
 msgstr ""
+"In Situationen, in denen Sie nicht doppeln dürfen, würfelt der Server in der "
+"Regel automatisch für Sie."
 
-#: C/invite.page:27(p)
-msgid ""
-"You invite a player by either double-clicking the corresponding line in the "
-"<link xref=\"players-list\">players' list</link> or by invoking the context "
-"menu (right-click or modifier key plus click) on the player's name."
-msgstr ""
+#: C/say.page:7(info/desc)
+msgid "Talking to your opponent during the game"
+msgstr "Mit der Gegnerin der dem Gegner während des Spiels sprechen"
 
-#: C/invite.page:33(p)
-msgid ""
-"Before the invitation is sent, you can select the desired length of the "
-"match. You should avoid invitations for <link xref=\"unlimited-matches"
-"\">unlimited matches</link> unless you know what you are doing. The reason "
-"is that it is difficult to get out of an unlimited match, both for you and "
-"your opponent. See <link xref=\"unlimited-matches\"/> for more information."
-msgstr ""
+#: C/say.page:19(page/title)
+msgid "Talking to Your Opponent (<cmd>say</cmd>)"
+msgstr "Mit dem Gegner sprechen (<cmd>say</cmd>)"
 
-#: C/introduction.page:6(desc)
-msgid ""
-"Introduction to <link href=\"http://www.gibbon.bg/\"><app>Gibbon</app></"
-"link>, <link href=\"http://www.fibs.com/\"><app>FIBS</app></link>, and this "
-"documentation."
-msgstr ""
-
-#: C/introduction.page:21(title)
-msgid "Introduction"
-msgstr ""
-
-#: C/introduction.page:22(p)
-msgid ""
-"<app>Gibbon</app> is a program that allows you to play backgammon online "
-"against other players, both humans and computer players, on the <link href="
-"\"http://www.fibs.com/\"><app>First Internet Backgammon Server (FIBS)</app></"
-"link>. You can also use <app>Gibbon</app> to play on other servers that use "
-"the <link href=\"http://www.fibs.com/fibs_interface.html\">FIBS Client "
-"Protocol</link>. At the time of this writing the only alternative public "
-"server is <link href=\"http://www.tigergammon.com/\">TigerGammon</link>. "
-"<app>Gibbon</app> will work with all servers that are compatible with FIBS "
-"but this documentation and the program itself will often assume that you are "
-"playing on FIBS."
-msgstr ""
-
-#: C/introduction.page:36(p)
-msgid ""
-"<app>FIBS</app> does not only provide online backgammon opponents but also "
-"an active community of users. <app>Gibbon</app> allows you to take part in "
-"all aspects of this community like chatting with other users, taking part in "
-"tournaments held on <app>FIBS</app>, or comparing your own skills with those "
-"of other players by comparing your own <link href=\"http://www.fibs.com/"
-"ratings.html\">FIBS rating</link> with that of other FIBSters."
-msgstr ""
-
-#: C/introduction.page:46(p)
-msgid ""
-"<app>Gibbon</app> is not yet ready. You may find features that are not yet "
-"covered in this documentation, and you may find features documented here "
-"that do not work, or that do not work as expected. An attempt is made to "
-"keep the software synchronized with this documentation but this may fail. If "
-"you find a discrepancy, or find factual errors, misspellings, typos, or any "
-"other shortcomings in this documentation (or the software itself) feel free "
-"to file a bug report, see <link xref=\"bugreports\"/>. All feedback is "
-"welcome."
-msgstr ""
-
-#: C/introduction.page:56(p)
-msgid ""
-"<app>Gibbon</app> should work on many different computer platforms. Do not "
-"be surprised if features presented in this documentation look different on "
-"your computer. The overall presentation will be close enough for you to "
-"recognize it."
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/index.page:20(None)
-msgid ""
-"@@image: 'figures/gibbon-logo.png'; md5=90767fd19bd5d82060c4a38ddecfdf77"
-msgstr ""
-
-#: C/index.page:7(title) C/index.page:8(title)
-msgid "Gibbon"
-msgstr ""
-
-#: C/index.page:19(title)
-msgid ""
-"<media type=\"image\" mime=\"image/png\" src=\"figures/gibbon-logo.png\"> "
-"Gibbon logo </media> Gibbon"
-msgstr ""
-
-#: C/index.page:27(title)
-msgid "Getting Started"
-msgstr ""
-
-#: C/index.page:30(title)
-msgid "Playing"
-msgstr ""
-
-#: C/index.page:32(title)
-msgid "Chatting During the Game"
-msgstr ""
-
-#: C/index.page:39(title)
-msgid "The User Interface"
-msgstr ""
-
-#: C/index.page:42(title)
-msgid "Help and Troubleshooting"
-msgstr ""
-
-#: C/index.page:44(title)
-msgid "Frequently Asked Questions"
-msgstr ""
-
-#: C/index.page:48(title)
-msgid "Miscellaneous"
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/game-chat-concept.page:31(None)
-msgid "@@image: 'figures/game-chat.png'; md5=e029de2a937eade8e32f4a2c2e22ca4a"
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/game-chat-concept.page:48(None)
-msgid "@@image: 'figures/say.png'; md5=78c6133069feba2b3bd098e0fd8d3329"
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/game-chat-concept.page:58(None)
-msgid "@@image: 'figures/whisper.png'; md5=f0e3b5cca4e0918aa255cfbbcd4f2fe1"
-msgstr ""
-
-#: C/game-chat-concept.page:11(desc)
-msgid "How Chatting During the Game is Handled in <app>Gibbon</app>"
-msgstr ""
-
-#: C/game-chat-concept.page:23(title)
-msgid "Concepts"
-msgstr ""
-
-#: C/game-chat-concept.page:24(p)
-msgid ""
-"As opposed to <link xref=\"tell\">private chats</link> or <link xref=\"shout"
-"\">lobby shouts</link>, all communication during a game is displayed in the "
-"so called game chat area below the board."
-msgstr ""
-
-#: C/game-chat-concept.page:31(media)
-msgid "The game chat area"
-msgstr ""
-
-#: C/game-chat-concept.page:35(p)
-msgid ""
-"Possible participants in the communication at the board are the two "
-"opponents and possible spectators. When you are currently playing yourself, "
-"you can talk to your opponent, or the spectators, or both. When you are "
-"watching, you have the choice of addressing the either other spectators "
-"only, or the spectators and the players."
-msgstr ""
-
-#: C/game-chat-concept.page:43(p)
-msgid ""
-"Two buttons at the top of the game chat area visualize your current choice:"
-msgstr ""
-
-#: C/game-chat-concept.page:48(media)
-msgid "Players/opponents as recipients"
-msgstr ""
-
-#: C/game-chat-concept.page:52(p)
-msgid ""
-"This is the <gui style=\"button\">say</gui> button. If it is selected, it "
-"means that your message should go to the players."
-msgstr ""
-
-#: C/game-chat-concept.page:58(media)
-msgid "Other spectators as recipients"
-msgstr ""
-
-#: C/game-chat-concept.page:62(p)
-msgid ""
-"This is the <gui style=\"button\">whisper</gui> button. If it is selected, "
-"it means that your message should go to the spectators."
-msgstr ""
-
-#: C/game-chat-concept.page:67(p)
-msgid ""
-"Not all combinations make sense in all situations. For example, when nobody "
-"is <link xref=\"watching\">watching</link> there is no point in talking to "
-"spectators."
-msgstr ""
-
-#: C/game-chat-concept.page:72(p)
-msgid ""
-"When you are more comfortable with a command like approach, you can also use "
-"a drop down next to the message entry. It has the labels <gui style=\"label"
-"\">Say</gui> for addressing your opponent only, <gui style=\"label\">Kibitz</"
-"gui> for everybody, and <gui style=\"label\">Whisper</gui> for spectators "
-"only."
-msgstr ""
-
-#: C/droppers.page:6(desc)
-msgid "What are droppers?"
-msgstr ""
-
-#: C/droppers.page:18(title)
-msgid "Droppers"
-msgstr ""
-
-#: C/droppers.page:19(p)
-msgid ""
-"When playing on FIBS, you will often hear people complaing about "
-"<em>droppers</em>."
-msgstr ""
-
-#: C/droppers.page:24(title)
-msgid "What Are Droppers?"
-msgstr ""
-
-#: C/droppers.page:25(p)
-msgid ""
-"The term dropper was actually coined for people that avoid losing a match by "
-"quitting, for example by dropping the connection. They probably do that not "
-"out of pure frustration about losing but in order to preserve a good rating."
-msgstr ""
-
-#: C/droppers.page:31(p)
-msgid ""
-"Many players on FIBS and Gibbon use a broader sense of the term dropper. "
-"Whenever somebody terminates a match prematurely, this is considered a drop, "
-"an unfriendly act. For the other party it is the same whether somebody drops "
-"the connection in the middle of a match in a vain effort to \"correct\" the "
-"own rating or because this somebody is called to lunch or the boss comes in "
-"or because this somebody is playing with an unstable internet connection."
-msgstr ""
-
-#: C/droppers.page:40(p)
-msgid ""
-"In fact, Gibbon uses an even broader meaning of the term dropper. Gibbon is "
-"a software, and cannot detect if somebody dropped a match after warning the "
-"opponent about it. This is not really considered a shortcoming. If your "
-"opponent asks you to quit a match because some urgent stuff slipped in, many "
-"people will be polite enough to accept it but that behavior is still "
-"annoying. When Gibbon records drops, it never takes such excuses into "
-"account, mostly because as a software it does not even know about that "
-"excuse but also because it considers such excuses irrelevant. The software "
-"just records the fact that somebody agreed on a match of a certain length "
-"and is later not able to finish that match."
-msgstr ""
-
-#: C/droppers.page:55(title)
-msgid "Measures Against Droppers"
-msgstr ""
-
-#: C/droppers.page:57(title)
-msgid "Reliabity Measurement"
-msgstr ""
-
-#: C/droppers.page:58(p)
-msgid ""
-"The best measure against droppers is to avoid playing them. And the best "
-"strategy to detect droppers is to watch the activities of all other players. "
-"This is cumbersome for humans but Gibbon does that automatically for you."
-msgstr ""
-
-#: C/droppers.page:64(p)
-msgid ""
-"In the <link xref=\"players-list\">players'</link> and <link xref=\"inviters-"
-"list\">inviters' list</link> you will see a colored bar next to the player "
-"names. A green bar signifies reliable players, a red bar unreliable players. "
-"Yellow and orange bars are displayed for players on the verge of being "
-"reliable (yellow) or being unreliable (orange). The length of the bar gives "
-"you an idea of how confident Gibbon is about that information. The longer "
-"the bar, the more data has been collected about the player in question, and "
-"the more accurate the information will be."
-msgstr ""
-
-#: C/droppers.page:75(p)
-msgid ""
-"Most of the time it is enough to just look at that bar. Avoid people without "
-"a green bar, unless you know them or have other reasons."
-msgstr ""
-
-#: C/droppers.page:82(title)
-msgid "Limit on Saved Matches"
-msgstr ""
-
-#: C/droppers.page:83(p)
-msgid ""
-"Whenever a match is terminated prematurely, FIBS will save the match, and it "
-"can be resumed later. After a certain time (about two weeks at the time of "
-"this writing), saved matches will be wiped out from the database."
-msgstr ""
-
-#: C/droppers.page:89(p)
-msgid ""
-"But before that, the number of saved matches is stored with each user. "
-"Gibbon displays the number of saved matches for every player that invites "
-"you to a match. You can also find it out by issuing the command <cmd>show "
-"savedcount playername</cmd> in the <link xref=\"server-console\">server "
-"console</link>."
-msgstr ""
-
-#: C/droppers.page:97(p)
-msgid ""
-"Currently, FIBS imposes a hard limit on the possible number of saved "
-"matches. Whenever a player's saved count reaches 10, that player can only "
-"resumve saved matches but cannot start new ones."
-msgstr ""
-
-#: C/droppers.page:104(title)
-msgid "Bots"
-msgstr ""
-
-#: C/droppers.page:105(p)
-msgid "Two computer players on FIBS try to warn people about droppers."
-msgstr ""
-
-#: C/droppers.page:108(p)
-msgid ""
-"One of them is <em>MissManners</em>. Whenever somebody with a high saved "
-"count logs in, MissManners will display a warning about that in the <link "
-"xref=\"shout-area\">shout area</link>. You should not invite such players to "
-"matches."
-msgstr ""
-
-#: C/droppers.page:114(p)
-msgid ""
-"The other computer player is <em>RepBotNG</em> (for Reputation Bot Next "
-"Generation). You can <link xref=\"chat\">chat</link> with RepBotNG like with "
-"a human player. Telling RepBotNG \"help\" will display more information."
-msgstr ""
-
-#: C/droppers.page:120(p)
-msgid ""
-"Most of the time you will <cmd>ask</cmd> about another player's reputation "
-"or <cmd>complain</cmd> about an opponent or <cmd>vouch</cmd> for an opponent."
-msgstr ""
-
-#: C/doubling.page:7(desc)
-msgid "Using the Doubling Cube"
-msgstr ""
-
-#: C/doubling.page:19(title)
-msgid "Doubling"
-msgstr ""
-
-#: C/doubling.page:21(title)
-msgid "Doubling Your Opponent"
-msgstr ""
-
-#: C/doubling.page:22(subtitle)
-msgid "Turning the Cube"
-msgstr ""
-
-#: C/doubling.page:23(p)
-msgid ""
-"When you see the doubling cube, and it is not located at your opponent's "
-"side of the board, you can turn the cube against her and double the stakes."
-msgstr ""
-
-#: C/doubling.page:28(p)
-msgid "You can turn the cube by"
-msgstr ""
-
-#: C/doubling.page:32(p)
-msgid "by double-clicking the cube"
-msgstr ""
-
-#: C/doubling.page:33(p)
+#: C/say.page:20(page/p)
 #, fuzzy
 msgid ""
-"by clicking the <link xref=\"board-toolbar#accept\"><gui style=\"button"
-"\">double</gui></link> button in the <link xref=\"board-toolbar\">board "
-"toolbar</link>."
+"You can chat with your opponent by typing text into the <link xref=\"game-"
+"chat-concept\">game chat area</link> and only selecting the <gui style="
+"\"button\">say</gui> button."
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"Sie können mit Ihrer Gegnerin oder Ihrem Gegner während des Spiels chatten, "
+"indem Sie Text in den <link xref=\"game-chat-area\">Spiel-Chatbereich<link> "
+"eingeben, und dabei nur den <gui style=\"button\">„Sag“-Button</gui> "
+"anwählen."
 
-#: C/doubling.page:37(p)
-msgid "The cube will now appear in the middle of the board."
-msgstr ""
-
-#: C/doubling.page:40(p)
-msgid ""
-"Your opponent now either has to accept the cube, and continue at twice the "
-"stakes, or give up, and lose the number of points the cube showed before you "
-"doubled."
-msgstr ""
-
-#: C/doubling.page:48(title)
-msgid "Getting Doubled"
-msgstr ""
-
-#: C/doubling.page:49(subtitle)
-msgid "Answering to the Cube"
-msgstr ""
-
-#: C/doubling.page:50(p)
-msgid ""
-"If your opponent doubled you, the doubling cube will appear in the middle of "
-"the board, showing the new stakes."
-msgstr ""
-
-#: C/doubling.page:55(p)
-msgid ""
-"Your now either have to accept the cube, and continue at twice the stakes, "
-"or give up, and lose the number of points the cube showed before the cube "
-"was turned."
-msgstr ""
-
-#: C/doubling.page:61(p)
-msgid "You can accept the cube"
-msgstr ""
-
-#: C/doubling.page:65(p)
-msgid "by double-clicking it"
-msgstr ""
-
-#: C/doubling.page:66(p)
+#: C/say.page:26(page/p)
 #, fuzzy
 msgid ""
-"by clicking the <link xref=\"board-toolbar#accept\"><gui style=\"button"
-"\">accept button</gui></link> in the <link xref=\"board-toolbar\"><gui style="
-"\"button\">board toolbar</gui></link>."
+"Please note that it is not possible to talk directly to one of the players "
+"while <link xref=\"index#watching\">watching</link> somebody else."
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"Bitte beachten Sie, dass es nicht möglich ist, während Sie <link xref="
+"\"watching\">zuschauen</link> direkt mit einer der Spielerinnen oder einem "
+"der Spieler zu sprechen."
 
-#: C/doubling.page:70(p)
-msgid "You can refuse the cube"
+#: C/swapping-dice.page:8(info/desc)
+msgid "How To Change the Order Of The Dice"
+msgstr "Wie sich die Reihenfolge der Würfel verändern lässt"
+
+#: C/swapping-dice.page:20(page/title)
+msgid "Swapping the Dice"
+msgstr "Würfel vertauschen"
+
+#: C/swapping-dice.page:21(page/p)
+msgid "You can swap the dice by left-clicking on them."
 msgstr ""
+"Sie können die beiden Würfel jederzeit vertauschen, indem Sie mit der linken "
+"Maustaste darauf klicken."
 
-#: C/doubling.page:74(p)
-msgid "by right-clicking it"
+#: C/watching-matches.page:6(info/desc)
+msgid "Watching Other People Play"
+msgstr "Anderen beim Spielen zuschauen"
+
+#: C/watching-matches.page:19(page/p)
+msgid ""
+"If you are interested in how other people are doing you can either peep at "
+"the current state of their ongoing match, or you can permanently follow "
+"another player and see all of his games."
 msgstr ""
+"Falls Sie Sich dafür interessieren, was die anderen Leute auf dem Server "
+"gerade tun, können Sie entweder einen einmaligen Blick auf deren laufende "
+"Spiele werfen, oder aber einer bestimmten Spielerin oder einem bestimmten "
+"Spieler „folgen“, und alle Spiele dieser Person verfolgen."
 
-#: C/doubling.page:75(p)
+#: C/watching-matches.page:25(page/p)
 #, fuzzy
 msgid ""
-"by clicking the <link xref=\"board-toolbar#reject\"><gui style=\"button"
-"\">reject button</gui></link> in the <gui><link xref=\"board-toolbar\">board "
-"toolbar</link></gui>"
+"Either way, you have to go to the <link xref=\"players-list\"> players list</"
+"link> and right-click the row with the player you are interested in."
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"In jedem Fall müssen Sie dafür zur <link xref=\"players-list\">Spielerliste</"
+"link> gehen, und einen Rechtsklick auf die entsprechende Zeile ausführen."
 
-#: C/doubling.page:79(p)
-msgid ""
-"If you accepted the cube, it will now be shown on your side of the board. If "
-"you refused it, the game ends."
-msgstr ""
-
-#: C/do-not.page:8(desc)
-msgid "Things You should not do on FIBS."
-msgstr ""
-
-#: C/do-not.page:20(title)
-msgid "Things You Should Not Do"
-msgstr ""
-
-#: C/do-not.page:21(p)
-msgid ""
-"There are a few things that you should not do on FIBS or any other "
-"backgammon server."
-msgstr ""
-
-#: C/do-not.page:26(title)
-msgid "Multiple Accounts"
-msgstr ""
-
-#: C/do-not.page:27(p)
-msgid ""
-"Multiple accounts on the same server violate the server terms and "
-"conditions. If you think you have a legitimate reason for violating this "
-"rule, please contact the server administrator, for <app>FIBS</app> this is "
-"<link href=\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>, "
-"prior to creating a new account."
-msgstr ""
-
-#: C/do-not.page:37(title)
-msgid "Drop Matches or Refuse Resumes"
-msgstr ""
-
-#: C/do-not.page:38(p)
-msgid ""
-"Before you start a match or accept an invitation you should make sure that "
-"you have enough to time to play it to an end. Otherwise consider playing a "
-"<link xres=\"bot\">computer player</link> instead. If you absolutely have to "
-"prematurely leave a match you should always tell your opponent first and may "
-"arrange for a resume."
-msgstr ""
-
-#: C/do-not.page:45(p)
-msgid ""
-"You should consider that the server stores data about your saved matches and "
-"this information is visible to other players. If you have a lot of saved "
-"matches your reputation will therefore get bad."
-msgstr ""
-
-#: C/do-not.page:51(p)
-msgid ""
-"If somebody invites you to resume a saved match that you have terminated "
-"before you should always try to accept that invitation. If the other person "
-"was responsible for the incident you can decide yourself."
-msgstr ""
-
-#: C/do-not.page:59(title)
-msgid "Bad Behavior and Rude Language"
-msgstr ""
-
-#: C/do-not.page:60(p)
-msgid "Be polite to other people!"
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/create-account.page:45(None)
-msgid ""
-"@@image: 'figures/connect-register.png'; md5=2c6fa2d9d41f444b8f5cc670388bfdfb"
-msgstr ""
-
-#: C/create-account.page:6(desc)
-msgid "Create a new account."
-msgstr ""
-
-#: C/create-account.page:18(title)
-msgid "Create a New Account"
-msgstr ""
-
-#: C/create-account.page:19(p)
-msgid ""
-"Before you can connect (see <link xref=\"connect\"/>) to <app>FIBS</app> you "
-"need an account. Do not be shy creating an account! You do not have to play "
-"immediately. It is also not considered <link xref=\"do-not\">bad habit</"
-"link> to not respond to invites to matches or other contact requests if you "
-"just want to look around first."
-msgstr ""
-
-#: C/create-account.page:26(p)
-msgid ""
-"For obvious reasons, <app>FIBS</app> does not allow multiple accounts for "
-"the same person. If you think you have a legitimate reason for violating "
-"this rule, please contact the server administrator, for <app>FIBS</app> this "
-"is <link href=\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>, "
-"prior to creating a new account."
-msgstr ""
-
-#: C/create-account.page:34(p)
-msgid ""
-"If you want to create a new account on <app>FIBS</app>, please visit the "
-"<link href=\"http://fibs.com/javafibs/register.html\">registration page</"
-"link> and follow the instructions you find there. Clicking the <gui>Connect</"
-"gui> button in the <link xref=\"main-toolbar\">main toolbar</link> or "
-"selecting <guiseq><gui>File</gui><gui>Connect</gui></guiseq> will popup the "
-"connection dialog that allows you to invoke the same page by clicking on "
-"<gui>Get new account on fibs.com</gui>:"
-msgstr ""
-
-#: C/create-account.page:45(media)
-msgid "Create a new account via the connect dialog."
-msgstr ""
-
-#: C/connect.page:6(desc)
-msgid "Connect to a backgammon server."
-msgstr ""
-
-#: C/connect.page:18(title)
-msgid "Connecting To a Server"
-msgstr ""
-
-#: C/connect.page:19(p)
-msgid ""
-"Once you have <link xref=\"starting\">started</link><app>Gibbon</app>, you "
-"can initiate a connection to a server by clicking the <gui style=\"button"
-"\">Connect</gui> button in the <link xref=\"main-toolbar\">main toolbar</"
-"link>. Alternatively, you can use the <guiseq><gui>File</gui><gui>Connect</"
-"gui></guiseq> menu entry:"
-msgstr ""
-
-#: C/checker-movement.page:9(desc)
-msgid "How To Move The Checkers Around On the Board"
-msgstr ""
-
-#: C/checker-movement.page:21(title)
-msgid "Moving The Checkers"
-msgstr ""
-
-#: C/checker-movement.page:22(p)
-msgid ""
-"After you have rolled the dice, see <link xref=\"rolling-dice\"/>, you must "
-"move your checkers."
-msgstr ""
-
-#: C/checker-movement.page:26(p)
-msgid ""
-"The most basic way to do this is to click on a checker you want to move. "
-"Left-clicking the checker will use the left die, right-clicking will use the "
-"right die."
-msgstr ""
-
-#: C/checker-movement.page:31(p)
-msgid ""
-"If you left-click, but the left die cannot be used <app>Gibbon</app> will "
-"check, whether you can use the, right die instead. That means that it is "
-"always possible to do the entire move with the left mouse button if you obey "
-"the order of the dice."
-msgstr ""
-
-#: C/checker-movement.page:38(p)
-msgid ""
-"If you cannot move, there is nothing to do for you. The dice you rolled will "
-"vanish after a short period of time, and your opponent continues."
-msgstr ""
-
-#: C/cannot-invite.page:4(title)
-msgid "I Cannot Invite Anybody"
-msgstr ""
-
-#: C/cannot-invite.page:7(desc)
-msgid "Please check your own status. You must set it to “available”."
-msgstr ""
-
-#: C/bugreports.page:6(desc)
-msgid "Reporting bugs for <app>Gibbon</app> or this documentation."
-msgstr ""
-
-#: C/bugreports.page:18(title)
-msgid "Reporting Bugs"
-msgstr ""
-
-#: C/bugreports.page:19(p)
-msgid ""
-"Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon. Search "
-"for “Bug Tracker” if you cannot find the submit link."
-msgstr ""
-
-#: C/bugreports.page:23(p)
-msgid ""
-"The bug tracking system allows “voting” for bugs. Every registered user has "
-"up to 100 votes and can distribute them to open bugs. Bugs with a higher "
-"number of votes are usually prioritized higher."
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/board-toolbar.page:24(None)
-msgid ""
-"@@image: 'figures/board-toolbar.png'; md5=b2dd73313901e80559ca223ffcc3d9a9"
-msgstr ""
-
-#: C/board-toolbar.page:6(desc)
-msgid "The small toolbar above the board"
-msgstr ""
-
-#: C/board-toolbar.page:18(title) C/board-toolbar.page:24(media)
-msgid "The Board Toolbar"
-msgstr ""
-
-#: C/board-toolbar.page:19(p)
-msgid ""
-"The small toolbar above the board contains controls that are useful while "
-"<link xref=\"index#playing\">playing</link> or <link xref=\"index#watching"
-"\">watching</link>"
-msgstr ""
-
-#: C/board-toolbar.page:27(p)
-msgid ""
-"All buttons will display a tooltip explaining their functions, when you "
-"leave the mouse pointer over them for a short period of time. The buttons "
-"from left to right are:"
-msgstr ""
-
-#: C/board-toolbar.page:34(p)
-msgid "Refresh Board"
-msgstr ""
-
-#: C/board-toolbar.page:35(p)
-msgid ""
-"Use this button if you have the impression that the communication with the "
-"server hangs. It will request a new board state from the server and update "
-"the board accordingly."
-msgstr ""
-
-#: C/board-toolbar.page:42(p)
-msgid "Undo Moves"
-msgstr ""
-
-#: C/board-toolbar.page:43(p)
-msgid "Move all checkers to their original places."
-msgstr ""
-
-#: C/board-toolbar.page:48(p)
+#: C/watching-matches.page:30(page/p)
 #, fuzzy
-msgid "Resign"
-msgstr "Aufgeben"
-
-#: C/board-toolbar.page:49(p)
 msgid ""
-"Display a dialog that allows you to choose the correct <link xref=\"resigning"
-"\">resignation</link>."
+"If you select <gui style=\"label\">Look</gui>, the board will display the "
+"board that this player is currently looking at."
 msgstr ""
+"Wenn Sie im daraufhin erscheinenden Kontextmenü <gui style=\"label"
+"\">Anschauen</gui> auswählen, wird der aktuelle Spielstand auf Ihrem Brett "
+"angezeigt."
 
-#: C/board-toolbar.page:55(p)
-msgid "Accept"
-msgstr ""
-
-#: C/board-toolbar.page:56(p)
+#: C/watching-matches.page:34(page/p)
+#, fuzzy
 msgid ""
-"Accept a proposal from your opponent. That is either a <link xref=\"doubling"
-"\">double</link> or a <link xref=\"resigning\">resignation</link>."
+"If you select <gui style=\"label\">Watch</gui> instead, the board will "
+"permanently display the board state of the ongoing match of that user. You "
+"will see the dice rolled, cube actions, and resignations."
 msgstr ""
+"Wenn Sie hingegen <gui style=\"label\">Beobachten</gui> auswählen, wird auf "
+"Ihrem Brett ständig der aktuelle Spielstand dargestellt."
 
-#: C/board-toolbar.page:63(p)
-msgid "Reject"
-msgstr ""
-
-#: C/board-toolbar.page:64(p)
+#: C/watching-matches.page:40(page/p)
+#, fuzzy
 msgid ""
-"Reject a proposal from your opponent. That is either a <link xref=\"doubling"
-"\">double</link> or a <link xref=\"resigning\">resignation</link>."
+"If you want to stop watching a player, got again to the <link xref=\"players-"
+"list\">players flist</link>, right-click the player, and select <gui style="
+"\"label\">Unwatch</gui>."
 msgstr ""
+"Wenn Sie nicht weiter zuschauen wollen, klicken Sie erneut mit rechts auf "
+"den Namen in der <link xref=\"players-list\">Spielerliste</link>, und wählen "
+"Sie <gui style=\"label\">Nicht mehr beobachten</gui> aus."
 
-#: C/board-toolbar.page:71(p)
-msgid "Double"
+#: C/watching-matches.page:45(page/p)
+msgid "If you start a match yourself, you automatically stop watching."
 msgstr ""
+"Sobald Sie selber ein Match beginnen, hören Sie automatisch auf, anderen "
+"zuzuschauen."
 
-#: C/board-toolbar.page:72(p)
-msgid "Offer a <link xref=\"doubling\">double</link> to your opponent."
-msgstr ""
-
-#: C/board-toolbar.page:77(p)
-msgid "Fullscreen"
-msgstr ""
-
-#: C/board-toolbar.page:78(p)
-msgid "Switch to fullscreen mode. <em>This is not yet implemented!</em>"
-msgstr ""
-
-#: C/board-toolbar.page:84(p)
-msgid "Record the Match"
-msgstr ""
-
-#: C/board-toolbar.page:85(p)
+#: C/watching-matches.page:48(page/p)
 msgid ""
-"This is a toggle button. When activated, the current match is recorded. "
-"<em>This is not yet implemented!</em>"
+"Please note that both players are notified, when you start or stop watching "
+"them."
 msgstr ""
+"Bitte beachten Sie, dass beide Spieler benachrichtigt werden, wenn Sie "
+"beginnen oder aufhören, Ihnen zuzuschauen."
 
-#: C/board-toolbar.page:92(p)
-msgid "Previous Game"
-msgstr ""
-
-#: C/board-toolbar.page:93(p)
+#: C/watching-matches.page:52(page/p)
 msgid ""
-"Got to the previous game in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
+"You should also know that both players can prevent you from watching them or "
+"looking at their current board."
 msgstr ""
+"Es ist auch möglich, dass andere Spielerinnen und Spieler Sie davon "
+"ausschließen, deren Spielstand zu sehen, oder ihnen zuzuschauen."
 
-#: C/board-toolbar.page:101(p)
-msgid "Previous Move"
-msgstr ""
+#: C/whisper.page:7(info/desc)
+msgid "Talking to other spectators (watchers) but not the players"
+msgstr "Mit anderen Zuschauern sprechen, aber nicht mit den Spielern"
 
-#: C/board-toolbar.page:102(p)
+#: C/whisper.page:20(page/title)
+msgid "Talking to Other Spectators (<cmd>whisper</cmd>)"
+msgstr "Mit anderen Zuschauern sprechen (<cmd>whisper</cmd>)"
+
+#: C/whisper.page:21(page/p)
+#, fuzzy
 msgid ""
-"Got to the previous (half!) move in the match. Clicking the <link xref="
-"\"board-toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> "
-"button will bring you back to the current position. <em>This is not yet "
-"implemented!</em>"
+"If you only want to talk to other people <link xref=\"index#watching"
+"\">watching</link> the same game as you but not to the players themselves, "
+"you should “whisper”. You can do this by typing text into the <link xref="
+"\"game-chat-concept\">game chat area</link> and only selecting the <gui "
+"style=\"button\">whisper</gui> button."
 msgstr ""
+"Wenn nur die Menschen, die ebenfalls dem aktuellen Spiel <link xref="
+"\"watching\">zuschauen</link>, Ihre Nachricht sehen sollen, müssen Sie "
+"„flüstern“. Sie erreichen das, indem Sie Text in den <link xref=\"game-chat-"
+"area\">Spiel-Chatbereich<link> eingeben, und dabei nur den <gui style="
+"\"button\">Flüsterbutton</gui> anwählen."
 
-#: C/board-toolbar.page:110(p)
-msgid "Next Move"
-msgstr ""
-
-#: C/board-toolbar.page:111(p)
+#: C/whisper.page:29(page/p)
+#, fuzzy
 msgid ""
-"Got to the next (half!) move in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
+"This will only work while you are <link xref=\"index#watching\">watching</"
+"link>. If you are the only one watching a match, this feature is not "
+"particularly useful."
 msgstr ""
+"Das funktioniert allerdings nur, während Sie <link xref=\"watching"
+"\">zuschauen</link>. Falls Sie die einzige Person sind, die dem Spiel "
+"zuschaut, ist die Funktion natürlich nicht sehr nützlich."
 
-#: C/board-toolbar.page:119(p)
-msgid "Next Game"
-msgstr ""
-
-#: C/board-toolbar.page:120(p)
-msgid ""
-"Got to the next game in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
-msgstr ""
-
-#: C/board-toolbar.page:128(p)
-msgid "Leave Game"
-msgstr ""
-
-#: C/board-toolbar.page:129(p)
-msgid ""
-"Leave the current game. Please do not make a habit of that. See <link xref="
-"\"do-not#drop-matches\"/> for details."
-msgstr ""
-
-#: C/board-toolbar.page:133(p)
-msgid ""
-"The server will save your running match, and you can resume it to a later "
-"point in time."
-msgstr ""
-
-#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
-#: C/board-toolbar.page:0(None)
-msgid "translator-credits"
-msgstr ""
+#~ msgid "guido@imperia.net"
+#~ msgstr "guido@imperia.net"
 
 #, fuzzy
 #~ msgid "watching"

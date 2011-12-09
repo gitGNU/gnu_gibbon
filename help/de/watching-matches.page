@@ -2,25 +2,18 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="say" xml:lang="de">
   <info>
     <link type="guide" xref="index#watching"/>
-    <desc>
-      Watching Other People Play
-    </desc>
+    <desc>Anderen beim Spielen zuschauen</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
-  <title>Watching</title>
-  <p>
-    If you are interested in how other people are doing you
-    can either peep at the current state of their ongoing
-    match, or you can permanently follow another player
-    and see all of his games.
-  </p>
+  <title>Zuschauen</title>
+  <p>Falls Sie Sich dafür interessieren, was die anderen Leute auf dem Server gerade tun, können Sie entweder einen einmaligen Blick auf deren laufende Spiele werfen, oder aber einer bestimmten Spielerin oder einem bestimmten Spieler „folgen“, und alle Spiele dieser Person verfolgen.</p>
   <p>
     Either way, you have to go to the <link xref="players-list">
     players list</link> and right-click the row with the
@@ -41,15 +34,7 @@
     <link xref="players-list">players flist</link>, right-click the
     player, and select <gui style="label">Unwatch</gui>.
   </p>
-  <p>
-    If you start a match yourself, you automatically stop watching.
-  </p>
-  <p>
-    Please note that both players are notified, when you start
-    or stop watching them.
-  </p>
-  <p>
-    You should also know that both players can prevent you
-    from watching them or looking at their current board.
-  </p>
+  <p>Sobald Sie selber ein Match beginnen, hören Sie automatisch auf, anderen zuzuschauen.</p>
+  <p>Bitte beachten Sie, dass beide Spieler benachrichtigt werden, wenn Sie beginnen oder aufhören, Ihnen zuzuschauen.</p>
+  <p>Es ist auch möglich, dass andere Spielerinnen und Spieler Sie davon ausschließen, deren Spielstand zu sehen, oder ihnen zuzuschauen.</p>
 </page>

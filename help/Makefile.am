@@ -15,21 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-# gnome-doc-utils.make is not portable. :-(
-AUTOMAKE_OPTIONS = -Wno-portability
+# BEFORE YELP_HELP_RULES
+@YELP_HELP_RULES@
+# AFTER YELP_HELP_RULES
 
-include $(top_srcdir)/gnome-doc-utils.make
+HELP_ID = gibbon
 
-DOC_ID = gibbon
-DOC_FIGURES = \
-	board-toolbar.png \
-	connect-register.png \
-	game-chat.png \
-	gibbon-logo.png \
-	say.png \
-	whisper.png
+HELP_MEDIA = \
+	figures/board-toolbar.png \
+	figures/connect-register.png \
+	figures/game-chat.png \
+	figures/gibbon-logo.png \
+	figures/say.png \
+	figures/whisper.png
 
-DOC_PAGES = \
+# FIXME! Add legal.xml here.
+HELP_FILES = \
 	board-toolbar.page \
 	bugreports.page \
 	cannot-invite.page \
@@ -51,5 +52,4 @@ DOC_PAGES = \
 	watching-matches.page \
 	whisper.page
 
-DOC_LINGUAS = de
-dist-hook: doc-dist-hook
+HELP_LINGUAS = de

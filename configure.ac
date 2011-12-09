@@ -155,6 +155,8 @@ GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon 
 GNOME_DOC_INIT([0.9.0],,
   [AC_MSG_WARN([[gnome-doc-utils not found: documentation will not be built.]])])
 
+YELP_HELP_INIT
+
 AC_CONFIG_FILES([ 
     Makefile
     gcreate_class.pl

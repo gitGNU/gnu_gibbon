@@ -3,19 +3,17 @@
   <info>
     <link type="guide" xref="index#game-chat"/>
     <link type="guide" xref="index#watching"/>
-    <desc>
-      Talking to your opponent during the game
-    </desc>
+    <desc>Mit der Gegnerin der dem Gegner während des Spiels sprechen</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
-  <title>Talking to Your Opponent (<cmd>say</cmd>)</title>
+  <title>Mit dem Gegner sprechen (<cmd>say</cmd>)</title>
   <p>
     You can chat with your opponent by typing text into the
     <link xref="game-chat-concept">game chat area</link> and

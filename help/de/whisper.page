@@ -3,20 +3,17 @@
   <info>
     <link type="guide" xref="index#game-chat"/>
     <link type="guide" xref="index#watching"/>
-    <desc>
-      Talking to other spectators (watchers) but not
-      the players
-    </desc>
+    <desc>Mit anderen Zuschauern sprechen, aber nicht mit den Spielern</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
-  <title>Talking to Other Spectators (<cmd>whisper</cmd>)</title>
+  <title>Mit anderen Zuschauern sprechen (<cmd>whisper</cmd>)</title>
   <p>
     If you only want to talk to other people <link xref="index#watching">watching</link>
     the same game as you but not to the players themselves, you should
