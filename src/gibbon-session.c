@@ -985,6 +985,7 @@ gibbon_session_clip_says (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         const gchar *message;
         const gchar *sender;
+        GibbonGameChat *game_chat;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
@@ -998,9 +999,19 @@ gibbon_session_clip_says (GibbonSession *self, GSList *iter)
 
         fibs_message = gibbon_fibs_message_new (sender, message);
 
-        gibbon_app_show_message (self->priv->app,
-                                 fibs_message->sender,
-                                 fibs_message);
+        if (self->priv->opponent && !self->priv->watching
+            && 0 == g_strcmp0 (self->priv->opponent, sender)) {
+                game_chat = gibbon_app_get_game_chat (self->priv->app);
+                if (!game_chat) {
+                        gibbon_fibs_message_free (fibs_message);
+                        return -1;
+                }
+                gibbon_game_chat_append_message (game_chat, fibs_message);
+        } else {
+                gibbon_app_show_message (self->priv->app,
+                                         fibs_message->sender,
+                                         fibs_message);
+        }
 
         gibbon_fibs_message_free (fibs_message);
 
@@ -1096,6 +1107,7 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
         const gchar *sender;
         const gchar *receiver;
         const gchar *message;
+        GibbonGameChat *game_chat;
 
         connection = gibbon_app_get_connection (self->priv->app);
         if (!connection)
@@ -1113,9 +1125,19 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
 
         fibs_message = gibbon_fibs_message_new (sender, message);
 
-        gibbon_app_show_message (self->priv->app,
-                                 receiver,
-                                 fibs_message);
+        if (self->priv->opponent && !self->priv->watching
+            && 0 == g_strcmp0 (self->priv->opponent, receiver)) {
+                game_chat = gibbon_app_get_game_chat (self->priv->app);
+                if (!game_chat) {
+                        gibbon_fibs_message_free (fibs_message);
+                        return -1;
+                }
+                gibbon_game_chat_append_message (game_chat, fibs_message);
+        } else {
+                gibbon_app_show_message (self->priv->app,
+                                         receiver,
+                                         fibs_message);
+        }
 
         gibbon_fibs_message_free (fibs_message);
 
