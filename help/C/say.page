@@ -19,13 +19,13 @@
   <title>Talking to Your Opponent (<cmd>say</cmd>)</title>
   <p>
     You can chat with your opponent by typing text into the
-    <link xref="game-chat-area">game chat area</link> and
+    <link xref="game-chat-concept">game chat area</link> and
     only selecting the <gui style="button">say</gui>
     button.
   </p>
   <p>
     Please note that it is not possible to talk directly
-    to one of the players while <link xref="watching">watching</link>
+    to one of the players while <link xref="index#watching">watching</link>
     somebody else.
   </p>
 </page>

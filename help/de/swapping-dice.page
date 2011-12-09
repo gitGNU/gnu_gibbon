@@ -4,16 +4,20 @@
     <link type="guide" xref="index#playing"/>
     <link type="seealso" xref="checker-movement"/>
     <link type="seealso" xref="rolling-dice"/>
-    <desc>Wie sich die Reihenfolge der Würfel verändern lässt</desc>
+    <desc>
+      How To Change the Order Of The Dice
+    </desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Create Commons Share Alike 3.0</p>
+      <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
-  <title>Würfel vertauschen</title>
-  <p>Sie können die beiden Würfel jederzeit vertauschen, indem Sie mit der linken Maustaste darauf klicken.</p>
+  <title>Swapping the Dice</title>
+  <p>
+    You can swap the dice by left-clicking on them.
+  </p>
 </page>
