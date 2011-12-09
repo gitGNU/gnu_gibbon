@@ -152,9 +152,6 @@ GTK_DOC_CHECK([1.17],[--flavour no-tmpl])
 
 GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2011 Guido Flohr, http://guido-flohr.net/])
 
-GNOME_DOC_INIT([0.9.0],,
-  [AC_MSG_WARN([[gnome-doc-utils not found: documentation will not be built.]])])
-
 YELP_HELP_INIT
 
 AC_CONFIG_FILES([ 

@@ -74,42 +74,6 @@ if test $? != 0; then
         cp -prd fallback/gtkdocize/* . || exit 1
 fi
 
-gnome-doc-common
-if test $? != 0; then
-        echo The script gnome-doc-common was not found in your path
-        echo or terminated with an error.  Copying possibly outdated 
-        echo versions of the files into the project!
-        echo
-        echo You can prevent this error by installing a recent enough
-        echo version of gnome-common, including developer files.
-        echo Press CTRL-C for interrupt or wait otherwise to continue.
-        echo -e -n "[-------------------------]\r["
-        for i in 1 2 3 4 5; do
-                sleep 1
-                echo -n +++++
-        done 
-        echo
-        cp -prd fallback/gnome-doc-common/* . || exit 1
-fi
-
-gnome-doc-prepare --automake
-if test $? != 0; then
-        echo The script gnome-doc-common was not found in your path
-        echo or terminated with an error.  Copying possibly outdated 
-        echo versions of the files into the project!
-        echo
-        echo You can prevent this error by installing a recent enough
-        echo version of gnome-doc-utils, including developer files.
-        echo Press CTRL-C for interrupt or wait otherwise to continue.
-        echo -e -n "[-------------------------]\r["
-        for i in 1 2 3 4 5; do
-                sleep 1
-                echo -n +++++
-        done 
-        echo
-        cp -prd fallback/gnome-doc-prepare/* . || exit 1
-fi
-
 # The remaining build tools are considered mandatory.  Only
 # libtoolize is sometimes installed as glibtoolize.
 glibtoolize --version >/dev/null 2>&1
