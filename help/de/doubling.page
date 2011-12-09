@@ -11,7 +11,7 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
@@ -29,7 +29,9 @@
     </p>
     <list>
       <item><p>by double-clicking the cube</p></item>
-      <item><p>by clicking the <gui style="button">plus button</gui> in the <link xref="board-toolbar">board toolbar</link></p></item>
+      <item><p>by clicking the 
+      <link xref="board-toolbar#accept"><gui style="button">double</gui></link>
+      button in the <link xref="board-toolbar">board toolbar</link>.</p></item>
     </list>
     <p>
       The cube will now appear in the middle of the board.
@@ -60,15 +62,17 @@
     </p>
     <list>
       <item><p>by double-clicking it</p></item>
-      <item><p>by clicking the <gui style="button">accept button</gui> 
-         in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
+      <item><p>by clicking the 
+         <link xref="board-toolbar#accept"><gui style="button">accept button</gui></link> 
+         in the <link xref="board-toolbar"><gui style="button">board toolbar</gui></link>.</p></item>
     </list>
     <p>
       You can refuse the cube
     </p>
     <list>
       <item><p>by right-clicking it</p></item>
-      <item><p>by clicking the <gui style="button">refuse button</gui> 
+      <item><p>by clicking the 
+         <link xref="board-toolbar#reject"><gui style="button">reject button</gui></link> 
          in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
     </list>
     <p>

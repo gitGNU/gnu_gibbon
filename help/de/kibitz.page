@@ -3,20 +3,17 @@
   <info>
     <link type="guide" xref="index#game-chat"/>
     <link type="guide" xref="index#watching"/>
-    <desc>
-      Talking to both other spectators (watchers) and
-      the players
-    </desc>
+    <desc>Sowohl mit anderen Zuschauern als auch mit den Spielern chatten</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
-  <title>Talking to Everybody At The Board (<cmd>kibitz</cmd>)</title>
+  <title>Mit allen am Brett sprechen (<cmd>kibitz</cmd>)</title>
   <p>
     If you want to talk to everybody on the board, that is the players
     themselves and possible spectators you have to select both the

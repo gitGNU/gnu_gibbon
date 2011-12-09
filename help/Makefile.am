@@ -21,10 +21,16 @@ AUTOMAKE_OPTIONS = -Wno-portability
 include $(top_srcdir)/gnome-doc-utils.make
 
 DOC_ID = gibbon
-DOC_FIGURES = connect-register.png \
-	      gibbon-logo.png
+DOC_FIGURES = \
+	board-toolbar.png \
+	connect-register.png \
+	game-chat.png \
+	gibbon-logo.png \
+	say.png \
+	whisper.png
 
 DOC_PAGES = \
+	board-toolbar.page \
 	bugreports.page \
 	cannot-invite.page \
 	checker-movement.page \

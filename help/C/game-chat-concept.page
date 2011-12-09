@@ -28,6 +28,11 @@
     game chat area below the board.
   </p>
   <p>
+    <media type="image" mime="src/png" src="figures/game-chat.png">
+      The game chat area
+    </media>
+  </p>
+  <p>
     Possible participants in the communication at the board
     are the two opponents and possible spectators.  When you
     are currently playing yourself, you can talk to your

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<page xmlns="http://projectmallard.org/1.0/" type="topic" id="create_account" xml:lang="de">
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="create-account" xml:lang="de">
   <info>
-    <link type="guide" xref="index#getting_started"/>
+    <link type="guide" xref="index#getting-started"/>
     <desc>
       Create a new account.
     </desc>
@@ -18,7 +18,7 @@
   <p>
     Before you can connect (see <link xref="connect"/>) to <app>FIBS</app> you 
     need an account.  Do not be shy creating an account! You do not have to
-    play immediately.  It is also not considered <link xref="do_not">bad
+    play immediately.  It is also not considered <link xref="do-not">bad
     habit</link> to not respond to invites to matches or other contact
     requests if you just want to look around first.
   </p>
@@ -34,7 +34,7 @@
     If you want to create a new account on <app>FIBS</app>, please visit the
     <link href="http://fibs.com/javafibs/register.html">registration
     page</link> and follow the instructions you find there.  Clicking the
-    <gui>Connect</gui> button in the <link xref="main_toolbar">main
+    <gui>Connect</gui> button in the <link xref="main-toolbar">main
     toolbar</link> or selecting 
     <guiseq><gui>File</gui><gui>Connect</gui></guiseq>
     will popup the connection dialog that allows you to invoke 

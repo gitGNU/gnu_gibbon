@@ -15,7 +15,7 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
   </info>
 
@@ -25,6 +25,11 @@
     <link xref="shout">lobby shouts</link>, all communication
     during a game is displayed in the so called
     game chat area below the board.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/game-chat.png">
+      The game chat area
+    </media>
   </p>
   <p>
     Possible participants in the communication at the board
