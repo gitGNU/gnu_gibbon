@@ -12,6 +12,12 @@
     <license>
       <p>Create Commons Share Alike 3.0</p>
     </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
   </info>
 
   <title>Create a New Account</title>
@@ -31,18 +37,101 @@
     prior to creating a new account.
   </p>
   <p>
-    If you want to create a new account on <app>FIBS</app>, please visit the
-    <link href="http://fibs.com/javafibs/register.html">registration
-    page</link> and follow the instructions you find there.  Clicking the
+    If you want to create a new account on a server, click the
     <gui>Connect</gui> button in the <link xref="main-toolbar">main
-    toolbar</link> or selecting 
-    <guiseq><gui>File</gui><gui>Connect</gui></guiseq>
-    will popup the connection dialog that allows you to invoke 
-    the same page by clicking on <gui>Get new account on fibs.com</gui>:
+    toolbar</link> or select the
+    <guiseq><gui>File</gui><gui>Connect</gui></guiseq> menu entry.
+    That will popup the the <link xref="connect">connection</link>
+    dialog:
   </p>
   <p>
-    <media type="image" mime="src/png" src="figures/connect-register.png">
-      Create a new account via the connect dialog.
+    <media type="image" mime="src/png" src="figures/connection-dialog.png">
+      The connection dialog
     </media>
   </p>
+  <p>
+    Click the <gui style="button">Register new account</gui> button
+    underneath the <gui style="label">User name</gui> text entry.
+    You will then see this dialog:
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/register-account.png">
+      The account creation dialog
+    </media>
+  </p>
+  <p>
+    The following information is needed:
+  </p>
+  <list>
+    <item>
+      <p><gui style="label">Server</gui></p>
+      <p>
+        The name or IP address of the server you want to connect to.
+        In doubt, try “fibs.com”.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Port</gui></p>
+      <p>
+        The port number. In doubt use the default port number 4321.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">User name</gui></p>
+      <p>
+        The user name you want to use on that server.  It is - of course -
+        not possible to use a name used by somebody else.  A little
+        surprising: Your name must not contain digits, underscores,
+        or hyphens.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Save Password?</gui></p>
+      <p>
+        Check this box, if you want <app>Gibobn</app> to remember
+        your password for you.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Password</gui></p>
+      <p>
+        Choose a suitable password.
+      </p>
+      <p>
+        <em>Important!</em> All communication with the server is
+        unencrypted.  It is therefore visible to everybody in your
+        network, and to everybody in the networks between you and 
+        the server (that will mostly be the staff of Internet
+        Service Providers).  This information should not make you
+        panic because it is quite unlikely that anybody is
+        interested in eavesdropping your backgammon communication.
+        But you must remember that your password is also visible
+        to these people.
+      </p>
+      <p>
+        The password is also visible to everybody with superuser
+        (or administrator) privileges on your computer because
+        <app>Gibbon</app> currently does not encrypt your password.
+      </p>
+      <p>
+        Therefore, use a password that is not too easy to guess
+        but do <em>not</em> use a “valuable” password here!
+        That means, do not use a password that you use for other
+        sensitive accounts like for online banking or internet
+        shops.  It is a well-known fact that criminals routinely collect
+        user name and password combinations, and try to reuse them
+        on other servers.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Repeat Password</gui></p>
+      <p>
+        You must repeat your password.
+      </p>
+      <p>
+        <em>Important!</em> Do <em>not</em> forget your password!
+        You cannot recover it!
+      </p>
+    </item>
+  </list>
 </page>

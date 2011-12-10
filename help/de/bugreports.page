@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="bugreports" xml:lang="de">
   <info>
     <link type="guide" xref="index#troubleshooting"/>
-    <desc>
-      Reporting bugs for <app>Gibbon</app> or this documentation.
-    </desc>
+    <desc>Fehler in <app>Gibbon</app> oder dieser Dokumentation melden.</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -12,16 +10,15 @@
     <license>
       <p>Create Commons Share Alike 3.0</p>
     </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
   </info>
 
-  <title>Reporting Bugs</title>
-  <p>
-    Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon.
-    Search for “Bug Tracker” if you cannot find the submit link.
-  </p>
-  <p>
-    The bug tracking system allows “voting” for bugs. Every registered user 
-    has up to 100 votes and can distribute them to open bugs. Bugs with a 
-    higher number of votes are usually prioritized higher.
-  </p>
+  <title>Fehler melden</title>
+  <p>Fehler können unter <link href="http://savannah.gnu.org/projects/gibbon"/> gemeldet werden. Suchen Sie nach „Fehlerverfolgung“, falls Sie den richtigen Link nicht finden können.</p>
+  <p>Die Fehlerverfolgung erlaubt es, über offene Fehler „abzustimmen“. Alle registrierten Benutzerinnen und Benutzer haben bis zu 100 Stimmen und können diese auf offene Bugs verteilen. Bugs mit höherer Stimmenzahl werden normalerweise mit höherer Priorität bearbeitet.</p>
 </page>

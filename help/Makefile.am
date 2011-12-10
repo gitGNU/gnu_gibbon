@@ -23,9 +23,10 @@ HELP_ID = gibbon
 
 HELP_MEDIA = \
 	figures/board-toolbar.png \
-	figures/connect-register.png \
+	figures/connection-dialog.png \
 	figures/game-chat.png \
 	figures/gibbon-logo.png \
+	figures/register-account.png \
 	figures/say.png \
 	figures/whisper.png
 

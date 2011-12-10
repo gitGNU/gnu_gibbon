@@ -36,7 +36,13 @@
     order of the dice.
   </p>
   <p>
-    If you cannot move, there is nothing to do for you.  The
+    When you are happy with your move, double-click on the dice.  This
+    is equivalent to picking up the dice in real-world backgamman, and
+    will send your move to the server.  If you cannot move all dice,
+    pick up the dice, when you have used the dice possible.
+  </p>
+  <p>
+    If you cannot move at all, there is nothing to do for you.  The
     dice you rolled will vanish after a short period of time, and
     your opponent continues.
   </p>

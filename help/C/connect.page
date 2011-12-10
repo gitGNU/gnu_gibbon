@@ -22,6 +22,57 @@
     <gui style="button">Connect</gui> button in the <link 
     xref="main-toolbar">main toolbar</link>.  Alternatively, you can
     use the <guiseq><gui>File</gui><gui>Connect</gui></guiseq> menu
-    entry:
+    entry.
   </p>
+  <p>
+    Either way, this will pop up a connection dialog:
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/connection-dialog.png">
+      The connection dialog
+    </media>
+  </p>
+  <p>
+    You have to fill in the following information:
+  </p>
+  <list>
+    <item>
+      <p><gui style="label">Server</gui></p>
+      <p>
+        The name or IP address of the server you want to connect to.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Port</gui></p>
+      <p>
+        The port number. In doubt use the default port number 4321.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">User name</gui></p>
+      <p>
+        Your user name on the server.  If you do not have an account
+        you can <link xref="create-account">create</link> one from
+        withing <app>Gibbon</app>.
+      </p>
+    </item>
+    <item>
+      <p><gui style="label">Password</gui></p>
+      <p>
+        This is also necessary.
+      </p>
+    </item>
+    <item>
+      <p>
+        Optionally, an e-mail address.  This e-mail address will be
+        visible to everybody else on the server.
+      </p>
+      <p>
+        <em>Hint:</em> FIBS does not allow arbitrary strings here.
+        If you want to give the address of a web site instead of an
+        e-mail address, you have to omit the leading scheme, i.e. 
+        do not write “http://www.example.com/” but “www.example.com”.
+      </p>
+    </item>
+  </list>
 </page>

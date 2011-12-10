@@ -19,7 +19,7 @@
   <p>
     The small toolbar above the board contains controls 
     that are useful while <link xref="index#playing">playing</link>
-    or <link xref="index#watching">watching</link>
+    or <link xref="index#watching">watching</link>.
   </p>
   <media type="image" mime="src/png" src="figures/board-toolbar.png">
     The Board Toolbar
@@ -38,8 +38,8 @@
         server and update the board accordingly.
       </p>
     </item>
-    <item id="undo-moves">
-      <p>Undo Moves</p>
+    <item>
+      <p>Reset Board</p>
       <p>
         Move all checkers to their original places.
       </p>
@@ -91,8 +91,8 @@
     <item id="previous-game">
       <p>Previous Game</p>
       <p>
-        Got to the previous game in the match. Clicking the 
-        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Go to the previous game in the match. Clicking the 
+        <link xref="board-toolbar"><gui style="button">Undo
         Moves</gui></link> button will bring you back to the current position.
         <em>This is not yet implemented!</em>
       </p>
@@ -100,8 +100,8 @@
     <item id="previous-move">
       <p>Previous Move</p>
       <p>
-        Got to the previous (half!) move in the match. Clicking the 
-        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Go to the previous (half!) move in the match. Clicking the 
+        <link xref="board-toolbar"><gui style="button">Undo
         Moves</gui></link> button will bring you back to the current position.
         <em>This is not yet implemented!</em>
       </p>
@@ -109,8 +109,8 @@
     <item id="next-move">
       <p>Next Move</p>
       <p>
-        Got to the next (half!) move in the match. Clicking the 
-        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Go to the next (half!) move in the match. Clicking the 
+        <link xref="board-toolbar"><gui style="button">Undo
         Moves</gui></link> button will bring you back to the current position.
         <em>This is not yet implemented!</em>
       </p>
@@ -118,8 +118,8 @@
     <item id="next-game">
       <p>Next Game</p>
       <p>
-        Got to the next game in the match. Clicking the 
-        <link xref="board-toolbar#undo-moves"><gui style="button">Undo
+        Go to the next game in the match. Clicking the 
+        <link xref="board-toolbar"><gui style="button">Undo
         Moves</gui></link> button will bring you back to the current position.
         <em>This is not yet implemented!</em>
       </p>
@@ -131,8 +131,8 @@
         <link xref="do-not#drop-matches"/> for details. 
       </p>
       <p>
-        The server will save your running match, and you can resume it
-        to a later point in time.
+        The server will save your running match, so that you can resume it
+        later.
       </p>
     </item>
   </list>

@@ -17,7 +17,8 @@
 
   <title>Reporting Bugs</title>
   <p>
-    Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon.
+    Please report Gibbon bugs at <link
+    href="http://savannah.gnu.org/projects/gibbon"/>.
     Search for “Bug Tracker” if you cannot find the submit link.
   </p>
   <p>

@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-09 17:53+0200\n"
-"PO-Revision-Date: 2011-12-10 01:03+0200\n"
+"POT-Creation-Date: 2011-12-10 01:44+0200\n"
+"PO-Revision-Date: 2011-12-10 01:23+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -85,15 +85,21 @@ msgstr "Die Spielbrett-Werkzeugleiste"
 msgid ""
 "The small toolbar above the board contains controls that are useful while "
 "<link xref=\"index#playing\">playing</link> or <link xref=\"index#watching"
-"\">watching</link>"
-msgstr "Die kleine Werkzeugliste oberhalb des Spielbretts enthält Buttons, die während des <link xref=\"index#playing\">Spielens</link> oder <link xref=\"index#watching\">Yuschauens</link> wichtig sind."
+"\">watching</link>."
+msgstr ""
+"Die kleine Werkzeugliste oberhalb des Spielbretts enthält Buttons, die "
+"während des <link xref=\"index#playing\">Spielens</link> oder <link xref="
+"\"index#watching\">Zuschauens</link> wichtig sind."
 
 #: C/board-toolbar.page:27(page/p)
 msgid ""
 "All buttons will display a tooltip explaining their functions, when you "
 "leave the mouse pointer over them for a short period of time. The buttons "
 "from left to right are:"
-msgstr "Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von links nach rechts sind:"
+msgstr ""
+"Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der "
+"Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von "
+"links nach rechts sind:"
 
 #: C/board-toolbar.page:34(item/p)
 msgid "Refresh Board"
@@ -104,11 +110,14 @@ msgid ""
 "Use this button if you have the impression that the communication with the "
 "server hangs. It will request a new board state from the server and update "
 "the board accordingly."
-msgstr "Klicken Sie diesen Knopf, wenn den Eindruck haben, dass die Kommunikation mit dem Server hängt. Es wird dann eine neue Position vom Server angefordert, und das Spielbrett entsprechend aktualisiert."
+msgstr ""
+"Klicken Sie diesen Knopf, wenn den Eindruck haben, dass die Kommunikation "
+"mit dem Server hängt. Es wird dann eine neue Position vom Server "
+"angefordert, und das Spielbrett entsprechend aktualisiert."
 
 #: C/board-toolbar.page:42(item/p)
-msgid "Undo Moves"
-msgstr "Zurücksetzen"
+msgid "Reset Board"
+msgstr "Spielbrett zurücksetzen"
 
 #: C/board-toolbar.page:43(item/p)
 msgid "Move all checkers to their original places."
@@ -122,7 +131,9 @@ msgstr "Aufgeben"
 msgid ""
 "Display a dialog that allows you to choose the correct <link xref=\"resigning"
 "\">resignation</link>."
-msgstr "Zeige einen Dialog, mit dem die korrekte <link xref=\"resigning\">Aufgabe</link> ausgewählt werden kann."
+msgstr ""
+"Zeige einen Dialog, mit dem die korrekte <link xref=\"resigning\">Aufgabe</"
+"link> ausgewählt werden kann."
 
 #: C/board-toolbar.page:55(item/p)
 msgid "Accept"
@@ -132,7 +143,10 @@ msgstr "Annehmen"
 msgid ""
 "Accept a proposal from your opponent. That is either a <link xref=\"doubling"
 "\">double</link> or a <link xref=\"resigning\">resignation</link>."
-msgstr "Eine Frage des Gegenübers annehmen. Diese Anfrage ist entweder ein <link xref=\"doubling\">Doppeln</link> oder eine <link xref=\"resigning\">Aufgabe</link>."
+msgstr ""
+"Eine Frage des Gegenübers annehmen. Diese Anfrage ist entweder ein <link "
+"xref=\"doubling\">Doppeln</link> oder eine <link xref=\"resigning\">Aufgabe</"
+"link>."
 
 #: C/board-toolbar.page:63(item/p)
 msgid "Reject"
@@ -142,7 +156,10 @@ msgstr "Ablehnen"
 msgid ""
 "Reject a proposal from your opponent. That is either a <link xref=\"doubling"
 "\">double</link> or a <link xref=\"resigning\">resignation</link>."
-msgstr "Eine Frage des Gegenübers ablehnen. Diese Anfrage ist entweder ein <link xref=\"doubling\">Doppeln</link> oder eine <link xref=\"resigning\">Aufgabe</link>."
+msgstr ""
+"Eine Frage des Gegenübers ablehnen. Diese Anfrage ist entweder ein <link "
+"xref=\"doubling\">Doppeln</link> oder eine <link xref=\"resigning\">Aufgabe</"
+"link>."
 
 #: C/board-toolbar.page:71(item/p)
 msgid "Double"
@@ -150,7 +167,9 @@ msgstr "Doppeln"
 
 #: C/board-toolbar.page:72(item/p)
 msgid "Offer a <link xref=\"doubling\">double</link> to your opponent."
-msgstr "Der Gegnerin oder dem Gegner ein <link xref=\"doubling\">Doppeln</link> vorschlagen."
+msgstr ""
+"Der Gegnerin oder dem Gegner ein <link xref=\"doubling\">Doppeln</link> "
+"vorschlagen."
 
 #: C/board-toolbar.page:77(item/p)
 msgid "Fullscreen"
@@ -158,7 +177,8 @@ msgstr "Vollbild"
 
 #: C/board-toolbar.page:78(item/p)
 msgid "Switch to fullscreen mode. <em>This is not yet implemented!</em>"
-msgstr "In den Vollbildmodus wechseln. <em>Dies ist noch nicht implementiert!</em>"
+msgstr ""
+"In den Vollbildmodus wechseln. <em>Dies ist noch nicht implementiert!</em>"
 
 #: C/board-toolbar.page:84(item/p)
 msgid "Record the Match"
@@ -168,55 +188,73 @@ msgstr "Match aufnehmen"
 msgid ""
 "This is a toggle button. When activated, the current match is recorded. "
 "<em>This is not yet implemented!</em>"
-msgstr "Dies ist ein Umschaltbutton. Im aktivierten Zustand bewirkt er, dass die laufenden Matches aufgenommen werden. <em>Noch nicht implementiert!</em>"
+msgstr ""
+"Dies ist ein Umschaltbutton. Im aktivierten Zustand bewirkt er, dass die "
+"laufenden Matches aufgenommen werden. <em>Noch nicht implementiert!</em>"
 
 #: C/board-toolbar.page:92(item/p)
 msgid "Previous Game"
 msgstr "Vorheriges Spiel"
 
 #: C/board-toolbar.page:93(item/p)
+#, fuzzy
 msgid ""
-"Got to the previous game in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
-msgstr "Gehe zum vorherigen Spiel in diesem Match. Durch einen Klick auf den Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em>"
+"Go to the previous game in the match. Clicking the <link xref=\"board-toolbar"
+"\"><gui style=\"button\">Undo Moves</gui></link> button will bring you back "
+"to the current position. <em>This is not yet implemented!</em>"
+msgstr ""
+"Gehe zum vorherigen Spiel in diesem Match. Durch einen Klick auf den Button "
+"<link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</"
+"gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht "
+"implementiert!</em>"
 
 #: C/board-toolbar.page:101(item/p)
 msgid "Previous Move"
 msgstr "Vorheriger Zug"
 
 #: C/board-toolbar.page:102(item/p)
+#, fuzzy
 msgid ""
-"Got to the previous (half!) move in the match. Clicking the <link xref="
-"\"board-toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> "
-"button will bring you back to the current position. <em>This is not yet "
-"implemented!</em>"
-msgstr "Gehe zum vorherigen (Halb-)Zug in diesem Match. Durch einen Klick auf den Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em>"
+"Go to the previous (half!) move in the match. Clicking the <link xref="
+"\"board-toolbar\"><gui style=\"button\">Undo Moves</gui></link> button will "
+"bring you back to the current position. <em>This is not yet implemented!</em>"
+msgstr ""
+"Gehe zum vorherigen (Halb-)Zug in diesem Match. Durch einen Klick auf den "
+"Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett "
+"zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. "
+"<em>Noch nicht implementiert!</em>"
 
 #: C/board-toolbar.page:110(item/p)
 msgid "Next Move"
 msgstr "Nächster Zug"
 
 #: C/board-toolbar.page:111(item/p)
+#, fuzzy
 msgid ""
-"Got to the next (half!) move in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
-msgstr "Gehe zum nächsten (Halb-)Zug in diesem Match. Durch einen Klick auf den Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em>"
+"Go to the next (half!) move in the match. Clicking the <link xref=\"board-"
+"toolbar\"><gui style=\"button\">Undo Moves</gui></link> button will bring "
+"you back to the current position. <em>This is not yet implemented!</em>"
+msgstr ""
+"Gehe zum nächsten (Halb-)Zug in diesem Match. Durch einen Klick auf den "
+"Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett "
+"zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. "
+"<em>Noch nicht implementiert!</em>"
 
 #: C/board-toolbar.page:119(item/p)
 msgid "Next Game"
 msgstr "Nächstes Spiel"
 
 #: C/board-toolbar.page:120(item/p)
+#, fuzzy
 msgid ""
-"Got to the next game in the match. Clicking the <link xref=\"board-"
-"toolbar#undo-moves\"><gui style=\"button\">Undo Moves</gui></link> button "
-"will bring you back to the current position. <em>This is not yet implemented!"
-"</em>"
-msgstr "Gehe zum nächsten Spiel in diesem Match. Durch einen Klick auf den Button <link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em>"
+"Go to the next game in the match. Clicking the <link xref=\"board-toolbar"
+"\"><gui style=\"button\">Undo Moves</gui></link> button will bring you back "
+"to the current position. <em>This is not yet implemented!</em>"
+msgstr ""
+"Gehe zum nächsten Spiel in diesem Match. Durch einen Klick auf den Button "
+"<link xref=\"board-toolbar\"><gui style=\"button\">Spielbrett zurücksetzen</"
+"gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht "
+"implementiert!</em>"
 
 #: C/board-toolbar.page:128(item/p)
 msgid "Leave Game"
@@ -226,13 +264,16 @@ msgstr "Spiel verlassen"
 msgid ""
 "Leave the current game. Please do not make a habit of that. See <link xref="
 "\"do-not#drop-matches\"/> for details."
-msgstr "Das aktuelle Spiel verlassen. Das sollte man sich nicht zur Gewohnheit machen, siehe <link xref=\"do-not\"/>."
+msgstr ""
+"Das aktuelle Spiel verlassen. Das sollte man sich nicht zur Gewohnheit "
+"machen, siehe <link xref=\"do-not\"/>."
 
 #: C/board-toolbar.page:133(item/p)
 msgid ""
-"The server will save your running match, and you can resume it to a later "
-"point in time."
-msgstr "Der Server wird das laufende Match speichern, so dass es zu einem späteren Zeitpunkt wiederaufgenommen werden kann."
+"The server will save your running match, so that you can resume it later."
+msgstr ""
+"Der Server wird das laufende Match speichern, so dass es zu einem späteren "
+"Zeitpunkt wiederaufgenommen werden kann."
 
 #: C/bugreports.page:6(info/desc)
 msgid "Reporting bugs for <app>Gibbon</app> or this documentation."
@@ -244,16 +285,23 @@ msgstr "Fehler melden"
 
 #: C/bugreports.page:19(page/p)
 msgid ""
-"Please report Gibbon bugs at http://savannah.gnu.org/projects/gibbon. Search "
-"for “Bug Tracker” if you cannot find the submit link."
-msgstr "Fehler können unter http://savannah.gnu.org/projects/gibbon gemeldet werden. Suchen Sie nach „Fehlerverfolgung“, falls Sie den richtigen Link nicht finden können."
+"Please report Gibbon bugs at <link href=\"http://savannah.gnu.org/projects/"
+"gibbon\"/>. Search for “Bug Tracker” if you cannot find the submit link."
+msgstr ""
+"Fehler können unter <link href=\"http://savannah.gnu.org/projects/gibbon\"/> "
+"gemeldet werden. Suchen Sie nach „Fehlerverfolgung“, falls Sie den richtigen "
+"Link nicht finden können."
 
-#: C/bugreports.page:23(page/p)
+#: C/bugreports.page:24(page/p)
 msgid ""
 "The bug tracking system allows “voting” for bugs. Every registered user has "
 "up to 100 votes and can distribute them to open bugs. Bugs with a higher "
 "number of votes are usually prioritized higher."
-msgstr "Die Fehlerverfolgung erlaubt es, über offene Fehler „abzustimmen“. Alle registrierten Benutzerinnen und Benutzer haben bis zu 100 Stimmen und können diese auf offene Bugs verteilen. Bugs mit höherer Stimmenzahl werden normalerweise mit höherer Priorität bearbeitet."
+msgstr ""
+"Die Fehlerverfolgung erlaubt es, über offene Fehler „abzustimmen“. Alle "
+"registrierten Benutzerinnen und Benutzer haben bis zu 100 Stimmen und können "
+"diese auf offene Bugs verteilen. Bugs mit höherer Stimmenzahl werden "
+"normalerweise mit höherer Priorität bearbeitet."
 
 #: C/cannot-invite.page:4(page/title)
 msgid "I Cannot Invite Anybody"
@@ -261,7 +309,8 @@ msgstr "Ich kann niemanden einladen"
 
 #: C/cannot-invite.page:7(info/desc)
 msgid "Please check your own status. You must set it to “available”."
-msgstr "Bitte überprüfen Sie Ihren eigenen Status. Er muss auf „verfügbar“ stehen."
+msgstr ""
+"Bitte überprüfen Sie Ihren eigenen Status. Er muss auf „verfügbar“ stehen."
 
 #: C/checker-movement.page:9(info/desc)
 msgid "How To Move The Checkers Around On the Board"
@@ -275,14 +324,19 @@ msgstr "Spielsteine bewegen"
 msgid ""
 "After you have rolled the dice, see <link xref=\"rolling-dice\"/>, you must "
 "move your checkers."
-msgstr "Nach dem Würfeln, siehe <link xref=\"rolling-dice\"/>, müssen Sie die Spielsteine bewegen."
+msgstr ""
+"Nach dem Würfeln, siehe <link xref=\"rolling-dice\"/>, müssen Sie die "
+"Spielsteine bewegen."
 
 #: C/checker-movement.page:26(page/p)
 msgid ""
 "The most basic way to do this is to click on a checker you want to move. "
 "Left-clicking the checker will use the left die, right-clicking will use the "
 "right die."
-msgstr "Klicken Sie dafür einfach mit der Mauf auf den Spielstein, den Sie ziehen wollen. Mit einem Linksklick wird der linke Würfel verwendet, mit einem Rechtsklick der rechte."
+msgstr ""
+"Klicken Sie dafür einfach mit der Mauf auf den Spielstein, den Sie ziehen "
+"wollen. Mit einem Linksklick wird der linke Würfel verwendet, mit einem "
+"Rechtsklick der rechte."
 
 #: C/checker-movement.page:31(page/p)
 msgid ""
@@ -291,39 +345,59 @@ msgid ""
 "always possible to do the entire move with the left mouse button if you obey "
 "the order of the dice."
 msgstr ""
+"Kann der linke Würfel bei einem Linksklick nicht verwendet werden, prüft "
+"<app>Gibbon</app>, ob stattdessen der rechte Würfel verwendet werden kann. "
+"Demnach ist es also stets möglich, den kompletten Zug mit der linken "
+"Maustaste durchzuführen, wenn Sie dabei die Reihenfolge der Würfel beachten."
 
 #: C/checker-movement.page:38(page/p)
 msgid ""
-"If you cannot move, there is nothing to do for you. The dice you rolled will "
-"vanish after a short period of time, and your opponent continues."
+"When you are happy with your move, double-click on the dice. This is "
+"equivalent to picking up the dice in real-world backgamman, and will send "
+"your move to the server. If you cannot move all dice, pick up the dice, when "
+"you have used the dice possible."
 msgstr ""
+
+#: C/checker-movement.page:44(page/p)
+#, fuzzy
+msgid ""
+"If you cannot move at all, there is nothing to do for you. The dice you "
+"rolled will vanish after a short period of time, and your opponent continues."
+msgstr ""
+"Falls Sie jedoch überhaupt nicht ziehen können, müssen Sie nichts machen. "
+"Die geworfenen Würfel verschwinden nach kurzer Zeit, und Ihre Gegnerin oder "
+"Ihr Gegner setzt das Spiel fort."
 
 #: C/connect.page:6(info/desc)
 msgid "Connect to a backgammon server."
-msgstr ""
+msgstr "Verbindung zu einem Backgammonserver herstellen."
 
 #: C/connect.page:18(page/title)
 msgid "Connecting To a Server"
-msgstr ""
+msgstr "Serververbindung herstellen"
 
 #: C/connect.page:19(page/p)
+#, fuzzy
 msgid ""
 "Once you have <link xref=\"starting\">started</link> <app>Gibbon</app>, you "
 "can initiate a connection to a server by clicking the <gui style=\"button"
 "\">Connect</gui> button in the <link xref=\"main-toolbar\">main toolbar</"
 "link>. Alternatively, you can use the <guiseq><gui>File</gui><gui>Connect</"
-"gui></guiseq> menu entry:"
+"gui></guiseq> menu entry."
 msgstr ""
+"Sobald Sie <app>Gibbon</app> <link xref=\"starting\">gestartet</link> haben, "
+"können Sie eine Verbindung zu einem Server durch einen Klick auf den Button "
+"<gui style=\"button\">Verbinden</gui> in der <link xref=\"main-toolbar"
+"\">Haupt-Werkzeugleiste</link> herstellen. Alternativ können Sie auch den "
+"Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/create-account.page:45(media)
+#: C/create-account.page:43(media)
 msgctxt "_"
-msgid ""
-"external ref='figures/connect-register.png' "
-"md5='2c6fa2d9d41f444b8f5cc670388bfdfb'"
+msgid "external ref='figures/connect-register.png' md5='__failed__'"
 msgstr ""
 
 #: C/create-account.page:6(info/desc)
@@ -353,20 +427,23 @@ msgid ""
 msgstr ""
 
 #: C/create-account.page:34(page/p)
+#, fuzzy
 msgid ""
-"If you want to create a new account on <app>FIBS</app>, please visit the "
-"<link href=\"http://fibs.com/javafibs/register.html\">registration page</"
-"link> and follow the instructions you find there. Clicking the <gui>Connect</"
-"gui> button in the <link xref=\"main-toolbar\">main toolbar</link> or "
-"selecting <guiseq><gui>File</gui><gui>Connect</gui></guiseq> will popup the "
-"connection dialog that allows you to invoke the same page by clicking on "
-"<gui>Get new account on fibs.com</gui>:"
+"If you want to create a new account on a server, click the <gui>Connect</"
+"gui> button in the <link xref=\"main-toolbar\">main toolbar</link> or select "
+"the <guiseq><gui>File</gui><gui>Connect</gui></guiseq> menu entry. That will "
+"popup the the <link xref=\"connect\">connection</link> dialog:"
 msgstr ""
+"Sobald Sie <app>Gibbon</app> <link xref=\"starting\">gestartet</link> haben, "
+"können Sie eine Verbindung zu einem Server durch einen Klick auf den Button "
+"<gui style=\"button\">Verbinden</gui> in der <link xref=\"main-toolbar"
+"\">Haupt-Werkzeugleiste</link> herstellen. Alternativ können Sie auch den "
+"Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden."
 
-#: C/create-account.page:44(page/p)
+#: C/create-account.page:42(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/connect-register.png\"> "
-"Create a new account via the connect dialog. </media>"
+"The connection dialog </media>"
 msgstr ""
 
 #: C/do-not.page:8(info/desc)
@@ -1245,6 +1322,9 @@ msgstr ""
 "Das funktioniert allerdings nur, während Sie <link xref=\"watching"
 "\">zuschauen</link>. Falls Sie die einzige Person sind, die dem Spiel "
 "zuschaut, ist die Funktion natürlich nicht sehr nützlich."
+
+#~ msgid "Undo Moves"
+#~ msgstr "Zurücksetzen"
 
 #~ msgid "guido@imperia.net"
 #~ msgstr "guido@imperia.net"
