@@ -17,8 +17,7 @@
     </license>
   </info>
 
-  <title type="text">The Gibbon Unicode Extension for FIBS Version 1.0</title>
-  <title type="link">Gibbon Unicode Extension for FIBS</title>
+  <title>Gibbon Unicode Extension for FIBS</title>
   <p>
     FIBS traditionally allows only 7-bit characters to be
     transmitted in communication between players (
