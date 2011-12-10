@@ -75,7 +75,7 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
         g_return_if_fail (GIBBON_IS_APP (app));
 
         window = gibbon_app_get_window (app);
-        uri = g_strdup_printf ("ghelp:%s", PACKAGE);
+        uri = g_strdup_printf ("help:%s/index", PACKAGE);
 
         success = gtk_show_uri (gtk_widget_get_screen (window), uri,
                                 GDK_CURRENT_TIME, &error);
