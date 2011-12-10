@@ -26,17 +26,8 @@
   <section id="getting-started" style="2column">
     <title>Getting Started</title>
   </section>
-  <section id="playing" style="2column">
-    <title>Playing</title>
-    <section id="game-chat" style="2column">
-      <title>Chatting During the Game</title>
-    </section>
-  </section>
-  <section id="watching" style="2column">
-    <title>Watching</title>
-  </section>
-  <section id="gui" style="2column">
-    <title>The User Interface</title>
+  <section id="general-concepts" style="2column">
+    <title>General Concepts</title>
   </section>
   <section id="troubleshooting" style="2column">
     <title>Help and Troubleshooting</title>

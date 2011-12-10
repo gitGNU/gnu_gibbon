@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="checker-movement" xml:lang="de">
   <info>
-    <link type="guide" xref="index#playing"/>
+    <link type="guide" xref="playing#basics"/>
     <link type="seealso" xref="finishing-a-move"/>
     <link type="seealso" xref="rolling-dice"/>
     <link type="seealso" xref="swapping-dice"/>
@@ -25,15 +25,6 @@
   <p>Nach dem Würfeln, siehe <link xref="rolling-dice"/>, müssen Sie die Spielsteine bewegen.</p>
   <p>Klicken Sie dafür einfach mit der Mauf auf den Spielstein, den Sie ziehen wollen. Mit einem Linksklick wird der linke Würfel verwendet, mit einem Rechtsklick der rechte.</p>
   <p>Kann der linke Würfel bei einem Linksklick nicht verwendet werden, prüft <app>Gibbon</app>, ob stattdessen der rechte Würfel verwendet werden kann. Demnach ist es also stets möglich, den kompletten Zug mit der linken Maustaste durchzuführen, wenn Sie dabei die Reihenfolge der Würfel beachten.</p>
-  <p>
-    When you are happy with your move, double-click on the dice.  This
-    is equivalent to picking up the dice in real-world backgamman, and
-    will send your move to the server.  If you cannot move all dice,
-    pick up the dice, when you have used the dice possible.
-  </p>
-  <p>
-    If you cannot move at all, there is nothing to do for you.  The
-    dice you rolled will vanish after a short period of time, and
-    your opponent continues.
-  </p>
+  <p>Wenn Sie zufrieden mit Ihrem Zug sie, doppelklicken Sie auf die Würfel. Dies entsprecht dem Aufnehmen der Würfel in der realen Welt, und bewirkt, dass Ihr Zug dem Server übermittelt wird. Falls Sie nicht alle Würfel für Ihren Zug verwenden können, nehmen Sie die Würfel auf, wenn Sie alle möglichen Würfel verwendet haben.</p>
+  <p>Falls Sie jedoch überhaupt nicht ziehen können, müssen Sie nichts machen. Die geworfenen Würfel verschwinden nach kurzer Zeit, und Ihre Gegnerin oder Ihr Gegner setzt das Spiel fort.</p>
 </page>

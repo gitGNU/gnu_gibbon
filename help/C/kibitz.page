@@ -2,8 +2,9 @@
       type="topic"
       id="kibitz">
   <info>
-    <link type="guide" xref="index#game-chat"/>
-    <link type="guide" xref="index#watching"/>
+    <link type="guide" xref="chatting#game-chat"/>
+    <link type="guide" xref="playing#chatting"/>
+    <link type="guide" xref="watching#chatting"/>
     <desc>
       Talking to both other spectators (watchers) and
       the players

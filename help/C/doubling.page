@@ -2,7 +2,7 @@
       type="topic"
       id="doubling">
   <info>
-    <link type="guide" xref="index#playing"/>
+    <link type="guide" xref="playing#basics"/>
     <link type="seealso" xref="rolling-dice"/>
     <desc>
       Using the Doubling Cube

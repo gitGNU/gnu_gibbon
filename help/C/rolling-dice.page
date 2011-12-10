@@ -2,7 +2,7 @@
       type="topic"
       id="rolling-dice">
   <info>
-    <link type="guide" xref="index#playing"/>
+    <link type="guide" xref="playing#basics"/>
     <link type="seealso" xref="checker-movement"/>
     <link type="seealso" xref="swapping-dice"/>
     <link type="seealso" xref="doubling"/>

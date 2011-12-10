@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="gui" xml:lang="de">
+
+  <info>
+    <link type="guide" xref="index#general-concepts"/>
+    <title type="link">User Interface</title>
+    <title type="text">User Interface</title>
+    <desc>The graphical user interface and other interaction</desc>
+    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>    
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>User Interface</title>
+
+  <p>
+    All interaction with <app>Gibbon</app> is done with the mouse
+    or the keyboard.
+  </p>
+
+  <section id="elements" style="2column">
+    <title>Elements</title>
+  </section>
+</page>

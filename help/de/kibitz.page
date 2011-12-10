@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="kibitz" xml:lang="de">
   <info>
-    <link type="guide" xref="index#game-chat"/>
-    <link type="guide" xref="index#watching"/>
+    <link type="guide" xref="chatting#game-chat"/>
+    <link type="guide" xref="playing#chatting"/>
+    <link type="guide" xref="watching#chatting"/>
     <desc>Sowohl mit anderen Zuschauern als auch mit den Spielern chatten</desc>
     <credit type="author">
       <name>Guido Flohr</name>

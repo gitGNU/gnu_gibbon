@@ -1,8 +1,8 @@
 <page xmlns="http://projectmallard.org/1.0/"
-      type="topic"
-      id="say">
+      type="guide"
+      id="watching">
   <info>
-    <link type="guide" xref="index#watching"/>
+    <link type="guide" xref="index#general-concepts"/>
     <desc>
       Watching Other People Play
     </desc>
@@ -53,4 +53,8 @@
     You should also know that both players can prevent you
     from watching them or looking at their current board.
   </p>
+  
+  <section id="chatting" style="2columns">
+    <title>Chatting With Other Spectators or Players</title>
+  </section>
 </page>

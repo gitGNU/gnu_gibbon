@@ -1,6 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      type="topic"
-      id="main-toolbar">
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="main-toolbar" xml:lang="de">
   <info>
     <link type="guide" xref="gui#elements"/>
     <desc>
@@ -11,8 +10,14 @@
       <email>guido@imperia.net</email>
     </credit>
     <license>
-      <p>Creative Commons Share Alike 3.0</p>
+      <p>Create Commons Share Alike 3.0</p>
     </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
   </info>
 
   <title>The Main Toolbar</title>
@@ -22,11 +27,7 @@
   <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
     The Main Toolbar When Disconnected
   </media>
-  <p>
-    All buttons will display a tooltip explaining their functions, when
-    you leave the mouse pointer over them for a short period of time.
-    The buttons from left to right are:
-  </p>
+  <p>Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von links nach rechts sind:</p>
   <list type="numbered">
     <item>
       <p>Connect</p>

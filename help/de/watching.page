@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<page xmlns="http://projectmallard.org/1.0/" type="topic" id="say" xml:lang="de">
+<page xmlns="http://projectmallard.org/1.0/" type="guide" id="watching" xml:lang="de">
   <info>
-    <link type="guide" xref="index#watching"/>
+    <link type="guide" xref="index#general-concepts"/>
     <desc>Anderen beim Spielen zuschauen</desc>
     <credit type="author">
       <name>Guido Flohr</name>
@@ -43,4 +43,8 @@
   <p>Sobald Sie selber ein Match beginnen, hören Sie automatisch auf, anderen zuzuschauen.</p>
   <p>Bitte beachten Sie, dass beide Spieler benachrichtigt werden, wenn Sie beginnen oder aufhören, Ihnen zuzuschauen.</p>
   <p>Es ist auch möglich, dass andere Spielerinnen und Spieler Sie davon ausschließen, deren Spielstand zu sehen, oder ihnen zuzuschauen.</p>
+  
+  <section id="chatting" style="2columns">
+    <title>Chatting With Other Spectators or Players</title>
+  </section>
 </page>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="resigning" xml:lang="de">
   <info>
-    <link type="guide" xref="index#playing"/>
+    <link type="guide" xref="playing#basics"/>
     <desc>Wie man aufgibt, oder auf die Aufgabe der Gegnerin oder des Gegners antwortet</desc>
     <credit type="author">
       <name>Guido Flohr</name>

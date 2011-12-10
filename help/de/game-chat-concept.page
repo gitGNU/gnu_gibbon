@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="game-chat-concept" xml:lang="de">
   <info>
-    <link type="guide" xref="index#game-chat"/>
-    <link type="seealso" xref="index#kibitz"/>
-    <link type="seealso" xref="index#whisper"/>
-    <link type="seealso" xref="index#say"/>
-    <link type="seealso" xref="index#tell"/>
-    <link type="seealso" xref="index#shout"/>
+    <link type="guide" xref="chatting#game-chat"/>
+    <link type="seealso" xref="playing"/>
+    <link type="seealso" xref="watchinging"/>
     <desc>
       How Chatting During the Game is Handled in <app>Gibbon</app>
     </desc>

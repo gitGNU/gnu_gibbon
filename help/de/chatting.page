@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="chatting" xml:lang="de">
+
+  <info>
+    <link type="guide" xref="index#general-concepts"/>
+    <title type="link">Chatting</title>
+    <title type="text">Chatting</title>
+    <desc>Communicating with other people on the server</desc>
+    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>    
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Chatting</title>
+
+  <p>
+    It is possible to chat with other people on the server very much
+    the same way as you know it from instant messaging programs.
+  </p>
+
+  <section id="game-chat" style="2column">
+    <title>Chatting During the Game</title>
+  </section>
+</page>

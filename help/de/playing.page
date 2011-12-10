@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="playing" xml:lang="de">
+
+  <info>
+    <link type="guide" xref="index#general-concepts"/>
+    <title type="link">Playing Backgammon</title>
+    <title type="text">Playing Backgammon</title>
+    <desc>Rolling the dice, moving checkers, using the cube, etc.</desc>
+    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>    
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Playing Backgammon</title>
+
+  <p>
+    Playing backgammon with <app>Gibbon</app> is a little different
+    from playing backgamon with humans at a real board.  But it is
+    very similar to the way you use other popular backgammon playing
+    software like for example <link href="http://www.gnubg.org/">GNU
+    Backgammon</link>.
+  </p>
+
+  <section id="basics" style="2column">
+    <title>Basics</title>
+  </section>
+  <section id="invitations" style="2column">
+    <title>Invitations</title>
+  </section>
+  <section id="chatting" style="2column">
+    <title>Chatting During the Game</title>
+  </section>
+</page>

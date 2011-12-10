@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="board-toolbar" xml:lang="de">
   <info>
-    <link type="guide" xref="index#gui"/>
+    <link type="guide" xref="gui#elements"/>
     <desc>Die kleine Werkzeugliste oberhalb des Spielbretts</desc>
     <credit type="author">
       <name>Guido Flohr</name>
@@ -19,7 +19,11 @@
   </info>
 
   <title>Die Spielbrett-Werkzeugleiste</title>
-  <p>Die kleine Werkzeugliste oberhalb des Spielbretts enthält Buttons, die während des <link xref="index#playing">Spielens</link> oder <link xref="index#watching">Zuschauens</link> wichtig sind.</p>
+  <p>
+    The small toolbar above the board contains controls 
+    that are useful while <link xref="playing">playing</link>
+    or <link xref="index#watching">watching</link>.
+  </p>
   <media type="image" mime="src/png" src="figures/board-toolbar.png">Die Spielbrett-Werkzeugleiste</media>
   <p>Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von links nach rechts sind:</p>
   <list type="numbered">

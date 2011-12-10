@@ -35,6 +35,7 @@ HELP_FILES = \
 	board-toolbar.page \
 	bugreports.page \
 	cannot-invite.page \
+	chatting.page \
 	checker-movement.page \
 	connect.page \
 	create-account.page \
@@ -42,15 +43,18 @@ HELP_FILES = \
 	doubling.page \
 	droppers.page \
 	game-chat-concept.page \
+	gui.page \
 	index.page \
 	introduction.page \
 	invite.page \
 	kibitz.page \
+	main-toolbar.page \
+	playing.page \
 	resigning.page \
 	rolling-dice.page \
 	say.page \
 	swapping-dice.page \
-	watching-matches.page \
+	watching.page \
 	whisper.page
 
 HELP_LINGUAS = de

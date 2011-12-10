@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="create-account" xml:lang="de">
   <info>
     <link type="guide" xref="index#getting-started"/>
-    <desc>
-      Create a new account.
-    </desc>
+    <desc>Neues Konto erstellen.</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,14 +18,8 @@
     </mal:credit>
   </info>
 
-  <title>Create a New Account</title>
-  <p>
-    Before you can connect (see <link xref="connect"/>) to <app>FIBS</app> you 
-    need an account.  Do not be shy creating an account! You do not have to
-    play immediately.  It is also not considered <link xref="do-not">bad
-    habit</link> to not respond to invites to matches or other contact
-    requests if you just want to look around first.
-  </p>
+  <title>Neues Konto erstellen</title>
+  <p>Bevor Sie Sich auf <app>FIBS</app> einloggen können (siehe dazu auch <link xref="connect"/>), benötigen Sie ein Konto. Keine Angst! Das geht ganz einfach, und Sie müssen auch nicht sofort beginnen zu spielen. Es wird nicht als <link xref="do-not">schlechte Manieren</link> betrachten, wenn man auf Einladungen zu Matches oder andere Kontaktaufnahmen nicht reagiert, und sich erst einmal nur umschaut.</p>
   <p>
     For obvious reasons, <app>FIBS</app> does not allow multiple accounts for 
     the same person.  If you think you have a legitimate reason for
@@ -72,9 +64,7 @@
     </item>
     <item>
       <p><gui style="label">Port</gui></p>
-      <p>
-        The port number. In doubt use the default port number 4321.
-      </p>
+      <p>Die Portnummer.  Verwenden Sie im Zweifel den Standardport 4321.</p>
     </item>
     <item>
       <p><gui style="label">User name</gui></p>
@@ -83,6 +73,12 @@
         not possible to use a name used by somebody else.  A little
         surprising: Your name must not contain digits, underscores,
         or hyphens.
+      </p>
+      <p>
+        This name will be your identity on the server! While it is not illegal
+        to choose a silly or offesive name, in fact some people have remarkably 
+        silly or offensive names on <app>FIBS</app>, you should think twice 
+        about how you want to be known to your future backgammon partners.
       </p>
     </item>
     <item>
