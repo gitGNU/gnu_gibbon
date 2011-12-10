@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-10 01:44+0200\n"
-"PO-Revision-Date: 2011-12-10 01:23+0200\n"
+"POT-Creation-Date: 2011-12-10 03:04+0200\n"
+"PO-Revision-Date: 2011-12-10 03:00+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -357,9 +357,13 @@ msgid ""
 "your move to the server. If you cannot move all dice, pick up the dice, when "
 "you have used the dice possible."
 msgstr ""
+"Wenn Sie zufrieden mit Ihrem Zug sie, doppelklicken Sie auf die Würfel. Dies "
+"entsprecht dem Aufnehmen der Würfel in der realen Welt, und bewirkt, dass "
+"Ihr Zug dem Server übermittelt wird. Falls Sie nicht alle Würfel für Ihren "
+"Zug verwenden können, nehmen Sie die Würfel auf, wenn Sie alle möglichen "
+"Würfel verwendet haben."
 
 #: C/checker-movement.page:44(page/p)
-#, fuzzy
 msgid ""
 "If you cannot move at all, there is nothing to do for you. The dice you "
 "rolled will vanish after a short period of time, and your opponent continues."
@@ -367,6 +371,23 @@ msgstr ""
 "Falls Sie jedoch überhaupt nicht ziehen können, müssen Sie nichts machen. "
 "Die geworfenen Würfel verschwinden nach kurzer Zeit, und Ihre Gegnerin oder "
 "Ihr Gegner setzt das Spiel fort."
+
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#.
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/connect.page:31(media) C/create-account.page:43(media)
+#, fuzzy
+msgctxt "_"
+msgid ""
+"external ref='figures/connection-dialog.png' "
+"md5='bd3324409ffe0bbcd6b1cce740e8a78e'"
+msgstr "translated"
 
 #: C/connect.page:6(info/desc)
 msgid "Connect to a backgammon server."
@@ -377,7 +398,6 @@ msgid "Connecting To a Server"
 msgstr "Serververbindung herstellen"
 
 #: C/connect.page:19(page/p)
-#, fuzzy
 msgid ""
 "Once you have <link xref=\"starting\">started</link> <app>Gibbon</app>, you "
 "can initiate a connection to a server by clicking the <gui style=\"button"
@@ -391,22 +411,97 @@ msgstr ""
 "\">Haupt-Werkzeugleiste</link> herstellen. Alternativ können Sie auch den "
 "Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden."
 
+#: C/connect.page:27(page/p)
+msgid "Either way, this will pop up a connection dialog:"
+msgstr "So oder so wird daraufhin der Verbindungs-Dialog angezeigt:"
+
+#: C/connect.page:30(page/p) C/create-account.page:42(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/connection-dialog.png"
+"\"> The connection dialog </media>"
+msgstr ""
+
+#: C/connect.page:35(page/p)
+msgid "You have to fill in the following information:"
+msgstr "Sie müssen die folgenden Informationen angeben:"
+
+#: C/connect.page:40(item/p) C/create-account.page:62(item/p)
+msgid "<gui style=\"label\">Server</gui>"
+msgstr "<gui style=\"label\">Server</gui>"
+
+#: C/connect.page:41(item/p)
+msgid "The name or IP address of the server you want to connect to."
+msgstr ""
+"Der Name oder die IP-Adresse des Servers, mit dem Sie die Verbindung "
+"herstellen wollen."
+
+#: C/connect.page:46(item/p) C/create-account.page:69(item/p)
+msgid "<gui style=\"label\">Port</gui>"
+msgstr "<gui style=\"label\">Port</gui>"
+
+#: C/connect.page:47(item/p) C/create-account.page:70(item/p)
+msgid "The port number. In doubt use the default port number 4321."
+msgstr "Die Portnummer.  Verwenden Sie im Zweifel den Standardport 4321."
+
+#: C/connect.page:52(item/p) C/create-account.page:75(item/p)
+msgid "<gui style=\"label\">User name</gui>"
+msgstr "<gui style=\"label\">User name</gui>"
+
+#: C/connect.page:53(item/p)
+msgid ""
+"Your user name on the server. If you do not have an account you can <link "
+"xref=\"create-account\">create</link> one from withing <app>Gibbon</app>."
+msgstr ""
+"Ihr Benutzername auf dem Server. Falls Sie noch kein Konto besitzen, können "
+"Sie mit <app>Gibbon</app> ein neues anlegen, siehe <link xref=\"create-"
+"account\"/>."
+
+#: C/connect.page:60(item/p) C/create-account.page:97(item/p)
+msgid "<gui style=\"label\">Password</gui>"
+msgstr "<gui style=\"label\">Password</gui>"
+
+#: C/connect.page:61(item/p)
+msgid "This is also necessary."
+msgstr "Dies ist ebenfalls eine notwendige Angabe."
+
+#: C/connect.page:66(item/p)
+msgid ""
+"Optionally, an e-mail address. This e-mail address will be visible to "
+"everybody else on the server."
+msgstr ""
+"Optional, eine E-Mail-Adresse. Diese Adresse ist für alle anderen "
+"Benutzerinnen und Benutzer auf dem Server sichtbar."
+
+#: C/connect.page:70(item/p)
+msgid ""
+"<em>Hint:</em> FIBS does not allow arbitrary strings here. If you want to "
+"give the address of a web site instead of an e-mail address, you have to "
+"omit the leading scheme, i.e. do not write “http://www.example.com/” but "
+"“www.example.com”."
+msgstr ""
+"<em>Hinweis:</em> FIBS erlaubt hier keine beliebigen Zeichenketten. Wenn Sie "
+"statt Ihrer Adresse eine Webseite angeben wollen, lassen Sie bitte das "
+"führende Schema weg, also nicht “http://www.example.com/” sondern “www."
+"example.com”."
+
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/create-account.page:43(media)
+#: C/create-account.page:53(media)
 msgctxt "_"
-msgid "external ref='figures/connect-register.png' md5='__failed__'"
-msgstr ""
+msgid ""
+"external ref='figures/register-account.png' "
+"md5='1c7cabc2672496d162bec8e8cd85d460'"
+msgstr "translated"
 
 #: C/create-account.page:6(info/desc)
 msgid "Create a new account."
-msgstr ""
+msgstr "Neues Konto erstellen."
 
 #: C/create-account.page:18(page/title)
 msgid "Create a New Account"
-msgstr ""
+msgstr "Neues Konto erstellen"
 
 #: C/create-account.page:19(page/p)
 msgid ""
@@ -416,6 +511,12 @@ msgid ""
 "link> to not respond to invites to matches or other contact requests if you "
 "just want to look around first."
 msgstr ""
+"Bevor Sie Sich auf <app>FIBS</app> einloggen können (siehe dazu auch <link "
+"xref=\"connect\"/>), benötigen Sie ein Konto. Keine Angst! Das geht ganz "
+"einfach, und Sie müssen auch nicht sofort beginnen zu spielen. Es wird nicht "
+"als <link xref=\"do-not\">schlechte Manieren</link> betrachten, wenn man auf "
+"Einladungen zu Matches oder andere Kontaktaufnahmen nicht reagiert, und sich "
+"erst einmal nur umschaut."
 
 #: C/create-account.page:26(page/p)
 msgid ""
@@ -440,10 +541,97 @@ msgstr ""
 "\">Haupt-Werkzeugleiste</link> herstellen. Alternativ können Sie auch den "
 "Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden."
 
-#: C/create-account.page:42(page/p)
+#: C/create-account.page:47(page/p)
 msgid ""
-"<media type=\"image\" mime=\"src/png\" src=\"figures/connect-register.png\"> "
-"The connection dialog </media>"
+"Click the <gui style=\"button\">Register new account</gui> button underneath "
+"the <gui style=\"label\">User name</gui> text entry. You will then see this "
+"dialog:"
+msgstr ""
+
+#: C/create-account.page:52(page/p)
+msgid ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/register-account.png\"> "
+"The account creation dialog </media>"
+msgstr ""
+
+#: C/create-account.page:57(page/p)
+msgid "The following information is needed:"
+msgstr ""
+
+#: C/create-account.page:63(item/p)
+msgid ""
+"The name or IP address of the server you want to connect to. In doubt, try "
+"“fibs.com”."
+msgstr ""
+
+#: C/create-account.page:76(item/p)
+msgid ""
+"The user name you want to use on that server. It is - of course - not "
+"possible to use a name used by somebody else. A little surprising: Your name "
+"must not contain digits, underscores, or hyphens."
+msgstr ""
+
+#: C/create-account.page:82(item/p)
+msgid ""
+"This name will be your identity on the server! While it is not illegal to "
+"choose a silly or rude name, in fact some people have remarkably silly or "
+"rude names on <app>FIBS</app>, you should think twice about how you want to "
+"be known to your future backgammon partners."
+msgstr ""
+
+#: C/create-account.page:90(item/p)
+msgid "<gui style=\"label\">Save Password?</gui>"
+msgstr ""
+
+#: C/create-account.page:91(item/p)
+msgid ""
+"Check this box, if you want <app>Gibobn</app> to remember your password for "
+"you."
+msgstr ""
+
+#: C/create-account.page:98(item/p)
+msgid "Choose a suitable password."
+msgstr ""
+
+#: C/create-account.page:101(item/p)
+msgid ""
+"<em>Important!</em> All communication with the server is unencrypted. It is "
+"therefore visible to everybody in your network, and to everybody in the "
+"networks between you and the server (that will mostly be the staff of "
+"Internet Service Providers). This information should not make you panic "
+"because it is quite unlikely that anybody is interested in eavesdropping "
+"your backgammon communication. But you must remember that your password is "
+"also visible to these people."
+msgstr ""
+
+#: C/create-account.page:112(item/p)
+msgid ""
+"The password is also visible to everybody with superuser (or administrator) "
+"privileges on your computer because <app>Gibbon</app> currently does not "
+"encrypt your password."
+msgstr ""
+
+#: C/create-account.page:117(item/p)
+msgid ""
+"Therefore, use a password that is not too easy to guess but do <em>not</em> "
+"use a “valuable” password here! That means, do not use a password that you "
+"use for other sensitive accounts like for online banking or internet shops. "
+"It is a well-known fact that criminals routinely collect user name and "
+"password combinations, and try to reuse them on other servers."
+msgstr ""
+
+#: C/create-account.page:128(item/p)
+msgid "<gui style=\"label\">Repeat Password</gui>"
+msgstr ""
+
+#: C/create-account.page:129(item/p)
+msgid "You must repeat your password."
+msgstr ""
+
+#: C/create-account.page:132(item/p)
+msgid ""
+"<em>Important!</em> Do <em>not</em> forget your password! You cannot recover "
+"it!"
 msgstr ""
 
 #: C/do-not.page:8(info/desc)
