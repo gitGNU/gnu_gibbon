@@ -79,6 +79,12 @@
         surprising: Your name must not contain digits, underscores,
         or hyphens.
       </p>
+      <p>
+        This name will be your identity on the server! While it is not illegal
+        to choose a silly or rude name, in fact some people have remarkably silly
+        or rude names on <app>FIBS</app>, you should think twice about how
+        you want to be known to your future backgammon partners.
+      </p>
     </item>
     <item>
       <p><gui style="label">Save Password?</gui></p>
