@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="gibbon-unicode" xml:lang="de">
+  <info>
+    <link type="guide" xref="developer-resources"/>
+    <link type="seealso" xref="chatting"/>
+    <desc>
+      Specification for allowing Unicode characters
+      in communication between players on FIBS
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title type="text">The Gibbon Unicode Extension for FIBS Version 1.0</title>
+  <title type="link">Gibbon Unicode Extension for FIBS</title>
+  <p>
+    FIBS traditionally allows only 7-bit characters to be
+    transmitted in communication between players (
+      <link xref="say"><cmd>say</cmd></link>,
+      <link xref="kibitz"><cmd>kibitz</cmd></link>,
+      <link xref="whisper"><cmd>whisper</cmd></link>,
+      <link xref="tell"><cmd>tell</cmd></link>,
+      <link xref="tellx"><cmd>tellx</cmd></link>,
+      and  <link xref="tellx"><cmd>message</cmd></link>).
+    Characters outside of the range of US-ASCII are
+    replaced by a question mark (“?”).
+  </p>
+  <p>
+    <app>Gibbon</app> automatically encodes characters
+    outside of the range of US-ASCII, when transmitting
+    it as part of the message body of the above commands to the server, 
+    and automatically decodes them when they are received as part of
+    the message body of one of the above commands from the server.
+  </p>
+  <section>
+    <title>Encoding</title>
+    <p>
+      Only the body of a message of one of the above mentioned
+      FIBS CLIP commands is subject to encoding.
+    </p>
+    <p>
+      A conforming application <em>must</em> encode
+      all characters above the 
+      <link href="http://www.unicode.org/">Unicode</link>
+      code point +U007F as named HTML entities as described
+      in <link href="http://www.w3.org/TR/html401/sgml/entities.html"/>
+      or as numerical entities as described in 
+      <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/>.
+      A conforming application <em>should</em> prefer
+      named entities over numerical entities wherever
+      possible.
+    </p>
+    <p>
+      A conforming application <em>must</em> encode
+      the character “&amp;” (ampersand, U+0026)
+      according to the above specification, if it
+      can be confused with an escaped sequence as described
+      in this protocol.  If the ampersand cannot be
+      confused with a valid entity, a conforming
+      application <em>should not</em> encode the 
+      ampersand character.
+    </p>
+    <p>
+      A conforming application <em>should not</em> encode
+      any other characters, especially not
+      the XML special characters 
+        “&lt;” (less than, U+003C),
+        “&gt;” (greater than, U+003E),
+        “"” (double quote, U+0022), and
+        “'” (apostrophe, U+0027).
+    </p>
+  </section>
+  <section>
+    <title>Decoding</title>
+    <p>
+      Only the body of a message of one of the above mentioned
+      FIBS CLIP commands is subject to decoding.
+    </p>
+    <p>
+      A conforming application <em>must</em> decode
+      all valid named entity references as described in
+      <link href="http://www.w3.org/TR/html401/sgml/entities.html"/>
+      or numerical entities as
+      described in 
+      <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/>.
+    </p>
+    <p>
+      A conforming application <em>should not</em> treat
+      incomplete or other invalid entity references in any
+      special way or display them in any special way.
+    </p>
+  </section>
+  <section>
+    <title>Rationale</title>
+    <p>
+      The US-ASCII restriction in the FIBS protocol makes it
+      hard or impossible to communicate in most languages
+      other than English.  This extension tries to overcome
+      this restriction in the least obtrusive way possible.
+    </p>
+    <p>
+      Using named HTML entities for encoding characters outside
+      of the range of US-ASCII has the advantage that they are
+      well-known and to a certain extent human-readable.  Even
+      for people using a client that does not support this extension
+      it is easier to decipher the meaning of “5 &amp;euro;” than
+      to guess what “5 ?” means.
+    </p>
+    <p>
+      Communication in language that use a script for which no
+      named entities are defined, will be completely unreadable
+      to people that are not using a client supporting this protocol.
+      On the other hand, taking part in such communication does not
+      only require a conforming client but also knowledge of that
+      particular script.  In this respect, users can only win
+      by this protocol.
+    </p>
+  </section>
+</page>

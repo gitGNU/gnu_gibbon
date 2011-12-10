@@ -26,7 +26,7 @@
     themselves and possible spectators you have to select both the
     <gui style="button">say</gui> and the <gui style="button">whisper</gui>
     button while typing text into the
-    <link xref="game-chat-area">game chat area</link>.
+    <link xref="chatting#game-chat">game chat area</link>.
   </p>
   <p>
     If you are currently playing, both your opponent and spectators

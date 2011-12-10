@@ -2,7 +2,6 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="checker-movement" xml:lang="de">
   <info>
     <link type="guide" xref="playing#basics"/>
-    <link type="seealso" xref="finishing-a-move"/>
     <link type="seealso" xref="rolling-dice"/>
     <link type="seealso" xref="swapping-dice"/>
     <desc>Wie die Spielsteine auf dem Spielbrett bewegt werden können</desc>
@@ -21,7 +20,7 @@
     </mal:credit>
   </info>
 
-  <title>Spielsteine bewegen</title>
+  <title>Making a Move</title>
   <p>Nach dem Würfeln, siehe <link xref="rolling-dice"/>, müssen Sie die Spielsteine bewegen.</p>
   <p>Klicken Sie dafür einfach mit der Mauf auf den Spielstein, den Sie ziehen wollen. Mit einem Linksklick wird der linke Würfel verwendet, mit einem Rechtsklick der rechte.</p>
   <p>Kann der linke Würfel bei einem Linksklick nicht verwendet werden, prüft <app>Gibbon</app>, ob stattdessen der rechte Würfel verwendet werden kann. Demnach ist es also stets möglich, den kompletten Zug mit der linken Maustaste durchzuführen, wenn Sie dabei die Reihenfolge der Würfel beachten.</p>

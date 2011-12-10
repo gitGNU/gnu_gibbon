@@ -21,7 +21,7 @@
 
   <title>Mit anderen Zuschauern sprechen (<cmd>whisper</cmd>)</title>
   <p>
-    If you only want to talk to other people <link xref="index#watching">watching</link>
+    If you only want to talk to other people <link xref="watching">watching</link>
     the same game as you but not to the players themselves, you should
     “whisper”.  You can do this  by typing text into the
     <link xref="game-chat-concept">game chat area</link> and
@@ -29,7 +29,7 @@
     button.
   </p>
   <p>
-    This will only work while you are <link xref="index#watching">watching</link>.
+    This will only work while you are <link xref="watching">watching</link>.
     If you are the only one watching a match, this feature is not
     particularly useful.
   </p>

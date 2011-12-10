@@ -19,7 +19,7 @@
   <p>
     The small toolbar above the board contains controls 
     that are useful while <link xref="playing">playing</link>
-    or <link xref="index#watching">watching</link>.
+    or <link xref="watching">watching</link>.
   </p>
   <media type="image" mime="src/png" src="figures/board-toolbar.png">
     The Board Toolbar

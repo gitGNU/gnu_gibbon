@@ -6,7 +6,6 @@
     <title type="link">Playing Backgammon</title>
     <title type="text">Playing Backgammon</title>
     <desc>Rolling the dice, moving checkers, using the cube, etc.</desc>
-    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>

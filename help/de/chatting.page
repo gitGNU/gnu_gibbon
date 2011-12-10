@@ -6,7 +6,6 @@
     <title type="link">Chatting</title>
     <title type="text">Chatting</title>
     <desc>Communicating with other people on the server</desc>
-    <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>

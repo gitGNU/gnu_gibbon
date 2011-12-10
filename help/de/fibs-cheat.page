@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="fibs-cheat" xml:lang="de">
+  <title>Does FIBS Cheat?</title>
+  <info>
+    <link type="guide" xref="index#faq"/>
+    <desc>
+      Of course, it does!  Click her to learn the details.    
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <p>
+    It is a well-known fact that all backgammon software
+    cheats.  <app>FIBS</app> is not exception here.
+  </p>
+  <p>
+    It uses biased dice.  The bias is calculated with a
+    carefully crafted secret algorithm.  Intensive reverse
+    engineering has led to this state of knowledge about
+    the internals of the algorithm:
+  </p>
+  <list type="numbered">
+    <item>
+      <p>
+        <em>Dice whiners</em> usually get the worst roll possible.
+      </p>
+    </item>
+    <item>
+      <p>
+        People that just concentrate on their play get random dice.
+        Only when they are winning, they tend to have long sequences
+        of extremely lucky rolls.
+      </p>
+    </item>
+    <item>
+      <p>
+        Strong players with a high rating always get the best rolls.
+        How else could they have become so strong after all?
+      </p>
+    </item>
+  </list>
+  <p>
+    Okay, before you spread the news about that ... It is a fib!
+    Heard it? It is a fib!
+    <app>FIBS</app> does <em>not</em> cheat.  And <em>you</em>
+    stop complaining about the dice!
+  </p>
+  <p>
+    But you are absolutely sure that the dice are biased.  Then
+    use the Official Computer Dice Complained Form at
+    <link href="http://www.bkgm.com/rgb/rgb.cgi?view+546"/>
+  </p>
+</page>

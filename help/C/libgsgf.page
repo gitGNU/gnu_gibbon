@@ -1,0 +1,41 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="libgsgf">
+  <info>
+    <link type="guide" xref="developer-resources"/>
+    <desc>
+      CLIP is the <em>CLIent</em> <em>P</em>rotocol
+      for FIBS
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Gibbon SGF Library libgsgf</title>
+  <p>
+    <app>Gibbon</app> uses the 
+    <link href="http://www.red-bean.com/sgf/">Smart Game
+    Format SGF</link> as its native format for storing
+    games.  This is the same format that the popular
+    backgammon software <link href="http://www.gnubg.org/">GNU
+    Backgammon</link> uses.
+  </p>
+  <p>
+    <app>Gibbon</app> has its own library for reading
+    and writing SGF data.  This library is called 
+    <app><em>libgsgf</em></app>
+    and could also be used as a stand-alone library.
+  </p>
+  <p>
+    Extensive developer documentation for <app>libgsgf</app>
+    is maybe installed together with <app>Gibbon</app> on
+    your machine.  Otherwise, you will always find the latest
+    documtation at
+    <link href="http://www.gibbon.bg/gibbon/docs/libgsgf/"/>.
+  </p>
+</page>

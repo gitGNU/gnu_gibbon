@@ -37,17 +37,21 @@ HELP_FILES = \
 	cannot-invite.page \
 	chatting.page \
 	checker-movement.page \
+	clip-conformance.page \
 	connect.page \
 	create-account.page \
 	do-not.page \
 	doubling.page \
 	droppers.page \
+	fibs-cheat.page \
 	game-chat-concept.page \
+	gibbon-unicode.page \
 	gui.page \
 	index.page \
 	introduction.page \
 	invite.page \
 	kibitz.page \
+	libgsgf.page \
 	main-toolbar.page \
 	playing.page \
 	resigning.page \

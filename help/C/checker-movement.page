@@ -3,7 +3,6 @@
       id="checker-movement">
   <info>
     <link type="guide" xref="playing#basics"/>
-    <link type="seealso" xref="finishing-a-move"/>
     <link type="seealso" xref="rolling-dice"/>
     <link type="seealso" xref="swapping-dice"/>
     <desc>
@@ -18,7 +17,7 @@
     </license>
   </info>
 
-  <title>Moving The Checkers</title>
+  <title>Making a Move</title>
   <p>
     After you have rolled the dice, see <link xref="rolling-dice"/>,
     you must move your checkers.

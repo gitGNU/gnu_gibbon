@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="clip-conformance" xml:lang="de">
+  <info>
+    <link type="guide" xref="developer-resources"/>
+    <link type="seealso" xref="gibbon-unicode"/>
+    <desc>
+      CLIP is the <em>CLIent</em> <em>P</em>rotocol
+      for FIBS
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Conformance With CLIP</title>
+  <p>
+    <app>Gibbon</app> tries to conform to
+    CLIP, the CLIent Protocol For FIBS as described
+    in <link href="http://www.fibs.com/fibs_interface.html"/>,
+    and you should be able to play with <app>Gibbon</app>
+    on every server that complies with CLIP.
+  </p>
+  <p>
+    Unfortunately, the specification is incomplete
+    and sometimes vague.  In doubt, <app>Gibbon</app>
+    complies with CLIP as implemented in
+    <link href="http://www.fibs.com/">FIBS</link>,
+    the First Internet Backgammon Server.
+  </p>
+  <p>
+    <app>Gibbon</app> does <em>not</em> fully implement the
+    <link href="http://www.fibs.com/fibs_interface.html#ppp">Player
+    Profile Protocol</link> and it probably never will. 
+    It tries to decode client names using this protocol but it
+    does not use it for encoding its own client name.
+  </p>
+  <p>
+    Gibbon extends CLIP by its own
+    <link xref="gibbon-unicode">Gibbon Unicode Extension
+    for FIBS</link>.
+  </p>
+</page>

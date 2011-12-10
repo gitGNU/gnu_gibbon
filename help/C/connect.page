@@ -17,7 +17,7 @@
 
   <title>Connecting To a Server</title>
   <p>
-    Once you have <link xref="starting">started</link> <app>Gibbon</app>,
+    Once you have started <app>Gibbon</app>,
     you can initiate a connection to a server by clicking the
     <gui style="button">Connect</gui> button in the <link 
     xref="main-toolbar">main toolbar</link>.  Alternatively, you can

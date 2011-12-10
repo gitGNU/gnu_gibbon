@@ -31,7 +31,7 @@
     <list>
       <item><p>by double-clicking the cube</p></item>
       <item><p>by clicking the 
-      <link xref="board-toolbar#accept"><gui style="button">double</gui></link>
+      <gui style="button">double</gui>
       button in the <link xref="board-toolbar">board toolbar</link>.</p></item>
     </list>
     <p>
@@ -64,7 +64,7 @@
     <list>
       <item><p>by double-clicking it</p></item>
       <item><p>by clicking the 
-         <link xref="board-toolbar#accept"><gui style="button">accept button</gui></link> 
+         <gui style="button">accept button</gui>
          in the <link xref="board-toolbar"><gui style="button">board toolbar</gui></link>.</p></item>
     </list>
     <p>
@@ -73,7 +73,7 @@
     <list>
       <item><p>by right-clicking it</p></item>
       <item><p>by clicking the 
-         <link xref="board-toolbar#reject"><gui style="button">reject button</gui></link> 
+         <gui style="button">reject button</gui>
          in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
     </list>
     <p>
