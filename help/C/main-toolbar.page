@@ -1,0 +1,87 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="main-toolbar">
+  <info>
+    <link type="guide" xref="index#gui"/>
+    <desc>
+      The large toolbar above the board
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Main Toolbar</title>
+  <p>
+    The main toolbar above initially looks like this:
+  </p>
+  <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
+    The Main Toolbar When Disconnected
+  </media>
+  <p>
+    All buttons will display a tooltip explaining their functions, when
+    you leave the mouse pointer over them for a short period of time.
+    The buttons from left to right are:
+  </p>
+  <list type="numbered">
+    <item>
+      <p>Connect</p>
+      <p>
+        Click to <link xref="connect">connect</link>, you guessed it.
+      </p>
+    </item>
+    <item>
+      <p>Status</p>
+      <p>
+        This button has no function, while you are disconnected.
+      </p>
+    </item>
+    <item>
+      <p>Quit</p>
+      <p>
+        Click to terminate the program.
+      </p>
+    </item>
+  </list>
+  <p>
+    Once you are <link xref="connect">connected</link> to a server,
+    the toolbar rather looks like this:
+  </p>
+  <media type="image" mime="src/png" src="figures/main-toolbar-connected.png">
+    The Main Toolbar When Connected
+  </media>
+  <list type="numbered">
+    <item>
+      <p>Disonnect</p>
+      <p>
+        Click to <link xref="connect">disconnect</link>.  This will
+        terminate your ongoing match.  The server will save your match
+        but normally you should play your matches to the end before
+        you disconnect.
+      </p>
+    </item>
+    <item>
+      <p>Status</p>
+      <p>
+        In the above screenshot, your status is <gui style="label">Ready</gui>,
+        that means you are available for playing and other people can invite you 
+        to matches.  Clicking it will toggle your state to
+        <gui style="label">Not Ready</gui> and you can neither get invited
+        or invite other people.
+      </p>
+    </item>
+    <item>
+      <p>Quit</p>
+      <p>
+        Click to terminate the program.  That will also
+        terminate your ongoing match.  The server will save your match
+        but normally you should play your matches to the end before
+        you disconnect.
+      </p>
+    </item>
+  </list>
+</page>
