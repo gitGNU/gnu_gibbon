@@ -837,7 +837,7 @@
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Goto beginning of match</property>
+                            <property name="tooltip_text" translatable="yes">Go to previous game</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Previous game</property>
                             <property name="use_underline">True</property>
@@ -885,7 +885,7 @@
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Go to end of match</property>
+                            <property name="tooltip_text" translatable="yes">Go to next game</property>
                             <property name="use_action_appearance">False</property>
                             <property name="label" translatable="yes">Next game</property>
                             <property name="use_underline">True</property>
