@@ -127,8 +127,7 @@
     <item id="leave-game">
       <p>Leave Game</p>
       <p>
-        Leave the current game. Please do not make a habit of that. See
-        <link xref="do-not#drop-matches"/> for details. 
+        Leave the current game.
       </p>
       <p>
         The server will save your running match, so that you can resume it

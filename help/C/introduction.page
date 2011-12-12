@@ -5,8 +5,7 @@
     <link type="guide" xref="index"/>
     <desc>
       Introduction to 
-      <link href="http://www.gibbon.bg/"><app>Gibbon</app></link>,
-      <link href="http://www.fibs.com/"><app>FIBS</app></link>,
+      <app>Gibbon</app>, <app>FIBS</app>,
       and this documentation.
     </desc>
     <credit type="author">

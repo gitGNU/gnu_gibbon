@@ -40,7 +40,6 @@ HELP_FILES = \
 	clip-conformance.page \
 	connect.page \
 	create-account.page \
-	do-not.page \
 	doubling.page \
 	droppers.page \
 	fibs-cheat.page \
