@@ -1027,6 +1027,34 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
         gtk_editable_set_editable(GTK_EDITABLE (obj), FALSE);
 
+#if 0
+        obj = gibbon_app_find_object(self, "board-refresh", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-undo", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-resign", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-accept", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-reject", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-double", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-fullscreen", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-record", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-game-back", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-move-back", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-next-move", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-next-game", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+        obj = gibbon_app_find_object(self, "board-leave", GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+#endif
 }
 
 void
