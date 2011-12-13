@@ -809,11 +809,13 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
                         y = 0.5 * (top + bottom);
                         cube_value = 2;
                 } else {
-                        y = top + 0.5 * self->priv->cube->height;
+                        y = self->priv->checker_w_home->y
+                            - 0.5 * self->priv->checker_w_home->height;
                 }
         } else if (self->priv->pos->may_double[1]) {
                 x = self->priv->cube->x + 0.5 * self->priv->cube->width;
-                y = bottom - 0.5 * self->priv->cube->height;
+                y = self->priv->checker_b_home->y
+                    + 0.5 * self->priv->cube->height;
                 cube_value = self->priv->pos->cube;
         } else {
                 return;
