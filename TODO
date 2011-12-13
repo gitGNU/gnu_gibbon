@@ -58,3 +58,5 @@
   both opponents have to wait until the match expires.
 - Handle "wait for ... to join, too" and make sure that there is no deadlock if   both parties use Gibbon.
 - Hash with saved games must be updated, when match finishes.
+- Doubling cube not clickable, when not centered.
+- Black bear-off goes to wrong side, when animated.
