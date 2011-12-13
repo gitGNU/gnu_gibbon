@@ -23,11 +23,27 @@ HELP_ID = gibbon
 
 HELP_MEDIA = \
 	figures/board-toolbar.png \
+	figures/chat-area.png \
 	figures/connection-dialog.png \
 	figures/game-chat.png \
 	figures/gibbon-logo.png \
+	figures/inviters-list.png \
+	figures/main-toolbar-connected.png \
+	figures/main-toolbar-disconnected.png \
+	figures/overview-board-toolbar.png \
+	figures/overview-board.png \
+	figures/overview-chat-area.png \
+	figures/overview-game-chat-area.png \
+	figures/overview-info-area.png \
+	figures/overview-inviters-list.png \
+	figures/overview-main-menu.png \
+	figures/overview-main-toolbar.png \
+	figures/overview-status-bar.png \
+	figures/overview.png \
+	figures/players-list.png \
 	figures/register-account.png \
 	figures/say.png \
+	figures/server-console.png \
 	figures/whisper.png
 
 # FIXME! Add legal.xml here.
