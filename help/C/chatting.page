@@ -25,6 +25,11 @@
   </p>
 
   <section id="game-chat" style="2column">
+    <info>
+      <link type="guide" xref="gui#elements"/>
+      <title type="link">The Game Chat Area</title>
+      <desc>How you can communicate with your opponent and spectators</desc>
+    </info>
     <title>Chatting During the Game</title>
   </section>
 </page>
