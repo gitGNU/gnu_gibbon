@@ -22,6 +22,10 @@
 HELP_ID = gibbon
 
 HELP_MEDIA = \
+	figures/board-cup.png \
+	figures/board-dice.png \
+	figures/board-her-cube.png \
+	figures/board-my-cube.png \
 	figures/board-toolbar.png \
 	figures/chat-area.png \
 	figures/connection-dialog.png \
