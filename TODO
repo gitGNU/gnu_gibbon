@@ -64,3 +64,5 @@
   displayed.
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
+- Validate help pages with yelp-check.
+- Build HTML version of help with yelp-build instead of gnome-doc-tool.
