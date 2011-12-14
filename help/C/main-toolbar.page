@@ -20,7 +20,7 @@
     The main toolbar above initially looks like this:
   </p>
   <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
-    The Main Toolbar When Disconnected
+    <p>The Main Toolbar When Disconnected</p>
   </media>
   <p>
     All buttons will display a tooltip explaining their functions, when
@@ -52,7 +52,7 @@
     the toolbar rather looks like this:
   </p>
   <media type="image" mime="src/png" src="figures/main-toolbar-connected.png">
-    The Main Toolbar When Connected
+    <p>The Main Toolbar When Connected</p>
   </media>
   <list type="numbered">
     <item>
