@@ -60,4 +60,16 @@
       </media>
     </link>
   </p>
+  <p>
+    In the middle right area of the main window, you find the 
+    <link xref="info-area">information area</link>:
+  </p>
+  <p>
+    <link href="figures/overview-info-area.png">
+      <media type="image" mime="src/png" src="figures/overview-info-area.png"
+             width="50%" height="50%">
+        <p>The Information Area</p>
+      </media>
+    </link>
+  </p>
 </page>
