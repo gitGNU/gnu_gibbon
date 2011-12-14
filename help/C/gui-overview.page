@@ -31,7 +31,7 @@
   <p>
     <link href="figures/overview-board.png">
       <media type="image" mime="src/png" src="figures/overview-board.png"
-             width="40%" height="40%">
+             width="50%" height="50%">
         <p>The Backgammon Board</p>
       </media>
     </link>
@@ -43,7 +43,7 @@
   <p>
     <link href="figures/overview-board-toolbar.png">
       <media type="image" mime="src/png" src="figures/overview-board-toolbar.png"
-             width="40%" height="40%">
+             width="50%" height="50%">
         <p>The Toolbar Above the Backgammon Board</p>
       </media>
     </link>
@@ -55,7 +55,7 @@
   <p>
     <link href="figures/overview-game-chat-area.png">
       <media type="image" mime="src/png" src="figures/overview-game-chat-area.png"
-             width="40%" height="40%">
+             width="50%" height="50%">
         <p>The Chat Area Beneath the Backgammon Board</p>
       </media>
     </link>
