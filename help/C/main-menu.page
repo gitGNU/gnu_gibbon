@@ -1,0 +1,23 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="main-menu">
+  <info>
+    <link type="guide" xref="gui#elements"/>
+    <desc>
+      The Main Application Menu
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Main Menu</title>
+  <p>
+    The main menu is only partly implemented at the moment.  It will
+    be documented later.
+  </p>
+</page>

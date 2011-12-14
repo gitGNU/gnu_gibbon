@@ -72,6 +72,7 @@ HELP_FILES = \
 	invite.page \
 	kibitz.page \
 	libgsgf.page \
+	main-menu.page \
 	main-toolbar.page \
 	playing.page \
 	resigning.page \
