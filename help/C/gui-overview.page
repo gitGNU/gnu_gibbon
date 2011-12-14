@@ -22,27 +22,42 @@
     look like this:
   </p>
   <media type="image" mime="src/png" src="figures/overview.png">
-    <p>The Backgammon Board</p>
+    <p>Gibbon Graphical User Interace</p>
   </media>
   <p>
     The first thing that catches ones eye is the backgammon board,
     see <link xref="playing"/>:
   </p>
-  <media type="image" mime="src/png" src="figures/overview-board.png">
-    <p>Gibbon Graphical User Interace</p>
-  </media>
+  <p>
+    <link href="figures/overview-board.png">
+      <media type="image" mime="src/png" src="figures/overview-board.png"
+             width="40%" height="40%">
+        <p>The Backgammon Board</p>
+      </media>
+    </link>
+  </p>
   <p>
     Above the board, you can see the <link xref="board-toolbar">board
     toolbar</link>:
   </p>
-  <media type="image" mime="src/png" src="figures/overview-board-toolbar.png">
-    <p>The Toolbar Above the Backgammon Board</p>
-  </media>
+  <p>
+    <link href="figures/overview-board-toolbar.png">
+      <media type="image" mime="src/png" src="figures/overview-board-toolbar.png"
+             width="40%" height="40%">
+        <p>The Toolbar Above the Backgammon Board</p>
+      </media>
+    </link>
+  </p>
   <p>
     Beneath the board, you can see the <link xref="chatting#game-chat">game
     chat area</link>:
   </p>
-  <media type="image" mime="src/png" src="figures/overview-game-chat-area.png">
-    <p>The Chat Area Beneath the Backgammon Board</p>
-  </media>
+  <p>
+    <link href="figures/overview-game-chat-area.png">
+      <media type="image" mime="src/png" src="figures/overview-game-chat-area.png"
+             width="40%" height="40%">
+        <p>The Chat Area Beneath the Backgammon Board</p>
+      </media>
+    </link>
+  </p>
 </page>
