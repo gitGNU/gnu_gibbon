@@ -1,0 +1,31 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="shout">
+  <info>
+    <link type="guide" xref="chatting#shout-tell"/>
+    <link type="seealso" xref="chat-area"/>
+    <desc>
+      Sending Messages to Everybody
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Talking to Everybody (<cmd>shout</cmd>)</title>
+  <p>
+    You can send a message to everybody currently logged in on the server.
+    The leftmost tab in the <link xref="chat-area">chat area</link> is
+    labeled <gui style="label">Shouts</gui> and represents the
+    <em>lobby</em>, the public chat room on the server.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/chat-area.png">
+      <p>The Chat Area</p>
+    </media>
+  </p>
+</page>

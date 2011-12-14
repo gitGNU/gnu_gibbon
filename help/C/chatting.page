@@ -32,4 +32,13 @@
     </info>
     <title>Chatting During the Game</title>
   </section>
+  <section id="shout-tell" style="2column">
+    <info>
+      <link type="guide" xref="gui#elements"/>
+      <title type="link">The Chat Area</title>
+      <desc>How You Can Communicate With Everybody 
+            At Once Or Particular Users</desc>
+    </info>
+    <title>Messages to the Public and Certain Players</title>
+  </section>
 </page>

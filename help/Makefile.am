@@ -78,7 +78,9 @@ HELP_FILES = \
 	resigning.page \
 	rolling-dice.page \
 	say.page \
+	shout.page \
 	swapping-dice.page \
+	tell.page \
 	watching.page \
 	whisper.page
 
