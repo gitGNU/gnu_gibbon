@@ -66,6 +66,7 @@ HELP_FILES = \
 	game-chat-concept.page \
 	gibbon-unicode.page \
 	gui.page \
+	gui-overview.page \
 	index.page \
 	introduction.page \
 	invite.page \

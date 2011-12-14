@@ -1,0 +1,48 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="gui-overview">
+  <info>
+    <link type="guide" xref="gui"/>
+    <desc>
+      Overview of the Graphical User Interface of <app>Gibbon</app>
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Graphical User Interface Overview</title>
+  <p>
+    Depending on your personal desktop settings <app>Gibbon</app> may
+    have an individual look and feel.  But it will at least roughly
+    look like this:
+  </p>
+  <media type="image" mime="src/png" src="figures/overview.png">
+    <p>The Backgammon Board</p>
+  </media>
+  <p>
+    The first thing that catches ones eye is the backgammon board,
+    see <link xref="playing"/>:
+  </p>
+  <media type="image" mime="src/png" src="figures/overview-board.png">
+    <p>Gibbon Graphical User Interace</p>
+  </media>
+  <p>
+    Above the board, you can see the <link xref="board-toolbar">board
+    toolbar</link>:
+  </p>
+  <media type="image" mime="src/png" src="figures/overview-board-toolbar.png">
+    <p>The Toolbar Above the Backgammon Board</p>
+  </media>
+  <p>
+    Beneath the board, you can see the <link xref="chatting#game-chat">game
+    chat area</link>:
+  </p>
+  <media type="image" mime="src/png" src="figures/overview-game-chat-area.png">
+    <p>The Chat Area Beneath the Backgammon Board</p>
+  </media>
+</page>
