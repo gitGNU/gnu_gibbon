@@ -55,6 +55,7 @@ HELP_FILES = \
 	board-toolbar.page \
 	bugreports.page \
 	cannot-invite.page \
+	chat-area.page \
 	chatting.page \
 	checker-movement.page \
 	clip-conformance.page \

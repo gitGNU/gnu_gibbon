@@ -1,0 +1,58 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="guide"
+      id="chat-area">
+
+  <info>
+    <link type="guide" xref="gui#elements"/>
+    <link type="seealso" xref="chatting"/>
+    <title type="link">The Chat Area</title>
+    <title type="text">The Chat Area</title>
+    <desc>How To Chat With Other People On the Server</desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>    
+  </info>
+
+  <title>The Chat Area</title>
+
+  <p>
+    The chat area is located in the bottom right part of the
+    <link xref="gui">main window</link>.
+  </p>
+  <p>
+    All your <link xref="shout">public communication</link>
+    and <link xref="tell">communication with particular users</link>
+    is displayed in this area. <em>Note:</em> While you are playing,
+    communication with your opponent and possible
+    <link xref="watching">spectators</link> is handled differently
+    and displayed in the <link xref="game-chat-area">game chat
+    area</link>, see <link xref="chatting#game-chat"/>.
+  </p>
+  <p>
+    The communication is organized in multiple tabs.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/chat-area.png">
+      <p>The Chat Area</p>
+    </media>
+  </p>
+  <p>
+    The <link xref="shout">public communication</link> is always
+    displayed in the leftmost tab.  <link xref="tell">Communication 
+    with particular users</link> is displayed in subsequent tabs.
+  </p>
+  <p>
+    You can enter your own messages in the text entry at the
+    bottom.  The message is sent by pressing the <key>Return</key>
+    key.
+  </p>
+  <p>
+    The recipient is selected according to the currently
+    selected tab, i.e. the one that is in the foreground.T
+  </p>
+</page>
