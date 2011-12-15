@@ -1,0 +1,45 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="geo-ip">
+  <info>
+    <link type="guide" xref="index#misc"/>
+    <desc>
+      How <app>Gibbon</app> locates people logged in with you
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Locating Users</title>
+  <p>
+    Gibbon will try to show you, the country from where other
+    people on the server have logged in, for example in the
+    <link xref="players-list">players list</link> or
+    <link xref="inviters-list">inviters list</link>.
+  </p>
+  <p>
+   <media type="image" mime="src/png" src="figures/inviters-list.png">
+     Inviters from Germany and Bulgaria
+   </media> 
+  </p>
+  <p>
+    The software will display that information as a flag, as
+    shown in the above example.
+  </p>
+  <p>
+    The information is displayed with the help of data provided by
+    a Danish internet service provider for free, see
+    <link href="http://software77.net/geo-ip/"/>.
+  </p>
+  <p>
+    In case you think that this feature violates your or others'
+    privacy rights, please keep in mind that it is trivial for
+    everybody on the server to find out, from which country you
+    logged in.
+  </p>
+</page>

@@ -66,6 +66,7 @@ HELP_FILES = \
 	droppers.page \
 	fibs-cheat.page \
 	game-chat-concept.page \
+	geo-ip.page \
 	gibbon-unicode.page \
 	gui.page \
 	gui-overview.page \
