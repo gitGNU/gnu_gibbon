@@ -1,0 +1,55 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="contributing">
+  <info>
+    <link type="guide" xref="supporting-gibbon"/>
+    <desc>
+      You don't have to be a programmer to contribute to <app>Gibbon</app>
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Contributing to <app>Gibbon</app></title>
+
+  <p>
+    If you want to contribute to <app>Gibbon</app> you can
+    find contact information on the
+    <link href="http://www.gibbon.bg/">Gibbon web site</link>.
+  </p>
+  <section>
+    <title>Translations</title>
+    <p>
+      If <app>Gibbon</app> is not yet available in your own
+      language, why not help translating it? Translating the program 
+      itself is not that hard, and it will only take a couple of 
+      hours.  It does not require any programming skills.
+    </p>
+    <p>
+      Translating the documentation is a little bit harder, and it
+      will also take more time.  In other words, if you want to be
+      the proud of the online backgammon community in your country, 
+      you should venture it!
+    </p>
+  </section>
+  <section>
+    <title>Report Bugs</title>
+    <p>
+      If you find an error in <app>Gibbon</app>, please
+      <link xref="bugreports">report a bug</link>.  Your feature
+      requests or suggestions for improvements are also welcome.
+    </p>
+  </section>
+  <section>
+    <title>Contribute Source Code</title>
+    <p>
+      Sure, go ahead! In order to avoid duplicate efforts, please
+      contact us before sending in source code or larger patches.
+    </p>
+  </section>
+</page>

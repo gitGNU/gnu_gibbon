@@ -1,0 +1,39 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="social-networks">
+  <info>
+    <link type="guide" xref="supporting-gibbon"/>
+    <desc>
+      You like <app>Gibbon</app>? Talk about it ...
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title><app>Gibbon</app> On Social Networks</title>
+
+  <section>
+    <title>Facebook</title>
+    <p>
+      <app>Gibbon</app> has its own 
+      <link href="http://www.facebook.com/pages/Gibbon/201252806558402">Facebook
+      page</link>.  As a fan, you will always be informed about
+      <app>Gibbon</app> news.
+    </p>
+  </section>
+  <section>
+    <title>Ohloh</title>
+    <p>
+      <link xref="http://www.ohloh.net/">Ohloh</link> is a directory
+      service for open source software.  You can show your support
+      by clicking the “I Use This” button on 
+      <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbon</app>'s
+      Ohloh page</link>.
+    </p>
+  </section>
+</page>

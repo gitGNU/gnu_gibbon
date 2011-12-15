@@ -60,6 +60,7 @@ HELP_FILES = \
 	checker-movement.page \
 	clip-conformance.page \
 	connect.page \
+	contributing.page \
 	create-account.page \
 	doubling.page \
 	droppers.page \
@@ -83,6 +84,8 @@ HELP_FILES = \
 	say.page \
 	server-console.page \
 	shout.page \
+	social-networks.page \
+	supporting-gibbon.page \
 	swapping-dice.page \
 	tell.page \
 	watching.page \

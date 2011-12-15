@@ -1,0 +1,21 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:e="http://projectmallard.org/experimental/"
+      type="guide"
+      id="supporting-gibbon" style="2columns">
+
+  <info>
+    <link type="guide" xref="index#misc"/>
+    <title type="link">Supporting <app>Gibbon</app></title>
+    <title type="text">Supporting <app>Gibbon</app></title>
+    <desc>Help <app>Gibbon</app> to become better</desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>    
+  </info>
+
+  <title>Supporting <app>Gibbon</app></title>
+</page>
