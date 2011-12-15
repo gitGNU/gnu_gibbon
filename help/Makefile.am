@@ -72,6 +72,7 @@ HELP_FILES = \
 	info-area.page \
 	introduction.page \
 	invite.page \
+	inviters-list.page \
 	kibitz.page \
 	libgsgf.page \
 	main-menu.page \
