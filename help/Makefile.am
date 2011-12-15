@@ -93,6 +93,7 @@ HELP_FILES = \
 	tell.page \
 	unlimited-matches.page \
 	watching.page \
-	whisper.page
+	whisper.page \
+	why-bg.page
 
 HELP_LINGUAS = de

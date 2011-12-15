@@ -1,0 +1,26 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="why-bg">
+  <title>What Is the BG in <gui style="">gibbon.bg</gui>?</title>
+  <info>
+    <link type="guide" xref="index#faq"/>
+    <desc>
+      No, not backgammon.  Bulgaria!    
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <p>
+    Bulgaria is a most beautiful country in South-Eastern Europe,
+    that the author of <app>Gibbon</app> has the honor of
+    being a guest of for a couple of years already.  If you 
+    associate the top-level domain <sys>.bg</sys> with backgammon, 
+    that is pure coincidence.
+  </p>
+</page>
