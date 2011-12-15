@@ -80,6 +80,7 @@ HELP_FILES = \
 	main-toolbar.page \
 	playing.page \
 	rating.page \
+	reliability.page \
 	resigning.page \
 	rolling-dice.page \
 	say.page \

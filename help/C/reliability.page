@@ -1,0 +1,60 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="reliability">
+  <info>
+    <link type="guide" xref="index#misc"/>
+    <desc>
+      How <app>Gibbon</app> measures reliability
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Reliability</title>
+  <p>
+    It is a very annoying experience, when your opponent
+    leaves a game in the middle of a match.  <app>Gibbon</app>
+    tries to help you avoid that.
+  </p>
+  <p>
+    The server broadcasts a lot of information about other
+    players, for example, when they start a match, finish a
+    match, log in or log out.  <app>Gibbon</app> collects
+    that information and stores it in an internal database.  
+  </p>
+  <p>
+    With that little data-mining, <app>Gibbon</app> is able to
+    distinguish between the good and the evil.  It will display
+    a player's “reliability” wherever appropriate, for example
+    in the <link xref="players-list">players list</link> or
+    <link xref="inviters-list">inviters list</link>.
+  </p>
+  <p>
+    <link xref="droppers">Dropping</link> matches will decrease
+    a player's reliability, resuming interrupted matches will
+    increase it, finishing matches without interrupting them
+    will increase the reliability even more.  This reliability
+    is translated into a color ranging from red (stay away from
+    those players), over orange and yellow to green (reliable).
+  </p>
+  <p>
+    It is hard for a player to earn a reliability bar that is not
+    green.  Stay away from them unless you know them personally.
+  </p>
+  <p>
+    Another factor is the <em>confidence</em>.  The more data
+    <app>Gibbon</app> has collected about a particular player,
+    the more confident it is about its estimation about that
+    player's reliability.  When visualized, this is translated
+    into the length of the reliability bar.
+  </p>
+  <p>
+    This is explained in greater detail at
+    <link href="http://www.gibbon.bg/gibbon/news/2011/003141/index.html.en"/>.
+  </p>
+</page>
