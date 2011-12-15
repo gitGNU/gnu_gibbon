@@ -79,6 +79,7 @@ HELP_FILES = \
 	main-menu.page \
 	main-toolbar.page \
 	playing.page \
+	rating.page \
 	resigning.page \
 	rolling-dice.page \
 	say.page \
