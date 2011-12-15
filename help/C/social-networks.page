@@ -29,7 +29,7 @@
   <section>
     <title>Ohloh</title>
     <p>
-      <link xref="http://www.ohloh.net/">Ohloh</link> is a directory
+      <link href="http://www.ohloh.net/">Ohloh</link> is a directory
       service for open source software.  You can show your support
       by clicking the “I Use This” button on 
       <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbon</app>'s

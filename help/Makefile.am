@@ -88,6 +88,7 @@ HELP_FILES = \
 	supporting-gibbon.page \
 	swapping-dice.page \
 	tell.page \
+	unlimited-matches.page \
 	watching.page \
 	whisper.page
 

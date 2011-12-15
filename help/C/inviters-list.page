@@ -3,6 +3,7 @@
       id="inviters-list">
   <info>
     <link type="guide" xref="playing#invitations"/>
+    <link type="guide" xref="index#getting-started"/>
     <link type="guide" xref="gui#elements"/>
     <desc>
       Who is inviting you to a match?

@@ -25,8 +25,8 @@
       <link xref="kibitz"><cmd>kibitz</cmd></link>,
       <link xref="whisper"><cmd>whisper</cmd></link>,
       <link xref="tell"><cmd>tell</cmd></link>,
-      <link xref="tellx"><cmd>tellx</cmd></link>,
-      and  <link xref="tellx"><cmd>message</cmd></link>).
+      <cmd>tellx</cmd>,
+      and  <cmd>message</cmd>).
     Characters outside of the range of US-ASCII are
     replaced by a question mark (“?”).
   </p>
