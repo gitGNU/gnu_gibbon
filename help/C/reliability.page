@@ -35,6 +35,11 @@
     <link xref="inviters-list">inviters list</link>.
   </p>
   <p>
+   <media type="image" mime="src/png" src="figures/inviters-list.png">
+     The player reliability in the inviters list
+   </media> 
+  </p>
+  <p>
     <link xref="droppers">Dropping</link> matches will decrease
     a player's reliability, resuming interrupted matches will
     increase it, finishing matches without interrupting them
