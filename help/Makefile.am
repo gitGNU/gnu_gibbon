@@ -69,6 +69,7 @@ HELP_FILES = \
 	gui.page \
 	gui-overview.page \
 	index.page \
+	info-area.page \
 	introduction.page \
 	invite.page \
 	kibitz.page \
@@ -79,6 +80,7 @@ HELP_FILES = \
 	resigning.page \
 	rolling-dice.page \
 	say.page \
+	server-console.page \
 	shout.page \
 	swapping-dice.page \
 	tell.page \

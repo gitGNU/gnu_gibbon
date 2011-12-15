@@ -1,0 +1,35 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="info-area">
+  <info>
+    <link type="guide" xref="gui#elements"/>
+    <link type="seealso" xref="players-list"/>
+    <link type="seealso" xref="server-console"/>
+    <desc>
+      The multi-purpose area in the middle right 
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Information Area</title>
+  <p>
+    The information area at the middle right of the main window
+    serves multiple purposes.  You switch them by clicking the
+    tabs at the top.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/players-list.png">
+      <p>The Information Area</p>
+    </media>
+  </p>
+
+  <section id="tabs" style="2column">
+    <title>Tabs In the Information Area</title>
+  </section>
+</page>

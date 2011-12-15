@@ -1,0 +1,147 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="server-console">
+  <info>
+    <link type="guide" xref="info-area"/>
+    <link type="guide" xref="gui#elements"/>
+    <desc>
+      Interacting with the server directly
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Server Console</title>
+  <p>
+    The server console is linked to the second tab of the <link
+    xref="info-area">information area</link> at the middle right
+    of the <link xref="gui-overview">main window</link>.
+  </p>
+  <p>
+    <media type="image" mime="src/png" src="figures/server-console.png">
+      The server console
+    </media>
+  </p>
+  <p>
+    Most of the time, you do not have to bother about the protocol
+    that <app>Gibbon</app> and the server use for interacting.
+    <app>Gibbon</app> “translates” most of the data sent by the server
+    and hides this data from you.  Data that is not handled by the
+    program is displayed in the server console.
+  </p>
+  <p>
+    You can also type your own commands into the text area at the bottom
+    While you are typing, you can see a list of suggestions.  You can
+    browse through these suggestions with the curser keys.
+  </p>
+  <p>
+    You can try this out by sending the command <cmd>help</cmd> which
+    will produce an overview of the commands the server understand.  For
+    a full list of commands, see 
+    <link href="http://www.fibs.com/CommandReference/index.html"/>.
+  </p>
+  <section>
+    <title>Hints For FIBS Experts</title>
+    <p>
+      <app>Gibbon</app> intercepts most of the output sent
+       by the server, and reacts upon it.  However, an attempt is made to
+       still display server output that is sent as a response to your
+       commands.  For example, you can see your current settings 
+       by sending the commands <cmd>set</cmd> or <cmd>toggle</cmd>.
+    </p>
+    <p>
+      There are some exceptions.  Sometimes it is not possible to
+      distinguish between server responses to your commands, and data
+      that is sent asynchronously.  This is the case for example
+      for the response to <cmd>who</cmd>, <cmd>rawwho</cmd>,
+      or <cmd>board</cmd>.
+    </p>
+    <p>
+      In other cases, detecting responses to manual commands would
+      mean an unreasonable effort and would not make much sense
+      anyway.  It if for example possible to send the commands
+      <cmd>roll</cmd>, <cmd>move</cmd>, or <cmd>double</cmd> but
+      <app>Gibbon</app> will intercept all confirmation responses
+      from the server, and update its own state instead of displaying
+      it.
+    </p>
+    <p>
+      It should also be said that sometimes the software overrides
+      your own commands.  This is for example the case for the command
+      <cmd>set boardstyle</cmd>.  When the software detects that you
+      you changed the board style, it will automatically reset
+      it to the value that it needs for proper operation.
+    </p>
+  </section>
+  <section>
+    <title>Debugging the Server Communication</title>
+    <p>
+      It is possible to analyse <em>all</em> communication between
+      <app>Gibbon</app> and the server.  Evenvtually, there
+      will be configuration dialogs for activating and deactivating
+      the debugging switches, but at the moment you have to change
+      these settings manually.
+    </p>
+    <p>
+      The configuration scheme is called 
+      <sys>bg.Gibbon.preferences.debugging</sys>.  The configuration
+      keys for this scheme are:
+    </p>
+    <list>
+      <item>
+        <p><sys>server-communication</sys></p>
+        <p>
+          Possible values are <sys>true</sys> and <sys>false</sys>.
+          A value of <sys>true</sys> will cause the software to
+          display all communication with the server in the server
+          console.
+        </p>
+      </item>
+      <item>
+        <p><sys>timestamps</sys></p>
+        <p>
+          Possible values are <sys>true</sys> and <sys>false</sys>.
+          A value of <sys>true</sys> will cause the software to
+          prepend all displayed data in the server console with
+          a high resolution timestamp.
+        </p>
+      </item>
+      <item>
+        <p><sys>logfile</sys></p>
+        <p>
+          If set, it should contain a valid filename.  <app>Gibbon</app>
+          will automatically append its process id to that name, and
+          then log all communication to that file.
+        </p>
+      </item>
+    </list>
+    <p>
+      Under Windows, you will find the configuration settings in the
+      Windows registry.  Under <app>Unix</app>, use the command-line.  Examples:
+    </p>
+    <p>
+      <code>gsettings list-keys bg.Gibbon.preferences.debugging</code>
+    </p>
+    <p>
+      This will list the keys, see above.
+    </p>
+    <p>
+      <code>gsettings get bg.Gibbon.preferences.debugging timestamps</code>
+    </p>
+    <p>
+      This will display the current value of the <sys>timestamp</sys> key.
+    </p>
+    <p>
+      <code>gsettings set bg.Gibbon.preferences.debugging server-communication true</code>
+    </p>
+    <p>
+      This will activate complete server communication output in the server
+      console.
+    </p>
+  </section>
+</page>

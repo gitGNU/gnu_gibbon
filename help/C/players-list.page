@@ -1,0 +1,19 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="players-list">
+  <info>
+    <link type="guide" xref="info-area#tabs"/>
+    <desc>
+      Interacting with other players
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>The Players List</title>
+</page>
