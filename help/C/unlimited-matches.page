@@ -1,0 +1,39 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="unlimited-matches">
+  <info>
+    <link type="guide" xref="index#misc"/>
+    <desc>
+      Matches without a fixed length
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Unlimited Matches</title>
+  <p>
+    Unlimited matches may show some surprising behavior.
+    Keep that in mind before you 
+    <link xref="inviters-list">invite</link>
+    somebody to an unlimited match or before you
+    <link xref="">accept an invitation</link> to 
+  </p>
+  <p>
+    It is hard to finish unlimited matches.  Every time
+    a game is terminated, the server saves the match.  The regular
+    way to do this is to start a new match with your
+    opponent.  That will automatically terminate your
+    saved unlimited match.
+  </p>
+  <p>
+    Another way to finish an unlimited match is to just
+    sit and wait.  The server saves matches for only a limited
+    time, around 10 days.  Sooner or later, all your matches
+    will expire.
+  </p>
+</page>
