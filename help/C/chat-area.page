@@ -28,8 +28,7 @@
     All your <link xref="shout">public communication</link>
     and <link xref="tell">communication with particular users</link>
     is displayed in this area. <em>Note:</em> While you are playing,
-    communication with your opponent and possible
-    <link xref="watching">spectators</link> is handled differently
+    communication with your opponent is handled differently
     and displayed in the <link xref="chatting#game-chat">game chat
     area</link>, see <link xref="chatting#game-chat"/>.
   </p>
