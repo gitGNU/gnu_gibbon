@@ -78,7 +78,7 @@ msgstr "Maximalzahl gespeicherte Kommandos"
 #: ../data/bg.Gibbon.gschema.xml.in.h:10 ../src/gibbon-connection-dialog.c:140
 #: ../src/gibbon-register-dialog.c:142
 msgid "Password"
-msgstr "Passwort"
+msgstr "Kennwort"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:11 ../src/gibbon-connection-dialog.c:99
 #: ../src/gibbon-register-dialog.c:100
@@ -107,7 +107,7 @@ msgstr "Letzte Kommandos"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:17
 msgid "Remember password?"
-msgstr "Passwort speichern?"
+msgstr "Kennwort speichern?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:18 ../data/gibbon.ui.h:37
 #: ../src/gibbon-connection-dialog.c:84 ../src/gibbon-register-dialog.c:85
@@ -116,7 +116,7 @@ msgstr "Server"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:19
 msgid "Should your password be stored on your hard disk?"
-msgstr "Soll das Passwort auf der lokalen Festplatte gespeichert werden?"
+msgstr "Soll das Kennwort auf der lokalen Festplatte gespeichert werden?"
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:20
 msgid "Show complete server communication in server console."
@@ -140,7 +140,7 @@ msgstr "Server, mit dem verbunden werden soll, normalerweise fibs.com."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:25
 msgid "Your password on the server."
-msgstr "Ihr Passwort auf diesem Server."
+msgstr "Ihr Kennwort auf diesem Server."
 
 #: ../data/bg.Gibbon.gschema.xml.in.h:26
 msgid "Your username on the server."
@@ -332,7 +332,7 @@ msgstr "Bewegung der Spielsteine zurücknehmen"
 
 #: ../data/gibbon.ui.h:44
 msgid "User name and password"
-msgstr "Anmeldename und Passwort"
+msgstr "Anmeldename und Kennwort"
 
 #: ../data/gibbon.ui.h:45 ../src/gibbon-session.c:2436
 msgid "Watch"
@@ -768,7 +768,7 @@ msgstr "Fehlerhafte Portnummer. Probieren Sie es im Zweifel mit 4321."
 
 #: ../src/gibbon-app.c:797
 msgid "No password given!"
-msgstr "Kein Passwort angegeben!"
+msgstr "Kein Kennwort angegeben!"
 
 #: ../src/gibbon-app.c:897
 #, c-format
@@ -983,7 +983,7 @@ msgstr "Anmeldename"
 
 #: ../src/gibbon-connection-dialog.c:129 ../src/gibbon-register-dialog.c:131
 msgid "Save password?"
-msgstr "Passwort speichern?"
+msgstr "Kennwort speichern?"
 
 #: ../src/gibbon-connection-dialog.c:166
 msgid "Register new account"
@@ -2618,7 +2618,7 @@ msgstr "Zuverlässigkeit eines Spielers"
 
 #: ../src/gibbon-register-dialog.c:168
 msgid "Repeat password"
-msgstr "Passwort wiederholen"
+msgstr "Kennwort wiederholen"
 
 #: ../src/gibbon-register-dialog.c:225
 msgid "Register New Account"
@@ -2646,19 +2646,19 @@ msgstr ""
 
 #: ../src/gibbon-register-dialog.c:343
 msgid "You must specify a password!"
-msgstr "Sie müssen ein Passwort angegeben!"
+msgstr "Sie müssen ein Kennwort angegeben!"
 
 #: ../src/gibbon-register-dialog.c:350
 msgid "Your password must have at least 4 characters!"
-msgstr "Ihr Passwort muss mindestens vier Zeichen haben!"
+msgstr "Ihr Kennwort muss mindestens vier Zeichen haben!"
 
 #: ../src/gibbon-register-dialog.c:357
 msgid "Your password must not contain a colon (`:')!"
-msgstr "Das Passwort darf keinen Doppelpunkt enthalten!"
+msgstr "Das Kennwort darf keinen Doppelpunkt enthalten!"
 
 #: ../src/gibbon-register-dialog.c:366
 msgid "Please repeat the password!"
-msgstr "Bitte wiederholen Sie das Passwort!"
+msgstr "Bitte wiederholen Sie das Kennwort!"
 
 #: ../src/gibbon-register-dialog.c:372
 msgid "Passwords do not match!"
@@ -2832,7 +2832,7 @@ msgid ""
 "Please do not forget your password! It cannot be recovered.\n"
 "You have to connect to the server again to start playing."
 msgstr ""
-"Bitte vergessen Sie dieses Passwort nicht! Es kann nicht wiederhergestellt "
+"Bitte vergessen Sie dieses Kennwort nicht! Es kann nicht wiederhergestellt "
 "werden.\n"
 "Um mit dem Spielen zu beginnen, müssen Sie Sich erneut mit dem Server "
 "verbinden."

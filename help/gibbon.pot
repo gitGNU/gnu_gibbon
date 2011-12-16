@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-16 01:16+0200\n"
+"POT-Creation-Date: 2011-12-16 09:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -281,7 +281,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/chat-area.page:40(media)
+#: C/chat-area.page:39(media)
 #: C/shout.page:27(media)
 #: C/tell.page:34(media)
 msgctxt "_"
@@ -311,28 +311,28 @@ msgid "The chat area is located in the bottom right part of the <link xref=\"gui
 msgstr ""
 
 #: C/chat-area.page:27(page/p)
-msgid "All your <link xref=\"shout\">public communication</link> and <link xref=\"tell\">communication with particular users</link> is displayed in this area. <em>Note:</em> While you are playing, communication with your opponent and possible <link xref=\"watching\">spectators</link> is handled differently and displayed in the <link xref=\"chatting#game-chat\">game chat area</link>, see <link xref=\"chatting#game-chat\"/>."
+msgid "All your <link xref=\"shout\">public communication</link> and <link xref=\"tell\">communication with particular users</link> is displayed in this area. <em>Note:</em> While you are playing, communication with your opponent is handled differently and displayed in the <link xref=\"chatting#game-chat\">game chat area</link>, see <link xref=\"chatting#game-chat\"/>."
 msgstr ""
 
-#: C/chat-area.page:36(page/p)
+#: C/chat-area.page:35(page/p)
 msgid "The communication is organized in multiple tabs."
 msgstr ""
 
-#: C/chat-area.page:39(page/p)
+#: C/chat-area.page:38(page/p)
 #: C/shout.page:26(page/p)
 #: C/tell.page:33(page/p)
 msgid "<media type=\"image\" mime=\"src/png\" src=\"figures/chat-area.png\"> <p>The Chat Area</p> </media>"
 msgstr ""
 
-#: C/chat-area.page:44(page/p)
+#: C/chat-area.page:43(page/p)
 msgid "The <link xref=\"shout\">public communication</link> is always displayed in the leftmost tab. <link xref=\"tell\">Communication with particular users</link> is displayed in subsequent tabs."
 msgstr ""
 
-#: C/chat-area.page:49(page/p)
+#: C/chat-area.page:48(page/p)
 msgid "You can enter your own messages in the text entry at the bottom. The message is sent by pressing the <key>Return</key> key."
 msgstr ""
 
-#: C/chat-area.page:54(page/p)
+#: C/chat-area.page:53(page/p)
 msgid "The recipient is selected according to the currently selected tab, i.e. the one that is in the foreground.T"
 msgstr ""
 

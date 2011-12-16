@@ -17,7 +17,7 @@
 
   <title>Create a New Account</title>
   <p>
-    Before you can connect (see <link xref="connect"/>) to <app>FIBS</app> you 
+    Before you can connect (see <link xref="connect"/>) to a server, you 
     need an account.
   </p>
   <p>
@@ -43,7 +43,7 @@
   </p>
   <p>
     Click the <gui style="button">Register new account</gui> button
-    underneath the <gui style="label">User name</gui> text entry.
+    beneath the <gui style="label">User name</gui> text entry.
     You will then see this dialog:
   </p>
   <p>
@@ -78,9 +78,10 @@
       </p>
       <p>
         This name will be your identity on the server! While it is not illegal
-        to choose a silly or offesive name, in fact some people have remarkably 
-        silly or offensive names on <app>FIBS</app>, you should think twice 
-        about how you want to be known to your future backgammon partners.
+        to choose a silly or offensive name, in fact some people have 
+        remarkably silly or offensive names on <app>FIBS</app>, you should 
+        think twice about how you want to be known to your future backgammon 
+        partners.
       </p>
     </item>
     <item>

@@ -36,8 +36,9 @@
     <app>Gibbon</app> does <em>not</em> fully implement the
     <link href="http://www.fibs.com/fibs_interface.html#ppp">Player
     Profile Protocol</link> and it probably never will. 
-    It tries to decode client names using this protocol but it
-    does not use it for encoding its own client name.
+    It tries to decode user and client names but it
+    does not use it for encoding its own client name or the
+    name of the <app>Gibbon</app> user.
   </p>
   <p>
     Gibbon extends CLIP by its own
