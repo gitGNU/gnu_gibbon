@@ -723,7 +723,6 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         GtkTreeViewColumn *column = NULL;
         GibbonPlayerListView *self;
         gchar *player_name;
-        gint bx, by;
         gchar *available = NULL;
         gchar *text = NULL;
         GibbonReliability *rel;
@@ -743,9 +742,7 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                                                 keyboard_tip,
                                                 &model, &path, &iter))
                 return FALSE;
-        gtk_tree_view_convert_widget_to_bin_window_coords (tree_view,
-                                                           x, y, &bx, &by);
-        gtk_tree_view_get_path_at_pos (tree_view, bx, by, NULL,
+        gtk_tree_view_get_path_at_pos (tree_view, x, y, NULL,
                                        &column, NULL, NULL);
         if (!column)
                 return FALSE;
