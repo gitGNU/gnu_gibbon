@@ -56,7 +56,9 @@ gibbon_signal_finalize (GObject *object)
 {
         GibbonSignal *self = GIBBON_SIGNAL (object);
 
-        if (self->priv->emitter)
+        if (self->priv->emitter
+            && g_signal_handler_is_connected (self->priv->emitter,
+                                              self->priv->handler_id))
                 g_signal_handler_disconnect (self->priv->emitter,
                                              self->priv->handler_id);
         self->priv->emitter = NULL;
