@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-16 09:10+0200\n"
+"POT-Creation-Date: 2011-12-16 12:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -333,7 +333,7 @@ msgid "You can enter your own messages in the text entry at the bottom. The mess
 msgstr ""
 
 #: C/chat-area.page:53(page/p)
-msgid "The recipient is selected according to the currently selected tab, i.e. the one that is in the foreground.T"
+msgid "The recipient is selected according to the currently selected tab, i.e. the one that is in the foreground."
 msgstr ""
 
 #: C/chatting.page:8(info/title)
@@ -396,8 +396,7 @@ msgid "If you cannot move at all, there is nothing to do for you. The dice you r
 msgstr ""
 
 #: C/clip-conformance.page:7(info/desc)
-#: C/libgsgf.page:6(info/desc)
-msgid "CLIP is the <em>CLIent</em> <em>P</em>rotocol for FIBS"
+msgid "CLIP is the <em>CLI</em>ent <em>P</em>rotocol for FIBS"
 msgstr ""
 
 #: C/clip-conformance.page:20(page/title)
@@ -413,10 +412,10 @@ msgid "Unfortunately, the specification is incomplete and sometimes vague. In do
 msgstr ""
 
 #: C/clip-conformance.page:35(page/p)
-msgid "<app>Gibbon</app> does <em>not</em> fully implement the <link href=\"http://www.fibs.com/fibs_interface.html#ppp\">Player Profile Protocol</link> and it probably never will. It tries to decode client names using this protocol but it does not use it for encoding its own client name."
+msgid "<app>Gibbon</app> does <em>not</em> fully implement the <link href=\"http://www.fibs.com/fibs_interface.html#ppp\">Player Profile Protocol</link> and it probably never will. It tries to decode user and client names but it does not use it for encoding its own client name or the name of the <app>Gibbon</app> user."
 msgstr ""
 
-#: C/clip-conformance.page:42(page/p)
+#: C/clip-conformance.page:43(page/p)
 msgid "Gibbon extends CLIP by its own <link xref=\"gibbon-unicode\">Gibbon Unicode Extension for FIBS</link>."
 msgstr ""
 
@@ -489,7 +488,7 @@ msgid "Your user name on the server. If you do not have an account you can <link
 msgstr ""
 
 #: C/connect.page:60(item/p)
-#: C/create-account.page:94(item/p)
+#: C/create-account.page:95(item/p)
 msgid "<gui style=\"label\">Password</gui>"
 msgstr ""
 
@@ -514,7 +513,7 @@ msgid "Contributing to <app>Gibbon</app>"
 msgstr ""
 
 #: C/contributing.page:20(page/p)
-msgid "If you want to contribute to <app>Gibbon</app> you can find contact information on the <link href=\"http://www.gibbon.bg/\">Gibbon web site</link>."
+msgid "If you want to contribute to <app>Gibbon</app> you can find contact information on the <link href=\"http://www.gibbon.bg/\"><app>Gibbon</app> web site</link>."
 msgstr ""
 
 #: C/contributing.page:26(section/title)
@@ -563,7 +562,7 @@ msgid "Create a New Account"
 msgstr ""
 
 #: C/create-account.page:19(page/p)
-msgid "Before you can connect (see <link xref=\"connect\"/>) to <app>FIBS</app> you need an account."
+msgid "Before you can connect (see <link xref=\"connect\"/>) to a server, you need an account."
 msgstr ""
 
 #: C/create-account.page:23(page/p)
@@ -575,7 +574,7 @@ msgid "If you want to create a new account on a server, click the <gui>Connect</
 msgstr ""
 
 #: C/create-account.page:44(page/p)
-msgid "Click the <gui style=\"button\">Register new account</gui> button underneath the <gui style=\"label\">User name</gui> text entry. You will then see this dialog:"
+msgid "Click the <gui style=\"button\">Register new account</gui> button beneath the <gui style=\"label\">User name</gui> text entry. You will then see this dialog:"
 msgstr ""
 
 #: C/create-account.page:49(page/p)
@@ -595,42 +594,42 @@ msgid "The user name you want to use on that server. It is - of course - not pos
 msgstr ""
 
 #: C/create-account.page:79(item/p)
-msgid "This name will be your identity on the server! While it is not illegal to choose a silly or offesive name, in fact some people have remarkably silly or offensive names on <app>FIBS</app>, you should think twice about how you want to be known to your future backgammon partners."
-msgstr ""
-
-#: C/create-account.page:87(item/p)
-msgid "<gui style=\"label\">Save Password?</gui>"
+msgid "This name will be your identity on the server! While it is not illegal to choose a silly or offensive name, in fact some people have remarkably silly or offensive names on <app>FIBS</app>, you should think twice about how you want to be known to your future backgammon partners."
 msgstr ""
 
 #: C/create-account.page:88(item/p)
+msgid "<gui style=\"label\">Save Password?</gui>"
+msgstr ""
+
+#: C/create-account.page:89(item/p)
 msgid "Check this box, if you want <app>Gibobn</app> to remember your password for you."
 msgstr ""
 
-#: C/create-account.page:95(item/p)
+#: C/create-account.page:96(item/p)
 msgid "Choose a suitable password."
 msgstr ""
 
-#: C/create-account.page:98(item/p)
+#: C/create-account.page:99(item/p)
 msgid "<em>Important!</em> All communication with the server is unencrypted. It is therefore visible to everybody in your network, and to everybody in the networks between you and the server (that will mostly be the staff of Internet Service Providers). This information should not make you panic because it is quite unlikely that anybody is interested in eavesdropping your backgammon communication. But you must remember that your password is also visible to these people."
 msgstr ""
 
-#: C/create-account.page:109(item/p)
+#: C/create-account.page:110(item/p)
 msgid "The password is also visible to everybody with superuser (or administrator) privileges on your computer because <app>Gibbon</app> currently does not encrypt your password."
 msgstr ""
 
-#: C/create-account.page:114(item/p)
+#: C/create-account.page:115(item/p)
 msgid "Therefore, use a password that is not too easy to guess but do <em>not</em> use a “valuable” password here! That means, do not use a password that you use for other sensitive accounts like for online banking or internet shops. It is a well-known fact that criminals routinely collect user name and password combinations, and try to reuse them on other servers."
 msgstr ""
 
-#: C/create-account.page:125(item/p)
+#: C/create-account.page:126(item/p)
 msgid "<gui style=\"label\">Repeat Password</gui>"
 msgstr ""
 
-#: C/create-account.page:126(item/p)
+#: C/create-account.page:127(item/p)
 msgid "You must repeat your password."
 msgstr ""
 
-#: C/create-account.page:129(item/p)
+#: C/create-account.page:130(item/p)
 msgid "<em>Important!</em> Do <em>not</em> forget your password! You cannot recover it!"
 msgstr ""
 
@@ -735,70 +734,70 @@ msgid "What Are Droppers?"
 msgstr ""
 
 #: C/droppers.page:25(section/p)
-msgid "The term dropper was actually coined for people that avoid losing a match by quitting, for example by dropping the connection. They probably do that not out of pure frustration about losing but in order to preserve a good rating."
+msgid "The term dropper was actually coined for people that avoid losing a match by quitting, for example by dropping the connection. They probably do that not out of pure frustration about losing but in order to preserve a good <link xref=\"rating\">rating</link>."
 msgstr ""
 
 #: C/droppers.page:31(section/p)
-msgid "Many players on FIBS and Gibbon use a broader sense of the term dropper. Whenever somebody terminates a match prematurely, this is considered a drop, an unfriendly act. For the other party it is the same whether somebody drops the connection in the middle of a match in a vain effort to \"correct\" the own rating or because this somebody is called to lunch or the boss comes in or because this somebody is playing with an unstable internet connection."
+msgid "Many players on FIBS and <app>Gibbon</app> use a broader sense of the term dropper. Whenever somebody terminates a match prematurely, this is considered a drop, an unfriendly act. For the other party it is the same whether somebody drops the connection in the middle of a match in a vain effort to \"correct\" the own <link xref=\"rating\">rating</link> or because this somebody is called to lunch or the boss comes in or because this somebody is playing with an unstable internet connection."
 msgstr ""
 
-#: C/droppers.page:40(section/p)
-msgid "In fact, Gibbon uses an even broader meaning of the term dropper. Gibbon is a software, and cannot detect if somebody dropped a match after warning the opponent about it. This is not really considered a shortcoming. If your opponent asks you to quit a match because some urgent stuff slipped in, many people will be polite enough to accept it but that behavior is still annoying. When Gibbon records drops, it never takes such excuses into account, mostly because as a software it does not even know about that excuse but also because it considers such excuses irrelevant. The software just records the fact that somebody agreed on a match of a certain length and is later not able to finish that match."
+#: C/droppers.page:42(section/p)
+msgid "In fact, <app>Gibbon</app> uses an even broader meaning of the term dropper. <app>Gibbon</app> is a software, and cannot detect if somebody dropped a match after warning the opponent about it. This is not really considered a shortcoming. If your opponent asks you to quit a match because some urgent stuff slipped in, many people will be polite enough to accept it but that behavior is still annoying. When <app>Gibbon</app> records drops, it never takes such excuses into account, mostly because as a software it does not even know about that excuse but also because it considers such excuses irrelevant. The software just records the fact that somebody agreed on a match of a certain length and is later not able to finish that match."
 msgstr ""
 
-#: C/droppers.page:55(section/title)
+#: C/droppers.page:59(section/title)
 msgid "Measures Against Droppers"
 msgstr ""
 
-#: C/droppers.page:57(section/title)
+#: C/droppers.page:61(section/title)
 msgid "Reliabity Measurement"
 msgstr ""
 
-#: C/droppers.page:58(section/p)
-msgid "The best measure against droppers is to avoid playing them. And the best strategy to detect droppers is to watch the activities of all other players. This is cumbersome for humans but Gibbon does that automatically for you."
+#: C/droppers.page:62(section/p)
+msgid "The best measure against droppers is to avoid playing them. And the best strategy to detect droppers is to watch the activities of all other players. This is cumbersome for humans but <app>Gibbon</app> does that automatically for you."
 msgstr ""
 
-#: C/droppers.page:64(section/p)
+#: C/droppers.page:68(section/p)
 msgid "In the <link xref=\"players-list\">players'</link> and <link xref=\"inviters-list\">inviters' list</link> you will see a colored bar next to the player names. A green bar signifies reliable players, a red bar unreliable players. Yellow and orange bars are displayed for players on the verge of being reliable (yellow) or being unreliable (orange). The length of the bar gives you an idea of how confident Gibbon is about that information. The longer the bar, the more data has been collected about the player in question, and the more accurate the information will be."
 msgstr ""
 
-#: C/droppers.page:75(section/p)
+#: C/droppers.page:79(section/p)
 msgid "Most of the time it is enough to just look at that bar. Avoid people without a green bar, unless you know them or have other reasons."
 msgstr ""
 
-#: C/droppers.page:82(section/title)
+#: C/droppers.page:86(section/title)
 msgid "Limit on Saved Matches"
 msgstr ""
 
-#: C/droppers.page:83(section/p)
+#: C/droppers.page:87(section/p)
 msgid "Whenever a match is terminated prematurely, FIBS will save the match, and it can be resumed later. After a certain time (about two weeks at the time of this writing), saved matches will be wiped out from the database."
 msgstr ""
 
-#: C/droppers.page:89(section/p)
-msgid "But before that, the number of saved matches is stored with each user. Gibbon displays the number of saved matches for every player that invites you to a match. You can also find it out by issuing the command <cmd>show savedcount playername</cmd> in the <link xref=\"server-console\">server console</link>."
+#: C/droppers.page:93(section/p)
+msgid "The number of saved matches is stored with each user, and <app>Gibbon</app> displays it, whenever somebody invites you to a match or you invite somebody else."
 msgstr ""
 
-#: C/droppers.page:97(section/p)
+#: C/droppers.page:98(section/p)
 msgid "Currently, FIBS imposes a hard limit on the possible number of saved matches. Whenever a player's saved count reaches 10, that player can only resumve saved matches but cannot start new ones."
 msgstr ""
 
-#: C/droppers.page:104(section/title)
+#: C/droppers.page:105(section/title)
 msgid "Bots"
 msgstr ""
 
-#: C/droppers.page:105(section/p)
+#: C/droppers.page:106(section/p)
 msgid "Two computer players on FIBS try to warn people about droppers."
 msgstr ""
 
-#: C/droppers.page:108(section/p)
+#: C/droppers.page:109(section/p)
 msgid "One of them is <em>MissManners</em>. Whenever somebody with a high saved count logs in, MissManners will display a warning about that in the <link xref=\"shout\">shout area</link>. You should not invite such players to matches."
 msgstr ""
 
-#: C/droppers.page:114(section/p)
+#: C/droppers.page:115(section/p)
 msgid "The other computer player is <em>RepBotNG</em> (for Reputation Bot Next Generation). You can <link xref=\"chatting\">chat</link> with RepBotNG like with a human player. Telling RepBotNG \"help\" will display more information."
 msgstr ""
 
-#: C/droppers.page:120(section/p)
+#: C/droppers.page:121(section/p)
 msgid "Most of the time you will <cmd>ask</cmd> about another player's reputation or <cmd>complain</cmd> about an opponent or <cmd>vouch</cmd> for an opponent."
 msgstr ""
 
@@ -1426,6 +1425,10 @@ msgstr ""
 
 #: C/kibitz.page:29(page/p)
 msgid "If you are currently playing, both your opponent and spectators will see your message. If you are <link xref=\"watching\">watching</link> both players and possible other spectators will see your message."
+msgstr ""
+
+#: C/libgsgf.page:6(info/desc)
+msgid "CLIP is the <em>CLIent</em> <em>P</em>rotocol for FIBS"
 msgstr ""
 
 #: C/libgsgf.page:19(page/title)
