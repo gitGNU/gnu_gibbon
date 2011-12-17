@@ -905,6 +905,8 @@ gibbon_draw_cup (GibbonCairoboard *self, cairo_t *cr)
                 return;
         if (position->dice[1])
                 return;
+        if (self->priv->pos->resigned)
+                return;
 
         top = self->priv->checker_w_home->y;
         bottom = self->priv->checker_b_home->y
