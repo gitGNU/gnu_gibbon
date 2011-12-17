@@ -25,7 +25,7 @@
     The main toolbar above initially looks like this:
   </p>
   <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
-    The Main Toolbar When Disconnected
+    <p>The Main Toolbar When Disconnected</p>
   </media>
   <p>Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von links nach rechts sind:</p>
   <list type="numbered">
@@ -53,7 +53,7 @@
     the toolbar rather looks like this:
   </p>
   <media type="image" mime="src/png" src="figures/main-toolbar-connected.png">
-    The Main Toolbar When Connected
+    <p>The Main Toolbar When Connected</p>
   </media>
   <list type="numbered">
     <item>

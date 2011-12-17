@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-16 09:10+0200\n"
-"PO-Revision-Date: 2011-12-16 10:06+0200\n"
+"POT-Creation-Date: 2011-12-16 12:20+0200\n"
+"PO-Revision-Date: 2011-12-16 12:49+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -403,26 +403,37 @@ msgstr "Die Kommunikation is in mehreren Reitern organisiert."
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/chat-area.png\"> <p>The "
 "Chat Area</p> </media>"
-msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/chat-area.png\"> <p>Der Chatbereich</p> </media>"
+msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/chat-area.png\"> <p>Der "
+"Chatbereich</p> </media>"
 
 #: C/chat-area.page:43(page/p)
 msgid ""
 "The <link xref=\"shout\">public communication</link> is always displayed in "
 "the leftmost tab. <link xref=\"tell\">Communication with particular users</"
 "link> is displayed in subsequent tabs."
-msgstr "Die <link xref=\"shout\">öffentliche Kommunication</link> wird immer unterhalb des ersten Reiters dargestellt, <link xref=\"tell\">Kommunication mit einzelnen Benutzerinnen und Benutzern</link> dagegen unterhalb der nachfolgenden Reiter."
+msgstr ""
+"Die <link xref=\"shout\">öffentliche Kommunication</link> wird immer "
+"unterhalb des ersten Reiters dargestellt, <link xref=\"tell\">Kommunication "
+"mit einzelnen Benutzerinnen und Benutzern</link> dagegen unterhalb der "
+"nachfolgenden Reiter."
 
 #: C/chat-area.page:48(page/p)
 msgid ""
 "You can enter your own messages in the text entry at the bottom. The message "
 "is sent by pressing the <key>Return</key> key."
-msgstr "Sie können Ihre eigenen Mitteilungen in das Texteingabefeld unten eingeben. Sie wird durch Drücken der <key>Eingabetaste</key> abgeschickt."
+msgstr ""
+"Sie können Ihre eigenen Mitteilungen in das Texteingabefeld unten eingeben. "
+"Sie wird durch Drücken der <key>Eingabetaste</key> abgeschickt."
 
 #: C/chat-area.page:53(page/p)
+#, fuzzy
 msgid ""
 "The recipient is selected according to the currently selected tab, i.e. the "
-"one that is in the foreground.T"
-msgstr "Die Empfängerin oder der Empfänger wird entsprechend dem selektierten, also im Vordergrund liegenden Reiter ausgewählt."
+"one that is in the foreground."
+msgstr ""
+"Die Empfängerin oder der Empfänger wird entsprechend dem selektierten, also "
+"im Vordergrund liegenden Reiter ausgewählt."
 
 #: C/chatting.page:8(info/title)
 msgctxt "link"
@@ -446,7 +457,10 @@ msgstr "Chatten"
 msgid ""
 "It is possible to chat with other people on the server very much the same "
 "way as you know it from instant messaging programs."
-msgstr "Sie können mit anderen Leuten auf dem Server in ähnlicher Weise wie Sie es von Sofortnachrichtendiensten (<em xml:lang=\"en\">Instant Messaging</em>) kennen."
+msgstr ""
+"Sie können mit anderen Leuten auf dem Server in ähnlicher Weise wie Sie es "
+"von Sofortnachrichtendiensten (<em xml:lang=\"en\">Instant Messaging</em>) "
+"kennen."
 
 #: C/chatting.page:28(section/title) C/playing.page:37(section/title)
 msgid "Chatting During the Game"
@@ -454,7 +468,8 @@ msgstr "Nachrichtenaustausch während des Spiels"
 
 #: C/chatting.page:31(section/title)
 msgid "Messages to the Public and Certain Players"
-msgstr "Mitteilungen an die Öffentlichkeit oder bestimmte Spielerinnen und Spieler"
+msgstr ""
+"Mitteilungen an die Öffentlichkeit oder bestimmte Spielerinnen und Spieler"
 
 #: C/checker-movement.page:8(info/desc)
 msgid "How To Move The Checkers Around On the Board"
@@ -516,9 +531,12 @@ msgstr ""
 "Die geworfenen Würfel verschwinden nach kurzer Zeit, und Ihre Gegnerin oder "
 "Ihr Gegner setzt das Spiel fort."
 
-#: C/clip-conformance.page:7(info/desc) C/libgsgf.page:6(info/desc)
-msgid "CLIP is the <em>CLIent</em> <em>P</em>rotocol for FIBS"
-msgstr "CLIP ist Software-Kommunikationsprotokol für FIBS (<span xml:lang=\"en\">CLIent</em> <em>P</em>rotocol for FIBS</span>)"
+#: C/clip-conformance.page:7(info/desc)
+#, fuzzy
+msgid "CLIP is the <em>CLI</em>ent <em>P</em>rotocol for FIBS"
+msgstr ""
+"CLIP ist Software-Kommunikationsprotokol für FIBS (<span xml:lang=\"en"
+"\"><em>CLI</em>ent <em>P</em>rotocol for FIBS</span>)"
 
 #: C/clip-conformance.page:20(page/title)
 msgid "Conformance With CLIP"
@@ -530,28 +548,45 @@ msgid ""
 "described in <link href=\"http://www.fibs.com/fibs_interface.html\"/>, and "
 "you should be able to play with <app>Gibbon</app> on every server that "
 "complies with CLIP."
-msgstr "<app>Gibbon</app> bemüht sich CLIP, das Software-Kommunikationsprotokoll mit FIBS, das unter <link href=\"http://www.fibs.com/fibs_interface.html\"/> beschrieben ist, einzuhalten. Sie sollten daher in der Lage sein, mit <app>Gibbon</app> auf jedem zu CLIP kompatiblen Server zu spielen."
+msgstr ""
+"<app>Gibbon</app> bemüht sich CLIP, das Software-Kommunikationsprotokoll mit "
+"FIBS, das unter <link href=\"http://www.fibs.com/fibs_interface.html\"/> "
+"beschrieben ist, einzuhalten. Sie sollten daher in der Lage sein, mit "
+"<app>Gibbon</app> auf jedem zu CLIP kompatiblen Server zu spielen."
 
 #: C/clip-conformance.page:28(page/p)
 msgid ""
 "Unfortunately, the specification is incomplete and sometimes vague. In "
 "doubt, <app>Gibbon</app> complies with CLIP as implemented in <link href="
 "\"http://www.fibs.com/\">FIBS</link>, the First Internet Backgammon Server."
-msgstr "Leider ist die Spezifikation nicht ganz vollständig und manchmal vage. Im Zweifel verhält sich <app>Gibbon</app> kompatibel zu CLIP, wie es auf <link href=\"http://www.fibs.com/\">FIBS</link>, dem Ersten Internet Backgammon Server implementiert ist."
+msgstr ""
+"Leider ist die Spezifikation nicht ganz vollständig und manchmal vage. Im "
+"Zweifel verhält sich <app>Gibbon</app> kompatibel zu CLIP, wie es auf <link "
+"href=\"http://www.fibs.com/\">FIBS</link>, dem Ersten Internet Backgammon "
+"Server implementiert ist."
 
 #: C/clip-conformance.page:35(page/p)
+#, fuzzy
 msgid ""
 "<app>Gibbon</app> does <em>not</em> fully implement the <link href=\"http://"
 "www.fibs.com/fibs_interface.html#ppp\">Player Profile Protocol</link> and it "
-"probably never will. It tries to decode client names using this protocol but "
-"it does not use it for encoding its own client name."
-msgstr "<app>Gibbon</app> implementiert dagegen das sogenannte <link href=\"http://www.fibs.com/fibs_interface.html#ppp\">Spielerprofilprotokoll</link> (<span xml:lang=\"en\">Player Profile Protocol</span>) <em>nicht</em> und das wird vermutlich auch in Zukunft so bleiben. Namen von Spielerinnen und Spieler, und Namen von Software werden soweit möglich dekodiert, aber nicht enkodiert."
+"probably never will. It tries to decode user and client names but it does "
+"not use it for encoding its own client name or the name of the <app>Gibbon</"
+"app> user."
+msgstr ""
+"<app>Gibbon</app> implementiert dagegen das sogenannte <link href=\"http://"
+"www.fibs.com/fibs_interface.html#ppp\">Spielerprofilprotokoll</link> (<span "
+"xml:lang=\"en\">Player Profile Protocol</span>) <em>nicht</em> und das wird "
+"vermutlich auch in Zukunft so bleiben. Namen von Spielerinnen und Spieler, "
+"und Namen von Software werden soweit möglich dekodiert, aber nicht enkodiert."
 
-#: C/clip-conformance.page:42(page/p)
+#: C/clip-conformance.page:43(page/p)
 msgid ""
 "Gibbon extends CLIP by its own <link xref=\"gibbon-unicode\">Gibbon Unicode "
 "Extension for FIBS</link>."
-msgstr "<app>Gibbon</app> erweitert CLIP durch sein eigene <link xref=\"gibbon-unicode\">Gibbon-Unicode-Erweiterung für FIBS</link>."
+msgstr ""
+"<app>Gibbon</app> erweitert CLIP durch sein eigene <link xref=\"gibbon-"
+"unicode\">Gibbon-Unicode-Erweiterung für FIBS</link>."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -598,7 +633,9 @@ msgstr "So oder so wird daraufhin der Verbindungs-Dialog angezeigt:"
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/connection-dialog.png"
 "\"> The connection dialog </media>"
-msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/connection-dialog.png\"> Der Verbindungsdialog </media>"
+msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/connection-dialog.png"
+"\"> Der Verbindungsdialog </media>"
 
 #: C/connect.page:35(page/p)
 msgid "You have to fill in the following information:"
@@ -635,7 +672,7 @@ msgstr ""
 "Sie mit <app>Gibbon</app> ein neues anlegen, siehe <link xref=\"create-"
 "account\"/>."
 
-#: C/connect.page:60(item/p) C/create-account.page:94(item/p)
+#: C/connect.page:60(item/p) C/create-account.page:95(item/p)
 msgid "<gui style=\"label\">Password</gui>"
 msgstr "<gui style=\"label\">Password</gui>"
 
@@ -660,23 +697,28 @@ msgid ""
 msgstr ""
 "<em>Hinweis:</em> FIBS erlaubt hier keine beliebigen Zeichenketten. Wenn Sie "
 "statt Ihrer Adresse eine Webseite angeben wollen, lassen Sie bitte das "
-"führende Schema weg, also nicht “http://www.example.com/” sondern “www."
+"führende Schema weg, also nicht „http://www.example.com/” sondern „www."
 "example.com”."
 
 #: C/contributing.page:6(info/desc)
 msgid "You don't have to be a programmer to contribute to <app>Gibbon</app>"
-msgstr "Um zu <app>Gibbon</app> beizutragen, muss man nicht programmieren können"
+msgstr ""
+"Um zu <app>Gibbon</app> beizutragen, muss man nicht programmieren können"
 
 #: C/contributing.page:18(page/title)
 msgid "Contributing to <app>Gibbon</app>"
 msgstr "Sich an <app>Gibbon</app> beteiligen"
 
 #: C/contributing.page:20(page/p)
+#, fuzzy
 msgid ""
 "If you want to contribute to <app>Gibbon</app> you can find contact "
-"information on the <link href=\"http://www.gibbon.bg/\">Gibbon web site</"
+"information on the <link href=\"http://www.gibbon.bg/\"><app>Gibbon</app> "
+"web site</link>."
+msgstr ""
+"Wenn Sie Sich an <app>Gibbon</app> finden Sie die notwendigen Kontaktdaten "
+"auf der <link href=\"http://www.gibbon.bg/\">Webseite von <app>Gibbon</app></"
 "link>."
-msgstr "Wenn Sie Sich an <app>Gibbon</app> finden Sie die notwendigen Kontaktdaten auf der <link href=\"http://www.gibbon.bg/\">Webseite von <app>Gibbon</app></link>."
 
 #: C/contributing.page:26(section/title)
 msgid "Translations"
@@ -687,14 +729,22 @@ msgid ""
 "If <app>Gibbon</app> is not yet available in your own language, why not help "
 "translating it? Translating the program itself is not that hard, and it will "
 "only take a couple of hours. It does not require any programming skills."
-msgstr "Falls <app>Gibbon</app> Gibbon in Ihrer eigenen Sprache noch nicht verfügbar ist, weshalb nicht beim Übersetzen helfen? Das ist nicht sehr schwer und bedeutet lediglich ein paar Stunden Arbeit. Programmierkenntnisse sind dafür nicht erforderlich. Allerdings muss man Englisch einigermaßen verstehen, weil die Originaltexte nur in Englisch vorliegen."
+msgstr ""
+"Falls <app>Gibbon</app> Gibbon in Ihrer eigenen Sprache noch nicht verfügbar "
+"ist, weshalb nicht beim Übersetzen helfen? Das ist nicht sehr schwer und "
+"bedeutet lediglich ein paar Stunden Arbeit. Programmierkenntnisse sind dafür "
+"nicht erforderlich. Allerdings muss man Englisch einigermaßen verstehen, "
+"weil die Originaltexte nur in Englisch vorliegen."
 
 #: C/contributing.page:33(section/p)
 msgid ""
 "Translating the documentation is a little bit harder, and it will also take "
 "more time. In other words, if you want to be the proud of the online "
 "backgammon community in your country, you should venture it!"
-msgstr "Die Dokumentation zu übersetzen, ist ein wenig schwieriger und zeitaufwändiger. Mit anderen Worten, falls Sie der Stolz der Backgammon-Community Ihres Landes sein wollen, sollten Sie einen Versuch starten."
+msgstr ""
+"Die Dokumentation zu übersetzen, ist ein wenig schwieriger und "
+"zeitaufwändiger. Mit anderen Worten, falls Sie der Stolz der Backgammon-"
+"Community Ihres Landes sein wollen, sollten Sie einen Versuch starten."
 
 #: C/contributing.page:41(section/title)
 msgid "Report Bugs"
@@ -705,7 +755,10 @@ msgid ""
 "If you find an error in <app>Gibbon</app>, please <link xref=\"bugreports"
 "\">report a bug</link>. Your feature requests or suggestions for "
 "improvements are also welcome."
-msgstr "Wenn Sie einen Fehler in <app>Gibbon</app> finden, <link xref=\"bugreports\">melden Sie Ihn</link> bitte. Ihre Featurewünsche oder Verbesserungsvorschläge sind natürlich ebenfalls willkommen."
+msgstr ""
+"Wenn Sie einen Fehler in <app>Gibbon</app> finden, <link xref=\"bugreports"
+"\">melden Sie Ihn</link> bitte. Ihre Featurewünsche oder "
+"Verbesserungsvorschläge sind natürlich ebenfalls willkommen."
 
 #: C/contributing.page:49(section/title)
 msgid "Contribute Source Code"
@@ -715,7 +768,9 @@ msgstr "Quelltext liefern"
 msgid ""
 "Sure, go ahead! In order to avoid duplicate efforts, please contact us "
 "before sending in source code or larger patches."
-msgstr "Klar, nur zu! Um doppelte Arbeit zu vermeiden, kontaktieren Sie uns aber besser vorher."
+msgstr ""
+"Klar, nur zu! Um doppelte Arbeit zu vermeiden, kontaktieren Sie uns aber "
+"besser vorher."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -737,10 +792,13 @@ msgid "Create a New Account"
 msgstr "Neues Konto erstellen"
 
 #: C/create-account.page:19(page/p)
+#, fuzzy
 msgid ""
-"Before you can connect (see <link xref=\"connect\"/>) to <app>FIBS</app> you "
-"need an account."
-msgstr "Bevor Sie sich mit dem Server verbinden können (siehe <link xref=\"connect\"/>), brauchen Sie ein Konto dort."
+"Before you can connect (see <link xref=\"connect\"/>) to a server, you need "
+"an account."
+msgstr ""
+"Bevor Sie sich mit dem Server verbinden können (siehe <link xref=\"connect\"/"
+">), brauchen Sie ein Konto dort."
 
 #: C/create-account.page:23(page/p)
 msgid ""
@@ -750,6 +808,12 @@ msgid ""
 "is <link href=\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>, "
 "prior to creating a new account."
 msgstr ""
+"Aus naheliegenden Gründen erlaubt <app>FIBS</app> keine Mehrfachzugänge für "
+"ein und dieselbe Person. Falls Sie meinen, dass in Ihrem Fall eine "
+"begründete Ausnahme von dieser Regel besteht, wenden Sie sich bitte, bevor "
+"Sie ein neues Konto einrichten, an die Administratorin oder den "
+"Administrator des Servers. Im Falle von <app>FIBS</app> ist das <link href="
+"\"http://www.pattib.org/contact.shtml\">Patti Beadles</link>."
 
 #: C/create-account.page:31(page/p)
 msgid ""
@@ -765,17 +829,23 @@ msgstr ""
 "Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden."
 
 #: C/create-account.page:44(page/p)
+#, fuzzy
 msgid ""
-"Click the <gui style=\"button\">Register new account</gui> button underneath "
+"Click the <gui style=\"button\">Register new account</gui> button beneath "
 "the <gui style=\"label\">User name</gui> text entry. You will then see this "
 "dialog:"
-msgstr "Klicken Sie den Button <gui style=\"button\">Neues Konto einrichten</gui> unterhalb des Eingabefeldes für Ihren <gui style=\"label\">Anmeldenamen</gui>. Daraufhin wird folgender Dialog angezeigt:"
+msgstr ""
+"Klicken Sie den Button <gui style=\"button\">Neues Konto einrichten</gui> "
+"unterhalb des Eingabefeldes für Ihren <gui style=\"label\">Anmeldenamen</"
+"gui>. Daraufhin wird folgender Dialog angezeigt:"
 
 #: C/create-account.page:49(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/register-account.png\"> "
 "The account creation dialog </media>"
-msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/register-account.png\"> Der Kontoeinrichtungsdialog </media>"
+msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/register-account.png\"> "
+"Der Kontoeinrichtungsdialog </media>"
 
 #: C/create-account.page:54(page/p)
 msgid "The following information is needed:"
@@ -785,38 +855,53 @@ msgstr "Die folgenden Informationen werden benötigt:"
 msgid ""
 "The name or IP address of the server you want to connect to. In doubt, try "
 "“fibs.com”."
-msgstr "Der Name oder die IP-Adresse des Servers, mit dem Sie Sich verbinden wollen. Probieren Sie im Zweifelsfall „fibs.com“."
+msgstr ""
+"Der Name oder die IP-Adresse des Servers, mit dem Sie Sich verbinden wollen. "
+"Probieren Sie im Zweifelsfall „fibs.com“."
 
 #: C/create-account.page:73(item/p)
 msgid ""
 "The user name you want to use on that server. It is - of course - not "
 "possible to use a name used by somebody else. A little surprising: Your name "
 "must not contain digits, underscores, or hyphens."
-msgstr "Der Anmeldename, den Sie für diesen Server verwenden wollen. Es ist natürlich nicht möglich, sich einen Namen auszusuchen, der schon von jemand anderem benutzt wird. Es ist eventuell etwas überraschend, dass der Anmeldename weder Ziffern noch Unter- oder Bindestiche enthalten darf."
+msgstr ""
+"Der Anmeldename, den Sie für diesen Server verwenden wollen. Es ist "
+"natürlich nicht möglich, sich einen Namen auszusuchen, der schon von jemand "
+"anderem benutzt wird. Es ist eventuell etwas überraschend, dass der "
+"Anmeldename weder Ziffern noch Unter- oder Bindestiche enthalten darf."
 
 #: C/create-account.page:79(item/p)
+#, fuzzy
 msgid ""
 "This name will be your identity on the server! While it is not illegal to "
-"choose a silly or offesive name, in fact some people have remarkably silly "
+"choose a silly or offensive name, in fact some people have remarkably silly "
 "or offensive names on <app>FIBS</app>, you should think twice about how you "
 "want to be known to your future backgammon partners."
-msgstr "Der Name stellt Ihre Identität auf dem Server dar! Es ist zwar nicht verboten, sich einen beleidigenden oder bescheuerten Namen auszusuchen, es gibt sogar einige Leute, die ausgesprochen beleidigende oder bescheuerte Namen auf FIBS verwenden, aber Sie sollten Sich vielleicht zweimal überlegen, mit welchem Namen Sie gegenüber Ihren zukünftigen Spielpartnerinnen und -partnern auftreten wollen."
+msgstr ""
+"Der Name stellt Ihre Identität auf dem Server dar! Es ist zwar nicht "
+"verboten, sich einen beleidigenden oder bescheuerten Namen auszusuchen, es "
+"gibt sogar einige Leute, die ausgesprochen beleidigende oder bescheuerte "
+"Namen auf FIBS verwenden, aber Sie sollten Sich vielleicht zweimal "
+"überlegen, mit welchem Namen Sie gegenüber Ihren zukünftigen "
+"Spielpartnerinnen und -partnern auftreten wollen."
 
-#: C/create-account.page:87(item/p)
+#: C/create-account.page:88(item/p)
 msgid "<gui style=\"label\">Save Password?</gui>"
 msgstr "<gui style=\"label\">Kennwort speichern?</gui>"
 
-#: C/create-account.page:88(item/p)
+#: C/create-account.page:89(item/p)
 msgid ""
 "Check this box, if you want <app>Gibobn</app> to remember your password for "
 "you."
-msgstr "Kreuzen Sie hier an, wenn Sie möchten, dass <app>Gibobn</app> das Kennwort für sie speichert."
+msgstr ""
+"Kreuzen Sie hier an, wenn Sie möchten, dass <app>Gibobn</app> das Kennwort "
+"für sie speichert."
 
-#: C/create-account.page:95(item/p)
+#: C/create-account.page:96(item/p)
 msgid "Choose a suitable password."
 msgstr "Wählen Sie ein passendes Kennwort."
 
-#: C/create-account.page:98(item/p)
+#: C/create-account.page:99(item/p)
 msgid ""
 "<em>Important!</em> All communication with the server is unencrypted. It is "
 "therefore visible to everybody in your network, and to everybody in the "
@@ -825,67 +910,87 @@ msgid ""
 "because it is quite unlikely that anybody is interested in eavesdropping "
 "your backgammon communication. But you must remember that your password is "
 "also visible to these people."
-msgstr "<em>Wichtig!</em> Der Datenverkehr mit dem Server läuft vollständig unverschlüsselt ab. Er ist damit für jeden in Ihrem eigenen Netzwerk und den Netzwerken auf dem Weg sichtbar, also hauptsächlich für die Belegschaft der beteiligten Internet-Provider. Das sollte kein Grund zur Panik sein, denn es ist einigermaßen unwahrscheinlich, dass wirklich jemand Ihren Backgammon-Datenverkehr abhören will. Aber Sie sollten sich bewusst sein, dass Ihr Kennwort ebenfalls für diese Leute sichtbar ist."
+msgstr ""
+"<em>Wichtig!</em> Der Datenverkehr mit dem Server läuft vollständig "
+"unverschlüsselt ab. Er ist damit für jeden in Ihrem eigenen Netzwerk und den "
+"Netzwerken auf dem Weg sichtbar, also hauptsächlich für die Belegschaft der "
+"beteiligten Internet-Provider. Das sollte kein Grund zur Panik sein, denn es "
+"ist einigermaßen unwahrscheinlich, dass wirklich jemand Ihren Backgammon-"
+"Datenverkehr abhören will. Aber Sie sollten sich bewusst sein, dass Ihr "
+"Kennwort ebenfalls für diese Leute sichtbar ist."
 
-#: C/create-account.page:109(item/p)
+#: C/create-account.page:110(item/p)
 msgid ""
 "The password is also visible to everybody with superuser (or administrator) "
 "privileges on your computer because <app>Gibbon</app> currently does not "
 "encrypt your password."
-msgstr "Das Kennwort ist ebenfalls für jeden sichtbar, der Superuser- bzw. Administratorrechte auf Ihrem Computer hat, weil <app>Gibbon</app> Kennwörter nicht verschlüsselt."
+msgstr ""
+"Das Kennwort ist ebenfalls für jeden sichtbar, der Superuser- bzw. "
+"Administratorrechte auf Ihrem Computer hat, weil <app>Gibbon</app> "
+"Kennwörter nicht verschlüsselt."
 
-#: C/create-account.page:114(item/p)
+#: C/create-account.page:115(item/p)
 msgid ""
 "Therefore, use a password that is not too easy to guess but do <em>not</em> "
 "use a “valuable” password here! That means, do not use a password that you "
 "use for other sensitive accounts like for online banking or internet shops. "
 "It is a well-known fact that criminals routinely collect user name and "
 "password combinations, and try to reuse them on other servers."
-msgstr "Verwenden Sie deshalb ein Kennwort, dass nicht leicht zu erraten ist, aber verwenden Sie hier <em>kein</em> „wertvolles“ Kennwort, also keins, dass sie für sensible Zugänge wie Online-Banking oder Internet-Shoops verwenden. Es ist bekannt, dass Kriminelle routinemäßig Kombinationen aus Anmeldenamen und Kennwörtern sammeln, um sich damit auf anderen Diensten anzumelden."
+msgstr ""
+"Verwenden Sie deshalb ein Kennwort, dass nicht leicht zu erraten ist, aber "
+"verwenden Sie hier <em>kein</em> „wertvolles“ Kennwort, also keins, dass sie "
+"für sensible Zugänge wie Online-Banking oder Internet-Shoops verwenden. Es "
+"ist bekannt, dass Kriminelle routinemäßig Kombinationen aus Anmeldenamen und "
+"Kennwörtern sammeln, um sich damit auf anderen Diensten anzumelden."
 
-#: C/create-account.page:125(item/p)
+#: C/create-account.page:126(item/p)
 msgid "<gui style=\"label\">Repeat Password</gui>"
 msgstr "<gui style=\"label\">Kennwort wiederholen</gui>"
 
-#: C/create-account.page:126(item/p)
+#: C/create-account.page:127(item/p)
 msgid "You must repeat your password."
 msgstr "Sie müssen Ihr Kennwort wiederholen."
 
-#: C/create-account.page:129(item/p)
+#: C/create-account.page:130(item/p)
 msgid ""
 "<em>Important!</em> Do <em>not</em> forget your password! You cannot recover "
 "it!"
-msgstr "<em>Wichtig!</em> Bitte vergessen Sie Ihr Kennwort nicht! Es kann <em>nicht</em> wiederhergestellt werden!"
+msgstr ""
+"<em>Wichtig!</em> Bitte vergessen Sie Ihr Kennwort nicht! Es kann <em>nicht</"
+"em> wiederhergestellt werden!"
 
 #: C/doubling.page:7(info/desc)
 msgid "Using the Doubling Cube"
-msgstr ""
+msgstr "Den Dopplerwürfel verwenden"
 
 #: C/doubling.page:19(page/title)
 msgid "Doubling"
-msgstr ""
+msgstr "Doppeln"
 
 #: C/doubling.page:21(section/title)
 msgid "Doubling Your Opponent"
-msgstr ""
+msgstr "Den Einsatz verdoppeln"
 
 #: C/doubling.page:22(section/subtitle)
 msgid "Turning the Cube"
-msgstr ""
+msgstr "Den Dopplerwürfel drehen"
 
 #: C/doubling.page:23(section/p)
 msgid ""
 "When you see the doubling cube, and it is not located at your opponent's "
 "side of the board, you can turn the cube against her and double the stakes."
 msgstr ""
+"Wenn der Dopplerwürfel sichtbar ist, und sich nicht auf der gegnerischen "
+"Seite des Brettes befindet, können Sie den Dopplerwürfel „drehen” und damit "
+"den Einsatz verdoppeln."
 
 #: C/doubling.page:28(section/p)
 msgid "You can turn the cube by"
-msgstr ""
+msgstr "Der Dopplerwürfel kann gedreht werden, durch"
 
 #: C/doubling.page:32(item/p)
 msgid "by double-clicking the cube"
-msgstr ""
+msgstr "Doppelklicken auf den Dopplerwürfel"
 
 #: C/doubling.page:33(item/p)
 #, fuzzy
@@ -893,14 +998,12 @@ msgid ""
 "by clicking the <gui style=\"button\">double</gui> button in the <link xref="
 "\"board-toolbar\">board toolbar</link>."
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"durch Klicken des Buttons <gui style=\"button\">Doppeln</gui> in der <link "
+"xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</link>."
 
 #: C/doubling.page:37(section/p)
 msgid "The cube will now appear in the middle of the board."
-msgstr ""
+msgstr "Der Dopplerwürfel erscheint daraufhin in der Mitte des Spielbretts."
 
 #: C/doubling.page:40(section/p)
 msgid ""
@@ -908,20 +1011,26 @@ msgid ""
 "stakes, or give up, and lose the number of points the cube showed before you "
 "doubled."
 msgstr ""
+"Ihre Gegnerin bzw. Ihr Gegner hat nun zwei Möglichkeiten. Durch Akzeptieren "
+"des Dopplerwürfels wird der Einsatz verdoppelt. Im Falle der Ablehnung "
+"verliert sie bzw. er die Anzahl Punkte, die der Dopplerwürfel vor dem "
+"Doppeln angezeigt hatte."
 
 #: C/doubling.page:48(section/title)
 msgid "Getting Doubled"
-msgstr ""
+msgstr "Gedoppelt werden"
 
 #: C/doubling.page:49(section/subtitle)
 msgid "Answering to the Cube"
-msgstr ""
+msgstr "Aktionen mit dem Dopplerwürfel erwidern"
 
 #: C/doubling.page:50(section/p)
 msgid ""
 "If your opponent doubled you, the doubling cube will appear in the middle of "
 "the board, showing the new stakes."
 msgstr ""
+"Falls Ihre Gegnerin oder Ihr Gegner doppelt, erscheint der Dopplerwürfel in "
+"der Mitte des Spielbretts und zeigt die neue Punktzahl an."
 
 #: C/doubling.page:55(section/p)
 msgid ""
@@ -929,116 +1038,153 @@ msgid ""
 "or give up, and lose the number of points the cube showed before the cube "
 "was turned."
 msgstr ""
+"Sie müssen die Verdoppelung entweder akzeptieren, und zu doppeltem Einsatz "
+"weiterspielen, oder aufgeben, wodurch Sie  die Anzahl Punkte verlieren, die "
+"der Dopplerwürfel vor dem Doppeln angezeigt hatte."
 
 #: C/doubling.page:61(section/p)
 msgid "You can accept the cube"
-msgstr ""
+msgstr "Sie können das Verdoppeln annehmen, durch"
 
 #: C/doubling.page:65(item/p)
 msgid "by double-clicking it"
-msgstr ""
+msgstr "Doppelklick auf den Dopplerwürfel"
 
 #: C/doubling.page:66(item/p)
-#, fuzzy
 msgid ""
 "by clicking the <gui style=\"button\">accept button</gui> in the <link xref="
 "\"board-toolbar\"><gui style=\"button\">board toolbar</gui></link>."
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"durch Klick auf den Button <gui style=\"button\">Annehmen</gui> in der <link "
+"xref=\"board-toolbar\"><gui style=\"button\">Spielbrett-Werkzeugleiste</"
+"gui></link>."
 
 #: C/doubling.page:70(section/p)
 msgid "You can refuse the cube"
-msgstr ""
+msgstr "Sie können das Doppeln ablehnen, durch"
 
 #: C/doubling.page:74(item/p)
 msgid "by right-clicking it"
-msgstr ""
+msgstr "Rechtsklick auf den Dopplerwürfel"
 
 #: C/doubling.page:75(item/p)
-#, fuzzy
 msgid ""
 "by clicking the <gui style=\"button\">reject button</gui> in the <gui><link "
 "xref=\"board-toolbar\">board toolbar</link></gui>"
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"durch Klicken des Buttons <gui style=\"button\">Ablehnen</gui> in der "
+"<gui><link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</link></gui>"
 
 #: C/doubling.page:79(section/p)
 msgid ""
 "If you accepted the cube, it will now be shown on your side of the board. If "
 "you refused it, the game ends."
 msgstr ""
+"Wenn Sie den Dopplerwürfel akzeptiert haben, erscheint er nunmehr auf Ihrer "
+"Seite des Bretts. Wenn Sie ablehnen, endet das Spiel."
 
 #: C/droppers.page:6(info/desc)
 msgid "What are droppers?"
-msgstr ""
+msgstr "Was sind Dropper?"
 
 #: C/droppers.page:18(page/title)
 msgid "Droppers"
-msgstr ""
+msgstr "Dropper"
 
 #: C/droppers.page:19(page/p)
 msgid ""
 "When playing on FIBS, you will often hear people complaing about "
 "<em>droppers</em>."
 msgstr ""
+"Wenn Sie auf FIBS spielen, werden Sie oft hören, wie Leute sich über "
+"<em>Dropper</em> beschweren."
 
 #: C/droppers.page:24(section/title)
 msgid "What Are Droppers?"
-msgstr ""
+msgstr "Was sind Dropper?"
 
 #: C/droppers.page:25(section/p)
 msgid ""
 "The term dropper was actually coined for people that avoid losing a match by "
 "quitting, for example by dropping the connection. They probably do that not "
-"out of pure frustration about losing but in order to preserve a good rating."
+"out of pure frustration about losing but in order to preserve a good <link "
+"xref=\"rating\">rating</link>."
 msgstr ""
+"Der Begriff stammt aus dem Englischen und wurde ursprünglich für Leute "
+"geprägt, die sich einer drohenden Niederlage durch Unterbrechen der "
+"Verbindung (engl. <em xml:lang=\"en\">to drop the connection</em>) "
+"entziehen. Vermutlich tun sie das nicht aus reiner Frustration, sondern um "
+"ihre <link xref=\"rating\">Ranglistenpunktee</link> zu „erhalten“."
 
 #: C/droppers.page:31(section/p)
+#, fuzzy
 msgid ""
-"Many players on FIBS and Gibbon use a broader sense of the term dropper. "
-"Whenever somebody terminates a match prematurely, this is considered a drop, "
-"an unfriendly act. For the other party it is the same whether somebody drops "
-"the connection in the middle of a match in a vain effort to \"correct\" the "
-"own rating or because this somebody is called to lunch or the boss comes in "
-"or because this somebody is playing with an unstable internet connection."
+"Many players on FIBS and <app>Gibbon</app> use a broader sense of the term "
+"dropper. Whenever somebody terminates a match prematurely, this is "
+"considered a drop, an unfriendly act. For the other party it is the same "
+"whether somebody drops the connection in the middle of a match in a vain "
+"effort to \"correct\" the own <link xref=\"rating\">rating</link> or because "
+"this somebody is called to lunch or the boss comes in or because this "
+"somebody is playing with an unstable internet connection."
 msgstr ""
+"Viele Menschen auf Fibs, und auch <app>Gibbon</app> verwenden den Begriff in "
+"einem weiteren Sinne, und wenden ihn auf jede vorzeitige Beendigung eines "
+"Matches an, das immer als unfreundlicher Akt betrachtet wird. Es ist für die "
+"andere Seite schließlich egal, ob jemand ein Spiel abbricht, um ihren oder "
+"seinen Platz in der <link xref=\"rating\">Rangliste</link> zu verteidigen, "
+"oder weil man zum Essen gerufen wird, der Chef ins Zimmer kommt, oder man "
+"einfach nur mit einer instabilen Internetverbindung spielt."
 
-#: C/droppers.page:40(section/p)
+#: C/droppers.page:42(section/p)
 msgid ""
-"In fact, Gibbon uses an even broader meaning of the term dropper. Gibbon is "
-"a software, and cannot detect if somebody dropped a match after warning the "
-"opponent about it. This is not really considered a shortcoming. If your "
-"opponent asks you to quit a match because some urgent stuff slipped in, many "
-"people will be polite enough to accept it but that behavior is still "
-"annoying. When Gibbon records drops, it never takes such excuses into "
-"account, mostly because as a software it does not even know about that "
-"excuse but also because it considers such excuses irrelevant. The software "
-"just records the fact that somebody agreed on a match of a certain length "
-"and is later not able to finish that match."
+"In fact, <app>Gibbon</app> uses an even broader meaning of the term dropper. "
+"<app>Gibbon</app> is a software, and cannot detect if somebody dropped a "
+"match after warning the opponent about it. This is not really considered a "
+"shortcoming. If your opponent asks you to quit a match because some urgent "
+"stuff slipped in, many people will be polite enough to accept it but that "
+"behavior is still annoying. When <app>Gibbon</app> records drops, it never "
+"takes such excuses into account, mostly because as a software it does not "
+"even know about that excuse but also because it considers such excuses "
+"irrelevant. The software just records the fact that somebody agreed on a "
+"match of a certain length and is later not able to finish that match."
 msgstr ""
+"Tatsächlich verwendet <app>Gibbon</app> diesen Begriff in einem noch "
+"weiteren Sinne. <app>Gibbon</app> ist eine Software, und kann nicht "
+"feststellen, ob jemand ein Match abbricht, und vorher um Erlaubnis gefragt "
+"hat. Diese Tatsache wird jedoch nicht als Mangel betrachtet. Falls die "
+"Gegnerin oder der Gegner um eine Vertagung der Partie bittet, werden viele "
+"Leute zwar höflich genug sein, darauf einzugehen, aber dieses Verhalten ist "
+"trotzdem ärgerlich. Wenn <app>Gibbon</app> einen Spielabbruch registriert, "
+"berücksichtigt die Software solcherlei Entschuldigungen natürlich nicht, "
+"schon alleine, weil sie nicht automatisch erkennbar und für den Zweck der "
+"Bewertung der Zuverlässigkeit einer Spielerin oder eines Spielers auch "
+"unerheblich sind.  Die Software registriert lediglich die Tatsache, dass "
+"jemand vereinbart hat, eine Partie bestimmter Länge zu spielen, und später "
+"nicht in der Lage ist, die Partie zu beenden."
 
-#: C/droppers.page:55(section/title)
+#: C/droppers.page:59(section/title)
 msgid "Measures Against Droppers"
-msgstr ""
+msgstr "Maßnahmen gegen Dropper"
 
-#: C/droppers.page:57(section/title)
+#: C/droppers.page:61(section/title)
 msgid "Reliabity Measurement"
-msgstr ""
+msgstr "Messung der Zuverlässigkeit"
 
-#: C/droppers.page:58(section/p)
+#: C/droppers.page:62(section/p)
+#, fuzzy
 msgid ""
 "The best measure against droppers is to avoid playing them. And the best "
 "strategy to detect droppers is to watch the activities of all other players. "
-"This is cumbersome for humans but Gibbon does that automatically for you."
+"This is cumbersome for humans but <app>Gibbon</app> does that automatically "
+"for you."
 msgstr ""
+"Die beste Maßnahme gegen Dropper ist, einen Bogen um diese Leute zu machen. "
+"Und die beste Strategie, um Dropper zu erkennen, besteht darin, die "
+"Aktivitäten aller Spielerinnen und Spieler zu beobachten. Für Menschen ist "
+"das ziemlich kompliziert, aber <app>Gibbon</app> kann das zum Glück "
+"automatisch erledigen."
 
-#: C/droppers.page:64(section/p)
+#: C/droppers.page:68(section/p)
 msgid ""
 "In the <link xref=\"players-list\">players'</link> and <link xref=\"inviters-"
 "list\">inviters' list</link> you will see a colored bar next to the player "
@@ -1049,64 +1195,78 @@ msgid ""
 "the bar, the more data has been collected about the player in question, and "
 "the more accurate the information will be."
 msgstr ""
+"In der <link xref=\"players-list\">Spieler-</link> und <link xref=\"inviters-"
+"list\">Einladungsliste</link> sehen Sie neben dem Namen aller Spielerinnen "
+"und Spieler einen farbigen Balken. Ein grüner Balken steht für "
+"Zuverlässigkeit, ein roter für Unzuverlässigkeit. Gelb und orange steht für "
+"die Übergangsbereiche zu zuverlässig (gelb) oder unzuverlässig (orange). Die "
+"Länge des Balkens gibt Auskunft darüber, mit welcher Sicherheit (Konfidenz) "
+"<app>Gibbon</app> diese Einschätzung trifft. Je länger der Balken, desto "
+"mehr Daten hat <app>Gibbon</app> über die betreffende Spielerin oder den "
+"betreffenden Spieler gesammelt, und desto akkurater ist die Einschätzung."
 
-#: C/droppers.page:75(section/p)
+#: C/droppers.page:79(section/p)
 msgid ""
 "Most of the time it is enough to just look at that bar. Avoid people without "
 "a green bar, unless you know them or have other reasons."
 msgstr ""
+"Meistens ist es völlig ausreichend, einfach nur auf diesen Balken zu "
+"schauen. Vermeiden Sie es, mit unbekannten Leuten zu spielen, deren Balken "
+"nicht grün ist,  es sei denn, sie wissen, was sie tun."
 
-#: C/droppers.page:82(section/title)
+#: C/droppers.page:86(section/title)
 msgid "Limit on Saved Matches"
-msgstr ""
+msgstr "Begrenzung gespeicherter Partien"
 
-#: C/droppers.page:83(section/p)
+#: C/droppers.page:87(section/p)
 msgid ""
 "Whenever a match is terminated prematurely, FIBS will save the match, and it "
 "can be resumed later. After a certain time (about two weeks at the time of "
 "this writing), saved matches will be wiped out from the database."
 msgstr ""
+"Immer, wenn eine Partie vorzeitig beendet wird, speichert FIBS sie, so dass "
+"sie zu einem späteren Zeitpunkt fortgesetzt werden kann. Nach einer gewissen "
+"Zeit (zur Zeit etwa zwei Wochen), werden gespeicherte Partien aus der "
+"Datenbank gelöscht."
 
-#: C/droppers.page:89(section/p)
+#: C/droppers.page:93(section/p)
 msgid ""
-"But before that, the number of saved matches is stored with each user. "
-"Gibbon displays the number of saved matches for every player that invites "
-"you to a match. You can also find it out by issuing the command <cmd>show "
-"savedcount playername</cmd> in the <link xref=\"server-console\">server "
-"console</link>."
-msgstr ""
+"The number of saved matches is stored with each user, and <app>Gibbon</app> "
+"displays it, whenever somebody invites you to a match or you invite somebody "
+"else."
+msgstr "Der Server speichert die Anzahl gespeicherter Partien für jede Benutzerin und jeden Benutzer ab, und <app>Gibbon</app> zeigt diese Zahl an, wann immer Sie von jemandem eingeladen werden, oder selber eine Einladung aussprechen wollen."
 
-#: C/droppers.page:97(section/p)
+#: C/droppers.page:98(section/p)
 msgid ""
 "Currently, FIBS imposes a hard limit on the possible number of saved "
 "matches. Whenever a player's saved count reaches 10, that player can only "
 "resumve saved matches but cannot start new ones."
-msgstr ""
+msgstr "Zur Zeit hat FIBS eine Begrenzung für die Anzahl gespeicherter Partien pro Benutzerin oder Benutzer. Sobald die Zahl gespeicherter Partien zehn errecht, kann dieser Spieler nur noch gespeicherte Partien fortsetzen, aber keine neue beginnen."
 
-#: C/droppers.page:104(section/title)
+#: C/droppers.page:105(section/title)
 msgid "Bots"
-msgstr ""
+msgstr "Bots (Computer)"
 
-#: C/droppers.page:105(section/p)
+#: C/droppers.page:106(section/p)
 msgid "Two computer players on FIBS try to warn people about droppers."
-msgstr ""
+msgstr "Zwei Computerspieler auf FIBS versuchen Leute vor Droppern zu warnen."
 
-#: C/droppers.page:108(section/p)
+#: C/droppers.page:109(section/p)
 msgid ""
 "One of them is <em>MissManners</em>. Whenever somebody with a high saved "
 "count logs in, MissManners will display a warning about that in the <link "
 "xref=\"shout\">shout area</link>. You should not invite such players to "
 "matches."
-msgstr ""
+msgstr "Der eine ist <em>MissManners</em>. Immer, wenn sich jemand mit einer hohen Anzahl gespeicherter Partien einloggt, sendet MissManners eine Benachrichtigung darüber in die <link xref=\"shout\">Lobby</link>."
 
-#: C/droppers.page:114(section/p)
+#: C/droppers.page:115(section/p)
 msgid ""
 "The other computer player is <em>RepBotNG</em> (for Reputation Bot Next "
 "Generation). You can <link xref=\"chatting\">chat</link> with RepBotNG like "
 "with a human player. Telling RepBotNG \"help\" will display more information."
-msgstr ""
+msgstr "Der andere Computerspieler ist <em>RepBotNG</em> (für engl. <span xml:lang=\"en\">Reputation Bot Next Generation</span>). Sie können mit RepBotNG wie mit einer menschlichen Spielerin oder einem menschlichen Spieler <link xref=\"chatting\">chatten</link> with RepBotNG like with a human player. Wenn Sie ihm eine Mitteilung mit dem Inhalt \"help\" schicken, antwortet er mit weiteren Informationen."
 
-#: C/droppers.page:120(section/p)
+#: C/droppers.page:121(section/p)
 msgid ""
 "Most of the time you will <cmd>ask</cmd> about another player's reputation "
 "or <cmd>complain</cmd> about an opponent or <cmd>vouch</cmd> for an opponent."
@@ -1114,54 +1274,54 @@ msgstr ""
 
 #: C/fibs-cheat.page:4(page/title)
 msgid "Does FIBS Cheat?"
-msgstr ""
+msgstr "Schummelt FIBS?"
 
 #: C/fibs-cheat.page:7(info/desc)
 msgid "Of course, it does! Click her to learn the details."
-msgstr ""
+msgstr "Aber sicher! Klicken Sie hier, um die Details zu erfahren."
 
 #: C/fibs-cheat.page:19(page/p)
 msgid ""
 "It is a well-known fact that all backgammon software cheats. <app>FIBS</app> "
 "makes no exception here."
-msgstr ""
+msgstr "Es ist ja allgemein bekannt, dass alle Backgammonsoftware schummelt. <app>FIBS</app> macht da keine Ausnahme."
 
 #: C/fibs-cheat.page:23(page/p)
 msgid ""
 "It uses biased dice. The bias is calculated with a carefully crafted secret "
 "algorithm. Intensive reverse engineering has led to this state of knowledge "
 "about the internals of the algorithm:"
-msgstr ""
+msgstr "FIBS verwendet gezinkte Würfel. Die Augenzahl wird mithilfe eines sorgfältig ausgedachten, geheimen Algorithmus' errechnet. Mithilfe umfangreicher statistischer Analysen hat hat man heute den folgenden, gesicherten Erkenntnisstand über den Algorithmus erreicht."
 
 #: C/fibs-cheat.page:31(item/p)
 msgid "<em>Dice whiners</em> usually get the worst roll possible."
-msgstr ""
+msgstr "<em>Würfeljammerer</em> bekommen in der Regel den schlechtmöglichsten Wurf."
 
 #: C/fibs-cheat.page:36(item/p)
 msgid ""
 "People that just concentrate on their play get random dice. Only when they "
 "are winning, they tend to have long sequences of extremely lucky rolls."
-msgstr ""
+msgstr "Menschen, die sich nur auf ihr Spiel konzentrieren, erhalten vollkommen zufällige Augenzahlen. Lediglich, wenn sie gewinnen, erhalten auch sie oft schier endlose Folgen unerträglich „glücklicher“ Würfe."
 
 #: C/fibs-cheat.page:43(item/p)
 msgid ""
 "Strong players with a high rating always get the best rolls. How else could "
 "they have become so strong after all?"
-msgstr ""
+msgstr "Starke Spielerinnen und Spieler mit vielen <link xref=\"rating\">Ranglistenpunkte</link> bekommen immer die besten Würfe. Wie sonst hätten sie denn auch so gut werden können?"
 
 #: C/fibs-cheat.page:49(page/p)
 msgid ""
 "Okay, before you spread the news about that ... It is a fib! Heard it? It is "
 "a fib! <app>FIBS</app> does <em>not</em> cheat. And <em>you</em> stop "
 "complaining about the dice!"
-msgstr ""
+msgstr "Halt, halt, bevor Sie die Nachricht im Internet verbreiten ... Es ist gelogen. <app>FIBS</app> schummelt <em>nicht</em>, und <em>Sie</em> gewöhnen Sich bitte ab, sich über das Würfelglück der anderen zu beklagen."
 
 #: C/fibs-cheat.page:55(page/p)
 msgid ""
 "But you are absolutely sure that the dice are biased? Then please use the "
 "Official Computer Dice Complaint Form at <link href=\"http://www.bkgm.com/"
 "rgb/rgb.cgi?view+546\"/>."
-msgstr ""
+msgstr "Nur wenn sie sich ganz sicher sind, dass der Server Sie benachteiligt, verwenden Sie für Ihre Beschwerde bitte das offizielle Beschwerdeformular für Computerwürfel unter <link href=\"http://www.bkgm.com/rgb/rgb.cgi?view+546\"/>."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -1171,7 +1331,7 @@ msgstr ""
 msgctxt "_"
 msgid ""
 "external ref='figures/game-chat.png' md5='e029de2a937eade8e32f4a2c2e22ca4a'"
-msgstr ""
+msgstr "translated"
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -1180,7 +1340,7 @@ msgstr ""
 #: C/game-chat-concept.page:45(media)
 msgctxt "_"
 msgid "external ref='figures/say.png' md5='78c6133069feba2b3bd098e0fd8d3329'"
-msgstr ""
+msgstr "translated"
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -1190,28 +1350,28 @@ msgstr ""
 msgctxt "_"
 msgid ""
 "external ref='figures/whisper.png' md5='f0e3b5cca4e0918aa255cfbbcd4f2fe1'"
-msgstr ""
+msgstr "translated"
 
 #: C/game-chat-concept.page:8(info/desc)
 msgid "How Chatting During the Game is Handled in <app>Gibbon</app>"
-msgstr ""
+msgstr "Wie kann man in <app>Gibbon</app> am Spielbrett chatten"
 
 #: C/game-chat-concept.page:20(page/title)
 msgid "Concepts"
-msgstr ""
+msgstr "Konzepte"
 
 #: C/game-chat-concept.page:21(page/p)
 msgid ""
 "As opposed to <link xref=\"tell\">private chats</link> or <link xref=\"shout"
 "\">lobby shouts</link>, all communication during a game is displayed in the "
 "so called game chat area below the board."
-msgstr ""
+msgstr "Im Gegensatz zu <link xref=\"tell\">privaten Chats</link> oder <link xref=\"shout\">Lobby-Chats</link>, findet die Kommunikation während des Spiels im Spielbrett-Chatt unterhalb des Bretts statt."
 
 #: C/game-chat-concept.page:27(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/game-chat.png\"> The "
 "game chat area </media>"
-msgstr ""
+msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/game-chat.png\"> Der Spielbrett-Chat </media>"
 
 #: C/game-chat-concept.page:32(page/p)
 msgid ""
@@ -1220,30 +1380,30 @@ msgid ""
 "you can talk to your opponent, or the spectators, or both. When you are "
 "watching, you have the choice of addressing the either other spectators "
 "only, or the spectators and the players."
-msgstr ""
+msgstr "Mögliche Teilnehmer des Chats am Spielbrett sind die Gegnerin bzw. der Gegner und möglicherweise Publikum (die <em>Kibitze</em>). Wenn Sie selber spielen, können Sie Sich also mit Ihrer Gegnerin oder Ihrem Gegner, mit eventuellen Zuschauerinnen und Zuschauern, oder allen auf einmal unterhalten. Wenn Sie dagegen zuschauen, haben Sie die Wahl entweder nur die anderen Kibitze oder aber die Kibitze und die Spielenden anzusprechen."
 
 #: C/game-chat-concept.page:40(page/p)
 msgid ""
 "Two buttons at the top of the game chat area visualize your current choice:"
-msgstr ""
+msgstr "Zwei Buttons oberhalb des Spielbrett-Chats visualisieren Ihre aktuelle Wahl:"
 
 #: C/game-chat-concept.page:44(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/say.png\"> Players/"
 "opponents as recipients </media>"
-msgstr ""
+msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/say.png\"> Die beiden Spielerinnen „hören“ Ihre Nachrichten </media>"
 
 #: C/game-chat-concept.page:49(page/p)
 msgid ""
 "This is the <gui style=\"button\">say</gui> button. If it is selected, it "
 "means that your message should go to the players."
-msgstr ""
+msgstr "Dies ist der Button <gui style=\"button\">Sagen</gui> (Kommando <cmd>say</cmd>). Wenn dieser Button gedrückt ist, gehen Ihre Nachrichten auch an die beiden gerade Spielenden."
 
 #: C/game-chat-concept.page:54(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/whisper.png\"> Other "
 "spectators as recipients </media>"
-msgstr ""
+msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/whisper.png\"> Publikum/Kibitze „hören“ Ihre Nachrichten </media>"
 
 #: C/game-chat-concept.page:59(page/p)
 msgid ""
@@ -1999,6 +2159,12 @@ msgid ""
 "your message. If you are <link xref=\"watching\">watching</link> both "
 "players and possible other spectators will see your message."
 msgstr ""
+
+#: C/libgsgf.page:6(info/desc)
+msgid "CLIP is the <em>CLIent</em> <em>P</em>rotocol for FIBS"
+msgstr ""
+"CLIP ist Software-Kommunikationsprotokol für FIBS (<span xml:lang=\"en"
+"\"><em>CLI</em>ent <em>P</em>rotocol for FIBS</span>)"
 
 #: C/libgsgf.page:19(page/title)
 msgid "Gibbon SGF Library libgsgf"

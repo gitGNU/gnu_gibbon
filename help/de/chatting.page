@@ -3,9 +3,9 @@
 
   <info>
     <link type="guide" xref="index#general-concepts"/>
-    <title type="link">Chatting</title>
-    <title type="text">Chatting</title>
-    <desc>Communicating with other people on the server</desc>
+    <title type="link">Chatten</title>
+    <title type="text">Chatten</title>
+    <desc>Mit anderen Leuten auf dem Server kommunizieren</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,14 +21,14 @@
     </mal:credit>
   </info>
 
-  <title>Chatting</title>
+  <title>Chatten</title>
 
-  <p>
-    It is possible to chat with other people on the server very much
-    the same way as you know it from instant messaging programs.
-  </p>
+  <p>Sie können mit anderen Leuten auf dem Server in ähnlicher Weise wie Sie es von Sofortnachrichtendiensten (<em xml:lang="en">Instant Messaging</em>) kennen.</p>
 
   <section id="game-chat" style="2column">
-    <title>Chatting During the Game</title>
+    <title>Nachrichtenaustausch während des Spiels</title>
+  </section>
+  <section id="shout-tell" style="2column">
+    <title>Mitteilungen an die Öffentlichkeit oder bestimmte Spielerinnen und Spieler</title>
   </section>
 </page>

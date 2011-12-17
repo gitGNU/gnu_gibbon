@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="contributing" xml:lang="de">
+  <info>
+    <link type="guide" xref="supporting-gibbon"/>
+    <desc>Um zu <app>Gibbon</app> beizutragen, muss man nicht programmieren können</desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Sich an <app>Gibbon</app> beteiligen</title>
+
+  <p>
+    If you want to contribute to <app>Gibbon</app> you can
+    find contact information on the
+    <link href="http://www.gibbon.bg/"><app>Gibbon</app> web site</link>.
+  </p>
+  <section>
+    <title>Übersetzungen</title>
+    <p>Falls <app>Gibbon</app> Gibbon in Ihrer eigenen Sprache noch nicht verfügbar ist, weshalb nicht beim Übersetzen helfen? Das ist nicht sehr schwer und bedeutet lediglich ein paar Stunden Arbeit. Programmierkenntnisse sind dafür nicht erforderlich. Allerdings muss man Englisch einigermaßen verstehen, weil die Originaltexte nur in Englisch vorliegen.</p>
+    <p>Die Dokumentation zu übersetzen, ist ein wenig schwieriger und zeitaufwändiger. Mit anderen Worten, falls Sie der Stolz der Backgammon-Community Ihres Landes sein wollen, sollten Sie einen Versuch starten.</p>
+  </section>
+  <section>
+    <title>Fehler melden</title>
+    <p>Wenn Sie einen Fehler in <app>Gibbon</app> finden, <link xref="bugreports">melden Sie Ihn</link> bitte. Ihre Featurewünsche oder Verbesserungsvorschläge sind natürlich ebenfalls willkommen.</p>
+  </section>
+  <section>
+    <title>Quelltext liefern</title>
+    <p>Klar, nur zu! Um doppelte Arbeit zu vermeiden, kontaktieren Sie uns aber besser vorher.</p>
+  </section>
+</page>

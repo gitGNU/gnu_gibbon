@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="guide" id="chat-area" xml:lang="de">
+
+  <info>
+    <link type="guide" xref="gui#elements"/>
+    <link type="seealso" xref="chatting"/>
+    <title type="link">Der Chat-Bereich</title>
+    <title type="text">Der Chat-Bereich</title>
+    <desc>How To Chat With Other People On the Server</desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>    
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Der Chat-Bereich</title>
+
+  <p>Der Chat-Bereich befindet sich im unteren rechten Teil des <link xref="gui">Hauptfensters</link>.</p>
+  <p>Hier wird die <link xref="shout">öffentliche Kommunication</link> und <link xref="tell">Kommunication mit einzelnenen Benutzerinnen und Benutzern</link> dargestellt. <em>Hinweis:</em> Während Sie spielen, wird die Kommunikation mit Ihrer Gegnerin oder Ihrem Gegner im <link xref="chatting#game-chat">Spielchatbereich</link> dargestellt, siehe <link xref="chatting#game-chat"/>.</p>
+  <p>Die Kommunikation is in mehreren Reitern organisiert.</p>
+  <p><media type="image" mime="src/png" src="figures/chat-area.png"> <p>Der Chatbereich</p> </media></p>
+  <p>Die <link xref="shout">öffentliche Kommunication</link> wird immer unterhalb des ersten Reiters dargestellt, <link xref="tell">Kommunication mit einzelnen Benutzerinnen und Benutzern</link> dagegen unterhalb der nachfolgenden Reiter.</p>
+  <p>Sie können Ihre eigenen Mitteilungen in das Texteingabefeld unten eingeben. Sie wird durch Drücken der <key>Eingabetaste</key> abgeschickt.</p>
+  <p>
+    The recipient is selected according to the currently
+    selected tab, i.e. the one that is in the foreground.
+  </p>
+</page>

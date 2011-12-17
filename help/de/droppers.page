@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="droppers" xml:lang="de">
   <info>
     <link type="guide" xref="index#misc"/>
-    <desc>
-      What are droppers?
-    </desc>
+    <desc>Was sind Dropper?</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,112 +18,52 @@
     </mal:credit>
   </info>
 
-  <title>Droppers</title>
-  <p>
-    When playing on FIBS, you will often hear people complaing about
-    <em>droppers</em>.
-  </p>
+  <title>Dropper</title>
+  <p>Wenn Sie auf FIBS spielen, werden Sie oft hören, wie Leute sich über <em>Dropper</em> beschweren.</p>
   <section id="what-are-droppers">
-    <title>What Are Droppers?</title>
+    <title>Was sind Dropper?</title>
+    <p>Der Begriff stammt aus dem Englischen und wurde ursprünglich für Leute geprägt, die sich einer drohenden Niederlage durch Unterbrechen der Verbindung (engl. <em xml:lang="en">to drop the connection</em>) entziehen. Vermutlich tun sie das nicht aus reiner Frustration, sondern um ihre <link xref="rating">Ranglistenpunktee</link> zu „erhalten“.</p>
     <p>
-      The term dropper was actually coined for people that avoid losing a match
-      by quitting, for example by dropping the connection.  They probably do
-      that not out of pure frustration about losing but in order to preserve
-      a good rating.
-    </p>
-    <p>
-      Many players on FIBS and Gibbon use a broader sense of the term dropper.
+      Many players on FIBS and <app>Gibbon</app> use a broader sense of the 
+      term dropper.
       Whenever somebody terminates a match prematurely, this is considered
       a drop, an unfriendly act.  For the other party it is the same whether
       somebody drops the connection in the middle of a match in a vain
-      effort to "correct" the own rating or because this somebody is called
+      effort to "correct" the own <link xref="rating">rating</link> or 
+      because this somebody is called
       to lunch or the boss comes in or because this somebody is playing
       with an unstable internet connection.
     </p>
-    <p>
-      In fact, Gibbon uses an even broader meaning of the term dropper.
-      Gibbon is a software, and cannot detect if somebody dropped a match
-      after warning the opponent about it.  This is not really considered
-      a shortcoming.  If your opponent asks you to quit a match because
-      some urgent stuff slipped in, many people will be polite enough
-      to accept it but that behavior is still annoying.  When Gibbon
-      records drops, it never takes such excuses into account, mostly
-      because as a software it does not even know about that excuse but also
-      because it considers such excuses irrelevant.  The software just
-      records the fact that somebody agreed on a match of a certain length
-      and is later not able to finish that match.
-    </p>
+    <p>Tatsächlich verwendet <app>Gibbon</app> diesen Begriff in einem noch weiteren Sinne. <app>Gibbon</app> ist eine Software, und kann nicht feststellen, ob jemand ein Match abbricht, und vorher um Erlaubnis gefragt hat. Diese Tatsache wird jedoch nicht als Mangel betrachtet. Falls die Gegnerin oder der Gegner um eine Vertagung der Partie bittet, werden viele Leute zwar höflich genug sein, darauf einzugehen, aber dieses Verhalten ist trotzdem ärgerlich. Wenn <app>Gibbon</app> einen Spielabbruch registriert, berücksichtigt die Software solcherlei Entschuldigungen natürlich nicht, schon alleine, weil sie nicht automatisch erkennbar und für den Zweck der Bewertung der Zuverlässigkeit einer Spielerin oder eines Spielers auch unerheblich sind.  Die Software registriert lediglich die Tatsache, dass jemand vereinbart hat, eine Partie bestimmter Länge zu spielen, und später nicht in der Lage ist, die Partie zu beenden.</p>
   </section>
   <section id="measures-against-droppers">
-    <title>Measures Against Droppers</title>
+    <title>Maßnahmen gegen Dropper</title>
     <section id="gibbon-reliability">
-      <title>Reliabity Measurement</title>
+      <title>Messung der Zuverlässigkeit</title>
       <p>
         The best measure against droppers is to avoid playing them.  And
         the best strategy to detect droppers is to watch the activities
-        of all other players.  This is cumbersome for humans but Gibbon
-        does that automatically for you.
+        of all other players.  This is cumbersome for humans but 
+        <app>Gibbon</app> does that automatically for you.
       </p>
-      <p>
-        In the <link xref="players-list">players'</link> and <link xref="inviters-list">inviters' list</link> you will see a colored
-        bar next to the player names.  A green bar signifies reliable
-        players, a red bar unreliable players.  Yellow and orange bars
-        are displayed for players on the verge of being reliable (yellow)
-        or being unreliable (orange).  The length of the bar gives you
-        an idea of how confident Gibbon is about that information.  The
-        longer the bar, the more data has been collected about the player
-        in question, and the more accurate the information will be.
-      </p>
-      <p>
-        Most of the time it is enough to just look at that bar.  Avoid
-        people without a green bar, unless you know them or have other
-        reasons.
-      </p>
+      <p>In der <link xref="players-list">Spieler-</link> und <link xref="inviters-list">Einladungsliste</link> sehen Sie neben dem Namen aller Spielerinnen und Spieler einen farbigen Balken. Ein grüner Balken steht für Zuverlässigkeit, ein roter für Unzuverlässigkeit. Gelb und orange steht für die Übergangsbereiche zu zuverlässig (gelb) oder unzuverlässig (orange). Die Länge des Balkens gibt Auskunft darüber, mit welcher Sicherheit (Konfidenz) <app>Gibbon</app> diese Einschätzung trifft. Je länger der Balken, desto mehr Daten hat <app>Gibbon</app> über die betreffende Spielerin oder den betreffenden Spieler gesammelt, und desto akkurater ist die Einschätzung.</p>
+      <p>Meistens ist es völlig ausreichend, einfach nur auf diesen Balken zu schauen. Vermeiden Sie es, mit unbekannten Leuten zu spielen, deren Balken nicht grün ist,  es sei denn, sie wissen, was sie tun.</p>
     </section>
     <section id="saved-limit">
-      <title>Limit on Saved Matches</title>
-      <p>
-        Whenever a match is terminated prematurely, FIBS will save the
-        match, and it can be resumed later.  After a certain time
-        (about two weeks at the time of this writing), saved matches
-        will be wiped out from the database.
-      </p>
-      <p>
-        But before that, the number of saved matches is stored with
-        each user.  Gibbon displays the number of saved matches for
-        every player that invites you to a match.  You can also find
-        it out by issuing the command <cmd>show savedcount
-        playername</cmd> in the <link xref="server-console">server
-        console</link>.
-      </p>
-      <p>
-        Currently, FIBS imposes a hard limit on the possible number of
-        saved matches.  Whenever a player's saved count reaches 10, that
-        player can only resumve saved matches but cannot start new ones.
-      </p>
+      <title>Begrenzung gespeicherter Partien</title>
+      <p>Immer, wenn eine Partie vorzeitig beendet wird, speichert FIBS sie, so dass sie zu einem späteren Zeitpunkt fortgesetzt werden kann. Nach einer gewissen Zeit (zur Zeit etwa zwei Wochen), werden gespeicherte Partien aus der Datenbank gelöscht.</p>
+      <p>Der Server speichert die Anzahl gespeicherter Partien für jede Benutzerin und jeden Benutzer ab, und <app>Gibbon</app> zeigt diese Zahl an, wann immer Sie von jemandem eingeladen werden, oder selber eine Einladung aussprechen wollen.</p>
+      <p>Zur Zeit hat FIBS eine Begrenzung für die Anzahl gespeicherter Partien pro Benutzerin oder Benutzer. Sobald die Zahl gespeicherter Partien zehn errecht, kann dieser Spieler nur noch gespeicherte Partien fortsetzen, aber keine neue beginnen.</p>
     </section>
     <section id="dropper-bots">
-      <title>Bots</title>
-      <p>
-        Two computer players on FIBS try to warn people about droppers.
-      </p>
+      <title>Bots (Computer)</title>
+      <p>Zwei Computerspieler auf FIBS versuchen Leute vor Droppern zu warnen.</p>
       <p>
         One of them is <em>MissManners</em>.  Whenever somebody with a
         high saved count logs in, MissManners will display a warning
-        about that in the <link xref="shout-area">shout area</link>.
-        You should not invite such players to matches.
+        about that in the <link xref="shout">shout area</link>.
       </p>
-      <p>
-        The other computer player is <em>RepBotNG</em> (for Reputation
-        Bot Next Generation).  You can <link xref="chatting">chat</link>
-        with RepBotNG like with a human player.  Telling RepBotNG
-        "help" will display more information.
-      </p>
-      <p>
-        Most of the time you will <cmd>ask</cmd> about another
-        player's reputation or <cmd>complain</cmd> about an
-        opponent or <cmd>vouch</cmd> for an opponent.
-      </p>
+      <p>Der andere Computerspieler ist <em>RepBotNG</em> (für engl. <span xml:lang="en">Reputation Bot Next Generation</span>). Sie können mit RepBotNG wie mit einer menschlichen Spielerin oder einem menschlichen Spieler <link xref="chatting">chatten</link> with RepBotNG like with a human player. Wenn Sie ihm eine Mitteilung mit dem Inhalt "help" schicken, antwortet er mit weiteren Informationen.</p>
     </section>
   </section>
 </page>

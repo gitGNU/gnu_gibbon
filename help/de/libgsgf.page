@@ -2,10 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="libgsgf" xml:lang="de">
   <info>
     <link type="guide" xref="developer-resources"/>
-    <desc>
-      CLIP is the <em>CLIent</em> <em>P</em>rotocol
-      for FIBS
-    </desc>
+    <desc>CLIP ist Software-Kommunikationsprotokol für FIBS (<span xml:lang="en"><em>CLI</em>ent <em>P</em>rotocol for FIBS</span>)</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>

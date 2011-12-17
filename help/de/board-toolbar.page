@@ -97,7 +97,7 @@
     </item>
     <item id="leave-game">
       <p>Spiel verlassen</p>
-      <p>Das aktuelle Spiel verlassen. Das sollte man sich nicht zur Gewohnheit machen, siehe <link xref="do-not"/>.</p>
+      <p>Aus dem aktuellen Spiel aussteigen.</p>
       <p>Der Server wird das laufende Match speichern, so dass es zu einem späteren Zeitpunkt wiederaufgenommen werden kann.</p>
     </item>
   </list>

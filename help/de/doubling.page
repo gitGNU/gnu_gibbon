@@ -3,9 +3,7 @@
   <info>
     <link type="guide" xref="playing#basics"/>
     <link type="seealso" xref="rolling-dice"/>
-    <desc>
-      Using the Doubling Cube
-    </desc>
+    <desc>Den Dopplerwürfel verwenden</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,69 +19,37 @@
     </mal:credit>
   </info>
 
-  <title>Doubling</title>
+  <title>Doppeln</title>
   <section id="turning-cube">
-    <title>Doubling Your Opponent</title>
-    <subtitle>Turning the Cube</subtitle>
-    <p>
-      When you see the doubling cube, and it is not located
-      at your opponent's side of the board, you can turn the
-      cube against her and double the stakes.
-    </p>
-    <p>
-      You can turn the cube by
-    </p>
+    <title>Den Einsatz verdoppeln</title>
+    <subtitle>Den Dopplerwürfel drehen</subtitle>
+    <p>Wenn der Dopplerwürfel sichtbar ist, und sich nicht auf der gegnerischen Seite des Brettes befindet, können Sie den Dopplerwürfel „drehen” und damit den Einsatz verdoppeln.</p>
+    <p>Der Dopplerwürfel kann gedreht werden, durch</p>
     <list>
-      <item><p>by double-clicking the cube</p></item>
+      <item><p>Doppelklicken auf den Dopplerwürfel</p></item>
       <item><p>by clicking the 
       <gui style="button">double</gui>
       button in the <link xref="board-toolbar">board toolbar</link>.</p></item>
     </list>
-    <p>
-      The cube will now appear in the middle of the board.
-    </p>
-    <p>
-      Your opponent now either has to accept the cube, and
-      continue at twice the stakes, or give up, and lose
-      the number of points the cube showed before you doubled.
-    </p>
+    <p>Der Dopplerwürfel erscheint daraufhin in der Mitte des Spielbretts.</p>
+    <p>Ihre Gegnerin bzw. Ihr Gegner hat nun zwei Möglichkeiten. Durch Akzeptieren des Dopplerwürfels wird der Einsatz verdoppelt. Im Falle der Ablehnung verliert sie bzw. er die Anzahl Punkte, die der Dopplerwürfel vor dem Doppeln angezeigt hatte.</p>
   </section>
 
   <section id="answering-cube">
-    <title>Getting Doubled</title>
-    <subtitle>Answering to the Cube</subtitle>
-    <p>
-      If your opponent doubled you, the doubling cube will
-      appear in the middle of the board, showing the new 
-      stakes.
-    </p>
-    <p>
-      Your now either have to accept the cube, and
-      continue at twice the stakes, or give up, and lose
-      the number of points the cube showed before the cube
-      was turned.
-    </p>
-    <p>
-      You can accept the cube
-    </p>
+    <title>Gedoppelt werden</title>
+    <subtitle>Aktionen mit dem Dopplerwürfel erwidern</subtitle>
+    <p>Falls Ihre Gegnerin oder Ihr Gegner doppelt, erscheint der Dopplerwürfel in der Mitte des Spielbretts und zeigt die neue Punktzahl an.</p>
+    <p>Sie müssen die Verdoppelung entweder akzeptieren, und zu doppeltem Einsatz weiterspielen, oder aufgeben, wodurch Sie  die Anzahl Punkte verlieren, die der Dopplerwürfel vor dem Doppeln angezeigt hatte.</p>
+    <p>Sie können das Verdoppeln annehmen, durch</p>
     <list>
-      <item><p>by double-clicking it</p></item>
-      <item><p>by clicking the 
-         <gui style="button">accept button</gui>
-         in the <link xref="board-toolbar"><gui style="button">board toolbar</gui></link>.</p></item>
+      <item><p>Doppelklick auf den Dopplerwürfel</p></item>
+      <item><p>durch Klick auf den Button <gui style="button">Annehmen</gui> in der <link xref="board-toolbar"><gui style="button">Spielbrett-Werkzeugleiste</gui></link>.</p></item>
     </list>
-    <p>
-      You can refuse the cube
-    </p>
+    <p>Sie können das Doppeln ablehnen, durch</p>
     <list>
-      <item><p>by right-clicking it</p></item>
-      <item><p>by clicking the 
-         <gui style="button">reject button</gui>
-         in the <gui><link xref="board-toolbar">board toolbar</link></gui></p></item>
+      <item><p>Rechtsklick auf den Dopplerwürfel</p></item>
+      <item><p>durch Klicken des Buttons <gui style="button">Ablehnen</gui> in der <gui><link xref="board-toolbar">Spielbrett-Werkzeugleiste</link></gui></p></item>
     </list>
-    <p>
-      If you accepted the cube, it will now be shown on your side
-      of the board.  If you refused it, the game ends.
-    </p>
+    <p>Wenn Sie den Dopplerwürfel akzeptiert haben, erscheint er nunmehr auf Ihrer Seite des Bretts. Wenn Sie ablehnen, endet das Spiel.</p>
   </section>
 </page>

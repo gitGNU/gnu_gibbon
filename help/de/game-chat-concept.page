@@ -4,9 +4,7 @@
     <link type="guide" xref="chatting#game-chat"/>
     <link type="seealso" xref="playing"/>
     <link type="seealso" xref="watching"/>
-    <desc>
-      How Chatting During the Game is Handled in <app>Gibbon</app>
-    </desc>
+    <desc>Wie kann man in <app>Gibbon</app> am Spielbrett chatten</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,45 +20,14 @@
     </mal:credit>
   </info>
 
-  <title>Concepts</title>
-  <p>
-    As opposed to <link xref="tell">private chats</link> or
-    <link xref="shout">lobby shouts</link>, all communication
-    during a game is displayed in the so called
-    game chat area below the board.
-  </p>
-  <p>
-    <media type="image" mime="src/png" src="figures/game-chat.png">
-      The game chat area
-    </media>
-  </p>
-  <p>
-    Possible participants in the communication at the board
-    are the two opponents and possible spectators.  When you
-    are currently playing yourself, you can talk to your
-    opponent, or the spectators, or both. When you are watching,
-    you have the choice of addressing the either other spectators
-    only, or the spectators and the players.
-  </p>
-  <p>
-    Two buttons at the top of the game chat area visualize your
-    current choice:
-  </p>
-  <p>
-    <media type="image" mime="src/png" src="figures/say.png">
-      Players/opponents as recipients
-    </media>
-  </p>
-  <p>
-    This is the <gui style="button">say</gui> button.  If it
-    is selected, it means that your message should go to the
-    players.
-  </p>
-  <p>
-    <media type="image" mime="src/png" src="figures/whisper.png">
-      Other spectators as recipients
-    </media>
-  </p>
+  <title>Konzepte</title>
+  <p>Im Gegensatz zu <link xref="tell">privaten Chats</link> oder <link xref="shout">Lobby-Chats</link>, findet die Kommunikation während des Spiels im Spielbrett-Chatt unterhalb des Bretts statt.</p>
+  <p><media type="image" mime="src/png" src="figures/game-chat.png"> Der Spielbrett-Chat </media></p>
+  <p>Mögliche Teilnehmer des Chats am Spielbrett sind die Gegnerin bzw. der Gegner und möglicherweise Publikum (die <em>Kibitze</em>). Wenn Sie selber spielen, können Sie Sich also mit Ihrer Gegnerin oder Ihrem Gegner, mit eventuellen Zuschauerinnen und Zuschauern, oder allen auf einmal unterhalten. Wenn Sie dagegen zuschauen, haben Sie die Wahl entweder nur die anderen Kibitze oder aber die Kibitze und die Spielenden anzusprechen.</p>
+  <p>Zwei Buttons oberhalb des Spielbrett-Chats visualisieren Ihre aktuelle Wahl:</p>
+  <p><media type="image" mime="src/png" src="figures/say.png"> Die beiden Spielerinnen „hören“ Ihre Nachrichten </media></p>
+  <p>Dies ist der Button <gui style="button">Sagen</gui> (Kommando <cmd>say</cmd>). Wenn dieser Button gedrückt ist, gehen Ihre Nachrichten auch an die beiden gerade Spielenden.</p>
+  <p><media type="image" mime="src/png" src="figures/whisper.png"> Publikum/Kibitze „hören“ Ihre Nachrichten </media></p>
   <p>
     This is the <gui style="button">whisper</gui> button.  If it
     is selected, it means that your message should go to the

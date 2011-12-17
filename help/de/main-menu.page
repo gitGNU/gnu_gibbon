@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="main-menu" xml:lang="de">
+  <info>
+    <link type="guide" xref="gui#elements"/>
+    <desc>
+      The Main Application Menu
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>The Main Menu</title>
+  <p>
+    The main menu is only partly implemented at the moment.  It will
+    be documented later.
+  </p>
+</page>

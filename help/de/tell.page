@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="tell" xml:lang="de">
+  <info>
+    <link type="guide" xref="chatting#shout-tell"/>
+    <link type="seealso" xref="chat-area"/>
+    <link type="seealso" xref="playing#chatting"/>
+    <desc>
+      Communicating With a Particular User
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Create Commons Share Alike 3.0</p>
+    </license>
+  
+    <mal:credit xmlns:mal="http://projectmallard.org/1.0/" type="translator copyright">
+      <mal:name>Guido Flohr</mal:name>
+      <mal:email>guido@imperia.bg</mal:email>
+      <mal:years>2011</mal:years>
+    </mal:credit>
+  </info>
+
+  <title>Talking to a Particular User (<cmd>tell</cmd>)</title>
+  <p>
+    Private conversations with a particular user take place in the
+    <link xref="chat-area">chat area</link>.  You can start a
+    private conversation by left-clicking the player's name in the
+    <link xref="players-list">players' list</link>.
+  </p>
+  <p>
+    Once you start a conversation with another player, or another
+    player starts a conversation with you, a new tab will automatically
+    open in the <link xref="chat-area">chat area</link>.  The label
+    of the tab is the name of your conversation partner.
+  </p>
+  <p><media type="image" mime="src/png" src="figures/chat-area.png"> <p>Der Chatbereich</p> </media></p>
+  <p>
+    If you have multiple conversations in parallel, and a conversation
+    is hidden, while new messages arrive, the tab label gets
+    hightlighted, and the number of unread messages will
+    appear in parentheses after the name.
+  </p>
+  <p>
+    <em>Important:</em> While you are playing, all communication 
+    with your opponent is redirected to the <link xref="chatting#game-chat">game chat area</link>, see
+    <link xref="playing#chatting"/>.
+  </p>
+</page>

@@ -28,13 +28,11 @@
     <p>Sie werden daraufhin gefragt, <em>wie</em> Sie aufgeben wollen. Mit einer normalen Aufgabe, verlieren Sie den aktuellen Wert des Dopplerwürfels. Mit einer Gammon-Aufgabe verlieren Sie den doppelten Wert des Dopplerwürfels, mit einer Backgammon-Aufgabe den dreifachen Wert des Dopplerwürfels.</p>
     <p>Ihre Gegnerin oder Ihr Gegner müssen Ihre Aufgabe natürlich nicht akzeptieren. In diesem Fall wird das Spiel einfach fortgesetzt, oder Sie müssen erneut aufgeben.</p>
     <p>Wird die Aufgabe hingegen akzeptiert, wird das aktuelle Spiel beendet.</p>
-    <p>Es wird normalerweise als freundliches Verhalten betrachtet, wenn Sie aufgeben, sobald der Ausgang des Spiels oder des Matches klar ist. Andererseits ist es unhöflich, seine Gegnerinnen oder Gegner dazu zu drängen aufzugeben, oder in bestimmter Höhe aufzugeben. Denken Sie daran, dass andere vielleicht nicht genügend Spielpraxis besitzen, um zu erkennen, dass das Spiel definitiv verloren ist. Und denken Sie auch an den absolut unwahrscheinlichen Fall, dass Sie mit Ihrer Einschätzung zum Spielstand einfach selber falsch liegen.</p>
   </section>
 
   <section id="opponent-resigns">
     <title>Auf eine Aufgabe antworten</title>
     <p>Wenn Ihre Gegnerin oder Ihr Gegner aufgibt, erscheint eine Dialogbox mit den Details. Sie sehen in welcher Höhe (normal, Gammon, Backgammon) die Aufgabe angeboten wird, und wieviele Punkt Sie durch Annahme gewinnen.</p>
     <p>Sie können die Aufgabe akzeptieren oder ablehnen.</p>
-    <p>Falls Sie der Meinung sind, die Aufgabe ist nicht in der korrekten Höhe, können Sie diese Ihrem Gegenüber höflich mitteilen. Aber bitte bedrängen Sie niemanden!</p>
   </section>
 </page>
