@@ -64,5 +64,8 @@
   displayed.
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
-- Validate help pages with yelp-check.
 - Build HTML version of help with yelp-build instead of gnome-doc-tool.
+- Make game chat area not editable.
+- When accepting a double, update position.  Otherwise the cube will
+  jump on the next board state received by the server.
+
