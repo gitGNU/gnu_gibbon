@@ -66,5 +66,3 @@
   right-click.
 - Validate help pages with yelp-check.
 - Build HTML version of help with yelp-build instead of gnome-doc-tool.
-- Players list, inviters list: Tooltips do not work, when window scrolled
-  horizontally.
