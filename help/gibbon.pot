@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-16 12:20+0200\n"
+"POT-Creation-Date: 2011-12-17 19:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -790,15 +790,11 @@ msgid "Two computer players on FIBS try to warn people about droppers."
 msgstr ""
 
 #: C/droppers.page:109(section/p)
-msgid "One of them is <em>MissManners</em>. Whenever somebody with a high saved count logs in, MissManners will display a warning about that in the <link xref=\"shout\">shout area</link>. You should not invite such players to matches."
+msgid "One of them is <em>MissManners</em>. Whenever somebody with a high saved count logs in, MissManners will display a warning about that in the <link xref=\"shout\">shout area</link>."
 msgstr ""
 
-#: C/droppers.page:115(section/p)
+#: C/droppers.page:114(section/p)
 msgid "The other computer player is <em>RepBotNG</em> (for Reputation Bot Next Generation). You can <link xref=\"chatting\">chat</link> with RepBotNG like with a human player. Telling RepBotNG \"help\" will display more information."
-msgstr ""
-
-#: C/droppers.page:121(section/p)
-msgid "Most of the time you will <cmd>ask</cmd> about another player's reputation or <cmd>complain</cmd> about an opponent or <cmd>vouch</cmd> for an opponent."
 msgstr ""
 
 #: C/fibs-cheat.page:4(page/title)
@@ -806,7 +802,7 @@ msgid "Does FIBS Cheat?"
 msgstr ""
 
 #: C/fibs-cheat.page:7(info/desc)
-msgid "Of course, it does! Click her to learn the details."
+msgid "Of course, it does! Click here to learn the details."
 msgstr ""
 
 #: C/fibs-cheat.page:19(page/p)

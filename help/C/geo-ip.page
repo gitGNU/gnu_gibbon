@@ -17,7 +17,7 @@
 
   <title>Locating Users</title>
   <p>
-    Gibbon will try to show you, the country from where other
+    <app>Gibbon</app> will try to show you, the country from where other
     people on the server have logged in, for example in the
     <link xref="players-list">players list</link> or
     <link xref="inviters-list">inviters list</link>.
