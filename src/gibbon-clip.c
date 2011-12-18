@@ -1975,6 +1975,22 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
                 return TRUE;
         }
 
+        if (0 == g_strcmp0 ("invited", tokens[2])
+            && tokens[3]
+            && 0 == g_strcmp0 ("to", tokens[4])
+            && 0 == g_strcmp0 ("resume", tokens[5])
+            && 0 == g_strcmp0 ("a", tokens[6])
+            && 0 == g_strcmp0 ("saved", tokens[7])
+            && 0 == g_strcmp0 ("match.", tokens[8])
+            && !tokens[9]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                          GIBBON_CLIP_CODE_RESUME_CONFIRMATION);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[3]);
+                return TRUE;
+        }
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
