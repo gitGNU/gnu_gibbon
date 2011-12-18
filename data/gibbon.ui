@@ -1004,7 +1004,8 @@
                         <child>
                           <object class="GtkTextView" id="game-chat-text-view">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="editable">False</property>
                           </object>
                         </child>
                       </object>
