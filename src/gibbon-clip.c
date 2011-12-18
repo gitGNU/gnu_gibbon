@@ -2172,6 +2172,21 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                                  GIBBON_CLIP_TYPE_UINT,
                                                  match_length);
                 return TRUE;
+        } else if (0 == g_strcmp0 ("Please", tokens[1])
+                   && 0 == g_strcmp0 ("wait", tokens[2])
+                   && 0 == g_strcmp0 ("for", tokens[3])
+                   && tokens[4]
+                   && 0 == g_strcmp0 ("to", tokens[5])
+                   && 0 == g_strcmp0 ("join", tokens[6])
+                   && 0 == g_strcmp0 ("too.", tokens[7])
+                   && !tokens[8]) {
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                GIBBON_CLIP_CODE_WAIT_JOIN_TOO);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[4]);
+                return TRUE;
         }
 
         if (0 == g_strcmp0 ("didn't", tokens[2])
