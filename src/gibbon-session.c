@@ -2238,13 +2238,19 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
                 self->priv->position->status =
                     g_strdup_printf ("Opponent %s accepted the cube.",
                                      self->priv->opponent);
+                self->priv->position->may_double[0] = FALSE;
+                self->priv->position->may_double[1] = TRUE;
         } else if (0 == g_strcmp0 (self->priv->watching, who)) {
                 self->priv->position->status =
                     g_strdup_printf ("Player %s accepted the cube.",
                                      self->priv->watching);
+                self->priv->position->may_double[0] = TRUE;
+                self->priv->position->may_double[1] = FALSE;
         } else if (0 == g_strcmp0 ("You", who)) {
                 self->priv->position->status =
                     g_strdup_printf ("You accepted the cube.");
+                self->priv->position->may_double[0] = TRUE;
+                self->priv->position->may_double[1] = FALSE;
         } else {
                 return -1;
         }
@@ -3011,6 +3017,7 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
         if (self->priv->position->dice[0])
                 return;
         self->priv->position->cube_turned = GIBBON_POSITION_SIDE_WHITE;
+
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "double");
         board = gibbon_app_get_board (self->priv->app);
@@ -3034,6 +3041,8 @@ gibbon_session_on_cube_taken (const GibbonSession *self)
         if (GIBBON_POSITION_SIDE_BLACK != self->priv->position->cube_turned)
                 return;
         self->priv->position->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        self->priv->position->may_double[0] = FALSE;
+        self->priv->position->may_double[1] = TRUE;
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "accept");
         board = gibbon_app_get_board (self->priv->app);
