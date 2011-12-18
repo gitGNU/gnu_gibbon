@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="gui-overview" xml:lang="de">
   <info>
     <link type="guide" xref="gui"/>
-    <desc>
-      Overview of the Graphical User Interface of <app>Gibbon</app>
-    </desc>
+    <desc>Überblick über die graphische Benutzersschnittstelle <app>Gibbons</app></desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,79 +18,24 @@
     </mal:credit>
   </info>
 
-  <title>Graphical User Interface Overview</title>
-  <p>
-    Depending on your personal desktop settings <app>Gibbon</app> may
-    have an individual look and feel.  But it will at least roughly
-    look like this:
-  </p>
+  <title>Überblick über die graphische Benutzerschnittstelle</title>
+  <p>In Abhängigkeit von Ihren persönlichen Einstellungen für Ihr Betriebssystem, kann <app>Gibbon</app> bei Ihnen abweichend aussehen. Im Großen und Ganzen sollte es jedoch so aussehen:</p>
   <media type="image" mime="src/png" src="figures/overview.png">
-    <p>Gibbon Graphical User Interace</p>
+    <p><app>Gibbon</app> Graphical User Interace</p>
   </media>
-  <p>
-    The first thing that catches ones eye is the backgammon board,
-    see <link xref="playing"/>:
-  </p>
-  <p>
-    <link href="figures/overview-board.png">
-      <media type="image" mime="src/png" src="figures/overview-board.png" width="50%" height="50%">
-        <p>The Backgammon Board</p>
-      </media>
-    </link>
-  </p>
+  <p>Das erste, das einem ins Auge sticht, ist das Backgammonbrett, siehe <link xref="playing"/>:</p>
+  <p><link href="figures/overview-board.png"> <media type="image" mime="src/png" src="figures/overview-board.png" width="50%" height="50%"> <p>Das Backgammon-Brett</p> </media> </link></p>
   <p>
     Above the board, you can see the <link xref="board-toolbar">board
     toolbar</link>:
   </p>
-  <p>
-    <link href="figures/overview-board-toolbar.png">
-      <media type="image" mime="src/png" src="figures/overview-board-toolbar.png" width="50%" height="50%">
-        <p>The Toolbar Above the Backgammon Board</p>
-      </media>
-    </link>
-  </p>
-  <p>
-    Beneath the board, you can see the <link xref="chatting#game-chat">game
-    chat area</link>:
-  </p>
-  <p>
-    <link href="figures/overview-game-chat-area.png">
-      <media type="image" mime="src/png" src="figures/overview-game-chat-area.png" width="50%" height="50%">
-        <p>The Chat Area Beneath the Backgammon Board</p>
-      </media>
-    </link>
-  </p>
-  <p>
-    The <link xref="inviters-list">inviters list</link> is located in the
-    top-right corner of the main window:
-  </p>
-  <p>
-    <link href="figures/overview-inviters-list.png">
-      <media type="image" mime="src/png" src="figures/overview-inviters-list.png" width="50%" height="50%">
-        <p>The Inviters List</p>
-      </media>
-    </link>
-  </p>
-  <p>
-    In the middle right area of the main window, you find a multi-purpose area,
-    the <link xref="info-area">information area</link>:
-  </p>
-  <p>
-    <link href="figures/overview-info-area.png">
-      <media type="image" mime="src/png" src="figures/overview-info-area.png" width="50%" height="50%">
-        <p>The Information Area</p>
-      </media>
-    </link>
-  </p>
-  <p>
-    Finally, the <link xref="chat-area">chat area</link> is in the bottom-right
-    corner:
-  </p>
-  <p>
-    <link href="figures/overview-chat-area.png">
-      <media type="image" mime="src/png" src="figures/overview-chat-area.png" width="50%" height="50%">
-        <p>The Chat Area</p>
-      </media>
-    </link>
-  </p>
+  <p><link href="figures/overview-board-toolbar.png"> <media type="image" mime="src/png" src="figures/overview-board-toolbar.png" width="50%" height="50%"> <p>Die Werkzeugliste oberhalb des Backgammon-Bretts</p> </media> </link></p>
+  <p>Unterhalb des Bretts sehen Sie den <link xref="chatting#game-chat">Spiel-Chatbereichs</link>:</p>
+  <p><link href="figures/overview-game-chat-area.png"> <media type="image" mime="src/png" src="figures/overview-game-chat-area.png" width="50%" height="50%"> <p>Der Chatbereich unterhalb des Backgammonbretts</p> </media> </link></p>
+  <p>Die <link xref="inviters-list">Einladungsliste</link> befindet sich oben rechts im Hauptfenster:</p>
+  <p><link href="figures/overview-inviters-list.png"> <media type="image" mime="src/png" src="figures/overview-inviters-list.png" width="50%" height="50%"> <p>Die Einladungsliste</p> </media> </link></p>
+  <p>Im mittleren rechten Bereich des Hauptfensters befindet sich ein Mehrzweckbereich, der <link xref="info-area">Informationsbereich</link>:</p>
+  <p><link href="figures/overview-info-area.png"> <media type="image" mime="src/png" src="figures/overview-info-area.png" width="50%" height="50%"> <p>Der Informationsbereich</p> </media> </link></p>
+  <p>Der <link xref="chat-area">Chatbereich</link> schließlich, befindet sich in der unteren rechten Ecke:</p>
+  <p><link href="figures/overview-chat-area.png"> <media type="image" mime="src/png" src="figures/overview-chat-area.png" width="50%" height="50%"> <p>Der Chatbereich</p> </media> </link></p>
 </page>

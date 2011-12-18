@@ -4,9 +4,7 @@
     <link type="guide" xref="index#getting-started"/>
     <link type="guide" xref="playing#invitations"/>
     <link type="seealso" xref="unlimited-matches"/>
-    <desc>
-      How to ask other people for a match
-    </desc>
+    <desc>Wie Sie andere Leute zu einer Partie einladen können</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,26 +20,8 @@
     </mal:credit>
   </info>
 
-  <title>Inviting Other Players To A Match</title>
-  <p>
-    The <link xref="players-list">players' list</link>
-    shows everybody that is currently logged in.  You
-    can invite anybody to a match, that is currently not
-    playing, and is available for a match.
-  </p>
-  <p>
-    You invite a player by either double-clicking the
-    corresponding line in the <link xref="players-list">players' 
-    list</link> or by invoking the context menu (right-click
-    or modifier key plus click) on the player's name.
-  </p>
-  <p>
-    Before the invitation is sent, you can select the desired
-    length of the match.  You should avoid invitations for
-    <link xref="unlimited-matches">unlimited matches</link>
-    unless you know what you are doing.  The reason is that
-    it is difficult to get out of an unlimited match, both for
-    you and your opponent. See <link xref="unlimited-matches"/>
-    for more information. 
-  </p>
+  <title>Andere zu einer Partie einladen</title>
+  <p>In der <link xref="players-list">Spielerliste</link> sehen Sie jeden, der gerade angemeldet ist. Sie können jeden zu einer Partie einladen, der oder die nicht gerade eine andere Partie spielt, und seinen Status auf verfügbar gestellt hat.</p>
+  <p>Sie laden andere Spielerinnen oder Spieler entweder durch Doppelklick auf die entsprechende Zeile in der <link xref="players-list">Spielerliste</link> oder durch Aufruf des Kontextmenüs (Recktsklick oder Kontrolltaste mit Klick auf dem Namen).</p>
+  <p>Bevor die Einladung abgesendet wird, können Sie noch die gewünschte Länge der Partie wählen. Vermeiden Sie, Einladungen für <link xref="unlimited-matches">unbegrenzte Partien</link> anzunehmen, außer wenn Sie genau wissen, was Sie tun. Grund ist, dass es sowohl für Sie selbst als auch Ihre Gegnerin oder Ihren Gegner schwer ist, aus einer unbegrenzten Partie wieder auszusteigen. Siehe <link xref="unlimited-matches"/> für weitere Informationen.</p>
 </page>

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-17 19:00+0200\n"
+"POT-Creation-Date: 2011-12-19 00:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,6 @@ msgstr ""
 #: C/unlimited-matches.page:10(credit/name)
 #: C/watching.page:10(credit/name)
 #: C/whisper.page:12(credit/name)
-#: C/why-bg.page:11(credit/name)
 msgid "Guido Flohr"
 msgstr ""
 
@@ -115,7 +114,6 @@ msgstr ""
 #: C/unlimited-matches.page:14(license/p)
 #: C/watching.page:14(license/p)
 #: C/whisper.page:16(license/p)
-#: C/why-bg.page:15(license/p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr ""
 
@@ -938,7 +936,7 @@ msgid "Locating Users"
 msgstr ""
 
 #: C/geo-ip.page:19(page/p)
-msgid "Gibbon will try to show you, the country from where other people on the server have logged in, for example in the <link xref=\"players-list\">players list</link> or <link xref=\"inviters-list\">inviters list</link>."
+msgid "<app>Gibbon</app> will try to show you, the country from where other people on the server have logged in, for example in the <link xref=\"players-list\">players list</link> or <link xref=\"inviters-list\">inviters list</link>."
 msgstr ""
 
 #: C/geo-ip.page:25(page/p)
@@ -966,7 +964,7 @@ msgid "Gibbon Unicode Extension for FIBS"
 msgstr ""
 
 #: C/gibbon-unicode.page:21(page/p)
-msgid "FIBS traditionally allows only 7-bit characters to be transmitted in communication between players ( <link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, and <cmd>message</cmd>). Characters outside of the range of US-ASCII are replaced by a question mark (“?”)."
+msgid "FIBS traditionally allows only 7-bit characters to be transmitted in communication between players (<link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, and <cmd>message</cmd>). Characters outside of the range of US-ASCII are replaced by a question mark (“?”)."
 msgstr ""
 
 #: C/gibbon-unicode.page:33(page/p)
@@ -1022,7 +1020,7 @@ msgid "Using named HTML entities for encoding characters outside of the range of
 msgstr ""
 
 #: C/gibbon-unicode.page:114(section/p)
-msgid "Communication in language that use a script for which no named entities are defined, will be completely unreadable to people that are not using a client supporting this protocol. On the other hand, taking part in such communication does not only require a conforming client but also knowledge of that particular script. In this respect, users can only win by this protocol."
+msgid "Communication in languages that use a script for which no named entities are defined, will be completely unreadable to people that are not using a client supporting this protocol. On the other hand, taking part in such communication does not only require a conforming client but also knowledge of that particular script. In this respect, users can only win by this protocol."
 msgstr ""
 
 #: C/gui.page:8(info/title)
@@ -1127,7 +1125,7 @@ msgid "Depending on your personal desktop settings <app>Gibbon</app> may have an
 msgstr ""
 
 #: C/gui-overview.page:25(media/p)
-msgid "Gibbon Graphical User Interace"
+msgid "<app>Gibbon</app> Graphical User Interace"
 msgstr ""
 
 #: C/gui-overview.page:27(page/p)
@@ -1263,14 +1261,14 @@ msgid "<app>Gibbon</app> is a program that allows you to play backgammon online 
 msgstr ""
 
 #: C/introduction.page:35(page/p)
-msgid "<app>FIBS</app> does not only provide online backgammon opponents but also an active community of users. <app>Gibbon</app> allows you to take part in all aspects of this community like chatting with other users, taking part in tournaments held on <app>FIBS</app>, or comparing your own skills with those of other players by comparing your own <link href=\"http://www.fibs.com/ratings.html\">FIBS rating</link> with that of other FIBSters."
+msgid "<app>FIBS</app> does not only provide online backgammon opponents but also an active community of users. <app>Gibbon</app> allows you to take part in all aspects of this community like chatting with other users, taking part in tournaments held on <app>FIBS</app>, or comparing your own skills with those of other players by comparing your own <link xref=\"rating\">rating</link> with that of the rest of the world."
 msgstr ""
 
-#: C/introduction.page:45(page/p)
+#: C/introduction.page:44(page/p)
 msgid "<app>Gibbon</app> is not yet ready. You may find features that are not yet covered in this documentation, and you may find features documented here that do not work, or that do not work as expected. An attempt is made to keep the software synchronized with this documentation but this may fail. If you find a discrepancy, or find factual errors, misspellings, typos, or any other shortcomings in this documentation (or the software itself) feel free to file a bug report, see <link xref=\"bugreports\"/>. All feedback is welcome."
 msgstr ""
 
-#: C/introduction.page:55(page/p)
+#: C/introduction.page:54(page/p)
 msgid "<app>Gibbon</app> should work on many different computer platforms. Do not be surprised if features presented in this documentation look different on your computer. The overall presentation will be close enough for you to recognize it."
 msgstr ""
 
@@ -1339,7 +1337,7 @@ msgid "Length"
 msgstr ""
 
 #: C/inviters-list.page:63(item/p)
-msgid "The desired match length. <link xref=\"unlimited-matches\">Unlimited matches</link> are represented by the infinity sign ∞."
+msgid "The desired match length. <link xref=\"unlimited-matches\">Unlimited matches</link> are represented by the infinity sign “∞“."
 msgstr ""
 
 #: C/inviters-list.page:69(item/p)
@@ -1990,17 +1988,5 @@ msgstr ""
 
 #: C/whisper.page:29(page/p)
 msgid "This will only work while you are <link xref=\"watching\">watching</link>. If you are the only one watching a match, this feature is not particularly useful."
-msgstr ""
-
-#: C/why-bg.page:4(page/title)
-msgid "What Is the BG in <gui style=\"\">gibbon.bg</gui>?"
-msgstr ""
-
-#: C/why-bg.page:7(info/desc)
-msgid "No, not backgammon. Bulgaria!"
-msgstr ""
-
-#: C/why-bg.page:19(page/p)
-msgid "Bulgaria is a most beautiful country in South-Eastern Europe, that the author of <app>Gibbon</app> has the honor of being a guest of for a couple of years already. If you associate the top-level domain <sys>.bg</sys> with backgammon, that is pure coincidence."
 msgstr ""
 

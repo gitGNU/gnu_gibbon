@@ -3,9 +3,9 @@
 
   <info>
     <link type="guide" xref="index#general-concepts"/>
-    <title type="link">User Interface</title>
-    <title type="text">User Interface</title>
-    <desc>The graphical user interface and other interaction</desc>
+    <title type="link">Benutzerschnittstelle</title>
+    <title type="text">Benutzerschnittstelle</title>
+    <desc>Die graphische Benutzerschnittstelle und weitere Interaktion</desc>
     <revision pkgversion="0.1.1" version="0.1.1" date="2011-06-13" status="incomplete"/>
     <credit type="author">
       <name>Guido Flohr</name>
@@ -22,14 +22,11 @@
     </mal:credit>
   </info>
 
-  <title>User Interface</title>
+  <title>Benutzerschnittstelle</title>
 
-  <p>
-    All interaction with <app>Gibbon</app> is done with the mouse
-    or the keyboard.
-  </p>
+  <p>Die Interaktion mit <app>Gibbon</app> erfolgt mit Maus und Tastatur.</p>
 
   <section id="elements" style="2column">
-    <title>Graphical User Interface Elements</title>
+    <title>Elemente der Benutzerschnittstelle</title>
   </section>
 </page>

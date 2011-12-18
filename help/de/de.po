@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-17 19:00+0200\n"
-"PO-Revision-Date: 2011-12-18 22:55+0200\n"
+"POT-Creation-Date: 2011-12-19 00:29+0200\n"
+"PO-Revision-Date: 2011-12-19 00:29+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -71,7 +71,7 @@ msgstr "Die kleine Werkzeugliste oberhalb des Spielbretts"
 #: C/supporting-gibbon.page:12(credit/name)
 #: C/swapping-dice.page:12(credit/name) C/tell.page:12(credit/name)
 #: C/unlimited-matches.page:10(credit/name) C/watching.page:10(credit/name)
-#: C/whisper.page:12(credit/name) C/why-bg.page:11(credit/name)
+#: C/whisper.page:12(credit/name)
 msgid "Guido Flohr"
 msgstr "Guido Flohr"
 
@@ -96,7 +96,6 @@ msgstr "Guido Flohr"
 #: C/supporting-gibbon.page:16(license/p) C/swapping-dice.page:16(license/p)
 #: C/tell.page:16(license/p) C/unlimited-matches.page:14(license/p)
 #: C/watching.page:14(license/p) C/whisper.page:16(license/p)
-#: C/why-bg.page:15(license/p)
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Create Commons Share Alike 3.0"
 
@@ -1460,14 +1459,20 @@ msgstr ""
 msgid ""
 "This is the <gui style=\"button\">whisper</gui> button. If it is selected, "
 "it means that your message should go to the spectators."
-msgstr "Dies ist der Button <gui style=\"button\">Flüstern</gui>. Wenn er selektiert ist, bedeutet dies, dass Ihre Nachricht an die Zuschauerinnen und Zuschauer gesandt wird."
+msgstr ""
+"Dies ist der Button <gui style=\"button\">Flüstern</gui>. Wenn er selektiert "
+"ist, bedeutet dies, dass Ihre Nachricht an die Zuschauerinnen und Zuschauer "
+"gesandt wird."
 
 #: C/game-chat-concept.page:64(page/p)
 msgid ""
 "Not all combinations make sense in all situations. For example, when nobody "
 "is <link xref=\"watching\">watching</link> there is no point in talking to "
 "spectators."
-msgstr "Natürlich ergeben nicht alle Kombinationen in allen Situationen Sinn. Wenn beispielsweise niemand <link xref=\"watching\">zuschaut</link>, hat es auch keinen Sinn mit Zuschauerinnen oder Zuschauern zu sprechen."
+msgstr ""
+"Natürlich ergeben nicht alle Kombinationen in allen Situationen Sinn. Wenn "
+"beispielsweise niemand <link xref=\"watching\">zuschaut</link>, hat es auch "
+"keinen Sinn mit Zuschauerinnen oder Zuschauern zu sprechen."
 
 #: C/game-chat-concept.page:69(page/p)
 msgid ""
@@ -1476,7 +1481,14 @@ msgid ""
 "\">Say</gui> for addressing your opponent only, <gui style=\"label\">Kibitz</"
 "gui> for everybody, and <gui style=\"label\">Whisper</gui> for spectators "
 "only."
-msgstr "Wenn Sie für ein Kommandozeilenkonzept mehr übrig haben, können Sie stattdessen auch die Textauswahl neben der Eingabemöglichkeit für die Nachrichten nutzen. Sie können dort entweder <gui style=\"label\">Sagen</gui> für Mitteilungen an Ihre Gegnerin oder Ihren Gegner auswählen, oder <gui style=\"label\">Kibitzen</gui> für Mitteilungen an alle, und <gui style=\"label\">Flüstern</gui> für Mitteilungen nur an Zuschauerinnen und Zuschauer."
+msgstr ""
+"Wenn Sie für ein Kommandozeilenkonzept mehr übrig haben, können Sie "
+"stattdessen auch die Textauswahl neben der Eingabemöglichkeit für die "
+"Nachrichten nutzen. Sie können dort entweder <gui style=\"label\">Sagen</"
+"gui> für Mitteilungen an Ihre Gegnerin oder Ihren Gegner auswählen, oder "
+"<gui style=\"label\">Kibitzen</gui> für Mitteilungen an alle, und <gui style="
+"\"label\">Flüstern</gui> für Mitteilungen nur an Zuschauerinnen und "
+"Zuschauer."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -1509,57 +1521,82 @@ msgid "Locating Users"
 msgstr "Andere lokalisieren"
 
 #: C/geo-ip.page:19(page/p)
+#, fuzzy
 msgid ""
-"Gibbon will try to show you, the country from where other people on the "
-"server have logged in, for example in the <link xref=\"players-list"
+"<app>Gibbon</app> will try to show you, the country from where other people "
+"on the server have logged in, for example in the <link xref=\"players-list"
 "\">players list</link> or <link xref=\"inviters-list\">inviters list</link>."
-msgstr "<app>Gibbon</app> versucht Ihnen zu zeigen, aus welchem Land die anderen Benutzerinnen und Benutzer sich mit dem Server verbunden haben, beispielsweise in der <link xref=\"players-list\">Spieler-</link> oder <link xref=\"inviters-list\">Einladungsliste</link>."
+msgstr ""
+"<app>Gibbon</app> versucht Ihnen zu zeigen, aus welchem Land die anderen "
+"Benutzerinnen und Benutzer sich mit dem Server verbunden haben, "
+"beispielsweise in der <link xref=\"players-list\">Spieler-</link> oder <link "
+"xref=\"inviters-list\">Einladungsliste</link>."
 
 #: C/geo-ip.page:25(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> "
 "Inviters from Germany and Bulgaria </media>"
-msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> Einladungen aus Deutschland und Bulgarien </media>"
+msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> "
+"Einladungen aus Deutschland und Bulgarien </media>"
 
 #: C/geo-ip.page:30(page/p)
 msgid ""
 "The software will display that information as a flag, as shown in the above "
 "example."
-msgstr "Die Software zeigt diese Information, wie im obigen Beispiel, als Flagge an."
+msgstr ""
+"Die Software zeigt diese Information, wie im obigen Beispiel, als Flagge an."
 
 #: C/geo-ip.page:34(page/p)
 msgid ""
 "The information is displayed with the help of data provided by a Danish "
 "internet service provider for free, see <link href=\"http://software77.net/"
 "geo-ip/\"/>."
-msgstr "Diese Informationen beruhen auf Daten, die kostenlos von einem dänischen Internet-Provider zur Verfügung gestellt werden, siehe <link href=\"http://software77.net/geo-ip/\"/>."
+msgstr ""
+"Diese Informationen beruhen auf Daten, die kostenlos von einem dänischen "
+"Internet-Provider zur Verfügung gestellt werden, siehe <link href=\"http://"
+"software77.net/geo-ip/\"/>."
 
 #: C/geo-ip.page:39(page/p)
 msgid ""
 "In case you think that this feature violates your or others' privacy rights, "
 "please keep in mind that it is trivial for everybody on the server to find "
 "out, from which country you logged in."
-msgstr "Falls Sie meinen, dass dieses Feature Ihre oder die Privatsphäre anderer verletzt, denken Sie bitte daran, dass es für alle Personen, die auf dem Server eingeloggt sind, absolut trivial ist, herauszufinden, in welchem Land Sie Sich gerade befinden."
+msgstr ""
+"Falls Sie meinen, dass dieses Feature Ihre oder die Privatsphäre anderer "
+"verletzt, denken Sie bitte daran, dass es für alle Personen, die auf dem "
+"Server eingeloggt sind, absolut trivial ist, herauszufinden, in welchem Land "
+"Sie Sich gerade befinden."
 
 #: C/gibbon-unicode.page:7(info/desc)
 msgid ""
 "Specification for allowing Unicode characters in communication between "
 "players on FIBS"
-msgstr "Spezifikation zur Verwendung von Unicodezeichen in der Kommunikation zwischen Benutzerinnen und Benutzern auf FIBS"
+msgstr ""
+"Spezifikation zur Verwendung von Unicodezeichen in der Kommunikation "
+"zwischen Benutzerinnen und Benutzern auf FIBS"
 
 #: C/gibbon-unicode.page:20(page/title)
 msgid "Gibbon Unicode Extension for FIBS"
 msgstr "Gibbon-Unicode-Erweiterung für FIBS"
 
 #: C/gibbon-unicode.page:21(page/p)
+#, fuzzy
 msgid ""
 "FIBS traditionally allows only 7-bit characters to be transmitted in "
-"communication between players ( <link xref=\"say\"><cmd>say</cmd></link>, "
+"communication between players (<link xref=\"say\"><cmd>say</cmd></link>, "
 "<link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper"
 "\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, "
 "<cmd>tellx</cmd>, and <cmd>message</cmd>). Characters outside of the range "
 "of US-ASCII are replaced by a question mark (“?”)."
-msgstr "FIBS erlaubt traditionell lediglich die Übermittlung von 7-Bit-Zeichen in der Kommunikation zwischen Benutzerinnen und Benutzern (bei den Befehlen <link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, und <cmd>message</cmd>). Zeichen außerhalb des Bereichs von US-ASCII werden durch ein Fragezeichen („?”) ersetzt."
+msgstr ""
+"FIBS erlaubt traditionell lediglich die Übermittlung von 7-Bit-Zeichen in "
+"der Kommunikation zwischen Benutzerinnen und Benutzern (bei den Befehlen "
+"<link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</"
+"cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref="
+"\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, und <cmd>message</cmd>). "
+"Zeichen außerhalb des Bereichs von US-ASCII werden durch ein Fragezeichen "
+"(„?”) ersetzt."
 
 #: C/gibbon-unicode.page:33(page/p)
 msgid ""
@@ -1568,7 +1605,11 @@ msgid ""
 "commands to the server, and automatically decodes them when they are "
 "received as part of the message body of one of the above commands from the "
 "server."
-msgstr "<app>Gibbon</app> kodiert Zeichen außerhalb des Zeichenvorrats von US-ASCII bei der Übermittlung an den Server automatisch, wenn sie zum Nachrichtenteil eines der obigen Befehle sind, und dekodiert sie im umgekehrten Falle automatisch."
+msgstr ""
+"<app>Gibbon</app> kodiert Zeichen außerhalb des Zeichenvorrats von US-ASCII "
+"bei der Übermittlung an den Server automatisch, wenn sie zum Nachrichtenteil "
+"eines der obigen Befehle sind, und dekodiert sie im umgekehrten Falle "
+"automatisch."
 
 #: C/gibbon-unicode.page:41(section/title)
 msgid "Encoding"
@@ -1578,7 +1619,9 @@ msgstr "Kodierung"
 msgid ""
 "Only the body of a message of one of the above mentioned FIBS CLIP commands "
 "is subject to encoding."
-msgstr "Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle wird kodiert."
+msgstr ""
+"Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle wird "
+"kodiert."
 
 #: C/gibbon-unicode.page:46(section/p)
 msgid ""
@@ -1589,7 +1632,13 @@ msgid ""
 "\"http://www.w3.org/TR/html401/charset.html#h-5.3\"/>. A conforming "
 "application <em>should</em> prefer named entities over numerical entities "
 "wherever possible."
-msgstr "Eine konforme Applikation <em>muss</em> alle Zeichen oberhalb von <link href=\"http://www.unicode.org/\">Unicode</link> +U007F als benannte HTML-Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/sgml/entities.html\"/> oder als nummerische Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/charset.html#h-5.3\"/>. Eine konforme Applikation <em>sollte</em> wann immer möglich benamte Entitäten nummerischen Entitäten vorziehen."
+msgstr ""
+"Eine konforme Applikation <em>muss</em> alle Zeichen oberhalb von <link href="
+"\"http://www.unicode.org/\">Unicode</link> +U007F als benannte HTML-"
+"Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/sgml/entities.html"
+"\"/> oder als nummerische Entitäten gemäß <link href=\"http://www.w3.org/TR/"
+"html401/charset.html#h-5.3\"/>. Eine konforme Applikation <em>sollte</em> "
+"wann immer möglich benamte Entitäten nummerischen Entitäten vorziehen."
 
 #: C/gibbon-unicode.page:58(section/p)
 msgid ""
@@ -1598,7 +1647,13 @@ msgid ""
 "be confused with an escaped sequence as described in this protocol. If the "
 "ampersand cannot be confused with a valid entity, a conforming application "
 "<em>should not</em> encode the ampersand character."
-msgstr "Eine konforme Applikation <em>muss</em> das Zeichen „&amp;” (Et-Zeichen bzw. Kaufmanns-Und, U+0026) gemäß dieser Spezifikation kodieren, wenn es ansonsten als Teil einer Escape-Sequenz gemäß der Beschreibung in diesem Protokoll gelten könnte. Falls das Zeichen dagegen nicht mit einer gültigen Entität verwechselt werden kann, <em>sollte</em> eine konforme Applikation dieses Zeichen <em>nicht</em> kodieren."
+msgstr ""
+"Eine konforme Applikation <em>muss</em> das Zeichen „&amp;” (Et-Zeichen bzw. "
+"Kaufmanns-Und, U+0026) gemäß dieser Spezifikation kodieren, wenn es "
+"ansonsten als Teil einer Escape-Sequenz gemäß der Beschreibung in diesem "
+"Protokoll gelten könnte. Falls das Zeichen dagegen nicht mit einer gültigen "
+"Entität verwechselt werden kann, <em>sollte</em> eine konforme Applikation "
+"dieses Zeichen <em>nicht</em> kodieren."
 
 #: C/gibbon-unicode.page:68(section/p)
 msgid ""
@@ -1606,7 +1661,11 @@ msgid ""
 "especially not the XML special characters “&lt;” (less than, U+003C), "
 "“&gt;” (greater than, U+003E), “\"” (double quote, U+0022), and "
 "“'” (apostrophe, U+0027)."
-msgstr "Eine konforme Applikation <em>sollte keine</em> anderen Zeichen kodieren, insbesondere nicht die XML-Spezialzeichen „&lt;” (Kleiner-Als-Zeichen, U+003C), “&gt;” (Größer-Als-Zeichen, U+003E), “\"” (doppelte Anführungszeichen, U+0022) und “'” (Apostroph, U+0027)."
+msgstr ""
+"Eine konforme Applikation <em>sollte keine</em> anderen Zeichen kodieren, "
+"insbesondere nicht die XML-Spezialzeichen „&lt;” (Kleiner-Als-Zeichen, U"
+"+003C), “&gt;” (Größer-Als-Zeichen, U+003E), “\"” (doppelte "
+"Anführungszeichen, U+0022) und “'” (Apostroph, U+0027)."
 
 #: C/gibbon-unicode.page:79(section/title)
 msgid "Decoding"
@@ -1616,7 +1675,9 @@ msgstr "Dekodieren"
 msgid ""
 "Only the body of a message of one of the above mentioned FIBS CLIP commands "
 "is subject to decoding."
-msgstr "Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle darf dekodiert werden."
+msgstr ""
+"Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle darf "
+"dekodiert werden."
 
 #: C/gibbon-unicode.page:84(section/p)
 msgid ""
@@ -1624,14 +1685,21 @@ msgid ""
 "references as described in <link href=\"http://www.w3.org/TR/html401/sgml/"
 "entities.html\"/> or numerical entities as described in <link href=\"http://"
 "www.w3.org/TR/html401/charset.html#h-5.3\"/>."
-msgstr "Eine konforme Applikation <em>muss</em> alle gültigen benamten Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/sgml/entities.html\"/> oder nummerischen Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/charset.html#h-5.3\"/> dekodieren."
+msgstr ""
+"Eine konforme Applikation <em>muss</em> alle gültigen benamten Entitäten "
+"gemäß <link href=\"http://www.w3.org/TR/html401/sgml/entities.html\"/> oder "
+"nummerischen Entitäten gemäß <link href=\"http://www.w3.org/TR/html401/"
+"charset.html#h-5.3\"/> dekodieren."
 
 #: C/gibbon-unicode.page:92(section/p)
 msgid ""
 "A conforming application <em>should not</em> treat incomplete or other "
 "invalid entity references in any special way or display them in any special "
 "way."
-msgstr "Eine konforme Applikation <em>sollte</em> unvollständige oder auf andere Weise ungültige Entitäten weder besonders behandeln, noch auf besondere Weise darstellen."
+msgstr ""
+"Eine konforme Applikation <em>sollte</em> unvollständige oder auf andere "
+"Weise ungültige Entitäten weder besonders behandeln, noch auf besondere "
+"Weise darstellen."
 
 #: C/gibbon-unicode.page:99(section/title)
 msgid "Rationale"
@@ -1642,7 +1710,11 @@ msgid ""
 "The US-ASCII restriction in the FIBS protocol makes it hard or impossible to "
 "communicate in most languages other than English. This extension tries to "
 "overcome this restriction in the least obtrusive way possible."
-msgstr "Die Beschränkung auf US-ASCII-Zeichen im FIBS-Protokoll macht es schwer oder gar unmöglich in einer anderen Sprache als Englisch zu kommunizieren. Diese Protokollerweiterung versucht diese Beschränkung auf wenigst störende Art aufzuheben."
+msgstr ""
+"Die Beschränkung auf US-ASCII-Zeichen im FIBS-Protokoll macht es schwer oder "
+"gar unmöglich in einer anderen Sprache als Englisch zu kommunizieren. Diese "
+"Protokollerweiterung versucht diese Beschränkung auf wenigst störende Art "
+"aufzuheben."
 
 #: C/gibbon-unicode.page:106(section/p)
 msgid ""
@@ -1651,17 +1723,30 @@ msgid ""
 "human-readable. Even for people using a client that does not support this "
 "extension it is easier to decipher the meaning of “5 &amp;euro;” than to "
 "guess what “5 ?” means."
-msgstr "Die Benutzung benamter Entitäten für die Kodierung von Zeichen außerhalb des Vorrats von US-ASCII hat den Vorteil, dass Sie gut bekannt und bis zu einem gewissen Grade auch von Menschen lesbar sind.  Selbst für Benutzerinnen und Benutzer von Software, welche diese Spezifikation nicht unterstützt, ist es einfacher, die Bedeutung von „5 &amp;euro;“ zu erfassen, als zu verstehen, was unter „5 ?“ zu verstehen ist."
+msgstr ""
+"Die Benutzung benamter Entitäten für die Kodierung von Zeichen außerhalb des "
+"Vorrats von US-ASCII hat den Vorteil, dass Sie gut bekannt und bis zu einem "
+"gewissen Grade auch von Menschen lesbar sind.  Selbst für Benutzerinnen und "
+"Benutzer von Software, welche diese Spezifikation nicht unterstützt, ist es "
+"einfacher, die Bedeutung von „5 &amp;euro;“ zu erfassen, als zu verstehen, "
+"was unter „5 ?“ zu verstehen ist."
 
 #: C/gibbon-unicode.page:114(section/p)
+#, fuzzy
 msgid ""
-"Communication in language that use a script for which no named entities are "
+"Communication in languages that use a script for which no named entities are "
 "defined, will be completely unreadable to people that are not using a client "
 "supporting this protocol. On the other hand, taking part in such "
 "communication does not only require a conforming client but also knowledge "
 "of that particular script. In this respect, users can only win by this "
 "protocol."
-msgstr "Kommunikation in einer Sprache, die eine Schrift verwendet, für die keine benamten Entitäten definiert sind, wird für Menschen, die keine konforme Software verwenden, völlig unlesbar sein. Auf der anderen Seiten erfordert die Beteiligung an einer soclehn Kommunikation nicht nur eine konforme Software, sondern auch Kenntnisse der Schrift. Demgemäß gewinnen also alle Beteiligten durch dieses Protokoll."
+msgstr ""
+"Kommunikation in einer Sprache, die eine Schrift verwendet, für die keine "
+"benamten Entitäten definiert sind, wird für Menschen, die keine konforme "
+"Software verwenden, völlig unlesbar sein. Auf der anderen Seiten erfordert "
+"die Beteiligung an einer soclehn Kommunikation nicht nur eine konforme "
+"Software, sondern auch Kenntnisse der Schrift. Demgemäß gewinnen also alle "
+"Beteiligten durch dieses Protokoll."
 
 #: C/gui.page:8(info/title)
 msgctxt "link"
@@ -1769,7 +1854,8 @@ msgstr "translated"
 
 #: C/gui-overview.page:6(info/desc)
 msgid "Overview of the Graphical User Interface of <app>Gibbon</app>"
-msgstr "Überblick über die graphische Benutzersschnittstelle <app>Gibbons</app>"
+msgstr ""
+"Überblick über die graphische Benutzersschnittstelle <app>Gibbons</app>"
 
 #: C/gui-overview.page:18(page/title)
 msgid "Graphical User Interface Overview"
@@ -1779,17 +1865,23 @@ msgstr "Überblick über die graphische Benutzerschnittstelle"
 msgid ""
 "Depending on your personal desktop settings <app>Gibbon</app> may have an "
 "individual look and feel. But it will at least roughly look like this:"
-msgstr "In Abhängigkeit von Ihren persönlichen Einstellungen für Ihr Betriebssystem, kann <app>Gibbon</app> bei Ihnen abweichend aussehen. Im Großen und Ganzen sollte es jedoch so aussehen:"
+msgstr ""
+"In Abhängigkeit von Ihren persönlichen Einstellungen für Ihr Betriebssystem, "
+"kann <app>Gibbon</app> bei Ihnen abweichend aussehen. Im Großen und Ganzen "
+"sollte es jedoch so aussehen:"
 
 #: C/gui-overview.page:25(media/p)
-msgid "Gibbon Graphical User Interace"
+#, fuzzy
+msgid "<app>Gibbon</app> Graphical User Interace"
 msgstr "Graphische Benutzerschnittstelle von <app>Gibbon</app>"
 
 #: C/gui-overview.page:27(page/p)
 msgid ""
 "The first thing that catches ones eye is the backgammon board, see <link "
 "xref=\"playing\"/>:"
-msgstr "Das erste, was einem ins Auge sticht, ist das Backgammonbrett, siehe <link xref=\"playing\"/>:"
+msgstr ""
+"Das erste, das einem ins Auge sticht, ist das Backgammonbrett, siehe <link "
+"xref=\"playing\"/>:"
 
 #: C/gui-overview.page:31(page/p)
 msgid ""
@@ -1797,6 +1889,9 @@ msgid ""
 "png\" src=\"figures/overview-board.png\" width=\"50%\" height=\"50%\"> "
 "<p>The Backgammon Board</p> </media> </link>"
 msgstr ""
+"<link href=\"figures/overview-board.png\"> <media type=\"image\" mime=\"src/"
+"png\" src=\"figures/overview-board.png\" width=\"50%\" height=\"50%\"> "
+"<p>Das Backgammon-Brett</p> </media> </link>"
 
 #: C/gui-overview.page:39(page/p)
 #, fuzzy
@@ -1804,10 +1899,8 @@ msgid ""
 "Above the board, you can see the <link xref=\"board-toolbar\">board toolbar</"
 "link>:"
 msgstr ""
-"Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den "
-"<link xref=\"board-toolbar#resign\"><gui style=\"button\">Aufgabe-Button</"
-"gui></link> in der <link xref=\"board-toolbar\">Spielbrett-Werkzeugleiste</"
-"link>."
+"Oberhalb des Bretts sehen Sie die <link xref=\"board-toolbar\">Spielbrett-"
+"Werkzeugliste</link>:"
 
 #: C/gui-overview.page:43(page/p)
 msgid ""
@@ -1816,12 +1909,18 @@ msgid ""
 "height=\"50%\"> <p>The Toolbar Above the Backgammon Board</p> </media> </"
 "link>"
 msgstr ""
+"<link href=\"figures/overview-board-toolbar.png\"> <media type=\"image\" "
+"mime=\"src/png\" src=\"figures/overview-board-toolbar.png\" width=\"50%\" "
+"height=\"50%\"> <p>Die Werkzeugliste oberhalb des Backgammon-Bretts</p> </"
+"media> </link>"
 
 #: C/gui-overview.page:51(page/p)
 msgid ""
 "Beneath the board, you can see the <link xref=\"chatting#game-chat\">game "
 "chat area</link>:"
 msgstr ""
+"Unterhalb des Bretts sehen Sie den <link xref=\"chatting#game-chat\">Spiel-"
+"Chatbereichs</link>:"
 
 #: C/gui-overview.page:55(page/p)
 msgid ""
@@ -1830,12 +1929,18 @@ msgid ""
 "height=\"50%\"> <p>The Chat Area Beneath the Backgammon Board</p> </media> </"
 "link>"
 msgstr ""
+"<link href=\"figures/overview-game-chat-area.png\"> <media type=\"image\" "
+"mime=\"src/png\" src=\"figures/overview-game-chat-area.png\" width=\"50%\" "
+"height=\"50%\"> <p>Der Chatbereich unterhalb des Backgammonbretts</p> </"
+"media> </link>"
 
 #: C/gui-overview.page:63(page/p)
 msgid ""
 "The <link xref=\"inviters-list\">inviters list</link> is located in the top-"
 "right corner of the main window:"
 msgstr ""
+"Die <link xref=\"inviters-list\">Einladungsliste</link> befindet sich oben "
+"rechts im Hauptfenster:"
 
 #: C/gui-overview.page:67(page/p)
 msgid ""
@@ -1843,12 +1948,17 @@ msgid ""
 "mime=\"src/png\" src=\"figures/overview-inviters-list.png\" width=\"50%\" "
 "height=\"50%\"> <p>The Inviters List</p> </media> </link>"
 msgstr ""
+"<link href=\"figures/overview-inviters-list.png\"> <media type=\"image\" "
+"mime=\"src/png\" src=\"figures/overview-inviters-list.png\" width=\"50%\" "
+"height=\"50%\"> <p>Die Einladungsliste</p> </media> </link>"
 
 #: C/gui-overview.page:75(page/p)
 msgid ""
 "In the middle right area of the main window, you find a multi-purpose area, "
 "the <link xref=\"info-area\">information area</link>:"
 msgstr ""
+"Im mittleren rechten Bereich des Hauptfensters befindet sich ein "
+"Mehrzweckbereich, der <link xref=\"info-area\">Informationsbereich</link>:"
 
 #: C/gui-overview.page:79(page/p)
 msgid ""
@@ -1856,12 +1966,17 @@ msgid ""
 "\"src/png\" src=\"figures/overview-info-area.png\" width=\"50%\" height=\"50%"
 "\"> <p>The Information Area</p> </media> </link>"
 msgstr ""
+"<link href=\"figures/overview-info-area.png\"> <media type=\"image\" mime="
+"\"src/png\" src=\"figures/overview-info-area.png\" width=\"50%\" height=\"50%"
+"\"> <p>Der Informationsbereich</p> </media> </link>"
 
 #: C/gui-overview.page:87(page/p)
 msgid ""
 "Finally, the <link xref=\"chat-area\">chat area</link> is in the bottom-"
 "right corner:"
 msgstr ""
+"Der <link xref=\"chat-area\">Chatbereich</link> schließlich, befindet sich "
+"in der unteren rechten Ecke:"
 
 #: C/gui-overview.page:91(page/p)
 msgid ""
@@ -1869,6 +1984,9 @@ msgid ""
 "\"src/png\" src=\"figures/overview-chat-area.png\" width=\"50%\" height=\"50%"
 "\"> <p>The Chat Area</p> </media> </link>"
 msgstr ""
+"<link href=\"figures/overview-chat-area.png\"> <media type=\"image\" mime="
+"\"src/png\" src=\"figures/overview-chat-area.png\" width=\"50%\" height=\"50%"
+"\"> <p>Der Chatbereich</p> </media> </link>"
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
@@ -1878,79 +1996,85 @@ msgstr ""
 msgctxt "_"
 msgid ""
 "external ref='figures/gibbon-logo.png' md5='90767fd19bd5d82060c4a38ddecfdf77'"
-msgstr ""
+msgstr "original"
 
 #: C/index.page:7(info/title)
 msgctxt "link"
 msgid "Gibbon"
-msgstr ""
+msgstr "Gibbon"
 
 #: C/index.page:8(info/title)
 msgctxt "text"
 msgid "Gibbon"
-msgstr ""
+msgstr "Gibbon"
 
 #: C/index.page:18(page/title)
 msgid ""
 "<media type=\"image\" mime=\"image/png\" src=\"figures/gibbon-logo.png\"> "
 "Gibbon logo </media> Gibbon"
 msgstr ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/gibbon-logo.png\"> "
+"Das  Gibbon-Logo </media> Gibbon"
 
 #: C/index.page:26(section/title)
 msgid "Getting Started"
-msgstr ""
+msgstr "Kurzanleitung"
 
 #: C/index.page:29(section/title)
 msgid "General Concepts"
-msgstr ""
+msgstr "Allgemeine Konzepte"
 
 #: C/index.page:32(section/title)
 msgid "Help and Troubleshooting"
-msgstr ""
+msgstr "Hilfe und Fehlerbehebung"
 
 #: C/index.page:34(section/title)
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Häufige Fragen"
 
 #: C/index.page:38(section/title)
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/info-area.page:27(media)
-#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/players-list.png' "
 "md5='0c2517db7b5c7f411f804c38df2d2f9d'"
-msgstr "original"
+msgstr "translated"
 
 #: C/info-area.page:8(info/desc)
 msgid "The multi-purpose area in the middle right"
-msgstr ""
+msgstr "Der Mehrzweckbereich auf dem mittleren rechten Teil des Hauptfensters"
 
 #: C/info-area.page:20(page/title)
 msgid "The Information Area"
-msgstr ""
+msgstr "Der Informationsbereich"
 
 #: C/info-area.page:21(page/p)
 msgid ""
 "The information area at the middle right of the main window serves multiple "
 "purposes. You switch them by clicking the tabs at the top."
 msgstr ""
+"Der Informationsbereich im mittleren rechten Teil des Hauptfensters dient "
+"verschiedenen Zwecken. Sie können zwischen den Funktionen durch Klicken der "
+"Reiter oben wechseln."
 
 #: C/info-area.page:26(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/players-list.png\"> "
 "<p>The Information Area</p> </media>"
 msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/players-list.png\"> "
+"<p>Der Informationsbereich</p> </media>"
 
 #: C/info-area.page:33(section/title)
 msgid "Tabs In the Information Area"
-msgstr ""
+msgstr "Reiter im Informationsbereich"
 
 #: C/introduction.page:6(info/desc)
 #, fuzzy
@@ -1960,7 +2084,7 @@ msgstr "Fehler in <app>Gibbon</app> oder dieser Dokumentation melden."
 
 #: C/introduction.page:20(page/title)
 msgid "Introduction"
-msgstr ""
+msgstr "Einführung"
 
 #: C/introduction.page:21(page/p)
 msgid ""
@@ -1975,6 +2099,16 @@ msgid ""
 "but this documentation and the program itself will often assume that you are "
 "playing on FIBS."
 msgstr ""
+"<app>Gibbon</app> ist ein Computerprogramm, mit dem Sie im Internet auf dem "
+"<link href=\"http://www.fibs.com/\">Ersten Internet-Backgammon-Server "
+"(<app>First Internet Backgammon Server FIBS</app>)</link> gegen Menschen und "
+"Computer Backgammon spielen können. Sie können mit <app>Gibbon</app> auch "
+"auf anderen Servern spielen, die das <link href=\"http://www.fibs.com/"
+"fibs_interface.html\">FIBS Client Protocol</link> unterstützen. Zum jetzigen "
+"Zeitpunkt ist das lediglich <link href=\"http://www.tigergammon.com/"
+"\">TigerGammon</link>. <app>Gibbon</app> funktioniert mit allen Servern, die "
+"kompatibel mit FIBS sind. Diese Dokumentation und das Programm selber gehen "
+"jedoch oft davon aus, dass Sie auf FIBS spielen."
 
 #: C/introduction.page:35(page/p)
 msgid ""
@@ -1982,11 +2116,17 @@ msgid ""
 "an active community of users. <app>Gibbon</app> allows you to take part in "
 "all aspects of this community like chatting with other users, taking part in "
 "tournaments held on <app>FIBS</app>, or comparing your own skills with those "
-"of other players by comparing your own <link href=\"http://www.fibs.com/"
-"ratings.html\">FIBS rating</link> with that of other FIBSters."
+"of other players by comparing your own <link xref=\"rating\">rating</link> "
+"with that of the rest of the world."
 msgstr ""
+"<app>FIBS</app> bietet nicht nur Spielpartnerinnen und Spielpartner für "
+"Backgammon im Internet, sondern auch eine aktive Community. Mit <app>Gibbon</"
+"app> können Sie an allen Aspekten dieser Community teilnehmen, wie "
+"öffentlichen oder privaten Chats, Turnieren auf <app>FIBS</app>, oder indem "
+"Sie Ihre eigenen Fähigkeiten aufgrund ihres Platzes in der <link xref="
+"\"rating\">Rangliste</link> mit dem Rest der Welt vergleichen."
 
-#: C/introduction.page:45(page/p)
+#: C/introduction.page:44(page/p)
 msgid ""
 "<app>Gibbon</app> is not yet ready. You may find features that are not yet "
 "covered in this documentation, and you may find features documented here "
@@ -1997,22 +2137,34 @@ msgid ""
 "to file a bug report, see <link xref=\"bugreports\"/>. All feedback is "
 "welcome."
 msgstr ""
+"<app>Gibbon</app> ist noch nicht fertig. Es gibt Dinge, die in dieser "
+"Dokumentation noch nicht beschrieben sind. Andere Dinge, die hier "
+"dokumentiert sind, funktionieren eventuell noch nicht oder nicht wie "
+"erwartet, obwohl natürlich versucht wird, die Dokumentation und die Software "
+"zu synchronisieren. Falls Ihnen Diskrepanzen, falsche Beschreibungen, "
+"Rechtschreibfehler oder andere Mängel in dieser Dokumentation oder der "
+"Software auffallen, melden Sie das bitte, siehe <link xref=\"bugreports\"/>. "
+"Jegliche Resonanz ist willkommen."
 
-#: C/introduction.page:55(page/p)
+#: C/introduction.page:54(page/p)
 msgid ""
 "<app>Gibbon</app> should work on many different computer platforms. Do not "
 "be surprised if features presented in this documentation look different on "
 "your computer. The overall presentation will be close enough for you to "
 "recognize it."
 msgstr ""
+"<app>Gibbon</app> sollte auf vielen verschiedenen Computerplattformen "
+"laufen. Seien Sie allerdings nicht überrascht, wenn Dinge, die in dieser "
+"Dokumentation präsentiert werden, auf Ihrem Rechner anders aussehen. Sie "
+"werden dennoch in der Lage sein, die Grundzüge wiederzuerkennen."
 
 #: C/invite.page:8(info/desc)
 msgid "How to ask other people for a match"
-msgstr ""
+msgstr "Wie Sie andere Leute zu einer Partie einladen können"
 
 #: C/invite.page:20(page/title)
 msgid "Inviting Other Players To A Match"
-msgstr ""
+msgstr "Andere zu einer Partie einladen"
 
 #: C/invite.page:21(page/p)
 msgid ""
@@ -2020,6 +2172,10 @@ msgid ""
 "currently logged in. You can invite anybody to a match, that is currently "
 "not playing, and is available for a match."
 msgstr ""
+"In der <link xref=\"players-list\">Spielerliste</link> sehen Sie jeden, der "
+"gerade angemeldet ist. Sie können jeden zu einer Partie einladen, der oder "
+"die nicht gerade eine andere Partie spielt, und seinen Status auf verfügbar "
+"gestellt hat."
 
 #: C/invite.page:27(page/p)
 msgid ""
@@ -2027,6 +2183,10 @@ msgid ""
 "<link xref=\"players-list\">players' list</link> or by invoking the context "
 "menu (right-click or modifier key plus click) on the player's name."
 msgstr ""
+"Sie laden andere Spielerinnen oder Spieler entweder durch Doppelklick auf "
+"die entsprechende Zeile in der <link xref=\"players-list\">Spielerliste</"
+"link> oder durch Aufruf des Kontextmenüs (Recktsklick oder Kontrolltaste mit "
+"Klick auf dem Namen)."
 
 #: C/invite.page:33(page/p)
 msgid ""
@@ -2036,46 +2196,62 @@ msgid ""
 "is that it is difficult to get out of an unlimited match, both for you and "
 "your opponent. See <link xref=\"unlimited-matches\"/> for more information."
 msgstr ""
+"Bevor die Einladung abgesendet wird, können Sie noch die gewünschte Länge "
+"der Partie wählen. Vermeiden Sie, Einladungen für <link xref=\"unlimited-"
+"matches\">unbegrenzte Partien</link> anzunehmen, außer wenn Sie genau "
+"wissen, was Sie tun. Grund ist, dass es sowohl für Sie selbst als auch Ihre "
+"Gegnerin oder Ihren Gegner schwer ist, aus einer unbegrenzten Partie wieder "
+"auszusteigen. Siehe <link xref=\"unlimited-matches\"/> für weitere "
+"Informationen."
 
 #: C/inviters-list.page:8(info/desc)
 msgid "Who is inviting you to a match?"
-msgstr ""
+msgstr "Wer lädt zu einer Partie ein?"
 
 #: C/inviters-list.page:20(page/title)
 msgid "The Inviters List"
-msgstr ""
+msgstr "Die Einladungsliste"
 
 #: C/inviters-list.page:21(page/p)
 msgid ""
 "The inviters list is located in the top-right corner of the <link xref=\"gui-"
 "overview\">main window</link>."
 msgstr ""
+"Die Einladungsliste befindet sich in der oberen rechten Ecke des <link xref="
+"\"gui-overview\">Hauptfensters</link>."
 
 #: C/inviters-list.page:25(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> "
 "The inviters list </media>"
 msgstr ""
+"<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> "
+"Die Einladungsliste </media>"
 
 #: C/inviters-list.page:30(page/p)
 msgid "It has the following columns:"
-msgstr ""
+msgstr "Es gibg folgende Spalten:"
 
 #: C/inviters-list.page:36(item/p)
 msgid ""
 "Clicking it will reject the invitation. You will be asked whether you want "
 "to explain your rejection with a message or not."
 msgstr ""
+"Durch einen Klick können Sie die Einladung abnehmen. Sie werden danach "
+"gefragt, ob Sie Ihrer Ablehnung eine Erklärung hinterherschicken wollen oder "
+"nicht."
 
 #: C/inviters-list.page:44(item/p)
 msgid ""
 "Clicking it will accept the invitation. You will immediately start <link "
 "xref=\"playing\">playing</link>."
 msgstr ""
+"Mit einem Klick nehmen Sie die Einladung an. Sie beginnen dann sofort mit "
+"dem <link xref=\"playing\">Spiel</link>."
 
 #: C/inviters-list.page:50(item/p)
 msgid "The player's name"
-msgstr ""
+msgstr "Name der Spielerin oder des Spielers"
 
 #: C/inviters-list.page:51(item/p)
 msgid ""
@@ -2083,26 +2259,35 @@ msgid ""
 "to start a <link xref=\"tell\">private conversation (chat)</link> with the "
 "player."
 msgstr ""
+"Nach einem Rechtsklick auf den Namen erscheint ein Kontextmenü. Dies erlaubt "
+"Ihenen, eine <link xref=\"tell\">private Unterhaltung</link> mit dieser "
+"Spielerin oder diesem Spieler zu beginnen."
 
 #: C/inviters-list.page:56(item/p)
 msgid ""
 "If you have a saved match with that player, the name will be displayed in "
 "<span style=\"font-weight: bold\">bold</span>."
 msgstr ""
+"Falls Sie eine gespeicherte Partie mit dieser Spielerin oder diesem Spieler "
+"haben, wird der Name <span style=\"font-weight: bold\">fett</span> "
+"dargestellt."
 
 #: C/inviters-list.page:62(item/p)
 msgid "Length"
-msgstr ""
+msgstr "Länge"
 
 #: C/inviters-list.page:63(item/p)
+#, fuzzy
 msgid ""
 "The desired match length. <link xref=\"unlimited-matches\">Unlimited "
-"matches</link> are represented by the infinity sign ∞."
+"matches</link> are represented by the infinity sign “∞“."
 msgstr ""
+"Die gewünschte Länge der Partie. <link xref=\"unlimited-matches\">Unendliche "
+"Partien</link> werden durch das Unendlickeitszeichen „∞“ repräsentiert."
 
 #: C/inviters-list.page:69(item/p)
 msgid "Location"
-msgstr ""
+msgstr "Geographische Position"
 
 #: C/inviters-list.page:70(item/p)
 msgid ""
@@ -2110,26 +2295,33 @@ msgid ""
 "flag. Moving the mouse over the flag will display the country name and the "
 "IP address of the player."
 msgstr ""
+"Die <link xref=\"geo-ip\">geographische Position</link> der Spielerin oder "
+"des Spielers wird als Flagge dargestellt. Wenn Sie den Mauszeiger über die "
+"Flagge bewegen, erscheint nach kurzer Zeit der Name des entsprechenden "
+"Landes und die Internetadresse der Spielerin oder des Spielers."
 
 #: C/inviters-list.page:77(item/p)
 msgid "Rating"
-msgstr ""
+msgstr "Rating"
 
 #: C/inviters-list.page:78(item/p)
 msgid "The player's <link xref=\"rating\">rating</link>."
 msgstr ""
+"Das <link xref=\"rating\">Rating</link> der Spielerin oder des Spielers."
 
 #: C/inviters-list.page:83(item/p)
 msgid "Experience"
-msgstr ""
+msgstr "Erfahrung"
 
 #: C/inviters-list.page:84(item/p)
 msgid "The player's <link xref=\"rating\">experience</link>."
 msgstr ""
+"Die <link xref=\"rating\">Erfahrungspunkte</link> der Spielerin oder des "
+"Spielers."
 
 #: C/inviters-list.page:89(item/p)
 msgid "Software"
-msgstr ""
+msgstr "Software"
 
 #: C/inviters-list.page:90(item/p)
 msgid ""
@@ -2138,14 +2330,20 @@ msgid ""
 "here: players using <app>Gibbon</app>, players using mobile phones, computer "
 "players, and players using other software."
 msgstr ""
+"In dieser Spalte erscheint ein Piktogramm, das für die jeweils eingesetzte "
+"Software steht. <app>Gibbon</app> unterscheidet hierbei zwischen vier "
+"verschiedenen Gruppen, nämlich <app>Gibbon</app> als Software, Anwendungen "
+"für Mobiltelefone, Software für Computerspieler, und alle andere Software."
 
 #: C/inviters-list.page:97(item/p)
 msgid "The mouseover tooltip reveals more details about the software used."
 msgstr ""
+"Wenn Sie den Mauszeiger über die Spalte bewegen, erscheint nach kurzer Zeit "
+"ein genauerer Hinweis über die eingesetzte Software."
 
 #: C/inviters-list.page:102(item/p) C/reliability.page:18(page/title)
 msgid "Reliability"
-msgstr ""
+msgstr "Verlässlichkeit"
 
 #: C/inviters-list.page:103(item/p)
 msgid ""
@@ -2153,6 +2351,10 @@ msgid ""
 "<app>Gibbon</app>. You will normally want to choose only players with a "
 "green reliability marker for your matches."
 msgstr ""
+"Die <link xref=\"reliability\">Verlässlichkeit</link> dieser Spielerin oder "
+"dieses Spielers, wie sie von <app>Gibbon</app> gemessen wird. Normalerweise "
+"werden Sie vermeiden, mit Leuten zu spielen, für die keine grüne "
+"Verlässlichkeitsmarkierung angezeigt wird."
 
 #: C/inviters-list.page:108(item/p)
 msgid "The mouseover tooltip will explain the measured values."
@@ -3056,22 +3258,6 @@ msgstr ""
 "Das funktioniert allerdings nur, während Sie <link xref=\"watching"
 "\">zuschauen</link>. Falls Sie die einzige Person sind, die dem Spiel "
 "zuschaut, ist die Funktion natürlich nicht sehr nützlich."
-
-#: C/why-bg.page:4(page/title)
-msgid "What Is the BG in <gui style=\"\">gibbon.bg</gui>?"
-msgstr ""
-
-#: C/why-bg.page:7(info/desc)
-msgid "No, not backgammon. Bulgaria!"
-msgstr ""
-
-#: C/why-bg.page:19(page/p)
-msgid ""
-"Bulgaria is a most beautiful country in South-Eastern Europe, that the "
-"author of <app>Gibbon</app> has the honor of being a guest of for a couple "
-"of years already. If you associate the top-level domain <sys>.bg</sys> with "
-"backgammon, that is pure coincidence."
-msgstr ""
 
 #~ msgid ""
 #~ "Leave the current game. Please do not make a habit of that. See <link "

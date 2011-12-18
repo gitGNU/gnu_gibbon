@@ -26,23 +26,9 @@
   <p>Mögliche Teilnehmer des Chats am Spielbrett sind die Gegnerin bzw. der Gegner und möglicherweise Publikum (die <em>Kibitze</em>). Wenn Sie selber spielen, können Sie Sich also mit Ihrer Gegnerin oder Ihrem Gegner, mit eventuellen Zuschauerinnen und Zuschauern, oder allen auf einmal unterhalten. Wenn Sie dagegen zuschauen, haben Sie die Wahl entweder nur die anderen Kibitze oder aber die Kibitze und die Spielenden anzusprechen.</p>
   <p>Zwei Buttons oberhalb des Spielbrett-Chats visualisieren Ihre aktuelle Wahl:</p>
   <p><media type="image" mime="src/png" src="figures/say.png"> Die beiden Spielerinnen „hören“ Ihre Nachrichten </media></p>
-  <p>Dies ist der Button <gui style="button">Sagen</gui> (Kommando <cmd>say</cmd>). Wenn dieser Button gedrückt ist, gehen Ihre Nachrichten auch an die beiden gerade Spielenden.</p>
+  <p>Dies ist der Button <gui style="button">Sagen</gui> (Befehl <cmd>say</cmd>). Wenn dieser Button gedrückt ist, gehen Ihre Nachrichten auch an die beiden gerade Spielenden.</p>
   <p><media type="image" mime="src/png" src="figures/whisper.png"> Publikum/Kibitze „hören“ Ihre Nachrichten </media></p>
-  <p>
-    This is the <gui style="button">whisper</gui> button.  If it
-    is selected, it means that your message should go to the
-    spectators.
-  </p>
-  <p>
-    Not all combinations make sense in all situations.  For example,
-    when nobody is <link xref="watching">watching</link> there is
-    no point in talking to spectators.
-  </p>
-  <p>
-    When you are more comfortable with a command like approach, you
-    can also use a drop down next to the message entry.  It has the
-    labels <gui style="label">Say</gui> for addressing your opponent only,
-    <gui style="label">Kibitz</gui> for everybody, and <gui style="label">Whisper</gui>
-    for spectators only.
-  </p>
+  <p>Dies ist der Button <gui style="button">Flüstern</gui>. Wenn er selektiert ist, bedeutet dies, dass Ihre Nachricht an die Zuschauerinnen und Zuschauer gesandt wird.</p>
+  <p>Natürlich ergeben nicht alle Kombinationen in allen Situationen Sinn. Wenn beispielsweise niemand <link xref="watching">zuschaut</link>, hat es auch keinen Sinn mit Zuschauerinnen oder Zuschauern zu sprechen.</p>
+  <p>Wenn Sie für ein Kommandozeilenkonzept mehr übrig haben, können Sie stattdessen auch die Textauswahl neben der Eingabemöglichkeit für die Nachrichten nutzen. Sie können dort entweder <gui style="label">Sagen</gui> für Mitteilungen an Ihre Gegnerin oder Ihren Gegner auswählen, oder <gui style="label">Kibitzen</gui> für Mitteilungen an alle, und <gui style="label">Flüstern</gui> für Mitteilungen nur an Zuschauerinnen und Zuschauer.</p>
 </page>

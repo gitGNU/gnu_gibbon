@@ -4,9 +4,7 @@
     <link type="guide" xref="playing#invitations"/>
     <link type="guide" xref="index#getting-started"/>
     <link type="guide" xref="gui#elements"/>
-    <desc>
-      Who is inviting you to a match?
-    </desc>
+    <desc>Wer lädt zu einer Partie ein?</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,94 +20,51 @@
     </mal:credit>
   </info>
 
-  <title>The Inviters List</title>
-  <p>
-    The inviters list is located in the top-right corner
-    of the <link xref="gui-overview">main window</link>.
-  </p>
-  <p>
-    <media type="image" mime="src/png" src="figures/inviters-list.png">
-      The inviters list
-    </media>
-  </p>
-  <p>
-    It has the following columns:
-  </p>
+  <title>Die Einladungsliste</title>
+  <p>Die Einladungsliste befindet sich in der oberen rechten Ecke des <link xref="gui-overview">Hauptfensters</link>.</p>
+  <p><media type="image" mime="src/png" src="figures/inviters-list.png"> Die Einladungsliste </media></p>
+  <p>Es gibg folgende Spalten:</p>
   <list type="numbered">
     <item>
       <p>Ablehnen</p>
-      <p>
-        Clicking it will reject the invitation.  You will be asked
-        whether you want to explain your rejection with a message
-        or not.
-      </p>
+      <p>Durch einen Klick können Sie die Einladung abnehmen. Sie werden danach gefragt, ob Sie Ihrer Ablehnung eine Erklärung hinterherschicken wollen oder nicht.</p>
     </item>
     <item>
       <p>Annehmen</p>
-      <p>
-        Clicking it will accept the invitation.  You will immediately
-        start <link xref="playing">playing</link>.
-      </p>
+      <p>Mit einem Klick nehmen Sie die Einladung an. Sie beginnen dann sofort mit dem <link xref="playing">Spiel</link>.</p>
     </item>
     <item>
-      <p>The player's name</p>
-      <p>
-        Right-clicking the player's name will pop up a context menu.
-        It allows you to start a <link xref="tell">private
-        conversation (chat)</link> with the player.
-      </p>
-      <p>
-        If you have a saved match with that player, the name will
-        be displayed in <span style="font-weight: bold">bold</span>.
-      </p>
+      <p>Name der Spielerin oder des Spielers</p>
+      <p>Nach einem Rechtsklick auf den Namen erscheint ein Kontextmenü. Dies erlaubt Ihenen, eine <link xref="tell">private Unterhaltung</link> mit dieser Spielerin oder diesem Spieler zu beginnen.</p>
+      <p>Falls Sie eine gespeicherte Partie mit dieser Spielerin oder diesem Spieler haben, wird der Name <span style="font-weight: bold">fett</span> dargestellt.</p>
     </item>
     <item>
-      <p>Length</p>
+      <p>Länge</p>
       <p>
         The desired match length.  <link xref="unlimited-matches">Unlimited
-        matches</link> are represented by the infinity sign ∞.
+        matches</link> are represented by the infinity sign “∞“.
       </p>
     </item>
     <item>
-      <p>Location</p>
-      <p>
-        The <link xref="geo-ip">location</link> of the player is displayed
-        as a flag.  Moving the mouse over the flag will display the country
-        name and the IP address of the player.
-      </p>
+      <p>Geographische Position</p>
+      <p>Die <link xref="geo-ip">geographische Position</link> der Spielerin oder des Spielers wird als Flagge dargestellt. Wenn Sie den Mauszeiger über die Flagge bewegen, erscheint nach kurzer Zeit der Name des entsprechenden Landes und die Internetadresse der Spielerin oder des Spielers.</p>
     </item>
     <item>
       <p>Rating</p>
-      <p>
-        The player's <link xref="rating">rating</link>.
-      </p>
+      <p>Das <link xref="rating">Rating</link> der Spielerin oder des Spielers.</p>
     </item>
     <item>
-      <p>Experience</p>
-      <p>
-        The player's <link xref="rating">experience</link>.
-      </p>
+      <p>Erfahrung</p>
+      <p>Die <link xref="rating">Erfahrungspunkte</link> der Spielerin oder des Spielers.</p>
     </item>
     <item>
       <p>Software</p>
-      <p>
-        In this column, an icon representing the client software that player
-        is using is displayed.  <app>Gibbon</app> distinguishes four
-        different types here: players using <app>Gibbon</app>, players
-        using mobile phones, computer players, and players using other
-        software.
-      </p>
-      <p>
-        The mouseover tooltip reveals more details about the software used.
-      </p>
+      <p>In dieser Spalte erscheint ein Piktogramm, das für die jeweils eingesetzte Software steht. <app>Gibbon</app> unterscheidet hierbei zwischen vier verschiedenen Gruppen, nämlich <app>Gibbon</app> als Software, Anwendungen für Mobiltelefone, Software für Computerspieler, und alle andere Software.</p>
+      <p>Wenn Sie den Mauszeiger über die Spalte bewegen, erscheint nach kurzer Zeit ein genauerer Hinweis über die eingesetzte Software.</p>
     </item>
     <item>
-      <p>Reliability</p>
-      <p>
-        The player's <link xref="reliability">reliability</link> as measured
-        by <app>Gibbon</app>.  You will normally want to choose only players
-        with a green reliability marker for your matches.
-      </p>
+      <p>Verlässlichkeit</p>
+      <p>Die <link xref="reliability">Verlässlichkeit</link> dieser Spielerin oder dieses Spielers, wie sie von <app>Gibbon</app> gemessen wird. Normalerweise werden Sie vermeiden, mit Leuten zu spielen, für die keine grüne Verlässlichkeitsmarkierung angezeigt wird.</p>
       <p>
         The mouseover tooltip will explain the measured values.
       </p>

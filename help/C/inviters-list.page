@@ -62,7 +62,7 @@
       <p>Length</p>
       <p>
         The desired match length.  <link xref="unlimited-matches">Unlimited
-        matches</link> are represented by the infinity sign &#8734;.
+        matches</link> are represented by the infinity sign “&#8734;“.
       </p>
     </item>
     <item>

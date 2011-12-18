@@ -19,26 +19,21 @@
     </mal:credit>
   </info>
 
-  <title>
-    <media type="image" mime="image/png" src="figures/gibbon-logo.png">
-      Gibbon logo
-    </media>
-    Gibbon 
-  </title>
+  <title><media type="image" mime="image/png" src="figures/gibbon-logo.png"> Das  Gibbon-Logo </media> Gibbon</title>
 
   <section id="getting-started" style="2column">
-    <title>Getting Started</title>
+    <title>Kurzanleitung</title>
   </section>
   <section id="general-concepts" style="2column">
-    <title>General Concepts</title>
+    <title>Allgemeine Konzepte</title>
   </section>
   <section id="troubleshooting" style="2column">
-    <title>Help and Troubleshooting</title>
+    <title>Hilfe und Fehlerbehebung</title>
     <section id="faq" style="2column">
-      <title>Frequently Asked Questions</title>
+      <title>Häufige Fragen</title>
     </section>
   </section>
   <section id="misc" style="2column">
-    <title>Miscellaneous</title>
+    <title>Sonstiges</title>
   </section>
 </page>

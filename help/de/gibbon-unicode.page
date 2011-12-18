@@ -3,10 +3,7 @@
   <info>
     <link type="guide" xref="developer-resources"/>
     <link type="seealso" xref="chatting"/>
-    <desc>
-      Specification for allowing Unicode characters
-      in communication between players on FIBS
-    </desc>
+    <desc>Spezifikation zur Verwendung von Unicodezeichen in der Kommunikation zwischen Benutzerinnen und Benutzern auf FIBS</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,11 +19,11 @@
     </mal:credit>
   </info>
 
-  <title>Gibbon Unicode Extension for FIBS</title>
+  <title>Gibbon-Unicode-Erweiterung für FIBS</title>
   <p>
     FIBS traditionally allows only 7-bit characters to be
-    transmitted in communication between players (
-      <link xref="say"><cmd>say</cmd></link>,
+    transmitted in communication between players 
+      (<link xref="say"><cmd>say</cmd></link>,
       <link xref="kibitz"><cmd>kibitz</cmd></link>,
       <link xref="whisper"><cmd>whisper</cmd></link>,
       <link xref="tell"><cmd>tell</cmd></link>,
@@ -35,89 +32,26 @@
     Characters outside of the range of US-ASCII are
     replaced by a question mark (“?”).
   </p>
-  <p>
-    <app>Gibbon</app> automatically encodes characters
-    outside of the range of US-ASCII, when transmitting
-    it as part of the message body of the above commands to the server, 
-    and automatically decodes them when they are received as part of
-    the message body of one of the above commands from the server.
-  </p>
+  <p><app>Gibbon</app> kodiert Zeichen außerhalb des Zeichenvorrats von US-ASCII bei der Übermittlung an den Server automatisch, wenn sie zum Nachrichtenteil eines der obigen Befehle sind, und dekodiert sie im umgekehrten Falle automatisch.</p>
   <section>
-    <title>Encoding</title>
-    <p>
-      Only the body of a message of one of the above mentioned
-      FIBS CLIP commands is subject to encoding.
-    </p>
-    <p>
-      A conforming application <em>must</em> encode
-      all characters above the 
-      <link href="http://www.unicode.org/">Unicode</link>
-      code point +U007F as named HTML entities as described
-      in <link href="http://www.w3.org/TR/html401/sgml/entities.html"/>
-      or as numerical entities as described in 
-      <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/>.
-      A conforming application <em>should</em> prefer
-      named entities over numerical entities wherever
-      possible.
-    </p>
-    <p>
-      A conforming application <em>must</em> encode
-      the character “&amp;” (ampersand, U+0026)
-      according to the above specification, if it
-      can be confused with an escaped sequence as described
-      in this protocol.  If the ampersand cannot be
-      confused with a valid entity, a conforming
-      application <em>should not</em> encode the 
-      ampersand character.
-    </p>
-    <p>
-      A conforming application <em>should not</em> encode
-      any other characters, especially not
-      the XML special characters 
-        “&lt;” (less than, U+003C),
-        “&gt;” (greater than, U+003E),
-        “"” (double quote, U+0022), and
-        “'” (apostrophe, U+0027).
-    </p>
+    <title>Kodierung</title>
+    <p>Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle wird kodiert.</p>
+    <p>Eine konforme Applikation <em>muss</em> alle Zeichen oberhalb von <link href="http://www.unicode.org/">Unicode</link> +U007F als benannte HTML-Entitäten gemäß <link href="http://www.w3.org/TR/html401/sgml/entities.html"/> oder als nummerische Entitäten gemäß <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/>. Eine konforme Applikation <em>sollte</em> wann immer möglich benamte Entitäten nummerischen Entitäten vorziehen.</p>
+    <p>Eine konforme Applikation <em>muss</em> das Zeichen „&amp;” (Et-Zeichen bzw. Kaufmanns-Und, U+0026) gemäß dieser Spezifikation kodieren, wenn es ansonsten als Teil einer Escape-Sequenz gemäß der Beschreibung in diesem Protokoll gelten könnte. Falls das Zeichen dagegen nicht mit einer gültigen Entität verwechselt werden kann, <em>sollte</em> eine konforme Applikation dieses Zeichen <em>nicht</em> kodieren.</p>
+    <p>Eine konforme Applikation <em>sollte keine</em> anderen Zeichen kodieren, insbesondere nicht die XML-Spezialzeichen „&lt;” (Kleiner-Als-Zeichen, U+003C), “&gt;” (Größer-Als-Zeichen, U+003E), “"” (doppelte Anführungszeichen, U+0022) und “'” (Apostroph, U+0027).</p>
   </section>
   <section>
-    <title>Decoding</title>
-    <p>
-      Only the body of a message of one of the above mentioned
-      FIBS CLIP commands is subject to decoding.
-    </p>
-    <p>
-      A conforming application <em>must</em> decode
-      all valid named entity references as described in
-      <link href="http://www.w3.org/TR/html401/sgml/entities.html"/>
-      or numerical entities as
-      described in 
-      <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/>.
-    </p>
-    <p>
-      A conforming application <em>should not</em> treat
-      incomplete or other invalid entity references in any
-      special way or display them in any special way.
-    </p>
+    <title>Dekodieren</title>
+    <p>Lediglich der Nachrichtenteil eines der obigen FIBS-CLIP-Befehle darf dekodiert werden.</p>
+    <p>Eine konforme Applikation <em>muss</em> alle gültigen benamten Entitäten gemäß <link href="http://www.w3.org/TR/html401/sgml/entities.html"/> oder nummerischen Entitäten gemäß <link href="http://www.w3.org/TR/html401/charset.html#h-5.3"/> dekodieren.</p>
+    <p>Eine konforme Applikation <em>sollte</em> unvollständige oder auf andere Weise ungültige Entitäten weder besonders behandeln, noch auf besondere Weise darstellen.</p>
   </section>
   <section>
-    <title>Rationale</title>
+    <title>Begründung</title>
+    <p>Die Beschränkung auf US-ASCII-Zeichen im FIBS-Protokoll macht es schwer oder gar unmöglich in einer anderen Sprache als Englisch zu kommunizieren. Diese Protokollerweiterung versucht diese Beschränkung auf wenigst störende Art aufzuheben.</p>
+    <p>Die Benutzung benamter Entitäten für die Kodierung von Zeichen außerhalb des Vorrats von US-ASCII hat den Vorteil, dass Sie gut bekannt und bis zu einem gewissen Grade auch von Menschen lesbar sind.  Selbst für Benutzerinnen und Benutzer von Software, welche diese Spezifikation nicht unterstützt, ist es einfacher, die Bedeutung von „5 &amp;euro;“ zu erfassen, als zu verstehen, was unter „5 ?“ zu verstehen ist.</p>
     <p>
-      The US-ASCII restriction in the FIBS protocol makes it
-      hard or impossible to communicate in most languages
-      other than English.  This extension tries to overcome
-      this restriction in the least obtrusive way possible.
-    </p>
-    <p>
-      Using named HTML entities for encoding characters outside
-      of the range of US-ASCII has the advantage that they are
-      well-known and to a certain extent human-readable.  Even
-      for people using a client that does not support this extension
-      it is easier to decipher the meaning of “5 &amp;euro;” than
-      to guess what “5 ?” means.
-    </p>
-    <p>
-      Communication in language that use a script for which no
+      Communication in languages that use a script for which no
       named entities are defined, will be completely unreadable
       to people that are not using a client supporting this protocol.
       On the other hand, taking part in such communication does not

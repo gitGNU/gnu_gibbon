@@ -4,9 +4,7 @@
     <link type="guide" xref="gui#elements"/>
     <link type="seealso" xref="players-list"/>
     <link type="seealso" xref="server-console"/>
-    <desc>
-      The multi-purpose area in the middle right 
-    </desc>
+    <desc>Der Mehrzweckbereich auf dem mittleren rechten Teil des Hauptfensters</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,19 +20,11 @@
     </mal:credit>
   </info>
 
-  <title>The Information Area</title>
-  <p>
-    The information area at the middle right of the main window
-    serves multiple purposes.  You switch them by clicking the
-    tabs at the top.
-  </p>
-  <p>
-    <media type="image" mime="src/png" src="figures/players-list.png">
-      <p>The Information Area</p>
-    </media>
-  </p>
+  <title>Der Informationsbereich</title>
+  <p>Der Informationsbereich im mittleren rechten Teil des Hauptfensters dient verschiedenen Zwecken. Sie können zwischen den Funktionen durch Klicken der Reiter oben wechseln.</p>
+  <p><media type="image" mime="src/png" src="figures/players-list.png"> <p>Der Informationsbereich</p> </media></p>
 
   <section id="tabs" style="2column">
-    <title>Tabs In the Information Area</title>
+    <title>Reiter im Informationsbereich</title>
   </section>
 </page>
