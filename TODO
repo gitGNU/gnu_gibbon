@@ -68,4 +68,7 @@
 - Make game chat area not editable.
 - When accepting a double, update position.  Otherwise the cube will
   jump on the next board state received by the server.
-
+- When resigning, hide the cup.
+- Unhandled messages:
+  Please wait for ... to join, too.
+  You invited ... to resume a saved match.
