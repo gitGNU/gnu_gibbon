@@ -586,6 +586,14 @@ gibbon_session_process_server_line (GibbonSession *self,
                  */
                 retval = GIBBON_CLIP_CODE_GAME_SCORE;
                 break;
+        case GIBBON_CLIP_CODE_WAIT_JOIN_TOO:
+                /* Ignore.  */
+                retval = GIBBON_CLIP_CODE_WAIT_JOIN_TOO;
+                break;
+        case GIBBON_CLIP_CODE_RESUME_CONFIRMATION:
+                /* Ignore.  */
+                retval = GIBBON_CLIP_CODE_RESUME_CONFIRMATION;
+                break;
         case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
                 break;
