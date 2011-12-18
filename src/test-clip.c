@@ -1217,6 +1217,15 @@ static struct test_case test_between32 = {
                 }
 };
 
+static struct test_case test_between33 = {
+                "** Please wait for GibbonTestA to join too.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "312" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
@@ -1867,6 +1876,7 @@ static struct test_case *test_cases[] = {
                 &test_between30,
                 &test_between31,
                 &test_between32,
+                &test_between33,
 
                 &test_resign00,
                 &test_resign01,
