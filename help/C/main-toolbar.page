@@ -4,7 +4,7 @@
   <info>
     <link type="guide" xref="gui#elements"/>
     <desc>
-      The large toolbar above the board
+      The large toolbar beneath the menu
     </desc>
     <credit type="author">
       <name>Guido Flohr</name>
@@ -17,7 +17,7 @@
 
   <title>The Main Toolbar</title>
   <p>
-    The main toolbar above initially looks like this:
+    The main toolbar initially looks like this:
   </p>
   <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
     <p>The Main Toolbar When Disconnected</p>

@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
 "POT-Creation-Date: 2011-12-19 00:29+0200\n"
-"PO-Revision-Date: 2011-12-19 00:29+0200\n"
+"PO-Revision-Date: 2011-12-20 00:28+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -1296,8 +1296,8 @@ msgid ""
 "It is a well-known fact that all backgammon software cheats. <app>FIBS</app> "
 "makes no exception here."
 msgstr ""
-"Es ist ja allgemein bekannt, dass alle Backgammonsoftware schummelt. "
-"<app>FIBS</app> macht da keine Ausnahme."
+"Es ist ja allgemein bekannt, dass jede Backgammonsoftware schummelt. "
+"<app>FIBS</app> macht da leider keine Ausnahme."
 
 #: C/fibs-cheat.page:23(page/p)
 msgid ""
@@ -1306,8 +1306,8 @@ msgid ""
 "about the internals of the algorithm:"
 msgstr ""
 "FIBS verwendet gezinkte Würfel. Die Augenzahl wird mithilfe eines sorgfältig "
-"ausgedachten, geheimen Algorithmus' errechnet. Mithilfe umfangreicher "
-"statistischer Analysen hat hat man heute den folgenden, gesicherten "
+"ausgedachten, geheimen Algorithmus' errechnet. Aufgrund umfangreicher "
+"statistischer Analysen hat man jedoch heute den folgenden, gesicherten "
 "Erkenntnisstand über den Algorithmus erreicht."
 
 #: C/fibs-cheat.page:31(item/p)
@@ -2358,11 +2358,11 @@ msgstr ""
 
 #: C/inviters-list.page:108(item/p)
 msgid "The mouseover tooltip will explain the measured values."
-msgstr ""
+msgstr "Wenn Sie den Mauszeiger über die Markierung halten, erscheint nach kurzer Zeit ein Hinweistext mit den genauen gemessenen Werten."
 
 #: C/inviters-list.page:113(item/p)
 msgid "Saved Matches"
-msgstr ""
+msgstr "Gespeicherte Partien"
 
 #: C/inviters-list.page:114(item/p)
 msgid ""
@@ -2371,15 +2371,15 @@ msgid ""
 "server for a certain time. That means that both the “culprit” and the "
 "“victim” have their “saved-count” increased. That being said, this number "
 "has limited significance."
-msgstr ""
+msgstr "Hier erscheint die Anzahl der Partien, die für die betreffende Spielerin oder den betreffenden Spieler auf dem Server gespeichert wurden. Vorzeitig abgebrochene Partien werden für eine gewisse Zeit auf dem Server gespeichert. Diese Zahl steigt also sowohl für den Verursacher als auch das „Opfer“ des Spielabbruches an. Dementsprechend hat dieser Wert nur begrenzte Aussagekraft."
 
 #: C/inviters-list.page:123(item/p)
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: C/inviters-list.page:124(item/p)
 msgid "The mail address this player has given, if any."
-msgstr ""
+msgstr "Die E-Mail-Adresse der Benutzerin oder des Benutzers, sofern angegeben."
 
 #: C/kibitz.page:8(info/desc)
 msgid "Talking to both other spectators (watchers) and the players"
@@ -2396,14 +2396,14 @@ msgid ""
 "\"button\">say</gui> and the <gui style=\"button\">whisper</gui> button "
 "while typing text into the <link xref=\"chatting#game-chat\">game chat area</"
 "link>."
-msgstr ""
+msgstr "Wenn Sie mit allen Leuten am Brett sprechen wollen, also den beiden Spielerinnen oder Spielern, und möglichen Zuschauerinnen und Zuschauern, müssen Sie sowohl den Button <gui style=\"button\">Sagen</gui> als auch den Button <gui style=\"button\">Flüstern</gui> aktivieren, wenn Sie Ihre Nachricht absenden."
 
 #: C/kibitz.page:29(page/p)
 msgid ""
 "If you are currently playing, both your opponent and spectators will see "
 "your message. If you are <link xref=\"watching\">watching</link> both "
 "players and possible other spectators will see your message."
-msgstr ""
+msgstr "Wenn Sie im Moment spielen, werden sowohl Ihre Gegnerin bzw. Ihr Gegner als auch die Zuschauerinnen oder Zuschauer Ihre Nachricht sehen.  Wenn Sie dagegen selber <link xref=\"watching\">zusehen</link>, sehen sowohl die beiden Spielerinnen bzw. Spieler als auch das Publikum die Mitteilung."
 
 #: C/libgsgf.page:6(info/desc)
 msgid "CLIP is the <em>CLIent</em> <em>P</em>rotocol for FIBS"
@@ -2413,7 +2413,7 @@ msgstr ""
 
 #: C/libgsgf.page:19(page/title)
 msgid "Gibbon SGF Library libgsgf"
-msgstr ""
+msgstr "Gibbons SGF-Bibliothek libgsgf"
 
 #: C/libgsgf.page:20(page/p)
 msgid ""
@@ -2421,14 +2421,14 @@ msgid ""
 "Game Format SGF</link> as its native format for storing games. This is the "
 "same format that the popular backgammon software <link href=\"http://www."
 "gnubg.org/\">GNU Backgammon</link> uses."
-msgstr ""
+msgstr "<app>Gibbon</app> verwendet das <link href=\"http://www.red-bean.com/sgf/\">Smart Game Format SGF</link> zum Speichern von Partien. Dies ist das gleiche Format, dass die beliebte Backgammon-Software <link href=\"http://www.gnubg.org/\">GNU Backgammon</link> verwendet."
 
 #: C/libgsgf.page:28(page/p)
 msgid ""
 "<app>Gibbon</app> has its own library for reading and writing SGF data. This "
 "library is called <app><em>libgsgf</em></app> and could also be used as a "
 "stand-alone library."
-msgstr ""
+msgstr "<app>Gibbon</app> hat eine eigene Programmierbibliothek zum Lesen und Schreiben von SGF-Daten, namens <app><em>libgsgf</em></app>. Libgsgf kann auch als eigenständige Bibliothek verwendet werden."
 
 #: C/libgsgf.page:34(page/p)
 msgid ""
@@ -2436,108 +2436,104 @@ msgid ""
 "together with <app>Gibbon</app> on your machine. Otherwise, you will always "
 "find the latest documtation at <link href=\"http://www.gibbon.bg/gibbon/docs/"
 "libgsgf/\"/>."
-msgstr ""
+msgstr "Die Programmierdokumentation für <app>libgsgf</app> wurde eventuell zusammen mit <app>Gibbon</app> auf Ihrer Maschine installiert. Andernfalls, finden Sie die neueste Version immer unter <link href=\"http://www.gibbon.bg/gibbon/docs/libgsgf/\"/>."
 
 #: C/main-menu.page:6(info/desc)
 msgid "The Main Application Menu"
-msgstr ""
+msgstr "Das allgemeine Menü für die Applikation"
 
 #: C/main-menu.page:18(page/title)
 msgid "The Main Menu"
-msgstr ""
+msgstr "Das Hauptmenü"
 
 #: C/main-menu.page:19(page/p)
 msgid ""
 "The main menu is only partly implemented at the moment. It will be "
 "documented later."
-msgstr ""
+msgstr "Das Hauptmenü ist im Moment noch unvollständig und wird zu einem späteren Zeitpunkt implementiert werden."
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/main-toolbar.page:22(media)
-#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/main-toolbar-disconnected.png' "
 "md5='9e97ded55807e1ade20f0062511822e0'"
-msgstr "original"
+msgstr "translated"
 
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/main-toolbar.page:54(media)
-#, fuzzy
 msgctxt "_"
 msgid ""
 "external ref='figures/main-toolbar-connected.png' "
 "md5='aea53a846d3ea506098d3225e8b026f1'"
-msgstr "original"
+msgstr "translated"
 
 #: C/main-toolbar.page:6(info/desc)
-#, fuzzy
 msgid "The large toolbar above the board"
-msgstr "Die kleine Werkzeugliste oberhalb des Spielbretts"
+msgstr "Die große Werkzeugleiste unterhalb des Menüs"
 
 #: C/main-toolbar.page:18(page/title)
-#, fuzzy
 msgid "The Main Toolbar"
-msgstr "Die Spielbrett-Werkzeugleiste"
+msgstr "Die Hauptwerkzeugleiste"
 
 #: C/main-toolbar.page:19(page/p)
 msgid "The main toolbar above initially looks like this:"
-msgstr ""
+msgstr "Die Hauptwerkzeugleiste sieht im ursprünglichen Zustand folgendermaßen aus:"
 
 #: C/main-toolbar.page:23(media/p)
 msgid "The Main Toolbar When Disconnected"
-msgstr ""
+msgstr "Die Hauptwerkzeugleiste ohne Serververbindung"
 
 #: C/main-toolbar.page:32(item/p)
 msgid "Connect"
-msgstr ""
+msgstr "Verbinden"
 
 #: C/main-toolbar.page:33(item/p)
 msgid "Click to <link xref=\"connect\">connect</link>, you guessed it."
-msgstr ""
+msgstr "Klicken Sie, um sich zu <link xref=\"connect\">verbinden</link>. Ja, das haben Sie möglicherweise schon erraten."
 
 #: C/main-toolbar.page:38(item/p) C/main-toolbar.page:68(item/p)
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: C/main-toolbar.page:39(item/p)
 msgid "This button has no function, while you are disconnected."
-msgstr ""
+msgstr "Dieser Button hat keine Funktion, wenn Sie nicht mit einem Server verbunden sind."
 
 #: C/main-toolbar.page:44(item/p) C/main-toolbar.page:78(item/p)
 msgid "Quit"
-msgstr ""
+msgstr "Beenden"
 
 #: C/main-toolbar.page:45(item/p)
 msgid "Click to terminate the program."
-msgstr ""
+msgstr "Klicken Sie hier, um das Programm zu beenden."
 
 #: C/main-toolbar.page:50(page/p)
 msgid ""
 "Once you are <link xref=\"connect\">connected</link> to a server, the "
 "toolbar rather looks like this:"
-msgstr ""
+msgstr "Sobald Sie mit einem Server <link xref=\"connect\">verbunden</link> sind, ändert die Werkzeugliste ihr Erscheinungsbild:"
 
 #: C/main-toolbar.page:55(media/p)
 msgid "The Main Toolbar When Connected"
-msgstr ""
+msgstr "Die Hauptwerkzeugleiste im verbundenen Zustand"
 
 #: C/main-toolbar.page:59(item/p)
 msgid "Disonnect"
-msgstr ""
+msgstr "Trennen"
 
 #: C/main-toolbar.page:60(item/p)
 msgid ""
 "Click to <link xref=\"connect\">disconnect</link>. This will terminate your "
 "ongoing match. The server will save your match but normally you should play "
 "your matches to the end before you disconnect."
-msgstr ""
+msgstr "Klicken Sie hier, um eine bestehende Verbindung zu <link xref=\"connect\">trennen</link>. Laufende Partien werden unterbrochen. Der Server wird die Partie speichern, aber Sie sollten normalerweise Ihre Partien zu Ende spielen."
 
 #: C/main-toolbar.page:69(item/p)
 msgid ""
@@ -2545,32 +2541,32 @@ msgid ""
 "that means you are available for playing and other people can invite you to "
 "matches. Clicking it will toggle your state to <gui style=\"label\">Not "
 "Ready</gui> and you can neither get invited or invite other people."
-msgstr ""
+msgstr "Im obigen Zustand ist ihr Status <gui style=\"label\">Bereit</gui>. Sie stehen also bereit und andere Leute können Sie zu Partien einladen. Durch Klicken auf den Button ändern Sie Ihren Zustand auf <gui style=\"label\">Beschäftigt</gui>, und Sie können weder eingeladen werden, noch andere Menschen zu einer Partie einladen."
 
 #: C/main-toolbar.page:79(item/p)
 msgid ""
 "Click to terminate the program. That will also terminate your ongoing match. "
 "The server will save your match but normally you should play your matches to "
 "the end before you disconnect."
-msgstr ""
+msgstr "Klicken Sie, um das Programm zu beenden. Damit werden auch Ihre laufenden Partien beendet. Der Server wird diese Partien zwar zwischenspeichern, aber normalerweise sollten Sie keine Partien vorzeitig beenden."
 
 #: C/playing.page:8(info/title)
 msgctxt "link"
 msgid "Playing Backgammon"
-msgstr ""
+msgstr "Backgammon spielen"
 
 #: C/playing.page:9(info/title)
 msgctxt "text"
 msgid "Playing Backgammon"
-msgstr ""
+msgstr "Backgammon spielen"
 
 #: C/playing.page:10(info/desc)
 msgid "Rolling the dice, moving checkers, using the cube, etc."
-msgstr ""
+msgstr "Würfeln, Ziehen, Doppeln etc."
 
 #: C/playing.page:20(page/title)
 msgid "Playing Backgammon"
-msgstr ""
+msgstr "Backgammon spielen"
 
 #: C/playing.page:22(page/p)
 msgid ""
@@ -2578,29 +2574,29 @@ msgid ""
 "backgamon with humans at a real board. But it is very similar to the way you "
 "use other popular backgammon playing software like for example <link href="
 "\"http://www.gnubg.org/\">GNU Backgammon</link>."
-msgstr ""
+msgstr "Mit <app>Gibbon</app> ist ein wenig anders, als mit Menschen an einem wirklichen Backgammonbrett zu spielen. Aber es ist ziemlich ähnlich dazu, wie man mit anderer populärer Backgammonsoftware, wie zum Beispiel <link href=\"http://www.gnubg.org/\">GNU Backgammon</link> spielt."
 
 #: C/playing.page:31(section/title)
 msgid "Basics"
-msgstr ""
+msgstr "Grundlagen"
 
 #: C/playing.page:34(section/title)
 msgid "Invitations"
-msgstr ""
+msgstr "Einladungen"
 
 #: C/rating.page:6(info/desc)
 msgid "Information about the FIBS rating system"
-msgstr ""
+msgstr "Informationen zur FIBS-Rangliste"
 
 #: C/rating.page:18(page/title)
 msgid "FIBS Rating"
-msgstr ""
+msgstr "FIBS-Rangliste"
 
 #: C/rating.page:19(page/p)
 msgid ""
 "When you <link xref=\"create-account\">create an account</link> on the "
 "server, you start with a rating of 1500 and an experience of 0."
-msgstr ""
+msgstr "Wenn Sie ein <link xref=\"create-account\">Konto eröffnen</link>, starten Sie mit 1500 Ranglisten- und Null Erfahrungspunkten."
 
 #: C/rating.page:24(page/p)
 msgid ""
@@ -2608,7 +2604,7 @@ msgid ""
 "you lose, it will become lower. The gory details of that are explained at "
 "<link href=\"http://www.fibs.com/ratings.html\"/>. Note that <link xref="
 "\"unlimited-matches\">unlimited matches</link> will never change your rating."
-msgstr ""
+msgstr "Mit jeder gewonnen Partie gewinnen Sie Ranglistenpunkte, mit jeder verlorenen Partie verlieren Sie Ranglistenpunkte. Die mathematischen Details erfahren Sie unter <link href=\"http://www.fibs.com/ratings.html\"/>. Beachten Sie, dass <link xref=\"unlimited-matches\">unendliche Partien</link> Ihre Position in der Rangliste nicht zu beeinflussen vermögen."
 
 #: C/rating.page:32(page/p)
 msgid ""
@@ -2616,24 +2612,24 @@ msgid ""
 "matches you have finished. When you finished a 5-point match, your "
 "experience will increase by five, no matter what the actual result of the "
 "match was."
-msgstr ""
+msgstr "Ihre <em>Erfahrung</em> ist ein Indikator für die Anzahl und Länge der Partien, die Sie beendet haben. Nach einer Fünf-Punkte-Partie gewinnen Sie fünf Erfahrungspunkte, ganz gleich, welches Ergebnis die Partie hatte."
 
 #: C/reliability.page:6(info/desc)
 msgid "How <app>Gibbon</app> measures reliability"
-msgstr ""
+msgstr "Wie <app>Gibbon</app> Verlässlichkeit misst"
 
 #: C/reliability.page:19(page/p)
 msgid ""
 "It is a very annoying experience, when your opponent leaves a game in the "
 "middle of a match. <app>Gibbon</app> tries to help you avoid that."
-msgstr ""
+msgstr "Wenn Ihre Gegnerin oder Ihr Gegner das Spiel während der Partie verlässt, ist das normalerweise eine sehr unangenehme Erfahrung. <app>Gibbon</app> bemüht sich, dies Ihnen zu ersparen."
 
 #: C/reliability.page:24(page/p)
 msgid ""
 "The server broadcasts a lot of information about other players, for example, "
 "when they start a match, finish a match, log in or log out. <app>Gibbon</"
 "app> collects that information and stores it in an internal database."
-msgstr ""
+msgstr "Der Server überträgt eigentlich eine Menge Informationen über andere Spielerinnen und Spieler, zum Beispiel, wann eine Partie begonnen oder beendet wird, oder wann sich wer verbindet oder eine bestehende Verbindung unterbricht."
 
 #: C/reliability.page:30(page/p)
 msgid ""
@@ -2641,13 +2637,13 @@ msgid ""
 "between the good and the evil. It will display a player's “reliability” "
 "wherever appropriate, for example in the <link xref=\"players-list\">players "
 "list</link> or <link xref=\"inviters-list\">inviters list</link>."
-msgstr ""
+msgstr "Mit ein wenig Analyse des Datenstroms, ist <app>Gibbon</app> Gibbon aber in der Lage, die Spreu vom Weizen zu trennen. Die Software zeigt die errechnete „Verlässlichkeit“ anderer Spielerinnen und Spieler da an, wo Sie es benötigen, zum Beispiel in der <link xref=\"players-list\">Spieler-</link> oder <link xref=\"inviters-list\">Einladungsliste</link>."
 
 #: C/reliability.page:37(page/p)
 msgid ""
 "<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> "
 "The player reliability in the inviters list </media>"
-msgstr ""
+msgstr "<media type=\"image\" mime=\"src/png\" src=\"figures/inviters-list.png\"> Die Verlässlichkeit, wie sie in der Einladungsliste angezeigt wird </media>"
 
 #: C/reliability.page:42(page/p)
 msgid ""
@@ -2656,13 +2652,13 @@ msgid ""
 "matches without interrupting them will increase the reliability even more. "
 "This reliability is translated into a color ranging from red (stay away from "
 "those players), over orange and yellow to green (reliable)."
-msgstr ""
+msgstr "Jede <link xref=\"droppers\">gekappte Verbindung</link> verringert die Verlässlichkeit einer Spielerin oder eines Spielers. Die Wiederaufnahme einer unterbrochenen Partie erhöht sie wieder etwas. Das normale Verhalten, dass nämlich einmal begonnene Partien ohne Unterbrechung zu Ende gespielt werden, erhöht die Verlässlichkeit sogar noch mehr. Diese Verlässlichkeit wird in eine Farbe zwischen rot (Wegbleiben), orange und gelb bis zu grün (verlässlich) übersetzt."
 
 #: C/reliability.page:50(page/p)
 msgid ""
 "It is hard for a player to earn a reliability bar that is not green. Stay "
 "away from them unless you know them personally."
-msgstr ""
+msgstr "Es ist ziemlich schwer, sich einen Verlässlichkeitsbalken zu verdienen, der nicht grün ist. Halten Sie sich von solchen Spielerinnen und Spielern also liber fern."
 
 #: C/reliability.page:54(page/p)
 msgid ""
@@ -2670,13 +2666,13 @@ msgid ""
 "has collected about a particular player, the more confident it is about its "
 "estimation about that player's reliability. When visualized, this is "
 "translated into the length of the reliability bar."
-msgstr ""
+msgstr "Ein weiterer Faktor ist die <em>Konfidenz (Zuverlässigkeit)</em>. Je mehr Daten <app>Gibbon</app> über eine bestimmte Spielerin oder einen bestimmten Spieler gesammelt hat, desto zuverlässiger ist die Einschätzung über die Verlässlichkeit der jeweiligen Spielerin oder des jeweiligen Spielers. Die Konfidenz wird in die Länge des Balkens übersetzt."
 
 #: C/reliability.page:61(page/p)
 msgid ""
 "This is explained in greater detail at <link href=\"http://www.gibbon.bg/"
 "gibbon/news/2011/003141/index.html.en\"/>."
-msgstr ""
+msgstr "Dies wird genauer unter <link href=\"http://www.gibbon.bg/gibbon/news/2011/003141/index.html.en\"/> erklärt."
 
 #: C/resigning.page:6(info/desc)
 msgid "How to Resign And Answer to Resignations"

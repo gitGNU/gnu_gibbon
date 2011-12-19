@@ -23,8 +23,7 @@
     If you want to talk to everybody on the board, that is the players
     themselves and possible spectators you have to select both the
     <gui style="button">say</gui> and the <gui style="button">whisper</gui>
-    button while typing text into the
-    <link xref="chatting#game-chat">game chat area</link>.
+    button, when you send your message to the server.
   </p>
   <p>
     If you are currently playing, both your opponent and spectators
