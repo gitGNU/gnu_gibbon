@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="reliability" xml:lang="de">
   <info>
     <link type="guide" xref="index#misc"/>
-    <desc>
-      How <app>Gibbon</app> measures reliability
-    </desc>
+    <desc>Wie <app>Gibbon</app> Verlässlichkeit misst</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,50 +19,12 @@
   </info>
 
   <title>Verlässlichkeit</title>
-  <p>
-    It is a very annoying experience, when your opponent
-    leaves a game in the middle of a match.  <app>Gibbon</app>
-    tries to help you avoid that.
-  </p>
-  <p>
-    The server broadcasts a lot of information about other
-    players, for example, when they start a match, finish a
-    match, log in or log out.  <app>Gibbon</app> collects
-    that information and stores it in an internal database.  
-  </p>
-  <p>
-    With that little data-mining, <app>Gibbon</app> is able to
-    distinguish between the good and the evil.  It will display
-    a player's “reliability” wherever appropriate, for example
-    in the <link xref="players-list">players list</link> or
-    <link xref="inviters-list">inviters list</link>.
-  </p>
-  <p>
-   <media type="image" mime="src/png" src="figures/inviters-list.png">
-     The player reliability in the inviters list
-   </media> 
-  </p>
-  <p>
-    <link xref="droppers">Dropping</link> matches will decrease
-    a player's reliability, resuming interrupted matches will
-    increase it, finishing matches without interrupting them
-    will increase the reliability even more.  This reliability
-    is translated into a color ranging from red (stay away from
-    those players), over orange and yellow to green (reliable).
-  </p>
-  <p>
-    It is hard for a player to earn a reliability bar that is not
-    green.  Stay away from them unless you know them personally.
-  </p>
-  <p>
-    Another factor is the <em>confidence</em>.  The more data
-    <app>Gibbon</app> has collected about a particular player,
-    the more confident it is about its estimation about that
-    player's reliability.  When visualized, this is translated
-    into the length of the reliability bar.
-  </p>
-  <p>
-    This is explained in greater detail at
-    <link href="http://www.gibbon.bg/gibbon/news/2011/003141/index.html.en"/>.
-  </p>
+  <p>Wenn Ihre Gegnerin oder Ihr Gegner das Spiel während der Partie verlässt, ist das normalerweise eine sehr unangenehme Erfahrung. <app>Gibbon</app> bemüht sich, dies Ihnen zu ersparen.</p>
+  <p>Der Server überträgt eigentlich eine Menge Informationen über andere Spielerinnen und Spieler, zum Beispiel, wann eine Partie begonnen oder beendet wird, oder wann sich wer verbindet oder eine bestehende Verbindung unterbricht.</p>
+  <p>Mit ein wenig Analyse des Datenstroms, ist <app>Gibbon</app> Gibbon aber in der Lage, die Spreu vom Weizen zu trennen. Die Software zeigt die errechnete „Verlässlichkeit“ anderer Spielerinnen und Spieler da an, wo Sie es benötigen, zum Beispiel in der <link xref="players-list">Spieler-</link> oder <link xref="inviters-list">Einladungsliste</link>.</p>
+  <p><media type="image" mime="src/png" src="figures/inviters-list.png"> Die Verlässlichkeit, wie sie in der Einladungsliste angezeigt wird </media></p>
+  <p>Jede <link xref="droppers">gekappte Verbindung</link> verringert die Verlässlichkeit einer Spielerin oder eines Spielers. Die Wiederaufnahme einer unterbrochenen Partie erhöht sie wieder etwas. Das normale Verhalten, dass nämlich einmal begonnene Partien ohne Unterbrechung zu Ende gespielt werden, erhöht die Verlässlichkeit sogar noch mehr. Diese Verlässlichkeit wird in eine Farbe zwischen rot (Wegbleiben), orange und gelb bis zu grün (verlässlich) übersetzt.</p>
+  <p>Es ist ziemlich schwer, sich einen Verlässlichkeitsbalken zu verdienen, der nicht grün ist. Halten Sie sich von solchen Spielerinnen und Spielern also liber fern.</p>
+  <p>Ein weiterer Faktor ist die <em>Konfidenz (Zuverlässigkeit)</em>. Je mehr Daten <app>Gibbon</app> über eine bestimmte Spielerin oder einen bestimmten Spieler gesammelt hat, desto zuverlässiger ist die Einschätzung über die Verlässlichkeit der jeweiligen Spielerin oder des jeweiligen Spielers. Die Konfidenz wird in die Länge des Balkens übersetzt.</p>
+  <p>Dies wird genauer unter <link href="http://www.gibbon.bg/gibbon/news/2011/003141/index.html.en"/> erklärt.</p>
 </page>

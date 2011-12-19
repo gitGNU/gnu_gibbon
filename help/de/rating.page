@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="rating" xml:lang="de">
   <info>
     <link type="guide" xref="index#misc"/>
-    <desc>
-      Information about the FIBS rating system
-    </desc>
+    <desc>Informationen zur FIBS-Rangliste</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,24 +18,8 @@
     </mal:credit>
   </info>
 
-  <title>FIBS Rating</title>
-  <p>
-    When you <link xref="create-account">create an account</link>
-    on the server, you start with a rating of 1500 and an
-    experience of 0.
-  </p>
-  <p>
-    With every match you win, your rating will become higher,
-    with every match you lose, it will become lower.  The gory
-    details of that are explained at 
-    <link href="http://www.fibs.com/ratings.html"/>.  Note that
-    <link xref="unlimited-matches">unlimited matches</link>
-    will never change your rating.
-  </p>
-  <p>
-    Your <em>experience</em> is an indicator for the number and
-    length of the matches you have finished.  When you finished
-    a 5-point match, your experience will increase by five, no
-    matter what the actual result of the match was.
-  </p>
+  <title>FIBS-Rangliste</title>
+  <p>Wenn Sie ein <link xref="create-account">Konto eröffnen</link>, starten Sie mit 1500 Ranglisten- und Null Erfahrungspunkten.</p>
+  <p>Mit jeder gewonnen Partie gewinnen Sie Ranglistenpunkte, mit jeder verlorenen Partie verlieren Sie Ranglistenpunkte. Die mathematischen Details erfahren Sie unter <link href="http://www.fibs.com/ratings.html"/>. Beachten Sie, dass <link xref="unlimited-matches">unendliche Partien</link> Ihre Position in der Rangliste nicht zu beeinflussen vermögen.</p>
+  <p>Ihre <em>Erfahrung</em> ist ein Indikator für die Anzahl und Länge der Partien, die Sie beendet haben. Nach einer Fünf-Punkte-Partie gewinnen Sie fünf Erfahrungspunkte, ganz gleich, welches Ergebnis die Partie hatte.</p>
 </page>

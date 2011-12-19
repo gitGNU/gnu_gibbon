@@ -65,25 +65,15 @@
     <item>
       <p>Verlässlichkeit</p>
       <p>Die <link xref="reliability">Verlässlichkeit</link> dieser Spielerin oder dieses Spielers, wie sie von <app>Gibbon</app> gemessen wird. Normalerweise werden Sie vermeiden, mit Leuten zu spielen, für die keine grüne Verlässlichkeitsmarkierung angezeigt wird.</p>
-      <p>
-        The mouseover tooltip will explain the measured values.
-      </p>
+      <p>Wenn Sie den Mauszeiger über die Markierung halten, erscheint nach kurzer Zeit ein Hinweistext mit den genauen gemessenen Werten.</p>
     </item>
     <item>
-      <p>Saved Matches</p>
-      <p>
-        The number of matches that are saved for this player on the server.
-        If a player terminates a match before it is finished, the match
-        is saved on the server for a certain time.  That means that both
-        the “culprit” and the “victim” have their “saved-count” increased.
-        That being said, this number has limited significance.
-      </p>
+      <p>Gespeicherte Partien</p>
+      <p>Hier erscheint die Anzahl der Partien, die für die betreffende Spielerin oder den betreffenden Spieler auf dem Server gespeichert wurden. Vorzeitig abgebrochene Partien werden für eine gewisse Zeit auf dem Server gespeichert. Diese Zahl steigt also sowohl für den Verursacher als auch das „Opfer“ des Spielabbruches an. Dementsprechend hat dieser Wert nur begrenzte Aussagekraft.</p>
     </item>
     <item>
-      <p>Address</p>
-      <p>
-        The mail address this player has given, if any.
-      </p>
+      <p>Adresse</p>
+      <p>Die E-Mail-Adresse der Benutzerin oder des Benutzers, sofern angegeben.</p>
     </item>
   </list>
 </page>

@@ -3,9 +3,9 @@
 
   <info>
     <link type="guide" xref="index#general-concepts"/>
-    <title type="link">Playing Backgammon</title>
-    <title type="text">Playing Backgammon</title>
-    <desc>Rolling the dice, moving checkers, using the cube, etc.</desc>
+    <title type="link">Backgammon spielen</title>
+    <title type="text">Backgammon spielen</title>
+    <desc>Würfeln, Ziehen, Doppeln etc.</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,21 +21,15 @@
     </mal:credit>
   </info>
 
-  <title>Playing Backgammon</title>
+  <title>Backgammon spielen</title>
 
-  <p>
-    Playing backgammon with <app>Gibbon</app> is a little different
-    from playing backgamon with humans at a real board.  But it is
-    very similar to the way you use other popular backgammon playing
-    software like for example <link href="http://www.gnubg.org/">GNU
-    Backgammon</link>.
-  </p>
+  <p>Mit <app>Gibbon</app> ist ein wenig anders, als mit Menschen an einem wirklichen Backgammonbrett zu spielen. Aber es ist ziemlich ähnlich dazu, wie man mit anderer populärer Backgammonsoftware, wie zum Beispiel <link href="http://www.gnubg.org/">GNU Backgammon</link> spielt.</p>
 
   <section id="basics" style="2column">
-    <title>Basics</title>
+    <title>Grundlagen</title>
   </section>
   <section id="invitations" style="2column">
-    <title>Invitations</title>
+    <title>Einladungen</title>
   </section>
   <section id="chatting" style="2column">
     <title>Nachrichtenaustausch während des Spiels</title>

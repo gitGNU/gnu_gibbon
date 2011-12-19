@@ -25,12 +25,7 @@
     If you want to talk to everybody on the board, that is the players
     themselves and possible spectators you have to select both the
     <gui style="button">say</gui> and the <gui style="button">whisper</gui>
-    button while typing text into the
-    <link xref="chatting#game-chat">game chat area</link>.
+    button, when you send your message to the server.
   </p>
-  <p>
-    If you are currently playing, both your opponent and spectators
-    will see your message.  If you are <link xref="watching">watching</link>
-    both players and possible other spectators will see your message.
-  </p>
+  <p>Wenn Sie im Moment spielen, werden sowohl Ihre Gegnerin bzw. Ihr Gegner als auch die Zuschauerinnen oder Zuschauer Ihre Nachricht sehen.  Wenn Sie dagegen selber <link xref="watching">zusehen</link>, sehen sowohl die beiden Spielerinnen bzw. Spieler als auch das Publikum die Mitteilung.</p>
 </page>
