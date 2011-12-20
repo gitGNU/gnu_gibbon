@@ -19,11 +19,7 @@
   </info>
 
   <title>Die Spielbrett-Werkzeugleiste</title>
-  <p>
-    The small toolbar above the board contains controls 
-    that are useful while <link xref="playing">playing</link>
-    or <link xref="watching">watching</link>.
-  </p>
+  <p>Die kleine Werkzeugliste oberhalb des Spielbretts enthält Buttons, die während des <link xref="index#playing">Spielens</link> oder <link xref="index#watching">Zuschauens</link> wichtig sind.</p>
   <media type="image" mime="src/png" src="figures/board-toolbar.png">Die Spielbrett-Werkzeugleiste</media>
   <p>Für jede Funktion gibt es einen Hinweistext, der angezeigt wird, wenn der Mauszeiger eine Zeitlang über dem jeweiligen Button ruht. Die Buttons von links nach rechts sind:</p>
   <list type="numbered">
@@ -61,39 +57,19 @@
     </item>
     <item id="previous-game">
       <p>Vorheriges Spiel</p>
-      <p>
-        Go to the previous game in the match. Clicking the 
-        <link xref="board-toolbar"><gui style="button">Undo
-        Moves</gui></link> button will bring you back to the current position.
-        <em>This is not yet implemented!</em>
-      </p>
+      <p>Gehe zum vorherigen Spiel in diesem Match. Durch einen Klick auf den Button <link xref="board-toolbar"><gui style="button">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em></p>
     </item>
     <item id="previous-move">
       <p>Vorheriger Zug</p>
-      <p>
-        Go to the previous (half!) move in the match. Clicking the 
-        <link xref="board-toolbar"><gui style="button">Undo
-        Moves</gui></link> button will bring you back to the current position.
-        <em>This is not yet implemented!</em>
-      </p>
+      <p>Gehe zum vorherigen (Halb-)Zug in diesem Match. Durch einen Klick auf den Button <link xref="board-toolbar"><gui style="button">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em></p>
     </item>
     <item id="next-move">
       <p>Nächster Zug</p>
-      <p>
-        Go to the next (half!) move in the match. Clicking the 
-        <link xref="board-toolbar"><gui style="button">Undo
-        Moves</gui></link> button will bring you back to the current position.
-        <em>This is not yet implemented!</em>
-      </p>
+      <p>Gehe zum nächsten (Halb-)Zug in diesem Match. Durch einen Klick auf den Button <link xref="board-toolbar"><gui style="button">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em></p>
     </item>
     <item id="next-game">
       <p>Nächstes Spiel</p>
-      <p>
-        Go to the next game in the match. Clicking the 
-        <link xref="board-toolbar"><gui style="button">Undo
-        Moves</gui></link> button will bring you back to the current position.
-        <em>This is not yet implemented!</em>
-      </p>
+      <p>Gehe zum nächsten Spiel in diesem Match. Durch einen Klick auf den Button <link xref="board-toolbar"><gui style="button">Spielbrett zurücksetzen</gui></link> wird die aktuelle Position wiederhergestellt. <em>Noch nicht implementiert!</em></p>
     </item>
     <item id="leave-game">
       <p>Spiel verlassen</p>

@@ -3,9 +3,7 @@
   <info>
     <link type="guide" xref="chatting#shout-tell"/>
     <link type="seealso" xref="chat-area"/>
-    <desc>
-      Sending Messages to Everybody
-    </desc>
+    <desc>Nachrichten an alle senden</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,12 +19,7 @@
     </mal:credit>
   </info>
 
-  <title>Talking to Everybody (<cmd>shout</cmd>)</title>
-  <p>
-    You can send a message to everybody currently logged in on the server.
-    The leftmost tab in the <link xref="chat-area">chat area</link> is
-    labeled <gui style="label">Shouts</gui> and represents the
-    <em>lobby</em>, the public chat room on the server.
-  </p>
+  <title>Mit allen auf einmal sprechen (<cmd>shout</cmd>)</title>
+  <p>Sie können Nachrichten an alle senden, die derzeit am Server angemeldet sind. Der erste Reiter im <link xref="chat-area">Chatbereich</link> ist mit <gui style="label">Lobby (Shouts)</gui> beschriftet, und steht für den öffentlichen Chatraum des Servers.</p>
   <p><media type="image" mime="src/png" src="figures/chat-area.png"> <p>Der Chatbereich</p> </media></p>
 </page>

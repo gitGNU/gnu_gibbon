@@ -21,14 +21,11 @@
   <title>Überblick über die graphische Benutzerschnittstelle</title>
   <p>In Abhängigkeit von Ihren persönlichen Einstellungen für Ihr Betriebssystem, kann <app>Gibbon</app> bei Ihnen abweichend aussehen. Im Großen und Ganzen sollte es jedoch so aussehen:</p>
   <media type="image" mime="src/png" src="figures/overview.png">
-    <p><app>Gibbon</app> Graphical User Interace</p>
+    <p>Graphische Benutzerschnittstelle von <app>Gibbon</app></p>
   </media>
   <p>Das erste, das einem ins Auge sticht, ist das Backgammonbrett, siehe <link xref="playing"/>:</p>
   <p><link href="figures/overview-board.png"> <media type="image" mime="src/png" src="figures/overview-board.png" width="50%" height="50%"> <p>Das Backgammon-Brett</p> </media> </link></p>
-  <p>
-    Above the board, you can see the <link xref="board-toolbar">board
-    toolbar</link>:
-  </p>
+  <p>Oberhalb des Bretts sehen Sie die <link xref="board-toolbar">Spielbrett-Werkzeugliste</link>:</p>
   <p><link href="figures/overview-board-toolbar.png"> <media type="image" mime="src/png" src="figures/overview-board-toolbar.png" width="50%" height="50%"> <p>Die Werkzeugliste oberhalb des Backgammon-Bretts</p> </media> </link></p>
   <p>Unterhalb des Bretts sehen Sie den <link xref="chatting#game-chat">Spiel-Chatbereichs</link>:</p>
   <p><link href="figures/overview-game-chat-area.png"> <media type="image" mime="src/png" src="figures/overview-game-chat-area.png" width="50%" height="50%"> <p>Der Chatbereich unterhalb des Backgammonbretts</p> </media> </link></p>

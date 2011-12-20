@@ -19,12 +19,7 @@
   </info>
 
   <title>Andere lokalisieren</title>
-  <p>
-    <app>Gibbon</app> will try to show you, the country from where other
-    people on the server have logged in, for example in the
-    <link xref="players-list">players list</link> or
-    <link xref="inviters-list">inviters list</link>.
-  </p>
+  <p><app>Gibbon</app> versucht Ihnen zu zeigen, aus welchem Land die anderen Benutzerinnen und Benutzer sich mit dem Server verbunden haben, beispielsweise in der <link xref="players-list">Spieler-</link> oder <link xref="inviters-list">Einladungsliste</link>.</p>
   <p><media type="image" mime="src/png" src="figures/inviters-list.png"> Einladungen aus Deutschland und Bulgarien </media></p>
   <p>Die Software zeigt diese Information, wie im obigen Beispiel, als Flagge an.</p>
   <p>Diese Informationen beruhen auf Daten, die kostenlos von einem dänischen Internet-Provider zur Verfügung gestellt werden, siehe <link href="http://software77.net/geo-ip/"/>.</p>

@@ -3,10 +3,7 @@
   <info>
     <link type="guide" xref="developer-resources"/>
     <link type="seealso" xref="gibbon-unicode"/>
-    <desc>
-      CLIP is the <em>CLI</em>ent <em>P</em>rotocol
-      for FIBS
-    </desc>
+    <desc>CLIP ist das Software-Kommunikationsprotokol für FIBS (<span xml:lang="en"><em>CLI</em>ent <em>P</em>rotocol for FIBS</span>)</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -25,13 +22,6 @@
   <title>Konformität mit CLIP</title>
   <p><app>Gibbon</app> bemüht sich CLIP, das Software-Kommunikationsprotokoll mit FIBS, das unter <link href="http://www.fibs.com/fibs_interface.html"/> beschrieben ist, einzuhalten. Sie sollten daher in der Lage sein, mit <app>Gibbon</app> auf jedem zu CLIP kompatiblen Server zu spielen.</p>
   <p>Leider ist die Spezifikation nicht ganz vollständig und manchmal vage. Im Zweifel verhält sich <app>Gibbon</app> kompatibel zu CLIP, wie es auf <link href="http://www.fibs.com/">FIBS</link>, dem Ersten Internet Backgammon Server implementiert ist.</p>
-  <p>
-    <app>Gibbon</app> does <em>not</em> fully implement the
-    <link href="http://www.fibs.com/fibs_interface.html#ppp">Player
-    Profile Protocol</link> and it probably never will. 
-    It tries to decode user and client names but it
-    does not use it for encoding its own client name or the
-    name of the <app>Gibbon</app> user.
-  </p>
+  <p><app>Gibbon</app> implementiert dagegen das sogenannte <link href="http://www.fibs.com/fibs_interface.html#ppp">Spielerprofilprotokoll</link> (<span xml:lang="en">Player Profile Protocol</span>) <em>nicht</em> und das wird vermutlich auch in Zukunft so bleiben. Namen von Spielerinnen und Spielern, und Namen von Software werden soweit möglich dekodiert, aber nicht enkodiert.</p>
   <p><app>Gibbon</app> erweitert CLIP durch sein eigene <link xref="gibbon-unicode">Gibbon-Unicode-Erweiterung für FIBS</link>.</p>
 </page>

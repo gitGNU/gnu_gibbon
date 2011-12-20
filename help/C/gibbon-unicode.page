@@ -20,7 +20,7 @@
   <title>Gibbon Unicode Extension for FIBS</title>
   <p>
     FIBS traditionally allows only 7-bit characters to be
-    transmitted in communication between players 
+    transmitted in the communication between players 
       (<link xref="say"><cmd>say</cmd></link>,
       <link xref="kibitz"><cmd>kibitz</cmd></link>,
       <link xref="whisper"><cmd>whisper</cmd></link>,

@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="social-networks" xml:lang="de">
   <info>
     <link type="guide" xref="supporting-gibbon"/>
-    <desc>
-      You like <app>Gibbon</app>? Talk about it ...
-    </desc>
+    <desc>Ihnen gefällt <app>Gibbon</app>? Reden Sie doch einfach darüber ...</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,25 +18,14 @@
     </mal:credit>
   </info>
 
-  <title><app>Gibbon</app> On Social Networks</title>
+  <title><app>Gibbon</app> in sozialen Netzwerken</title>
 
   <section>
     <title>Facebook</title>
-    <p>
-      <app>Gibbon</app> has its own 
-      <link href="http://www.facebook.com/pages/Gibbon/201252806558402">Facebook
-      page</link>.  As a fan, you will always be informed about
-      <app>Gibbon</app> news.
-    </p>
+    <p><app>Gibbon</app> hat eine eigene <link href="http://www.facebook.com/pages/Gibbon/201252806558402">Facebookseite</link>. Als Fan, werden Sie immer auf dem neuesten Stand über <app>Gibbon</app> gehalten.</p>
   </section>
   <section>
     <title>Ohloh</title>
-    <p>
-      <link href="http://www.ohloh.net/">Ohloh</link> is a directory
-      service for open source software.  You can show your support
-      by clicking the “I Use This” button on 
-      <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbon</app>'s
-      Ohloh page</link>.
-    </p>
+    <p><link href="http://www.ohloh.net/">Ohloh</link> ist ein Verzeichnisdienst für quelloffene Software. Sie können Ihre Unterstützung zeigen, indem Sie den Button „<span xml:lang="en">I Use This</span>” auf <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbons</app> Ohloh-Seite</link> klicken.</p>
   </section>
 </page>

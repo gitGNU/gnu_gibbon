@@ -20,7 +20,7 @@
   <title>Talking to Other Spectators (<cmd>whisper</cmd>)</title>
   <p>
     If you only want to talk to other people <link xref="watching">watching</link>
-    the same game as you but not to the players themselves, you should
+    the same game with you but not to the players themselves, you should
     “whisper”.  You can do this  by typing text into the
     <link xref="game-chat-concept">game chat area</link> and
     only selecting the <gui style="button">whisper</gui>

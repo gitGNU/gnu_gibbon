@@ -40,10 +40,7 @@
     </item>
     <item>
       <p>Länge</p>
-      <p>
-        The desired match length.  <link xref="unlimited-matches">Unlimited
-        matches</link> are represented by the infinity sign “∞“.
-      </p>
+      <p>Die gewünschte Länge der Partie. <link xref="unlimited-matches">Unendliche Partien</link> werden durch das Unendlickeitszeichen „∞“ repräsentiert.</p>
     </item>
     <item>
       <p>Geographische Position</p>

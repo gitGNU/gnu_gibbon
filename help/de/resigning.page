@@ -21,10 +21,7 @@
   <title>Aufgeben</title>
   <section id="you-resign">
     <title>Sie geben auf</title>
-    <p>You can resign the current game anytime during a match.  You do this
-       by clicking the 
-       <link xref="board-toolbar"><gui style="button">resign button</gui></link> in the <link xref="board-toolbar">board toolbar</link>.
-    </p>
+    <p>Sie können jederzeit während des Spiels aufgeben. Klicken Sie hierfür den Button <link xref="board-toolbar"><gui style="button">Aufgeben</gui></link> in der <link xref="board-toolbar">Spielbrett-Werkzeugleiste</link>.</p>
     <p>Sie werden daraufhin gefragt, <em>wie</em> Sie aufgeben wollen. Mit einer normalen Aufgabe, verlieren Sie den aktuellen Wert des Dopplerwürfels. Mit einer Gammon-Aufgabe verlieren Sie den doppelten Wert des Dopplerwürfels, mit einer Backgammon-Aufgabe den dreifachen Wert des Dopplerwürfels.</p>
     <p>Ihre Gegnerin oder Ihr Gegner müssen Ihre Aufgabe natürlich nicht akzeptieren. In diesem Fall wird das Spiel einfach fortgesetzt, oder Sie müssen erneut aufgeben.</p>
     <p>Wird die Aufgabe hingegen akzeptiert, wird das aktuelle Spiel beendet.</p>

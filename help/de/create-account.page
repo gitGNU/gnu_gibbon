@@ -19,18 +19,11 @@
   </info>
 
   <title>Neues Konto erstellen</title>
-  <p>
-    Before you can connect (see <link xref="connect"/>) to a server, you 
-    need an account.
-  </p>
+  <p>Bevor Sie sich mit dem Server verbinden können (siehe <link xref="connect"/>), brauchen Sie dort ein Konto.</p>
   <p>Aus naheliegenden Gründen erlaubt <app>FIBS</app> keine Mehrfachzugänge für ein und dieselbe Person. Falls Sie meinen, dass in Ihrem Fall eine begründete Ausnahme von dieser Regel besteht, wenden Sie sich bitte, bevor Sie ein neues Konto einrichten, an die Administratorin oder den Administrator des Servers. Im Falle von <app>FIBS</app> ist das <link href="http://www.pattib.org/contact.shtml">Patti Beadles</link>.</p>
   <p>Sobald Sie <app>Gibbon</app> <link xref="starting">gestartet</link> haben, können Sie eine Verbindung zu einem Server durch einen Klick auf den Button <gui style="button">Verbinden</gui> in der <link xref="main-toolbar">Haupt-Werkzeugleiste</link> herstellen. Alternativ können Sie auch den Menüeintrag <guiseq><gui>Datei</gui><gui>Verbinden</gui></guiseq> verwenden.</p>
   <p><media type="image" mime="src/png" src="figures/connection-dialog.png"> Der Verbindungsdialog </media></p>
-  <p>
-    Click the <gui style="button">Register new account</gui> button
-    beneath the <gui style="label">User name</gui> text entry.
-    You will then see this dialog:
-  </p>
+  <p>Klicken Sie den Button <gui style="button">Neues Konto einrichten</gui> unterhalb des Eingabefeldes für Ihren <gui style="label">Anmeldenamen</gui>. Daraufhin wird folgender Dialog angezeigt:</p>
   <p><media type="image" mime="src/png" src="figures/register-account.png"> Der Kontoeinrichtungsdialog </media></p>
   <p>Die folgenden Informationen werden benötigt:</p>
   <list>
@@ -44,19 +37,8 @@
     </item>
     <item>
       <p><gui style="label">User name</gui></p>
-      <p>
-        The user name you want to use on that server.  It is - of course -
-        not possible to use a name used by somebody else.  A little
-        surprising: Your name must not contain digits, hyphens,
-        or two or more subsequent underscores.
-      </p>
-      <p>
-        This name will be your identity on the server! While it is not illegal
-        to choose a silly or offensive name - in fact some people have 
-        remarkably silly or offensive names on <app>FIBS</app> - you want to 
-        think twice about how you want to be known to your future backgammon 
-        partners.
-      </p>
+      <p>Der Anmeldename, den Sie für diesen Server verwenden wollen. Es ist natürlich nicht möglich, sich einen Namen auszusuchen, der schon von jemand anderem benutzt wird. Es ist eventuell etwas überraschend, dass der Anmeldename weder Ziffern noch Bindestriche, noch mehr als zwei Unterstriche hintereinander enthalten darf.</p>
+      <p>Der Name stellt Ihre Identität auf dem Server dar! Es ist zwar nicht verboten, sich einen beleidigenden oder bescheuerten Namen auszusuchen, es gibt sogar einige Leute, die ausgesprochen beleidigende oder bescheuerte Namen auf FIBS verwenden, aber Sie sollten Sich vielleicht zweimal überlegen, mit welchem Namen Sie gegenüber Ihren zukünftigen Spielpartnerinnen und -partnern auftreten wollen.</p>
     </item>
     <item>
       <p><gui style="label">Kennwort speichern?</gui></p>

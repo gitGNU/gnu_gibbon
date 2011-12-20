@@ -20,18 +20,7 @@
   </info>
 
   <title>Gibbon-Unicode-Erweiterung für FIBS</title>
-  <p>
-    FIBS traditionally allows only 7-bit characters to be
-    transmitted in communication between players 
-      (<link xref="say"><cmd>say</cmd></link>,
-      <link xref="kibitz"><cmd>kibitz</cmd></link>,
-      <link xref="whisper"><cmd>whisper</cmd></link>,
-      <link xref="tell"><cmd>tell</cmd></link>,
-      <cmd>tellx</cmd>,
-      and  <cmd>message</cmd>).
-    Characters outside of the range of US-ASCII are
-    replaced by a question mark (“?”).
-  </p>
+  <p>FIBS erlaubt traditionell lediglich die Übermittlung von 7-Bit-Zeichen in der Kommunikation zwischen Benutzerinnen und Benutzern (bei den Befehlen <link xref="say"><cmd>say</cmd></link>, <link xref="kibitz"><cmd>kibitz</cmd></link>, <link xref="whisper"><cmd>whisper</cmd></link>, <link xref="tell"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, und <cmd>message</cmd>). Zeichen außerhalb des Bereichs von US-ASCII werden durch ein Fragezeichen („?”) ersetzt.</p>
   <p><app>Gibbon</app> kodiert Zeichen außerhalb des Zeichenvorrats von US-ASCII bei der Übermittlung an den Server automatisch, wenn sie zum Nachrichtenteil eines der obigen Befehle sind, und dekodiert sie im umgekehrten Falle automatisch.</p>
   <section>
     <title>Kodierung</title>
@@ -50,14 +39,6 @@
     <title>Begründung</title>
     <p>Die Beschränkung auf US-ASCII-Zeichen im FIBS-Protokoll macht es schwer oder gar unmöglich in einer anderen Sprache als Englisch zu kommunizieren. Diese Protokollerweiterung versucht diese Beschränkung auf wenigst störende Art aufzuheben.</p>
     <p>Die Benutzung benamter Entitäten für die Kodierung von Zeichen außerhalb des Vorrats von US-ASCII hat den Vorteil, dass Sie gut bekannt und bis zu einem gewissen Grade auch von Menschen lesbar sind.  Selbst für Benutzerinnen und Benutzer von Software, welche diese Spezifikation nicht unterstützt, ist es einfacher, die Bedeutung von „5 &amp;euro;“ zu erfassen, als zu verstehen, was unter „5 ?“ zu verstehen ist.</p>
-    <p>
-      Communication in languages that use a script for which no
-      named entities are defined, will be completely unreadable
-      to people that are not using a client supporting this protocol.
-      On the other hand, taking part in such communication does not
-      only require a conforming client but also knowledge of that
-      particular script.  In this respect, users can only win
-      by this protocol.
-    </p>
+    <p>Kommunikation in einer Sprache, die eine Schrift verwendet, für die keine benamten Entitäten definiert sind, wird für Menschen, die keine konforme Software verwenden, völlig unlesbar sein. Auf der anderen Seiten erfordert die Beteiligung an einer solchen Kommunikation ohnehin nicht nur eine konforme Software, sondern auch Kenntnisse der Schrift. Demgemäß gewinnen also alle Beteiligten durch dieses Protokoll.</p>
   </section>
 </page>

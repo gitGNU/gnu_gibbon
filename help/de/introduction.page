@@ -2,11 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="introduction" xml:lang="de">
   <info>
     <link type="guide" xref="index"/>
-    <desc>
-      Introduction to 
-      <app>Gibbon</app>, <app>FIBS</app>,
-      and this documentation.
-    </desc>
+    <desc>Einführung in <app>Gibbon</app>, <app>FIBS</app>, und diese Dokumentation.</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>

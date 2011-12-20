@@ -21,19 +21,20 @@
     Keep that in mind before you 
     <link xref="invite">invite</link>
     somebody to an unlimited match or before you
-    <link xref="inviters-list">accept an invitation</link> to 
+    <link xref="inviters-list">accept an invitation</link> to
+    an unlimited match. 
   </p>
   <p>
     It is hard to finish unlimited matches.  Every time
     a game is terminated, the server saves the match.  The regular
-    way to do this is to start a new match with your
+    way to terminate an unlimited match is to start a new match with your
     opponent.  That will automatically terminate your
     saved unlimited match.
   </p>
   <p>
     Another way to finish an unlimited match is to just
     sit and wait.  The server saves matches for only a limited
-    time, around 10 days.  Sooner or later, all your matches
+    time, around ten days.  Sooner or later, all your matches
     will expire.
   </p>
 </page>

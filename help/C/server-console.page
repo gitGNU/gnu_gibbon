@@ -32,12 +32,13 @@
     that <app>Gibbon</app> and the server use for interacting.
     <app>Gibbon</app> “translates” most of the data sent by the server
     and hides this data from you.  Data that is not handled by the
-    program is displayed in the server console.
+    program is either displayed in the server console, or - if marked
+    as important by the server - displayed in a message dialog.
   </p>
   <p>
-    You can also type your own commands into the text area at the bottom
+    You can also type your own commands into the text area at the bottom.
     While you are typing, you can see a list of suggestions.  You can
-    browse through these suggestions with the curser keys.
+    browse through these suggestions with the cursor keys.
   </p>
   <p>
     You can try this out by sending the command <cmd>help</cmd> which
@@ -64,7 +65,7 @@
     <p>
       In other cases, detecting responses to manual commands would
       mean an unreasonable effort and would not make much sense
-      anyway.  It if for example possible to send the commands
+      anyway.  It is for example possible to send the commands
       <cmd>roll</cmd>, <cmd>move</cmd>, or <cmd>double</cmd> but
       <app>Gibbon</app> will intercept all confirmation responses
       from the server, and update its own state instead of displaying

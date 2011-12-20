@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-20 21:59+0200\n"
+"POT-Creation-Date: 2011-12-21 01:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -964,7 +964,7 @@ msgid "Gibbon Unicode Extension for FIBS"
 msgstr ""
 
 #: C/gibbon-unicode.page:21(page/p)
-msgid "FIBS traditionally allows only 7-bit characters to be transmitted in communication between players (<link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, and <cmd>message</cmd>). Characters outside of the range of US-ASCII are replaced by a question mark (“?”)."
+msgid "FIBS traditionally allows only 7-bit characters to be transmitted in the communication between players (<link xref=\"say\"><cmd>say</cmd></link>, <link xref=\"kibitz\"><cmd>kibitz</cmd></link>, <link xref=\"whisper\"><cmd>whisper</cmd></link>, <link xref=\"tell\"><cmd>tell</cmd></link>, <cmd>tellx</cmd>, and <cmd>message</cmd>). Characters outside of the range of US-ASCII are replaced by a question mark (“?”)."
 msgstr ""
 
 #: C/gibbon-unicode.page:33(page/p)
@@ -1725,98 +1725,98 @@ msgid "<media type=\"image\" mime=\"src/png\" src=\"figures/server-console.png\"
 msgstr ""
 
 #: C/server-console.page:30(page/p)
-msgid "Most of the time, you do not have to bother about the protocol that <app>Gibbon</app> and the server use for interacting. <app>Gibbon</app> “translates” most of the data sent by the server and hides this data from you. Data that is not handled by the program is displayed in the server console."
+msgid "Most of the time, you do not have to bother about the protocol that <app>Gibbon</app> and the server use for interacting. <app>Gibbon</app> “translates” most of the data sent by the server and hides this data from you. Data that is not handled by the program is either displayed in the server console, or - if marked as important by the server - displayed in a message dialog."
 msgstr ""
 
-#: C/server-console.page:37(page/p)
-msgid "You can also type your own commands into the text area at the bottom While you are typing, you can see a list of suggestions. You can browse through these suggestions with the curser keys."
+#: C/server-console.page:38(page/p)
+msgid "You can also type your own commands into the text area at the bottom. While you are typing, you can see a list of suggestions. You can browse through these suggestions with the cursor keys."
 msgstr ""
 
-#: C/server-console.page:42(page/p)
+#: C/server-console.page:43(page/p)
 msgid "You can try this out by sending the command <cmd>help</cmd> which will produce an overview of the commands the server understand. For a full list of commands, see <link href=\"http://www.fibs.com/CommandReference/index.html\"/>."
 msgstr ""
 
-#: C/server-console.page:49(section/title)
+#: C/server-console.page:50(section/title)
 msgid "Hints For FIBS Experts"
 msgstr ""
 
-#: C/server-console.page:50(section/p)
+#: C/server-console.page:51(section/p)
 msgid "<app>Gibbon</app> intercepts most of the output sent by the server, and reacts upon it. However, an attempt is made to still display server output that is sent as a response to your commands. For example, you can see your current settings by sending the commands <cmd>set</cmd> or <cmd>toggle</cmd>."
 msgstr ""
 
-#: C/server-console.page:57(section/p)
+#: C/server-console.page:58(section/p)
 msgid "There are some exceptions. Sometimes it is not possible to distinguish between server responses to your commands, and data that is sent asynchronously. This is the case for example for the response to <cmd>who</cmd>, <cmd>rawwho</cmd>, or <cmd>board</cmd>."
 msgstr ""
 
-#: C/server-console.page:64(section/p)
-msgid "In other cases, detecting responses to manual commands would mean an unreasonable effort and would not make much sense anyway. It if for example possible to send the commands <cmd>roll</cmd>, <cmd>move</cmd>, or <cmd>double</cmd> but <app>Gibbon</app> will intercept all confirmation responses from the server, and update its own state instead of displaying it."
+#: C/server-console.page:65(section/p)
+msgid "In other cases, detecting responses to manual commands would mean an unreasonable effort and would not make much sense anyway. It is for example possible to send the commands <cmd>roll</cmd>, <cmd>move</cmd>, or <cmd>double</cmd> but <app>Gibbon</app> will intercept all confirmation responses from the server, and update its own state instead of displaying it."
 msgstr ""
 
-#: C/server-console.page:73(section/p)
+#: C/server-console.page:74(section/p)
 msgid "It should also be said that sometimes the software overrides your own commands. This is for example the case for the command <cmd>set boardstyle</cmd>. When the software detects that you you changed the board style, it will automatically reset it to the value that it needs for proper operation."
 msgstr ""
 
-#: C/server-console.page:82(section/title)
+#: C/server-console.page:83(section/title)
 msgid "Debugging the Server Communication"
 msgstr ""
 
-#: C/server-console.page:83(section/p)
+#: C/server-console.page:84(section/p)
 msgid "It is possible to analyse <em>all</em> communication between <app>Gibbon</app> and the server. Evenvtually, there will be configuration dialogs for activating and deactivating the debugging switches, but at the moment you have to change these settings manually."
 msgstr ""
 
-#: C/server-console.page:90(section/p)
+#: C/server-console.page:91(section/p)
 msgid "The configuration scheme is called <sys>bg.Gibbon.preferences.debugging</sys>. The configuration keys for this scheme are:"
 msgstr ""
 
-#: C/server-console.page:97(item/p)
+#: C/server-console.page:98(item/p)
 msgid "<sys>server-communication</sys>"
 msgstr ""
 
-#: C/server-console.page:98(item/p)
+#: C/server-console.page:99(item/p)
 msgid "Possible values are <sys>true</sys> and <sys>false</sys>. A value of <sys>true</sys> will cause the software to display all communication with the server in the server console."
 msgstr ""
 
-#: C/server-console.page:106(item/p)
+#: C/server-console.page:107(item/p)
 msgid "<sys>timestamps</sys>"
 msgstr ""
 
-#: C/server-console.page:107(item/p)
+#: C/server-console.page:108(item/p)
 msgid "Possible values are <sys>true</sys> and <sys>false</sys>. A value of <sys>true</sys> will cause the software to prepend all displayed data in the server console with a high resolution timestamp."
 msgstr ""
 
-#: C/server-console.page:115(item/p)
+#: C/server-console.page:116(item/p)
 msgid "<sys>logfile</sys>"
 msgstr ""
 
-#: C/server-console.page:116(item/p)
+#: C/server-console.page:117(item/p)
 msgid "If set, it should contain a valid filename. <app>Gibbon</app> will automatically append its process id to that name, and then log all communication to that file."
 msgstr ""
 
-#: C/server-console.page:123(section/p)
+#: C/server-console.page:124(section/p)
 msgid "Under Windows, you will find the configuration settings in the Windows registry. Under <app>Unix</app>, use the command-line. Examples:"
 msgstr ""
 
-#: C/server-console.page:127(section/p)
+#: C/server-console.page:128(section/p)
 msgid "<code>gsettings list-keys bg.Gibbon.preferences.debugging</code>"
 msgstr ""
 
-#: C/server-console.page:130(section/p)
+#: C/server-console.page:131(section/p)
 msgid "This will list the keys, see above."
 msgstr ""
 
-#: C/server-console.page:133(section/p)
+#: C/server-console.page:134(section/p)
 msgid "<code>gsettings get bg.Gibbon.preferences.debugging timestamps</code>"
 msgstr ""
 
-#: C/server-console.page:136(section/p)
+#: C/server-console.page:137(section/p)
 msgid "This will display the current value of the <sys>timestamp</sys> key."
 msgstr ""
 
-#: C/server-console.page:139(section/p)
+#: C/server-console.page:140(section/p)
 msgid "<code>gsettings set bg.Gibbon.preferences.debugging server-communication true</code>"
 msgstr ""
 
-#: C/server-console.page:142(section/p)
+#: C/server-console.page:143(section/p)
 msgid "This will activate complete server communication output in the server console."
 msgstr ""
 
@@ -1895,7 +1895,7 @@ msgid "Talking to a Particular User (<cmd>tell</cmd>)"
 msgstr ""
 
 #: C/tell.page:21(page/p)
-msgid "Private conversations with a particular user take place in the <link xref=\"chat-area\">chat area</link>. You can start a private conversation by left-clicking the player's name in the <link xref=\"players-list\">players' list</link>."
+msgid "Private conversations with a particular user take place in the <link xref=\"chat-area\">chat area</link>. You can start a private conversation by right-clicking the player's name in the <link xref=\"players-list\">players' list</link>."
 msgstr ""
 
 #: C/tell.page:27(page/p)
@@ -1919,15 +1919,15 @@ msgid "Unlimited Matches"
 msgstr ""
 
 #: C/unlimited-matches.page:19(page/p)
-msgid "Unlimited matches may show some surprising behavior. Keep that in mind before you <link xref=\"invite\">invite</link> somebody to an unlimited match or before you <link xref=\"inviters-list\">accept an invitation</link> to"
+msgid "Unlimited matches may show some surprising behavior. Keep that in mind before you <link xref=\"invite\">invite</link> somebody to an unlimited match or before you <link xref=\"inviters-list\">accept an invitation</link> to an unlimited match."
 msgstr ""
 
-#: C/unlimited-matches.page:26(page/p)
-msgid "It is hard to finish unlimited matches. Every time a game is terminated, the server saves the match. The regular way to do this is to start a new match with your opponent. That will automatically terminate your saved unlimited match."
+#: C/unlimited-matches.page:27(page/p)
+msgid "It is hard to finish unlimited matches. Every time a game is terminated, the server saves the match. The regular way to terminate an unlimited match is to start a new match with your opponent. That will automatically terminate your saved unlimited match."
 msgstr ""
 
-#: C/unlimited-matches.page:33(page/p)
-msgid "Another way to finish an unlimited match is to just sit and wait. The server saves matches for only a limited time, around 10 days. Sooner or later, all your matches will expire."
+#: C/unlimited-matches.page:34(page/p)
+msgid "Another way to finish an unlimited match is to just sit and wait. The server saves matches for only a limited time, around ten days. Sooner or later, all your matches will expire."
 msgstr ""
 
 #: C/watching.page:6(info/desc)
@@ -1955,7 +1955,7 @@ msgid "If you select <gui style=\"label\">Watch</gui> instead, the board will pe
 msgstr ""
 
 #: C/watching.page:40(page/p)
-msgid "If you want to stop watching a player, got again to the <link xref=\"players-list\">players flist</link>, right-click the player, and select <gui style=\"label\">Unwatch</gui>."
+msgid "If you want to stop watching a player, go again to the <link xref=\"players-list\">players list</link>, right-click the player, and select <gui style=\"label\">Unwatch</gui>."
 msgstr ""
 
 #: C/watching.page:45(page/p)
@@ -1983,7 +1983,7 @@ msgid "Talking to Other Spectators (<cmd>whisper</cmd>)"
 msgstr ""
 
 #: C/whisper.page:21(page/p)
-msgid "If you only want to talk to other people <link xref=\"watching\">watching</link> the same game as you but not to the players themselves, you should “whisper”. You can do this by typing text into the <link xref=\"game-chat-concept\">game chat area</link> and only selecting the <gui style=\"button\">whisper</gui> button."
+msgid "If you only want to talk to other people <link xref=\"watching\">watching</link> the same game with you but not to the players themselves, you should “whisper”. You can do this by typing text into the <link xref=\"game-chat-concept\">game chat area</link> and only selecting the <gui style=\"button\">whisper</gui> button."
 msgstr ""
 
 #: C/whisper.page:29(page/p)

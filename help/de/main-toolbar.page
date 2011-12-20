@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="main-toolbar" xml:lang="de">
   <info>
     <link type="guide" xref="gui#elements"/>
-    <desc>
-      The large toolbar beneath the menu
-    </desc>
+    <desc>Die große Werkzeugleiste unterhalb des Menüs</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,9 +19,7 @@
   </info>
 
   <title>Die Hauptwerkzeugleiste</title>
-  <p>
-    The main toolbar initially looks like this:
-  </p>
+  <p>Die Hauptwerkzeugleiste sieht im ursprünglichen Zustand folgendermaßen aus:</p>
   <media type="image" mime="src/png" src="figures/main-toolbar-disconnected.png">
     <p>Die Hauptwerkzeugleiste ohne Serververbindung</p>
   </media>

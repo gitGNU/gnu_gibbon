@@ -27,9 +27,7 @@
     <p>Der Dopplerwürfel kann gedreht werden, durch</p>
     <list>
       <item><p>Doppelklicken auf den Dopplerwürfel</p></item>
-      <item><p>by clicking the 
-      <gui style="button">double</gui>
-      button in the <link xref="board-toolbar">board toolbar</link>.</p></item>
+      <item><p>durch Klicken des Buttons <gui style="button">Doppeln</gui> in der <link xref="board-toolbar">Spielbrett-Werkzeugleiste</link>.</p></item>
     </list>
     <p>Der Dopplerwürfel erscheint daraufhin in der Mitte des Spielbretts.</p>
     <p>Ihre Gegnerin bzw. Ihr Gegner hat nun zwei Möglichkeiten. Durch Akzeptieren des Dopplerwürfels wird der Einsatz verdoppelt. Im Falle der Ablehnung verliert sie bzw. er die Anzahl Punkte, die der Dopplerwürfel vor dem Doppeln angezeigt hatte.</p>

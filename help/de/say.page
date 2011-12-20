@@ -20,15 +20,6 @@
   </info>
 
   <title>Mit dem Gegner sprechen (<cmd>say</cmd>)</title>
-  <p>
-    You can chat with your opponent by typing text into the
-    <link xref="game-chat-concept">game chat area</link> and
-    only selecting the <gui style="button">say</gui>
-    button.
-  </p>
-  <p>
-    Please note that it is not possible to talk directly
-    to one of the players while <link xref="watching">watching</link>
-    somebody else.
-  </p>
+  <p>Sie können mit Ihrer Gegnerin oder Ihrem Gegner während des Spiels chatten, indem Sie Text in den <link xref="game-chat-area">Spiel-Chatbereich</link> eingeben, und dabei nur den Button <gui style="button">Sagen</gui> anwählen.</p>
+  <p>Bitte beachten Sie, dass es nicht möglich ist, während Sie <link xref="watching">zuschauen</link>, direkt mit einer der Spielerinnen oder einem der Spieler zu sprechen.</p>
 </page>

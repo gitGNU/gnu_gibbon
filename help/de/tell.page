@@ -4,9 +4,7 @@
     <link type="guide" xref="chatting#shout-tell"/>
     <link type="seealso" xref="chat-area"/>
     <link type="seealso" xref="playing#chatting"/>
-    <desc>
-      Communicating With a Particular User
-    </desc>
+    <desc>Mit einer bestimmten Benutzerin oder einem bestimmten Benutzer kommunizieren</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -22,29 +20,10 @@
     </mal:credit>
   </info>
 
-  <title>Talking to a Particular User (<cmd>tell</cmd>)</title>
-  <p>
-    Private conversations with a particular user take place in the
-    <link xref="chat-area">chat area</link>.  You can start a
-    private conversation by left-clicking the player's name in the
-    <link xref="players-list">players' list</link>.
-  </p>
-  <p>
-    Once you start a conversation with another player, or another
-    player starts a conversation with you, a new tab will automatically
-    open in the <link xref="chat-area">chat area</link>.  The label
-    of the tab is the name of your conversation partner.
-  </p>
+  <title>Mit einer bestimmten Benutzerin oder einem bestimmten Benutzer sprechen (<cmd>tell</cmd>)</title>
+  <p>Private Konversationen mit bestimmten Benutzerinnen oder Benutzern finden im <link xref="chat-area">Chatbereich</link> statt. Sie können eine private Kommunikation starten, in dem Sie rechts auf den Namen der betreffenden Spielerin oder des Spielers in der <link xref="players-list">Spielerliste</link> klicken.</p>
+  <p>Wenn Sie eine Konversation mit einer anderen Spielerin oder einem anderen Spieler beginnen, oder jemand anders Sie anspricht, öffnet sich automatisch ein neuer Reiter im <link xref="chat-area">Chatbereich</link>. Der Reiter ist mit dem Namen ihrer Konversationspartnerin oder Ihres Konversationspartners beschriftet.</p>
   <p><media type="image" mime="src/png" src="figures/chat-area.png"> <p>Der Chatbereich</p> </media></p>
-  <p>
-    If you have multiple conversations in parallel, and a conversation
-    is hidden, while new messages arrive, the tab label gets
-    hightlighted, and the number of unread messages will
-    appear in parentheses after the name.
-  </p>
-  <p>
-    <em>Important:</em> While you are playing, all communication 
-    with your opponent is redirected to the <link xref="chatting#game-chat">game chat area</link>, see
-    <link xref="playing#chatting"/>.
-  </p>
+  <p>Wenn Sie mehrere private Konversationen parallel führen, und eine Konversation verdeckt ist, während neue Nachrichten eintreffen, wird die Beschriftung hervorgehoben, und die Anzahl der ungelesenen Nachrichten erscheint in Klammern hinter dem Namen.</p>
+  <p><em>Wichtig:</em> Während Sie spielen, wird die Kommunikation mit Ihrer Gegnerin oder Ihrem Gegner in den <link xref="chatting#game-chat">Spielchatbereich</link> umgeleitet, siehe <link xref="playing#chatting"/>.</p>
 </page>

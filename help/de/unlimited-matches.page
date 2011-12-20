@@ -2,9 +2,7 @@
 <page xmlns="http://projectmallard.org/1.0/" type="topic" id="unlimited-matches" xml:lang="de">
   <info>
     <link type="guide" xref="index#misc"/>
-    <desc>
-      Matches without a fixed length
-    </desc>
+    <desc>Partien ohne fixe Länge</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -20,25 +18,8 @@
     </mal:credit>
   </info>
 
-  <title>Unlimited Matches</title>
-  <p>
-    Unlimited matches may show some surprising behavior.
-    Keep that in mind before you 
-    <link xref="invite">invite</link>
-    somebody to an unlimited match or before you
-    <link xref="inviters-list">accept an invitation</link> to 
-  </p>
-  <p>
-    It is hard to finish unlimited matches.  Every time
-    a game is terminated, the server saves the match.  The regular
-    way to do this is to start a new match with your
-    opponent.  That will automatically terminate your
-    saved unlimited match.
-  </p>
-  <p>
-    Another way to finish an unlimited match is to just
-    sit and wait.  The server saves matches for only a limited
-    time, around 10 days.  Sooner or later, all your matches
-    will expire.
-  </p>
+  <title>Unbegrenzte Partien</title>
+  <p>Unbegrenzte Partien weisen einige Eigentümlichkeiten auf. Bitte behalten Sie das im Sinn, bevor Sie jemanden zu einer unbegrenzten Partie selbst <link xref="invite">einladen</link>, oder bevor Sie eine solche <link xref="inviters-list">Einladung annehmen</link>.</p>
+  <p>Es ist schwer, aus unbegrenzten Partien herauszukommen. Jedes Mal, wenn ein Spiel beendet wird, speichert der Server das Match ab. Der reguläre Weg, eine unbegrenzte Partie zu beenden, besteht darin, eine neue Partie mit Ihrer Gegnerin oder Ihrem Gegner zu beginnen. Die gespeicherte Partie wird damit automatisch terminiert.</p>
+  <p>Eine andere Art besteht darin, einfach abzuwarten. Der Server speichert Partien nur für eine begrenzte Zeit, ungefähr zehn Tage. Früher oder später werden also all Ihre gespeicherten Partien durch Zeitablauf verschwinden.</p>
 </page>

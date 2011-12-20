@@ -3,9 +3,9 @@
 
   <info>
     <link type="guide" xref="index#misc"/>
-    <title type="link">Supporting <app>Gibbon</app></title>
-    <title type="text">Supporting <app>Gibbon</app></title>
-    <desc>Help <app>Gibbon</app> to become better</desc>
+    <title type="link"><app>Gibbon</app> unterstützen</title>
+    <title type="text"><app>Gibbon</app> unterstützen</title>
+    <desc>Helfen, damit <app>Gibbon</app> besser wird</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,5 +21,5 @@
     </mal:credit>
   </info>
 
-  <title>Supporting <app>Gibbon</app></title>
+  <title><app>Gibbon</app> unterstützen</title>
 </page>

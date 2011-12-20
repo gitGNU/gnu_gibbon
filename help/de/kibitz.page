@@ -21,11 +21,6 @@
   </info>
 
   <title>Mit allen am Brett sprechen (<cmd>kibitz</cmd>)</title>
-  <p>
-    If you want to talk to everybody on the board, that is the players
-    themselves and possible spectators you have to select both the
-    <gui style="button">say</gui> and the <gui style="button">whisper</gui>
-    button, when you send your message to the server.
-  </p>
+  <p>Wenn Sie mit allen Leuten am Brett sprechen wollen, also den beiden Spielerinnen oder Spielern, und möglichen Zuschauerinnen und Zuschauern, müssen Sie sowohl den Button <gui style="button">Sagen</gui> als auch den Button <gui style="button">Flüstern</gui> aktivieren, wenn Sie Ihre Nachricht absenden.</p>
   <p>Wenn Sie im Moment spielen, werden sowohl Ihre Gegnerin bzw. Ihr Gegner als auch die Zuschauerinnen oder Zuschauer Ihre Nachricht sehen.  Wenn Sie dagegen selber <link xref="watching">zusehen</link>, sehen sowohl die beiden Spielerinnen bzw. Spieler als auch das Publikum die Mitteilung.</p>
 </page>

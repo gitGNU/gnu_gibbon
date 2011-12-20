@@ -6,7 +6,7 @@
     <link type="seealso" xref="chatting"/>
     <title type="link">Der Chat-Bereich</title>
     <title type="text">Der Chat-Bereich</title>
-    <desc>How To Chat With Other People On the Server</desc>
+    <desc>Mit anderen Leuten auf dem Server chatten</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -30,8 +30,5 @@
   <p><media type="image" mime="src/png" src="figures/chat-area.png"> <p>Der Chatbereich</p> </media></p>
   <p>Die <link xref="shout">öffentliche Kommunication</link> wird immer unterhalb des ersten Reiters dargestellt, <link xref="tell">Kommunication mit einzelnen Benutzerinnen und Benutzern</link> dagegen unterhalb der nachfolgenden Reiter.</p>
   <p>Sie können Ihre eigenen Mitteilungen in das Texteingabefeld unten eingeben. Sie wird durch Drücken der <key>Eingabetaste</key> abgeschickt.</p>
-  <p>
-    The recipient is selected according to the currently
-    selected tab, i.e. the one that is in the foreground.
-  </p>
+  <p>Die Empfängerin oder der Empfänger wird entsprechend dem selektierten, also im Vordergrund liegenden Reiter ausgewählt.</p>
 </page>
