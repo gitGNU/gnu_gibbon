@@ -67,7 +67,8 @@ void
 gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
 {
         gchar *uri;
-        GError *error = NULL;
+        GError *error_local = NULL;
+        GError *error_online = NULL;
         gboolean success;
         GtkWidget *window;
 
@@ -78,16 +79,35 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
         uri = g_strdup_printf ("help:%s/index", PACKAGE);
 
         success = gtk_show_uri (gtk_widget_get_screen (window), uri,
-                                GDK_CURRENT_TIME, &error);
-
-        if (error) {
-                gibbon_app_display_error (app, _("Error displaying help:"
-						 " %s"), error->message);
-        } else if (!success) {
-                gibbon_app_display_error (app, NULL,
-                                          "%s",
-                                          _("Unknown error displaying help!"));
-        }
+                                GDK_CURRENT_TIME, &error_local);
 
         g_free (uri);
+
+        if (!error_local && success)
+                return;
+
+        /*
+         * TRANSLATORS: This is the URI of the online help.  Please "translate"
+         * it with the appropriate URI for your language.
+         */
+        uri = _("http://www.gibbon.bg/gibbon/docs/gibbon/en/index.html.en");
+        success = gtk_show_uri (gtk_widget_get_screen (window), uri,
+                                GDK_CURRENT_TIME, &error_online);
+
+        if (!error_online && success)
+                return;
+
+
+        gibbon_app_display_error (app, _("Error Displaying Help"),
+                                  _("Locally installed help: %s.\n"
+                                    "Online help: %s.\n"),
+                                  error_local ? error_local->message
+                                                  : _("Unknown error"),
+                                  error_online ? error_online->message
+                                                  : _("Unknown error"));
+
+        if (error_local)
+                g_error_free (error_local);
+        if (error_online)
+                g_error_free (error_online);
 }
