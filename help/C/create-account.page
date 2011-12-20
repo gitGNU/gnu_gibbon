@@ -73,8 +73,8 @@
       <p>
         The user name you want to use on that server.  It is - of course -
         not possible to use a name used by somebody else.  A little
-        surprising: Your name must not contain digits, underscores,
-        or hyphens.
+        surprising: Your name must not contain digits, hyphens,
+        or two or more subsequent underscores.
       </p>
       <p>
         This name will be your identity on the server! While it is not illegal
