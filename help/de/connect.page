@@ -42,7 +42,8 @@
     </item>
     <item>
       <p>Optional, eine E-Mail-Adresse. Diese Adresse ist für alle anderen Benutzerinnen und Benutzer auf dem Server sichtbar.</p>
-      <p><em>Hinweis:</em> FIBS erlaubt hier keine beliebigen Zeichenketten. Wenn Sie statt Ihrer Adresse eine Webseite angeben wollen, lassen Sie bitte das führende Schema weg, also nicht „http://www.example.com/” sondern „www.example.com”.</p>
+      <p><em>Hinweis:</em> Sie müssen hier nichts angeben. Und wenn Sie eine Mail-Adresse angeben, muss sie nicht gültig sein. Allerdings, wenn Sie Ihr Passwort vergessen haben, können Sie es auf FIBS nur zurücksetzen lassen, wenn sie eine gültige E-Mail-Adresse angegeben haben. FIBS verlangt das, um Sie zu identifizieren. Es handelt sich hier also um eine Abwägung zwischen Ihrer Privatsphäre und Ihrem schlechten Gedächtnis.</p>
+      <p><em>Noch ein Hinweis:</em> FIBS erlaubt hier keine beliebigen Zeichenketten. Wenn Sie statt Ihrer Adresse eine Webseite angeben wollen, lassen Sie bitte das führende Schema weg, also nicht „http://www.example.com/” sondern „www.example.com”.</p>
     </item>
   </list>
 </page>

@@ -68,12 +68,12 @@
         visible to everybody else on the server.
       </p>
       <p>
-        <em>Hint:</em> It is not necessary to give an e-mail address here.
+        <em>Hint:</em> It is not necessary to give any address.
         And if you give one, it is not necessary to be valid.  However,
         you can only recover a forgotten password, if you have given a 
         valid e-mail address on FIBS.  FIBS requires this, so that it can
-        identify you.  It is a trade-off between your privacy and poor
-        memorizing.
+        identify you.  In other words, it is a trade-off between your privacy 
+        and poor memorizing.
       </p>
       <p>
         <em>Another hint:</em> FIBS does not allow arbitrary strings here.

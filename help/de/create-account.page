@@ -54,7 +54,7 @@
     <item>
       <p><gui style="label">Kennwort wiederholen</gui></p>
       <p>Sie müssen Ihr Kennwort wiederholen.</p>
-      <p><em>Wichtig!</em> Bitte vergessen Sie Ihr Kennwort nicht! Es kann <em>nicht</em> wiederhergestellt werden!</p>
+      <p><em>Wichtig!</em> Bitte vergessen Sie Ihr Kennwort nicht! Sie können es nur zurücksetzen, wenn Sie eine gültige Mail-Adresse während des Verbindungsaufbaus angegeben hatten, siehe <link xref="connect"/>!</p>
     </item>
   </list>
 </page>
