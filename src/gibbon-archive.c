@@ -237,6 +237,7 @@ gibbon_archive_new (GibbonApp *app)
         self->priv->droppers = g_hash_table_new_full (g_str_hash, g_str_equal,
                                                       g_free, NULL);
 
+#if 0
         if (first_run)
                 gibbon_app_display_info (app, NULL,
                                          _("You can import settings and saved"
@@ -244,6 +245,7 @@ gibbon_archive_new (GibbonApp *app)
                                            " Check the menu `Extras' to see if"
                                            " your old client software is"
                                            " supported!"));
+#endif
 
         return self;
 }
