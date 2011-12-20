@@ -129,7 +129,8 @@
       </p>
       <p>
         <em>Important!</em> Do <em>not</em> forget your password!
-        You cannot recover it!
+        You can only recover it, if you have given a valid e-mail
+        address, in the connection, see <link xref="connect"/>!
       </p>
     </item>
   </list>
