@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-12-19 00:29+0200\n"
+"POT-Creation-Date: 2011-12-20 21:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -588,11 +588,11 @@ msgid "The name or IP address of the server you want to connect to. In doubt, tr
 msgstr ""
 
 #: C/create-account.page:73(item/p)
-msgid "The user name you want to use on that server. It is - of course - not possible to use a name used by somebody else. A little surprising: Your name must not contain digits, underscores, or hyphens."
+msgid "The user name you want to use on that server. It is - of course - not possible to use a name used by somebody else. A little surprising: Your name must not contain digits, hyphens, or two or more subsequent underscores."
 msgstr ""
 
 #: C/create-account.page:79(item/p)
-msgid "This name will be your identity on the server! While it is not illegal to choose a silly or offensive name, in fact some people have remarkably silly or offensive names on <app>FIBS</app>, you should think twice about how you want to be known to your future backgammon partners."
+msgid "This name will be your identity on the server! While it is not illegal to choose a silly or offensive name - in fact some people have remarkably silly or offensive names on <app>FIBS</app> - you want to think twice about how you want to be known to your future backgammon partners."
 msgstr ""
 
 #: C/create-account.page:88(item/p)
@@ -1414,10 +1414,10 @@ msgid "Talking to Everybody At The Board (<cmd>kibitz</cmd>)"
 msgstr ""
 
 #: C/kibitz.page:22(page/p)
-msgid "If you want to talk to everybody on the board, that is the players themselves and possible spectators you have to select both the <gui style=\"button\">say</gui> and the <gui style=\"button\">whisper</gui> button while typing text into the <link xref=\"chatting#game-chat\">game chat area</link>."
+msgid "If you want to talk to everybody on the board, that is the players themselves and possible spectators you have to select both the <gui style=\"button\">say</gui> and the <gui style=\"button\">whisper</gui> button, when you send your message to the server."
 msgstr ""
 
-#: C/kibitz.page:29(page/p)
+#: C/kibitz.page:28(page/p)
 msgid "If you are currently playing, both your opponent and spectators will see your message. If you are <link xref=\"watching\">watching</link> both players and possible other spectators will see your message."
 msgstr ""
 
@@ -1472,7 +1472,7 @@ msgid "external ref='figures/main-toolbar-connected.png' md5='aea53a846d3ea50609
 msgstr ""
 
 #: C/main-toolbar.page:6(info/desc)
-msgid "The large toolbar above the board"
+msgid "The large toolbar beneath the menu"
 msgstr ""
 
 #: C/main-toolbar.page:18(page/title)
@@ -1480,7 +1480,7 @@ msgid "The Main Toolbar"
 msgstr ""
 
 #: C/main-toolbar.page:19(page/p)
-msgid "The main toolbar above initially looks like this:"
+msgid "The main toolbar initially looks like this:"
 msgstr ""
 
 #: C/main-toolbar.page:23(media/p)

@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 01:20+0200\n"
-"PO-Revision-Date: 2011-12-08 01:23+0200\n"
+"POT-Creation-Date: 2011-12-20 22:50+0200\n"
+"PO-Revision-Date: 2011-12-20 22:53+0200\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -195,12 +195,12 @@ msgid "Go back one half roll"
 msgstr "Einen Halbzug zurück"
 
 #: ../data/gibbon.ui.h:11
-msgid "Go to end of match"
-msgstr "Zum Ende des Matchs"
+msgid "Go to next game"
+msgstr "Nächstes Spiel"
 
 #: ../data/gibbon.ui.h:12
-msgid "Goto beginning of match"
-msgstr "Zum Anfang des Matchs"
+msgid "Go to previous game"
+msgstr "Vorheriges Spiel"
 
 #: ../data/gibbon.ui.h:13
 msgid "Import settings and games from JavaFIBS"
@@ -270,7 +270,7 @@ msgstr "Vorheriger Zug"
 msgid "Rating information"
 msgstr "Ranglisteninformation"
 
-#: ../data/gibbon.ui.h:29 ../src/gibbon-app.c:1522
+#: ../data/gibbon.ui.h:29 ../src/gibbon-app.c:1550
 msgid "Ready"
 msgstr "Bereit"
 
@@ -334,7 +334,7 @@ msgstr "Bewegung der Spielsteine zurücknehmen"
 msgid "User name and password"
 msgstr "Anmeldename und Kennwort"
 
-#: ../data/gibbon.ui.h:45 ../src/gibbon-session.c:2436
+#: ../data/gibbon.ui.h:45 ../src/gibbon-session.c:2476
 msgid "Watch"
 msgstr "Beobachten"
 
@@ -799,35 +799,35 @@ msgstr ""
 "Es ist normalerweise nicht in Ordnung, aus einem laufenden Spiel "
 "auszusteigen. Dennoch das Spiel verlassen?"
 
-#: ../src/gibbon-app.c:1208
+#: ../src/gibbon-app.c:1236
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr "Verbindungsaufbau mit %s auf Port %d."
 
-#: ../src/gibbon-app.c:1224
+#: ../src/gibbon-app.c:1252
 #, c-format
 msgid "Connected with %s port %d."
 msgstr "Mit %s auf Port %d verbunden."
 
-#: ../src/gibbon-app.c:1243
+#: ../src/gibbon-app.c:1271
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr "Als %s auf %s Port %d angemeldet."
 
-#: ../src/gibbon-app.c:1303
+#: ../src/gibbon-app.c:1331
 #, c-format
 msgid "Error loading image `%s': %s!"
 msgstr "Fehler beim Laden des Bildes „%s“: %s!"
 
-#: ../src/gibbon-app.c:1526
+#: ../src/gibbon-app.c:1554
 msgid "Click to set yourself busy."
 msgstr "Auf „beschäftigt“ setzen"
 
-#: ../src/gibbon-app.c:1539
+#: ../src/gibbon-app.c:1567
 msgid "Busy"
 msgstr "Beschäftigt"
 
-#: ../src/gibbon-app.c:1543
+#: ../src/gibbon-app.c:1571
 msgid "Click to set yourself ready to play."
 msgstr "Auf „bereit zu spielen“ setzen"
 
@@ -840,7 +840,7 @@ msgstr "Das Benutzerdaten-Verzeichnis kann nicht ermittelt werden!"
 msgid "Failed to create server directory `%s': %s!"
 msgstr "Fehler bei der Erzeugung des Serververzeichnisses „%s“: %s!"
 
-#: ../src/gibbon-archive.c:242
+#: ../src/gibbon-archive.c:243
 msgid ""
 "You can import settings and saved games from your old client. Check the menu "
 "`Extras' to see if your old client software is supported!"
@@ -849,7 +849,7 @@ msgstr ""
 "übernommen werden. Sehen Sie im Menü „Extras“ nach, ob Ihre alte Software "
 "unterstützt wird!"
 
-#: ../src/gibbon-archive.c:285
+#: ../src/gibbon-archive.c:287
 #, c-format
 msgid ""
 "Failed to create directory `%s': %s!\n"
@@ -901,31 +901,31 @@ msgstr ""
 msgid "Error parsing board definition `%s'.\n"
 msgstr "Fehler beim Laden der Brett-Definition „%s“.\n"
 
-#: ../src/gibbon-cairoboard.c:1169
+#: ../src/gibbon-cairoboard.c:1173
 #, c-format
 msgid "Board definition `%s' does not have an element `%s'.\n"
 msgstr "Brettdefinition „%s“ hat kein Element „%s“.\n"
 
-#: ../src/gibbon-cairoboard.c:1328
+#: ../src/gibbon-cairoboard.c:1332
 #, c-format
 msgid "%u-point match"
 msgstr "%u-Punkte-Match"
 
-#: ../src/gibbon-cairoboard.c:1331
+#: ../src/gibbon-cairoboard.c:1335
 msgid "Unlimited match"
 msgstr "Unbegrenztes Match"
 
-#: ../src/gibbon-cairoboard.c:1349 ../src/gibbon-cairoboard.c:1355
+#: ../src/gibbon-cairoboard.c:1353 ../src/gibbon-cairoboard.c:1359
 #, c-format
 msgid "Score: %u (%u-away)"
 msgstr "Spielstand: %u (%u entfernt)"
 
-#: ../src/gibbon-cairoboard.c:1361 ../src/gibbon-cairoboard.c:1365
+#: ../src/gibbon-cairoboard.c:1365 ../src/gibbon-cairoboard.c:1369
 #, c-format
 msgid "Score: %u"
 msgstr "Spielstand: %u"
 
-#: ../src/gibbon-cairoboard.c:1375 ../src/gibbon-cairoboard.c:1380
+#: ../src/gibbon-cairoboard.c:1379 ../src/gibbon-cairoboard.c:1384
 #, c-format
 msgid "Pips: %u (%+d)"
 msgstr "Augen: %u (%+d)"
@@ -938,28 +938,28 @@ msgstr "Reiter schließen"
 msgid "Really close?"
 msgstr "Wirklich schließen?"
 
-#: ../src/gibbon-clip.c:1970
+#: ../src/gibbon-clip.c:1973
 msgid "You cannot play two matches at once!"
 msgstr "Sie können nicht zwei Matches auf einmal spielen!"
 
-#: ../src/gibbon-clip.c:2000 ../src/gibbon-clip.c:2137
-#: ../src/gibbon-clip.c:2160
+#: ../src/gibbon-clip.c:2058 ../src/gibbon-clip.c:2212
+#: ../src/gibbon-clip.c:2235
 #, c-format
 msgid "Player `%s' is already playing with someone else!"
 msgstr "„%s“ spielt bereits mit jemand anderem!"
 
-#: ../src/gibbon-clip.c:2021
+#: ../src/gibbon-clip.c:2079
 #, c-format
 msgid "Player `%s' is not logged in!"
 msgstr "„%s“ ist nicht eingeloggt!"
 
-#: ../src/gibbon-clip.c:2102
+#: ../src/gibbon-clip.c:2162
 msgid "Your saved match was corrupted on server.  Please start a new one!"
 msgstr ""
 "Die Daten Ihres gespeicherten Matches sind auf dem Server beschädigt worden. "
 "Bitte starten Sie ein neues!"
 
-#: ../src/gibbon-clip.c:2180
+#: ../src/gibbon-clip.c:2255
 #, c-format
 msgid "Player `%s' is now refusing matches!"
 msgstr "„%s“ lehnt jetzt Einladungen zu Matches ab!"
@@ -2457,14 +2457,30 @@ msgstr "%s ist ein Spiel, mit dem online Backgammon gespielt werden kann."
 msgid "translator-credits"
 msgstr "Guido Flohr <guido@imperi.net>"
 
-#: ../src/gibbon-help.c:84
-#, c-format
-msgid "Error displaying help: %s"
-msgstr "Fehler beim Anzeigen der Hilfe: %s!"
+#.
+#. * TRANSLATORS: This is the URI of the online help.  Please "translate"
+#. * it with the appropriate URI for your language.
+#.
+#: ../src/gibbon-help.c:93
+msgid "http://www.gibbon.bg/gibbon/docs/gibbon/en/index.html.en"
+msgstr "http://www.gibbon.bg/gibbon/docs/gibbon/de/index.html.de"
 
-#: ../src/gibbon-help.c:89
-msgid "Unknown error displaying help!"
-msgstr "Unbekannter Fehler beim Anzeigen der Hilfe!"
+#: ../src/gibbon-help.c:101
+msgid "Error Displaying Help"
+msgstr "Fehler beim Anzeigen der Hilfe"
+
+#: ../src/gibbon-help.c:102
+#, c-format
+msgid ""
+"Locally installed help: %s.\n"
+"Online help: %s.\n"
+msgstr ""
+"Lokal installierte Hilfe: %s.\n"
+"Hilfe im Internet: %s.\n"
+
+#: ../src/gibbon-help.c:105 ../src/gibbon-help.c:107
+msgid "Unknown error"
+msgstr "Unbekannter Fehler"
 
 #: ../src/gibbon-inviter-list-view.c:193
 msgid "Inviter"
@@ -2495,27 +2511,27 @@ msgstr "Gespeichert"
 msgid "Address"
 msgstr "Adresse"
 
-#: ../src/gibbon-inviter-list-view.c:549 ../src/gibbon-player-list-view.c:790
+#: ../src/gibbon-inviter-list-view.c:546 ../src/gibbon-player-list-view.c:787
 msgid "good"
 msgstr "gut"
 
-#: ../src/gibbon-inviter-list-view.c:555 ../src/gibbon-player-list-view.c:796
+#: ../src/gibbon-inviter-list-view.c:552 ../src/gibbon-player-list-view.c:793
 msgid "keep away"
 msgstr "wegbleiben"
 
-#: ../src/gibbon-inviter-list-view.c:557 ../src/gibbon-player-list-view.c:798
+#: ../src/gibbon-inviter-list-view.c:554 ../src/gibbon-player-list-view.c:795
 msgid "very certain"
 msgstr "sehr sicher"
 
-#: ../src/gibbon-inviter-list-view.c:559 ../src/gibbon-player-list-view.c:800
+#: ../src/gibbon-inviter-list-view.c:556 ../src/gibbon-player-list-view.c:797
 msgid "certain"
 msgstr "sicher"
 
-#: ../src/gibbon-inviter-list-view.c:561 ../src/gibbon-player-list-view.c:802
+#: ../src/gibbon-inviter-list-view.c:558 ../src/gibbon-player-list-view.c:799
 msgid "uncertain"
 msgstr "unsicher"
 
-#: ../src/gibbon-inviter-list-view.c:563 ../src/gibbon-player-list-view.c:804
+#: ../src/gibbon-inviter-list-view.c:560 ../src/gibbon-player-list-view.c:801
 msgid "unknown"
 msgstr "unbekannt"
 
@@ -2589,12 +2605,12 @@ msgstr "Matchlänge:"
 msgid "unlimited"
 msgstr "unbegrenzt"
 
-#: ../src/gibbon-player-list-view.c:767
+#: ../src/gibbon-player-list-view.c:764
 #, c-format
 msgid "<i>%s</i> does not want to play right now."
 msgstr "<i>%s</i> möchte im Moment nicht spielen."
 
-#: ../src/gibbon-player-list-view.c:806
+#: ../src/gibbon-player-list-view.c:803
 #, c-format
 msgid ""
 "<b>Reliability of player <i>%s</i>:</b>\n"
@@ -2603,7 +2619,7 @@ msgstr ""
 "<b>Zuverlässigkeit von Spieler <i>%s</i>:</b>\n"
 " %f (%s) mit einer Konfidenz von %u (%s)."
 
-#: ../src/gibbon-player-list-view.c:815
+#: ../src/gibbon-player-list-view.c:812
 #, c-format
 msgid "<b>Reliability of player <i>%s</i></b>: unknown."
 msgstr "<b>Zuverlässigkeit von Spieler <i>%s</i></b>: Unbekannt."
@@ -2689,37 +2705,37 @@ msgstr ""
 msgid "Unable to write to logfile `%s': %s.\n"
 msgstr "Fehler beim Schreiben in die Logdate „%s“: %s.\n"
 
-#: ../src/gibbon-session.c:685
+#: ../src/gibbon-session.c:697
 #, c-format
 msgid "Last login on %s from `%s'."
 msgstr "Letztes Login am %s von „%s“ aus."
 
-#: ../src/gibbon-session.c:882 ../src/gibbon-session.c:893
+#: ../src/gibbon-session.c:894 ../src/gibbon-session.c:905
 #, c-format
 msgid "%s logged out!"
 msgstr "%s hat sich abgemeldet!"
 
-#: ../src/gibbon-session.c:888 ../src/gibbon-session.c:898
+#: ../src/gibbon-session.c:900 ../src/gibbon-session.c:910
 #, c-format
 msgid "Player `%s' logged out!"
 msgstr "„%s“ hat sich ausgeloggt!"
 
-#: ../src/gibbon-session.c:939
+#: ../src/gibbon-session.c:951
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr "„%s“ hat Ihnen am %s eine Nachricht hinterlassen: %s"
 
-#: ../src/gibbon-session.c:954
+#: ../src/gibbon-session.c:966
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr "Ihre Nachricht an „%s“ wurde ausgeliefert!"
 
-#: ../src/gibbon-session.c:970
+#: ../src/gibbon-session.c:982
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr "„%s“ ist nicht angemeldet. Ihre Nachricht wurde gespeichert!"
 
-#: ../src/gibbon-session.c:1323
+#: ../src/gibbon-session.c:1357
 msgid "Crawford game"
 msgstr "Crawford-Spiel"
 
@@ -2730,86 +2746,86 @@ msgstr "Crawford-Spiel"
 #. * after all, almost nobody plays without the Crawford rule
 #. * and we ignore that problem.
 #.
-#: ../src/gibbon-session.c:1333
+#: ../src/gibbon-session.c:1367
 msgid "Post-Crawford game"
 msgstr "Nach-Crawford-Spiel"
 
-#: ../src/gibbon-session.c:1606
+#: ../src/gibbon-session.c:1640
 #, c-format
 msgid "You roll %u and %u."
 msgstr "Sie haben %u und %u gewürfelt."
 
-#: ../src/gibbon-session.c:1617 ../src/gibbon-session.c:1625
+#: ../src/gibbon-session.c:1651 ../src/gibbon-session.c:1659
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr "„%s“ hat %u und %u gewürfelt."
 
-#: ../src/gibbon-session.c:1687 ../src/gibbon-session.c:1700
+#: ../src/gibbon-session.c:1721 ../src/gibbon-session.c:1734
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr "%d%d: %s hat %s gezogen."
 
-#: ../src/gibbon-session.c:1694
+#: ../src/gibbon-session.c:1728
 #, c-format
 msgid "%d%d: You move %s."
 msgstr "%d%d: Sie haben %s gezogen."
 
-#: ../src/gibbon-session.c:1726
+#: ../src/gibbon-session.c:1760
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr "Fehler bei der Ausführung des Zuges %s in der aktuellen Position.\n"
 
-#: ../src/gibbon-session.c:2122
+#: ../src/gibbon-session.c:2156
 #, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr "Die E-Mail-Adresse „%s“ wurde vom Server zurückgewiesen!"
 
-#: ../src/gibbon-session.c:2142 ../src/gibbon-session.c:2149
+#: ../src/gibbon-session.c:2176 ../src/gibbon-session.c:2183
 #, c-format
 msgid "%s cannot move!"
 msgstr "%s kann nicht ziehen!"
 
-#: ../src/gibbon-session.c:2153
+#: ../src/gibbon-session.c:2187
 msgid "You cannot move!"
 msgstr "Sie können nicht ziehen!"
 
-#: ../src/gibbon-session.c:2298 ../src/gibbon-session.c:2324
+#: ../src/gibbon-session.c:2338 ../src/gibbon-session.c:2364
 #, c-format
 msgid "%s has won the game and one point!"
 msgid_plural "%s has won the game and %d points!"
 msgstr[0] "%s hat das Spiel und einen Punkt gewonnen!"
-msgstr[1] "%s hat das Spiel und %s Punkte gewonnen!"
+msgstr[1] "%s hat das Spiel und %d Punkte gewonnen!"
 
-#: ../src/gibbon-session.c:2311
+#: ../src/gibbon-session.c:2351
 #, c-format
 msgid "You have won the game and one point!"
 msgid_plural "You have won the game and %d points!"
 msgstr[0] "Sie haben das Spiel und damit einen Punkt gewonnen!"
 msgstr[1] "Sie haben das Spiel und damit %d Punkte gewonnen!"
 
-#: ../src/gibbon-session.c:2350
+#: ../src/gibbon-session.c:2390
 msgid "Message from server"
 msgstr "Nachricht vom Server"
 
-#: ../src/gibbon-session.c:2433
+#: ../src/gibbon-session.c:2473
 msgid "Stop watching"
 msgstr "Beobachten beenden"
 
-#: ../src/gibbon-session.c:2534
+#: ../src/gibbon-session.c:2574
 msgid "Timeout during during registration!"
 msgstr "Zeitüberschreitung während der Registrierung!"
 
-#: ../src/gibbon-session.c:2569 ../src/gibbon-session.c:2617
+#: ../src/gibbon-session.c:2609 ../src/gibbon-session.c:2657
 msgid "Unexpected reply from server!"
 msgstr "Unerwartete Antwort vom Server!"
 
-#: ../src/gibbon-session.c:2580 ../src/gibbon-session.c:2632
+#: ../src/gibbon-session.c:2620 ../src/gibbon-session.c:2672
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 "Registrierung fehlgeschlagen. Bitte schauen Sie für Einzelheiten in der "
 "Serverkonsole nach!"
 
-#: ../src/gibbon-session.c:2676
+#: ../src/gibbon-session.c:2716
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
@@ -2818,16 +2834,16 @@ msgstr ""
 "Bitte wählen Sie einen anderen Namen. Der Name „%s“ wird bereits von jemand "
 "anderem auf diesem Server verwendet!"
 
-#: ../src/gibbon-session.c:2682
+#: ../src/gibbon-session.c:2722
 #, c-format
 msgid "Registration failure: %s!"
 msgstr "Registrierung fehlgeschlagen: %s!"
 
-#: ../src/gibbon-session.c:2716
+#: ../src/gibbon-session.c:2756
 msgid "Registration successful!"
 msgstr "Registrierung erfolgreich!"
 
-#: ../src/gibbon-session.c:2718
+#: ../src/gibbon-session.c:2758
 msgid ""
 "Please do not forget your password! It cannot be recovered.\n"
 "You have to connect to the server again to start playing."
@@ -2837,11 +2853,11 @@ msgstr ""
 "Um mit dem Spielen zu beginnen, müssen Sie Sich erneut mit dem Server "
 "verbinden."
 
-#: ../src/gibbon-session.c:2769
+#: ../src/gibbon-session.c:2809
 msgid "This will end your saved match!"
 msgstr "Das gespeicherte Match wird beendet!"
 
-#: ../src/gibbon-session.c:2770
+#: ../src/gibbon-session.c:2810
 msgid ""
 "You still have a saved match of unlimited length with that player.  If you "
 "accept the invitation, your saved match will be terminated.\n"
@@ -2851,27 +2867,27 @@ msgstr ""
 "oder diesem Spieler. Wenn Sie die Einladung annehmen, wird ihr gespeichertes "
 "Match beendet. Wollen Sie die Einladung wirklich annehmen?"
 
-#: ../src/gibbon-session.c:2794
+#: ../src/gibbon-session.c:2834
 msgid "Decline Invitation"
 msgstr "Einladung ablehnen"
 
-#: ../src/gibbon-session.c:2798
+#: ../src/gibbon-session.c:2838
 msgid "Decline with message"
 msgstr "Einladung mit Nachricht ablehnen"
 
-#: ../src/gibbon-session.c:2800
+#: ../src/gibbon-session.c:2840
 msgid "Ignore"
 msgstr "Ignorieren"
 
-#: ../src/gibbon-session.c:2901
+#: ../src/gibbon-session.c:2941
 msgid "Illegal move!"
 msgstr "Ungültiger Zug!"
 
-#: ../src/gibbon-session.c:2906
+#: ../src/gibbon-session.c:2946
 msgid "You moved too many checkers!"
 msgstr "Zu viele Steine gezogen!"
 
-#: ../src/gibbon-session.c:2911
+#: ../src/gibbon-session.c:2951
 msgid ""
 "You cannot move to a point that is blocked by two or more of your opponent's "
 "checkers!"
@@ -2879,22 +2895,22 @@ msgstr ""
 "Sie können nicht auf ein Feld ziehen, das von mehr als zwei gegnerischen "
 "Steinen besetzt ist!"
 
-#: ../src/gibbon-session.c:2917
+#: ../src/gibbon-session.c:2957
 msgid "You have to use both dice!"
 msgstr "Sie müssen alle Würfel verwenden!"
 
-#: ../src/gibbon-session.c:2921
+#: ../src/gibbon-session.c:2961
 msgid "You have to use the higher die!"
 msgstr "Sie müssen den Würfel mit der höheren Augenzahl verwenden!"
 
-#: ../src/gibbon-session.c:2925
+#: ../src/gibbon-session.c:2965
 msgid ""
 "You have to use both dice if possible (hint: try to use the other die first)!"
 msgstr ""
 "Sie müssen beide Würfel verwenden (Hinweis: Versuchen Sie zuerst den anderen "
 "Würfel zu verwenden)!"
 
-#: ../src/gibbon-session.c:2931
+#: ../src/gibbon-session.c:2971
 msgid ""
 "You must move all checkers into your home board before you can start bearing-"
 "off!"
@@ -2902,11 +2918,11 @@ msgstr ""
 "Sie müssen zuerst alle Steine in ihr Heimatfeld bringen, bevor sie Steine "
 "ausspielen können!"
 
-#: ../src/gibbon-session.c:2937
+#: ../src/gibbon-session.c:2977
 msgid "You must move your checkers from the higher points first!"
 msgstr "Sie müssen erst Steine von den höheren Feldern bewegen!"
 
-#: ../src/gibbon-session.c:2942
+#: ../src/gibbon-session.c:2982
 msgid "You must bring in checkers from the bar first!"
 msgstr "Geschlagene Steine müssen zuerst wieder ins Spiel gebracht werden!"
 
@@ -2961,3 +2977,12 @@ msgstr "Fehler beim Parsen der SVG-Datei „%s“: %s.\n"
 #, c-format
 msgid "Error getting SVG dimensions of `%s': %s.\n"
 msgstr "Fehler bei der Ermittlung der SVG-Dimension von „%s“: %s.\n"
+
+#~ msgid "Go to end of match"
+#~ msgstr "Zum Ende des Matchs"
+
+#~ msgid "Goto beginning of match"
+#~ msgstr "Zum Anfang des Matchs"
+
+#~ msgid "Unknown error displaying help!"
+#~ msgstr "Unbekannter Fehler beim Anzeigen der Hilfe!"

@@ -44,11 +44,16 @@
     </item>
     <item>
       <p><gui style="label">User name</gui></p>
-      <p>Der Anmeldename, den Sie für diesen Server verwenden wollen. Es ist natürlich nicht möglich, sich einen Namen auszusuchen, der schon von jemand anderem benutzt wird. Es ist eventuell etwas überraschend, dass der Anmeldename weder Ziffern noch Unter- oder Bindestiche enthalten darf.</p>
+      <p>
+        The user name you want to use on that server.  It is - of course -
+        not possible to use a name used by somebody else.  A little
+        surprising: Your name must not contain digits, hyphens,
+        or two or more subsequent underscores.
+      </p>
       <p>
         This name will be your identity on the server! While it is not illegal
-        to choose a silly or offensive name, in fact some people have 
-        remarkably silly or offensive names on <app>FIBS</app>, you should 
+        to choose a silly or offensive name - in fact some people have 
+        remarkably silly or offensive names on <app>FIBS</app> - you want to 
         think twice about how you want to be known to your future backgammon 
         partners.
       </p>

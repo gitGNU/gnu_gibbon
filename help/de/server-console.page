@@ -3,9 +3,7 @@
   <info>
     <link type="guide" xref="info-area"/>
     <link type="guide" xref="gui#elements"/>
-    <desc>
-      Interacting with the server directly
-    </desc>
+    <desc>Direkte Interaktion mit dem Server</desc>
     <credit type="author">
       <name>Guido Flohr</name>
       <email>guido@imperia.net</email>
@@ -21,11 +19,8 @@
     </mal:credit>
   </info>
 
-  <title>The Server Console</title>
-  <p>
-    The server console is linked to the second tab of the <link xref="info-area">information area</link> at the middle right
-    of the <link xref="gui-overview">main window</link>.
-  </p>
+  <title>Die Serverkonsole</title>
+  <p>Die Serverkonsole ist an den zweiten Reiter des <link xref="info-area">Informationsbereich</link> im linken mittleren Bereich des <link xref="gui-overview">Hauptfensters</link> gebunden.</p>
   <p>
     <media type="image" mime="src/png" src="figures/server-console.png">
       The server console
