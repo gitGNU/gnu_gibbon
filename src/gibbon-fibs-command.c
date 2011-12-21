@@ -21,7 +21,7 @@
  * SECTION:gibbon-fibs-command
  * @short_description: Entry for an output command queue!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * We have to queue commands to the server.  Each individual element in the
  * queue is represented by an GibbonFIBSCommand.

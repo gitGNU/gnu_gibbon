@@ -21,7 +21,7 @@
  * SECTION:gibbon-java-fibs-importer
  * @short_description: Import settings and games from JavaFIBS!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Class that handles data import from JavaFIBS.
  **/

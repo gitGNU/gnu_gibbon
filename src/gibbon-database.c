@@ -21,7 +21,7 @@
  * SECTION:gibbon-database
  * @short_description: SQL backend for Gibbon.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Gibbon database.  All data in this database should be either unimportant
  * or redundant.

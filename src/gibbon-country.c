@@ -21,7 +21,7 @@
  * SECTION:gibbon-country
  * @short_description: Class representing a country.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * This class represents a country.
  */

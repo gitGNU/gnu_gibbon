@@ -21,7 +21,7 @@
  * SECTION:gibbon-server-console
  * @short_description: Class representing server output area!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Show server communication.
  **/

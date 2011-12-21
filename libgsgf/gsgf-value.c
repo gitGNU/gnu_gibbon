@@ -21,7 +21,7 @@
  * SECTION:gsgf-value
  * @short_description: Abstract base class for the value of a #GSGFProperty!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A #GSGFValue encapsulates the value of a property in SGF data.  It is the
  * common, abstract base class of raw, unqualified data stored in a #GSGFRaw,

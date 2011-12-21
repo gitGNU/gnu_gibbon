@@ -21,7 +21,7 @@
  * SECTION:gibbon-chat-view
  * @short_description: Gtk components for FIBS communication.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Communicating with other FIBSters, be it the "shouts" room, private
  * chatting via "tell", or the game chat for "say", "kibitz", and "whisper"

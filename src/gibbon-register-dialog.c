@@ -21,7 +21,7 @@
  * SECTION:gibbon-register-dialog
  * @short_description: The registration dialog in Gibbon.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Class representing the Gibbon registration dialog.
  **/

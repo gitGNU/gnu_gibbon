@@ -21,7 +21,7 @@
  * SECTION:gibbon-shouts
  * @short_description: Abstraction for the shout area.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Handling of FIBS shouts.
  **/

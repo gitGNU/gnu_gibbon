@@ -21,7 +21,7 @@
  * SECTION:gibbon-player-list-view
  * @short_description: Visual representation of the players list!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * View for the Gibbon player list.
  **/

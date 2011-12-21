@@ -21,7 +21,7 @@
  * SECTION:gibbon-client-icons
  * @short_description: Container for pre-loaded client icons!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * This purpose maps (software) clients to icons representing their type.
  */

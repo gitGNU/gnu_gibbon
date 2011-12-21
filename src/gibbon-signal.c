@@ -21,7 +21,7 @@
  * SECTION:gibbon-signal
  * @short_description: Wrapper around a glib signal bound to an object.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Simplifies the handling of temporary signals.
  **/

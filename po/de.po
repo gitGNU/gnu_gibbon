@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gibbon 0.1.1\n"
+"Project-Id-Version: Gibbon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-20 22:50+0200\n"
 "PO-Revision-Date: 2011-12-20 22:53+0200\n"

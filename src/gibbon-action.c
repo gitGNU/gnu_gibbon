@@ -21,7 +21,7 @@
  * SECTION:gibbon-action
  * @short_description: FIXME! Short description missing!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * FIXME! Long description missing!
  **/

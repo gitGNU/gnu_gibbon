@@ -21,7 +21,7 @@
  * SECTION:gibbon-position
  * @short_description: Boxed type for a position in backgammon.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * This structure holds all information needed to display a
  * normalized backgammon position.

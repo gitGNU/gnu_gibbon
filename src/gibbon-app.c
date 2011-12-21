@@ -21,7 +21,7 @@
  * SECTION:gibbon-app
  * @short_description: The Gibbon Application!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Class representing the running Gibbon application!
  **/

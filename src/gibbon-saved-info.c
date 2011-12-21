@@ -21,7 +21,7 @@
  * SECTION:gibbon-saved-info
  * @short_description: Boxed type for saved match info
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Information about a saved match contains a pointer to the opponent's
  * name, the length of the match, and the current score.

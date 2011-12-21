@@ -21,7 +21,7 @@
  * SECTION:gsgf-date
  * @short_description: Representation of a date (or dates!) in SGF
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A #GSGFDate represents a list of dates with at least one value.
  *

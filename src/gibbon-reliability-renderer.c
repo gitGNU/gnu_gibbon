@@ -21,7 +21,7 @@
  * SECTION:gibbon-reliability-renderer
  * @short_description: Custom cell renderer for reliability display!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Display a little bar where the color indicates the reliability of a certain
  * playder, and its length indicates the confidence for that value.

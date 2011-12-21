@@ -21,7 +21,7 @@
  * SECTION:gibbon-game
  * @short_description: Representation of a single game of backgammon in Gibbon!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A #GibbonGame represents a single game of backgammon in Gibbon!  It is
  * always associated with a #GSGFGameTree that is used as a backend.

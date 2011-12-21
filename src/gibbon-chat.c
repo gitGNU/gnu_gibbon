@@ -22,7 +22,7 @@
  * @short_description: Communication with another FIBSter or a plurarility
  *                     of FIBSters.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * The model for a #GibbonChatView.
  */

@@ -21,7 +21,7 @@
  * SECTION:gsgf-component
  * @short_description: Component of an SGF document.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * An SGF document consists of a hierarchy of components, ranging from
  * #GSGFCollection over #GSGFGameTree, #GSGFNode, down to a #GSGFProperty.

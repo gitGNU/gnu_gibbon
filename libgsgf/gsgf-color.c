@@ -21,7 +21,7 @@
  * SECTION:gsgf-color
  * @short_description: Primitive type for an SGF color.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A #GSGFColor encapsulates an SGF color, that is either black or white.
  **/

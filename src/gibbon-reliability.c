@@ -21,7 +21,7 @@
  * SECTION:gibbon-reliability
  * @short_description: Boxed type for reliability values!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Reliability in Gibbon has a value and a confidence.
  **/

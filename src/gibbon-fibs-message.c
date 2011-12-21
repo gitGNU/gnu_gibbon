@@ -21,7 +21,7 @@
  * SECTION:gibbon-fibs-message
  * @short_description: Boxed type for FIBS messages!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A message on FIBS has a sender and a text.  The text can not contain
  * newlines.

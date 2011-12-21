@@ -21,7 +21,7 @@
  * SECTION:gibbon-game-chat
  * @short_description: GibbonGameChat handles say, whisper, and kibitz.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Handling of the in-game chat functionality.  That is the commands
  * say, kibitz, and whisper.

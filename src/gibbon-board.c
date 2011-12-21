@@ -21,7 +21,7 @@
  * SECTION:gibbon-board
  * @short_description: Visual representation of a backgammon position.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * The #GibbonBoard interface defines the methods and properties that the
  * visual representation of a certain state in a backgammon match must

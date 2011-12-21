@@ -21,7 +21,7 @@
  * SECTION:gibbon-archive
  * @short_description: Game archive.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Handling of archived games.
  *

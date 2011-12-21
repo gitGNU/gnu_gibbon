@@ -21,7 +21,7 @@
  * SECTION:gsgf-result
  * @short_description: A result of a game in SGF!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * The SGF specification stipulates a certain format for expressing the
  * result of the game.

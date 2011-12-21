@@ -21,7 +21,7 @@
  * SECTION:gibbon-match
  * @short_description: Representation of a backgammon match in Gibbon!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * A GibbonMatch is the internal representation of a backgammon match in
  * Gibbon.  It is always linked to a #GSGFCollection that serves as the

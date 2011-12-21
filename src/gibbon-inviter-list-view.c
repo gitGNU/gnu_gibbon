@@ -21,7 +21,7 @@
  * SECTION:gibbon-inviter-list-view
  * @short_description: Visual representation of the inviters list!
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * View for the Gibbon inviter list.
  **/

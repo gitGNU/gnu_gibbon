@@ -21,7 +21,7 @@
  * SECTION:gibbon-geo-ip-updater
  * @short_description: Class for updating the Gibbon GeoIP database.
  *
- * Since: 0.1.1
+ * Since: 0.1.0
  *
  * Class for updating the Gibbon GeoIP database.
  */
