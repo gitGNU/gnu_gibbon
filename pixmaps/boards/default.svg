@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
-<!ENTITY white             "#dddddd">
-<!ENTITY white_border      "#aaaaaa">
-<!ENTITY white_point_color "#7f7f7f">
-<!ENTITY black             "#111111">
-<!ENTITY black_border      "#444444">
-<!ENTITY black_point_color "#900000">
-<!ENTITY frame_color       "#332600">
-<!ENTITY board_color       "#664000">
-]>
 <svg viewBox="0 0 490 460" width="490" height="460" 
      xmlns:xlink="http://www.w3.org/1999/xlink" 
      xmlns="http://www.w3.org/2000/svg">
