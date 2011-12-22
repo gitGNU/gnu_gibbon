@@ -42,7 +42,7 @@ have to do the following:
    this directory.  The file must set the shell variable "ISCC" to
    the complete path name of that program.  For example:
 
-        ICSS="/c/Program Files (x86)/Inno Setup 5/ISCC.exe"
+        ISCC="/c/Program Files (x86)/Inno Setup 5/ISCC.exe"
 
    The file will be sourced if present by the script that builds the
    installer.
