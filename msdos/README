@@ -53,8 +53,7 @@ have to do the following:
    - MinGW must be installed in C:\MinGW (translated to "/c/MinGW").
    - all libraries (Gtk+, SQLite, ...) must be installed with the
      same prefix (run their configure script with --prefix=/c/MinGW)
-   - Gibbon must be installed in "/local" (this is the default under
-     MinGW)
+   - Gibbon must be installed also be installed to "/c/MinGW"
 
    If your setup differs, you can play around with the variables
    "mingw_prefix" and "gibbon_prefix" and override them in

@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "You need to execute this on a Windows machine within msys (http://www.mingw.org)"
 echo "You also need InnoSetup (http://www.innosetup.org) with iscc in your PATH"
-echo "Make sure gibbon and all its dependencies have been installed correctly to /local"
+echo "Make sure gibbon and all its dependencies have been installed correctly to /c/MinGW"
 
 # This file is mostly stolen from gedit and a mess.  It should be re-written
 # from scratch.
@@ -10,7 +10,8 @@ echo "Make sure gibbon and all its dependencies have been installed correctly to
 ISCC=iscc
 
 mingw_prefix="/c/MinGW"
-gibbon_prefix="/local"
+gibbon_prefix="/c/MinGW"
+#gibbon_prefix="/local"
 
 if test -f $0.include; then
 	. $0.include
