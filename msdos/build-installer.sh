@@ -72,18 +72,6 @@ cp "${mingw_prefix}/bin/libcroco-0.6-3.dll" installer/gtk/bin || exit 1
 echo "Stripping DLL files..."
 strip installer/gtk/bin/*.dll || exit 1
 
-#-------------------------------- gibbon ------------------------------------
-echo "Copying misc DLL files..."
-mkdir -p installer/gibbon/bin
-
-cp "${mingw_prefix}/bin/libORBit-2-0.dll" installer/gibbon/bin || exit 1
-cp "${mingw_prefix}/bin/libORBit-imodule-2-0.dll" installer/gibbon/bin || exit 1
-cp "${mingw_prefix}/bin/libORBitCosNaming-2-0.dll" installer/gibbon/bin || exit 1
-cp "${mingw_prefix}/bin/libgconf-2-4.dll" installer/gibbon/bin || exit 1
-
-echo "Stripping DLL files..."
-strip installer/gibbon/bin/*.dll || exit 1
-
 
 # stripping libxml2.dll renders it unusable (although not changing it in size).
 # We therefore copy it after having stripped the rest. Same with the other DLLs
