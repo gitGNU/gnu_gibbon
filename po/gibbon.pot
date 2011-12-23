@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-20 22:50+0200\n"
+"POT-Creation-Date: 2011-12-23 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2329,42 +2329,42 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:267
+#: ../src/gibbon-geo-ip-updater.c:271
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:290
+#: ../src/gibbon-geo-ip-updater.c:294
 msgid "Update Geo IP database"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:308
+#: ../src/gibbon-geo-ip-updater.c:312
 #, c-format
 msgid "Opening `%s' ..."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:351
+#: ../src/gibbon-geo-ip-updater.c:355
 #, c-format
 msgid "Cannot open `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:360
+#: ../src/gibbon-geo-ip-updater.c:364
 #, c-format
 msgid "Reading `%s'."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:405
+#: ../src/gibbon-geo-ip-updater.c:409
 #, c-format
 msgid "Error reading `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:682
+#: ../src/gibbon-geo-ip-updater.c:686
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:688
+#: ../src/gibbon-geo-ip-updater.c:692
 #, c-format
 msgid "%s: line %u: Unexpected end of line!"
 msgstr ""
@@ -2395,9 +2395,10 @@ msgstr ""
 msgid ""
 "Locally installed help: %s.\n"
 "Online help: %s.\n"
+"Please read the documentation under '%s' instead!"
 msgstr ""
 
-#: ../src/gibbon-help.c:105 ../src/gibbon-help.c:107
+#: ../src/gibbon-help.c:107 ../src/gibbon-help.c:109
 msgid "Unknown error"
 msgstr ""
 
