@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-20 22:50+0200\n"
-"PO-Revision-Date: 2011-12-20 22:53+0200\n"
+"POT-Creation-Date: 2011-12-23 11:19+0200\n"
+"PO-Revision-Date: 2011-12-23 11:21+0200\n"
 "Last-Translator: Guido <guido@imperia.bg>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -2406,7 +2406,7 @@ msgstr[1] ""
 "Gibbon installiert wurde, ist mehr als %llu Monate alt. Sollen neue Daten "
 "(1-2 MB) aus dem Internet geladen werden?"
 
-#: ../src/gibbon-geo-ip-updater.c:267
+#: ../src/gibbon-geo-ip-updater.c:271
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
@@ -2414,36 +2414,36 @@ msgstr ""
 "Die Information über die geographische Position anderer Spieler wird ungenau "
 "sein."
 
-#: ../src/gibbon-geo-ip-updater.c:290
+#: ../src/gibbon-geo-ip-updater.c:294
 msgid "Update Geo IP database"
 msgstr "Geo-IP-Datenbank aktualisieren"
 
-#: ../src/gibbon-geo-ip-updater.c:308
+#: ../src/gibbon-geo-ip-updater.c:312
 #, c-format
 msgid "Opening `%s' ..."
 msgstr "Offne „%s“ ..."
 
-#: ../src/gibbon-geo-ip-updater.c:351
+#: ../src/gibbon-geo-ip-updater.c:355
 #, c-format
 msgid "Cannot open `%s': %s!"
 msgstr "„%s“ kann nicht geöffnet werden: %s!"
 
-#: ../src/gibbon-geo-ip-updater.c:360
+#: ../src/gibbon-geo-ip-updater.c:364
 #, c-format
 msgid "Reading `%s'."
 msgstr "„%s“ wird gelesen."
 
-#: ../src/gibbon-geo-ip-updater.c:405
+#: ../src/gibbon-geo-ip-updater.c:409
 #, c-format
 msgid "Error reading `%s': %s!"
 msgstr "Fehler beim Lesen von „%s“: %s!"
 
-#: ../src/gibbon-geo-ip-updater.c:682
+#: ../src/gibbon-geo-ip-updater.c:686
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
 msgstr "%s: Zeile %u: Parserfehler in der Nähe von „%s“!"
 
-#: ../src/gibbon-geo-ip-updater.c:688
+#: ../src/gibbon-geo-ip-updater.c:692
 #, c-format
 msgid "%s: line %u: Unexpected end of line!"
 msgstr "%s: Zeile %u: Unerwartetes Dateiende!"
@@ -2474,11 +2474,13 @@ msgstr "Fehler beim Anzeigen der Hilfe"
 msgid ""
 "Locally installed help: %s.\n"
 "Online help: %s.\n"
+"Please read the documentation under '%s' instead!"
 msgstr ""
 "Lokal installierte Hilfe: %s.\n"
 "Hilfe im Internet: %s.\n"
+"Bitte lesen Sie stattdessen die Dokumentation unter „%s“!"
 
-#: ../src/gibbon-help.c:105 ../src/gibbon-help.c:107
+#: ../src/gibbon-help.c:107 ../src/gibbon-help.c:109
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
