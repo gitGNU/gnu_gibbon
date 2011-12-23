@@ -1,3 +1,1384 @@
+commit 74402d1c77e863d458964fa55ae0953a8e168e6d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 14:54:50 2011 +0200
+
+    Updated Geo IP data
+
+commit 0139c545733f3bf8c843e01bad3c5ec1cf54c8d2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 11:28:33 2011 +0200
+
+    Re-generated Bulgarian PO file
+
+commit 23fe0f72864b3d96254ac8ad743d56330954fd07
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 11:28:13 2011 +0200
+
+    Updated German translation
+
+commit e399fae0cd0eb330fc7642b714ac983afe3e2d64
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 11:26:47 2011 +0200
+
+    Re-generated gibbon.pot
+
+commit 08faf4dae3bd2d52587cf0e3cbac6759dcc8fef8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 08:02:18 2011 +0200
+
+    NEWS file for release 0.1.0
+
+commit b6ccdfe304ef2ff1eb9583015555d4c16e32a095
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 08:00:11 2011 +0200
+
+    Display URI for online help in case of error
+    
+    Under Windows, displaying the help currently fails.  Display at least the
+    URI that can be entered manually.
+
+commit 2bc5a818ccad8b29d09c413b617e10c521d20d56
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 22 22:19:44 2011 +0200
+
+    Install Gibbon with prefix /c/MinGW
+
+commit edc49db2cbe3050dedea5f3d57baa9c3f1607a6e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 22 21:45:23 2011 +0200
+
+    Removed unneeded DLLs from Windows build
+
+commit 3789bba87a44d667722e3604818fa4c8a4e4e526
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 22 21:31:23 2011 +0200
+
+    Typo
+
+commit a006afc7d0e507c800186b7a46b68a15624dae8e
+Author: unknown <guido@guido-ms-dos.(none)>
+Date:   Thu Dec 22 21:18:10 2011 +0200
+
+    Downloading Geo IP data fails under Windows
+    
+    Downloading the original location fails with "Invalid compressed data".
+    Until the issue is resolved, we will download from www.gibbon.bg instead.
+
+commit 25254d6817de72e59b6ef56b4bcbb9646959a8ee
+Author: unknown <guido@guido-ms-dos.(none)>
+Date:   Thu Dec 22 20:49:35 2011 +0200
+
+    Parsing doctype fails under Windows
+
+commit cbd9c41a1192af76533b8d05882f5af1aacbc32c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 21 10:45:49 2011 +0200
+
+    First version will be 0.1.0, not 0.1.1
+
+commit 2f3c27fcbbfb88d1c444f4405546d549577d106a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 21 01:45:52 2011 +0200
+
+    German translations of docs and proof-reading
+
+commit 969dd18c717c52f04bbcb695fb5936b200a7aac6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 21 01:36:54 2011 +0200
+
+    Hints for password recovery
+
+commit 796040ff949c807a979d06bd9498cf47ee1c0269
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 21 01:20:16 2011 +0200
+
+    German translation and proof-reading of docs
+
+commit bac96d8255ce4b64a42a909331ae9e6ae7d91fef
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 22:54:04 2011 +0200
+
+    Updated po stuff
+
+commit 4c25a9422c33fc47ed498f24d9e1b05f307e6b57
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 22:49:27 2011 +0200
+
+    Fall back to online help
+
+commit 41cfa8a76d5c6fe488c6c2cf95b39ae7d44f7692
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 21:57:35 2011 +0200
+
+    Removed hint for unimplemented feature
+
+commit 27e30ddda0961701a60c8252f66c755e8165c772
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 21:23:22 2011 +0200
+
+    User names may contain single underscores
+
+commit 5f8f4c08027382f5306e87fec573eb6001417d91
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 01:29:55 2011 +0200
+
+    German translation and proof-reading
+
+commit f5edf2439cb1c373509aa14a47295203ede6d682
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 20 00:28:33 2011 +0200
+
+    Docs: German translation and proof-reading
+
+commit 1e69f4b95db6c5fa04df702097f483d5118b90c1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 19 00:29:43 2011 +0200
+
+    Docs: German translations and proof-reading
+
+commit dba347a23014f3ca04b96588574733fa34e7d0a0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 22:55:42 2011 +0200
+
+    German documentation and proof-reading
+
+commit b25e2d1afa4851f62ccf2e733f769b774fae7aad
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 20:29:55 2011 +0200
+
+    Synchronized
+
+commit 036b2e29dae9a7c5b919d5973b650bee92492939
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 19:38:59 2011 +0200
+
+    Updated todo list
+
+commit 0f40a6237b9e8a93dd0a4e43393ddadf711f7d1a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 19:32:17 2011 +0200
+
+    Game chat area must not be editable
+
+commit f2edd7693edd0f671faa5cf2398f6ef97781c81e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 19:24:15 2011 +0200
+
+    Several todo items resolved
+
+commit 91524961635a28bc3cf781d36fbb6b993ee0ec26
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 19:23:45 2011 +0200
+
+    More messages to ignore
+
+commit 66f0571eeb69aa40adda58521e618284f761e8e0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 19:17:35 2011 +0200
+
+    Handle resume confirmations from server
+
+commit 184414d9a954531362297a7ae3d328ada3aefecb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 18:52:19 2011 +0200
+
+    Test for resume confirmation from server
+
+commit 7389be8b3dc2a07afa705ab7a77f03aee446ca00
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 18:45:51 2011 +0200
+
+    More messsages handled
+
+commit 9e39da971af77af189f4f93429df88593d90a261
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 18:26:59 2011 +0200
+
+    "Please wait ... to join too" was unhandled
+
+commit af8753a2e8076b51e39f86bc9922471ef768b839
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 18:05:39 2011 +0200
+
+    Updated todo list
+
+commit c0652bf423ab41da4e8b84f19c822b4b06f3df3a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 18 18:04:21 2011 +0200
+
+    Update position, when cube is taken
+    
+    When we take the cube we have to update the may_double fields of the
+    current position.  Otherwise the cube will be drawn centered until a new
+    board state from the server is received.
+
+commit 7fca9f716026a328bee319eeee3c91f0dc4cca83
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 18:43:52 2011 +0200
+
+    Do not display cup, when somebody resigns
+
+commit 96d2f7e52c261ba3907eecab71174030d6ae5094
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 18:00:56 2011 +0200
+
+    Updated todo list.
+
+commit 3c165533b587a4cf09907ca91f2e0a49213300fb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 17:52:29 2011 +0200
+
+    Avoid warning about invalid handler ids
+    
+    During global destruction, the destruction order of the individual
+    objects is arbitrary.
+
+commit 04c7a5f6dd499f6924ba7de5d54ca87fb3775706
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 15:46:00 2011 +0200
+
+    Updated todo list
+
+commit 0b7bf32050aa823fd8b951333bdffb552808b2d8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 15:44:40 2011 +0200
+
+    No need to convert to bin window coordinates
+
+commit 9c25ad988572de1e2516b25177852db12fc52fc4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 15:41:25 2011 +0200
+
+    Re-generated
+
+commit 28068091eda400a0b236a9bbb8b49e8d8ddedbae
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 15:40:50 2011 +0200
+
+    Docs: German translation and proof-reading
+
+commit eef1b48e30919418e51603ccb920fd1d80f1e243
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 15:36:42 2011 +0200
+
+    No need to convert to bin window coordinates
+
+commit a959bf7b3b95f34f3cee856863fbfc670c9b5d3e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 17 12:00:57 2011 +0200
+
+    Updated todo list
+
+commit 4a07a4321111cf32856c182661295c7a47cc5e87
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 10:08:06 2011 +0200
+
+    Proof-reading and German translation
+
+commit 5b95dc551290b8c5aedd976f40329ab22497d243
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 09:09:02 2011 +0200
+
+    Fixed documentation
+
+commit 663070d8ac3a59bc719e8b3add10bbaa19873c35
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 08:59:58 2011 +0200
+
+    Updated pot file
+
+commit 13eca10d6382d7ad3f82d4a949e57b669b897ef9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 01:15:46 2011 +0200
+
+    Bulgaria? What is Bulgaria?
+
+commit 0631d5e3a3a5b33253760f7c3651cdabfebb00ff
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 01:01:24 2011 +0200
+
+    Explain geo ip location
+
+commit e7ea95dfb73861396a71227cf42dde09a381d5f4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 00:43:47 2011 +0200
+
+    Added screenshot
+
+commit 368370d9a861508c2f091e03de3fd6d7eb106f7e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 00:39:21 2011 +0200
+
+    Explained reliability measurement
+
+commit ec07853e09090fa444e05e3abde6dfe8d5f0b71b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 00:04:56 2011 +0200
+
+    Typo
+
+commit efe4fb15fe8b01c3421f441daa71e67c2b726191
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 16 00:04:11 2011 +0200
+
+    Rating explained
+
+commit c57473662326a4a02e8a8e05a8bbec4e95646d58
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 23:52:42 2011 +0200
+
+    Fixed broken links
+
+commit d188e8ca9f2731df6f1cd6f3c342e80f1d41c622
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 23:52:30 2011 +0200
+
+    Describe unlimited matches
+
+commit 627c70302e03b39800d4937a53c4cff56c6595e6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 23:17:41 2011 +0200
+
+    Explain how to support Gibbon
+
+commit 37ddd88950e3589045b56b76ffa48d9adbdc7297
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 22:24:35 2011 +0200
+
+    Documentation for the inviters list
+
+commit 3d8a882646cfecfc80e6c62f8bf27203a5a3ef0f
+Merge: e6c627b 476dbcb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 21:47:58 2011 +0200
+
+    Merge branch 'master' of git.sv.gnu.org:/srv/git/gibbon
+    
+    Conflicts:
+    	help/C/players-list.page
+
+commit e6c627b705152c117268757dcc891faff588ce8c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 21:42:01 2011 +0200
+
+    Documentation for the players list
+
+commit 476dbcb4ed2a2df5cc0b72c3529545575972ea5a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 21:42:01 2011 +0200
+
+    Documentation for the players list
+
+commit 5719efca60bce4b168ccacb460b8cdb7162b928e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 21:41:45 2011 +0200
+
+    Updated todo list
+
+commit aad3d82357be401d5539debdc592b3f7f872d98e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 10:16:50 2011 +0200
+
+    More documentation, work in progress
+
+commit 2940443cafdce6c53ac8b85010e6a443cca04750
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 15 00:12:45 2011 +0200
+
+    Link to multi-purpose information area
+
+commit e1445c193775e69a95695800554170973b93f458
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 23:39:36 2011 +0200
+
+    Documentation cross links
+
+commit 9470bc3eedd80660c94dafe2b89495c3800d73b7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 22:40:59 2011 +0200
+
+    Documentation for shout and tell
+
+commit c5e3f6e6a0adf21ed5634fb2115fedbd1bcdc350
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 21:43:57 2011 +0200
+
+    Incomplete documentation for the main menu
+
+commit 3f65144d1e2d27d3523d411ff42056b641b2a800
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 21:39:26 2011 +0200
+
+    Scale down to 50 %
+
+commit 74fe382d32058b4e2fd0f4d3f20a39d242b5f1a7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 21:10:50 2011 +0200
+
+    Darken border around bord
+
+commit 1429715b9872492f303ef87fb427123745af3c4e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 21:05:00 2011 +0200
+
+    Scale overview screenshots down
+
+commit 21449d746d17ee952d96f607ddaecec99720f609
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 09:26:08 2011 +0200
+
+    Documentation cross links
+
+commit d64928ab7105f999658f5e050ee21ccdce8c13e7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 09:17:51 2011 +0200
+
+    Started GUI overview
+
+commit 86ce8f69f029b2db6fe0b845d0a9939d01566d91
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 09:17:28 2011 +0200
+
+    Fixed validation errors
+
+commit e5ff11976708149e34fd39ccd18b4eaad0710572
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 08:52:44 2011 +0200
+
+    Updated todo list
+
+commit 705c5043b8905b24484e99cd387062d1e2d98edf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 08:43:18 2011 +0200
+
+    New screenshots of board in different situations
+
+commit a0f8c587e9858c7ddd6a2ac321ace7d142a97fe0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 14 08:25:41 2011 +0200
+
+    Updated todo list
+
+commit d67d10f413ccc4f7168acc10a6e45b38767a232c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 13 10:35:59 2011 +0200
+
+    Added screenshots
+
+commit 4ca44a7b529aaf1c6b048c557fde41b981ef9ad9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 13 10:35:35 2011 +0200
+
+    Fixed cube position
+
+commit 80774d36b480c105c3c0cfb630c8df8b5700ce6b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 13 10:04:05 2011 +0200
+
+    Updated todo list
+
+commit 700d2a0f2f8e085cb8c0827ef175dc50faec94b9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 13 01:22:55 2011 +0200
+
+    Screenshots
+
+commit b0d57f808d10088628859b3816a97c3de322e5a6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 13 01:20:35 2011 +0200
+
+    Different disconnect display for screenshots
+
+commit 1e71e4cd7a2b7ee26491058556d0d4be71249bda
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 12 23:44:44 2011 +0200
+
+    Fixed tooltips
+
+commit 3ff5125018fbc4799ac4d8f642c91c4731697100
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 12 09:31:09 2011 +0200
+
+    Focus on functionality
+
+commit 89428773b5b3846b0b41e2662cb3f2a5ca1890db
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 19:02:27 2011 +0200
+
+    Typo
+
+commit 7f0affe0cb81b675b8c8f1cffd9c36e47689257a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 19:01:35 2011 +0200
+
+    Typos
+
+commit 2c6d655925e9b712baa0c91cb82b7591d8b365e8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 19:00:11 2011 +0200
+
+    Language
+
+commit a76daa6d40fa6305cacfcd84a092fe0a9f1889c3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 18:58:15 2011 +0200
+
+    Link and text titles are confusing here
+
+commit 1641e7f5ef29241b9ee1e67062f756a08db90abf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 18:46:46 2011 +0200
+
+    Corrected web address
+
+commit ecdec0a9edd80c81a2972c0324eac577571474bf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 18:32:07 2011 +0200
+
+    More documentation
+
+commit 8360fb6bf6053b5848c741fc4243dd6eaf2cc525
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 17:15:22 2011 +0200
+
+    Fixed broken links
+
+commit e1a6b58834e2f06499b3ec11f133a4cb08aa9481
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 16:10:56 2011 +0200
+
+    Removed revision elements
+    
+    They won't be maintained anyway.
+
+commit 245797367d201e0b97034aa54c7503dac0911b68
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 16:00:47 2011 +0200
+
+    Restructured documentation
+
+commit acdd94f5306e12cd837b0ba5dace4374ffed35d5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 14:24:19 2011 +0200
+
+    Ongoing documentation efforts
+
+commit 80ce2640e44257c8532241bb4690a0b91a21cb65
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 14:23:28 2011 +0200
+
+    gibbon.pot put under version control
+    
+    The new help building scheme now creates a pot file.
+
+commit ab02b7da0bb579397785caaef546449d42e513ed
+Merge: 97f3eca 1591b9a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 03:07:32 2011 +0200
+
+    Merge branch 'master' of git.sv.gnu.org:/srv/git/gibbon
+    
+    Conflicts:
+    	help/C/create-account.page
+
+commit 97f3ecae23bcb7db493dfd266ed523a85fc2361c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 03:04:25 2011 +0200
+
+    Documentation, work in progress
+
+commit 1591b9aa645ba52fa93e1bd116aa7657dfafbc1a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 03:04:25 2011 +0200
+
+    Documentation, work in progress
+
+commit 99de52b4176b41f7868926cf4d70bad9d563c680
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 02:46:11 2011 +0200
+
+    Documentation, wip
+
+commit 1fa34a7b59b382073dc5d03b63bd6be3d23d4b2e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 02:45:43 2011 +0200
+
+    New help URI
+
+commit 35768cefd140511b290a5bfd76052cbaebe27d74
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 01:49:19 2011 +0200
+
+    Up-to-date screenshots
+
+commit ce069ce7011f385d6b34fa4166e3b84007437f8f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Dec 10 01:04:26 2011 +0200
+
+    German translations
+
+commit 77fd1521516c058f1591b1499635f7488504fcf1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 18:32:32 2011 +0200
+
+    Do not use the old gnome-doc-utils
+
+commit b1c9b81b73c3ef18792c604ac8ab006dd95ff9f3
+Merge: ce1ac1b d857b0c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 18:27:57 2011 +0200
+
+    Merge branch 'master' of git.sv.gnu.org:/srv/git/gibbon
+    
+    Conflicts:
+    	src/test-clip.c
+
+commit ce1ac1be9248ef0212970d563876b08e2c208fb7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 18:20:15 2011 +0200
+
+    Switch to new help scheme
+
+commit c4d26a005f89920c46b2b0239e630827e356118a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 17:32:23 2011 +0200
+
+    Various corrections
+
+commit 7cb5acfeb943b315a667d1287a890dd5cae881c9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 16:27:14 2011 +0200
+
+    Updating docs
+
+commit 2f054f49d5e7208e2ce5f52a1943110722dd6cee
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 9 16:26:50 2011 +0200
+
+    Redirect game chat messages
+
+commit b0c50a63fa0746c8da6a618fab3cb6ba32c83799
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 21:27:31 2011 +0200
+
+    Ignore heard you messages
+
+commit 47c0c9192bee4f53eb127e00b34bc4e7c44076de
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 21:18:44 2011 +0200
+
+    Implementation for heard you messages
+
+commit 88d8ab117c9bcc3ab530cb7dd9fa04abc089cbd9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 20:51:43 2011 +0200
+
+    Test for heard you messages
+
+commit d857b0c76e40cda68d0f40b616d481df0cc430f1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 20:51:43 2011 +0200
+
+    Test for heard you messages
+
+commit 77cf54947eee534f6f927d1cd626d6fb97f9a42b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 20:02:58 2011 +0200
+
+    Cross-links
+
+commit 01f255e961933dcd5c16ba87296b20c593380a2e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 19:27:07 2011 +0200
+
+    Documentation for the toolbar
+
+commit 184e0f52260ccc4d361be5f1b5209589733ca20a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 01:26:57 2011 +0200
+
+    POT files should be under version control
+
+commit 90ab47e76b71fddff8df4b9df297784612d794d1
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 01:25:09 2011 +0200
+
+    German translation
+
+commit a2cee5c22d529c544a57c115aaddd6c3e522f9c6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 01:24:51 2011 +0200
+
+    I18N
+
+commit 96626af3f95f99327b9b2fb1b077aab4e29f79e8
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Dec 8 00:04:28 2011 +0200
+
+    Option to terminate unlimited matches
+    
+    Fix for Savannah #34985.  When we have a saved match of unlimited
+    length, we have to give the user an option to invite to a new match of
+    limited length.  This is the only way to terminate the saved match,
+    unless you want to wait for FIBS to discard the saved match.
+
+commit 4f0e3041efa84ae1db0b8f4bd1c9ce9ee70a3875
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 23:25:10 2011 +0200
+
+    Do not silently terminate saved matches
+    
+    If we have a saved match of unlimited length with a player, and that
+    player invites us to a new match with limited length, the saved match is
+    deleted.  Display a warning for that case.
+
+commit 72a73d8169f9a70996a62f5a6a842f54e9467e2a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 22:40:17 2011 +0200
+
+    Match lengths are always positive
+
+commit a54ed46d43b5963889a85f50d898f0f098b0cded
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 22:36:34 2011 +0200
+
+    Retrieve match length for invitation
+
+commit 77cb5bdd6c175ded159c146e02f26874925a6514
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 22:36:06 2011 +0200
+
+    Display match length after invitations
+
+commit 9bec08af94133c5c95e43631ceae11b3c2afb749
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 21:18:48 2011 +0200
+
+    Visualize resumes
+    
+    Invitations to resume a match are now visualized.  The player name is
+    printed in bold for that purpose.
+
+commit e425fe11fdafe24e2a9929966f4a65078c99fca0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 20:37:03 2011 +0200
+
+    Updated German docs from English
+
+commit 239bd9ce116e30fdbd72c3289dff0b2db1249deb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 20:34:39 2011 +0200
+
+    Added tons of documentation
+
+commit 220a92815b3f7dea362d1d8a1697fa41c7d761d5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 14:26:52 2011 +0200
+
+    New website www.gibbon.bg
+
+commit 627a92dec7fc94102e8d680a225e6024a3990132
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 10:12:19 2011 +0200
+
+    Displayer inviters for resume in bold
+
+commit e9f9840cd916acc39fc14e4aca854bbc95710a57
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 7 10:10:57 2011 +0200
+
+    Store saved game status in inviter list
+    
+    As per the player list.
+
+commit 662e9cd38aa7e33ac5b9fda047ae764d822bd500
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 6 09:40:33 2011 +0200
+
+    Visualize saved matches in player list
+
+commit f2fc6cc947d228a323ff2b92a21170c1ab67aecc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 6 09:35:50 2011 +0200
+
+    Setter for saved game status
+
+commit 19f657882e16f89b3aa69b70f67c4b9610480160
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 6 09:23:37 2011 +0200
+
+    Visualize saved game status
+    
+    Names of players that we have saved games with are now in bold in the
+    player list.
+
+commit 39eac014daefcc6522f8f4913900a98cee3420af
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Dec 6 08:47:08 2011 +0200
+
+    Updated TODO
+
+commit fa7eba82efc2934cdae16977b6b4dc2dc84d0dbc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 5 21:05:22 2011 +0200
+
+    Copied images from POSIX locale
+
+commit f9bacab7f26c7823332f7892997049807b39e037
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Dec 5 09:34:39 2011 +0200
+
+    Updated German help files
+
+commit f4e957de1857e30f2af83f6ed1b561226ba324e0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 4 15:54:05 2011 +0200
+
+    Updated TODO list
+
+commit d16c53a7aeb45f9082fc76c9fb2b94939c5fa498
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 4 15:53:33 2011 +0200
+
+    New file README-alpha
+
+commit 541d6f4b3cc52c1d88d07bbd31dfb2e5b1dd8c13
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 4 15:09:04 2011 +0200
+
+    Updated
+
+commit 8a130a53ca973a86bfdd16a9d8e41c971422f6fe
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 4 14:04:19 2011 +0200
+
+    Fixed license headers
+    
+    See https://savannah.gnu.org/task/?11445#comment11.
+
+commit 813a1e0b5c5fffe42b9b22ae971e7bfde3a011bc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Dec 4 13:52:17 2011 +0200
+
+    Removed license header
+    
+    Gdk-pixbuf may fail to detect SVG files, when large comments are present
+    before the opening svg tag, see
+    https://bugzilla.gnome.org/show_bug.cgi?id=663611.
+
+commit e019b3fea8c0e7369b3e98bf9293e341efa20bed
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 20:35:09 2011 +0100
+
+    Typo.
+
+commit 8d90f84221441fb3bfd88971dc29ff2681bdbcf7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 09:37:34 2011 +0100
+
+    Remove inviters that are already playing
+
+commit c13d83a732f3f85b08c8091946ee8b949c7b8148
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 09:18:55 2011 +0100
+
+    Clear inviter list after new match starts
+
+commit 010244ec6be9a86d16da6e3a237a2961b73b8252
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 09:14:23 2011 +0100
+
+    Updated
+
+commit 36ed7e4bd090923108f11af799ae6b8f3712ca82
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 09:10:42 2011 +0100
+
+    Log server communication to file if requested
+
+commit d04bf15196f8aa909a6a3e5760fb98bb9f30160c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 28 08:38:04 2011 +0100
+
+    New key for logging functionality
+
+commit 72b5ce9ff959074c494d393c73dc7c90825340cb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 22:48:30 2011 +0100
+
+    Updated
+
+commit fac352758abe62582226768ae2793b094ef5b8fe
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 22:20:14 2011 +0100
+
+    Debugging hook
+
+commit 770e82ec6c799cd82e5ff9c5bd382e7498057e1d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 22:18:35 2011 +0100
+
+    Fixed move animation
+    
+    Black checker counts are always negative.
+
+commit 3931f7dbc83507795d0ebc10a35236af28ffe1f4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 22:18:07 2011 +0100
+
+    Removed debugging output
+
+commit fabb49cbcf1f5832fe495f7f86c86e5314670212
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 18:05:41 2011 +0100
+
+    Updated
+
+commit d09275901cf8d06ba8c6d0c254b9b217d549562e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 18:04:34 2011 +0100
+
+    Various fixes for move animation
+
+commit 052745c8456e46297a92157b7032b3a70d199848
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 17:41:32 2011 +0100
+
+    Update reverse moves on the fly
+
+commit 6753d2e21c8a400fa39421ba5897a2a19c5b50de
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 17:40:59 2011 +0100
+
+    Updated
+
+commit 085e7662e024bb86aed48fe41432a76b2923c316
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 16:04:53 2011 +0100
+
+    Obey move direction in animation
+
+commit 566dc2d54a28a1cd476f7fb7e55e487e7e89b7c7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 15:43:22 2011 +0100
+
+    Changed board comparison logic once more
+
+commit b2ec926ac4feac4f5b8c2c8620b41d53ac2d51c0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 15:35:53 2011 +0100
+
+    Obey moving direction
+
+commit 6d860147cb368305b1ea957cda155a418e1769af
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 14:25:11 2011 +0100
+
+    Typo
+
+commit 92352a378c171198721c76ceaaf5cb3b1dd04986
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 14:00:22 2011 +0100
+
+    Fixed move handling
+    
+    First argument is a player name, not an unqualified string.
+    
+    If this move is not the user's move, then animate it.
+    
+    Additionally, session handlers return gint not gboolean.
+
+commit f02f8be492bf4702230119d84ea7dbf0fdf7578d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 13:35:07 2011 +0100
+
+    Allow swapping of dice
+    
+    Plus bugfix: Always use position sent by server, not the one saved in
+    the session.
+
+commit 9659ae85f199492f6c1ac397c870aa16c7e89bfa
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 12:47:53 2011 +0100
+
+    Switch sides after moving
+    
+    Otherwise the cup will be displayed until the server sends the next
+    board state.
+
+commit 5a7752640ff366d376cdceec165c27d77fc49cbf
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 12:27:07 2011 +0100
+
+    Reverted once more
+
+commit c12cff3374883a0ac5a83f17a8500c7870563825
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 12:25:37 2011 +0100
+
+    Always keep session position up-to-date
+
+commit cf66f8b2109c9be55996c4a2f6e56243de4ef9d0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 11:47:13 2011 +0100
+
+    Renamed cube signals
+
+commit 2f1dccde634c99d3bd2a5dd0791500d9f33d53dd
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 11:31:24 2011 +0100
+
+    Added LICENSE to distribution
+
+commit d8bd1c2cf1155a2d18b8126d8d01ccb80d42e0be
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 03:49:49 2011 +0100
+
+    Updated
+
+commit 31fc71184cece5be1ed7542f42b625183c3beb3d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 02:06:59 2011 +0100
+
+    Undone last commit
+
+commit edfc0070fdfe5c93503a3bbc808d1b140fab19ad
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 02:00:15 2011 +0100
+
+    Renamed LICENSE to README
+    
+    README will automatically be added to distribution
+
+commit c30c94f57f802808cee13507e7d186feb74fc53a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 01:54:40 2011 +0100
+
+    Spread artwork license everywhere
+
+commit 41e7d0dd28e2007ca9e26383dd6f11b529ed3205
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 01:48:20 2011 +0100
+
+    Put all “artwork” under GPL
+    
+    See http://savannah.gnu.org/task/?11445 for details.
+
+commit 23af9c90171a8a8460bbf395662e49ac1a217fc3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 01:18:59 2011 +0100
+
+    Updated
+
+commit c1259d09f36cadb1d6ba0100f2cf826e91fbfb2c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 01:15:52 2011 +0100
+
+    Handle accept/reject of cube/resignation
+
+commit eecc1b37f91c5ac6e0dbbb6fa965496d9d483e1b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 00:55:55 2011 +0100
+
+    Signal replies to resignations
+
+commit aaa065baa961caaf61c791bbfca6ea0bf13589f2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 27 00:44:39 2011 +0100
+
+    Mirror position of turned cube and white flag
+
+commit 8d2557bf2c813182fbfd9d7d93b5b2f1dbfdb7c6
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 23:33:59 2011 +0100
+
+    Resignation
+
+commit 629c47efac38a6f832188d49ebd264c1dbd49c1a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 23:32:36 2011 +0100
+
+    Resignation handler
+    
+    Additionally we have to make the position accessible.  The resignation
+    dialog needs to know the current value of the cube.
+
+commit dc8247652ecb424b3f68c1c7eb3d168ffcca8621
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 16:40:36 2011 +0100
+
+    New check for libjpeg
+    
+    jpeg_destroy_decompress() fails with a recent libjpeg-turbo.  Use
+    jpeg_start_decompress() instead.
+
+commit c4b869edff6f6acba021055574bf2f25d239da02
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 15:32:33 2011 +0100
+
+    Turn change not significant
+    
+    If the other player is on turn, the positions should not differ
+    technically.  Otherwise the animation will be disturbed.
+
+commit c45cd2da100cf57d5cb072c3b88b33dc536d216b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 15:29:38 2011 +0100
+
+    Turn now stored in position
+
+commit f537a9d767b2095ffdb236189f9098c7489dff9f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 15:25:56 2011 +0100
+
+    Do not draw cup, when not on move
+
+commit 64dc9f47bb970f2b49857c905876fa2ba7cd9533
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 14:02:25 2011 +0100
+
+    Store explicitely whose turn it is
+
+commit f851c1c5b9070cf0be3639f24335088f25426006
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 13:57:14 2011 +0100
+
+    Store whose turn it is in position
+
+commit e6a6915d5ca61c1bc8c5d7a9b22229a54e614598
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sat Nov 26 13:53:49 2011 +0100
+
+    New position test
+    
+    Position with and without resignation should not differ technically.
+
+commit e0a7e3693ff3ffe724452c305491b89dd7df6151
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 25 23:54:26 2011 +0100
+
+    Relicensed to GPLv3 like rest of libgsgf
+
+commit 2bc516be91cf83ca0218a8113bb1c56c24688900
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 25 23:54:09 2011 +0100
+
+    Readded GPL v3
+
+commit d3a6eeb385734f2b610414870d14b4148d04dc67
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Nov 25 00:03:53 2011 +0100
+
+    Do not display cup, when dice already rolled
+
+commit e389815ec4886126e80c065515d5ca06889fb28d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 23:50:43 2011 +0100
+
+    Draw cup
+
+commit 9bdfdbf4c7d0388d900c70323daea033c873f806
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 23:50:24 2011 +0100
+
+    Formatting
+
+commit c424746ab4e4c45c085d05e4e2d04ff8656b8f85
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 23:40:26 2011 +0100
+
+    Handle resignation messages
+
+commit b905a0b0b95102ee3e4379b7294ca2600d674de7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 23:22:33 2011 +0100
+
+    Cup for dice
+
+commit dd11ea682577231937446397e98021bcfb63fe46
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 22:19:48 2011 +0100
+
+    Reordered structure members
+    
+    The resignation flag is considered insignificant.  It must be located
+    in the second part of the structure.
+
+commit 4c86d8235164718498b08f875eed1bd20089b4f2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 21:12:50 2011 +0100
+
+    Parse rejected resignation
+
+commit 9f91f10a2c7b4b08fb93a4810297bc8d800a9137
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 21:12:22 2011 +0100
+
+    Renamed
+
+commit 46c39473802ef7d65ee751a94ff305cb3fcc9a56
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 21:10:09 2011 +0100
+
+    Typo fixed
+
+commit 7054caf14669348d1fb6c266867670e5cb34989e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:23:51 2011 +0100
+
+    Display white flag for resignation
+
+commit f7e28fb1b1e2e80cb54d43515096e3369ae94f54
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:23:31 2011 +0100
+
+    Handle accepted cubes
+
+commit 120914833b965687826f472547a882236ee6aa86
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:22:45 2011 +0100
+
+    Store resignation offers
+
+commit 18b17be4d5b2f1f36bfebfe4dc4fde91a370f193
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:22:27 2011 +0100
+
+    Parse resignation messages
+
+commit 9103f89f478872f4193ddea3324a992dd0a42a42
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:22:04 2011 +0100
+
+    Tests for resignation messages
+
+commit 86685d1710bfe852e95c96cbaddfe487a68b2699
+Author: Guido Flohr <guido@imperia.net>
+Date:   Thu Nov 24 19:21:34 2011 +0100
+
+    Include white flag for resignation
+
+commit 89fc3a9f1ad0604429f26cf825da2cd536d4753a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Nov 23 00:02:37 2011 +0100
+
+    Signal taken or dropped cube
+
+commit 3df831ea78f549941c0065fb358ff3517d6a0731
+Merge: c526658 ade5235
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 22:19:08 2011 +0100
+
+    Merge branch 'master' of ssh://guido-flohr.net/var/git/c/gibbon
+
+commit c5266587c742e9626884069c1e6b46ecaba252ee
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 22:18:01 2011 +0100
+
+    Re-done git chaos
+
+commit ade52353d98ba8cb4ad8ddbe095747b63d0ea506
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 21:53:53 2011 +0100
+
+    Propage accept and reject
+
+commit 500f1dc9090a7bb84b9667c9dc328ec1e7074c14
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 21:53:39 2011 +0100
+
+    Handlers for yes/no decisions
+
+commit 9cab8581fca38291c5e5981a7399fc7cde39fe7a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 21:21:26 2011 +0100
+
+    Make accept/reject buttons sensitive when doubled
+
+commit be3e2662d1562cb62b1455364341d0d2466c2612
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 21:13:41 2011 +0100
+
+    No state argument required
+    
+    Resetting the expect response state is equivalent to setting the initial
+    playing state.
+
+commit 1c5b629e4943726da5da847d3a97eadb8a2e474b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 20:54:08 2011 +0100
+
+    Use new dice fade out feature
+
+commit 5b069bbf09faa080ece8c7990589d0a3c23e3b3b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 20:53:41 2011 +0100
+
+    Fade out unusable dice
+
+commit 94199d01ddb441d77f8beee69d3996edfecf6d6a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Nov 22 09:55:59 2011 +0100
+
+    Typo and comment
+
+commit d05ac0d4e3ed98c3d053ee09e21f79cc56b34a9d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 21:24:18 2011 +0100
+
+    TODO for non-modal FIBS messages
+
+commit 38419ec110400373593ebf346b936b0427aedf42
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 10:15:25 2011 +0100
+
+    New board analysis strategy
+    
+    Gibbon will now honor the post-Crawford (aka did-Crawford) flag in the
+    board state.  If one of the two players is 1-away and the flag is not
+    set, we have the Crawford game.
+    
+    The cube has been turned if both may_double flags are unset and both
+    dice show zero.  We additionally check that this is not the Crawford
+    game although this is not needed on FIBS at least, where the may_double
+    flags are set during the post-Crawford game.
+
+commit 39bf372d82357011c3808ffdf82f93a758c06e40
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 10:05:17 2011 +0100
+
+    Ignore the was-doubled flag (test)
+
+commit 52991021b9a6b294cd1133fbb9e76f049618d796
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 10:03:52 2011 +0100
+
+    Use post-Crawford flag
+
+commit 4ec92db50edbd94fe6c09bcedc68ea6154e8ef8f
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 09:46:15 2011 +0100
+
+    Test for post-Crawford flag
+
+commit a853785cf6e0af1783d712924d50243c108dff7b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 09:39:32 2011 +0100
+
+    Cube state
+
+commit 7b7eff3ce31fbbace8541b911282f57637383e04
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Nov 21 09:34:44 2011 +0100
+
+    Updated
+
+commit c69e6cd49d0a8f2ac47ead1014a250fe60476bdb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Nov 20 14:05:48 2011 +0100
+
+    Re-generated
+
 commit 590dc9ca1a053b017f52bda570914706c59bca46
 Author: Guido Flohr <guido@imperia.net>
 Date:   Sun Nov 20 13:59:45 2011 +0100
