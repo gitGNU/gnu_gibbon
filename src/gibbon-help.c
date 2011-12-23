@@ -100,11 +100,14 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
 
         gibbon_app_display_error (app, _("Error Displaying Help"),
                                   _("Locally installed help: %s.\n"
-                                    "Online help: %s.\n"),
+                                    "Online help: %s.\n"
+                                    "Please read the documentation under"
+                                    " '%s' instead!"),
                                   error_local ? error_local->message
                                                   : _("Unknown error"),
                                   error_online ? error_online->message
-                                                  : _("Unknown error"));
+                                                  : _("Unknown error"),
+                                  uri);
 
         if (error_local)
                 g_error_free (error_local);
