@@ -93,7 +93,8 @@ common_SOURCES = 			\
 	gibbon-settings.c		\
 	gibbon-register-dialog.c			\
 	gibbon-game-action.c				\
-	gibbon-movement.c	
+	gibbon-movement.c				\
+	gibbon-move.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -137,7 +138,8 @@ noinst_HEADERS =			\
 	gibbon-settings.h		\
 	gibbon-register-dialog.h			\
 	gibbon-game-action.h			\
-	gibbon-movement.h
+	gibbon-movement.h			\
+	gibbon-move.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
