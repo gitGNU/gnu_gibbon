@@ -79,7 +79,7 @@ GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                              const gchar *white, const gchar *black,
                              guint match_length, guint game_number,
                              guint white_score, guint black_score,
-                             gboolean is_crawford,
+                             gboolean crawford, gboolean is_crawford,
                              GError **error);
 GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 

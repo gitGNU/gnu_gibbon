@@ -77,7 +77,8 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                 const gchar *white, const gchar *black,
                 guint match_length, guint game_number,
                 guint white_score, guint black_score,
-                gboolean is_crawford, GError **error)
+                gboolean crawford, gboolean is_crawford,
+                GError **error)
 {
         GibbonGame *self = g_object_new (GIBBON_TYPE_GAME, NULL);
         const GSGFFlavor *flavor;
@@ -101,19 +102,26 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         simple_text = GSGF_VALUE (gsgf_simple_text_new (white));
         if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
                 g_object_unref (simple_text);
-                return FALSE;
+                return self;
         }
         simple_text = GSGF_VALUE (gsgf_simple_text_new (black));
         if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
                 g_object_unref (simple_text);
-                return FALSE;
+                return self;
+        }
+        if (crawford) {
+                simple_text = GSGF_VALUE (gsgf_simple_text_new ("Crawford"));
+                if (!gsgf_node_set_property (root, "RU", simple_text, error)) {
+                        g_object_unref (simple_text);
+                        return self;
+                }
         }
 
         match_info = GSGF_VALUE (gsgf_list_of_new (gsgf_compose_get_type (),
                                                    flavor));
         if (!gsgf_node_set_property (root, "MI", match_info, error)) {
                 g_object_unref (match_info);
-                return FALSE;
+                return self;
         }
 
         mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("length"));
@@ -125,7 +133,43 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
                                   mi_compose, error)) {
                 g_object_unref (mi_compose);
-                return FALSE;
+                return self;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("game"));
+        str = g_strdup_printf ("%u", game_number);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_compose);
+                return self;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("bs"));
+        str = g_strdup_printf ("%u", black_score);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_compose);
+                return self;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("ws"));
+        str = g_strdup_printf ("%u", white_score);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_compose);
+                return self;
         }
 
         return self;
