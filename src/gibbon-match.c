@@ -235,6 +235,14 @@ gibbon_match_set_length (GibbonMatch *self, gint length)
         return TRUE;
 }
 
+gint
+gibbon_match_get_length (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), -1);
+
+        return self->priv->length;
+}
+
 GibbonGame *
 gibbon_match_get_current_game (const GibbonMatch *self)
 {
