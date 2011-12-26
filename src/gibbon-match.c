@@ -45,6 +45,8 @@ struct _GibbonMatchPrivate {
 
         gchar *black_player;
         gchar *white_player;
+
+        gint length;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -64,6 +66,8 @@ gibbon_match_init (GibbonMatch *self)
 
         self->priv->black_player = NULL;
         self->priv->white_player = NULL;
+
+        self->priv->length = -1;
 }
 
 static void
@@ -151,7 +155,7 @@ gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
         GSGFValue *simple_text;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name, FALSE);
+        g_return_val_if_fail (name != NULL, FALSE);
 
         for (iter = self->priv->games; iter; iter = iter->next) {
                 game = GIBBON_GAME (iter->data);
@@ -172,6 +176,14 @@ gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
         return TRUE;
 }
 
+const gchar *
+gibbon_match_get_white_player (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->white_player;
+}
+
 gboolean
 gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                                GError **error)
@@ -184,7 +196,7 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
         GSGFValue *simple_text;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name, FALSE);
+        g_return_val_if_fail (name != NULL, FALSE);
 
         for (iter = self->priv->games; iter; iter = iter->next) {
                 game = GIBBON_GAME (iter->data);
@@ -206,19 +218,21 @@ gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
 }
 
 const gchar *
-gibbon_match_get_white_player (const GibbonMatch *self)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->white_player;
-}
-
-const gchar *
 gibbon_match_get_black_player (const GibbonMatch *self)
 {
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
         return self->priv->black_player;
+}
+
+gboolean
+gibbon_match_set_length (GibbonMatch *self, gint length)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+
+        self->priv->length = length;
+
+        return TRUE;
 }
 
 GibbonGame *

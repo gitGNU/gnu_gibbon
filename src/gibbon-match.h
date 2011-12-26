@@ -79,6 +79,11 @@ const gchar *gibbon_match_get_white_player (const GibbonMatch *self);
 gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
                                         GError **error);
 const gchar *gibbon_match_get_black_player (const GibbonMatch *self);
+/*
+ * Match length: 0 means unlimited, negative values for unknown length.
+ */
+gboolean gibbon_match_set_length (GibbonMatch *self, gint length);
+gint gibbon_match_get_length (const GibbonMatch *self);
 
 struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
 
