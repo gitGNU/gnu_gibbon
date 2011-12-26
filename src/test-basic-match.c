@@ -64,10 +64,23 @@ fill_match (void)
         if (!gibbon_match_set_black_player (match, "Joe Black", &error))
                 g_printerr ("Error setting black player: %s.\n",
                             error->message);
+        if (error)
+                g_error_free (error);
+        error = NULL;
 
         if (!gibbon_match_set_white_player (match, "Snow White", &error))
                 g_printerr ("Error setting white player: %s.\n",
                             error->message);
+        if (error)
+                g_error_free (error);
+        error = NULL;
+
+        if (!gibbon_match_set_match_length (match, 5))
+                g_printerr ("Error setting match length: %s.\n",
+                            error->message);
+        if (error)
+                g_error_free (error);
+        error = NULL;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -116,7 +129,7 @@ serialize_match (const GibbonMatch *match)
                 return FALSE;
         }
 
-#if (0)
+#if (1)
         g_printerr ("%s",
                     (gchar *) g_memory_output_stream_get_data  (
                                     G_MEMORY_OUTPUT_STREAM (out)));
