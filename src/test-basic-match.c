@@ -58,29 +58,62 @@ fill_match (void)
 {
         GibbonMatch *match = gibbon_match_new ();
         GibbonGame *game;
+        const gchar *got_string;
+        const gchar *expect_string;
+        gint got_int, expect_int;
 
         GError *error = NULL;
 
-        if (!gibbon_match_set_black_player (match, "Joe Black", &error))
+        if (!gibbon_match_set_black_player (match, "Joe Black", &error)) {
                 g_printerr ("Error setting black player: %s.\n",
                             error->message);
-        if (error)
                 g_error_free (error);
-        error = NULL;
+                g_object_unref (match);
+                return NULL;
+        }
 
-        if (!gibbon_match_set_white_player (match, "Snow White", &error))
+        expect_string = "Joe Black";
+        got_string = gibbon_match_get_black_player (match);
+        if (g_strcmp0 (expect_string, got_string)) {
+                g_printerr ("Expected `%s', got `%s'.\n",
+                            expect_string, got_string);
+                g_object_unref (match);
+                return NULL;
+        }
+
+        if (!gibbon_match_set_white_player (match, "Snow White", &error)) {
                 g_printerr ("Error setting white player: %s.\n",
                             error->message);
-        if (error)
                 g_error_free (error);
-        error = NULL;
+                g_object_unref (match);
+                return NULL;
+        }
 
-        if (!gibbon_match_set_length (match, 5))
+        expect_string = "Snow White";
+        got_string = gibbon_match_get_white_player (match);
+        if (g_strcmp0 (expect_string, got_string)) {
+                g_printerr ("Expected `%s', got `%s'.\n",
+                            expect_string, got_string);
+                g_object_unref (match);
+                return NULL;
+        }
+
+        if (!gibbon_match_set_length (match, 5)) {
                 g_printerr ("Error setting match length: %s.\n",
                             error->message);
-        if (error)
                 g_error_free (error);
-        error = NULL;
+                g_object_unref (match);
+                return NULL;
+        }
+
+        expect_int = 5;
+        got_int = gibbon_match_get_length (match);
+        if (expect_int != got_int) {
+                g_printerr ("Expected match length %d, got %d.\n",
+                            expect_int, got_int);
+                g_object_unref (match);
+                return NULL;
+        }
 
         game = gibbon_match_get_current_game (match);
         if (!game)
