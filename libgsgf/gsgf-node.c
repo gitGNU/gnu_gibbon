@@ -464,7 +464,7 @@ gsgf_node_convert (GSGFComponent *_self, const gchar *charset, GError **error)
  * @value: The value to set.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Set a property.  The property is created if it does not exist.  If the
+ * Set a property.  The property is created if it does not exist.  The
  * value is a #GSGFRaw.
  *
  * Returns: %TRUE for success, %FALSE for failure.
