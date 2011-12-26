@@ -226,9 +226,51 @@ gibbon_match_get_black_player (const GibbonMatch *self)
 }
 
 gboolean
-gibbon_match_set_length (GibbonMatch *self, gint length)
+gibbon_match_set_length (GibbonMatch *self, gint length, GError **error)
 {
+        GList *iter;
+        GibbonGame *game;
+        GSGFGameTree *game_tree;
+        GList* nodes;
+        GSGFNode* root;
+        GSGFValue *match_info;
+        gchar *str;
+        GSGFCookedValue *length_key, *length_value;
+        GSGFCookedValue *composed_length;
+
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+
+        for (iter = self->priv->games; iter; iter = iter->next) {
+                game = GIBBON_GAME (iter->data);
+                game_tree = gibbon_game_get_game_tree (game);
+                nodes = gsgf_game_tree_get_nodes (game_tree);
+                root = nodes->data;
+                match_info = GSGF_VALUE (gsgf_node_get_property (root, "MI"));
+                if (!match_info) {
+                        match_info = GSGF_VALUE (gsgf_list_of_new (
+                                                       gsgf_compose_get_type (),
+                                                           self->priv->flavor));
+                        if (!gsgf_node_set_property (root, "MI", match_info,
+                                                     error)) {
+                                g_object_unref (match_info);
+                                return FALSE;
+                        }
+                }
+                length_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("length"));
+                str = g_strdup_printf ("%d", length);
+                length_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+                g_free (str);
+                composed_length =
+                        GSGF_COOKED_VALUE (gsgf_compose_new (length_key,
+                                                             length_value,
+                                                             NULL));
+                if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                          composed_length, error)) {
+                        g_object_unref (composed_length);
+                        return FALSE;
+                }
+                g_printerr ("Before the crash?\n");
+        }
 
         self->priv->length = length;
 
