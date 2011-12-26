@@ -75,7 +75,12 @@ struct _GibbonGameClass
 
 GType gibbon_game_get_type (void) G_GNUC_CONST;
 
-GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree);
+GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
+                             const gchar *white, const gchar *black,
+                             guint match_length, guint game_number,
+                             guint white_score, guint black_score,
+                             gboolean is_crawford,
+                             GError **error);
 GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 
 #endif

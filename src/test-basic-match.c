@@ -56,19 +56,18 @@ main(int argc, char *argv[])
 static GibbonMatch *
 fill_match (void)
 {
-        GibbonMatch *match = gibbon_match_new ();
-        GibbonGame *game;
-        const gchar *got_string;
-        const gchar *expect_string;
-        gint got_int, expect_int;
-
         GError *error = NULL;
+        GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
+                                               5, TRUE, &error);
+        const gchar *expect_string, *got_string;
+        gint expect_int, got_int;
+        GibbonGame *game;
 
-        if (!gibbon_match_set_black_player (match, "Joe Black", &error)) {
-                g_printerr ("Error setting black player: %s.\n",
+        if (error) {
+                g_object_unref (match);
+                g_printerr ("Error creating match: %s!\n",
                             error->message);
                 g_error_free (error);
-                g_object_unref (match);
                 return NULL;
         }
 
@@ -81,27 +80,11 @@ fill_match (void)
                 return NULL;
         }
 
-        if (!gibbon_match_set_white_player (match, "Snow White", &error)) {
-                g_printerr ("Error setting white player: %s.\n",
-                            error->message);
-                g_error_free (error);
-                g_object_unref (match);
-                return NULL;
-        }
-
         expect_string = "Snow White";
         got_string = gibbon_match_get_white_player (match);
         if (g_strcmp0 (expect_string, got_string)) {
                 g_printerr ("Expected `%s', got `%s'.\n",
                             expect_string, got_string);
-                g_object_unref (match);
-                return NULL;
-        }
-
-        if (!gibbon_match_set_length (match, 5, error)) {
-                g_printerr ("Error setting match length: %s.\n",
-                            error->message);
-                g_error_free (error);
                 g_object_unref (match);
                 return NULL;
         }

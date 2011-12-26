@@ -72,27 +72,61 @@ gibbon_game_class_init (GibbonGameClass *klass)
         object_class->finalize = gibbon_game_finalize;
 }
 
-/**
- * gibbon_game_new:
- * @match: The #GibbonMatch that this #GibbonGame is part of.
- * @game_tree: The associated #GSGFGameTree.
- *
- * Creates a new #GibbonGame.
- *
- * Returns: The newly created #GibbonGame or %NULL in case of failure.
- */
 GibbonGame *
-gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree)
+gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
+                const gchar *white, const gchar *black,
+                guint match_length, guint game_number,
+                guint white_score, guint black_score,
+                gboolean is_crawford, GError **error)
 {
         GibbonGame *self = g_object_new (GIBBON_TYPE_GAME, NULL);
+        const GSGFFlavor *flavor;
+        GSGFNode *root;
+        GSGFValue *simple_text;
+        GSGFValue *match_info;
+        gchar *str;
+        GSGFCookedValue *mi_key, *mi_value;
+        GSGFCookedValue *mi_compose;
 
         self->priv->match = match;
         self->priv->game_tree = game_tree;
 
-        (void) gsgf_game_tree_add_node (game_tree);
-        (void) gsgf_game_tree_set_application (game_tree,
-                                               PACKAGE, VERSION,
-                                               NULL);
+        flavor = gsgf_game_tree_get_flavor (game_tree);
+
+        root = gsgf_game_tree_add_node (game_tree);
+        if (!gsgf_game_tree_set_application (game_tree,
+                                             PACKAGE, VERSION,
+                                             error))
+                return self;
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (white));
+        if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (black));
+        if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
+
+        match_info = GSGF_VALUE (gsgf_list_of_new (gsgf_compose_get_type (),
+                                                   flavor));
+        if (!gsgf_node_set_property (root, "MI", match_info, error)) {
+                g_object_unref (match_info);
+                return FALSE;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("length"));
+        str = g_strdup_printf ("%u", match_length);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_compose);
+                return FALSE;
+        }
 
         return self;
 }

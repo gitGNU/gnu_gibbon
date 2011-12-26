@@ -47,6 +47,7 @@ struct _GibbonMatchPrivate {
         gchar *white_player;
 
         gint length;
+        gboolean crawford;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -68,6 +69,7 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->white_player = NULL;
 
         self->priv->length = -1;
+        self->priv->crawford = TRUE;
 }
 
 static void
@@ -116,7 +118,8 @@ gibbon_match_class_init (GibbonMatchClass *klass)
  * Returns: The newly created #GibbonMatch or %NULL.
  */
 GibbonMatch *
-gibbon_match_new ()
+gibbon_match_new (const gchar *white, const gchar *black,
+                  guint length, gboolean crawford, GError **error)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
         GSGFGameTree *game_tree;
@@ -126,10 +129,16 @@ gibbon_match_new ()
 
         self->priv->flavor = gsgf_flavor_backgammon_new ();
 
+        self->priv->black_player = g_strdup (black);
+        self->priv->white_player = g_strdup (white);
+        self->priv->length = length;
+        self->priv->crawford = TRUE;
+
         game_tree = gsgf_collection_add_game_tree (self->priv->collection,
                                                    self->priv->flavor);
 
-        game = gibbon_game_new (self, game_tree);
+        game = gibbon_game_new (self, game_tree,
+                                white, black, length, 0, 0, 0, TRUE, error);
         self->priv->games = g_list_prepend (self->priv->games, game);
 
         return self;
@@ -143,78 +152,12 @@ gibbon_match_get_collection (GibbonMatch *self)
         return self->priv->collection;
 }
 
-gboolean
-gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
-                               GError **error)
-{
-        GList *iter;
-        GibbonGame *game;
-        GSGFGameTree *game_tree;
-        GList* nodes;
-        GSGFNode* root;
-        GSGFValue *simple_text;
-
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name != NULL, FALSE);
-
-        for (iter = self->priv->games; iter; iter = iter->next) {
-                game = GIBBON_GAME (iter->data);
-                game_tree = gibbon_game_get_game_tree (game);
-                nodes = gsgf_game_tree_get_nodes (game_tree);
-                root = nodes->data;
-                simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
-                if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
-                        g_object_unref (simple_text);
-                        return FALSE;
-                }
-        }
-
-        if (self->priv->white_player)
-                g_free (self->priv->white_player);
-        self->priv->white_player = g_strdup (name);
-
-        return TRUE;
-}
-
 const gchar *
 gibbon_match_get_white_player (const GibbonMatch *self)
 {
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
         return self->priv->white_player;
-}
-
-gboolean
-gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
-                               GError **error)
-{
-        GList *iter;
-        GibbonGame *game;
-        GSGFGameTree *game_tree;
-        GList* nodes;
-        GSGFNode* root;
-        GSGFValue *simple_text;
-
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name != NULL, FALSE);
-
-        for (iter = self->priv->games; iter; iter = iter->next) {
-                game = GIBBON_GAME (iter->data);
-                game_tree = gibbon_game_get_game_tree (game);
-                nodes = gsgf_game_tree_get_nodes (game_tree);
-                root = nodes->data;
-                simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
-                if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
-                        g_object_unref (simple_text);
-                        return FALSE;
-                }
-        }
-
-        if (self->priv->black_player)
-                g_free (self->priv->black_player);
-        self->priv->black_player = g_strdup (name);
-
-        return TRUE;
 }
 
 const gchar *
@@ -269,7 +212,6 @@ gibbon_match_set_length (GibbonMatch *self, gint length, GError **error)
                         g_object_unref (composed_length);
                         return FALSE;
                 }
-                g_printerr ("Before the crash?\n");
         }
 
         self->priv->length = length;

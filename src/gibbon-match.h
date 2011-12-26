@@ -70,21 +70,17 @@ struct _GibbonMatchClass
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;
 
-GibbonMatch *gibbon_match_new ();
+GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
+                               guint length, gboolean crawford,
+                               GError **error);
 
 const GSGFCollection *gibbon_match_get_collection ();
-gboolean gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
-                                        GError **error);
 const gchar *gibbon_match_get_white_player (const GibbonMatch *self);
-gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
-                                        GError **error);
 const gchar *gibbon_match_get_black_player (const GibbonMatch *self);
-/*
- * Match length: 0 means unlimited, negative values for unknown length.
- */
-gboolean gibbon_match_set_length (GibbonMatch *self, gint length,
-                                  GError **error);
+gboolean
+gibbon_match_set_length (GibbonMatch *self, gint length, GError **error);
 gint gibbon_match_get_length (const GibbonMatch *self);
+gboolean gibbon_match_get_crawford (const GibbonMatch *self);
 
 struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
 
