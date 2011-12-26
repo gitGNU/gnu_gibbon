@@ -98,7 +98,7 @@ fill_match (void)
                 return NULL;
         }
 
-        if (!gibbon_match_set_length (match, 5)) {
+        if (!gibbon_match_set_length (match, 5, error)) {
                 g_printerr ("Error setting match length: %s.\n",
                             error->message);
                 g_error_free (error);
