@@ -298,16 +298,16 @@ gibbon_game_point_to_sgf_char (GibbonPositionSide side, gint point)
 {
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 if (point <= 0)
-                        return 'z';
-                else if (point >= 25)
                         return 'y';
+                else if (point >= 25)
+                        return 'z';
                 else
                         return 'x' + 1 - point;
         } else {
                 if (point <= 0)
-                        return 'y';
-                else if (point >= 25)
                         return 'z';
+                else if (point >= 25)
+                        return 'y';
                 else
                         return 'x' + 1 - point;
         }
