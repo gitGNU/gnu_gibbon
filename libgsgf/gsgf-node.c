@@ -138,6 +138,10 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
         GList *keys;
         GList *iter;
         GList *property;
+        GList *siblings;
+        GSGFNode *root;
+        const gchar *intro;
+        gsize intro_length;
 
         *bytes_written = 0;
 
@@ -146,7 +150,17 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
 
         self = GSGF_NODE (_self);
 
-        if (!g_output_stream_write_all(out, ";", 1, &written_here,
+        siblings = gsgf_game_tree_get_nodes (self->priv->parent);
+        root = GSGF_NODE (g_list_nth_data (siblings, 0));
+        if (root == self) {
+                intro = ";";
+                intro_length = 1;
+        } else {
+                intro = "\n;";
+                intro_length = 2;
+        }
+
+        if (!g_output_stream_write_all(out, intro, intro_length, &written_here,
                                        cancellable, error)) {
                 *bytes_written += written_here;
                 return FALSE;
