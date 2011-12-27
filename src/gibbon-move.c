@@ -72,6 +72,50 @@ gibbon_move_new (gint die1, gint die2, gsize num_movements)
 }
 
 GibbonMove *
+gibbon_move_newv (gint die1, gint die2, ...)
+{
+        GibbonMove *self = gibbon_move_new (die1, die2, 4);
+        GibbonMovement *movement;
+        va_list ap;
+        gint i, from, to;
+
+        va_start (ap, die2);
+        for (i = 0; i < 4; ++i) {
+                from = va_arg (ap, gint);
+                if (from < 0)
+                        break;
+                if (from > 24) {
+                        va_end (ap);
+                        g_critical ("gibbon_move_newv: starting point %d"
+                                    " is out of range!", from);
+                        return self;
+                }
+                to = va_arg (ap, gint);
+                if (to < 0) {
+                        va_end (ap);
+                        g_critical ("gibbon_move_newv: odd number of points!");
+                        return self;
+                } else if (to < 1 || to > 25) {
+                        va_end (ap);
+                        g_critical ("gibbon_move_newv: end point %d"
+                                    " is out of range!", to);
+                        return self;
+                }
+                self->number++;
+                movement = self->movements + i;
+                movement->from = from;
+                movement->to = to;
+                /*
+                 * We do not bother to find out, which die was used.
+                 */
+                movement->die = -1;
+        }
+        va_end (ap);
+
+        return self;
+}
+
+GibbonMove *
 gibbon_move_copy (const GibbonMove *self)
 {
         GibbonMove *copy;
