@@ -59,8 +59,6 @@ fill_match (void)
         GError *error = NULL;
         GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
                                                5, TRUE, &error);
-        const gchar *expect_string, *got_string;
-        gint expect_int, got_int;
         GibbonGame *game;
 
         if (error) {
@@ -68,33 +66,6 @@ fill_match (void)
                 g_printerr ("Error creating match: %s!\n",
                             error->message);
                 g_error_free (error);
-                return NULL;
-        }
-
-        expect_string = "Joe Black";
-        got_string = gibbon_match_get_black_player (match);
-        if (g_strcmp0 (expect_string, got_string)) {
-                g_printerr ("Expected `%s', got `%s'.\n",
-                            expect_string, got_string);
-                g_object_unref (match);
-                return NULL;
-        }
-
-        expect_string = "Snow White";
-        got_string = gibbon_match_get_white_player (match);
-        if (g_strcmp0 (expect_string, got_string)) {
-                g_printerr ("Expected `%s', got `%s'.\n",
-                            expect_string, got_string);
-                g_object_unref (match);
-                return NULL;
-        }
-
-        expect_int = 5;
-        got_int = gibbon_match_get_length (match);
-        if (expect_int != got_int) {
-                g_printerr ("Expected match length %d, got %d.\n",
-                            expect_int, got_int);
-                g_object_unref (match);
                 return NULL;
         }
 
@@ -111,6 +82,7 @@ check_match (const GibbonMatch *match)
         gboolean retval = TRUE;
         const gchar *got;
         const gchar *expect;
+        gint expect_int, got_int;
 
         got = gibbon_match_get_black_player (match);
         expect = "Joe Black";
@@ -123,6 +95,14 @@ check_match (const GibbonMatch *match)
         expect = "Snow White";
         if (g_strcmp0 (expect, got)) {
                 g_printerr ("Expected `%s', got `%s'!\n", expect, got);
+                retval = FALSE;
+        }
+
+        expect_int = 5;
+        got_int = gibbon_match_get_length (match);
+        if (expect_int != got_int) {
+                g_printerr ("Expected match length %d, got %d.\n",
+                            expect_int, got_int);
                 retval = FALSE;
         }
 
