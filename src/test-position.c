@@ -324,7 +324,7 @@ test_apply_move (void)
         gboolean retval = TRUE;
         GibbonPosition *expect = gibbon_position_new ();
         GibbonPosition *got = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
+        GibbonMove *move = gibbon_move_new (3, 1, 4);
 
         move->number = 2;
         move->movements[0].from = 8;
@@ -493,7 +493,7 @@ test_apply_move (void)
                 retval = FALSE;
         }
 
-        g_free (move);
+        g_object_unref (move);
         gibbon_position_free (got);
         gibbon_position_free (expect);
 

@@ -8,7 +8,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * gibbon is distributed in the hope that it will be useful,
+ * gibbon is distributed in pthe hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -63,6 +63,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-position.h"
+#include "gibbon-util.h"
 
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
@@ -309,18 +310,6 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
 }
 
 GibbonMove *
-gibbon_position_alloc_move (gsize num_movements)
-{
-        GibbonMove *move = g_malloc (sizeof move->number
-                                     + num_movements * sizeof *move->movements
-                                     + sizeof move->status);
-        move->number = 0;
-        move->status = GIBBON_MOVE_LEGAL;
-
-        return move;
-}
-
-GibbonMove *
 gibbon_position_check_move (const GibbonPosition *_before,
                             const GibbonPosition *_after,
                             GibbonPositionSide side)
@@ -337,7 +326,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
         die1 = abs (_before->dice[0]);
         die2 = abs (_before->dice[1]);
-        move = gibbon_position_alloc_move (0);
+        move = gibbon_move_new (die1, die2, 0);
         move->status = GIBBON_MOVE_ILLEGAL;
 
         g_return_val_if_fail (die1 != 0, move);
@@ -411,7 +400,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
                         if (this_move->status == GIBBON_MOVE_LEGAL
                             || move->status == GIBBON_MOVE_ILLEGAL) {
-                                g_free (move);
+                                g_object_unref (move);
                                 move = this_move;
                                 iter->data = NULL;
                         }
@@ -426,7 +415,11 @@ gibbon_position_check_move (const GibbonPosition *_before,
                 }
                 iter = iter->next;
         }
-        g_list_foreach (found, (GFunc) g_free, NULL);
+        /*
+         * We cannot use g_object_unref here because we may have set the
+         * data pointer to NULL for certain items.
+         */
+        g_list_foreach (found, (GFunc) gibbon_safe_object_unref, NULL);
         g_list_free (found);
 
         if (move->status != GIBBON_MOVE_LEGAL)
@@ -741,7 +734,7 @@ gibbon_position_find_non_double (const gint *before,
         }
 
         if (!num_froms) {
-                move = gibbon_position_alloc_move (0);
+                move = gibbon_move_new (die1, die2, 0);
                 moves = g_list_append (moves, move);
 
                 return moves;
@@ -749,12 +742,12 @@ gibbon_position_find_non_double (const gint *before,
 
         /* Two possibilities.  */
         if (2 == num_froms) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die1);
                 gibbon_position_fill_movement (move, froms[1], die2);
                 moves = g_list_append (moves, move);
 
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die2);
                 gibbon_position_fill_movement (move, froms[1], die1);
                 moves = g_list_append (moves, move);
@@ -766,27 +759,27 @@ gibbon_position_find_non_double (const gint *before,
          * ways.
          */
         if (froms[0] > die1) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die1);
                 gibbon_position_fill_movement (move, froms[0] - die1, die2);
                 moves = g_list_append (moves, move);
         }
         if (froms[0] > die2) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die2);
                 gibbon_position_fill_movement (move, froms[0] - die2, die1);
                 moves = g_list_append (moves, move);
         }
 
-        move = gibbon_position_alloc_move (1);
+        move = gibbon_move_new (die1, die2, 1);
         gibbon_position_fill_movement (move, froms[0], die1);
         moves = g_list_append (moves, move);
 
-        move = gibbon_position_alloc_move (1);
+        move = gibbon_move_new (die1, die2, 1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
 
-        move = gibbon_position_alloc_move (2);
+        move = gibbon_move_new (die1, die2, 2);
         gibbon_position_fill_movement (move, froms[0], die1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
@@ -812,7 +805,7 @@ gibbon_position_find_double (const gint *before,
 
         switch (num_froms) {
                 case 0:
-                        move = gibbon_position_alloc_move (0);
+                        move = gibbon_move_new (die, die, 0);
                         moves = g_list_append (moves, move);
 
                         return moves;
@@ -843,7 +836,7 @@ gibbon_position_find_double (const gint *before,
                 /* This may allocate too much but calculating the correct size
                  * would never pay out.
                  */
-                move = gibbon_position_alloc_move (4);
+                move = gibbon_move_new (die, die, 4);
                 is_bear_off = FALSE;
 
                 while (pattern) {

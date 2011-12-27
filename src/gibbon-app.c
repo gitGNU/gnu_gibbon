@@ -677,50 +677,6 @@ gibbon_app_on_connect_request(GibbonApp *self, GtkWidget *emitter)
         gchar *login = NULL;
         GVariant *variant;
 
-#if 0
-        GibbonBoard *board = GIBBON_BOARD (self->priv->board);
-        GibbonPosition *pos = gibbon_position_copy (gibbon_board_get_position (board));
-
-        pos->points[23] = 1;
-        pos->points[17] = 1;
-        pos->points[12] = 4;
-        pos->points[10] = 1;
-        pos->turn = GIBBON_POSITION_SIDE_BLACK;
-        pos->dice[0] = -6;
-        pos->dice[1] = -1;
-
-        GibbonPosition *target_pos = gibbon_position_copy (pos);
-
-        gibbon_board_set_position (board, pos);
-
-        GibbonMove *move = gibbon_position_alloc_move (2);
-        move->number = 2;
-        move->status = GIBBON_MOVE_LEGAL;
-        move->movements[0].from = 13;
-        move->movements[0].to = 7;
-        move->movements[0].die = 6;
-        move->movements[1].from = 8;
-        move->movements[1].to = 7;
-        move->movements[1].die = 1;
-
-        if (!gibbon_position_apply_move (target_pos, move,
-                                         GIBBON_POSITION_SIDE_BLACK,
-                                         TRUE)) {
-                g_printerr ("Oops: %d\n", move->status);
-                return;
-        }
-
-        target_pos->turn = GIBBON_POSITION_SIDE_WHITE;
-        target_pos->dice[0] = 0;
-        target_pos->dice[1] = 0;
-
-        gibbon_board_animate_move (board, move,
-                                   GIBBON_POSITION_SIDE_BLACK,
-                                   target_pos);
-
-        return;
-#endif
-
         dialog = gibbon_connection_dialog_new (self, FALSE);
         response = gtk_dialog_run (GTK_DIALOG (dialog));
 

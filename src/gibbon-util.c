@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 
+#include <glib-object.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-util.h"
@@ -226,4 +227,11 @@ int gibbon_util_compare_bot_info (const void *p1, const void *p2)
                 return +1;
 
         return g_strcmp0 (i1->hostname, i2->hostname);
+}
+
+void
+gibbon_safe_object_unref (gpointer data)
+{
+        if (data)
+                g_object_unref (data);
 }

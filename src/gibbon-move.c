@@ -30,25 +30,13 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-move.h"
-#include "gibbon-movement.h"
-
-typedef struct _GibbonMovePrivate GibbonMovePrivate;
-struct _GibbonMovePrivate {
-        GSList *movements;
-};
-
-#define GIBBON_MOVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-        GIBBON_TYPE_MOVE, GibbonMovePrivate))
 
 G_DEFINE_TYPE (GibbonMove, gibbon_move, GIBBON_TYPE_GAME_ACTION)
 
 static void 
 gibbon_move_init (GibbonMove *self)
 {
-        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                GIBBON_TYPE_MOVE, GibbonMovePrivate);
-
-        self->priv->movements = NULL;
+        self->movements = NULL;
 }
 
 static void
@@ -56,9 +44,7 @@ gibbon_move_finalize (GObject *object)
 {
         GibbonMove *self = GIBBON_MOVE (object);
 
-        if (self->priv->movements) {
-                /* FIXME! Free movements.  */
-        }
+        g_free (self->movements);
 
         G_OBJECT_CLASS (gibbon_move_parent_class)->finalize(object);
 }
@@ -68,15 +54,45 @@ gibbon_move_class_init (GibbonMoveClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        g_type_class_add_private (klass, sizeof (GibbonMovePrivate));
-
         object_class->finalize = gibbon_move_finalize;
 }
 
 GibbonMove *
-gibbon_move_new (guint die1, guint die2, ...)
+gibbon_move_new (gint die1, gint die2, gsize num_movements)
 {
         GibbonMove *self = g_object_new (GIBBON_TYPE_MOVE, NULL);
 
+        self->die1 = die1;
+        self->die2 = die2;
+        self->status = GIBBON_MOVE_LEGAL;
+        self->number = 0;
+        self->movements = g_malloc0 (num_movements * sizeof *self->movements);
+
         return self;
+}
+
+GibbonMove *
+gibbon_move_copy (const GibbonMove *self)
+{
+        GibbonMove *copy;
+        GibbonMovement *src, *dest;
+        gsize i;
+
+        g_return_val_if_fail (GIBBON_IS_MOVE (self), NULL);
+
+        copy = gibbon_move_new (self->die1, self->die2, self->number);
+
+        /*
+         * We cannot use gibbon_movement_copy here because that would produce
+         * four pointers, where we need just one.
+         */
+        for (i = 0; i < self->number; ++i) {
+                src = self->movements + i;
+                dest = copy->movements + i;
+                dest->from = src->from;
+                dest->to = src->to;
+                dest->die = src->die;
+        }
+
+        return copy;
 }

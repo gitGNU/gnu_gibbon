@@ -265,7 +265,7 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->target)
                 gibbon_position_free (self->priv->target);
         if (self->priv->move)
-                g_free (self->priv->move);
+                g_object_unref (self->priv->move);
 
         if (self->priv->ids)
                 g_hash_table_destroy (self->priv->ids);
@@ -1404,11 +1404,7 @@ gibbon_cairoboard_animate_move (GibbonBoard *_self, const GibbonMove *move,
 
         self->priv->target = target_position;
 
-        self->priv->move = gibbon_position_alloc_move (move->number);
-        memcpy (self->priv->move, move,
-                sizeof move->number
-                + move->number * sizeof *move->movements
-                + sizeof move->status);
+        self->priv->move = gibbon_move_copy (move);
 
         self->priv->animation_move_number = 0;
         self->priv->animation_side = side;
@@ -1453,7 +1449,8 @@ gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
         self->priv->pos = self->priv->target;
         self->priv->target = NULL;
 
-        g_free (self->priv->move);
+        if (self->priv->move)
+                g_object_unref (self->priv->move);
         self->priv->move = NULL;
 
         if (self->priv->animation_id)

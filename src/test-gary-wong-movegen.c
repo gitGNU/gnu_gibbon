@@ -422,7 +422,7 @@ test_roll (GibbonPosition *position)
                 legal = LegalMove (board, post_board, dice, moves);
                 compare_results (position, post_position, move,
                                  legal, moves, turn);
-                g_free (move);
+                g_object_unref (move);
                 if (legal) {
 #if (DEBUG_TEST_ENGINE)
                         print_moves (moves, turn, dice);
