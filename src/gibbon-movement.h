@@ -31,18 +31,28 @@
 
 /**
  * GibbonMovement:
+ * @from: The starting point for a move.  1 is the ace point for white, O,
+ *        or the player with positive checker counts.  23 is the ace point
+ *        for black, X, or the player with negative checker counts.  0 and
+ *        24 represent home and the bar accordingly.
+ * @to: The end point for a move, see @from for semantics.
+ * @die: The die value used for the move.
  *
- * A boxed type for one single checker movement.
+ * A boxed type representing a single backgammon checker movement.
+ *
+ * The numbers are always positive (greater than zero) but we have to use gint
+ * instead of guint for internal reasons.
  */
 typedef struct _GibbonMovement GibbonMovement;
 struct _GibbonMovement
 {
-        guint from;
-        guint to;
+        gint from;
+        gint to;
+        gint die;
 };
 
 GType gibbon_movement_get_type (void) G_GNUC_CONST;
 
-GibbonMovement *gibbon_movement_new (guint from, guint to);
+GibbonMovement *gibbon_movement_new (gint from, gint to, gint die);
 
 #endif

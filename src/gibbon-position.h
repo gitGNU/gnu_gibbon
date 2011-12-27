@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gibbon-movement.h"
+
 #define GIBBON_TYPE_POSITION (gibbon_position_get_type ())
 
 /**
@@ -128,25 +130,6 @@ struct _GibbonPosition
 
         gchar *game_info;
         gchar *status;
-};
-
-/**
- * GibbonMovement:
- * @from: The starting point for a move.  1 is the ace point for white, O,
- *        or the player with positive checker counts.  23 is the ace point
- *        for black, X, or the player with negative checker counts.  0 and
- *        24 represent home and the bar accordingly.
- * @to: The end point for a move, see @from for semantics.
- * @die: The die value used for the move.
- *
- * Structure representing a single backgammon checker movement.
- */
-typedef struct _GibbonMovement GibbonMovement;
-struct _GibbonMovement
-{
-        gint from;
-        gint to;
-        gint die;
 };
 
 /**

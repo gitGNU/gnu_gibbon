@@ -43,6 +43,7 @@ gibbon_movement_copy (GibbonMovement *self)
 
         copy->from = self->from;
         copy->to = self->to;
+        copy->die = self->die;
 
         return copy;
 }
@@ -51,6 +52,7 @@ gibbon_movement_copy (GibbonMovement *self)
  * gibbon_movement_new:
  * @from: The source point.
  * @to: The destionation point.
+ * @die: The die used.
  *
  * Creates a new #GibbonMovement.
  *
@@ -60,13 +62,14 @@ gibbon_movement_copy (GibbonMovement *self)
  * Returns: The newly created #GibbonMovement or %NULL in case of failure.
  */
 GibbonMovement *
-gibbon_movement_new (guint from, guint to)
+gibbon_movement_new (gint from, gint to, gint die)
 {
         GibbonMovement *self;
 
         self = g_malloc (sizeof *self);
         self->from = from;
         self->to = to;
+        self->die = die;
 
         return self;
 }
