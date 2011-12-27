@@ -25,6 +25,7 @@
 
 #include <gibbon-match.h>
 #include <gibbon-game.h>
+#include <gibbon-position.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -60,6 +61,7 @@ fill_match (void)
         GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
                                                5, TRUE, &error);
         GibbonGame *game;
+        GibbonMove *move;
 
         if (error) {
                 g_object_unref (match);
@@ -72,6 +74,9 @@ fill_match (void)
         game = gibbon_match_get_current_game (match);
         if (!game)
                 g_printerr ("Fresh match has no game.\n");
+
+        move = gibbon_move_newv (3, 1, 8, 5, 6, 5, -1);
+        g_object_unref (move);
 
         return match;
 }
