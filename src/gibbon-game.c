@@ -31,17 +31,33 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-game.h"
+#include "gibbon-move.h"
+#include "gibbon-position.h"
+
+typedef struct _GibbonGameSnapshot GibbonGameSnapshot;
+struct _GibbonGameSnapshot {
+        GibbonGameAction *action;
+        GibbonPosition *resulting_position;
+};
 
 typedef struct _GibbonGamePrivate GibbonGamePrivate;
 struct _GibbonGamePrivate {
         GibbonMatch *match;
         GSGFGameTree *game_tree;
+
+        GibbonPosition *initial_position;
+        gsize num_half_moves;
+        GibbonGameSnapshot *snapshots;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_GAME, GibbonGamePrivate))
 
 G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
+
+static gboolean gibbon_game_add_move (GibbonGame *self,
+                                      GibbonPositionSide side,
+                                      GibbonMove *move);
 
 static void 
 gibbon_game_init (GibbonGame *self)
@@ -50,14 +66,28 @@ gibbon_game_init (GibbonGame *self)
                 GIBBON_TYPE_GAME, GibbonGamePrivate);
 
         self->priv->game_tree = NULL;
+        self->priv->match = NULL;
+        self->priv->initial_position = NULL;
+        self->priv->snapshots = NULL;
+        self->priv->num_half_moves = 0;
 }
 
 static void
 gibbon_game_finalize (GObject *object)
 {
         GibbonGame *self = GIBBON_GAME (object);
+        gsize i;
+        GibbonGameSnapshot *snapshot;
 
-        self->priv->game_tree = NULL;
+        if (self->priv->initial_position)
+                gibbon_position_free (self->priv->initial_position);
+
+        for (i = 0; i < self->priv->num_half_moves; ++i) {
+                snapshot = &self->priv->snapshots[i];
+                g_object_unref (snapshot->action);
+                gibbon_position_free (snapshot->resulting_position);
+       }
+        g_free (self->priv->snapshots);
 
         G_OBJECT_CLASS (gibbon_game_parent_class)->finalize(object);
 }
@@ -172,6 +202,8 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                 return self;
         }
 
+        self->priv->initial_position = gibbon_position_new ();
+
         return self;
 }
 
@@ -181,4 +213,85 @@ gibbon_game_get_game_tree (const GibbonGame *self)
         g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
 
         return self->priv->game_tree;
+}
+
+gboolean
+gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
+                        GibbonGameAction *action)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), FALSE);
+        g_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE);
+        g_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
+                              || GIBBON_POSITION_SIDE_BLACK,
+                              FALSE);
+
+        if (GIBBON_IS_MOVE (action)) {
+                return gibbon_game_add_move (self, side, GIBBON_MOVE (action));
+        } else {
+                g_critical ("gibbon_game_add_action: unsupported action type"
+                            " %s!", G_OBJECT_TYPE_NAME (action));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
+                      GibbonMove *move)
+{
+        gchar move_string[11];
+        GSGFNode *node;
+        GSGFProperty *property;
+        GError *error = NULL;
+        const gchar *id;
+        GSGFRaw *raw;
+        gsize i, j;
+        GibbonMovement *movement;
+        gchar c;
+
+        g_return_val_if_fail (move->number <= 4, FALSE);
+
+        id = side == GIBBON_POSITION_SIDE_BLACK ? "B" : "W";
+
+        move_string[0] = move->die1 + '0';
+        move_string[1] = move->die2 + '0';
+        j = 1;
+        for (i = 0; i < move->number; ++i) {
+                movement = move->movements + i;
+                if (move->movements[i].from <= 0)
+                        c = 'y';
+                else if (move->movements[i].from >= 25)
+                        c = 'z';
+                else
+                        c = 'a' - 1 + move->movements[i].from;
+                move_string[++j] = c;
+                if (move->movements[i].to <= 0)
+                        c = 'y';
+                else if (move->movements[i].to >= 25)
+                        c = 'z';
+                else
+                        c = 'a' - 1 + move->movements[i].to;
+                move_string[++j] = c;
+        }
+        move_string[++j] = 0;
+
+        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        property = gsgf_node_add_property (node, id, &error);
+        if (!property) {
+                g_critical ("gibbon_game_add_move: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        raw = gsgf_raw_new (move_string);
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
+                g_critical ("gibbon_game_add_move: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
 }

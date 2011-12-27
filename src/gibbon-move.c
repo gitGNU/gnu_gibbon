@@ -112,6 +112,9 @@ gibbon_move_newv (gint die1, gint die2, ...)
         }
         va_end (ap);
 
+        self->movements = g_realloc (self->movements,
+                                     self->number * sizeof *self->movements);
+
         return self;
 }
 

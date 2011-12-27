@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 static gboolean expect_move (const GibbonMove *expect,
                              GibbonMove *got, const gchar *msg);

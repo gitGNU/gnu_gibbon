@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 static gboolean test_constructor (void);
 static gboolean test_copy_constructor (void);

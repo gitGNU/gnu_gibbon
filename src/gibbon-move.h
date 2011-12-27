@@ -29,6 +29,7 @@
 
 #include "gibbon-game-action.h"
 #include "gibbon-movement.h"
+#include "gibbon-position.h"
 
 #define GIBBON_TYPE_MOVE \
         (gibbon_move_get_type ())
@@ -115,7 +116,8 @@ struct _GibbonMoveClass
 
 GType gibbon_move_get_type (void) G_GNUC_CONST;
 
-GibbonMove *gibbon_move_new (gint die1, gint die2, gsize num_movements);
+GibbonMove *gibbon_move_new (gint die1, gint die2,
+                             gsize num_movements);
 GibbonMove *gibbon_move_newv (gint die1, gint die2, ...);
 
 GibbonMove *gibbon_move_copy (const GibbonMove *self);

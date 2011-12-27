@@ -64,6 +64,7 @@
 
 #include "gibbon-position.h"
 #include "gibbon-util.h"
+#include "gibbon-move.h"
 
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)

@@ -29,6 +29,7 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 /* The code below was taken from a newsgroup archive found on
  * http://www.bkgm.com/rgb/rgb.cgi?view+593

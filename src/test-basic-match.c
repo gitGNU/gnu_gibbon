@@ -26,6 +26,7 @@
 #include <gibbon-match.h>
 #include <gibbon-game.h>
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -76,7 +77,12 @@ fill_match (void)
                 g_printerr ("Fresh match has no game.\n");
 
         move = gibbon_move_newv (3, 1, 8, 5, 6, 5, -1);
-        g_object_unref (move);
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE,
+                                GIBBON_GAME_ACTION (move));
+
+        move = gibbon_move_newv (5, 2, 12, 17, 1, 3, -1);
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK,
+                                GIBBON_GAME_ACTION (move));
 
         return match;
 }

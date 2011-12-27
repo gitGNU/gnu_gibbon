@@ -29,6 +29,8 @@
 
 #include <libgsgf/gsgf.h>
 #include "gibbon-match.h"
+#include "gibbon-game-action.h"
+#include "gibbon-position.h"
 
 #define GIBBON_TYPE_GAME \
         (gibbon_game_get_type ())
@@ -82,5 +84,7 @@ GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                              gboolean crawford, gboolean is_crawford,
                              GError **error);
 GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
+gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
+                                 GibbonGameAction *action);
 
 #endif

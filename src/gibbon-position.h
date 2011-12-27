@@ -27,8 +27,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "gibbon-move.h"
-
 #define GIBBON_TYPE_POSITION (gibbon_position_get_type ())
 
 /**
@@ -146,9 +144,9 @@ guint gibbon_position_get_pip_count (const GibbonPosition *self,
 guint gibbon_position_get_borne_off (const GibbonPosition *self,
                                      GibbonPositionSide side);
 
-GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
-                                        const GibbonPosition *after,
-                                        GibbonPositionSide side);
+struct _GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
+                                                const GibbonPosition *after,
+                                                GibbonPositionSide side);
 gboolean gibbon_position_equals_technically (const GibbonPosition *self,
                                              const GibbonPosition *other);
 void gibbon_position_dump_position (const GibbonPosition *self);
@@ -163,18 +161,18 @@ void gibbon_position_dump_position (const GibbonPosition *self);
  * is white's bar and black's home, 0 is black's bar and white's home.
  */
 gboolean gibbon_position_apply_move (GibbonPosition *self,
-                                     GibbonMove *move,
+                                     struct _GibbonMove *move,
                                      GibbonPositionSide side,
                                      gboolean reverse);
 gboolean gibbon_position_game_over (const GibbonPosition *position);
 
 /* Free return value with g_free()!  */
 gchar *gibbon_position_format_move (GibbonPosition *self,
-                                    const GibbonMove *move,
+                                    const struct _GibbonMove *move,
                                     GibbonPositionSide side,
                                     gboolean reverse);
 gchar *gibbon_position_fibs_move (GibbonPosition *self,
-                                  const GibbonMove *move,
+                                  const struct _GibbonMove *move,
                                   GibbonPositionSide side,
                                   gboolean reverse);
 
