@@ -62,7 +62,7 @@ fill_match (void)
         GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
                                                5, TRUE, &error);
         GibbonGame *game;
-        GibbonMove *move;
+        GibbonGameAction *action;
 
         if (error) {
                 g_object_unref (match);
@@ -76,13 +76,18 @@ fill_match (void)
         if (!game)
                 g_printerr ("Fresh match has no game.\n");
 
-        move = gibbon_move_newv (3, 1, 8, 5, 6, 5, -1);
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE,
-                                GIBBON_GAME_ACTION (move));
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
-        move = gibbon_move_newv (5, 2, 12, 17, 1, 3, -1);
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK,
-                                GIBBON_GAME_ACTION (move));
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
+                                                       6, 1, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
 }
