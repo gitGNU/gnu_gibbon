@@ -58,6 +58,8 @@ G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
 static gboolean gibbon_game_add_move (GibbonGame *self,
                                       GibbonPositionSide side,
                                       GibbonMove *move);
+static gchar gibbon_game_point_to_sgf_char (GibbonPositionSide side,
+                                            gint point);
 
 static void 
 gibbon_game_init (GibbonGame *self)
@@ -130,12 +132,12 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                                              error))
                 return self;
         simple_text = GSGF_VALUE (gsgf_simple_text_new (white));
-        if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
+        if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
                 g_object_unref (simple_text);
                 return self;
         }
         simple_text = GSGF_VALUE (gsgf_simple_text_new (black));
-        if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+        if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
                 g_object_unref (simple_text);
                 return self;
         }
@@ -248,31 +250,26 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         GSGFRaw *raw;
         gsize i, j;
         GibbonMovement *movement;
-        gchar c;
 
         g_return_val_if_fail (move->number <= 4, FALSE);
 
-        id = side == GIBBON_POSITION_SIDE_BLACK ? "B" : "W";
+        /*
+         * When exporting to SGF, we swap sides in order to match GNU
+         * backgammon's notion of colors and directions.
+         */
+        id = side == GIBBON_POSITION_SIDE_BLACK ? "W" : "B";
 
         move_string[0] = move->die1 + '0';
         move_string[1] = move->die2 + '0';
         j = 1;
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
-                if (move->movements[i].from <= 0)
-                        c = 'y';
-                else if (move->movements[i].from >= 25)
-                        c = 'z';
-                else
-                        c = 'a' - 1 + move->movements[i].from;
-                move_string[++j] = c;
-                if (move->movements[i].to <= 0)
-                        c = 'y';
-                else if (move->movements[i].to >= 25)
-                        c = 'z';
-                else
-                        c = 'a' - 1 + move->movements[i].to;
-                move_string[++j] = c;
+                move_string[++j] =
+                        gibbon_game_point_to_sgf_char (side,
+                                                       move->movements[i].from);
+                move_string[++j] =
+                        gibbon_game_point_to_sgf_char (side,
+                                                       move->movements[i].to);
         }
         move_string[++j] = 0;
 
@@ -294,4 +291,24 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         }
 
         return TRUE;
+}
+
+static gchar
+gibbon_game_point_to_sgf_char (GibbonPositionSide side, gint point)
+{
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                if (point <= 0)
+                        return 'z';
+                else if (point >= 25)
+                        return 'y';
+                else
+                        return 'x' + 1 - point;
+        } else {
+                if (point <= 0)
+                        return 'y';
+                else if (point >= 25)
+                        return 'z';
+                else
+                        return 'x' + 1 - point;
+        }
 }
