@@ -65,7 +65,6 @@ common_SOURCES = 			\
 	gibbon-game-chat.c		\
 	gibbon-archive.c		\
 	gibbon-java-fibs-importer.c	\
-	gibbon-action.c			\
 	gibbon-fibs-message.c		\
 	gibbon-app.c			\
 	gibbon-player-list-view.c	\
@@ -110,7 +109,6 @@ noinst_HEADERS =			\
 	gibbon-game-chat.h		\
 	gibbon-archive.h		\
 	gibbon-java-fibs-importer.h	\
-	gibbon-action.h			\
 	gibbon-fibs-message.h		\
 	gibbon-app.h			\
 	gibbon-player-list-view.h	\
