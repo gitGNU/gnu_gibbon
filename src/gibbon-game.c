@@ -31,8 +31,9 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-game.h"
-#include "gibbon-move.h"
 #include "gibbon-position.h"
+#include "gibbon-move.h"
+#include "gibbon-double.h"
 
 typedef struct _GibbonGameSnapshot GibbonGameSnapshot;
 struct _GibbonGameSnapshot {
@@ -58,6 +59,9 @@ G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
 static gboolean gibbon_game_add_move (GibbonGame *self,
                                       GibbonPositionSide side,
                                       GibbonMove *move);
+static gboolean gibbon_game_add_double (GibbonGame *self,
+                                      GibbonPositionSide side,
+                                      GibbonDouble *dbl);
 static gchar gibbon_game_point_to_sgf_char (GibbonPositionSide side,
                                             gint point);
 
@@ -229,6 +233,9 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
 
         if (GIBBON_IS_MOVE (action)) {
                 return gibbon_game_add_move (self, side, GIBBON_MOVE (action));
+        } else if (GIBBON_IS_DOUBLE (action)) {
+                return gibbon_game_add_double (self, side,
+                                               GIBBON_DOUBLE (action));
         } else {
                 g_critical ("gibbon_game_add_action: unsupported action type"
                             " %s!", G_OBJECT_TYPE_NAME (action));
@@ -283,6 +290,42 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         }
 
         raw = gsgf_raw_new (move_string);
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
+                g_critical ("gibbon_game_add_move: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
+                        GibbonDouble *dbl)
+{
+        const gchar *id;
+        GSGFNode *node;
+        GSGFProperty *property;
+        GError *error = NULL;
+        GSGFRaw *raw;
+
+        /*
+         * When exporting to SGF, we swap sides in order to match GNU
+         * backgammon's notion of colors and directions.
+         */
+        id = side == GIBBON_POSITION_SIDE_BLACK ? "W" : "B";
+
+        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        property = gsgf_node_add_property (node, id, &error);
+        if (!property) {
+                g_critical ("gibbon_game_add_double: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        raw = gsgf_raw_new ("double");
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
                 g_critical ("gibbon_game_add_move: %s!",
                             error->message);
