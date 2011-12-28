@@ -86,5 +86,6 @@ GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
 GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                  GibbonGameAction *action);
+GibbonPositionSide gibbon_game_winner (GibbonGame *self, guint *score);
 
 #endif

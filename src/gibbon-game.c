@@ -51,6 +51,10 @@ struct _GibbonGamePrivate {
         GibbonPosition *initial_position;
         gsize num_half_moves;
         GibbonGameSnapshot *snapshots;
+
+        GibbonPositionSide winner;
+        guint cube_value;
+        guint score;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -81,6 +85,10 @@ gibbon_game_init (GibbonGame *self)
         self->priv->initial_position = NULL;
         self->priv->snapshots = NULL;
         self->priv->num_half_moves = 0;
+
+        self->priv->winner = GIBBON_POSITION_SIDE_NONE;
+        self->priv->cube_value = 1;
+        self->priv->score = 0;
 }
 
 static void
@@ -380,7 +388,14 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
          * When exporting to SGF, we swap sides in order to match GNU
          * backgammon's notion of colors and directions.
          */
-        id = side == GIBBON_POSITION_SIDE_BLACK ? "W" : "B";
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                id = "W";
+                self->priv->winner = GIBBON_POSITION_SIDE_WHITE;
+        } else {
+                id = "B";
+                self->priv->winner = GIBBON_POSITION_SIDE_BLACK;
+        }
+        self->priv->score = self->priv->cube_value;
 
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
@@ -420,4 +435,19 @@ gibbon_game_point_to_sgf_char (GibbonPositionSide side, gint point)
                 else
                         return 'x' + 1 - point;
         }
+}
+
+GibbonPositionSide
+gibbon_game_winner (GibbonGame *self, guint *score)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self),
+                              GIBBON_POSITION_SIDE_NONE);
+
+        if (self->priv->winner != GIBBON_POSITION_SIDE_NONE) {
+                if (score)
+                        *score = self->priv->score;
+                return self->priv->winner;
+        }
+
+        return GIBBON_POSITION_SIDE_NONE;
 }
