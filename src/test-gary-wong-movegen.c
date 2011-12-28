@@ -384,8 +384,6 @@ test_roll (GibbonPosition *position)
                  * be used first, in order to be able to use the second.
                  * Or where the first is the higher, and it has to be
                  * used in favor of the other.
-                 *
-                 * But since
                  */
                 die = dice[0];
                 dice[0] = dice[1];
@@ -1029,7 +1027,7 @@ find_good_movement (gint board[28], gint dice[2],
                return;
         }
 
-        /* As a lost resort, try to move the most backward checker.  */
+        /* As a last resort, try to move the most backward checker.  */
         for (i = 24; i > 0; --i) {
                 /* Too far?  */
                 if (!may_bear_off && i <= die)
@@ -1039,6 +1037,8 @@ find_good_movement (gint board[28], gint dice[2],
                 if (board[i] <= 0)
                         continue;
                 to = i - die;
+                if (to < 0)
+                        to = 0;
 
                 /* Blocked? */
                 if (to > 0 && board[to] < -1)
