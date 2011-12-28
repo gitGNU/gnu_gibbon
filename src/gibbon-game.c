@@ -325,6 +325,26 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
+        if (side != GIBBON_POSITION_SIDE_NONE) {
+                property = gsgf_node_add_property (node, "PL", &error);
+                if (!property) {
+                        g_critical ("gibbon_game_add_roll: %s!",
+                                    error->message);
+                        g_error_free (error);
+                        return FALSE;
+                }
+
+                raw = gsgf_raw_new (side == GIBBON_POSITION_SIDE_WHITE
+                                    ? "B" : "W");
+                if (!gsgf_property_set_value (property, GSGF_VALUE (raw),
+                                              &error)) {
+                        g_critical ("gibbon_game_add_roll: %s!",
+                                    error->message);
+                        g_error_free (error);
+                        return FALSE;
+                }
+        }
+
         return TRUE;
 }
 
