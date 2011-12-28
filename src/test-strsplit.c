@@ -92,9 +92,10 @@ test_strsplit_ws (const gchar *in, ...)
         do {
                 arg = va_arg (list, const gchar *);
                 if (g_strcmp0 (arg, tokens[i])) {
-                        g_printerr ("%s: %s: token #%u:"
+                        g_printerr ("%s: %s: token #%llu:"
                                     "expected '%s', got '%s'.\n", 
-                                    prefix, in, i, arg, tokens[i]);
+                                    prefix, in, (unsigned long long) i,
+                                    arg, tokens[i]);
                         retval = FALSE;
                         break;
                 }
