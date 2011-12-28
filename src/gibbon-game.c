@@ -27,11 +27,14 @@
  * always associated with a #GSGFGameTree that is used as a backend.
  **/
 
+#include <stdlib.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-game.h"
 #include "gibbon-position.h"
+#include "gibbon-roll.h"
 #include "gibbon-move.h"
 #include "gibbon-double.h"
 #include "gibbon-drop.h"
@@ -62,6 +65,9 @@ struct _GibbonGamePrivate {
 
 G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
 
+static gboolean gibbon_game_add_roll (GibbonGame *self,
+                                      GibbonPositionSide side,
+                                      GibbonRoll *roll);
 static gboolean gibbon_game_add_move (GibbonGame *self,
                                       GibbonPositionSide side,
                                       GibbonMove *move);
@@ -244,7 +250,9 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                               || GIBBON_POSITION_SIDE_BLACK,
                               FALSE);
 
-        if (GIBBON_IS_MOVE (action)) {
+        if (GIBBON_IS_ROLL (action)) {
+                return gibbon_game_add_roll (self, side, GIBBON_ROLL (action));
+        } else if (GIBBON_IS_MOVE (action)) {
                 return gibbon_game_add_move (self, side, GIBBON_MOVE (action));
         } else if (GIBBON_IS_DOUBLE (action)) {
                 return gibbon_game_add_double (self, side,
@@ -255,6 +263,65 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
         } else {
                 g_critical ("gibbon_game_add_action: unsupported action type"
                             " %s!", G_OBJECT_TYPE_NAME (action));
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
+                      GibbonRoll *roll)
+{
+        GSGFNode *node;
+        GSGFProperty *property;
+        GError *error = NULL;
+        gchar raw_string[3];
+        GSGFRaw *raw;
+        GibbonPosition *pos;
+        GibbonGameSnapshot *snapshot = NULL;
+
+        g_return_val_if_fail (self->priv->winner == GIBBON_POSITION_SIDE_NONE,
+                              FALSE);
+
+        if (self->priv->snapshots && self->priv->num_half_moves) {
+                snapshot = self->priv->snapshots
+                                + self->priv->num_half_moves - 1;
+                pos = gibbon_position_copy (snapshot->resulting_position);
+        } else {
+                pos = gibbon_position_copy (self->priv->initial_position);
+        }
+
+        pos->dice[0] = roll->die1;
+        pos->dice[1] = roll->die2;
+
+        self->priv->snapshots = g_realloc (self->priv->snapshots,
+                                           ++self->priv->num_half_moves
+                                           * sizeof *snapshot);
+        snapshot = self->priv->snapshots
+                        + self->priv->num_half_moves - 1;
+        snapshot->action = GIBBON_GAME_ACTION (roll);
+        snapshot->side = side;
+        snapshot->resulting_position = pos;
+
+        raw_string[0] = '0' + abs (pos->dice[0]);
+        raw_string[1] = '0' + abs (pos->dice[1]);
+        raw_string[2] = 0;
+
+        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        property = gsgf_node_add_property (node, "DI", &error);
+        if (!property) {
+                g_critical ("gibbon_game_add_roll: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        raw = gsgf_raw_new (raw_string);
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
+                g_critical ("gibbon_game_add_roll: %s!",
+                            error->message);
+                g_error_free (error);
                 return FALSE;
         }
 
@@ -277,6 +344,8 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         GibbonGameSnapshot *snapshot = NULL;
 
         g_return_val_if_fail (move->number <= 4, FALSE);
+        g_return_val_if_fail (self->priv->winner == GIBBON_POSITION_SIDE_NONE,
+                              FALSE);
 
         if (self->priv->snapshots && self->priv->num_half_moves) {
                 snapshot = self->priv->snapshots

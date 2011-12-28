@@ -29,6 +29,7 @@
 #include <gibbon-move.h>
 #include <gibbon-double.h>
 #include <gibbon-drop.h>
+#include <gibbon-roll.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -79,14 +80,26 @@ fill_match (void)
         if (!game)
                 g_printerr ("Fresh match has no game.\n");
 
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
         action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 2));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 5));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
                                                        6, 1, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (4, 5));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
