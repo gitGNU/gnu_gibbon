@@ -27,6 +27,7 @@
 #include <gibbon-game.h>
 #include <gibbon-position.h>
 #include <gibbon-move.h>
+#include <gibbon-double.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -87,6 +88,12 @@ fill_match (void)
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
