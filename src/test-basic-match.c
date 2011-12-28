@@ -28,6 +28,7 @@
 #include <gibbon-position.h>
 #include <gibbon-move.h>
 #include <gibbon-double.h>
+#include <gibbon-drop.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -92,6 +93,9 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
 }
