@@ -65,6 +65,7 @@ fill_match (void)
                                                5, TRUE, &error);
         GibbonGame *game;
         GibbonGameAction *action;
+        guint score;
 
         if (error) {
                 g_object_unref (match);
@@ -94,8 +95,28 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
+        if (gibbon_game_winner (game, NULL)) {
+                g_object_unref (match);
+                g_printerr ("Premature end of game before drop.\n");
+                return NULL;
+        }
+
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        if (GIBBON_POSITION_SIDE_WHITE != gibbon_game_winner (game, &score)) {
+                g_object_unref (match);
+                g_printerr ("White should have won the game after black's"
+                             " drop!\n");
+                return NULL;
+        }
+
+        if (score != 1) {
+                g_object_unref (match);
+                g_printerr ("Expected score 1, got %u after black's drop!\n",
+                            score);
+                return NULL;
+        }
 
         return match;
 }
