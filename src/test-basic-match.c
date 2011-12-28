@@ -90,11 +90,8 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
-
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
         return match;
 }
