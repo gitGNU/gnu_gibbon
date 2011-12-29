@@ -353,7 +353,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
                       GibbonMove *move)
 {
         gchar move_string[11];
-        GSGFNode *node;
+        GSGFNode *node = NULL;
         GSGFProperty *property;
         GError *error = NULL;
         const gchar *id;
@@ -362,6 +362,8 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         GibbonMovement *movement;
         GibbonPosition *pos;
         GibbonGameSnapshot *snapshot = NULL;
+        gboolean delete_roll = FALSE;
+        GList *nodes;
 
         g_return_val_if_fail (move->number <= 4, FALSE);
         g_return_val_if_fail (self->priv->winner == GIBBON_POSITION_SIDE_NONE,
@@ -371,13 +373,19 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
                 snapshot = self->priv->snapshots
                                 + self->priv->num_half_moves - 1;
                 pos = gibbon_position_copy (snapshot->resulting_position);
+
+                if (GIBBON_IS_ROLL (snapshot->action)
+                    && side == snapshot->side)
+                        delete_roll = TRUE;
         } else {
                 pos = gibbon_position_copy (self->priv->initial_position);
         }
+
         if (!gibbon_position_apply_move (pos, move, side, FALSE)) {
                 gibbon_position_free (pos);
                 return FALSE;
         }
+
         self->priv->snapshots = g_realloc (self->priv->snapshots,
                                            ++self->priv->num_half_moves
                                            * sizeof *snapshot);
@@ -407,7 +415,18 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         }
         move_string[++j] = 0;
 
-        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        if (delete_roll) {
+                nodes = gsgf_game_tree_get_nodes (self->priv->game_tree);
+                nodes = g_list_last (nodes);
+                if (nodes) {
+                        node = nodes->data;
+                        gsgf_node_remove_property (node, "DI");
+                        gsgf_node_remove_property (node, "PL");
+                }
+        }
+
+        if (!node)
+                node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
         if (!property) {
                 g_critical ("gibbon_game_add_move: %s!",
