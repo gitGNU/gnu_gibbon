@@ -182,7 +182,7 @@ check_match (const GibbonMatch *match)
                 retval = FALSE;
         }
 
-        expect_int = 5;
+        expect_int = 0;
         got_int = gibbon_match_get_length (match);
         if (expect_int != got_int) {
                 g_printerr ("Expected match length %d, got %d.\n",
