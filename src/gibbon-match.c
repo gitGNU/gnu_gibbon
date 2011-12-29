@@ -132,7 +132,10 @@ gibbon_match_new (const gchar *white, const gchar *black,
         self->priv->black_player = g_strdup (black);
         self->priv->white_player = g_strdup (white);
         self->priv->length = length;
-        self->priv->crawford = TRUE;
+
+        if (!length)
+                crawford = FALSE;
+        self->priv->crawford = crawford;
 
         game_tree = gsgf_collection_add_game_tree (self->priv->collection,
                                                    self->priv->flavor);
@@ -192,17 +195,12 @@ GibbonGame *
 gibbon_match_add_game (GibbonMatch *self)
 {
         GibbonGame *game;
-        GList *game_trees;
         GSGFGameTree *game_tree;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
-        game_trees = gsgf_collection_get_game_trees (self->priv->collection);
-        g_return_val_if_fail (game_trees != NULL, NULL);
-
-        game_tree = game_trees->data;
-        g_return_val_if_fail (game_tree != NULL, NULL);
-        g_return_val_if_fail (GSGF_IS_GAME_TREE (game_tree), NULL);
+        game_tree = gsgf_collection_add_game_tree (self->priv->collection,
+                                                   self->priv->flavor);
 
         /*
          * FIXME! Match scores are wrong! Game number is wrong!
