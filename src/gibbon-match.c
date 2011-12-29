@@ -187,3 +187,32 @@ gibbon_match_get_current_game (const GibbonMatch *self)
 
         return self->priv->games->data;
 }
+
+GibbonGame *
+gibbon_match_add_game (GibbonMatch *self)
+{
+        GibbonGame *game;
+        GList *game_trees;
+        GSGFGameTree *game_tree;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        game_trees = gsgf_collection_get_game_trees (self->priv->collection);
+        g_return_val_if_fail (game_trees != NULL, NULL);
+
+        game_tree = game_trees->data;
+        g_return_val_if_fail (game_tree != NULL, NULL);
+        g_return_val_if_fail (GSGF_IS_GAME_TREE (game_tree), NULL);
+
+        /*
+         * FIXME! Match scores are wrong! Game number is wrong!
+         */
+        game = gibbon_game_new (self, game_tree,
+                                self->priv->black_player,
+                                self->priv->white_player,
+                                self->priv->length, 0, 0, 0, TRUE, FALSE,
+                                NULL);
+        self->priv->games = g_list_append (self->priv->games, game);
+
+        return game;
+}
