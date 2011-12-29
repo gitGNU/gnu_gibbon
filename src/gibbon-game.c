@@ -129,11 +129,10 @@ gibbon_game_class_init (GibbonGameClass *klass)
 
 GibbonGame *
 gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
-                const gchar *white, const gchar *black,
-                guint match_length, guint game_number,
-                guint white_score, guint black_score,
-                gboolean crawford, gboolean is_crawford,
-                GError **error)
+                 const gchar *white, const gchar *black,
+                 guint match_length, guint game_number,
+                 guint white_score, guint black_score,
+                 gboolean crawford, gboolean is_crawford)
 {
         GibbonGame *self = g_object_new (GIBBON_TYPE_GAME, NULL);
         const GSGFFlavor *flavor;
@@ -143,6 +142,7 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         gchar *str;
         GSGFCookedValue *mi_key, *mi_value;
         GSGFCookedValue *mi_compose;
+        GError *error = NULL;
 
         self->priv->match = match;
         self->priv->game_tree = game_tree;
@@ -152,30 +152,41 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         root = gsgf_game_tree_add_node (game_tree);
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
-                                             error))
+                                             &error)) {
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
+        }
         simple_text = GSGF_VALUE (gsgf_simple_text_new (white));
-        if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+        if (!gsgf_node_set_property (root, "PB", simple_text, &error)) {
                 g_object_unref (simple_text);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
         simple_text = GSGF_VALUE (gsgf_simple_text_new (black));
-        if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
+        if (!gsgf_node_set_property (root, "PW", simple_text, &error)) {
                 g_object_unref (simple_text);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
         if (crawford) {
                 simple_text = GSGF_VALUE (gsgf_simple_text_new ("Crawford"));
-                if (!gsgf_node_set_property (root, "RU", simple_text, error)) {
+                if (!gsgf_node_set_property (root, "RU", simple_text, &error)) {
                         g_object_unref (simple_text);
+                        g_warning ("%s", error->message);
+                        g_error_free (error);
                         return self;
                 }
         }
 
         match_info = GSGF_VALUE (gsgf_list_of_new (gsgf_compose_get_type (),
                                                    flavor));
-        if (!gsgf_node_set_property (root, "MI", match_info, error)) {
+        if (!gsgf_node_set_property (root, "MI", match_info, &error)) {
                 g_object_unref (match_info);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
 
@@ -186,8 +197,10 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
                                                           NULL));
         if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
-                                  mi_compose, error)) {
+                                  mi_compose, &error)) {
                 g_object_unref (mi_compose);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
 
@@ -198,8 +211,10 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
                                                           NULL));
         if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
-                                  mi_compose, error)) {
+                                  mi_compose, &error)) {
                 g_object_unref (mi_compose);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
 
@@ -210,8 +225,10 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
                                                           NULL));
         if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
-                                  mi_compose, error)) {
+                                  mi_compose, &error)) {
                 g_object_unref (mi_compose);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
 
@@ -222,8 +239,10 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
                                                           NULL));
         if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
-                                  mi_compose, error)) {
+                                  mi_compose, &error)) {
                 g_object_unref (mi_compose);
+                g_warning ("%s", error->message);
+                g_error_free (error);
                 return self;
         }
 
@@ -311,7 +330,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, "DI", &error);
         if (!property) {
-                g_critical ("gibbon_game_add_roll: %s!",
+                g_warning ("gibbon_game_add_roll: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -319,7 +338,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
 
         raw = gsgf_raw_new (raw_string);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
-                g_critical ("gibbon_game_add_roll: %s!",
+                g_warning ("gibbon_game_add_roll: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -328,7 +347,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
         if (side != GIBBON_POSITION_SIDE_NONE) {
                 property = gsgf_node_add_property (node, "PL", &error);
                 if (!property) {
-                        g_critical ("gibbon_game_add_roll: %s!",
+                        g_warning ("gibbon_game_add_roll: %s!",
                                     error->message);
                         g_error_free (error);
                         return FALSE;
@@ -338,7 +357,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                                     ? "B" : "W");
                 if (!gsgf_property_set_value (property, GSGF_VALUE (raw),
                                               &error)) {
-                        g_critical ("gibbon_game_add_roll: %s!",
+                        g_warning ("gibbon_game_add_roll: %s!",
                                     error->message);
                         g_error_free (error);
                         return FALSE;
@@ -429,7 +448,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
                 node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
         if (!property) {
-                g_critical ("gibbon_game_add_move: %s!",
+                g_warning ("gibbon_game_add_move: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -437,7 +456,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 
         raw = gsgf_raw_new (move_string);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
-                g_critical ("gibbon_game_add_move: %s!",
+                g_warning ("gibbon_game_add_move: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -465,7 +484,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
         if (!property) {
-                g_critical ("gibbon_game_add_double: %s!",
+                g_warning ("gibbon_game_add_double: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -473,7 +492,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
 
         raw = gsgf_raw_new ("double");
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
-                g_critical ("gibbon_game_add_move: %s!",
+                g_warning ("gibbon_game_add_move: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -508,7 +527,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
         if (!property) {
-                g_critical ("gibbon_game_add_double: %s!",
+                g_warning ("gibbon_game_add_double: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -516,7 +535,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
 
         raw = gsgf_raw_new ("drop");
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
-                g_critical ("gibbon_game_add_move: %s!",
+                g_warning ("gibbon_game_add_move: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;

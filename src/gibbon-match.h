@@ -71,8 +71,7 @@ struct _GibbonMatchClass
 GType gibbon_match_get_type (void) G_GNUC_CONST;
 
 GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
-                               guint length, gboolean crawford,
-                               GError **error);
+                               guint length, gboolean crawford);
 
 const GSGFCollection *gibbon_match_get_collection ();
 const gchar *gibbon_match_get_white_player (const GibbonMatch *self);

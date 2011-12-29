@@ -119,7 +119,7 @@ gibbon_match_class_init (GibbonMatchClass *klass)
  */
 GibbonMatch *
 gibbon_match_new (const gchar *white, const gchar *black,
-                  guint length, gboolean crawford, GError **error)
+                  guint length, gboolean crawford)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
         GSGFGameTree *game_tree;
@@ -144,8 +144,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
          * Note: The first game can never be the crawford game!
          */
         game = gibbon_game_new (self, game_tree,
-                                white, black, length, 0, 0, 0, TRUE, FALSE,
-                                error);
+                                white, black, length, 0, 0, 0, TRUE, FALSE);
         self->priv->games = g_list_prepend (self->priv->games, game);
 
         return self;
@@ -208,8 +207,7 @@ gibbon_match_add_game (GibbonMatch *self)
         game = gibbon_game_new (self, game_tree,
                                 self->priv->black_player,
                                 self->priv->white_player,
-                                self->priv->length, 0, 0, 0, TRUE, FALSE,
-                                NULL);
+                                self->priv->length, 0, 0, 0, TRUE, FALSE);
         self->priv->games = g_list_append (self->priv->games, game);
 
         return game;

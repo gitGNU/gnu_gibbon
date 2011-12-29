@@ -61,20 +61,11 @@ main(int argc, char *argv[])
 static GibbonMatch *
 fill_match (void)
 {
-        GError *error = NULL;
         GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
-                                               0, TRUE, &error);
+                                               0, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
         guint score;
-
-        if (error) {
-                g_object_unref (match);
-                g_printerr ("Error creating match: %s!\n",
-                            error->message);
-                g_error_free (error);
-                return NULL;
-        }
 
         game = gibbon_match_get_current_game (match);
         if (!game)
