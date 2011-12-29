@@ -63,7 +63,7 @@ fill_match (void)
 {
         GError *error = NULL;
         GibbonMatch *match = gibbon_match_new ("Snow White", "Joe Black",
-                                               5, TRUE, &error);
+                                               0, TRUE, &error);
         GibbonGame *game;
         GibbonGameAction *action;
         guint score;
@@ -130,6 +130,32 @@ fill_match (void)
                             score);
                 return NULL;
         }
+
+        game = gibbon_match_add_game (match);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add 2nd game!\n");
+                return NULL;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 2));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 5));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
+                                                       6, 1, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
 }
