@@ -1048,6 +1048,8 @@ gibbon_position_game_over (const GibbonPosition *position)
                                                     GIBBON_POSITION_SIDE_BLACK);
                 if (black_borne_off)
                         return 1;
+                if (position->bar[1])
+                        return 3;
                 for (i = 0; i < 6; ++i)
                         if (position->points[i])
                                 return 3;
@@ -1064,6 +1066,8 @@ gibbon_position_game_over (const GibbonPosition *position)
                                                     GIBBON_POSITION_SIDE_WHITE);
                 if (white_borne_off)
                         return -1;
+                if (position->bar[0])
+                        return -3;
                 for (i = 23; i > 17; --i)
                         if (position->points[i])
                                 return -3;
