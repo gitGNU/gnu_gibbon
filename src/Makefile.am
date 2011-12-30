@@ -97,7 +97,8 @@ common_SOURCES = 			\
 	gibbon-double.c				\
 	gibbon-drop.c				\
 	gibbon-roll.c				\
-	gibbon-take.c	
+	gibbon-take.c				\
+	gibbon-resign.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -145,7 +146,8 @@ noinst_HEADERS =			\
 	gibbon-double.h			\
 	gibbon-drop.h			\
 	gibbon-roll.h			\
-	gibbon-take.h
+	gibbon-take.h			\
+	gibbon-resign.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \

@@ -38,6 +38,8 @@
 #include "gibbon-move.h"
 #include "gibbon-double.h"
 #include "gibbon-drop.h"
+#include "gibbon-take.h"
+#include "gibbon-resign.h"
 
 typedef struct _GibbonGameSnapshot GibbonGameSnapshot;
 struct _GibbonGameSnapshot {
@@ -75,6 +77,12 @@ static gboolean gibbon_game_add_double (GibbonGame *self,
 static gboolean gibbon_game_add_drop (GibbonGame *self,
                                       GibbonPositionSide side,
                                       GibbonDrop *drop);
+static gboolean gibbon_game_add_take (GibbonGame *self,
+                                      GibbonPositionSide side,
+                                      GibbonTake *take);
+static gboolean gibbon_game_add_resign (GibbonGame *self,
+                                        GibbonPositionSide side,
+                                        GibbonResign *resign);
 static gchar gibbon_game_point_to_sgf_char (GibbonPositionSide side,
                                             gint point);
 static void gibbon_game_add_snapshot (GibbonGame *self,
@@ -281,6 +289,12 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
         } else if (GIBBON_IS_DROP (action)) {
                 return gibbon_game_add_drop (self, side,
                                              GIBBON_DROP (action));
+        } else if (GIBBON_IS_TAKE (action)) {
+                return gibbon_game_add_take (self, side,
+                                             GIBBON_TAKE (action));
+        } else if (GIBBON_IS_RESIGN (action)) {
+                return gibbon_game_add_resign (self, side,
+                                               GIBBON_RESIGN (action));
         } else {
                 g_critical ("gibbon_game_add_action: unsupported action type"
                             " %s!", G_OBJECT_TYPE_NAME (action));
@@ -543,6 +557,92 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
         raw = gsgf_raw_new ("drop");
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
                 g_warning ("gibbon_game_add_move: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
+                      GibbonTake *take)
+{
+        const gchar *id;
+        GSGFNode *node;
+        GSGFProperty *property;
+        GError *error = NULL;
+        GSGFRaw *raw;
+        GibbonPosition *pos;
+
+        pos = gibbon_position_copy (gibbon_game_get_position (self));
+
+        /*
+         * When exporting to SGF, we swap sides in order to match GNU
+         * backgammon's notion of colors and directions.
+         */
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                id = "W";
+        } else {
+                id = "B";
+        }
+        pos->cube <<= 1;
+
+        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        property = gsgf_node_add_property (node, id, &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_take: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        raw = gsgf_raw_new ("take");
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
+                g_warning ("gibbon_game_add_take: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
+                        GibbonResign *resign)
+{
+        const gchar *id;
+        GSGFNode *node;
+        GSGFProperty *property;
+        GError *error = NULL;
+        GSGFRaw *raw;
+        GibbonPosition *pos;
+        gchar *raw_string;
+
+        pos = gibbon_position_copy (gibbon_game_get_position (self));
+
+        if (side == GIBBON_POSITION_SIDE_BLACK) {
+                id = "W";
+        } else {
+                id = "B";
+        }
+
+        node = gsgf_game_tree_add_node (self->priv->game_tree);
+        property = gsgf_node_add_property (node, id, &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_resign: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        raw_string = g_strdup_printf ("-%uResign", pos->cube * resign->value);
+        raw = gsgf_raw_new (raw_string);
+        g_free (raw_string);
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
+                g_warning ("gibbon_game_add_resign: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
