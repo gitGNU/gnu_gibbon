@@ -1219,10 +1219,8 @@ gibbon_position_format_move (GibbonPosition *self,
 }
 
 gchar *
-gibbon_position_fibs_move (GibbonPosition *self,
-                             const GibbonMove *move,
-                             GibbonPositionSide side,
-                             gboolean reverse)
+gibbon_position_fibs_move (GibbonPosition *self, const GibbonMove *move,
+                           GibbonPositionSide side, gboolean reverse)
 {
         GString *string = g_string_new ("");
         const GibbonMovement *movement;
@@ -1310,4 +1308,16 @@ gibbon_position_dump_position (const GibbonPosition *self)
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_printerr ("Game info: %s\n", self->game_info);
         g_printerr ("Status: %s\n", self->status);
+}
+
+void
+gibbon_position_reset (GibbonPosition *self)
+{
+        self->turn = GIBBON_POSITION_SIDE_NONE;
+        memcpy (self->points, initial.points, sizeof *self->points);
+        memset (self->bar, 0, sizeof *self->bar);
+        memset (self->dice, 0, sizeof *self->dice);
+        self->cube = 1;
+        self->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        self->resigned = 0;
 }

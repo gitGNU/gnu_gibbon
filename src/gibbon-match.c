@@ -161,7 +161,7 @@ gibbon_match_add_game (GibbonMatch *self)
         GList *game_trees;
         GSGFGameTree *game_tree;
         guint game_number;
-        const GibbonPosition *position;
+        GibbonPosition *position;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
@@ -171,10 +171,13 @@ gibbon_match_add_game (GibbonMatch *self)
                                                    self->priv->flavor);
 
         game = self->priv->games->data;
-        position = gibbon_game_get_position (game);
+        position = gibbon_position_copy (gibbon_game_get_position (game));
+        gibbon_position_reset (position);
+
         /* FIXME! Check whether this is the crawford game! */
         game = gibbon_game_new (self, game_tree, position, game_number,
                                 self->priv->crawford, FALSE);
+        gibbon_position_free (position);
         self->priv->games = g_list_prepend (self->priv->games, game);
 
         return game;
