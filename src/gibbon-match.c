@@ -146,24 +146,6 @@ gibbon_match_get_collection (GibbonMatch *self)
         return self->priv->collection;
 }
 
-const gchar *
-gibbon_match_get_white_player (const GibbonMatch *self)
-{
-        return NULL;
-}
-
-const gchar *
-gibbon_match_get_black_player (const GibbonMatch *self)
-{
-        return NULL;
-}
-
-gint
-gibbon_match_get_length (const GibbonMatch *self)
-{
-        return 27;
-}
-
 GibbonGame *
 gibbon_match_get_current_game (const GibbonMatch *self)
 {
