@@ -1036,19 +1036,40 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
 gint
 gibbon_position_game_over (const GibbonPosition *position)
 {
-        guint num_checkers =
+        guint white_borne_off =
                 gibbon_position_get_borne_off (position,
                                                GIBBON_POSITION_SIDE_WHITE);
+        guint black_borne_off;
+        gint i;
 
-        if (num_checkers >= 15)
-                return 1;
+        if (white_borne_off >= 15) {
+                black_borne_off =
+                        gibbon_position_get_borne_off (position,
+                                                    GIBBON_POSITION_SIDE_BLACK);
+                if (black_borne_off)
+                        return 1;
+                for (i = 0; i < 6; ++i)
+                        if (position->points[i])
+                                return 3;
+                return 2;
+        }
 
-        num_checkers =
+        black_borne_off =
                 gibbon_position_get_borne_off (position,
                                                GIBBON_POSITION_SIDE_BLACK);
 
-        if (num_checkers >= 15)
-                return 1;
+        if (black_borne_off >= 15) {
+                white_borne_off =
+                        gibbon_position_get_borne_off (position,
+                                                    GIBBON_POSITION_SIDE_WHITE);
+                if (white_borne_off)
+                        return -1;
+                for (i = 23; i > 17; --i)
+                        if (position->points[i])
+                                return -3;
+                return -2;
+        }
+
 
         return 0;
 }
