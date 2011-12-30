@@ -506,23 +506,74 @@ test_game_over ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
+        gint score, expect;
 
-        if (gibbon_position_game_over (position)) {
+        score = gibbon_position_game_over (position);
+
+        if (score) {
                 g_printerr ("False positive for game over for initial"
                             " position.\n");
                 retval = FALSE;
         }
         memset (position->points, 0, sizeof position->points);
-        position->points[10] = +2;
-        if (!gibbon_position_game_over (position)) {
-                g_printerr ("Black win not detected.\n");
+
+        position->points[23] = -1;
+        score = gibbon_position_game_over (position);
+        expect = 1;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
                 retval = FALSE;
         }
-        position->points[10] = -2;
-        if (!gibbon_position_game_over (position)) {
-                g_printerr ("White win not detected.\n");
+        position->points[23] = 0;
+
+        position->points[0] = +1;
+        score = gibbon_position_game_over (position);
+        expect = -1;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
                 retval = FALSE;
         }
+        position->points[0] = 0;
+
+        position->points[23] = -15;
+        score = gibbon_position_game_over (position);
+        expect = 2;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
+                retval = FALSE;
+        }
+        position->points[23] = 0;
+
+        position->points[0] = 15;
+        score = gibbon_position_game_over (position);
+        expect = -2;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
+                retval = FALSE;
+        }
+        position->points[0] = 0;
+
+        position->points[23] = -14;
+        position->points[0] = -1;
+        score = gibbon_position_game_over (position);
+        expect = 3;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
+                retval = FALSE;
+        }
+        position->points[23] = 0;
+        position->points[0] = 0;
+
+        position->points[0] = 1;
+        position->points[23] = 14;
+        score = gibbon_position_game_over (position);
+        expect = -3;
+        if (score != expect) {
+                g_printerr ("Expected score %d, got %d.\n", expect, score);
+                retval = FALSE;
+        }
+        position->points[0] = 0;
+        position->points[23] = 0;
 
         gibbon_position_free (position);
 
