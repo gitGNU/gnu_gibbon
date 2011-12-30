@@ -43,13 +43,7 @@ struct _GibbonMatchPrivate {
 
         GList *games;
 
-        gchar *black_player;
-        gchar *white_player;
-
-        gint length;
         gboolean crawford;
-
-        guint black_score, white_score;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -67,13 +61,7 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->flavor = NULL;
         self->priv->games = NULL;
 
-        self->priv->black_player = NULL;
-        self->priv->white_player = NULL;
-
-        self->priv->length = -1;
         self->priv->crawford = TRUE;
-
-        self->priv->white_score = self->priv->black_score = 0;
 }
 
 static void
@@ -95,11 +83,6 @@ gibbon_match_finalize (GObject *object)
         if (self->priv->flavor)
                 g_object_unref (self->priv->flavor);
         self->priv->flavor = NULL;
-
-        if (self->priv->black_player)
-                g_free (self->priv->black_player);
-        if (self->priv->white_player)
-                g_free (self->priv->white_player);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -134,9 +117,9 @@ gibbon_match_new (const gchar *white, const gchar *black,
 
         self->priv->flavor = gsgf_flavor_backgammon_new ();
 
-        self->priv->black_player = g_strdup (black);
-        self->priv->white_player = g_strdup (white);
-        self->priv->length = length;
+        position->players[0] = g_strdup (white);
+        position->players[1] = g_strdup (black);
+        position->match_length = length;
 
         if (!length)
                 crawford = FALSE;
@@ -149,7 +132,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
          * Note: The first game can never be the crawford game!
          */
         game = gibbon_game_new (self, game_tree, position,
-                                white, black, length, 0, 0, 0, TRUE, FALSE);
+                                0, crawford, FALSE);
         self->priv->games = g_list_prepend (self->priv->games, game);
 
         return self;
@@ -166,25 +149,19 @@ gibbon_match_get_collection (GibbonMatch *self)
 const gchar *
 gibbon_match_get_white_player (const GibbonMatch *self)
 {
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->white_player;
+        return NULL;
 }
 
 const gchar *
 gibbon_match_get_black_player (const GibbonMatch *self)
 {
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->black_player;
+        return NULL;
 }
 
 gint
 gibbon_match_get_length (const GibbonMatch *self)
 {
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), -1);
-
-        return self->priv->length;
+        return 27;
 }
 
 GibbonGame *
@@ -213,12 +190,9 @@ gibbon_match_add_game (GibbonMatch *self)
 
         game = self->priv->games->data;
         position = gibbon_game_get_position (game);
-        game = gibbon_game_new (self, game_tree,
-                                position,
-                                self->priv->black_player,
-                                self->priv->white_player,
-                                self->priv->length, game_number,
-                                0, 0, TRUE, FALSE);
+        /* FIXME! Check whether this is the crawford game! */
+        game = gibbon_game_new (self, game_tree, position, game_number,
+                                self->priv->crawford, FALSE);
         self->priv->games = g_list_append (self->priv->games, game);
 
         return game;
