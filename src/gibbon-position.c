@@ -1314,9 +1314,9 @@ void
 gibbon_position_reset (GibbonPosition *self)
 {
         self->turn = GIBBON_POSITION_SIDE_NONE;
-        memcpy (self->points, initial.points, sizeof *self->points);
-        memset (self->bar, 0, sizeof *self->bar);
-        memset (self->dice, 0, sizeof *self->dice);
+        memcpy (self->points, initial.points, sizeof self->points);
+        memset (self->bar, 0, sizeof self->bar);
+        memset (self->dice, 0, sizeof self->dice);
         self->cube = 1;
         self->cube_turned = GIBBON_POSITION_SIDE_NONE;
         self->resigned = 0;
