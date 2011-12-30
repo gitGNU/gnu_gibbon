@@ -175,7 +175,7 @@ gibbon_match_add_game (GibbonMatch *self)
         /* FIXME! Check whether this is the crawford game! */
         game = gibbon_game_new (self, game_tree, position, game_number,
                                 self->priv->crawford, FALSE);
-        self->priv->games = g_list_append (self->priv->games, game);
+        self->priv->games = g_list_prepend (self->priv->games, game);
 
         return game;
 }
@@ -186,4 +186,16 @@ gibbon_match_score (const GibbonMatch *self, GibbonPositionSide side)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
 
         return 0;
+}
+
+const GibbonPosition *
+gibbon_match_get_current_position (const GibbonMatch *self)
+{
+        const GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        game = self->priv->games->data;
+
+        return gibbon_game_get_position (game);
 }

@@ -65,7 +65,6 @@ fill_match (void)
                                                0, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
-        guint score, black_score, white_score;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -99,44 +98,19 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 
-        if (gibbon_game_winner (game, NULL)) {
+        if (gibbon_game_over (game)) {
                 g_object_unref (match);
                 g_printerr ("Premature end of game before drop.\n");
-                return NULL;
-        }
-
-        white_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_WHITE);
-        black_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_BLACK);
-        if (white_score || black_score) {
-                g_object_unref (match);
-                g_printerr ("Expected score %u:%u, got %u:%u.\n",
-                            0, 0, white_score, black_score);
                 return NULL;
         }
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
-        if (GIBBON_POSITION_SIDE_WHITE != gibbon_game_winner (game, &score)) {
+        if (GIBBON_POSITION_SIDE_WHITE != gibbon_game_over (game)) {
                 g_object_unref (match);
                 g_printerr ("White should have won the game after black's"
                              " drop!\n");
-                return NULL;
-        }
-
-        if (score != 1) {
-                g_object_unref (match);
-                g_printerr ("Expected game score 1, got %u after black's drop!\n",
-                            score);
-                return NULL;
-        }
-
-        white_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_WHITE);
-        black_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_BLACK);
-        if (white_score != 1 || black_score != 0) {
-                g_object_unref (match);
-                g_printerr ("Expected score %u:%u, got %u:%u.\n",
-                            1, 0, white_score, black_score);
                 return NULL;
         }
 
@@ -176,15 +150,19 @@ check_match (const GibbonMatch *match)
         const gchar *got;
         const gchar *expect;
         gint expect_int, got_int;
+        const GibbonPosition *pos;
 
-        got = gibbon_match_get_black_player (match);
+        pos = gibbon_match_get_current_position (match);
+        g_return_val_if_fail (pos != NULL, FALSE);
+
+        got = pos->players[1];
         expect = "Joe Black";
         if (g_strcmp0 (expect, got)) {
                 g_printerr ("Expected `%s', got `%s'!\n", expect, got);
                 retval = FALSE;
         }
 
-        got = gibbon_match_get_white_player (match);
+        got = pos->players[0];
         expect = "Snow White";
         if (g_strcmp0 (expect, got)) {
                 g_printerr ("Expected `%s', got `%s'!\n", expect, got);
@@ -192,7 +170,7 @@ check_match (const GibbonMatch *match)
         }
 
         expect_int = 0;
-        got_int = gibbon_match_get_length (match);
+        got_int = pos->match_length;
         if (expect_int != got_int) {
                 g_printerr ("Expected match length %d, got %d.\n",
                             expect_int, got_int);

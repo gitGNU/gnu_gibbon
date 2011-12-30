@@ -551,31 +551,12 @@ gibbon_game_point_to_sgf_char (GibbonPositionSide side, gint point)
 }
 
 GibbonPositionSide
-gibbon_game_winner (GibbonGame *self, guint *score)
+gibbon_game_over (const GibbonGame *self)
 {
-        const GibbonGameSnapshot *snapshot;
-        const GibbonPosition *pos;
-
         g_return_val_if_fail (GIBBON_IS_GAME (self),
                               GIBBON_POSITION_SIDE_NONE);
 
-        if (self->priv->winner != GIBBON_POSITION_SIDE_NONE) {
-                if (score) {
-                        *score = 0;
-                        snapshot = gibbon_game_get_snapshot (self);
-                        g_return_val_if_fail (snapshot != NULL,
-                                              GIBBON_POSITION_SIDE_NONE);
-                        pos = snapshot->resulting_position;
-                        if (self->priv->winner == GIBBON_POSITION_SIDE_WHITE)
-                                *score = pos->scores[0];
-                        else
-                                *score = pos->scores[1];
-
-                }
-                return self->priv->winner;
-        }
-
-        return GIBBON_POSITION_SIDE_NONE;
+        return self->priv->winner;
 }
 
 const GibbonPosition *
