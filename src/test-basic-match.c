@@ -138,6 +138,9 @@ fill_match (void)
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_take_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
