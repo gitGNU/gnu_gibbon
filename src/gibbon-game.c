@@ -378,6 +378,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         const GibbonGameSnapshot *snapshot = NULL;
         gboolean delete_roll = FALSE;
         GList *nodes;
+        gchar *pretty_move;
 
         g_return_val_if_fail (move->number <= 4, FALSE);
         g_return_val_if_fail (self->priv->winner == GIBBON_POSITION_SIDE_NONE,
@@ -392,6 +393,26 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         if (!gibbon_position_apply_move (pos, move, side, FALSE)) {
                 gibbon_position_free (pos);
                 return FALSE;
+        }
+
+        g_free (pos->status);
+        if (move->movements) {
+                pretty_move = gibbon_position_format_move (pos, move, side,
+                                                           FALSE);
+                pos->status = g_strdup_printf (_("%d%d: %s has moved %s."),
+                                               move->die1, move->die2,
+                                               side
+                                               == GIBBON_POSITION_SIDE_BLACK
+                                               ? pos->players[1]
+                                               : pos->players[0],
+                                               pretty_move);
+        } else {
+                pos->status = g_strdup_printf (_("%d%d: %s cannot move!"),
+                                               move->die1, move->die2,
+                                               side
+                                               == GIBBON_POSITION_SIDE_BLACK
+                                               ? pos->players[1]
+                                               : pos->players[0]);
         }
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (move), side, pos);
