@@ -25,6 +25,8 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gibbon-position.h"
+
 #define GIBBON_TYPE_MATCH \
         (gibbon_match_get_type ())
 #define GIBBON_MATCH(obj) \
@@ -85,5 +87,7 @@ struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
  * add the first game.  It is automatically there.
  */
 struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
+
+guint gibbon_match_score (const GibbonMatch *self, GibbonPositionSide side);
 
 #endif

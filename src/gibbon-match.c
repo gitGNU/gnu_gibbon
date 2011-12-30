@@ -194,10 +194,14 @@ GibbonGame *
 gibbon_match_add_game (GibbonMatch *self)
 {
         GibbonGame *game;
+        GList *game_trees;
         GSGFGameTree *game_tree;
+        guint game_number;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
+        game_trees = gsgf_collection_get_game_trees (self->priv->collection);
+        game_number = g_list_length (game_trees);
         game_tree = gsgf_collection_add_game_tree (self->priv->collection,
                                                    self->priv->flavor);
 
@@ -207,8 +211,17 @@ gibbon_match_add_game (GibbonMatch *self)
         game = gibbon_game_new (self, game_tree,
                                 self->priv->black_player,
                                 self->priv->white_player,
-                                self->priv->length, 0, 0, 0, TRUE, FALSE);
+                                self->priv->length, game_number,
+                                0, 0, TRUE, FALSE);
         self->priv->games = g_list_append (self->priv->games, game);
 
         return game;
+}
+
+guint
+gibbon_match_score (const GibbonMatch *self, GibbonPositionSide side)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return 0;
 }

@@ -65,7 +65,7 @@ fill_match (void)
                                                0, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
-        guint score;
+        guint score, black_score, white_score;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -105,6 +105,15 @@ fill_match (void)
                 return NULL;
         }
 
+        white_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_WHITE);
+        black_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_BLACK);
+        if (white_score || black_score) {
+                g_object_unref (match);
+                g_printerr ("Expected score %u:%u, got %u:%u.\n",
+                            0, 0, white_score, black_score);
+                return NULL;
+        }
+
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
@@ -117,8 +126,17 @@ fill_match (void)
 
         if (score != 1) {
                 g_object_unref (match);
-                g_printerr ("Expected score 1, got %u after black's drop!\n",
+                g_printerr ("Expected game score 1, got %u after black's drop!\n",
                             score);
+                return NULL;
+        }
+
+        white_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_WHITE);
+        black_score = gibbon_match_score (match, GIBBON_POSITION_SIDE_BLACK);
+        if (white_score != 1 || black_score != 0) {
+                g_object_unref (match);
+                g_printerr ("Expected score %u:%u, got %u:%u.\n",
+                            1, 0, white_score, black_score);
                 return NULL;
         }
 
