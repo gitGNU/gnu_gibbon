@@ -129,6 +129,7 @@ gibbon_game_class_init (GibbonGameClass *klass)
 
 GibbonGame *
 gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
+                 const GibbonPosition *initial_position,
                  const gchar *white, const gchar *black,
                  guint match_length, guint game_number,
                  guint white_score, guint black_score,
@@ -246,8 +247,12 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                 return self;
         }
 
-        self->priv->initial_position = gibbon_position_new ();
-
+        if (initial_position) {
+                self->priv->initial_position =
+                                gibbon_position_copy (initial_position);
+        } else {
+                self->priv->initial_position = gibbon_position_new ();
+        }
         return self;
 }
 
@@ -523,7 +528,6 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                 self->priv->winner = GIBBON_POSITION_SIDE_BLACK;
         }
         self->priv->score = self->priv->cube_value;
-
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, id, &error);
         if (!property) {
@@ -577,4 +581,19 @@ gibbon_game_winner (GibbonGame *self, guint *score)
         }
 
         return GIBBON_POSITION_SIDE_NONE;
+}
+
+const GibbonPosition *
+gibbon_game_get_position (const GibbonGame *self)
+{
+        GibbonGameSnapshot *snapshot;
+
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        if (!self->priv->snapshots)
+                return self->priv->initial_position;
+
+        snapshot = self->priv->snapshots + self->priv->num_half_moves - 1;
+
+        return snapshot->resulting_position;
 }

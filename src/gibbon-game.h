@@ -78,6 +78,7 @@ struct _GibbonGameClass
 GType gibbon_game_get_type (void) G_GNUC_CONST;
 
 GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
+                             const GibbonPosition *initial_position,
                              const gchar *white, const gchar *black,
                              guint match_length, guint game_number,
                              guint white_score, guint black_score,
@@ -86,5 +87,6 @@ GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                  GibbonGameAction *action);
 GibbonPositionSide gibbon_game_winner (GibbonGame *self, guint *score);
+const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
 
 #endif

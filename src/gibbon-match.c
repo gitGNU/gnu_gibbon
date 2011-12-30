@@ -48,6 +48,8 @@ struct _GibbonMatchPrivate {
 
         gint length;
         gboolean crawford;
+
+        guint black_score, white_score;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -70,6 +72,8 @@ gibbon_match_init (GibbonMatch *self)
 
         self->priv->length = -1;
         self->priv->crawford = TRUE;
+
+        self->priv->white_score = self->priv->black_score = 0;
 }
 
 static void
@@ -124,6 +128,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
         GSGFGameTree *game_tree;
         GibbonGame *game;
+        GibbonPosition *position = gibbon_position_new ();
 
         self->priv->collection = gsgf_collection_new ();
 
@@ -143,7 +148,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
         /*
          * Note: The first game can never be the crawford game!
          */
-        game = gibbon_game_new (self, game_tree,
+        game = gibbon_game_new (self, game_tree, position,
                                 white, black, length, 0, 0, 0, TRUE, FALSE);
         self->priv->games = g_list_prepend (self->priv->games, game);
 
@@ -197,6 +202,7 @@ gibbon_match_add_game (GibbonMatch *self)
         GList *game_trees;
         GSGFGameTree *game_tree;
         guint game_number;
+        const GibbonPosition *position;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
@@ -205,10 +211,10 @@ gibbon_match_add_game (GibbonMatch *self)
         game_tree = gsgf_collection_add_game_tree (self->priv->collection,
                                                    self->priv->flavor);
 
-        /*
-         * FIXME! Match scores are wrong! Game number is wrong!
-         */
+        game = self->priv->games->data;
+        position = gibbon_game_get_position (game);
         game = gibbon_game_new (self, game_tree,
+                                position,
                                 self->priv->black_player,
                                 self->priv->white_player,
                                 self->priv->length, game_number,
