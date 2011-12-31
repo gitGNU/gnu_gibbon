@@ -32,6 +32,8 @@
 #include <gibbon-roll.h>
 #include <gibbon-take.h>
 #include <gibbon-resign.h>
+#include <gibbon-reject.h>
+#include <gibbon-accept.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -154,6 +156,15 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (2));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
 }
