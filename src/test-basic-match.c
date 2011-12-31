@@ -67,6 +67,7 @@ fill_match (void)
                                                0, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
+        gint score;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -109,10 +110,11 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
-        if (GIBBON_POSITION_SIDE_WHITE != gibbon_game_over (game)) {
+        score = gibbon_game_over (game);
+        if (1 != score) {
                 g_object_unref (match);
-                g_printerr ("White should have won the game after black's"
-                             " drop!\n");
+                g_printerr ("Score should be %d, not %d after black's"
+                             " drop!\n", 1, score);
                 return NULL;
         }
 
