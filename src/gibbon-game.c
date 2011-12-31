@@ -592,7 +592,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        property = gsgf_node_add_property (node, id2, &error);
+        property = gsgf_node_add_property (node, "RE", &error);
         if (!property) {
                 g_warning ("gibbon_game_add_double: %s!",
                             error->message);
@@ -663,7 +663,7 @@ static gboolean
 gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
                         GibbonResign *resign)
 {
-        const gchar *id;
+        const gchar *color;
         GSGFNode *node;
         GSGFProperty *property;
         GError *error = NULL;
@@ -676,13 +676,13 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
         if (side == GIBBON_POSITION_SIDE_BLACK) {
-                id = "W";
+                color = "B";
         } else {
-                id = "B";
+                color = "B";
         }
 
         node = gsgf_game_tree_add_node (self->priv->game_tree);
-        property = gsgf_node_add_property (node, id, &error);
+        property = gsgf_node_add_property (node, "OR", &error);
         if (!property) {
                 g_warning ("gibbon_game_add_resign: %s!",
                             error->message);
@@ -690,7 +690,8 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        raw_string = g_strdup_printf ("resign-%u", pos->cube * resign->value);
+        raw_string = g_strdup_printf ("%s-%u",
+                                      color, pos->cube * resign->value);
         raw = gsgf_raw_new (raw_string);
         g_free (raw_string);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
