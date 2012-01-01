@@ -3,7 +3,7 @@
  * Copyright (C) 2000 Eazel, Inc.
  * Copyright (C) 2002 Dom Lachowicz <cinamod@hotmail.com>
  * Copyright (C) 2002 USC/Information Sciences Institute
- * Copyright (C) 2009-2011 Guido Flohr
+ * Copyright (C) 2009-2012 Guido Flohr
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

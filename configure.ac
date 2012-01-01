@@ -1,6 +1,6 @@
 dnl This file is part of Gibbon, a graphical frontend to the First Internet 
 dnl Backgammon Server FIBS.
-dnl Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
+dnl Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
 dnl
 dnl Gibbon is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ dnl gtk-doc 1.16 produces a failure for missing overview.xml after
 dnl "make distcheck".
 GTK_DOC_CHECK([1.17],[--flavour no-tmpl])
 
-GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2011 Guido Flohr, http://guido-flohr.net/])
+GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2012 Guido Flohr, http://guido-flohr.net/])
 
 YELP_HELP_INIT
 

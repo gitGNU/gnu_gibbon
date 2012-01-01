@@ -897,6 +897,11 @@ void
 <RETURNS>gboolean  </RETURNS>
 const GSGFFlavor *self, const struct _GSGFProperty *property, const struct _GSGFRaw *raw, struct _GSGFCookedValue **cooked, GError **error 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_flavor_get_game_id</NAME>
+<RETURNS>guint  </RETURNS>
+const GSGFFlavor *self, GError **error 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_PROPERTY</NAME>
 #define GSGF_TYPE_PROPERTY             (gsgf_property_get_type ())
