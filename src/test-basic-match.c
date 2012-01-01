@@ -166,6 +166,14 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
+        score = gibbon_game_over (game);
+        if (-8 != score) {
+                g_object_unref (match);
+                g_printerr ("Score should be %d, not %d after white's"
+                             " resignation!\n", -8, score);
+                return NULL;
+        }
+
         return match;
 }
 
