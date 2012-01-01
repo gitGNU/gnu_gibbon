@@ -504,6 +504,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
         GError *error = NULL;
         GSGFRaw *raw;
         GibbonPosition *pos;
+        const GibbonGameSnapshot *snapshot;
 
         g_return_val_if_fail (self->priv->score == 0, FALSE);
 
@@ -519,6 +520,13 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 pos->status = g_strdup_printf (_("%s offers a double."),
                                                pos->players[1]);
         }
+
+        /*
+         * Beaver?
+         */
+        snapshot = gibbon_game_get_snapshot (self);
+        if (snapshot && GIBBON_IS_DOUBLE (snapshot->action))
+                pos->cube <<= 1;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (dbl), side, pos);
 
