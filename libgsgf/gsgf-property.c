@@ -178,7 +178,7 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
         g_return_val_if_fail(GSGF_IS_PROPERTY(property), FALSE);
         g_return_val_if_fail(value != NULL, FALSE);
 
-        _gsgf_raw_add_value(GSGF_RAW(property->priv->value), value);
+        gsgf_raw_add_value(GSGF_RAW(property->priv->value), value);
 
         return TRUE;
 }

@@ -70,6 +70,7 @@ GType gsgf_raw_get_type(void) G_GNUC_CONST;
 GSGFRaw* gsgf_raw_new(const gchar *value);
 gsize gsgf_raw_get_number_of_values(const GSGFRaw *self);
 gchar *gsgf_raw_get_value(const GSGFRaw *self, gsize i);
+void gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 
 G_END_DECLS
 
