@@ -22,6 +22,7 @@
 #endif
 
 #include <glib.h>
+#include <string.h>
 
 #include <gibbon-match.h>
 #include <gibbon-game.h>
@@ -34,6 +35,7 @@
 #include <gibbon-resign.h>
 #include <gibbon-reject.h>
 #include <gibbon-accept.h>
+#include <gibbon-setup.h>
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
@@ -70,6 +72,7 @@ fill_match (void)
         GibbonGame *game;
         GibbonGameAction *action;
         gint score;
+        GibbonPosition *pos;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -173,6 +176,29 @@ fill_match (void)
                              " resignation!\n", -8, score);
                 return NULL;
         }
+
+        game = gibbon_match_add_game (match);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add 3rd game!\n");
+                return NULL;
+        }
+
+        pos = gibbon_position_new ();
+        memset (pos->points, 0, sizeof pos->points);
+        pos->points[0] = 1;
+        pos->points[1] = 1;
+        pos->points[17] = -2;
+        pos->points[18] = -7;
+        pos->points[19] = -6;
+
+        action = GIBBON_GAME_ACTION (gibbon_setup_new (pos));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 2, 0, 1, 0, -1));
+        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         return match;
 }
