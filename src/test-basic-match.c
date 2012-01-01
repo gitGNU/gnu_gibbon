@@ -151,7 +151,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1));
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, -1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
