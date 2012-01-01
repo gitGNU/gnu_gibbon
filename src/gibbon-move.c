@@ -95,7 +95,7 @@ gibbon_move_newv (gint die1, gint die2, ...)
                         va_end (ap);
                         g_critical ("gibbon_move_newv: odd number of points!");
                         return self;
-                } else if (to < 1 || to > 25) {
+                } else if (to < 0 || to > 25) {
                         va_end (ap);
                         g_critical ("gibbon_move_newv: end point %d"
                                     " is out of range!", to);
