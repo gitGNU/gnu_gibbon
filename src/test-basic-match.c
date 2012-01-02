@@ -193,12 +193,12 @@ fill_match (void)
         pos->points[17] = -2;
         pos->points[18] = -7;
         pos->points[19] = -6;
+        pos->dice[0] = 1;
+        pos->dice[1] = -3;
 
         action = GIBBON_GAME_ACTION (gibbon_setup_new (pos));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
 
-        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
         action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 2, 0, 1, 0, -1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
 

@@ -892,6 +892,7 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
         gint point_no;
         gchar point_str[2] = {0, 0};
         gint i;
+        gchar dice_string[3];
 
         g_return_val_if_fail (self->priv->score == 0, FALSE);
 
@@ -1000,6 +1001,29 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
         }
 
         if (!gsgf_property_set_value (property, GSGF_VALUE (ae), &error)) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        if (!pos->dice[0] && !pos->dice[1])
+                return TRUE;
+
+        dice_string[0] = '0' + abs (pos->dice[0]);
+        dice_string[1] = '0' + abs (pos->dice[1]);
+        dice_string[2] = 0;
+        raw = gsgf_raw_new (dice_string);
+
+        property = gsgf_node_add_property (node, "DI", &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
                 g_warning ("gibbon_game_add_setup: %s!",
                             error->message);
                 g_error_free (error);
