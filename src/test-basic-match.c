@@ -213,9 +213,15 @@ check_match (const GibbonMatch *match)
                 retval = FALSE;
         }
 
-        if (27 != pos->scores[0]) {
+        if (1 != pos->scores[0]) {
                 g_printerr ("Expected white score of %u, got %u!\n",
-                            27, pos->scores[0]);
+                            1, pos->scores[0]);
+                retval = FALSE;
+        }
+
+        if (8 != pos->scores[1]) {
+                g_printerr ("Expected white score of %u, got %u!\n",
+                            8, pos->scores[1]);
                 retval = FALSE;
         }
 
