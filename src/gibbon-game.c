@@ -888,6 +888,10 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
         GError *error = NULL;
         GSGFRaw *raw;
         GibbonPosition *pos;
+        GSGFRaw *ab, *aw, *ae;
+        gint point_no;
+        gchar point_str[2] = {0, 0};
+        gint i;
 
         g_return_val_if_fail (self->priv->score == 0, FALSE);
 
@@ -904,7 +908,7 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
         node = gsgf_game_tree_add_node (self->priv->game_tree);
         property = gsgf_node_add_property (node, "PL", &error);
         if (!property) {
-                g_warning ("gibbon_game_add_take: %s!",
+                g_warning ("gibbon_game_add_setup: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
@@ -912,7 +916,91 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
 
         raw = gsgf_raw_new (pl);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
-                g_warning ("gibbon_game_add_take: %s!",
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        aw = gsgf_raw_new (NULL);
+        ab = gsgf_raw_new (NULL);
+        ae = gsgf_raw_new (NULL);
+
+#define gibbon_game_add_point(raw, side, point) { \
+        point_str[0] = gibbon_game_point_to_sgf_char (side, point); \
+        gsgf_raw_add_value (raw, point_str); \
+}
+
+        if (pos->bar[0])
+                for (i = 0; i < pos->bar[0]; ++i)
+                        gibbon_game_add_point (ab, GIBBON_POSITION_SIDE_WHITE,
+                                               25);
+
+        if (pos->bar[1])
+                for (i = 0; i < pos->bar[1]; ++i)
+                        gibbon_game_add_point (aw, GIBBON_POSITION_SIDE_BLACK,
+                                               0);
+
+        if (!pos->bar[0] && !pos->bar[1])
+                gibbon_game_add_point (ae, GIBBON_POSITION_SIDE_BLACK, 0);
+
+        for (point_no = 0; point_no < 24; ++point_no) {
+                if (!pos->points[point_no]) {
+                        gibbon_game_add_point (ae, GIBBON_POSITION_SIDE_NONE,
+                                               point_no);
+                } else if (pos->points[point_no] > 0) {
+                        for (i = 0; i < pos->points[point_no]; ++i)
+                                gibbon_game_add_point (ab,
+                                                     GIBBON_POSITION_SIDE_WHITE,
+                                                       point_no + 1);
+                } else {
+                        for (i = 0; i > pos->points[point_no]; --i)
+                                gibbon_game_add_point (aw,
+                                                     GIBBON_POSITION_SIDE_BLACK,
+                                                       point_no + 1);
+                }
+        }
+
+        property = gsgf_node_add_property (node, "AW", &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        if (!gsgf_property_set_value (property, GSGF_VALUE (aw), &error)) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        property = gsgf_node_add_property (node, "AB", &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        if (!gsgf_property_set_value (property, GSGF_VALUE (ab), &error)) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        property = gsgf_node_add_property (node, "AE", &error);
+        if (!property) {
+                g_warning ("gibbon_game_add_setup: %s!",
+                            error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        if (!gsgf_property_set_value (property, GSGF_VALUE (ae), &error)) {
+                g_warning ("gibbon_game_add_setup: %s!",
                             error->message);
                 g_error_free (error);
                 return FALSE;
