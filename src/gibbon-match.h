@@ -87,6 +87,4 @@ const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
  */
 struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
 
-guint gibbon_match_score (const GibbonMatch *self, GibbonPositionSide side);
-
 #endif

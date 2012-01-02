@@ -183,14 +183,6 @@ gibbon_match_add_game (GibbonMatch *self)
         return game;
 }
 
-guint
-gibbon_match_score (const GibbonMatch *self, GibbonPositionSide side)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
-
-        return 0;
-}
-
 const GibbonPosition *
 gibbon_match_get_current_position (const GibbonMatch *self)
 {
