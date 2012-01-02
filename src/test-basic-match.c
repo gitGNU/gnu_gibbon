@@ -185,6 +185,8 @@ fill_match (void)
         }
 
         pos = gibbon_position_new ();
+        pos->players[0] = g_strdup ("Snow White");
+        pos->players[1] = g_strdup ("Joe Black");
         memset (pos->points, 0, sizeof pos->points);
         pos->points[0] = 1;
         pos->points[1] = 1;
