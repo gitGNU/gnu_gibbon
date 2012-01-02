@@ -944,7 +944,7 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
         if (!pos->bar[0] && !pos->bar[1])
                 gibbon_game_add_point (ae, GIBBON_POSITION_SIDE_BLACK, 0);
 
-        for (point_no = 0; point_no < 24; ++point_no) {
+        for (point_no = 23; point_no >= 0; --point_no) {
                 if (!pos->points[point_no]) {
                         gibbon_game_add_point (ae, GIBBON_POSITION_SIDE_NONE,
                                                point_no);
