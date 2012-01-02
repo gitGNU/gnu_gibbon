@@ -72,7 +72,6 @@ fill_match (void)
         GibbonGame *game;
         GibbonGameAction *action;
         gint score;
-        GibbonPosition *pos;
 
         game = gibbon_match_get_current_game (match);
         if (!game)
@@ -177,31 +176,6 @@ fill_match (void)
                 return NULL;
         }
 
-        game = gibbon_match_add_game (match);
-        if (!game) {
-                g_object_unref (match);
-                g_printerr ("Cannot add 3rd game!\n");
-                return NULL;
-        }
-
-        pos = gibbon_position_new ();
-        pos->players[0] = g_strdup ("Snow White");
-        pos->players[1] = g_strdup ("Joe Black");
-        memset (pos->points, 0, sizeof pos->points);
-        pos->points[0] = 1;
-        pos->points[1] = 1;
-        pos->points[17] = -2;
-        pos->points[18] = -7;
-        pos->points[19] = -6;
-        pos->dice[0] = 1;
-        pos->dice[1] = -3;
-
-        action = GIBBON_GAME_ACTION (gibbon_setup_new (pos));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
-
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 2, 0, 1, 0, -1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
-
         return match;
 }
 
@@ -239,6 +213,12 @@ check_match (const GibbonMatch *match)
                 retval = FALSE;
         }
 
+        if (27 != pos->scores[0]) {
+                g_printerr ("Expected white score of %u, got %u!\n",
+                            27, pos->scores[0]);
+                retval = FALSE;
+        }
+
         return retval;
 }
 
@@ -258,7 +238,7 @@ serialize_match (const GibbonMatch *match)
                 return FALSE;
         }
 
-#if (1)
+#if (0)
         g_printerr ("%s",
                     (gchar *) g_memory_output_stream_get_data  (
                                     G_MEMORY_OUTPUT_STREAM (out)));
