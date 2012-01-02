@@ -866,7 +866,7 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
          * backgammon's notion of colors and directions.
          */
         color = side == GIBBON_POSITION_SIDE_BLACK ? 'W' : 'B';
-        raw_string = g_strdup_printf ("%c+%d", color, value);
+        raw_string = g_strdup_printf ("%c+%dResign", color, value);
         raw = gsgf_raw_new (raw_string);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
                 g_warning ("gibbon_game_add_move: %s!",
