@@ -21,7 +21,7 @@
  * SECTION:gibbon-match
  * @short_description: Representation of a backgammon match in Gibbon!
  *
- * Since: 0.1.0
+ * Since: 0.1.1
  *
  * A GibbonMatch is the internal representation of a backgammon match in
  * Gibbon.  It is always linked to a #GSGFCollection that serves as the
@@ -162,6 +162,9 @@ gibbon_match_add_game (GibbonMatch *self)
         GSGFGameTree *game_tree;
         guint game_number;
         GibbonPosition *position;
+        gboolean is_crawford = FALSE;
+        gint white_away, black_away;
+        const GibbonPosition *last_position;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
@@ -174,9 +177,56 @@ gibbon_match_add_game (GibbonMatch *self)
         position = gibbon_position_copy (gibbon_game_get_position (game));
         gibbon_position_reset (position);
 
-        /* FIXME! Check whether this is the crawford game! */
+        /*
+         * Check whether this is the crawford game.  This is less trivial than
+         * it seems at first glance.
+         *
+         * A necessary but not sufficient condition is that we have a fixed
+         * match length, and that exactly one of the opponents is 1-away.
+         */
+        if (!position->match_length)
+                goto no_crawford;
+
+        white_away = position->match_length - position->scores[0];
+        black_away = position->match_length - position->scores[1];
+
+        if (white_away != 1 && black_away != 1)
+                goto no_crawford;
+
+        if (white_away ==  1 && black_away == 1)
+                goto no_crawford;
+
+        if (white_away == position->match_length
+            || black_away == position->match_length) {
+                is_crawford = TRUE;
+                goto no_crawford;
+        }
+
+        /*
+         * Now check for a transition in the first game action.
+         */
+        game = self->priv->games->data;
+        if (gibbon_game_is_crawford (game))
+                goto no_crawford;
+
+        last_position = gibbon_game_get_nth_position (game, -2);
+        if (!last_position)
+                goto no_crawford;
+
+        white_away = last_position->match_length - last_position->scores[0];
+        black_away = last_position->match_length - last_position->scores[1];
+        if (white_away == 1 || black_away == 1)
+                goto no_crawford;
+
+        is_crawford = TRUE;
+
+        /*
+         * So far for the regular cases.  But we also have to bear in mind
+         * that the last match
+         */
+    no_crawford:
         game = gibbon_game_new (self, game_tree, position, game_number,
-                                self->priv->crawford, FALSE);
+                                self->priv->crawford, is_crawford);
         gibbon_position_free (position);
         self->priv->games = g_list_prepend (self->priv->games, game);
 

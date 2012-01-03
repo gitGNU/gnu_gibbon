@@ -144,6 +144,7 @@ noinst_HEADERS =			\
 	gibbon-settings.h		\
 	gibbon-register-dialog.h			\
 	gibbon-game-action.h			\
+	gibbon-game-actions.h			\
 	gibbon-movement.h			\
 	gibbon-move.h			\
 	gibbon-double.h			\
@@ -165,14 +166,14 @@ endif
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
 	test_pretty_print_move test_strsplit test_clip \
-	test_gary_wong_movegen
+	test_gary_wong_movegen test_crawford_detection
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
 	test_clip test_pretty_print_move test_strsplit	\
-	test_gary_wong_movegen
+	test_gary_wong_movegen test_crawford_detection
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
@@ -182,6 +183,7 @@ test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) test-clip.c
+test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 
 SGF_FILES =
 

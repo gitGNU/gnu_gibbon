@@ -21,7 +21,7 @@
  * SECTION:gibbon-game
  * @short_description: Representation of a single game of backgammon in Gibbon!
  *
- * Since: 0.1.0
+ * Since: 0.1.1
  *
  * A #GibbonGame represents a single game of backgammon in Gibbon!  It is
  * always associated with a #GSGFGameTree that is used as a backend.
@@ -61,6 +61,8 @@ struct _GibbonGamePrivate {
         GibbonGameSnapshot *snapshots;
 
         gint score;
+
+        gboolean is_crawford;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -101,8 +103,10 @@ static void gibbon_game_add_snapshot (GibbonGame *self,
                                       GibbonGameAction *action,
                                       GibbonPositionSide side,
                                       GibbonPosition *position);
-static const GibbonGameSnapshot *gibbon_game_get_snapshot (const GibbonGame
-                                                           *self);
+static const GibbonGameSnapshot *gibbon_game_get_snapshot (const GibbonGame *
+                                                           self);
+static const GibbonGameSnapshot *gibbon_game_get_nth_snapshot (const GibbonGame
+                                                               * self, gint n);
 
 static void 
 gibbon_game_init (GibbonGame *self)
@@ -117,6 +121,8 @@ gibbon_game_init (GibbonGame *self)
         self->priv->num_snapshots = 0;
 
         self->priv->score = 0;
+
+        self->priv->is_crawford = FALSE;
 }
 
 static void
@@ -194,6 +200,7 @@ gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree,
                 return self;
         }
         if (crawford) {
+                self->priv->is_crawford = is_crawford;
                 rule = is_crawford ? "Crawford:CrawfordGame" : "Crawford";
                 simple_text = GSGF_VALUE (gsgf_simple_text_new (rule));
                 if (!gsgf_node_set_property (root, "RU", simple_text, &error)) {
@@ -900,6 +907,13 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (setup), side, pos);
 
+        /*
+         * This is just a safe guess.  If the rest of the code detects that
+         * this is actually the Crawford game, we simply set the flag
+         * correctly.
+         */
+        self->priv->is_crawford = FALSE;
+
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 pl = "B";
         } else {
@@ -914,6 +928,7 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
                 g_error_free (error);
                 return FALSE;
         }
+
 
         raw = gsgf_raw_new (pl);
         if (!gsgf_property_set_value (property, GSGF_VALUE (raw), &error)) {
@@ -1100,4 +1115,43 @@ gibbon_game_get_snapshot (const GibbonGame *self)
                 return NULL;
 
         return self->priv->snapshots + self->priv->num_snapshots - 1;
+}
+
+gboolean
+gibbon_game_is_crawford (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), FALSE);
+
+        return self->priv->is_crawford;
+}
+
+const GibbonPosition *
+gibbon_game_get_nth_position (const GibbonGame *self, gint n)
+{
+        const GibbonGameSnapshot *snapshot;
+
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        snapshot = gibbon_game_get_nth_snapshot (self, n);
+
+        if (snapshot)
+                return snapshot->resulting_position;
+        else
+                return NULL;
+}
+
+
+static const GibbonGameSnapshot *
+gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
+{
+        gsize i;
+
+        if (n < 0) {
+                i = self->priv->num_snapshots + n;
+        }
+
+        if (i >= self->priv->num_snapshots)
+                return NULL;
+
+        return self->priv->snapshots + i;
 }
