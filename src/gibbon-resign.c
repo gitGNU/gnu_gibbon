@@ -49,7 +49,6 @@ static void
 gibbon_resign_class_init (GibbonResignClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GibbonGameActionClass *gibbon_game_action_class = GIBBON_GAME_ACTION_CLASS (klass);
 
         object_class->finalize = gibbon_resign_finalize;
 }
