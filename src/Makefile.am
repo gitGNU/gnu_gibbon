@@ -90,20 +90,22 @@ common_SOURCES = 			\
 	gibbon-geo-ip-updater.c		\
 	gibbon-country.c		\
 	gibbon-settings.c		\
-	gibbon-register-dialog.c			\
-	gibbon-game-action.c				\
-	gibbon-movement.c				\
-	gibbon-move.c				\
-	gibbon-double.c				\
-	gibbon-drop.c				\
-	gibbon-roll.c				\
-	gibbon-take.c				\
-	gibbon-resign.c				\
-	gibbon-accept.c				\
-	gibbon-reject.c				\
+	gibbon-register-dialog.c	\
+	gibbon-game-action.c		\
+	gibbon-movement.c		\
+	gibbon-move.c			\
+	gibbon-double.c			\
+	gibbon-drop.c			\
+	gibbon-roll.c			\
+	gibbon-take.c			\
+	gibbon-resign.c			\
+	gibbon-accept.c			\
+	gibbon-reject.c			\
 	gibbon-setup.c			\
-	gibbon-match-reader.c				\
-	gibbon-java-fibs-reader.c	
+	gibbon-match-reader.c		\
+	gibbon-java-fibs-reader.c	\	
+	gibbon-match-writer.c		\
+	gibbon-java-fibs-writer.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -144,10 +146,10 @@ noinst_HEADERS =			\
 	gibbon-geo-ip-updater.h		\
 	gibbon-country.h		\
 	gibbon-settings.h		\
-	gibbon-register-dialog.h			\
-	gibbon-game-action.h			\
-	gibbon-game-actions.h			\
-	gibbon-movement.h			\
+	gibbon-register-dialog.h	\
+	gibbon-game-action.h		\
+	gibbon-game-actions.h		\
+	gibbon-movement.h		\
 	gibbon-move.h			\
 	gibbon-double.h			\
 	gibbon-drop.h			\
@@ -157,8 +159,10 @@ noinst_HEADERS =			\
 	gibbon-accept.h			\
 	gibbon-reject.h			\
 	gibbon-setup.h			\
-	gibbon-match-reader.h			\
-	gibbon-java-fibs-reader.h
+	gibbon-match-reader.h		\
+	gibbon-java-fibs-reader.h	\
+	gibbon-match-writer.h		\
+	gibbon-java-fibs-writer.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
