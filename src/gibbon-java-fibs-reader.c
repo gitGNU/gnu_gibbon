@@ -34,8 +34,8 @@
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
-        /* FIXME! Replace with the real structure of the private data! */
-        gchar *dummy;
+        gchar *filename;
+        gchar *you;
 };
 
 #define GIBBON_JAVA_FIBS_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -49,8 +49,8 @@ gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_JAVA_FIBS_READER, GibbonJavaFIBSReaderPrivate);
 
-        /* FIXME! Initialize private data! */
-        self->priv->dummy = NULL;
+        self->priv->filename = NULL;
+        self->priv->you = NULL;
 }
 
 static void
@@ -58,10 +58,8 @@ gibbon_java_fibs_reader_finalize (GObject *object)
 {
         GibbonJavaFIBSReader *self = GIBBON_JAVA_FIBS_READER (object);
 
-        /* FIXME! Free private data! */
-        if (self->priv->dummy)
-                g_free (self->priv->dummy);
-        self->priv->dummy = NULL;
+        g_free (self->priv->filename);
+        g_free (self->priv->you);
 
         G_OBJECT_CLASS (gibbon_java_fibs_reader_parent_class)->finalize(object);
 }
@@ -85,19 +83,23 @@ gibbon_java_fibs_reader_class_init (GibbonJavaFIBSReaderClass *klass)
 
 /**
  * gibbon_java_fibs_reader_new:
- * @dummy: The argument.
+ * @path: Filename to read
+ * @you: Player name to replace for JavaFIBS' "You"
  *
  * Creates a new #GibbonJavaFIBSReader.
  *
  * Returns: The newly created #GibbonJavaFIBSReader or %NULL in case of failure.
  */
 GibbonJavaFIBSReader *
-gibbon_java_fibs_reader_new (/* FIXME! Argument list! */ const gchar *dummy)
+gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
 {
         GibbonJavaFIBSReader *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_READER, NULL);
 
-        /* FIXME! Initialize private data! */
-        /* self->priv->dummy = g_strdup (dummy); */
+        g_return_val_if_fail (filename != NULL, NULL);
+
+        self->priv->filename = g_strdup (filename);
+        if (you)
+                self->priv->you = g_strdup (you);
 
         return self;
 }

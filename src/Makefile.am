@@ -51,6 +51,7 @@ AM_CPPFLAGS = 				\
 	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
 	-D_ISOC99_SOURCE		\
 	$(GIBBON_GTK_MIGRATION_CFLAGS)	\
+	-DABS_BUILDDIR=\""$(abs_builddir)"\"	\
 	-D_SVID_SOURCE
 
 common_SOURCES = 			\
@@ -174,14 +175,17 @@ endif
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
 	test_pretty_print_move test_strsplit test_clip \
-	test_gary_wong_movegen test_crawford_detection
+	test_gary_wong_movegen test_crawford_detection \
+	test_java_fibs_reader
+
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
 	test_clip test_pretty_print_move test_strsplit	\
-	test_gary_wong_movegen test_crawford_detection
+	test_gary_wong_movegen test_crawford_detection \
+	test_java_fibs_reader
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_build_match_SOURCES = $(common_SOURCES) test-build-match.c
@@ -192,7 +196,8 @@ test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) test-clip.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
+test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 
-SGF_FILES =
+MATCH_FILES = complete.match
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) gibbon.rc
+EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
