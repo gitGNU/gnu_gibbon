@@ -101,7 +101,9 @@ common_SOURCES = 			\
 	gibbon-resign.c				\
 	gibbon-accept.c				\
 	gibbon-reject.c				\
-	gibbon-setup.c
+	gibbon-setup.c			\
+	gibbon-match-reader.c				\
+	gibbon-java-fibs-reader.c	
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -154,7 +156,9 @@ noinst_HEADERS =			\
 	gibbon-resign.h			\
 	gibbon-accept.h			\
 	gibbon-reject.h			\
-	gibbon-setup.h
+	gibbon-setup.h			\
+	gibbon-match-reader.h			\
+	gibbon-java-fibs-reader.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
