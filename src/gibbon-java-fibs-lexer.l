@@ -55,9 +55,25 @@ JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v
 					}
 <OPCODE>\n
 <WHAT>\n				BEGIN (OPCODE);
+  /* Not used? */
+<OPCODE>10:[^\n]*			; 
 <OPCODE>13				{
 						BEGIN (WHO); 
 						return START_OF_GAME;
+					}
+  /* This is only used for the opening roll.  But why distinguish? */
+<OPCODE>11				{
+						BEGIN (WHO); 
+						return ROLL;
+					}
+  /* Dance.  We can treat that like a regular (empty) move. */
+<OPCODE>15				{
+						BEGIN (WHO); 
+						return MOVE;
+					}
+<OPCODE>0				{
+						BEGIN (WHO); 
+						return ROLL;
 					}
 <OPCODE>6				{
 						BEGIN (WHO); 
@@ -67,6 +83,12 @@ JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v
 						BEGIN (WHO); 
 						return START_OF_MATCH;
 					}
+  /* Ignore all unknown opcodes.  */
+<OPCODE>16:[^\n]*			;
+<OPCODE>17:[^\n]*			;
+<OPCODE>18:[^\n]*			;
+<OPCODE>19:[^\n]*			;
+<OPCODE>[2-9][0-9]:[^\n]*		;
 <WHAT>[1-9][0-9]*			return INTEGER;
 <WHO,WHAT>[^-: \t\r\n][^-: \t\r\n]*	{
 						BEGIN (WHAT);

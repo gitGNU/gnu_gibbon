@@ -83,9 +83,19 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 %token COLON
 %token INTEGER
 %token PLAYER
-%token START_OF_MATCH
+%token ROLL
+%token MOVE
+%token DOUBLE
+%token RESIGN
+%token TAKE
+%token DROP
 %token START_OF_GAME
+%token WIN_GAME
+%token START_OF_MATCH
+%token WIN_MATCH
+%token REJECT_RESIGN
 %token OPPONENTS
+%token RESULT
 %token JUNK
 
 %%
