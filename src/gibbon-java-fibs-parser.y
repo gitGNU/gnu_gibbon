@@ -71,7 +71,7 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 #define yylhs      gibbon_java_fibs_parser_yylhs
 #define yylen      gibbon_java_fibs_parser_yylen
 #define yydefred   gibbon_java_fibs_parser_yydefred
-#define yydgoto    gibbon_java_fibs_parser_yydgoto
+#define yysdgoto    gibbon_java_fibs_parser_yydgoto
 #define yysindex   gibbon_java_fibs_parser_yysindex
 #define yyrindex   gibbon_java_fibs_parser_yyrindex
 #define yygindex   gibbon_java_fibs_parser_yygindex
@@ -79,16 +79,40 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 #define yycheck    gibbon_java_fibs_parser_yycheck
 %}
 
+%token PROLOG
+%token COLON
+%token INTEGER
+%token PLAYER
+%token START_OF_MATCH
+%token START_OF_GAME
+%token OPPONENTS
+%token JUNK
+
 %%
 
 java_fibs_file
-        : /* empty */
+        : PROLOG match
         ;
 
+match
+	: START_OF_MATCH COLON PLAYER COLON INTEGER games
+	;
+
+games
+	: /* empty */
+	| games game
+	;
+
+game
+	: START_OF_GAME COLON PLAYER COLON
+	  OPPONENTS COLON PLAYER COLON PLAYER
+	
 %%
 
 void
 gibbon_java_fibs_parser_error (const char *msg)
 {
-	g_printerr ("JavaFIBS lexer error: %s\n", msg);
+	extern int gibbon_java_fibs_lexer_lineno;
+	
+	g_printerr ("Line %d: %s\n", gibbon_java_fibs_lexer_lineno, msg);
 }

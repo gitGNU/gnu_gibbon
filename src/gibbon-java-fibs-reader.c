@@ -98,6 +98,7 @@ gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
         GibbonJavaFIBSReader *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_READER, NULL);
         FILE *in;
         extern FILE *gibbon_java_fibs_lexer_in;
+        extern gibbon_java_fibs_parser_parse ();
 
         g_return_val_if_fail (filename != NULL, NULL);
 
@@ -110,6 +111,10 @@ gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
                 return self;
 
         gibbon_java_fibs_lexer_in = in;
+
+        do {
+                gibbon_java_fibs_parser_parse ();
+        } while (!feof (in));
 
         fclose (in);
 

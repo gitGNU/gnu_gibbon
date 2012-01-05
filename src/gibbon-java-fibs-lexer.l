@@ -28,11 +28,50 @@ static int yywrap ();
 
 #include <glib.h>
 #include <glib/gi18n.h>
+
+#include "gibbon-java-fibs-parser.h"
+
 %}
 
+%option yylineno
 %option prefix="gibbon_java_fibs_lexer_"
 
+%option debug
+
+%x OPCODE
+%s WHO
+%s WHAT
+
 %%
+  /* Ignore all whitespace.  */
+[ \t]					;
+  /* JavaFIBS seems to spit out gratuitous carriage returns.  */
+\r					;
+:					{ return COLON; }
+<INITIAL>\n				;
+JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v[0-9.][0-9.]* {
+						BEGIN (OPCODE);
+						return PROLOG;
+					}
+<OPCODE>\n
+<WHAT>\n				BEGIN (OPCODE);
+<OPCODE>13				{
+						BEGIN (WHO); 
+						return START_OF_GAME;
+					}
+<OPCODE>6				{
+						BEGIN (WHO); 
+						return OPPONENTS;
+					}
+<OPCODE>8				{
+						BEGIN (WHO); 
+						return START_OF_MATCH;
+					}
+<WHAT>[1-9][0-9]*			return INTEGER;
+<WHO,WHAT>[^-: \t\r\n][^-: \t\r\n]*	{
+						BEGIN (WHAT);
+						return PLAYER;
+					}
 %%
 
 static int
