@@ -104,9 +104,21 @@ common_SOURCES = 			\
 	gibbon-reject.c			\
 	gibbon-setup.c			\
 	gibbon-match-reader.c		\
-	gibbon-java-fibs-reader.c	\	
+	gibbon-java-fibs-reader.c	\
 	gibbon-match-writer.c		\
-	gibbon-java-fibs-writer.c	
+	gibbon-java-fibs-writer.c	\
+	gibbon-java-fibs-parser.y	\
+	gibbon-java-fibs-lexer.c
+
+LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
+LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+        $(LIBTOOLFLAGS) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
+AM_V_LEX = $(am__v_LEX_$(V))
+am__v_LEX_ = $(am__v_LEX_$(AM_DEFAULT_VERBOSITY))
+am__v_LEX_0 = @echo "  LEX   " $@;
+
+gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
+	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
@@ -164,6 +176,12 @@ noinst_HEADERS =			\
 	gibbon-java-fibs-reader.h	\
 	gibbon-match-writer.h		\
 	gibbon-java-fibs-writer.h
+
+
+BUILT_SOURCES = gibbon-java-fibs-parser.c gibbon-java-fibs-parser.h \
+	gibbon-java-fibs-lexer.c
+
+AM_YFLAGS =-d
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \

@@ -4,3 +4,6 @@ gibbon
 gibbon.exe
 gibbon.rc
 test_*
+gibbon-java-fibs-lexer.c
+gibbon-java-fibs-parser.c
+gibbon-java-fibs-parser.h

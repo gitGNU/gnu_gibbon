@@ -27,6 +27,8 @@
  * format.!
  */
 
+#include <stdio.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -94,12 +96,22 @@ GibbonJavaFIBSReader *
 gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
 {
         GibbonJavaFIBSReader *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_READER, NULL);
+        FILE *in;
+        extern FILE *gibbon_java_fibs_lexer_in;
 
         g_return_val_if_fail (filename != NULL, NULL);
 
         self->priv->filename = g_strdup (filename);
         if (you)
                 self->priv->you = g_strdup (you);
+
+        in = fopen (filename, "rb");
+        if (!in)
+                return self;
+
+        gibbon_java_fibs_lexer_in = in;
+
+        fclose (in);
 
         return self;
 }

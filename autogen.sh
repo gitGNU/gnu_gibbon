@@ -17,6 +17,41 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
+echo -n Checking for flex ...
+flex --version >/dev/null
+if test $? != 0; then
+        echo " not found!"
+        echo
+        echo The lex replacement flex was not found in your path
+        echo but is required for building Gibbon.
+        exit 1
+fi
+echo " okay"
+
+# You need a parser generator for compiling Gibbon from the scm
+# repository.  While yacc is probably good enough for that job,
+# we cannot easily check for it being installed because the original
+# yacc does not honor the bison option --version and which is
+# not that portable.
+#
+# For simplicity we just check for bison and hope that whoever has
+# yacc instead of bison will be smart enough to get around the
+# check.
+echo -n Checking for bison ...
+bison --version >/dev/null
+if test $? != 0; then
+        echo " not found!"
+        echo
+        echo The yacc replacement bison was not found in your path
+        echo but is required for building Gibbon.
+        echo
+        echo If you have yacc instead of bison, you can try changing
+        echo this script and replacing bison with yacc.  This will
+        echo probably work.
+        exit 1
+fi
+echo " okay"
+
 glib-gettextize --copy --force
 if  test $? != 0; then
         echo The script glib-gettextize was not found in your path
