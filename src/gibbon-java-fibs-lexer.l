@@ -36,11 +36,11 @@ static int yywrap ();
 %option yylineno
 %option prefix="gibbon_java_fibs_lexer_"
 
-%option debug
+/* %option debug */
 
 %x OPCODE
-%s WHO
-%s WHAT
+%x WHO
+%x WHAT
 
 %%
 
@@ -57,8 +57,8 @@ static int yywrap ();
    * The colon and the hyphen can never be part of a user name.  It is safe
    * to treat them the same in all scanner states.
    */
-:					{ return COLON; }
--					{ return HYPHEN; }
+<*>:					{ return COLON; }
+<*>-					{ return HYPHEN; }
 
   /***************************************************************************
    * In the initial state we are waiting for the format header but we ignore *
