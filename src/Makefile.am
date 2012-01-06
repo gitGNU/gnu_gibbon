@@ -110,6 +110,8 @@ common_SOURCES = 			\
 	gibbon-java-fibs-parser.y	\
 	gibbon-java-fibs-lexer.c
 
+AM_YFLAGS = -d
+
 LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
 LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
         $(LIBTOOLFLAGS) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
@@ -180,8 +182,6 @@ noinst_HEADERS =			\
 
 BUILT_SOURCES = gibbon-java-fibs-parser.c gibbon-java-fibs-parser.h \
 	gibbon-java-fibs-lexer.c
-
-AM_YFLAGS =-d
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
