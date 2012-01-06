@@ -48,13 +48,16 @@ static int yywrap ();
   /* JavaFIBS seems to spit out gratuitous carriage returns.  */
 \r					;
 :					{ return COLON; }
+-					{ return HYPHEN; }
 <INITIAL>\n				;
-JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v[0-9.][0-9.]* {
+JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 						BEGIN (OPCODE);
 						return PROLOG;
 					}
 <OPCODE>\n
 <WHAT>\n				BEGIN (OPCODE);
+<WHAT>bar				return BAR;
+<WHAT>off				return OFF;
   /* Not used? */
 <OPCODE>10:[^\n]*			; 
 <OPCODE>13				{
@@ -75,6 +78,10 @@ JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v
 						BEGIN (WHO); 
 						return ROLL;
 					}
+<OPCODE>1				{
+						BEGIN (WHO); 
+						return MOVE;
+					}
 <OPCODE>6				{
 						BEGIN (WHO); 
 						return OPPONENTS;
@@ -90,10 +97,11 @@ JavaFIBS[ \t][ \t]*internal[ \t][ \t]*match[ \t][ \t]*representation[ \t][ \t]*v
 <OPCODE>19:[^\n]*			;
 <OPCODE>[2-9][0-9]:[^\n]*		;
 <WHAT>[1-9][0-9]*			return INTEGER;
-<WHO,WHAT>[^-: \t\r\n][^-: \t\r\n]*	{
+<WHO,WHAT>[^-: \t\r\n]+			{
 						BEGIN (WHAT);
 						return PLAYER;
 					}
+.					return JUNK;
 %%
 
 static int

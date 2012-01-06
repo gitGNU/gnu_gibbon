@@ -81,6 +81,7 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 
 %token PROLOG
 %token COLON
+%token HYPHEN
 %token INTEGER
 %token PLAYER
 %token ROLL
@@ -96,6 +97,8 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 %token REJECT_RESIGN
 %token OPPONENTS
 %token RESULT
+%token BAR
+%token OFF
 %token JUNK
 
 %%
@@ -116,7 +119,40 @@ games
 game
 	: START_OF_GAME COLON PLAYER COLON
 	  OPPONENTS COLON PLAYER COLON PLAYER
+	  actions
+
+actions
+	: /* empty */
+	| actions action
+	;
 	
+action
+	: roll | move
+	;
+
+roll
+	: ROLL COLON PLAYER COLON INTEGER INTEGER
+	;
+
+move
+	: MOVE COLON PLAYER COLON movements
+	;
+
+movements
+	: /* empty */
+	| movement
+	| movement movement
+	| movement movement movement
+	| movement movement movement movement
+	;
+
+movement
+	: point HYPHEN point
+	;
+
+point
+	: INTEGER | BAR | OFF
+	;
 %%
 
 void
