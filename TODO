@@ -64,3 +64,5 @@
   displayed.
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
+- Try to #define symbols of the flex scanner in a %top section.  If that
+  works as expected we can remove the automake hack in src/Makefile.am.
