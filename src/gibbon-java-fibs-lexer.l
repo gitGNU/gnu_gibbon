@@ -179,6 +179,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 <WHAT>bar				return BAR;
 <WHAT>off				return OFF;
 <WHAT>[1-9][0-9]*			return INTEGER;
+<WHAT>0					return INTEGER;
 <WHAT>[^-: \t\r\n]+			{
 						BEGIN (WHAT);
 						return PLAYER;

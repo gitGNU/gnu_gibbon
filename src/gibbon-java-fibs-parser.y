@@ -127,7 +127,8 @@ actions
 	;
 	
 action
-	: roll | move | cube | drop | take | win_game | score
+	: roll | move | cube | drop | take | win_game | score 
+	| resign | reject_resign | win_match
 	;
 
 roll
@@ -173,7 +174,19 @@ win_game
 score
 	: SCORE COLON PLAYER HYPHEN INTEGER COLON PLAYER HYPHEN INTEGER
 	;
+
+resign
+	: RESIGN COLON PLAYER COLON INTEGER
+	;
 	
+reject_resign
+	: REJECT_RESIGN COLON PLAYER COLON
+	;
+	
+win_match
+	: WIN_MATCH COLON PLAYER COLON INTEGER
+	;
+
 %%
 
 void

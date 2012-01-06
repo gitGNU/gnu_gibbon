@@ -110,7 +110,7 @@ common_SOURCES = 			\
 	gibbon-java-fibs-parser.y	\
 	gibbon-java-fibs-lexer.c
 
-AM_YFLAGS = -d
+AM_YFLAGS = -d -v
 
 LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
 LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \

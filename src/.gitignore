@@ -7,3 +7,4 @@ test_*
 gibbon-java-fibs-lexer.c
 gibbon-java-fibs-parser.c
 gibbon-java-fibs-parser.h
+gibbon-java-fibs-parser.output
