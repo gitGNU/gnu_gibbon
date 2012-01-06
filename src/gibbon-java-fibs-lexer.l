@@ -83,15 +83,40 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 						BEGIN (WHO); 
 						return MOVE;
 					}
+<OPCODE>2				{
+						BEGIN (WHO); 
+						return DOUBLE;
+					}
+<OPCODE>3				{
+						BEGIN (WHO); 
+						return RESIGN;
+					}
+<OPCODE>4				{
+						BEGIN (WHO); 
+						return TAKE;
+					}
+<OPCODE>5				{
+						BEGIN (WHO); 
+						return DROP;
+					}
 <OPCODE>6				{
 						BEGIN (WHO); 
 						return OPPONENTS;
+					}
+<OPCODE>7				{
+						BEGIN (WHO); 
+						return WIN_GAME;
 					}
 <OPCODE>8				{
 						BEGIN (WHO); 
 						return START_OF_MATCH;
 					}
-  /* I haven't seen that opcode in any of my matches.  Ignore it.  */
+<OPCODE>9				{
+						BEGIN (WHO); 
+						return WIN_MATCH;
+					}
+					
+  /* I have yet to see that opcode in any of my matches.  Ignore it.  */
 <OPCODE>10:[^\n]*			;
 
   /* Like 0 but for the opening roll.  We treat them the same */
@@ -99,11 +124,23 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 						BEGIN (WHO); 
 						return ROLL;
 					}
+<OPCODE>12				{
+						BEGIN (WHO); 
+						return REJECT_RESIGN;
+					}
+
+  /* Always before 6 (OPPONENTS).  No semantics visible.  */
 <OPCODE>13				{
 						BEGIN (WHO); 
 						return START_OF_GAME;
 					}
-  /* Dance.  We can treat that as a regular (empty) move. */
+					
+<OPCODE>14				{
+						BEGIN (WHO); 
+						return RESULT;
+					}
+					
+  /* Cannot move or dance.  We can treat that as a regular (empty) move. */
 <OPCODE>15				{
 						BEGIN (WHO); 
 						return MOVE;
