@@ -85,7 +85,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 					}
 <OPCODE>2				{
 						BEGIN (WHO); 
-						return DOUBLE;
+						return CUBE;
 					}
 <OPCODE>3				{
 						BEGIN (WHO); 
@@ -137,7 +137,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 					
 <OPCODE>14				{
 						BEGIN (WHO); 
-						return RESULT;
+						return SCORE;
 					}
 					
   /* Cannot move or dance.  We can treat that as a regular (empty) move. */

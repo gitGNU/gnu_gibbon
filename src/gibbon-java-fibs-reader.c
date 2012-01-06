@@ -112,10 +112,11 @@ gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
 
         gibbon_java_fibs_lexer_in = in;
 
-        do {
-                gibbon_java_fibs_parser_parse ();
-        } while (!feof (in));
-
+        /*
+         * FIXME! Turn this into a loop so that we can detect and report
+         * trailing garbage.
+         */
+        gibbon_java_fibs_parser_parse ();
         fclose (in);
 
         return self;

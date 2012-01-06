@@ -86,7 +86,7 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 %token PLAYER
 %token ROLL
 %token MOVE
-%token DOUBLE
+%token CUBE
 %token RESIGN
 %token TAKE
 %token DROP
@@ -96,7 +96,7 @@ extern void gibbon_java_fibs_parser_error (const gchar *msg);
 %token WIN_MATCH
 %token REJECT_RESIGN
 %token OPPONENTS
-%token RESULT
+%token SCORE
 %token BAR
 %token OFF
 %token JUNK
@@ -127,7 +127,7 @@ actions
 	;
 	
 action
-	: roll | move
+	: roll | move | cube | drop | take | win_game | score
 	;
 
 roll
@@ -153,6 +153,27 @@ movement
 point
 	: INTEGER | BAR | OFF
 	;
+
+cube
+	: CUBE COLON PLAYER COLON
+	;
+
+drop
+	: DROP COLON PLAYER COLON
+	;
+
+take
+	: TAKE COLON PLAYER COLON
+	;
+	
+win_game
+	: WIN_GAME COLON PLAYER COLON INTEGER
+	;
+	
+score
+	: SCORE COLON PLAYER HYPHEN INTEGER COLON PLAYER HYPHEN INTEGER
+	;
+	
 %%
 
 void
