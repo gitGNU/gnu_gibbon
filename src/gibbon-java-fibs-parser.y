@@ -17,6 +17,12 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Parser for the internal format of JavaFIBS.  This grammar describes that
+ * format only loosely.  This is sufficient for parsing because we will
+ * ignore all redundant date, while building the syntax tree.
+ */
+
 %{
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -119,7 +125,7 @@ games
 game
 	: START_OF_GAME COLON PLAYER COLON
 	  OPPONENTS COLON PLAYER COLON PLAYER
-	  actions
+	  actions win_game
 
 actions
 	: /* empty */
@@ -127,7 +133,7 @@ actions
 	;
 	
 action
-	: roll | move | cube | drop | take | win_game | score 
+	: roll | move | cube | drop | take | score 
 	| resign | reject_resign | win_match
 	;
 

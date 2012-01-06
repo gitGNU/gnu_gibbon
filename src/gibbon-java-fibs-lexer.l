@@ -19,6 +19,12 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Lexical scanner for the internal format of JavaFIBS.  The scanner is
+ * quite forgiving.  For example, empty lines are ignored, as well as
+ * whitespace between tokens.
+ */
+
 %{
 #ifdef HAVE_CONFIG_H
 # include "config.h"
