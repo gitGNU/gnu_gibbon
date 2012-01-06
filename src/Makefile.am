@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = gibbon
+bin_PROGRAMS = gibbon gibbon-convert
 
 AUTOMAKE_OPTIONS = color-tests
 
@@ -123,6 +123,8 @@ gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
+
+gibbon_convert_SOURCES = gibbon-convert.c $(common_SOURCES)
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
