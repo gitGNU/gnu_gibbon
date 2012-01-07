@@ -37,11 +37,11 @@ gboolean version = FALSE;
 
 static const GOptionEntry options[] =
 {
-                { "in", 'i', 0, G_OPTION_ARG_FILENAME, &input_filename,
+                { "input-file", 'i', 0, G_OPTION_ARG_FILENAME, &input_filename,
                   N_("input filename or '-' for standard input"),
                   N_("FILENAME")
                 },
-                { "out", 'o', 0, G_OPTION_ARG_FILENAME, &output_filename,
+                { "output-file", 'o', 0, G_OPTION_ARG_FILENAME, &output_filename,
                   N_("output filename or '-' for standard output"),
                   N_("FILENAME")
                 },
@@ -61,6 +61,7 @@ static const GOptionEntry options[] =
 };
 
 static void print_version ();
+static void usage_error ();
 static gboolean parse_command_line (int argc, char *argv[]);
 #ifdef G_OS_WIN32
 static void init_i18n (const gchar *installdir);
@@ -120,11 +121,18 @@ parse_command_line (int argc, char *argv[])
         GOptionContext *context;
         GError *error = NULL;
         gchar *description;
+        gchar *alt_usage;
 
         context = g_option_context_new (_("- Gibbon match converter"));
         g_option_context_set_summary (context, _("Convert popular backgammon"
                                                  " match formats."));
-        description = g_strdup_printf ("%s\n%s\n%s\n",
+        alt_usage = g_strdup_printf (
+                        _("Alternative usages:\n"
+                          " %s [OPTION ...] INPUTFILE\n"
+                          " %s [OPTION ...] INPUTFILE OUTPUTFILE\n"),
+                          program_name, program_name);
+        description = g_strdup_printf ("%s\n%s\n%s\n%s\n",
+                        alt_usage,
                         _("Recognized values for FORMAT are 'SGF' for"
                           " the Smart Game format (used by\n"
                           "Gibbon and GNU backgammon), 'Jellyfish' and"
@@ -136,6 +144,7 @@ parse_command_line (int argc, char *argv[])
                           "'match' for the internal format of JavaFIBS.\n"),
                         _("Report bugs at"
                           " https://savannah.nongnu.org/projects/gibbon."));
+        g_free (alt_usage);
         g_option_context_set_description (context, description);
         g_free (description);
         g_option_context_add_main_entries (context, options, PACKAGE);
@@ -146,11 +155,39 @@ parse_command_line (int argc, char *argv[])
         if (error) {
                 g_printerr ("%s\n", error->message);
                 g_printerr (_("Run `%s --help' for more information!\n"),
-                            argv[0]);
+                            program_name);
                 g_error_free (error);
                 return FALSE;
         }
-        
+
+        if (argc == 2) {
+                if (input_filename) {
+                        usage_error (_("Either use the option `--input-file'"
+                                       " or specify the input file as an"
+                                       " argument."));
+                        return FALSE;
+                }
+                input_filename = argv[1];
+        } else if (argc == 3) {
+                if (input_filename) {
+                        usage_error (_("Either use the option `--input-file'"
+                                       " or specify the input file as an"
+                                       " argument."));
+                        return FALSE;
+                }
+                input_filename = argv[1];
+                if (output_filename) {
+                        usage_error (_("Either use the option `--output-file'"
+                                       " or specify the output file as an"
+                                       " argument."));
+                        return FALSE;
+                }
+                output_filename = argv[1];
+        } else if (argc > 3) {
+                usage_error (_("Too many arguments!"));
+                return FALSE;
+        }
+
         return TRUE;
 }
 
@@ -166,4 +203,12 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 "),
                 "2009-2012", _("Guido Flohr"));
         g_print (_("Written by %s.\n"), _("Guido Flohr"));
+}
+
+void
+usage_error (const gchar *msg)
+{
+        g_printerr ("%s\n", msg);
+        g_printerr (_("Try `%s --help' for more information!\n"),
+                    program_name);
 }
