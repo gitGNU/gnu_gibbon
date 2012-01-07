@@ -22,17 +22,29 @@
 #endif
 
 #include <locale.h>
+#include <string.h>
 
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 
 #include "gibbon-java-fibs-reader.h"
 
+typedef enum {
+        GIBBON_CONVERT_FORMAT_UNKNOWN = 0,
+        GIBBON_CONVERT_FORMAT_SGF = 1,
+        GIBBON_CONVERT_FORMAT_JAVAFIBS = 2,
+        GIBBON_CONVERT_FORMAT_JELLYFISH = 3
+} GibbonConvertFormat;
+
 static gchar *program_name;
 static gchar *input_filename = NULL;
 static gchar *output_filename = NULL;
 static gchar *from_format = NULL;
 static gchar *to_format = NULL;
+
+GibbonConvertFormat input_format = GIBBON_CONVERT_FORMAT_UNKNOWN;
+GibbonConvertFormat output_format = GIBBON_CONVERT_FORMAT_UNKNOWN;
+
 gboolean version = FALSE;
 
 static const GOptionEntry options[] =
@@ -60,14 +72,17 @@ static const GOptionEntry options[] =
 	        { NULL }
 };
 
-static void print_version ();
-static void usage_error ();
-static gboolean parse_command_line (int argc, char *argv[]);
 #ifdef G_OS_WIN32
 static void init_i18n (const gchar *installdir);
 #else
 static void init_i18n (void);
 #endif
+
+static void print_version ();
+static void usage_error ();
+static gboolean parse_command_line (int argc, char *argv[]);
+static GibbonConvertFormat guess_format_from_id (const gchar *id);
+static GibbonConvertFormat guess_format_from_filename (const gchar *name);
 
 int
 main (int argc, char *argv[])
@@ -80,6 +95,7 @@ main (int argc, char *argv[])
 #else
         init_i18n ();
 #endif
+        GibbonMatchReader *reader;
 
         program_name = argv[0];
         if (!parse_command_line (argc, argv))
@@ -89,6 +105,31 @@ main (int argc, char *argv[])
                 print_version ();
                 return 0;
         }
+
+        if (from_format) {
+                input_format = guess_format_from_id (from_format);
+        } else if (input_filename) {
+                input_format = guess_format_from_filename (input_filename);
+        } else {
+                usage_error (_("The option `--from-format' is mandatory,"
+                               " when reading standard input."));
+                return 1;
+        }
+
+        if (to_format) {
+                output_format = guess_format_from_id (to_format);
+        } else if (input_filename) {
+                output_format = guess_format_from_filename (output_filename);
+        } else {
+                usage_error (_("The option `--to-format' is mandatory,"
+                               " when writing to standard output."));
+                return 1;
+        }
+
+        if (!from_format || !to_format)
+                return 1;
+
+
 
         return 0;
 }
@@ -211,4 +252,69 @@ usage_error (const gchar *msg)
         g_printerr ("%s\n", msg);
         g_printerr (_("Try `%s --help' for more information!\n"),
                     program_name);
+}
+
+static GibbonConvertFormat
+guess_format_from_id (const gchar *id)
+{
+        gchar *msg;
+        size_t got_length = strlen (id);
+
+        if (got_length) {
+                if (got_length <= 3
+                    && 0 == g_ascii_strncasecmp ("sgf", id, got_length))
+                         return GIBBON_CONVERT_FORMAT_SGF;
+
+                if (got_length > 1) {
+                        if (0 == g_ascii_strncasecmp ("javafibs", id,
+                                                      got_length))
+                                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+                        if (0 == g_ascii_strncasecmp ("jellyfish", id,
+                                                      got_length))
+                                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+                }
+
+                if ((id[0] == 'j' || id[0] == 'J') && id[1] == 0) {
+                        msg = g_strdup_printf (_("The file format `%c' is"
+                                                 " ambiguous."),
+                                               id[0]);
+                        usage_error (msg);
+                        g_free (msg);
+                        return GIBBON_CONVERT_FORMAT_UNKNOWN;
+                }
+        }
+
+        msg = g_strdup_printf (_("Unknown file format `%s'!"), id);
+        usage_error (msg);
+        g_free (msg);
+
+        return GIBBON_CONVERT_FORMAT_UNKNOWN;
+}
+
+static GibbonConvertFormat
+guess_format_from_filename (const gchar *filename)
+{
+        const gchar *last_dot;
+        gchar *msg;
+
+        last_dot = rindex (filename, '.');
+
+        if (!last_dot) {
+                msg = g_strdup_printf (_("Cannot guess format of `%s'!"),
+                                       filename);
+                usage_error (msg);
+                g_free (msg);
+                return GIBBON_CONVERT_FORMAT_UNKNOWN;
+        } else if (0 == g_ascii_strcasecmp (".sgf", last_dot)) {
+                return GIBBON_CONVERT_FORMAT_SGF;
+        } else if (0 == g_ascii_strcasecmp (".match", last_dot)) {
+                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+        } else if (0 == g_ascii_strcasecmp (".mat", last_dot)) {
+                return GIBBON_CONVERT_FORMAT_JELLYFISH;
+        }
+
+        msg = g_strdup_printf (_("Cannot guess format of `%s'!"), filename);
+        usage_error (msg);
+        g_free (msg);
+        return GIBBON_CONVERT_FORMAT_UNKNOWN;
 }
