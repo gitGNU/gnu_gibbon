@@ -2,6 +2,8 @@ gobject-skeleton.c
 gobject-skeleton.h
 gibbon
 gibbon.exe
+gibbon-convert
+gibbon-convert.exe
 gibbon.rc
 test_*
 gibbon-java-fibs-lexer.c
