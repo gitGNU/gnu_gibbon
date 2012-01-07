@@ -26,6 +26,7 @@
 
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <gdk/gdk.h>
 
 #include "gibbon-java-fibs-reader.h"
 
@@ -96,6 +97,9 @@ main (int argc, char *argv[])
         init_i18n ();
 #endif
         GibbonMatchReader *reader;
+        GibbonMatch *match;
+
+        g_type_init ();
 
         program_name = argv[0];
         if (!parse_command_line (argc, argv))
@@ -118,7 +122,7 @@ main (int argc, char *argv[])
 
         if (to_format) {
                 output_format = guess_format_from_id (to_format);
-        } else if (input_filename) {
+        } else if (output_filename) {
                 output_format = guess_format_from_filename (output_filename);
         } else {
                 usage_error (_("The option `--to-format' is mandatory,"
@@ -126,10 +130,31 @@ main (int argc, char *argv[])
                 return 1;
         }
 
-        if (!from_format || !to_format)
+        if (!g_thread_supported ()) {
+                g_thread_init (NULL);
+                gdk_threads_init ();
+        }
+
+        switch (input_format) {
+        case GIBBON_CONVERT_FORMAT_UNKNOWN:
                 return 1;
+        case GIBBON_CONVERT_FORMAT_SGF:
+                g_printerr ("Reading SGF is not yet implemented!\n");
+                return 0;
+        case GIBBON_CONVERT_FORMAT_JAVAFIBS:
+                reader =
+                   GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (NULL,
+                                                                     NULL));
+                break;
+        case GIBBON_CONVERT_FORMAT_JELLYFISH:
+                g_printerr ("Reading JellyFish files is not yet implemented!\n");
+                return 1;
+        }
 
+        match = gibbon_match_reader_parse (reader, input_filename);
 
+        if (match)
+                g_object_unref (match);
 
         return 0;
 }

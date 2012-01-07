@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gibbon-match.h"
+
 #define GIBBON_TYPE_MATCH_READER \
         (gibbon_match_reader_get_type ())
 #define GIBBON_MATCH_READER(obj) \
@@ -44,6 +46,9 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_MATCH_READER, GibbonMatchReaderClass))
 
+typedef void (*GibbonMatchReaderErrorFunc) (gpointer user_data,
+                                            const gchar *msg);
+
 /**
  * GibbonMatchReader:
  *
@@ -57,6 +62,9 @@ struct _GibbonMatchReader
 
 /**
  * GibbonMatchReaderClass:
+ * @parse: Parse the given filename or %NULL for standard input.
+ *
+ * IMPORTANT: The @parse method is usually NOT thread-safe!
  *
  * Abstract base class for readers for backgammon match files.
  */
@@ -65,8 +73,14 @@ struct _GibbonMatchReaderClass
 {
         /* <private >*/
         GObjectClass parent_class;
+
+        /* <public> */
+        GibbonMatch * (*parse) (GibbonMatchReader *self, const gchar *filename);
 };
 
 GType gibbon_match_reader_get_type (void) G_GNUC_CONST;
+
+GibbonMatch *gibbon_match_reader_parse (GibbonMatchReader *self,
+                                        const gchar *filename);
 
 #endif

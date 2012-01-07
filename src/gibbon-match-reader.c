@@ -31,6 +31,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-match-reader.h"
+#include "gibbon-match.h"
 
 G_DEFINE_TYPE (GibbonMatchReader, gibbon_match_reader, G_TYPE_OBJECT)
 
@@ -50,8 +51,17 @@ gibbon_match_reader_class_init (GibbonMatchReaderClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods! */
-        /* klass->do_that = GibbonMatchReader_do_that; */
+        klass->parse = NULL;
 
         object_class->finalize = gibbon_match_reader_finalize;
+}
+
+GibbonMatch *
+gibbon_match_reader_parse (GibbonMatchReader *self, const gchar *filename)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_READER (self), NULL);
+        g_return_val_if_fail (GIBBON_MATCH_READER_GET_CLASS (self)->parse,
+                              NULL);
+
+        return GIBBON_MATCH_READER_GET_CLASS(self)->parse (self, filename);
 }

@@ -28,10 +28,11 @@
 # include "config.h"
 #endif
 
-#include "gibbon-java-fibs-parser.h"
-
 #include <glib.h>
 #include <glib/gi18n.h>
+
+#include "gibbon-java-fibs-parser.h"
+#include "gibbon-java-fibs-reader.h"
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -47,8 +48,7 @@
 #define yyparse    gibbon_java_fibs_parser_parse
 #define yylex      gibbon_java_fibs_lexer_lex
 extern int gibbon_java_fibs_lexer_lex (void);
-#define yyerror    gibbon_java_fibs_parser_error
-extern void gibbon_java_fibs_parser_error (const gchar *msg);
+#define yyerror    gibbon_java_fibs_reader_yyerror
 #define yylval     gibbon_java_fibs_parser_lval
 #define yychar     gibbon_java_fibs_parser_char
 #define yydebug    gibbon_java_fibs_parser_debug
@@ -194,11 +194,3 @@ win_match
 	;
 
 %%
-
-void
-gibbon_java_fibs_parser_error (const char *msg)
-{
-	extern int gibbon_java_fibs_lexer_lineno;
-	
-	g_printerr ("Line %d: %s\n", gibbon_java_fibs_lexer_lineno, msg);
-}

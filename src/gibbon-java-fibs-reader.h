@@ -74,7 +74,10 @@ struct _GibbonJavaFIBSReaderClass
 
 GType gibbon_java_fibs_reader_get_type (void) G_GNUC_CONST;
 
-GibbonJavaFIBSReader *gibbon_java_fibs_reader_new (const gchar *path,
-                                                   const gchar *you);
+GibbonJavaFIBSReader *gibbon_java_fibs_reader_new (
+                GibbonMatchReaderErrorFunc error_func,
+                gpointer user_data);
+
+void gibbon_java_fibs_reader_yyerror (const gchar *msg);
 
 #endif

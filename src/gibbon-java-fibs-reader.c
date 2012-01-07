@@ -28,22 +28,31 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gdk/gdk.h>
 
 #include "gibbon-java-fibs-reader.h"
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
-        gchar *filename;
-        gchar *you;
+        GibbonMatchReaderErrorFunc yyerror;
+        const gchar *filename;
+        gpointer user_data;
 };
+
+static GibbonJavaFIBSReader *instance = NULL;
 
 #define GIBBON_JAVA_FIBS_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_JAVA_FIBS_READER, GibbonJavaFIBSReaderPrivate))
 
 G_DEFINE_TYPE (GibbonJavaFIBSReader, gibbon_java_fibs_reader, GIBBON_TYPE_MATCH_READER)
+
+static GibbonMatch *gibbon_java_fibs_reader_parse (GibbonMatchReader *match_reader,
+                                                   const gchar *filename);
 
 static void 
 gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
@@ -51,18 +60,17 @@ gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_JAVA_FIBS_READER, GibbonJavaFIBSReaderPrivate);
 
+        self->priv->yyerror = NULL;
+        self->priv->user_data = NULL;
+
+        /* Per parser-instance data.  */
         self->priv->filename = NULL;
-        self->priv->you = NULL;
+
 }
 
 static void
 gibbon_java_fibs_reader_finalize (GObject *object)
 {
-        GibbonJavaFIBSReader *self = GIBBON_JAVA_FIBS_READER (object);
-
-        g_free (self->priv->filename);
-        g_free (self->priv->you);
-
         G_OBJECT_CLASS (gibbon_java_fibs_reader_parent_class)->finalize(object);
 }
 
@@ -70,54 +78,123 @@ static void
 gibbon_java_fibs_reader_class_init (GibbonJavaFIBSReaderClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GibbonMatchReaderClass *gibbon_match_reader_class = GIBBON_MATCH_READER_CLASS (klass);
+        GibbonMatchReaderClass *gibbon_match_reader_class =
+                        GIBBON_MATCH_READER_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods from parent class! */
-        /* gibbon_match_reader_class->do_this = gibbon_java_fibs_reader_do_this; */
+        gibbon_match_reader_class->parse = gibbon_java_fibs_reader_parse;
         
         g_type_class_add_private (klass, sizeof (GibbonJavaFIBSReaderPrivate));
-
-        /* FIXME! Initialize pointers to methods! */
-        /* klass->do_that = GibbonJavaFIBSReader_do_that; */
 
         object_class->finalize = gibbon_java_fibs_reader_finalize;
 }
 
 /**
  * gibbon_java_fibs_reader_new:
- * @path: Filename to read
- * @you: Player name to replace for JavaFIBS' "You"
+ * @error_func: Error reporting function or %NULL
+ * @user_data: Pointer to pass to @error_func or %NULL
  *
  * Creates a new #GibbonJavaFIBSReader.
  *
- * Returns: The newly created #GibbonJavaFIBSReader or %NULL in case of failure.
+ * Returns: The newly created #GibbonJavaFIBSReader.
  */
 GibbonJavaFIBSReader *
-gibbon_java_fibs_reader_new (const gchar *filename, const gchar *you)
+gibbon_java_fibs_reader_new (GibbonMatchReaderErrorFunc yyerror,
+                             gpointer user_data)
 {
-        GibbonJavaFIBSReader *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_READER, NULL);
-        FILE *in;
-        extern FILE *gibbon_java_fibs_lexer_in;
-        extern gibbon_java_fibs_parser_parse ();
+        GibbonJavaFIBSReader *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_READER,
+                                                   NULL);
 
-        g_return_val_if_fail (filename != NULL, NULL);
-
-        self->priv->filename = g_strdup (filename);
-        if (you)
-                self->priv->you = g_strdup (you);
-
-        in = fopen (filename, "rb");
-        if (!in)
-                return self;
-
-        gibbon_java_fibs_lexer_in = in;
-
-        /*
-         * FIXME! Turn this into a loop so that we can detect and report
-         * trailing garbage.
-         */
-        gibbon_java_fibs_parser_parse ();
-        fclose (in);
+        self->priv->user_data = user_data;
+        self->priv->yyerror = yyerror;
 
         return self;
+}
+
+static GibbonMatch *
+gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
+{
+        GibbonJavaFIBSReader *self;
+        GibbonMatch *match = NULL;
+        FILE *in;
+        extern FILE *gibbon_java_fibs_lexer_in;
+        extern int gibbon_java_fibs_parser_parse ();
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (_self), NULL);
+        self = GIBBON_JAVA_FIBS_READER (_self);
+
+        gdk_threads_enter ();
+        if (instance) {
+                g_critical ("Another instance of GibbonJavaFIBSReader is"
+                            " currently active!");
+                gdk_threads_leave ();
+                return NULL;
+        }
+        instance = self;
+        gdk_threads_leave ();
+
+        self->priv->filename = filename;
+
+        if (filename)
+                in = fopen (filename, "rb");
+        else
+                in = stdin;
+        if (in) {
+                gibbon_java_fibs_lexer_in = in;
+
+                gibbon_java_fibs_parser_parse ();
+                if (filename)
+                        fclose (in);
+        } else {
+                gibbon_java_fibs_reader_yyerror (strerror (errno));
+        }
+
+        self->priv->filename = NULL;
+
+        gdk_threads_enter ();
+        if (!instance || instance != self) {
+                g_object_unref (match);
+                g_critical ("Another instance of GibbonJavaFIBSReader has"
+                            " reset this one!");
+                gdk_threads_leave ();
+                return NULL;
+        }
+        instance = NULL;
+        gdk_threads_leave ();
+
+        return match;
+}
+
+void
+gibbon_java_fibs_reader_yyerror (const gchar *msg)
+{
+        gchar *full_msg;
+        const gchar *filename;
+        extern int gibbon_java_fibs_lexer_get_lineno ();
+        int lineno;
+
+        if (!instance || !GIBBON_IS_JAVA_FIBS_READER (instance)) {
+                g_critical ("gibbon_java_fibs_reader_yyerror() called without"
+                            " an instance");
+                return;
+        }
+
+        /* FIXME! Get yylineno! */
+        if (instance->priv->filename)
+                filename = instance->priv->filename;
+        else
+                filename = _("[standard input]");
+
+        lineno = gibbon_java_fibs_lexer_get_lineno ();
+
+        if (lineno)
+                full_msg = g_strdup_printf ("%s:%d: %s", filename, lineno, msg);
+        else
+                full_msg = g_strdup_printf ("%s: %s", filename, msg);
+
+        if (instance->priv->yyerror)
+                instance->priv->yyerror (instance->priv->user_data, full_msg);
+        else
+                g_printerr ("%s\n", full_msg);
+
+        g_free (full_msg);
 }
