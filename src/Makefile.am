@@ -124,7 +124,27 @@ gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
-gibbon_convert_SOURCES = gibbon-convert.c $(common_SOURCES)
+gibbon_convert_SOURCES = 		\
+	gibbon-convert.c		\
+	gibbon-game-action.c		\
+	gibbon-movement.c		\
+	gibbon-move.c			\
+	gibbon-double.c			\
+	gibbon-drop.c			\
+	gibbon-roll.c			\
+	gibbon-take.c			\
+	gibbon-resign.c			\
+	gibbon-accept.c			\
+	gibbon-reject.c			\
+	gibbon-setup.c			\
+	gibbon-match-reader.c		\
+	gibbon-java-fibs-reader.c	\
+	gibbon-match-writer.c		\
+	gibbon-java-fibs-writer.c	\
+	gibbon-java-fibs-parser.y	\
+	gibbon-java-fibs-lexer.c	\
+	gibbon-position.c		\
+	gibbon-util.c
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
