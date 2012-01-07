@@ -54,7 +54,8 @@ static const GOptionEntry options[] =
 };
 
 static void print_version ();
-static guint parse_command_line (int argc, char *argv[]);
+static void usage_error ();
+static gboolean parse_command_line (int argc, char *argv[]);
 #ifdef G_OS_WIN32
 static void setup_path (const gchar *installdir);
 static void init_i18n (const gchar *installdir);
@@ -166,7 +167,7 @@ init_i18n (void)
         textdomain (GETTEXT_PACKAGE);
 }
  
-static guint 
+static gboolean
 parse_command_line (int argc, char *argv[])
 {
         GOptionContext *context;
@@ -183,14 +184,11 @@ parse_command_line (int argc, char *argv[])
         g_option_context_free (context);
 
         if (error) {
-                g_printerr ("%s\n", error->message);
-                g_printerr (_("Run `%s --help' for more information!\n"),
-                            argv[0]);
-                g_error_free (error);
-                return 0;
+                usage_error (error->message);
+                return FALSE;
         }
         
-        return 1;
+        return TRUE;
 }
 
 #ifdef G_OS_WIN32
@@ -225,4 +223,12 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 "),
                 "2009-2012", _("Guido Flohr"));
         g_print (_("Written by %s.\n"), _("Guido Flohr"));
+}
+
+void
+usage_error (const gchar *msg)
+{
+        g_printerr ("%s\n", msg);
+        g_printerr (_("Try `%s --help' for more information!\n"),
+                    program_name);
 }
