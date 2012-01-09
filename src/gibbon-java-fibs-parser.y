@@ -123,9 +123,16 @@ games
 	;
 
 game
+	: start_of_game opponents actions
+	;
+
+start_of_game
 	: START_OF_GAME COLON PLAYER COLON
-	  OPPONENTS COLON PLAYER COLON PLAYER
-	  actions win_game
+	;
+
+opponents
+	: OPPONENTS COLON PLAYER COLON PLAYER
+	;
 
 actions
 	: /* empty */
@@ -134,7 +141,7 @@ actions
 	
 action
 	: roll | move | cube | drop | take | score 
-	| resign | reject_resign | win_match
+	| resign | reject_resign | win_game | win_match
 	;
 
 roll
