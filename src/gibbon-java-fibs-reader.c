@@ -40,8 +40,9 @@
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
-        const gchar *filename;
         gpointer user_data;
+        const gchar *filename;
+        GibbonMatch *match;
 };
 
 static GibbonJavaFIBSReader *instance = NULL;
@@ -65,7 +66,7 @@ gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
 
         /* Per parser-instance data.  */
         self->priv->filename = NULL;
-
+        self->priv->match = NULL;
 }
 
 static void
@@ -133,6 +134,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         gdk_threads_leave ();
 
         self->priv->filename = filename;
+        match = self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -149,6 +151,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         }
 
         self->priv->filename = NULL;
+        self->priv->match = NULL;
 
         gdk_threads_enter ();
         if (!instance || instance != self) {

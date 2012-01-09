@@ -85,6 +85,11 @@ extern int gibbon_java_fibs_lexer_lex (void);
 #define yycheck    gibbon_java_fibs_parser_yycheck
 %}
 
+%union {
+	int num;
+	char *name;
+}
+
 %token PROLOG
 %token COLON
 %token HYPHEN

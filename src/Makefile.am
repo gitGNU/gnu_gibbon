@@ -144,7 +144,9 @@ gibbon_convert_SOURCES = 		\
 	gibbon-java-fibs-parser.y	\
 	gibbon-java-fibs-lexer.c	\
 	gibbon-position.c		\
-	gibbon-util.c
+	gibbon-util.c			\
+	gibbon-match.c			\
+	gibbon-game.c
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
