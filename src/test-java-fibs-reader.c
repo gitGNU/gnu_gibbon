@@ -30,17 +30,21 @@ main (int argc, char *argv[])
 {
         gint status = 0;
         gchar *input_file;
-        GibbonJavaFIBSReader *reader;
+        GibbonMatchReader *reader;
+        GibbonMatch *match;
 
         g_type_init ();
 
-        input_file = g_build_filename (ABS_BUILDDIR, "complete.match", NULL);
-
-        reader = gibbon_java_fibs_reader_new (input_file, "Snow White");
-        g_free (input_file);
-
+        reader = GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (NULL, NULL));
         g_return_val_if_fail (reader != NULL, -1);
 
+        input_file = g_build_filename (ABS_BUILDDIR, "complete.match", NULL);
+        match = gibbon_match_reader_parse (reader, input_file);
+        g_free (input_file);\
+
+        g_return_val_if_fail (match != NULL, -1);
+
+        g_object_unref (match);
         g_object_unref (reader);
 
         return status;
