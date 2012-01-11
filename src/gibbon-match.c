@@ -138,6 +138,14 @@ gibbon_match_new (const gchar *white, const gchar *black,
         return self;
 }
 
+GibbonMatch *
+gibbon_match_new_empty (void)
+{
+        GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
+
+        return self;
+}
+
 const GSGFCollection *
 gibbon_match_get_collection (GibbonMatch *self)
 {

@@ -74,6 +74,7 @@ GType gibbon_match_get_type (void) G_GNUC_CONST;
 
 GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
                                guint length, gboolean crawford);
+GibbonMatch *gibbon_match_new_empty (void);
 
 const GSGFCollection *gibbon_match_get_collection ();
 gboolean gibbon_match_get_crawford (const GibbonMatch *self);
