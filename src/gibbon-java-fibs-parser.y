@@ -86,15 +86,15 @@ extern int gibbon_java_fibs_lexer_lex (void);
 %}
 
 %union {
-	int num;
-	char *name;
+	gint num;
+	gchar *name;
 }
 
 %token PROLOG
 %token COLON
 %token HYPHEN
-%token INTEGER
-%token PLAYER
+%token <num> INTEGER
+%token <name> PLAYER
 %token ROLL
 %token MOVE
 %token CUBE

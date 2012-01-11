@@ -134,7 +134,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         gdk_threads_leave ();
 
         self->priv->filename = filename;
-        match = self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
+        match = self->priv->match = gibbon_match_new ("foo", "bar", 0, FALSE);
 
         if (filename)
                 in = fopen (filename, "rb");
