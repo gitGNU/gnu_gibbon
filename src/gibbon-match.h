@@ -87,7 +87,7 @@ struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
 void gibbon_match_set_white (GibbonMatch *self, const gchar *white);
 const gchar *gibbon_match_get_white (const GibbonMatch *self);
 void gibbon_match_set_black (GibbonMatch *self, const gchar *black);
-const gchar *gibbon_match_get_white (const GibbonMatch *self);
+const gchar *gibbon_match_get_black (const GibbonMatch *self);
 void gibbon_match_set_length (GibbonMatch *self, gsize length);
 gsize gibbon_match_get_length (const GibbonMatch *self);
 
