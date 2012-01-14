@@ -32,6 +32,8 @@
 #include "gibbon-jelly-fish-writer.h"
 #include "gibbon-game.h"
 
+#include "gibbon-roll.h"
+
 G_DEFINE_TYPE (GibbonJellyFishWriter, gibbon_jelly_fish_writer,
                GIBBON_TYPE_MATCH_WRITER)
 
@@ -45,6 +47,8 @@ static gboolean gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter
                                                      GOutputStream *out,
                                                      const GibbonGame *game,
                                                      GError **error);
+static gchar *gibbon_jelly_fish_writer_roll (const GibbonJellyFishWriter *self,
+                                             const GibbonRoll *roll);
 
 static void 
 gibbon_jelly_fish_writer_init (GibbonJellyFishWriter *self)
@@ -129,7 +133,7 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
 }
 
 static gboolean
-gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
+gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                                      GOutputStream *out,
                                      const GibbonGame *game,
                                      GError **error)
@@ -140,6 +144,10 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
         gchar padding[32];
         glong len, i;
         glong move_num = 0;
+        glong action_num;
+        const GibbonGameAction *action;
+        GibbonPositionSide side;
+        gsize column = 0;
 
         buffer = g_strdup_printf (" %s : %u",
                                   position->players[1],
@@ -167,15 +175,49 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
                                   position->players[0],
                                   position->scores[0]);
 
-        if (!g_output_stream_write_all (out,
-                                        buffer, strlen (buffer),
+        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
                 g_free (buffer);
                 return FALSE;
         }
         g_free (buffer);
 
+#define new_half_move()                                                       \
+        if (!move_num || side == GIBBON_POSITION_SIDE_BLACK) {                \
+                buffer = g_strdup_printf ("%3ld)", ++move_num);               \
+                if (!g_output_stream_write_all (out, buffer, strlen (buffer), \
+                                                NULL, NULL, error)) {         \
+                        g_free (buffer);                                      \
+                        return FALSE;                                         \
+                }                                                             \
+                column = g_utf8_strlen (buffer, -1);                          \
+                g_free (buffer);                                              \
+        }
 
+
+        for (action_num = 0; ; ++action_num) {
+                action = gibbon_game_get_nth_action (game, action_num, &side);
+                if (!action)
+                        break;
+
+                if (GIBBON_IS_ROLL (action)) {
+                        if (!side)
+                                continue;
+                        new_half_move();
+                        buffer = gibbon_jelly_fish_writer_roll (self,
+                                                          GIBBON_ROLL (action));
+                        g_free (buffer);
+                } else {
+                        /* TODO */
+                }
+        }
 
         return TRUE;
+}
+
+static gchar *
+gibbon_jelly_fish_writer_roll (const GibbonJellyFishWriter *self,
+                               const GibbonRoll *roll)
+{
+        return NULL;
 }
