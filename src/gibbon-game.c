@@ -558,3 +558,70 @@ gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
 
         return self->priv->snapshots + i;
 }
+
+void
+gibbon_game_set_white (GibbonGame *self, const gchar *white)
+{
+        GibbonPosition *position;
+        GibbonGameSnapshot *snapshot;
+        gsize i;
+
+        g_return_if_fail (GIBBON_IS_GAME (self));
+
+        position = self->priv->initial_position;
+        g_free (position->players[0]);
+        position->players[0] = g_strdup (white);
+
+        for (i = 0; i < self->priv->num_snapshots; ++i) {
+                snapshot = self->priv->snapshots + i;
+                position = snapshot->resulting_position;
+                g_free (position->players[0]);
+                position->players[0] = g_strdup (white);
+        }
+
+        return;
+}
+
+void
+gibbon_game_set_black (GibbonGame *self, const gchar *black)
+{
+        GibbonPosition *position;
+        GibbonGameSnapshot *snapshot;
+        gsize i;
+
+        g_return_if_fail (GIBBON_IS_GAME (self));
+
+        position = self->priv->initial_position;
+        g_free (position->players[1]);
+        position->players[1] = g_strdup (black);
+
+        for (i = 0; i < self->priv->num_snapshots; ++i) {
+                snapshot = self->priv->snapshots + i;
+                position = snapshot->resulting_position;
+                g_free (position->players[1]);
+                position->players[0] = g_strdup (black);
+        }
+
+        return;
+}
+
+void
+gibbon_game_set_match_length (GibbonGame *self, gsize length)
+{
+        GibbonPosition *position;
+        GibbonGameSnapshot *snapshot;
+        gsize i;
+
+        g_return_if_fail (GIBBON_IS_GAME (self));
+
+        position = self->priv->initial_position;
+        position->match_length = length;
+
+        for (i = 0; i < self->priv->num_snapshots; ++i) {
+                snapshot = self->priv->snapshots + i;
+                position = snapshot->resulting_position;
+                position->match_length = length;
+        }
+
+        return;
+}

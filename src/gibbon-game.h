@@ -91,4 +91,8 @@ gboolean gibbon_game_is_crawford (const GibbonGame *self);
 const GibbonPosition *gibbon_game_get_nth_position (const GibbonGame *self,
                                                     gint n);
 
+void gibbon_game_set_white (GibbonGame *self, const gchar *white);
+void gibbon_game_set_black (GibbonGame *self, const gchar *black);
+void gibbon_game_set_match_length (GibbonGame *self, gsize length);
+
 #endif
