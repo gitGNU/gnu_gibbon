@@ -38,6 +38,7 @@ static int yywrap ();
 #define yylval gibbon_java_fibs_parser_lval
 
 #include "gibbon-java-fibs-parser.h"
+#include "gibbon-java-fibs-reader-priv.h"
 
 %}
 
@@ -177,7 +178,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
    ***************************************************************************/
 <WHO>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = yytext;
+					yylval.name = g_strdup (yytext);
 					return PLAYER;
 				}
 <WHO>.|\n			return JUNK;
@@ -204,7 +205,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 				}
 <WHAT>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = yytext;
+					yylval.name = g_strdup (yytext);
 					return PLAYER;
 				}
 <WHAT>\n			BEGIN (OPCODE);
