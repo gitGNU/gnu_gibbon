@@ -109,8 +109,14 @@ gibbon_match_new (const gchar *white, const gchar *black,
         self->priv->crawford = crawford;
         self->priv->match_length = length;
 
-        self->priv->white = g_strdup (white);
-        self->priv->black = g_strdup (black);
+        if (white)
+                self->priv->white = g_strdup (white);
+        else
+                self->priv->white = g_strdup ("white");
+        if (black)
+                self->priv->black = g_strdup (black);
+        else
+                self->priv->black = g_strdup ("black");
 
         return self;
 }
