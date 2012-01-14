@@ -78,6 +78,4 @@ GibbonJavaFIBSReader *gibbon_java_fibs_reader_new (
                 GibbonMatchReaderErrorFunc error_func,
                 gpointer user_data);
 
-void gibbon_java_fibs_reader_yyerror (const gchar *msg);
-
 #endif

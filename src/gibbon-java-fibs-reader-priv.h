@@ -28,4 +28,11 @@
 
 void _gibbon_java_fibs_reader_yyerror (const gchar *msg);
 
+void _gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
+                                         const gchar *white);
+void _gibbon_java_fibs_reader_set_black (GibbonJavaFIBSReader *self,
+                                         const gchar *black);
+void _gibbon_java_fibs_reader_set_match_length (GibbonJavaFIBSReader *self,
+                                                gsize length);
+
 #endif

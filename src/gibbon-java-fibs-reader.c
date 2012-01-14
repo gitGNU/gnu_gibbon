@@ -133,7 +133,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         gdk_threads_leave ();
 
         self->priv->filename = filename;
-        self->priv->match = NULL;
+        self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -201,4 +201,24 @@ _gibbon_java_fibs_reader_yyerror (const gchar *msg)
                 g_printerr ("%s\n", full_msg);
 
         g_free (full_msg);
+}
+
+void
+_gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
+                                    const gchar *white)
+{
+        g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_white (self->priv->match, white);
+}
+
+void
+_gibbon_java_fibs_reader_set_match_length (GibbonJavaFIBSReader *self,
+                                           gsize length)
+{
+        g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_length (self->priv->match, length);
 }

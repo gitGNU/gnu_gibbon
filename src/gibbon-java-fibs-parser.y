@@ -34,7 +34,7 @@
 #include "gibbon-java-fibs-parser.h"
 #include "gibbon-java-fibs-reader-priv.h"
 
-#define reader gibbon_java_fibs_reader_instance;
+#define reader gibbon_java_fibs_reader_instance
 extern GibbonJavaFIBSReader *reader;
 
 /*
@@ -122,7 +122,16 @@ java_fibs_file
         ;
 
 match
-	: START_OF_MATCH COLON PLAYER COLON INTEGER  games
+	: START_OF_MATCH COLON PLAYER 
+		{
+			_gibbon_java_fibs_reader_set_white (reader, $3);
+			g_free ($3);
+		}
+	  COLON INTEGER 
+		{
+			_gibbon_java_fibs_reader_set_match_length (reader, $6);
+		}
+	  games
 	;
 
 games
