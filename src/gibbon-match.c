@@ -242,6 +242,14 @@ gibbon_match_set_white (GibbonMatch *self, const gchar *white)
         return;
 }
 
+const gchar *
+gibbon_match_get_white (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->white;
+}
+
 void
 gibbon_match_set_black (GibbonMatch *self, const gchar *black)
 {
@@ -264,6 +272,13 @@ gibbon_match_set_black (GibbonMatch *self, const gchar *black)
         }
 
         return;
+}
+const gchar *
+gibbon_match_get_black (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->black;
 }
 
 void
