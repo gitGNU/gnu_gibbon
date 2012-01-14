@@ -460,12 +460,6 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                         GIBBON_POSITION_SIDE_WHITE : GIBBON_POSITION_SIDE_BLACK;
 
         snapshot = gibbon_game_get_snapshot (self);
-        if (!snapshot)
-                g_printerr ("No snapshot!\n");
-        if (!GIBBON_IS_RESIGN (snapshot->action))
-                g_printerr ("Not a resignation!\n");
-        if (other != snapshot->side)
-                g_printerr ("wrong side!\n");
         if (!snapshot || !GIBBON_IS_RESIGN (snapshot->action)
             || other != snapshot->side) {
                 g_warning (_("Accept without resignation!"));
@@ -614,6 +608,8 @@ gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
 
         if (n < 0) {
                 i = self->priv->num_snapshots + n;
+        } else {
+                i = n;
         }
 
         if (i >= self->priv->num_snapshots)
