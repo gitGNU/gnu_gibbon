@@ -37,6 +37,10 @@
 
 #include "gibbon-java-fibs-reader-priv.h"
 
+#include "gibbon-game.h"
+#include "gibbon-game-action.h"
+#include "gibbon-roll.h"
+
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
@@ -54,6 +58,9 @@ G_DEFINE_TYPE (GibbonJavaFIBSReader, gibbon_java_fibs_reader, GIBBON_TYPE_MATCH_
 
 static GibbonMatch *gibbon_java_fibs_reader_parse (GibbonMatchReader *match_reader,
                                                    const gchar *filename);
+static gboolean gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
+                                                    const gchar *name,
+                                                    GibbonGameAction *action);
 
 static void 
 gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
@@ -253,6 +260,52 @@ _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self)
         if (!gibbon_match_add_game (self->priv->match, &error)) {
                 _gibbon_java_fibs_reader_yyerror (error->message);
                 g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
+                               const gchar *name,
+                               guint die1, guint die2)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (die1, die2));
+
+        return gibbon_java_fibs_reader_add_action (self, name, action);
+}
+
+static gboolean
+gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
+                                    const gchar *name,
+                                    GibbonGameAction *action)
+{
+        GibbonGame *game;
+        const GibbonPosition *position;
+        GibbonPositionSide side;
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        if (!game) {
+                _gibbon_java_fibs_reader_yyerror (_("No game in progress!"));
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        position = gibbon_game_get_position (game);
+        if (g_strcmp0 (position->players[1], name))
+                side = GIBBON_POSITION_SIDE_BLACK;
+        else
+                side = GIBBON_POSITION_SIDE_WHITE;
+
+        if (!gibbon_game_add_action (game, side, action)) {
+                _gibbon_java_fibs_reader_yyerror (_("Action ..."));
+                g_object_unref (action);
                 return FALSE;
         }
 

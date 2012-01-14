@@ -35,5 +35,8 @@ void _gibbon_java_fibs_reader_set_black (GibbonJavaFIBSReader *self,
 void _gibbon_java_fibs_reader_set_match_length (GibbonJavaFIBSReader *self,
                                                 gsize length);
 gboolean _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self);
+gboolean _gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
+                                        const gchar *name,
+                                        guint die1, guint die2);
 
 #endif

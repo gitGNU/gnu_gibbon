@@ -174,6 +174,10 @@ action
 
 roll
 	: ROLL COLON PLAYER COLON INTEGER INTEGER
+		{
+			if (!_gibbon_java_fibs_reader_roll (reader, $3, $5, $6))
+				YYABORT;
+		}
 	;
 
 move
