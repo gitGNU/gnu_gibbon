@@ -160,6 +160,7 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
 
         self->priv->match = match;
         self->priv->initial_position = gibbon_position_copy (pos);
+        self->priv->is_crawford = is_crawford;
 
         return self;
 }
