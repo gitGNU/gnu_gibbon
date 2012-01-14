@@ -47,6 +47,8 @@ struct _GibbonJavaFIBSReaderPrivate {
         gpointer user_data;
         const gchar *filename;
         GibbonMatch *match;
+
+        GList *names;
 };
 
 GibbonJavaFIBSReader *gibbon_java_fibs_reader_instance = NULL;
@@ -74,11 +76,17 @@ gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
         /* Per parser-instance data.  */
         self->priv->filename = NULL;
         self->priv->match = NULL;
+        self->priv->names = NULL;
 }
 
 static void
 gibbon_java_fibs_reader_finalize (GObject *object)
 {
+        GibbonJavaFIBSReader *self = GIBBON_JAVA_FIBS_READER (object);
+
+        g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
+        g_list_free (self->priv->names);
+
         G_OBJECT_CLASS (gibbon_java_fibs_reader_parent_class)->finalize(object);
 }
 
@@ -141,7 +149,12 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         gdk_threads_leave ();
 
         self->priv->filename = filename;
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
+        g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
+        g_list_free (self->priv->names);
+        self->priv->names = NULL;
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -170,6 +183,9 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 if (self->priv->match)
                         g_object_unref (self->priv->match);
                 self->priv->match = NULL;
+                g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
+                g_list_free (self->priv->names);
+                self->priv->names = NULL;
                 g_critical ("Another instance of GibbonJavaFIBSReader has"
                             " reset this one!");
                 gdk_threads_leave ();
@@ -289,7 +305,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         GibbonGame *game;
         const GibbonPosition *position;
         GibbonPositionSide side;
-        GError *error;
+        GError *error = NULL;
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
