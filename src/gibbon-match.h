@@ -75,13 +75,20 @@ GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
 
 gboolean gibbon_match_get_crawford (const GibbonMatch *self);
 
-struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
+struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch
+                                                   *self);
+gsize gibbon_match_get_number_of_games (const GibbonMatch *self);
+struct _GibbonGame *gibbon_match_get_nth_game (const GibbonMatch *self,
+                                               gsize i);
 const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
                                                          self);
 struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
 
 void gibbon_match_set_white (GibbonMatch *self, const gchar *white);
+const gchar *gibbon_match_get_white (const GibbonMatch *self);
 void gibbon_match_set_black (GibbonMatch *self, const gchar *black);
+const gchar *gibbon_match_get_white (const GibbonMatch *self);
 void gibbon_match_set_length (GibbonMatch *self, gsize length);
+gsize gibbon_match_get_length (const GibbonMatch *self);
 
 #endif

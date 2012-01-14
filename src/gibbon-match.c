@@ -201,7 +201,7 @@ gibbon_match_add_game (GibbonMatch *self)
         game = gibbon_game_new (self, position, game_number,
                                 self->priv->crawford, is_crawford);
         gibbon_position_free (position);
-        self->priv->games = g_list_prepend (self->priv->games, game);
+        self->priv->games = g_list_append (self->priv->games, game);
 
         return game;
 }
@@ -288,4 +288,34 @@ gibbon_match_set_length (GibbonMatch *self, gsize length)
                 iter = iter->next;
         }
 
+}
+
+gsize
+gibbon_match_get_length (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return self->priv->length;
+}
+
+gsize
+gibbon_match_get_number_of_games (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return g_list_length (self->priv->games);
+}
+
+GibbonGame *
+gibbon_match_get_nth_game (const GibbonMatch *self, gsize i)
+{
+        GList *iter;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        iter = g_list_nth (self->priv->games, i);
+        if (!iter)
+                return NULL;
+
+        return iter->data;
 }
