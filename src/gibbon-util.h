@@ -26,6 +26,18 @@
 
 #include <glib.h>
 
+#define gibbon_return_val_if_fail(expr, val, error) G_STMT_START{       \
+     if G_LIKELY(expr) { } else                                         \
+       {                                                                \
+         g_set_error (error, GSGF_ERROR, GSGF_ERROR_USAGE_ERROR,        \
+                      _("In function `%s': assertion `%s' failed."),    \
+                      __PRETTY_FUNCTION__, #expr);                      \
+         g_return_if_fail_warning (G_LOG_DOMAIN,                        \
+                                   __PRETTY_FUNCTION__,                 \
+                                   #expr);                              \
+         return (val);                                                  \
+       };                               }G_STMT_END
+
 G_BEGIN_DECLS
 
 enum GibbonClientType {
