@@ -124,7 +124,7 @@ java_fibs_file
 match
 	: START_OF_MATCH COLON PLAYER 
 		{
-			_gibbon_java_fibs_reader_set_white (reader, $3);
+			_gibbon_java_fibs_reader_set_black (reader, $3);
 			g_free ($3);
 		}
 	  COLON INTEGER 
@@ -144,7 +144,13 @@ game
 	;
 
 start_of_game
-	: START_OF_GAME COLON PLAYER COLON
+	: START_OF_GAME COLON PLAYER COLON 
+		{ 
+			_gibbon_java_fibs_reader_set_black (reader, $3);
+			g_free ($3); 
+			if (!_gibbon_java_fibs_reader_add_game (reader))
+				YYABORT;
+		}
 	;
 
 opponents
