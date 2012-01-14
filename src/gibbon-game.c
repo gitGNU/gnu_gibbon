@@ -528,6 +528,14 @@ gibbon_game_is_crawford (const GibbonGame *self)
 }
 
 const GibbonPosition *
+gibbon_game_get_initial_position (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        return self->priv->initial_position;
+}
+
+const GibbonPosition *
 gibbon_game_get_nth_position (const GibbonGame *self, gint n)
 {
         const GibbonGameSnapshot *snapshot;
