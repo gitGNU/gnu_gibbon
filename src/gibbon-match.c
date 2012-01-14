@@ -38,7 +38,10 @@ typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
         GList *games;
 
+        gchar *white;
+        gchar *black;
         gboolean crawford;
+        gsize match_length;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -54,7 +57,10 @@ gibbon_match_init (GibbonMatch *self)
 
         self->priv->games = NULL;
 
+        self->priv->white = NULL;
+        self->priv->black = NULL;
         self->priv->crawford = TRUE;
+        self->priv->match_length = 0;
 }
 
 static void
@@ -68,6 +74,9 @@ gibbon_match_finalize (GObject *object)
                 g_list_free (self->priv->games);
         }
         self->priv->games = NULL;
+
+        g_free (self->priv->white);
+        g_free (self->priv->black);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -94,15 +103,14 @@ gibbon_match_new (const gchar *white, const gchar *black,
                   guint length, gboolean crawford)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
-        GibbonPosition *position = gibbon_position_new ();
-
-        position->players[0] = g_strdup (white);
-        position->players[1] = g_strdup (black);
-        position->match_length = length;
 
         if (!length)
                 crawford = FALSE;
         self->priv->crawford = crawford;
+        self->priv->match_length = length;
+
+        self->priv->white = g_strdup (white);
+        self->priv->black = g_strdup (black);
 
         return self;
 }
@@ -120,6 +128,9 @@ gibbon_match_get_current_game (const GibbonMatch *self)
 {
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
+        if (!self->priv->games)
+                return NULL;
+
         return self->priv->games->data;
 }
 
@@ -135,9 +146,16 @@ gibbon_match_add_game (GibbonMatch *self)
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
-        game = self->priv->games->data;
-        position = gibbon_position_copy (gibbon_game_get_position (game));
-        gibbon_position_reset (position);
+        if (self->priv->games) {
+                game = self->priv->games->data;
+                position = gibbon_position_copy (gibbon_game_get_position (game));
+                gibbon_position_reset (position);
+        } else {
+                position = gibbon_position_new ();
+                position->players[0] = g_strdup (self->priv->white);
+                position->players[1] = g_strdup (self->priv->black);
+                position->match_length = self->priv->match_length;
+        }
 
         /*
          * Check whether this is the crawford game.  This is less trivial than
@@ -146,7 +164,7 @@ gibbon_match_add_game (GibbonMatch *self)
          * A necessary but not sufficient condition is that we have a fixed
          * match length, and that exactly one of the opponents is 1-away.
          */
-        if (!position->match_length)
+        if (!self->priv->match_length)
                 goto no_crawford;
 
         white_away = position->match_length - position->scores[0];
