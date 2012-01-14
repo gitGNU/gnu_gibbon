@@ -31,16 +31,11 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <libgsgf/gsgf.h>
-
 #include "gibbon-match.h"
 #include "gibbon-game.h"
 
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
-        GSGFCollection *collection;
-        GSGFFlavor *flavor;
-
         GList *games;
 
         gboolean crawford;
@@ -57,8 +52,6 @@ gibbon_match_init (GibbonMatch *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MATCH, GibbonMatchPrivate);
 
-        self->priv->collection = NULL;
-        self->priv->flavor = NULL;
         self->priv->games = NULL;
 
         self->priv->crawford = TRUE;
@@ -69,20 +62,12 @@ gibbon_match_finalize (GObject *object)
 {
         GibbonMatch *self = GIBBON_MATCH (object);
 
-        if (self->priv->collection)
-                g_object_unref (self->priv->collection);
-        self->priv->collection = NULL;
-
         if (self->priv->games) {
                 g_list_foreach (self->priv->games,
                                 (GFunc) g_object_unref, NULL);
                 g_list_free (self->priv->games);
         }
         self->priv->games = NULL;
-
-        if (self->priv->flavor)
-                g_object_unref (self->priv->flavor);
-        self->priv->flavor = NULL;
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -109,13 +94,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
                   guint length, gboolean crawford)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
-        GSGFGameTree *game_tree;
-        GibbonGame *game;
         GibbonPosition *position = gibbon_position_new ();
-
-        self->priv->collection = gsgf_collection_new ();
-
-        self->priv->flavor = gsgf_flavor_backgammon_new ();
 
         position->players[0] = g_strdup (white);
         position->players[1] = g_strdup (black);
@@ -124,16 +103,6 @@ gibbon_match_new (const gchar *white, const gchar *black,
         if (!length)
                 crawford = FALSE;
         self->priv->crawford = crawford;
-
-        game_tree = gsgf_collection_add_game_tree (self->priv->collection,
-                                                   self->priv->flavor);
-
-        /*
-         * Note: The first game can never be the crawford game!
-         */
-        game = gibbon_game_new (self, game_tree, position,
-                                0, crawford, FALSE);
-        self->priv->games = g_list_prepend (self->priv->games, game);
 
         return self;
 }
@@ -144,14 +113,6 @@ gibbon_match_new_empty (void)
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
 
         return self;
-}
-
-const GSGFCollection *
-gibbon_match_get_collection (GibbonMatch *self)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->collection;
 }
 
 GibbonGame *
@@ -166,8 +127,6 @@ GibbonGame *
 gibbon_match_add_game (GibbonMatch *self)
 {
         GibbonGame *game;
-        GList *game_trees;
-        GSGFGameTree *game_tree;
         guint game_number;
         GibbonPosition *position;
         gboolean is_crawford = FALSE;
@@ -175,11 +134,6 @@ gibbon_match_add_game (GibbonMatch *self)
         const GibbonPosition *last_position;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        game_trees = gsgf_collection_get_game_trees (self->priv->collection);
-        game_number = g_list_length (game_trees);
-        game_tree = gsgf_collection_add_game_tree (self->priv->collection,
-                                                   self->priv->flavor);
 
         game = self->priv->games->data;
         position = gibbon_position_copy (gibbon_game_get_position (game));
@@ -233,7 +187,8 @@ gibbon_match_add_game (GibbonMatch *self)
          * that the last match
          */
     no_crawford:
-        game = gibbon_game_new (self, game_tree, position, game_number,
+        game_number = g_list_length (self->priv->games);
+        game = gibbon_game_new (self, position, game_number,
                                 self->priv->crawford, is_crawford);
         gibbon_position_free (position);
         self->priv->games = g_list_prepend (self->priv->games, game);

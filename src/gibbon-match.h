@@ -23,8 +23,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include <libgsgf/gsgf.h>
-
 #include "gibbon-position.h"
 
 #define GIBBON_TYPE_MATCH \
@@ -76,16 +74,11 @@ GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
                                guint length, gboolean crawford);
 GibbonMatch *gibbon_match_new_empty (void);
 
-const GSGFCollection *gibbon_match_get_collection ();
 gboolean gibbon_match_get_crawford (const GibbonMatch *self);
 
 struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
 const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
                                                          self);
-/*
- * Since every SGF file holds at least one game, you must not explicitely
- * add the first game.  It is automatically there.
- */
 struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
 
 #endif
