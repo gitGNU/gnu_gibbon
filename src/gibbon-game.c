@@ -153,7 +153,6 @@ gibbon_game_class_init (GibbonGameClass *klass)
 
 GibbonGame *
 gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
-                 guint game_number,
                  gboolean crawford, gboolean is_crawford)
 {
         GibbonGame *self = g_object_new (GIBBON_TYPE_GAME, NULL);

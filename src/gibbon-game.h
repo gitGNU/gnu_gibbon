@@ -78,7 +78,6 @@ GType gibbon_game_get_type (void) G_GNUC_CONST;
 
 GibbonGame *gibbon_game_new (GibbonMatch *match,
                              const GibbonPosition *initial_position,
-                             guint game_number,
                              gboolean crawford, gboolean is_crawford);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                  GibbonGameAction *action);

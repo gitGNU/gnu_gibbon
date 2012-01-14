@@ -198,7 +198,7 @@ gibbon_match_add_game (GibbonMatch *self)
          */
     no_crawford:
         game_number = g_list_length (self->priv->games);
-        game = gibbon_game_new (self, position, game_number,
+        game = gibbon_game_new (self, position,
                                 self->priv->crawford, is_crawford);
         gibbon_position_free (position);
         self->priv->games = g_list_append (self->priv->games, game);
