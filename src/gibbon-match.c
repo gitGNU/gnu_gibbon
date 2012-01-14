@@ -124,12 +124,15 @@ gibbon_match_error_quark (void)
 GibbonGame *
 gibbon_match_get_current_game (const GibbonMatch *self)
 {
+        GList *iter;
+
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
-        if (!self->priv->games)
+        iter = g_list_last (self->priv->games);
+        if (!iter)
                 return NULL;
 
-        return self->priv->games->data;
+        return iter->data;
 }
 
 GibbonGame *
