@@ -177,7 +177,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
    ***************************************************************************/
 <WHO>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = g_strdup (yytext);
+					yylval.name = yytext;
 					return PLAYER;
 				}
 <WHO>.|\n			return JUNK;
@@ -204,7 +204,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 				}
 <WHAT>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = g_strdup (yytext);
+					yylval.name = yytext;
 					return PLAYER;
 				}
 <WHAT>\n			BEGIN (OPCODE);
