@@ -134,5 +134,46 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
                                      const GibbonGame *game,
                                      GError **error)
 {
+        const GibbonPosition *position =
+                        gibbon_game_get_initial_position (game);
+        gchar *buffer;
+        gchar padding[32];
+        glong len, i;
+
+        buffer = g_strdup_printf (" %s : %u",
+                                  position->players[1],
+                                  position->scores[1]);
+
+        if (!g_output_stream_write_all (out,
+                                        buffer, strlen (buffer),
+                                        NULL, NULL, error)) {
+                g_free (buffer);
+                return FALSE;
+        }
+        len = g_utf8_strlen (buffer, -1);
+        g_free (buffer);
+
+        padding[0] = 0;
+        g_printerr ("Length: %ld\n", len);
+        if (len < 31) {
+                for (i = 0; i + len < 31; ++i) {
+                        padding[i] = ' ';
+                }
+                padding[i] = 0;
+        }
+
+        buffer = g_strdup_printf ("%s %s : %u\n",
+                                  padding,
+                                  position->players[0],
+                                  position->scores[0]);
+
+        if (!g_output_stream_write_all (out,
+                                        buffer, strlen (buffer),
+                                        NULL, NULL, error)) {
+                g_free (buffer);
+                return FALSE;
+        }
+        g_free (buffer);
+
         return TRUE;
 }
