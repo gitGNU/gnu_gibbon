@@ -80,7 +80,7 @@ GibbonGame *gibbon_game_new (GibbonMatch *match,
                              const GibbonPosition *initial_position,
                              gboolean crawford, gboolean is_crawford);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
-                                 GibbonGameAction *action);
+                                 GibbonGameAction *action, GError **error);
 gint gibbon_game_over (const GibbonGame *self);
 const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
 
@@ -91,6 +91,9 @@ const GibbonPosition *gibbon_game_get_initial_position (const GibbonGame *self);
 /* Yes! N can be negative, think Perl! */
 const GibbonPosition *gibbon_game_get_nth_position (const GibbonGame *self,
                                                     gint n);
+const GibbonGameAction *gibbon_game_get_nth_action (const GibbonGame *self,
+                                                    gint n,
+                                                    GibbonPositionSide *side);
 
 void gibbon_game_set_white (GibbonGame *self, const gchar *white);
 void gibbon_game_set_black (GibbonGame *self, const gchar *black);

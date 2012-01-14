@@ -139,6 +139,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
         gchar *buffer;
         gchar padding[32];
         glong len, i;
+        glong move_num = 0;
 
         buffer = g_strdup_printf (" %s : %u",
                                   position->players[1],
@@ -154,7 +155,6 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
         g_free (buffer);
 
         padding[0] = 0;
-        g_printerr ("Length: %ld\n", len);
         if (len < 31) {
                 for (i = 0; i + len < 31; ++i) {
                         padding[i] = ' ';
@@ -174,6 +174,8 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
                 return FALSE;
         }
         g_free (buffer);
+
+
 
         return TRUE;
 }

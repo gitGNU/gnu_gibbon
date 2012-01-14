@@ -72,14 +72,22 @@ struct _GibbonMatchClass
  * GibbonMatchError:
  * @GIBBON_MATCH_ERROR_NONE: No error.
  * @GIBBON_MATCH_ERROR_GENERIC: Generic error.
- * @GIBBON_MATCH_ERROR_END_OF_MATCH: Attempt to add data after end of match.
+ * @GIBBON_MATCH_ERROR_END_OF_MATCH: Attempt to add match data after end of
+ *                                   match.
+ * @GIBBON_MATCH_ERROR_END_OF_GAME: Attempt to add game data after end of game.
+ * @GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION: An unsupported #GibbonGameAction was
+ *                                         encountered.
+ * @GIBBON_MATCH_ERROR_NOT_ON_TURN: This player is not on turn.
  *
  * Error codes for the domain #GIBBON_MATCH_ERROR.
  */
 typedef enum {
         GIBBON_MATCH_ERROR_NONE = 0,
-        GIBBON_MATCH_ERROR_GENERIC = 1,
-        GIBBON_MATCH_ERROR_END_OF_MATCH = 2
+        GIBBON_MATCH_ERROR_GENERIC,
+        GIBBON_MATCH_ERROR_END_OF_MATCH,
+        GIBBON_MATCH_ERROR_END_OF_GAME,
+        GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION,
+        GIBBON_MATCH_ERROR_NOT_ON_TURN
 } GibbonMatchError;
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;

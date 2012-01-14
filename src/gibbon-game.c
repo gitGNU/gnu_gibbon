@@ -71,31 +71,31 @@ G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
 
 static gboolean gibbon_game_add_roll (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonRoll *roll);
+                                      GibbonRoll *roll, GError **error);
 static gboolean gibbon_game_add_move (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonMove *move);
+                                      GibbonMove *move, GError **error);
 static gboolean gibbon_game_add_double (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonDouble *dbl);
+                                      GibbonDouble *dbl, GError **error);
 static gboolean gibbon_game_add_drop (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonDrop *drop);
+                                      GibbonDrop *drop, GError **error);
 static gboolean gibbon_game_add_take (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonTake *take);
+                                      GibbonTake *take, GError **error);
 static gboolean gibbon_game_add_resign (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonResign *resign);
+                                        GibbonResign *resign, GError **error);
 static gboolean gibbon_game_add_reject (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonReject *reject);
+                                        GibbonReject *reject, GError **error);
 static gboolean gibbon_game_add_accept (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonAccept *accept);
+                                        GibbonAccept *accept, GError **error);
 static gboolean gibbon_game_add_setup (GibbonGame *self,
                                        GibbonPositionSide side,
-                                       GibbonSetup *setup);
+                                       GibbonSetup *setup, GError **error);
 static void gibbon_game_add_snapshot (GibbonGame *self,
                                       GibbonGameAction *action,
                                       GibbonPositionSide side,
@@ -166,41 +166,50 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
 
 gboolean
 gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
-                        GibbonGameAction *action)
+                        GibbonGameAction *action, GError **error)
 {
-        g_return_val_if_fail (GIBBON_IS_GAME (self), FALSE);
-        g_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE);
-        g_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
-                              || GIBBON_POSITION_SIDE_BLACK,
-                              FALSE);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME (self), FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
+                                         error);
+        gibbon_match_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
+                                         || GIBBON_POSITION_SIDE_BLACK,
+                                         FALSE, error);
 
         if (GIBBON_IS_ROLL (action)) {
-                return gibbon_game_add_roll (self, side, GIBBON_ROLL (action));
+                return gibbon_game_add_roll (self, side, GIBBON_ROLL (action),
+                                             error);
         } else if (GIBBON_IS_MOVE (action)) {
-                return gibbon_game_add_move (self, side, GIBBON_MOVE (action));
+                return gibbon_game_add_move (self, side, GIBBON_MOVE (action),
+                                             error);
         } else if (GIBBON_IS_DOUBLE (action)) {
                 return gibbon_game_add_double (self, side,
-                                               GIBBON_DOUBLE (action));
+                                               GIBBON_DOUBLE (action), error);
         } else if (GIBBON_IS_DROP (action)) {
                 return gibbon_game_add_drop (self, side,
-                                             GIBBON_DROP (action));
+                                             GIBBON_DROP (action), error);
         } else if (GIBBON_IS_TAKE (action)) {
                 return gibbon_game_add_take (self, side,
-                                             GIBBON_TAKE (action));
+                                             GIBBON_TAKE (action), error);
         } else if (GIBBON_IS_RESIGN (action)) {
                 return gibbon_game_add_resign (self, side,
-                                               GIBBON_RESIGN (action));
+                                               GIBBON_RESIGN (action), error);
         } else if (GIBBON_IS_REJECT (action)) {
                 return gibbon_game_add_reject (self, side,
-                                               GIBBON_REJECT (action));
+                                               GIBBON_REJECT (action), error);
         } else if (GIBBON_IS_ACCEPT (action)) {
                 return gibbon_game_add_accept (self, side,
-                                               GIBBON_ACCEPT (action));
+                                               GIBBON_ACCEPT (action), error);
         } else if (GIBBON_IS_SETUP (action)) {
                 return gibbon_game_add_setup (self, side,
-                                              GIBBON_SETUP (action));
+                                              GIBBON_SETUP (action), error);
         } else {
-                g_critical ("gibbon_game_add_action: unsupported action type"
+                /*
+                 * We do not bother to translate this message.  It can only
+                 * occur if the software itself is broken.
+                 */
+                g_set_error (error, GIBBON_MATCH_ERROR,
+                             GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION,
+                            "gibbon_game_add_action: unsupported action type"
                             " %s!", G_OBJECT_TYPE_NAME (action));
                 return FALSE;
         }
@@ -210,12 +219,16 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
-                      GibbonRoll *roll)
+                      GibbonRoll *roll, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         snapshot = gibbon_game_get_snapshot (self);
 
@@ -225,6 +238,14 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 pos = gibbon_position_copy (self->priv->initial_position);
         }
 
+        if (side && pos->turn && side != pos->turn) {
+                gibbon_position_free (pos);
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_NOT_ON_TURN,
+                                     _("This player is not on turn!"));
+                return FALSE;
+        }
+        pos->turn = side;
         pos->dice[0] = roll->die1;
         pos->dice[1] = roll->die2;
 
@@ -235,13 +256,18 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
-                      GibbonMove *move)
+                      GibbonMove *move, GError **error)
 {
         GibbonPosition *pos;
         gchar *pretty_move;
 
         g_return_val_if_fail (move->number <= 4, FALSE);
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
@@ -278,12 +304,18 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
-                        GibbonDouble *dbl)
+                        GibbonDouble *dbl, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot;
 
         g_return_val_if_fail (self->priv->score == 0, FALSE);
+
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
@@ -309,11 +341,15 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
-                      GibbonDrop *drop)
+                      GibbonDrop *drop, GError **error)
 {
         GibbonPosition *pos;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
@@ -338,11 +374,15 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
-                      GibbonTake *take)
+                      GibbonTake *take, GError **error)
 {
         GibbonPosition *pos;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
         pos->cube <<= 1;
@@ -354,11 +394,15 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
-                        GibbonResign *resign)
+                        GibbonResign *resign, GError **error)
 {
         GibbonPosition *pos;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
@@ -369,12 +413,16 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
-                        GibbonReject *reject)
+                        GibbonReject *reject, GError **error)
 {
         GibbonPosition *pos;
         gchar *player;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
@@ -394,7 +442,7 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
-                        GibbonAccept *accept)
+                        GibbonAccept *accept, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot = NULL;
@@ -402,7 +450,11 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         GibbonResign* resign;
         gint value;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         other = side == GIBBON_POSITION_SIDE_BLACK ?
                         GIBBON_POSITION_SIDE_WHITE : GIBBON_POSITION_SIDE_BLACK;
@@ -450,11 +502,15 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
-                       GibbonSetup *setup)
+                       GibbonSetup *setup, GError **error)
 {
         GibbonPosition *pos;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        if (gibbon_game_over (self)) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Game is already over!"));
+        }
 
         pos = gibbon_position_copy (setup->position);
 
@@ -631,4 +687,22 @@ gibbon_game_set_match_length (GibbonGame *self, gsize length)
         }
 
         return;
+}
+
+const GibbonGameAction *
+gibbon_game_get_nth_action (const GibbonGame *self, gint n,
+                            GibbonPositionSide *side)
+{
+        const GibbonGameSnapshot *snapshot;
+
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        snapshot = gibbon_game_get_nth_snapshot (self, n);
+        if (!snapshot)
+                return NULL;
+
+        if (side)
+                *side = snapshot->side;
+
+        return snapshot->action;
 }

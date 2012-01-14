@@ -289,6 +289,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         GibbonGame *game;
         const GibbonPosition *position;
         GibbonPositionSide side;
+        GError *error;
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
@@ -303,8 +304,8 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         else
                 side = GIBBON_POSITION_SIDE_WHITE;
 
-        if (!gibbon_game_add_action (game, side, action)) {
-                _gibbon_java_fibs_reader_yyerror (_("Action ..."));
+        if (!gibbon_game_add_action (game, side, action, &error)) {
+                _gibbon_java_fibs_reader_yyerror (error->message);
                 g_object_unref (action);
                 return FALSE;
         }
