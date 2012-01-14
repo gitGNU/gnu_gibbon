@@ -29,12 +29,13 @@
 #include <gdk/gdk.h>
 
 #include "gibbon-java-fibs-reader.h"
+#include "gibbon-jelly-fish-writer.h"
 
 typedef enum {
         GIBBON_CONVERT_FORMAT_UNKNOWN = 0,
         GIBBON_CONVERT_FORMAT_SGF = 1,
-        GIBBON_CONVERT_FORMAT_JAVAFIBS = 2,
-        GIBBON_CONVERT_FORMAT_JELLYFISH = 3
+        GIBBON_CONVERT_FORMAT_JAVA_FIBS = 2,
+        GIBBON_CONVERT_FORMAT_JELLY_FISH = 3
 } GibbonConvertFormat;
 
 static gchar *program_name;
@@ -97,7 +98,12 @@ main (int argc, char *argv[])
         init_i18n ();
 #endif
         GibbonMatchReader *reader;
+        GibbonMatchWriter *writer;
         GibbonMatch *match;
+        GFile *file = NULL;
+        GFileOutputStream *fout;
+        GOutputStream *out;
+        GError *error = NULL;
 
         g_type_init ();
 
@@ -140,21 +146,79 @@ main (int argc, char *argv[])
                 return 1;
         case GIBBON_CONVERT_FORMAT_SGF:
                 g_printerr ("Reading SGF is not yet implemented!\n");
-                return 0;
-        case GIBBON_CONVERT_FORMAT_JAVAFIBS:
+                return 1;
+        case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 reader =
                    GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (NULL,
                                                                      NULL));
                 break;
-        case GIBBON_CONVERT_FORMAT_JELLYFISH:
+        case GIBBON_CONVERT_FORMAT_JELLY_FISH:
                 g_printerr ("Reading JellyFish files is not yet implemented!\n");
                 return 1;
         }
 
         match = gibbon_match_reader_parse (reader, input_filename);
+        if (!match)
+                return 1;
 
-        if (match)
+
+        switch (output_format) {
+        case GIBBON_CONVERT_FORMAT_UNKNOWN:
                 g_object_unref (match);
+                return 1;
+        case GIBBON_CONVERT_FORMAT_SGF:
+                g_printerr ("Writing SGF is not yet implemented!\n");
+                return 1;
+        case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
+                g_printerr ("Writing JavaFIBS files is not yet implemented!\n");
+                return 1;
+        case GIBBON_CONVERT_FORMAT_JELLY_FISH:
+                writer = GIBBON_MATCH_WRITER (gibbon_jelly_fish_writer_new ());
+                break;
+        }
+
+        if (output_filename) {
+                file = g_file_new_for_commandline_arg (output_filename);
+                fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_NONE,
+                                       NULL, &error);
+                g_object_unref (file);
+                if (!fout) {
+                        if (error)
+                                g_printerr (_("%s: Error writing to `%s': %s!\n"),
+                                            program_name,
+                                            output_filename, error->message);
+                        return 1;
+                }
+                out = G_OUTPUT_STREAM (fout);
+        } else {
+                /* FIXME! How do we get a GOutputStream for stdout? */
+                out = G_OUTPUT_STREAM (g_memory_output_stream_new (NULL, 0,
+                                                                   g_realloc,
+                                                                   g_free));
+        }
+
+        if (!gibbon_match_writer_write_stream (writer, out, match, &error)) {
+                if (error)
+                        g_printerr (_("%s: %s\n"), program_name,
+                                    error->message);
+                return 1;
+        }
+
+        if (!output_filename) {
+                g_print ("%s",
+                        (gchar *) g_memory_output_stream_get_data  (
+                                            G_MEMORY_OUTPUT_STREAM (out)));
+        } else if (!g_output_stream_close (out, NULL, &error)) {
+                if (error)
+                        g_printerr (_("%s: Error closing `%s': %s!\n"),
+                                    program_name, output_filename,
+                                    error->message);
+                return 1;
+        }
+
+        g_object_unref (out);
+        g_object_unref (writer);
+        g_object_unref (reader);
 
         return 0;
 }
@@ -293,10 +357,10 @@ guess_format_from_id (const gchar *id)
                 if (got_length > 1) {
                         if (0 == g_ascii_strncasecmp ("javafibs", id,
                                                       got_length))
-                                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+                                return GIBBON_CONVERT_FORMAT_JAVA_FIBS;
                         if (0 == g_ascii_strncasecmp ("jellyfish", id,
                                                       got_length))
-                                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+                                return GIBBON_CONVERT_FORMAT_JELLY_FISH;
                 }
 
                 if ((id[0] == 'j' || id[0] == 'J') && id[1] == 0) {
@@ -333,9 +397,9 @@ guess_format_from_filename (const gchar *filename)
         } else if (0 == g_ascii_strcasecmp (".sgf", last_dot)) {
                 return GIBBON_CONVERT_FORMAT_SGF;
         } else if (0 == g_ascii_strcasecmp (".match", last_dot)) {
-                return GIBBON_CONVERT_FORMAT_JAVAFIBS;
+                return GIBBON_CONVERT_FORMAT_JAVA_FIBS;
         } else if (0 == g_ascii_strcasecmp (".mat", last_dot)) {
-                return GIBBON_CONVERT_FORMAT_JELLYFISH;
+                return GIBBON_CONVERT_FORMAT_JELLY_FISH;
         }
 
         msg = g_strdup_printf (_("Cannot guess format of `%s'!"), filename);
