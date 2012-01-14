@@ -228,6 +228,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         snapshot = gibbon_game_get_snapshot (self);
