@@ -55,3 +55,20 @@ gibbon_match_writer_class_init (GibbonMatchWriterClass *klass)
 
         object_class->finalize = gibbon_match_writer_finalize;
 }
+
+gboolean
+gibbon_match_writer_write_stream (const GibbonMatchWriter *self,
+                                  GOutputStream *out,
+                                  const GibbonMatch *match,
+                                  GError **error)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_WRITER (self), FALSE);
+        g_return_val_if_fail (GIBBON_MATCH_WRITER_GET_CLASS (self)->write_stream,
+                              FALSE);
+        g_return_val_if_fail (G_IS_OUTPUT_STREAM (out), FALSE);
+        g_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE);
+
+        return GIBBON_MATCH_WRITER_GET_CLASS(self)->write_stream (self, out,
+                                                                  match, error);
+}
+

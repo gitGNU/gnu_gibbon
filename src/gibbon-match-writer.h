@@ -26,6 +26,9 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include <gio/gio.h>
+
+#include "gibbon-match.h"
 
 #define GIBBON_TYPE_MATCH_WRITER \
         (gibbon_match_writer_get_type ())
@@ -65,8 +68,18 @@ struct _GibbonMatchWriterClass
 {
         /* <private >*/
         GObjectClass parent_class;
+
+        /* <public> */
+        gboolean (*write_stream) (const GibbonMatchWriter *self,
+                                  GOutputStream *out,
+                                  const GibbonMatch *match,
+                                  GError **error);
 };
 
 GType gibbon_match_writer_get_type (void) G_GNUC_CONST;
 
+gboolean gibbon_match_writer_write_stream (const GibbonMatchWriter *self,
+                                           GOutputStream *out,
+                                           const GibbonMatch *match,
+                                           GError **error);
 #endif
