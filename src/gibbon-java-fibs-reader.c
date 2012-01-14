@@ -118,6 +118,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         FILE *in;
         extern FILE *gibbon_java_fibs_lexer_in;
         extern int gibbon_java_fibs_parser_parse ();
+        int parse_status;
 
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (_self), NULL);
         self = GIBBON_JAVA_FIBS_READER (_self);
@@ -142,9 +143,14 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         if (in) {
                 gibbon_java_fibs_lexer_in = in;
 
-                gibbon_java_fibs_parser_parse ();
+                parse_status = gibbon_java_fibs_parser_parse ();
                 if (filename)
                         fclose (in);
+                if (parse_status) {
+                        if (self->priv->match)
+                                g_object_unref (self->priv->match);
+                        self->priv->match = NULL;
+                }
         } else {
                 _gibbon_java_fibs_reader_yyerror (strerror (errno));
         }
@@ -210,7 +216,20 @@ _gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
         g_return_if_fail (self->priv->match);
 
-        gibbon_match_set_white (self->priv->match, white);
+        if (g_strcmp0 (gibbon_match_get_white (self->priv->match), white))
+                gibbon_match_set_white (self->priv->match, white);
+}
+
+
+void
+_gibbon_java_fibs_reader_set_black (GibbonJavaFIBSReader *self,
+                                    const gchar *black)
+{
+        g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        if (g_strcmp0 (gibbon_match_get_black (self->priv->match), black))
+                gibbon_match_set_black (self->priv->match, black);
 }
 
 void
@@ -221,4 +240,18 @@ _gibbon_java_fibs_reader_set_match_length (GibbonJavaFIBSReader *self,
         g_return_if_fail (self->priv->match);
 
         gibbon_match_set_length (self->priv->match, length);
+}
+
+gboolean
+_gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self)
+{
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        if (!gibbon_match_add_game (self->priv->match)) {
+                _gibbon_java_fibs_reader_yyerror ("Error adding game!");
+                return FALSE;
+        }
+
+        return FALSE;
 }
