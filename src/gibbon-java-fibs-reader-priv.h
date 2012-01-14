@@ -26,6 +26,10 @@
 
 #include "gibbon-java-fibs-reader.h"
 
+G_BEGIN_DECLS
+
+extern GibbonJavaFIBSReader *gibbon_java_fibs_reader_instance;
+
 void _gibbon_java_fibs_reader_yyerror (const gchar *msg);
 
 void _gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
@@ -38,5 +42,7 @@ gboolean _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self);
 gboolean _gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
                                         const gchar *name,
                                         guint die1, guint die2);
+
+G_END_DECLS
 
 #endif
