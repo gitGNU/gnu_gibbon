@@ -115,7 +115,6 @@ static GibbonMatch *
 gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 {
         GibbonJavaFIBSReader *self;
-        GibbonMatch *match = NULL;
         FILE *in;
         extern FILE *gibbon_java_fibs_lexer_in;
         extern int gibbon_java_fibs_parser_parse ();
@@ -134,7 +133,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         gdk_threads_leave ();
 
         self->priv->filename = filename;
-        match = self->priv->match = gibbon_match_new_empty ();
+        self->priv->match = NULL;
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -151,11 +150,12 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         }
 
         self->priv->filename = NULL;
-        self->priv->match = NULL;
 
         gdk_threads_enter ();
         if (!instance || instance != self) {
-                g_object_unref (match);
+                if (self->priv->match)
+                        g_object_unref (self->priv->match);
+                self->priv->match = NULL;
                 g_critical ("Another instance of GibbonJavaFIBSReader has"
                             " reset this one!");
                 gdk_threads_leave ();
@@ -164,7 +164,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         instance = NULL;
         gdk_threads_leave ();
 
-        return match;
+        return self->priv->match;
 }
 
 void
