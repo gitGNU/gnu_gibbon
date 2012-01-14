@@ -93,8 +93,8 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
         gsize game_number;
         const GibbonGame *game;
 
-        gchar *buffer = g_strdup_printf ("% 2lld point match\n",
-                                         (long long)
+        gchar *buffer = g_strdup_printf (" %llu point match\n",
+                                         (unsigned long long)
                                          gibbon_match_get_length (match));
 
         if (!g_output_stream_write_all (out,
@@ -103,11 +103,22 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
                 g_free (buffer);
                 return FALSE;
         }
+        g_free (buffer);
 
         for (game_number = 0; ; ++game_number) {
                 game = gibbon_match_get_nth_game (match, game_number);
                 if (!game)
                         break;
+                buffer = g_strdup_printf ("\n Game %llu\n",
+                                          (unsigned long long) game_number);
+
+                if (!g_output_stream_write_all (out,
+                                                buffer, strlen (buffer),
+                                                NULL, NULL, error)) {
+                        g_free (buffer);
+                        return FALSE;
+                }
+                g_free (buffer);
                 if (!gibbon_jelly_fish_writer_write_game (
                                 GIBBON_JELLY_FISH_WRITER (_self), out, game,
                                 error))
