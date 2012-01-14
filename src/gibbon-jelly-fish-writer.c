@@ -30,9 +30,21 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-jelly-fish-writer.h"
+#include "gibbon-game.h"
 
 G_DEFINE_TYPE (GibbonJellyFishWriter, gibbon_jelly_fish_writer,
                GIBBON_TYPE_MATCH_WRITER)
+
+static gboolean gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter
+                                                       *writer,
+                                                       GOutputStream *out,
+                                                       const GibbonMatch *match,
+                                                       GError **error);
+static gboolean gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter
+                                                     *self,
+                                                     GOutputStream *out,
+                                                     const GibbonGame *game,
+                                                     GError **error);
 
 static void 
 gibbon_jelly_fish_writer_init (GibbonJellyFishWriter *self)
@@ -49,10 +61,11 @@ static void
 gibbon_jelly_fish_writer_class_init (GibbonJellyFishWriterClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-        GibbonMatchWriterClass *gibbon_match_writer_class = GIBBON_MATCH_WRITER_CLASS (klass);
+        GibbonMatchWriterClass *gibbon_match_writer_class =
+                        GIBBON_MATCH_WRITER_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods from parent class! */
-        /* gibbon_match_writer_class->do_this = gibbon_jelly_fish_writer_do_this; */
+        gibbon_match_writer_class->write_stream =
+                        gibbon_jelly_fish_writer_write_stream;
 
         object_class->finalize = gibbon_jelly_fish_writer_finalize;
 }
@@ -69,4 +82,46 @@ gibbon_jelly_fish_writer_new (void)
 {
         GibbonJellyFishWriter *self = g_object_new (GIBBON_TYPE_JELLY_FISH_WRITER, NULL);
         return self;
+}
+
+static gboolean
+gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
+                                       GOutputStream *out,
+                                       const GibbonMatch *match,
+                                       GError **error)
+{
+        gsize game_number;
+        const GibbonGame *game;
+
+        gchar *buffer = g_strdup_printf ("% 2lld point match\n",
+                                         (long long)
+                                         gibbon_match_get_length (match));
+
+        if (!g_output_stream_write_all (out,
+                                        buffer, strlen (buffer),
+                                        NULL, NULL, error)) {
+                g_free (buffer);
+                return FALSE;
+        }
+
+        for (game_number = 0; ; ++game_number) {
+                game = gibbon_match_get_nth_game (match, game_number);
+                if (!game)
+                        break;
+                if (!gibbon_jelly_fish_writer_write_game (
+                                GIBBON_JELLY_FISH_WRITER (_self), out, game,
+                                error))
+                        return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *_self,
+                                     GOutputStream *out,
+                                     const GibbonGame *game,
+                                     GError **error)
+{
+        return TRUE;
 }
