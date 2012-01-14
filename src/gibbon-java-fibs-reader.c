@@ -245,13 +245,16 @@ _gibbon_java_fibs_reader_set_match_length (GibbonJavaFIBSReader *self,
 gboolean
 _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self)
 {
+        GError *error = NULL;
+
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
 
-        if (!gibbon_match_add_game (self->priv->match)) {
-                _gibbon_java_fibs_reader_yyerror ("Error adding game!");
+        if (!gibbon_match_add_game (self->priv->match, &error)) {
+                _gibbon_java_fibs_reader_yyerror (error->message);
+                g_error_free (error);
                 return FALSE;
         }
 
-        return FALSE;
+        return TRUE;
 }
