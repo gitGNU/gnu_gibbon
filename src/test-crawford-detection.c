@@ -103,7 +103,7 @@ test_to_nil (void)
 
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("Crawford game to_nill not detected.\n");
+                g_printerr ("Crawford game to_nil not detected.\n");
                 return FALSE;
         }
 
