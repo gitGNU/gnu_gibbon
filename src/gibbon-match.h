@@ -80,4 +80,8 @@ const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
                                                          self);
 struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
 
+void gibbon_match_set_white (GibbonMatch *self, const gchar *white);
+void gibbon_match_set_black (GibbonMatch *self, const gchar *black);
+void gibbon_match_set_length (GibbonMatch *self, gsize length);
+
 #endif

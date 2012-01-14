@@ -41,7 +41,7 @@ struct _GibbonMatchPrivate {
         gchar *white;
         gchar *black;
         gboolean crawford;
-        gsize match_length;
+        gsize length;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -60,7 +60,7 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->white = NULL;
         self->priv->black = NULL;
         self->priv->crawford = TRUE;
-        self->priv->match_length = 0;
+        self->priv->length = 0;
 }
 
 static void
@@ -107,16 +107,10 @@ gibbon_match_new (const gchar *white, const gchar *black,
         if (!length)
                 crawford = FALSE;
         self->priv->crawford = crawford;
-        self->priv->match_length = length;
 
-        if (white)
-                self->priv->white = g_strdup (white);
-        else
-                self->priv->white = g_strdup ("white");
-        if (black)
-                self->priv->black = g_strdup (black);
-        else
-                self->priv->black = g_strdup ("black");
+        gibbon_match_set_white (self, white);
+        gibbon_match_set_black (self, black);
+        gibbon_match_set_length (self, length);
 
         return self;
 }
@@ -152,7 +146,7 @@ gibbon_match_add_game (GibbonMatch *self)
                 position = gibbon_position_new ();
                 position->players[0] = g_strdup (self->priv->white);
                 position->players[1] = g_strdup (self->priv->black);
-                position->match_length = self->priv->match_length;
+                position->match_length = self->priv->length;
         }
 
         /*
@@ -162,7 +156,7 @@ gibbon_match_add_game (GibbonMatch *self)
          * A necessary but not sufficient condition is that we have a fixed
          * match length, and that exactly one of the opponents is 1-away.
          */
-        if (!self->priv->match_length)
+        if (!self->priv->length)
                 goto no_crawford;
 
         white_away = position->match_length - position->scores[0];
@@ -222,4 +216,76 @@ gibbon_match_get_current_position (const GibbonMatch *self)
         game = self->priv->games->data;
 
         return gibbon_game_get_position (game);
+}
+
+void
+gibbon_match_set_white (GibbonMatch *self, const gchar *white)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        g_free (self->priv->white);
+        if (white)
+                self->priv->white = g_strdup (white);
+        else
+                self->priv->white = g_strdup ("white");
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_white (game, self->priv->white);
+                iter = iter->next;
+        }
+
+        return;
+}
+
+void
+gibbon_match_set_black (GibbonMatch *self, const gchar *black)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        g_free (self->priv->black);
+        if (black)
+                self->priv->black = g_strdup (black);
+        else
+                self->priv->black = g_strdup ("black");
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_black (game, self->priv->black);
+                iter = iter->next;
+        }
+
+        return;
+}
+
+void
+gibbon_match_set_length (GibbonMatch *self, gsize length)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        if (length)
+                self->priv->crawford = TRUE;
+        else
+                self->priv->crawford = FALSE;
+
+        self->priv->length = length;
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_match_length (game, length);
+                iter = iter->next;
+        }
+
 }
