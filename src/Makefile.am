@@ -200,6 +200,7 @@ noinst_HEADERS =			\
 	gibbon-setup.h			\
 	gibbon-match-reader.h		\
 	gibbon-java-fibs-reader.h	\
+	gibbon-java-fibs-reader-priv.h	\
 	gibbon-match-writer.h		\
 	gibbon-java-fibs-writer.h
 

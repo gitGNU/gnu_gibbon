@@ -32,7 +32,10 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-java-fibs-parser.h"
-#include "gibbon-java-fibs-reader.h"
+#include "gibbon-java-fibs-reader-priv.h"
+
+#define reader gibbon_java_fibs_reader_instance;
+extern GibbonJavaFIBSReader *reader;
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -48,7 +51,7 @@
 #define yyparse    gibbon_java_fibs_parser_parse
 #define yylex      gibbon_java_fibs_lexer_lex
 extern int gibbon_java_fibs_lexer_lex (void);
-#define yyerror    gibbon_java_fibs_reader_yyerror
+#define yyerror    _gibbon_java_fibs_reader_yyerror
 #define yylval     gibbon_java_fibs_parser_lval
 #define yychar     gibbon_java_fibs_parser_char
 #define yydebug    gibbon_java_fibs_parser_debug
@@ -119,7 +122,7 @@ java_fibs_file
         ;
 
 match
-	: START_OF_MATCH COLON PLAYER COLON INTEGER games
+	: START_OF_MATCH COLON PLAYER COLON INTEGER  games
 	;
 
 games
