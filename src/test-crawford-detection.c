@@ -55,7 +55,12 @@ test_to_nil (void)
         GibbonGame *game;
         GibbonGameAction *action;
 
-        game = gibbon_match_get_current_game (match);
+        game = gibbon_match_add_game (match);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add 1st game!\n");
+                return FALSE;
+        }
 
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
@@ -116,7 +121,13 @@ test_regular_match (void)
         GibbonGame *game;
         GibbonGameAction *action;
 
-        game = gibbon_match_get_current_game (match);
+        game = gibbon_match_add_game (match);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add 1st game!\n");
+                return FALSE;
+        }
+
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
                 g_printerr ("First game cannot be Crawford at %s:%d.\n",

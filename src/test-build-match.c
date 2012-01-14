@@ -39,7 +39,6 @@
 
 static GibbonMatch *fill_match (void);
 static gboolean check_match (const GibbonMatch *match);
-static gboolean serialize_match (const GibbonMatch *match);
 
 int
 main(int argc, char *argv[])
@@ -56,9 +55,6 @@ main(int argc, char *argv[])
         if (!check_match (match))
                 status = -1;
 
-        if (!serialize_match (match))
-                status = -1;
-
         g_object_unref (match);
 
         return status;
@@ -73,9 +69,12 @@ fill_match (void)
         GibbonGameAction *action;
         gint score;
 
-        game = gibbon_match_get_current_game (match);
-        if (!game)
-                g_printerr ("Fresh match has no game.\n");
+        game = gibbon_match_add_game (match);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add 1st game!\n");
+                return NULL;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
@@ -226,31 +225,4 @@ check_match (const GibbonMatch *match)
         }
 
         return retval;
-}
-
-static gboolean
-serialize_match (const GibbonMatch *match)
-{
-        const GSGFCollection *collection = gibbon_match_get_collection (match);
-        GOutputStream *out = g_memory_output_stream_new (NULL, 0,
-                                                         g_realloc, g_free);
-        GError *error = NULL;
-        gsize written;
-
-        if (!gsgf_component_write_stream (GSGF_COMPONENT (collection), out,
-                                          &written, NULL, &error)) {
-                g_printerr ("Writing basic match failed: %s.\n",
-                            error->message);
-                return FALSE;
-        }
-
-#if (0)
-        g_printerr ("%s",
-                    (gchar *) g_memory_output_stream_get_data  (
-                                    G_MEMORY_OUTPUT_STREAM (out)));
-#endif
-
-        g_object_unref (out);
-
-        return TRUE;
 }
