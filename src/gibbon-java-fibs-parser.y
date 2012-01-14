@@ -35,7 +35,6 @@
 #include "gibbon-java-fibs-reader-priv.h"
 
 #define reader gibbon_java_fibs_reader_instance
-extern GibbonJavaFIBSReader *reader;
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
