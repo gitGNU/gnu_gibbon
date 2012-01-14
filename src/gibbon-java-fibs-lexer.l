@@ -204,6 +204,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 				}
 <WHAT>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
+					yylval.name = g_strdup (yytext);
 					return PLAYER;
 				}
 <WHAT>\n			BEGIN (OPCODE);
