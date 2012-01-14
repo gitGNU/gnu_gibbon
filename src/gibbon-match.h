@@ -68,7 +68,38 @@ struct _GibbonMatchClass
         GObjectClass parent_class;
 };
 
+/**
+ * GibbonMatchError:
+ * @GIBBON_MATCH_ERROR_NONE: No error.
+ * @GIBBON_MATCH_ERROR_GENERIC: Generic error.
+ * @GIBBON_MATCH_ERROR_END_OF_MATCH: Attempt to add data after end of match.
+ *
+ * Error codes for the domain #GIBBON_MATCH_ERROR.
+ */
+typedef enum {
+        GIBBON_MATCH_ERROR_NONE = 0,
+        GIBBON_MATCH_ERROR_GENERIC = 1,
+        GIBBON_MATCH_ERROR_END_OF_MATCH = 2
+} GibbonMatchError;
+
 GType gibbon_match_get_type (void) G_GNUC_CONST;
+
+#define GIBBON_MATCH_ERROR gibbon_match_error_quark ()
+
+GQuark gibbon_match_error_quark (void);
+
+#define gibbon_match_return_val_if_fail(expr, val, error) G_STMT_START{      \
+     if G_LIKELY(expr) { } else                                              \
+       {                                                                     \
+         g_set_error (error, GIBBON_MATCH_ERROR, GIBBON_MATCH_ERROR_GENERIC, \
+                      _("In function `%s': assertion `%s' failed."),         \
+                      __PRETTY_FUNCTION__, #expr);                           \
+         g_return_if_fail_warning (G_LOG_DOMAIN,                             \
+                                   __PRETTY_FUNCTION__,                      \
+                                   #expr);                                   \
+         return (val);                                                       \
+       };                               }G_STMT_END
+
 
 GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
                                guint length, gboolean crawford);
@@ -82,7 +113,7 @@ struct _GibbonGame *gibbon_match_get_nth_game (const GibbonMatch *self,
                                                gsize i);
 const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
                                                          self);
-struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self);
+struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self, GError **error);
 
 void gibbon_match_set_white (GibbonMatch *self, const gchar *white);
 const gchar *gibbon_match_get_white (const GibbonMatch *self);

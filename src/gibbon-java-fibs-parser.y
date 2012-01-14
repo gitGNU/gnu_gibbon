@@ -154,8 +154,17 @@ start_of_game
 	;
 
 opponents
-	: OPPONENTS COLON PLAYER COLON PLAYER
-	;
+	: OPPONENTS COLON PLAYER
+		{
+			_gibbon_java_fibs_reader_set_white (reader, $3);
+			g_free ($3); 
+		}
+ 	  COLON PLAYER
+		{
+			_gibbon_java_fibs_reader_set_black (reader, $6);
+			g_free ($6); 
+		}
+ 	;
 
 actions
 	: /* empty */

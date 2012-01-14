@@ -68,11 +68,13 @@ fill_match (void)
         GibbonGame *game;
         GibbonGameAction *action;
         gint score;
+        GError *error = NULL;
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 1st game!\n");
+                g_printerr ("Cannot add 1st game: %s\n", error->message);
+                g_error_free (error);
                 return NULL;
         }
 
@@ -121,10 +123,11 @@ fill_match (void)
                 return NULL;
         }
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 2nd game!\n");
+                g_printerr ("Cannot add 2nd game: %s\n", error->message);
+                g_error_free (error);
                 return NULL;
         }
 

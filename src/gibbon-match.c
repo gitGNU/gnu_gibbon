@@ -115,6 +115,12 @@ gibbon_match_new (const gchar *white, const gchar *black,
         return self;
 }
 
+GQuark
+gibbon_match_error_quark (void)
+{
+        return g_quark_from_static_string ("gsgf-error-quark");
+}
+
 GibbonGame *
 gibbon_match_get_current_game (const GibbonMatch *self)
 {
@@ -127,7 +133,7 @@ gibbon_match_get_current_game (const GibbonMatch *self)
 }
 
 GibbonGame *
-gibbon_match_add_game (GibbonMatch *self)
+gibbon_match_add_game (GibbonMatch *self, GError **error)
 {
         GibbonGame *game;
         guint game_number;
@@ -136,7 +142,7 @@ gibbon_match_add_game (GibbonMatch *self)
         gint white_away, black_away;
         const GibbonPosition *last_position;
 
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (self), NULL, error);
 
         if (self->priv->games) {
                 game = self->priv->games->data;
@@ -147,6 +153,17 @@ gibbon_match_add_game (GibbonMatch *self)
                 position->players[0] = g_strdup (self->priv->white);
                 position->players[1] = g_strdup (self->priv->black);
                 position->match_length = self->priv->length;
+        }
+
+        if (position->match_length) {
+                if (position->scores[0] >= position->match_length
+                    || position->scores[1] >= position->match_length) {
+                        g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                             GIBBON_MATCH_ERROR_END_OF_MATCH,
+                                             _("Match is already over!"));
+                        gibbon_position_free (position);
+                        return NULL;
+                }
         }
 
         /*

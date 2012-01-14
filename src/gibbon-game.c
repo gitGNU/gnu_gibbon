@@ -598,7 +598,7 @@ gibbon_game_set_black (GibbonGame *self, const gchar *black)
                 snapshot = self->priv->snapshots + i;
                 position = snapshot->resulting_position;
                 g_free (position->players[1]);
-                position->players[0] = g_strdup (black);
+                position->players[1] = g_strdup (black);
         }
 
         return;
