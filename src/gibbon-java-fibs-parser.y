@@ -238,6 +238,10 @@ point
 
 cube
 	: CUBE COLON PLAYER COLON
+		{
+			if (!_gibbon_java_fibs_reader_doubles (reader, $3))
+				YYABORT;
+		}
 	;
 
 drop

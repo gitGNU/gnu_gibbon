@@ -45,6 +45,8 @@ gboolean _gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
 gboolean _gibbon_java_fibs_reader_move (GibbonJavaFIBSReader *self,
                                         const gchar *name,
                                         guint64 encoded);
+gboolean _gibbon_java_fibs_reader_doubles (GibbonJavaFIBSReader *self,
+                                           const gchar *name);
 gchar *_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
                                           const gchar *name);
 void _gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self);
