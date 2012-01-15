@@ -203,7 +203,6 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 buffer = g_strdup_printf ("%3ld)", ++move_num);               \
                 write_buffer ();                                              \
         } else {                                                              \
-                g_print ("....");                                             \
         }
 
 
@@ -262,6 +261,11 @@ gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
                 from = move->movements[i].from;
                 to = move->movements[i].to;
 
+                /* JellyFish moves are always high to low.  */
+                if (from < to) {
+                        from = -from + 25;
+                        to = -to + 25;
+                }
                 g_string_append_printf (s, " %d/%d", from, to);
         }
 
