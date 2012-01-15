@@ -42,6 +42,9 @@ gboolean _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self);
 gboolean _gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
                                         const gchar *name,
                                         guint die1, guint die2);
+gchar *_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
+                                          const gchar *name);
+void _gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self);
 
 G_END_DECLS
 

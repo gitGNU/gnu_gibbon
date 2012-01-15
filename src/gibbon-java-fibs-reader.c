@@ -48,7 +48,7 @@ struct _GibbonJavaFIBSReaderPrivate {
         const gchar *filename;
         GibbonMatch *match;
 
-        GList *names;
+        GSList *names;
 };
 
 GibbonJavaFIBSReader *gibbon_java_fibs_reader_instance = NULL;
@@ -84,8 +84,7 @@ gibbon_java_fibs_reader_finalize (GObject *object)
 {
         GibbonJavaFIBSReader *self = GIBBON_JAVA_FIBS_READER (object);
 
-        g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
-        g_list_free (self->priv->names);
+        _gibbon_java_fibs_reader_free_names (self);
 
         G_OBJECT_CLASS (gibbon_java_fibs_reader_parent_class)->finalize(object);
 }
@@ -152,9 +151,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         if (self->priv->match)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
-        g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
-        g_list_free (self->priv->names);
-        self->priv->names = NULL;
+        _gibbon_java_fibs_reader_free_names (self);
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -183,9 +180,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 if (self->priv->match)
                         g_object_unref (self->priv->match);
                 self->priv->match = NULL;
-                g_list_foreach (self->priv->names, (GFunc) g_free, NULL);
-                g_list_free (self->priv->names);
-                self->priv->names = NULL;
+                _gibbon_java_fibs_reader_free_names (self);
                 g_critical ("Another instance of GibbonJavaFIBSReader has"
                             " reset this one!");
                 gdk_threads_leave ();
@@ -327,4 +322,26 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         }
 
         return TRUE;
+}
+
+gchar *
+_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
+                                     const gchar *name)
+{
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), NULL);
+
+        self->priv->names = g_slist_prepend (self->priv->names,
+                                             g_strdup (name));
+
+        return self->priv->names->data;
+}
+
+void
+_gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self)
+{
+        g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
+
+        g_slist_foreach (self->priv->names, (GFunc) g_free, NULL);
+        g_slist_free (self->priv->names);
+        self->priv->names = NULL;
 }
