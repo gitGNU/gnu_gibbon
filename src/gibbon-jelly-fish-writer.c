@@ -93,6 +93,10 @@ gibbon_jelly_fish_writer_new (void)
         return self;
 }
 
+/*
+ * JellyFish is an MS-DOS file format.  We therefore use MS-DOS line ending
+ * conventions which!
+ */
 static gboolean
 gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
                                        GOutputStream *out,
@@ -101,8 +105,7 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
 {
         gsize game_number;
         const GibbonGame *game;
-
-        gchar *buffer = g_strdup_printf (" %llu point match\n",
+        gchar *buffer = g_strdup_printf (" %llu point match\015\012",
                                          (unsigned long long)
                                          gibbon_match_get_length (match));
 
@@ -118,7 +121,7 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
                 game = gibbon_match_get_nth_game (match, game_number);
                 if (!game)
                         break;
-                buffer = g_strdup_printf ("\n Game %llu\n",
+                buffer = g_strdup_printf ("\015\012 Game %llu\015\012",
                                           (unsigned long long) game_number);
 
                 if (!g_output_stream_write_all (out,
@@ -153,6 +156,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         const GibbonGameAction *action;
         GibbonPositionSide side;
         gsize column = 0;
+        gchar last_char = 0;
 
         buffer = g_strdup_printf (" %s : %u",
                                   position->players[1],
@@ -175,7 +179,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 padding[i] = 0;
         }
 
-        buffer = g_strdup_printf ("%s %s : %u\n",
+        buffer = g_strdup_printf ("%s %s : %u\015\012",
                                   padding,
                                   position->players[0],
                                   position->scores[0]);
@@ -187,6 +191,8 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         }
         g_free (buffer);
 
+        last_char = '\012';
+
 #define write_buffer()                                                        \
         if (buffer) {                                                         \
                 if (!g_output_stream_write_all (out, buffer, strlen (buffer), \
@@ -195,14 +201,32 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                         return FALSE;                                         \
                 }                                                             \
                 column += g_utf8_strlen (buffer, -1);                         \
+                last_char = buffer[strlen(buffer) - 1];                       \
                 g_free (buffer);                                              \
+        }
+
+#define pad_white_action(tab)                                                 \
+        padding[0] = 0;                                                       \
+        if (column < tab) {                                                   \
+                for (i = 0; i + column < tab; ++i) {                          \
+                        padding[i] = ' ';                                     \
+                }                                                             \
+                if (!g_output_stream_write_all (out, padding, i,              \
+                                                NULL, NULL, error)) {         \
+                        return FALSE;                                         \
+                }                                                             \
+                last_char = ' ';                                              \
         }
 
 #define new_half_move()                                                       \
         if (!move_num || side == GIBBON_POSITION_SIDE_BLACK) {                \
-                buffer = g_strdup_printf ("%3ld)", ++move_num);               \
+                column = 0;                                                   \
+                buffer = g_strdup_printf ("\015\012%3ld)", ++move_num);       \
                 write_buffer ();                                              \
-        } else {                                                              \
+                column -= 2;                                                  \
+        }                                                                     \
+        if (side == GIBBON_POSITION_SIDE_WHITE) {                             \
+                pad_white_action (32);                                        \
         }
 
 
@@ -229,6 +253,13 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 } else {
                         /* TODO */
                 }
+        }
+
+        if (last_char != '\012') {
+                if (!g_output_stream_write_all (out, "\015\012", 2,           \
+                                                NULL, NULL, error)) {         \
+                        return FALSE;                                         \
+                }                                                             \
         }
 
         return TRUE;
