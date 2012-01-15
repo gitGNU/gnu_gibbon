@@ -1354,3 +1354,14 @@ gibbon_position_reset (GibbonPosition *self)
         self->cube_turned = GIBBON_POSITION_SIDE_NONE;
         self->resigned = 0;
 }
+
+GibbonPositionSide
+gibbon_position_match_over (const GibbonPosition *self)
+{
+        if (self->scores[0] >= self->match_length)
+                return GIBBON_POSITION_SIDE_WHITE;
+        else if (self->scores[1] >= self->match_length)
+                return GIBBON_POSITION_SIDE_BLACK;
+
+        return GIBBON_POSITION_SIDE_NONE;
+}

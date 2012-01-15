@@ -28,6 +28,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <stdlib.h>
 
 #include "gibbon-jelly-fish-writer.h"
 #include "gibbon-game.h"
@@ -156,7 +157,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         const GibbonPosition *position =
                         gibbon_game_get_initial_position (game);
         gchar *buffer;
-        gchar padding[32];
+        gchar padding[33];
         glong len, i;
         glong move_num = 0;
         glong action_num;
@@ -164,6 +165,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         GibbonPositionSide side;
         gsize column = 0;
         gchar last_char = 0;
+        gint score;
 
         buffer = g_strdup_printf (" %s : %u",
                                   position->players[1],
@@ -271,6 +273,20 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                         buffer = gibbon_jelly_fish_writer_take (self);
                         write_buffer ();
                 }
+        }
+
+        score = gibbon_game_over (game);
+        if (score) {
+                if (score > 0)
+                        pad_white_action(33);
+                buffer = g_strdup_printf ("%s Wins %u point%s%s\015\012",
+                                          score > 0 ? "\015\012" : "",
+                                          abs (score),
+                                          (score == 1 || score == -1)
+                                                  ? "s" : "",
+                                          gibbon_position_match_over (position)
+                                                  ? " and the match" : "");
+                write_buffer ();
         }
 
         if (last_char != '\012') {
