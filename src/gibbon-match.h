@@ -79,6 +79,7 @@ struct _GibbonMatchClass
  *                                         encountered.
  * @GIBBON_MATCH_ERROR_NOT_ON_TURN: This player is not on turn.
  * @GIBBON_MATCH_ERROR_NO_ROLL: Move without prior roll.
+ * @GIBBON_MATCH_ERROR_ALREADY_ROLLED: Already rolled.
  *
  * Error codes for the domain #GIBBON_MATCH_ERROR.
  */
@@ -89,7 +90,8 @@ typedef enum {
         GIBBON_MATCH_ERROR_END_OF_GAME,
         GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION,
         GIBBON_MATCH_ERROR_NOT_ON_TURN,
-        GIBBON_MATCH_ERROR_NO_ROLL
+        GIBBON_MATCH_ERROR_NO_ROLL,
+        GIBBON_MATCH_ERROR_ALREADY_ROLLED
 } GibbonMatchError;
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;

@@ -246,6 +246,26 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                                      _("This player is not on turn!"));
                 return FALSE;
         }
+
+        if (pos->turn) {
+                if (pos->dice[0] || pos->dice[1]) {
+                        gibbon_position_free (pos);
+                        g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                             GIBBON_MATCH_ERROR_ALREADY_ROLLED,
+                                             _("The dice have already been"
+                                               " rolled!"));
+                        return FALSE;
+                }
+        } else if ((pos->dice[0] || pos->dice[1])
+                    && (pos->dice[0] != -pos->dice[1])) {
+                gibbon_position_free (pos);
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_ALREADY_ROLLED,
+                                     _("The dice have already been"
+                                       " rolled!"));
+                return FALSE;
+        }
+
         pos->turn = side;
         pos->dice[0] = roll->die1;
         pos->dice[1] = roll->die2;
