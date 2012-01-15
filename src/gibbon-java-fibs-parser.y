@@ -85,10 +85,12 @@ extern int gibbon_java_fibs_lexer_lex (void);
 #define yygindex   gibbon_java_fibs_parser_yygindex
 #define yytable    gibbon_java_fibs_parser_yytable
 #define yycheck    gibbon_java_fibs_parser_yycheck
+
+static guint gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to);
 %}
 
 %union {
-	gint num;
+	guint64 num;
 	gchar *name;
 }
 
@@ -113,6 +115,10 @@ extern int gibbon_java_fibs_lexer_lex (void);
 %token BAR
 %token OFF
 %token JUNK
+
+%type <num>point
+%type <num>movement
+%type <num>movements
 
 %%
 
@@ -181,22 +187,53 @@ roll
 
 move
 	: MOVE COLON PLAYER COLON movements
+		{
+			if (!_gibbon_java_fibs_reader_move (reader, $3, $5))
+				YYABORT;
+		}
 	;
 
 movements
 	: /* empty */
-	| movement
+		{
+			$$ = 0;
+		}
+	| movement /* $$ = $1 */
 	| movement movement
+		{
+			$$ = $1 << 16 | $2;
+		}
 	| movement movement movement
+		{
+			$$ = $1 << 32 | $2 << 16 | $3;
+		}
 	| movement movement movement movement
+		{
+			$$ = $1 << 48 | $2 << 32 | $3 << 16 | $4;
+		}
 	;
 
 movement
-	: point HYPHEN point
+	: point HYPHEN point 
+		{
+			if ($1 == $3) {
+				yyerror (_("Start and end point are equal!"));
+				YYABORT;
+			} 
+			$$ = gibbon_java_fibs_parser_encode_movement ($1, $3);
+		}
 	;
 
 point
-	: INTEGER | BAR | OFF
+	: INTEGER 
+		{ 
+			if (!$$ || $$ > 24) {
+				yyerror (_("Point out of range (1-24)!"));
+				YYABORT;
+			}
+		}
+	  | BAR { $$ = 25; }
+	  | OFF { $$ = 0; }
 	;
 
 cube
@@ -232,3 +269,30 @@ win_match
 	;
 
 %%
+
+static guint
+gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to)
+{
+	/*
+	 * This is the first normalization step for JavaFIBS moves.
+	 * Depending on the direction of the move we translate 25 and 0 to
+	 * bar and off.
+	 */
+	if (from >= 25 && to <= 6)
+		/* Come in from bar.  */
+		from = 0;
+	if (to == 0 && from > 6)
+		/* Bear-off.  */
+		to = 25;
+
+	/*
+	 * And now we make sure that we move in descending direction.  That
+	 * corresponds to white's move direction in our internal notion.
+	 */
+	if (from < to) {
+		from = -from + 25;
+		to = -to + 25;
+	}
+	
+	return (from << 8 | to);
+}
