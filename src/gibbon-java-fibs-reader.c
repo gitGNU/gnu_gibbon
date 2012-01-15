@@ -40,6 +40,7 @@
 #include "gibbon-game.h"
 #include "gibbon-game-action.h"
 #include "gibbon-roll.h"
+#include "gibbon-move.h"
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
@@ -292,6 +293,55 @@ _gibbon_java_fibs_reader_roll (GibbonJavaFIBSReader *self,
         return gibbon_java_fibs_reader_add_action (self, name, action);
 }
 
+gboolean _gibbon_java_fibs_reader_move (GibbonJavaFIBSReader *self,
+                                        const gchar *name,
+                                        guint64 encoded)
+{
+        GibbonMove *move;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        if (encoded & 0xffff000000000000ULL) {
+                move = gibbon_move_newv (0, 0,
+                                         (encoded & 0xff00000000000000ULL) >> 56,
+                                         (encoded & 0x00ff000000000000ULL) >> 48,
+                                         (encoded & 0x0000ff0000000000ULL) >> 40,
+                                         (encoded & 0x000000ff00000000ULL) >> 32,
+                                         (encoded & 0x00000000ff000000ULL) >> 24,
+                                         (encoded & 0x0000000000ff0000ULL) >> 16,
+                                         (encoded & 0x000000000000ff00ULL) >> 8,
+                                         (encoded & 0x00000000000000ffULL),
+                                         -1);
+        } else if (encoded & 0xffff00000000ULL) {
+                move = gibbon_move_newv (0, 0,
+                                         (encoded & 0x0000ff0000000000ULL) >> 40,
+                                         (encoded & 0x000000ff00000000ULL) >> 32,
+                                         (encoded & 0x00000000ff000000ULL) >> 24,
+                                         (encoded & 0x0000000000ff0000ULL) >> 16,
+                                         (encoded & 0x000000000000ff00ULL) >> 8,
+                                         (encoded & 0x00000000000000ffULL),
+                                         -1);
+        } else if (encoded & 0xffff0000ULL) {
+                move = gibbon_move_newv (0, 0,
+                                         (encoded & 0x00000000ff000000ULL) >> 24,
+                                         (encoded & 0x0000000000ff0000ULL) >> 16,
+                                         (encoded & 0x000000000000ff00ULL) >> 8,
+                                         (encoded & 0x00000000000000ffULL),
+                                         -1);
+        } else if (encoded & 0xffffULL) {
+                move = gibbon_move_newv (0, 0,
+                                         (encoded & 0x000000000000ff00ULL) >> 8,
+                                         (encoded & 0x00000000000000ffULL),
+                                         -1);
+        } else {
+                move = gibbon_move_newv (0, 0, -1);
+        }
+
+        return gibbon_java_fibs_reader_add_action (self, name,
+                                                   GIBBON_GAME_ACTION (move));
+}
+
 static gboolean
 gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
                                     const gchar *name,
@@ -301,6 +351,8 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         const GibbonPosition *position;
         GibbonPositionSide side;
         GError *error = NULL;
+        GibbonMove *move;
+        gsize i;
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
@@ -310,10 +362,25 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         }
 
         position = gibbon_game_get_position (game);
-        if (g_strcmp0 (position->players[1], name))
+        if (g_strcmp0 (position->players[0], name))
                 side = GIBBON_POSITION_SIDE_BLACK;
         else
                 side = GIBBON_POSITION_SIDE_WHITE;
+
+        if (GIBBON_IS_MOVE (action)
+            && side == GIBBON_POSITION_SIDE_BLACK) {
+                /*
+                 * The parser has already translated the move to a move
+                 * that corresponds white's direction, that is from higher
+                 * points to 0.  If our move is actually for black, we have
+                 * to translate it once more.
+                 */
+                move = GIBBON_MOVE (action);
+                for (i = 0; i < move->number; ++i) {
+                        move->movements[i].from = -move->movements[i].from + 25;
+                        move->movements[i].to = -move->movements[i].to + 25;
+                }
+        }
 
         if (!gibbon_game_add_action (game, side, action, &error)) {
                 _gibbon_java_fibs_reader_yyerror (error->message);

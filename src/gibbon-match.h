@@ -78,6 +78,7 @@ struct _GibbonMatchClass
  * @GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION: An unsupported #GibbonGameAction was
  *                                         encountered.
  * @GIBBON_MATCH_ERROR_NOT_ON_TURN: This player is not on turn.
+ * @GIBBON_MATCH_ERROR_NO_ROLL: Move without prior roll.
  *
  * Error codes for the domain #GIBBON_MATCH_ERROR.
  */
@@ -87,7 +88,8 @@ typedef enum {
         GIBBON_MATCH_ERROR_END_OF_MATCH,
         GIBBON_MATCH_ERROR_END_OF_GAME,
         GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION,
-        GIBBON_MATCH_ERROR_NOT_ON_TURN
+        GIBBON_MATCH_ERROR_NOT_ON_TURN,
+        GIBBON_MATCH_ERROR_NO_ROLL
 } GibbonMatchError;
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;

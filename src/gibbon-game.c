@@ -272,6 +272,29 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
+        if (!side || side != pos->turn) {
+                gibbon_position_free (pos);
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_NOT_ON_TURN,
+                                     _("This player is not on turn!"));
+                return FALSE;
+        }
+
+        if (!pos->dice[0] || !pos->dice[1]) {
+                /*
+                 * FIXME! This can happen, if we missed a roll because of
+                 * network problems.  Instead, try to guess the roll.
+                 */
+                gibbon_position_free (pos);
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_NO_ROLL,
+                                     _("Move without a roll!"));
+                return FALSE;
+        }
+
+        move->die1 = abs (pos->dice[0]);
+        move->die2 = abs (pos->dice[1]);
+
         if (!gibbon_position_apply_move (pos, move, side, FALSE)) {
                 gibbon_position_free (pos);
                 return FALSE;

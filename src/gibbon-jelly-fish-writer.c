@@ -33,6 +33,7 @@
 #include "gibbon-game.h"
 
 #include "gibbon-roll.h"
+#include "gibbon-move.h"
 
 G_DEFINE_TYPE (GibbonJellyFishWriter, gibbon_jelly_fish_writer,
                GIBBON_TYPE_MATCH_WRITER)
@@ -49,6 +50,10 @@ static gboolean gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter
                                                      GError **error);
 static gchar *gibbon_jelly_fish_writer_roll (const GibbonJellyFishWriter *self,
                                              const GibbonRoll *roll);
+static gchar *gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
+                                             const GibbonPosition *position,
+                                             GibbonPositionSide side,
+                                             const GibbonMove *move);
 
 static void 
 gibbon_jelly_fish_writer_init (GibbonJellyFishWriter *self)
@@ -206,12 +211,21 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
+                if (action_num)
+                        position = gibbon_game_get_nth_position (game,
+                                                                 action_num
+                                                                 - 1);
                 if (GIBBON_IS_ROLL (action)) {
                         if (!side)
                                 continue;
                         new_half_move();
                         buffer = gibbon_jelly_fish_writer_roll (self,
                                                           GIBBON_ROLL (action));
+                        write_buffer ();
+                } else if (GIBBON_IS_MOVE (action)) {
+                        buffer = gibbon_jelly_fish_writer_move (self, position,
+                                                                side,
+                                                          GIBBON_MOVE (action));
                         write_buffer ();
                 } else {
                         /* TODO */
@@ -228,6 +242,31 @@ gibbon_jelly_fish_writer_roll (const GibbonJellyFishWriter *self,
         gchar *buffer;
 
         buffer = g_strdup_printf (" %d%d:", roll->die1, roll->die2);
+
+        return buffer;
+}
+
+
+static gchar *
+gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
+                               const GibbonPosition *position,
+                               GibbonPositionSide side,
+                               const GibbonMove *move)
+{
+        GString *s = g_string_new ("");
+        gchar *buffer;
+        gsize i;
+        gint from, to;
+
+        for (i = 0; i < move->number; ++i) {
+                from = move->movements[i].from;
+                to = move->movements[i].to;
+
+                g_string_append_printf (s, " %d/%d", from, to);
+        }
+
+        buffer = s->str;
+        g_string_free (s, FALSE);
 
         return buffer;
 }
