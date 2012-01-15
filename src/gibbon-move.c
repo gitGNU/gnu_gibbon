@@ -84,7 +84,7 @@ gibbon_move_newv (gint die1, gint die2, ...)
                 from = va_arg (ap, gint);
                 if (from < 0)
                         break;
-                if (from > 24) {
+                if (from > 25) {
                         va_end (ap);
                         g_critical ("gibbon_move_newv: starting point %d"
                                     " is out of range!", from);
