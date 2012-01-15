@@ -288,6 +288,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
@@ -301,10 +302,6 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         }
 
         if (!pos->dice[0] || !pos->dice[1]) {
-                /*
-                 * FIXME! This can happen, if we missed a roll because of
-                 * network problems.  Instead, try to guess the roll.
-                 */
                 gibbon_position_free (pos);
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_NO_ROLL,
@@ -359,9 +356,17 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
+
+        if (pos->dice[0] || pos->dice[1]) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL,
+                                     _("Double after dice have been rolled!"));
+                return FALSE;
+        }
 
         g_free (pos->status);
         if (side == GIBBON_POSITION_SIDE_WHITE) {
@@ -374,6 +379,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                                                pos->players[1]);
         }
 
+        /* Beaver? */
         snapshot = gibbon_game_get_snapshot (self);
         if (snapshot && GIBBON_IS_DOUBLE (snapshot->action))
                 pos->cube <<= 1;
@@ -393,6 +399,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
@@ -426,6 +433,7 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
@@ -446,6 +454,7 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
@@ -466,6 +475,7 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
@@ -498,6 +508,7 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         other = side == GIBBON_POSITION_SIDE_BLACK ?
@@ -548,6 +559,7 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
         }
 
         pos = gibbon_position_copy (setup->position);
