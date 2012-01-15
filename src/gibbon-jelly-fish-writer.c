@@ -34,6 +34,7 @@
 
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
+#include "gibbon-double.h"
 
 G_DEFINE_TYPE (GibbonJellyFishWriter, gibbon_jelly_fish_writer,
                GIBBON_TYPE_MATCH_WRITER)
@@ -54,6 +55,8 @@ static gchar *gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
                                              const GibbonPosition *position,
                                              GibbonPositionSide side,
                                              const GibbonMove *move);
+static gchar *gibbon_jelly_fish_writer_doubles (const GibbonJellyFishWriter *self,
+                                                const GibbonPosition *position);
 
 static void 
 gibbon_jelly_fish_writer_init (GibbonJellyFishWriter *self)
@@ -241,7 +244,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 if (GIBBON_IS_ROLL (action)) {
                         if (!side)
                                 continue;
-                        new_half_move();
+                        new_half_move ();
                         buffer = gibbon_jelly_fish_writer_roll (self,
                                                           GIBBON_ROLL (action));
                         write_buffer ();
@@ -249,6 +252,11 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                         buffer = gibbon_jelly_fish_writer_move (self, position,
                                                                 side,
                                                           GIBBON_MOVE (action));
+                        write_buffer ();
+                } else if (GIBBON_IS_DOUBLE (action)) {
+                        new_half_move ();
+                        buffer = gibbon_jelly_fish_writer_doubles (self,
+                                                                   position);
                         write_buffer ();
                 } else {
                         /* TODO */
@@ -275,7 +283,6 @@ gibbon_jelly_fish_writer_roll (const GibbonJellyFishWriter *self,
 
         return buffer;
 }
-
 
 static gchar *
 gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
@@ -304,4 +311,11 @@ gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
         g_string_free (s, FALSE);
 
         return buffer;
+}
+
+static gchar *
+gibbon_jelly_fish_writer_doubles (const GibbonJellyFishWriter *self,
+                                  const GibbonPosition *position)
+{
+        return g_strdup_printf ("  Doubles to %u", position->cube << 1);
 }
