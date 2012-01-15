@@ -136,6 +136,12 @@ main (int argc, char *argv[])
                 return 1;
         }
 
+        if (input_format == output_format) {
+                usage_error (_("The output format is the same as the input"
+                               " format."));
+                return 1;
+        }
+
         if (!g_thread_supported ()) {
                 g_thread_init (NULL);
                 gdk_threads_init ();
@@ -160,7 +166,6 @@ main (int argc, char *argv[])
         match = gibbon_match_reader_parse (reader, input_filename);
         if (!match)
                 return 1;
-
 
         switch (output_format) {
         case GIBBON_CONVERT_FORMAT_UNKNOWN:
