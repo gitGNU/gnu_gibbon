@@ -34,7 +34,7 @@
 #include "gibbon-java-fibs-parser.h"
 #include "gibbon-java-fibs-reader-priv.h"
 
-#define reader gibbon_java_fibs_reader_instance
+#define reader _gibbon_java_fibs_reader_instance
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -117,7 +117,7 @@ extern int gibbon_java_fibs_lexer_lex (void);
 %%
 
 java_fibs_file
-        : PROLOG match
+        : PROLOG match  { _gibbon_java_fibs_reader_free_names (reader); }
         ;
 
 match
@@ -163,7 +163,7 @@ opponents
 
 actions
 	: /* empty */
-	| actions action
+	| actions action { _gibbon_java_fibs_reader_free_names (reader); }
 	;
 	
 action

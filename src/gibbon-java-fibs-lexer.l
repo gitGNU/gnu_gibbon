@@ -40,6 +40,9 @@ static int yywrap ();
 #include "gibbon-java-fibs-parser.h"
 #include "gibbon-java-fibs-reader-priv.h"
 
+#define alloc_name(s) \
+	_gibbon_java_fibs_reader_alloc_name(_gibbon_java_fibs_reader_instance, \
+	                                    s)
 %}
 
 %option yylineno
@@ -178,7 +181,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
    ***************************************************************************/
 <WHO>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = g_strdup (yytext);
+					yylval.name = alloc_name (yytext);
 					return PLAYER;
 				}
 <WHO>.|\n			return JUNK;
@@ -205,7 +208,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 				}
 <WHAT>[^-: \t\r\n]+		{
 					BEGIN (WHAT);
-					yylval.name = g_strdup (yytext);
+					yylval.name = alloc_name (yytext);
 					return PLAYER;
 				}
 <WHAT>\n			BEGIN (OPCODE);

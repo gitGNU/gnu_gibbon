@@ -28,7 +28,7 @@
 
 G_BEGIN_DECLS
 
-extern GibbonJavaFIBSReader *gibbon_java_fibs_reader_instance;
+extern GibbonJavaFIBSReader *_gibbon_java_fibs_reader_instance;
 
 void _gibbon_java_fibs_reader_yyerror (const gchar *msg);
 
