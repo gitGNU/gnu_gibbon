@@ -957,6 +957,11 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
 
         g_return_val_if_fail (side, FALSE);
 
+        if (side > 0)
+                side = GIBBON_POSITION_SIDE_WHITE;
+        else
+                side = GIBBON_POSITION_SIDE_BLACK;
+
         if (reverse) {
                 m = -1;
                 c = 24;
@@ -1030,6 +1035,9 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
                 }
         }
 
+        self->dice[0] = self->dice[1] = 0;
+        self->turn = -side;
+
         return TRUE;
 }
 
@@ -1086,7 +1094,7 @@ static GRegex *re_dup4 = NULL;
 static GRegex *re_prune_intermediate = NULL;
 
 gchar *
-gibbon_position_format_move (GibbonPosition *self,
+gibbon_position_format_move (const GibbonPosition *self,
                              const GibbonMove *move,
                              GibbonPositionSide side,
                              gboolean reverse)
@@ -1244,7 +1252,7 @@ gibbon_position_format_move (GibbonPosition *self,
 }
 
 gchar *
-gibbon_position_fibs_move (GibbonPosition *self, const GibbonMove *move,
+gibbon_position_fibs_move (const GibbonPosition *self, const GibbonMove *move,
                            GibbonPositionSide side, gboolean reverse)
 {
         GString *string = g_string_new ("");

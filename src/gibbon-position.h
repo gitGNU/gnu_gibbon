@@ -167,11 +167,11 @@ gboolean gibbon_position_apply_move (GibbonPosition *self,
 gint gibbon_position_game_over (const GibbonPosition *position);
 
 /* Free return value with g_free()!  */
-gchar *gibbon_position_format_move (GibbonPosition *self,
+gchar *gibbon_position_format_move (const GibbonPosition *self,
                                     const struct _GibbonMove *move,
                                     GibbonPositionSide side,
                                     gboolean reverse);
-gchar *gibbon_position_fibs_move (GibbonPosition *self,
+gchar *gibbon_position_fibs_move (const GibbonPosition *self,
                                   const struct _GibbonMove *move,
                                   GibbonPositionSide side,
                                   gboolean reverse);
