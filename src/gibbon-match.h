@@ -81,6 +81,8 @@ struct _GibbonMatchClass
  * @GIBBON_MATCH_ERROR_NO_ROLL: Move without prior roll.
  * @GIBBON_MATCH_ERROR_ALREADY_ROLLED: Already rolled.
  * @GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL: Cube turned after dice roll.
+ * @GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE: Drop but cube is not turned.
+ * @GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE: Take but cube is not turned.
  *
  * Error codes for the domain #GIBBON_MATCH_ERROR.
  */
@@ -93,7 +95,9 @@ typedef enum {
         GIBBON_MATCH_ERROR_NOT_ON_TURN,
         GIBBON_MATCH_ERROR_NO_ROLL,
         GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-        GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL
+        GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL,
+        GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE,
+        GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE
 } GibbonMatchError;
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;

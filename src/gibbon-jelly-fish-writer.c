@@ -35,6 +35,8 @@
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
 #include "gibbon-double.h"
+#include "gibbon-drop.h"
+#include "gibbon-take.h"
 
 G_DEFINE_TYPE (GibbonJellyFishWriter, gibbon_jelly_fish_writer,
                GIBBON_TYPE_MATCH_WRITER)
@@ -55,8 +57,10 @@ static gchar *gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
                                              const GibbonPosition *position,
                                              GibbonPositionSide side,
                                              const GibbonMove *move);
-static gchar *gibbon_jelly_fish_writer_doubles (const GibbonJellyFishWriter *self,
-                                                const GibbonPosition *position);
+static gchar *gibbon_jelly_fish_writer_double (const GibbonJellyFishWriter *self,
+                                               const GibbonPosition *position);
+static gchar *gibbon_jelly_fish_writer_take (const GibbonJellyFishWriter *self);
+static gchar *gibbon_jelly_fish_writer_drop (const GibbonJellyFishWriter *self);
 
 static void 
 gibbon_jelly_fish_writer_init (GibbonJellyFishWriter *self)
@@ -255,11 +259,17 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                         write_buffer ();
                 } else if (GIBBON_IS_DOUBLE (action)) {
                         new_half_move ();
-                        buffer = gibbon_jelly_fish_writer_doubles (self,
-                                                                   position);
+                        buffer = gibbon_jelly_fish_writer_double (self,
+                                                                  position);
                         write_buffer ();
-                } else {
-                        /* TODO */
+                } else if (GIBBON_IS_DROP (action)) {
+                        new_half_move ();
+                        buffer = gibbon_jelly_fish_writer_drop (self);
+                        write_buffer ();
+                } else if (GIBBON_IS_TAKE (action)) {
+                        new_half_move ();
+                        buffer = gibbon_jelly_fish_writer_take (self);
+                        write_buffer ();
                 }
         }
 
@@ -314,8 +324,20 @@ gibbon_jelly_fish_writer_move (const GibbonJellyFishWriter *self,
 }
 
 static gchar *
-gibbon_jelly_fish_writer_doubles (const GibbonJellyFishWriter *self,
+gibbon_jelly_fish_writer_double (const GibbonJellyFishWriter *self,
                                   const GibbonPosition *position)
 {
         return g_strdup_printf ("  Doubles to %u", position->cube << 1);
+}
+
+static gchar *
+gibbon_jelly_fish_writer_take (const GibbonJellyFishWriter *self)
+{
+        return g_strdup_printf ("  Takes");
+}
+
+static gchar *
+gibbon_jelly_fish_writer_drop (const GibbonJellyFishWriter *self)
+{
+        return g_strdup_printf ("  Drops");
 }

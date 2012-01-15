@@ -42,6 +42,8 @@
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
 #include "gibbon-double.h"
+#include "gibbon-drop.h"
+#include "gibbon-take.h"
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
@@ -344,8 +346,8 @@ gboolean _gibbon_java_fibs_reader_move (GibbonJavaFIBSReader *self,
 }
 
 gboolean
-_gibbon_java_fibs_reader_doubles (GibbonJavaFIBSReader *self,
-                                  const gchar *name)
+_gibbon_java_fibs_reader_double (GibbonJavaFIBSReader *self,
+                                 const gchar *name)
 {
         GibbonGameAction *action;
 
@@ -353,6 +355,34 @@ _gibbon_java_fibs_reader_doubles (GibbonJavaFIBSReader *self,
         g_return_val_if_fail (self->priv->match, FALSE);
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
+
+        return gibbon_java_fibs_reader_add_action (self, name, action);
+}
+
+gboolean
+_gibbon_java_fibs_reader_drop (GibbonJavaFIBSReader *self,
+                               const gchar *name)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+
+        return gibbon_java_fibs_reader_add_action (self, name, action);
+}
+
+gboolean
+_gibbon_java_fibs_reader_take (GibbonJavaFIBSReader *self,
+                               const gchar *name)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_take_new ());
 
         return gibbon_java_fibs_reader_add_action (self, name, action);
 }

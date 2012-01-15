@@ -239,17 +239,25 @@ point
 cube
 	: CUBE COLON PLAYER COLON
 		{
-			if (!_gibbon_java_fibs_reader_doubles (reader, $3))
+			if (!_gibbon_java_fibs_reader_double (reader, $3))
 				YYABORT;
 		}
 	;
 
 drop
 	: DROP COLON PLAYER COLON
+		{
+			if (!_gibbon_java_fibs_reader_drop (reader, $3))
+				YYABORT;
+		}
 	;
 
 take
 	: TAKE COLON PLAYER COLON
+		{
+			if (!_gibbon_java_fibs_reader_take (reader, $3))
+				YYABORT;
+		}
 	;
 	
 win_game
