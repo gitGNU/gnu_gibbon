@@ -421,7 +421,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                 self->priv->score = pos->cube;
                 pos->scores[0] += pos->cube;
                 pos->status = g_strdup_printf (_("%s refuses the cube."),
-                                               pos->players[0]);
+                                               pos->players[1]);
         }
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (drop), side, pos);
