@@ -144,11 +144,14 @@ gibbon_match_add_game (GibbonMatch *self, GError **error)
         gboolean is_crawford = FALSE;
         gint white_away, black_away;
         const GibbonPosition *last_position;
+        GList *iter;
 
         gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (self), NULL, error);
 
-        if (self->priv->games) {
-                game = self->priv->games->data;
+        iter = g_list_last (self->priv->games);
+
+        if (iter) {
+                game = iter->data;
                 position = gibbon_position_copy (gibbon_game_get_position (game));
                 gibbon_position_reset (position);
         } else {
