@@ -188,7 +188,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 padding[i] = 0;
         }
 
-        buffer = g_strdup_printf ("%s %s : %u\015\012",
+        buffer = g_strdup_printf ("%s %s : %u",
                                   padding,
                                   position->players[0],
                                   position->scores[0]);
@@ -200,7 +200,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         }
         g_free (buffer);
 
-        last_char = '\012';
+        last_char = 'x';
 
 #define write_buffer()                                                        \
         if (buffer) {                                                         \
