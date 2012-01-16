@@ -130,7 +130,7 @@ gibbon_jelly_fish_writer_write_stream (const GibbonMatchWriter *_self,
                 if (!game)
                         break;
                 buffer = g_strdup_printf ("\015\012 Game %llu\015\012",
-                                          (unsigned long long) game_number);
+                                          (unsigned long long) game_number + 1);
 
                 if (!g_output_stream_write_all (out,
                                                 buffer, strlen (buffer),
@@ -280,10 +280,10 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 if (score > 0)
                         pad_white_action(33);
                 buffer = g_strdup_printf ("%s Wins %u point%s%s\015\012",
-                                          score > 0 ? "\015\012" : "",
+                                          score < 0 ? "\015\012" : "",
                                           abs (score),
                                           (score == 1 || score == -1)
-                                                  ? "s" : "",
+                                                  ? "" : "s",
                                           gibbon_position_match_over (position)
                                                   ? " and the match" : "");
                 write_buffer ();
@@ -343,7 +343,7 @@ static gchar *
 gibbon_jelly_fish_writer_double (const GibbonJellyFishWriter *self,
                                   const GibbonPosition *position)
 {
-        return g_strdup_printf ("  Doubles to %u", position->cube << 1);
+        return g_strdup_printf ("  Doubles => %u", position->cube << 1);
 }
 
 static gchar *
