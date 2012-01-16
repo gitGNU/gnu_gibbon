@@ -262,6 +262,10 @@ take
 	
 win_game
 	: WIN_GAME COLON PLAYER COLON INTEGER
+		{
+			if (!_gibbon_java_fibs_reader_win_game (reader, $3, $5))
+				YYABORT;
+		}
 	;
 	
 score
@@ -270,10 +274,19 @@ score
 
 resign
 	: RESIGN COLON PLAYER COLON INTEGER
+		{
+			if (!_gibbon_java_fibs_reader_resign (reader, $3, $5))
+				YYABORT;
+		}
 	;
 	
 reject_resign
 	: REJECT_RESIGN COLON PLAYER COLON
+		{
+			if (!_gibbon_java_fibs_reader_reject_resign (reader, 
+			                                             $3))
+				YYABORT;
+		}
 	;
 	
 win_match

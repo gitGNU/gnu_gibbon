@@ -44,6 +44,9 @@
 #include "gibbon-double.h"
 #include "gibbon-drop.h"
 #include "gibbon-take.h"
+#include "gibbon-resign.h"
+#include "gibbon-reject.h"
+#include "gibbon-accept.h"
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {
@@ -385,6 +388,65 @@ _gibbon_java_fibs_reader_take (GibbonJavaFIBSReader *self,
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
 
         return gibbon_java_fibs_reader_add_action (self, name, action);
+}
+
+/*
+ * We only have to consider this item, after a resignation offer.  Otherwise,
+ * we know better, when the game is over.
+ */
+gboolean
+_gibbon_java_fibs_reader_win_game (GibbonJavaFIBSReader *self,
+                                   const gchar *name, guint points)
+{
+        GibbonGameAction *action;
+        const GibbonGameAction *last_action;
+        GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        if (!game) {
+                _gibbon_java_fibs_reader_yyerror (_("Syntax error!"));
+                return TRUE;
+        }
+
+        last_action = gibbon_game_get_nth_action (game, -1, NULL);
+        if (GIBBON_IS_RESIGN (last_action)) {
+                action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+                return gibbon_java_fibs_reader_add_action (self, name, action);
+        }
+
+        /* Otherwise, simply ignore this item.  */
+        return TRUE;
+}
+
+gboolean
+_gibbon_java_fibs_reader_resign (GibbonJavaFIBSReader *self,
+                                 const gchar *name, guint points)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (points));
+
+        return gibbon_java_fibs_reader_add_action (self, name, action);
+}
+
+gboolean
+_gibbon_java_fibs_reader_reject_resign (GibbonJavaFIBSReader *self,
+                                        const gchar *name)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+
+        return FALSE;
 }
 
 static gboolean
