@@ -342,10 +342,13 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (move), side, pos);
 
         winner = gibbon_position_game_over (pos);
-        if (GIBBON_POSITION_SIDE_BLACK == winner)
+        if (GIBBON_POSITION_SIDE_BLACK == winner) {
                 self->priv->score = -pos->cube;
-        else if (GIBBON_POSITION_SIDE_WHITE == winner)
+                pos->scores[1] += pos->cube;
+        } else if (GIBBON_POSITION_SIDE_WHITE == winner) {
                 self->priv->score = pos->cube;
+                pos->scores[0] += pos->cube;
+        }
 
         return TRUE;
 }
@@ -474,6 +477,13 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_END_OF_GAME,
                                      _("Game is already over!"));
+                return FALSE;
+        }
+
+        if (!resign->value) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_EMPTY_RESIGNATION,
+                                     _("Resignation without a value!"));
                 return FALSE;
         }
 
