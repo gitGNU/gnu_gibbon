@@ -161,7 +161,8 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         glong len, i;
         glong move_num = 0;
         glong action_num;
-        const GibbonGameAction *action;
+        const GibbonGameAction *action = NULL;
+        const GibbonGameAction *last_action = NULL;
         GibbonPositionSide side;
         gsize column = 0;
         gchar last_char = 0;
@@ -240,6 +241,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
 
 
         for (action_num = 0; ; ++action_num) {
+                last_action = action;
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
@@ -277,6 +279,13 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
 
         score = gibbon_game_over (game);
         if (score) {
+                if (score > 0 && GIBBON_IS_MOVE (last_action)) {
+                        if (!g_output_stream_write_all (out, "\015\012", 2,
+                                                        NULL, NULL, error)) {
+                                return FALSE;
+                        }
+                        column = 0;
+                }
                 if (score > 0)
                         pad_white_action(33);
                 buffer = g_strdup_printf ("%s Wins %u point%s%s\015\012",
@@ -290,10 +299,10 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
         }
 
         if (last_char != '\012') {
-                if (!g_output_stream_write_all (out, "\015\012", 2,           \
-                                                NULL, NULL, error)) {         \
-                        return FALSE;                                         \
-                }                                                             \
+                if (!g_output_stream_write_all (out, "\015\012", 2,
+                                                NULL, NULL, error)) {
+                        return FALSE;
+                }
         }
 
         return TRUE;
