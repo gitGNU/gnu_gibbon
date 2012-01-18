@@ -434,7 +434,6 @@ _gibbon_java_fibs_reader_resign (GibbonJavaFIBSReader *self,
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
 
-        g_printerr ("%s offers resign worth %u points.\n", name, points);
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
                 _gibbon_java_fibs_reader_yyerror (_("Syntax error!"));
