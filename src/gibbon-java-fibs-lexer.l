@@ -192,7 +192,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
    ***************************************************************************/
 
 <WHAT>bar			return BAR;
-<WHAT>off			return OFF;
+<WHAT>o(ff)?			return OFF;
 <WHAT>[1-9][0-9]*		{
 					/* We leave all complaints
 					 * about conversion errors to 
