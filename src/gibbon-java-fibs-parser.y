@@ -191,6 +191,16 @@ move
 			if (!_gibbon_java_fibs_reader_move (reader, $3, $5))
 				YYABORT;
 		}
+	/*
+	 * Sometimes, JavaFIBS appends a gratuitous "xyz-moves ...".  We just
+	 * match that exception without being too strict about the exact
+	 * semantics.
+	 */
+	| MOVE COLON PLAYER COLON movements PLAYER HYPHEN PLAYER garbage
+		{
+			if (!_gibbon_java_fibs_reader_move (reader, $3, $5))
+				YYABORT;
+		}
 	;
 
 movements
@@ -213,6 +223,12 @@ movements
 		}
 	;
 
+garbage
+	: /* empty */
+	| garbage point
+	| garbage HYPHEN
+	;
+	
 movement
 	: point HYPHEN point 
 		{
