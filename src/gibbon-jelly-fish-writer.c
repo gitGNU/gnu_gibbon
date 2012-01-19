@@ -288,6 +288,7 @@ gibbon_jelly_fish_writer_write_game (const GibbonJellyFishWriter *self,
                 }
                 if (score > 0)
                         pad_white_action(33);
+                position = gibbon_game_get_nth_position (game, -1);
                 buffer = g_strdup_printf ("%s Wins %u point%s%s\015\012",
                                           score < 0 ? "\015\012" : "",
                                           abs (score),
