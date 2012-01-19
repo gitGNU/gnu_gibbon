@@ -1049,19 +1049,20 @@ gibbon_position_game_over (const GibbonPosition *position)
                                                GIBBON_POSITION_SIDE_WHITE);
         guint black_borne_off;
         gint i;
+        guint cube = position->cube;
 
         if (white_borne_off >= 15) {
                 black_borne_off =
                         gibbon_position_get_borne_off (position,
                                                     GIBBON_POSITION_SIDE_BLACK);
                 if (black_borne_off)
-                        return 1;
+                        return cube;
                 if (position->bar[1])
-                        return 3;
+                        return 3 * cube;
                 for (i = 0; i < 6; ++i)
                         if (position->points[i])
-                                return 3;
-                return 2;
+                                return 3 * cube;
+                return 2 * cube;
         }
 
         black_borne_off =
@@ -1073,15 +1074,14 @@ gibbon_position_game_over (const GibbonPosition *position)
                         gibbon_position_get_borne_off (position,
                                                     GIBBON_POSITION_SIDE_WHITE);
                 if (white_borne_off)
-                        return -1;
+                        return -cube;
                 if (position->bar[0])
-                        return -3;
+                        return -3 * cube;
                 for (i = 23; i > 17; --i)
                         if (position->points[i])
-                                return -3;
-                return -2;
+                                return -3 * cube;
+                return -2 * cube;
         }
-
 
         return 0;
 }
