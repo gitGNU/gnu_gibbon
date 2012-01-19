@@ -167,6 +167,13 @@ main (int argc, char *argv[])
         if (!match)
                 return 1;
 
+        if (!gibbon_match_get_current_game (match)) {
+                g_printerr (_("%s: Empty or incomplete match file!\n"),
+                            input_filename
+                            ? input_filename : _("standard input"));
+                return 1;
+        }
+
         switch (output_format) {
         case GIBBON_CONVERT_FORMAT_UNKNOWN:
                 g_object_unref (match);
