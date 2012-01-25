@@ -141,7 +141,7 @@ match
 		{
 			_gibbon_java_fibs_reader_set_match_length (reader, $6);
 		}
-	  games win_match
+	  games last_game win_match
 	;
 
 games
@@ -150,6 +150,10 @@ games
 	;
 
 game
+	: start_of_game opponents actions win_game score
+	;
+
+last_game
 	: start_of_game opponents actions win_game
 	;
 
@@ -179,7 +183,7 @@ actions
 	;
 	
 action
-	: roll | move | cube | drop | take | score 
+	: roll | move | cube | drop | take
 	| resign | reject_resign
 	;
 
