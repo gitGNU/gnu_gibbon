@@ -324,7 +324,7 @@ parse_command_line (int argc, char *argv[])
                                        " argument."));
                         return FALSE;
                 }
-                output_filename = argv[1];
+                output_filename = argv[2];
         } else if (argc > 3) {
                 usage_error (_("Too many arguments!"));
                 return FALSE;
