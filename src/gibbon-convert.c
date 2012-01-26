@@ -118,8 +118,12 @@ main (int argc, char *argv[])
 
         if (from_format) {
                 input_format = guess_format_from_id (from_format);
+                if (!input_format)
+                        return 1;
         } else if (input_filename) {
                 input_format = guess_format_from_filename (input_filename);
+                if (!input_format)
+                        return 1;
         } else {
                 usage_error (_("The option `--from-format' is mandatory,"
                                " when reading standard input."));
@@ -128,8 +132,12 @@ main (int argc, char *argv[])
 
         if (to_format) {
                 output_format = guess_format_from_id (to_format);
+                if (!output_format)
+                        return 1;
         } else if (output_filename) {
                 output_format = guess_format_from_filename (output_filename);
+                if (!output_format)
+                        return 1;
         } else {
                 usage_error (_("The option `--to-format' is mandatory,"
                                " when writing to standard output."));
