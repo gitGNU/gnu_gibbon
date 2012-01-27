@@ -109,7 +109,8 @@ common_SOURCES = 			\
 	gibbon-java-fibs-writer.c	\
 	gibbon-java-fibs-parser.y	\
 	gibbon-java-fibs-lexer.c			\
-	gibbon-jelly-fish-writer.c	
+	gibbon-jelly-fish-writer.c				\
+	gibbon-sgf-writer.c	
 
 AM_YFLAGS = -d -v
 
@@ -205,7 +206,8 @@ noinst_HEADERS =			\
 	gibbon-java-fibs-reader-priv.h	\
 	gibbon-match-writer.h		\
 	gibbon-java-fibs-writer.h			\
-	gibbon-jelly-fish-writer.h
+	gibbon-jelly-fish-writer.h			\
+	gibbon-sgf-writer.h
 
 
 BUILT_SOURCES = gibbon-java-fibs-parser.c gibbon-java-fibs-parser.h \
