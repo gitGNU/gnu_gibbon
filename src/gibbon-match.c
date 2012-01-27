@@ -357,3 +357,11 @@ gibbon_match_get_nth_game (const GibbonMatch *self, gsize i)
 
         return iter->data;
 }
+
+gboolean
+gibbon_match_get_crawford (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+
+        return self->priv->crawford;
+}
