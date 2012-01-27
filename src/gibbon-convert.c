@@ -30,6 +30,7 @@
 
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-jelly-fish-writer.h"
+#include "gibbon-sgf-writer.h"
 
 typedef enum {
         GIBBON_CONVERT_FORMAT_UNKNOWN = 0,
@@ -187,7 +188,7 @@ main (int argc, char *argv[])
                 g_object_unref (match);
                 return 1;
         case GIBBON_CONVERT_FORMAT_SGF:
-                g_printerr ("Writing SGF is not yet implemented!\n");
+                writer = GIBBON_MATCH_WRITER (gibbon_sgf_writer_new ());
                 return 1;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 g_printerr ("Writing JavaFIBS files is not yet implemented!\n");
@@ -203,10 +204,12 @@ main (int argc, char *argv[])
                                        NULL, &error);
                 g_object_unref (file);
                 if (!fout) {
-                        if (error)
+                        if (error) {
                                 g_printerr (_("%s: Error writing to `%s': %s!\n"),
                                             program_name,
                                             output_filename, error->message);
+                                g_error_free (error);
+                        }
                         return 1;
                 }
                 out = G_OUTPUT_STREAM (fout);
@@ -218,9 +221,11 @@ main (int argc, char *argv[])
         }
 
         if (!gibbon_match_writer_write_stream (writer, out, match, &error)) {
-                if (error)
+                if (error) {
                         g_printerr (_("%s: %s\n"), program_name,
                                     error->message);
+                        g_error_free (error);
+                }
                 return 1;
         }
 
@@ -229,10 +234,12 @@ main (int argc, char *argv[])
                         (gchar *) g_memory_output_stream_get_data  (
                                             G_MEMORY_OUTPUT_STREAM (out)));
         } else if (!g_output_stream_close (out, NULL, &error)) {
-                if (error)
+                if (error) {
                         g_printerr (_("%s: Error closing `%s': %s!\n"),
                                     program_name, output_filename,
                                     error->message);
+                        g_error_free (error);
+                }
                 return 1;
         }
 
