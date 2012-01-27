@@ -189,7 +189,7 @@ main (int argc, char *argv[])
                 return 1;
         case GIBBON_CONVERT_FORMAT_SGF:
                 writer = GIBBON_MATCH_WRITER (gibbon_sgf_writer_new ());
-                return 1;
+                break;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 g_printerr ("Writing JavaFIBS files is not yet implemented!\n");
                 return 1;
