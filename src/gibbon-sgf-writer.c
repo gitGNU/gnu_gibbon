@@ -43,6 +43,7 @@ static gboolean gibbon_sgf_writer_write_stream (const GibbonMatchWriter *writer,
 static gboolean gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                               GSGFGameTree *game_tree,
                                               const GibbonGame *game,
+                                              const GibbonMatch *match,
                                               GError **error);
 
 static void 
@@ -121,7 +122,7 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
                         g_object_unref (collection);
                         return FALSE;
                 }
-                if (!gibbon_sgf_writer_write_game (self, game_tree, game,
+                if (!gibbon_sgf_writer_write_game (self, game_tree, game, match,
                                                    error)) {
                         g_object_unref (collection);
                         return FALSE;
@@ -132,12 +133,19 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
                                             out, &bytes_written, NULL, error);
 }
 
+/*
+ * Note that we swap black and white on output so that Gibbon's notion of black
+ * and white matches that of GNU Backgammon.
+ */
 static gboolean
 gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                               GSGFGameTree *game_tree,
-                              const GibbonGame *game, GError **error)
+                              const GibbonGame *game, const GibbonMatch *match,
+                              GError **error)
 {
         GSGFNode *root;
+        const gchar *text;
+        GSGFValue *simple_text;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -145,6 +153,24 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 return FALSE;
 
         root = gsgf_game_tree_add_node (game_tree);
+
+        text = gibbon_match_get_white (match);
+        if (!text)
+                text = "black";
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
+        if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
+
+        text = gibbon_match_get_black (match);
+        if (!text)
+                text = "white";
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
+        if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
 
         return TRUE;
 }
