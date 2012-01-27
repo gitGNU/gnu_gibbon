@@ -149,7 +149,8 @@ gibbon_convert_SOURCES = 		\
 	gibbon-position.c		\
 	gibbon-util.c			\
 	gibbon-match.c			\
-	gibbon-game.c
+	gibbon-game.c			\
+	gibbon-sgf-writer.c
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
