@@ -29,9 +29,21 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <libgsgf/gsgf.h>
+
 #include "gibbon-sgf-writer.h"
+#include "gibbon-game.h"
 
 G_DEFINE_TYPE (GibbonSGFWriter, gibbon_sgf_writer, GIBBON_TYPE_MATCH_WRITER)
+
+static gboolean gibbon_sgf_writer_write_stream (const GibbonMatchWriter *writer,
+                                                GOutputStream *out,
+                                                const GibbonMatch *match,
+                                                GError **error);
+static gboolean gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
+                                              GSGFGameTree *game_tree,
+                                              const GibbonGame *game,
+                                              GError **error);
 
 static void 
 gibbon_sgf_writer_init (GibbonSGFWriter *self)
@@ -51,8 +63,8 @@ gibbon_sgf_writer_class_init (GibbonSGFWriterClass *klass)
         GibbonMatchWriterClass *gibbon_match_writer_class =
                         GIBBON_MATCH_WRITER_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods from parent class! */
-        /* gibbon_match_writer_class->do_this = gibbon_sgf_writer_do_this; */
+        gibbon_match_writer_class->write_stream =
+                        gibbon_sgf_writer_write_stream;
         
         object_class->finalize = gibbon_sgf_writer_finalize;
 }
@@ -70,4 +82,69 @@ gibbon_sgf_writer_new (void)
         GibbonSGFWriter *self = g_object_new (GIBBON_TYPE_SGF_WRITER, NULL);
 
         return self;
+}
+
+static gboolean
+gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
+                                GOutputStream *out, const GibbonMatch *match,
+                                GError **error)
+{
+        const GibbonSGFWriter *self;
+        GibbonGame *game;
+        GSGFFlavor *flavor;
+        GSGFCollection *collection;
+        GSGFGameTree *game_tree;
+        gsize bytes_written;
+        gsize game_number;
+
+        self = GIBBON_SGF_WRITER (_self);
+        g_return_val_if_fail (self != NULL, FALSE);
+
+        game = gibbon_match_get_current_game (match);
+        if (!game) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_GENERIC,
+                                     _("Empty matches cannot be written as"
+                                       "SGF"));
+                return FALSE;
+        }
+
+        flavor = gsgf_flavor_backgammon_new ();
+
+        collection = gsgf_collection_new ();
+        for (game_number = 0; ; ++game_number) {
+                game = gibbon_match_get_nth_game (match, game_number);
+                if (!game)
+                        break;
+                game_tree = gsgf_collection_add_game_tree (collection, flavor);
+                if (!game_tree) {
+                        g_object_unref (collection);
+                        return FALSE;
+                }
+                if (!gibbon_sgf_writer_write_game (self, game_tree, game,
+                                                   error)) {
+                        g_object_unref (collection);
+                        return FALSE;
+                }
+        }
+
+        return gsgf_component_write_stream (GSGF_COMPONENT (collection),
+                                            out, &bytes_written, NULL, error);
+}
+
+static gboolean
+gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
+                              GSGFGameTree *game_tree,
+                              const GibbonGame *game, GError **error)
+{
+        GSGFNode *root;
+
+        if (!gsgf_game_tree_set_application (game_tree,
+                                             PACKAGE, VERSION,
+                                             error))
+                return FALSE;
+
+        root = gsgf_game_tree_add_node (game_tree);
+
+        return TRUE;
 }
