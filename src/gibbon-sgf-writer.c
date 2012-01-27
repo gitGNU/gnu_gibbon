@@ -172,5 +172,15 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 return FALSE;
         }
 
+        if (gibbon_match_get_crawford (match)) {
+                text = gibbon_game_is_crawford (game) ?
+                                "Crawford:CrawfordGame" : "Crawford";
+                 simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
+                 if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+                         g_object_unref (simple_text);
+                         return FALSE;
+                 }
+        }
+
         return TRUE;
 }
