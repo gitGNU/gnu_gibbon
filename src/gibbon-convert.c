@@ -222,7 +222,12 @@ main (int argc, char *argv[])
 
         if (!gibbon_match_writer_write_stream (writer, out, match, &error)) {
                 if (error) {
-                        g_printerr (_("%s: %s\n"), program_name,
+                        /*
+                         * TRANSLATORS: The first argument is the program
+                         * name (gibbon-convert), and the second argument
+                         * is the error message.
+                         */
+                        g_printerr (_("%s: %s.\n"), program_name,
                                     error->message);
                         g_error_free (error);
                 }
@@ -235,6 +240,12 @@ main (int argc, char *argv[])
                                             G_MEMORY_OUTPUT_STREAM (out)));
         } else if (!g_output_stream_close (out, NULL, &error)) {
                 if (error) {
+                        /*
+                         * TRANSLATORS: The first argument is the program
+                         * name (gibbon-convert), the second is the
+                         * output filename, the third one is the actual
+                         * error message.
+                         */
                         g_printerr (_("%s: Error closing `%s': %s!\n"),
                                     program_name, output_filename,
                                     error->message);
