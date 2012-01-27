@@ -19,7 +19,7 @@
 
 /**
  * SECTION:gibbon-jelly-fish-writer
- * @short_description: Convert GibbonMatch to JellyFish format
+ * @short_description: Convert a #GibbonMatch to JellyFish format
  *
  * Since: 0.1.1
  *

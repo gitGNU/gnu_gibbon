@@ -60,7 +60,7 @@ struct _GibbonJellyFishWriter
 /**
  * GibbonJellyFishWriterClass:
  *
- * Convert GibbonMatch to JellyFish format.
+ * Convert a #GibbonMatch to JellyFish format.
  */
 typedef struct _GibbonJellyFishWriterClass GibbonJellyFishWriterClass;
 struct _GibbonJellyFishWriterClass
