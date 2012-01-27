@@ -141,7 +141,12 @@ match
 		{
 			_gibbon_java_fibs_reader_set_match_length (reader, $6);
 		}
-	  games last_game win_match
+	  playing
+	;
+
+playing
+	: games last_game win_match
+	| games incomplete_game
 	;
 
 games
@@ -155,6 +160,10 @@ game
 
 last_game
 	: start_of_game opponents actions win_game
+	;
+
+incomplete_game
+	: start_of_game opponents actions
 	;
 
 start_of_game
