@@ -1507,6 +1507,7 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
         gibbon_app_set_state_playing (self->priv->app);
 
         gibbon_inviter_list_clear (self->priv->inviter_list);
+        g_hash_table_remove (self->priv->saved_games, player);
 
         return GIBBON_CLIP_CODE_NOW_PLAYING;
 }
