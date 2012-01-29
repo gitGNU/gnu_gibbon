@@ -1,10 +1,17 @@
 Version 0.1.1
 =============
+
+Version 0.1.1 is a mainly a bugfix release.
+
 * Point labels are updated dynamically
 
 * Fixed bugs:
   #35002
   #35200
   #35202
+  #35205
+
+Version 0.1.0
+=============
 
 Version 0.1.0 is the first one.  Everything is new.
