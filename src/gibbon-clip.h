@@ -82,10 +82,11 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_GAME_SCORE = 311,
                         GIBBON_CLIP_CODE_WAIT_JOIN_TOO = 312,
                         GIBBON_CLIP_CODE_RESUME_CONFIRMATION = 313,
+                        GIBBON_CLIP_CODE_WIN_MATCH = 314,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
-                        GIBBON_CLIP_CODE_WIN_MATCH = 401,
+                        GIBBON_CLIP_CODE_OTHER_WIN_MATCH = 401,
                         GIBBON_CLIP_CODE_RESUME_MATCH = 402,
                         GIBBON_CLIP_CODE_EMPTY = 403,
                         GIBBON_CLIP_CODE_START_SETTINGS = 404,

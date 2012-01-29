@@ -595,7 +595,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 /* Ignore.  */
                 retval = GIBBON_CLIP_CODE_RESUME_CONFIRMATION;
                 break;
-        case GIBBON_CLIP_CODE_WIN_MATCH:
+        case GIBBON_CLIP_CODE_OTHER_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
                 break;
         case GIBBON_CLIP_CODE_RESUME_MATCH:
@@ -1605,7 +1605,7 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
         gibbon_archive_save_win (self->priv->archive, hostname, port,
                                  player1, player2);
 
-        return GIBBON_CLIP_CODE_WIN_MATCH;
+        return GIBBON_CLIP_CODE_OTHER_WIN_MATCH;
 }
 
 static gboolean
