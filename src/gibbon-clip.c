@@ -909,7 +909,8 @@ gibbon_clip_parse_clip_who_info (const gchar *line, gchar **tokens,
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
 
-        if (!gibbon_clip_extract_double (tokens[6], &d, 0, G_MAXDOUBLE))
+        if (!gibbon_clip_extract_double (tokens[6], &d,
+                                         -G_MAXDOUBLE, G_MAXDOUBLE))
                 return FALSE;
         *result = gibbon_clip_alloc_double (*result, GIBBON_CLIP_TYPE_DOUBLE,
                                             d);
