@@ -43,6 +43,7 @@ static gboolean gibbon_sgf_writer_write_stream (const GibbonMatchWriter *writer,
 static gboolean gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                               GSGFGameTree *game_tree,
                                               const GibbonGame *game,
+                                              guint game_number,
                                               const GibbonMatch *match,
                                               GError **error);
 
@@ -122,8 +123,8 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
                         g_object_unref (collection);
                         return FALSE;
                 }
-                if (!gibbon_sgf_writer_write_game (self, game_tree, game, match,
-                                                   error)) {
+                if (!gibbon_sgf_writer_write_game (self, game_tree, game,
+                                                   game_number, match, error)) {
                         g_object_unref (collection);
                         return FALSE;
                 }
@@ -140,7 +141,8 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
 static gboolean
 gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                               GSGFGameTree *game_tree,
-                              const GibbonGame *game, const GibbonMatch *match,
+                              const GibbonGame *game, guint game_number,
+                              const GibbonMatch *match,
                               GError **error)
 {
         GSGFNode *root;
@@ -151,6 +153,7 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         GSGFCookedValue *mi_key, *mi_value;
         GSGFCookedValue *mi_compose;
         const GSGFFlavor *flavor;
+        const GibbonPosition *pos;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -197,6 +200,50 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
 
         mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("length"));
         str = g_strdup_printf ("%u", (guint) gibbon_match_get_length (match));
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_key);
+                g_object_unref (mi_value);
+                g_object_unref (mi_compose);
+                return FALSE;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("game"));
+        str = g_strdup_printf ("%u", game_number);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_key);
+                g_object_unref (mi_value);
+                g_object_unref (mi_compose);
+                return FALSE;
+        }
+
+        pos = gibbon_game_get_nth_position (game, 0);
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("ws"));
+        str = g_strdup_printf ("%u", pos->scores[1]);
+        mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
+        g_free (str);
+        mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
+                                                          NULL));
+        if (!gsgf_list_of_append (GSGF_LIST_OF (match_info),
+                                  mi_compose, error)) {
+                g_object_unref (mi_key);
+                g_object_unref (mi_value);
+                g_object_unref (mi_compose);
+                return FALSE;
+        }
+
+        mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("bs"));
+        str = g_strdup_printf ("%u", pos->scores[0]);
         mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
         g_free (str);
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
