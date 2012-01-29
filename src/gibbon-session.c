@@ -881,9 +881,11 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
 {
         const gchar *hostname;
         guint port;
-
         const gchar *name;
         gchar *opponent;
+        GibbonSavedInfo *info;
+        guint match_length;
+        guint scores[2];
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
                 return -1;
@@ -905,10 +907,20 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                     g_strdup_printf (_("%s logged out!"), name);
                 g_free (self->priv->opponent);
                 self->priv->opponent = NULL;
-                if (!self->priv->watching)
+                if (!self->priv->watching) {
+                        match_length = self->priv->position->match_length;
+                        scores[0] = self->priv->position->scores[0];
+                        scores[1] = self->priv->position->scores[1];
+                        info = gibbon_saved_info_new (name, match_length,
+                                                      scores[0], scores[1]);
+
+                        g_hash_table_insert (self->priv->saved_games,
+                                             (gpointer) g_strdup (name),
+                                             (gpointer) info);
                         gibbon_app_display_info (self->priv->app, NULL,
                                                  _("Player `%s' logged out!"),
                                                  name);
+                }
         }
 
         opponent = gibbon_player_list_get_opponent (self->priv->player_list,
