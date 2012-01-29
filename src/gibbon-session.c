@@ -117,6 +117,8 @@ static gint gibbon_session_handle_show_address (GibbonSession *self,
                                                 GSList *iter);
 static gint gibbon_session_handle_address_error (GibbonSession *self,
                                                  GSList *iter);
+static gint gibbon_session_handle_left_game (GibbonSession *self,
+                                             GSList *iter);
 static gint gibbon_session_handle_cannot_move (GibbonSession *self,
                                                GSList *iter);
 static gint gibbon_session_handle_doubles (GibbonSession *self, GSList *iter);
@@ -523,8 +525,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = GIBBON_CLIP_CODE_START_GAME;
                 break;
         case GIBBON_CLIP_CODE_LEFT_GAME:
-                gibbon_app_set_state_not_playing (self->priv->app);
-                retval = GIBBON_CLIP_CODE_LEFT_GAME;
+                retval = gibbon_session_handle_left_game (self, iter);
                 break;
         case GIBBON_CLIP_CODE_CANNOT_MOVE:
                 retval = gibbon_session_handle_cannot_move (self, iter);
@@ -2169,6 +2170,54 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
                                    " the server!"), address);
 
         return GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS;
+}
+
+static gint
+gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
+{
+        GibbonSavedInfo *info;
+        const gchar *who;
+        guint match_length, scores[2];
+
+        if (self->priv->watching)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        if (0 == g_strcmp0 (who, self->priv->opponent)) {
+                gibbon_app_set_state_not_playing (self->priv->app);
+                match_length = self->priv->position->match_length;
+                scores[0] = self->priv->position->scores[0];
+                scores[1] = self->priv->position->scores[1];
+                info = gibbon_saved_info_new (who, match_length,
+                                              scores[0], scores[1]);
+                g_hash_table_insert (self->priv->saved_games,
+                                     (gpointer) g_strdup (who),
+                                     (gpointer) info);
+                g_free (self->priv->position->status);
+                self->priv->position->status = g_strdup_printf (_("Your"
+                                                                  " opponent %s"
+                                                                  " has left"
+                                                                  " the"
+                                                                  " match."),
+                                                                who);
+                gibbon_app_display_error(self->priv->app,
+                                         _("Your opponent has left the game."),
+                                         _("Your opponent %s has left the"
+                                           " the match.  The server will save"
+                                           " it for some time.  You can try to"
+                                           " resume it at a later time by"
+                                           " inviting %s."), who, who);
+        } else if (0 == g_strcmp0 (who, "You")) {
+                gibbon_app_set_state_not_playing (self->priv->app);
+                self->priv->position->status = g_strdup_printf ("You have left"
+                                                                " the match.");
+        } else {
+                return -1;
+        }
+
+        return GIBBON_CLIP_CODE_LEFT_GAME;
 }
 
 static gint
