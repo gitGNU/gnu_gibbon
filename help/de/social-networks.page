@@ -25,7 +25,11 @@
     <p><app>Gibbon</app> hat eine eigene <link href="http://www.facebook.com/pages/Gibbon/201252806558402">Facebookseite</link>. Als Fan, werden Sie immer auf dem neuesten Stand über <app>Gibbon</app> gehalten.</p>
   </section>
   <section>
+    <title>Freecode</title>
+    <p><link href="http://freecode.com/">Freecode</link> (vormals Freshmeat) ist ein Verzeichnisdienst für (hauptsächlich) quelloffene Software. Die Freecode-Seite von <app>Gibbon</app> ist <link href="http://freecode.com/projects/gibbon"/>. Registrierte Benutzerinnen und Benutzer von freecode.com können Software bewerten oder auch Kommentare schreiben.</p>
+  </section>
+  <section>
     <title>Ohloh</title>
-    <p><link href="http://www.ohloh.net/">Ohloh</link> ist ein Verzeichnisdienst für quelloffene Software. Sie können Ihre Unterstützung zeigen, indem Sie den Button „<span xml:lang="en">I Use This</span>” auf <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbons</app> Ohloh-Seite</link> klicken.</p>
+    <p><link href="http://www.ohloh.net/">Ohloh</link> ist ein weiterer Verzeichnisdienst für quelloffene Software. Ohloh hat einen relativ technischen Fokus. Sie können Ihre Unterstützung zeigen, indem Sie den Button „<span xml:lang="en">I Use This</span>” auf <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbons</app> Ohloh-Seite</link> klicken.</p>
   </section>
 </page>
