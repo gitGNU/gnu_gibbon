@@ -27,10 +27,21 @@
     </p>
   </section>
   <section>
+    <title>Freecode</title>
+    <p>
+      <link href="http://freecode.com/">Freecode</link> (formerly known as
+      Freshmeat) is a directory service for (mostly) open source software.
+      You can find <app>Gibbon</app>'s freecode page under 
+      <link href="http://freecode.com/projects/gibbon">.  Registered users
+      on freecode.com can rate for software or even write a comment.
+    </p>
+  </section>
+  <section>
     <title>Ohloh</title>
     <p>
-      <link href="http://www.ohloh.net/">Ohloh</link> is a directory
-      service for open source software.  You can show your support
+      <link href="http://www.ohloh.net/">Ohloh</link> is another directory
+      service for open source software.  Ohloh has a rather technical
+      focus.  You can show your support
       by clicking the “I Use This” button on 
       <link href="https://www.ohloh.net/p/gibbon2"><app>Gibbon</app>'s
       Ohloh page</link>.
