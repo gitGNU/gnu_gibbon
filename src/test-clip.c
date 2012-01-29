@@ -719,10 +719,48 @@ static struct test_case test_game_start00 = {
                 }
 };
 
-static struct test_case test_game_left = {
+static struct test_case test_game_left00 = {
                 "** You terminated the game. The game was saved.",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "205" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_game_left01 = {
+                "** Player GibbonTestA terminated the game."
+                " The game was saved.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "205" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_game_left02 = {
+                "GibbonTestA logs out. The game was saved.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "205" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_game_left03 = {
+                "GibbonTestA drops connection. The game was saved.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "205" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_game_left04 = {
+                "Connection with GibbonTestA timed out. The game was saved.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "205" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1253,6 +1291,30 @@ static struct test_case test_between34 = {
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "313" },
                                 { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between35 = {
+                "You win the 7 point match 8-4.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "314" },
+                                { GIBBON_CLIP_TYPE_NAME, "You" },
+                                { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_UINT, "8" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_between36 = {
+                "GibbonTestA wins the 7 point match 8-4.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "314" },
+                                { GIBBON_CLIP_TYPE_NAME, "GibbonTestA" },
+                                { GIBBON_CLIP_TYPE_UINT, "7" },
+                                { GIBBON_CLIP_TYPE_UINT, "8" },
+                                { GIBBON_CLIP_TYPE_UINT, "4" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1867,7 +1929,11 @@ static struct test_case *test_cases[] = {
                 &test_moves06,
                 &test_moves07,
                 &test_game_start00,
-                &test_game_left,
+                &test_game_left00,
+                &test_game_left01,
+                &test_game_left02,
+                &test_game_left03,
+                &test_game_left04,
                 &test_cannot_move00,
                 &test_cannot_move01,
                 &test_doubling00,
