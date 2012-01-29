@@ -42,7 +42,7 @@ static struct test_case test_clip00 = {
                 }
 };
 
-static struct test_case test_clip01 = {
+static struct test_case test_clip01_0 = {
                 "1 gflohr 1306865048 gibbon.example.com",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
@@ -54,7 +54,7 @@ static struct test_case test_clip01 = {
                 }
 };
 
-static struct test_case test_clip01a = {
+static struct test_case test_clip01_1 = {
                 "1 GibbonTestA 1308476373 95.87.204.192",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "1" },
@@ -112,7 +112,7 @@ static struct test_case test_clip04 = {
                 }
 };
 
-static struct test_case test_clip05 = {
+static struct test_case test_clip05_0 = {
                 "5 gflohr barrack - 0 0 1418.61 1914 23 1306926526"
                 " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
                 {
@@ -130,6 +130,28 @@ static struct test_case test_clip05 = {
                                 { GIBBON_CLIP_TYPE_STRING, "Gibbon_0.1.1" },
                                 { GIBBON_CLIP_TYPE_STRING,
                                                 "president@whitehouse.gov" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_clip05_1 = {
+                "5 donator - - 0 0 -35.67 914 23 1306926526"
+                " 44.55.66.77 Gibbon_0.1.1 foo@bar.baz",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "5" },
+                                { GIBBON_CLIP_TYPE_NAME, "donator" },
+                                { GIBBON_CLIP_TYPE_NAME, "" },
+                                { GIBBON_CLIP_TYPE_NAME, "" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "-35.670000" },
+                                { GIBBON_CLIP_TYPE_UINT, "914" },
+                                { GIBBON_CLIP_TYPE_UINT, "23" },
+                                { GIBBON_CLIP_TYPE_TIMESTAMP, "1306926526" },
+                                { GIBBON_CLIP_TYPE_STRING, "44.55.66.77" },
+                                { GIBBON_CLIP_TYPE_STRING, "Gibbon_0.1.1" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "foo@bar.baz" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 }
 };
@@ -1802,12 +1824,13 @@ static struct test_case test_heard_you01 = {
 
 static struct test_case *test_cases[] = {
                 &test_clip00,
-                &test_clip01,
-                &test_clip01a,
+                &test_clip01_0,
+                &test_clip01_1,
                 &test_clip02,
                 &test_clip03,
                 &test_clip04,
-                &test_clip05,
+                &test_clip05_0,
+                &test_clip05_1,
                 &test_clip06,
                 &test_clip07,
                 &test_clip08,
