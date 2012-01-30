@@ -47,6 +47,6 @@ geo_ip:
 
 EXTRA_DIST = COPYING.LESSER README.libsvg README.libsvg-cairo config.rpath \
 	gcreate_class.pl.in gibbon-geo-ip-data.h.tmpl \
-	ip2country.csv.gz
+	ip2country.csv.gz README-alpha
 
 .PHONY: ChangeLog geo_ip
