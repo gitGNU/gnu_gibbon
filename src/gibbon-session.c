@@ -1290,8 +1290,6 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 
         if (g_strcmp0 ("You", str)) {
                 pos->players[0] = g_strdup (str);
-                g_free (self->priv->watching);
-                self->priv->watching = g_strdup (pos->players[0]);
         } else {
                 connection = gibbon_app_get_connection (self->priv->app);
                 pos->players[0] =
