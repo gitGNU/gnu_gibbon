@@ -177,8 +177,9 @@ gsgf_util_read_text (const gchar *raw, const gchar **end, gchar delim)
  *
  * The number is first formatted using standard printf formatting directives.
  * If both @width and @precision are given, the format string is
- * "%@width.@{precision}f".  If @zeropad is TRUE, the format string is
- * "%0@width.@{precision}f" instead.
+ * "\%@width.@precision f" (without the space in front of the f).  If @zeropad
+ * is TRUE, the format string is "\%0@width.@precision f" instead (again
+ * without the gratuitous space in front of the f).
  *
  * If @zerotrim is true, trailing zeros after the decimal point are removed.
  * If no decimal digits are left, the decimal point is removed as well.

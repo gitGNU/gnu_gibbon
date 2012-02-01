@@ -369,6 +369,7 @@ gsgf_property_get_type
 <TITLE>GSGFRaw</TITLE>
 GSGFRaw
 GSGFRawClass
+gsgf_raw_add_value
 gsgf_raw_get_number_of_values
 gsgf_raw_get_value
 gsgf_raw_new
@@ -492,6 +493,7 @@ gsgf_text_get_type
 
 <SECTION>
 <FILE>gsgf-util</FILE>
+gsgf_ascii_dtostring
 gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>
