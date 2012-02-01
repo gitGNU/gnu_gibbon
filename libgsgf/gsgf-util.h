@@ -24,9 +24,11 @@
 
 G_BEGIN_DECLS
 
-gchar *gsgf_util_read_simple_text(const gchar *raw, const gchar **end,
-                                 gchar delim);
-gchar *gsgf_util_read_text(const gchar *raw, const gchar **end, gchar delim);
+gchar *gsgf_util_read_simple_text (const gchar *raw, const gchar **end,
+                                   gchar delim);
+gchar *gsgf_util_read_text (const gchar *raw, const gchar **end, gchar delim);
+gchar *gsgf_ascii_formatd (gdouble d, gint width, gint precision,
+                           gboolean zeropad, gboolean zerotrim);
 
 G_END_DECLS
 

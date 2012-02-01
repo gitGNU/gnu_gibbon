@@ -46,7 +46,8 @@ TESTS_C = test-convert			\
 	  test-write-empty-property	\
 	  test-write-full		\
 	  test-write-linefeeds		\
-	  test-write-minimal
+	  test-write-minimal		\
+	  test-formatd
 
 TESTS_SH = test-write-stream
 
@@ -94,6 +95,7 @@ test_write_full_SOURCES = lib.c main.c test-write-full.c
 test_write_linefeeds_SOURCES = lib.c main.c test-write-linefeeds.c
 test_write_minimal_SOURCES = lib.c main.c test-write-minimal.c
 gsgf_write_back_SOURCES = gsgf-write-back.c
+test_formatd_SOURCES = test-formatd.c
 
 noinst_HEADERS = test.h
 
