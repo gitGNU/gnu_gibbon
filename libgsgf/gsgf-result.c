@@ -129,6 +129,8 @@ gsgf_result_new (GSGFResultWinner winner, gdouble score, GSGFResultCause cause)
                         break;
         };
 
+        gsgf_result_sync_text (self);
+
         return self;
 }
 
@@ -206,6 +208,7 @@ gsgf_result_sync_text (GSGFResult *self)
         gchar *text;
         GSGFTextClass *text_class;
         gsize i;
+        gchar sign[2];
 
         switch (self->priv->winner) {
                 case GSGF_RESULT_WHITE:
@@ -239,8 +242,16 @@ gsgf_result_sync_text (GSGFResult *self)
         }
 
         if (self->priv->score) {
-                score_text = g_strdup_printf ("%s+%.17f", winner,
-                                              self->priv->score);
+                sign[0] = self->priv->score > 0 ? '+' : 0;
+                sign[1] = 0;
+                /*
+                 * FIXME! This will cause a truncation of the value string
+                 * for large score values.  We have to roll our own function
+                 * instead.  It is not possible to use g_ascii_strtod() because
+                 * that can cause the e format to be used which violates the
+                 * SGF specification.
+                 */
+                score_text = gsgf_ascii_dtostr (self->priv->score);
                 i = strlen (score_text);
                 while ('0' == score_text[i - 1]) {
                         score_text[i - 1] = 0;
@@ -248,8 +259,8 @@ gsgf_result_sync_text (GSGFResult *self)
                 }
                 if ('.' == score_text[i - 1])
                         score_text[i - 1] = 0;
-                text = g_strdup_printf ("%s%s", score_text, cause);
-                g_free (score_text);
+                text = g_strdup_printf ("%s%s%s%s",
+                                        winner, sign, score_text, cause);
         } else
                 text = g_strdup_printf ("%s", winner);
 
