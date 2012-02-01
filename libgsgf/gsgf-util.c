@@ -160,3 +160,44 @@ gsgf_util_read_text (const gchar *raw, const gchar **end, gchar delim)
 
         return result;
 }
+
+/**
+ * gsgf_ascii_dtostring:
+ * @d: The #gdouble to format.
+ * @width: (Maximum) output width before zero-trimming or -1 for default
+ * @precision: Decimal precision before zero-trimming or -1 for default
+ * @zeropad: Left-pad with zeros if #TRUE
+ * @zerotrim: Right
+ *
+ * Formats @d as a string using the portable POSIX locale, i.e. using the
+ * dot ('.') as the decimal point, and no thousands separator.  The function
+ * is threadsafe.
+ *
+ * Invalid values for @width or @precision are silently replaced by -1.
+ *
+ * The number is first formatted using standard printf formatting directives.
+ * If both @width and @precision are given, the format string is
+ * "%@width.@{precision}f".  If @zeropad is TRUE, the format string is
+ * "%0@width.@{precision}f" instead.
+ *
+ * If @zerotrim is true, trailing zeros after the decimal point are removed.
+ * If no decimal digits are left, the decimal point is removed as well.
+ *
+ * Example: If you zero-trim the intermediate output "123.45600", the result
+ * will be "123.456".  Zero-trimming the output "123.000" will result in "123".
+ * Zero-trimming the output "123.000000001" will not change the string at
+ * all.
+ *
+ * Returns: The formatted value in a newly allocated buffer.
+ */
+gchar *
+gsgf_ascii_dtostring (gdouble d, gint width, gint precision,
+                      gboolean zeropad, gboolean zerotrim)
+{
+        gchar *format = "%f";
+        gchar *output;
+
+        output = g_strdup_printf (format, d);
+
+        return output;
+}

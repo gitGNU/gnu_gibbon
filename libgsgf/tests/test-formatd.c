@@ -22,8 +22,11 @@
 #endif
 
 #include <stdio.h>
+#include <locale.h>
 
 #include <glib.h>
+
+#include "../gsgf-util.h"
 
 struct test_case {
         const gchar *expect;
@@ -50,6 +53,22 @@ main(int argc, char *argv[])
         int status = 0;
         gsize i;
 
+        /*
+         * Try to select a locale with a decimal comma.
+         */
+#ifdef G_OS_WIN32
+        if (!setlocale(LC_ALL, "French_France"))
+        if (!setlocale(LC_ALL, "German_Germany"))
+        ;
+#else
+        if (!setlocale(LC_ALL, "es_ES"))
+        if (!setlocale(LC_ALL, "fr_FR"))
+        if (!setlocale(LC_ALL, "de_DE"))
+        if (!setlocale(LC_ALL, "it_IT"))
+        if (!setlocale(LC_ALL, "sv_SE"))
+        ;
+#endif
+
         for (i = 0; i < sizeof test_cases / sizeof test_cases[0]; ++i) {
                 if (!test_single_case (test_cases[i]))
                         status = -1;
@@ -59,7 +78,27 @@ main(int argc, char *argv[])
 }
 
 static gboolean
-test_single_case (struct test_case *test_case)
+test_single_case (struct test_case *tc)
 {
-        return FALSE;
+        gchar *got = gsgf_ascii_dtostring (tc->d, tc->precision,
+                                           tc->width, tc->zeropad,
+                                           tc->zerotrim);
+        gboolean result = TRUE;
+        gchar *saved_locale;
+
+        if (g_strcmp0 (tc->expect, got)) {
+                saved_locale = setlocale (LC_ALL, NULL);
+                setlocale (LC_ALL, "C");
+                g_printerr ("%f, %d, %d, %s, %s: expected '%s', got '%s'!\n",
+                            tc->d, tc->precision, tc->width,
+                            tc->zeropad ? "TRUE" : "FALSE",
+                            tc->zerotrim ? "TRUE" : "FALSE",
+                            tc->expect, got);
+                result = FALSE;
+                if (saved_locale)
+                        setlocale (LC_ALL, saved_locale);
+        }
+        g_free (got);
+
+        return result;
 }
