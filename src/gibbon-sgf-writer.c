@@ -154,6 +154,13 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         GSGFCookedValue *mi_compose;
         const GSGFFlavor *flavor;
         const GibbonPosition *pos;
+        gint score;
+        GSGFValue *result = NULL;
+        GSGFResultCause cause;
+        glong action_num;
+        GibbonPositionSide side;
+        const GibbonGameAction *action = NULL;
+        const GibbonGameAction *last_action = NULL;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -184,7 +191,7 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 text = gibbon_game_is_crawford (game) ?
                                 "Crawford:CrawfordGame" : "Crawford";
                  simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
-                 if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
+                 if (!gsgf_node_set_property (root, "RU", simple_text, error)) {
                          g_object_unref (simple_text);
                          return FALSE;
                  }
@@ -254,6 +261,28 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 g_object_unref (mi_value);
                 g_object_unref (mi_compose);
                 return FALSE;
+        }
+
+        score = gibbon_game_over (game);
+        cause = gibbon_game_resignation (game)
+                        ? GSGF_RESULT_RESIGNATION : GSGF_RESULT_NORMAL;
+        if (score > 0)
+                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_WHITE, score,
+                                                      cause));
+        else if (score < 0)
+                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_BLACK, -score,
+                                                      cause));
+        if (result
+            && !gsgf_node_set_property (root, "RE", result, error)) {
+                        g_object_unref (result);
+                        return FALSE;
+        }
+
+        for (action_num = 0; ; ++action_num) {
+                last_action = action;
+                action = gibbon_game_get_nth_action (game, action_num, &side);
+                if (!action)
+                        break;
         }
 
         return TRUE;
