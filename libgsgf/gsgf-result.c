@@ -207,7 +207,6 @@ gsgf_result_sync_text (GSGFResult *self)
         gchar *score_text;
         gchar *text;
         GSGFTextClass *text_class;
-        gsize i;
         gchar sign[2];
 
         switch (self->priv->winner) {
@@ -246,15 +245,9 @@ gsgf_result_sync_text (GSGFResult *self)
                 sign[1] = 0;
                 score_text = gsgf_ascii_dtostring (self->priv->score, -1, -1,
                                                    FALSE, TRUE);
-                i = strlen (score_text);
-                while ('0' == score_text[i - 1]) {
-                        score_text[i - 1] = 0;
-                        --i;
-                }
-                if ('.' == score_text[i - 1])
-                        score_text[i - 1] = 0;
                 text = g_strdup_printf ("%s%s%s%s",
                                         winner, sign, score_text, cause);
+                g_free (score_text);
         } else
                 text = g_strdup_printf ("%s", winner);
 
