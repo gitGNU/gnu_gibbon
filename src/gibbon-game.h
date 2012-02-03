@@ -82,6 +82,8 @@ GibbonGame *gibbon_game_new (GibbonMatch *match,
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                  GibbonGameAction *action, GError **error);
 gint gibbon_game_over (const GibbonGame *self);
+gboolean gibbon_game_resignation (const GibbonGame *self);
+
 const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
 
 gboolean gibbon_game_is_crawford (const GibbonGame *self);

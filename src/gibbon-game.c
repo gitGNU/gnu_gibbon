@@ -60,6 +60,7 @@ struct _GibbonGamePrivate {
         GibbonGameSnapshot *snapshots;
 
         gint score;
+        gboolean resigned;
 
         gboolean is_crawford;
 };
@@ -117,6 +118,7 @@ gibbon_game_init (GibbonGame *self)
         self->priv->num_snapshots = 0;
 
         self->priv->score = 0;
+        self->priv->resigned = FALSE;
 
         self->priv->is_crawford = FALSE;
 }
@@ -574,6 +576,8 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                 self->priv->score = value;
         }
 
+        self->priv->resigned = TRUE;
+
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos);
 
         return TRUE;
@@ -787,4 +791,12 @@ gibbon_game_get_nth_action (const GibbonGame *self, gint n,
                 *side = snapshot->side;
 
         return snapshot->action;
+}
+
+gboolean
+gibbon_game_resignation (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), FALSE);
+
+        return self->priv->resigned;
 }
