@@ -26,6 +26,8 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include <libgsgf/gsgf.h>
+
 #include "gibbon-app.h"
 #include "gibbon-connection.h"
 #include "gibbon-archive.h"
@@ -92,8 +94,9 @@ main (int argc, char *argv[])
 
         if (!g_thread_supported ()) {
                 g_thread_init (NULL);
-		gdk_threads_init ();
 	}
+        gdk_threads_init ();
+        gsgf_threads_init ();
 
         gtk_init (&argc, &argv);
 
