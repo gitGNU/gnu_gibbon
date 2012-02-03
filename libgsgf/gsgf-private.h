@@ -20,6 +20,16 @@
 #ifndef _LIBGSGF_PRIVATE_H
 # define _LIBGSGF_PRIVATE_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#if (HAVE_USELOCALE && HAVE_NEWLOCALE)
+# define HAVE_XLOCALE_API 1
+#else
+# undef HAVE_XLOCALE_API
+#endif
+
 #include <libgsgf/gsgf.h>
 
 extern GHashTable *_libgsgf_flavors;
