@@ -41,8 +41,23 @@ static struct test_case simple = {
                 "1234.000000", 1234.0, -1, -1, FALSE, FALSE
 };
 
+static struct test_case trim = {
+                "1234.56", 1234.56, -1, -1, FALSE, TRUE
+};
+
+static struct test_case truncate_decimal_point = {
+                "1234", 1234.0, -1, -1, FALSE, TRUE
+};
+
+static struct test_case zeropad = {
+                "00001234.560000", 1234.56, 15, -1, TRUE, FALSE
+};
+
 static struct test_case *test_cases[] = {
                 &simple,
+                &trim,
+                &truncate_decimal_point,
+                &zeropad
 };
 
 static gboolean test_single_case (struct test_case *test_case);
@@ -57,16 +72,17 @@ main(int argc, char *argv[])
          * Try to select a locale with a decimal comma.
          */
 #ifdef G_OS_WIN32
+        if (!setlocale(LC_ALL, "Spanish_Spain"))
         if (!setlocale(LC_ALL, "French_France"))
         if (!setlocale(LC_ALL, "German_Germany"))
-        ;
+        {}
 #else
         if (!setlocale(LC_ALL, "es_ES"))
         if (!setlocale(LC_ALL, "fr_FR"))
         if (!setlocale(LC_ALL, "de_DE"))
         if (!setlocale(LC_ALL, "it_IT"))
         if (!setlocale(LC_ALL, "sv_SE"))
-        ;
+        {}
 #endif
 
         for (i = 0; i < sizeof test_cases / sizeof test_cases[0]; ++i) {
@@ -80,8 +96,8 @@ main(int argc, char *argv[])
 static gboolean
 test_single_case (struct test_case *tc)
 {
-        gchar *got = gsgf_ascii_dtostring (tc->d, tc->precision,
-                                           tc->width, tc->zeropad,
+        gchar *got = gsgf_ascii_dtostring (tc->d, tc->width,
+                                           tc->precision, tc->zeropad,
                                            tc->zerotrim);
         gboolean result = TRUE;
         gchar *saved_locale;
