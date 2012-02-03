@@ -18,7 +18,7 @@ dnl along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 AC_PREREQ(2.63)
 
 m4_define(gibbon_major_version, 0)
-m4_define(gibbon_minor_version, 1)
+m4_define(gibbon_minor_version, 2)
 m4_define(gibbon_micro_version, 0)
 m4_define(gibbon_version, gibbon_major_version.gibbon_minor_version.gibbon_micro_version)
 
@@ -141,6 +141,9 @@ if test $gibbon_native_msdos = no; then
 fi
 
 AC_CHECK_FUNCS([index rindex])
+
+AC_CHECK_HEADERS([xlocale.h])
+AC_CHECK_FUNCS([newlocale uselocale])
 
 GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)
