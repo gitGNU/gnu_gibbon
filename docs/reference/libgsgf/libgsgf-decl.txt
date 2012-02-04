@@ -1879,6 +1879,11 @@ GSGFGameTree *self
 const GSGFGameTree *self 
 </FUNCTION>
 <FUNCTION>
+<NAME>gsgf_game_tree_get_last_node</NAME>
+<RETURNS>GList  *</RETURNS>
+const GSGFGameTree *self 
+</FUNCTION>
+<FUNCTION>
 <NAME>gsgf_game_tree_get_children</NAME>
 <RETURNS>GList  *</RETURNS>
 const GSGFGameTree *self 
@@ -1958,6 +1963,11 @@ void
 <NAME>gsgf_move_backgammon_new_from_raw</NAME>
 <RETURNS>GSGFMoveBackgammon  *</RETURNS>
 const GSGFRaw *raw, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_move_backgammon_new_regular</NAME>
+<RETURNS>GSGFMoveBackgammon  *</RETURNS>
+guint die1, guint die2, GError **error, ... 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_regular</NAME>
