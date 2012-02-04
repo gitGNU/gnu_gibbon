@@ -61,6 +61,11 @@ static gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
                                         GSGFGameTree *game_tree,
                                         GibbonPositionSide side,
                                         GibbonMove *move, GError **error);
+static gboolean gibbon_sgf_writer_special_move (const GibbonSGFWriter *self,
+                                                GSGFGameTree *game_tree,
+                                                GibbonPositionSide side,
+                                                const gchar *special,
+                                                GError **error);
 static guint translate_point (guint point, GibbonPositionSide side);
 
 static void 
@@ -316,6 +321,27 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                                      GIBBON_MOVE (action),
                                                      error))
                                 return FALSE;
+                } else if (GIBBON_IS_DOUBLE (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_special_move (self, game_tree,
+                                                             side, "double",
+                                                             error))
+                                return FALSE;
+                } else if (GIBBON_IS_TAKE (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_special_move (self, game_tree,
+                                                             side, "take",
+                                                             error))
+                                return FALSE;
+                } else if (GIBBON_IS_DROP (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_special_move (self, game_tree,
+                                                             side, "drop",
+                                                             error))
+                                return FALSE;
                 }
         }
 
@@ -454,6 +480,31 @@ gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
         if (!gsgf_move)
                 return FALSE;
 
+        side_str = side == GIBBON_POSITION_SIDE_WHITE ? "B" : "W";
+        if (!gsgf_node_set_property (node, side_str, GSGF_VALUE (gsgf_move),
+                                     error)) {
+                g_object_unref (gsgf_move);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static
+gboolean gibbon_sgf_writer_special_move (const GibbonSGFWriter *self,
+                                         GSGFGameTree *game_tree,
+                                         GibbonPositionSide side,
+                                         const gchar *special, GError **error)
+{
+        GSGFNode *node = NULL;
+        const gchar *side_str;
+        GSGFMoveBackgammon *gsgf_move;
+
+        gsgf_move = gsgf_move_backgammon_new_from_string (special, error);
+        if (!gsgf_move)
+                return FALSE;
+
+        node = gsgf_game_tree_add_node (game_tree);
         side_str = side == GIBBON_POSITION_SIDE_WHITE ? "B" : "W";
         if (!gsgf_node_set_property (node, side_str, GSGF_VALUE (gsgf_move),
                                      error)) {
