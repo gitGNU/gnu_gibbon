@@ -32,6 +32,7 @@
 #include <libgsgf/gsgf.h>
 
 #include "gibbon-sgf-writer.h"
+#include "gibbon-match.h"
 #include "gibbon-game.h"
 
 #include "gibbon-roll.h"
@@ -60,6 +61,7 @@ static gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
                                         GSGFGameTree *game_tree,
                                         GibbonPositionSide side,
                                         GibbonMove *move, GError **error);
+static guint translate_point (guint point, GibbonPositionSide side);
 
 static void 
 gibbon_sgf_writer_init (GibbonSGFWriter *self)
@@ -307,6 +309,13 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                                      GIBBON_ROLL (action),
                                                      error))
                                 return FALSE;
+                } else if (GIBBON_IS_MOVE (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_move (self, game_tree, side,
+                                                     GIBBON_MOVE (action),
+                                                     error))
+                                return FALSE;
                 }
         }
 
@@ -343,4 +352,134 @@ gboolean gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
         }
 
         return TRUE;
+}
+
+static
+gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
+                                 GSGFGameTree *game_tree,
+                                 GibbonPositionSide side,
+                                 GibbonMove *move, GError **error)
+{
+        GList *last_element;
+        GSGFNode *node = NULL;
+        const gchar *side_str;
+        GSGFMoveBackgammon *gsgf_move;
+
+        gibbon_match_return_val_if_fail (move->number < 5, FALSE, error);
+
+        last_element = gsgf_game_tree_get_last_node (game_tree);
+        if (last_element) {
+                node = last_element->data;
+                if (gsgf_node_get_property (node, "DI")
+                    && gsgf_node_get_property (node, "PL")) {
+                        gsgf_node_remove_property (node, "DI");
+                        gsgf_node_remove_property (node, "PL");
+                } else {
+                        node = NULL;
+                }
+        }
+
+        if (!node)
+                node = gsgf_game_tree_add_node (game_tree);
+
+        switch (move->number) {
+        case 0:
+                gsgf_move = gsgf_move_backgammon_new_regular (move->die1,
+                                                              move->die2,
+                                                              error, -1);
+                break;
+        case 1:
+                gsgf_move = gsgf_move_backgammon_new_regular (
+                                move->die1, move->die2, error,
+                                translate_point (move->movements[0].from,
+                                                 side),
+                                translate_point (move->movements[0].to,
+                                                side),
+                                -1);
+                break;
+        case 2:
+                gsgf_move = gsgf_move_backgammon_new_regular (
+                                move->die1, move->die2, error,
+                                translate_point (move->movements[0].from,
+                                                 side),
+                                translate_point (move->movements[0].to,
+                                                 side),
+                                translate_point (move->movements[1].from,
+                                                 side),
+                                translate_point (move->movements[1].to,
+                                                 side),
+                                -1);
+                break;
+        case 3:
+                gsgf_move = gsgf_move_backgammon_new_regular (
+                                move->die1, move->die2, error,
+                                translate_point (move->movements[0].from,
+                                                 side),
+                                translate_point (move->movements[0].to,
+                                                 side),
+                                translate_point (move->movements[1].from,
+                                                 side),
+                                translate_point (move->movements[1].to,
+                                                 side),
+                                translate_point (move->movements[2].from,
+                                                 side),
+                                translate_point (move->movements[2].to,
+                                                 side),
+                                -1);
+                break;
+        case 4:
+                gsgf_move = gsgf_move_backgammon_new_regular (
+                                move->die1, move->die2, error,
+                                translate_point (move->movements[0].from,
+                                                 side),
+                                translate_point (move->movements[0].to,
+                                                 side),
+                                translate_point (move->movements[1].from,
+                                                 side),
+                                translate_point (move->movements[1].to,
+                                                 side),
+                                translate_point (move->movements[2].from,
+                                                 side),
+                                translate_point (move->movements[2].to,
+                                                 side),
+                                translate_point (move->movements[3].from,
+                                                 side),
+                                translate_point (move->movements[3].to,
+                                                 side),
+                                -1);
+                break;
+        default:
+                return FALSE; /* NOT_REACHED */
+        }
+        if (!gsgf_move)
+                return FALSE;
+
+        side_str = side == GIBBON_POSITION_SIDE_WHITE ? "B" : "W";
+        if (!gsgf_node_set_property (node, side_str, GSGF_VALUE (gsgf_move),
+                                     error)) {
+                g_object_unref (gsgf_move);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static guint
+translate_point (guint point, GibbonPositionSide side)
+{
+        if (point == 0) {
+                if (side == GIBBON_POSITION_SIDE_BLACK)
+                        return 24;
+                else
+                        return 25;
+        }
+
+        /* Swap colors for SGF export! */
+        if (point <= 24)
+                return 25 - point - 1;
+
+        if (side == GIBBON_POSITION_SIDE_BLACK)
+                return 25;
+        else
+                return 24;
 }
