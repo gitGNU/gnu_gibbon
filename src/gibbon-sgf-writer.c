@@ -40,6 +40,9 @@
 #include "gibbon-double.h"
 #include "gibbon-drop.h"
 #include "gibbon-take.h"
+#include "gibbon-resign.h"
+#include "gibbon-accept.h"
+#include "gibbon-reject.h"
 
 G_DEFINE_TYPE (GibbonSGFWriter, gibbon_sgf_writer, GIBBON_TYPE_MATCH_WRITER)
 
@@ -66,6 +69,10 @@ static gboolean gibbon_sgf_writer_special_move (const GibbonSGFWriter *self,
                                                 GibbonPositionSide side,
                                                 const gchar *special,
                                                 GError **error);
+static gboolean gibbon_sgf_writer_resign (const GibbonSGFWriter *self,
+                                          GSGFGameTree *game_tree,
+                                          GibbonPositionSide side,
+                                          GibbonResign *resign, GError **error);
 static guint translate_point (guint point, GibbonPositionSide side);
 
 static void 
@@ -342,6 +349,27 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                                              side, "drop",
                                                              error))
                                 return FALSE;
+                } else if (GIBBON_IS_RESIGN (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_resign (self, game_tree, side,
+                                                       GIBBON_RESIGN (action),
+                                                       error))
+                                return FALSE;
+                } else if (GIBBON_IS_ACCEPT (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_special_move (self, game_tree,
+                                                             side, "accept",
+                                                             error))
+                                return FALSE;
+                } else if (GIBBON_IS_REJECT (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_special_move (self, game_tree,
+                                                             side, "reject",
+                                                             error))
+                                return FALSE;
                 }
         }
 
@@ -513,6 +541,21 @@ gboolean gibbon_sgf_writer_special_move (const GibbonSGFWriter *self,
         }
 
         return TRUE;
+}
+
+
+static
+gboolean gibbon_sgf_writer_resign (const GibbonSGFWriter *self,
+                                   GSGFGameTree *game_tree,
+                                   GibbonPositionSide side,
+                                   GibbonResign *resign, GError **error)
+{
+        gchar *special = g_strdup_printf ("resign:%u", resign->value);
+        gboolean retval = gibbon_sgf_writer_special_move (self, game_tree,
+                                                          side, special,
+                                                          error);
+        g_free (special);
+        return retval;
 }
 
 static guint
