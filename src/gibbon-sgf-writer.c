@@ -34,6 +34,12 @@
 #include "gibbon-sgf-writer.h"
 #include "gibbon-game.h"
 
+#include "gibbon-roll.h"
+#include "gibbon-move.h"
+#include "gibbon-double.h"
+#include "gibbon-drop.h"
+#include "gibbon-take.h"
+
 G_DEFINE_TYPE (GibbonSGFWriter, gibbon_sgf_writer, GIBBON_TYPE_MATCH_WRITER)
 
 static gboolean gibbon_sgf_writer_write_stream (const GibbonMatchWriter *writer,
@@ -46,6 +52,14 @@ static gboolean gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                               guint game_number,
                                               const GibbonMatch *match,
                                               GError **error);
+static gboolean gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
+                                        GSGFGameTree *game_tree,
+                                        GibbonPositionSide side,
+                                        GibbonRoll *roll, GError **error);
+static gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
+                                        GSGFGameTree *game_tree,
+                                        GibbonPositionSide side,
+                                        GibbonMove *move, GError **error);
 
 static void 
 gibbon_sgf_writer_init (GibbonSGFWriter *self)
@@ -160,7 +174,7 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         glong action_num;
         GibbonPositionSide side;
         const GibbonGameAction *action = NULL;
-        const GibbonGameAction *last_action = NULL;
+        const GibbonPosition *position;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -169,18 +183,18 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
 
         root = gsgf_game_tree_add_node (game_tree);
 
-        text = gibbon_match_get_white (match);
+        text = gibbon_match_get_black (match);
         if (!text)
-                text = "black";
+                text = "white";
         simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
         if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
                 g_object_unref (simple_text);
                 return FALSE;
         }
 
-        text = gibbon_match_get_black (match);
+        text = gibbon_match_get_white (match);
         if (!text)
-                text = "white";
+                text = "black";
         simple_text = GSGF_VALUE (gsgf_simple_text_new (text));
         if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
                 g_object_unref (simple_text);
@@ -279,10 +293,53 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         }
 
         for (action_num = 0; ; ++action_num) {
-                last_action = action;
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
+                if (action_num)
+                        position = gibbon_game_get_nth_position (game,
+                                                                 action_num
+                                                                 - 1);
+                if (GIBBON_IS_ROLL (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_sgf_writer_roll (self, game_tree, side,
+                                                     GIBBON_ROLL (action),
+                                                     error))
+                                return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static
+gboolean gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
+                                 GSGFGameTree *game_tree,
+                                 GibbonPositionSide side,
+                                 GibbonRoll *roll, GError **error)
+{
+        gchar *buffer;
+        GSGFValue *simple_text;
+        GSGFNode *node;
+
+        buffer = g_strdup_printf ("%d%d", roll->die1, roll->die2);
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (buffer));
+        g_free (buffer);
+
+        node = gsgf_game_tree_add_node (game_tree);
+        if (!gsgf_node_set_property (node, "DI", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
+
+        if (side == GIBBON_POSITION_SIDE_WHITE)
+                simple_text = GSGF_VALUE (gsgf_simple_text_new ("Black"));
+        else
+                simple_text = GSGF_VALUE (gsgf_simple_text_new ("White"));
+        if (!gsgf_node_set_property (node, "PL", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
         }
 
         return TRUE;
