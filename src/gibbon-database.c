@@ -690,8 +690,10 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                 ++i;
                 ptr = va_arg (args, gpointer);
                 if (!ptr) {
-                        if (sqlite3_bind_null (stmt, i))
+                        if (sqlite3_bind_null (stmt, i)) {
+                                va_end (args);
                                 return FALSE;
+                        }
                         continue;
                 }
 
@@ -699,32 +701,41 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                         case G_TYPE_INT:
                         case G_TYPE_UINT:
                                 if (sqlite3_bind_int (stmt, i,
-                                                      *((gint *) ptr)))
+                                                      *((gint *) ptr))) {
+                                        va_end (args);
                                         return gibbon_database_display_error (
                                                         self, sql);
+                                }
                                 break;
                         case G_TYPE_INT64:
                         case G_TYPE_UINT64:
                                 if (sqlite3_bind_int64 (stmt, i,
-                                                        *((sqlite3_int64 *) ptr)))
+                                                        *((sqlite3_int64 *) ptr))) {
+                                        va_end (args);
                                         return gibbon_database_display_error (
                                                         self, sql);
+                                }
                                 break;
                         case G_TYPE_DOUBLE:
                                 if (sqlite3_bind_double (stmt, i,
-                                                         *((gdouble *) ptr)))
+                                                         *((gdouble *) ptr))) {
+                                        va_end (args);
                                         return gibbon_database_display_error (
                                                         self, sql);
+                                }
                                 break;
                         case G_TYPE_STRING:
                                 if (sqlite3_bind_text (stmt, i,
                                                        *((gchar **) ptr), -1,
                                                        SQLITE_STATIC
-                                                       ))
+                                                       )) {
+                                        va_end (args);
                                         return gibbon_database_display_error (
                                                         self, sql);
+                                }
                                 break;
                         default:
+                                va_end (args);
                                 gibbon_app_display_error (self->priv->app,
                                                           NULL,
                                                           _("Unknown data"
@@ -795,6 +806,7 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                                                 sqlite3_column_text (stmt, i);
                                 break;
                         default:
+                                va_end (args);
                                 gibbon_app_display_error (self->priv->app,
                                                           NULL,
                                                           _("Unknown data"
