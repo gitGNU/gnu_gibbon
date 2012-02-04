@@ -427,12 +427,10 @@ _gibbon_java_fibs_reader_resign (GibbonJavaFIBSReader *self,
 {
         GibbonGameAction *action;
         const GibbonGame *game;
-        const GibbonPosition *position;
-        gchar *msg;
-        guint value;
 
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
+        g_return_val_if_fail (points != 0, FALSE);
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
@@ -440,18 +438,7 @@ _gibbon_java_fibs_reader_resign (GibbonJavaFIBSReader *self,
                 return TRUE;
         }
 
-        position = gibbon_game_get_position (game);
-        if (points % position->cube) {
-                msg = g_strdup_printf (_("Resignation value %u is not a"
-                                         " multiple of cube value %u!"),
-                                       points, position->cube);
-                _gibbon_java_fibs_reader_yyerror (msg);
-                g_free (msg);
-                return FALSE;
-        }
-
-        value = points / position->cube;
-        action = GIBBON_GAME_ACTION (gibbon_resign_new (value));
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (points));
 
         return gibbon_java_fibs_reader_add_action (self, name, action);
 }

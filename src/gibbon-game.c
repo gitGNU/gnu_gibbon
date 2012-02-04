@@ -534,7 +534,6 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         const GibbonGameSnapshot *snapshot = NULL;
         GibbonPositionSide other;
         GibbonResign* resign;
-        gint value;
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
@@ -556,8 +555,6 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
-        value = resign->value * pos->cube;
-
         g_free (pos->status);
         pos->status = g_strdup_printf (
                         g_dngettext (GETTEXT_PACKAGE,
@@ -569,11 +566,11 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                       pos->cube);
 
         if (side == GIBBON_POSITION_SIDE_BLACK) {
-                pos->scores[1] += value;
-                self->priv->score = -value;
+                pos->scores[1] += resign->value;
+                self->priv->score = -resign->value;
         } else {
-                pos->scores[0] += value;
-                self->priv->score = value;
+                pos->scores[0] += resign->value;
+                self->priv->score = resign->value;
         }
 
         self->priv->resigned = TRUE;
