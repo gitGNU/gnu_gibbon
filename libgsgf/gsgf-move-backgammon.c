@@ -50,8 +50,9 @@ static gboolean gsgf_move_backgammon_write_stream (const GSGFValue *self,
                                                    GCancellable *cancellable,
                                                    GError **error);
 
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
-                                                           GError **error);
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular_from_string (
+                const gchar *string,
+                GError **error);
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_double();
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_take();
 static GSGFMoveBackgammon *gsgf_move_backgammon_new_drop();
@@ -126,7 +127,8 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
         }
 
         if (string[0] >= '1' && string[1] <= '6') {
-                return gsgf_move_backgammon_new_regular(string, error);
+                return gsgf_move_backgammon_new_regular_from_string (string,
+                                                                     error);
         } else if (!strcmp(string, "double")) {
                 return gsgf_move_backgammon_new_double();
         } else if (!strcmp(string, "take")) {
@@ -141,8 +143,90 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
         return NULL;
 }
 
+/**
+ * gsgf_move_backgammon_new_regular:
+ * @die1: First die (1-6).
+ * @die2: Second die (1-6).
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ * ...: List of from-to pairs of points (0 - 25), terminated by -1.
+ *
+ * Creates a new regular #GSGFMoveBackgammon.
+ *
+ * Returns: The new #GSGFMoveBackgammon.
+ *
+ * Since: 0.2.0
+ */
+GSGFMoveBackgammon *
+gsgf_move_backgammon_new_regular (guint die1, guint die2, GError **error, ...)
+{
+        GSGFMoveBackgammon *self;
+        guint num_moves = 0;
+        va_list args;
+        gint from, to;
+
+        if(die1 < 1 || die1 > 6) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                                _("Invalid number %u on dice number %u"),
+                                die1, 1);
+                return NULL;
+        }
+
+        if(die2 < 1 || die2 > 6) {
+                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                                _("Invalid number %u on dice number %u"),
+                                die1, 1);
+                return NULL;
+        }
+
+        self = gsgf_move_backgammon_new ();
+
+        self->priv->dice[0] = die1;
+        self->priv->dice[1] = die2;
+
+        va_start(args, error);
+
+        while (1) {
+                from = va_arg (args, gint);
+                if (from < 0)
+                        break;
+                if (++num_moves > 4) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                                        _("More then four checkers moved"));
+                        g_object_unref (self);
+                        va_end(args);
+                        return NULL;
+                }
+                to = va_arg (args, gint);
+                if (to < 0) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                                        _("Odd number of points"),
+                                        from, to);
+                        g_object_unref (self);
+                        va_end(args);
+                        return NULL;
+                }
+                if (from > 25 || to > 25) {
+                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                                    _("Invalid point combination %d-%d"),
+                                    from, to);
+                        g_object_unref (self);
+                        va_end(args);
+                        return NULL;
+                }
+                self->priv->moves[num_moves - 1][0] = from;
+                self->priv->moves[num_moves - 1][1] = to;
+        }
+
+        va_end(args);
+
+        self->priv->num_moves = num_moves;
+
+        return self;
+}
+
 static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_regular (const gchar *string, GError **error)
+gsgf_move_backgammon_new_regular_from_string (const gchar *string,
+                                              GError **error)
 {
         GSGFMoveBackgammon *self;
         GSGFMoveBackgammonPrivate *priv;
