@@ -37,6 +37,7 @@ struct _GSGFGameTreePrivate {
 
         const GSGFFlavor *flavor;
         GList *nodes;
+        GList *last_node;
         GList *children;
 
         gchar *app;
@@ -72,6 +73,7 @@ gsgf_game_tree_init(GSGFGameTree *self)
         self->priv->flavor = NULL;
         self->priv->parent = NULL;
         self->priv->nodes = NULL;
+        self->priv->last_node = NULL;
         self->priv->children = NULL;
 
         self->priv->app = NULL;
@@ -170,17 +172,18 @@ gsgf_game_tree_add_child (GSGFGameTree *self)
 GSGFNode *
 gsgf_game_tree_add_node(GSGFGameTree *self)
 {
-        GList *last;
         GSGFNode *previous_node;
         GSGFNode *node;
 
         g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
 
-        last = g_list_last(self->priv->nodes);
-        previous_node = last ? GSGF_NODE(last->data) : NULL;
+        previous_node = self->priv->last_node
+                        ? self->priv->last_node->data : NULL;
+
         node = _gsgf_node_new (previous_node, self);
 
-        self->priv->nodes = g_list_append(self->priv->nodes, node);
+        self->priv->nodes = g_list_append (self->priv->nodes, node);
+        self->priv->last_node = g_list_last (self->priv->nodes);
 
         return node;
 }
@@ -488,6 +491,27 @@ gsgf_game_tree_get_nodes(const GSGFGameTree *self)
         g_return_val_if_fail(GSGF_IS_GAME_TREE(self), NULL);
 
         return self->priv->nodes;
+}
+
+
+/**
+ * gsgf_game_tree_get_last_node
+ * @self: the #GSGFGameTree.
+ *
+ * Get the last element of the list of #GSGFNode objects stored in a
+ * #GSGFGameTree.
+ *
+ * This list is not a copy.  You should not free it.  The list becomes invalid,
+ * when you add or remove nodes.
+ *
+ * Returns: Returns a #GList of #GSGFGameTree objects..
+ **/
+GList *
+gsgf_game_tree_get_last_node (const GSGFGameTree *self)
+{
+        g_return_val_if_fail (GSGF_IS_GAME_TREE(self), NULL);
+
+        return self->priv->last_node;
 }
 
 /**
