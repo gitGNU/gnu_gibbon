@@ -288,10 +288,10 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         cause = gibbon_game_resignation (game)
                         ? GSGF_RESULT_RESIGNATION : GSGF_RESULT_NORMAL;
         if (score > 0)
-                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_WHITE, score,
+                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_BLACK, score,
                                                       cause));
         else if (score < 0)
-                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_BLACK, -score,
+                result = GSGF_VALUE (gsgf_result_new (GSGF_RESULT_WHITE, -score,
                                                       cause));
         if (result
             && !gsgf_node_set_property (root, "RE", result, error)) {
