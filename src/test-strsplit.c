@@ -102,6 +102,8 @@ test_strsplit_ws (const gchar *in, ...)
                 ++i;
         } while (arg);
 
+        va_end (list);
+
         g_strfreev (tokens);
 
         return retval;
