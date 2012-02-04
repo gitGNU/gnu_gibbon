@@ -509,6 +509,8 @@ gsgf_node_set_property (GSGFNode *self,
 /*
  * GNU Backgammon expects the FF and GM attributes at the head of the list. :-(
  * We also write the CA and AP properties in the order that gnubg expects it.
+ *
+ * TODO! Write a lookup table and use that to compare values.
  */
 static gint
 compare_property_ids (gconstpointer _a, gconstpointer _b)
@@ -535,6 +537,14 @@ compare_property_ids (gconstpointer _a, gconstpointer _b)
         if (0 == g_strcmp0 (a, "AP"))
                 return -1;
         if (0 == g_strcmp0 (b, "AP"))
+                return 1;
+
+        /*
+         * Gnubg needs thos as well.
+         */
+        if (0 == g_strcmp0 (a, "PL"))
+                return -1;
+        if (0 == g_strcmp0 (b, "PL"))
                 return 1;
 
         return retval;
