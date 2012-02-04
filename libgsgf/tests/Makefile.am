@@ -105,9 +105,7 @@ SGF_IN_FILES = compressed-list.sgf.in	\
 
 SGF_FILES_GENERATED = $(SGF_IN_FILES:.in=)
 
-compressed-list.sgf: compressed-list.sgf.in
-full.sgf: full.sgf.in
-utf-8.sgf.in: utf-8.sgf
+check-local: $(SGF_FILES_GENERATED)
 
 SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\
