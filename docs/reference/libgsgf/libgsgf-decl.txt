@@ -462,6 +462,11 @@ GSGFText *self, const gchar *value, gboolean copy, GError **error
 const GSGFText *self 
 </FUNCTION>
 <FUNCTION>
+<NAME>gsgf_threads_init</NAME>
+<RETURNS>void  </RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
 <NAME>gsgf_util_read_simple_text</NAME>
 <RETURNS>gchar  *</RETURNS>
 const gchar *raw, const gchar **end, gchar delim 
@@ -1963,6 +1968,11 @@ void
 <NAME>gsgf_move_backgammon_new_from_raw</NAME>
 <RETURNS>GSGFMoveBackgammon  *</RETURNS>
 const GSGFRaw *raw, GError **error 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_move_backgammon_new_from_string</NAME>
+<RETURNS>GSGFMoveBackgammon  *</RETURNS>
+const gchar *str, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_new_regular</NAME>

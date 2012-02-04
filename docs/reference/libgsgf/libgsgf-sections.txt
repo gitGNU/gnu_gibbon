@@ -258,6 +258,7 @@ gsgf_move_backgammon_is_regular
 gsgf_move_backgammon_is_take
 gsgf_move_backgammon_new
 gsgf_move_backgammon_new_from_raw
+gsgf_move_backgammon_new_from_string
 gsgf_move_backgammon_new_regular
 <SUBSECTION Standard>
 GSGF_IS_MOVE_BACKGAMMON
@@ -496,6 +497,7 @@ gsgf_text_get_type
 <SECTION>
 <FILE>gsgf-util</FILE>
 gsgf_ascii_dtostring
+gsgf_threads_init
 gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>

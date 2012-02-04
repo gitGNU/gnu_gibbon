@@ -108,7 +108,10 @@ gsgf_move_backgammon_new (void)
  * @raw: The #GSGFRaw to parse.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Creates a new #GSGFMoveBackgammon from a #GSGFRaw.
+ * Creates a new #GSGFMoveBackgammon from a #GSGFRaw.  @raw must be
+ * single-valued and contain a string matching the SGF backgammon move
+ * syntax (see <ulink
+ * url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).
  *
  * Returns: The new #GSGFMoveBackgammon.
  */
@@ -126,21 +129,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
                 return NULL;
         }
 
-        if (string[0] >= '1' && string[1] <= '6') {
-                return gsgf_move_backgammon_new_regular_from_string (string,
-                                                                     error);
-        } else if (!strcmp(string, "double")) {
-                return gsgf_move_backgammon_new_double();
-        } else if (!strcmp(string, "take")) {
-                return gsgf_move_backgammon_new_take();
-        } else if (!strcmp(string, "drop")) {
-                return gsgf_move_backgammon_new_drop();
-        }
-
-        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                    _("Invalid move syntax '%s'"), string);
-
-        return NULL;
+        return gsgf_move_backgammon_new_from_string (string, error);
 }
 
 /**
@@ -199,8 +188,7 @@ gsgf_move_backgammon_new_regular (guint die1, guint die2, GError **error, ...)
                 to = va_arg (args, gint);
                 if (to < 0) {
                         g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                        _("Odd number of points"),
-                                        from, to);
+                                        _("Odd number of points"));
                         g_object_unref (self);
                         va_end(args);
                         return NULL;
@@ -222,6 +210,42 @@ gsgf_move_backgammon_new_regular (guint die1, guint die2, GError **error, ...)
         self->priv->num_moves = num_moves;
 
         return self;
+}
+
+/**
+ * gsgf_move_backgammon_new_from_string:
+ * @str: The string to parse.
+ * @error: a #GError location to store the error occuring, or %NULL to ignore.
+ *
+ * Creates a new #GSGFMoveBackgammon from a string.  The contents of
+ * @string must match the SGF backgammon string syntax (see
+ * <ulink url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).
+ *
+ * Returns: The new #GSGFMoveBackgammon.
+ *
+ * Since: 0.2.0
+ */
+GSGFMoveBackgammon *
+gsgf_move_backgammon_new_from_string (const gchar *str,
+                                      GError **error)
+{
+        gsgf_return_val_if_fail (str != NULL, NULL, error);
+
+        if (str[0] >= '1' && str[1] <= '6') {
+                return gsgf_move_backgammon_new_regular_from_string (str,
+                                                                     error);
+        } else if (!strcmp(str, "double")) {
+                return gsgf_move_backgammon_new_double();
+        } else if (!strcmp(str, "take")) {
+                return gsgf_move_backgammon_new_take();
+        } else if (!strcmp(str, "drop")) {
+                return gsgf_move_backgammon_new_drop();
+        }
+
+        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
+                    _("Invalid move syntax '%s'"), str);
+
+        return NULL;
 }
 
 static GSGFMoveBackgammon *
