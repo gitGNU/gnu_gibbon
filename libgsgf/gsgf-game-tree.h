@@ -72,6 +72,7 @@ GSGFGameTree *gsgf_game_tree_add_child(GSGFGameTree *self);
 GSGFGameTree *gsgf_game_tree_get_parent(const GSGFGameTree *self);
 struct _GSGFNode *gsgf_game_tree_add_node(GSGFGameTree *self);
 GList *gsgf_game_tree_get_nodes(const GSGFGameTree *self);
+GList *gsgf_game_tree_get_last_node(const GSGFGameTree *self);
 GList *gsgf_game_tree_get_children(const GSGFGameTree *self);
 const GSGFFlavor *gsgf_game_tree_get_flavor (const GSGFGameTree *self);
 

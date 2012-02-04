@@ -504,7 +504,9 @@ gsgf_game_tree_get_nodes(const GSGFGameTree *self)
  * This list is not a copy.  You should not free it.  The list becomes invalid,
  * when you add or remove nodes.
  *
- * Returns: Returns a #GList of #GSGFGameTree objects..
+ * Returns: Returns a #GList of #GSGFGameTree objects.
+ *
+ * Since: 0.2.0
  **/
 GList *
 gsgf_game_tree_get_last_node (const GSGFGameTree *self)
