@@ -114,6 +114,7 @@ gsgf_compose_new (GSGFCookedValue *value, ...)
                 if (!value)
                         break;
                 if (!GSGF_IS_COOKED_VALUE(value)) {
+                        va_end (args);
                         g_list_free(values);
                         /* This will always fail on purpose.  We just want the
                          * error message to be printed in a consistent way.
