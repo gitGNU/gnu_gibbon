@@ -141,11 +141,6 @@ static gchar *gibbon_session_decode_client (GibbonSession *self,
 static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
                                                   GSList **list,
                                                   const gchar *string);
-static void gibbon_session_queue_who_request (GibbonSession *self,
-                                              const gchar *who);
-static void gibbon_session_unqueue_who_request (GibbonSession *self,
-                                                const gchar *who);
-
 static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
                                               const GibbonCountry *country);
@@ -159,6 +154,13 @@ static void gibbon_session_on_cube_taken (const GibbonSession *self);
 static void gibbon_session_on_cube_dropped (const GibbonSession *self);
 static void gibbon_session_on_resignation_accepted (const GibbonSession *self);
 static void gibbon_session_on_resignation_rejected (const GibbonSession *self);
+
+static void gibbon_session_check_expect_queues (GibbonSession *self,
+                                                gboolean force);
+static void gibbon_session_queue_who_request (GibbonSession *self,
+                                              const gchar *who);
+static void gibbon_session_unqueue_who_request (GibbonSession *self,
+                                                const gchar *who);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -183,7 +185,6 @@ struct _GibbonSessionPrivate {
         GibbonSessionRegisterState rstate;
 
         gboolean initialized;
-        gboolean init_commands_sent;
 
         GSList *expect_settings;
         GSList *expect_toggles;
@@ -212,8 +213,6 @@ G_DEFINE_TYPE (GibbonSession, gibbon_session, G_TYPE_OBJECT);
 static void
 gibbon_session_init (GibbonSession *self)
 {
-        GSList *iter;
-
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_SESSION, 
                                                   GibbonSessionPrivate);
@@ -232,41 +231,12 @@ gibbon_session_init (GibbonSession *self)
         self->priv->rstate = GIBBON_SESSION_REGISTER_WAIT_INIT;
 
         self->priv->initialized = FALSE;
-        self->priv->init_commands_sent = FALSE;
 
-        iter = NULL;
-        iter = g_slist_prepend (iter, "boardstyle");
-        iter = g_slist_prepend (iter, "linelength");
-        iter = g_slist_prepend (iter, "pagelength");
-        iter = g_slist_prepend (iter, "redoubles");
-        iter = g_slist_prepend (iter, "sortwho");
-        iter = g_slist_prepend (iter, "timezone");
-        self->priv->expect_settings = iter;
-
-        iter = NULL;
-        iter = g_slist_prepend (iter, "wrap");
-        iter = g_slist_prepend (iter, "telnet");
-        iter = g_slist_prepend (iter, "silent");
-        iter = g_slist_prepend (iter, "report");
-        iter = g_slist_prepend (iter, "ready");
-        iter = g_slist_prepend (iter, "ratings");
-        iter = g_slist_prepend (iter, "notify");
-        iter = g_slist_prepend (iter, "moves");
-        iter = g_slist_prepend (iter, "moreboards");
-        iter = g_slist_prepend (iter, "greedy");
-        iter = g_slist_prepend (iter, "double");
-        iter = g_slist_prepend (iter, "crawford");
-        iter = g_slist_prepend (iter, "bell");
-        iter = g_slist_prepend (iter, "automove");
-        iter = g_slist_prepend (iter, "autodouble");
-        iter = g_slist_prepend (iter, "autoboard");
-        iter = g_slist_prepend (iter, "allowpip");
-        self->priv->expect_toggles = iter;
-
+        self->priv->expect_settings = NULL;
+        self->priv->expect_toggles = NULL;
         self->priv->expect_who_infos = NULL;
-
         self->priv->expect_saved_counts = NULL;
-        self->priv->expect_address = TRUE;
+        self->priv->expect_address = FALSE;
 
         self->priv->saved_games =
                 g_hash_table_new_full (g_str_hash,
@@ -378,13 +348,9 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
         GibbonBoard *board;
-        const gchar *login;
 
         self->priv->connection = connection;
         self->priv->app = app;
-
-        login = gibbon_connection_get_login (connection);
-        gibbon_session_queue_who_request (self, login);
 
         if (self->priv->available) {
                 gibbon_app_set_state_available (app);
@@ -668,7 +634,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                         retval = -1;
                 else
                         retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
-                self->priv->init_commands_sent = TRUE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
@@ -679,7 +644,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                 else
                         retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
                 self->priv->saved_games_finished = TRUE;
-                self->priv->init_commands_sent = TRUE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
@@ -905,16 +869,50 @@ static gint
 gibbon_session_clip_who_info_end (GibbonSession *self,
                                   GSList *iter)
 {
+        const gchar *login;
+        GSList *list;
+
         if (!self->priv->initialized) {
                 self->priv->initialized = TRUE;
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "set");
-                self->priv->timeout_id =
-                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                       (GSourceFunc) gibbon_session_timeout,
-                                       (gpointer) self);
 
+                list = NULL;
+                list = g_slist_prepend (list, "boardstyle");
+                list = g_slist_prepend (list, "linelength");
+                list = g_slist_prepend (list, "pagelength");
+                list = g_slist_prepend (list, "redoubles");
+                list = g_slist_prepend (list, "sortwho");
+                list = g_slist_prepend (list, "timezone");
+                self->priv->expect_settings = list;
+
+                list = NULL;
+                list = g_slist_prepend (list, "wrap");
+                list = g_slist_prepend (list, "telnet");
+                list = g_slist_prepend (list, "silent");
+                list = g_slist_prepend (list, "report");
+                list = g_slist_prepend (list, "ready");
+                list = g_slist_prepend (list, "ratings");
+                list = g_slist_prepend (list, "notify");
+                list = g_slist_prepend (list, "moves");
+                list = g_slist_prepend (list, "moreboards");
+                list = g_slist_prepend (list, "greedy");
+                list = g_slist_prepend (list, "double");
+                list = g_slist_prepend (list, "crawford");
+                list = g_slist_prepend (list, "bell");
+                list = g_slist_prepend (list, "automove");
+                list = g_slist_prepend (list, "autodouble");
+                list = g_slist_prepend (list, "autoboard");
+                list = g_slist_prepend (list, "allowpip");
+                self->priv->expect_toggles = list;
+
+                self->priv->expect_address = TRUE;
+
+                /*
+                 * Make sure that we see a who info for ourselves.
+                 */
+                login = gibbon_connection_get_login (self->priv->connection);
+                gibbon_session_queue_who_request (self, login);
+
+                gibbon_session_check_expect_queues (self, TRUE);
         }
 
         return GIBBON_CLIP_CODE_WHO_INFO_END;
@@ -1934,6 +1932,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
         GibbonConnection *connection;
         GibbonSavedInfo *saved_info;
         gboolean has_saved;
+        struct GibbonSessionSavedCountCallbackInfo *info;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
                                      &opponent))
@@ -1973,6 +1972,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "rawwho %s", opponent);
+                gibbon_session_queue_who_request (self, opponent);
         }
 
         country = gibbon_archive_get_country (self->priv->archive, hostname,
@@ -2017,9 +2017,15 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                                               opponent, length);
 
         /* Get the saved count.  */
-        gibbon_connection_queue_command (self->priv->connection,
-                                         FALSE,
-                                         "show savedcount %s", opponent);
+        info = g_malloc (sizeof *info);
+        info->callback = NULL;
+        info->data = NULL;
+        info->who = g_strdup (opponent);
+        info->object = NULL;
+
+        self->priv->expect_saved_counts =
+                        g_slist_append (self->priv->expect_saved_counts, info);
+        gibbon_session_check_expect_queues (self, FALSE);
 
         return GIBBON_CLIP_CODE_INVITATION;
 }
@@ -2041,18 +2047,8 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                                               key))
                 retval = GIBBON_CLIP_CODE_SHOW_SETTING;
 
-        if (!self->priv->init_commands_sent && !self->priv->expect_settings) {
-                /* Restart timer.  */
-                if (self->priv->timeout_id)
-                        g_source_remove (self->priv->timeout_id);
-                self->priv->timeout_id =
-                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                       (GSourceFunc) gibbon_session_timeout,
-                                       (gpointer) self);
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "toggle");
-        }
+        if (!self->priv->expect_settings)
+                gibbon_session_check_expect_queues (self, TRUE);
 
         /* The only setting we are interested in is "boardstyle".  */
         if (0 == g_strcmp0 ("boardstyle", key)
@@ -2066,6 +2062,10 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                 gibbon_connection_queue_command (self->priv->connection,
                                                  TRUE,
                                                  "set boardstyle 3");
+                /*
+                 * FIXME! We have to start a timeout here, and send the
+                 * command again in case of an error.
+                 */
         }
 
         return retval;
@@ -2077,8 +2077,6 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
         gint retval = -1;
         const gchar *key;
         gboolean value;
-        GSettings *settings;
-        gchar *mail;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
                 return -1;
@@ -2089,39 +2087,8 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                                               &self->priv->expect_toggles,
                                               key))
                 retval = GIBBON_CLIP_CODE_SHOW_TOGGLE;
-
-        if (!self->priv->init_commands_sent
-            && !self->priv->expect_toggles) {
-                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
-                mail = g_settings_get_string (settings,
-                                              GIBBON_PREFS_SERVER_ADDRESS);
-                if (mail && !self->priv->expect_address) {
-                        /* Restart timer.  */
-                        if (self->priv->timeout_id)
-                                g_source_remove (self->priv->timeout_id);
-                        self->priv->timeout_id =
-                                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                           (GSourceFunc) gibbon_session_timeout,
-                                               (gpointer) self);
-                        gibbon_connection_queue_command (self->priv->connection,
-                                                         FALSE,
-                                                         "address %s",
-                                                         mail);
-                        g_free (mail);
-                } else if (!self->priv->init_commands_sent) {
-                        /* Restart timer.  */
-                        if (self->priv->timeout_id)
-                                g_source_remove (self->priv->timeout_id);
-                        self->priv->timeout_id =
-                                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                           (GSourceFunc) gibbon_session_timeout,
-                                               (gpointer) self);
-                        gibbon_connection_queue_command (self->priv->connection,
-                                                         FALSE,
-                                                         "show saved");
-                }
-                g_object_unref (settings);
-        }
+        if (!self->priv->expect_toggles)
+                gibbon_session_check_expect_queues (self, TRUE);
 
         if (0 == g_strcmp0 ("notify", key)) {
                 if (!value) {
@@ -2198,13 +2165,17 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
                         self->priv->expect_saved_counts =
                                 g_slist_remove (self->priv->expect_saved_counts,
                                                 iter2->data);
-                        info->callback (info->object, info->who,
-                                        count, info->data);
+                        if (info->callback)
+                                info->callback (info->object, info->who,
+                                                count, info->data);
                         g_free (info->who);
+                        g_free (info);
+                        gibbon_session_check_expect_queues (self, FALSE);
                         return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
                 }
                 iter2 = iter2->next;
         }
+        gibbon_session_check_expect_queues (self, FALSE);
 
         /*
          * If the user is not an active inviter we guess that the command
@@ -2229,21 +2200,9 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
-        if (!self->priv->init_commands_sent) {
-                /* Restart timer.  */
-                if (self->priv->timeout_id)
-                        g_source_remove (self->priv->timeout_id);
-                self->priv->timeout_id =
-                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                       (GSourceFunc) gibbon_session_timeout,
-                                       (gpointer) self);
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "show saved");
-        }
-
         if  (self->priv->expect_address) {
                 self->priv->expect_address = FALSE;
+                gibbon_session_check_expect_queues (self, TRUE);
                 return GIBBON_CLIP_CODE_SHOW_ADDRESS;
         }
 
@@ -2255,26 +2214,15 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
 {
         const gchar *address;
 
-        if (!self->priv->init_commands_sent) {
-                self->priv->init_commands_sent = TRUE;
-                /* Restart timer.  */
-                if (self->priv->timeout_id)
-                        g_source_remove (self->priv->timeout_id);
-                self->priv->timeout_id =
-                        g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
-                                       (GSourceFunc) gibbon_session_timeout,
-                                       (gpointer) self);
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "show saved");
-        }
-
         /*
          * If the command was entered manually there is no need to display
          * an error message.  It is already visible in the server console.
          */
         if (!self->priv->expect_address)
                 return -1;
+
+        self->priv->expect_address = FALSE;
+        gibbon_session_check_expect_queues (self, TRUE);
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &address))
                 return -1;
@@ -2743,7 +2691,6 @@ gibbon_session_get_saved_count (GibbonSession *self, gchar *who,
          */
         self->priv->expect_saved_counts =
                         g_slist_append (self->priv->expect_saved_counts, info);
-
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "show savedcount %s", who);
 }
@@ -2768,6 +2715,35 @@ gibbon_session_timeout (GibbonSession *self)
                         gibbon_app_disconnect (self->priv->app);
                         return FALSE;
                 }
+        } else if (self->priv->expect_settings
+                   || self->priv->expect_toggles
+                   || self->priv->expect_saved_counts
+                   || self->priv->expect_who_infos
+                   || self->priv->expect_address) {
+                gibbon_session_check_expect_queues (self, TRUE);
+                return TRUE;
+        }
+
+        self->priv->timeout_id = 0;
+
+        return FALSE;
+}
+
+static void
+gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
+{
+        GSettings *settings;
+        gchar *mail;
+        struct GibbonSessionSavedCountCallbackInfo *info;
+
+        if (!force && self->priv->timeout_id)
+                return;
+
+        if (self->priv->expect_saved_counts) {
+                info = self->priv->expect_saved_counts->data;
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "show savedcount %s",
+                                                 info->who);
         } else if (self->priv->expect_settings) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "set");
@@ -2778,14 +2754,26 @@ gibbon_session_timeout (GibbonSession *self)
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "rawwho %s", (gchar *)
                                             self->priv->expect_who_infos->data);
+        } else if (self->priv->expect_address) {
+                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+                mail = g_settings_get_string (settings,
+                                              GIBBON_PREFS_SERVER_ADDRESS);
+                if (mail) {
+                        gibbon_connection_queue_command (self->priv->connection,
+                                                         FALSE,
+                                                         "address %s",
+                                                         mail);
+                }
+                g_free (mail);
+        } else {
+                return;
         }
 
-        /*
-         * FIXME: If we expect a  saved count we should resent the command.
-         * But "show saved" or "address" are not important enough to do that.
-         */
-
-        return TRUE;
+        if (!self->priv->timeout_id)
+                self->priv->timeout_id =
+                                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
+                                           (GSourceFunc) gibbon_session_timeout,
+                                               (gpointer) self);
 }
 
 void
