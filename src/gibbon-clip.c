@@ -1451,7 +1451,7 @@ gibbon_clip_parse_async_win_match (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_OTHER_WIN_MATCH);
+                                         GIBBON_CLIP_CODE_ASYNC_WIN_MATCH);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
