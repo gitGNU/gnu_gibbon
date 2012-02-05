@@ -71,6 +71,7 @@ struct GibbonSessionSavedCountCallbackInfo {
 #define GIBBON_SESSION_REPLY_TIMEOUT 2500
 
 static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_own_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info_end (GibbonSession *self,
                                               GSList *iter);
@@ -138,9 +139,6 @@ static gint gibbon_session_handle_unknown_message (GibbonSession *self,
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
-static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
-                                                  GSList **list,
-                                                  const gchar *string);
 static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
                                               const GibbonCountry *country);
@@ -188,7 +186,7 @@ struct _GibbonSessionPrivate {
 
         gboolean expect_boardstyle;
         gboolean set_boardstyle;
-        GSList *expect_toggles;
+        gboolean expect_notify;
         GSList *expect_who_infos;
         GSList *expect_saved_counts;
         gboolean expect_address;
@@ -235,7 +233,7 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->expect_boardstyle = FALSE;
         self->priv->set_boardstyle = FALSE;
-        self->priv->expect_toggles = NULL;
+        self->priv->expect_notify = FALSE;
         self->priv->expect_who_infos = NULL;
         self->priv->expect_saved_counts = NULL;
         self->priv->expect_address = FALSE;
@@ -311,8 +309,6 @@ gibbon_session_finalize (GObject *object)
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
-
-        g_slist_free (self->priv->expect_toggles);
 
         iter = self->priv->expect_who_infos;
         while (iter) {
@@ -450,8 +446,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_clip_welcome (self, iter);
                 break;
         case GIBBON_CLIP_CODE_OWN_INFO:
-                /* FIXME! Parse settings! */
-                retval = GIBBON_CLIP_CODE_OWN_INFO;
+                retval = gibbon_session_clip_own_info (self, iter);
                 break;
         case GIBBON_CLIP_CODE_MOTD:
                 retval = GIBBON_CLIP_CODE_MOTD;
@@ -620,10 +615,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_show_setting (self, iter);
                 break;
         case GIBBON_CLIP_CODE_START_TOGGLES:
-                if (self->priv->expect_toggles)
-                        retval = GIBBON_CLIP_CODE_START_TOGGLES;
-                else
-                        retval = -1;
+                retval = -1;
                 break;
         case GIBBON_CLIP_CODE_SHOW_TOGGLE:
                 retval = gibbon_session_handle_show_toggle (self, iter);
@@ -706,6 +698,95 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         g_free (reply);
 
         return GIBBON_CLIP_CODE_WELCOME;
+}
+
+
+static gint
+gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
+{
+        const gchar *login;
+        gboolean allowpip, autoboard, autodouble, automove, away, bell,
+                 crawford, dbl;
+        guint64 experience;
+        gboolean greedy, moreboards, moves, notify;
+        gdouble rating;
+        gboolean ratings, ready;
+        gint redoubles;
+        gboolean report, silent;
+        const gchar *timezone;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME,
+                                     &login))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &allowpip))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &autoboard))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &autodouble))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &automove))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &away))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &bell))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &crawford))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &dbl))
+                return -1;
+        if (!gibbon_clip_get_uint64 (&iter, GIBBON_CLIP_TYPE_UINT,
+                                     &experience))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &greedy))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &moreboards))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &moves))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &notify))
+                return -1;
+        if (!gibbon_clip_get_double (&iter, GIBBON_CLIP_TYPE_DOUBLE,
+                                     &rating))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &ratings))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &ready))
+                return -1;
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
+                                  &redoubles))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &report))
+                return -1;
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &silent))
+                return -1;
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &timezone))
+                return -1;
+
+        if (!notify)
+                self->priv->expect_notify = TRUE;
+        if (ready) {
+                gibbon_app_set_state_available (self->priv->app);
+        } else {
+                gibbon_app_set_state_busy (self->priv->app);
+        }
+        return GIBBON_CLIP_CODE_OWN_INFO;
 }
 
 static gint
@@ -869,32 +950,11 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                                   GSList *iter)
 {
         const gchar *login;
-        GSList *list;
 
         if (!self->priv->initialized) {
                 self->priv->initialized = TRUE;
 
                 self->priv->expect_boardstyle = TRUE;
-
-                list = NULL;
-                list = g_slist_prepend (list, "wrap");
-                list = g_slist_prepend (list, "telnet");
-                list = g_slist_prepend (list, "silent");
-                list = g_slist_prepend (list, "report");
-                list = g_slist_prepend (list, "ready");
-                list = g_slist_prepend (list, "ratings");
-                list = g_slist_prepend (list, "notify");
-                list = g_slist_prepend (list, "moves");
-                list = g_slist_prepend (list, "moreboards");
-                list = g_slist_prepend (list, "greedy");
-                list = g_slist_prepend (list, "double");
-                list = g_slist_prepend (list, "crawford");
-                list = g_slist_prepend (list, "bell");
-                list = g_slist_prepend (list, "automove");
-                list = g_slist_prepend (list, "autodouble");
-                list = g_slist_prepend (list, "autoboard");
-                list = g_slist_prepend (list, "allowpip");
-                self->priv->expect_toggles = list;
 
                 self->priv->expect_address = TRUE;
 
@@ -2066,28 +2126,21 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
 {
-        gint retval = -1;
         const gchar *key;
         gboolean value;
+        gboolean check_queue = FALSE;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
                 return -1;
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN, &value))
                 return -1;
 
-        if (gibbon_session_clear_expect_list (self,
-                                              &self->priv->expect_toggles,
-                                              key))
-                retval = GIBBON_CLIP_CODE_SHOW_TOGGLE;
-        if (!self->priv->expect_toggles)
-                gibbon_session_check_expect_queues (self, TRUE);
-
         if (0 == g_strcmp0 ("notify", key)) {
-                if (!value) {
-                        gibbon_connection_queue_command (self->priv->connection,
-                                                         TRUE,
-                                                         "toggle notify");
-                }
+                if (self->priv->expect_notify)
+                        check_queue = TRUE;
+                self->priv->expect_notify = !value;
+                if (check_queue)
+                        gibbon_session_check_expect_queues (self, TRUE);
         } else if (0 == g_strcmp0 ("ready", key)) {
                 self->priv->available = value;
                 if (value) {
@@ -2097,7 +2150,7 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                 }
         }
 
-        return retval;
+        return -1;
 }
 
 static gint
@@ -2525,23 +2578,6 @@ gibbon_session_handle_unknown_message (GibbonSession *self, GSList *iter)
         return GIBBON_CLIP_CODE_UNKNOWN_MESSAGE;
 }
 
-static gboolean
-gibbon_session_clear_expect_list (GibbonSession *self, GSList **list,
-                                  const gchar *key)
-{
-        GSList *iter = *list;
-
-        while (iter) {
-                if (0 == g_strcmp0 (iter->data, key)) {
-                        *list = g_slist_remove (*list, iter->data);
-                        return TRUE;
-                }
-                iter = iter->next;
-        }
-
-        return FALSE;
-}
-
 void
 gibbon_session_configure_player_menu (const GibbonSession *self,
                                       const gchar *player,
@@ -2708,7 +2744,7 @@ gibbon_session_timeout (GibbonSession *self)
                         return FALSE;
                 }
         } else if (self->priv->expect_boardstyle
-                   || self->priv->expect_toggles
+                   || self->priv->expect_notify
                    || self->priv->expect_saved_counts
                    || self->priv->expect_who_infos
                    || self->priv->expect_address) {
@@ -2741,9 +2777,9 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                                                  self->priv->set_boardstyle,
                                                  "set boardstyle 3");
                 self->priv->set_boardstyle = TRUE;
-        } else if (self->priv->expect_toggles) {
-                gibbon_connection_queue_command (self->priv->connection, FALSE,
-                                                 "toggle");
+        } else if (self->priv->expect_notify) {
+                gibbon_connection_queue_command (self->priv->connection, TRUE,
+                                                 "toggle notify");
         } else if (self->priv->expect_who_infos) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "rawwho %s", (gchar *)
@@ -2950,8 +2986,6 @@ gibbon_session_set_available (GibbonSession *self, gboolean available)
 
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "toggle ready");
-        self->priv->expect_toggles =
-                g_slist_prepend (self->priv->expect_toggles, "ready");
 }
 
 void
