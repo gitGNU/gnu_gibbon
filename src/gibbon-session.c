@@ -1549,6 +1549,9 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
         const gchar *player;
+        const gchar *hostname;
+        const gchar *login;
+        guint port;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
                 return -1;
@@ -1556,6 +1559,12 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
         g_free (self->priv->opponent);
         g_free (self->priv->watching);
         self->priv->opponent = g_strdup (player);
+
+        hostname = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
+        login = gibbon_connection_get_login (self->priv->connection);
+        gibbon_archive_save_resume (self->priv->archive, hostname, port,
+                                    login, player);
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
