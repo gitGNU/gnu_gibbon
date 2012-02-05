@@ -1630,7 +1630,7 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
         gibbon_archive_save_win (self->priv->archive, hostname, port,
                                  self->priv->opponent, login);
 
-        return GIBBON_CLIP_CODE_ASYNC_WIN_MATCH;
+        return GIBBON_CLIP_CODE_WIN_MATCH;
 }
 
 static gboolean
