@@ -152,6 +152,9 @@ static gboolean gibbon_clip_parse_wins (const gchar *line,
 static gboolean gibbon_clip_parse_win_game (const gchar *line,
                                             gchar **tokens,
                                             GSList **result);
+static gboolean gibbon_clip_parse_win_match (const gchar *line,
+                                             gchar **tokens,
+                                             GSList **result);
 static gboolean gibbon_clip_parse_async_win_match (const gchar *line,
                                                    gchar **tokens,
                                                    GSList **result);
@@ -1404,6 +1407,54 @@ gibbon_clip_parse_start_match (const gchar *line, gchar **tokens,
 }
 
 static gboolean
+gibbon_clip_parse_win_match (const gchar *line, gchar **tokens, GSList **result)
+{
+        gint64 match_length;
+        gint64 s0, s1;
+        gchar *ptr;
+
+        if (!tokens[3])
+                return FALSE;
+        if (g_strcmp0 ("point", tokens[4]))
+                return FALSE;
+        if (g_strcmp0 ("match", tokens[5]))
+                return FALSE;
+        if (!tokens[6])
+                return FALSE;
+
+        if (!gibbon_clip_extract_integer (tokens[3], &match_length, 1, G_MAXINT))
+                return FALSE;
+
+        ptr = index (tokens[6], '-');
+        if (!ptr)
+                return FALSE;
+        *ptr++ = 0;
+        if (!gibbon_clip_extract_integer (tokens[6], &s0, 0, G_MAXINT))
+                return FALSE;
+        gibbon_clip_chomp (ptr, '.');
+        if (!gibbon_clip_extract_integer (ptr, &s1, 0, G_MAXINT))
+                return FALSE;
+
+        if (s0 < match_length)
+                return FALSE;
+        if (s0 < s1)
+                return FALSE;
+        if (s1 >= match_length)
+                return FALSE;
+
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         GIBBON_CLIP_CODE_WIN_MATCH);
+        *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
+                                            tokens[0]);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                         match_length);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s0);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT, s1);
+
+        return TRUE;
+}
+
+static gboolean
 gibbon_clip_parse_async_win_match (const gchar *line, gchar **tokens,
                                    GSList **result)
 {
@@ -2562,8 +2613,13 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
         if (0 == g_strcmp0 ("double.", tokens[1]))
                 return gibbon_clip_parse_you_double (line, tokens, result);
 
-        if (0 == g_strcmp0 ("win", tokens[1]))
-                return gibbon_clip_parse_win_game (line, tokens, result);
+        if (0 == g_strcmp0 ("win", tokens[1])
+            && 0 == g_strcmp0 ("the", tokens[2])) {
+                if (0 == g_strcmp0 ("game", tokens[3]))
+                        return gibbon_clip_parse_win_game (line, tokens,
+                                                           result);
+                return gibbon_clip_parse_win_match (line, tokens, result);
+        }
 
         if (0 == g_strcmp0 ("accept", tokens[1]))
                 return gibbon_clip_parse_accepts (line, tokens, result);
