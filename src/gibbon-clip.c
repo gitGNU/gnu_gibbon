@@ -2291,6 +2291,20 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[2]);
                 return TRUE;
+        } else if (0 == g_strcmp0 ("There", tokens[1])
+                   && 0 == g_strcmp0 ("is", tokens[2])
+                   && 0 == g_strcmp0 ("no", tokens[3])
+                   && 0 == g_strcmp0 ("one", tokens[4])
+                   && 0 == g_strcmp0 ("called", tokens[5])
+                   && tokens[6]) {
+                gibbon_clip_chomp (tokens[6], '.');
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                GIBBON_CLIP_CODE_ERROR_NO_USER);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[6]);
+                return TRUE;
         }
 
         if (0 == g_strcmp0 ("didn't", tokens[2])
