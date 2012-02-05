@@ -330,6 +330,15 @@ static struct test_case test_error02 = {
                 },
 };
 
+static struct test_case test_error03 = {
+                "** There is no one called anonymous.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "102" },
+                                { GIBBON_CLIP_TYPE_NAME, "anonymous"},
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                },
+};
+
 static struct test_case test_board00 =  {
                 "board:joe_white:black_jack:7:5:0:0:0:2:-1:0:-1:4:0:2:0:0:0:-2"
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
@@ -1911,6 +1920,7 @@ static struct test_case *test_cases[] = {
                 &test_error00,
                 &test_error01,
                 &test_error02,
+                &test_error03,
 
                 &test_board00,
                 &test_board01,
@@ -1976,6 +1986,8 @@ static struct test_case *test_cases[] = {
                 &test_between32,
                 &test_between33,
                 &test_between34,
+                &test_between35,
+                &test_between36,
 
                 &test_resign00,
                 &test_resign01,

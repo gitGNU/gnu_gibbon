@@ -53,6 +53,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE = 100,
                         GIBBON_CLIP_CODE_ERROR = 101,
                         GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS = 102,
+                        GIBBON_CLIP_CODE_ERROR_NO_USER = 103,
 
                         /* Game play.  */
                         GIBBON_CLIP_CODE_BOARD = 200,
