@@ -186,7 +186,8 @@ struct _GibbonSessionPrivate {
 
         gboolean initialized;
 
-        GSList *expect_settings;
+        gboolean expect_boardstyle;
+        gboolean set_boardstyle;
         GSList *expect_toggles;
         GSList *expect_who_infos;
         GSList *expect_saved_counts;
@@ -232,7 +233,8 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->initialized = FALSE;
 
-        self->priv->expect_settings = NULL;
+        self->priv->expect_boardstyle = FALSE;
+        self->priv->set_boardstyle = FALSE;
         self->priv->expect_toggles = NULL;
         self->priv->expect_who_infos = NULL;
         self->priv->expect_saved_counts = NULL;
@@ -310,7 +312,6 @@ gibbon_session_finalize (GObject *object)
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
 
-        g_slist_free (self->priv->expect_settings);
         g_slist_free (self->priv->expect_toggles);
 
         iter = self->priv->expect_who_infos;
@@ -578,6 +579,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE, "join");
                 retval = GIBBON_CLIP_CODE_RESUME_UNLIMITED;
+                break;
         case GIBBON_CLIP_CODE_WIN_GAME:
                 retval = gibbon_session_handle_win_game (self, iter);
                 break;
@@ -612,10 +614,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = GIBBON_CLIP_CODE_EMPTY;
                 break;
         case GIBBON_CLIP_CODE_START_SETTINGS:
-                if (self->priv->expect_settings)
-                        retval = GIBBON_CLIP_CODE_START_SETTINGS;
-                else
-                        retval = -1;
+                retval = -1;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SETTING:
                 retval = gibbon_session_handle_show_setting (self, iter);
@@ -875,14 +874,7 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
         if (!self->priv->initialized) {
                 self->priv->initialized = TRUE;
 
-                list = NULL;
-                list = g_slist_prepend (list, "boardstyle");
-                list = g_slist_prepend (list, "linelength");
-                list = g_slist_prepend (list, "pagelength");
-                list = g_slist_prepend (list, "redoubles");
-                list = g_slist_prepend (list, "sortwho");
-                list = g_slist_prepend (list, "timezone");
-                self->priv->expect_settings = list;
+                self->priv->expect_boardstyle = TRUE;
 
                 list = NULL;
                 list = g_slist_prepend (list, "wrap");
@@ -2036,37 +2028,37 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
         gint retval = -1;
         const gchar *key;
         const gchar *value;
+        gboolean check_queues = FALSE;
+        gboolean force_queues = FALSE;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &key))
                 return -1;
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &value))
                 return -1;
 
-        if (gibbon_session_clear_expect_list (self,
-                                              &self->priv->expect_settings,
-                                              key))
-                retval = GIBBON_CLIP_CODE_SHOW_SETTING;
-
-        if (!self->priv->expect_settings)
-                gibbon_session_check_expect_queues (self, TRUE);
-
         /* The only setting we are interested in is "boardstyle".  */
-        if (0 == g_strcmp0 ("boardstyle", key)
-            && (value[0] != '3' || value[1])) {
-                /*
-                 * Somebody changed the boardstyle.  This is assumed an error.
-                 * We will therefore completely show the communication with
-                 * FIBS and neither hide the command sent, nor will we
-                 * try to hide the reply.
-                 */
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 TRUE,
-                                                 "set boardstyle 3");
-                /*
-                 * FIXME! We have to start a timeout here, and send the
-                 * command again in case of an error.
-                 */
+        if (0 == g_strcmp0 ("boardstyle", key)) {
+                if (self->priv->expect_boardstyle)
+                        check_queues = TRUE;
+                if (value[0] != '3' || value[1]) {
+                        /*
+                         * Somebody changed the boardstyle.  This is assumed an
+                         * error.  We will therefore completely show the
+                         * communication with FIBS and neither hide the command
+                         * sent, nor will we  try to hide the reply.
+                         */
+                        self->priv->expect_boardstyle = TRUE;
+                        check_queues = TRUE;
+                        force_queues = TRUE;
+                } else if (self->priv->expect_boardstyle) {
+                        self->priv->expect_boardstyle = FALSE;
+                        retval = GIBBON_CLIP_CODE_SHOW_SETTING;
+                        check_queues = TRUE;
+                }
         }
+
+        if (check_queues)
+                gibbon_session_check_expect_queues (self, force_queues);
 
         return retval;
 }
@@ -2715,7 +2707,7 @@ gibbon_session_timeout (GibbonSession *self)
                         gibbon_app_disconnect (self->priv->app);
                         return FALSE;
                 }
-        } else if (self->priv->expect_settings
+        } else if (self->priv->expect_boardstyle
                    || self->priv->expect_toggles
                    || self->priv->expect_saved_counts
                    || self->priv->expect_who_infos
@@ -2744,9 +2736,11 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "show savedcount %s",
                                                  info->who);
-        } else if (self->priv->expect_settings) {
-                gibbon_connection_queue_command (self->priv->connection, FALSE,
-                                                 "set");
+        } else if (self->priv->expect_boardstyle) {
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 self->priv->set_boardstyle,
+                                                 "set boardstyle 3");
+                self->priv->set_boardstyle = TRUE;
         } else if (self->priv->expect_toggles) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "toggle");
