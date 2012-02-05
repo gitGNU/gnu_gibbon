@@ -19,7 +19,7 @@ AC_PREREQ(2.63)
 
 m4_define(gibbon_major_version, 0)
 m4_define(gibbon_minor_version, 1)
-m4_define(gibbon_micro_version, 0)
+m4_define(gibbon_micro_version, 1)
 m4_define(gibbon_version, gibbon_major_version.gibbon_minor_version.gibbon_micro_version)
 
 AC_INIT([gibbon],[gibbon_version],[mailto:guido@imperia.net],[gibbon],[http://guido-flohr.net/projects/gibbon])
