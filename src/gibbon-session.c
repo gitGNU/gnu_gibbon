@@ -102,7 +102,10 @@ static gint gibbon_session_handle_now_playing (GibbonSession *self,
 static gint gibbon_session_handle_invite_error (GibbonSession *self,
                                                 GSList *iter);
 static gint gibbon_session_handle_resume (GibbonSession *self, GSList *iter);
-static gint gibbon_session_handle_win_match (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_win_match (GibbonSession *self,
+                                             GSList *iter);
+static gint gibbon_session_handle_async_win_match (GibbonSession *self,
+                                                   GSList *iter);
 static gint gibbon_session_handle_resume_match (GibbonSession *self,
                                                 GSList *iter);
 static gint gibbon_session_handle_show_setting (GibbonSession *self,
@@ -595,8 +598,11 @@ gibbon_session_process_server_line (GibbonSession *self,
                 /* Ignore.  */
                 retval = GIBBON_CLIP_CODE_RESUME_CONFIRMATION;
                 break;
-        case GIBBON_CLIP_CODE_ASYNC_WIN_MATCH:
+        case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ASYNC_WIN_MATCH:
+                retval = gibbon_session_handle_async_win_match (self, iter);
                 break;
         case GIBBON_CLIP_CODE_RESUME_MATCH:
                 retval = gibbon_session_handle_resume_match (self, iter);
@@ -1586,6 +1592,27 @@ gibbon_session_decode_client (GibbonSession *self, const gchar *client)
 
 static gboolean
 gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
+{
+        const gchar *hostname;
+        guint port;
+        const gchar *login;
+
+        if (!self->priv->opponent)
+                return -1;
+        if (self->priv->watching)
+                return -1;
+        hostname = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
+        login = gibbon_connection_get_login (self->priv->connection);
+
+        gibbon_archive_save_win (self->priv->archive, hostname, port,
+                                 self->priv->opponent, login);
+
+        return GIBBON_CLIP_CODE_ASYNC_WIN_MATCH;
+}
+
+static gboolean
+gibbon_session_handle_async_win_match (GibbonSession *self, GSList *iter)
 {
         const gchar *hostname;
         guint port;
