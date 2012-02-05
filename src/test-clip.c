@@ -66,7 +66,7 @@ static struct test_case test_clip01_1 = {
                 }
 };
 
-static struct test_case test_clip02 = {
+static struct test_case test_clip02_0 = {
                 "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
                 " Europe/Sofia",
                 {
@@ -88,7 +88,67 @@ static struct test_case test_clip02 = {
                                 { GIBBON_CLIP_TYPE_DOUBLE, "3457.850000" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_INT, "0" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_STRING, "Europe/Sofia" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_clip02_1 = {
+                "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 2 0 0"
+                " Europe/Sofia",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_UINT, "2396" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "3457.850000" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_INT, "2" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_STRING, "Europe/Sofia" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_clip02_2 = {
+                "2 gflohr 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 unlimited 0"
+                " 0 Europe/Sofia",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "2" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_UINT, "2396" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_DOUBLE, "3457.850000" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_INT, "-1" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_STRING, "Europe/Sofia" },
@@ -1897,7 +1957,9 @@ static struct test_case *test_cases[] = {
                 &test_clip00,
                 &test_clip01_0,
                 &test_clip01_1,
-                &test_clip02,
+                &test_clip02_0,
+                &test_clip02_1,
+                &test_clip02_2,
                 &test_clip03,
                 &test_clip04,
                 &test_clip05_0,

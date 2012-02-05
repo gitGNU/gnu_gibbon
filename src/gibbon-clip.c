@@ -889,7 +889,7 @@ gibbon_clip_parse_clip_own_info (const gchar *line, gchar **tokens,
         } else {
                 i = -1;
         }
-        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN, i);
+        *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_INT, i);
 
         if (!gibbon_clip_extract_integer (tokens[19], &i, 0, 1))
                 return FALSE;
