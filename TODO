@@ -50,6 +50,12 @@
 - Implement some sort of auto-idle that sets you to `not ready' after some
   time of inactivity.
 - FIBS messages (** ...) should be displayed in a non-modal dialog.
+- Check that the FIBS spanner bug as in "someplayer accepts the double. The 
+  cube shows 2.13 anotherplayer Anybody for a 5 point match?" is also handled 
+  correctly.
+- IMPORTANT: If a saved match was an unlimited one, only optionally allow
+  resuming it but display the normal match length selection.  Otherwise,
+  both opponents have to wait until the match expires.
 - Handle "wait for ... to join, too" and make sure that there is no deadlock if   both parties use Gibbon.
 - Hash with saved games must be updated, when match finishes.
 - Doubling cube not clickable, when not centered.
@@ -58,6 +64,3 @@
   displayed.
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
-- Try to #define symbols of the flex scanner in a %top section.  If that
-  works as expected we can remove the automake hack in src/Makefile.am.
-- Split up the monolithic interface definition into smaller components.

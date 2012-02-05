@@ -1,6 +1,6 @@
 # This file is part of Gibbon, a graphical frontend to the First Internet 
 # Backgammon Server FIBS.
-# Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+# Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 #
 # Gibbon is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = gibbon gibbon-convert
+bin_PROGRAMS = gibbon
 
 AUTOMAKE_OPTIONS = color-tests
 
@@ -51,7 +51,6 @@ AM_CPPFLAGS = 				\
 	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
 	-D_ISOC99_SOURCE		\
 	$(GIBBON_GTK_MIGRATION_CFLAGS)	\
-	-DABS_BUILDDIR=\""$(abs_builddir)"\"	\
 	-D_SVID_SOURCE
 
 common_SOURCES = 			\
@@ -66,6 +65,7 @@ common_SOURCES = 			\
 	gibbon-game-chat.c		\
 	gibbon-archive.c		\
 	gibbon-java-fibs-importer.c	\
+	gibbon-action.c			\
 	gibbon-fibs-message.c		\
 	gibbon-app.c			\
 	gibbon-player-list-view.c	\
@@ -91,66 +91,9 @@ common_SOURCES = 			\
 	gibbon-geo-ip-updater.c		\
 	gibbon-country.c		\
 	gibbon-settings.c		\
-	gibbon-register-dialog.c	\
-	gibbon-game-action.c		\
-	gibbon-movement.c		\
-	gibbon-move.c			\
-	gibbon-double.c			\
-	gibbon-drop.c			\
-	gibbon-roll.c			\
-	gibbon-take.c			\
-	gibbon-resign.c			\
-	gibbon-accept.c			\
-	gibbon-reject.c			\
-	gibbon-setup.c			\
-	gibbon-match-reader.c		\
-	gibbon-java-fibs-reader.c	\
-	gibbon-match-writer.c		\
-	gibbon-java-fibs-writer.c	\
-	gibbon-java-fibs-parser.y	\
-	gibbon-java-fibs-lexer.c			\
-	gibbon-jelly-fish-writer.c				\
-	gibbon-sgf-writer.c	
-
-AM_YFLAGS = -d -v
-
-LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
-LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
-        $(LIBTOOLFLAGS) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
-AM_V_LEX = $(am__v_LEX_$(V))
-am__v_LEX_ = $(am__v_LEX_$(AM_DEFAULT_VERBOSITY))
-am__v_LEX_0 = @echo "  LEX   " $@;
-
-gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
-	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
+	gibbon-register-dialog.c
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
-
-gibbon_convert_SOURCES = 		\
-	gibbon-convert.c		\
-	gibbon-game-action.c		\
-	gibbon-movement.c		\
-	gibbon-move.c			\
-	gibbon-double.c			\
-	gibbon-drop.c			\
-	gibbon-roll.c			\
-	gibbon-take.c			\
-	gibbon-resign.c			\
-	gibbon-accept.c			\
-	gibbon-reject.c			\
-	gibbon-setup.c			\
-	gibbon-match-reader.c		\
-	gibbon-match-writer.c		\
-	gibbon-java-fibs-reader.c	\
-	gibbon-java-fibs-writer.c	\
-	gibbon-java-fibs-parser.y	\
-	gibbon-java-fibs-lexer.c	\
-	gibbon-jelly-fish-writer.c	\
-	gibbon-position.c		\
-	gibbon-util.c			\
-	gibbon-match.c			\
-	gibbon-game.c			\
-	gibbon-sgf-writer.c
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
@@ -164,6 +107,7 @@ noinst_HEADERS =			\
 	gibbon-game-chat.h		\
 	gibbon-archive.h		\
 	gibbon-java-fibs-importer.h	\
+	gibbon-action.h			\
 	gibbon-fibs-message.h		\
 	gibbon-app.h			\
 	gibbon-player-list-view.h	\
@@ -189,30 +133,7 @@ noinst_HEADERS =			\
 	gibbon-geo-ip-updater.h		\
 	gibbon-country.h		\
 	gibbon-settings.h		\
-	gibbon-register-dialog.h	\
-	gibbon-game-action.h		\
-	gibbon-game-actions.h		\
-	gibbon-movement.h		\
-	gibbon-move.h			\
-	gibbon-double.h			\
-	gibbon-drop.h			\
-	gibbon-roll.h			\
-	gibbon-take.h			\
-	gibbon-resign.h			\
-	gibbon-accept.h			\
-	gibbon-reject.h			\
-	gibbon-setup.h			\
-	gibbon-match-reader.h		\
-	gibbon-java-fibs-reader.h	\
-	gibbon-java-fibs-reader-priv.h	\
-	gibbon-match-writer.h		\
-	gibbon-java-fibs-writer.h			\
-	gibbon-jelly-fish-writer.h			\
-	gibbon-sgf-writer.h
-
-
-BUILT_SOURCES = gibbon-java-fibs-parser.c gibbon-java-fibs-parser.h \
-	gibbon-java-fibs-lexer.c
+	gibbon-register-dialog.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
@@ -222,31 +143,26 @@ gibbon_LDFLAGS = -mwindows
 endif
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
-TESTS_C = test_html_entities test_build_match test_position test_moves \
+TESTS_C = test_html_entities test_basic_match test_position test_moves \
 	test_pretty_print_move test_strsplit test_clip \
-	test_gary_wong_movegen test_crawford_detection \
-	test_java_fibs_reader
-
+	test_gary_wong_movegen
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
-check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
+check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
 	test_clip test_pretty_print_move test_strsplit	\
-	test_gary_wong_movegen test_crawford_detection \
-	test_java_fibs_reader
+	test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
-test_build_match_SOURCES = $(common_SOURCES) test-build-match.c
+test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
 test_position_SOURCES = $(common_SOURCES) test-position.c
 test_moves_SOURCES = $(common_SOURCES) test-moves.c
 test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) test-clip.c
-test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
-test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 
-MATCH_FILES = complete.match
+SGF_FILES =
 
-EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
+EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) gibbon.rc

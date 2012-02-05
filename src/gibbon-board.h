@@ -1,7 +1,7 @@
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <glib-object.h>
 
 #include "gibbon-position.h"
-#include "gibbon-move.h"
 
 #define GIBBON_TYPE_BOARD \
         (gibbon_board_get_type ())

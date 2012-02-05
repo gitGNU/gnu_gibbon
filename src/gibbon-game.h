@@ -1,7 +1,7 @@
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include <libgsgf/gsgf.h>
 #include "gibbon-match.h"
-#include "gibbon-game-action.h"
-#include "gibbon-position.h"
 
 #define GIBBON_TYPE_GAME \
         (gibbon_game_get_type ())
@@ -76,29 +75,7 @@ struct _GibbonGameClass
 
 GType gibbon_game_get_type (void) G_GNUC_CONST;
 
-GibbonGame *gibbon_game_new (GibbonMatch *match,
-                             const GibbonPosition *initial_position,
-                             gboolean crawford, gboolean is_crawford);
-gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
-                                 GibbonGameAction *action, GError **error);
-gint gibbon_game_over (const GibbonGame *self);
-gboolean gibbon_game_resignation (const GibbonGame *self);
-
-const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
-
-gboolean gibbon_game_is_crawford (const GibbonGame *self);
-
-const GibbonPosition *gibbon_game_get_initial_position (const GibbonGame *self);
-
-/* Yes! N can be negative, think Perl! */
-const GibbonPosition *gibbon_game_get_nth_position (const GibbonGame *self,
-                                                    gint n);
-const GibbonGameAction *gibbon_game_get_nth_action (const GibbonGame *self,
-                                                    gint n,
-                                                    GibbonPositionSide *side);
-
-void gibbon_game_set_white (GibbonGame *self, const gchar *white);
-void gibbon_game_set_black (GibbonGame *self, const gchar *black);
-void gibbon_game_set_match_length (GibbonGame *self, gsize length);
+GibbonGame *gibbon_game_new (GibbonMatch *match, GSGFGameTree *game_tree);
+GSGFGameTree *gibbon_game_get_game_tree (const GibbonGame *game);
 
 #endif

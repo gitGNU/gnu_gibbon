@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,9 @@
 
 G_BEGIN_DECLS
 
-void gsgf_threads_init (void);
-gchar *gsgf_util_read_simple_text (const gchar *raw, const gchar **end,
-                                   gchar delim);
-gchar *gsgf_util_read_text (const gchar *raw, const gchar **end, gchar delim);
-gchar *gsgf_ascii_dtostring (gdouble d, gint width, gint precision,
-                             gboolean zeropad, gboolean zerotrim);
+gchar *gsgf_util_read_simple_text(const gchar *raw, const gchar **end,
+                                 gchar delim);
+gchar *gsgf_util_read_text(const gchar *raw, const gchar **end, gchar delim);
 
 G_END_DECLS
 

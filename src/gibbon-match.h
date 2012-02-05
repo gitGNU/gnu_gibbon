@@ -1,7 +1,7 @@
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "gibbon-position.h"
+#include <libgsgf/gsgf.h>
 
 #define GIBBON_TYPE_MATCH \
         (gibbon_match_get_type ())
@@ -68,78 +68,18 @@ struct _GibbonMatchClass
         GObjectClass parent_class;
 };
 
-/**
- * GibbonMatchError:
- * @GIBBON_MATCH_ERROR_NONE: No error.
- * @GIBBON_MATCH_ERROR_GENERIC: Generic error.
- * @GIBBON_MATCH_ERROR_END_OF_MATCH: Attempt to add match data after end of
- *                                   match.
- * @GIBBON_MATCH_ERROR_END_OF_GAME: Attempt to add game data after end of game.
- * @GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION: An unsupported #GibbonGameAction was
- *                                         encountered.
- * @GIBBON_MATCH_ERROR_NOT_ON_TURN: This player is not on turn.
- * @GIBBON_MATCH_ERROR_NO_ROLL: Move without prior roll.
- * @GIBBON_MATCH_ERROR_ALREADY_ROLLED: Already rolled.
- * @GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL: Cube turned after dice roll.
- * @GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE: Drop but cube is not turned.
- * @GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE: Take but cube is not turned.
- * @GIBBON_MATCH_ERROR_EMPTY_RESIGNATION: Resignation without a value.
- *
- * Error codes for the domain #GIBBON_MATCH_ERROR.
- */
-typedef enum {
-        GIBBON_MATCH_ERROR_NONE = 0,
-        GIBBON_MATCH_ERROR_GENERIC,
-        GIBBON_MATCH_ERROR_END_OF_MATCH,
-        GIBBON_MATCH_ERROR_END_OF_GAME,
-        GIBBON_MATCH_ERROR_UNSUPPORTED_ACTION,
-        GIBBON_MATCH_ERROR_NOT_ON_TURN,
-        GIBBON_MATCH_ERROR_NO_ROLL,
-        GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-        GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL,
-        GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE,
-        GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE,
-        GIBBON_MATCH_ERROR_EMPTY_RESIGNATION
-} GibbonMatchError;
-
 GType gibbon_match_get_type (void) G_GNUC_CONST;
 
-#define GIBBON_MATCH_ERROR gibbon_match_error_quark ()
+GibbonMatch *gibbon_match_new ();
 
-GQuark gibbon_match_error_quark (void);
+const GSGFCollection *gibbon_match_get_collection ();
+gboolean gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
+                                        GError **error);
+const gchar *gibbon_match_get_white_player (const GibbonMatch *self);
+gboolean gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
+                                        GError **error);
+const gchar *gibbon_match_get_black_player (const GibbonMatch *self);
 
-#define gibbon_match_return_val_if_fail(expr, val, error) G_STMT_START{      \
-     if G_LIKELY(expr) { } else                                              \
-       {                                                                     \
-         g_set_error (error, GIBBON_MATCH_ERROR, GIBBON_MATCH_ERROR_GENERIC, \
-                      _("In function `%s': assertion `%s' failed."),         \
-                      __PRETTY_FUNCTION__, #expr);                           \
-         g_return_if_fail_warning (G_LOG_DOMAIN,                             \
-                                   __PRETTY_FUNCTION__,                      \
-                                   #expr);                                   \
-         return (val);                                                       \
-       };                               }G_STMT_END
-
-
-GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
-                               guint length, gboolean crawford);
-
-gboolean gibbon_match_get_crawford (const GibbonMatch *self);
-
-struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch
-                                                   *self);
-gsize gibbon_match_get_number_of_games (const GibbonMatch *self);
-struct _GibbonGame *gibbon_match_get_nth_game (const GibbonMatch *self,
-                                               gsize i);
-const GibbonPosition *gibbon_match_get_current_position (const GibbonMatch *
-                                                         self);
-struct _GibbonGame *gibbon_match_add_game (GibbonMatch *self, GError **error);
-
-void gibbon_match_set_white (GibbonMatch *self, const gchar *white);
-const gchar *gibbon_match_get_white (const GibbonMatch *self);
-void gibbon_match_set_black (GibbonMatch *self, const gchar *black);
-const gchar *gibbon_match_get_black (const GibbonMatch *self);
-void gibbon_match_set_length (GibbonMatch *self, gsize length);
-gsize gibbon_match_get_length (const GibbonMatch *self);
+struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch *self);
 
 #endif

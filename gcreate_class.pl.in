@@ -1,7 +1,7 @@
 #! @GCREATE_CLASS_PERL@ -w
 # This file is part of Gibbon.
 # Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
-# Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+# Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 #
 # @PACKAGE@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

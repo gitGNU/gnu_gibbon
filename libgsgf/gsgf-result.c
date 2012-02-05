@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -129,8 +129,6 @@ gsgf_result_new (GSGFResultWinner winner, gdouble score, GSGFResultCause cause)
                         break;
         };
 
-        gsgf_result_sync_text (self);
-
         return self;
 }
 
@@ -202,54 +200,55 @@ gsgf_result_set_value (GSGFText *_self, const gchar *value,
 static void
 gsgf_result_sync_text (GSGFResult *self)
 {
-        const gchar *winner;
-        const gchar *cause;
-        gchar *score_text;
+        const gchar *Winner;
+        const gchar *Cause;
         gchar *text;
         GSGFTextClass *text_class;
-        gchar sign[2];
+        gsize i;
 
         switch (self->priv->winner) {
                 case GSGF_RESULT_WHITE:
-                        winner = "W";
+                        Winner = "W";
                         break;
                 case GSGF_RESULT_BLACK:
-                        winner = "B";
+                        Winner = "B";
                         break;
                 case GSGF_RESULT_VOID:
-                        winner = "Void";
+                        Winner = "Void";
                         break;
                 default:
-                        winner = "?";
+                        Winner = "?";
                         break;
         }
 
         switch (self->priv->cause) {
                 case GSGF_RESULT_RESIGNATION:
-                        cause = "Resign";
+                        Cause = "Resign";
                         break;
                 case GSGF_RESULT_TIME:
-                        cause = "Time";
+                        Cause = "Time";
                         break;
                 case GSGF_RESULT_FORFEIT:
-                        cause = "Forfeit";
+                        Cause = "Forfeit";
                         break;
                 case GSGF_RESULT_NORMAL:
                 default:
-                        cause = "";
+                        Cause = "";
                         break;
         }
 
         if (self->priv->score) {
-                sign[0] = self->priv->score > 0 ? '+' : 0;
-                sign[1] = 0;
-                score_text = gsgf_ascii_dtostring (self->priv->score, -1, -1,
-                                                   FALSE, TRUE);
-                text = g_strdup_printf ("%s%s%s%s",
-                                        winner, sign, score_text, cause);
-                g_free (score_text);
+                text = g_strdup_printf ("%s+%.17f%s", Winner,
+                                        self->priv->score, Cause);
+                i = strlen (text);
+                while ('0' == text[i - 1]) {
+                        text[i - 1] = 0;
+                        --i;
+                }
+                if ('.' == text[i - 1])
+                        text[i - 1] = 0;
         } else
-                text = g_strdup_printf ("%s", winner);
+                text = g_strdup_printf ("%s", Winner);
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
         text_class->set_value (GSGF_TEXT (self), text, TRUE, NULL);

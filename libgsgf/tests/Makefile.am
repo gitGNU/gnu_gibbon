@@ -1,6 +1,6 @@
 # This file is part of Gibbon, a graphical frontend to the First Internet 
 # Backgammon Server FIBS.
-# Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+# Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 #
 # Gibbon is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,8 +46,7 @@ TESTS_C = test-convert			\
 	  test-write-empty-property	\
 	  test-write-full		\
 	  test-write-linefeeds		\
-	  test-write-minimal		\
-	  test-formatd
+	  test-write-minimal
 
 TESTS_SH = test-write-stream
 
@@ -95,7 +94,6 @@ test_write_full_SOURCES = lib.c main.c test-write-full.c
 test_write_linefeeds_SOURCES = lib.c main.c test-write-linefeeds.c
 test_write_minimal_SOURCES = lib.c main.c test-write-minimal.c
 gsgf_write_back_SOURCES = gsgf-write-back.c
-test_formatd_SOURCES = test-formatd.c
 
 noinst_HEADERS = test.h
 
@@ -104,8 +102,6 @@ SGF_IN_FILES = compressed-list.sgf.in	\
 	       utf-8.sgf.in
 
 SGF_FILES_GENERATED = $(SGF_IN_FILES:.in=)
-
-check-local: $(SGF_FILES_GENERATED)
 
 SGF_FILES = cp1251.sgf			\
 	    empty.sgf 			\

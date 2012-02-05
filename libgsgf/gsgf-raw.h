@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,6 @@ GType gsgf_raw_get_type(void) G_GNUC_CONST;
 GSGFRaw* gsgf_raw_new(const gchar *value);
 gsize gsgf_raw_get_number_of_values(const GSGFRaw *self);
 gchar *gsgf_raw_get_value(const GSGFRaw *self, gsize i);
-void gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 
 G_END_DECLS
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +262,6 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         gchar *saved_locale;
         svg_t *svg = NULL;
         svg_status_t status;
-        svg_cairo_status_t cairo_status;
         svg_util_render_context ctx;
         xmlDoc *doc_copy = NULL;
         struct svg_component *component;
@@ -272,10 +271,10 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         *_component = g_malloc0 (sizeof **_component);
         component = *_component;
         if (render) {
-                cairo_status = svg_cairo_create (&component->scr);
-                if (cairo_status != SVG_CAIRO_STATUS_SUCCESS) {
+                status = svg_cairo_create (&component->scr);
+                if (status != SVG_CAIRO_STATUS_SUCCESS) {
                         g_error (_("Error creating libsvg-cairo context: %s\n"),
-                                 svg_cairo_strerror (cairo_status));
+                                svg_cairo_strerror (status));
                         g_free (component);
                         return FALSE;
                 }

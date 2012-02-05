@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -265,7 +265,7 @@ gibbon_cairoboard_finalize (GObject *object)
         if (self->priv->target)
                 gibbon_position_free (self->priv->target);
         if (self->priv->move)
-                g_object_unref (self->priv->move);
+                g_free (self->priv->move);
 
         if (self->priv->ids)
                 g_hash_table_destroy (self->priv->ids);
@@ -581,8 +581,10 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gdouble aspect_ratio;
         gdouble width;
         gdouble height;
-        
-        gint i;
+        gint i, j;
+        GibbonPositionSide turn;
+        gchar label_id[7] = "text??";
+        gchar *label;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));
 
@@ -625,6 +627,24 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         svg_cairo_set_viewport_dimension (self->priv->board->scr,
                                           allocation.width,
                                           allocation.height);
+        turn = self->priv->pos->turn;
+        for (i = 1; i <= 24; ++i) {
+                j = turn == GIBBON_POSITION_SIDE_BLACK ? 24 - i + 1 : i;
+                if (i < 10) {
+                        label_id[4] = '0' + i;
+                        label_id[5] = 0;
+                } else {
+                        label_id[4] = '0' + i / 10;
+                        label_id[5] = '0' + i % 10;
+                        label_id[6] = 0;
+                }
+                label = g_strdup_printf ("%d", j);
+                g_return_if_fail (svg_util_steal_text_params (self->priv->board,
+                                                              label_id, label,
+                                                              1.0, 0,
+                                                              NULL));
+                g_free (label);
+        }
         svg_cairo_render (self->priv->board->scr, cr);
 
         gibbon_draw_dice (self, cr);
@@ -1404,7 +1424,11 @@ gibbon_cairoboard_animate_move (GibbonBoard *_self, const GibbonMove *move,
 
         self->priv->target = target_position;
 
-        self->priv->move = gibbon_move_copy (move);
+        self->priv->move = gibbon_position_alloc_move (move->number);
+        memcpy (self->priv->move, move,
+                sizeof move->number
+                + move->number * sizeof *move->movements
+                + sizeof move->status);
 
         self->priv->animation_move_number = 0;
         self->priv->animation_side = side;
@@ -1449,8 +1473,7 @@ gibbon_cairoboard_cancel_animation (GibbonCairoboard *self)
         self->priv->pos = self->priv->target;
         self->priv->target = NULL;
 
-        if (self->priv->move)
-                g_object_unref (self->priv->move);
+        g_free (self->priv->move);
         self->priv->move = NULL;
 
         if (self->priv->animation_id)

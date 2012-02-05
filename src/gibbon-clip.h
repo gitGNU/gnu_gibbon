@@ -1,7 +1,7 @@
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE = 100,
                         GIBBON_CLIP_CODE_ERROR = 101,
                         GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS = 102,
+                        GIBBON_CLIP_CODE_ERROR_NO_USER = 103,
 
                         /* Game play.  */
                         GIBBON_CLIP_CODE_BOARD = 200,
@@ -82,10 +83,11 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_GAME_SCORE = 311,
                         GIBBON_CLIP_CODE_WAIT_JOIN_TOO = 312,
                         GIBBON_CLIP_CODE_RESUME_CONFIRMATION = 313,
+                        GIBBON_CLIP_CODE_WIN_MATCH = 314,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
-                        GIBBON_CLIP_CODE_WIN_MATCH = 401,
+                        GIBBON_CLIP_CODE_ASYNC_WIN_MATCH = 401,
                         GIBBON_CLIP_CODE_RESUME_MATCH = 402,
                         GIBBON_CLIP_CODE_EMPTY = 403,
                         GIBBON_CLIP_CODE_START_SETTINGS = 404,

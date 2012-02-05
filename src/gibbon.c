@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -26,38 +26,27 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include <libgsgf/gsgf.h>
-
 #include "gibbon-app.h"
 #include "gibbon-connection.h"
 #include "gibbon-archive.h"
 
-static gchar *program_name;
-
 static gchar *data_dir = NULL;
 static gchar *pixmaps_dir = NULL;
-gboolean version;
 
 static const GOptionEntry options[] =
 {
-                { "data-dir", 'd', 0, G_OPTION_ARG_FILENAME, &data_dir,
+                { "data-dir", 'u', 0, G_OPTION_ARG_FILENAME, &data_dir,
                   N_("Path to data directory (developers only)"),
                   N_("DIRECTORY")
                 },
-                { "pixmaps-dir", 'p', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
+                { "pixmaps-dir", 'b', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
                   N_("Path to pixmaps directory (developers only)"),
                   N_("DIRECTORY")
-                },
-                { "version", 'V', 0, G_OPTION_ARG_NONE, &version,
-                  N_("output version information and exit"),
-                  N_("FORMAT")
                 },
 	        { NULL }
 };
 
-static void print_version ();
-static void usage_error ();
-static gboolean parse_command_line (int argc, char *argv[]);
+static guint parse_command_line (int argc, char *argv[]);
 #ifdef G_OS_WIN32
 static void setup_path (const gchar *installdir);
 static void init_i18n (const gchar *installdir);
@@ -81,22 +70,13 @@ main (int argc, char *argv[])
         init_i18n ();
 #endif
 
-        program_name = argv[0];
-
         if (!parse_command_line (argc, argv))
                 return 1;
         
-
-        if (version) {
-                print_version ();
-                return 0;
-        }
-
         if (!g_thread_supported ()) {
                 g_thread_init (NULL);
+		gdk_threads_init ();
 	}
-        gdk_threads_init ();
-        gsgf_threads_init ();
 
         gtk_init (&argc, &argv);
 
@@ -170,16 +150,13 @@ init_i18n (void)
         textdomain (GETTEXT_PACKAGE);
 }
  
-static gboolean
+static guint 
 parse_command_line (int argc, char *argv[])
 {
         GOptionContext *context;
         GError *error = NULL;
 
         context = g_option_context_new (_("- Gtk+ frontend for FIBS"));
-        g_option_context_set_summary (context, "Play backgammon online.");
-        g_option_context_set_description (context,
-           _("Report bugs at https://savannah.nongnu.org/projects/gibbon."));
         g_option_context_add_main_entries (context, options, PACKAGE);
         g_option_context_add_group (context, gtk_get_option_group (TRUE));
         g_option_context_parse (context, &argc, &argv, &error);
@@ -187,11 +164,14 @@ parse_command_line (int argc, char *argv[])
         g_option_context_free (context);
 
         if (error) {
-                usage_error (error->message);
-                return FALSE;
+                g_printerr ("%s\n", error->message);
+                g_printerr (_("Run `%s --help' for more information!\n"),
+                            argv[0]);
+                g_error_free (error);
+                return 0;
         }
         
-        return TRUE;
+        return 1;
 }
 
 #ifdef G_OS_WIN32
@@ -213,25 +193,3 @@ setup_path (const gchar *installdir)
         g_free (path);
 }
 #endif
-
-static void
-print_version ()
-{
-        g_print ("%s (%s) %s\n", program_name, PACKAGE, VERSION);
-        /* xgettext: no-wrap */
-        g_print (_("Copyright (C) %s %s.\n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-"),
-                "2009-2012", _("Guido Flohr"));
-        g_print (_("Written by %s.\n"), _("Guido Flohr"));
-}
-
-void
-usage_error (const gchar *msg)
-{
-        g_printerr ("%s\n", msg);
-        g_printerr (_("Try `%s --help' for more information!\n"),
-                    program_name);
-}

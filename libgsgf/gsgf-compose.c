@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,6 @@ gsgf_compose_new (GSGFCookedValue *value, ...)
                 if (!value)
                         break;
                 if (!GSGF_IS_COOKED_VALUE(value)) {
-                        va_end (args);
                         g_list_free(values);
                         /* This will always fail on purpose.  We just want the
                          * error message to be printed in a consistent way.

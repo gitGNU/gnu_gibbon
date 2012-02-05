@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -690,10 +690,8 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                 ++i;
                 ptr = va_arg (args, gpointer);
                 if (!ptr) {
-                        if (sqlite3_bind_null (stmt, i)) {
-                                va_end (args);
+                        if (sqlite3_bind_null (stmt, i))
                                 return FALSE;
-                        }
                         continue;
                 }
 
@@ -701,41 +699,32 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                         case G_TYPE_INT:
                         case G_TYPE_UINT:
                                 if (sqlite3_bind_int (stmt, i,
-                                                      *((gint *) ptr))) {
-                                        va_end (args);
+                                                      *((gint *) ptr)))
                                         return gibbon_database_display_error (
                                                         self, sql);
-                                }
                                 break;
                         case G_TYPE_INT64:
                         case G_TYPE_UINT64:
                                 if (sqlite3_bind_int64 (stmt, i,
-                                                        *((sqlite3_int64 *) ptr))) {
-                                        va_end (args);
+                                                        *((sqlite3_int64 *) ptr)))
                                         return gibbon_database_display_error (
                                                         self, sql);
-                                }
                                 break;
                         case G_TYPE_DOUBLE:
                                 if (sqlite3_bind_double (stmt, i,
-                                                         *((gdouble *) ptr))) {
-                                        va_end (args);
+                                                         *((gdouble *) ptr)))
                                         return gibbon_database_display_error (
                                                         self, sql);
-                                }
                                 break;
                         case G_TYPE_STRING:
                                 if (sqlite3_bind_text (stmt, i,
                                                        *((gchar **) ptr), -1,
                                                        SQLITE_STATIC
-                                                       )) {
-                                        va_end (args);
+                                                       ))
                                         return gibbon_database_display_error (
                                                         self, sql);
-                                }
                                 break;
                         default:
-                                va_end (args);
                                 gibbon_app_display_error (self->priv->app,
                                                           NULL,
                                                           _("Unknown data"
@@ -806,7 +795,6 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                                                 sqlite3_column_text (stmt, i);
                                 break;
                         default:
-                                va_end (args);
                                 gibbon_app_display_error (self->priv->app,
                                                           NULL,
                                                           _("Unknown data"

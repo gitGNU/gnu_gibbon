@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
-#include <gibbon-move.h>
 
 /* The code below was taken from a newsgroup archive found on
  * http://www.bkgm.com/rgb/rgb.cgi?view+593
@@ -421,7 +420,7 @@ test_roll (GibbonPosition *position)
                 legal = LegalMove (board, post_board, dice, moves);
                 compare_results (position, post_position, move,
                                  legal, moves, turn);
-                g_object_unref (move);
+                g_free (move);
                 if (legal) {
 #if (DEBUG_TEST_ENGINE)
                         print_moves (moves, turn, dice);

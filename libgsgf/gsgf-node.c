@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -138,10 +138,6 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
         GList *keys;
         GList *iter;
         GList *property;
-        GList *siblings;
-        GSGFNode *root;
-        const gchar *intro;
-        gsize intro_length;
 
         *bytes_written = 0;
 
@@ -150,17 +146,7 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
 
         self = GSGF_NODE (_self);
 
-        siblings = gsgf_game_tree_get_nodes (self->priv->parent);
-        root = GSGF_NODE (g_list_nth_data (siblings, 0));
-        if (root == self) {
-                intro = ";";
-                intro_length = 1;
-        } else {
-                intro = "\n;";
-                intro_length = 2;
-        }
-
-        if (!g_output_stream_write_all(out, intro, intro_length, &written_here,
+        if (!g_output_stream_write_all(out, ";", 1, &written_here,
                                        cancellable, error)) {
                 *bytes_written += written_here;
                 return FALSE;
@@ -478,7 +464,7 @@ gsgf_node_convert (GSGFComponent *_self, const gchar *charset, GError **error)
  * @value: The value to set.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Set a property.  The property is created if it does not exist.  The
+ * Set a property.  The property is created if it does not exist.  If the
  * value is a #GSGFRaw.
  *
  * Returns: %TRUE for success, %FALSE for failure.
@@ -509,8 +495,6 @@ gsgf_node_set_property (GSGFNode *self,
 /*
  * GNU Backgammon expects the FF and GM attributes at the head of the list. :-(
  * We also write the CA and AP properties in the order that gnubg expects it.
- *
- * TODO! Write a lookup table and use that to compare values.
  */
 static gint
 compare_property_ids (gconstpointer _a, gconstpointer _b)
@@ -537,14 +521,6 @@ compare_property_ids (gconstpointer _a, gconstpointer _b)
         if (0 == g_strcmp0 (a, "AP"))
                 return -1;
         if (0 == g_strcmp0 (b, "AP"))
-                return 1;
-
-        /*
-         * Gnubg needs thos as well.
-         */
-        if (0 == g_strcmp0 (a, "PL"))
-                return -1;
-        if (0 == g_strcmp0 (b, "PL"))
                 return 1;
 
         return retval;

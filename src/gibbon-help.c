@@ -1,7 +1,7 @@
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ static const gchar *const authors[] = {
                 NULL
 };
 
-static const gchar copyright[] = "Copyright \xc2\xa9 2009-2012 Guido Flohr\n";
+static const gchar copyright[] = "Copyright \xc2\xa9 2009-2011 Guido Flohr\n";
 
 static gchar *descr =  N_("%s is a program for playing backgammon online.");
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -202,16 +202,8 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         return TRUE;
 }
 
-
-/**
- * gsgf_raw_add_value:
- * @self: The #GSGFRaw object.
- * @value: The value to add.
- *
- * Add another string to the #GSGFRaw.
- */
 void
-gsgf_raw_add_value (GSGFRaw *self, const gchar *value)
+_gsgf_raw_add_value (GSGFRaw *self, const gchar *value)
 {
 
         g_return_if_fail (GSGF_IS_RAW (self));

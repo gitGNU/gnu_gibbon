@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,6 @@
 
 #ifndef _LIBGSGF_PRIVATE_H
 # define _LIBGSGF_PRIVATE_H
-
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#if (HAVE_USELOCALE && HAVE_NEWLOCALE)
-# define HAVE_XLOCALE_API 1
-#else
-# undef HAVE_XLOCALE_API
-#endif
 
 #include <libgsgf/gsgf.h>
 
@@ -59,6 +49,7 @@ gboolean _gsgf_property_add_value(GSGFProperty *property, const gchar *text);
 
 GSGFCookedValue *_gsgf_property_get_raw(const GSGFProperty* property);
 void _gsgf_raw_set_value(GSGFRaw *self, const gchar *value, gsize i, gboolean copy);
+void _gsgf_raw_add_value(GSGFRaw *self, const gchar *value);
 gboolean _gsgf_raw_convert (GSGFRaw *self, const gchar *charset,
                             GError **error);
 

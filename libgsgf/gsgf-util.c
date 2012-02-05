@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,9 @@
  * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gsgf.h"
+#include <gsgf.h>
+
 #include "gsgf-private.h"
-
-
-#include <locale.h>
-#include <string.h>
-
-static GMutex *gsgf_threads_mutex = NULL;
-
-#if HAVE_XLOCALE_API
-# if HAVE_XLOCALE_H
-#  include <xlocale.h>
-# endif
-static locale_t gsgf_posix_locale = NULL;
-#endif
 
 /**
  * SECTION:gsgf-util
@@ -40,31 +28,6 @@ static locale_t gsgf_posix_locale = NULL;
  *
  * Some utility functions for libgsgf.
  */
-
-/**
- * gsgf_threads_init:
- *
- * Initializes libgsgf so that it can be used from multiple threads.
- * g_thread_init() must be called previous to this function.
- *
- * If you want to use libgsgf in a multi-threaded application, you must
- * call this function prior to any other libgsgf function.
- *
- * Since: 0.2.0
- **/
-void
-gsgf_threads_init (void)
-{
-        if (!g_thread_supported ())
-                g_error ("gsgf_thread_init() must be called before"
-                         " gsgf_threads_init()");
-
-        gsgf_threads_mutex = g_mutex_new ();
-
-#if HAVE_XLOCALE_API
-        gsgf_posix_locale = newlocale (LC_ALL_MASK, "POSIX", NULL);
-#endif
-}
 
 /**
  * gsgf_util_read_simple_text:
@@ -196,95 +159,4 @@ gsgf_util_read_text (const gchar *raw, const gchar **end, gchar delim)
         g_string_free(string, FALSE);
 
         return result;
-}
-
-/**
- * gsgf_ascii_dtostring:
- * @d: The #gdouble to format.
- * @width: (Maximum) output width before zero-trimming or -1 for default
- * @precision: Decimal precision before zero-trimming or -1 for default
- * @zeropad: Left-pad with zeros if #TRUE, and @width is greater than 0
- * @zerotrim: Right-trime trailing zeros if #TRUE
- *
- * Formats @d as a string using the portable POSIX locale, i.e. using the
- * dot ('.') as the decimal point, and no thousands separator.  The function
- * is threadsafe.
- *
- * Invalid values for @width or @precision are silently replaced by -1.
- *
- * The number is first formatted using standard printf formatting directives.
- * If both @width and @precision are given, the format string is
- * "\%@width.@precision f" (without the space in front of the f).  If @zeropad
- * is TRUE, the format string is "\%0@width.@precision f" instead (again
- * without the gratuitous space in front of the f).
- *
- * The default precision is 6.  There is no default width.  If @width is not
- * specified, the non-fractional part will be as large as necessary.
- *
- * If @zerotrim is true, trailing zeros after the decimal point are removed.
- * If no decimal digits are left, the decimal point is removed as well.
- *
- * Example: If you zero-trim the intermediate output "123.45600", the result
- * will be "123.456".  Zero-trimming the output "123.000" will result in "123".
- * Zero-trimming the output "123.000000001" will not change the string at
- * all.
- *
- * Returns: The formatted value in a newly allocated buffer.
- *
- * Since: 0.2.0
- */
-gchar *
-gsgf_ascii_dtostring (gdouble d, gint width, gint precision,
-                      gboolean zeropad, gboolean zerotrim)
-{
-        gchar *format;
-        gchar *output;
-#if HAVE_XLOCALE_API
-        locale_t saved_locale;
-#else
-        gchar *saved_locale;
-#endif
-        gchar *ptr;
-
-        if (width < 1)
-                width = 1;
-        if (precision < 1)
-                precision = 6;
-        format = g_strdup_printf ("%%%s%d.%df",
-                                  zeropad ? "0" : "",
-                                  width, precision);
-
-#if HAVE_XLOCALE_API
-        saved_locale = uselocale (NULL);
-        if (!gsgf_posix_locale)
-                gsgf_posix_locale = newlocale (LC_ALL_MASK, "POSIX", NULL);
-        uselocale (gsgf_posix_locale);
-#else
-        if (gsgf_threads_mutex)
-                g_mutex_lock (gsgf_threads_mutex);
-        saved_locale = setlocale (LC_NUMERIC, NULL);
-        saved_locale = setlocale (LC_NUMERIC, "C");
-#endif
-        output = g_strdup_printf (format, d);
-        if (saved_locale)
-#if HAVE_XLOCALE_API
-                uselocale (saved_locale);
-#else
-                setlocale (LC_NUMERIC, saved_locale);
-        if (gsgf_threads_mutex)
-                g_mutex_unlock (gsgf_threads_mutex);
-#endif
-
-        g_free (format);
-
-        if (zerotrim) {
-                ptr = output + strlen(output) - 1;
-                while ('0' == *ptr) {
-                        *ptr-- = 0;
-                }
-                if ('.' == *ptr)
-                        *ptr-- = 0;
-        }
-
-        return output;
 }

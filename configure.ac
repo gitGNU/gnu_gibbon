@@ -1,6 +1,6 @@
 dnl This file is part of Gibbon, a graphical frontend to the First Internet 
 dnl Backgammon Server FIBS.
-dnl Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+dnl Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
 dnl
 dnl Gibbon is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@ dnl along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 AC_PREREQ(2.63)
 
 m4_define(gibbon_major_version, 0)
-m4_define(gibbon_minor_version, 2)
-m4_define(gibbon_micro_version, 0)
+m4_define(gibbon_minor_version, 1)
+m4_define(gibbon_micro_version, 1)
 m4_define(gibbon_version, gibbon_major_version.gibbon_minor_version.gibbon_micro_version)
 
 AC_INIT([gibbon],[gibbon_version],[mailto:guido@imperia.net],[gibbon],[http://guido-flohr.net/projects/gibbon])
@@ -85,8 +85,6 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PATH_PROG(GZIP, gzip)
-AC_PROG_YACC
-AC_PROG_LEX
 
 AC_SUBST(ACLOCAL_AMFLAGS, "$ACLOCAL_FLAGS -I m4")
 
@@ -142,9 +140,6 @@ fi
 
 AC_CHECK_FUNCS([index rindex])
 
-AC_CHECK_HEADERS([xlocale.h])
-AC_CHECK_FUNCS([newlocale uselocale])
-
 GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)
 AC_SUBST(GIBBON_CFLAGS)
@@ -155,7 +150,7 @@ dnl gtk-doc 1.16 produces a failure for missing overview.xml after
 dnl "make distcheck".
 GTK_DOC_CHECK([1.17],[--flavour no-tmpl])
 
-GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2012 Guido Flohr, http://guido-flohr.net/])
+GCREATE_CLASS_INIT([Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.],[2009-2011 Guido Flohr, http://guido-flohr.net/])
 
 YELP_HELP_INIT
 

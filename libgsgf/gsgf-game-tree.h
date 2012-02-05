@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,6 @@ GSGFGameTree *gsgf_game_tree_add_child(GSGFGameTree *self);
 GSGFGameTree *gsgf_game_tree_get_parent(const GSGFGameTree *self);
 struct _GSGFNode *gsgf_game_tree_add_node(GSGFGameTree *self);
 GList *gsgf_game_tree_get_nodes(const GSGFGameTree *self);
-GList *gsgf_game_tree_get_last_node(const GSGFGameTree *self);
 GList *gsgf_game_tree_get_children(const GSGFGameTree *self);
 const GSGFFlavor *gsgf_game_tree_get_flavor (const GSGFGameTree *self);
 

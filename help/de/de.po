@@ -2,7 +2,7 @@
 #
 # This file is part of Gibbon, a graphical frontend to the First Internet 
 # Backgammon Server FIBS.
-# Copyright (C) 2009-2012 Guido Flohr 
+# Copyright (C) 2009-2011 Guido Flohr 
 #
 # Gibbon is free software: you can redistribute it and/or modify 
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gibbon help\n"
-"POT-Creation-Date: 2011-12-21 01:44+0200\n"
-"PO-Revision-Date: 2011-12-21 01:44+0200\n"
+"POT-Creation-Date: 2012-01-29 21:17+0200\n"
+"PO-Revision-Date: 2012-01-29 21:21+0200\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: German <guido@imperia.net>\n"
 "Language: de\n"
@@ -3171,21 +3171,29 @@ msgstr ""
 "dem neuesten Stand über <app>Gibbon</app> gehalten."
 
 #: C/social-networks.page:30(section/title)
-msgid "Ohloh"
-msgstr "Ohloh"
+msgid "Freecode"
+msgstr "Freecode"
 
 #: C/social-networks.page:31(section/p)
 msgid ""
-"<link href=\"http://www.ohloh.net/\">Ohloh</link> is a directory service for "
-"open source software. You can show your support by clicking the “I Use This” "
-"button on <link href=\"https://www.ohloh.net/p/gibbon2\"><app>Gibbon</app>'s "
-"Ohloh page</link>."
-msgstr ""
-"<link href=\"http://www.ohloh.net/\">Ohloh</link> ist ein Verzeichnisdienst "
-"für quelloffene Software. Sie können Ihre Unterstützung zeigen, indem Sie "
-"den Button „<span xml:lang=\"en\">I Use This</span>” auf <link href="
-"\"https://www.ohloh.net/p/gibbon2\"><app>Gibbons</app> Ohloh-Seite</link> "
-"klicken."
+"<link href=\"http://freecode.com/\">Freecode</link> (formerly known as "
+"Freshmeat) is a directory service for (mostly) open source software. You can "
+"find <app>Gibbon</app>'s freecode page under <link href=\"http://freecode."
+"com/projects/gibbon\"/>. Registered users on freecode.com can rate for "
+"software or even write a comment."
+msgstr "<link href=\"http://freecode.com/\">Freecode</link> (vormals Freshmeat) ist ein Verzeichnisdienst für (hauptsächlich) quelloffene Software. Die Freecode-Seite von <app>Gibbon</app> ist <link href=\"http://freecode.com/projects/gibbon\"/>. Registrierte Benutzerinnen und Benutzer von freecode.com können Software bewerten oder auch Kommentare schreiben."
+
+#: C/social-networks.page:40(section/title)
+msgid "Ohloh"
+msgstr "Ohloh"
+
+#: C/social-networks.page:41(section/p)
+msgid ""
+"<link href=\"http://www.ohloh.net/\">Ohloh</link> is another directory "
+"service for open source software. Ohloh has a rather technical focus. You "
+"can show your support by clicking the “I Use This” button on <link href="
+"\"https://www.ohloh.net/p/gibbon2\"><app>Gibbon</app>'s Ohloh page</link>."
+msgstr "<link href=\"http://www.ohloh.net/\">Ohloh</link> ist ein weiterer Verzeichnisdienst für quelloffene Software. Ohloh hat einen relativ technischen Fokus. Sie können Ihre Unterstützung zeigen, indem Sie den Button „<span xml:lang=\"en\">I Use This</span>” auf <link href=\"https://www.ohloh.net/p/gibbon2\"><app>Gibbons</app> Ohloh-Seite</link> klicken."
 
 #: C/supporting-gibbon.page:8(info/title)
 msgctxt "link"

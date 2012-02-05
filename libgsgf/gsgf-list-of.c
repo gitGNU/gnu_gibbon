@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -104,8 +104,9 @@ gsgf_list_of_class_init(GSGFListOfClass *klass)
  * @type: Type of items.
  * @flavor: #GSGFFlavor that this list belongs to.
  *
- * Creates a new #GSGFListOf that is prepared for storing items of type
- * @type.
+ * Creates a new #GSGFListOf from a list of #GSGFCookedValue objects.  The
+ * stored items are "hijacked" and are now considered property of the list_of
+ * object, and you must not g_object_unref() them yourself.
  *
  * Returns: The new #GSGFListOf.
  */

@@ -1,7 +1,7 @@
 /*
  * This file is part of Gibbon, a graphical frontend to the First Internet 
  * Backgammon Server FIBS.
- * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
+ * Copyright (C) 2009-2011 Guido Flohr, http://guido-flohr.net/.
  *
  * Gibbon is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by
@@ -50,15 +50,11 @@ static gboolean gsgf_move_backgammon_write_stream (const GSGFValue *self,
                                                    GCancellable *cancellable,
                                                    GError **error);
 
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular_from_string (
-                const gchar *string,
-                GError **error);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_double (void);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_take (void);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_drop (void);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_resign (guint value);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_accept (void);
-static GSGFMoveBackgammon *gsgf_move_backgammon_new_reject (void);
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_regular(const gchar *string,
+                                                           GError **error);
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_double();
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_take();
+static GSGFMoveBackgammon *gsgf_move_backgammon_new_drop();
 
 static void
 gsgf_move_backgammon_init(GSGFMoveBackgammon *self)
@@ -111,14 +107,7 @@ gsgf_move_backgammon_new (void)
  * @raw: The #GSGFRaw to parse.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Creates a new #GSGFMoveBackgammon from a #GSGFRaw.  @raw must be
- * single-valued and contain a string matching the SGF backgammon move
- * syntax (see <ulink
- * url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).  Additionally,
- * libgsgf allows the following move specifications: "resign:N" where N is
- * an integer greater than 0 specifying the value of the offered resignation
- * (1 for normal, 2 for gammon, 3 for backgammon), "reject" for rejection of
- * an offered resignation, "accept" for an accepted resignation.
+ * Creates a new #GSGFMoveBackgammon from a #GSGFRaw.
  *
  * Returns: The new #GSGFMoveBackgammon.
  */
@@ -136,148 +125,24 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
                 return NULL;
         }
 
-        return gsgf_move_backgammon_new_from_string (string, error);
-}
-
-/**
- * gsgf_move_backgammon_new_regular:
- * @die1: First die (1-6).
- * @die2: Second die (1-6).
- * @error: a #GError location to store the error occuring, or %NULL to ignore.
- * ...: List of from-to pairs of points (0 - 25), terminated by -1.
- *
- * Creates a new regular #GSGFMoveBackgammon.
- *
- * Returns: The new #GSGFMoveBackgammon.
- *
- * Since: 0.2.0
- */
-GSGFMoveBackgammon *
-gsgf_move_backgammon_new_regular (guint die1, guint die2, GError **error, ...)
-{
-        GSGFMoveBackgammon *self;
-        guint num_moves = 0;
-        va_list args;
-        gint from, to;
-
-        if(die1 < 1 || die1 > 6) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                _("Invalid number %u on dice number %u"),
-                                die1, 1);
-                return NULL;
-        }
-
-        if(die2 < 1 || die2 > 6) {
-                g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                _("Invalid number %u on dice number %u"),
-                                die1, 1);
-                return NULL;
-        }
-
-        self = gsgf_move_backgammon_new ();
-
-        self->priv->dice[0] = die1;
-        self->priv->dice[1] = die2;
-
-        va_start(args, error);
-
-        while (1) {
-                from = va_arg (args, gint);
-                if (from < 0)
-                        break;
-                if (++num_moves > 4) {
-                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                        _("More then four checkers moved"));
-                        g_object_unref (self);
-                        va_end(args);
-                        return NULL;
-                }
-                to = va_arg (args, gint);
-                if (to < 0) {
-                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                        _("Odd number of points"));
-                        g_object_unref (self);
-                        va_end(args);
-                        return NULL;
-                }
-                if (from > 25 || to > 25) {
-                        g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                                    _("Invalid point combination %d-%d"),
-                                    from, to);
-                        g_object_unref (self);
-                        va_end(args);
-                        return NULL;
-                }
-                self->priv->moves[num_moves - 1][0] = from;
-                self->priv->moves[num_moves - 1][1] = to;
-        }
-
-        va_end(args);
-
-        self->priv->num_moves = num_moves;
-
-        return self;
-}
-
-/**
- * gsgf_move_backgammon_new_from_string:
- * @str: The string to parse.
- * @error: a #GError location to store the error occuring, or %NULL to ignore.
- *
- * Creates a new #GSGFMoveBackgammon from a string.  The contents of
- * @string must match the SGF backgammon string syntax (see
- * <ulink url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).
- * Additionally, libgsgf allows the following move specifications: "resign:N"
- * where N is an integer greater than 0 specifying the value of the offered
- * resignation, "reject" for rejection of an offered resignation, "accept" for
- * an accepted resignation.
- *
- * Applications should accept any positive value for a resignation.  The
- * value of the cube is already taken into account.  If a player resigns with
- * a gammon and the cube show 2, the "value" or the resignation should be
- * 4.
- *
- * Returns: The new #GSGFMoveBackgammon.
- *
- * Since: 0.2.0
- */
-GSGFMoveBackgammon *
-gsgf_move_backgammon_new_from_string (const gchar *str,
-                                      GError **error)
-{
-        guint64 value;
-        gchar *endptr;
-
-        gsgf_return_val_if_fail (str != NULL, NULL, error);
-
-        if (str[0] >= '1' && str[1] <= '6') {
-                return gsgf_move_backgammon_new_regular_from_string (str,
-                                                                     error);
-        } else if (!strcmp (str, "double")) {
-                return gsgf_move_backgammon_new_double ();
-        } else if (!strcmp (str, "take")) {
-                return gsgf_move_backgammon_new_take ();
-        } else if (!strcmp (str, "drop")) {
-                return gsgf_move_backgammon_new_drop ();
-        } else if (!strncmp (str, "resign:", 7) && str[7]) {
-                value = g_ascii_strtoull (str + 7, &endptr, 10);
-                if (endptr != str + 7  && value <= G_MAXINT)
-                        return gsgf_move_backgammon_new_resign (value);
-        } else if (!strcmp (str, "accept")) {
-                return gsgf_move_backgammon_new_accept ();
-        } else if (!strcmp (str, "reject")) {
-                return gsgf_move_backgammon_new_reject ();
+        if (string[0] >= '1' && string[1] <= '6') {
+                return gsgf_move_backgammon_new_regular(string, error);
+        } else if (!strcmp(string, "double")) {
+                return gsgf_move_backgammon_new_double();
+        } else if (!strcmp(string, "take")) {
+                return gsgf_move_backgammon_new_take();
+        } else if (!strcmp(string, "drop")) {
+                return gsgf_move_backgammon_new_drop();
         }
 
         g_set_error(error, GSGF_ERROR, GSGF_ERROR_INVALID_MOVE,
-                    _("Invalid move syntax '%s'"), str);
+                    _("Invalid move syntax '%s'"), string);
 
         return NULL;
 }
 
 static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_regular_from_string (const gchar *string,
-                                              GError **error)
+gsgf_move_backgammon_new_regular (const gchar *string, GError **error)
 {
         GSGFMoveBackgammon *self;
         GSGFMoveBackgammonPrivate *priv;
@@ -354,55 +219,19 @@ gsgf_move_backgammon_new_drop ()
         return self;
 }
 
-static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_resign (guint value)
-{
-        GSGFMoveBackgammon *self;
-
-        if (!value) value = 1;
-
-        self = g_object_new(GSGF_TYPE_MOVE_BACKGAMMON, NULL);
-
-        self->priv->dice[0] = 7;
-        self->priv->dice[1] = value;
-
-        return self;
-}
-
-static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_accept ()
-{
-        GSGFMoveBackgammon *self;
-
-        self = g_object_new(GSGF_TYPE_MOVE_BACKGAMMON, NULL);
-
-        self->priv->dice[0] = 8;
-
-        return self;
-}
-
-static GSGFMoveBackgammon *
-gsgf_move_backgammon_new_reject ()
-{
-        GSGFMoveBackgammon *self;
-
-        self = g_object_new(GSGF_TYPE_MOVE_BACKGAMMON, NULL);
-
-        self->priv->dice[0] = 9;
-
-        return self;
-}
-
 /**
  * gsgf_move_backgammon_is_regular:
  * @self: The #GSGFMoveBackgammon to check.
  *
- * Checks whether @self is a regular backgammon move.
+ * Checks whether @self is a regular backgammon move.  Other options are
+ * a double, a take, or a drop (see gsgf_move_backgammon_is_double(),
+ * gsgf_move_backgammon_is_take(), or gsgf_move_backgammon_is_drop()
+ * respectively).
  *
  * Returns: #TRUE if @self is a regular backgammon move, #FALSE otherwise.
  */
 gboolean
-gsgf_move_backgammon_is_regular (const GSGFMoveBackgammon *self)
+gsgf_move_backgammon_is_regular(const GSGFMoveBackgammon *self)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
@@ -413,12 +242,15 @@ gsgf_move_backgammon_is_regular (const GSGFMoveBackgammon *self)
  * gsgf_move_backgammon_is_double:
  * @self: The #GSGFMoveBackgammon to check.
  *
- * Checks whether @self is a double in backgammon.
+ * Checks whether @self is a double in backgammon.  Other options are
+ * a regular move, a take, or a drop (see gsgf_move_backgammon_is_regular(),
+ * gsgf_move_backgammon_is_take(), or gsgf_move_backgammon_is_drop()
+ * respectively).
  *
  * Returns: #TRUE if @self is a regular backgammon move, #FALSE otherwise.
  */
 gboolean
-gsgf_move_backgammon_is_double (const GSGFMoveBackgammon *self)
+gsgf_move_backgammon_is_double(const GSGFMoveBackgammon *self)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
@@ -430,14 +262,16 @@ gsgf_move_backgammon_is_double (const GSGFMoveBackgammon *self)
  * @self: The #GSGFMoveBackgammon to check.
  *
  * Checks whether @self is a backgammon take (the affirmative reply to
- * a double
+ * a double.  Other options are a regular move, a take, or a drop (see
+ * gsgf_move_backgammon_is_regular(), gsgf_move_backgammon_is_double(), or
+ * gsgf_move_backgammon_is_drop() respectively).
  *
  * Returns: #TRUE if @self is a backgammon take, #FALSE otherwise.
  */
 gboolean
-gsgf_move_backgammon_is_take (const GSGFMoveBackgammon *self)
+gsgf_move_backgammon_is_take(const GSGFMoveBackgammon *self)
 {
-        g_return_val_if_fail (GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
+        g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
         return self->priv->num_moves == -1 && self->priv->dice[0] == 2;
 }
@@ -447,71 +281,18 @@ gsgf_move_backgammon_is_take (const GSGFMoveBackgammon *self)
  * @self: The #GSGFMoveBackgammon to check.
  *
  * Checks whether @self is a backgammon drop (the negative reply to
- * a double.
+ * a double.  Other options are a regular move, a double, or a take (see
+ * gsgf_move_backgammon_is_regular(), gsgf_move_backgammon_is_double(), or
+ * gsgf_move_backgammon_is_take() respectively).
  *
  * Returns: #TRUE if @self is a backgammon drop, #FALSE otherwise.
  */
 gboolean
-gsgf_move_backgammon_is_drop (const GSGFMoveBackgammon *self)
-{
-        g_return_val_if_fail (GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
-
-        return self->priv->num_moves == -1 && self->priv->dice[0] == 3;
-}
-
-/**
- * gsgf_move_backgammon_is_resign:
- * @self: The #GSGFMoveBackgammon to check.
- *
- * Checks whether @self is a backgammon resignation offer.
- *
- * Returns: The value of the resignation or 0 if @self is not a resignation
- *          offer.
- *
- * Since: 0.2.0
- */
-guint
-gsgf_move_backgammon_is_resign (const GSGFMoveBackgammon *self)
+gsgf_move_backgammon_is_drop(const GSGFMoveBackgammon *self)
 {
         g_return_val_if_fail(GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
 
-        if (self->priv->num_moves == -1
-            && self->priv->dice[0] == 7 && self->priv->dice[1])
-                return self->priv->dice[1];
-
-        return 0;
-}
-
-/**
- * gsgf_move_backgammon_is_accept:
- * @self: The #GSGFMoveBackgammon to check.
- *
- * Checks whether @self is an accepted resignation in backgammon.
- *
- * Returns: #TRUE if @self is an accepted resignation, #FALSE otherwise.
- */
-gboolean
-gsgf_move_backgammon_is_accept (const GSGFMoveBackgammon *self)
-{
-        g_return_val_if_fail (GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
-
-        return self->priv->num_moves == -1 && self->priv->dice[0] == 8;
-}
-
-/**
- * gsgf_move_backgammon_is_reject:
- * @self: The #GSGFMoveBackgammon to check.
- *
- * Checks whether @self is a rejected resignation in backgammon.
- *
- * Returns: #TRUE if @self is a rejected resignation, #FALSE otherwise.
- */
-gboolean
-gsgf_move_backgammon_is_reject (const GSGFMoveBackgammon *self)
-{
-        g_return_val_if_fail (GSGF_IS_MOVE_BACKGAMMON(self), FALSE);
-
-        return self->priv->num_moves == -1 && self->priv->dice[0] == 9;
+        return self->priv->num_moves == -1 && self->priv->dice[0] == 3;
 }
 
 /**
@@ -614,62 +395,42 @@ gsgf_move_backgammon_write_stream (const GSGFValue *_self,
         gchar buffer[2];
         gsize written_here;
         gint i;
-        gchar *output;
 
         *bytes_written = 0;
 
         if (gsgf_move_backgammon_is_regular (self)) {
                 buffer[0] = '0' + self->priv->dice[0];
                 buffer[1] = '0' + self->priv->dice[1];
-                if (!g_output_stream_write_all (out, buffer, 2,
-                                                &written_here,
-                                                cancellable, error)) {
+                if (!g_output_stream_write_all(out, buffer, 2,
+                                               &written_here,
+                                               cancellable, error)) {
                         *bytes_written += written_here;
                         return FALSE;
                 }
                 for (i = 0; i < self->priv->num_moves; ++i) {
                         buffer[0] = self->priv->moves[i][0] + 'a';
                         buffer[1] = self->priv->moves[i][1] + 'a';
-                        if (!g_output_stream_write_all (out, buffer, 2,
-                                                        &written_here,
-                                                        cancellable, error)) {
+                        if (!g_output_stream_write_all(out, buffer, 2,
+                                                       &written_here,
+                                                       cancellable, error)) {
                                 *bytes_written += written_here;
                                 return FALSE;
                         }
                 }
         } else if (gsgf_move_backgammon_is_double (self)) {
-                if (!g_output_stream_write_all (out, "double", 6,
-                                                bytes_written,
-                                                cancellable, error))
+                if (!g_output_stream_write_all(out, "double", 6,
+                                               bytes_written,
+                                               cancellable, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (self)) {
-                if (!g_output_stream_write_all (out, "take", 4,
-                                                bytes_written,
-                                                cancellable, error))
+                if (!g_output_stream_write_all(out, "take", 4,
+                                               bytes_written,
+                                               cancellable, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (self)) {
-                if (!g_output_stream_write_all (out, "drop", 4,
-                                                bytes_written,
-                                                cancellable, error))
-                        return FALSE;
-        } else if (gsgf_move_backgammon_is_resign (self)) {
-                output = g_strdup_printf ("resign:%d", self->priv->dice[1]);
-                if (!g_output_stream_write_all (out, output, strlen (output),
-                                                bytes_written,
-                                                cancellable, error)) {
-                        g_free (output);
-                        return FALSE;
-                }
-                g_free (output);
-        } else if (gsgf_move_backgammon_is_accept (self)) {
-                if (!g_output_stream_write_all (out, "accept", 6,
-                                                bytes_written,
-                                                cancellable, error))
-                        return FALSE;
-        } else if (gsgf_move_backgammon_is_reject (self)) {
-                if (!g_output_stream_write_all (out, "reject", 6,
-                                                bytes_written,
-                                                cancellable, error))
+                if (!g_output_stream_write_all(out, "drop", 4,
+                                               bytes_written,
+                                               cancellable, error))
                         return FALSE;
         }
 
