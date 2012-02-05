@@ -1366,7 +1366,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 goto bail_out_board;
 
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &self->priv->direction));
+                                      &self->priv->direction))
+                goto bail_out_board;
 
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &pos->bar[0]))
@@ -1376,7 +1377,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 goto bail_out_board;
         
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
-                                      &post_crawford));
+                                      &post_crawford))
+                goto bail_out_board;
 
         if (pos->match_length
             && (pos->scores[0] == pos->match_length - 1
