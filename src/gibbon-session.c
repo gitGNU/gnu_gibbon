@@ -74,6 +74,7 @@ static gint gibbon_session_clip_welcome (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_who_info_end (GibbonSession *self,
                                               GSList *iter);
+static gint gibbon_session_clip_login (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_logout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_message (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_message_delivered (GibbonSession *self,
@@ -89,6 +90,8 @@ static gint gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_error (GibbonSession *self, GSList *iter);
+static gint gibbon_session_handle_error_no_user (GibbonSession *self,
+                                                 GSList *iter);
 static gint gibbon_session_handle_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rolls (GibbonSession *self, GSList *iter);
@@ -138,6 +141,10 @@ static gchar *gibbon_session_decode_client (GibbonSession *self,
 static gboolean gibbon_session_clear_expect_list (GibbonSession *self,
                                                   GSList **list,
                                                   const gchar *string);
+static void gibbon_session_queue_who_request (GibbonSession *self,
+                                              const gchar *who);
+static void gibbon_session_unqueue_who_request (GibbonSession *self,
+                                                const gchar *who);
 
 static void gibbon_session_on_geo_ip_resolve (GibbonSession *self,
                                               const gchar *hostname,
@@ -180,6 +187,7 @@ struct _GibbonSessionPrivate {
 
         GSList *expect_settings;
         GSList *expect_toggles;
+        GSList *expect_who_infos;
         GSList *expect_saved_counts;
         gboolean expect_address;
 
@@ -254,6 +262,8 @@ gibbon_session_init (GibbonSession *self)
         iter = g_slist_prepend (iter, "autoboard");
         iter = g_slist_prepend (iter, "allowpip");
         self->priv->expect_toggles = iter;
+
+        self->priv->expect_who_infos = NULL;
 
         self->priv->expect_saved_counts = NULL;
         self->priv->expect_address = TRUE;
@@ -333,6 +343,13 @@ gibbon_session_finalize (GObject *object)
         g_slist_free (self->priv->expect_settings);
         g_slist_free (self->priv->expect_toggles);
 
+        iter = self->priv->expect_who_infos;
+        while (iter) {
+                g_free (iter->data);
+                iter = iter->next;
+        }
+        g_slist_free (self->priv->expect_who_infos);
+
         iter = self->priv->expect_saved_counts;
         while (iter) {
                 info = (struct GibbonSessionSavedCountCallbackInfo *) iter->data;
@@ -361,9 +378,13 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
         GibbonBoard *board;
+        const gchar *login;
 
         self->priv->connection = connection;
         self->priv->app = app;
+
+        login = gibbon_connection_get_login (connection);
+        gibbon_session_queue_who_request (self, login);
 
         if (self->priv->available) {
                 gibbon_app_set_state_available (app);
@@ -478,7 +499,7 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_clip_who_info_end (self, iter);
                 break;
         case GIBBON_CLIP_CODE_LOGIN:
-                retval = GIBBON_CLIP_CODE_LOGIN;
+                retval = gibbon_session_clip_login (self, iter);
                 break;
         case GIBBON_CLIP_CODE_LOGOUT:
                 retval = gibbon_session_clip_logout (self, iter);
@@ -521,6 +542,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_ERROR:
                 retval = gibbon_session_handle_error (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ERROR_NO_USER:
+                retval = gibbon_session_handle_error_no_user (self, iter);
                 break;
         case GIBBON_CLIP_CODE_BOARD:
                 retval = gibbon_session_handle_board (self, iter);
@@ -754,6 +778,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
 
+        gibbon_session_unqueue_who_request (self, who);
+
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
                 return -1;
         if (opponent[0] == '-' && opponent[1] == 0)
@@ -894,6 +920,20 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
         return GIBBON_CLIP_CODE_WHO_INFO_END;
 }
 
+
+static gint
+gibbon_session_clip_login (GibbonSession *self, GSList *iter)
+{
+        const gchar *name;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
+                return -1;
+
+        gibbon_session_queue_who_request (self, name);
+
+        return GIBBON_CLIP_CODE_LOGIN;
+}
+
 static gint
 gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
 {
@@ -908,9 +948,13 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
                 return -1;
 
+        gibbon_session_unqueue_who_request (self, name);
+
         opponent = gibbon_player_list_get_opponent (self->priv->player_list,
                                                     name);
         if (opponent) {
+                gibbon_session_queue_who_request (self, opponent);
+
                 hostname = gibbon_connection_get_hostname (self->priv->connection);
                 port = gibbon_connection_get_port (self->priv->connection);
                 gibbon_archive_save_drop (self->priv->archive,
@@ -1467,6 +1511,21 @@ gibbon_session_handle_error (GibbonSession *self, GSList *iter)
 }
 
 static gboolean
+gibbon_session_handle_error_no_user (GibbonSession *self, GSList *iter)
+{
+        const gchar *who;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
+                return -1;
+
+        gibbon_session_unqueue_who_request (self, who);
+        gibbon_player_list_remove (self->priv->player_list, who);
+        gibbon_inviter_list_remove (self->priv->inviter_list, who);
+
+        return GIBBON_CLIP_CODE_ERROR;
+}
+
+static gboolean
 gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter)
 {
         const gchar *board;
@@ -1627,6 +1686,9 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
         port = gibbon_connection_get_port (self->priv->connection);
         login = gibbon_connection_get_login (self->priv->connection);
 
+        gibbon_session_queue_who_request (self, self->priv->opponent);
+        gibbon_session_queue_who_request (self, login);
+
         gibbon_archive_save_win (self->priv->archive, hostname, port,
                                  self->priv->opponent, login);
 
@@ -1643,8 +1705,10 @@ gibbon_session_handle_async_win_match (GibbonSession *self, GSList *iter)
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player1))
                 return -1;
+        gibbon_session_queue_who_request (self, player1);
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
                 return -1;
+        gibbon_session_queue_who_request (self, player2);
 
         hostname = gibbon_connection_get_hostname (self->priv->connection);
         port = gibbon_connection_get_port (self->priv->connection);
@@ -1665,8 +1729,10 @@ gibbon_session_handle_resume_match (GibbonSession *self, GSList *iter)
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player1))
                 return -1;
+        gibbon_session_queue_who_request (self, player1);
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player2))
                 return -1;
+        gibbon_session_queue_who_request (self, player2);
 
         hostname = gibbon_connection_get_hostname (self->priv->connection);
         port = gibbon_connection_get_port (self->priv->connection);
@@ -2274,6 +2340,8 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         hostname = gibbon_connection_get_hostname (self->priv->connection);
         port = gibbon_connection_get_port (self->priv->connection);
         login = gibbon_connection_get_login (self->priv->connection);
+        gibbon_session_queue_who_request (self, login);
+        gibbon_session_queue_who_request (self, self->priv->opponent);
         gibbon_archive_save_drop (self->priv->archive, hostname, port,
                                   login, self->priv->opponent);
 
@@ -2706,6 +2774,10 @@ gibbon_session_timeout (GibbonSession *self)
         } else if (self->priv->expect_toggles) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "toggle");
+        } else if (self->priv->expect_who_infos) {
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "rawwho %s", (gchar *)
+                                            self->priv->expect_who_infos->data);
         }
 
         /*
@@ -3310,4 +3382,48 @@ gibbon_session_resign (GibbonSession *self, guint value)
                                          "resign %s", value_string);
         board = gibbon_app_get_board (self->priv->app);
         gibbon_board_set_position (board, self->priv->position);
+}
+
+static void
+gibbon_session_queue_who_request (GibbonSession *self, const gchar *who)
+{
+        GSList *iter;
+
+        /* Restart timer.  */
+        if (self->priv->timeout_id)
+                g_source_remove (self->priv->timeout_id);
+        self->priv->timeout_id =
+                g_timeout_add (GIBBON_SESSION_REPLY_TIMEOUT,
+                               (GSourceFunc) gibbon_session_timeout,
+                               (gpointer) self);
+
+        iter = self->priv->expect_who_infos;
+        while (iter) {
+                if (0 == g_strcmp0 (who, iter->data))
+                        return;
+                iter = iter->next;
+        }
+
+        self->priv->expect_who_infos =
+                        g_slist_prepend (self->priv->expect_who_infos,
+                                         g_strdup (who));
+}
+
+static void
+gibbon_session_unqueue_who_request (GibbonSession *self, const gchar *who)
+{
+        GSList *iter;
+
+        iter = self->priv->expect_who_infos;
+        while (iter) {
+                if (0 == g_strcmp0 (who, iter->data)) {
+                        g_free (iter->data);
+                        self->priv->expect_who_infos =
+                                g_slist_remove (self->priv->expect_who_infos,
+                                                iter->data);
+                        gibbon_session_unqueue_who_request (self, who);
+                        return;
+                }
+                iter = iter->next;
+        }
 }
