@@ -333,7 +333,7 @@ static struct test_case test_error02 = {
 static struct test_case test_error03 = {
                 "** There is no one called anonymous.",
                 {
-                                { GIBBON_CLIP_TYPE_UINT, "102" },
+                                { GIBBON_CLIP_TYPE_UINT, "103" },
                                 { GIBBON_CLIP_TYPE_NAME, "anonymous"},
                                 { GIBBON_CLIP_TYPE_END, NULL }
                 },
