@@ -279,8 +279,19 @@ gibbon_session_finalize (GObject *object)
         GibbonSession *self = GIBBON_SESSION (object);
         struct GibbonSessionSavedCountCallbackInfo *info;
         GSList *iter;
+        const gchar *hostname;
+        const gchar *login;
+        guint port;
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
+
+        if (self->priv->opponent) {
+                hostname = gibbon_connection_get_hostname (self->priv->connection);
+                port = gibbon_connection_get_port (self->priv->connection);
+                login = gibbon_connection_get_login (self->priv->connection);
+                gibbon_archive_save_drop (self->priv->archive, hostname, port,
+                                          login, self->priv->opponent);
+        }
 
         if (self->priv->dice_picked_up_handler)
                 g_signal_handler_disconnect (gibbon_app_get_board (
@@ -897,6 +908,18 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &name))
                 return -1;
 
+        opponent = gibbon_player_list_get_opponent (self->priv->player_list,
+                                                    name);
+        if (opponent) {
+                hostname = gibbon_connection_get_hostname (self->priv->connection);
+                port = gibbon_connection_get_port (self->priv->connection);
+                gibbon_archive_save_drop (self->priv->archive,
+                                          hostname, port, name, opponent);
+                g_free (opponent);
+        }
+        gibbon_player_list_remove (self->priv->player_list, name);
+        gibbon_inviter_list_remove (self->priv->inviter_list, name);
+
         if (0 == g_strcmp0 (name, self->priv->watching)) {
                 g_free (self->priv->position->status);
                 self->priv->position->status =
@@ -929,18 +952,6 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                                                  name);
                 }
         }
-
-        opponent = gibbon_player_list_get_opponent (self->priv->player_list,
-                                                    name);
-        if (opponent) {
-                hostname = gibbon_connection_get_hostname (self->priv->connection);
-                port = gibbon_connection_get_port (self->priv->connection);
-                gibbon_archive_save_drop (self->priv->archive,
-                                          hostname, port, name, opponent);
-                g_free (opponent);
-        }
-        gibbon_player_list_remove (self->priv->player_list, name);
-        gibbon_inviter_list_remove (self->priv->inviter_list, name);
 
         return GIBBON_CLIP_CODE_LOGOUT;
 }
@@ -2204,6 +2215,9 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         GibbonSavedInfo *info;
         const gchar *who;
         guint match_length, scores[2];
+        const gchar *hostname;
+        const gchar *login;
+        guint port;
 
         if (self->priv->watching)
                 return -1;
@@ -2242,6 +2256,18 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         } else {
                 return -1;
         }
+
+        if (!self->priv->opponent)
+                return GIBBON_CLIP_CODE_LEFT_GAME;
+
+        hostname = gibbon_connection_get_hostname (self->priv->connection);
+        port = gibbon_connection_get_port (self->priv->connection);
+        login = gibbon_connection_get_login (self->priv->connection);
+        gibbon_archive_save_drop (self->priv->archive, hostname, port,
+                                  login, self->priv->opponent);
+
+        g_free (self->priv->opponent);
+        self->priv->opponent = NULL;
 
         return GIBBON_CLIP_CODE_LEFT_GAME;
 }
