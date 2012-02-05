@@ -1576,22 +1576,26 @@ gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
                                           1, G_MAXINT))
                 return FALSE;
 
-        if (g_strcmp0 ("match", tokens[4]))
+        if (g_strcmp0 ("point", tokens[4]))
                 return FALSE;
 
-        if (!tokens[5])
+        if (g_strcmp0 ("match", tokens[5]))
                 return FALSE;
 
-        ptr = index (tokens[5], '-');
+        if (!tokens[6])
+                return FALSE;
+
+        ptr = index (tokens[6], '-');
         if (!ptr)
                 return FALSE;
         *ptr = 0;
         if (!gibbon_clip_extract_integer (tokens[6], &scores[0],
-                                          1, G_MAXINT))
+                                          0, G_MAXINT))
                 return FALSE;
         ++ptr;
+        gibbon_clip_chomp (ptr, '.');
         if (!gibbon_clip_extract_integer (ptr, &scores[1],
-                                          1, G_MAXINT))
+                                          0, G_MAXINT))
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result,
