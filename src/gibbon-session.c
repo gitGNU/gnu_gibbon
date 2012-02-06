@@ -784,8 +784,10 @@ gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
         if (!notify)
                 self->priv->expect_notify = TRUE;
         if (ready) {
+                self->priv->available = TRUE;
                 gibbon_app_set_state_available (self->priv->app);
         } else {
+                self->priv->available = FALSE;
                 gibbon_app_set_state_busy (self->priv->app);
         }
         return GIBBON_CLIP_CODE_OWN_INFO;
