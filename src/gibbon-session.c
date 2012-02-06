@@ -630,10 +630,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_show_saved (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
-                if (self->priv->expect_saved)
+                if (self->priv->expect_saved) {
+                        gibbon_session_check_expect_queues (self, TRUE);
                         retval = -1;
-                else
+                } else {
                         retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
+                }
                 self->priv->expect_saved = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
@@ -2160,6 +2162,8 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         guint match_length, scores[2];
         GibbonSavedInfo *info;
 
+        if (self->priv->expect_saved)
+                gibbon_session_check_expect_queues (self, TRUE);
         self->priv->expect_saved = FALSE;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
