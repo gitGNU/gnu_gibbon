@@ -21,6 +21,10 @@
 
 #include "gibbon-help.h"
 
+#ifdef G_OS_WIN32
+# include <windows.h>
+#endif
+
 static const gchar *const authors[] = {
                 "Guido Flohr <guido@imperia.net>",
                 NULL
@@ -91,8 +95,26 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
          * it with the appropriate URI for your language.
          */
         uri = _("http://www.gibbon.bg/gibbon/docs/gibbon/en/index.html.en");
+#ifdef G_OS_WIN32
+        /*
+         * gtk_show_uri() fails to open web pages under MS-DOS.  This should
+         * be fixed in glib.  If gibbon requires a glib version that fixes
+         * the bug of gtk_show_uri(), the gibbon bug #35457 (see
+         * http://savannah.nongnu.org/bugs/?35457) should be closed. 
+         */
+	if (!(ShellExecute (NULL, "open", uri, NULL, NULL, 
+                            SW_SHOWNORMAL) > (HINSTANCE) 32)) {
+                error_online = g_error_new_literal (0, 0,
+                                                    _("Gibbon web page cannot"
+                                                      "  be opened"));
+                success = FALSE;
+        } else {
+                success = TRUE;
+        }
+#else
         success = gtk_show_uri (gtk_widget_get_screen (window), uri,
                                 GDK_CURRENT_TIME, &error_online);
+#endif
 
         if (!error_online && success)
                 return;
