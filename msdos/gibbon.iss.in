@@ -49,8 +49,8 @@ Name: "bg"; MessagesFile: ".\Bulgarian-5.1.11.isl"
 [Files]
 
 ; All files
-Source: "gtk\*"; DestDir: "{app}\"; Components: gtk; Flags: recursesubdirs replacesameversion
-Source: "gibbon\*"; DestDir: "{app}\"; Components: main; Flags: recursesubdirs replacesameversion
+Source: "gtk\*"; DestDir: "{app}\"; Components: gtk; Flags: recursesubdirs
+Source: "gibbon\*"; DestDir: "{app}\"; Components: main; Flags: recursesubdirs
 
 [Run]
 Filename: "{app}\bin\querymodules.bat"; StatusMsg: "Querying modules ..."; Flags: runhidden
@@ -70,4 +70,38 @@ begin
 		Result := True
 	else
 		Result := False;
+end;
+
+// Uninstall a previously installed version of Gibbon.
+function GetUninstallCommand(): String;
+var
+        UninstallExe: String;
+        Command: String;
+begin
+        UninstallExe := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\Gibbon_is1');
+        Command := '';
+        // Prefix can be HKLM or HKCU.
+        if not RegQueryStringValue(HKLM, UninstallExe, 'UninstallString', Command) then
+                RegQueryStringValue(HKCU, UninstallExe, 'UninstallString', Command);
+        Result := Command;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+        Command: String;
+        var ExitCode: Integer;
+begin
+        if (CurStep = ssInstall) then
+        begin
+                Command := GetUninstallCommand ();
+                if (Command <> '') then
+                begin
+                        Command := RemoveQuotes (Command);
+                        // If that fails, a warning or error message will most
+                        // probably pop up.  We therefore ignore the return
+                        // value.
+                        Exec (Command, '/SILENT /NORESTART /SUPPRESSMSGBOXES',
+                              '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+                end;
+        end;
 end;
