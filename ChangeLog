@@ -1,3 +1,345 @@
+commit 4f42e8cb6d254fa1cb7feb5def9744c1508c0717
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 21:20:16 2012 +0200
+
+    Updated
+
+commit 8cd07bd097635c831d65c2545a51beef7962a073
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 21:11:27 2012 +0200
+
+    Uninstall old version of Gibbon
+    
+    The interactive installer for MS-DOS must uninstall a previously installed
+    version.  Otherwise, if files are no longer present in a new versions,
+    they will not be deleted.
+                    if Exec(Command, '/SILENT /NORESTART /SUPPRESSMSGBOXES','',
+                            SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+                    if Exec(Command, '/SILENT /NORESTART /SUPPRESSMSGBOXES','',
+                            SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+
+commit b6500ed285dad8cf1090ab23ddc8064735d61ceb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 21:11:02 2012 +0200
+
+    Remove installer directory
+
+commit 6b1d282679e475c10d9eaed5cb349b2bacf17f9b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 20:14:54 2012 +0200
+
+    Fixed copyright date
+
+commit 928863c38e0f5cde8339946e61f2e05fd9d0369d
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 18:59:54 2012 +0200
+
+    Updated German translations
+
+commit ecf581eb07a0673ceb41c176cbb3267094962945
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 18:59:40 2012 +0200
+
+    Typo
+
+commit 3a5ce83b71c58b007344135695db9b126434e836
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 11:32:45 2012 +0200
+
+    Encode file version into executable under MS-DOS
+
+commit 137e6c44c628d958b2d6687860399f5dd8d76d12
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Feb 7 11:01:13 2012 +0200
+
+    Overwrite old installation files
+
+commit 7b61f5810b7313a82b88edc2bf4a5b94e4e547c9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 23:05:48 2012 +0200
+
+    Changed mode
+
+commit 0bf5e02cc2a1f00b5efe4d9d952e498a5dd84c0b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 21:59:06 2012 +0200
+
+    Workaround for broken gtk_show_uri()
+    
+    gtk_show_uri() is broken under MS-DOS.  We fall back to a native MS-DOS
+    solution instead.
+
+commit 38801a10d844f050879d74278ae662fa6ce70f3c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 09:54:48 2012 +0200
+
+    Update session available status after own info
+
+commit 7686c6cb16ad6e3713a50e06e229ccdd4424c668
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 09:44:31 2012 +0200
+
+    Continue with init command queue
+    
+    After we receive the first information about saved games, we can
+    continue with our queue.
+
+commit 419fe2e9d15d2eae97d40d918afeaf18709671ae
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 09:40:49 2012 +0200
+
+    Issue "show saved" upon login again
+
+commit 33d8ea27b2796b5d9dab9d1cfafb54796526cfc3
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 01:24:03 2012 +0200
+
+    Bumped version number to 0.1.1
+
+commit f3c99d1bdbe88f8d5c000a4e76d5ee6e1d5f5e07
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Feb 6 00:56:38 2012 +0200
+
+    Updated geo IP database
+
+commit d4d4f30b55850b0bb182ea95af5986e344b0256c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 20:22:50 2012 +0200
+
+    Parse own info
+    
+    Parsing the CLIP "own info" saves us the hassle of sending the "toggle"
+    command to the server, and parsing it.  That fixes #35453.
+
+commit 042926908dcbfc4a74918260f993fcf9b70f5ccb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 20:17:39 2012 +0200
+
+    Field "redoubles" in own info is int, not boolean
+
+commit 470875593869a992518583823af65acfa5e28f4c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 19:29:27 2012 +0200
+
+    Simplify initial settings
+    
+    The only setting important for proper operation is the board style.
+    Instead of parsing all settings, we now send a boardstyle setting after
+    initialization.  Actions are only taken, when the server does not
+    confirm the setting, or the user changes it manually.
+
+commit 5d06371e3c550dbfb14bd75685b99a62655bf2e9
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 19:02:01 2012 +0200
+
+    Queue essential commands
+    
+    Certain commands are vital for the functioning.  These are queued, and a
+    server response is checked in a callback.  This fixes #35203.
+
+commit 8f36fcd82f915421d513a14d81237a7d06dc6cac
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 14:01:58 2012 +0200
+
+    Remember, when to expect a who info
+    
+    This fixes for example #35002 and more related issues.
+
+commit 1198fe6f7a29bf36f7d374047fc181bee5415702
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:33:54 2012 +0200
+
+    Typo
+
+commit dc06aebc180898f9b9c5cc3d83e80f2e7a09811a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:33:15 2012 +0200
+
+    Parse own match losses
+
+commit 191fbbb925d4549775bbddb6ed990ee4f322cb68
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:23:52 2012 +0200
+
+    Parse own match wins
+
+commit d9f24169209882f71cfd7cf84add1d7bfae9dafc
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:11:51 2012 +0200
+
+    Handle rawwho error message
+
+commit 099a73e6938b9b842000ff7d15256426607fb6db
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:10:43 2012 +0200
+
+    Typo
+
+commit 0350c7aada184cc30f40dd655d3b554bebfd4fe5
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:05:43 2012 +0200
+
+    Forgotten action
+
+commit 1a5c9ba98bea1a0e4129f760b7e6924ee9d1c154
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 12:03:56 2012 +0200
+
+    Handle error message for rawwho
+
+commit 8186cd58c94ce129d66cf0ce40b79240b18875cd
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 11:59:51 2012 +0200
+
+    Archive own resumes
+
+commit d6df1d5ea197bdb15c35924d98b8b75a17c3706e
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 11:56:16 2012 +0200
+
+    Archive own drops, and that of opponent
+
+commit 2e17029f5f34979ab0adfccddb3f69f3591f0379
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 11:39:25 2012 +0200
+
+    Save own match ends in archive
+
+commit f2116567b88f5b34d6f6511fdc9085141e951539
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Feb 5 11:28:39 2012 +0200
+
+    Refactoring:
+    
+    Renamed GIBBON_CLIP_CODE_OTHER_WIN_MATCH to
+    GIBBON_CLIP_CODE_ASYNC_WIN_MATCH.
+
+commit 4ad1e16f1d06318c470f46f3ffe8c927bf58fb39
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Jan 31 09:23:40 2012 +0200
+
+    Do not set watching state after every board state
+    
+    A new board state does not necessarily mean that we are currently
+    watching somebody.  It is also received, when we looked at somebody
+    else's match.
+
+commit 1cd7e6c033946e121d4935178aa37bf3e22e3519
+Author: Guido Flohr <guido@imperia.net>
+Date:   Tue Jan 31 09:22:12 2012 +0200
+
+    Updated NEWS
+
+commit f1983a568aa885e2ea98473bc701c4b4864e3971
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Jan 30 21:58:35 2012 +0200
+
+    Parse all different kinds of drops
+
+commit e8107c17a6452afbd0e7e49c2a87ee35ab46b638
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Jan 30 20:08:27 2012 +0200
+
+    Ship README-alpha
+
+commit a25905907020769faeabf6c6a7697784207a0f7c
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 23:29:36 2012 +0200
+
+    Distinguish between match ends
+
+commit 7db1f04327a24561f8b1d2c85dee2278deaac618
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 23:25:28 2012 +0200
+
+    Remove opponent from saved infos on match start
+
+commit 2b5d30f60ea7279ab6951c77c784a52c465b0f2a
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 23:24:45 2012 +0200
+
+    More tests for matdch ends
+
+commit 36ce4bebdc596e86398f17b9807be6c0b9b5e3e0
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 22:57:09 2012 +0200
+
+    Handle all kinds of drops
+
+commit 40526664193a39133e5e3687de7f6fbee9136667
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 22:16:10 2012 +0200
+
+    Remember saved info, when opponent drops
+
+commit 8450cd574a6687954c52e40e27450f74148b69e2
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 22:15:56 2012 +0200
+
+    Updated NEWS file
+
+commit a011aa692ecbbad74f6e4156c96439d0a0d580e7
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 21:49:51 2012 +0200
+
+    Accept negative ratings in who info
+    
+    That fixes #35205.
+
+commit 6fe37232aff669f01e3f1f117e88c01704fffeab
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 21:49:13 2012 +0200
+
+    Test for negative ratings
+
+commit 90355a9735678cb091f933a77a623103c6d70fd4
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 21:22:50 2012 +0200
+
+    Updated German translation
+
+commit 64f421980bada0f87a38e51def44bc67e1bcc0fa
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 21:08:00 2012 +0200
+
+    Typo
+
+commit 8f9e84fb16ce8e72abd564c51f3773703d3dd32b
+Author: Guido Flohr <guido@imperia.net>
+Date:   Sun Jan 29 20:58:42 2012 +0200
+
+    Freecode.com entry
+
+commit b98d7d0a5639d08526f81c5256c8bb0db22ee952
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Jan 9 21:27:33 2012 +0200
+
+    Do not send "board" command after looking
+
+commit 5bd571204e11b5f52aadcb2904b48e52148b2c79
+Author: Guido Flohr <guido@imperia.net>
+Date:   Mon Jan 9 10:20:41 2012 +0200
+
+    Update point labels dynamically (#35200)
+
+commit 221281b07007104367e1cc14842a39b644e1a8eb
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 28 17:43:45 2011 +0200
+
+    Fixed buffer overflow in move generation tester
+
+commit 624fe34686e34f24b25b480f85d4281fdf8c1185
+Author: Guido Flohr <guido@imperia.net>
+Date:   Wed Dec 28 15:04:04 2011 +0200
+
+    Fixed warning
+
+commit 6f8ca50c3468d7f6aa516179585638528d884b21
+Author: Guido Flohr <guido@imperia.net>
+Date:   Fri Dec 23 14:17:54 2011 +0200
+
+    Updated ChangeLog
+
 commit 74402d1c77e863d458964fa55ae0953a8e168e6d
 Author: Guido Flohr <guido@imperia.net>
 Date:   Fri Dec 23 14:54:50 2011 +0200
