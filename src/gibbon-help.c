@@ -106,7 +106,7 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
                             SW_SHOWNORMAL) > (HINSTANCE) 32)) {
                 error_online = g_error_new_literal (0, 0,
                                                     _("Gibbon web page cannot"
-                                                      "  be opened"));
+                                                      " be opened"));
                 success = FALSE;
         } else {
                 success = TRUE;
