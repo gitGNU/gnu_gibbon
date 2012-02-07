@@ -45,6 +45,10 @@ case "$host" in
 esac
 AC_MSG_RESULT([$gibbon_native_msdos])
 AM_CONDITIONAL(MSDOS, test x$gibbon_native_msdos = xyes)
+dnl Under MS-DOS files have a version number separated by comma.  It is
+dnl important to increase that with every new version.
+GIBBON_COMMA_VERSION=["]gibbon_major_version","gibbon_minor_version","gibbon_micro_version["]
+AC_SUBST(GIBBON_COMMA_VERSION)
 
 AC_MSG_CHECKING([for Mac OS X platform])
 case "$host" in
