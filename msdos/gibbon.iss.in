@@ -49,8 +49,8 @@ Name: "bg"; MessagesFile: ".\Bulgarian-5.1.11.isl"
 [Files]
 
 ; All files
-Source: "gtk\*"; DestDir: "{app}\"; Components: gtk; Flags: recursesubdirs
-Source: "gibbon\*"; DestDir: "{app}\"; Components: main; Flags: recursesubdirs
+Source: "gtk\*"; DestDir: "{app}\"; Components: gtk; Flags: recursesubdirs replacesameversion
+Source: "gibbon\*"; DestDir: "{app}\"; Components: main; Flags: recursesubdirs replacesameversion
 
 [Run]
 Filename: "{app}\bin\querymodules.bat"; StatusMsg: "Querying modules ..."; Flags: runhidden
