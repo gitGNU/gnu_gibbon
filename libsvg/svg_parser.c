@@ -209,7 +209,7 @@ _svg_parser_sax_start_element (void		*closure,
 
     parser->status = (cb->parse_element) (parser, attributes, &element);
     if (parser->status) {
-	if (parser->status == SVGINT_STATUS_UNKNOWN_ELEMENT)
+	if (parser->status == (svg_status_t) SVGINT_STATUS_UNKNOWN_ELEMENT)
 	    parser->status = SVG_STATUS_SUCCESS;
 	return;
     }
@@ -729,7 +729,9 @@ _svg_parser_parse_gradient_stop (svg_parser_t	*parser,
 
     _svg_attribute_get_double (attributes, "offset", &offset, 0);
     _svg_attribute_get_double (attributes, "stop-opacity", &opacity, opacity);
-    if (_svg_attribute_get_string (attributes, "stop-color", &color_str, "#000000") == SVG_STATUS_SUCCESS)
+    if (_svg_attribute_get_string (attributes, "stop-color", &color_str, 
+                                   "#000000") == 
+        (svgint_status_t) SVG_STATUS_SUCCESS)
 	_svg_color_init_from_str (&color, color_str);
     if (color.is_current_color)
 	color = group_element->style.color;
