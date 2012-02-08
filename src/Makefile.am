@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = gibbon
+bin_PROGRAMS = gibbon gibbon-convert
 
 AUTOMAKE_OPTIONS = color-tests
 
 platform_libadd =
 
 if MSDOS
+gibbon_LDFLAGS = -mwindows
+
 gibbon-res.o: gibbon.rc ../share/icons/application/gibbon.ico
 	$(WINDRES) -i gibbon.rc --input-format=rc -o $@ -O coff
 
@@ -90,9 +92,66 @@ common_SOURCES = 			\
 	gibbon-geo-ip-updater.c		\
 	gibbon-country.c		\
 	gibbon-settings.c		\
-	gibbon-register-dialog.c
+	gibbon-register-dialog.c	\
+        gibbon-game-action.c            \
+        gibbon-movement.c               \
+        gibbon-move.c                   \
+        gibbon-double.c                 \
+        gibbon-drop.c                   \
+        gibbon-roll.c                   \
+        gibbon-take.c                   \
+        gibbon-resign.c                 \
+        gibbon-accept.c                 \
+        gibbon-reject.c                 \
+        gibbon-setup.c                  \
+        gibbon-match-reader.c           \
+        gibbon-java-fibs-reader.c       \
+        gibbon-match-writer.c           \
+        gibbon-java-fibs-writer.c       \
+        gibbon-java-fibs-parser.y       \
+        gibbon-java-fibs-lexer.c        \
+        gibbon-jelly-fish-writer.c      \
+        gibbon-sgf-writer.c
+
+AM_YFLAGS = -d -v
+
+LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
+LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+        $(LIBTOOLFLAGS) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
+AM_V_LEX = $(am__v_LEX_$(V))
+am__v_LEX_ = $(am__v_LEX_$(AM_DEFAULT_VERBOSITY))
+am__v_LEX_0 = @echo "  LEX   " $@;
+
+gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
+        $(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
+
+gibbon_convert_SOURCES =                \
+        gibbon-convert.c                \
+        gibbon-game-action.c            \
+        gibbon-movement.c               \
+        gibbon-move.c                   \
+        gibbon-double.c                 \
+        gibbon-drop.c                   \
+        gibbon-roll.c                   \
+        gibbon-take.c                   \
+        gibbon-resign.c                 \
+        gibbon-accept.c                 \
+        gibbon-reject.c                 \
+        gibbon-setup.c                  \
+        gibbon-match-reader.c           \
+        gibbon-match-writer.c           \
+        gibbon-java-fibs-reader.c       \
+        gibbon-java-fibs-writer.c       \
+        gibbon-java-fibs-parser.y       \
+        gibbon-java-fibs-lexer.c        \
+        gibbon-jelly-fish-writer.c      \
+        gibbon-position.c               \
+        gibbon-util.c                   \
+        gibbon-match.c                  \
+        gibbon-game.c                   \
+        gibbon-sgf-writer.c
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
@@ -137,21 +196,19 @@ AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 	$(GIBBON_LIBS) $(platform_libadd)
 
-if MSDOS
-gibbon_LDFLAGS = -mwindows
-endif
-
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_basic_match test_position test_moves \
 	test_pretty_print_move test_strsplit test_clip \
-	test_gary_wong_movegen
+	test_gary_wong_movegen test_crawford_detection \
+	test_java_fibs_reader
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_basic_match test_position test_moves \
 	test_clip test_pretty_print_move test_strsplit	\
-	test_gary_wong_movegen
+	test_gary_wong_movegen test_crawford_detection \
+	test_java_fibs_reader
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_basic_match_SOURCES = $(common_SOURCES) test-basic-match.c
@@ -161,7 +218,9 @@ test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) test-clip.c
+test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
+test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 
-SGF_FILES =
+MATCH_FILES = complete.match
 
-EXTRA_DIST = $(SGF_FILES) $(TESTS_SH) gibbon.rc
+EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
