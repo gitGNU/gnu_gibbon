@@ -89,6 +89,8 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PATH_PROG(GZIP, gzip)
+AC_PATH_PROG_YACC
+AC_PATH_PROG_LEX
 
 AC_SUBST(ACLOCAL_AMFLAGS, "$ACLOCAL_FLAGS -I m4")
 
@@ -143,6 +145,9 @@ if test $gibbon_native_msdos = no; then
 fi
 
 AC_CHECK_FUNCS([index rindex])
+
+AC_CHECK_HEADERS([xlocale.h])
+AC_CHECK_FUNCS([newlocale uselocale])
 
 GIBBON_LIBS="${GIBBON_LIBS} -ljpeg"
 AC_SUBST(GIBBON_LIBS)

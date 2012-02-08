@@ -129,6 +129,8 @@ gsgf_result_new (GSGFResultWinner winner, gdouble score, GSGFResultCause cause)
                         break;
         };
 
+        gsgf_result_sync_text (self);
+
         return self;
 }
 
@@ -200,55 +202,54 @@ gsgf_result_set_value (GSGFText *_self, const gchar *value,
 static void
 gsgf_result_sync_text (GSGFResult *self)
 {
-        const gchar *Winner;
-        const gchar *Cause;
+        const gchar *winner;
+        const gchar *cause;
+        gchar *score_text;
         gchar *text;
         GSGFTextClass *text_class;
-        gsize i;
+        gchar sign[2];
 
         switch (self->priv->winner) {
                 case GSGF_RESULT_WHITE:
-                        Winner = "W";
+                        winner = "W";
                         break;
                 case GSGF_RESULT_BLACK:
-                        Winner = "B";
+                        winner = "B";
                         break;
                 case GSGF_RESULT_VOID:
-                        Winner = "Void";
+                        winner = "Void";
                         break;
                 default:
-                        Winner = "?";
+                        winner = "?";
                         break;
         }
 
         switch (self->priv->cause) {
                 case GSGF_RESULT_RESIGNATION:
-                        Cause = "Resign";
+                        cause = "Resign";
                         break;
                 case GSGF_RESULT_TIME:
-                        Cause = "Time";
+                        cause = "Time";
                         break;
                 case GSGF_RESULT_FORFEIT:
-                        Cause = "Forfeit";
+                        cause = "Forfeit";
                         break;
                 case GSGF_RESULT_NORMAL:
                 default:
-                        Cause = "";
+                        cause = "";
                         break;
         }
 
         if (self->priv->score) {
-                text = g_strdup_printf ("%s+%.17f%s", Winner,
-                                        self->priv->score, Cause);
-                i = strlen (text);
-                while ('0' == text[i - 1]) {
-                        text[i - 1] = 0;
-                        --i;
-                }
-                if ('.' == text[i - 1])
-                        text[i - 1] = 0;
+                sign[0] = self->priv->score > 0 ? '+' : 0;
+                sign[1] = 0;
+                score_text = gsgf_ascii_dtostring (self->priv->score, -1, -1,
+                                                   FALSE, TRUE);
+                text = g_strdup_printf ("%s%s%s%s",
+                                        winner, sign, score_text, cause);
+                g_free (score_text);
         } else
-                text = g_strdup_printf ("%s", Winner);
+                text = g_strdup_printf ("%s", winner);
 
         text_class = g_type_class_peek_parent (GSGF_RESULT_GET_CLASS (self));
         text_class->set_value (GSGF_TEXT (self), text, TRUE, NULL);

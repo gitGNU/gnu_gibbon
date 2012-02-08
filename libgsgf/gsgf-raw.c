@@ -202,8 +202,16 @@ _gsgf_raw_convert(GSGFRaw *self, const gchar *charset, GError **error)
         return TRUE;
 }
 
+
+/**
+ * gsgf_raw_add_value:
+ * @self: The #GSGFRaw object.
+ * @value: The value to add.
+ *
+ * Add another string to the #GSGFRaw.
+ */
 void
-_gsgf_raw_add_value (GSGFRaw *self, const gchar *value)
+gsgf_raw_add_value (GSGFRaw *self, const gchar *value)
 {
 
         g_return_if_fail (GSGF_IS_RAW (self));
