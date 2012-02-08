@@ -155,6 +155,6 @@ perl -pe "s/INSTALLERREVISION/$revision/" gibbon.iss >installer/gibbon.iss || ex
 
 mv installer/Output/gibbon-setup-*.exe .
 
-#rm -r installer
+rm -r installer
 
 echo "Successfully created " gibbon-setup-*.exe

@@ -136,6 +136,7 @@ noinst_HEADERS =			\
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 	$(GIBBON_LIBS) $(platform_libadd)
+
 if MSDOS
 gibbon_LDFLAGS = -mwindows
 endif

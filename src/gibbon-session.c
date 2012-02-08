@@ -186,6 +186,7 @@ struct _GibbonSessionPrivate {
 
         gboolean expect_boardstyle;
         gboolean set_boardstyle;
+        gboolean expect_saved;
         gboolean expect_notify;
         GSList *expect_who_infos;
         GSList *expect_saved_counts;
@@ -194,7 +195,6 @@ struct _GibbonSessionPrivate {
         guint timeout_id;
 
         GHashTable *saved_games;
-        gboolean saved_games_finished;
 
         guint dice_picked_up_handler;
         guint cube_turned_handler;
@@ -233,6 +233,7 @@ gibbon_session_init (GibbonSession *self)
 
         self->priv->expect_boardstyle = FALSE;
         self->priv->set_boardstyle = FALSE;
+        self->priv->expect_saved = FALSE;
         self->priv->expect_notify = FALSE;
         self->priv->expect_who_infos = NULL;
         self->priv->expect_saved_counts = NULL;
@@ -243,7 +244,6 @@ gibbon_session_init (GibbonSession *self)
                                        g_str_equal,
                                        g_free,
                                        (GDestroyNotify) gibbon_saved_info_free);
-        self->priv->saved_games_finished = FALSE;
 
         self->priv->dice_picked_up_handler = 0;
         self->priv->cube_turned_handler = 0;
@@ -621,20 +621,22 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_show_toggle (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SHOW_START_SAVED:
-                if (self->priv->saved_games_finished)
-                        retval = -1;
-                else
+                if (self->priv->expect_saved)
                         retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                else
+                        retval = -1;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
-                if (self->priv->saved_games_finished)
+                if (self->priv->expect_saved) {
+                        gibbon_session_check_expect_queues (self, TRUE);
                         retval = -1;
-                else
+                } else {
                         retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
-                self->priv->saved_games_finished = TRUE;
+                }
+                self->priv->expect_saved = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
@@ -782,8 +784,10 @@ gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
         if (!notify)
                 self->priv->expect_notify = TRUE;
         if (ready) {
+                self->priv->available = TRUE;
                 gibbon_app_set_state_available (self->priv->app);
         } else {
+                self->priv->available = FALSE;
                 gibbon_app_set_state_busy (self->priv->app);
         }
         return GIBBON_CLIP_CODE_OWN_INFO;
@@ -955,7 +959,7 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 self->priv->initialized = TRUE;
 
                 self->priv->expect_boardstyle = TRUE;
-
+                self->priv->expect_saved = TRUE;
                 self->priv->expect_address = TRUE;
 
                 /*
@@ -2160,8 +2164,9 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         guint match_length, scores[2];
         GibbonSavedInfo *info;
 
-        if  (self->priv->saved_games_finished)
-                return -1;
+        if (self->priv->expect_saved)
+                gibbon_session_check_expect_queues (self, TRUE);
+        self->priv->expect_saved = FALSE;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
                 return -1;
@@ -2182,7 +2187,12 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         gibbon_inviter_list_update_has_saved (self->priv->inviter_list,
                                               opponent, TRUE);
 
-        return GIBBON_CLIP_CODE_SHOW_SAVED;
+        /*
+         * We always display saved games in the server console.  This is not
+         * really a feature but necessary since we cannot find out the end
+         * of the saved games list.
+         */
+        return -1;
 }
 
 static gint
@@ -2744,6 +2754,7 @@ gibbon_session_timeout (GibbonSession *self)
                         return FALSE;
                 }
         } else if (self->priv->expect_boardstyle
+                   || self->priv->expect_saved
                    || self->priv->expect_notify
                    || self->priv->expect_saved_counts
                    || self->priv->expect_who_infos
@@ -2767,19 +2778,23 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
         if (!force && self->priv->timeout_id)
                 return;
 
-        if (self->priv->expect_saved_counts) {
-                info = self->priv->expect_saved_counts->data;
-                gibbon_connection_queue_command (self->priv->connection, FALSE,
-                                                 "show savedcount %s",
-                                                 info->who);
-        } else if (self->priv->expect_boardstyle) {
+        if (self->priv->expect_boardstyle) {
                 gibbon_connection_queue_command (self->priv->connection,
                                                  self->priv->set_boardstyle,
                                                  "set boardstyle 3");
                 self->priv->set_boardstyle = TRUE;
+        } else if (self->priv->expect_saved) {
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "show saved");
         } else if (self->priv->expect_notify) {
                 gibbon_connection_queue_command (self->priv->connection, TRUE,
                                                  "toggle notify");
+        } else if (self->priv->expect_saved_counts) {
+                info = self->priv->expect_saved_counts->data;
+                gibbon_connection_queue_command (self->priv->connection, FALSE,
+                                                 "show savedcount %s",
+                                                 info->who);
         } else if (self->priv->expect_who_infos) {
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
                                                  "rawwho %s", (gchar *)
