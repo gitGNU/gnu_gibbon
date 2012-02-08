@@ -272,7 +272,7 @@ svg_util_get_dimensions (xmlNode *node, xmlDoc *doc, const gchar *filename,
         component = *_component;
         if (render) {
                 status = svg_cairo_create (&component->scr);
-                if (status != SVG_CAIRO_STATUS_SUCCESS) {
+                if (status != (svg_status_t) SVG_CAIRO_STATUS_SUCCESS) {
                         g_error (_("Error creating libsvg-cairo context: %s\n"),
                                 svg_cairo_strerror (status));
                         g_free (component);
