@@ -53,6 +53,7 @@ AM_CPPFLAGS = 				\
         -DGIBBON_LIBDIR=\""$(libdir)"\"	\
         -D_ISOC99_SOURCE		\
         $(GIBBON_GTK_MIGRATION_CFLAGS)	\
+	-DABS_BUILDDIR=\""$(abs_builddir)"\"	\
         -D_SVID_SOURCE
 
 common_SOURCES = 			\
@@ -206,7 +207,7 @@ test_moves_SOURCES = $(common_SOURCES) test-moves.c
 test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
-test_clip_SOURCES = $(common_SOURCES) test-clip.c
+test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 

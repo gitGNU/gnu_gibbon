@@ -54,11 +54,13 @@ test_to_nil (void)
                                                3, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
+        GError *error = NULL;
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 1st game!\n");
+                g_printerr ("Cannot add 1st game: %s.\n", error->message);
+                g_error_free (error);
                 return FALSE;
         }
 
@@ -69,37 +71,103 @@ test_to_nil (void)
         }
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 2));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 5));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
                                                        6, 1, -1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
@@ -120,11 +188,12 @@ test_regular_match (void)
                                                4, TRUE);
         GibbonGame *game;
         GibbonGameAction *action;
+        GError *error = NULL;
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 1st game!\n");
+                g_printerr ("Cannot add 1st game: %s!\n", error->message);
                 return FALSE;
         }
 
@@ -136,11 +205,29 @@ test_regular_match (void)
         }
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (2));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
                 g_printerr ("False positive for Crawford at %s:%d.\n",
@@ -148,11 +235,29 @@ test_regular_match (void)
                 return FALSE;
         }
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
 
-        game = gibbon_match_add_game (match);
+        game = gibbon_match_add_game (match, &error);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
                 g_printerr ("False positive for Crawford at %s:%d.\n",
@@ -161,10 +266,28 @@ test_regular_match (void)
         }
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
-        game = gibbon_match_add_game (match);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+        game = gibbon_match_add_game (match, &error);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
                 g_printerr ("Crawford not detected at %s:%d.\n",
@@ -173,10 +296,29 @@ test_regular_match (void)
         }
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-        gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action);
-        game = gibbon_match_add_game (match);
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+        game = gibbon_match_add_game (match, &error);
+        if (!game) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s\n", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
                 g_printerr ("False positive for post-Crawford at %s:%d.\n",
