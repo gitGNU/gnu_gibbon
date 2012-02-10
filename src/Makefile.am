@@ -56,45 +56,12 @@ AM_CPPFLAGS = 				\
 	-D_SVID_SOURCE
 
 common_SOURCES = 			\
-	gibbon-cairoboard.c		\
-	gibbon-connection.c		\
+	gibbon-position.c		\
 	gibbon-game.c           	\
 	gibbon-match.c          	\
-	gibbon-player-list.c		\
-	gibbon-session.c		\
-	html-entities.c			\
-	svg-util.c			\
-	gibbon-game-chat.c		\
-	gibbon-archive.c		\
-	gibbon-java-fibs-importer.c	\
-	gibbon-fibs-message.c		\
-	gibbon-app.c			\
-	gibbon-player-list-view.c	\
-	gibbon-connection-dialog.c	\
-	gibbon-signal.c			\
-	gibbon-server-console.c		\
-	gibbon-fibs-command.c		\
-	gibbon-shouts.c			\
-	gibbon-position.c		\
-	gibbon-board.c			\
-	gibbon-chat-view.c		\
-	gibbon-chat.c			\
-	gibbon-help.c			\
-	gibbon-database.c		\
-	gibbon-reliability.c		\
-	gibbon-reliability-renderer.c	\
-	gibbon-util.c			\
-	gibbon-clip.c			\
-	gibbon-inviter-list.c		\
-	gibbon-inviter-list-view.c	\
-	gibbon-saved-info.c		\
-	gibbon-client-icons.c		\
-	gibbon-geo-ip-updater.c		\
-	gibbon-country.c		\
-	gibbon-settings.c		\
-	gibbon-register-dialog.c	\
         gibbon-game-action.c            \
         gibbon-movement.c               \
+	gibbon-util.c			\
         gibbon-move.c                   \
         gibbon-double.c                 \
         gibbon-drop.c                   \
@@ -115,33 +82,45 @@ common_SOURCES = 			\
 
 AM_YFLAGS = -d -v
 
-gibbon_SOURCES = gibbon.c $(common_SOURCES)
+gibbon_SOURCES = gibbon.c 		\
+	gibbon-app.c			\
+	gibbon-cairoboard.c		\
+	gibbon-connection.c		\
+	gibbon-player-list.c		\
+	gibbon-session.c		\
+	html-entities.c			\
+	svg-util.c			\
+	gibbon-game-chat.c		\
+	gibbon-archive.c		\
+	gibbon-java-fibs-importer.c	\
+	gibbon-fibs-message.c		\
+	gibbon-player-list-view.c	\
+	gibbon-connection-dialog.c	\
+	gibbon-signal.c			\
+	gibbon-server-console.c		\
+	gibbon-fibs-command.c		\
+	gibbon-shouts.c			\
+	gibbon-board.c			\
+	gibbon-chat-view.c		\
+	gibbon-chat.c			\
+	gibbon-help.c			\
+	gibbon-database.c		\
+	gibbon-reliability.c		\
+	gibbon-reliability-renderer.c	\
+	gibbon-clip.c			\
+	gibbon-inviter-list.c		\
+	gibbon-inviter-list-view.c	\
+	gibbon-saved-info.c		\
+	gibbon-client-icons.c		\
+	gibbon-geo-ip-updater.c		\
+	gibbon-country.c		\
+	gibbon-settings.c		\
+	gibbon-register-dialog.c	\
+	$(common_SOURCES)
 
 gibbon_convert_SOURCES =                \
         gibbon-convert.c                \
-        gibbon-game-action.c            \
-        gibbon-movement.c               \
-        gibbon-move.c                   \
-        gibbon-double.c                 \
-        gibbon-drop.c                   \
-        gibbon-roll.c                   \
-        gibbon-take.c                   \
-        gibbon-resign.c                 \
-        gibbon-accept.c                 \
-        gibbon-reject.c                 \
-        gibbon-setup.c                  \
-        gibbon-match-reader.c           \
-        gibbon-match-writer.c           \
-        gibbon-java-fibs-reader.c       \
-        gibbon-java-fibs-writer.c       \
-        gibbon-java-fibs-parser.y       \
-        gibbon-java-fibs-lexer.c        \
-        gibbon-jelly-fish-writer.c      \
-        gibbon-position.c               \
-        gibbon-util.c                   \
-        gibbon-match.c                  \
-        gibbon-game.c                   \
-        gibbon-sgf-writer.c
+	$(common_SOURCES)
 
 noinst_HEADERS =			\
 	gibbon-cairoboard.h		\
@@ -158,6 +137,7 @@ noinst_HEADERS =			\
 	gibbon-fibs-message.h		\
 	gibbon-app.h			\
 	gibbon-player-list-view.h	\
+	gibbon-register-dialog.h	\
 	gibbon-connection-dialog.h	\
 	gibbon-signal.h			\
 	gibbon-server-console.h		\
@@ -180,7 +160,24 @@ noinst_HEADERS =			\
 	gibbon-geo-ip-updater.h		\
 	gibbon-country.h		\
 	gibbon-settings.h		\
-	gibbon-register-dialog.h
+	gibbon-move.h			\
+	gibbon-movement.h		\
+	gibbon-game-action.h		\
+	gibbon-roll.h			\
+	gibbon-double.h			\
+	gibbon-drop.h			\
+	gibbon-take.h			\
+	gibbon-reject.h			\
+	gibbon-accept.h			\
+	gibbon-resign.h			\
+	gibbon-setup.h			\
+	gibbon-match-reader.h		\
+	gibbon-java-fibs-reader.h	\
+	gibbon-java-fibs-reader-priv.h	\
+	gibbon-match-writer.h		\
+	gibbon-java-fibs-writer.h	\
+	gibbon-jelly-fish-writer.h	\
+	gibbon-sgf-writer.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
