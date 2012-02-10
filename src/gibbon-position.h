@@ -130,72 +130,6 @@ struct _GibbonPosition
         gchar *status;
 };
 
-/**
- * GibbonMovement:
- * @from: The starting point for a move.  1 is the ace point for white, O,
- *        or the player with positive checker counts.  23 is the ace point
- *        for black, X, or the player with negative checker counts.  0 and
- *        24 represent home and the bar accordingly.
- * @to: The end point for a move, see @from for semantics.
- * @die: The die value used for the move.
- *
- * Structure representing a single backgammon checker movement.
- */
-typedef struct _GibbonMovement GibbonMovement;
-struct _GibbonMovement
-{
-        gint from;
-        gint to;
-        gint die;
-};
-
-/**
- * GibbonMoveError:
- * @GIBBON_MOVE_LEGAL: legal move
- * @GIBBON_MOVE_ILLEGAL: illegal move
- * @GIBBON_MOVE_TOO_MANY_MOVES: more checkers moved than dice rolled
- * @GIBBON_MOVE_BLOCKED: one of the intermediate landing points was occupied,
- *                       never used here
- * @GIBBON_MOVE_USE_ALL: at least one more checker can be moved
- * @GIBBON_MOVE_USE_HIGHER: in doubt, you must use the higher value
- * @GIBBON_MOVE_TRY_SWAP: two checkers can be moved by swapping the dice order
- * @GIBOBN_MOVE_PREMATURE_BEAR_OFF: checker borne off with checkers outhside
- *                                  home board
- * @GIBBON_MOVE_ILLEGAL_WASTE: move higher before bearing off with waste
- * @GIBBON_MOVE_DANCING: Must come in from the bar first
- *
- * Use these symbolic constants, when referring to one side of the board.
- */
-typedef enum {
-        GIBBON_MOVE_LEGAL = 0,
-        GIBBON_MOVE_ILLEGAL = 1,
-        GIBBON_MOVE_TOO_MANY_MOVES = 2,
-        GIBBON_MOVE_BLOCKED = 3,
-        GIBBON_MOVE_USE_ALL = 4,
-        GIBBON_MOVE_USE_HIGHER = 5,
-        GIBBON_MOVE_TRY_SWAP = 6,
-        GIBBON_MOVE_PREMATURE_BEAR_OFF = 7,
-        GIBBON_MOVE_ILLEGAL_WASTE = 8,
-        GIBBON_MOVE_DANCING = 9
-} GibbonMoveError;
-
-/**
- * GibbonMove:
- * @number: number of movements following (0 to 4).
- * @movements: the individual movements.
- * @status: status of this move.
- *
- * Structure representing a backgammon move.  This is always a checker move.
- * Other actions like doubling, resigning, etc. are not covered.
- */
-typedef struct _GibbonMove GibbonMove;
-struct _GibbonMove
-{
-        gint number;
-        GibbonMoveError status;
-        GibbonMovement movements[];
-};
-
 GType gibbon_position_get_type (void) G_GNUC_CONST;
 
 GibbonPosition *gibbon_position_new (void);
@@ -210,10 +144,9 @@ guint gibbon_position_get_pip_count (const GibbonPosition *self,
 guint gibbon_position_get_borne_off (const GibbonPosition *self,
                                      GibbonPositionSide side);
 
-GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
-                                        const GibbonPosition *after,
-                                        GibbonPositionSide side);
-GibbonMove *gibbon_position_alloc_move (gsize num_movements);
+struct _GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
+                                                const GibbonPosition *after,
+                                                GibbonPositionSide side);
 gboolean gibbon_position_equals_technically (const GibbonPosition *self,
                                              const GibbonPosition *other);
 void gibbon_position_dump_position (const GibbonPosition *self);
@@ -228,19 +161,24 @@ void gibbon_position_dump_position (const GibbonPosition *self);
  * is white's bar and black's home, 0 is black's bar and white's home.
  */
 gboolean gibbon_position_apply_move (GibbonPosition *self,
-                                     GibbonMove *move,
+                                     struct _GibbonMove *move,
                                      GibbonPositionSide side,
                                      gboolean reverse);
-gboolean gibbon_position_game_over (const GibbonPosition *position);
+gint gibbon_position_game_over (const GibbonPosition *position);
+GibbonPositionSide gibbon_position_match_over (const GibbonPosition *self);
 
 /* Free return value with g_free()!  */
-gchar *gibbon_position_format_move (GibbonPosition *self,
-                                    const GibbonMove *move,
+gchar *gibbon_position_format_move (const GibbonPosition *self,
+                                    const struct _GibbonMove *move,
                                     GibbonPositionSide side,
                                     gboolean reverse);
-gchar *gibbon_position_fibs_move (GibbonPosition *self,
-                                  const GibbonMove *move,
+gchar *gibbon_position_fibs_move (const GibbonPosition *self,
+                                  const struct _GibbonMove *move,
                                   GibbonPositionSide side,
                                   gboolean reverse);
+/*
+ * Reset position to beginning-of-game state.
+ */
+void gibbon_position_reset (GibbonPosition *self);
 
 #endif

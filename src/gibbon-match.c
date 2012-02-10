@@ -21,7 +21,7 @@
  * SECTION:gibbon-match
  * @short_description: Representation of a backgammon match in Gibbon!
  *
- * Since: 0.1.0
+ * Since: 0.1.1
  *
  * A GibbonMatch is the internal representation of a backgammon match in
  * Gibbon.  It is always linked to a #GSGFCollection that serves as the
@@ -31,20 +31,17 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <libgsgf/gsgf.h>
-
 #include "gibbon-match.h"
 #include "gibbon-game.h"
 
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
-        GSGFCollection *collection;
-        GSGFFlavor *flavor;
-
         GList *games;
 
-        gchar *black_player;
-        gchar *white_player;
+        gchar *white;
+        gchar *black;
+        gboolean crawford;
+        gsize length;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -58,22 +55,18 @@ gibbon_match_init (GibbonMatch *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MATCH, GibbonMatchPrivate);
 
-        self->priv->collection = NULL;
-        self->priv->flavor = NULL;
         self->priv->games = NULL;
 
-        self->priv->black_player = NULL;
-        self->priv->white_player = NULL;
+        self->priv->white = NULL;
+        self->priv->black = NULL;
+        self->priv->crawford = TRUE;
+        self->priv->length = 0;
 }
 
 static void
 gibbon_match_finalize (GObject *object)
 {
         GibbonMatch *self = GIBBON_MATCH (object);
-
-        if (self->priv->collection)
-                g_object_unref (self->priv->collection);
-        self->priv->collection = NULL;
 
         if (self->priv->games) {
                 g_list_foreach (self->priv->games,
@@ -82,14 +75,8 @@ gibbon_match_finalize (GObject *object)
         }
         self->priv->games = NULL;
 
-        if (self->priv->flavor)
-                g_object_unref (self->priv->flavor);
-        self->priv->flavor = NULL;
-
-        if (self->priv->black_player)
-                g_free (self->priv->black_player);
-        if (self->priv->white_player)
-                g_free (self->priv->white_player);
+        g_free (self->priv->white);
+        g_free (self->priv->black);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -112,119 +99,269 @@ gibbon_match_class_init (GibbonMatchClass *klass)
  * Returns: The newly created #GibbonMatch or %NULL.
  */
 GibbonMatch *
-gibbon_match_new ()
+gibbon_match_new (const gchar *white, const gchar *black,
+                  guint length, gboolean crawford)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
-        GSGFGameTree *game_tree;
-        GibbonGame *game;
 
-        self->priv->collection = gsgf_collection_new ();
+        if (!length)
+                crawford = FALSE;
+        self->priv->crawford = crawford;
 
-        self->priv->flavor = gsgf_flavor_backgammon_new ();
-
-        game_tree = gsgf_collection_add_game_tree (self->priv->collection,
-                                                   self->priv->flavor);
-
-        game = gibbon_game_new (self, game_tree);
-        self->priv->games = g_list_prepend (self->priv->games, game);
+        gibbon_match_set_white (self, white);
+        gibbon_match_set_black (self, black);
+        gibbon_match_set_length (self, length);
 
         return self;
 }
 
-const GSGFCollection *
-gibbon_match_get_collection (GibbonMatch *self)
+GQuark
+gibbon_match_error_quark (void)
 {
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->collection;
-}
-
-gboolean
-gibbon_match_set_white_player (GibbonMatch *self, const gchar *name,
-                               GError **error)
-{
-        GList *iter;
-        GibbonGame *game;
-        GSGFGameTree *game_tree;
-        GList* nodes;
-        GSGFNode* root;
-        GSGFValue *simple_text;
-
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name, FALSE);
-
-        for (iter = self->priv->games; iter; iter = iter->next) {
-                game = GIBBON_GAME (iter->data);
-                game_tree = gibbon_game_get_game_tree (game);
-                nodes = gsgf_game_tree_get_nodes (game_tree);
-                root = nodes->data;
-                simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
-                if (!gsgf_node_set_property (root, "PW", simple_text, error)) {
-                        g_object_unref (simple_text);
-                        return FALSE;
-                }
-        }
-
-        if (self->priv->white_player)
-                g_free (self->priv->white_player);
-        self->priv->white_player = g_strdup (name);
-
-        return TRUE;
-}
-
-gboolean
-gibbon_match_set_black_player (GibbonMatch *self, const gchar *name,
-                               GError **error)
-{
-        GList *iter;
-        GibbonGame *game;
-        GSGFGameTree *game_tree;
-        GList* nodes;
-        GSGFNode* root;
-        GSGFValue *simple_text;
-
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
-        g_return_val_if_fail (name, FALSE);
-
-        for (iter = self->priv->games; iter; iter = iter->next) {
-                game = GIBBON_GAME (iter->data);
-                game_tree = gibbon_game_get_game_tree (game);
-                nodes = gsgf_game_tree_get_nodes (game_tree);
-                root = nodes->data;
-                simple_text = GSGF_VALUE (gsgf_simple_text_new (name));
-                if (!gsgf_node_set_property (root, "PB", simple_text, error)) {
-                        g_object_unref (simple_text);
-                        return FALSE;
-                }
-        }
-
-        if (self->priv->black_player)
-                g_free (self->priv->black_player);
-        self->priv->black_player = g_strdup (name);
-
-        return TRUE;
-}
-
-const gchar *
-gibbon_match_get_white_player (const GibbonMatch *self)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->white_player;
-}
-
-const gchar *
-gibbon_match_get_black_player (const GibbonMatch *self)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
-
-        return self->priv->black_player;
+        return g_quark_from_static_string ("gsgf-error-quark");
 }
 
 GibbonGame *
 gibbon_match_get_current_game (const GibbonMatch *self)
 {
+        GList *iter;
+
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
-        return self->priv->games->data;
+        iter = g_list_last (self->priv->games);
+        if (!iter)
+                return NULL;
+
+        return iter->data;
+}
+
+GibbonGame *
+gibbon_match_add_game (GibbonMatch *self, GError **error)
+{
+        GibbonGame *game;
+        guint game_number;
+        GibbonPosition *position;
+        gboolean is_crawford = FALSE;
+        gint white_away, black_away;
+        const GibbonPosition *last_position;
+        GList *iter;
+
+        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (self), NULL, error);
+
+        iter = g_list_last (self->priv->games);
+
+        if (iter) {
+                game = iter->data;
+                position = gibbon_position_copy (gibbon_game_get_position (game));
+                gibbon_position_reset (position);
+        } else {
+                position = gibbon_position_new ();
+                position->players[0] = g_strdup (self->priv->white);
+                position->players[1] = g_strdup (self->priv->black);
+                position->match_length = self->priv->length;
+        }
+
+        if (position->match_length) {
+                if (position->scores[0] >= position->match_length
+                    || position->scores[1] >= position->match_length) {
+                        g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                             GIBBON_MATCH_ERROR_END_OF_MATCH,
+                                             _("Match is already over!"));
+                        gibbon_position_free (position);
+                        return NULL;
+                }
+        }
+
+        /*
+         * Check whether this is the crawford game.  This is less trivial than
+         * it seems at first glance.
+         *
+         * A necessary but not sufficient condition is that we have a fixed
+         * match length, and that exactly one of the opponents is 1-away.
+         */
+        if (!self->priv->length)
+                goto no_crawford;
+
+        white_away = position->match_length - position->scores[0];
+        black_away = position->match_length - position->scores[1];
+
+        if (white_away != 1 && black_away != 1)
+                goto no_crawford;
+
+        if (white_away ==  1 && black_away == 1)
+                goto no_crawford;
+
+        if (white_away == position->match_length
+            || black_away == position->match_length) {
+                is_crawford = TRUE;
+                goto no_crawford;
+        }
+
+        /*
+         * Now check for a transition in the first game action.
+         */
+        game = self->priv->games->data;
+        if (gibbon_game_is_crawford (game))
+                goto no_crawford;
+
+        last_position = gibbon_game_get_nth_position (game, -2);
+        if (!last_position)
+                goto no_crawford;
+
+        white_away = last_position->match_length - last_position->scores[0];
+        black_away = last_position->match_length - last_position->scores[1];
+        if (white_away == 1 || black_away == 1)
+                goto no_crawford;
+
+        is_crawford = TRUE;
+
+        /*
+         * So far for the regular cases.  But we also have to bear in mind
+         * that the last match
+         */
+    no_crawford:
+        game_number = g_list_length (self->priv->games);
+        game = gibbon_game_new (self, position,
+                                self->priv->crawford, is_crawford);
+        gibbon_position_free (position);
+        self->priv->games = g_list_append (self->priv->games, game);
+
+        return game;
+}
+
+const GibbonPosition *
+gibbon_match_get_current_position (const GibbonMatch *self)
+{
+        const GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        game = self->priv->games->data;
+
+        return gibbon_game_get_position (game);
+}
+
+void
+gibbon_match_set_white (GibbonMatch *self, const gchar *white)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        g_free (self->priv->white);
+        if (white)
+                self->priv->white = g_strdup (white);
+        else
+                self->priv->white = g_strdup ("white");
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_white (game, self->priv->white);
+                iter = iter->next;
+        }
+
+        return;
+}
+
+const gchar *
+gibbon_match_get_white (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->white;
+}
+
+void
+gibbon_match_set_black (GibbonMatch *self, const gchar *black)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        g_free (self->priv->black);
+        if (black)
+                self->priv->black = g_strdup (black);
+        else
+                self->priv->black = g_strdup ("black");
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_black (game, self->priv->black);
+                iter = iter->next;
+        }
+
+        return;
+}
+const gchar *
+gibbon_match_get_black (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        return self->priv->black;
+}
+
+void
+gibbon_match_set_length (GibbonMatch *self, gsize length)
+{
+        GList *iter;
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        if (length)
+                self->priv->crawford = TRUE;
+        else
+                self->priv->crawford = FALSE;
+
+        self->priv->length = length;
+
+        iter = self->priv->games;
+        while (iter) {
+                game = GIBBON_GAME (iter->data);
+                gibbon_game_set_match_length (game, length);
+                iter = iter->next;
+        }
+
+}
+
+gsize
+gibbon_match_get_length (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return self->priv->length;
+}
+
+gsize
+gibbon_match_get_number_of_games (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return g_list_length (self->priv->games);
+}
+
+GibbonGame *
+gibbon_match_get_nth_game (const GibbonMatch *self, gsize i)
+{
+        GList *iter;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+
+        iter = g_list_nth (self->priv->games, i);
+        if (!iter)
+                return NULL;
+
+        return iter->data;
+}
+
+gboolean
+gibbon_match_get_crawford (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+
+        return self->priv->crawford;
 }

@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 static gboolean expect_move (const GibbonMove *expect,
                              GibbonMove *got, const gchar *msg);
@@ -104,8 +105,10 @@ expect_move (const GibbonMove *expect,
 
         if (expect->status == GIBBON_MOVE_LEGAL) {
                 if (expect->number != got->number) {
-                        g_printerr ("%s: Expected %u movements, got %u.\n",
-                                    msg, expect->number, got->number);
+                        g_printerr ("%s: Expected %llu movements, got %llu.\n",
+                                    msg,
+                                    (unsigned long long) expect->number,
+                                    (unsigned long long) got->number);
                         retval = FALSE;
                 }
 
@@ -128,7 +131,7 @@ expect_move (const GibbonMove *expect,
                 }
         }
 
-        g_free (got);
+        g_object_unref (got);
 
         return retval;
 }
@@ -142,9 +145,7 @@ test_too_many_moves ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (2, 2, 4);
 
         before->match_length = 1;
         before->dice[0] = 2;
@@ -205,6 +206,8 @@ test_too_many_moves ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -217,9 +220,7 @@ test_use_all ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (3, 2, 4);
 
         before->match_length = 1;
         before->dice[0] = 3;
@@ -272,6 +273,8 @@ test_use_all ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -284,9 +287,7 @@ test_try_swap1 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (6, 3, 4);
 
         before->match_length = 1;
         before->dice[0] = 6;
@@ -323,6 +324,8 @@ test_try_swap1 ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -335,9 +338,7 @@ test_try_swap2 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (1, 4, 4);
 
         before->match_length = 1;
         before->dice[0] = 1;
@@ -381,6 +382,8 @@ test_try_swap2 ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -393,9 +396,7 @@ test_try_dance ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (1, 2, 4);
 
         before->match_length = 1;
         before->dice[0] = 1;
@@ -444,6 +445,8 @@ test_try_dance ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -456,9 +459,7 @@ test_illegal_waste ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (1, 5, 4);
 
         before->match_length = 1;
         before->dice[0] = 1;
@@ -494,6 +495,8 @@ test_illegal_waste ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -506,9 +509,7 @@ test_use_higher ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (6, 4, 4);
 
         before->match_length = 1;
         before->dice[0] = 6;
@@ -548,6 +549,8 @@ test_use_higher ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -560,9 +563,7 @@ test_not_use_higher ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (4, 6, 4);
 
         before->match_length = 1;
         before->dice[0] = 4;
@@ -605,6 +606,8 @@ test_not_use_higher ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -617,9 +620,7 @@ test_try_swap_bug1 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (6, 3, 4);
 
         before->match_length = 1;
         before->dice[0] = 6;
@@ -657,6 +658,8 @@ test_try_swap_bug1 ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -669,9 +672,7 @@ test_try_swap_bug2 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (5, 3, 4);
 
         before->match_length = 1;
         before->dice[0] = 5;
@@ -724,6 +725,8 @@ test_try_swap_bug2 ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -736,9 +739,7 @@ test_try_swap_bug3 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (5, 3, 4);
 
         before->match_length = 1;
         before->dice[0] = -5;
@@ -791,6 +792,8 @@ test_try_swap_bug3 ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -803,9 +806,7 @@ test_ordered_bear_off ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (3, 3, 4);
 
         before->match_length = 1;
         before->dice[0] = 3;
@@ -867,6 +868,8 @@ test_ordered_bear_off ()
 
         gibbon_position_free (after);
 
+        g_object_unref (expect);
+
         return retval;
 }
 
@@ -879,9 +882,7 @@ test_bear_off_bug1 ()
         GibbonMove *expect;
         gboolean retval = TRUE;
 
-        expect = g_alloca (sizeof expect->number
-                           + 4 * sizeof *expect->movements
-                           + sizeof expect->status);
+        expect = gibbon_move_new (1, 4, 4);
 
         before->match_length = 1;
         before->dice[0] = -1;
@@ -929,6 +930,8 @@ test_bear_off_bug1 ()
                 retval = FALSE;
 
         gibbon_position_free (after);
+
+        g_object_unref (expect);
 
         return retval;
 }

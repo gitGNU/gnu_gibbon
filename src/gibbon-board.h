@@ -28,6 +28,7 @@
 #include <glib-object.h>
 
 #include "gibbon-position.h"
+#include "gibbon-move.h"
 
 #define GIBBON_TYPE_BOARD \
         (gibbon_board_get_type ())

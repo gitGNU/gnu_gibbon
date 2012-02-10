@@ -63,6 +63,8 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-position.h"
+#include "gibbon-util.h"
+#include "gibbon-move.h"
 
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
@@ -309,18 +311,6 @@ gibbon_position_get_pip_count (const GibbonPosition *self,
 }
 
 GibbonMove *
-gibbon_position_alloc_move (gsize num_movements)
-{
-        GibbonMove *move = g_malloc (sizeof move->number
-                                     + num_movements * sizeof *move->movements
-                                     + sizeof move->status);
-        move->number = 0;
-        move->status = GIBBON_MOVE_LEGAL;
-
-        return move;
-}
-
-GibbonMove *
 gibbon_position_check_move (const GibbonPosition *_before,
                             const GibbonPosition *_after,
                             GibbonPositionSide side)
@@ -337,7 +327,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
         die1 = abs (_before->dice[0]);
         die2 = abs (_before->dice[1]);
-        move = gibbon_position_alloc_move (0);
+        move = gibbon_move_new (die1, die2, 0);
         move->status = GIBBON_MOVE_ILLEGAL;
 
         g_return_val_if_fail (die1 != 0, move);
@@ -411,7 +401,7 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
                         if (this_move->status == GIBBON_MOVE_LEGAL
                             || move->status == GIBBON_MOVE_ILLEGAL) {
-                                g_free (move);
+                                g_object_unref (move);
                                 move = this_move;
                                 iter->data = NULL;
                         }
@@ -426,7 +416,11 @@ gibbon_position_check_move (const GibbonPosition *_before,
                 }
                 iter = iter->next;
         }
-        g_list_foreach (found, (GFunc) g_free, NULL);
+        /*
+         * We cannot use g_object_unref here because we may have set the
+         * data pointer to NULL for certain items.
+         */
+        g_list_foreach (found, (GFunc) gibbon_safe_object_unref, NULL);
         g_list_free (found);
 
         if (move->status != GIBBON_MOVE_LEGAL)
@@ -741,7 +735,7 @@ gibbon_position_find_non_double (const gint *before,
         }
 
         if (!num_froms) {
-                move = gibbon_position_alloc_move (0);
+                move = gibbon_move_new (die1, die2, 0);
                 moves = g_list_append (moves, move);
 
                 return moves;
@@ -749,12 +743,12 @@ gibbon_position_find_non_double (const gint *before,
 
         /* Two possibilities.  */
         if (2 == num_froms) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die1);
                 gibbon_position_fill_movement (move, froms[1], die2);
                 moves = g_list_append (moves, move);
 
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die2);
                 gibbon_position_fill_movement (move, froms[1], die1);
                 moves = g_list_append (moves, move);
@@ -766,27 +760,27 @@ gibbon_position_find_non_double (const gint *before,
          * ways.
          */
         if (froms[0] > die1) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die1);
                 gibbon_position_fill_movement (move, froms[0] - die1, die2);
                 moves = g_list_append (moves, move);
         }
         if (froms[0] > die2) {
-                move = gibbon_position_alloc_move (2);
+                move = gibbon_move_new (die1, die2, 2);
                 gibbon_position_fill_movement (move, froms[0], die2);
                 gibbon_position_fill_movement (move, froms[0] - die2, die1);
                 moves = g_list_append (moves, move);
         }
 
-        move = gibbon_position_alloc_move (1);
+        move = gibbon_move_new (die1, die2, 1);
         gibbon_position_fill_movement (move, froms[0], die1);
         moves = g_list_append (moves, move);
 
-        move = gibbon_position_alloc_move (1);
+        move = gibbon_move_new (die1, die2, 1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
 
-        move = gibbon_position_alloc_move (2);
+        move = gibbon_move_new (die1, die2, 2);
         gibbon_position_fill_movement (move, froms[0], die1);
         gibbon_position_fill_movement (move, froms[0], die2);
         moves = g_list_append (moves, move);
@@ -812,7 +806,7 @@ gibbon_position_find_double (const gint *before,
 
         switch (num_froms) {
                 case 0:
-                        move = gibbon_position_alloc_move (0);
+                        move = gibbon_move_new (die, die, 0);
                         moves = g_list_append (moves, move);
 
                         return moves;
@@ -843,7 +837,7 @@ gibbon_position_find_double (const gint *before,
                 /* This may allocate too much but calculating the correct size
                  * would never pay out.
                  */
-                move = gibbon_position_alloc_move (4);
+                move = gibbon_move_new (die, die, 4);
                 is_bear_off = FALSE;
 
                 while (pattern) {
@@ -963,6 +957,11 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
 
         g_return_val_if_fail (side, FALSE);
 
+        if (side > 0)
+                side = GIBBON_POSITION_SIDE_WHITE;
+        else
+                side = GIBBON_POSITION_SIDE_BLACK;
+
         if (reverse) {
                 m = -1;
                 c = 24;
@@ -1036,27 +1035,55 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
                 }
         }
 
+        self->dice[0] = self->dice[1] = 0;
+        self->turn = -side;
+
         return TRUE;
 }
 
-gboolean
+gint
 gibbon_position_game_over (const GibbonPosition *position)
 {
-        guint num_checkers =
+        guint white_borne_off =
                 gibbon_position_get_borne_off (position,
                                                GIBBON_POSITION_SIDE_WHITE);
+        guint black_borne_off;
+        gint i;
+        guint cube = position->cube;
 
-        if (num_checkers >= 15)
-                return TRUE;
+        if (white_borne_off >= 15) {
+                black_borne_off =
+                        gibbon_position_get_borne_off (position,
+                                                    GIBBON_POSITION_SIDE_BLACK);
+                if (black_borne_off)
+                        return cube;
+                if (position->bar[1])
+                        return 3 * cube;
+                for (i = 0; i < 6; ++i)
+                        if (position->points[i])
+                                return 3 * cube;
+                return 2 * cube;
+        }
 
-        num_checkers =
+        black_borne_off =
                 gibbon_position_get_borne_off (position,
                                                GIBBON_POSITION_SIDE_BLACK);
 
-        if (num_checkers >= 15)
-                return TRUE;
+        if (black_borne_off >= 15) {
+                white_borne_off =
+                        gibbon_position_get_borne_off (position,
+                                                    GIBBON_POSITION_SIDE_WHITE);
+                if (white_borne_off)
+                        return -cube;
+                if (position->bar[0])
+                        return -3 * cube;
+                for (i = 23; i > 17; --i)
+                        if (position->points[i])
+                                return -3 * cube;
+                return -2 * cube;
+        }
 
-        return FALSE;
+        return 0;
 }
 
 static GRegex *re_adjacent1 = NULL;
@@ -1067,7 +1094,7 @@ static GRegex *re_dup4 = NULL;
 static GRegex *re_prune_intermediate = NULL;
 
 gchar *
-gibbon_position_format_move (GibbonPosition *self,
+gibbon_position_format_move (const GibbonPosition *self,
                              const GibbonMove *move,
                              GibbonPositionSide side,
                              gboolean reverse)
@@ -1225,10 +1252,8 @@ gibbon_position_format_move (GibbonPosition *self,
 }
 
 gchar *
-gibbon_position_fibs_move (GibbonPosition *self,
-                             const GibbonMove *move,
-                             GibbonPositionSide side,
-                             gboolean reverse)
+gibbon_position_fibs_move (const GibbonPosition *self, const GibbonMove *move,
+                           GibbonPositionSide side, gboolean reverse)
 {
         GString *string = g_string_new ("");
         const GibbonMovement *movement;
@@ -1316,4 +1341,27 @@ gibbon_position_dump_position (const GibbonPosition *self)
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_printerr ("Game info: %s\n", self->game_info);
         g_printerr ("Status: %s\n", self->status);
+}
+
+void
+gibbon_position_reset (GibbonPosition *self)
+{
+        self->turn = GIBBON_POSITION_SIDE_NONE;
+        memcpy (self->points, initial.points, sizeof self->points);
+        memset (self->bar, 0, sizeof self->bar);
+        memset (self->dice, 0, sizeof self->dice);
+        self->cube = 1;
+        self->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        self->resigned = 0;
+}
+
+GibbonPositionSide
+gibbon_position_match_over (const GibbonPosition *self)
+{
+        if (self->scores[0] >= self->match_length)
+                return GIBBON_POSITION_SIDE_WHITE;
+        else if (self->scores[1] >= self->match_length)
+                return GIBBON_POSITION_SIDE_BLACK;
+
+        return GIBBON_POSITION_SIDE_NONE;
 }

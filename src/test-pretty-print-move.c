@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include <gibbon-position.h>
+#include <gibbon-move.h>
 
 static gboolean test_cannot_move (void);
 static gboolean test_basic_move (void);
@@ -74,7 +75,7 @@ test_cannot_move ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (0);
+        GibbonMove *move = gibbon_move_new (3, 3, 0);
         gchar *expect = "-";
         gchar *got = NULL;
 
@@ -88,7 +89,7 @@ test_cannot_move ()
         g_free (got);
 
         gibbon_position_free (position);
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -98,7 +99,7 @@ test_basic_move ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (2);
+        GibbonMove *move = gibbon_move_new (3, 1, 2);
         gchar *expect;
         gchar *got = NULL;
 
@@ -146,7 +147,7 @@ test_basic_move ()
         g_free (got);
 
         gibbon_position_free (position);
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -156,7 +157,7 @@ test_double2 ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
+        GibbonMove *move = gibbon_move_new (6, 6, 4);
         gchar *expect;
         gchar *got = NULL;
 
@@ -194,7 +195,7 @@ test_double2 ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -204,7 +205,7 @@ test_double3 ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
+        GibbonMove *move = gibbon_move_new (6, 6, 4);
         gchar *expect;
         gchar *got = NULL;
 
@@ -242,7 +243,7 @@ test_double3 ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -252,7 +253,7 @@ test_double4 ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
+        GibbonMove *move = gibbon_move_new (6, 6, 4);
         gchar *expect;
         gchar *got = NULL;
 
@@ -290,7 +291,7 @@ test_double4 ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -300,7 +301,7 @@ test_from_bar ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (1);
+        GibbonMove *move = gibbon_move_new (6, 2, 1);
         gchar *expect;
         gchar *got = NULL;
 
@@ -319,7 +320,7 @@ test_from_bar ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -329,7 +330,7 @@ test_bear_off ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (1);
+        GibbonMove *move = gibbon_move_new (6, 3, 1);
         gchar *expect;
         gchar *got = NULL;
 
@@ -348,7 +349,7 @@ test_bear_off ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -358,7 +359,7 @@ test_black_move ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (2);
+        GibbonMove *move = gibbon_move_new (6, 3, 2);
         gchar *expect;
         gchar *got = NULL;
 
@@ -391,7 +392,7 @@ test_black_move ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -402,7 +403,7 @@ test_black_move_reverse ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (2);
+        GibbonMove *move = gibbon_move_new (5, 3, 2);
         gchar *expect;
         gchar *got = NULL;
 
@@ -435,7 +436,7 @@ test_black_move_reverse ()
 
         gibbon_position_free (position);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
@@ -445,7 +446,7 @@ test_double_bug1 ()
 {
         gboolean retval = TRUE;
         GibbonPosition *position = gibbon_position_new ();
-        GibbonMove *move = gibbon_position_alloc_move (4);
+        GibbonMove *move = gibbon_move_new (5, 5, 4);
         gchar *expect;
         gchar *got = NULL;
 
@@ -479,7 +480,7 @@ test_double_bug1 ()
         }
         g_free (got);
 
-        g_free (move);
+        g_object_unref (move);
 
         return retval;
 }
