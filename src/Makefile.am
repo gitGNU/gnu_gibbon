@@ -123,7 +123,7 @@ am__v_LEX_ = $(am__v_LEX_$(AM_DEFAULT_VERBOSITY))
 am__v_LEX_0 = @echo "  LEX   " $@;
 
 gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
-        $(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
+	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
