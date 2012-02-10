@@ -290,7 +290,7 @@ fill_match (void)
                 return NULL;
         }
 
-        action = GIBBON_GAME_ACTION (gibbon_resign_new (2));
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (8));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);

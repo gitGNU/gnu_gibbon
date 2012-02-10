@@ -55,8 +55,7 @@ gibbon_resign_class_init (GibbonResignClass *klass)
 
 /**
  * gibbon_resign_new:
- * @value: Value of the resignation (1 for normal, 2 for gammon,
- *         3 for backgammon).
+ * @value: Value of the resignation.
  *
  * Creates a new #GibbonResign.
  *
@@ -68,7 +67,6 @@ gibbon_resign_new (guint value)
         GibbonResign *self;
 
         g_return_val_if_fail (value != 0, NULL);
-        g_return_val_if_fail (value <= 3, NULL);
 
         self = g_object_new (GIBBON_TYPE_RESIGN, NULL);
 
