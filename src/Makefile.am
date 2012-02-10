@@ -198,7 +198,8 @@ check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_gary_wong_movegen test_crawford_detection \
         test_java_fibs_reader
 
-test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
+test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
+	test-html-entities.c
 test_build_match_SOURCES = $(common_SOURCES) test-build-match.c
 test_position_SOURCES = $(common_SOURCES) test-position.c
 test_moves_SOURCES = $(common_SOURCES) test-moves.c
