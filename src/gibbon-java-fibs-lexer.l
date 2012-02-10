@@ -45,8 +45,41 @@ static int yywrap ();
 	                                    s)
 %}
 
+%top{
+#define yy_create_buffer gibbon_java_fibs_lexer_create_buffer
+#define yy_delete_buffer gibbon_java_fibs_lexer_delete_buffer
+#define yy_flush_buffer gibbon_java_fibs_lexer_flush_buffer
+#define yy_scan_buffer gibbon_java_fibs_lexer_scan_buffer
+#define yy_scan_bytes gibbon_java_fibs_lexer_scan_bytes
+#define yy_scan_string gibbon_java_fibs_lexer_scan_string
+#define yy_switch_to_buffer gibbon_java_fibs_lexer_switch_to_buffer
+#define yyalloc gibbon_java_fibs_lexer_alloc
+#define yyfree gibbon_java_fibs_lexer_free
+#define yyget_debug gibbon_java_fibs_lexer_get_debug
+#define yyget_in gibbon_java_fibs_lexer_get_in
+#define yyget_leng gibbon_java_fibs_lexer_get_leng
+#define yyget_lineno gibbon_java_fibs_lexer_get_lineno
+#define yyget_out gibbon_java_fibs_lexer_get_out
+#define yyget_text gibbon_java_fibs_lexer_get_text
+#define yylex gibbon_java_fibs_lexer_lex
+#define yylex_destroy gibbon_java_fibs_lexer_lex_destroy
+#define yypop_buffer_state gibbon_java_fibs_lexer_pop_buffer_state
+#define yypush_buffer_state gibbon_java_fibs_lexer_push_buffer_state
+#define yyrealloc gibbon_java_fibs_lexer_realloc
+#define yyrestart gibbon_java_fibs_lexer_restart
+#define yyset_debug gibbon_java_fibs_lexer_set_debug
+#define yyset_in gibbon_java_fibs_lexer_set_in
+#define yyset_lineno gibbon_java_fibs_lexer_set_lineno
+#define yyset_out gibbon_java_fibs_lexer_set_out
+#define yy_flex_debug gibbon_java_fibs_lexer_flex_debug
+#define yyin gibbon_java_fibs_lexer_in
+#define yyleng gibbon_java_fibs_lexer_leng
+#define yylineno gibbon_java_fibs_lexer_lineno
+#define yyout gibbon_java_fibs_lexer_out
+#define yytext gibbon_java_fibs_lexer_text
+}
+
 %option yylineno
-%option prefix="gibbon_java_fibs_lexer_"
 %option nounput
 %option noinput
 

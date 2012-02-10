@@ -109,21 +109,11 @@ common_SOURCES = 			\
         gibbon-match-writer.c           \
         gibbon-java-fibs-writer.c       \
         gibbon-java-fibs-parser.y       \
-        gibbon-java-fibs-lexer.c        \
+        gibbon-java-fibs-lexer.l        \
         gibbon-jelly-fish-writer.c      \
         gibbon-sgf-writer.c
 
 AM_YFLAGS = -d -v
-
-LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
-LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
-        $(LIBTOOLFLAGS) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
-AM_V_LEX = $(am__v_LEX_$(V))
-am__v_LEX_ = $(am__v_LEX_$(AM_DEFAULT_VERBOSITY))
-am__v_LEX_0 = @echo "  LEX   " $@;
-
-gibbon-java-fibs-lexer.c: gibbon-java-fibs-lexer.l
-	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< lex.gibbon_java_fibs_lexer_.c $@ -- $(LEXCOMPILE)
 
 gibbon_SOURCES = gibbon.c $(common_SOURCES)
 
