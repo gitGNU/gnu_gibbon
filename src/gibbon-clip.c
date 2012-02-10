@@ -771,6 +771,7 @@ gibbon_clip_parse_clip (const gchar *line, gchar **tokens,
                 case GIBBON_CLIP_CODE_WHO_INFO_END:
                         if (1 == g_strv_length (tokens))
                                 return TRUE;
+                        break;
                 default:
                         break;
         }
