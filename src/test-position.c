@@ -158,24 +158,6 @@ test_compare (void)
                 retval = FALSE;
         }
 
-        def->players[0] = g_strdup ("foo");
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions with different white player do not differ"
-                            " technically.\n");
-                retval = FALSE;
-        }
-        g_free (def->players[1]);
-        def->players[0] = NULL;
-
-        def->players[1] = g_strdup ("foo");
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions with different black player do not differ"
-                            " technically.\n");
-                retval = FALSE;
-        }
-        g_free (def->players[1]);
-        def->players[1] = NULL;
-
         def->match_length = 7;
         if (gibbon_position_equals_technically (ref, def)) {
                 g_printerr ("Positions with different match lengths do not"
@@ -266,8 +248,8 @@ test_compare (void)
         def->may_double[1] = !def->may_double[1];
 
         def->game_info = g_strdup ("Crawford game");
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions with different game info do not differ"
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different game info do differ"
                             " technically.\n");
                 retval = FALSE;
         }
@@ -275,8 +257,8 @@ test_compare (void)
         def->game_info = NULL;
 
         def->status = g_strdup ("It is your turn.");
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions with different status do not differ"
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with different status do differ"
                             " technically.\n");
                 retval = FALSE;
         }
@@ -301,9 +283,9 @@ test_compare (void)
         def->resigned = 0;
 
         def->turn = GIBBON_POSITION_SIDE_BLACK;
-        if (gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions do not differ technically after turn"
-                            " changed although they shoul.\n");
+        if (!gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions do differ technically after turn"
+                            " changed although they should not.\n");
                 retval = FALSE;
         }
         def->turn = GIBBON_POSITION_SIDE_NONE;
@@ -337,6 +319,7 @@ test_apply_move (void)
         expect->points[7] = 2;
         expect->points[5] = 4;
         expect->points[4] = 2;
+        expect->turn = GIBBON_POSITION_SIDE_NONE;
         if (!gibbon_position_apply_move (got, move,
                                          GIBBON_POSITION_SIDE_WHITE, FALSE)) {
                 g_printerr ("Cannot apply white's 1) 31: 8/5 6/5.\n");

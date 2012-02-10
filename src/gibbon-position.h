@@ -106,10 +106,6 @@ typedef struct _GibbonPosition GibbonPosition;
 struct _GibbonPosition
 {
         guint match_length;
-        guint scores[2];
-
-        GibbonPositionSide turn;
-
         gint points[24];
 
         guint bar[2];
@@ -119,6 +115,16 @@ struct _GibbonPosition
         guint cube;
         gboolean may_double[2];
         GibbonPositionSide cube_turned;
+
+        guint scores[2];
+
+        /*
+         * All properties above this comment are considered `significant'.
+         * Significant differences lead to a termination of a currently
+         * running animation of a move.
+         */
+
+        GibbonPositionSide turn;
 
         gchar *players[2];
 

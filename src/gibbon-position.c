@@ -71,14 +71,14 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
 
 GibbonPosition initial = {
                 0,
-                { 0, 0 },
-                GIBBON_POSITION_SIDE_NONE,
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
                    5,  0,  0,  0, -3,  0, -5,  0,  0,  0,  0,  2 },
                 { 0, 0 },
                 { 0, 0 },
                 1,
                 { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE,
+                { 0, 0 },
+                GIBBON_POSITION_SIDE_NONE,
                 { NULL, NULL },
                 0,
                 { 0, 0, 0, 0 },
@@ -925,21 +925,26 @@ gboolean
 gibbon_position_equals_technically (const GibbonPosition *self,
                                     const GibbonPosition *other)
 {
+#define GIBBON_POSITION_DEBUG_EQUALS_TECHNICALLY 0
+#if GIBBON_POSITION_DEBUG_EQUALS_TECHNICALLY
+        if (!self && !other)
+                g_printerr ("*** !self && !other\n");
+#endif
         if (!self && !other)
                 return TRUE;
+#if GIBBON_POSITION_DEBUG_EQUALS_TECHNICALLY
+        if (!self)
+                g_printerr ("*** !self\n");
+#endif
         if (!self)
                 return FALSE;
+#if GIBBON_POSITION_DEBUG_EQUALS_TECHNICALLY
+        if (!other)
+                g_printerr ("*** !other\n");
+#endif
         if (!other)
                 return FALSE;
-        if (g_strcmp0 (self->players[0], other->players[0]))
-                return FALSE;
-        if (g_strcmp0 (self->players[1], other->players[1]))
-                return FALSE;
-        if (g_strcmp0 (self->game_info, other->game_info))
-                return FALSE;
-        if (g_strcmp0 (self->status, other->status))
-                return FALSE;
-        if (memcmp (self, other, (gpointer) &self->players[0] - (gpointer) self))
+        if (memcmp (self, other, (gpointer) &self->turn - (gpointer) self))
                 return FALSE;
 
         return TRUE;
