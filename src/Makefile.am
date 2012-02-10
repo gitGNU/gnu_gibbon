@@ -25,7 +25,7 @@ if MSDOS
 gibbon_LDFLAGS = -mwindows
 
 gibbon-res.o: gibbon.rc ../share/icons/application/gibbon.ico
-	$(WINDRES) -i gibbon.rc --input-format=rc -o $@ -O coff
+        $(WINDRES) -i gibbon.rc --input-format=rc -o $@ -O coff
 
 gibbon.rc: gibbon.rc.in
 
@@ -34,168 +34,169 @@ endif
 
 if GIBBON_GTK_MIGRATION_PRE_FLIGHT
 GIBBON_GTK_MIGRATION_CFLAGS =			\
-	-DGTK_DISABLE_SINGLE_INCLUDES	\
-	-DGDK_DISABLE_DEPRECATED	\
-	-DGTK_DISABLE_DEPRECATED	\
-	-DGSEAL_ENABLE
+        -DGTK_DISABLE_SINGLE_INCLUDES	\
+        -DGDK_DISABLE_DEPRECATED	\
+        -DGTK_DISABLE_DEPRECATED	\
+        -DGSEAL_ENABLE
 else
 GIBBON_GTK_MIGRATION_CFLAGS =
 endif
 
 AM_CPPFLAGS = 				\
-	-D_GNU_SOURCE			\
-	-I$(top_srcdir)			\
-	-I$(top_srcdir)/libsvg		\
-	-I$(top_srcdir)/libsvg-cairo	\
-	-I$(srcdir)			\
-	$(GIBBON_CFLAGS)		\
-	-DGIBBON_DATADIR=\""$(datadir)"\"	\
-	-DGIBBON_LIBDIR=\""$(libdir)"\"	\
-	-D_ISOC99_SOURCE		\
-	$(GIBBON_GTK_MIGRATION_CFLAGS)	\
-	-D_SVID_SOURCE
+        -D_GNU_SOURCE			\
+        -I$(top_srcdir)			\
+        -I$(top_srcdir)/libsvg		\
+        -I$(top_srcdir)/libsvg-cairo	\
+        -I$(srcdir)			\
+        $(GIBBON_CFLAGS)		\
+        -DGIBBON_DATADIR=\""$(datadir)"\"	\
+        -DGIBBON_LIBDIR=\""$(libdir)"\"	\
+        -D_ISOC99_SOURCE		\
+        $(GIBBON_GTK_MIGRATION_CFLAGS)	\
+        -D_SVID_SOURCE
 
 common_SOURCES = 			\
-	gibbon-position.c		\
-	gibbon-game.c           	\
-	gibbon-match.c          	\
-        gibbon-game-action.c            \
-        gibbon-movement.c               \
-	gibbon-util.c			\
-        gibbon-move.c                   \
+        gibbon-accept.c                 \
         gibbon-double.c                 \
         gibbon-drop.c                   \
-        gibbon-roll.c                   \
-        gibbon-take.c                   \
-        gibbon-resign.c                 \
-        gibbon-accept.c                 \
-        gibbon-reject.c                 \
-        gibbon-setup.c                  \
-        gibbon-match-reader.c           \
-        gibbon-java-fibs-reader.c       \
-        gibbon-match-writer.c           \
-        gibbon-java-fibs-writer.c       \
-        gibbon-java-fibs-parser.y       \
+        gibbon-game.c           	\
+        gibbon-game-action.c            \
         gibbon-java-fibs-lexer.l        \
+        gibbon-java-fibs-parser.y       \
+        gibbon-java-fibs-reader.c       \
+        gibbon-java-fibs-writer.c       \
         gibbon-jelly-fish-writer.c      \
+        gibbon-move.c                   \
+        gibbon-movement.c               \
+        gibbon-match.c          	\
+        gibbon-match-reader.c           \
+        gibbon-match-writer.c           \
+        gibbon-position.c		\
+        gibbon-reject.c                 \
+        gibbon-resign.c                 \
+        gibbon-roll.c                   \
+        gibbon-setup.c                  \
+        gibbon-take.c                   \
+        gibbon-util.c			\
         gibbon-sgf-writer.c
 
 AM_YFLAGS = -d -v
 
-gibbon_SOURCES = gibbon.c 		\
-	gibbon-app.c			\
-	gibbon-cairoboard.c		\
-	gibbon-connection.c		\
-	gibbon-player-list.c		\
-	gibbon-session.c		\
-	html-entities.c			\
-	svg-util.c			\
-	gibbon-game-chat.c		\
-	gibbon-archive.c		\
-	gibbon-java-fibs-importer.c	\
-	gibbon-fibs-message.c		\
-	gibbon-player-list-view.c	\
-	gibbon-connection-dialog.c	\
-	gibbon-signal.c			\
-	gibbon-server-console.c		\
-	gibbon-fibs-command.c		\
-	gibbon-shouts.c			\
-	gibbon-board.c			\
-	gibbon-chat-view.c		\
-	gibbon-chat.c			\
-	gibbon-help.c			\
-	gibbon-database.c		\
-	gibbon-reliability.c		\
-	gibbon-reliability-renderer.c	\
-	gibbon-clip.c			\
-	gibbon-inviter-list.c		\
-	gibbon-inviter-list-view.c	\
-	gibbon-saved-info.c		\
-	gibbon-client-icons.c		\
-	gibbon-geo-ip-updater.c		\
-	gibbon-country.c		\
-	gibbon-settings.c		\
-	gibbon-register-dialog.c	\
-	$(common_SOURCES)
+gibbon_SOURCES = 			\
+        gibbon.c 			\
+        gibbon-app.c			\
+        gibbon-archive.c		\
+        gibbon-board.c			\
+        gibbon-cairoboard.c		\
+        gibbon-chat.c			\
+        gibbon-chat-view.c		\
+        gibbon-client-icons.c		\
+        gibbon-clip.c			\
+        gibbon-connection.c		\
+        gibbon-connection-dialog.c	\
+        gibbon-country.c		\
+        gibbon-database.c		\
+        gibbon-fibs-command.c		\
+        gibbon-fibs-message.c		\
+        gibbon-game-chat.c		\
+        gibbon-help.c			\
+        gibbon-geo-ip-updater.c		\
+        gibbon-inviter-list.c		\
+        gibbon-inviter-list-view.c	\
+        gibbon-java-fibs-importer.c	\
+        gibbon-player-list.c		\
+        gibbon-player-list-view.c	\
+        gibbon-register-dialog.c	\
+        gibbon-reliability.c		\
+        gibbon-reliability-renderer.c	\
+        gibbon-saved-info.c		\
+        gibbon-server-console.c		\
+        gibbon-session.c		\
+        gibbon-settings.c		\
+        gibbon-shouts.c			\
+        gibbon-signal.c			\
+        html-entities.c			\
+        svg-util.c			\
+        $(common_SOURCES)
 
 gibbon_convert_SOURCES =                \
         gibbon-convert.c                \
-	$(common_SOURCES)
+        $(common_SOURCES)
 
 noinst_HEADERS =			\
-	gibbon-cairoboard.h		\
-	gibbon-connection.h		\
-	gibbon-game.h           	\
-	gibbon-match.h          	\
-	gibbon-player-list.h		\
-	gibbon-session.h		\
-	html-entities.h			\
-	svg-util.h			\
-	gibbon-game-chat.h		\
-	gibbon-archive.h		\
-	gibbon-java-fibs-importer.h	\
-	gibbon-fibs-message.h		\
-	gibbon-app.h			\
-	gibbon-player-list-view.h	\
-	gibbon-register-dialog.h	\
-	gibbon-connection-dialog.h	\
-	gibbon-signal.h			\
-	gibbon-server-console.h		\
-	gibbon-fibs-command.h		\
-	gibbon-shouts.h			\
-	gibbon-position.h		\
-	gibbon-board.h			\
-	gibbon-chat-view.h		\
-	gibbon-chat.h			\
-	gibbon-help.h			\
-	gibbon-database.h		\
-	gibbon-reliability.h		\
-	gibbon-reliability-renderer.h	\
-	gibbon-util.h			\
-	gibbon-clip.h			\
-	gibbon-inviter-list.h		\
-	gibbon-inviter-list-view.h	\
-	gibbon-saved-info.h		\
-	gibbon-client-icons.h		\
-	gibbon-geo-ip-updater.h		\
-	gibbon-country.h		\
-	gibbon-settings.h		\
-	gibbon-move.h			\
-	gibbon-movement.h		\
-	gibbon-game-action.h		\
-	gibbon-roll.h			\
-	gibbon-double.h			\
-	gibbon-drop.h			\
-	gibbon-take.h			\
-	gibbon-reject.h			\
-	gibbon-accept.h			\
-	gibbon-resign.h			\
-	gibbon-setup.h			\
-	gibbon-match-reader.h		\
-	gibbon-java-fibs-reader.h	\
-	gibbon-java-fibs-reader-priv.h	\
-	gibbon-match-writer.h		\
-	gibbon-java-fibs-writer.h	\
-	gibbon-jelly-fish-writer.h	\
-	gibbon-sgf-writer.h
+        gibbon-accept.h			\
+        gibbon-app.h			\
+        gibbon-archive.h		\
+        gibbon-board.h			\
+        gibbon-cairoboard.h		\
+        gibbon-chat.h			\
+        gibbon-chat-view.h		\
+        gibbon-client-icons.h		\
+        gibbon-clip.h			\
+        gibbon-connection.h		\
+        gibbon-connection-dialog.h	\
+        gibbon-country.h		\
+        gibbon-database.h		\
+        gibbon-double.h			\
+        gibbon-drop.h			\
+        gibbon-fibs-command.h		\
+        gibbon-fibs-message.h		\
+        gibbon-game.h           	\
+        gibbon-game-action.h		\
+        gibbon-game-chat.h		\
+        gibbon-geo-ip-updater.h		\
+        gibbon-help.h			\
+        gibbon-inviter-list.h		\
+        gibbon-inviter-list-view.h	\
+        gibbon-java-fibs-importer.h	\
+        gibbon-java-fibs-reader.h	\
+        gibbon-java-fibs-reader-priv.h	\
+        gibbon-java-fibs-writer.h	\
+        gibbon-jelly-fish-writer.h	\
+        gibbon-match.h          	\
+        gibbon-match-reader.h		\
+        gibbon-match-writer.h		\
+        gibbon-move.h			\
+        gibbon-movement.h		\
+        gibbon-player-list.h		\
+        gibbon-player-list-view.h	\
+        gibbon-position.h		\
+        gibbon-register-dialog.h	\
+        gibbon-reject.h			\
+        gibbon-reliability.h		\
+        gibbon-reliability-renderer.h	\
+        gibbon-resign.h			\
+        gibbon-roll.h			\
+        gibbon-saved-info.h		\
+        gibbon-server-console.h		\
+        gibbon-session.h		\
+        gibbon-settings.h		\
+        gibbon-setup.h			\
+        gibbon-sgf-writer.h		\
+        gibbon-shouts.h			\
+        gibbon-signal.h			\
+        gibbon-take.h			\
+        gibbon-util.h			\
+        html-entities.h			\
+        svg-util.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
-	$(GIBBON_LIBS) $(platform_libadd)
+        $(GIBBON_LIBS) $(platform_libadd)
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
-	test_pretty_print_move test_strsplit test_clip \
-	test_gary_wong_movegen test_crawford_detection \
-	test_java_fibs_reader
+        test_pretty_print_move test_strsplit test_clip \
+        test_gary_wong_movegen test_crawford_detection \
+        test_java_fibs_reader
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
-	test_clip test_pretty_print_move test_strsplit	\
-	test_gary_wong_movegen test_crawford_detection \
-	test_java_fibs_reader
+        test_clip test_pretty_print_move test_strsplit	\
+        test_gary_wong_movegen test_crawford_detection \
+        test_java_fibs_reader
 
 test_html_entities_SOURCES = $(common_SOURCES) test-html-entities.c
 test_build_match_SOURCES = $(common_SOURCES) test-build-match.c
