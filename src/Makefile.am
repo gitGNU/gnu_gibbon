@@ -144,6 +144,7 @@ noinst_HEADERS =			\
         gibbon-fibs-message.h		\
         gibbon-game.h           	\
         gibbon-game-action.h		\
+	gibbon-game-actions.h		\
         gibbon-game-chat.h		\
         gibbon-geo-ip-updater.h		\
         gibbon-help.h			\
