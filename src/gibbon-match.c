@@ -236,7 +236,7 @@ gibbon_match_get_current_position (const GibbonMatch *self)
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
-        game = self->priv->games->data;
+        game = gibbon_match_get_current_game (self);
 
         return gibbon_game_get_position (game);
 }
