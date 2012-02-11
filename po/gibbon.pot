@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-07 18:59+0200\n"
+"POT-Creation-Date: 2012-02-11 18:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -377,8 +377,7 @@ msgstr ""
 msgid "Trailing garbage"
 msgstr ""
 
-#: ../libgsgf/gsgf-collection.c:439 ../libgsgf/tests/test-empty.c:36
-#: ../libgsgf/tests/test-really-empty.c:36
+#: ../libgsgf/gsgf-collection.c:439
 #, c-format
 msgid "Empty SGF collections are not allowed"
 msgstr ""
@@ -403,8 +402,7 @@ msgstr ""
 msgid "%d:%d: Expected %s"
 msgstr ""
 
-#: ../libgsgf/gsgf-collection.c:720 ../libgsgf/gsgf-game-tree.c:231
-#: ../libgsgf/tests/test-write-empty.c:46
+#: ../libgsgf/gsgf-collection.c:720 ../libgsgf/gsgf-game-tree.c:234
 #, c-format
 msgid "Attempt to write an empty collection"
 msgstr ""
@@ -412,7 +410,7 @@ msgstr ""
 #: ../libgsgf/gsgf-color.c:130 ../libgsgf/gsgf-date.c:363
 #: ../libgsgf/gsgf-double.c:96 ../libgsgf/gsgf-empty.c:105
 #: ../libgsgf/gsgf-number.c:126 ../libgsgf/gsgf-real.c:164
-#: ../libgsgf/gsgf-result.c:285
+#: ../libgsgf/gsgf-result.c:286
 #, c-format
 msgid "Only one value allowed for property"
 msgstr ""
@@ -422,7 +420,7 @@ msgstr ""
 msgid "Unrecognized color identifier '%s'"
 msgstr ""
 
-#: ../libgsgf/gsgf-compose.c:168 ../libgsgf/gsgf-list-of.c:160
+#: ../libgsgf/gsgf-compose.c:169 ../libgsgf/gsgf-list-of.c:159
 #: ../libgsgf/gsgf-raw.c:144
 #, c-format
 msgid "Attempt to write empty property"
@@ -459,7 +457,6 @@ msgid "Empty value required"
 msgstr ""
 
 #: ../libgsgf/gsgf-flavor.c:974 ../libgsgf/gsgf-flavor.c:982
-#: ../libgsgf/tests/test-non-unique-points.c:38
 #, c-format
 msgid "Property '%s': "
 msgstr ""
@@ -582,57 +579,75 @@ msgstr ""
 msgid "Invalid point labels in property"
 msgstr ""
 
-#: ../libgsgf/gsgf-flavor.c:1776 ../libgsgf/tests/test-non-unique-points.c:37
+#: ../libgsgf/gsgf-flavor.c:1776
 #, c-format
 msgid "Points in list must be unique"
 msgstr ""
 
-#: ../libgsgf/gsgf-game-tree.c:448
+#: ../libgsgf/gsgf-game-tree.c:451
 #, c-format
 msgid "Method cook() called on something that is not a GSGFComponent."
 msgstr ""
 
-#: ../libgsgf/gsgf-game-tree.c:553
+#: ../libgsgf/gsgf-game-tree.c:579
 #, c-format
 msgid "Application name or version info missing."
 msgstr ""
 
-#: ../libgsgf/gsgf-game-tree.c:563
+#: ../libgsgf/gsgf-game-tree.c:589
 #, c-format
 msgid ""
 "Application name or version info must not contain linefeeds or carriage "
 "returns."
 msgstr ""
 
-#: ../libgsgf/gsgf-move-backgammon.c:124
+#: ../libgsgf/gsgf-move-backgammon.c:135
 #, c-format
 msgid "Empty move"
 msgstr ""
 
-#: ../libgsgf/gsgf-move-backgammon.c:139 ../libgsgf/gsgf-move-backgammon.c:158
+#: ../libgsgf/gsgf-move-backgammon.c:165 ../libgsgf/gsgf-move-backgammon.c:172
+#, c-format
+msgid "Invalid number %u on dice number %u"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:190
+#, c-format
+msgid "More then four checkers moved"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:198
+#, c-format
+msgid "Odd number of points"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:205
+#, c-format
+msgid "Invalid point combination %d-%d"
+msgstr ""
+
+#: ../libgsgf/gsgf-move-backgammon.c:273 ../libgsgf/gsgf-move-backgammon.c:293
 #, c-format
 msgid "Invalid move syntax '%s'"
 msgstr ""
 
-#: ../libgsgf/gsgf-move-backgammon.c:176
+#: ../libgsgf/gsgf-move-backgammon.c:311
 #, c-format
 msgid "Invalid move syntax"
 msgstr ""
 
-#: ../libgsgf/gsgf-node.c:222
+#: ../libgsgf/gsgf-node.c:236
 #, c-format
 msgid "Only upper case letters are allowed for property identifiers"
 msgstr ""
 
 #: ../libgsgf/gsgf-number.c:144 ../libgsgf/gsgf-real.c:122
-#: ../libgsgf/gsgf-real.c:182 ../libgsgf/tests/test-number.c:100
-#: ../libgsgf/tests/test-real.c:101 ../libgsgf/tests/test-real.c:119
+#: ../libgsgf/gsgf-real.c:182
 #, c-format
 msgid "Invalid number '%s'"
 msgstr ""
 
 #: ../libgsgf/gsgf-number.c:150 ../libgsgf/gsgf-real.c:188
-#: ../libgsgf/tests/test-number.c:118
 #, c-format
 msgid "Trailing garbage after number in '%s'"
 msgstr ""
@@ -814,30 +829,61 @@ msgid ""
 "It will be impossible to save your matches and other data."
 msgstr ""
 
-#: ../src/gibbon.c:39
+#: ../src/gibbon.c:44
 msgid "Path to data directory (developers only)"
 msgstr ""
 
-#: ../src/gibbon.c:40 ../src/gibbon.c:44
+#: ../src/gibbon.c:45 ../src/gibbon.c:49
 msgid "DIRECTORY"
 msgstr ""
 
-#: ../src/gibbon.c:43
+#: ../src/gibbon.c:48
 msgid "Path to pixmaps directory (developers only)"
 msgstr ""
 
-#: ../src/gibbon.c:159
+#: ../src/gibbon.c:52 ../src/gibbon-convert.c:72
+msgid "output version information and exit"
+msgstr ""
+
+#: ../src/gibbon.c:53 ../src/gibbon-convert.c:65 ../src/gibbon-convert.c:69
+msgid "FORMAT"
+msgstr ""
+
+#: ../src/gibbon.c:179
 msgid "- Gtk+ frontend for FIBS"
 msgstr ""
 
-#: ../src/gibbon.c:168
-#, c-format
-msgid "Run `%s --help' for more information!\n"
+#: ../src/gibbon.c:182 ../src/gibbon-convert.c:313
+msgid "Report bugs at https://savannah.nongnu.org/projects/gibbon."
 msgstr ""
 
-#: ../src/gibbon.c:191
+#: ../src/gibbon.c:211
 #, c-format
 msgid "Error setting PATH environment variable!\n"
+msgstr ""
+
+#: ../src/gibbon.c:222 ../src/gibbon-convert.c:367
+#, c-format, no-wrap
+msgid ""
+"Copyright (C) %s %s.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+msgstr ""
+
+#: ../src/gibbon.c:227 ../src/gibbon.c:228 ../src/gibbon-convert.c:372
+#: ../src/gibbon-convert.c:373
+msgid "Guido Flohr"
+msgstr ""
+
+#: ../src/gibbon.c:228 ../src/gibbon-convert.c:373
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#: ../src/gibbon.c:235 ../src/gibbon-convert.c:380
+#, c-format
+msgid "Try `%s --help' for more information!\n"
 msgstr ""
 
 #: ../src/gibbon-cairoboard.c:397
@@ -852,31 +898,31 @@ msgstr ""
 msgid "Error parsing board definition `%s'.\n"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1193
+#: ../src/gibbon-cairoboard.c:1173
 #, c-format
 msgid "Board definition `%s' does not have an element `%s'.\n"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1352
+#: ../src/gibbon-cairoboard.c:1332
 #, c-format
 msgid "%u-point match"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1355
+#: ../src/gibbon-cairoboard.c:1335
 msgid "Unlimited match"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1373 ../src/gibbon-cairoboard.c:1379
+#: ../src/gibbon-cairoboard.c:1353 ../src/gibbon-cairoboard.c:1359
 #, c-format
 msgid "Score: %u (%u-away)"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1385 ../src/gibbon-cairoboard.c:1389
+#: ../src/gibbon-cairoboard.c:1365 ../src/gibbon-cairoboard.c:1369
 #, c-format
 msgid "Score: %u"
 msgstr ""
 
-#: ../src/gibbon-cairoboard.c:1399 ../src/gibbon-cairoboard.c:1404
+#: ../src/gibbon-cairoboard.c:1379 ../src/gibbon-cairoboard.c:1384
 #, c-format
 msgid "Pips: %u (%+d)"
 msgstr ""
@@ -889,26 +935,26 @@ msgstr ""
 msgid "Really close?"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2100
+#: ../src/gibbon-clip.c:2101
 msgid "You cannot play two matches at once!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2185 ../src/gibbon-clip.c:2369
-#: ../src/gibbon-clip.c:2392
+#: ../src/gibbon-clip.c:2186 ../src/gibbon-clip.c:2370
+#: ../src/gibbon-clip.c:2393
 #, c-format
 msgid "Player `%s' is already playing with someone else!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2206
+#: ../src/gibbon-clip.c:2207
 #, c-format
 msgid "Player `%s' is not logged in!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2289
+#: ../src/gibbon-clip.c:2290
 msgid "Your saved match was corrupted on server.  Please start a new one!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2412
+#: ../src/gibbon-clip.c:2413
 #, c-format
 msgid "Player `%s' is now refusing matches!"
 msgstr ""
@@ -948,6 +994,139 @@ msgstr ""
 
 #: ../src/gibbon-connection-dialog.c:246
 msgid "Connection settings"
+msgstr ""
+
+#: ../src/gibbon-convert.c:56
+msgid "input filename or '-' for standard input"
+msgstr ""
+
+#: ../src/gibbon-convert.c:57 ../src/gibbon-convert.c:61
+msgid "FILENAME"
+msgstr ""
+
+#: ../src/gibbon-convert.c:60
+msgid "output filename or '-' for standard output"
+msgstr ""
+
+#: ../src/gibbon-convert.c:64
+msgid "input format (omit for automatic detection)"
+msgstr ""
+
+#: ../src/gibbon-convert.c:68
+msgid "output format (omit for automatic detection)"
+msgstr ""
+
+#: ../src/gibbon-convert.c:129
+msgid "The option `--from-format' is mandatory, when reading standard input."
+msgstr ""
+
+#: ../src/gibbon-convert.c:143
+msgid "The option `--to-format' is mandatory, when writing to standard output."
+msgstr ""
+
+#: ../src/gibbon-convert.c:149
+msgid "The output format is the same as the input format."
+msgstr ""
+
+#: ../src/gibbon-convert.c:180
+#, c-format
+msgid "%s: Empty or incomplete match file!\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:182
+msgid "standard input"
+msgstr ""
+
+#: ../src/gibbon-convert.c:208
+#, c-format
+msgid "%s: Error writing to `%s': %s!\n"
+msgstr ""
+
+#.
+#. * TRANSLATORS: The first argument is the program
+#. * name (gibbon-convert), and the second argument
+#. * is the error message.
+#.
+#: ../src/gibbon-convert.c:230
+#, c-format
+msgid "%s: %s.\n"
+msgstr ""
+
+#.
+#. * TRANSLATORS: The first argument is the program
+#. * name (gibbon-convert), the second is the
+#. * output filename, the third one is the actual
+#. * error message.
+#.
+#: ../src/gibbon-convert.c:249
+#, c-format
+msgid "%s: Error closing `%s': %s!\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:294
+msgid "- Gibbon match converter"
+msgstr ""
+
+#: ../src/gibbon-convert.c:295
+msgid "Convert popular backgammon match formats."
+msgstr ""
+
+#: ../src/gibbon-convert.c:298
+#, c-format
+msgid ""
+"Alternative usages:\n"
+" %s [OPTION ...] INPUTFILE\n"
+" %s [OPTION ...] INPUTFILE OUTPUTFILE\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:304
+msgid ""
+"Recognized values for FORMAT are 'SGF' for the Smart Game format (used by\n"
+"Gibbon and GNU backgammon), 'Jellyfish' and 'JavaFIBS'.  Formats are\n"
+"case-insensitve and you can abbreviate them as long as they are unique.\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:310
+msgid ""
+"For automatic detection, '.sgf' is expected for SGF, '.mat' for Jellyfish, "
+"and\n"
+"'match' for the internal format of JavaFIBS.\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:325
+#, c-format
+msgid "Run `%s --help' for more information!\n"
+msgstr ""
+
+#: ../src/gibbon-convert.c:333 ../src/gibbon-convert.c:341
+msgid ""
+"Either use the option `--input-file' or specify the input file as an "
+"argument."
+msgstr ""
+
+#: ../src/gibbon-convert.c:348
+msgid ""
+"Either use the option `--output-file' or specify the output file as an "
+"argument."
+msgstr ""
+
+#: ../src/gibbon-convert.c:355
+msgid "Too many arguments!"
+msgstr ""
+
+#: ../src/gibbon-convert.c:405
+#, c-format
+msgid "The file format `%c' is ambiguous."
+msgstr ""
+
+#: ../src/gibbon-convert.c:414
+#, c-format
+msgid "Unknown file format `%s'!"
+msgstr ""
+
+#: ../src/gibbon-convert.c:430 ../src/gibbon-convert.c:443
+#, c-format
+msgid "Cannot guess format of `%s'!"
 msgstr ""
 
 #. ad
@@ -2285,10 +2464,76 @@ msgstr ""
 msgid "Database failure"
 msgstr ""
 
-#: ../src/gibbon-database.c:730 ../src/gibbon-database.c:800
+#: ../src/gibbon-database.c:741 ../src/gibbon-database.c:812
 #, c-format
 msgid "Unknown data type %d!"
 msgstr ""
+
+#: ../src/gibbon-game.c:232 ../src/gibbon-game.c:293 ../src/gibbon-game.c:370
+#: ../src/gibbon-game.c:413 ../src/gibbon-game.c:453 ../src/gibbon-game.c:481
+#: ../src/gibbon-game.c:509 ../src/gibbon-game.c:541 ../src/gibbon-game.c:592
+msgid "Game is already over!"
+msgstr ""
+
+#: ../src/gibbon-game.c:248 ../src/gibbon-game.c:303
+msgid "This player is not on turn!"
+msgstr ""
+
+#: ../src/gibbon-game.c:257 ../src/gibbon-game.c:266
+msgid "The dice have already been rolled!"
+msgstr ""
+
+#: ../src/gibbon-game.c:311
+msgid "Move without a roll!"
+msgstr ""
+
+#: ../src/gibbon-game.c:327
+#, c-format
+msgid "%d%d: %s has moved %s."
+msgstr ""
+
+#: ../src/gibbon-game.c:336
+#, c-format
+msgid "%d%d: %s cannot move!"
+msgstr ""
+
+#: ../src/gibbon-game.c:379
+msgid "Double after dice have been rolled!"
+msgstr ""
+
+#: ../src/gibbon-game.c:386 ../src/gibbon-game.c:390
+#, c-format
+msgid "%s offers a double."
+msgstr ""
+
+#: ../src/gibbon-game.c:421 ../src/gibbon-game.c:461
+msgid "The cube has not been turned!"
+msgstr ""
+
+#: ../src/gibbon-game.c:429 ../src/gibbon-game.c:435
+#, c-format
+msgid "%s refuses the cube."
+msgstr ""
+
+#: ../src/gibbon-game.c:488
+msgid "Resignation without a value!"
+msgstr ""
+
+#: ../src/gibbon-game.c:522
+#, c-format
+msgid "%s rejects."
+msgstr ""
+
+#: ../src/gibbon-game.c:551
+msgid "Accept without resignation!"
+msgstr ""
+
+#: ../src/gibbon-game.c:561
+#, c-format
+msgid "%s resigns and gives up one point."
+msgid_plural "%s resigns and gives up %d points."
+msgstr[0] ""
+msgstr[1] ""
 
 #. TRANSLATORS: This is the FIBS `say' command!
 #: ../src/gibbon-game-chat.c:185
@@ -2459,6 +2704,30 @@ msgstr ""
 msgid "unknown"
 msgstr ""
 
+#: gibbon-java-fibs-parser.y:255 ../src/gibbon-java-fibs-parser.y:255
+msgid "Start and end point are equal!"
+msgstr ""
+
+#: gibbon-java-fibs-parser.y:266 ../src/gibbon-java-fibs-parser.y:266
+msgid "Point out of range (1-24)!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-reader.c:220
+msgid "[standard input]"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-reader.c:410 ../src/gibbon-java-fibs-reader.c:437
+msgid "Syntax error!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-reader.c:474
+msgid "No game in progress!"
+msgstr ""
+
+#: ../src/gibbon-match.c:169
+msgid "Match is already over!"
+msgstr ""
+
 #: ../src/gibbon-player-list-view.c:196
 msgid "Name"
 msgstr ""
@@ -2542,12 +2811,8 @@ msgstr ""
 msgid "<b>Reliability of player <i>%s</i></b>: unknown."
 msgstr ""
 
-#: ../src/gibbon-position.c:1085 ../src/gibbon-position.c:1090
+#: ../src/gibbon-position.c:1117 ../src/gibbon-position.c:1122
 msgid "invalid"
-msgstr ""
-
-#: ../src/gibbon-reliability-renderer.c:114
-msgid "Reliability of a player"
 msgstr ""
 
 #: ../src/gibbon-register-dialog.c:168
@@ -2610,6 +2875,10 @@ msgstr[1] ""
 #: ../src/gibbon-register-dialog.c:420
 msgid ""
 "It is not allowed to have more than one account per person.  Register anyway?"
+msgstr ""
+
+#: ../src/gibbon-reliability-renderer.c:114
+msgid "Reliability of a player"
 msgstr ""
 
 #: ../src/gibbon-server-console.c:427
@@ -2835,6 +3104,10 @@ msgstr ""
 
 #: ../src/gibbon-session.c:3209
 msgid "You must bring in checkers from the bar first!"
+msgstr ""
+
+#: ../src/gibbon-sgf-writer.c:137
+msgid "Empty matches cannot be written asSGF"
 msgstr ""
 
 #: ../src/svg-util.c:238 ../src/svg-util.c:997
