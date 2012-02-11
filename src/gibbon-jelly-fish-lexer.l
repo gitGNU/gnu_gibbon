@@ -27,6 +27,9 @@ static int yywrap ();
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "gibbon-jelly-fish-parser.h"
+#include "gibbon-jelly-fish-reader-priv.h"
+
 %}
 
 %top{

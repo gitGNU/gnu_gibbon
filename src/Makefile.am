@@ -67,6 +67,8 @@ common_SOURCES = 			\
         gibbon-java-fibs-reader.c       \
         gibbon-java-fibs-writer.c       \
 	gibbon-jelly-fish-lexer.l	\
+	gibbon-jelly-fish-parser.y	\
+	gibbon-jelly-fish-reader.c	\
         gibbon-jelly-fish-writer.c      \
         gibbon-move.c                   \
         gibbon-movement.c               \
@@ -155,6 +157,8 @@ noinst_HEADERS =			\
         gibbon-java-fibs-reader.h	\
         gibbon-java-fibs-reader-priv.h	\
         gibbon-java-fibs-writer.h	\
+	gibbon-jelly-fish-reader.h	\
+	gibbon-jelly-fish-reader-priv.h	\
         gibbon-jelly-fish-writer.h	\
         gibbon-match.h          	\
         gibbon-match-reader.h		\
