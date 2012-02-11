@@ -200,7 +200,7 @@ gibbon_match_add_game (GibbonMatch *self, GError **error)
         /*
          * Now check for a transition in the first game action.
          */
-        game = self->priv->games->data;
+        game = gibbon_match_get_current_game (self);
         if (gibbon_game_is_crawford (game))
                 goto no_crawford;
 
