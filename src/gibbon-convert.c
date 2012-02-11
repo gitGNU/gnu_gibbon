@@ -29,6 +29,7 @@
 #include <gdk/gdk.h>
 
 #include "gibbon-java-fibs-reader.h"
+#include "gibbon-jelly-fish-reader.h"
 #include "gibbon-jelly-fish-writer.h"
 #include "gibbon-sgf-writer.h"
 
@@ -168,7 +169,9 @@ main (int argc, char *argv[])
                                                                      NULL));
                 break;
         case GIBBON_CONVERT_FORMAT_JELLY_FISH:
-                g_printerr ("Reading JellyFish files is not yet implemented!\n");
+                reader =
+                   GIBBON_MATCH_READER (gibbon_jelly_fish_reader_new (NULL,
+                                                                      NULL));
                 return 1;
         }
 
