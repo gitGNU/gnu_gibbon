@@ -66,6 +66,7 @@ common_SOURCES = 			\
         gibbon-java-fibs-parser.y       \
         gibbon-java-fibs-reader.c       \
         gibbon-java-fibs-writer.c       \
+	gibbon-jelly-fish-lexer.l	\
         gibbon-jelly-fish-writer.c      \
         gibbon-move.c                   \
         gibbon-movement.c               \
