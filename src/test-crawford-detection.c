@@ -59,14 +59,15 @@ test_to_nil (void)
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 1st game: %s.\n", error->message);
+                g_printerr ("%s:%d: Cannot add 1st game: %s.\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
 
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("First game cannot be Crawford.\n");
+                g_printerr ("%s:%d: First game cannot be Crawford.\n");
                 return FALSE;
         }
 
@@ -74,7 +75,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message););
                 g_error_free (error);
                 return FALSE;
         }
@@ -83,7 +85,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -92,7 +95,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -101,7 +105,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -110,7 +115,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -119,7 +125,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -128,7 +135,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -138,16 +146,18 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
 
-        action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (2));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -156,7 +166,8 @@ test_to_nil (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -164,14 +175,15 @@ test_to_nil (void)
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
 
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("Crawford game to_nil not detected.\n");
+                g_printerr ("%s:%d: Crawford game to_nil not detected.\n");
                 return FALSE;
         }
 
@@ -179,7 +191,6 @@ test_to_nil (void)
 
         return TRUE;
 }
-
 
 static gboolean
 test_regular_match (void)
@@ -190,16 +201,18 @@ test_regular_match (void)
         GibbonGameAction *action;
         GError *error = NULL;
 
+        G_BREAKPOINT ();
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add 1st game: %s!\n", error->message);
+                g_printerr ("%s:%d: Cannot add 1st game: %s!\n",
+                            __FILE__, __LINE__, error->message);
                 return FALSE;
         }
 
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("First game cannot be Crawford at %s:%d.\n",
+                g_printerr ("%s:%d: First game cannot be Crawford.\n",
                             __FILE__, __LINE__);
                 return FALSE;
         }
@@ -208,7 +221,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -216,7 +230,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -224,13 +239,14 @@ test_regular_match (void)
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("False positive for Crawford at %s:%d.\n",
+                g_printerr ("%s:%d: False positive for Crawford.\n",
                             __FILE__, __LINE__);
                 return FALSE;
         }
@@ -238,7 +254,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -246,7 +263,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -254,13 +272,14 @@ test_regular_match (void)
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("False positive for Crawford at %s:%d.\n",
+                g_printerr ("%s:%d: False positive for Crawford.\n",
                             __FILE__, __LINE__);
                 return FALSE;
         }
@@ -269,7 +288,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -277,20 +297,22 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("Crawford not detected at %s:%d.\n",
+                g_printerr ("%s:%d: Crawford not detected.\n",
                             __FILE__, __LINE__);
                 return FALSE;
         }
@@ -299,7 +321,8 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -307,21 +330,23 @@ test_regular_match (void)
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
-                g_printerr ("Cannot add game: %s\n", error->message);
+                g_printerr ("%s:%d: Cannot add game: %s\n",
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
 
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("False positive for post-Crawford at %s:%d.\n",
+                g_printerr ("%s:%d: False positive for post-Crawford.\n",
                             __FILE__, __LINE__);
                 return FALSE;
         }
