@@ -202,7 +202,6 @@ test_regular_match (void)
         GibbonGameAction *action;
         GError *error = NULL;
 
-        G_BREAKPOINT ();
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
