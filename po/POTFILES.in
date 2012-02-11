@@ -81,9 +81,12 @@ src/gibbon-inviter-list.c
 src/gibbon-inviter-list-view.c
 src/gibbon-java-fibs-importer.c
 src/gibbon-java-fibs-lexer.c
+src/gibbon-java-fibs-lexer.l
 src/gibbon-java-fibs-parser.c
+src/gibbon-java-fibs-parser.y
 src/gibbon-java-fibs-reader.c
 src/gibbon-java-fibs-writer.c
+src/gibbon-jelly-fish-lexer.l
 src/gibbon-jelly-fish-writer.c
 src/gibbon-match.c
 src/gibbon-match-reader.c
@@ -111,13 +114,3 @@ src/gibbon-take.c
 src/gibbon-util.c
 src/html-entities.c
 src/svg-util.c
-src/test-build-match.c
-src/test-clip.c
-src/test-crawford-detection.c
-src/test-gary-wong-movegen.c
-src/test-html-entities.c
-src/test-java-fibs-reader.c
-src/test-moves.c
-src/test-position.c
-src/test-pretty-print-move.c
-src/test-strsplit.c
