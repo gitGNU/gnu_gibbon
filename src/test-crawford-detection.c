@@ -67,7 +67,8 @@ test_to_nil (void)
 
         if (gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("%s:%d: First game cannot be Crawford.\n");
+                g_printerr ("%s:%d: First game cannot be Crawford.\n",
+                            __FILE__, __LINE__);
                 return FALSE;
         }
 
@@ -76,7 +77,7 @@ test_to_nil (void)
                                      &error)) {
                 g_object_unref (match);
                 g_printerr ("%s:%d: Cannot add game action: %s\n",
-                            __FILE__, __LINE__, error->message););
+                            __FILE__, __LINE__, error->message);
                 g_error_free (error);
                 return FALSE;
         }
