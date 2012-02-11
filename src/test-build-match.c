@@ -360,7 +360,7 @@ check_match (const GibbonMatch *match)
         }
 
         if (8 != pos->scores[1]) {
-                g_printerr ("Expected white score of %u, got %u!\n",
+                g_printerr ("Expected black score of %u, got %u!\n",
                             8, pos->scores[1]);
                 retval = FALSE;
         }
