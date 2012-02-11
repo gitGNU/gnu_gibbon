@@ -560,7 +560,7 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                         g_dngettext (GETTEXT_PACKAGE,
                                      "%s resigns and gives up one point.",
                                      "%s resigns and gives up %d points.",
-                                     pos->cube),
+                                     resign->value),
                       other == GIBBON_POSITION_SIDE_BLACK ?
                                       pos->players[0] : pos->players[1],
                       pos->cube);
