@@ -184,7 +184,8 @@ test_to_nil (void)
 
         if (!gibbon_game_is_crawford (game)) {
                 g_object_unref (match);
-                g_printerr ("%s:%d: Crawford game to_nil not detected.\n");
+                g_printerr ("%s:%d: Crawford game to_nil not detected.\n",
+                            __FILE__, __LINE__);
                 return FALSE;
         }
 
@@ -302,6 +303,7 @@ test_regular_match (void)
                 g_error_free (error);
                 return FALSE;
         }
+
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
@@ -318,15 +320,6 @@ test_regular_match (void)
         }
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
-        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_printerr ("%s:%d: Cannot add game action: %s\n",
-                            __FILE__, __LINE__, error->message);
-                g_error_free (error);
-                return FALSE;
-        }
-        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
                                      &error)) {
                 g_object_unref (match);
@@ -335,6 +328,16 @@ test_regular_match (void)
                 g_error_free (error);
                 return FALSE;
         }
+        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_printerr ("%s:%d: Cannot add game action: %s\n",
+                            __FILE__, __LINE__, error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
         game = gibbon_match_add_game (match, &error);
         if (!game) {
                 g_object_unref (match);
