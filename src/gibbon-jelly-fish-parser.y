@@ -25,8 +25,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include "gibbon-java-fibs-parser.h"
-#include "gibbon-java-fibs-reader-priv.h"
+#include "gibbon-jelly-fish-parser.h"
+#include "gibbon-jelly-fish-reader-priv.h"
 
 #define reader _gibbon_jelly_fish_reader_instance
 
@@ -80,11 +80,32 @@ extern int gibbon_jelly_fish_lexer_lex (void);
 #define yytable    gibbon_jelly_fish_parser_yytable
 #define yycheck    gibbon_jelly_fish_parser_yycheck
 
+static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
+                                                       guint64 to);
 %}
+
+%union {
+	guint64 num;
+	gchar *name;
+}
+
+%token <num> INTEGER
+%token MATCH_LENGTH
 
 %%
 
 jelly_fish_file
-        : /* empty */
+        : prolog
         ;
+
+prolog
+	: INTEGER MATCH_LENGTH
+	;
+
 %%
+
+static guint
+gibbon_jelly_fish_parser_encode_movement (guint64 from, guint64 to)
+{
+	return 42;
+}
