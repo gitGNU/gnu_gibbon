@@ -193,17 +193,17 @@ LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
-        test_pretty_print_move test_strsplit test_clip \
-        test_gary_wong_movegen test_crawford_detection \
-        test_java_fibs_reader
+        test_clip test_pretty_print_move test_strsplit	\
+	test_crawford_detection test_java_fibs_reader test_jelly_fish_reader \
+        test_gary_wong_movegen
 TESTS_SH =
 
 TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
-        test_gary_wong_movegen test_crawford_detection \
-        test_java_fibs_reader
+	test_crawford_detection test_java_fibs_reader test_jelly_fish_reader \
+        test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
 	test-html-entities.c
@@ -216,6 +216,7 @@ test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
+test_jelly_fish_reader_SOURCES = $(common_SOURCES) test-jelly-fish-reader.c
 
 MATCH_FILES = complete.match
 
