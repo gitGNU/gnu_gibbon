@@ -1,5 +1,3 @@
-/* #define foobarbaz */
-
 /*
  * This file is part of gibbon.
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
