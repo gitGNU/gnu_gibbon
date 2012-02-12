@@ -83,9 +83,6 @@ extern int gibbon_jelly_fish_lexer_lex (void);
 static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
                                                        guint64 to);
 
-#define YYDEBUG 0
-yydebug = 0;
-
 %}
 
 %union {
