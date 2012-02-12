@@ -107,7 +107,6 @@ yydebug = 0;
 %token DROPS
 %token TAKES
 %token <num> WINS
-%token JUNK
 
 %%
 
@@ -152,21 +151,21 @@ action
 move
 	: INTEGER PAREN half_move half_move
 	| INTEGER PAREN half_move
+	| INTEGER PAREN WHITESPACE half_move
+	| INTEGER PAREN WHITESPACE WINS
 	| WHITESPACE WINS
 	| WINS
 	;
 
 half_move
-	: WHITESPACE
-	| ROLL movements
+	: ROLL movements
 	| DOUBLES
 	| TAKES
 	| DROPS
-	| WINS
 	;
 
-movements:
-	| WHITESPACE
+movements
+	: /* empty */
 	| movement
 	| movement movement
 	| movement movement movement
