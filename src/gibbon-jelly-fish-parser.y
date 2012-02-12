@@ -90,16 +90,36 @@ static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
 }
 
 %token <num> INTEGER
+%token <name> PLAYER
 %token MATCH_LENGTH
+%token GAME
+%token COLON
+%token JUNK
 
 %%
 
 jelly_fish_file
-        : prolog
+        : prolog game
         ;
 
 prolog
 	: INTEGER MATCH_LENGTH
+	;
+
+game
+	: game_prolog opponents
+	;
+
+game_prolog
+	: GAME INTEGER
+	;
+
+opponents
+	: opponent opponent
+	;
+
+opponent
+	: PLAYER COLON INTEGER
 	;
 
 %%
