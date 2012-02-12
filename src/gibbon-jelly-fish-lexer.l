@@ -201,7 +201,7 @@ static int yywrap ();
    
   /* Ignore all whitespace.  */
 <*>[ \t\r\n]			;
-<*>.				return JUNK;
+<*>.				return yytext[0];
 %%
 
 static int
