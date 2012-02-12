@@ -114,7 +114,6 @@ static guint gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to);
 %token SCORE
 %token BAR
 %token OFF
-%token JUNK
 
 %type <num>point
 %type <num>movement

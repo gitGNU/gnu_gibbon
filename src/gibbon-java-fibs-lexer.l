@@ -204,7 +204,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 <OPCODE>\n			;
 
   /* Ouch! */
-<OPCODE>.			return JUNK;
+<OPCODE>.			return yytext[0];
 
   /***************************************************************************
    * After the opcode we expect a colon and then a player name.  Complaints  *
@@ -215,7 +215,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 					yylval.name = alloc_name (yytext);
 					return PLAYER;
 				}
-<WHO>.|\n			return JUNK;
+<WHO>.|\n			return yytext[0];
 
   /***************************************************************************
    * What is following after the player name, is opcode-specific but         *
@@ -243,7 +243,7 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 					return PLAYER;
 				}
 <WHAT>\n			BEGIN (OPCODE);
-.				return JUNK;
+.				return yytext[0];
 %%
 
 static int
