@@ -75,14 +75,20 @@ static int yywrap ();
 %option yylineno
 %option nounput
 %option noinput
+%option case-insensitive
 
-%option debug
+/* %option debug */
 
 %x GAME_START
 %x OPPONENTS1
 %x OPPONENTS2
 %x OPPONENTS3
-%x ACTIONS
+%x OPPONENTS4
+%x OPPONENTS5
+%x OPPONENTS6
+%x MOVES
+%x HALF_MOVE
+%x ACTION
 
 %%
 
@@ -104,6 +110,11 @@ static int yywrap ();
 
                                 }
 
+  /***************************************************************************
+   * The line with the opponents.                                            
+   * This isr really a little awkward to use six start conditions for six
+   * simple tokens.  But I cannot see a simpler solution right now.
+   ***************************************************************************/
 <OPPONENTS1>[\x21-\xff]+	{
 					yylval.name = alloc_name (yytext);
 					BEGIN (OPPONENTS2);
@@ -113,18 +124,76 @@ static int yywrap ();
 					BEGIN (OPPONENTS3);
 					return COLON;
 				}
-<OPPONENTS3>0			{
-					yylval.num = (gint) 0;
-					BEGIN (OPPONENTS1); 
-					return INTEGER;
-                                }
-<OPPONENTS3>[1-9][0-9]*		{
+<OPPONENTS3>0|[1-9][0-9]*	{
 					yylval.num = (gint) g_ascii_strtoull 
 							     (yytext, NULL, 10);
-					BEGIN (OPPONENTS1); 
+					BEGIN (OPPONENTS4); 
 					return INTEGER;
                                 }
-<OPPONENTS3>\n			BEGIN (ACTIONS);
+<OPPONENTS4>[\x21-\xff]+	{
+					yylval.name = alloc_name (yytext);
+					BEGIN (OPPONENTS5);
+					return PLAYER;
+				}
+<OPPONENTS5>:			{
+					BEGIN (OPPONENTS6);
+					return COLON;
+				}
+<OPPONENTS6>0|[1-9][0-9]*	{
+					yylval.num = (gint) g_ascii_strtoull 
+							     (yytext, NULL, 10);
+					BEGIN (MOVES); 
+					return INTEGER;
+                                }
+
+<MOVES>[1-9][0-9]*		{
+					yylval.num = (gint) g_ascii_strtoull 
+							     (yytext, NULL, 10);
+					return INTEGER;
+                                }
+<MOVES>[)]			{
+					BEGIN (HALF_MOVE);
+					return PAREN;
+				}
+<HALF_MOVE>[ \t]{3,}		{
+					return WHITESPACE;
+				}
+<HALF_MOVE,ACTION>[1-6][1-6][ \t]*:	{
+					yylval.num = (yytext[0] - '0') * 10
+						+ yytext[1] - '0';
+					BEGIN (ACTION);
+					return ROLL; 
+				}
+<ACTION>[0-9]|1[0-9]|2[0-5]	{
+					yylval.num = (gint) g_ascii_strtoull 
+							     (yytext, NULL, 10);
+					return POINT;
+				}
+<ACTION>\/			{
+					return SLASH;
+				}
+<ACTION,HALF_MOVE>Doubles?[ \t]*=>[ \t]*[1-9][0-9]*	{
+					BEGIN (ACTION);
+					return DOUBLES;
+				}
+<ACTION,HALF_MOVE>Drops?	{
+					BEGIN (ACTION);
+					return DROPS;
+				}
+<ACTION,HALF_MOVE>Takes?	{
+					BEGIN (ACTION);
+					return TAKES;
+				}
+<ACTION,HALF_MOVE,MOVES>
+	Wins?[ \t]*[1-9][0-9]*[ \t]*points?([ \t]*and[ \t]*the[ \t]*match)? {
+					while (*yytext < '1' && *yytext > '9')
+						++yytext;
+					yylval.num = (gint) g_ascii_strtoull 
+							     (yytext, NULL, 10);
+					BEGIN (GAME_START);					
+					return WINS;
+				}
+<ACTION>\n			BEGIN (MOVES);
 
   /***************************************************************************
    * General rules, valid for all scanner states.                            *

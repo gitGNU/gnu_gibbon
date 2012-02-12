@@ -82,6 +82,10 @@ extern int gibbon_jelly_fish_lexer_lex (void);
 
 static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
                                                        guint64 to);
+
+#define YYDEBUG 0
+yydebug = 0;
+
 %}
 
 %union {
@@ -94,20 +98,34 @@ static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
 %token MATCH_LENGTH
 %token GAME
 %token COLON
+%token WHITESPACE
+%token PAREN
+%token <num> ROLL
+%token SLASH
+%token <num> POINT
+%token DOUBLES
+%token DROPS
+%token TAKES
+%token <num> WINS
 %token JUNK
 
 %%
 
 jelly_fish_file
-        : prolog game
+        : prolog games
         ;
 
 prolog
 	: INTEGER MATCH_LENGTH
 	;
 
+games
+	: game
+	| games game
+	;
+	
 game
-	: game_prolog opponents
+	: game_prolog opponents actions
 	;
 
 game_prolog
@@ -122,6 +140,43 @@ opponent
 	: PLAYER COLON INTEGER
 	;
 
+actions
+	: /* empty */
+	| action actions
+	;
+
+action
+	: move
+	;
+	
+move
+	: INTEGER PAREN half_move half_move
+	| INTEGER PAREN half_move
+	| WHITESPACE WINS
+	| WINS
+	;
+
+half_move
+	: WHITESPACE
+	| ROLL movements
+	| DOUBLES
+	| TAKES
+	| DROPS
+	| WINS
+	;
+
+movements:
+	| WHITESPACE
+	| movement
+	| movement movement
+	| movement movement movement
+	| movement movement movement movement
+	;
+
+movement
+	: POINT SLASH POINT
+	;
+	
 %%
 
 static guint
