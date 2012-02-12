@@ -53,6 +53,12 @@ libgsgf/gsgf-text.c
 libgsgf/gsgf-util.c
 libgsgf/gsgf-value.c
 libgsgf/libgsgf.c
+libgsgf/tests/test-empty.c
+libgsgf/tests/test-non-unique-points.c
+libgsgf/tests/test-number.c
+libgsgf/tests/test-real.c
+libgsgf/tests/test-really-empty.c
+libgsgf/tests/test-write-empty.c
 src/gibbon-accept.c
 src/gibbon-app.c
 src/gibbon-archive.c
@@ -87,6 +93,8 @@ src/gibbon-java-fibs-parser.y
 src/gibbon-java-fibs-reader.c
 src/gibbon-java-fibs-writer.c
 src/gibbon-jelly-fish-lexer.l
+src/gibbon-jelly-fish-parser.c
+src/gibbon-jelly-fish-reader.c
 src/gibbon-jelly-fish-writer.c
 src/gibbon-match.c
 src/gibbon-match-reader.c
