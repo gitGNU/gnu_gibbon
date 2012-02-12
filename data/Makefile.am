@@ -38,5 +38,5 @@ EXTRA_DIST = \
 
 CLEANFILES = \
 	$(desktop_DATA) \
-	$(schemas_DATA)
+	$(gsettings_SCHEMAS)
 
