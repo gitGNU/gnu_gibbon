@@ -62,12 +62,12 @@ common_SOURCES = 			\
         gibbon-drop.c                   \
         gibbon-game.c           	\
         gibbon-game-action.c            \
-        gibbon-java-fibs-lexer.l        \
         gibbon-java-fibs-parser.y       \
+        gibbon-java-fibs-lexer.l        \
         gibbon-java-fibs-reader.c       \
         gibbon-java-fibs-writer.c       \
-	gibbon-jelly-fish-lexer.l	\
 	gibbon-jelly-fish-parser.y	\
+	gibbon-jelly-fish-lexer.l	\
 	gibbon-jelly-fish-reader.c	\
         gibbon-jelly-fish-writer.c      \
         gibbon-move.c                   \
