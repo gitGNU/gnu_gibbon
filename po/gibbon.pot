@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-07 18:59+0200\n"
+"POT-Creation-Date: 2012-02-26 16:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2305,7 +2305,7 @@ msgstr ""
 msgid "Whisper"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:184
+#: ../src/gibbon-geo-ip-updater.c:187
 #, c-format
 msgid ""
 "Your database used for locating other players geographically is more than "
@@ -2316,7 +2316,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:202
+#: ../src/gibbon-geo-ip-updater.c:205
 #, c-format
 msgid ""
 "The database used for locating other players geographically that was "
@@ -2329,42 +2329,42 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:271
+#: ../src/gibbon-geo-ip-updater.c:282
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:294
+#: ../src/gibbon-geo-ip-updater.c:305
 msgid "Update Geo IP database"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:312
+#: ../src/gibbon-geo-ip-updater.c:323
 #, c-format
 msgid "Opening `%s' ..."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:355
+#: ../src/gibbon-geo-ip-updater.c:366
 #, c-format
 msgid "Cannot open `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:364
+#: ../src/gibbon-geo-ip-updater.c:375
 #, c-format
 msgid "Reading `%s'."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:409
+#: ../src/gibbon-geo-ip-updater.c:420
 #, c-format
 msgid "Error reading `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:686
+#: ../src/gibbon-geo-ip-updater.c:697
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:692
+#: ../src/gibbon-geo-ip-updater.c:703
 #, c-format
 msgid "%s: line %u: Unexpected end of line!"
 msgstr ""
