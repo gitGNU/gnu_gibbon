@@ -62,12 +62,12 @@ common_SOURCES = 			\
         gibbon-drop.c                   \
         gibbon-game.c           	\
         gibbon-game-action.c            \
-        gibbon-java-fibs-parser.y       \
         gibbon-java-fibs-lexer.l        \
+        gibbon-java-fibs-parser.y       \
         gibbon-java-fibs-reader.c       \
         gibbon-java-fibs-writer.c       \
-	gibbon-jelly-fish-parser.y	\
 	gibbon-jelly-fish-lexer.l	\
+	gibbon-jelly-fish-parser.y	\
 	gibbon-jelly-fish-reader.c	\
         gibbon-jelly-fish-writer.c      \
         gibbon-move.c                   \
@@ -186,6 +186,11 @@ noinst_HEADERS =			\
         gibbon-util.h			\
         html-entities.h			\
         svg-util.h
+
+# These dependencies are not automatically detected by GNU autotools.
+# See https://savannah.nongnu.org/bugs/?35578.
+gibbon-java-fibs-lexer.o: gibbon-java-fibs-parser.h
+gibbon-jelly-fish-lexer.o: gibbon-jelly-fish-parser.h
 
 AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
