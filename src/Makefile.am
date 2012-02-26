@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = color-tests
 
 platform_libadd =
 
-if MSDOS
+if WIN32
 gibbon-res.o: gibbon.rc ../share/icons/application/gibbon.ico
 	$(WINDRES) -i gibbon.rc --input-format=rc -o $@ -O coff
 
@@ -137,7 +137,7 @@ AM_LDFLAGS = -export-dynamic
 LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 	$(GIBBON_LIBS) $(platform_libadd)
 
-if MSDOS
+if WIN32
 gibbon_LDFLAGS = -mwindows
 endif
 

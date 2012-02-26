@@ -33,19 +33,19 @@ AC_CANONICAL_HOST
 
 AM_MAINTAINER_MODE
 
-AC_MSG_CHECKING([for MS-DOS])
+AC_MSG_CHECKING([for native Windows])
 case "$host" in
 	*-*-mingw*)
 		AC_CHECK_TOOL(WINDRES, windres)
-		gibbon_native_msdos=yes
+		gibbon_native_win32=yes
         	;;
 	*)
-		gibbon_native_msdos=no
+		gibbon_native_win32=no
 		;;
 esac
-AC_MSG_RESULT([$gibbon_native_msdos])
-AM_CONDITIONAL(MSDOS, test x$gibbon_native_msdos = xyes)
-dnl Under MS-DOS files have a version number separated by comma.  It is
+AC_MSG_RESULT([$gibbon_native_win32])
+AM_CONDITIONAL(WIN32, test x$gibbon_native_win32 = xyes)
+dnl Under Windows files have a version number separated by comma.  It is
 dnl important to increase that with every new version.
 GIBBON_COMMA_VERSION=["]gibbon_major_version","gibbon_minor_version","gibbon_micro_version["]
 AC_SUBST(GIBBON_COMMA_VERSION)
@@ -62,7 +62,7 @@ esac
 AC_MSG_RESULT([$platform_osx])
 AM_CONDITIONAL(OSX, test x$platform_osx = xyes)
 
-AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_msdos$platform_osx = xnono)
+AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_win32$platform_osx = xnono)
 
 AC_ARG_ENABLE(gtk3-migration,
               AC_HELP_STRING([--enable-gtk3-migration],
@@ -125,7 +125,7 @@ AC_CHECK_LIB(jpeg, jpeg_start_decompress,
     test_jpeg=ok,
     AC_MSG_ERROR([jpeg library not found]))
 
-if test $gibbon_native_msdos = no; then
+if test $gibbon_native_win32 = no; then
   AC_CHECK_FUNC(res_query, ,
     [AC_CHECK_LIB(resolv, res_query, [],
       [ save_libs="$LIBS"
@@ -187,8 +187,8 @@ AC_CONFIG_FILES([
     docs/reference/libgsgf/Makefile
     docs/reference/libgsgf/version.xml
     help/Makefile
-    msdos/Makefile
-    msdos/gibbon.iss
+    win32/Makefile
+    win32/gibbon.iss
     share/Makefile
     share/icons/Makefile
     share/icons/application/Makefile

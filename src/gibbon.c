@@ -176,8 +176,8 @@ parse_command_line (int argc, char *argv[])
 
 #ifdef G_OS_WIN32
 /*
- * Under MS-DOS shared libraries are searched in $PATH.  We have to make sure
- * that gconfd-2 finds its libraries.  
+ * Under Windows, shared libraries are searched in $PATH.  We have to make
+ * sure that gtk helper programs find their libraries.
  */
 void
 setup_path (const gchar *installdir)
