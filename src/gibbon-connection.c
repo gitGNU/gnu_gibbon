@@ -358,7 +358,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonServerConsole *console;
         GibbonSession *session;
         GibbonApp *app;
-        gsize offset;
+        gsize i, eaten = 0;
 
         if (!self || !GIBBON_IS_CONNECTION (self))
                 return;
@@ -390,18 +390,24 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         self->priv->read_buf[bytes_read] = 0;
 
         /*
-         * FIBS sends telnet sequences for turning echoing on and off.
+         * Filter out all 8 bit data, for example telnet echo will
+         * and echo wont.
          */
-        if (self->priv->read_buf[0] == 255
-            && (self->priv->read_buf[1] == 251
-                || self->priv->read_buf[1] == 252)
-            && self->priv->read_buf[2] == 1) {
-                offset = 3;
-        } else {
-                offset = 0;
+        for (i = 0; i < bytes_read; ++i) {
+                if (self->priv->read_buf[i] < '\n'
+                    || (self->priv->read_buf[i] > '\n' 
+                        && self->priv->read_buf[i] < ' ')
+                    || self->priv->read_buf[i] >= 127) {
+                        ++eaten;
+                } else if (eaten) {
+                        self->priv->read_buf[i - eaten] = 
+                                self->priv->read_buf[i];
+                }
         }
+        self->priv->read_buf[i - eaten] = 0;
+
         self->priv->in_buffer = g_strconcat (head,
-                                             self->priv->read_buf + offset,
+                                             self->priv->read_buf,
                                              NULL);
         g_free (head);
 
