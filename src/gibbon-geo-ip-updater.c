@@ -162,6 +162,9 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
         gint64 last_update;
         gint reply;
         gboolean download = FALSE;
+#ifdef G_OS_WIN32
+        gchar *win32_dir;
+#endif
 
         self->priv->app = app;
         self->priv->database = database;
@@ -249,8 +252,16 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
                 self->priv->file = g_file_new_for_uri (GEO_IP_DEFAULT_URI);
                 self->priv->uri = g_strdup (GEO_IP_DEFAULT_URI);
         } else {
+
+#ifdef G_OS_WIN32
+                win32_dir =
+                    g_win32_get_package_installation_directory_of_module (NULL);
+                self->priv->uri = g_build_filename (win32_dir, "share", PACKAGE,
+                                                    "ip2country.csv.gz", NULL);
+#else
                 self->priv->uri = g_build_filename (GIBBON_DATADIR, PACKAGE,
                                                     "ip2country.csv.gz", NULL);
+#endif                                                    
                 self->priv->file = g_file_new_for_path (self->priv->uri);
         }
 

@@ -97,7 +97,7 @@ gibbon_help_show_help (GObject *emitter, const GibbonApp *app)
         uri = _("http://www.gibbon.bg/gibbon/docs/gibbon/en/index.html.en");
 #ifdef G_OS_WIN32
         /*
-         * gtk_show_uri() fails to open web pages under MS-DOS.  This should
+         * gtk_show_uri() fails to open web pages under Windows.  This should
          * be fixed in glib.  If gibbon requires a glib version that fixes
          * the bug of gtk_show_uri(), the gibbon bug #35457 (see
          * http://savannah.nongnu.org/bugs/?35457) should be closed. 

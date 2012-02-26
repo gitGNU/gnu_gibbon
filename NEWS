@@ -1,3 +1,11 @@
+Version 0.1.2
+=============
+
+Version 0.1.2 is another bugfix release.
+
+* Fixed bugs:
+  #35582
+
 Version 0.1.1
 =============
 
@@ -5,7 +13,7 @@ Version 0.1.1 is a mainly a bugfix release.
 
 * Point labels are now updated dynamically
 
-* Online help will now be displayed under MS-DOS.
+* Online help will now be displayed under Windows.
 
 * Fixed bugs:
   #35002

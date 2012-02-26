@@ -1,7 +1,7 @@
 This directory contains stuff needed to build an executable installer
-image for MS-DOS ("Windows 32-bit").
+image for Windows.
 
-The MS-DOS port of Gibbon is currently maintained by yours truly,
+The Windows port of Gibbon is currently maintained by yours truly,
 Guido Flohr (guido@imperia.net).  I am far from being an expert for
 this task.  You can contribute to Gibbon by taking over maintainership
 for this subdirectory of Gibbon.

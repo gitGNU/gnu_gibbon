@@ -21,7 +21,7 @@ noinst_LIBRARIES = libgsgf.a
 
 platform_libadd =
 
-if MSDOS
+if WIN32
 platform_libadd += -ldnsapi -lws2_32
 endif
 

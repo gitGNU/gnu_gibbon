@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = color-tests
 
 platform_libadd =
 
-if MSDOS
+if WIN32
 gibbon_LDFLAGS = -mwindows
 
 gibbon-res.o: gibbon.rc ../share/icons/application/gibbon.ico
