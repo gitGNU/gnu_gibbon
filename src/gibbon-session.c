@@ -2803,11 +2803,13 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
-                if (mail) {
+                if (mail && *mail) {
                         gibbon_connection_queue_command (self->priv->connection,
                                                          FALSE,
                                                          "address %s",
                                                          mail);
+                } else {
+                        self->priv->expect_address = FALSE;
                 }
                 g_free (mail);
         } else {
