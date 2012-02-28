@@ -194,6 +194,7 @@ gsgf_game_tree_add_child
 gsgf_game_tree_add_node
 gsgf_game_tree_get_children
 gsgf_game_tree_get_flavor
+gsgf_game_tree_get_last_node
 gsgf_game_tree_get_nodes
 gsgf_game_tree_get_parent
 gsgf_game_tree_set_application
@@ -257,6 +258,8 @@ gsgf_move_backgammon_is_regular
 gsgf_move_backgammon_is_take
 gsgf_move_backgammon_new
 gsgf_move_backgammon_new_from_raw
+gsgf_move_backgammon_new_from_string
+gsgf_move_backgammon_new_regular
 <SUBSECTION Standard>
 GSGF_IS_MOVE_BACKGAMMON
 GSGF_IS_MOVE_BACKGAMMON_CLASS
@@ -369,6 +372,7 @@ gsgf_property_get_type
 <TITLE>GSGFRaw</TITLE>
 GSGFRaw
 GSGFRawClass
+gsgf_raw_add_value
 gsgf_raw_get_number_of_values
 gsgf_raw_get_value
 gsgf_raw_new
@@ -492,6 +496,8 @@ gsgf_text_get_type
 
 <SECTION>
 <FILE>gsgf-util</FILE>
+gsgf_ascii_dtostring
+gsgf_threads_init
 gsgf_util_read_simple_text
 gsgf_util_read_text
 </SECTION>
