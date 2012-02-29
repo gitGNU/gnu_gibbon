@@ -359,8 +359,9 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonSession *session;
         GibbonApp *app;
         gsize offset;
+        bytes_read = g_input_stream_read_finish (input_stream, result, &error);
 
-        if (!self || !GIBBON_IS_CONNECTION (self))
+        if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) || !self || !GIBBON_IS_CONNECTION (self))
                 return;
 
         app = self->priv->app;
@@ -370,8 +371,6 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         if (self->priv->read_cancellable)
                 g_object_unref (self->priv->read_cancellable);
         self->priv->read_cancellable = NULL;
-
-        bytes_read = g_input_stream_read_finish (input_stream, result, &error);
 
         if (bytes_read < 0) {
                 g_signal_emit (self, signals[NETWORK_ERROR], 0,
