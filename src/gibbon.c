@@ -94,8 +94,8 @@ main (int argc, char *argv[])
 
         if (!g_thread_supported ()) {
                 g_thread_init (NULL);
+                gdk_threads_init ();
 	}
-        gdk_threads_init ();
         gsgf_threads_init ();
 
         gtk_init (&argc, &argv);
