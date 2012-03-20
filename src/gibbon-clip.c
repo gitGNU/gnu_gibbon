@@ -912,6 +912,7 @@ gibbon_clip_parse_clip_who_info (const gchar *line, gchar **tokens,
         gint64 i;
         gdouble d;
         gchar *s;
+		gsize l;
 
         if (13 != g_strv_length (tokens))
                 return FALSE;
@@ -955,6 +956,15 @@ gibbon_clip_parse_clip_who_info (const gchar *line, gchar **tokens,
                 return FALSE;
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_TIMESTAMP,
                                          i);
+
+
+        /*
+         * fibs.com appends an asterisk to IP addresses of certain mobile phone
+         * clients.
+         */		
+        l = strlen (tokens[10]);
+        if ('*' == tokens[10][l - 1])
+            tokens[10][l - 1] = 0;
 
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             tokens[10]);
