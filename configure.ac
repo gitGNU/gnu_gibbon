@@ -107,7 +107,7 @@ m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
 m4_define(gibbon_libpng_requirement, [libpng >= 0.23])
 m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
 m4_define(gibbon_sqlite3_requirement, [sqlite3 >= 3.6.19])
-m4_define(gibbon_zlib_requirement, [zlib >= 1.2.5])
+m4_define(gibbon_zlib_requirement, [zlib >= 1.2.3])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_librsvg_requirement
