@@ -1781,8 +1781,12 @@ gibbon_cairoboard_on_2button_press (GibbonCairoboard *self,
         if (event->button != 1)
                 return FALSE;
 
-        x = event->x;
-        y = event->y;
+        x = event->x - self->priv->translate_x;
+        y = event->y - self->priv->translate_y;
+        if (self->priv->scale) {
+                x /= self->priv->scale;
+                y /= self->priv->scale;
+        }
 
         cube = self->priv->cube;
         if (x >= cube->x && x <= cube->x + cube->width) {
