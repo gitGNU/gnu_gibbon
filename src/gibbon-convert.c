@@ -29,6 +29,7 @@
 #include <gdk/gdk.h>
 
 #include "gibbon-java-fibs-reader.h"
+#include "gibbon-java-fibs-writer.h"
 #include "gibbon-jelly-fish-reader.h"
 #include "gibbon-jelly-fish-writer.h"
 #include "gibbon-sgf-writer.h"
@@ -91,6 +92,13 @@ static GibbonConvertFormat guess_format_from_filename (const gchar *name);
 int
 main (int argc, char *argv[])
 {	
+        GibbonMatchReader *reader;
+        GibbonMatchWriter *writer;
+        GibbonMatch *match;
+        GFile *file = NULL;
+        GFileOutputStream *fout;
+        GOutputStream *out;
+        GError *error = NULL;
 #ifdef G_OS_WIN32
         gchar *win32_dir =
                 g_win32_get_package_installation_directory_of_module (NULL);
@@ -99,13 +107,6 @@ main (int argc, char *argv[])
 #else
         init_i18n ();
 #endif
-        GibbonMatchReader *reader;
-        GibbonMatchWriter *writer;
-        GibbonMatch *match;
-        GFile *file = NULL;
-        GFileOutputStream *fout;
-        GOutputStream *out;
-        GError *error = NULL;
 
         g_type_init ();
 
@@ -194,8 +195,8 @@ main (int argc, char *argv[])
                 writer = GIBBON_MATCH_WRITER (gibbon_sgf_writer_new ());
                 break;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
-                g_printerr ("Writing JavaFIBS files is not yet implemented!\n");
-                return 1;
+                writer = GIBBON_MATCH_WRITER (gibbon_java_fibs_writer_new ());
+                break;
         case GIBBON_CONVERT_FORMAT_JELLY_FISH:
                 writer = GIBBON_MATCH_WRITER (gibbon_jelly_fish_writer_new ());
                 break;
