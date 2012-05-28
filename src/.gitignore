@@ -2,5 +2,15 @@ gobject-skeleton.c
 gobject-skeleton.h
 gibbon
 gibbon.exe
+gibbon-convert
+gibbon-convert.exe
 gibbon.rc
 test_*
+gibbon-java-fibs-lexer.c
+gibbon-java-fibs-parser.c
+gibbon-java-fibs-parser.h
+gibbon-java-fibs-parser.output
+gibbon-jelly-fish-lexer.c
+gibbon-jelly-fish-parser.c
+gibbon-jelly-fish-parser.h
+gibbon-jelly-fish-parser.output
