@@ -187,6 +187,7 @@ struct _GibbonSessionPrivate {
         gboolean expect_boardstyle;
         gboolean set_boardstyle;
         gboolean expect_saved;
+        gboolean saved_finished;
         gboolean expect_notify;
         GSList *expect_who_infos;
         GSList *expect_saved_counts;
@@ -234,6 +235,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->expect_boardstyle = FALSE;
         self->priv->set_boardstyle = FALSE;
         self->priv->expect_saved = FALSE;
+        self->priv->saved_finished = FALSE;
         self->priv->expect_notify = FALSE;
         self->priv->expect_who_infos = NULL;
         self->priv->expect_saved_counts = NULL;
@@ -621,22 +623,25 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_show_toggle (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SHOW_START_SAVED:
-                if (self->priv->expect_saved)
-                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
-                else
+                if (self->priv->saved_finished)
                         retval = -1;
+                else
+                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                self->priv->expect_saved = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
+                self->priv->expect_saved = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
-                if (self->priv->expect_saved) {
+                if (self->priv->expect_saved)
                         gibbon_session_check_expect_queues (self, TRUE);
+                if (self->priv->saved_finished)
                         retval = -1;
-                } else {
-                        retval = GIBBON_CLIP_CODE_SHOW_SAVED_NONE;
-                }
+                else
+                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
                 self->priv->expect_saved = FALSE;
+                self->priv->saved_finished = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
@@ -2222,12 +2227,10 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         gibbon_inviter_list_update_has_saved (self->priv->inviter_list,
                                               opponent, TRUE);
 
-        /*
-         * We always display saved games in the server console.  This is not
-         * really a feature but necessary since we cannot find out the end
-         * of the saved games list.
-         */
-        return -1;
+        if (self->priv->saved_finished)
+                return -1;
+        else
+                return GIBBON_CLIP_CODE_SHOW_SAVED;
 }
 
 static gint
@@ -2809,6 +2812,7 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
         GSettings *settings;
         gchar *mail;
         struct GibbonSessionSavedCountCallbackInfo *info;
+        gboolean saved_finished = TRUE;
 
         if (!force && self->priv->timeout_id)
                 return;
@@ -2818,10 +2822,12 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                                                  self->priv->set_boardstyle,
                                                  "set boardstyle 3");
                 self->priv->set_boardstyle = TRUE;
+                saved_finished = FALSE;
         } else if (self->priv->expect_saved) {
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "show saved");
+                saved_finished = FALSE;
         } else if (self->priv->expect_notify) {
                 gibbon_connection_queue_command (self->priv->connection, TRUE,
                                                  "toggle notify");
@@ -2848,8 +2854,11 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                 }
                 g_free (mail);
         } else {
+                self->priv->saved_finished = TRUE;
                 return;
         }
+
+        self->priv->saved_finished = saved_finished;
 
         if (!self->priv->timeout_id)
                 self->priv->timeout_id =
