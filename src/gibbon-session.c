@@ -1532,6 +1532,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 gibbon_position_free (pos);
         }
 
+        pos = self->priv->position;
         if (pos->may_double[0]
             && !pos->dice[0]
             && self->priv->position->turn == GIBBON_POSITION_SIDE_WHITE)
