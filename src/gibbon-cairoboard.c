@@ -617,7 +617,7 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
 
         self->priv->translate_x = translate_x;
         self->priv->translate_y = translate_y;
-        self->priv->scale = 1;
+        self->priv->scale = scale;
 
         cairo_translate (cr, translate_x, translate_y);
         cairo_scale (cr, scale, scale);
