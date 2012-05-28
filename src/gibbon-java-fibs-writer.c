@@ -75,6 +75,7 @@ static gboolean gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
                                               GibbonPositionSide side,
                                               GibbonMove *move,
                                               const GibbonMatch *match,
+                                              gboolean swap,
                                               GError **error);
 
 static void 
@@ -198,7 +199,9 @@ gibbon_java_fibs_writer_write_game (const GibbonJavaFIBSWriter *self,
                                 continue;
                         if (!gibbon_java_fibs_writer_move (self, out, side,
                                                            GIBBON_MOVE (action),
-                                                           match, error))
+                                                           match,
+                                                           game_number % 2,
+                                                           error))
                                 return FALSE;
                         opening = FALSE;
                 }
@@ -237,7 +240,7 @@ static gboolean
 gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
                               GOutputStream *out,
                               GibbonPositionSide side, GibbonMove *move,
-                              const GibbonMatch *match,
+                              const GibbonMatch *match, gboolean noswap,
                               GError **error)
 {
         gchar *buffer;
@@ -246,9 +249,11 @@ gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
         gint from, to;
         const gchar *lead, *tail;
 
-        buffer = g_strdup_printf ("1:%s:",
+        buffer = g_strdup_printf ("%u:%s:%s",
+                                  move->number ? 1 : 15,
                                   side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
+                                  "You" : gibbon_match_get_black (match),
+                                  move->number ? "" : " ");
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
@@ -259,8 +264,8 @@ gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
 
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
-                from = 25 - movement->from;
-                to = 25 - movement->to;
+                from = noswap ? movement->from : 25 - movement->from;
+                to = noswap ? movement->to : 25 - movement->to;
                 if (side == GIBBON_POSITION_SIDE_WHITE) {
                         lead = "";
                         tail = " ";
