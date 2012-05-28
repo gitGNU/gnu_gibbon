@@ -1876,19 +1876,20 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         else
                 side = GIBBON_POSITION_SIDE_BLACK;
 
-        move = g_alloca (sizeof move->number
-                         + num_moves * sizeof *move->movements
-                         + sizeof move->status);
-        move->number = 0;
+        move = gibbon_move_new (0, 0, num_moves);
 
         for (i = 0; i < num_moves; ++i) {
                 movement = move->movements + move->number++;
                 if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                          &movement->from))
+                                          &movement->from)) {
+                        g_object_unref (move);
                         return -1;
+                }
                 if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
-                                          &movement->to))
+                                          &movement->to)) {
+                        g_object_unref (move);
                         return -1;
+                }
         }
 
         pretty_move = gibbon_position_format_move (self->priv->position, move,
@@ -1919,6 +1920,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                                 self->priv->watching,
                                                 pretty_move);
         } else {
+                g_object_unref (move);
                 return -1;
         }
 
@@ -1942,6 +1944,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                     g_strdup_printf (_("Error applying move %s to position.\n"),
                                      pretty_move);
                 g_free (pretty_move);
+                g_object_unref (move);
                 return -1;
         }
         g_free (pretty_move);
@@ -1960,6 +1963,8 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                            -self->priv->position->turn,
                                            target_position);
         }
+
+        g_object_unref (move);
 
         return GIBBON_CLIP_CODE_MOVES;
 }
