@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-11 18:38+0200\n"
+"POT-Creation-Date: 2012-05-28 11:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -377,7 +377,8 @@ msgstr ""
 msgid "Trailing garbage"
 msgstr ""
 
-#: ../libgsgf/gsgf-collection.c:439
+#: ../libgsgf/gsgf-collection.c:439 ../libgsgf/tests/test-empty.c:36
+#: ../libgsgf/tests/test-really-empty.c:36
 #, c-format
 msgid "Empty SGF collections are not allowed"
 msgstr ""
@@ -403,6 +404,7 @@ msgid "%d:%d: Expected %s"
 msgstr ""
 
 #: ../libgsgf/gsgf-collection.c:720 ../libgsgf/gsgf-game-tree.c:234
+#: ../libgsgf/tests/test-write-empty.c:46
 #, c-format
 msgid "Attempt to write an empty collection"
 msgstr ""
@@ -457,6 +459,7 @@ msgid "Empty value required"
 msgstr ""
 
 #: ../libgsgf/gsgf-flavor.c:974 ../libgsgf/gsgf-flavor.c:982
+#: ../libgsgf/tests/test-non-unique-points.c:38
 #, c-format
 msgid "Property '%s': "
 msgstr ""
@@ -579,7 +582,7 @@ msgstr ""
 msgid "Invalid point labels in property"
 msgstr ""
 
-#: ../libgsgf/gsgf-flavor.c:1776
+#: ../libgsgf/gsgf-flavor.c:1776 ../libgsgf/tests/test-non-unique-points.c:37
 #, c-format
 msgid "Points in list must be unique"
 msgstr ""
@@ -642,12 +645,14 @@ msgid "Only upper case letters are allowed for property identifiers"
 msgstr ""
 
 #: ../libgsgf/gsgf-number.c:144 ../libgsgf/gsgf-real.c:122
-#: ../libgsgf/gsgf-real.c:182
+#: ../libgsgf/gsgf-real.c:182 ../libgsgf/tests/test-number.c:100
+#: ../libgsgf/tests/test-real.c:101 ../libgsgf/tests/test-real.c:119
 #, c-format
 msgid "Invalid number '%s'"
 msgstr ""
 
 #: ../libgsgf/gsgf-number.c:150 ../libgsgf/gsgf-real.c:188
+#: ../libgsgf/tests/test-number.c:118
 #, c-format
 msgid "Trailing garbage after number in '%s'"
 msgstr ""
@@ -841,11 +846,11 @@ msgstr ""
 msgid "Path to pixmaps directory (developers only)"
 msgstr ""
 
-#: ../src/gibbon.c:52 ../src/gibbon-convert.c:72
+#: ../src/gibbon.c:52 ../src/gibbon-convert.c:73
 msgid "output version information and exit"
 msgstr ""
 
-#: ../src/gibbon.c:53 ../src/gibbon-convert.c:65 ../src/gibbon-convert.c:69
+#: ../src/gibbon.c:53 ../src/gibbon-convert.c:66 ../src/gibbon-convert.c:70
 msgid "FORMAT"
 msgstr ""
 
@@ -853,7 +858,7 @@ msgstr ""
 msgid "- Gtk+ frontend for FIBS"
 msgstr ""
 
-#: ../src/gibbon.c:182 ../src/gibbon-convert.c:313
+#: ../src/gibbon.c:182 ../src/gibbon-convert.c:316
 msgid "Report bugs at https://savannah.nongnu.org/projects/gibbon."
 msgstr ""
 
@@ -862,7 +867,7 @@ msgstr ""
 msgid "Error setting PATH environment variable!\n"
 msgstr ""
 
-#: ../src/gibbon.c:222 ../src/gibbon-convert.c:367
+#: ../src/gibbon.c:222 ../src/gibbon-convert.c:370
 #, c-format, no-wrap
 msgid ""
 "Copyright (C) %s %s.\n"
@@ -871,17 +876,17 @@ msgid ""
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 
-#: ../src/gibbon.c:227 ../src/gibbon.c:228 ../src/gibbon-convert.c:372
-#: ../src/gibbon-convert.c:373
+#: ../src/gibbon.c:227 ../src/gibbon.c:228 ../src/gibbon-convert.c:375
+#: ../src/gibbon-convert.c:376
 msgid "Guido Flohr"
 msgstr ""
 
-#: ../src/gibbon.c:228 ../src/gibbon-convert.c:373
+#: ../src/gibbon.c:228 ../src/gibbon-convert.c:376
 #, c-format
 msgid "Written by %s.\n"
 msgstr ""
 
-#: ../src/gibbon.c:235 ../src/gibbon-convert.c:380
+#: ../src/gibbon.c:235 ../src/gibbon-convert.c:383
 #, c-format
 msgid "Try `%s --help' for more information!\n"
 msgstr ""
@@ -935,26 +940,26 @@ msgstr ""
 msgid "Really close?"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2101
+#: ../src/gibbon-clip.c:2111
 msgid "You cannot play two matches at once!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2186 ../src/gibbon-clip.c:2370
-#: ../src/gibbon-clip.c:2393
+#: ../src/gibbon-clip.c:2196 ../src/gibbon-clip.c:2380
+#: ../src/gibbon-clip.c:2403
 #, c-format
 msgid "Player `%s' is already playing with someone else!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2207
+#: ../src/gibbon-clip.c:2217
 #, c-format
 msgid "Player `%s' is not logged in!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2290
+#: ../src/gibbon-clip.c:2300
 msgid "Your saved match was corrupted on server.  Please start a new one!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2413
+#: ../src/gibbon-clip.c:2423
 #, c-format
 msgid "Player `%s' is now refusing matches!"
 msgstr ""
@@ -963,11 +968,11 @@ msgstr ""
 msgid "End-of-file while receiving data from server."
 msgstr ""
 
-#: ../src/gibbon-connection.c:516
+#: ../src/gibbon-connection.c:522
 msgid "Authentication failed."
 msgstr ""
 
-#: ../src/gibbon-connection.c:656
+#: ../src/gibbon-connection.c:662
 #, c-format
 msgid "Error connecting to `%s' port %u: %s.\n"
 msgstr ""
@@ -996,48 +1001,48 @@ msgstr ""
 msgid "Connection settings"
 msgstr ""
 
-#: ../src/gibbon-convert.c:56
+#: ../src/gibbon-convert.c:57
 msgid "input filename or '-' for standard input"
 msgstr ""
 
-#: ../src/gibbon-convert.c:57 ../src/gibbon-convert.c:61
+#: ../src/gibbon-convert.c:58 ../src/gibbon-convert.c:62
 msgid "FILENAME"
 msgstr ""
 
-#: ../src/gibbon-convert.c:60
+#: ../src/gibbon-convert.c:61
 msgid "output filename or '-' for standard output"
 msgstr ""
 
-#: ../src/gibbon-convert.c:64
+#: ../src/gibbon-convert.c:65
 msgid "input format (omit for automatic detection)"
 msgstr ""
 
-#: ../src/gibbon-convert.c:68
+#: ../src/gibbon-convert.c:69
 msgid "output format (omit for automatic detection)"
 msgstr ""
 
-#: ../src/gibbon-convert.c:129
+#: ../src/gibbon-convert.c:130
 msgid "The option `--from-format' is mandatory, when reading standard input."
 msgstr ""
 
-#: ../src/gibbon-convert.c:143
+#: ../src/gibbon-convert.c:144
 msgid "The option `--to-format' is mandatory, when writing to standard output."
 msgstr ""
 
-#: ../src/gibbon-convert.c:149
+#: ../src/gibbon-convert.c:150
 msgid "The output format is the same as the input format."
 msgstr ""
 
-#: ../src/gibbon-convert.c:180
+#: ../src/gibbon-convert.c:183
 #, c-format
 msgid "%s: Empty or incomplete match file!\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:182
+#: ../src/gibbon-convert.c:185
 msgid "standard input"
 msgstr ""
 
-#: ../src/gibbon-convert.c:208
+#: ../src/gibbon-convert.c:211
 #, c-format
 msgid "%s: Error writing to `%s': %s!\n"
 msgstr ""
@@ -1047,7 +1052,7 @@ msgstr ""
 #. * name (gibbon-convert), and the second argument
 #. * is the error message.
 #.
-#: ../src/gibbon-convert.c:230
+#: ../src/gibbon-convert.c:233
 #, c-format
 msgid "%s: %s.\n"
 msgstr ""
@@ -1058,20 +1063,20 @@ msgstr ""
 #. * output filename, the third one is the actual
 #. * error message.
 #.
-#: ../src/gibbon-convert.c:249
+#: ../src/gibbon-convert.c:252
 #, c-format
 msgid "%s: Error closing `%s': %s!\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:294
+#: ../src/gibbon-convert.c:297
 msgid "- Gibbon match converter"
 msgstr ""
 
-#: ../src/gibbon-convert.c:295
+#: ../src/gibbon-convert.c:298
 msgid "Convert popular backgammon match formats."
 msgstr ""
 
-#: ../src/gibbon-convert.c:298
+#: ../src/gibbon-convert.c:301
 #, c-format
 msgid ""
 "Alternative usages:\n"
@@ -1079,52 +1084,52 @@ msgid ""
 " %s [OPTION ...] INPUTFILE OUTPUTFILE\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:304
+#: ../src/gibbon-convert.c:307
 msgid ""
 "Recognized values for FORMAT are 'SGF' for the Smart Game format (used by\n"
 "Gibbon and GNU backgammon), 'Jellyfish' and 'JavaFIBS'.  Formats are\n"
 "case-insensitve and you can abbreviate them as long as they are unique.\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:310
+#: ../src/gibbon-convert.c:313
 msgid ""
 "For automatic detection, '.sgf' is expected for SGF, '.mat' for Jellyfish, "
 "and\n"
 "'match' for the internal format of JavaFIBS.\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:325
+#: ../src/gibbon-convert.c:328
 #, c-format
 msgid "Run `%s --help' for more information!\n"
 msgstr ""
 
-#: ../src/gibbon-convert.c:333 ../src/gibbon-convert.c:341
+#: ../src/gibbon-convert.c:336 ../src/gibbon-convert.c:344
 msgid ""
 "Either use the option `--input-file' or specify the input file as an "
 "argument."
 msgstr ""
 
-#: ../src/gibbon-convert.c:348
+#: ../src/gibbon-convert.c:351
 msgid ""
 "Either use the option `--output-file' or specify the output file as an "
 "argument."
 msgstr ""
 
-#: ../src/gibbon-convert.c:355
+#: ../src/gibbon-convert.c:358
 msgid "Too many arguments!"
 msgstr ""
 
-#: ../src/gibbon-convert.c:405
+#: ../src/gibbon-convert.c:408
 #, c-format
 msgid "The file format `%c' is ambiguous."
 msgstr ""
 
-#: ../src/gibbon-convert.c:414
+#: ../src/gibbon-convert.c:417
 #, c-format
 msgid "Unknown file format `%s'!"
 msgstr ""
 
-#: ../src/gibbon-convert.c:430 ../src/gibbon-convert.c:443
+#: ../src/gibbon-convert.c:433 ../src/gibbon-convert.c:446
 #, c-format
 msgid "Cannot guess format of `%s'!"
 msgstr ""
@@ -2550,7 +2555,7 @@ msgstr ""
 msgid "Whisper"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:184
+#: ../src/gibbon-geo-ip-updater.c:187
 #, c-format
 msgid ""
 "Your database used for locating other players geographically is more than "
@@ -2561,7 +2566,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:202
+#: ../src/gibbon-geo-ip-updater.c:205
 #, c-format
 msgid ""
 "The database used for locating other players geographically that was "
@@ -2574,42 +2579,42 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:271
+#: ../src/gibbon-geo-ip-updater.c:282
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:294
+#: ../src/gibbon-geo-ip-updater.c:305
 msgid "Update Geo IP database"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:312
+#: ../src/gibbon-geo-ip-updater.c:323
 #, c-format
 msgid "Opening `%s' ..."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:355
+#: ../src/gibbon-geo-ip-updater.c:366
 #, c-format
 msgid "Cannot open `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:364
+#: ../src/gibbon-geo-ip-updater.c:375
 #, c-format
 msgid "Reading `%s'."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:409
+#: ../src/gibbon-geo-ip-updater.c:420
 #, c-format
 msgid "Error reading `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:686
+#: ../src/gibbon-geo-ip-updater.c:697
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:692
+#: ../src/gibbon-geo-ip-updater.c:703
 #, c-format
 msgid "%s: line %u: Unexpected end of line!"
 msgstr ""
@@ -2704,23 +2709,24 @@ msgstr ""
 msgid "unknown"
 msgstr ""
 
-#: gibbon-java-fibs-parser.y:255 ../src/gibbon-java-fibs-parser.y:255
+#: gibbon-java-fibs-parser.y:254 ../src/gibbon-java-fibs-parser.y:254
 msgid "Start and end point are equal!"
 msgstr ""
 
-#: gibbon-java-fibs-parser.y:266 ../src/gibbon-java-fibs-parser.y:266
+#: gibbon-java-fibs-parser.y:265 ../src/gibbon-java-fibs-parser.y:265
 msgid "Point out of range (1-24)!"
 msgstr ""
 
-#: ../src/gibbon-java-fibs-reader.c:220
+#: ../src/gibbon-java-fibs-reader.c:220 ../src/gibbon-jelly-fish-reader.c:212
 msgid "[standard input]"
 msgstr ""
 
 #: ../src/gibbon-java-fibs-reader.c:410 ../src/gibbon-java-fibs-reader.c:437
+#: ../src/gibbon-jelly-fish-reader.c:402 ../src/gibbon-jelly-fish-reader.c:429
 msgid "Syntax error!"
 msgstr ""
 
-#: ../src/gibbon-java-fibs-reader.c:474
+#: ../src/gibbon-java-fibs-reader.c:474 ../src/gibbon-jelly-fish-reader.c:466
 msgid "No game in progress!"
 msgstr ""
 
@@ -3012,97 +3018,97 @@ msgstr ""
 msgid "Timeout during during registration!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2838 ../src/gibbon-session.c:2886
+#: ../src/gibbon-session.c:2840 ../src/gibbon-session.c:2888
 msgid "Unexpected reply from server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2849 ../src/gibbon-session.c:2901
+#: ../src/gibbon-session.c:2851 ../src/gibbon-session.c:2903
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2945
+#: ../src/gibbon-session.c:2947
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2951
+#: ../src/gibbon-session.c:2953
 #, c-format
 msgid "Registration failure: %s!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2985
+#: ../src/gibbon-session.c:2987
 msgid "Registration successful!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2987
+#: ../src/gibbon-session.c:2989
 msgid ""
 "Please do not forget your password! It cannot be recovered.\n"
 "You have to connect to the server again to start playing."
 msgstr ""
 
-#: ../src/gibbon-session.c:3036
+#: ../src/gibbon-session.c:3038
 msgid "This will end your saved match!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3037
+#: ../src/gibbon-session.c:3039
 msgid ""
 "You still have a saved match of unlimited length with that player.  If you "
 "accept the invitation, your saved match will be terminated.\n"
 "Do you really want to accept the invitation?"
 msgstr ""
 
-#: ../src/gibbon-session.c:3061
+#: ../src/gibbon-session.c:3063
 msgid "Decline Invitation"
 msgstr ""
 
-#: ../src/gibbon-session.c:3065
+#: ../src/gibbon-session.c:3067
 msgid "Decline with message"
 msgstr ""
 
-#: ../src/gibbon-session.c:3067
+#: ../src/gibbon-session.c:3069
 msgid "Ignore"
 msgstr ""
 
-#: ../src/gibbon-session.c:3168
+#: ../src/gibbon-session.c:3170
 msgid "Illegal move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3173
+#: ../src/gibbon-session.c:3175
 msgid "You moved too many checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3178
+#: ../src/gibbon-session.c:3180
 msgid ""
 "You cannot move to a point that is blocked by two or more of your opponent's "
 "checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3184
+#: ../src/gibbon-session.c:3186
 msgid "You have to use both dice!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3188
+#: ../src/gibbon-session.c:3190
 msgid "You have to use the higher die!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3192
+#: ../src/gibbon-session.c:3194
 msgid ""
 "You have to use both dice if possible (hint: try to use the other die first)!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3198
+#: ../src/gibbon-session.c:3200
 msgid ""
 "You must move all checkers into your home board before you can start bearing-"
 "off!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3204
+#: ../src/gibbon-session.c:3206
 msgid "You must move your checkers from the higher points first!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3209
+#: ../src/gibbon-session.c:3211
 msgid "You must bring in checkers from the bar first!"
 msgstr ""
 

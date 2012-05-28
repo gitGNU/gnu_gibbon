@@ -359,9 +359,10 @@ gibbon_connection_handle_input (GInputStream *input_stream,
         GibbonSession *session;
         GibbonApp *app;
         gsize i, eaten = 0;
+        
         bytes_read = g_input_stream_read_finish (input_stream, result, &error);
-	
-        if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) || !self || !GIBBON_IS_CONNECTION (self))
+        if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) 
+            || !self || !GIBBON_IS_CONNECTION (self))
                 return;
 
         app = self->priv->app;

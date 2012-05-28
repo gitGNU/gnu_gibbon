@@ -50,17 +50,13 @@ dnl important to increase that with every new version.
 GIBBON_COMMA_VERSION=["]gibbon_major_version","gibbon_minor_version","gibbon_micro_version["]
 AC_SUBST(GIBBON_COMMA_VERSION)
 
-AC_MSG_CHECKING([for Mac OS X platform])
-case "$host" in
-        *-*-darwin*)
-                platform_osx=yes
-                ;;
-        *)
-                platform_osx=no
-                ;;
-esac
-AC_MSG_RESULT([$platform_osx])
-AM_CONDITIONAL(OSX, test x$platform_osx = xyes)
+AC_MSG_CHECKING([for Mac OS X Carbon support])
+AC_TRY_CPP([
+#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
+], gibbon_native_osx=yes)
+AC_MSG_RESULT([$gibbon_native_osx])
+AM_CONDITIONAL(OSX, test x$gibbon_native_osx = xyes)
 
 AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_win32$platform_osx = xnono)
 
@@ -100,13 +96,20 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 
 AM_GLIB_GNU_GETTEXT([external])
 
-m4_define(gibbon_glib_requirement, [glib-2.0 >= 2.26.0])
+dnl On the Mac we need the new NeXTSTEP backend for GSettings.
+if test "x$gibbon_native_osx" = "xyes"; then
+    gibbon_glib_version=2.31.8
+else
+    gibbon_glib_version=2.26.0
+fi
+m4_define(gibbon_glib_requirement, [glib-2.0 >= $gibbon_glib_version])
 m4_define(gibbon_librsvg_requirement, [librsvg-2.0 >= 2.32.1])
 m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.22.0])
 m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
 m4_define(gibbon_libpng_requirement, [libpng >= 0.23])
 m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
 m4_define(gibbon_sqlite3_requirement, [sqlite3 >= 3.6.19])
+m4_define(gibbon_zlib_requirement, [zlib >= 1.2.3])
 m4_define(gibbon_requirements,
     gibbon_glib_requirement
     gibbon_librsvg_requirement
@@ -115,10 +118,11 @@ m4_define(gibbon_requirements,
     gibbon_libpng_requirement
     gibbon_libxml_requirement
     gibbon_sqlite3_requirement
+    gibbon_zlib_requirement
 )
 
 PKG_CHECK_MODULES(GIBBON, gibbon_requirements)
-GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ]gibbon_librsvg_requirement[, ]gibbon_gtk_requirement[, ]gibbon_gthread_requirement[, ]gibbon_libpng_requirement[, ]gibbon_libxml_requirement[, ]gibbon_sqlite3_requirement["]
+GIBBON_PKGCONFIG_REQUIREMENTS=["] gibbon_glib_requirement[, ]gibbon_librsvg_requirement[, ]gibbon_gtk_requirement[, ]gibbon_gthread_requirement[, ]gibbon_libpng_requirement[, ]gibbon_libxml_requirement[, ]gibbon_sqlite3_requirement[, ]gibbon_zlib_requirement["]
 AC_SUBST(GIBBON_PKGCONFIG_REQUIREMENTS)
 
 AC_CHECK_LIB(nsl, gethostbyname)
