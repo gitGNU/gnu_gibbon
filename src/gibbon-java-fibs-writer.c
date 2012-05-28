@@ -70,6 +70,12 @@ static gboolean gibbon_java_fibs_writer_roll (const GibbonJavaFIBSWriter *self,
                                               const GibbonMatch *match,
                                               gboolean is_opening,
                                               GError **error);
+static gboolean gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
+                                              GOutputStream *out,
+                                              GibbonPositionSide side,
+                                              GibbonMove *move,
+                                              const GibbonMatch *match,
+                                              GError **error);
 
 static void 
 gibbon_java_fibs_writer_init (GibbonJavaFIBSWriter *self)
@@ -124,7 +130,7 @@ gibbon_java_fibs_writer_write_stream (const GibbonMatchWriter *_self,
         self = GIBBON_JAVA_FIBS_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
 
-        prolog = g_strdup_printf ("%s\n8:%s:%llu\n",
+        prolog = g_strdup_printf ("%s\015\0128:%s:%llu\015\012",
                                   GIBBON_JAVA_FIBS_PROLOG,
                                   gibbon_match_get_black (match),
                                   (unsigned long long)
@@ -163,7 +169,7 @@ gibbon_java_fibs_writer_write_game (const GibbonJavaFIBSWriter *self,
         const GibbonGameAction *action = NULL;
         gboolean opening = TRUE;
 
-        prolog = g_strdup_printf ("13:%s:\n6:You:%s\n",
+        prolog = g_strdup_printf ("13:%s: \015\0126:You:%s\015\012",
                                   gibbon_match_get_black (match),
                                   gibbon_match_get_black (match));
         if (!g_output_stream_write_all (out, prolog, strlen (prolog),
@@ -187,6 +193,15 @@ gibbon_java_fibs_writer_write_game (const GibbonJavaFIBSWriter *self,
                                 return FALSE;
                         opening = FALSE;
                 }
+                if (GIBBON_IS_MOVE (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_java_fibs_writer_move (self, out, side,
+                                                           GIBBON_MOVE (action),
+                                                           match, error))
+                                return FALSE;
+                        opening = FALSE;
+                }
         }
 
         return TRUE;
@@ -202,7 +217,7 @@ gibbon_java_fibs_writer_roll (const GibbonJavaFIBSWriter *self,
         gchar *buffer;
         guint opcode = is_opening ? 11 : 0;
 
-        buffer = g_strdup_printf ("%u:%s:%u %u\n",
+        buffer = g_strdup_printf ("%u:%s:%u %u\015\012",
                                   opcode,
                                   side == GIBBON_POSITION_SIDE_WHITE ?
                                   "You" : gibbon_match_get_black (match),
@@ -214,6 +229,65 @@ gibbon_java_fibs_writer_roll (const GibbonJavaFIBSWriter *self,
                 return FALSE;
         }
         g_free (buffer);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_java_fibs_writer_move (const GibbonJavaFIBSWriter *self,
+                              GOutputStream *out,
+                              GibbonPositionSide side, GibbonMove *move,
+                              const GibbonMatch *match,
+                              GError **error)
+{
+        gchar *buffer;
+        gsize i;
+        GibbonMovement *movement;
+        gint from, to;
+        const gchar *lead, *tail;
+
+        buffer = g_strdup_printf ("1:%s:",
+                                  side == GIBBON_POSITION_SIDE_WHITE ?
+                                  "You" : gibbon_match_get_black (match));
+
+        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
+                                        NULL, NULL, error)) {
+                g_free (buffer);
+                return FALSE;
+        }
+        g_free (buffer);
+
+        for (i = 0; i < move->number; ++i) {
+                movement = move->movements + i;
+                from = 25 - movement->from;
+                to = 25 - movement->to;
+                if (side == GIBBON_POSITION_SIDE_WHITE) {
+                        lead = "";
+                        tail = " ";
+                } else {
+                        lead = " ";
+                        tail = "";
+                }
+                if (from == 25 || from == 0)
+                        buffer = g_strdup_printf ("%sbar-%u%s",
+                                                  lead, to, tail);
+                else if (to == 25 || to == 0)
+                        buffer = g_strdup_printf ("%s%u-off%s",
+                                                  lead, from, tail);
+                else
+                        buffer = g_strdup_printf ("%s%u-%u%s",
+                                                  lead, from, to, tail);
+                if (!g_output_stream_write_all (out, buffer, strlen (buffer),
+                                                NULL, NULL, error)) {
+                        g_free (buffer);
+                        return FALSE;
+                }
+                g_free (buffer);
+        }
+
+        if (!g_output_stream_write_all (out, "\015\012", 2,
+                                        NULL, NULL, error))
+                return FALSE;
 
         return TRUE;
 }
