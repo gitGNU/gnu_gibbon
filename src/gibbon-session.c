@@ -3148,7 +3148,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
          * Triggering an undo will restore the original state of the dice.
          */
         if (move->status != GIBBON_MOVE_LEGAL && pos->unused_dice[0]) {
-                g_free (move);
+                g_object_unref (move);
                 new_pos = gibbon_position_copy (pos);
                 tmp = pos->dice[0];
                 new_pos->dice[0] = new_pos->dice[1];
@@ -3215,7 +3215,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         }
 
         if (move->status != GIBBON_MOVE_LEGAL) {
-                g_free (move);
+                g_object_unref (move);
                 gibbon_board_set_position (board, self->priv->position);
                 return;
         }
@@ -3224,7 +3224,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
                                                move,
                                                GIBBON_POSITION_SIDE_WHITE,
                                                !self->priv->direction);
-        g_free (move);
+        g_object_unref (move);
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "move %s", fibs_move);
         g_free (fibs_move);
