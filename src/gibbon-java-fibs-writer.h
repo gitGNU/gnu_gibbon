@@ -55,9 +55,6 @@ typedef struct _GibbonJavaFIBSWriter GibbonJavaFIBSWriter;
 struct _GibbonJavaFIBSWriter
 {
         GibbonMatchWriter parent_instance;
-
-        /*< private >*/
-        struct _GibbonJavaFIBSWriterPrivate *priv;
 };
 
 /**
@@ -74,6 +71,6 @@ struct _GibbonJavaFIBSWriterClass
 
 GType gibbon_java_fibs_writer_get_type (void) G_GNUC_CONST;
 
-GibbonJavaFIBSWriter *gibbon_java_fibs_writer_new (const gchar *path);
+GibbonJavaFIBSWriter *gibbon_java_fibs_writer_new (void);
 
 #endif

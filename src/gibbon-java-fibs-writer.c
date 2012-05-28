@@ -31,39 +31,54 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-java-fibs-writer.h"
+#include "gibbon-match.h"
+#include "gibbon-game.h"
 
-typedef struct _GibbonJavaFIBSWriterPrivate GibbonJavaFIBSWriterPrivate;
-struct _GibbonJavaFIBSWriterPrivate {
-        /* FIXME! Replace with the real structure of the private data! */
-        gchar *dummy;
-};
+#include "gibbon-roll.h"
+#include "gibbon-move.h"
+#include "gibbon-double.h"
+#include "gibbon-drop.h"
+#include "gibbon-take.h"
+#include "gibbon-resign.h"
+#include "gibbon-accept.h"
+#include "gibbon-reject.h"
 
 #define GIBBON_JAVA_FIBS_WRITER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_JAVA_FIBS_WRITER, GibbonJavaFIBSWriterPrivate))
 
-G_DEFINE_TYPE (GibbonJavaFIBSWriter, gibbon_java_fibs_writer, GIBBON_TYPE_MATCH_WRITER)
+#define GIBBON_JAVA_FIBS_PROLOG "JavaFIBS internal match representation v1.1"
+
+G_DEFINE_TYPE (GibbonJavaFIBSWriter, gibbon_java_fibs_writer, \
+               GIBBON_TYPE_MATCH_WRITER)
+
+static gboolean gibbon_java_fibs_writer_write_stream (const GibbonMatchWriter
+                                                      *writer,
+                                                      GOutputStream *out,
+                                                      const GibbonMatch *match,
+                                                      GError **error);
+static gboolean gibbon_java_fibs_writer_write_game (const GibbonJavaFIBSWriter
+                                                    *self,
+                                                    GOutputStream *out,
+                                                    const GibbonGame *game,
+                                                    guint game_number,
+                                                    const GibbonMatch *match,
+                                                    GError **error);
+static gboolean gibbon_java_fibs_writer_roll (const GibbonJavaFIBSWriter *self,
+                                              GOutputStream *out,
+                                              GibbonPositionSide side,
+                                              GibbonRoll *roll,
+                                              const GibbonMatch *match,
+                                              gboolean is_opening,
+                                              GError **error);
 
 static void 
 gibbon_java_fibs_writer_init (GibbonJavaFIBSWriter *self)
 {
-        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                GIBBON_TYPE_JAVA_FIBS_WRITER, GibbonJavaFIBSWriterPrivate);
-
-        /* FIXME! Initialize private data! */
-        self->priv->dummy = NULL;
 }
 
 static void
 gibbon_java_fibs_writer_finalize (GObject *object)
 {
-        GibbonJavaFIBSWriter *self = GIBBON_JAVA_FIBS_WRITER (object);
-
-        /* FIXME! Free private data! */
-        if (self->priv->dummy)
-                g_free (self->priv->dummy);
-        self->priv->dummy = NULL;
-
-        G_OBJECT_CLASS (gibbon_java_fibs_writer_parent_class)->finalize(object);
 }
 
 static void
@@ -72,32 +87,133 @@ gibbon_java_fibs_writer_class_init (GibbonJavaFIBSWriterClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         GibbonMatchWriterClass *gibbon_match_writer_class = GIBBON_MATCH_WRITER_CLASS (klass);
 
-        /* FIXME! Initialize pointers to methods from parent class! */
-        /* gibbon_match_writer_class->do_this = gibbon_java_fibs_writer_do_this; */
+        gibbon_match_writer_class->write_stream =
+                        gibbon_java_fibs_writer_write_stream;
         
-        g_type_class_add_private (klass, sizeof (GibbonJavaFIBSWriterPrivate));
-
-        /* FIXME! Initialize pointers to methods! */
-        /* klass->do_that = GibbonJavaFIBSWriter_do_that; */
-
         object_class->finalize = gibbon_java_fibs_writer_finalize;
 }
 
 /**
  * gibbon_java_fibs_writer_new:
- * @dummy: The argument.
  *
  * Creates a new #GibbonJavaFIBSWriter.
  *
  * Returns: The newly created #GibbonJavaFIBSWriter or %NULL in case of failure.
  */
 GibbonJavaFIBSWriter *
-gibbon_java_fibs_writer_new (/* FIXME! Argument list! */ const gchar *dummy)
+gibbon_java_fibs_writer_new (void)
 {
-        GibbonJavaFIBSWriter *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_WRITER, NULL);
-
-        /* FIXME! Initialize private data! */
-        /* self->priv->dummy = g_strdup (dummy); */
+        GibbonJavaFIBSWriter *self = g_object_new (GIBBON_TYPE_JAVA_FIBS_WRITER,
+                                                   NULL);
 
         return self;
+}
+
+
+static gboolean
+gibbon_java_fibs_writer_write_stream (const GibbonMatchWriter *_self,
+                                      GOutputStream *out,
+                                      const GibbonMatch *match,
+                                      GError **error)
+{
+        const GibbonJavaFIBSWriter *self;
+        gsize game_number;
+        GibbonGame *game;
+        gchar *prolog;
+
+        self = GIBBON_JAVA_FIBS_WRITER (_self);
+        g_return_val_if_fail (self != NULL, FALSE);
+
+        prolog = g_strdup_printf ("%s\n8:%s:%llu\n",
+                                  GIBBON_JAVA_FIBS_PROLOG,
+                                  gibbon_match_get_black (match),
+                                  (unsigned long long)
+                                  gibbon_match_get_length (match));
+        if (!g_output_stream_write_all (out, prolog, strlen (prolog),
+                                        NULL, NULL, error)) {
+                g_free (prolog);
+                return FALSE;
+        }
+        g_free (prolog);
+
+        for (game_number = 0; ; ++game_number) {
+                game = gibbon_match_get_nth_game (match, game_number);
+                if (!game)
+                        break;
+                if (!gibbon_java_fibs_writer_write_game (self, out, game,
+                                                         game_number, match,
+                                                         error))
+                        return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_java_fibs_writer_write_game (const GibbonJavaFIBSWriter *self,
+                                    GOutputStream *out,
+                                    const GibbonGame *game,
+                                    guint game_number,
+                                    const GibbonMatch *match,
+                                    GError **error)
+{
+        gchar *prolog;
+        glong action_num;
+        GibbonPositionSide side;
+        const GibbonGameAction *action = NULL;
+        gboolean opening = TRUE;
+
+        prolog = g_strdup_printf ("13:%s:\n6:You:%s\n",
+                                  gibbon_match_get_black (match),
+                                  gibbon_match_get_black (match));
+        if (!g_output_stream_write_all (out, prolog, strlen (prolog),
+                                        NULL, NULL, error)) {
+                g_free (prolog);
+                return FALSE;
+        }
+        g_free (prolog);
+
+        for (action_num = 0; ; ++action_num) {
+                action = gibbon_game_get_nth_action (game, action_num, &side);
+                if (!action)
+                        break;
+                if (GIBBON_IS_ROLL (action)) {
+                        if (!side)
+                                continue;
+                        if (!gibbon_java_fibs_writer_roll (self, out, side,
+                                                           GIBBON_ROLL (action),
+                                                           match,
+                                                           opening, error))
+                                return FALSE;
+                        opening = FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_java_fibs_writer_roll (const GibbonJavaFIBSWriter *self,
+                              GOutputStream *out,
+                              GibbonPositionSide side, GibbonRoll *roll,
+                              const GibbonMatch *match, gboolean is_opening,
+                              GError **error)
+{
+        gchar *buffer;
+        guint opcode = is_opening ? 11 : 0;
+
+        buffer = g_strdup_printf ("%u:%s:%u %u\n",
+                                  opcode,
+                                  side == GIBBON_POSITION_SIDE_WHITE ?
+                                  "You" : gibbon_match_get_black (match),
+                                  roll->die1, roll->die2);
+
+        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
+                                        NULL, NULL, error)) {
+                g_free (buffer);
+                return FALSE;
+        }
+        g_free (buffer);
+
+        return TRUE;
 }
