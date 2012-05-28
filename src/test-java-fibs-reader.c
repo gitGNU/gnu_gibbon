@@ -40,7 +40,7 @@ main (int argc, char *argv[])
 
         input_file = g_build_filename (ABS_BUILDDIR, "complete.match", NULL);
         match = gibbon_match_reader_parse (reader, input_file);
-        g_free (input_file);\
+        g_free (input_file);
 
         g_return_val_if_fail (match != NULL, -1);
 
