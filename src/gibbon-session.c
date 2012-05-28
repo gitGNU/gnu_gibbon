@@ -1384,7 +1384,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 {
         GibbonPosition *pos;
         GibbonBoard *board;
-        gint i;
+        gint i, tmp;
         GibbonConnection *connection;
         const gchar *str;
         gint retval = -1;
@@ -1452,6 +1452,18 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                   &pos->dice[1]))
                 goto bail_out_board;
         
+        /*
+         * Swap the dice if the lower one is left.
+         * FIXME! This should be configurable!
+         * FIXME! This should maybe be locale-dependent (rtl).
+         */
+        if ((pos->dice[0] > 0 && pos->dice[0] < pos->dice[1])
+            || (pos->dice[0] < 0 && pos->dice[0] > pos->dice[1])) {
+                tmp = pos->dice[0];
+                pos->dice[0] = pos->dice[1];
+                pos->dice[1] = tmp;
+        }
+
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT,
                                    &pos->cube))
                 goto bail_out_board;
@@ -1803,6 +1815,8 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
         guint dice[2];
+        guint tmp;
+        GibbonPosition *pos;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -1845,8 +1859,23 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
-                                   self->priv->position);
+        /*
+         * Swap the dice if the lower one is left.
+         * FIXME! This should be configurable!
+         * FIXME! This should maybe be locale-dependent (rtl).
+         */
+        pos = self->priv->position;
+        if ((pos->dice[0] > 0 && pos->dice[0] < pos->dice[1])
+            || (pos->dice[0] < 0 && pos->dice[0] > pos->dice[1])) {
+                tmp = pos->dice[0];
+                pos->dice[0] = pos->dice[1];
+                pos->dice[1] = tmp;
+                tmp = pos->unused_dice[0];
+                pos->unused_dice[0] = pos->unused_dice[1];
+                pos->unused_dice[1] = tmp;
+        }
+
+        gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
 
         return GIBBON_CLIP_CODE_ROLLS;
 }
