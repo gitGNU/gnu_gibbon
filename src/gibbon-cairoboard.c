@@ -807,7 +807,7 @@ gibbon_draw_cube (GibbonCairoboard *self, cairo_t *cr)
                 x = self->priv->cube->x + 0.5 * self->priv->cube->width;
                 if (self->priv->pos->may_double[1]) {
                         y = 0.5 * (top + bottom);
-                        cube_value = 2;
+                        cube_value = 1;
                 } else {
                         y = self->priv->checker_w_home->y
                             - 0.5 * self->priv->checker_w_home->height;
