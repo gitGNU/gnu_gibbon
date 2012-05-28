@@ -188,7 +188,6 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         glong action_num;
         GibbonPositionSide side;
         const GibbonGameAction *action = NULL;
-        const GibbonPosition *position;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -310,10 +309,6 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
-                if (action_num)
-                        position = gibbon_game_get_nth_position (game,
-                                                                 action_num
-                                                                 - 1);
                 if (GIBBON_IS_ROLL (action)) {
                         if (!side)
                                 continue;
