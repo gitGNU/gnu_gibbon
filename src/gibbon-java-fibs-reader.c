@@ -56,6 +56,8 @@ struct _GibbonJavaFIBSReaderPrivate {
         GibbonMatch *match;
 
         GSList *names;
+
+        gchar *white;
 };
 
 GibbonJavaFIBSReader *_gibbon_java_fibs_reader_instance = NULL;
@@ -84,6 +86,7 @@ gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
         self->priv->filename = NULL;
         self->priv->match = NULL;
         self->priv->names = NULL;
+        self->priv->white = NULL;
 }
 
 static void
@@ -159,6 +162,8 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
         _gibbon_java_fibs_reader_free_names (self);
+        g_free (self->priv->white);
+        self->priv->white = NULL;
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -174,6 +179,8 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                         if (self->priv->match)
                                 g_object_unref (self->priv->match);
                         self->priv->match = NULL;
+                        g_free (self->priv->white);
+                        self->priv->white = NULL;
                 }
         } else {
                 _gibbon_java_fibs_reader_yyerror (strerror (errno));
@@ -188,6 +195,8 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                         g_object_unref (self->priv->match);
                 self->priv->match = NULL;
                 _gibbon_java_fibs_reader_free_names (self);
+                g_free (self->priv->white);
+                self->priv->white = NULL;
                 g_critical ("Another instance of GibbonJavaFIBSReader has"
                             " reset this one!");
                 gdk_threads_leave ();
@@ -195,6 +204,11 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         }
         _gibbon_java_fibs_reader_instance = NULL;
         gdk_threads_leave ();
+
+        if (self->priv->white)
+                gibbon_match_set_white (self->priv->match, self->priv->white);
+        g_free (self->priv->white);
+        self->priv->white = NULL;
 
         return self->priv->match;
 }
@@ -243,6 +257,8 @@ _gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
 
         if (g_strcmp0 (gibbon_match_get_white (self->priv->match), white))
                 gibbon_match_set_white (self->priv->match, white);
+        if (!self->priv->white)
+                self->priv->white = g_strdup (white);
 }
 
 
@@ -418,6 +434,35 @@ _gibbon_java_fibs_reader_win_game (GibbonJavaFIBSReader *self,
         }
 
         /* Otherwise, simply ignore this item.  */
+        return TRUE;
+}
+
+gboolean
+_gibbon_java_fibs_reader_score (GibbonJavaFIBSReader *self,
+                                const gchar *winner, guint points_winner,
+                                const gchar *loser, guint points_loser)
+{
+        const gchar *white, *black;
+        GibbonMatch *match;
+
+        g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        match = self->priv->match;
+        white = gibbon_match_get_white (match);
+
+        if (self->priv->white && g_strcmp0 ("You", self->priv->white))
+                return TRUE;
+
+        black = gibbon_match_get_black (match);
+        if (0 == g_strcmp0 (winner, black)) {
+                g_free (self->priv->white);
+                self->priv->white = g_strdup (loser);
+        } else if (0 == g_strcmp0 (loser, black)) {
+                g_free (self->priv->white);
+                self->priv->white = g_strdup (winner);
+        }
+
         return TRUE;
 }
 

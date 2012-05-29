@@ -59,6 +59,11 @@ gboolean _gibbon_java_fibs_reader_reject_resign (GibbonJavaFIBSReader *self,
 gboolean _gibbon_java_fibs_reader_win_game (GibbonJavaFIBSReader *self,
                                             const gchar *name,
                                             guint points);
+gboolean _gibbon_java_fibs_reader_score (GibbonJavaFIBSReader *self,
+                                         const gchar *winner,
+                                         guint points_winner,
+                                         const gchar *loser,
+                                         guint points_loser);
 gchar *_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
                                           const gchar *name);
 void _gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self);

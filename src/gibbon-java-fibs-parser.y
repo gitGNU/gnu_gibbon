@@ -304,6 +304,12 @@ win_game
 	
 score
 	: SCORE COLON PLAYER HYPHEN INTEGER COLON PLAYER HYPHEN INTEGER
+		{
+			if (!_gibbon_java_fibs_reader_score (reader, 
+                                                             $3, $5,
+                                                             $7, $9))
+				YYABORT;
+		}
 	;
 
 resign
