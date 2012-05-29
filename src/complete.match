@@ -17,7 +17,7 @@ JavaFIBS internal match representation v1.1
 2:You:
 5:JoeBlack:
 7:You:1
-14:gflohr-1:JoeBlack-0
+14:SnowWhite-1:JoeBlack-0
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:2 6
@@ -85,7 +85,7 @@ JavaFIBS internal match representation v1.1
 2:JoeBlack:
 5:You:
 7:JoeBlack:2
-14:JoeBlack-2:gflohr-1
+14:JoeBlack-2:SnowWhite-1
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:5 6
@@ -117,7 +117,7 @@ JavaFIBS internal match representation v1.1
 2:You:
 5:JoeBlack:
 7:You:1
-14:gflohr-2:JoeBlack-2
+14:SnowWhite-2:JoeBlack-2
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:2 5
@@ -190,7 +190,7 @@ JavaFIBS internal match representation v1.1
 1:JoeBlack:19-24 19-21
 3:You:2
 7:JoeBlack:2
-14:JoeBlack-4:gflohr-2
+14:JoeBlack-4:SnowWhite-2
 13:JoeBlack:
 6:You:JoeBlack
 11:You:5 1
@@ -362,7 +362,7 @@ JavaFIBS internal match representation v1.1
 0:You:2 3
 1:You:24-off 24-off
 7:You:2
-14:gflohr-4:JoeBlack-4
+14:SnowWhite-4:JoeBlack-4
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:4 5
@@ -422,7 +422,7 @@ JavaFIBS internal match representation v1.1
 2:You:
 5:JoeBlack:
 7:You:1
-14:gflohr-5:JoeBlack-4
+14:SnowWhite-5:JoeBlack-4
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:1 4
@@ -568,7 +568,7 @@ JavaFIBS internal match representation v1.1
 0:JoeBlack:3 6
 1:JoeBlack:1-off
 7:JoeBlack:1
-14:JoeBlack-5:gflohr-5
+14:JoeBlack-5:SnowWhite-5
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:1 2
@@ -630,7 +630,7 @@ JavaFIBS internal match representation v1.1
 2:JoeBlack:
 5:You:
 7:JoeBlack:1
-14:JoeBlack-6:gflohr-5
+14:JoeBlack-6:SnowWhite-5
 13:JoeBlack:
 6:You:JoeBlack
 11:You:6 5
