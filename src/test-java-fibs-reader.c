@@ -75,6 +75,7 @@ main (int argc, char *argv[])
         }
 
         g_free (wanted);
+        g_free (input_file);
 
         g_object_unref (match);
         g_object_unref (reader);
