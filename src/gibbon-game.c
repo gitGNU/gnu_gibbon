@@ -285,7 +285,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         gchar *pretty_move;
         gint score;
 
-        g_return_val_if_fail (move->number <= 4, FALSE);
+        gibbon_match_return_val_if_fail (move->number <= 4, FALSE, error);
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
@@ -317,6 +317,9 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 
         if (!gibbon_position_apply_move (pos, move, side, FALSE)) {
                 gibbon_position_free (pos);
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_NO_ROLL,
+                                     _("Invalid move!"));
                 return FALSE;
         }
 
@@ -362,7 +365,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot;
 
-        g_return_val_if_fail (self->priv->score == 0, FALSE);
+        gibbon_match_return_val_if_fail (self->priv->score == 0, FALSE, error);
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
@@ -548,7 +551,9 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         snapshot = gibbon_game_get_snapshot (self);
         if (!snapshot || !GIBBON_IS_RESIGN (snapshot->action)
             || other != snapshot->side) {
-                g_warning (_("Accept without resignation!"));
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_END_OF_GAME,
+                                     _("Accept without resignation!"));
                 return FALSE;
         }
         resign = GIBBON_RESIGN (snapshot->action);
