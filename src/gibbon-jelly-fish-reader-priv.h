@@ -41,22 +41,12 @@ void _gibbon_jelly_fish_reader_set_match_length (GibbonJellyFishReader *self,
 gboolean _gibbon_jelly_fish_reader_add_game (GibbonJellyFishReader *self);
 void _gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
                                          GibbonPositionSide side);
-
 gboolean _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
                                          guint64 dice, guint64 encoded);
-gboolean _gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self,
-                                           const gchar *name);
-gboolean _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self,
-                                         const gchar *name);
-gboolean _gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self,
-                                         const gchar *name);
-gboolean _gibbon_jelly_fish_reader_resign (GibbonJellyFishReader *self,
-                                           const gchar *name,
-                                           guint points);
-gboolean _gibbon_jelly_fish_reader_reject_resign (GibbonJellyFishReader *self,
-                                                  const gchar *name);
+gboolean _gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self);
+gboolean _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self);
+gboolean _gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self);
 gboolean _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
-                                             const gchar *name,
                                              guint points);
 gchar *_gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
                                              const gchar *name);

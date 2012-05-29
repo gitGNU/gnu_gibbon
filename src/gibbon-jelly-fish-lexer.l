@@ -186,7 +186,7 @@ static int yywrap ();
 				}
 <ACTION,HALF_MOVE,MOVES>
 	Wins?[ \t]*[1-9][0-9]*[ \t]*points?([ \t]*and[ \t]*the[ \t]*match)? {
-					while (*yytext < '1' && *yytext > '9')
+					while (*yytext < '1' || *yytext > '9')
 						++yytext;
 					yylval.num = (gint) g_ascii_strtoull 
 							     (yytext, NULL, 10);

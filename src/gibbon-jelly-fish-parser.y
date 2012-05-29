@@ -214,6 +214,8 @@ move
 		}
 		WINS
 		{
+			if (!_gibbon_jelly_fish_reader_win_game (reader, $5))
+				YYABORT;
 			_gibbon_jelly_fish_reader_set_side (
 				reader,
 				GIBBON_POSITION_SIDE_NONE
@@ -228,6 +230,8 @@ move
 		}
 		WINS
 		{
+			if (!_gibbon_jelly_fish_reader_win_game (reader, $3))
+				YYABORT;
 			_gibbon_jelly_fish_reader_set_side (
 				reader,
 				GIBBON_POSITION_SIDE_NONE
@@ -235,6 +239,8 @@ move
 		}
 	| WINS
 		{
+			if (!_gibbon_jelly_fish_reader_win_game (reader, $1))
+				YYABORT;
 			_gibbon_jelly_fish_reader_set_side (
 				reader,
 				GIBBON_POSITION_SIDE_NONE
@@ -249,8 +255,20 @@ half_move
 				YYABORT;
 		}
 	| DOUBLES
+		{
+			if (!_gibbon_jelly_fish_reader_double (reader))
+				YYABORT;
+		}
 	| TAKES
+		{
+			if (!_gibbon_jelly_fish_reader_take (reader))
+				YYABORT;
+		}
 	| DROPS
+		{
+			if (!_gibbon_jelly_fish_reader_drop (reader))
+				YYABORT;
+		}
 	;
 
 movements

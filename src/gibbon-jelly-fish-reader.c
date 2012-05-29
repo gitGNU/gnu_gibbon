@@ -361,8 +361,7 @@ _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
 }
 
 gboolean
-_gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self,
-                                 const gchar *name)
+_gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self)
 {
         GibbonGameAction *action;
 
@@ -375,8 +374,7 @@ _gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self,
 }
 
 gboolean
-_gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self,
-                               const gchar *name)
+_gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self)
 {
         GibbonGameAction *action;
 
@@ -389,8 +387,7 @@ _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self,
 }
 
 gboolean
-_gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self,
-                               const gchar *name)
+_gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self)
 {
         GibbonGameAction *action;
 
@@ -402,17 +399,12 @@ _gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self,
         return gibbon_jelly_fish_reader_add_action (self, action);
 }
 
-/*
- * We only have to consider this item, after a resignation offer.  Otherwise,
- * we know better, when the game is over.
- */
 gboolean
 _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
-                                   const gchar *name, guint points)
+                                    guint points)
 {
-        GibbonGameAction *action;
-        const GibbonGameAction *last_action;
         GibbonGame *game;
+        GibbonGameAction *action;
 
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
@@ -423,13 +415,23 @@ _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
                 return TRUE;
         }
 
-        last_action = gibbon_game_get_nth_action (game, -1, NULL);
-        if (GIBBON_IS_RESIGN (last_action)) {
-                action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-                return gibbon_jelly_fish_reader_add_action (self, action);
-        }
+        /*
+         * Normally, we know from the previous actions that the game is
+         * already over.  We only have to consider resignations which
+         * are encoded implicitely.
+         */
+        if (gibbon_game_over (game))
+                return TRUE;
 
-        /* Otherwise, simply ignore this item.  */
+        self->priv->side = -self->priv->side;
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (points));
+        if (!gibbon_jelly_fish_reader_add_action (self, action))
+                return FALSE;
+        self->priv->side = -self->priv->side;
+        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+        if (!gibbon_jelly_fish_reader_add_action (self, action))
+                return FALSE;
+
         return TRUE;
 }
 
