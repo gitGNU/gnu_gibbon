@@ -300,6 +300,8 @@ _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
 {
         GibbonMove *move;
         GibbonRoll *roll;
+        gsize i;
+
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
         g_return_val_if_fail (self->priv->side, FALSE);
@@ -344,6 +346,14 @@ _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
                                          -1);
         } else {
                 move = gibbon_move_newv (0, 0, -1);
+        }
+
+        if (self->priv->side == GIBBON_POSITION_SIDE_BLACK) {
+                /* We have to reverse the move.  */
+                for (i = 0; i < move->number; ++i) {
+                        move->movements[i].from = -move->movements[i].from + 25;
+                        move->movements[i].to = -move->movements[i].to + 25;
+                }
         }
 
         return gibbon_jelly_fish_reader_add_action (self,
