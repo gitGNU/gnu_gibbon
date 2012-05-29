@@ -105,14 +105,19 @@ static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
 %token TAKES
 %token <num> WINS
 
+%type <name> opponent
+
 %%
 
 jelly_fish_file
-        : prolog games
+        : prolog games { _gibbon_jelly_fish_reader_free_names (reader); }
         ;
 
 prolog
 	: INTEGER MATCH_LENGTH
+		{
+			_gibbon_jelly_fish_reader_set_match_length (reader, $1);
+		}
 	;
 
 games
@@ -126,14 +131,23 @@ game
 
 game_prolog
 	: GAME INTEGER
+		{
+			if (!_gibbon_jelly_fish_reader_add_game (reader))
+					YYABORT;
+		}
 	;
 
 opponents
 	: opponent opponent
+		{
+			_gibbon_jelly_fish_reader_set_black (reader, $1);
+			_gibbon_jelly_fish_reader_set_white (reader, $2);
+			_gibbon_jelly_fish_reader_free_names (reader);
+		}
 	;
 
 opponent
-	: PLAYER COLON INTEGER
+	: PLAYER COLON INTEGER { $$ = $1; }
 	;
 
 actions

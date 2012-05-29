@@ -39,6 +39,9 @@ void _gibbon_jelly_fish_reader_set_black (GibbonJellyFishReader *self,
 void _gibbon_jelly_fish_reader_set_match_length (GibbonJellyFishReader *self,
                                                  gsize length);
 gboolean _gibbon_jelly_fish_reader_add_game (GibbonJellyFishReader *self);
+void _gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
+                                         GibbonPositionSide side);
+
 gboolean _gibbon_jelly_fish_reader_roll (GibbonJellyFishReader *self,
                                          const gchar *name,
                                          guint die1, guint die2);

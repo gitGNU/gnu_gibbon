@@ -48,6 +48,8 @@ struct _GibbonJellyFishReaderPrivate {
         GibbonMatch *match;
 
         GSList *names;
+
+        GibbonPositionSide side;
 };
 
 GibbonJellyFishReader *_gibbon_jelly_fish_reader_instance = NULL;
@@ -76,6 +78,7 @@ gibbon_jelly_fish_reader_init (GibbonJellyFishReader *self)
         self->priv->filename = NULL;
         self->priv->match = NULL;
         self->priv->names = NULL;
+        self->priv->side = GIBBON_POSITION_SIDE_NONE;
 }
 
 static void
@@ -151,6 +154,7 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
         _gibbon_jelly_fish_reader_free_names (self);
+        self->priv->side = GIBBON_POSITION_SIDE_NONE;
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -166,12 +170,14 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                         if (self->priv->match)
                                 g_object_unref (self->priv->match);
                         self->priv->match = NULL;
+                        self->priv->side = GIBBON_POSITION_SIDE_NONE;
                 }
         } else {
                 _gibbon_jelly_fish_reader_yyerror (strerror (errno));
         }
 
         self->priv->filename = NULL;
+        self->priv->side = GIBBON_POSITION_SIDE_NONE;
 
         gdk_threads_enter ();
         if (!_gibbon_jelly_fish_reader_instance
@@ -251,10 +257,13 @@ _gibbon_jelly_fish_reader_set_black (GibbonJellyFishReader *self,
 
 void
 _gibbon_jelly_fish_reader_set_match_length (GibbonJellyFishReader *self,
-                                           gsize length)
+                                            gsize length)
 {
         g_return_if_fail (GIBBON_IS_JELLY_FISH_READER (self));
         g_return_if_fail (self->priv->match);
+
+        /* Unlimited matches are encoded with a zero match length.  */
+        if (!length) length = -1;
 
         gibbon_match_set_length (self->priv->match, length);
 }
@@ -274,6 +283,17 @@ _gibbon_jelly_fish_reader_add_game (GibbonJellyFishReader *self)
         }
 
         return TRUE;
+}
+
+void
+_gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
+                                    GibbonPositionSide side)
+{
+        g_return_if_fail (GIBBON_IS_JELLY_FISH_READER (self));
+        g_return_if_fail (self->priv->match);
+        g_return_if_fail (side);
+
+        self->priv->side = side;
 }
 
 gboolean

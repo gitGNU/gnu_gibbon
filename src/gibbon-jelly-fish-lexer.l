@@ -27,7 +27,7 @@ static int yywrap ();
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#define yylval gibbon_java_fibs_parser_lval
+#define yylval gibbon_jelly_fish_parser_lval
 
 #include "gibbon-jelly-fish-parser.h"
 #include "gibbon-jelly-fish-reader-priv.h"
