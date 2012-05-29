@@ -6,6 +6,10 @@ gibbon-convert
 gibbon-convert.exe
 gibbon.rc
 test_*
+gibbon-gmd-lexer.c
+gibbon-gmd-parser.c
+gibbon-gmd-parser.h
+gibbon-gmd-parser.output
 gibbon-java-fibs-lexer.c
 gibbon-java-fibs-parser.c
 gibbon-java-fibs-parser.h

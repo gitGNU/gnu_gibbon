@@ -62,6 +62,10 @@ common_SOURCES = 			\
         gibbon-drop.c                   \
         gibbon-game.c           	\
         gibbon-game-action.c            \
+        gibbon-gmd-lexer.l        	\
+        gibbon-gmd-parser.y       	\
+        gibbon-gmd-reader.c       	\
+        gibbon-gmd-writer.c       	\
         gibbon-java-fibs-lexer.l        \
         gibbon-java-fibs-parser.y       \
         gibbon-java-fibs-reader.c       \
@@ -150,6 +154,9 @@ noinst_HEADERS =			\
 	gibbon-game-actions.h		\
         gibbon-game-chat.h		\
         gibbon-geo-ip-updater.h		\
+	gibbon-gmd-reader.h		\
+	gibbon-gmd-reader-priv.h	\
+        gibbon-gmd-writer.h		\
         gibbon-help.h			\
         gibbon-inviter-list.h		\
         gibbon-inviter-list-view.h	\
@@ -189,6 +196,7 @@ noinst_HEADERS =			\
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.
+gibbon-gmd-lexer.o: gibbon-gmd-parser.h
 gibbon-java-fibs-lexer.o: gibbon-java-fibs-parser.h
 gibbon-jelly-fish-lexer.o: gibbon-jelly-fish-parser.h
 
@@ -199,7 +207,8 @@ LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
-	test_crawford_detection test_java_fibs_reader test_jelly_fish_reader \
+	test_crawford_detection test_gmd_reader \
+	test_java_fibs_reader test_jelly_fish_reader \
         test_gary_wong_movegen
 TESTS_SH =
 
@@ -207,7 +216,8 @@ TESTS = $(TESTS_C) $(TESTS_SH)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
-	test_crawford_detection test_java_fibs_reader test_jelly_fish_reader \
+	test_crawford_detection test_gmd_reader \
+	test_java_fibs_reader test_jelly_fish_reader \
         test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
@@ -220,6 +230,7 @@ test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
+test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 test_jelly_fish_reader_SOURCES = $(common_SOURCES) test-jelly-fish-reader.c
 

@@ -28,17 +28,19 @@
 #include <gio/gio.h>
 #include <gdk/gdk.h>
 
+#include "gibbon-gmd-writer.h"
+#include "gibbon-sgf-writer.h"
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-java-fibs-writer.h"
 #include "gibbon-jelly-fish-reader.h"
 #include "gibbon-jelly-fish-writer.h"
-#include "gibbon-sgf-writer.h"
 
 typedef enum {
         GIBBON_CONVERT_FORMAT_UNKNOWN = 0,
         GIBBON_CONVERT_FORMAT_SGF = 1,
-        GIBBON_CONVERT_FORMAT_JAVA_FIBS = 2,
-        GIBBON_CONVERT_FORMAT_JELLY_FISH = 3
+        GIBBON_CONVERT_FORMAT_GMD = 2,
+        GIBBON_CONVERT_FORMAT_JAVA_FIBS = 3,
+        GIBBON_CONVERT_FORMAT_JELLY_FISH = 4
 } GibbonConvertFormat;
 
 static gchar *program_name;
@@ -164,6 +166,9 @@ main (int argc, char *argv[])
         case GIBBON_CONVERT_FORMAT_SGF:
                 g_printerr ("Reading SGF is not yet implemented!\n");
                 return 1;
+        case GIBBON_CONVERT_FORMAT_GMD:
+                g_printerr ("Reading GMD is not yet implemented!\n");
+                return 1;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 reader =
                    GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (NULL,
@@ -193,6 +198,9 @@ main (int argc, char *argv[])
                 return 1;
         case GIBBON_CONVERT_FORMAT_SGF:
                 writer = GIBBON_MATCH_WRITER (gibbon_sgf_writer_new ());
+                break;
+        case GIBBON_CONVERT_FORMAT_GMD:
+                writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
                 break;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 writer = GIBBON_MATCH_WRITER (gibbon_java_fibs_writer_new ());
@@ -307,13 +315,15 @@ parse_command_line (int argc, char *argv[])
                         alt_usage,
                         _("Recognized values for FORMAT are 'SGF' for"
                           " the Smart Game format (used by\n"
-                          "Gibbon and GNU backgammon), 'Jellyfish' and"
+                          "Gibbon and GNU backgammon), 'GMD' for"
+                          " the Gibbon Match Dump format, 'Jellyfish' and"
                           " 'JavaFIBS'.  Formats are\n"
                           "case-insensitve and you can abbreviate"
                           " them as long as they are unique.\n"),
                         _("For automatic detection, '.sgf' is expected for"
-                          " SGF, '.mat' for Jellyfish, and\n"
-                          "'match' for the internal format of JavaFIBS.\n"),
+                          " SGF, '.mat' for Jellyfish, '.gmd' for the"
+                          " Gibbon match format, and\n"
+                          "'.match' for the internal format of JavaFIBS.\n"),
                         _("Report bugs at"
                           " https://savannah.nongnu.org/projects/gibbon."));
         g_free (alt_usage);
@@ -396,6 +406,14 @@ guess_format_from_id (const gchar *id)
                     && 0 == g_ascii_strncasecmp ("sgf", id, got_length))
                          return GIBBON_CONVERT_FORMAT_SGF;
 
+                if (got_length <= 3
+                    && 0 == g_ascii_strncasecmp ("gmd", id, got_length))
+                         return GIBBON_CONVERT_FORMAT_GMD;
+
+                if (0 == g_ascii_strncasecmp ("gibbon", id,
+                                              got_length))
+                        return GIBBON_CONVERT_FORMAT_JAVA_FIBS;
+
                 if (got_length > 1) {
                         if (0 == g_ascii_strncasecmp ("javafibs", id,
                                                       got_length))
@@ -438,6 +456,8 @@ guess_format_from_filename (const gchar *filename)
                 return GIBBON_CONVERT_FORMAT_UNKNOWN;
         } else if (0 == g_ascii_strcasecmp (".sgf", last_dot)) {
                 return GIBBON_CONVERT_FORMAT_SGF;
+        } else if (0 == g_ascii_strcasecmp (".gmd", last_dot)) {
+                return GIBBON_CONVERT_FORMAT_GMD;
         } else if (0 == g_ascii_strcasecmp (".match", last_dot)) {
                 return GIBBON_CONVERT_FORMAT_JAVA_FIBS;
         } else if (0 == g_ascii_strcasecmp (".mat", last_dot)) {
