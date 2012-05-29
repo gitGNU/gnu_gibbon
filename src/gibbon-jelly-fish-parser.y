@@ -106,6 +106,8 @@ static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
 %token <num> WINS
 
 %type <name> opponent
+%type <num> movement
+%type <num> movements
 
 %%
 
@@ -242,6 +244,10 @@ move
 
 half_move
 	: ROLL movements
+		{
+			if (!_gibbon_jelly_fish_reader_move (reader, $1, $2))
+				YYABORT;
+		}
 	| DOUBLES
 	| TAKES
 	| DROPS
@@ -249,14 +255,33 @@ half_move
 
 movements
 	: /* empty */
-	| movement
+		{
+			$$ = 0;
+		}
+	| movement /* $$ = $1 */
 	| movement movement
+		{
+			$$ = $1 << 16 | $2;
+		}
 	| movement movement movement
+		{
+			$$ = $1 << 32 | $2 << 16 | $3;
+		}
 	| movement movement movement movement
+		{
+			$$ = $1 << 48 | $2 << 32 | $3 << 16 | $4;
+		}
 	;
 
 movement
 	: POINT SLASH POINT
+		{
+			if ($1 == $3) {
+				yyerror (_("Start and end point are equal!"));
+				YYABORT;
+			} 
+			$$ = gibbon_jelly_fish_parser_encode_movement ($1, $3);
+		}
 	;
 	
 %%
@@ -264,5 +289,5 @@ movement
 static guint
 gibbon_jelly_fish_parser_encode_movement (guint64 from, guint64 to)
 {
-	return 42;
+	return (from << 8 | to);
 }

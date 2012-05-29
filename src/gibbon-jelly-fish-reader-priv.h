@@ -42,12 +42,8 @@ gboolean _gibbon_jelly_fish_reader_add_game (GibbonJellyFishReader *self);
 void _gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
                                          GibbonPositionSide side);
 
-gboolean _gibbon_jelly_fish_reader_roll (GibbonJellyFishReader *self,
-                                         const gchar *name,
-                                         guint die1, guint die2);
 gboolean _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
-                                         const gchar *name,
-                                         guint64 encoded);
+                                         guint64 dice, guint64 encoded);
 gboolean _gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self,
                                            const gchar *name);
 gboolean _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self,

@@ -62,7 +62,6 @@ G_DEFINE_TYPE (GibbonJellyFishReader, gibbon_jelly_fish_reader, GIBBON_TYPE_MATC
 static GibbonMatch *gibbon_jelly_fish_reader_parse (GibbonMatchReader *match_reader,
                                                    const gchar *filename);
 static gboolean gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
-                                                    const gchar *name,
                                                     GibbonGameAction *action);
 
 static void 
@@ -296,28 +295,20 @@ _gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
 }
 
 gboolean
-_gibbon_jelly_fish_reader_roll (GibbonJellyFishReader *self,
-                               const gchar *name,
-                               guint die1, guint die2)
-{
-        GibbonGameAction *action;
-
-        g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), FALSE);
-        g_return_val_if_fail (self->priv->match, FALSE);
-
-        action = GIBBON_GAME_ACTION (gibbon_roll_new (die1, die2));
-
-        return gibbon_jelly_fish_reader_add_action (self, name, action);
-}
-
-gboolean _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
-                                        const gchar *name,
-                                        guint64 encoded)
+_gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
+                                guint64 dice, guint64 encoded)
 {
         GibbonMove *move;
-
+        GibbonRoll *roll;
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), FALSE);
         g_return_val_if_fail (self->priv->match, FALSE);
+        g_return_val_if_fail (self->priv->side, FALSE);
+
+        roll = gibbon_roll_new (dice / 10, dice % 10);
+
+        if (!gibbon_jelly_fish_reader_add_action (self,
+                                                  GIBBON_GAME_ACTION (roll)))
+                return FALSE;
 
         if (encoded & 0xffff000000000000ULL) {
                 move = gibbon_move_newv (0, 0,
@@ -355,8 +346,8 @@ gboolean _gibbon_jelly_fish_reader_move (GibbonJellyFishReader *self,
                 move = gibbon_move_newv (0, 0, -1);
         }
 
-        return gibbon_jelly_fish_reader_add_action (self, name,
-                                                   GIBBON_GAME_ACTION (move));
+        return gibbon_jelly_fish_reader_add_action (self,
+                                                    GIBBON_GAME_ACTION (move));
 }
 
 gboolean
@@ -370,7 +361,7 @@ _gibbon_jelly_fish_reader_double (GibbonJellyFishReader *self,
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
 
-        return gibbon_jelly_fish_reader_add_action (self, name, action);
+        return gibbon_jelly_fish_reader_add_action (self, action);
 }
 
 gboolean
@@ -384,7 +375,7 @@ _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self,
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
 
-        return gibbon_jelly_fish_reader_add_action (self, name, action);
+        return gibbon_jelly_fish_reader_add_action (self, action);
 }
 
 gboolean
@@ -398,7 +389,7 @@ _gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self,
 
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
 
-        return gibbon_jelly_fish_reader_add_action (self, name, action);
+        return gibbon_jelly_fish_reader_add_action (self, action);
 }
 
 /*
@@ -425,7 +416,7 @@ _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
         last_action = gibbon_game_get_nth_action (game, -1, NULL);
         if (GIBBON_IS_RESIGN (last_action)) {
                 action = GIBBON_GAME_ACTION (gibbon_accept_new ());
-                return gibbon_jelly_fish_reader_add_action (self, name, action);
+                return gibbon_jelly_fish_reader_add_action (self, action);
         }
 
         /* Otherwise, simply ignore this item.  */
@@ -451,7 +442,7 @@ _gibbon_jelly_fish_reader_resign (GibbonJellyFishReader *self,
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (points));
 
-        return gibbon_jelly_fish_reader_add_action (self, name, action);
+        return gibbon_jelly_fish_reader_add_action (self, action);
 }
 
 gboolean
@@ -470,42 +461,21 @@ _gibbon_jelly_fish_reader_reject_resign (GibbonJellyFishReader *self,
 
 static gboolean
 gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
-                                    const gchar *name,
-                                    GibbonGameAction *action)
+                                     GibbonGameAction *action)
 {
         GibbonGame *game;
-        const GibbonPosition *position;
         GibbonPositionSide side;
         GError *error = NULL;
-        GibbonMove *move;
-        gsize i;
+
+        g_return_val_if_fail (self->priv->side, FALSE);
+
+        side = self->priv->side;
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
                 _gibbon_jelly_fish_reader_yyerror (_("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
-        }
-
-        position = gibbon_game_get_position (game);
-        if (g_strcmp0 (position->players[0], name))
-                side = GIBBON_POSITION_SIDE_BLACK;
-        else
-                side = GIBBON_POSITION_SIDE_WHITE;
-
-        if (GIBBON_IS_MOVE (action)
-            && side == GIBBON_POSITION_SIDE_BLACK) {
-                /*
-                 * The parser has already translated the move to a move
-                 * that corresponds white's direction, that is from higher
-                 * points to 0.  If our move is actually for black, we have
-                 * to translate it once more.
-                 */
-                move = GIBBON_MOVE (action);
-                for (i = 0; i < move->number; ++i) {
-                        move->movements[i].from = -move->movements[i].from + 25;
-                        move->movements[i].to = -move->movements[i].to + 25;
-                }
         }
 
         if (!gibbon_game_add_action (game, side, action, &error)) {
