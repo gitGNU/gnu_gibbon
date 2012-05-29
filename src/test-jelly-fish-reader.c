@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gibbon-jelly-fish-reader.h"
+#include "gibbon-jelly-fish-writer.h"
 
 int
 main (int argc, char *argv[])
@@ -31,7 +32,11 @@ main (int argc, char *argv[])
         gint status = 0;
         gchar *input_file;
         GibbonMatchReader *reader;
+        GibbonMatchWriter *writer;
         GibbonMatch *match;
+        gchar *wanted, *got;
+        GError *error = NULL;
+        GOutputStream *out;
 
         g_type_init ();
 
@@ -41,9 +46,38 @@ main (int argc, char *argv[])
 
         input_file = g_build_filename (ABS_BUILDDIR, "complete.mat", NULL);
         match = gibbon_match_reader_parse (reader, input_file);
-        g_free (input_file);
 
         g_return_val_if_fail (match != NULL, -1);
+
+        if (!g_file_get_contents (input_file, &wanted, NULL, &error)) {
+                g_printerr ("Error reading `%s': %s\n",
+                            input_file, error->message);
+                return -1;
+        }
+
+        writer = GIBBON_MATCH_WRITER (gibbon_jelly_fish_writer_new ());
+        g_return_val_if_fail (writer != NULL, -1);
+
+        out = G_OUTPUT_STREAM (g_memory_output_stream_new (NULL, 0,
+                                                           g_realloc,
+                                                           g_free));
+        g_return_val_if_fail (out != NULL, -1);
+
+        if (!gibbon_match_writer_write_stream (writer, out, match, &error)) {
+                g_printerr ("%s.\n", error->message);
+                return 1;
+        }
+
+        got = g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out));
+        if (g_strcmp0 (wanted, got)) {
+                g_printerr ("Wanted contents of `%s', got:\n%s--- END ---\n",
+                            input_file, got);
+                return -1;
+        }
+
+
+        g_free (wanted);
+        g_free (input_file);
 
         g_object_unref (match);
         g_object_unref (reader);
