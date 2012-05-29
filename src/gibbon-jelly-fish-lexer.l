@@ -112,7 +112,7 @@ static int yywrap ();
 
   /***************************************************************************
    * The line with the opponents.                                            
-   * This isr really a little awkward to use six start conditions for six
+   * This is really a little awkward to use six start conditions for six
    * simple tokens.  But I cannot see a simpler solution right now.
    ***************************************************************************/
 <OPPONENTS1>[\x21-\xff]+	{
