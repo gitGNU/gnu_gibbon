@@ -126,7 +126,14 @@ games
 	;
 	
 game
-	: game_prolog opponents actions
+	: game_prolog opponents 
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_BLACK
+			);
+		}
+		actions
 	;
 
 game_prolog
@@ -160,12 +167,77 @@ action
 	;
 	
 move
-	: INTEGER PAREN half_move half_move
+	: INTEGER PAREN 
+		half_move
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_WHITE
+			);
+		}
+		half_move
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_BLACK
+			);
+		}
 	| INTEGER PAREN half_move
-	| INTEGER PAREN WHITESPACE half_move
-	| INTEGER PAREN WHITESPACE WINS
-	| WHITESPACE WINS
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_BLACK
+			);
+		}
+	| INTEGER PAREN WHITESPACE
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_WHITE
+			);
+		}
+		half_move
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_BLACK
+			);
+		}
+	| INTEGER PAREN WHITESPACE 
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_WHITE
+			);
+		}
+		WINS
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_NONE
+			);
+		}
+	| WHITESPACE 
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_WHITE
+			);
+		}
+		WINS
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_NONE
+			);
+		}
 	| WINS
+		{
+			_gibbon_jelly_fish_reader_set_side (
+				reader,
+				GIBBON_POSITION_SIDE_NONE
+			);
+		}
 	;
 
 half_move

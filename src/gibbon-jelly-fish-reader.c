@@ -291,7 +291,6 @@ _gibbon_jelly_fish_reader_set_side (GibbonJellyFishReader *self,
 {
         g_return_if_fail (GIBBON_IS_JELLY_FISH_READER (self));
         g_return_if_fail (self->priv->match);
-        g_return_if_fail (side);
 
         self->priv->side = side;
 }
