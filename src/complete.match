@@ -426,207 +426,207 @@ JavaFIBS internal match representation v1.1
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:1 4
-1:JoeBlack:1-2 12-16
+1:JoeBlack:24-23 13-9
 0:You:5 1
-1:You:13-8 24-23
+1:You:12-17 1-2
 0:JoeBlack:2 1
-1:JoeBlack:16-18 17-18
+1:JoeBlack:9-7 8-7
 0:You:6 6
-1:You:8-2 8-2 13-7 13-7
+1:You:17-23 17-23 12-18 12-18
 0:JoeBlack:2 4
-1:JoeBlack:bar-4 1-3
+1:JoeBlack:bar-21 24-22
 0:You:6 3
-1:You:23-20 20-14
+1:You:2-5 5-11
 0:JoeBlack:6 6
-1:JoeBlack:4-10 10-16 3-9 9-15
+1:JoeBlack:21-15 15-9 22-16 16-10
 0:You:4 4
-1:You:24-20 20-16 14-10 6-2
+1:You:1-5 5-9 11-15 19-23
 0:JoeBlack:4 2
-1:JoeBlack:bar-4 15-17
+1:JoeBlack:bar-21 10-8
 0:You:4 6
-1:You:10-4 8-4
+1:You:15-21 17-21
 0:JoeBlack:2 4
 15:JoeBlack:
 0:You:4 3
-1:You:7-3 6-3
+1:You:18-22 19-22
 0:JoeBlack:6 4
 15:JoeBlack:
 0:You:6 4
-1:You:16-10 13-9
+1:You:9-15 12-16
 0:JoeBlack:1 2
-1:JoeBlack:bar-1 19-21
+1:JoeBlack:bar-24 6-4
 0:You:1 1
-1:You:2-1 2-1 2-1 8-7
+1:You:23-24 23-24 23-24 17-18
 0:JoeBlack:2 5
-1:JoeBlack:bar-5 19-21
+1:JoeBlack:bar-20 6-4
 0:You:4 1
-1:You:9-5 6-5
+1:You:16-20 19-20
 0:JoeBlack:1 3
 15:JoeBlack:
 0:You:2 1
-1:You:13-11 11-10
+1:You:12-14 14-15
 0:JoeBlack:1 6
 15:JoeBlack:
 0:You:1 2
-1:You:10-8 8-7
+1:You:15-17 17-18
 0:JoeBlack:6 4
 15:JoeBlack:
 0:You:1 2
-1:You:10-8 8-7
+1:You:15-17 17-18
 0:JoeBlack:1 3
 15:JoeBlack:
 0:You:4 5
-1:You:7-2 7-3
+1:You:18-23 18-22
 0:JoeBlack:6 3
 15:JoeBlack:
 0:You:6 3
-1:You:7-1 7-4
+1:You:18-24 18-21
 0:JoeBlack:5 2
-1:JoeBlack:bar-2 2-7
+1:JoeBlack:bar-23 23-18
 0:You:3 4
-1:You:bar-22 6-2
+1:You:bar-3 19-23
 0:JoeBlack:3 2
-1:JoeBlack:12-15 15-17
+1:JoeBlack:13-10 10-8
 0:You:3 1
-1:You:6-3 3-2
+1:You:19-22 22-23
 0:JoeBlack:3 1
-1:JoeBlack:17-20 19-20
+1:JoeBlack:8-5 6-5
 0:You:1 6
-1:You:22-16 16-15
+1:You:3-9 9-10
 0:JoeBlack:3 2
-1:JoeBlack:12-15 12-14
+1:JoeBlack:13-10 13-11
 0:You:5 6
 15:You:
 0:JoeBlack:5 3
-1:JoeBlack:15-18 14-19
+1:JoeBlack:10-7 11-6
 0:You:1 3
-1:You:bar-22 3-2
+1:You:bar-3 22-23
 0:JoeBlack:2 6
-1:JoeBlack:7-13 18-20
+1:JoeBlack:18-12 7-5
 0:You:5 5
 15:You:
 0:JoeBlack:6 2
-1:JoeBlack:12-18 20-22
+1:JoeBlack:13-7 5-3
 0:You:1 5
-1:You:bar-24
+1:You:bar-1
 0:JoeBlack:2 1
-1:JoeBlack:19-21 21-22
+1:JoeBlack:6-4 4-3
 0:You:5 6
 15:You:
 0:JoeBlack:5 1
-1:JoeBlack:13-18 17-18
+1:JoeBlack:12-7 8-7
 0:You:3 3
-1:You:5-2 5-2 4-1 4-1
+1:You:20-23 20-23 21-24 21-24
 0:JoeBlack:2 1
-1:JoeBlack:18-20 18-19
+1:JoeBlack:7-5 7-6
 0:You:6 3
-1:You:4-1
+1:You:21-24
 0:JoeBlack:6 1
-1:JoeBlack:17-23 17-18
+1:JoeBlack:8-2 8-7
 0:You:5 6
 15:You:
 0:JoeBlack:1 5
-1:JoeBlack:18-23 18-19
+1:JoeBlack:7-2 7-6
 0:You:6 2
-1:You:3-1
+1:You:22-24
 0:JoeBlack:1 2
-1:JoeBlack:19-21 21-22
+1:JoeBlack:6-4 4-3
 0:You:1 1
-1:You:3-2 2-1 2-1 2-1
+1:You:22-23 23-24 23-24 23-24
 0:JoeBlack:6 1
-1:JoeBlack:18-24 18-19
+1:JoeBlack:7-1 7-6
 0:You:4 2
 15:You:
 0:JoeBlack:5 2
-1:JoeBlack:19-24 19-21
+1:JoeBlack:6-1 6-4
 0:You:4 2
 15:You:
 0:JoeBlack:4 6
-1:JoeBlack:19-off 19-23
+1:JoeBlack:6-off 6-2
 0:You:1 5
 15:You:
 0:JoeBlack:1 4
-1:JoeBlack:20-24 24-off
+1:JoeBlack:5-1 1-off
 0:You:2 4
 15:You:
 0:JoeBlack:5 5
-1:JoeBlack:20-off 20-off 21-off 21-off
+1:JoeBlack:5-off 5-off 4-off 4-off
 0:You:6 4
-1:You:bar-21 21-15
+1:You:bar-4 4-10
 0:JoeBlack:5 5
-1:JoeBlack:bar-5 5-10 10-15 15-20
+1:JoeBlack:bar-20 20-15 15-10 10-5
 0:You:1 6
-1:You:bar-19 19-18
+1:You:bar-6 6-7
 0:JoeBlack:6 6
-1:JoeBlack:20-off 22-off 22-off 22-off
+1:JoeBlack:5-off 3-off 3-off 3-off
 0:You:6 6
-1:You:18-12 12-6 6-off 2-off
+1:You:7-13 13-19 19-off 23-off
 0:JoeBlack:3 3
-1:JoeBlack:23-off 23-off 23-off 24-off
+1:JoeBlack:2-off 2-off 2-off 1-off
 0:You:3 4
-1:You:2-off 2-off
+1:You:23-off 23-off
 0:JoeBlack:3 6
-1:JoeBlack:24-off
+1:JoeBlack:1-off
 7:JoeBlack:1
 14:JoeBlack-5:gflohr-5
 13:JoeBlack:
 6:You:JoeBlack
 11:JoeBlack:1 2
-1:JoeBlack:24-23 13-11
+1:JoeBlack:1-2 12-14
 0:You:5 1
-1:You:12-17 19-20
+1:You:13-8 6-5
 0:JoeBlack:3 5
-1:JoeBlack:23-20 13-8
+1:JoeBlack:2-5 12-17
 0:You:5 2
-1:You:bar-5 1-3
+1:You:bar-20 24-22
 0:JoeBlack:2 4
-1:JoeBlack:24-20 13-11
+1:JoeBlack:1-5 12-14
 0:You:1 6
-1:You:12-18 17-18
+1:You:13-7 8-7
 0:JoeBlack:4 3
-1:JoeBlack:8-5 5-1
+1:JoeBlack:17-20 20-24
 0:You:2 5
-1:You:bar-5 bar-2
+1:You:bar-20 bar-23
 0:JoeBlack:4 1
-1:JoeBlack:6-5 5-1
+1:JoeBlack:19-20 20-24
 0:You:3 1
-1:You:bar-3 2-3
+1:You:bar-22 23-22
 0:JoeBlack:4 5
-1:JoeBlack:20-15 15-11
+1:JoeBlack:5-10 10-14
 0:You:1 6
-1:You:3-9 19-20
+1:You:22-16 6-5
 0:JoeBlack:4 3
-1:JoeBlack:bar-22 13-9
+1:JoeBlack:bar-3 12-16
 0:You:2 1
-1:You:bar-2 19-20
+1:You:bar-23 6-5
 0:JoeBlack:5 6
-1:JoeBlack:22-16 16-11
+1:JoeBlack:3-9 9-14
 0:You:1 6
-1:You:2-3 3-9
+1:You:23-22 22-16
 0:JoeBlack:5 1
-1:JoeBlack:bar-24 13-8
+1:JoeBlack:bar-1 12-17
 0:You:6 3
-1:You:9-15 12-15
+1:You:16-10 13-10
 0:JoeBlack:1 5
-1:JoeBlack:24-23 11-6
+1:JoeBlack:1-2 14-19
 0:You:2 4
-1:You:12-16 12-14
+1:You:13-9 13-11
 0:JoeBlack:3 1
-1:JoeBlack:8-5 6-5
+1:JoeBlack:17-20 19-20
 0:You:3 5
-1:You:14-19 16-19
+1:You:11-6 9-6
 0:JoeBlack:1 1
-1:JoeBlack:6-5 6-5 5-4 5-4
+1:JoeBlack:19-20 19-20 20-21 20-21
 0:You:2 5
-1:You:15-20 19-21
+1:You:10-5 6-4
 0:JoeBlack:1 3
-1:JoeBlack:23-22 11-8
+1:JoeBlack:2-3 14-17
 0:You:4 2
-1:You:19-21 3-7
+1:You:6-4 22-18
 0:JoeBlack:5 6
-1:JoeBlack:22-16 16-11
+1:JoeBlack:3-9 9-14
 0:You:3 1
-1:You:15-18 18-19
+1:You:10-7 7-6
 2:JoeBlack:
 5:You:
 7:JoeBlack:1
