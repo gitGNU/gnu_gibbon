@@ -58,61 +58,34 @@ G_DEFINE_TYPE (GibbonGMDWriter, gibbon_gmd_writer, \
         g_free (buffer);
 
 static gboolean gibbon_gmd_writer_write_stream (const GibbonMatchWriter
-                                                      *writer,
-                                                      GOutputStream *out,
-                                                      const GibbonMatch *match,
-                                                      GError **error);
-static gboolean gibbon_gmd_writer_write_game (const GibbonGMDWriter
-                                                    *self,
-                                                    GOutputStream *out,
-                                                    const GibbonGame *game,
-                                                    guint game_number,
-                                                    const GibbonMatch *match,
-                                                    GError **error);
-static gboolean gibbon_gmd_writer_roll (const GibbonGMDWriter *self,
-                                              GOutputStream *out,
-                                              GibbonPositionSide side,
-                                              GibbonRoll *roll,
-                                              const GibbonMatch *match,
-                                              gboolean is_opening,
-                                              GError **error);
-static gboolean gibbon_gmd_writer_move (const GibbonGMDWriter *self,
-                                              GOutputStream *out,
-                                              GibbonPositionSide side,
-                                              GibbonMove *move,
-                                              const GibbonMatch *match,
-                                              gboolean swap,
-                                              GError **error);
-static gboolean gibbon_gmd_writer_double (const GibbonGMDWriter *self,
-                                               GOutputStream *out,
-                                               GibbonPositionSide side,
-                                               GibbonDouble *dbl,
-                                               const GibbonMatch *match,
-                                               GError **error);
-static gboolean gibbon_gmd_writer_take (const GibbonGMDWriter *self,
-                                              GOutputStream *out,
-                                              GibbonPositionSide side,
-                                              GibbonTake *take,
-                                              const GibbonMatch *match,
-                                              GError **error);
-static gboolean gibbon_gmd_writer_drop (const GibbonGMDWriter *self,
-                                              GOutputStream *out,
-                                              GibbonPositionSide side,
-                                              GibbonDrop *drop,
-                                              const GibbonMatch *match,
-                                              GError **error);
-static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
-                                               GOutputStream *out,
-                                               GibbonPositionSide side,
-                                               GibbonResign *resign,
-                                               const GibbonMatch *match,
-                                               GError **error);
-static gboolean gibbon_gmd_writer_reject (const GibbonGMDWriter *self,
+                                                *writer,
                                                 GOutputStream *out,
-                                                GibbonPositionSide side,
-                                                GibbonReject *reject,
                                                 const GibbonMatch *match,
                                                 GError **error);
+static gboolean gibbon_gmd_writer_write_game (const GibbonGMDWriter *self,
+                                              GOutputStream *out,
+                                              const GibbonGame *game,
+                                              GError **error);
+static gboolean gibbon_gmd_writer_roll (const GibbonGMDWriter *self,
+                                        GOutputStream *out,
+                                        gchar color,
+                                        const GibbonRoll *roll,
+                                        GError **error);
+static gboolean gibbon_gmd_writer_move (const GibbonGMDWriter *self,
+                                        GOutputStream *out,
+                                        gchar color,
+                                        const GibbonMove *move,
+                                        GError **error);
+static gboolean gibbon_gmd_writer_simple (const GibbonGMDWriter *self,
+                                        GOutputStream *out,
+                                        gchar color,
+                                        const gchar *action,
+                                        GError **error);
+static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
+                                          GOutputStream *out,
+                                          gchar color,
+                                          const GibbonResign *resign,
+                                          GError **error);
 
 static void 
 gibbon_gmd_writer_init (GibbonGMDWriter *self)
@@ -162,12 +135,8 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         gsize game_number;
         GibbonGame *game;
         gchar *buffer;
-        guint scores[2] = {0, 0};
-        unsigned long long cs[2];
-        gint score;
         gsize match_length;
         gsize num_games;
-        const gchar *winner, *loser;
 
         self = GIBBON_GMD_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
@@ -199,170 +168,74 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         }
         GIBBON_WRITE_ALL (buffer);
 
-        return TRUE;
-
         for (game_number = 0; ; ++game_number) {
                 game = gibbon_match_get_nth_game (match, game_number);
                 if (!game)
                         break;
-                if (!gibbon_gmd_writer_write_game (self, out, game,
-                                                         game_number, match,
-                                                         error))
+                if (!gibbon_gmd_writer_write_game (self, out, game, error))
                         return FALSE;
-
-                score = gibbon_game_over (game);
-                if (score) {
-                        if (score < 0) {
-                                winner = gibbon_match_get_black (match);
-                                scores[1] -= score;
-                                cs[0] = scores[0];
-                                cs[1] = scores[1];
-                        } else {
-                                winner = "You";
-                                scores[0] += score;
-                                cs[0] = scores[1];
-                                cs[1] = scores[0];
-                        }
-                        buffer = g_strdup_printf ("7:%s:%llu\015\012",
-                                                  winner,
-                                                  (unsigned long long)
-                                                  abs (score));
-                        if (!g_output_stream_write_all (out, buffer,
-                                                        strlen (buffer),
-                                                        NULL, NULL, error)) {
-                                g_free (buffer);
-                                return FALSE;
-                        }
-                        g_free (buffer);
-                        buffer = NULL;
-
-                        if (match_length > 0
-                            && (scores[0] >= match_length
-                                || scores[1] >= match_length)) {
-                                buffer = g_strdup_printf ("9:%s:%llu\015\012",
-                                                          scores[0]
-                                                          > scores[1] ?
-                                                          "You" :
-                                                          winner,
-                                                          (unsigned long long)
-                                                          match_length);
-                        } else if (match_length > 0) {
-                                if (score < 0) {
-                                        winner = gibbon_match_get_black (match);
-                                        loser = gibbon_match_get_white (match);
-                                } else {
-                                        winner = gibbon_match_get_white (match);
-                                        loser = gibbon_match_get_black (match);
-                                }
-
-                                buffer = g_strdup_printf ("14:%s-%llu:%s-%llu"
-                                                          "\015\012",
-                                                winner, cs[1],
-                                                loser, cs[0]);
-                        }
-
-                        if (buffer) {
-                                if (!g_output_stream_write_all (out, buffer,
-                                                                strlen (buffer),
-                                                                NULL, NULL,
-                                                                error)) {
-                                        g_free (buffer);
-                                        return FALSE;
-                                }
-                                g_free (buffer);
-                        }
-                }
         }
 
         return TRUE;
 }
 
 static gboolean
-gibbon_gmd_writer_write_game (const GibbonGMDWriter *self,
-                                    GOutputStream *out,
-                                    const GibbonGame *game,
-                                    guint game_number,
-                                    const GibbonMatch *match,
-                                    GError **error)
+gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
+                              const GibbonGame *game, GError **error)
 {
-        gchar *prolog;
         glong action_num;
         GibbonPositionSide side;
         const GibbonGameAction *action = NULL;
-        gboolean opening = TRUE;
-
-        prolog = g_strdup_printf ("13:%s:\015\0126:You:%s\015\012",
-                                  gibbon_match_get_black (match),
-                                  gibbon_match_get_black (match));
-        if (!g_output_stream_write_all (out, prolog, strlen (prolog),
-                                        NULL, NULL, error)) {
-                g_free (prolog);
-                return FALSE;
-        }
-        g_free (prolog);
+        gchar color;
 
         for (action_num = 0; ; ++action_num) {
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
+                if (side < 0)
+                        color = 'B';
+                else if (color > 0)
+                        color = 'W';
+                else
+                        color = '0';
+
                 if (GIBBON_IS_ROLL (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_roll (self, out, side,
-                                                           GIBBON_ROLL (action),
-                                                           match,
-                                                           opening, error))
+                        if (!gibbon_gmd_writer_roll (self, out, color,
+                                                     GIBBON_ROLL (action),
+                                                     error))
                                 return FALSE;
-                        opening = FALSE;
                 } else if (GIBBON_IS_MOVE (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_move (self, out, side,
-                                                           GIBBON_MOVE (action),
-                                                           match,
-                                                           game_number % 2,
-                                                           error))
+                        if (!gibbon_gmd_writer_move (self, out, color,
+                                                     GIBBON_MOVE (action),
+                                                     error))
                                 return FALSE;
                 } else if (GIBBON_IS_DOUBLE (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_double (self, out, side,
-                                                         GIBBON_DOUBLE (action),
-                                                             match, error))
+                        if (!gibbon_gmd_writer_simple (self, out, color,
+                                                      "Double", error))
                                 return FALSE;
                 } else if (GIBBON_IS_TAKE (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_take (self, out, side,
-                                                           GIBBON_TAKE (action),
-                                                           match, error))
+                        if (!gibbon_gmd_writer_simple (self, out, color,
+                                                      "Take", error))
                                 return FALSE;
                 } else if (GIBBON_IS_DROP (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_drop (self, out, side,
-                                                           GIBBON_DROP (action),
-                                                           match, error))
+                        if (!gibbon_gmd_writer_simple (self, out, color,
+                                                       "Drop", error))
                                 return FALSE;
                 } else if (GIBBON_IS_RESIGN (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_resign (self, out, side,
-                                                         GIBBON_RESIGN (action),
-                                                             match, error))
+                        if (!gibbon_gmd_writer_resign (self, out, color,
+                                                       GIBBON_RESIGN (action),
+                                                       error))
                                 return FALSE;
                 } else if (GIBBON_IS_ACCEPT (action)) {
-                        /* Ignored.  We write the game or match result
-                         * instead.
-                         */
-                        continue;
-                } else if (GIBBON_IS_REJECT (action)) {
-                        if (!side)
-                                continue;
-                        if (!gibbon_gmd_writer_reject (self, out, side,
-                                                         GIBBON_REJECT (action),
-                                                             match, error))
+                        if (!gibbon_gmd_writer_simple (self, out, color,
+                                                       "Accept", error))
                                 return FALSE;
+                } else if (GIBBON_IS_REJECT (action)) {
+                        if (!gibbon_gmd_writer_simple (self, out, color,
+                                                       "Reject", error))
+                                return FALSE;
+                } else {
+                        g_printerr ("Action %p is not supported.\n", action);
                 }
         }
 
@@ -370,19 +243,12 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self,
 }
 
 static gboolean
-gibbon_gmd_writer_roll (const GibbonGMDWriter *self,
-                              GOutputStream *out,
-                              GibbonPositionSide side, GibbonRoll *roll,
-                              const GibbonMatch *match, gboolean is_opening,
-                              GError **error)
+gibbon_gmd_writer_roll (const GibbonGMDWriter *self, GOutputStream *out,
+                        gchar color, const GibbonRoll *roll, GError **error)
 {
         gchar *buffer;
-        guint opcode = is_opening ? 11 : 0;
 
-        buffer = g_strdup_printf ("%u:%s:%u %u\015\012",
-                                  opcode,
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match),
+        buffer = g_strdup_printf ("Roll:%c: %d %d\n", color,
                                   roll->die1, roll->die2);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
@@ -396,21 +262,15 @@ gibbon_gmd_writer_roll (const GibbonGMDWriter *self,
 }
 
 static gboolean
-gibbon_gmd_writer_move (const GibbonGMDWriter *self,
-                              GOutputStream *out,
-                              GibbonPositionSide side, GibbonMove *move,
-                              const GibbonMatch *match, gboolean noswap,
-                              GError **error)
+gibbon_gmd_writer_move (const GibbonGMDWriter *self, GOutputStream *out,
+                        gchar color, const GibbonMove *move, GError **error)
 {
         gchar *buffer;
         gsize i;
         GibbonMovement *movement;
         gint from, to;
 
-        buffer = g_strdup_printf ("%u:%s:",
-                                  move->number ? 1 : 15,
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
+        buffer = g_strdup_printf ("Move:%c:", color);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
@@ -421,17 +281,14 @@ gibbon_gmd_writer_move (const GibbonGMDWriter *self,
 
         for (i = 0; i < move->number; ++i) {
                 movement = move->movements + i;
-                from = noswap ? movement->from : 25 - movement->from;
-                to = noswap ? movement->to : 25 - movement->to;
+                from = movement->from;
+                to = movement->to;
                 if (from == 25 || from == 0)
-                        buffer = g_strdup_printf ("%sbar-%u",
-                                                  i ? " " : "", to);
+                        buffer = g_strdup_printf (" bar/%u", to);
                 else if (to == 25 || to == 0)
-                        buffer = g_strdup_printf ("%s%u-off",
-                                                  i ? " " : "", from);
+                        buffer = g_strdup_printf (" %u/off", from);
                 else
-                        buffer = g_strdup_printf ("%s%u-%u",
-                                                  i ? " " : "", from, to);
+                        buffer = g_strdup_printf (" %u/%u", from, to);
                 if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                                 NULL, NULL, error)) {
                         g_free (buffer);
@@ -440,7 +297,7 @@ gibbon_gmd_writer_move (const GibbonGMDWriter *self,
                 g_free (buffer);
         }
 
-        if (!g_output_stream_write_all (out, "\015\012", 2,
+        if (!g_output_stream_write_all (out, "\n", strlen ("\n"),
                                         NULL, NULL, error))
                 return FALSE;
 
@@ -448,16 +305,12 @@ gibbon_gmd_writer_move (const GibbonGMDWriter *self,
 }
 
 static gboolean
-gibbon_gmd_writer_double (const GibbonGMDWriter *self,
-                               GOutputStream *out,
-                               GibbonPositionSide side, GibbonDouble *dbl,
-                               const GibbonMatch *match, GError **error)
+gibbon_gmd_writer_simple (const GibbonGMDWriter *self, GOutputStream *out,
+                          gchar color, const gchar *action, GError **error)
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("2:%s:\015\012",
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
+        buffer = g_strdup_printf ("%s:%c\n", action, color);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
@@ -470,83 +323,13 @@ gibbon_gmd_writer_double (const GibbonGMDWriter *self,
 }
 
 static gboolean
-gibbon_gmd_writer_take (const GibbonGMDWriter *self,
-                              GOutputStream *out,
-                              GibbonPositionSide side, GibbonTake *take,
-                              const GibbonMatch *match, GError **error)
+gibbon_gmd_writer_resign (const GibbonGMDWriter *self, GOutputStream *out,
+                          gchar color, const GibbonResign *resign,
+                          GError **error)
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("4:%s:\015\012",
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
-
-        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
-                                        NULL, NULL, error)) {
-                g_free (buffer);
-                return FALSE;
-        }
-        g_free (buffer);
-
-        return TRUE;
-}
-
-static gboolean
-gibbon_gmd_writer_drop (const GibbonGMDWriter *self,
-                              GOutputStream *out,
-                              GibbonPositionSide side, GibbonDrop *drop,
-                              const GibbonMatch *match, GError **error)
-{
-        gchar *buffer;
-
-        buffer = g_strdup_printf ("5:%s:\015\012",
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
-
-        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
-                                        NULL, NULL, error)) {
-                g_free (buffer);
-                return FALSE;
-        }
-        g_free (buffer);
-
-        return TRUE;
-}
-
-static gboolean
-gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
-                                GOutputStream *out,
-                                GibbonPositionSide side, GibbonResign *resign,
-                                const GibbonMatch *match, GError **error)
-{
-        gchar *buffer;
-
-        buffer = g_strdup_printf ("3:%s:%u\015\012",
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match),
-                                  resign->value);
-
-        if (!g_output_stream_write_all (out, buffer, strlen (buffer),
-                                        NULL, NULL, error)) {
-                g_free (buffer);
-                return FALSE;
-        }
-        g_free (buffer);
-
-        return TRUE;
-}
-
-static gboolean
-gibbon_gmd_writer_reject (const GibbonGMDWriter *self,
-                               GOutputStream *out,
-                               GibbonPositionSide side, GibbonReject *reject,
-                               const GibbonMatch *match, GError **error)
-{
-        gchar *buffer;
-
-        buffer = g_strdup_printf ("12:%s:\015\012",
-                                  side == GIBBON_POSITION_SIDE_WHITE ?
-                                  "You" : gibbon_match_get_black (match));
+        buffer = g_strdup_printf ("Double:%c:%u\n", color, resign->value);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
