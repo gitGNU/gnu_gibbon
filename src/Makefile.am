@@ -234,6 +234,6 @@ test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 test_jelly_fish_reader_SOURCES = $(common_SOURCES) test-jelly-fish-reader.c
 
-MATCH_FILES = complete.match
+MATCH_FILES = complete.match complete.gmd complete.mat complete.sgf
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
