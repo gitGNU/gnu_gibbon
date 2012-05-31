@@ -266,6 +266,11 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                                      _("The dice have already been"
                                        " rolled!"));
                 return FALSE;
+        } else if (!side) {
+                if (roll->die1 > roll->die2)
+                        side = GIBBON_POSITION_SIDE_WHITE;
+                else if (roll->die1 < roll->die2)
+                        side = GIBBON_POSITION_SIDE_BLACK;
         }
 
         pos->turn = side;
