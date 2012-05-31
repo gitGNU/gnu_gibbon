@@ -152,8 +152,8 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         if (gibbon_match_get_length (match) < 0) {
                 buffer = g_strdup_printf ("Length: unlimited\n");
         } else {
-                buffer = g_strdup_printf ("Length: %llu\n",
-                                          (unsigned long long)
+                buffer = g_strdup_printf ("Length: %lld\n",
+                                          (long long)
                                           gibbon_match_get_length (match));
         }
         GIBBON_WRITE_ALL (buffer);
@@ -165,13 +165,17 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
 
         if (gibbon_match_get_crawford (match)) {
                 buffer = g_strdup_printf ("Rule: Crawford\n");
+                GIBBON_WRITE_ALL (buffer);
         }
-        GIBBON_WRITE_ALL (buffer);
 
         for (game_number = 0; ; ++game_number) {
                 game = gibbon_match_get_nth_game (match, game_number);
                 if (!game)
                         break;
+
+                buffer = g_strdup_printf ("Game:\n");
+                GIBBON_WRITE_ALL (buffer);
+
                 if (!gibbon_gmd_writer_write_game (self, out, game, error))
                         return FALSE;
         }
@@ -197,7 +201,7 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
                 else if (color > 0)
                         color = 'W';
                 else
-                        color = '0';
+                        color = '-';
 
                 if (GIBBON_IS_ROLL (action)) {
                         if (!gibbon_gmd_writer_roll (self, out, color,
@@ -329,7 +333,7 @@ gibbon_gmd_writer_resign (const GibbonGMDWriter *self, GOutputStream *out,
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("Double:%c:%u\n", color, resign->value);
+        buffer = g_strdup_printf ("Resign:%c:%u\n", color, resign->value);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
