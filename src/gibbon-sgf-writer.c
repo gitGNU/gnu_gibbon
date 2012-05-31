@@ -233,7 +233,8 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         }
 
         mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("length"));
-        str = g_strdup_printf ("%u", (guint) gibbon_match_get_length (match));
+        str = g_strdup_printf ("%llu", (unsigned long long)
+                                gibbon_match_get_length (match));
         mi_value = GSGF_COOKED_VALUE (gsgf_simple_text_new (str));
         g_free (str);
         mi_compose = GSGF_COOKED_VALUE (gsgf_compose_new (mi_key, mi_value,
@@ -260,7 +261,7 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                 return FALSE;
         }
 
-        pos = gibbon_game_get_nth_position (game, 0);
+        pos = gibbon_game_get_initial_position (game);
 
         mi_key = GSGF_COOKED_VALUE (gsgf_simple_text_new ("ws"));
         str = g_strdup_printf ("%u", pos->scores[1]);
