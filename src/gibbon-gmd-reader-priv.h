@@ -36,18 +36,27 @@ void _gibbon_gmd_reader_set_white (GibbonGMDReader *self,
                                           const gchar *white);
 void _gibbon_gmd_reader_set_black (GibbonGMDReader *self,
                                           const gchar *black);
-void _gibbon_gmd_reader_set_match_length (GibbonGMDReader *self,
-                                                 gsize length);
+void _gibbon_gmd_reader_set_match_length (GibbonGMDReader *self, gint length);
 gboolean _gibbon_gmd_reader_add_game (GibbonGMDReader *self);
-void _gibbon_gmd_reader_set_side (GibbonGMDReader *self,
-                                         GibbonPositionSide side);
+void _gibbon_gmd_reader_set_crawford (GibbonGMDReader *self);
+gboolean _gibbon_gmd_reader_roll (GibbonGMDReader *self,
+                                  GibbonPositionSide side,
+                                  guint64 die1, guint64 die2);
 gboolean _gibbon_gmd_reader_move (GibbonGMDReader *self,
-                                         guint64 dice, guint64 encoded);
-gboolean _gibbon_gmd_reader_double (GibbonGMDReader *self);
-gboolean _gibbon_gmd_reader_drop (GibbonGMDReader *self);
-gboolean _gibbon_gmd_reader_take (GibbonGMDReader *self);
-gboolean _gibbon_gmd_reader_win_game (GibbonGMDReader *self,
-                                             guint points);
+                                  GibbonPositionSide side,
+                                  guint64 encoded);
+gboolean _gibbon_gmd_reader_double (GibbonGMDReader *self,
+                                    GibbonPositionSide side);
+gboolean _gibbon_gmd_reader_drop (GibbonGMDReader *self,
+                                  GibbonPositionSide side);
+gboolean _gibbon_gmd_reader_take (GibbonGMDReader *self,
+                                  GibbonPositionSide side);
+gboolean _gibbon_gmd_reader_resign (GibbonGMDReader *self,
+                                    GibbonPositionSide side, guint value);
+gboolean _gibbon_gmd_reader_reject (GibbonGMDReader *self,
+                                    GibbonPositionSide side);
+gboolean _gibbon_gmd_reader_accept (GibbonGMDReader *self,
+                                    GibbonPositionSide side);
 gchar *_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
                                              const gchar *name);
 void _gibbon_gmd_reader_free_names (GibbonGMDReader *self);

@@ -67,10 +67,10 @@ GibbonGMDReader *_gibbon_gmd_reader_instance = NULL;
 G_DEFINE_TYPE (GibbonGMDReader, gibbon_gmd_reader, GIBBON_TYPE_MATCH_READER)
 
 static GibbonMatch *gibbon_gmd_reader_parse (GibbonMatchReader *match_reader,
-                                                   const gchar *filename);
+                                             const gchar *filename);
 static gboolean gibbon_gmd_reader_add_action (GibbonGMDReader *self,
-                                                    const gchar *name,
-                                                    GibbonGameAction *action);
+                                              GibbonPositionSide side,
+                                              GibbonGameAction *action);
 
 static void 
 gibbon_gmd_reader_init (GibbonGMDReader *self)
@@ -246,10 +246,309 @@ _gibbon_gmd_reader_yyerror (const gchar *msg)
         g_free (full_msg);
 }
 
+void
+_gibbon_gmd_reader_set_white (GibbonGMDReader *self, const gchar *white)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_white (self->priv->match, white);
+}
+
+void
+_gibbon_gmd_reader_set_black (GibbonGMDReader *self, const gchar *black)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_black (self->priv->match, black);
+}
+
+void
+_gibbon_gmd_reader_set_match_length (GibbonGMDReader *self, gint length)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_length (self->priv->match, length);
+}
+
+void
+_gibbon_gmd_reader_set_crawford (GibbonGMDReader *self)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_crawford (self->priv->match, TRUE);
+}
+
+gboolean
+_gibbon_gmd_reader_add_game (GibbonGMDReader *self)
+{
+        GError *error = NULL;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        if (!gibbon_match_add_game (self->priv->match, &error)) {
+                _gibbon_gmd_reader_yyerror (error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_roll (GibbonGMDReader *self, GibbonPositionSide side,
+                         guint64 die1, guint64 die2)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (die1, die2));
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_move (GibbonGMDReader *self, GibbonPositionSide side,
+                         guint64 encoded)
+{
+        GibbonMove *move;
+        guint p[8], i;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+#define HOME 26
+#define BAR 27
+        if (encoded & 0xffff000000000000ULL) {
+                p[0] = (encoded & 0xff00000000000000ULL) >> 56;
+                p[1] = (encoded & 0x00ff000000000000ULL) >> 48;
+                p[2] = (encoded & 0x0000ff0000000000ULL) >> 40;
+                p[3] = (encoded & 0x000000ff00000000ULL) >> 32;
+                p[4] = (encoded & 0x00000000ff000000ULL) >> 24;
+                p[5] = (encoded & 0x0000000000ff0000ULL) >> 16;
+                p[6] = (encoded & 0x000000000000ff00ULL) >> 8;
+                p[7] = (encoded & 0x00000000000000ffULL);
+                for (i = 0; i < 8; i += 2) {
+                        if (p[i] == BAR) {
+                                if (p[i + 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i + 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                for (i = 1; i < 8; i += 2) {
+                        if (p[i] == HOME) {
+                                if (p[i - 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i - 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                move = gibbon_move_newv (0, 0,
+                                         p[0], p[1], p[2], p[3],
+                                         p[4], p[5], p[6], p[7],
+                                         -1);
+        } else if (encoded & 0xffff00000000ULL) {
+                p[0] = (encoded & 0x0000ff0000000000ULL) >> 40;
+                p[1] = (encoded & 0x000000ff00000000ULL) >> 32;
+                p[2] = (encoded & 0x00000000ff000000ULL) >> 24;
+                p[3] = (encoded & 0x0000000000ff0000ULL) >> 16;
+                p[4] = (encoded & 0x000000000000ff00ULL) >> 8;
+                p[5] = (encoded & 0x00000000000000ffULL);
+                for (i = 0; i < 6; i += 2) {
+                        if (p[i] == BAR) {
+                                if (p[i + 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i + 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                for (i = 1; i < 6; i += 2) {
+                        if (p[i] == HOME) {
+                                if (p[i - 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i - 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                move = gibbon_move_newv (0, 0,
+                                         p[0], p[1], p[2], p[3],
+                                         p[4], p[5],
+                                         -1);
+        } else if (encoded & 0xffff0000ULL) {
+                p[0] = (encoded & 0x00000000ff000000ULL) >> 24;
+                p[1] = (encoded & 0x0000000000ff0000ULL) >> 16;
+                p[2] = (encoded & 0x000000000000ff00ULL) >> 8;
+                p[3] = (encoded & 0x00000000000000ffULL);
+                for (i = 0; i < 4; i += 2) {
+                        if (p[i] == BAR) {
+                                if (p[i + 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i + 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                for (i = 1; i < 4; i += 2) {
+                        if (p[i] == HOME) {
+                                if (p[i - 1] > 18)
+                                        p[i] = 25;
+                                else if (p[i - 1] <= 6)
+                                        p[i] = 0;
+                        }
+                }
+                move = gibbon_move_newv (0, 0,
+                                         p[0], p[1], p[2], p[3],
+                                         -1);
+        } else if (encoded & 0xffffULL) {
+                p[0] = (encoded & 0x000000000000ff00ULL) >> 8;
+                p[1] = (encoded & 0x00000000000000ffULL);
+                if (p[0] == BAR) {
+                        if (p[1] > 18)
+                                p[0] = 25;
+                        else if (p[1] <= 6)
+                                p[0] = 0;
+                }
+                if (p[1] == HOME) {
+                        if (p[0] > 18)
+                                p[1] = 25;
+                        else if (p[0] <= 6)
+                                p[1] = 0;
+                }
+                move = gibbon_move_newv (0, 0,
+                                         p[0], p[1],
+                                         -1);
+        } else {
+                move = gibbon_move_newv (0, 0, -1);
+        }
+
+         return gibbon_gmd_reader_add_action (self, side,
+                                              GIBBON_GAME_ACTION (move));
+}
+
+gboolean
+_gibbon_gmd_reader_double (GibbonGMDReader *self, GibbonPositionSide side)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_drop (GibbonGMDReader *self, GibbonPositionSide side)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_take (GibbonGMDReader *self, GibbonPositionSide side)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_take_new ());
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_resign (GibbonGMDReader *self, GibbonPositionSide side,
+                           guint value)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (value));
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_reject (GibbonGMDReader *self, GibbonPositionSide side)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_accept (GibbonGMDReader *self, GibbonPositionSide side)
+{
+        GibbonGameAction *action;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (self->priv->match, FALSE);
+
+        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+
+        return gibbon_gmd_reader_add_action (self, side, action);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
+                              GibbonGameAction *action)
+{
+        GibbonGame *game;
+        GError *error = NULL;
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        if (!game) {
+                _gibbon_gmd_reader_yyerror (_("No game in progress!"));
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        if (!gibbon_game_add_action (game, side, action, &error)) {
+                _gibbon_gmd_reader_yyerror (error->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        return TRUE;
+}
 
 gchar *
-_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
-                                     const gchar *name)
+_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self, const gchar *name)
 {
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), NULL);
 

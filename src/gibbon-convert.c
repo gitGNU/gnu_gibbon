@@ -29,6 +29,7 @@
 #include <gdk/gdk.h>
 
 #include "gibbon-gmd-writer.h"
+#include "gibbon-gmd-reader.h"
 #include "gibbon-sgf-writer.h"
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-java-fibs-writer.h"
@@ -167,8 +168,9 @@ main (int argc, char *argv[])
                 g_printerr ("Reading SGF is not yet implemented!\n");
                 return 1;
         case GIBBON_CONVERT_FORMAT_GMD:
-                g_printerr ("Reading GMD is not yet implemented!\n");
-                return 1;
+                reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (NULL,
+                                                                     NULL));
+                break;
         case GIBBON_CONVERT_FORMAT_JAVA_FIBS:
                 reader =
                    GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (NULL,

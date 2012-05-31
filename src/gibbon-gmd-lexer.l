@@ -28,6 +28,8 @@
 # include "config.h"
 #endif
 
+#include "gibbon-util.h"
+
 static int yywrap ();
 
 #include <glib.h>
@@ -76,17 +78,232 @@ static int yywrap ();
 #define yytext gibbon_gmd_lexer_text
 }
 
+%{
+extern void _gibbon_gmd_reader_yyerror (const gchar *msg);
+#define yyerror(msg) _gibbon_gmd_reader_yyerror (msg)
+%}
+
 %option yylineno
 %option nounput
 %option noinput
+%option case-insensitive
+%option stack
 
 /* %option debug */
 
+NL (\r\n|\n|\r\n|\r)
+
+%s OPCODE
+%s SCOLON
+%s SCOLOR
+%s SLENGTH
+%s SRULE
+%s SPLAYER
+%s SMOVE
+%s EAT_UP
+
 %%
+
+  /***************************************************************************
+   * General rules, valid for all scanner states.                            *
+   ***************************************************************************/
+   
+  /* Ignore comments.  */
+#.*{NL}		   		{
+		BEGIN (OPCODE);
+	}
+  /* Ignore all whitespace.  */
+[ \t\f\v][ \t\f\v]*		;
+
+<INITIAL>GMD			{
+		/* The file magic is case-sensitive! */
+		if ('G' == yytext[0] && 'M' == yytext[1] && 'D' == yytext[2])
+	        	return MAGIC;
+	        return yytext[0];
+	}
+<INITIAL>-                      return HYPHEN;
+
+<OPCODE>length			{
+		BEGIN (SLENGTH);
+		yy_push_state (SCOLON);
+		return LENGTH;
+	}
+<SLENGTH>unlimited		{
+		BEGIN (OPCODE);
+		yylval.num = -1;
+		return INTEGER;
+	}
+<SLENGTH>money    		{
+		BEGIN (OPCODE);
+		yylval.num = -1;
+		return INTEGER;
+	}
+	
+<OPCODE>game                    {
+		yy_push_state (SCOLON);
+		return GAME;
+	}
+
+<OPCODE>white                   {
+		BEGIN (SPLAYER);
+		yy_push_state (SCOLON);
+		return PLAYER_WHITE;
+	}
+<OPCODE>black                   {
+		BEGIN (SPLAYER);
+		yy_push_state (SCOLON);
+		return PLAYER_BLACK;
+	}
+<SPLAYER>.*{NL}			{
+		BEGIN (OPCODE);
+		yylval.name = alloc_name (gibbon_trim (yytext));
+		return PLAYER;
+	}
+
+<OPCODE>rule			{
+		BEGIN (SRULE);
+		yy_push_state (SCOLON);
+		return RULE;
+	}
+<SRULE>[ \t\f\v]*crawford[ \t\f\v]*	{
+		BEGIN (OPCODE);
+		return CRAWFORD;
+	}
+<SRULE>.*			{
+		gchar *msg = g_strdup_printf (_("warning: unknown rule `%s'"), 
+		                              gibbon_trim (yytext));
+		yyerror (msg);
+		g_free (msg);
+
+		BEGIN (OPCODE);
+		return UNKNOWN;
+	}
+	
+<OPCODE>roll			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLON);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return ROLL;
+	}
+		
+<OPCODE>move			{
+		BEGIN (SMOVE);
+		yy_push_state (SCOLON);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return MOVE;
+	}
+<SMOVE>[-/]			{
+		return SLASH;
+	}
+<SMOVE>b(ar)?			{
+		return BAR;
+	}
+<SMOVE>h(ome)?			{
+		return HOME;
+	}
+<SMOVE>o(ff)?			{
+		return HOME;
+	}
+	
+<OPCODE>double			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return DOUBLE;
+	}
+
+<OPCODE>drop			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return DROP;
+	}
+
+<OPCODE>take			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return TAKE;
+	}
+
+<OPCODE>resign			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLON);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return RESIGN;
+	}
+	
+<OPCODE>reject			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return REJ;
+	}
+
+<OPCODE>accept			{
+		BEGIN (OPCODE);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return ACCEPT;
+	}
+
+<OPCODE>[_a-z][_a-z0-9]*        {
+		gchar *msg = g_strdup_printf (_("warning: unknown opcode `%s'"), 
+		                              yytext);
+		yyerror (msg);
+		g_free (msg);
+		BEGIN (EAT_UP);
+		yy_push_state (SCOLON);
+		return UNKNOWN;
+	}
+
+<EAT_UP>.*                      {
+		BEGIN (OPCODE);
+		return GARBAGE;
+	}
+
+<SCOLON>:			{
+		yy_pop_state ();
+		return COLON;
+	}
+	
+<SCOLOR>-			{
+		yy_pop_state ();
+		return NO_COLOR;
+	}
+<SCOLOR>[0OW]			{
+		yy_pop_state ();
+		return WHITE;
+	}
+<SCOLOR>white			{
+		yy_pop_state ();
+		return WHITE;
+	}
+<SCOLOR>[1XB]			{
+		yy_pop_state ();
+		return BLACK;
+	}
+<SCOLOR>black			{
+		yy_pop_state ();
+		return BLACK;
+	}
+					
+{NL}				BEGIN (OPCODE);
+
+[0-9]+                          {
+		yylval.num = (gint) g_ascii_strtoull (yytext, NULL, 10);
+		return INTEGER;
+	}
+
+.				return yytext[0];
 %%
 
 static int
 yywrap ()
 {
-	return 1;
+	/* Make compiler happy.  */
+	return yy_top_state () || 1;
 }

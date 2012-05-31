@@ -85,24 +85,235 @@ extern int gibbon_gmd_lexer_lex (void);
 #define yytable    gibbon_gmd_parser_yytable
 #define yycheck    gibbon_gmd_parser_yycheck
 
-static guint gibbon_gmd_parser_encode_movement (guint64 from, guint64 to);
+#define YYDEBUG 42
 %}
 
 %union {
 	guint64 num;
 	gdouble dbl;
 	gchar *name;
+	gint side;
 }
+
+%token MAGIC
+%token HYPHEN
+%token COLON
+%token <num> INTEGER
+%token <name> PLAYER
+%token LENGTH
+%token PLAYER_WHITE
+%token PLAYER_BLACK
+%token RULE
+%token CRAWFORD
+%token GAME
+%token WHITE
+%token BLACK
+%token NO_COLOR
+%token ROLL
+%token MOVE
+%token SLASH
+%token BAR
+%token HOME
+%token DOUBLE
+%token DROP
+%token TAKE
+%token RESIGN
+%token REJ
+%token ACCEPT
+%token UNKNOWN
+%token GARBAGE
+
+%type <side> color
+%type <num> movements
+%type <num> movement
+%type <num> point
 
 %%
 
 gmd_file
-	: /* empty */
+	: { yydebug = 0; } MAGIC HYPHEN INTEGER things
+		{
+			_gibbon_gmd_reader_free_names (reader);
+		}
         ;
-%%
 
-static guint
-gibbon_gmd_parser_encode_movement (guint64 from, guint64 to)
-{
-	return (from << 8 | to);
-}
+things
+	: /* empty */
+	| things thing
+		{
+			_gibbon_gmd_reader_free_names (reader);
+		}
+	;
+
+thing
+	: property
+	| action
+	;
+
+property
+	: length | white | black | rule | game | unknown
+	;
+	
+length
+	: LENGTH COLON INTEGER
+		{
+			_gibbon_gmd_reader_set_match_length (reader, $3);
+		}
+	;
+
+white
+	: PLAYER_WHITE COLON PLAYER
+		{
+			_gibbon_gmd_reader_set_white (reader, $3);
+		}
+	;
+
+black
+	: PLAYER_BLACK COLON PLAYER
+		{
+			_gibbon_gmd_reader_set_black (reader, $3);
+		}
+	;
+
+game
+	: GAME COLON
+		{
+			if (!_gibbon_gmd_reader_add_game (reader))
+				YYABORT;
+		}
+	;
+
+rule
+	: RULE COLON CRAWFORD
+		{
+			_gibbon_gmd_reader_set_crawford (reader);
+		}
+	| RULE COLON UNKNOWN
+	;
+
+action
+	: roll | move | double | drop | take | resign | reject | accept
+	;
+
+color
+	: BLACK    { $$ = GIBBON_POSITION_SIDE_BLACK; }
+	| WHITE    { $$ = GIBBON_POSITION_SIDE_WHITE; }
+	| NO_COLOR { $$ = GIBBON_POSITION_SIDE_NONE; }
+	;
+
+roll
+	: ROLL COLON color COLON INTEGER INTEGER
+		{
+			if (!_gibbon_gmd_reader_roll (reader, $3, $5, $6))
+				YYABORT;
+		}
+	;
+
+move
+	: MOVE COLON color COLON movements
+		{
+			if (!_gibbon_gmd_reader_move (reader, $3, $5))
+				YYABORT;
+		}
+	;
+
+movements
+	: /* empty */
+		{
+			$$ = 0;
+		}
+	| movement /* $$ = $1 */
+	| movement movement
+		{
+			$$ = $1 << 16 | $2;
+		}
+	| movement movement movement
+		{
+			$$ = $1 << 32 | $2 << 16 | $3;
+		}
+	| movement movement movement movement
+		{
+			$$ = $1 << 48 | $2 << 32 | $3 << 16 | $4;
+		}
+	;
+
+movement
+	: point SLASH point 
+		{
+			$$ = ($1 << 8 | $3);
+		}
+	;
+
+point
+	: INTEGER
+		{ 
+			if (!$$ || $$ > 24) {
+				yyerror (_("Point out of range (1-24)!"));
+				YYABORT;
+			}
+		}
+	  /* 
+	   * These have to be decoded on a higher level with more
+	   * context available.
+	   */
+	| HOME { $$ = 26; }
+	| BAR  { $$ = 27; }
+	;
+
+double
+	: DOUBLE COLON color
+		{
+			if (!_gibbon_gmd_reader_double (reader, $3))
+				YYABORT;
+		}
+	;
+
+drop
+	: DROP COLON color
+		{
+			if (!_gibbon_gmd_reader_drop (reader, $3))
+				YYABORT;
+		}
+	;
+
+take
+	: TAKE COLON color
+		{
+			if (!_gibbon_gmd_reader_take (reader, $3))
+				YYABORT;
+		}
+	;
+
+resign
+	: RESIGN COLON color COLON INTEGER
+		{
+			if (!$5) {
+				yyerror (_("Resignation value cannot be"
+				           " zero!"));
+				YYABORT;
+			}
+			if (!_gibbon_gmd_reader_resign (reader, $3, $5))
+				YYABORT;
+		}
+	;
+
+reject
+	: REJ COLON color
+		{
+			if (!_gibbon_gmd_reader_reject (reader, $3))
+				YYABORT;
+		}
+	;
+
+accept
+	: ACCEPT COLON color
+		{
+			if (!_gibbon_gmd_reader_accept (reader, $3))
+				YYABORT;
+		}
+	;
+
+unknown
+	: UNKNOWN COLON GARBAGE
+	;
+%%
