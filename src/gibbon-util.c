@@ -235,3 +235,27 @@ gibbon_safe_object_unref (gpointer data)
         if (data)
                 g_object_unref (data);
 }
+
+gchar *
+gibbon_trim (gchar *string)
+{
+        gchar *ptr;
+        size_t l;
+
+        while (' ' == *string || ('\011' <= *string && '\015' >= *string))
+                ++string;
+
+        l = strlen (string);
+        if (!l)
+                return string;
+
+        ptr = string + l;
+        --ptr;
+
+        while (' ' == *ptr || ('\011' <= *ptr && '\015' >= *ptr))
+                --ptr;
+        ++ptr;
+        *ptr = 0;
+
+        return string;
+}

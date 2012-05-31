@@ -41,6 +41,7 @@ gchar **gibbon_strsplit_ws (const gchar *string);
 const gchar *gibbon_skip_ws_tokens (const gchar *string,
                                     const gchar * const * const tokens,
                                     gsize num);
+gchar *gibbon_trim (gchar *string);
 enum GibbonClientType gibbon_get_client_type (const gchar *client_name,
                                               const gchar *user_name,
                                               const gchar *host_name,
