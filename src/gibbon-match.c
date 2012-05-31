@@ -100,7 +100,7 @@ gibbon_match_class_init (GibbonMatchClass *klass)
  */
 GibbonMatch *
 gibbon_match_new (const gchar *white, const gchar *black,
-                  guint length, gboolean crawford)
+                  gsize length, gboolean crawford)
 {
         GibbonMatch *self = g_object_new (GIBBON_TYPE_MATCH, NULL);
 
@@ -312,11 +312,6 @@ gibbon_match_set_length (GibbonMatch *self, gsize length)
 
         g_return_if_fail (GIBBON_IS_MATCH (self));
 
-        if (length)
-                self->priv->crawford = TRUE;
-        else
-                self->priv->crawford = FALSE;
-
         self->priv->length = length;
 
         iter = self->priv->games;
@@ -364,4 +359,15 @@ gibbon_match_get_crawford (const GibbonMatch *self)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
 
         return self->priv->crawford;
+}
+
+void
+gibbon_match_set_crawford (GibbonMatch *self, gboolean crawford)
+{
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        if (self->priv->length && crawford)
+                self->priv->crawford = crawford;
+        else
+                self->priv->crawford = FALSE;
 }

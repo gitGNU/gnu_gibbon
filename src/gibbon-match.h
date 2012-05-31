@@ -122,9 +122,10 @@ GQuark gibbon_match_error_quark (void);
 
 
 GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
-                               guint length, gboolean crawford);
+                               gsize length, gboolean crawford);
 
 gboolean gibbon_match_get_crawford (const GibbonMatch *self);
+void gibbon_match_set_crawford (GibbonMatch *self, gboolean crawford);
 
 struct _GibbonGame *gibbon_match_get_current_game (const GibbonMatch
                                                    *self);
