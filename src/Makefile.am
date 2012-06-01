@@ -86,6 +86,7 @@ common_SOURCES = 			\
         gibbon-setup.c                  \
         gibbon-take.c                   \
         gibbon-util.c			\
+        gibbon-sgf-reader.c		\
         gibbon-sgf-writer.c
 
 AM_YFLAGS = -d -v
@@ -186,6 +187,7 @@ noinst_HEADERS =			\
         gibbon-session.h		\
         gibbon-settings.h		\
         gibbon-setup.h			\
+        gibbon-sgf-reader.h		\
         gibbon-sgf-writer.h		\
         gibbon-shouts.h			\
         gibbon-signal.h			\
@@ -208,7 +210,7 @@ LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 TESTS_C = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
-	test_java_fibs_reader test_jelly_fish_reader \
+	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
         test_gary_wong_movegen
 TESTS_SH =
 
@@ -217,7 +219,7 @@ TESTS = $(TESTS_C) $(TESTS_SH)
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
-	test_java_fibs_reader test_jelly_fish_reader \
+	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
         test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
@@ -233,6 +235,7 @@ test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 test_jelly_fish_reader_SOURCES = $(common_SOURCES) test-jelly-fish-reader.c
+test_sgf_reader_SOURCES = $(common_SOURCES) test-sgf-reader.c
 
 MATCH_FILES = complete.match complete.gmd complete.mat complete.sgf
 
