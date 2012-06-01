@@ -135,7 +135,7 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_GENERIC,
                                      _("Empty matches cannot be written as"
-                                       "SGF"));
+                                       " SGF"));
                 return FALSE;
         }
 
