@@ -181,7 +181,7 @@ my $lib_header;
 
 if ($option_library) {
         my $name = lc $macro_prefix . '.h';
-        $lib_header = "<$option_library/$lib_header>";
+        $lib_header = "<$option_library/$name>";
 } else {
         $lib_header = qq{"$file_stem.h"};
 }
