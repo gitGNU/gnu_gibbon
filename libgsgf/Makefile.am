@@ -60,7 +60,8 @@ libgsgf_a_SOURCES = 			\
 	gsgf-result.c				\
 	gsgf-date.c				\
 	gsgf-component.c				\
-	gsgf-value.c	
+	gsgf-value.c				\
+	gsgf-backgammon-match-info.c	
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -94,4 +95,5 @@ noinst_HEADERS =			\
 	gsgf-result.h			\
 	gsgf-date.h			\
 	gsgf-component.h			\
-	gsgf-value.h
+	gsgf-value.h			\
+	gsgf-backgammon-match-info.h

@@ -56,6 +56,13 @@ static gboolean gsgf_flavor_backgammon_write_compressed_list (const GSGFFlavor
                                    GCancellable *cancellable,
                                    GError **error);
 static guint gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self);
+static gboolean gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *self,
+                                                         const GSGFProperty
+                                                             *property,
+                                                         const GSGFRaw *raw,
+                                                         GSGFCookedValue
+                                                              **cooked,
+                                                         GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -74,6 +81,9 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
         GSGFFlavorClass *flavor_class = GSGF_FLAVOR_CLASS(klass);
 
+        klass->parent_get_cooked_value = flavor_class->get_cooked_value;
+        flavor_class->get_cooked_value =
+                        gsgf_flavor_backgammon_get_cooked_value;
         flavor_class->create_move = gsgf_flavor_backgammon_create_move;
         flavor_class->stone_type = GSGF_TYPE_STONE_BACKGAMMON;
         flavor_class->create_stone = gsgf_flavor_backgammon_create_stone;
@@ -231,3 +241,35 @@ gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self)
         return 6;
 }
 
+static gboolean
+gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
+                                         const GSGFProperty *property,
+                                         const GSGFRaw *raw,
+                                         GSGFCookedValue **cooked,
+                                         GError **error)
+{
+        const gchar *id;
+        const GSGFFlavorBackgammonClass *klass;
+
+        gpointer result;
+
+        gsgf_return_val_if_fail (cooked, FALSE, error);
+
+        *cooked = NULL;
+
+        id = gsgf_property_get_id (property);
+        if ('M' == id[0]) {
+                if ('I' == id[1] && !id[2]) {
+                        result = gsgf_backgammon_match_info_new_from_raw (raw,
+                                       _self, property, error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                }
+        }
+
+        klass = GSGF_FLAVOR_BACKGAMMON_GET_CLASS (_self);
+        return klass->parent_get_cooked_value (_self, property, raw, cooked,
+                                               error);
+}
