@@ -169,6 +169,12 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 return FALSE;
         }
 
+        if (!gsgf_component_cook (GSGF_COMPONENT (collection), NULL, &error)) {
+                gibbon_sgf_reader_yyerror (self, error->message);
+                g_object_unref (collection);
+                return FALSE;
+        }
+
         match = gibbon_match_new (NULL, NULL, 0, FALSE);
 
         iter = gsgf_collection_get_game_trees (collection);
