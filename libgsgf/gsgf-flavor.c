@@ -965,8 +965,10 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
                 def = gsgf_handlers[id[0] - 'A'][id[1] - 'A'];
         }
 
-        if (!def)
+        if (!def) {
+                g_warning (_("Unsupported property `%s'.\n"), id);
                 return TRUE;
+        }
 
         *cooked = def->constructor(raw, flavor, property, error);
 
