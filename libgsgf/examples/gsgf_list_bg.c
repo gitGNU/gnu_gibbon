@@ -90,6 +90,12 @@ list_sgf(const gchar *path)
                 return FALSE;
         }
 
+        if (!gsgf_component_cook (GSGF_COMPONENT (collection),
+                                  NULL, &error)) {
+                g_printerr ("%s: %s\n", path, error->message);
+                return FALSE;
+        }
+
         /* A GSGFCollection can be thought of as a match consisting of
          * individual games.
          */
