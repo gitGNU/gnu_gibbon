@@ -141,6 +141,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         GList *nodes;
         GSGFNode *root;
         GSGFNumber *number;
+        GSGFValue *value;
         GSGFCookedValue *cooked;
         GSGFCompose *AP;
         GSGFSimpleText *application;
@@ -222,7 +223,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
         while (iter) {
                 if (strcmp("GM", (gchar *) iter->data)
                     && strcmp("AP", (gchar *) iter->data)) {
-                        cooked = GSGF_COOKED_VALUE (
+                        value = GSGF_VALUE (
                                 gsgf_node_get_property_value (root,
                                                              (gchar *)
                                                               iter->data));
@@ -233,7 +234,7 @@ list_game_tree (const gchar *path, const GSGFGameTree *game_tree)
                          */
                         printf("Property %s: %s\n",
                                (gchar *) iter->data,
-                               G_OBJECT_TYPE_NAME(G_OBJECT(cooked)));
+                               G_OBJECT_TYPE_NAME(G_OBJECT(value)));
                 }
 
                 /* And remove the property.  */
