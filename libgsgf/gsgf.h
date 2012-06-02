@@ -23,7 +23,6 @@
 #include <glib.h>
 
 #include <libgsgf/gsgf-flavor.h>
-#include <libgsgf/gsgf-flavor-backgammon.h>
 
 #include <libgsgf/gsgf-component.h>
 
@@ -57,6 +56,8 @@
 #include <libgsgf/gsgf-game-tree.h>
 #include <libgsgf/gsgf-node.h>
 #include <libgsgf/gsgf-property.h>
+
+#include <libgsgf/gsgf-flavor-backgammon.h>
 
 #include <libgsgf/gsgf-util.h>
 
