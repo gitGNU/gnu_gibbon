@@ -66,7 +66,7 @@ list_sgf(const gchar *path)
 {
         GFile *file;
         GSGFCollection *collection;
-        GError *error;
+        GError *error = NULL;
         gboolean retval = TRUE;
 
         printf ("\nSGF File: %s\n", path);
