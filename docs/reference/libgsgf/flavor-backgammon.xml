@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+]>
+<chapter id="backgammon-properties">
+  <title>Backgammon Properties</title>
+  <para>
+    The original documentation for SGF backgammon properties can be
+    found at  
+    <ulink url="http://www.red-bean.com/sgf/backgammon.html">http://www.red-bean.com/sgf/backgammon.html</ulink>.
+  </para>
+  <para>
+    This documentation covers the backgammon flavor of SGF as it is understood
+    and created by <ulink url="http://www.gnubg.org/">GNU Backgammon</ulink>
+    and <ulink url="http://www.gibbon.bg/">Gibbon</ulink>.
+  </para>
+  <sect1 id="bg-game-info-properties">
+    <title>Game Info Properties</title>
+    <sect2 id="bg-property-MI">
+      <title>MI (Match Information)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFComposed">Composed</link>
+        of <link linkend="GSGFSimpleText">GSGFSimpleText</link>:<link 
+                 linkend="GSGFSimpleText">GSGFSimpleText</link>.
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/backgammon.html#MI">http://www.red-bean.com/sgf/backgammon.html#MI</ulink>.
+        Please note that contrary to the informtion found there,
+        game numbers are counted starting from zero not from one!<para>
+    </sect2>
+    <sect2 id="bg-property-GS">
+      <title>GS (General Statistics)</title>
+      <para>
+        Type (multi-valued): <link linkend="GSGFSimpleText">GSGFSimpleText</link>.
+      </para>
+      <para>
+        General analysis statistics about a certain game in a backgammon
+        match. TODO ...
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="bg-node-annotation-properties">
+    <title>Node Annotation Properties</title>
+    <sect2 id="bg-property-A">
+      <title>A (Analysis)</title>
+      <para>
+        Type: <link linkend="GSGFListOf">GSGFListOf</link>,
+        item type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>.
+      </para>
+      <para>
+        The analysis for a move.  The property is not documented.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-DA">
+      <title>DA (Doubling Analysis)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>.
+      </para>
+      <para>
+        The analysis of a doubling decision.  The property is not documented.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-BC">
+      <title>BC (Bad Cube)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>.
+      </para>
+      <para>
+        Mark a doubling decision as bad.  The property is not documented.
+      </para>
+      <para>
+        The value of the property gives the degree of badness, the
+        higher the worse.
+      </para>
+      <para>
+        See also <link linkend="bg-property-DC">DC</link>.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-DC">
+      <title>DC (Doubtful Cube)</title>
+      <para>
+        Type: <link linkend="GSGFEmpty">GSGFEmpty</link>.
+      </para>
+      <para>
+        Mark a doubling decision as doubtful.  The property is not documented.
+      </para>
+      <para>
+        See also <link linkend="bg-property-BC">BC</link>.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-LU">
+      <title>LU (Luck)</title>
+      <para>
+        Type: <link linkend="GSGFReal">GSGFReal</link>.
+      </para>
+      <para>
+        Luck measurement of a roll in the range from -1.0 (unlucky)
+        to +1.0 (lucky).
+      </para>
+    </sect2>
+    <sect2 id="bg-property-MR">
+      <title>MR (Marked As Rolled Out)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>.
+      </para>
+      <para>
+        Undocumented.
+      </para>
+      <para>
+        Only useful in conjunction with an <link linkend="bg-property-A">A<link>
+        property.  It contains a space-separated list of the numbers of
+        evaluated possible moves that have been rolled out.
+      </para>
+      <para>
+        Example: If there are 20 possible moves in a certain position, and
+        the first, the second, and the fourth move have been rolled out
+        in the analysis, the MR property would contain the string "0 1 3".
+        Note that counting starts at zero!
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="bg-setup-properties">
+    <title>Setup Properties</title>
+    <sect2 id="bg-property-CO">
+      <title>CO (Cube Position)</title>
+      <para>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/backgammon.html#CO">http://www.red-bean.com/sgf/backgammon.html#CO</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-CV">
+      <title>CV (Cube Value)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/backgammon.html#CV">http://www.red-bean.com/sgf/backgammon.html#CV</ulink>.
+      </para>
+    </sect2>
+    <sect2 id="bg-property-DI">
+      <title>DI (Dice)</title>
+      <para>
+        Type: <link linkend="GSGFNumber">GSGFNumber</link>
+      </para>
+      <para>
+        See <ulink url="http://www.red-bean.com/sgf/backgammon.html#DI">http://www.red-bean.com/sgf/backgammon.html#DI</ulink>.
+      </para>
+    </sect2>
+  </sect1>
+</chapter>

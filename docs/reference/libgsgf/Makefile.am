@@ -61,4 +61,5 @@ include $(top_srcdir)/gtk-doc.make
 
 EXTRA_DIST += version.xml.in 		\
 	flavor-general.xml		\
+	flavor-backgammon.xml		\
 	flavors.xml
