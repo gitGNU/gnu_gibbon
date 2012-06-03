@@ -54,12 +54,6 @@ struct _GSGFFlavorBackgammonClass
 {
         /*< private >*/
         GSGFFlavorClass parent_class;
-
-        gboolean (*parent_get_cooked_value) (const GSGFFlavor *flavor,
-                                             const struct _GSGFProperty *property,
-                                             const struct _GSGFRaw *raw,
-                                             struct _GSGFCookedValue **cooked,
-                                             GError **error);
 };
 
 /**
