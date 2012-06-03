@@ -966,7 +966,7 @@ _gsgf_flavor_get_cooked_value(const GSGFFlavor *flavor, const GSGFProperty *prop
         }
 
         if (!def) {
-                g_warning (_("Unsupported property `%s'.\n"), id);
+                g_warning (_("Unsupported property `%s'."), id);
                 return TRUE;
         }
 

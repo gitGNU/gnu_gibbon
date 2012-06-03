@@ -63,6 +63,9 @@ static gboolean gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *self,
                                                          GSGFCookedValue
                                                               **cooked,
                                                          GError **error);
+static GSGFSimpleText *gsgf_flavor_backgammon_cube_position (
+                const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
+                GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -81,7 +84,6 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
         GObjectClass* object_class = G_OBJECT_CLASS (klass);
         GSGFFlavorClass *flavor_class = GSGF_FLAVOR_CLASS(klass);
 
-        klass->parent_get_cooked_value = flavor_class->get_cooked_value;
         flavor_class->get_cooked_value =
                         gsgf_flavor_backgammon_get_cooked_value;
         flavor_class->create_move = gsgf_flavor_backgammon_create_move;
@@ -107,7 +109,8 @@ gsgf_flavor_backgammon_class_init(GSGFFlavorBackgammonClass *klass)
 GSGFFlavor *
 gsgf_flavor_backgammon_new (void)
 {
-        GSGFFlavorBackgammon *self = g_object_new(GSGF_TYPE_FLAVOR_BACKGAMMON, NULL);
+        GSGFFlavorBackgammon *self = g_object_new (GSGF_TYPE_FLAVOR_BACKGAMMON,
+                                                   NULL);
 
         return GSGF_FLAVOR(self);
 }
@@ -117,7 +120,8 @@ gsgf_flavor_backgammon_create_move (const GSGFFlavor *flavor,
                                     const GSGFRaw *raw,
                                     GError **error)
 {
-        GSGFMoveBackgammon *result = gsgf_move_backgammon_new_from_raw(raw, error);
+        GSGFMoveBackgammon *result = gsgf_move_backgammon_new_from_raw (raw,
+                                                                        error);
 
         if (!result)
                 return NULL;
@@ -131,7 +135,8 @@ gsgf_flavor_backgammon_create_stone (const GSGFFlavor *flavor,
                                      gsize i,
                                      GError **error)
 {
-        GSGFStoneBackgammon *result = gsgf_stone_backgammon_new_from_raw(raw, i, error);
+        GSGFStoneBackgammon *result = gsgf_stone_backgammon_new_from_raw (
+                        raw, i, error);
 
         if (!result)
                 return NULL;
@@ -145,7 +150,8 @@ gsgf_flavor_backgammon_create_point (const GSGFFlavor *flavor,
                                      gsize i,
                                      GError **error)
 {
-        GSGFPointBackgammon *result = gsgf_point_backgammon_new_from_raw(raw, i, error);
+        GSGFPointBackgammon *result = gsgf_point_backgammon_new_from_raw (
+                        raw, i, error);
 
         if (!result)
                 return NULL;
@@ -249,12 +255,12 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                                          GError **error)
 {
         const gchar *id;
-        const GSGFFlavorBackgammonClass *klass;
-
         gpointer result;
+        GSGFFlavorBackgammon *self;
 
         gsgf_return_val_if_fail (cooked, FALSE, error);
 
+        self = GSGF_FLAVOR_BACKGAMMON (_self);
         *cooked = NULL;
 
         id = gsgf_property_get_id (property);
@@ -267,9 +273,46 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                         *cooked = GSGF_COOKED_VALUE (result);
                         return TRUE;
                 }
+        } else if ('C' == id[0]) {
+                if ('O' == id[1] && !id[2]) {
+                        result = gsgf_flavor_backgammon_cube_position (self,
+                                                                       raw,
+                                                                       error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                }
         }
 
-        klass = GSGF_FLAVOR_BACKGAMMON_GET_CLASS (_self);
-        return klass->parent_get_cooked_value (_self, property, raw, cooked,
-                                               error);
+        return GSGF_FLAVOR_CLASS (gsgf_flavor_backgammon_parent_class)
+                        ->get_cooked_value (_self, property, raw, cooked,
+                                            error);
+}
+
+static GSGFSimpleText *
+gsgf_flavor_backgammon_cube_position (const GSGFFlavorBackgammon *self,
+                                      const GSGFRaw *raw, GError **error)
+{
+        GSGFSimpleText *retval;
+        const gchar *raw_value;
+
+        if (1 < gsgf_raw_get_number_of_values (raw)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Property CO must be single-valued!"));
+                return FALSE;
+        }
+
+        raw_value = gsgf_raw_get_value (raw, 0);
+        if (('b' != raw_value[0] && 'w' != raw_value[0]
+             && 'c' != raw_value[0] && 'n' != raw_value[0])
+            || raw_value[1]) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Invalid cube position (CO) `%s'!"),
+                             raw_value);
+                return FALSE;
+        }
+        retval = gsgf_simple_text_new (raw_value);
+
+        return retval;
 }
