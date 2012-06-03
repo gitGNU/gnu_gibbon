@@ -66,6 +66,9 @@ static gboolean gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *self,
 static GSGFSimpleText *gsgf_flavor_backgammon_cube_position (
                 const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
                 GError **error);
+static GSGFNumber *gsgf_flavor_backgammon_cube_value (
+                const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
+                GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -282,6 +285,13 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                                 return FALSE;
                         *cooked = GSGF_COOKED_VALUE (result);
                         return TRUE;
+                } if ('V' == id[1] && !id[2]) {
+                        result = gsgf_flavor_backgammon_cube_value (self, raw,
+                                                                    error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
                 }
         }
 
@@ -315,4 +325,30 @@ gsgf_flavor_backgammon_cube_position (const GSGFFlavorBackgammon *self,
         retval = gsgf_simple_text_new (raw_value);
 
         return retval;
+}
+
+static GSGFNumber *
+gsgf_flavor_backgammon_cube_value (const GSGFFlavorBackgammon *self,
+                                   const GSGFRaw *raw, GError **error)
+{
+        GSGFCookedValue *retval;
+        guint64 cube;
+
+        retval = gsgf_number_new_from_raw (raw, GSGF_FLAVOR (self), NULL,
+                                           error);
+        if (!retval)
+                return FALSE;
+
+        cube = (guint64) gsgf_number_get_value (GSGF_NUMBER (retval));
+
+        if (!cube || (cube & (cube - 1))) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Cube value (CV[%llu]) must be a power of two"
+                               " greater than one!"),
+                             (unsigned long long) cube);
+                g_object_unref (retval);
+                return FALSE;
+        }
+
+        return GSGF_NUMBER (retval);
 }
