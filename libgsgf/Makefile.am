@@ -57,11 +57,10 @@ libgsgf_a_SOURCES = 			\
 	libgsgf.c			\
 	gsgf-color.c			\
 	gsgf-double.c			\
-	gsgf-result.c				\
-	gsgf-date.c				\
-	gsgf-component.c				\
-	gsgf-value.c				\
-	gsgf-backgammon-match-info.c	
+	gsgf-result.c			\
+	gsgf-date.c			\
+	gsgf-component.c		\
+	gsgf-value.c
 
 noinst_HEADERS =			\
 	gsgf.h				\
@@ -94,6 +93,5 @@ noinst_HEADERS =			\
 	gsgf-double.h			\
 	gsgf-result.h			\
 	gsgf-date.h			\
-	gsgf-component.h			\
-	gsgf-value.h			\
-	gsgf-backgammon-match-info.h
+	gsgf-component.h		\
+	gsgf-value.h
