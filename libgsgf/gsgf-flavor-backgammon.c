@@ -331,10 +331,8 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                         *cooked = GSGF_COOKED_VALUE (result);
                         return TRUE;
                 } else if ('R' == id[1] && !id[2]) {
-                        g_printerr ("MR ...\n");
                         result = gsgf_flavor_backgammon_mark_rollout (self, raw,
                                                                       error);
-                        g_printerr ("MR done!\n");
                         if (!result)
                                 return FALSE;
                         *cooked = GSGF_COOKED_VALUE (result);
