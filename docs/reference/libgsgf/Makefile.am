@@ -35,6 +35,7 @@ CFILE_GLOB = $(top_srcdir)/libgsgf/*.c
 
 # Headers to ignore.
 IGNORE_HFILES =				\
+	gsgf.h				\
 	gsgf-private.h			\
 	gsgf-flavor-protected.h		\
 	test.h

@@ -185,50 +185,50 @@ _gsgf_property_add_value(GSGFProperty *property, const gchar *value)
 
 /**
  * gsgf_property_get_value:
- * @property: the #GSGFProperty.
+ * @self: the #GSGFProperty.
  *
  * Retrieve the value of a property.
  *
  * Returns: Returns the value as a #GSGFValue.
  */
 GSGFValue *
-gsgf_property_get_value (const GSGFProperty *property)
+gsgf_property_get_value (const GSGFProperty *self)
 {
-        g_return_val_if_fail (GSGF_IS_PROPERTY (property), NULL);
+        g_return_val_if_fail (GSGF_IS_PROPERTY (self), NULL);
 
-        return property->priv->value;
+        return self->priv->value;
 }
 
 /**
  * gsgf_property_get_id:
- * @property: the #GSGFProperty.
+ * @self: the #GSGFProperty.
  *
  * Retrieve the id of a property.
  *
  * Returns: Returns the id of the property.
  */
 const gchar *
-gsgf_property_get_id(const GSGFProperty *property)
+gsgf_property_get_id(const GSGFProperty *self)
 {
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(self), NULL);
 
-        return property->priv->id;
+        return self->priv->id;
 }
 
 /**
  * gsgf_property_get_node:
- * @property: the #GSGFProperty.
+ * @self: the #GSGFProperty.
  *
  * Retrieve the #GSGFNode that this #GSGFProperty belongs to.
  *
  * Returns: Returns the #GSGFNode.
  */
 GSGFNode *
-gsgf_property_get_node(const GSGFProperty *property)
+gsgf_property_get_node(const GSGFProperty *self)
 {
-        g_return_val_if_fail(GSGF_IS_PROPERTY(property), NULL);
+        g_return_val_if_fail(GSGF_IS_PROPERTY(self), NULL);
 
-        return property->priv->node;
+        return self->priv->node;
 }
 
 static gboolean
@@ -275,7 +275,7 @@ gsgf_property_cook (GSGFComponent *_self, GSGFComponent **culprit, GError **erro
 }
 
 /**
- * gsgf_game_tree_set_value:
+ * gsgf_property_set_value:
  * @self: The #GSGFProperty.
  * @value: The value to set.
  * @error: a #GError location to store the error occurring, or %NULL to ignore.

@@ -926,6 +926,16 @@ gsgf_flavor_append_points(const GSGFFlavor *self,
                                                           raw, i, error);
 }
 
+/**
+ * gsgf_flavor_get_game_id:
+ * @self: The #GSGFFlavor.
+ * @error: An optional location for storing an error.
+ *
+ * SGF defines well-known positive ids for supported games, for example
+ * 0 for Go or 6 backgammon.
+ *
+ * Returns: The game id or 0 in case of failure.
+ */
 guint
 gsgf_flavor_get_game_id (const GSGFFlavor *self, GError **error)
 {

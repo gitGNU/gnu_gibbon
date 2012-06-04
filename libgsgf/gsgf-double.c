@@ -52,6 +52,14 @@ gsgf_double_class_init (GSGFDoubleClass *klass)
         object_class->finalize = gsgf_double_finalize;
 }
 
+/**
+ * gsgf_double_new:
+ * @grade: "How" much double.
+ *
+ * Create a #GSGFDouble.
+ *
+ * Returns: The newly created #GSGFDouble.
+ */
 GSGFDouble *
 gsgf_double_new (GSGFDoubleEnum grade)
 {
@@ -110,6 +118,14 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
         return GSGF_COOKED_VALUE (self);
 }
 
+
+/**
+ * gsgf_double_set_value:
+ * @self: The #GSGFDouble to change.
+ * @value: The #GSGFDoubleEnum containing the value that should be stored.
+ *
+ * Store a #GSGFDoubleEnum in a #GSGFDouble.
+ */
 void
 gsgf_double_set_value (GSGFDouble *self, GSGFDoubleEnum value)
 {
@@ -118,6 +134,14 @@ gsgf_double_set_value (GSGFDouble *self, GSGFDoubleEnum value)
         gsgf_number_set_value (GSGF_NUMBER (self), value);
 }
 
+/**
+ * gsgf_double_get_value:
+ * @self: The #GSGFDouble to examine.
+ *
+ * Get the value of a #GSGFDouble.
+ *
+ * Store a #GSGFDoubleEnum in a #GSGFDouble.
+ */
 GSGFDoubleEnum
 gsgf_double_get_value (const GSGFDouble *self)
 {
