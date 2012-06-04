@@ -353,11 +353,12 @@ gsgf_flavor_backgammon_match_info (const GSGFFlavorBackgammon *self,
         num_values = gsgf_raw_get_number_of_values (raw);
         for (i = 0; i < num_values; ++i) {
                 raw_value = gsgf_raw_get_value (raw, i);
-                if (!raw_value || *raw_value || !strchr (raw_value, ':')) {
+                if (!raw_value || !*raw_value || !strchr (raw_value, ':')) {
                         g_set_error (error, GSGF_ERROR,
                                      GSGF_ERROR_SEMANTIC_ERROR,
                                      _("Backgammon match info (MI) must"
-                                       " contain a colon!"));
+                                       " contain a colon in `%s'!"),
+                                     raw_value);
                         g_object_unref (retval);
                         return FALSE;
                 }
