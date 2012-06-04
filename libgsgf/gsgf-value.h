@@ -45,19 +45,13 @@
  * One instance of a #GSGFValue.  All properties are private.
  **/
 typedef struct _GSGFValue GSGFValue;
+typedef struct _GSGFValueClass GSGFValueClass;
+
 struct _GSGFValue
 {
         GObject parent_instance;
 };
 
-/**
- * GSGFValueClass:
- * @write_stream: Serialization method, see gsgf_value_write_stream().
- *                All derived classes must implement this method.
- *
- * Abstract base class for a value of a #GSGFProperty!
- **/
-typedef struct _GSGFValueClass GSGFValueClass;
 struct _GSGFValueClass
 {
         /* <private >*/

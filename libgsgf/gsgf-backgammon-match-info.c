@@ -20,7 +20,6 @@
 /**
  * SECTION:gsgf-backgammon-match-info
  * @short_description: Match information for Backgammon.
- *
  * Since: 0.2.0
  *
  * A #GSGFBackgammonMatchInfo holds meta information about a backgammon

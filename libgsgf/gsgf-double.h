@@ -73,7 +73,7 @@ GType gsgf_double_get_type (void) G_GNUC_CONST;
 /**
  * GSGFDoubleEnum:
  * @GSGF_DOUBLE_NORMAL: Yes!
- * @GSGF_DOUBLE_MUCH: Yes! YES!
+ * @GSGF_DOUBLE_VERY: Yes! YES!
  *
  * A binary value that is not yes or no but yes or very much.
  */

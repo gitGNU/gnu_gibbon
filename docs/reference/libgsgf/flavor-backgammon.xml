@@ -28,7 +28,8 @@
       <para>
         See <ulink url="http://www.red-bean.com/sgf/backgammon.html#MI">http://www.red-bean.com/sgf/backgammon.html#MI</ulink>.
         Please note that contrary to the informtion found there,
-        game numbers are counted starting from zero not from one!<para>
+        game numbers are counted starting from zero not from one!
+      </para>
     </sect2>
     <sect2 id="bg-property-GS">
       <title>GS (General Statistics)</title>
@@ -109,7 +110,7 @@
         Undocumented.
       </para>
       <para>
-        Only useful in conjunction with an <link linkend="bg-property-A">A<link>
+        Only useful in conjunction with an <link linkend="bg-property-A">A</link>
         property.  It contains a space-separated list of the numbers of
         evaluated possible moves that have been rolled out.
       </para>

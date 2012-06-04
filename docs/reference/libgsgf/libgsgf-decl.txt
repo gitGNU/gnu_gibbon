@@ -1601,7 +1601,7 @@ void
 <FUNCTION>
 <NAME>gsgf_date_new</NAME>
 <RETURNS>GSGFDate  *</RETURNS>
-GSGFDateDMY *dmy, GError **error 
+GSGFDateDMY *date, GError **error 
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_date_new_from_raw</NAME>
@@ -1611,7 +1611,7 @@ const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *proper
 <FUNCTION>
 <NAME>gsgf_date_append</NAME>
 <RETURNS>gboolean  </RETURNS>
-GSGFDate *self, GSGFDateDMY *dmy, GError **error 
+GSGFDate *self, GSGFDateDMY *date, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_COLOR</NAME>
@@ -1902,6 +1902,73 @@ const GSGFGameTree *self
 <NAME>gsgf_game_tree_set_application</NAME>
 <RETURNS>gboolean  </RETURNS>
 GSGFGameTree *self, const gchar *app, const gchar *version, GError **error 
+</FUNCTION>
+<MACRO>
+<NAME>GSGF_TYPE_BACKGAMMON_MATCH_INFO</NAME>
+#define GSGF_TYPE_BACKGAMMON_MATCH_INFO \
+        (gsgf_backgammon_match_info_get_type ())
+</MACRO>
+<MACRO>
+<NAME>GSGF_BACKGAMMON_MATCH_INFO</NAME>
+#define GSGF_BACKGAMMON_MATCH_INFO(obj) \
+        (G_TYPE_CHECK_INSTANCE_CAST ((obj), GSGF_TYPE_BACKGAMMON_MATCH_INFO, \
+                GSGFBackgammonMatchInfo))
+</MACRO>
+<MACRO>
+<NAME>GSGF_BACKGAMMON_MATCH_INFO_CLASS</NAME>
+#define GSGF_BACKGAMMON_MATCH_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
+        GSGF_TYPE_BACKGAMMON_MATCH_INFO, GSGFBackgammonMatchInfoClass))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_BACKGAMMON_MATCH_INFO</NAME>
+#define GSGF_IS_BACKGAMMON_MATCH_INFO(obj) \
+        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                GSGF_TYPE_BACKGAMMON_MATCH_INFO))
+</MACRO>
+<MACRO>
+<NAME>GSGF_IS_BACKGAMMON_MATCH_INFO_CLASS</NAME>
+#define GSGF_IS_BACKGAMMON_MATCH_INFO_CLASS(klass) \
+        (G_TYPE_CHECK_CLASS_TYPE ((klass), \
+                GSGF_TYPE_BACKGAMMON_MATCH_INFO))
+</MACRO>
+<MACRO>
+<NAME>GSGF_BACKGAMMON_MATCH_INFO_GET_CLASS</NAME>
+#define GSGF_BACKGAMMON_MATCH_INFO_GET_CLASS(obj) \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj), \
+                GSGF_TYPE_BACKGAMMON_MATCH_INFO, GSGFBackgammonMatchInfoClass))
+</MACRO>
+<STRUCT>
+<NAME>GSGFBackgammonMatchInfo</NAME>
+struct _GSGFBackgammonMatchInfo
+{
+        GSGFCookedValue parent_instance;
+
+        /*< private >*/
+        struct _GSGFBackgammonMatchInfoPrivate *priv;
+};
+</STRUCT>
+<STRUCT>
+<NAME>GSGFBackgammonMatchInfoClass</NAME>
+struct _GSGFBackgammonMatchInfoClass
+{
+        /* <private >*/
+        GSGFCookedValueClass parent_class;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>gsgf_backgammon_match_info_get_type</NAME>
+<RETURNS>GType  </RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_backgammon_match_info_new</NAME>
+<RETURNS>GSGFBackgammonMatchInfo  *</RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_backgammon_match_info_new_from_raw</NAME>
+<RETURNS>GSGFBackgammonMatchInfo  *</RETURNS>
+ const GSGFRaw *raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_MOVE_BACKGAMMON</NAME>

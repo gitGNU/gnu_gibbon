@@ -86,7 +86,7 @@ gsgf_compose_class_init(GSGFComposeClass *klass)
 /**
  * gsgf_compose_new:
  * @value: The first value to store.
- * @Varargs: Other optional values, terminated by %NULL.
+ * @...: Other optional values, terminated by %NULL.
  *
  * Creates a new #GSGFCompose from a list of #GSGFCookedValue objects.  The
  * stored items are "hijacked" and are now considered property of the composed

@@ -4,6 +4,23 @@
 </SECTION>
 
 <SECTION>
+<FILE>gsgf-backgammon-match-info</FILE>
+<TITLE>GSGFBackgammonMatchInfo</TITLE>
+GSGFBackgammonMatchInfo
+GSGFBackgammonMatchInfoClass
+gsgf_backgammon_match_info_new
+gsgf_backgammon_match_info_new_from_raw
+<SUBSECTION Standard>
+GSGF_BACKGAMMON_MATCH_INFO
+GSGF_BACKGAMMON_MATCH_INFO_CLASS
+GSGF_BACKGAMMON_MATCH_INFO_GET_CLASS
+GSGF_IS_BACKGAMMON_MATCH_INFO
+GSGF_IS_BACKGAMMON_MATCH_INFO_CLASS
+GSGF_TYPE_BACKGAMMON_MATCH_INFO
+gsgf_backgammon_match_info_get_type
+</SECTION>
+
+<SECTION>
 <FILE>gsgf-collection</FILE>
 <TITLE>GSGFCollection</TITLE>
 GSGFCollection

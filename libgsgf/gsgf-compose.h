@@ -40,11 +40,16 @@ G_BEGIN_DECLS
                 GSGF_TYPE_COMPOSE, GSGFComposeClass))
 
 /**
- * GSGFCompose:
+ * GSGFComposeClass:
  *
- * Instance of a #GSGFComposeClass.  All properties are private.
+ * Class representing a composed value in SGF.
+ *
+ * Composed values are two values separated by a colon.
  **/
+
 typedef struct _GSGFCompose        GSGFCompose;
+typedef struct _GSGFComposeClass   GSGFComposeClass;
+
 struct _GSGFCompose
 {
         GSGFCookedValue parent_instance;
@@ -53,15 +58,6 @@ struct _GSGFCompose
         struct _GSGFComposePrivate *priv;
 };
 
-/**
- * GSGFComposeClass:
- * @parent_class: The parent #GSGFCookedValueClass.
- *
- * Class representing a composed value in SGF.
- *
- * All other properties and methods are private.
- **/
-typedef struct _GSGFComposeClass   GSGFComposeClass;
 struct _GSGFComposeClass
 {
         /*< private >*/

@@ -113,12 +113,12 @@ gsgf_move_backgammon_new (void)
  *
  * Creates a new #GSGFMoveBackgammon from a #GSGFRaw.  @raw must be
  * single-valued and contain a string matching the SGF backgammon move
- * syntax (see <ulink
- * url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).  Additionally,
- * libgsgf allows the following move specifications: "resign:N" where N is
- * an integer greater than 0 specifying the value of the offered resignation
- * (1 for normal, 2 for gammon, 3 for backgammon), "reject" for rejection of
- * an offered resignation, "accept" for an accepted resignation.
+ * syntax (see <ulink url="http://www.red-bean.com/sgf/backgammon.html#moves">
+ * online docs</ulink> for more details).  Additionally, libgsgf allows the
+ * following move specifications: "resign:N" where N is an integer greater than
+ * 0 specifying the value of the offered resignation (1 for normal, 2 for
+ * gammon, 3 for backgammon), "reject" for rejection of an offered resignation,
+ * "accept" for an accepted resignation.
  *
  * Returns: The new #GSGFMoveBackgammon.
  */
@@ -144,7 +144,7 @@ gsgf_move_backgammon_new_from_raw (const GSGFRaw *raw, GError **error)
  * @die1: First die (1-6).
  * @die2: Second die (1-6).
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
- * ...: List of from-to pairs of points (0 - 25), terminated by -1.
+ * @...: List of from-to pairs of points (0 - 25), terminated by -1.
  *
  * Creates a new regular #GSGFMoveBackgammon.
  *
@@ -226,11 +226,11 @@ gsgf_move_backgammon_new_regular (guint die1, guint die2, GError **error, ...)
  *
  * Creates a new #GSGFMoveBackgammon from a string.  The contents of
  * @string must match the SGF backgammon string syntax (see
- * <ulink url="http://www.red-bean.com/sgf/backgammon.html#moves"/>).
- * Additionally, libgsgf allows the following move specifications: "resign:N"
- * where N is an integer greater than 0 specifying the value of the offered
- * resignation, "reject" for rejection of an offered resignation, "accept" for
- * an accepted resignation.
+ * <ulink url="http://www.red-bean.com/sgf/backgammon.html#moves">
+ * online docs</ulink> for more details).  Additionally, libgsgf allows the
+ * following move specifications: "resign:N" where N is an integer greater than
+ * 0 specifying the value of the offered resignation, "reject" for rejection of
+ * an offered resignation, "accept" for an accepted resignation.
  *
  * Applications should accept any positive value for a resignation.  The
  * value of the cube is already taken into account.  If a player resigns with

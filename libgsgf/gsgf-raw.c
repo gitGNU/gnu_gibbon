@@ -24,7 +24,7 @@
  * A #GSGFRaw is the only #GSGFValue that is not a cooked value;
  * the name sort of suggests that.  If the #GSGFProperty that this #GSGFValue
  * is known to the current #GSGFFlavor you can cook it into a #GSGFCookedValue
- * with the cook() method of that #GSGFPropert, although it is almost always
+ * with the cook() method of that #GSGFProperty, although it is almost always
  * correct to just cook the top-level #GSGFComponent, the #GSGFCollection
  * instead.  This will cook all lower level components.
  */

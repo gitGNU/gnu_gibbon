@@ -82,7 +82,7 @@
     <sect2 id="property-AB">
       <title>AB (Add black stone)</title>
       <para>
-        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        Type: <link linkend="GSGFListOf">GSGFListOf</link> of
         <link linkend="GSGFStone">GSGFStone</link>:
       </para>
       <para>

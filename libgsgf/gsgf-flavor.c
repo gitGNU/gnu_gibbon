@@ -28,7 +28,7 @@
  * It is the base class for other flavors, and defines properties that are
  * common to all specialized SGF flavors.
  *
- * This #GSFFlavor class is actually internal to libgsgf.  You only have to bother
+ * This #GSGFFlavor class is actually internal to libgsgf.  You only have to bother
  * about these details if you want to implement your own flavors of SGF.
  *
  * When you want to add your own flavor, please check the following list mostly taken
@@ -856,7 +856,7 @@ gsgf_flavor_new (void)
  * @cooked: Location to store the cooked value.
  * @error: Optional #GError location or %NULL to ignore.
  *
- * Cook a #GSGFRaw into a #GSGFCooked.
+ * Cook a #GSGFRaw into a #GSGFCookedValue.
  *
  * This function is internal and only interesting for implementors of new
  * flavors.

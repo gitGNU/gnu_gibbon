@@ -21,7 +21,7 @@
  * SECTION:gsgf-node
  * @short_description: An SGF node.
  *
- * A #GSGFNode is a list of#GSGFPropertyElements.
+ * A #GSGFNode is a list of#GSGFProperty elements.
  */
 
 #include <glib.h>

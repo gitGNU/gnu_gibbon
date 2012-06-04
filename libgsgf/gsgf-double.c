@@ -20,7 +20,6 @@
 /**
  * SECTION:gsgf-double
  * @short_description: An integer number that is either one or two.
- *
  * Since: 0.1.0
  *
  * Emphasizable properties.

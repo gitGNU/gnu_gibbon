@@ -65,6 +65,14 @@ struct _GSGFDateClass
         GSGFSimpleTextClass parent_class;
 };
 
+/**
+ * GSGFDateDMY:
+ * @day: Day of the month (1-31).
+ * @month: Month of the year (1-12).
+ * @year: The year.
+ *
+ * Broken down representation of a calendar date.
+ */
 typedef struct _GSGFDateDMY GSGFDateDMY;
 struct _GSGFDateDMY {
         guint day: 6;
@@ -74,11 +82,11 @@ struct _GSGFDateDMY {
 
 GType gsgf_date_get_type (void) G_GNUC_CONST;
 
-GSGFDate *gsgf_date_new (GSGFDateDMY *dmy, GError **error);
+GSGFDate *gsgf_date_new (GSGFDateDMY *date, GError **error);
 GSGFCookedValue *gsgf_date_new_from_raw (const GSGFRaw *raw,
                                          const GSGFFlavor *flavor,
                                          const struct _GSGFProperty *property,
                                          GError **error);
-gboolean gsgf_date_append (GSGFDate *self, GSGFDateDMY *dmy, GError **error);
+gboolean gsgf_date_append (GSGFDate *self, GSGFDateDMY *date, GError **error);
 
 #endif

@@ -20,7 +20,6 @@
 /**
  * SECTION:gsgf-date
  * @short_description: Representation of a date (or dates!) in SGF
- *
  * Since: 0.1.0
  *
  * A #GSGFDate represents a list of dates with at least one value.
@@ -28,7 +27,7 @@
  * The maximum accuracy is one day.  If you need more you have to store this
  * externally, for example in the file name.
  *
- * The class uses #GSGFDateDay for its internal date representation and uses
+ * The class uses #GSGFDateDMY for its internal date representation and uses
  * the values #G_DATE_BAD_MONTH or #G_DATE_BAD_DAY for month or day of the
  * month values not available.
  **/
@@ -143,7 +142,8 @@ gsgf_date_new (GSGFDateDMY* date, GError **error)
 
 /**
  * gsgf_date_append:
- * @date: A #GSGFDateDMY to append.
+ * @self: A #GSGFDateDMY to append to.
+ * @date: The #GSGFDateDMY to append.
  * @error: An optional error location or #NULL.
  *
  * Append another #GSGFDateDMY.

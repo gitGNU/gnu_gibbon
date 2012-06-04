@@ -20,7 +20,6 @@
 /**
  * SECTION:gsgf-component
  * @short_description: Component of an SGF document.
- *
  * Since: 0.1.0
  *
  * An SGF document consists of a hierarchy of components, ranging from
@@ -44,7 +43,7 @@ gsgf_component_default_init (GSGFComponentInterface *iface)
 
 /**
  * gsgf_component_cook:
- * @component: The #GSGFComponent to cook.
+ * @self: The #GSGFComponent to cook.
  * @culprit: Optional location for storing a #GSGFComponent that caused the
  *           operation to fail.
  * @error: Optional location to store an error.
@@ -83,21 +82,21 @@ gsgf_component_default_init (GSGFComponentInterface *iface)
  * Returns: %TRUE for success or %FALSE for failure.
  **/
 gboolean
-gsgf_component_cook (GSGFComponent *component,
+gsgf_component_cook (GSGFComponent *self,
                      GSGFComponent **culprit, GError **error)
 {
         GSGFComponentIface *iface;
 
-        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (self), FALSE, error);
 
-        iface = GSGF_COMPONENT_GET_IFACE (component);
+        iface = GSGF_COMPONENT_GET_IFACE (self);
 
-        return (*iface->cook) (component, culprit, error);
+        return (*iface->cook) (self, culprit, error);
 }
 
 /**
  * gsgf_component_write_stream
- * @component: the #GSGFComponent.
+ * @self: the #GSGFComponent.
  * @out: a #GOutputStream to write to.
  * @bytes_written: number of bytes written to the stream.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
@@ -110,12 +109,10 @@ gsgf_component_cook (GSGFComponent *component,
  * is set to indicate the error status, @bytes_written is updated to contain
  * the number of bytes written into the stream before the error occurred.
  *
- * See also gsgf_collection_write_file().
- *
  * Returns: %TRUE on success.  %FALSE if there was an error.
  **/
 gboolean
-gsgf_component_write_stream (const GSGFComponent *component,
+gsgf_component_write_stream (const GSGFComponent *self,
                              GOutputStream *out,
                              gsize *bytes_written,
                              GCancellable *cancellable,
@@ -127,10 +124,10 @@ gsgf_component_write_stream (const GSGFComponent *component,
 
         *bytes_written = 0;
 
-        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (component), FALSE, error);
+        gsgf_return_val_if_fail (GSGF_IS_COMPONENT (self), FALSE, error);
 
-        iface = GSGF_COMPONENT_GET_IFACE (component);
+        iface = GSGF_COMPONENT_GET_IFACE (self);
 
-        return (*iface->write_stream) (component, out, bytes_written,
+        return (*iface->write_stream) (self, out, bytes_written,
                                        cancellable, error);
 }
