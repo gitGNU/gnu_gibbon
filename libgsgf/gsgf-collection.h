@@ -47,7 +47,6 @@ G_BEGIN_DECLS
  **/
 
 typedef struct _GSGFCollection        GSGFCollection;
-typedef struct _GSGFCollectionClass   GSGFCollectionClass;
 
 struct _GSGFCollection
 {
@@ -57,6 +56,12 @@ struct _GSGFCollection
         struct _GSGFCollectionPrivate *priv;
 };
 
+/**
+ * GSGFCollectionClass:
+ *
+ * Class definition for a collection of SGF games.
+ **/
+typedef struct _GSGFCollectionClass   GSGFCollectionClass;
 struct _GSGFCollectionClass
 {
         /*< private >*/

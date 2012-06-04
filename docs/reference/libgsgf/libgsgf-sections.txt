@@ -62,6 +62,7 @@ gsgf_color_get_type
 <SECTION>
 <FILE>gsgf-component</FILE>
 <TITLE>GSGFComponent</TITLE>
+GSGFComponent
 GSGFComponentIface
 gsgf_component_cook
 gsgf_component_write_stream
@@ -190,6 +191,7 @@ gsgf_flavor_get_type
 <SECTION>
 <FILE>gsgf-flavor-backgammon</FILE>
 <TITLE>GSGFFlavorBackgammon</TITLE>
+GSGFFlavorBackgammon
 GSGFFlavorBackgammonClass
 gsgf_flavor_backgammon_new
 <SUBSECTION Standard>

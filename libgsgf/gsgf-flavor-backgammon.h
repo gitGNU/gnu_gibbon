@@ -45,26 +45,29 @@ G_BEGIN_DECLS
 			GSGFFlavorBackgammonClass))
 
 /**
+ * GSGFFlavorBackgammon:
+ *
+ * The backgammon flavor of SGF.
+ **/
+
+typedef struct _GSGFFlavorBackgammon       GSGFFlavorBackgammon;
+
+struct _GSGFFlavorBackgammon
+{
+        GSGFFlavor parent_instance;
+};
+
+/**
  * GSGFFlavorBackgammonClass:
  *
- * Class implementing the backgammo flavor of SGF.
- **/
+ * Class definition for the backgammon flavor of SGF.
+ */
+
 typedef struct _GSGFFlavorBackgammonClass  GSGFFlavorBackgammonClass;
 struct _GSGFFlavorBackgammonClass
 {
         /*< private >*/
         GSGFFlavorClass parent_class;
-};
-
-/**
- * GSGFFlavor:
- *
- * One instance of a #GSGFFlavorClass.
- **/
-typedef struct _GSGFFlavorBackgammon       GSGFFlavorBackgammon;
-struct _GSGFFlavorBackgammon
-{
-        GSGFFlavor parent_instance;
 };
 
 GType gsgf_flavor_backgammon_get_type(void) G_GNUC_CONST;

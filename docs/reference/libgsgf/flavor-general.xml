@@ -95,7 +95,7 @@
     <sect2 id="property-AE">
       <title>AE (Add empty stone, or clear point)</title>
       <para>
-        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        Type: <link linkend="GSGFListOf">GSGFListOf</link> of
         <link linkend="GSGFPoint">GSGFPoint</link>:
       </para>
       <para>
@@ -108,7 +108,7 @@
     <sect2 id="property-AW">
       <title>AW (Add white stone)</title>
       <para>
-        Type: <link linkend="GSGFListof">GSGFListOf</link> of
+        Type: <link linkend="GSGFListOf">GSGFListOf</link> of
         <link linkend="GSGFStone">GSGFStone</link>:
       </para>
       <para>
@@ -445,7 +445,7 @@
     <sect2 id="property-CA">
       <title>CA (Charset)</title>
       <para>
-        Type: <link linken="GSGFSimpleText">GSGFSimpleText</link>
+        Type: <link linkend="GSGFSimpleText">GSGFSimpleText</link>
       </para>
       <para>
         The charset of the SGF file.  Note that this will always be the

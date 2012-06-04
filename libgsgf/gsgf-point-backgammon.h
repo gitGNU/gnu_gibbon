@@ -45,7 +45,7 @@ G_BEGIN_DECLS
 /**
  * GSGFPointBackgammon:
  *
- * One instance of a #GSGFBackgammonPointClass.  All properties are private.
+ * One instance of a #GSGFPointBackgammonClass.  All properties are private.
  **/
 typedef struct _GSGFPointBackgammon GSGFPointBackgammon;
 struct _GSGFPointBackgammon

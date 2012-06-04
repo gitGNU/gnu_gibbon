@@ -21,7 +21,7 @@
       <title>MI (Match Information)</title>
       <para>
         Type: <link linkend="GSGFListOf">GSGFListOf</link>,
-        item type: <link linkend="GSGFComposed">Composed</link>
+        item type: <link linkend="GSGFCompose">GSGFCompose</link>
         of <link linkend="GSGFSimpleText">GSGFSimpleText</link>:<link 
                  linkend="GSGFSimpleText">GSGFSimpleText</link>.
       </para>

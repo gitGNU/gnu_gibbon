@@ -42,16 +42,22 @@
 /**
  * GSGFValue:
  *
- * One instance of a #GSGFValue.  All properties are private.
+ * Encapsulation for any value, raw or cooked.  All properties are private.
  **/
 typedef struct _GSGFValue GSGFValue;
-typedef struct _GSGFValueClass GSGFValueClass;
 
 struct _GSGFValue
 {
         GObject parent_instance;
 };
 
+
+/**
+ * GSGFValueClass:
+ *
+ * Class definition for any SGF value.
+ */
+typedef struct _GSGFValueClass GSGFValueClass;
 struct _GSGFValueClass
 {
         /* <private >*/

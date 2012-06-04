@@ -20,6 +20,7 @@
 /**
  * SECTION:gsgf-node
  * @short_description: An SGF node.
+ * Since:0.1.0
  *
  * A #GSGFNode is a list of#GSGFProperty elements.
  */
@@ -210,8 +211,8 @@ gsgf_node_write_stream (const GSGFComponent *_self, GOutputStream *out,
  * @id: identifier of the property.
  * @error: a #GError location to store the error occuring, or %NULL to ignore.
  *
- * Add an empty #GSGFProperty as a child. A copy of the %id is used internally;
- * you can safely free resources related to the %id.
+ * Add an empty #GSGFProperty as a child. A copy of the @id is used internally;
+ * you can safely free resources related to the @id.
  *
  * It is illegal to add a property with an already existing identifier to a 
  * node.
@@ -251,9 +252,9 @@ gsgf_node_add_property(GSGFNode *self, const gchar *id, GError **error)
  * @self: a #GSGFNode.
  * @id: identifier of the property.
  *
- * Get a #GSGFProperty identified by %id.
+ * Get a #GSGFProperty identified by @id.
  *
- * Returns: The #GSGFProperty identified by %id or %NULL.
+ * Returns: The #GSGFProperty identified by @id or %NULL.
  */
 GSGFProperty *
 gsgf_node_get_property(const GSGFNode *self, const gchar *id)
@@ -272,13 +273,13 @@ gsgf_node_get_property(const GSGFNode *self, const gchar *id)
  * @self: a #GSGFNode.
  * @id: identifier of the property.
  *
- * Get a #GSGFValue identified by %id.
+ * Get a #GSGFValue identified by @id.
  *
  * This is equivalent to retrieving the property first with
- * %gsgf_node_get_property(), and then calling %gsgf_property_get_value()
+ * gsgf_node_get_property(), and then calling gsgf_property_get_value()
  * on this #GSGFProperty.
  *
- * Returns: The #GSGFValue identified by %id or %NULL.
+ * Returns: The #GSGFValue identified by @id or %NULL.
  */
 GSGFValue *
 gsgf_node_get_property_value (const GSGFNode *self, const gchar *id)
@@ -301,7 +302,7 @@ gsgf_node_get_property_value (const GSGFNode *self, const gchar *id)
  * @self: a #GSGFNode.
  *
  * Return all #GSGFProperty ids stored in this node.  The returned list must be
- * freed with %g_list_free().  The returned list becomes invalid, when you add
+ * freed with g_list_free().  The returned list becomes invalid, when you add
  * or properties to the #GSGFNode or remove nodes from it.
  *
  * The data portion of each #GList item points to a #gchar.
@@ -324,8 +325,9 @@ gsgf_node_get_property_ids(const GSGFNode *self)
  * @self: a #GSGFNode.
  * @id: identifier of the property.
  *
- * Remove a #GSGFProperty identified by %id and free all resources occupied by it.
- * If there is no such property the function silently returns without error.
+ * Remove a #GSGFProperty identified by @id and free all resources occupied by
+ * it.  If there is no such property the function silently returns without
+ * error.
  */
 void
 gsgf_node_remove_property(GSGFNode *self, const gchar *id)

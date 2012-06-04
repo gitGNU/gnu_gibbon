@@ -7,10 +7,11 @@
   <title>SGF Flavors</title>
   <para>
     Both 
-    <link linkend="gsgf-node-get-property-cooked">gsgf_node_get_property_cooked()</link>
+    <link linkend="gsgf-node-get-property-value">gsgf_node_get_property_value()</link>
     and
     <link linkend="gsgf-property-get-value">gsgf_property_get_value()</link>
-    return a <link linkend="GSGFCookedValue">GSGFCookedValue</link>.  This is
+    return a <link linkend="GSGFCookedValue">GSGFCookedValue</link>, resp.
+    a <link linkend="GSGFValue">GSGFValue</link>.  This is
     not very useful unless you know the exact subtype.  The following sections
     give an overview about the exact types returned by these functions, depending
     on the particular flavor of SGF you use.      

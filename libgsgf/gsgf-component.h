@@ -34,7 +34,16 @@
         (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
                 GSGF_TYPE_COMPONENT, GSGFComponentIface))
 
+/**
+ * GSGFComponent:
+ *
+ * Any component of an SGF structure, that is a #GSGFCollection,
+ * a #GSGFGameTree, a #GSGFNode, or a #GSGFProperty.
+ **/
 typedef struct _GSGFComponent GSGFComponent;
+struct _GSGFComponent {
+        /* Make gtk-doc happy! */
+};
 
 /**
  * GSGFComponentIface:

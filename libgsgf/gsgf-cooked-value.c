@@ -23,8 +23,8 @@
  * files.
  *
  * A #GSGFCookedValue encapsulates qualified data read from an SGF file.  It
- * is the result of cooking that data with the cook() method of a
- * #GSGFComponent, normally of cooking the top-level #GSGFCollection.
+ * is the result of qualifying that data, normally by cooking the top-level
+ * #GSGFCollection.
  */
 
 #include <glib.h>

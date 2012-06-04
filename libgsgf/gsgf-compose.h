@@ -40,9 +40,7 @@ G_BEGIN_DECLS
                 GSGF_TYPE_COMPOSE, GSGFComposeClass))
 
 /**
- * GSGFComposeClass:
- *
- * Class representing a composed value in SGF.
+ * GSGFCompose:
  *
  * Composed values are two values separated by a colon.
  **/
@@ -58,6 +56,11 @@ struct _GSGFCompose
         struct _GSGFComposePrivate *priv;
 };
 
+/**
+ * GSGFComposeClass:
+ *
+ * Class definition for a composed value.
+ **/
 struct _GSGFComposeClass
 {
         /*< private >*/

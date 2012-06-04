@@ -75,6 +75,14 @@ gsgf_color_class_init (GSGFColorClass *klass)
         object_class->finalize = gsgf_color_finalize;
 }
 
+/**
+ * gsgf_color_new:
+ * @color: A #GSGFColorEnum.
+ *
+ * Creates a new #GSGFColor.
+ *
+ * Returns: The new #GSGFColor.
+ */
 GSGFColor *
 gsgf_color_new (GSGFColorEnum color)
 {
@@ -85,6 +93,14 @@ gsgf_color_new (GSGFColorEnum color)
         return self;
 }
 
+/**
+ * gsgf_color_get_color:
+ * @self: The #GSGFColor.
+ *
+ * Get the encapsulated color.
+ *
+ * Returns: The encapsulated #GSGFColorEnum.
+ */
 GSGFColorEnum
 gsgf_color_get_color (const GSGFColor *self)
 {
