@@ -115,14 +115,14 @@ gsgf_raw_new (const gchar *value)
  * Retrieve a certain raw value.  This function is onl interesting for people
  * implementing their own #GSGFFlavor.
  *
- * Returns: The value stored at position @i or %NULL.
+ * Returns: (transfer none): The value stored at position @i or %NULL.
  */
 gchar *
-gsgf_raw_get_value(const GSGFRaw *self, gsize i)
+gsgf_raw_get_value (const GSGFRaw *self, gsize i)
 {
-        g_return_val_if_fail(GSGF_IS_RAW(self), NULL);
+        g_return_val_if_fail (GSGF_IS_RAW(self), NULL);
 
-        return (gchar *) g_list_nth_data(self->priv->values, i);
+        return (gchar *) g_list_nth_data (self->priv->values, i);
 }
 
 static gboolean
