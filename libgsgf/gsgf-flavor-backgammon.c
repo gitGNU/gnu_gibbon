@@ -78,6 +78,9 @@ static GSGFNumber *gsgf_flavor_backgammon_dice (
 static GSGFSimpleText *gsgf_flavor_backgammon_mark_rollout (
                 const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
                 GError **error);
+static GSGFListOf *gsgf_flavor_backgammon_analysis (
+                const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
+                GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -288,7 +291,13 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
         *cooked = NULL;
 
         id = gsgf_property_get_id (property);
-        if ('C' == id[0]) {
+        if ('A' == id[0] && !id[1]) {
+                result = gsgf_flavor_backgammon_analysis (self, raw, error);
+                if (!result)
+                        return FALSE;
+                *cooked = GSGF_COOKED_VALUE (result);
+                return TRUE;
+        } else if ('C' == id[0]) {
                 if ('O' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_cube_position (self,
                                                                        raw,
@@ -359,6 +368,40 @@ gsgf_flavor_backgammon_match_info (const GSGFFlavorBackgammon *self,
                                      _("Backgammon match info (MI) must"
                                        " contain a colon in `%s'!"),
                                      raw_value);
+                        g_object_unref (retval);
+                        return FALSE;
+                }
+                simple = gsgf_simple_text_new (raw_value);
+                if (!gsgf_list_of_append (retval, GSGF_COOKED_VALUE (simple),
+                                          error)) {
+                        g_object_unref (retval);
+                        return FALSE;
+                }
+        }
+
+        return retval;
+}
+
+static GSGFListOf *
+gsgf_flavor_backgammon_analysis (const GSGFFlavorBackgammon *self,
+                                 const GSGFRaw *raw, GError **error)
+{
+        GSGFListOf *retval;
+        gsize i, num_values;
+        gchar *raw_value;
+        GSGFSimpleText *simple;
+
+        retval = gsgf_list_of_new (gsgf_simple_text_get_type (),
+                                   GSGF_FLAVOR (self));
+
+        num_values = gsgf_raw_get_number_of_values (raw);
+        for (i = 0; i < num_values; ++i) {
+                raw_value = gsgf_raw_get_value (raw, i);
+                if (!raw_value || !*raw_value) {
+                        g_set_error (error, GSGF_ERROR,
+                                     GSGF_ERROR_SEMANTIC_ERROR,
+                                     _("Backgammon analysis (A) must"
+                                       " not be empty!"));
                         g_object_unref (retval);
                         return FALSE;
                 }
