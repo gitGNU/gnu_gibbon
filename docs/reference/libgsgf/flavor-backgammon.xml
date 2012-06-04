@@ -97,8 +97,7 @@
         Type: <link linkend="GSGFReal">GSGFReal</link>.
       </para>
       <para>
-        Luck measurement of a roll in the range from -1.0 (unlucky)
-        to +1.0 (lucky).
+        Luck measurement of a roll.
       </para>
     </sect2>
     <sect2 id="bg-property-MR">
