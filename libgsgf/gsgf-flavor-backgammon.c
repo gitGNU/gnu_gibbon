@@ -87,6 +87,9 @@ static GSGFReal *gsgf_flavor_backgammon_luck (
 static GSGFListOf *gsgf_flavor_backgammon_general_stats (
                 const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
                 GError **error);
+static GSGFSimpleText *gsgf_flavor_backgammon_double_analysis (
+                const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
+                GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -272,12 +275,6 @@ gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self)
  *
  * BC[number]: Bad cube (range 1-2)
  * DC[]: Doubtful cube (empty)
- * DA[...]: Double analysis.
- * GS: General statistics
- *     [M: ...] moves
- *     [C: ...] cube
- *     [D: ...] dice (luck)
- * LU[number]: Luck (range -1.0 ... +1.0)
  */
 static gboolean
 gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
@@ -320,7 +317,15 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                         return TRUE;
                 }
         } else if ('D' == id[0]) {
-                if ('I' == id[1] && !id[2]) {
+                if ('A' == id[1] && !id[2]) {
+                        result = gsgf_flavor_backgammon_double_analysis (self,
+                                                                         raw,
+                                                                         error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                } else if ('I' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_dice (self, raw, error);
                         if (!result)
                                 return FALSE;
@@ -593,4 +598,24 @@ gsgf_flavor_backgammon_general_stats (const GSGFFlavorBackgammon *self,
         }
 
         return retval;
+}
+
+static GSGFSimpleText *
+gsgf_flavor_backgammon_double_analysis (const GSGFFlavorBackgammon *self,
+                                        const GSGFRaw *raw, GError **error)
+{
+        GSGFCookedValue *retval;
+
+        if (1 != gsgf_raw_get_number_of_values (raw)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Property %s must be single-valued!"), "DA");
+                return FALSE;
+        }
+
+        retval = gsgf_simple_text_new_from_raw (raw, GSGF_FLAVOR (self),
+                                                NULL, error);
+        if (!retval)
+                return NULL;
+
+        return GSGF_SIMPLE_TEXT (retval);
 }
