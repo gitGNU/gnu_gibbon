@@ -72,6 +72,9 @@ static GSGFNumber *gsgf_flavor_backgammon_cube_value (
 static GSGFNumber *gsgf_flavor_backgammon_dice (
                 const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
                 GError **error);
+static GSGFSimpleText *gsgf_flavor_backgammon_mark_rollout (
+                const GSGFFlavorBackgammon *self,  const GSGFRaw *raw,
+                GError **error);
 
 static void
 gsgf_flavor_backgammon_init(GSGFFlavorBackgammon *self)
@@ -253,6 +256,18 @@ gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self)
         return 6;
 }
 
+/* TODO:
+ *
+ * A[...]: Analysis.
+ * BC[number]: Bad cube (range 1-2)
+ * DC[]: Doubtful cube (empty)
+ * DA[...]: Double analysis.
+ * GS: General statistics
+ *     [M: ...] moves
+ *     [C: ...] cube
+ *     [D: ...] dice (luck)
+ * LU[number]: Luck (range -1.0 ... +1.0)
+ */
 static gboolean
 gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                                          const GSGFProperty *property,
@@ -270,16 +285,7 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
         *cooked = NULL;
 
         id = gsgf_property_get_id (property);
-        if ('M' == id[0]) {
-                if ('I' == id[1] && !id[2]) {
-                        result = gsgf_backgammon_match_info_new_from_raw (raw,
-                                       _self, property, error);
-                        if (!result)
-                                return FALSE;
-                        *cooked = GSGF_COOKED_VALUE (result);
-                        return TRUE;
-                }
-        } else if ('C' == id[0]) {
+        if ('C' == id[0]) {
                 if ('O' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_cube_position (self,
                                                                        raw,
@@ -288,7 +294,7 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                                 return FALSE;
                         *cooked = GSGF_COOKED_VALUE (result);
                         return TRUE;
-                } if ('V' == id[1] && !id[2]) {
+                } else if ('V' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_cube_value (self, raw,
                                                                     error);
                         if (!result)
@@ -299,6 +305,24 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
         } else if ('D' == id[0]) {
                 if ('I' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_dice (self, raw, error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                }
+        } else if ('M' == id[0]) {
+                if ('I' == id[1] && !id[2]) {
+                        result = gsgf_backgammon_match_info_new_from_raw (raw,
+                                       _self, property, error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                } else if ('R' == id[1] && !id[2]) {
+                        g_printerr ("MR ...\n");
+                        result = gsgf_flavor_backgammon_mark_rollout (self, raw,
+                                                                      error);
+                        g_printerr ("MR done!\n");
                         if (!result)
                                 return FALSE;
                         *cooked = GSGF_COOKED_VALUE (result);
@@ -318,7 +342,7 @@ gsgf_flavor_backgammon_cube_position (const GSGFFlavorBackgammon *self,
         GSGFSimpleText *retval;
         const gchar *raw_value;
 
-        if (1 < gsgf_raw_get_number_of_values (raw)) {
+        if (1 != gsgf_raw_get_number_of_values (raw)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                              _("Property %s must be single-valued!"), "CO");
                 return FALSE;
@@ -345,7 +369,7 @@ gsgf_flavor_backgammon_cube_value (const GSGFFlavorBackgammon *self,
         GSGFCookedValue *retval;
         guint64 cube;
 
-        if (1 < gsgf_raw_get_number_of_values (raw)) {
+        if (1 != gsgf_raw_get_number_of_values (raw)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                              _("Property %s must be single-valued!"), "CV");
                 return FALSE;
@@ -377,7 +401,7 @@ gsgf_flavor_backgammon_dice (const GSGFFlavorBackgammon *self,
         guint dice;
         const gchar *raw_value;
 
-        if (1 < gsgf_raw_get_number_of_values (raw)) {
+        if (1 != gsgf_raw_get_number_of_values (raw)) {
                 g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
                              _("Property %s must be single-valued!"), "DI");
                 return FALSE;
@@ -394,4 +418,24 @@ gsgf_flavor_backgammon_dice (const GSGFFlavorBackgammon *self,
         dice = 10 * (raw_value[0] - '0') + raw_value[1] - '0';
 
         return gsgf_number_new (dice);
+}
+
+static GSGFSimpleText *
+gsgf_flavor_backgammon_mark_rollout (const GSGFFlavorBackgammon *self,
+                                     const GSGFRaw *raw, GError **error)
+{
+        GSGFCookedValue *retval;
+
+        if (1 != gsgf_raw_get_number_of_values (raw)) {
+                g_set_error (error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
+                             _("Property %s must be single-valued!"), "MR");
+                return FALSE;
+        }
+
+        retval = gsgf_simple_text_new_from_raw (raw, GSGF_FLAVOR (self),
+                                                NULL, error);
+        if (!retval)
+                return NULL;
+
+        return GSGF_SIMPLE_TEXT (retval);
 }
