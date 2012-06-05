@@ -158,7 +158,7 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         }
         GIBBON_WRITE_ALL (buffer);
 
-        buffer = g_strdup_printf ("White: %s\nBlack: %s\n",
+        buffer = g_strdup_printf ("Player:W: %s\nPlayer:B: %s\n",
                                   gibbon_match_get_white (match),
                                   gibbon_match_get_black (match));
         GIBBON_WRITE_ALL (buffer);

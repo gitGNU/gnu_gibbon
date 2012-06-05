@@ -98,7 +98,7 @@ NL (\r\n|\n|\r\n|\r)
 %s SCOLOR
 %s SLENGTH
 %s SRULE
-%s SPLAYER
+%s SNAME
 %s SMOVE
 %s EAT_UP
 
@@ -144,20 +144,17 @@ NL (\r\n|\n|\r\n|\r)
 		return GAME;
 	}
 
-<OPCODE>white                   {
-		BEGIN (SPLAYER);
+<OPCODE>player                  {
+		BEGIN (SNAME);
 		yy_push_state (SCOLON);
-		return PLAYER_WHITE;
-	}
-<OPCODE>black                   {
-		BEGIN (SPLAYER);
+		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
-		return PLAYER_BLACK;
+		return PLAYER;
 	}
-<SPLAYER>.*{NL}			{
+<SNAME>.*{NL}			{
 		BEGIN (OPCODE);
 		yylval.name = alloc_name (gibbon_trim (yytext));
-		return PLAYER;
+		return NAME;
 	}
 
 <OPCODE>rule			{

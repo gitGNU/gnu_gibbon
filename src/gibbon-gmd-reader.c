@@ -247,21 +247,17 @@ _gibbon_gmd_reader_yyerror (const gchar *msg)
 }
 
 void
-_gibbon_gmd_reader_set_white (GibbonGMDReader *self, const gchar *white)
+_gibbon_gmd_reader_set_player (GibbonGMDReader *self,
+                               GibbonPositionSide side,
+                               const gchar *name)
 {
         g_return_if_fail (GIBBON_IS_GMD_READER (self));
         g_return_if_fail (self->priv->match);
 
-        gibbon_match_set_white (self->priv->match, white);
-}
-
-void
-_gibbon_gmd_reader_set_black (GibbonGMDReader *self, const gchar *black)
-{
-        g_return_if_fail (GIBBON_IS_GMD_READER (self));
-        g_return_if_fail (self->priv->match);
-
-        gibbon_match_set_black (self->priv->match, black);
+        if (side > 0)
+                gibbon_match_set_white (self->priv->match, name);
+        else if (side < 0)
+                gibbon_match_set_black (self->priv->match, name);
 }
 
 void

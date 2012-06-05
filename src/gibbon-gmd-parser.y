@@ -99,10 +99,9 @@ extern int gibbon_gmd_lexer_lex (void);
 %token HYPHEN
 %token COLON
 %token <num> INTEGER
-%token <name> PLAYER
+%token <name> NAME
 %token LENGTH
-%token PLAYER_WHITE
-%token PLAYER_BLACK
+%token PLAYER
 %token RULE
 %token CRAWFORD
 %token GAME
@@ -151,7 +150,7 @@ thing
 	;
 
 property
-	: length | white | black | rule | game | unknown
+	: length | player | rule | game | unknown
 	;
 	
 length
@@ -161,17 +160,10 @@ length
 		}
 	;
 
-white
-	: PLAYER_WHITE COLON PLAYER
+player
+	: PLAYER COLON color COLON NAME
 		{
-			_gibbon_gmd_reader_set_white (reader, $3);
-		}
-	;
-
-black
-	: PLAYER_BLACK COLON PLAYER
-		{
-			_gibbon_gmd_reader_set_black (reader, $3);
+			_gibbon_gmd_reader_set_player (reader, $3, $5);
 		}
 	;
 

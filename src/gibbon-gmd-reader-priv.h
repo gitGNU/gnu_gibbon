@@ -32,10 +32,9 @@ extern GibbonGMDReader *_gibbon_gmd_reader_instance;
 
 void _gibbon_gmd_reader_yyerror (const gchar *msg);
 
-void _gibbon_gmd_reader_set_white (GibbonGMDReader *self,
-                                          const gchar *white);
-void _gibbon_gmd_reader_set_black (GibbonGMDReader *self,
-                                          const gchar *black);
+void _gibbon_gmd_reader_set_player (GibbonGMDReader *self,
+                                    GibbonPositionSide side,
+                                    const gchar *white);
 void _gibbon_gmd_reader_set_match_length (GibbonGMDReader *self, gint length);
 gboolean _gibbon_gmd_reader_add_game (GibbonGMDReader *self);
 void _gibbon_gmd_reader_set_crawford (GibbonGMDReader *self);
