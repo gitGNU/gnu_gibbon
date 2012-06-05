@@ -102,13 +102,15 @@ gsgf_empty_new_from_raw(const GSGFRaw *raw, const GSGFFlavor *flavor,
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
-                            _("Only one value allowed for property"));
+                            _("Only one value allowed for property `%s'"),
+                            gsgf_property_get_id (property));
                 return NULL;
         }
         string = gsgf_raw_get_value(raw, 0);
         if (string[0]) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_SEMANTIC_ERROR,
-                            _("Empty value required"));
+                            _("Empty value required for property `%s'"),
+                            gsgf_property_get_id (property));
                 return NULL;
         }
 

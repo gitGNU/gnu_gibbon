@@ -100,14 +100,15 @@ GSGFCookedValue *gsgf_double_new_from_raw(const GSGFRaw* raw,
 
         if (1 != gsgf_raw_get_number_of_values(raw)) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_LIST_TOO_LONG,
-                            _("Only one value allowed for property"));
+                            _("Only one value allowed for property `%s'"),
+                            gsgf_property_get_id (property));
                 return NULL;
         }
 
         string = gsgf_raw_get_value(raw, 0);
         if (string[0] < '1' || string[0] > '2' || string[1]) {
                 g_set_error(error, GSGF_ERROR, GSGF_ERROR_DOUBLE_OUT_OF_RANGE,
-                            _("SGF double must be 1 or 2, not '%s'"),
+                            _("SGF double must be 1 or 2, not `%s'"),
                             string);
                 return NULL;
         }
