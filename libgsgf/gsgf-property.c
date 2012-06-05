@@ -205,7 +205,7 @@ gsgf_property_get_value (const GSGFProperty *self)
  *
  * Retrieve the id of a property.
  *
- * Returns: Returns the id of the property.
+ * Returns: (transfer none): Returns the id of the property.
  */
 const gchar *
 gsgf_property_get_id(const GSGFProperty *self)
