@@ -271,11 +271,6 @@ gsgf_flavor_backgammon_get_game_id (const GSGFFlavor *self)
         return 6;
 }
 
-/* TODO:
- *
- * BC[number]: Bad cube (range 1-2)
- * DC[]: Doubtful cube (empty)
- */
 static gboolean
 gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                                          const GSGFProperty *property,
@@ -299,6 +294,16 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                         return FALSE;
                 *cooked = GSGF_COOKED_VALUE (result);
                 return TRUE;
+        } else if ('B' == id[0]) {
+                if ('C' == id[1] && !id[2]) {
+                        result = gsgf_double_new_from_raw (raw,
+                                                           GSGF_FLAVOR (self),
+                                                           property, error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                }
         } else if ('C' == id[0]) {
                 if ('O' == id[1] && !id[2]) {
                         result = gsgf_flavor_backgammon_cube_position (self,
@@ -321,6 +326,14 @@ gsgf_flavor_backgammon_get_cooked_value (const GSGFFlavor *_self,
                         result = gsgf_flavor_backgammon_double_analysis (self,
                                                                          raw,
                                                                          error);
+                        if (!result)
+                                return FALSE;
+                        *cooked = GSGF_COOKED_VALUE (result);
+                        return TRUE;
+                } else if ('C' == id[1] && !id[2]) {
+                        result = gsgf_empty_new_from_raw (raw,
+                                                          GSGF_FLAVOR (self),
+                                                          property, error);
                         if (!result)
                                 return FALSE;
                         *cooked = GSGF_COOKED_VALUE (result);
