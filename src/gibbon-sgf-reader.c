@@ -81,6 +81,10 @@ static gboolean gibbon_sgf_reader_match_info (GibbonSGFReader *self,
                                               GibbonMatch *match,
                                               GSGFGameTree *game_tree,
                                               GError **error);
+static gboolean gibbon_sgf_reader_match_info_item (GibbonSGFReader *self,
+                                                   GibbonMatch *match,
+                                                   const gchar *kv,
+                                                   GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -289,16 +293,72 @@ static gboolean
 gibbon_sgf_reader_match_info (GibbonSGFReader *self, GibbonMatch *match,
                               GSGFGameTree *game_tree, GError **error)
 {
-        GList *nodes = gsgf_game_tree_get_nodes (game_tree);
-        GSGFNode *root;
+        const GList *nodes = gsgf_game_tree_get_nodes (game_tree);
+        const GSGFNode *root;
+        const GSGFProperty *mi;
+        const GSGFListOf *values;
+        gsize i, num_items;
+        const GSGFText *value;
 
-        /* Empty game trees are allowed.  But for our purposes they are
-         * unusable.
-         */
-        if (!nodes)
+        if (!nodes) return TRUE;
+
+        root = GSGF_NODE (nodes->data);
+
+        mi = gsgf_node_get_property (root, "MI");
+        if (!mi) return TRUE;
+
+        values = GSGF_LIST_OF (gsgf_property_get_value (mi));
+        num_items = gsgf_list_of_get_number_of_items (values);
+        for (i = 0; i < num_items; ++i) {
+                value = GSGF_TEXT (gsgf_list_of_get_nth_item (values, i));
+                if (!gibbon_sgf_reader_match_info_item (
+                                self, match, gsgf_text_get_value (value),
+                                error))
+                        return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
+                                   const gchar *kv, GError **error)
+{
+        gchar *key = g_alloca (1 + strlen (kv));
+        gchar *string_value;
+        guint64 value;
+        gchar *endptr;
+
+        strcpy (key, kv);
+        string_value = strchr (key, ':');
+        if (!string_value)
+                return TRUE;
+
+        *string_value++ = 0;
+        if (!*string_value)
+                return TRUE;
+
+        /* The only property we are currently interested in is the length.  */
+        if (g_strcmp0 ("length", key))
+                return TRUE;
+
+        errno = 0;
+        value = g_ascii_strtoull (string_value, &endptr, 010);
+        if (errno) {
+                g_set_error (error, 0, -1,
+                             _("Invalid match length: %s!"),
+                             strerror (errno));
                 return FALSE;
+        }
 
-        root = GSGF_NODE (g_list_nth_data (nodes, 0));
+        if (value > G_MAXSIZE) {
+                g_set_error (error, 0, -1,
+                             _("Match length %llu out of range!"),
+                             (unsigned long long) value);
+                return FALSE;
+        }
+
+        gibbon_match_set_length (match, value);
 
         return TRUE;
 }
