@@ -282,10 +282,14 @@ static gboolean
 gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                         GSGFGameTree *game_tree, GError **error)
 {
-        GList *iter;
+        const GList *iter;
         GibbonPositionSide side;
-        GSGFNode *node;
-        GSGFProperty *prop;
+        const GSGFNode *node;
+        const GSGFProperty *prop;
+        const GibbonGame *game;
+        const GSGFResult *result;
+        GibbonResign *resign;
+        GibbonGameAction *action;
 
         if (!gibbon_match_add_game (match, error))
                 return FALSE;
@@ -307,6 +311,34 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                                 return FALSE;
         }
 
+        game = gibbon_match_get_current_game (match);
+        if (!gibbon_game_over (game)) {
+                iter = gsgf_game_tree_get_nodes (game_tree);
+                node = GSGF_NODE (iter->data);
+                prop = gsgf_node_get_property (node, "RE");
+                if (!prop)
+                        return TRUE;
+                result = GSGF_RESULT (gsgf_property_get_value (prop));
+                if (GSGF_RESULT_RESIGNATION != gsgf_result_get_cause (result))
+                        return TRUE;
+                if (GSGF_RESULT_BLACK)
+                        side = GIBBON_POSITION_SIDE_BLACK;
+                else if (GSGF_RESULT_WHITE)
+                        side = GIBBON_POSITION_SIDE_WHITE;
+                else
+                        return TRUE;
+
+                resign = gibbon_resign_new (gsgf_result_get_score (result));
+                action = GIBBON_GAME_ACTION (resign);
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+                action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, -side, action,
+                                                   error))
+                        return FALSE;
+        }
+
         return TRUE;
 }
 
@@ -319,7 +351,8 @@ gibbon_sgf_reader_root_node (GibbonSGFReader *self, GibbonMatch *match,
         const GSGFProperty *prop;
         const GSGFListOf *values;
         gsize i, num_items;
-        const GSGFText *value;
+        const GSGFText *text;
+        const gchar *value;
 
         if (!nodes) return TRUE;
 
@@ -330,9 +363,9 @@ gibbon_sgf_reader_root_node (GibbonSGFReader *self, GibbonMatch *match,
                 values = GSGF_LIST_OF (gsgf_property_get_value (prop));
                 num_items = gsgf_list_of_get_number_of_items (values);
                 for (i = 0; i < num_items; ++i) {
-                        value = GSGF_TEXT (gsgf_list_of_get_nth_item (values, i));
+                        text = GSGF_TEXT (gsgf_list_of_get_nth_item (values, i));
                         if (!gibbon_sgf_reader_match_info_item (
-                                        self, match, gsgf_text_get_value (value),
+                                        self, match, gsgf_text_get_value (text),
                                         error))
                                 return FALSE;
                 }
@@ -341,17 +374,29 @@ gibbon_sgf_reader_root_node (GibbonSGFReader *self, GibbonMatch *match,
         /* Colors are swapped!  */
         prop = gsgf_node_get_property (root, "PB");
         if (prop) {
-                value = GSGF_TEXT (gsgf_property_get_value (prop));
-                if (value)
+                text = GSGF_TEXT (gsgf_property_get_value (prop));
+                if (text)
                         gibbon_match_set_white (match,
-                                                gsgf_text_get_value (value));
+                                                gsgf_text_get_value (text));
         }
         prop = gsgf_node_get_property (root, "PW");
         if (prop) {
-                value = GSGF_TEXT (gsgf_property_get_value (prop));
-                if (value)
+                text = GSGF_TEXT (gsgf_property_get_value (prop));
+                if (text)
                         gibbon_match_set_black (match,
-                                                gsgf_text_get_value (value));
+                                                gsgf_text_get_value (text));
+        }
+
+        prop = gsgf_node_get_property (root, "RU");
+        if (prop) {
+                text = GSGF_TEXT (gsgf_property_get_value (prop));
+                value = gsgf_text_get_value (text);
+                if (text && (0 == g_ascii_strcasecmp ("Crawford", value)
+                             || 0 == g_ascii_strcasecmp ("Crawford"
+                                                         ":CrawfordGame",
+                                                         value))) {
+                        gibbon_match_set_crawford (match, TRUE);
+                }
         }
 
         return TRUE;
