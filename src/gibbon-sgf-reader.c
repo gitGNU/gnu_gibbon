@@ -453,6 +453,16 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    error))
                         return FALSE;
+        } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_double_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
         }
 
         return TRUE;
