@@ -295,7 +295,7 @@ gibbon_sgf_reader_match_info (GibbonSGFReader *self, GibbonMatch *match,
 {
         const GList *nodes = gsgf_game_tree_get_nodes (game_tree);
         const GSGFNode *root;
-        const GSGFProperty *mi;
+        const GSGFProperty *prop;
         const GSGFListOf *values;
         gsize i, num_items;
         const GSGFText *value;
@@ -304,17 +304,33 @@ gibbon_sgf_reader_match_info (GibbonSGFReader *self, GibbonMatch *match,
 
         root = GSGF_NODE (nodes->data);
 
-        mi = gsgf_node_get_property (root, "MI");
-        if (!mi) return TRUE;
+        prop = gsgf_node_get_property (root, "MI");
+        if (prop) {
+                values = GSGF_LIST_OF (gsgf_property_get_value (prop));
+                num_items = gsgf_list_of_get_number_of_items (values);
+                for (i = 0; i < num_items; ++i) {
+                        value = GSGF_TEXT (gsgf_list_of_get_nth_item (values, i));
+                        if (!gibbon_sgf_reader_match_info_item (
+                                        self, match, gsgf_text_get_value (value),
+                                        error))
+                                return FALSE;
+                }
+        }
 
-        values = GSGF_LIST_OF (gsgf_property_get_value (mi));
-        num_items = gsgf_list_of_get_number_of_items (values);
-        for (i = 0; i < num_items; ++i) {
-                value = GSGF_TEXT (gsgf_list_of_get_nth_item (values, i));
-                if (!gibbon_sgf_reader_match_info_item (
-                                self, match, gsgf_text_get_value (value),
-                                error))
-                        return FALSE;
+        /* Colors are swapped! */
+        prop = gsgf_node_get_property (root, "PB");
+        if (prop) {
+                value = GSGF_TEXT (gsgf_property_get_value (prop));
+                if (value)
+                        gibbon_match_set_white (match,
+                                                gsgf_text_get_value (value));
+        }
+        prop = gsgf_node_get_property (root, "PW");
+        if (prop) {
+                value = GSGF_TEXT (gsgf_property_get_value (prop));
+                if (value)
+                        gibbon_match_set_black (match,
+                                                gsgf_text_get_value (value));
         }
 
         return TRUE;
