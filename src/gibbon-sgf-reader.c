@@ -72,19 +72,25 @@ static GibbonMatch *gibbon_sgf_reader_parse (GibbonMatchReader *match_reader,
 static gboolean gibbon_sgf_reader_add_action (GibbonSGFReader *self,
                                               GibbonMatch *match,
                                               GibbonPositionSide side,
-                                              GibbonGameAction *action);
+                                              GibbonGameAction *action,
+                                              GError **error);
 static gboolean gibbon_sgf_reader_game (GibbonSGFReader *self,
                                         GibbonMatch *match,
                                         GSGFGameTree *game_tree,
                                         GError **error);
-static gboolean gibbon_sgf_reader_match_info (GibbonSGFReader *self,
-                                              GibbonMatch *match,
-                                              GSGFGameTree *game_tree,
-                                              GError **error);
+static gboolean gibbon_sgf_reader_root_node (GibbonSGFReader *self,
+                                             GibbonMatch *match,
+                                             GSGFGameTree *game_tree,
+                                            GError **error);
 static gboolean gibbon_sgf_reader_match_info_item (GibbonSGFReader *self,
                                                    GibbonMatch *match,
                                                    const gchar *kv,
                                                    GError **error);
+static gboolean gibbon_sgf_reader_move (GibbonSGFReader *self,
+                                        GibbonMatch *match,
+                                        const GSGFProperty *prop,
+                                        GibbonPositionSide side,
+                                        GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -148,7 +154,6 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         GibbonMatch *match;
         GList *iter;
         GSGFGameTree *game_tree;
-        gboolean match_info_read = FALSE;
         const GSGFFlavor *flavor;
 
         g_return_val_if_fail (GIBBON_IS_SGF_READER (_self), NULL);
@@ -203,18 +208,14 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 
                 /*
                  * SGF stores general match meta information in the the root
-                 * node of each game tree.  We read it only for the first
-                 * game tree and rely on it being constant over the rest
-                 * of the file.
+                 * node of each game tree.
                  */
-                if (!match_info_read) {
-                        if (!gibbon_sgf_reader_match_info (self, match,
-                                                           game_tree, &error)) {
-                                gibbon_sgf_reader_yyerror (self, error->message);
-                                g_object_unref (match);
-                                match = NULL;
-                                break;
-                        }
+                if (!gibbon_sgf_reader_root_node (self, match,
+                                                  game_tree, &error)) {
+                        gibbon_sgf_reader_yyerror (self, error->message);
+                        g_object_unref (match);
+                        match = NULL;
+                        break;
                 }
 
                 if (!gibbon_sgf_reader_game (self, match, game_tree,
@@ -237,20 +238,18 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 static gboolean
 gibbon_sgf_reader_add_action (GibbonSGFReader *self, GibbonMatch *match,
                               GibbonPositionSide side,
-                              GibbonGameAction *action)
+                              GibbonGameAction *action, GError **error)
 {
         GibbonGame *game;
-        GError *error = NULL;
 
         game = gibbon_match_get_current_game (match);
         if (!game) {
-                gibbon_sgf_reader_yyerror (self, _("No game in progress!"));
+                g_set_error_literal (error, 0, -1, _("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, &error)) {
-                gibbon_sgf_reader_yyerror (self, error->message);
+        if (!gibbon_game_add_action (game, side, action, error)) {
                 g_object_unref (action);
                 return FALSE;
         }
@@ -274,7 +273,7 @@ gibbon_sgf_reader_yyerror (const GibbonSGFReader *self,
         if (self->priv->yyerror)
                 self->priv->yyerror (self->priv->user_data, full_msg);
         else
-                g_printerr ("%s: %s\n", location, full_msg);
+                g_printerr ("%s\n", full_msg);
 
         g_free (full_msg);
 }
@@ -283,15 +282,37 @@ static gboolean
 gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                         GSGFGameTree *game_tree, GError **error)
 {
+        GList *iter;
+        GibbonPositionSide side;
+        GSGFNode *node;
+        GSGFProperty *prop;
+
         if (!gibbon_match_add_game (match, error))
                 return FALSE;
+
+        iter = gsgf_game_tree_get_nodes (game_tree);
+        if (!iter) return TRUE;
+
+        for (iter = iter->next; iter; iter = iter->next) {
+                node = GSGF_NODE (iter->data);
+                prop = gsgf_node_get_property (node, "B");
+                if (prop) {
+                        side = GIBBON_POSITION_SIDE_WHITE;
+                } else {
+                        prop = gsgf_node_get_property (node, "W");
+                        side = GIBBON_POSITION_SIDE_BLACK;
+                }
+                if (prop && !gibbon_sgf_reader_move (self, match, prop, side,
+                                                     error))
+                                return FALSE;
+        }
 
         return TRUE;
 }
 
 static gboolean
-gibbon_sgf_reader_match_info (GibbonSGFReader *self, GibbonMatch *match,
-                              GSGFGameTree *game_tree, GError **error)
+gibbon_sgf_reader_root_node (GibbonSGFReader *self, GibbonMatch *match,
+                             GSGFGameTree *game_tree, GError **error)
 {
         const GList *nodes = gsgf_game_tree_get_nodes (game_tree);
         const GSGFNode *root;
@@ -317,7 +338,7 @@ gibbon_sgf_reader_match_info (GibbonSGFReader *self, GibbonMatch *match,
                 }
         }
 
-        /* Colors are swapped! */
+        /* Colors are swapped!  */
         prop = gsgf_node_get_property (root, "PB");
         if (prop) {
                 value = GSGF_TEXT (gsgf_property_get_value (prop));
@@ -375,6 +396,64 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
         }
 
         gibbon_match_set_length (match, value);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
+                        const GSGFProperty *prop, GibbonPositionSide side,
+                        GError **error)
+{
+        GSGFMoveBackgammon *gsgf_move;
+        guint dice[2];
+        GibbonGameAction *action;
+        GibbonMove *move;
+        gsize num_movements, i;
+        guint from, to;
+        GibbonMovement *movement;
+
+        gsgf_move = GSGF_MOVE_BACKGAMMON (gsgf_property_get_value (prop));
+
+        if (gsgf_move_backgammon_is_regular (gsgf_move)) {
+                dice[0] = gsgf_move_backgammon_get_die (gsgf_move, 0);
+                dice[1] = gsgf_move_backgammon_get_die (gsgf_move, 1);
+                action = GIBBON_GAME_ACTION (gibbon_roll_new (dice[0],
+                                                              dice[1]));
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+                num_movements = gsgf_move_backgammon_get_num_moves (gsgf_move);
+                move = gibbon_move_new (dice[0], dice[1], num_movements);
+                move->number = num_movements;
+                for (i = 0; i < num_movements; ++i) {
+                        movement = move->movements + i;
+                        from = gsgf_move_backgammon_get_from (gsgf_move, i);
+                        to = gsgf_move_backgammon_get_to (gsgf_move, i);
+                        if (from == 24) {
+                                if (to < 6)
+                                        from = 0;
+                                else
+                                        from = 25;
+                        } else {
+                                ++from;
+                        }
+                        if (to == 25) {
+                                if (from <= 6)
+                                        to = 0;
+                        } else {
+                                ++to;
+                        }
+                        from = 25 - from;
+                        to = 25 - to;
+                        movement->from = from;
+                        movement->to = to;
+                }
+                action = GIBBON_GAME_ACTION (move);
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+        }
 
         return TRUE;
 }
