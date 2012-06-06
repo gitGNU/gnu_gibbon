@@ -33,6 +33,7 @@
 #include "gsgf-private.h"
 
 #include <errno.h>
+#include <math.h>
 
 typedef struct _GSGFResultPrivate GSGFResultPrivate;
 struct _GSGFResultPrivate {
@@ -294,4 +295,51 @@ gsgf_result_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
         }
 
         return GSGF_COOKED_VALUE (self);
+}
+
+/**
+ * gsgf_result_get_winner:
+ * @self: The #GSGFResult.
+ *
+ * Returns: the encoded winner.
+ */
+GSGFResultWinner
+gsgf_result_get_winner (const GSGFResult *self)
+{
+        g_return_val_if_fail (GSGF_IS_RESULT (self), GSGF_RESULT_UNKNOWN);
+
+        return self->priv->winner;
+}
+
+/**
+ * gsgf_result_get_cause:
+ * @self: The #GSGFResult.
+ *
+ * Returns: the encoded cause.
+ */
+GSGFResultCause
+gsgf_result_get_cause (const GSGFResult *self)
+{
+        g_return_val_if_fail (GSGF_IS_RESULT (self), GSGF_RESULT_OTHER);
+
+        return self->priv->cause;
+}
+
+
+/**
+ * gsgf_result_get_cause:
+ * @self: The #GSGFResult.
+ *
+ * Returns: the encoded score.
+ */
+gdouble
+gsgf_result_get_score (const GSGFResult *self)
+{
+#ifdef NAN
+        g_return_val_if_fail (GSGF_IS_RESULT (self), NAN);
+#else
+        g_return_val_if_fail (GSGF_IS_RESULT (self), 0.0);
+#endif
+
+        return self->priv->score;
 }

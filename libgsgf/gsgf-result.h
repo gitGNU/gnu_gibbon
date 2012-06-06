@@ -111,5 +111,8 @@ GSGFCookedValue *gsgf_result_new_from_raw (const GSGFRaw* raw,
                                            const GSGFFlavor *flavor,
                                            const struct _GSGFProperty *property,
                                            GError **error);
+GSGFResultWinner gsgf_result_get_winner (const GSGFResult *self);
+GSGFResultCause gsgf_result_get_cause (const GSGFResult *self);
+gdouble gsgf_result_get_score (const GSGFResult *self);
 
 #endif
