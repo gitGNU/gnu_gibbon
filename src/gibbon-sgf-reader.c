@@ -508,6 +508,27 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    error))
                         return FALSE;
+        } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_take_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_resign (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_resign_new (
+                                gsgf_move_backgammon_is_resign (gsgf_move)));
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_accept (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
+        } else if (gsgf_move_backgammon_is_reject (gsgf_move)) {
+                action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                                                   error))
+                        return FALSE;
         }
 
         return TRUE;
