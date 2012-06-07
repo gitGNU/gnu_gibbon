@@ -113,8 +113,8 @@ GdkPixbuf *
 gibbon_client_icons_get_icon (GibbonClientIcons *self,
                               enum GibbonClientType type)
 {
-        GdkPixbuf **pixbuf;
-        gchar *filename;
+        GdkPixbuf **pixbuf = NULL;
+        gchar *filename = NULL;
         gchar *path;
 
         g_return_val_if_fail (GIBBON_IS_CLIENT_ICONS (self), NULL);
