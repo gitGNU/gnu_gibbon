@@ -390,6 +390,21 @@ GSGFResultWinner winner, gdouble score, GSGFResultCause cause
 <RETURNS>GSGFCookedValue  *</RETURNS>
 const GSGFRaw* raw, const GSGFFlavor *flavor, const struct _GSGFProperty *property, GError **error 
 </FUNCTION>
+<FUNCTION>
+<NAME>gsgf_result_get_winner</NAME>
+<RETURNS>GSGFResultWinner  </RETURNS>
+const GSGFResult *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_result_get_cause</NAME>
+<RETURNS>GSGFResultCause  </RETURNS>
+const GSGFResult *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_result_get_score</NAME>
+<RETURNS>gdouble  </RETURNS>
+const GSGFResult *self 
+</FUNCTION>
 <MACRO>
 <NAME>GSGF_TYPE_TEXT</NAME>
 #define GSGF_TYPE_TEXT             (gsgf_text_get_type ())
@@ -2003,6 +2018,21 @@ const GSGFMoveBackgammon *self
 </FUNCTION>
 <FUNCTION>
 <NAME>gsgf_move_backgammon_is_drop</NAME>
+<RETURNS>gboolean  </RETURNS>
+const GSGFMoveBackgammon *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_move_backgammon_is_resign</NAME>
+<RETURNS>guint  </RETURNS>
+const GSGFMoveBackgammon *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_move_backgammon_is_accept</NAME>
+<RETURNS>gboolean  </RETURNS>
+const GSGFMoveBackgammon *self 
+</FUNCTION>
+<FUNCTION>
+<NAME>gsgf_move_backgammon_is_reject</NAME>
 <RETURNS>gboolean  </RETURNS>
 const GSGFMoveBackgammon *self 
 </FUNCTION>

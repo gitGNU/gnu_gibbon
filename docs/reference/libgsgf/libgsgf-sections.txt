@@ -249,9 +249,12 @@ gsgf_move_backgammon_get_die
 gsgf_move_backgammon_get_from
 gsgf_move_backgammon_get_num_moves
 gsgf_move_backgammon_get_to
+gsgf_move_backgammon_is_accept
 gsgf_move_backgammon_is_double
 gsgf_move_backgammon_is_drop
 gsgf_move_backgammon_is_regular
+gsgf_move_backgammon_is_reject
+gsgf_move_backgammon_is_resign
 gsgf_move_backgammon_is_take
 gsgf_move_backgammon_new
 gsgf_move_backgammon_new_from_raw
@@ -410,6 +413,9 @@ GSGFResult
 GSGFResultCause
 GSGFResultClass
 GSGFResultWinner
+gsgf_result_get_cause
+gsgf_result_get_score
+gsgf_result_get_winner
 gsgf_result_new
 gsgf_result_new_from_raw
 <SUBSECTION Standard>
