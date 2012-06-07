@@ -340,6 +340,7 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
         GibbonSession *session;
         gchar *who;
         gint64 length;
+        gint decline_width, accept_width;
 
         if (event->type != GDK_BUTTON_PRESS
             || !(event->button == 1 || event->button == 3))
@@ -361,11 +362,14 @@ gibbon_inviter_list_view_on_button_pressed (GibbonInviterListView *self,
                 session = gibbon_app_get_session (self->priv->app);
                 who = gibbon_inviter_list_view_row_name (self);
                 length = gibbon_inviter_list_view_row_length (self);
-                if (event->x <= self->priv->decline_column->width) {
+                decline_width = gtk_tree_view_column_get_width (
+                                self->priv->decline_column);
+                accept_width = gtk_tree_view_column_get_width (
+                                self->priv->accept_column);
+                if (event->x <= decline_width) {
                         gibbon_session_reply_to_invite (session, who, FALSE,
                                                         length);
-                } else if (event->x <= self->priv->decline_column->width
-                                       + self->priv->accept_column->width) {
+                } else if (event->x <= decline_width + accept_width) {
                         gibbon_session_reply_to_invite (session, who, TRUE,
                                                         length);
                 } else {
