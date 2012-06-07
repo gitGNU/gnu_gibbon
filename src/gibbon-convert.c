@@ -96,8 +96,8 @@ static GibbonConvertFormat guess_format_from_filename (const gchar *name);
 int
 main (int argc, char *argv[])
 {	
-        GibbonMatchReader *reader;
-        GibbonMatchWriter *writer;
+        GibbonMatchReader *reader = NULL;
+        GibbonMatchWriter *writer = NULL;
         GibbonMatch *match;
         GFile *file = NULL;
         GFileOutputStream *fout;
