@@ -46,7 +46,7 @@ typedef struct _GibbonGameChatPrivate GibbonGameChatPrivate;
 struct _GibbonGameChatPrivate {
         const GibbonApp *app;
 
-        GtkComboBox *combo;
+        GtkComboBoxText *combo;
 
         GtkToggleToolButton *toggle_say;
         GtkToggleToolButton *toggle_whisper;
@@ -156,39 +156,30 @@ gibbon_game_chat_new (GibbonApp *app)
 static gboolean
 gibbon_game_chat_fixup_combo (GibbonGameChat *self)
 {
-        GtkComboBox *combo;
+        GtkComboBoxText *combo;
         GtkCellRenderer *cell;
-        GtkListStore *store;
         const GibbonApp *app;
 
         app = self->priv->app;
 
-        combo = GTK_COMBO_BOX (gibbon_app_find_object (app, "combo-game-chat",
-                                                       GTK_TYPE_COMBO_BOX));
+        combo = GTK_COMBO_BOX_TEXT (gibbon_app_find_object (app,
+                                                            "combo-game-chat",
+                                                            GTK_TYPE_COMBO_BOX));
         if (!combo)
                 return FALSE;
 
         self->priv->combo = combo;
 
-        store = gtk_list_store_new (1, G_TYPE_STRING);
-        gtk_combo_box_set_model (combo, GTK_TREE_MODEL (store));
-        g_object_unref (store);
-
         cell = gtk_cell_renderer_text_new ();
-        gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell,
-                                    TRUE);
-        gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
-                                        cell, "text", 0,
-                                        NULL);
 
         /* TRANSLATORS: This is the FIBS `say' command! */
-        gtk_combo_box_append_text (combo, _("Say"));
+        gtk_combo_box_text_append_text (combo, _("Say"));
         /* TRANSLATORS: This is the FIBS `kibitz' command! */
-        gtk_combo_box_append_text (combo, _("Kibitz"));
+        gtk_combo_box_text_append_text (combo, _("Kibitz"));
         /* TRANSLATORS: This is the FIBS `whisper' command! */
-        gtk_combo_box_append_text (combo, _("Whisper"));
+        gtk_combo_box_text_append_text (combo, _("Whisper"));
 
-        gtk_combo_box_set_active (combo, 0);
+        gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
 
         g_signal_connect_swapped (G_OBJECT (combo), "changed",
                                   G_CALLBACK (gibbon_game_chat_on_combo_change),
@@ -294,9 +285,9 @@ gibbon_game_chat_on_combo_change (GibbonGameChat *self, GtkComboBox *combo)
 
         g_return_if_fail (self == singleton);
         g_return_if_fail (GTK_IS_COMBO_BOX (combo));
-        g_return_if_fail (combo == self->priv->combo);
+        g_return_if_fail (combo == GTK_COMBO_BOX (self->priv->combo));
 
-        new_mode = gtk_combo_box_get_active (combo);
+        new_mode = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
         if (new_mode == self->priv->mode)
                 return;
 
@@ -333,7 +324,7 @@ gibbon_game_chat_on_tool_button_toggle (GibbonGameChat *self,
                 return;
 
         self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
-        gtk_combo_box_set_active (self->priv->combo, mode);
+        gtk_combo_box_set_active (GTK_COMBO_BOX (self->priv->combo), mode);
 }
 
 void

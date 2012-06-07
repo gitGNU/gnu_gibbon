@@ -77,14 +77,19 @@ enum {
 static void 
 gibbon_reliability_renderer_init (GibbonReliabilityRenderer *self)
 {
+        GValue v = G_VALUE_INIT;
+
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_RELIABILITY_RENDERER, GibbonReliabilityRendererPrivate);
 
         self->priv->rel = NULL;
 
-        GTK_CELL_RENDERER (self)->mode = GTK_CELL_RENDERER_MODE_INERT;
-        GTK_CELL_RENDERER (self)->xpad = 2;
-        GTK_CELL_RENDERER (self)->ypad = 2;
+        g_value_init (&v, G_TYPE_INT);
+
+        g_object_set_property (G_OBJECT (self), "mode", &v);
+        g_value_set_int (&v, GTK_CELL_RENDERER_MODE_INERT);
+
+        gtk_cell_renderer_set_padding (GTK_CELL_RENDERER (self), 2, 2);
 }
 
 static void
@@ -187,18 +192,22 @@ gibbon_reliability_renderer_set_property (GObject *object,
 
 static void
 gibbon_reliability_renderer_get_size (GtkCellRenderer *cell,
-                                                  GtkWidget *widget,
-                                                  GdkRectangle *cell_area,
-                                                  gint *x_offset,
-                                                  gint *y_offset,
-                                                  gint *width,
-                                                  gint *height)
+                                      GtkWidget *widget,
+                                      GdkRectangle *cell_area,
+                                      gint *x_offset,
+                                      gint *y_offset,
+                                      gint *width,
+                                      gint *height)
 {
         gint calc_width;
         gint calc_height;
+        gint xpad, ypad;
+        gfloat xalign, yalign;
 
-        calc_width  = (gint) cell->xpad * 2 + 80;
-        calc_height = (gint) cell->ypad * 2 + 12;
+        gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
+
+        calc_width  = xpad * 2 + 80;
+        calc_height = ypad * 2 + 12;
 
         if (width)
                 *width = calc_width;
@@ -206,15 +215,17 @@ gibbon_reliability_renderer_get_size (GtkCellRenderer *cell,
         if (height)
                 *height = calc_height;
 
+        gtk_cell_renderer_get_alignment (cell, &xalign, &yalign);
+
         if (cell_area) {
                 if (x_offset) {
-                        *x_offset = cell->xalign * (cell_area->width
+                        *x_offset = xalign * (cell_area->width
                                                     - calc_width);
                         *x_offset = MAX (*x_offset, 0);
                 }
 
                 if (y_offset) {
-                        *y_offset = cell->yalign * 0.5 * (cell_area->height
+                        *y_offset = yalign * 0.5 * (cell_area->height
                                                           - calc_height);
                         *y_offset = MAX (*y_offset, 0);
                 }
@@ -233,6 +244,7 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
         GibbonReliabilityRenderer *self = GIBBON_RELIABILITY_RENDERER (cell);
         gint width, height;
         gint x_offset, y_offset;
+        gint xpad, ypad;
         gdouble percentage;
         cairo_t *cr;
         GdkColor color;
@@ -254,8 +266,9 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
                     expose_area->x, expose_area->y);
         */
 
-        width  -= cell->xpad * 2;
-        height -= cell->ypad * 2;
+        gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
+        width  -= xpad * 2;
+        height -= ypad * 2;
 
         percentage = 0.1 * self->priv->rel->confidence;
         if (percentage > 1.0)
@@ -271,8 +284,8 @@ gibbon_reliability_renderer_render (GtkCellRenderer *cell,
         color.blue = 0x0000;
         gdk_cairo_set_source_color (cr, &color);
 
-        bar.x = cell_area->x + x_offset + cell->xpad;
-        bar.y = cell_area->y + y_offset + cell->ypad;
+        bar.x = cell_area->x + x_offset + xpad;
+        bar.y = cell_area->y + y_offset + ypad;
         bar.width = width;
         bar.height = height - 1;
         gdk_cairo_rectangle (cr, &bar);

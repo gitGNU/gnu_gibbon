@@ -571,7 +571,7 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                 gtk_box_pack_start (GTK_BOX (hbox),
                                     gtk_label_new (_("Match length:")),
                                     TRUE, TRUE, 10);
-                combo = gtk_combo_box_new_text ();
+                combo = gtk_combo_box_text_new ();
                 gtk_box_pack_start (GTK_BOX (hbox),
                                     combo, TRUE, TRUE, 0);
 
@@ -590,8 +590,8 @@ gibbon_player_list_view_on_invite (const GibbonPlayerListView *self)
                         } else {
                                 length_string = g_strdup_printf ("%d", length);
                         }
-                        gtk_combo_box_append_text (GTK_COMBO_BOX (combo),
-                                                   length_string);
+                        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                                        length_string);
                         g_free (length_string);
                         if (pref_length == length)
                                 g_object_set (G_OBJECT (combo), "active", i,

@@ -692,7 +692,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkComboBox" id="combo-game-chat">
+                          <object class="GtkComboBoxText" id="combo-game-chat">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -878,7 +878,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkComboBox" id="combobox1">
+                              <object class="GtkComboBoxText" id="combobox1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                               </object>
