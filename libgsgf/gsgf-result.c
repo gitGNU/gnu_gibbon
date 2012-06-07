@@ -301,6 +301,8 @@ gsgf_result_new_from_raw (const GSGFRaw *raw, const GSGFFlavor *flavor,
  * gsgf_result_get_winner:
  * @self: The #GSGFResult.
  *
+ * The winner encoded into @self.
+ *
  * Returns: the encoded winner.
  */
 GSGFResultWinner
@@ -315,6 +317,8 @@ gsgf_result_get_winner (const GSGFResult *self)
  * gsgf_result_get_cause:
  * @self: The #GSGFResult.
  *
+ * The cause of the end-of-game encoded into @self.
+ *
  * Returns: the encoded cause.
  */
 GSGFResultCause
@@ -327,8 +331,10 @@ gsgf_result_get_cause (const GSGFResult *self)
 
 
 /**
- * gsgf_result_get_cause:
+ * gsgf_result_get_score:
  * @self: The #GSGFResult.
+ *
+ * The score encoded into @self.
  *
  * Returns: the encoded score.
  */
