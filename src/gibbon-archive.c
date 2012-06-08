@@ -75,6 +75,8 @@
 #include "gibbon-database.h"
 #include "gibbon-util.h"
 #include "gibbon-country.h"
+#include "gibbon-match.h"
+#include "gibbon-gmd-writer.h"
 
 /* We can safely cache that across sessions.  */
 static GHashTable *gibbon_archive_countries = NULL;
@@ -104,9 +106,10 @@ struct _GibbonArchivePrivate {
 
         GibbonDatabase *db;
 
-        gchar *archive_directory;
-
         GHashTable *droppers;
+
+        GibbonMatch *match;
+        GOutputStream *match_out;
 };
 
 #define GIBBON_ARCHIVE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -136,6 +139,8 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv->servers_directory = NULL;
         self->priv->db = NULL;
         self->priv->droppers = NULL;
+        self->priv->match = NULL;
+        self->priv->match_out = NULL;
 }
 
 static void
@@ -154,6 +159,11 @@ gibbon_archive_finalize (GObject *object)
 
         if (self->priv->db)
                 g_object_unref (self->priv->db);
+
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
+        if (self->priv->match_out)
+                g_object_unref (self->priv->match_out);
 
         G_OBJECT_CLASS (gibbon_archive_parent_class)->finalize(object);
 }
@@ -745,4 +755,84 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
         }
 
         return accounts;
+}
+
+void
+gibbon_archive_set_match (GibbonArchive *self, GibbonMatch *match)
+{
+        gchar *saved_directory;
+        gint mode;
+        GFile *file;
+        gchar *filename, *path;
+        GFileOutputStream *fout;
+        GError *error = NULL;
+        GibbonMatchWriter *writer;
+
+        g_printerr ("setting match\n");
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_MATCH (match));
+
+        if (self->priv->match_out)
+                g_object_unref (self->priv->match_out);
+        self->priv->match_out = NULL;
+
+        if (self->priv->match)
+                g_object_unref (match);
+
+        self->priv->match = match;
+
+        saved_directory = g_build_filename (self->priv->session_directory,
+                                            "saved",
+                                            gibbon_match_get_white (match),
+                                            NULL);
+
+#ifdef G_OS_WIN32
+        mode = S_IRWXU;
+#else
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+        if (0 != g_mkdir_with_parents (saved_directory, mode)) {
+                gibbon_app_display_error (self->priv->app, NULL,
+                                          _("Failed to create"
+                                            " directory `%s': %s!\n\n"
+                                            "It will be impossible to save"
+                                            " your matches and other data."),
+                               saved_directory,
+                               strerror (errno));
+                g_free (saved_directory);
+                return;
+        }
+        filename = g_strdup_printf ("%s.%s", gibbon_match_get_black (match),
+                                    "gmd");
+        path = g_build_filename (saved_directory, filename, NULL);
+        g_free (filename);
+        g_free (saved_directory);
+        file = g_file_new_for_path (path);
+
+        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_NONE,
+                               NULL, &error);
+        g_object_unref (file);
+        if (!fout) {
+                g_free (path);
+                g_object_unref (fout);
+                gibbon_app_display_error (self->priv->app, NULL,
+                                          _("Error writing match file"
+                                            " `%s': %s!"),
+                                          path, error->message);
+                g_error_free (error);
+                return;
+        }
+
+        self->priv->match_out = G_OUTPUT_STREAM (fout);
+
+        writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
+        if (!gibbon_match_writer_write_stream (writer, self->priv->match_out,
+                                               match, &error)) {
+                g_free (path);
+                g_object_unref (writer);
+                g_object_unref (self->priv->match_out);
+                self->priv->match_out = NULL;
+        }
+
+        g_free (path);
 }

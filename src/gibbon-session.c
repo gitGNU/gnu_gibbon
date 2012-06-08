@@ -1637,8 +1637,13 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
         const gchar *player;
+        GibbonMatch *match;
+        guint length;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+                return -1;
+        if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
+                                  (gint*) &length))
                 return -1;
 
         g_free (self->priv->opponent);
@@ -1656,6 +1661,11 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 
         gibbon_inviter_list_clear (self->priv->inviter_list);
         g_hash_table_remove (self->priv->saved_games, player);
+
+        match = gibbon_match_new (
+                        gibbon_connection_get_login (self->priv->connection),
+                        player, length, TRUE);
+        gibbon_archive_set_match (self->priv->archive, match);
 
         return GIBBON_CLIP_CODE_NOW_PLAYING;
 }

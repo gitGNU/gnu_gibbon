@@ -24,6 +24,7 @@
 
 #include "gibbon-app.h"
 #include "gibbon-country.h"
+#include "gibbon-match.h"
 
 #define GIBBON_TYPE_ARCHIVE \
         (gibbon_archive_get_type ())
@@ -105,5 +106,7 @@ struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
 
 GSList *gibbon_archive_get_accounts (const GibbonArchive *self,
                                      const gchar *hostname, guint port);
+
+void gibbon_archive_set_match (GibbonArchive *self, GibbonMatch *match);
 
 #endif
