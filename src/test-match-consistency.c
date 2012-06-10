@@ -47,10 +47,14 @@ typedef gboolean (*test_function) (GibbonMatch *match, GError **error);
 
 static gboolean check_opening (GibbonMatch *match, GError **error);
 static gboolean check_roll (GibbonMatch *match, GError **error);
+static gboolean check_move (GibbonMatch *match, GError **error);
+static gboolean check_double (GibbonMatch *match, GError **error);
 
 static test_function tests[] = {
     check_opening,
-    check_roll
+    check_roll,
+    check_move,
+    check_double
 };
 
 int
@@ -152,7 +156,7 @@ check_roll (GibbonMatch *match, GError **error)
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
                                       error)) {
-                g_printerr ("Adding second opening roll after double failed: %s\n",
+                g_printerr ("Adding normal opening roll failed: %s\n",
                             (*error)->message);
                 g_object_unref (action);
                 return FALSE;
@@ -170,6 +174,157 @@ check_roll (GibbonMatch *match, GError **error)
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
                                       action, error)) {
                 g_printerr ("White rolling twice succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5,
+                                                       -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("Adding white move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                      action, error)) {
+                g_printerr ("White roll after white move succeded!\n");
+                return FALSE;
+        }
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                      error)) {
+                g_printerr ("Black roll after white move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+check_move (GibbonMatch *match, GError **error)
+{
+        GibbonGameAction *action;
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
+                                      error)) {
+                g_printerr ("Adding normal opening roll failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 19, 21,
+                                                       -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                      action, error)) {
+                g_printerr ("Black move after white roll succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5,
+                                                       -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("Adding white move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5,
+                                                       -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                      action, error)) {
+                g_printerr ("White moving twice succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        return TRUE;
+}
+
+
+static gboolean
+check_double (GibbonMatch *match, GError **error)
+{
+        GibbonGameAction *action;
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
+                                      error)) {
+                g_printerr ("Adding normal opening roll failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5,
+                                                       -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("Adding white move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                      error)) {
+                g_printerr ("Black's first roll failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                      action, error)) {
+                g_printerr ("Double after roll succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 19, 21,
+                                                       -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                      error)) {
+                g_printerr ("Adding black's first move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("Adding white's first double failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (6, 5));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                      action, error)) {
+                g_printerr ("White roll after unresponded double succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                      action, error)) {
+                g_printerr ("Black roll after unresponded double succeded!\n");
                 return FALSE;
         }
         gibbon_error_reset (*error);
