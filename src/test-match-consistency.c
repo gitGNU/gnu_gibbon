@@ -104,7 +104,7 @@ check_opening (GibbonMatch *match, GError **error)
                                                        19, 21, 19, 21, -1));
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
                                       action, error)) {
-                g_printerr ("White move after opening double succeded!\n");
+                g_printerr ("Black move after opening double succeded!\n");
                 return FALSE;
         }
         gibbon_error_reset (*error);
@@ -114,6 +114,26 @@ check_opening (GibbonMatch *match, GError **error)
         if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
                                       error)) {
                 g_printerr ("Adding second opening roll after double failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 17, 21,
+                                                       19, 21, 19, 21, -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                      action, error)) {
+                g_printerr ("Black opening move although not on turn!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 7, 8, 7,
+                                                       6, 5, 6, 5, -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("White opening move failed: %s!\n",
                             (*error)->message);
                 g_object_unref (action);
                 return FALSE;
