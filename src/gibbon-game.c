@@ -254,7 +254,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                         gibbon_position_free (pos);
                         g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                              GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-                                             _("The dice have already been"
+                                             _("aThe dice have already been"
                                                " rolled!"));
                         return FALSE;
                 }
@@ -263,19 +263,27 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 gibbon_position_free (pos);
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-                                     _("The dice have already been"
+                                     _("bThe dice have already been"
                                        " rolled!"));
                 return FALSE;
         } else if (!side) {
-                if (roll->die1 > roll->die2)
+                if (abs (roll->die1) > abs (roll->die2))
                         side = GIBBON_POSITION_SIDE_WHITE;
                 else if (roll->die1 < roll->die2)
                         side = GIBBON_POSITION_SIDE_BLACK;
         }
 
         pos->turn = side;
-        pos->dice[0] = roll->die1;
-        pos->dice[1] = roll->die2;
+        if (pos->turn > 0) {
+                pos->dice[0] = +abs (roll->die1);
+                pos->dice[1] = +abs (roll->die2);
+        } else if (pos->turn < 0) {
+                pos->dice[0] = -abs (roll->die1);
+                pos->dice[1] = -abs (roll->die2);
+        } else {
+                pos->dice[0] = +abs (roll->die1);
+                pos->dice[1] = -abs (roll->die2);
+        }
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (roll), side, pos);
 
