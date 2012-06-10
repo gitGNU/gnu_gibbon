@@ -37,104 +37,87 @@
 #include <gibbon-accept.h>
 #include <gibbon-setup.h>
 
+#define gibbon_error_reset(error)       \
+	{                               \
+                g_error_free (error);   \
+                error = NULL;           \
+        }
+
+typedef gboolean (*test_function) (GibbonMatch *match, GError **error);
+
+static gboolean check_opening (GibbonMatch *match, GError **error);
+
+static test_function tests[] = {
+    check_opening
+};
+
 int
 main(int argc, char *argv[])
 {
 	GibbonMatch *match;
-	GibbonGameAction *action;
+	GibbonGame *game;
 	GError *error = NULL;
+	gsize i;
+	int status = 0;
 
         g_type_init ();
 
-        match = gibbon_match_new ("SnowWhite", "JoeBlack", 5, TRUE);
-        if (!match) {
-                g_printerr ("Match creation failed!\n");
+        for (i = 0; i < sizeof tests / sizeof tests[0]; ++i) {
+                match = gibbon_match_new ("SnowWhite", "JoeBlack", 5, TRUE);
+                g_return_val_if_fail (match != NULL, -1);
+                game = gibbon_match_add_game (match, NULL);
+                g_return_val_if_fail (game != NULL, -1);
+                if (!tests[i] (match, &error))
+                        status = -1;
                 g_object_unref (match);
-                return -1;
+                if (error)
+                        g_error_free (error);
+                error = NULL;
         }
 
-        if (!gibbon_match_add_game (match, &error)) {
-                g_object_unref (match);
-                g_printerr ("Cannot add game: %s!\n", error->message);
+        return status;
+}
+
+static gboolean
+check_opening (GibbonMatch *match, GError **error)
+{
+        GibbonGameAction *action;
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (1, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
+                                      error)) {
+                g_printerr ("Adding opening double failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
                 return FALSE;
         }
-
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
-        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Opening move without roll succeded!\n");
-                return -1;
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (1, 1, 8, 7, 8, 7,
+                                                       6, 5, 6, 5, -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                      action, error)) {
+                g_printerr ("White move after opening double succeded!\n");
+                return FALSE;
         }
-        g_error_free (error);
-        error = NULL;
-        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Opening move without roll succeded!\n");
-                return -1;
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (1, 1, 17, 21, 17, 21,
+                                                       19, 21, 19, 21, -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                      action, error)) {
+                g_printerr ("White move after opening double succeded!\n");
+                return FALSE;
         }
-        g_error_free (error);
-        error = NULL;
+        gibbon_error_reset (*error);
         g_object_unref (action);
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
-                                      &error)) {
-                g_object_unref (match);
+                                      error)) {
+                g_printerr ("Adding second opening roll after double failed: %s\n",
+                            (*error)->message);
                 g_object_unref (action);
-                g_printerr ("Could not add opening roll: %s\n", error->message);
-                g_error_free (error);
-                return -1;
+                return FALSE;
         }
 
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 19, 21,
-                                                       -1));
-        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Opening move succeded but not on move!\n");
-                return -1;
-        }
-        g_error_free (error);
-        error = NULL;
-        g_object_unref (action);
-
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
-        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
-                                      &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Legal opening move failed: %s\n", error->message);
-                g_error_free (error);
-                return -1;
-        }
-        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Redoing opening move succeded!\n");
-                return -1;
-        }
-        g_error_free (error);
-        error = NULL;
-        g_object_unref (action);
-
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 19, 21,
-                                                       -1));
-        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_object_unref (action);
-                g_printerr ("Move without roll succeded!\n");
-                return -1;
-        }
-        g_error_free (error);
-        error = NULL;
-        g_object_unref (action);
-
-        return 0;
+        return TRUE;
 }
