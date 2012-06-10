@@ -59,7 +59,7 @@ main(int argc, char *argv[])
                 return FALSE;
         }
 
-        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5));
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
@@ -89,6 +89,30 @@ main(int argc, char *argv[])
                 g_error_free (error);
                 return -1;
         }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 17, 21, 19, 21,
+                                                       -1));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_object_unref (action);
+                g_printerr ("Opening move succeded but not on move!\n");
+                return -1;
+        }
+        g_error_free (error);
+        error = NULL;
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      &error)) {
+                g_object_unref (match);
+                g_object_unref (action);
+                g_printerr ("Legal opening move failed: %s\n", error->message);
+                g_error_free (error);
+                return -1;
+        }
+        g_object_unref (action);
 
         return 0;
 }
