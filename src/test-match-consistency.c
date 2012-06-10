@@ -53,7 +53,7 @@ main(int argc, char *argv[])
                 return -1;
         }
 
-        if (!gibbon_match_add_game (match, error)) {
+        if (!gibbon_match_add_game (match, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game: %s!\n", error->message);
                 return FALSE;
@@ -65,6 +65,28 @@ main(int argc, char *argv[])
                 g_object_unref (match);
                 g_object_unref (action);
                 g_printerr ("Opening move without roll succeded!\n");
+                return -1;
+        }
+        g_error_free (error);
+        error = NULL;
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_object_unref (action);
+                g_printerr ("Opening move without roll succeded!\n");
+                return -1;
+        }
+        g_error_free (error);
+        error = NULL;
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
+                                      &error)) {
+                g_object_unref (match);
+                g_object_unref (action);
+                g_printerr ("Could not add opening roll: %s\n", error->message);
+                g_error_free (error);
                 return -1;
         }
 
