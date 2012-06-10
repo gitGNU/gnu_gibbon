@@ -371,3 +371,24 @@ gibbon_match_set_crawford (GibbonMatch *self, gboolean crawford)
         else
                 self->priv->crawford = FALSE;
 }
+
+gboolean
+gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
+                         GibbonGameAction *action, GError **error)
+{
+        GibbonGame *game;
+
+        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
+                                         error);
+
+        game = gibbon_match_get_current_game (self);
+        if (!game) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_GENERIC,
+                                     _("No current game in match!"));
+                return FALSE;
+        }
+
+        return gibbon_game_add_action (game, side, action, error);
+}

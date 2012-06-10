@@ -41,6 +41,8 @@ int
 main(int argc, char *argv[])
 {
 	GibbonMatch *match;
+	GibbonGameAction *action;
+	GError *error = NULL;
 
         g_type_init ();
 
@@ -48,6 +50,21 @@ main(int argc, char *argv[])
         if (!match) {
                 g_printerr ("Match creation failed!\n");
                 g_object_unref (match);
+                return -1;
+        }
+
+        if (!gibbon_match_add_game (match, error)) {
+                g_object_unref (match);
+                g_printerr ("Cannot add game: %s!\n", error->message);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5));
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                     &error)) {
+                g_object_unref (match);
+                g_object_unref (action);
+                g_printerr ("Opening move without roll succeded!\n");
                 return -1;
         }
 
