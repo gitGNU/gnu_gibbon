@@ -211,6 +211,7 @@ TESTS_C = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
+	test_match_consistency \
         test_gary_wong_movegen
 TESTS_SH =
 
@@ -220,6 +221,7 @@ check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
+	test_match_consistency \
         test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
@@ -236,6 +238,7 @@ test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
 test_jelly_fish_reader_SOURCES = $(common_SOURCES) test-jelly-fish-reader.c
 test_sgf_reader_SOURCES = $(common_SOURCES) test-sgf-reader.c
+test_match_consistency_SOURCES = $(common_SOURCES) test-match-consistency.c
 
 MATCH_FILES = complete.match complete.gmd complete.mat complete.sgf
 
