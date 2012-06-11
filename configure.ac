@@ -104,7 +104,7 @@ else
 fi
 m4_define(gibbon_glib_requirement, [glib-2.0 >= $gibbon_glib_version])
 m4_define(gibbon_librsvg_requirement, [librsvg-2.0 >= 2.32.1])
-m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.22.0])
+m4_define(gibbon_gtk_requirement, [gtk+-2.0 >= 2.24.0])
 m4_define(gibbon_gthread_requirement, [gthread-2.0 >= 2.20.5])
 m4_define(gibbon_libpng_requirement, [libpng >= 0.23])
 m4_define(gibbon_libxml_requirement, [libxml-2.0 >= 2.7.3])
