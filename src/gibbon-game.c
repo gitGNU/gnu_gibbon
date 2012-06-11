@@ -449,10 +449,10 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
-        if (!pos->cube_turned && pos->cube_turned != -side) {
+        if (!pos->cube_turned || pos->cube_turned != side) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE,
-                                     _("The cube has not been turned!"));
+                                     _("Opponent did not double!"));
                 return FALSE;
         }
 
@@ -491,10 +491,10 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
-        if (!pos->cube_turned && pos->cube_turned != -side) {
+        if (!pos->cube_turned || pos->cube_turned != side) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE,
-                                     _("The cube has not been turned!"));
+                                     _("Opponent did not double!"));
                 return FALSE;
         }
 

@@ -317,14 +317,32 @@ check_double (GibbonMatch *match, GError **error)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (6, 5));
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
-                                      action, error)) {
+                                     action, error)) {
                 g_printerr ("White roll after unresponded double succeded!\n");
                 return FALSE;
         }
         gibbon_error_reset (*error);
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
-                                      action, error)) {
+                                     action, error)) {
                 g_printerr ("Black roll after unresponded double succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_take_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("White taking own double succeded!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("White dropping own double succeded!\n");
                 return FALSE;
         }
         gibbon_error_reset (*error);
