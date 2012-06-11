@@ -183,6 +183,16 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                          || GIBBON_POSITION_SIDE_BLACK,
                                          FALSE, error);
 
+        if (self->priv->pending_double) {
+                if (!GIBBON_IS_TAKE (action) && !GIBBON_IS_DROP (action)) {
+                        g_set_error (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_UNRESPONDED_DOUBLE,
+                                     _("A reply to the double is required!"));
+                        return FALSE;
+
+                }
+        }
+
         if (GIBBON_IS_ROLL (action)) {
                 return gibbon_game_add_roll (self, side, GIBBON_ROLL (action),
                                              error);

@@ -237,17 +237,8 @@ fill_match (void)
                 return NULL;
         }
 
-        action = GIBBON_GAME_ACTION (gibbon_double_new ());
-        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
-                g_object_unref (match);
-                g_printerr ("Cannot add game action: %s\n", error->message);
-                g_error_free (error);
-                return NULL;
-        }
-
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
-        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
+        if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
                                      &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
