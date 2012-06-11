@@ -63,6 +63,9 @@ struct _GibbonGamePrivate {
         gboolean resigned;
 
         gboolean is_crawford;
+
+        gboolean pending_double;
+        gboolean pending_resign;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -121,6 +124,9 @@ gibbon_game_init (GibbonGame *self)
         self->priv->resigned = FALSE;
 
         self->priv->is_crawford = FALSE;
+
+        self->priv->pending_resign = FALSE;
+        self->priv->pending_double = FALSE;
 }
 
 static void
@@ -414,6 +420,8 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (dbl), side, pos);
 
+        self->priv->pending_double = TRUE;
+
         return TRUE;
 }
 
@@ -452,6 +460,8 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                                                pos->players[1]);
         }
 
+        self->priv->pending_double = FALSE;
+
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (drop), side, pos);
 
         return TRUE;
@@ -482,6 +492,8 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (take), side, pos);
 
+        self->priv->pending_double = FALSE;
+
         return TRUE;
 }
 
@@ -508,6 +520,8 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
         pos = gibbon_position_copy (gibbon_game_get_position (self));
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (resign), side, pos);
+
+        self->priv->pending_resign = TRUE;
 
         return TRUE;
 }
@@ -538,6 +552,8 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
         pos->status = g_strdup_printf (_("%s rejects."), player);
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (reject), side, pos);
+
+        self->priv->pending_resign = FALSE;
 
         return TRUE;
 }
@@ -594,6 +610,8 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         self->priv->resigned = TRUE;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos);
+
+        self->priv->pending_resign = FALSE;
 
         return TRUE;
 }
