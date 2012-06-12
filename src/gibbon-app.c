@@ -443,7 +443,7 @@ gibbon_app_init_board(GibbonApp *self, const gchar *board_filename)
                         GTK_TYPE_DRAWING_AREA);
         gtk_widget_destroy(GTK_WIDGET (dummy));
 
-        board_vbox = gibbon_app_find_object(self, "board-vbox", GTK_TYPE_VBOX);
+        board_vbox = gibbon_app_find_object(self, "board-vbox", GTK_TYPE_BOX);
         gtk_box_pack_start(GTK_BOX (board_vbox), GTK_WIDGET (board), TRUE,
                         TRUE, 0);
 
