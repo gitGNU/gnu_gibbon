@@ -262,7 +262,6 @@ gsgf_ascii_dtostring (gdouble d, gint width, gint precision,
 #else
         if (gsgf_threads_mutex)
                 g_mutex_lock (gsgf_threads_mutex);
-        saved_locale = setlocale (LC_NUMERIC, NULL);
         saved_locale = setlocale (LC_NUMERIC, "C");
 #endif
         output = g_strdup_printf (format, d);
