@@ -6,6 +6,7 @@ gibbon-convert
 gibbon-convert.exe
 gibbon.rc
 test_*
+!test_*.sh
 gibbon-gmd-lexer.c
 gibbon-gmd-parser.c
 gibbon-gmd-parser.h
