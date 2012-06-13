@@ -87,8 +87,7 @@ common_SOURCES = 			\
         gibbon-take.c                   \
         gibbon-util.c			\
         gibbon-sgf-reader.c		\
-        gibbon-sgf-writer.c			\
-	gibbon-match-completor.c	
+        gibbon-sgf-writer.c
 
 AM_YFLAGS = -d -v
 
@@ -195,8 +194,7 @@ noinst_HEADERS =			\
         gibbon-take.h			\
         gibbon-util.h			\
         html-entities.h			\
-        svg-util.h			\
-	gibbon-match-completor.h
+        svg-util.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.
@@ -213,7 +211,7 @@ TESTS_C = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
-	test_match_consistency test_match_completor \
+	test_match_consistency \
         test_gary_wong_movegen
 TESTS_SH =
 
@@ -223,7 +221,7 @@ check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
         test_clip test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
-	test_match_consistency test_match_completor \
+	test_match_consistency \
         test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
