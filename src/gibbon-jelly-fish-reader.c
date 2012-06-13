@@ -166,12 +166,14 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 if (filename)
                         fclose (in);
                 if (parse_status) {
-                        if (self->priv->match)
-                                g_object_unref (self->priv->match);
+                        g_object_unref (self->priv->match);
                         self->priv->match = NULL;
                         self->priv->side = GIBBON_POSITION_SIDE_NONE;
                 }
         } else {
+                g_object_unref (self->priv->match);
+                self->priv->match = NULL;
+                self->priv->side = GIBBON_POSITION_SIDE_NONE;
                 _gibbon_jelly_fish_reader_yyerror (strerror (errno));
         }
 

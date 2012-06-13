@@ -2517,7 +2517,6 @@ static gint
 gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
-        guint resignation;
         guint points;
 
         if (!self->priv->position->cube)
@@ -2529,10 +2528,7 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_uint (&iter, GIBBON_CLIP_TYPE_UINT, &points))
                 return -1;
 
-        resignation = points / self->priv->position->cube;
-        if (resignation < 0 || resignation > 3)
-                return -1;
-        if (resignation * self->priv->position->cube != points)
+        if (points < 1 || points > 3)
                 return -1;
 
         if (0 == g_strcmp0 ("You", who)) {

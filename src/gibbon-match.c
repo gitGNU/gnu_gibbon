@@ -28,11 +28,23 @@
  * storage backend.
  **/
 
+#include <stdlib.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-match.h"
 #include "gibbon-game.h"
+#include "gibbon-position.h"
+
+#include "gibbon-roll.h"
+#include "gibbon-move.h"
+#include "gibbon-double.h"
+#include "gibbon-drop.h"
+#include "gibbon-take.h"
+#include "gibbon-resign.h"
+#include "gibbon-accept.h"
+#include "gibbon-reject.h"
 
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
@@ -48,6 +60,19 @@ struct _GibbonMatchPrivate {
         GIBBON_TYPE_MATCH, GibbonMatchPrivate))
 
 G_DEFINE_TYPE (GibbonMatch, gibbon_match, G_TYPE_OBJECT)
+
+static GSList *_gibbon_match_get_missing_actions (const GibbonMatch *self,
+                                                  GibbonPosition *current,
+                                                  const GibbonPosition *target,
+                                                  const GibbonGameAction
+                                                  *last_action,
+                                                  gboolean try_move);
+static GibbonGameAction *gibbon_match_try_resign (const GibbonMatch *self,
+                                                  GibbonPosition *current,
+                                                  const GibbonPosition *target);
+static GibbonGameAction *gibbon_match_try_roll (const GibbonMatch *self,
+                                                GibbonPosition *current,
+                                                const GibbonPosition *target);
 
 static void 
 gibbon_match_init (GibbonMatch *self)
@@ -391,4 +416,169 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
         }
 
         return gibbon_game_add_action (game, side, action, error);
+}
+
+/**
+ * gibbon_match_get_missing_actions:
+ * @self: The incomplete #GibbonMatch.
+ * @target: The position to achieve.
+ * @result: A #GSList that holds the missing actions.
+ *
+ * Recording online matches can lead to gaps if the connection to the server
+ * gets lost after the server has recorded a new action in the match but
+ * before the client got the notification.  This function tries to guess
+ * missing actions by comparing the last recorded position with the position
+ * saved on the server.
+ *
+ * If both a roll and a move is missing in the sequence, the function has
+ * a lot to do.  For every possible roll it has to calculate all possible
+ * moves and compare them to the target position.  It will do that only
+ * once, and give up if the target position cannot be achieved after
+ * one try.
+ *
+ * It lies in the nature of the problem that certain sequences of game actions
+ * cannot be recovered, for example a rejected resignation or a roll, move,
+ * roll, move sequence, when both opponents dance.  But this is only
+ * significant if you want to measure the luck factor.
+ *
+ * You can safely call this function if the target position is the current
+ * position in the match.  In that case, %TRUE is returned, and the output
+ * list @result will be empty.
+ *
+ * Returns: %TRUE for success, %FALSE for failure.
+ */
+gboolean
+gibbon_match_get_missing_actions (const GibbonMatch *self,
+                                  const GibbonPosition *target,
+                                  GSList **_result)
+{
+        GSList *result;
+        const GibbonGameAction *last_action;
+        const GibbonPosition *last_pos;
+        GibbonPosition *current;
+        GibbonGame *current_game;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+        g_return_val_if_fail (target != NULL, FALSE);
+
+        last_pos = gibbon_match_get_current_position (self);
+        if (gibbon_position_equals_technically (last_pos, target)) {
+                *_result = NULL;
+                return TRUE;
+        }
+
+        current_game = gibbon_match_get_current_game (self);
+        last_action = gibbon_game_get_nth_action (current_game, -1, NULL);
+
+        current = gibbon_position_copy (last_pos);
+        result = _gibbon_match_get_missing_actions (self, current,
+                                                    target, last_action,
+                                                    TRUE);
+        gibbon_position_free (current);
+        if (result) {
+                if (_result)
+                        *_result = g_slist_reverse (result);
+                return TRUE;
+        }
+
+        return FALSE;
+}
+
+static GSList *
+_gibbon_match_get_missing_actions (const GibbonMatch *self,
+                                   GibbonPosition *current,
+                                   const GibbonPosition *target,
+                                   const GibbonGameAction *last_action,
+                                   gboolean try_move)
+{
+        GibbonGameAction *action = NULL;
+        GSList *retval = NULL;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
+        g_return_val_if_fail (target != NULL, FALSE);
+
+        if (!last_action || GIBBON_IS_MOVE (last_action)) {
+                action = gibbon_match_try_resign (self, current, target);
+                if (!action)
+                        action = gibbon_match_try_roll (self, current, target);
+        }
+
+        if (!action)
+                return NULL;
+
+        retval = g_slist_prepend (retval, action);
+        if (gibbon_position_equals_technically (current, target))
+                return retval;
+
+        return _gibbon_match_get_missing_actions (self, current, target,
+                                                  action, try_move);
+}
+
+static GibbonGameAction *
+gibbon_match_try_roll (const GibbonMatch *self,
+                       GibbonPosition *current,
+                       const GibbonPosition *target)
+{
+        gboolean must_move;
+        gboolean white_moved, black_moved;
+
+        /*
+         * When the recorded match was completely empty, it is a little bit
+         * hard to deduce who must have won the first roll.  We rely on
+         * the caller to check before whether the very first action was an
+         * unanswered resignation offer.
+         *
+         * If both of the opponents have moved already, we cannot fill the
+         * missing actions anyway.  If exactly one opponent has moved at
+         * least one checker we can safely assume that this opponent won
+         * the opening roll.
+         *
+         * If none of the opponents have moved, the first roll can be
+         * read from the target position.
+         */
+        if (!current->turn) {
+                if (target->points[5] == 5 && target->points[7] == 3
+                    && target->points[12] == 5 && target->points[23] == 2)
+                        white_moved = FALSE;
+                else
+                        white_moved = TRUE;
+                if (target->points[0] == -2 && target->points[11] == -5
+                    && target->points[16] == -3 && target->points[18] == -5)
+                        black_moved = FALSE;
+                else
+                        black_moved = TRUE;
+
+                if (white_moved && black_moved)
+                        return NULL;
+
+                /*
+                 * This looks reversed but it will be corrected seven lines
+                 * below.
+                 */
+                if (white_moved)
+                        current->turn = GIBBON_POSITION_SIDE_WHITE;
+                else
+                        current->turn = GIBBON_POSITION_SIDE_BLACK;
+        }
+
+        if (memcmp (current->points, target->points, sizeof current->points))
+                must_move = TRUE;
+        else
+                must_move = FALSE;
+
+        if (!must_move) {
+                if (!target->dice[0] || !target->dice[1])
+                        return NULL;
+
+                current->dice[0] = target->dice[0];
+                current->dice[1] = target->dice[1];
+                current->turn = -current->turn;
+
+                return GIBBON_GAME_ACTION (gibbon_roll_new (
+                                abs (target->dice[0]),
+                                abs (target->dice[1])));
+        }
+
+        /* We have to try out all possible rolls. */
+        return NULL;
 }

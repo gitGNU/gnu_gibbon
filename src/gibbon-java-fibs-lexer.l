@@ -249,5 +249,6 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 static int
 yywrap ()
 {
+        BEGIN (0);
 	return 1;
 }

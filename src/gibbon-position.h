@@ -78,12 +78,8 @@ typedef enum {
  * @unused_dice: Can be filled with the dice not yet used in this roll.
  *               They should be normalized, i.e. all positive for white or all
  *               negative for black, even for the opening roll.
- * @resigned: 1 if white resigned normally
- *            2 if white resigned with a gammon
- *            3 if white resigned with a backgammon
- *           -1 if black resigned normally
- *           -2 if black resigned with a gammon
- *           -3 if black resigned with a backgammon
+ * @resigned: Value of an offered resignation.  This is positive for white
+ *            resignation offers, and negative for black ones.
  * @game_info: Free-form string describing the game ("Crawford", ...).
  * @status: Free-form string describing the status ("It's your move", ...).
  *
@@ -118,17 +114,17 @@ struct _GibbonPosition
 
         guint scores[2];
 
+        GibbonPositionSide turn;
+
+        gint resigned;
+
         /*
          * All properties above this comment are considered `significant'.
          * Significant differences lead to a termination of a currently
          * running animation of a move.
          */
 
-        GibbonPositionSide turn;
-
         gchar *players[2];
-
-        gint resigned;
 
         gint unused_dice[4];
 

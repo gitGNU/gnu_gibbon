@@ -58,7 +58,7 @@ struct _GibbonGameAction
 /**
  * GibbonGameActionClass:
  *
- * Abstract base class for all differnt kinds of things you can do during a
+ * Abstract base class for all different kinds of things you can do during a
  * backgammon game.
  */
 typedef struct _GibbonGameActionClass GibbonGameActionClass;

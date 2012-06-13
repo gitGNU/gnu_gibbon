@@ -207,5 +207,6 @@ static int yywrap ();
 static int
 yywrap ()
 {
+        BEGIN (0);
 	return 1;
 }

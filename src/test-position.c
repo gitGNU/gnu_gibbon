@@ -266,26 +266,17 @@ test_compare (void)
         def->status = NULL;
 
         def->resigned = 3;
-        if (!gibbon_position_equals_technically (ref, def)) {
-                /*
-                 * We consider positions with and without a resignation
-                 * flag as technically equals.  FIBS does not store an
-                 * unreplied resignation in the board state.  We must
-                 * therefore make sure that a new board state sent by
-                 * FIBS will not be considered a new position because
-                 * in the position that we calculate from the board state
-                 * the flag will not be set.
-                 */
-                g_printerr ("Positions with and without resignation differ"
-                            " but they should not.\n");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions with and without resignation do"
+                            " not differ!\n");
                 retval = FALSE;
         }
         def->resigned = 0;
 
         def->turn = GIBBON_POSITION_SIDE_BLACK;
-        if (!gibbon_position_equals_technically (ref, def)) {
-                g_printerr ("Positions do differ technically after turn"
-                            " changed although they should not.\n");
+        if (gibbon_position_equals_technically (ref, def)) {
+                g_printerr ("Positions do not differ technically after turn"
+                            " changed although they should!\n");
                 retval = FALSE;
         }
         def->turn = GIBBON_POSITION_SIDE_NONE;
@@ -325,8 +316,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply white's 1) 31: 8/5 6/5.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's 1) 31: 8/5 6/5.\n");
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after white's 1) 31: 8/5 6/5.\n");
                 retval = FALSE;
         }
 
@@ -344,8 +335,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply black's 1) 64: 24/14.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after black's 1) 64: 24/14.\n");
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after black's 1) 64: 24/14.\n");
                 retval = FALSE;
         }
 
@@ -366,8 +357,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply white's 2) 25: 13/11* 6/1*.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's 2)"
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after white's 2)"
                             " 25: 13/11* 6/1*.\n");
                 retval = FALSE;
         }
@@ -385,8 +376,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply black's 2) 61: bar/24*.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after black's 2) 61: bar/24.\n");
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after black's 2) 61: bar/24.\n");
                 retval = FALSE;
         }
 
@@ -410,8 +401,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply white's 3: 55 bar/5.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's 3)"
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after white's 3)"
                             " 55: bar/5.\n");
                 retval = FALSE;
         }
@@ -438,8 +429,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply black's 3) 44: bar/21 12/9(3).\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after black's"
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after black's"
                             " 3) 44: bar/21 12/9(3).\n");
                 retval = FALSE;
         }
@@ -471,8 +462,8 @@ test_apply_move (void)
                 g_printerr ("Cannot apply white's n: 64 3/off 1/off.\n");
                 retval = FALSE;
         }
-        if (!gibbon_position_equals_technically (got, expect)) {
-                g_printerr ("Positions differ after white's n)"
+        if (gibbon_position_equals_technically (got, expect)) {
+                g_printerr ("Positions do not differ after white's n)"
                             " 64: 3/off 1/off.\n");
                 retval = FALSE;
         }

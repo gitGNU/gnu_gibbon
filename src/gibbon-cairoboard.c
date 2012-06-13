@@ -872,7 +872,7 @@ gibbon_draw_flag (GibbonCairoboard *self, cairo_t *cr)
         x = 0.5 * (left + right);
         y = 0.5 * (top + bottom);
 
-        flag_value = abs (self->priv->pos->resigned);
+        flag_value = abs (self->priv->pos->resigned / self->priv->pos->cube);
         flag_label = g_strdup_printf ("%d", flag_value);
         g_return_if_fail (svg_util_steal_text_params (self->priv->flag,
                                                       "flag-value",

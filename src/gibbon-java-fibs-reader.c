@@ -176,13 +176,16 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 if (filename)
                         fclose (in);
                 if (parse_status) {
-                        if (self->priv->match)
-                                g_object_unref (self->priv->match);
+                        g_object_unref (self->priv->match);
                         self->priv->match = NULL;
                         g_free (self->priv->white);
                         self->priv->white = NULL;
                 }
         } else {
+                g_object_unref (self->priv->match);
+                self->priv->match = NULL;
+                g_free (self->priv->white);
+                self->priv->white = NULL;
                 _gibbon_java_fibs_reader_yyerror (strerror (errno));
         }
 
@@ -205,7 +208,7 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         _gibbon_java_fibs_reader_instance = NULL;
         gdk_threads_leave ();
 
-        if (self->priv->white)
+        if (self->priv->white && self->priv->match)
                 gibbon_match_set_white (self->priv->match, self->priv->white);
         g_free (self->priv->white);
         self->priv->white = NULL;

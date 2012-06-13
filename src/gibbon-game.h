@@ -48,6 +48,13 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_GAME, GibbonGameClass))
 
+typedef struct _GibbonGameSnapshot GibbonGameSnapshot;
+struct _GibbonGameSnapshot {
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+        GibbonPosition *resulting_position;
+};
+
 /**
  * GibbonGame:
  *

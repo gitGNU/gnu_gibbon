@@ -301,6 +301,8 @@ NL (\r\n|\n|\r\n|\r)
 static int
 yywrap ()
 {
+	BEGIN (0);
+
 	/* Make compiler happy.  */
 	return yy_top_state () || 1;
 }

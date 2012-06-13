@@ -151,4 +151,8 @@ gsize gibbon_match_get_length (const GibbonMatch *self);
 gboolean gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                                   GibbonGameAction *action, GError **error);
 
+gboolean gibbon_match_get_missing_actions (const GibbonMatch *self,
+                                           const GibbonPosition *target,
+                                           GSList **result);
+
 #endif

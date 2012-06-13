@@ -70,19 +70,30 @@ G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
 
 GibbonPosition initial = {
+                /* match_length */
                 0,
+                /* points */
                 { -2,  0,  0,  0,  0,  5,  0,  3,  0,  0,  0, -5,
                    5,  0,  0,  0, -3,  0, -5,  0,  0,  0,  0,  2 },
+                /* bar */
                 { 0, 0 },
+                /* dice */
                 { 0, 0 },
+                /* cube */
                 1,
+                /* may double, cube_turned */
                 { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE,
-                { 0, 0 },
-                GIBBON_POSITION_SIDE_NONE,
-                { NULL, NULL },
+                /* scores, turn */
+                { 0, 0 }, GIBBON_POSITION_SIDE_NONE,
+                /* resigned */
                 0,
+                /* players */
+                { NULL, NULL },
+                /* unused dice */
                 { 0, 0, 0, 0 },
+                /* game_info */
                 NULL,
+                /* status */
                 NULL
 };
 
@@ -944,7 +955,7 @@ gibbon_position_equals_technically (const GibbonPosition *self,
 #endif
         if (!other)
                 return FALSE;
-        if (memcmp (self, other, (gpointer) &self->turn - (gpointer) self))
+        if (memcmp (self, other, (gpointer) &self->players - (gpointer) self))
                 return FALSE;
 
         return TRUE;

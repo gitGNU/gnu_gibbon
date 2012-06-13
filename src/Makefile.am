@@ -244,6 +244,7 @@ test_match_complete_SOURCES = $(common_SOURCES) test-match-complete.c
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
 MATCH_FILES = complete.match complete.gmd complete.mat complete.sgf \
-	incomplete-opening.gmd complete-opening.gmd
+	incomplete-opening.gmd complete-opening.gmd \
+	incomplete-initial-resign.gmd complete-initial-resign.gmd
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc

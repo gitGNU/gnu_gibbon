@@ -44,13 +44,6 @@
 #include "gibbon-reject.h"
 #include "gibbon-setup.h"
 
-typedef struct _GibbonGameSnapshot GibbonGameSnapshot;
-struct _GibbonGameSnapshot {
-        GibbonGameAction *action;
-        GibbonPositionSide side;
-        GibbonPosition *resulting_position;
-};
-
 typedef struct _GibbonGamePrivate GibbonGamePrivate;
 struct _GibbonGamePrivate {
         GibbonMatch *match;
@@ -63,9 +56,6 @@ struct _GibbonGamePrivate {
         gboolean resigned;
 
         gboolean is_crawford;
-
-        gboolean pending_double;
-        gboolean pending_resignation;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -104,10 +94,10 @@ static void gibbon_game_add_snapshot (GibbonGame *self,
                                       GibbonGameAction *action,
                                       GibbonPositionSide side,
                                       GibbonPosition *position);
-static const GibbonGameSnapshot *gibbon_game_get_snapshot (const GibbonGame *
-                                                           self);
+static const GibbonGameSnapshot *gibbon_game_get_snapshot (const GibbonGame
+                                                           *self);
 static const GibbonGameSnapshot *gibbon_game_get_nth_snapshot (const GibbonGame
-                                                               * self, gint n);
+                                                               *self, gint n);
 
 static void 
 gibbon_game_init (GibbonGame *self)
@@ -124,9 +114,6 @@ gibbon_game_init (GibbonGame *self)
         self->priv->resigned = FALSE;
 
         self->priv->is_crawford = FALSE;
-
-        self->priv->pending_resignation = FALSE;
-        self->priv->pending_double = FALSE;
 }
 
 static void
@@ -176,6 +163,8 @@ gboolean
 gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                         GibbonGameAction *action, GError **error)
 {
+        const GibbonPosition *current;
+
         gibbon_match_return_val_if_fail (GIBBON_IS_GAME (self), FALSE, error);
         gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
                                          error);
@@ -183,21 +172,22 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                          || GIBBON_POSITION_SIDE_BLACK,
                                          FALSE, error);
 
-        if (self->priv->pending_double) {
-                if (!GIBBON_IS_TAKE (action) && !GIBBON_IS_DROP (action)) {
-                        g_set_error (error, GIBBON_MATCH_ERROR,
-                                     GIBBON_MATCH_ERROR_UNRESPONDED_DOUBLE,
-                                     _("A reply to the double is required!"));
-                        return FALSE;
-
-                }
-        }
-        if (self->priv->pending_resignation) {
+        current = gibbon_game_get_position (self);
+        if (current->resigned) {
                 if (!GIBBON_IS_ACCEPT (action) && !GIBBON_IS_REJECT (action)) {
                         g_set_error (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_UNRESPONDED_RESIGNATION,
                                      _("A reply to the resignation is"
                                        " required!"));
+                        return FALSE;
+
+                }
+        }
+        if (current->cube_turned) {
+                if (!GIBBON_IS_TAKE (action) && !GIBBON_IS_DROP (action)) {
+                        g_set_error (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_UNRESPONDED_DOUBLE,
+                                     _("A reply to the double is required!"));
                         return FALSE;
 
                 }
@@ -440,8 +430,6 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (dbl), side, pos);
 
-        self->priv->pending_double = TRUE;
-
         return TRUE;
 }
 
@@ -480,7 +468,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
                                                pos->players[1]);
         }
 
-        self->priv->pending_double = FALSE;
+        pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (drop), side, pos);
 
@@ -509,10 +497,9 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos->cube <<= 1;
+        pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (take), side, pos);
-
-        self->priv->pending_double = FALSE;
 
         return TRUE;
 }
@@ -538,10 +525,9 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
+        pos->resigned = resign->value;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (resign), side, pos);
-
-        self->priv->pending_resignation = TRUE;
 
         return TRUE;
 }
@@ -575,6 +561,8 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
+        pos->resigned = 0;
+
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 player = pos->players[1];
         } else {
@@ -585,8 +573,6 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
         pos->status = g_strdup_printf (_("%s rejects."), player);
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (reject), side, pos);
-
-        self->priv->pending_resignation = FALSE;
 
         return TRUE;
 }
@@ -640,11 +626,11 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
                 self->priv->score = resign->value;
         }
 
+        pos->resigned = 0;
+
         self->priv->resigned = TRUE;
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos);
-
-        self->priv->pending_resignation = FALSE;
 
         return TRUE;
 }

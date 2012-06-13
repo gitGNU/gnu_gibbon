@@ -55,8 +55,6 @@ struct _GibbonGMDReaderPrivate {
         GibbonMatch *match;
 
         GSList *names;
-
-        gchar *white;
 };
 
 GibbonGMDReader *_gibbon_gmd_reader_instance = NULL;
@@ -160,8 +158,6 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
         _gibbon_gmd_reader_free_names (self);
-        g_free (self->priv->white);
-        self->priv->white = NULL;
 
         if (filename)
                 in = fopen (filename, "rb");
@@ -174,13 +170,12 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 if (filename)
                         fclose (in);
                 if (parse_status) {
-                        if (self->priv->match)
-                                g_object_unref (self->priv->match);
+                        g_object_unref (self->priv->match);
                         self->priv->match = NULL;
-                        g_free (self->priv->white);
-                        self->priv->white = NULL;
                 }
         } else {
+                g_object_unref (self->priv->match);
+                self->priv->match = NULL;
                 _gibbon_gmd_reader_yyerror (strerror (errno));
         }
 
@@ -193,8 +188,6 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                         g_object_unref (self->priv->match);
                 self->priv->match = NULL;
                 _gibbon_gmd_reader_free_names (self);
-                g_free (self->priv->white);
-                self->priv->white = NULL;
                 g_critical ("Another instance of GibbonGMDReader has"
                             " reset this one!");
                 gdk_threads_leave ();
@@ -202,11 +195,6 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         }
         _gibbon_gmd_reader_instance = NULL;
         gdk_threads_leave ();
-
-        if (self->priv->white)
-                gibbon_match_set_white (self->priv->match, self->priv->white);
-        g_free (self->priv->white);
-        self->priv->white = NULL;
 
         return self->priv->match;
 }
