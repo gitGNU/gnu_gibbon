@@ -156,6 +156,11 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
         self->priv->initial_position = gibbon_position_copy (pos);
         self->priv->is_crawford = is_crawford;
 
+//        if (is_crawford) {
+//                self->priv->initial_position->may_double[0] = FALSE;
+//                self->priv->initial_position->may_double[1] = FALSE;
+//        }
+
         return self;
 }
 
@@ -409,6 +414,13 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL,
                                      _("Double after dice have been rolled!"));
+                return FALSE;
+        }
+
+        if (self->priv->is_crawford) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_DOUBLE_CRAWFORD,
+                                     _("Double during Crawford game!"));
                 return FALSE;
         }
 

@@ -577,5 +577,33 @@ check_crawford (GibbonMatch *match, GError **error)
                 return FALSE;
         }
 
+        action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_NONE, action,
+                                      error)) {
+                g_printerr ("Adding normal opening roll failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5,
+                                                       -1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("Adding white move failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                     action, error)) {
+                g_printerr ("Double during Crawford game possible!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
         return TRUE;
 }
