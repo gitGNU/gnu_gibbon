@@ -46,6 +46,8 @@
 #include "gibbon-accept.h"
 #include "gibbon-reject.h"
 
+#include "gibbon-match-play.h"
+
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
         GList *games;
@@ -64,15 +66,16 @@ G_DEFINE_TYPE (GibbonMatch, gibbon_match, G_TYPE_OBJECT)
 static GSList *_gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                   GibbonPosition *current,
                                                   const GibbonPosition *target,
-                                                  const GibbonGameAction
-                                                  *last_action,
+                                                  const GibbonMatchPlay
+                                                  *last_play,
                                                   gboolean try_move);
-static GibbonGameAction *gibbon_match_try_resign (const GibbonMatch *self,
-                                                  GibbonPosition *current,
-                                                  const GibbonPosition *target);
-static GibbonGameAction *gibbon_match_try_roll (const GibbonMatch *self,
-                                                GibbonPosition *current,
-                                                const GibbonPosition *target);
+static GSList *gibbon_match_try_roll (const GibbonMatch *self,
+                                      GibbonPosition *current,
+                                      const GibbonPosition *target,
+                                      gboolean try_move);
+static GSList *gibbon_match_try_accept (const GibbonMatch *self,
+                                        GibbonPosition *current,
+                                        const GibbonPosition *target);
 
 static void 
 gibbon_match_init (GibbonMatch *self)
@@ -402,6 +405,7 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                          GibbonGameAction *action, GError **error)
 {
         GibbonGame *game;
+        const GibbonPosition *current;
 
         gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE, error);
         gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
@@ -415,7 +419,19 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        return gibbon_game_add_action (game, side, action, error);
+        if (!gibbon_game_add_action (game, side, action, error))
+                return FALSE;
+
+        if (gibbon_game_over (game)) {
+                current = gibbon_game_get_position (game);
+                if (gibbon_position_match_over (current))
+                        return TRUE;
+
+                if (!gibbon_match_add_game (self, error))
+                        return FALSE;
+        }
+
+        return TRUE;
 }
 
 /**
@@ -453,7 +469,9 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
                                   GSList **_result)
 {
         GSList *result;
-        const GibbonGameAction *last_action;
+        GibbonMatchPlay *last_play;
+        GibbonGameAction *last_action;
+        GibbonPositionSide last_side;
         const GibbonPosition *last_pos;
         GibbonPosition *current;
         GibbonGame *current_game;
@@ -468,13 +486,24 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
         }
 
         current_game = gibbon_match_get_current_game (self);
-        last_action = gibbon_game_get_nth_action (current_game, -1, NULL);
+        /*
+         * The cast removes the const from the return value.  But in
+         * absence of a copy function for GibbonGameAction we have no
+         * other chance here.
+         */
+        last_action = GIBBON_GAME_ACTION (gibbon_game_get_nth_action (
+                        current_game, -1, &last_side));
+        last_play = gibbon_match_play_new (last_action, last_side);
+        if (last_action)
+                g_object_ref (last_action);
 
         current = gibbon_position_copy (last_pos);
         result = _gibbon_match_get_missing_actions (self, current,
-                                                    target, last_action,
+                                                    target, last_play,
                                                     TRUE);
         gibbon_position_free (current);
+        gibbon_match_play_free (last_play);
+
         if (result) {
                 if (_result)
                         *_result = g_slist_reverse (result);
@@ -488,39 +517,66 @@ static GSList *
 _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                    GibbonPosition *current,
                                    const GibbonPosition *target,
-                                   const GibbonGameAction *last_action,
+                                   const GibbonMatchPlay *last_play,
                                    gboolean try_move)
 {
-        GibbonGameAction *action = NULL;
         GSList *retval = NULL;
+        GibbonGameAction *last_action = last_play->action;
+        GSList *head;
+        GibbonMatchPlay *play;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
         g_return_val_if_fail (target != NULL, FALSE);
 
-        if (!last_action || GIBBON_IS_MOVE (last_action)) {
-                action = gibbon_match_try_resign (self, current, target);
-                if (!action)
-                        action = gibbon_match_try_roll (self, current, target);
+        if (!last_action) {
+                retval = gibbon_match_try_roll (self, current, target,
+                                                try_move);
+                try_move = FALSE;
+        } else if (GIBBON_IS_RESIGN (last_action)) {
+                retval = gibbon_match_try_accept (self, current, target);
+        } else if (GIBBON_IS_ACCEPT (last_action)) {
+                retval = gibbon_match_try_roll (self, current, target,
+                                                try_move);
+                try_move = FALSE;
+        } else if (GIBBON_IS_MOVE (last_action)) {
+                retval = gibbon_match_try_roll (self, current, target,
+                                                try_move);
         }
 
-        if (!action)
+        if (!retval)
                 return NULL;
 
-        retval = g_slist_prepend (retval, action);
         if (gibbon_position_equals_technically (current, target))
                 return retval;
 
-        return _gibbon_match_get_missing_actions (self, current, target,
-                                                  action, try_move);
+        play = (GibbonMatchPlay *) retval->data;
+        head = _gibbon_match_get_missing_actions (self, current, target,
+                                                  play, try_move);
+
+        if (!head) {
+                g_slist_free_full (retval,
+                                   (GDestroyNotify) gibbon_match_play_free);
+                return NULL;
+        }
+
+        return g_slist_concat (head, retval);
 }
 
-static GibbonGameAction *
+static GSList *
 gibbon_match_try_roll (const GibbonMatch *self,
                        GibbonPosition *current,
-                       const GibbonPosition *target)
+                       const GibbonPosition *target,
+                       gboolean try_move)
 {
+        GibbonGameAction *action;
         gboolean must_move;
         gboolean white_moved, black_moved;
+        guint die1, die2;
+        GibbonMove *move;
+        GibbonMatchPlay *play;
+        GSList *retval = NULL;
+        gboolean reverse;
+        gint score;
 
         /*
          * When the recorded match was completely empty, it is a little bit
@@ -551,10 +607,6 @@ gibbon_match_try_roll (const GibbonMatch *self,
                 if (white_moved && black_moved)
                         return NULL;
 
-                /*
-                 * This looks reversed but it will be corrected seven lines
-                 * below.
-                 */
                 if (white_moved)
                         current->turn = GIBBON_POSITION_SIDE_WHITE;
                 else
@@ -572,13 +624,114 @@ gibbon_match_try_roll (const GibbonMatch *self,
 
                 current->dice[0] = target->dice[0];
                 current->dice[1] = target->dice[1];
-                current->turn = -current->turn;
 
-                return GIBBON_GAME_ACTION (gibbon_roll_new (
+                action = GIBBON_GAME_ACTION (gibbon_roll_new (
                                 abs (target->dice[0]),
                                 abs (target->dice[1])));
+                return g_slist_prepend (NULL,
+                                        gibbon_match_play_new (action,
+                                                               current->turn));
         }
 
-        /* We have to try out all possible rolls. */
-        return NULL;
+        if (!try_move)
+                return NULL;
+
+        /*
+         * First try non-doubles.  They are more likely and easier to
+         * process.
+         */
+        reverse = current->turn < 0 ? TRUE : FALSE;
+        for (die1 = 6; die1 > 1; --die1) {
+                for (die2 = 5; die2 > 0; --die2) {
+                        current->dice[0] = current->turn * die1;
+                        current->dice[1] = current->turn * die2;
+                        move = gibbon_position_check_move (current, target, current->turn);
+                        if (move->status != GIBBON_MOVE_LEGAL) {
+                                g_object_unref (move);
+                                continue;
+                        }
+                        if (!gibbon_position_apply_move (current, move,
+                                                         current->turn,
+                                                         reverse))
+                                return FALSE;
+                        /*
+                         * gibbon_position_apply_move() has already swapped
+                         * the sides! */
+                        play = gibbon_match_play_new (GIBBON_GAME_ACTION (
+                                        gibbon_roll_new (die1, die2)),
+                                        -current->turn);
+                        retval = g_slist_prepend (NULL, play);
+                        play = gibbon_match_play_new (GIBBON_GAME_ACTION (move),
+                                                      -current->turn);
+                        retval = g_slist_prepend (retval, play);
+                        break;
+                }
+        }
+        for (die1 = 6; !retval && die1 > 0; --die1) {
+                current->dice[0] = current->turn * die1;
+                current->dice[1] = current->turn * die1;
+                move = gibbon_position_check_move (current, target, current->turn);
+                if (move->status != GIBBON_MOVE_LEGAL) {
+                        g_object_unref (move);
+                        continue;
+                }
+                if (!gibbon_position_apply_move (current, move,
+                                                 current->turn, reverse))
+                        return FALSE;
+                /*
+                 * gibbon_position_apply_move() has already swapped
+                 * the sides! */
+                play = gibbon_match_play_new (GIBBON_GAME_ACTION (
+                                gibbon_roll_new (die1, die1)),
+                                -current->turn);
+                retval = g_slist_prepend (NULL, play);
+                play = gibbon_match_play_new (GIBBON_GAME_ACTION (move),
+                                              -current->turn);
+                retval = g_slist_prepend (retval, play);
+                break;
+        }
+
+        score = gibbon_position_game_over (current);
+        if (score) {
+                gibbon_position_reset (current);
+                if (score < 0)
+                        current->scores[1] -= score;
+                else
+                        current->scores[0] += score;
+        }
+        return retval;
+}
+
+static GSList *
+gibbon_match_try_accept (const GibbonMatch *self,
+                         GibbonPosition *current,
+                         const GibbonPosition *target)
+{
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+
+        if (current->resigned > 0) {
+                if (current->scores[0] != target->scores[0]
+                    || (current->scores[1] + current->resigned
+                        != target->scores[1]))
+                        return NULL;
+                side = GIBBON_POSITION_SIDE_WHITE;
+        } else if (current->resigned < 0) {
+                if (current->scores[1] != target->scores[1]
+                    || (current->scores[0] - current->resigned
+                        != target->scores[0]))
+                        return NULL;
+                side = GIBBON_POSITION_SIDE_BLACK;
+        } else {
+                return NULL;
+        }
+
+        current->turn = GIBBON_POSITION_SIDE_NONE;
+        current->scores[0] = target->scores[0];
+        current->scores[1] = target->scores[1];
+        gibbon_position_reset (current);
+
+        action = GIBBON_GAME_ACTION (gibbon_accept_new ());
+
+        return g_slist_prepend (NULL, gibbon_match_play_new (action, -side));
 }

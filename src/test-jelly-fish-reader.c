@@ -44,7 +44,7 @@ main (int argc, char *argv[])
                                                                     NULL));
         g_return_val_if_fail (reader != NULL, -1);
 
-        input_file = g_build_filename (ABS_BUILDDIR, "complete.mat", NULL);
+        input_file = g_build_filename (ABS_BUILDDIR, "7point.mat", NULL);
         match = gibbon_match_reader_parse (reader, input_file);
 
         g_return_val_if_fail (match != NULL, -1);

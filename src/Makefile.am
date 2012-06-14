@@ -77,6 +77,7 @@ common_SOURCES = 			\
         gibbon-move.c                   \
         gibbon-movement.c               \
         gibbon-match.c          	\
+	gibbon-match-play.c		\
         gibbon-match-reader.c           \
         gibbon-match-writer.c           \
         gibbon-position.c		\
@@ -169,6 +170,7 @@ noinst_HEADERS =			\
 	gibbon-jelly-fish-reader-priv.h	\
         gibbon-jelly-fish-writer.h	\
         gibbon-match.h          	\
+	gibbon-match-play.h		\
         gibbon-match-reader.h		\
         gibbon-match-writer.h		\
         gibbon-move.h			\
@@ -243,8 +245,7 @@ test_match_complete_SOURCES = $(common_SOURCES) test-match-complete.c
 
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
-MATCH_FILES = complete.match complete.gmd complete.mat complete.sgf \
-	incomplete-opening.gmd complete-opening.gmd \
-	incomplete-initial-resign.gmd complete-initial-resign.gmd
+MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
+	incomplete-resign.gmd complete-resign.gmd
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc

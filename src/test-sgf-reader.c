@@ -43,7 +43,7 @@ main (int argc, char *argv[])
         reader = GIBBON_MATCH_READER (gibbon_sgf_reader_new (NULL, NULL));
         g_return_val_if_fail (reader != NULL, -1);
 
-        input_file = g_build_filename (ABS_BUILDDIR, "complete.sgf", NULL);
+        input_file = g_build_filename (ABS_BUILDDIR, "7point.sgf", NULL);
         match = gibbon_match_reader_parse (reader, input_file);
 
         g_return_val_if_fail (match != NULL, -1);
