@@ -64,3 +64,4 @@
   displayed.
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
+- Make sure that src/test-match-complete does not leak memory.
