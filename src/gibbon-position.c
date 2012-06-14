@@ -1369,6 +1369,7 @@ gibbon_position_reset (GibbonPosition *self)
         self->cube = 1;
         self->cube_turned = GIBBON_POSITION_SIDE_NONE;
         self->resigned = 0;
+        self->may_double[0] = self->may_double[1] = TRUE;
 }
 
 GibbonPositionSide
