@@ -412,6 +412,15 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
+        if ((side > 0 && !pos->may_double[0])
+            || (side < 0 && !pos->may_double[1])) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_DOUBLE_NOT_CUBE_OWNER,
+                                     _("Double but cube is neither centered"
+                                       " nor owned!"));
+                return FALSE;
+        }
+
         g_free (pos->status);
         if (side == GIBBON_POSITION_SIDE_WHITE) {
                 pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
@@ -494,6 +503,14 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
                                      GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE,
                                      _("Opponent did not double!"));
                 return FALSE;
+        }
+
+        if (side < 0) {
+                pos->may_double[0] = FALSE;
+                pos->may_double[1] = TRUE;
+        } else {
+                pos->may_double[0] = TRUE;
+                pos->may_double[1] = FALSE;
         }
 
         pos->cube <<= 1;

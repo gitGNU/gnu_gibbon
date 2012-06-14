@@ -82,6 +82,9 @@ struct _GibbonMatchClass
  * @GIBBON_MATCH_ERROR_NO_ROLL: Move without prior roll.
  * @GIBBON_MATCH_ERROR_ALREADY_ROLLED: Already rolled.
  * @GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL: Cube turned after dice roll.
+ * @GIBBON_MATCH_ERROR_DOUBLE_NOT_CUBE_OWNER: Double, although cube is neither
+ *                                            centered nor owned.
+ * @GIBBON_MATCH_ERROR_DOUBLE_CRAWFORD: Double during Crawford game.
  * @GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE: Drop but cube is not turned.
  * @GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE: Take but cube is not turned.
  * @GIBBON_MATCH_ERROR_EMPTY_RESIGNATION: Resignation without a value.
@@ -100,6 +103,8 @@ typedef enum {
         GIBBON_MATCH_ERROR_NO_ROLL,
         GIBBON_MATCH_ERROR_ALREADY_ROLLED,
         GIBBON_MATCH_ERROR_DOUBLE_AFTER_ROLL,
+        GIBBON_MATCH_ERROR_DOUBLE_NOT_CUBE_OWNER,
+        GIBBON_MATCH_ERROR_DOUBLE_CRAWFORD,
         GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE,
         GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE,
         GIBBON_MATCH_ERROR_EMPTY_RESIGNATION,
