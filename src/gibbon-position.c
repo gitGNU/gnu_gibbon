@@ -1374,6 +1374,9 @@ gibbon_position_reset (GibbonPosition *self)
 GibbonPositionSide
 gibbon_position_match_over (const GibbonPosition *self)
 {
+        if (self->match_length <= 0)
+                return GIBBON_POSITION_SIDE_NONE;
+
         if (self->scores[0] >= self->match_length)
                 return GIBBON_POSITION_SIDE_WHITE;
         else if (self->scores[1] >= self->match_length)
