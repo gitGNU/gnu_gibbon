@@ -425,6 +425,13 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
+        if (side && pos->turn && side != pos->turn) {
+                g_set_error_literal (error, GIBBON_MATCH_ERROR,
+                                     GIBBON_MATCH_ERROR_NOT_ON_TURN,
+                                     _("This player is not on turn!"));
+                return FALSE;
+        }
+
         if (self->priv->is_crawford) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_DOUBLE_CRAWFORD,
