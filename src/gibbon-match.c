@@ -82,6 +82,9 @@ static GSList *gibbon_match_try_double (const GibbonMatch *self,
 static GSList *gibbon_match_try_take (const GibbonMatch *self,
                                       GibbonPosition *current,
                                       const GibbonPosition *target);
+static GSList *gibbon_match_try_drop (const GibbonMatch *self,
+                                      GibbonPosition *current,
+                                      const GibbonPosition *target);
 
 static void 
 gibbon_match_init (GibbonMatch *self)
@@ -576,14 +579,24 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                         try_move);
         } else if (GIBBON_IS_DOUBLE (last_action)) {
                 retval = gibbon_match_try_take (self, current, target);
+                if (!retval)
+                        retval = gibbon_match_try_drop (self, current, target);
         } else if (GIBBON_IS_TAKE (last_action)) {
                 retval = gibbon_match_try_roll (self, current, target,
                                                 try_move);
                 try_move = FALSE;
+        } else if (GIBBON_IS_DROP (last_action)) {
+                retval = gibbon_match_try_roll (self, current, target,
+                                                try_move);
+                g_printerr ("After drop: %p\n", retval);
+                if (retval)
+                        g_printerr ("After drop (%p): %s\n",
+                                        retval->data,
+                                        G_OBJECT_TYPE_NAME (retval->data));
+                try_move = FALSE;
         } else {
                 g_printerr ("unhandled action: %s\n", G_OBJECT_TYPE_NAME (last_action));
         }
-        /* TODO: GIBBON_IS_RESIGN */
         /* TODO: GIBBON_IS_REJECT */
 
         if (!retval)
@@ -834,9 +847,6 @@ gibbon_match_try_take (const GibbonMatch *self,
         GibbonGameAction *action;
         GibbonPositionSide side;
 
-        if (current->cube_turned != current->turn)
-                return NULL;
-
         if (current->cube << 1 != target->cube)
                 return NULL;
 
@@ -854,6 +864,32 @@ gibbon_match_try_take (const GibbonMatch *self,
         current->cube <<= 1;
 
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
+
+        return g_slist_prepend (NULL, gibbon_match_play_new (action, side));
+}
+
+static GSList *
+gibbon_match_try_drop (const GibbonMatch *self,
+                       GibbonPosition *current,
+                       const GibbonPosition *target)
+{
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+
+        if (target->cube != 1)
+                return NULL;
+
+        if (current->cube_turned < 0) {
+                side = GIBBON_POSITION_SIDE_WHITE;
+                current->scores[1] += current->cube;
+        } else {
+                side = GIBBON_POSITION_SIDE_BLACK;
+                current->scores[0] += current->cube;
+        }
+
+        gibbon_position_reset (current);
+
+        action = GIBBON_GAME_ACTION (gibbon_drop_new ());
 
         return g_slist_prepend (NULL, gibbon_match_play_new (action, side));
 }
