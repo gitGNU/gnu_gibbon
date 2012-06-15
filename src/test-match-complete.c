@@ -95,7 +95,8 @@ main(int argc, char *argv[])
                 action = play->action;
                 side = play->side;
                 if (!gibbon_match_add_action (from, side, action, &error)) {
-                        g_printerr ("Error applying match action: %s\n",
+                        g_printerr ("Error applying match action %s: %s\n",
+                                    G_OBJECT_TYPE_NAME (action),
                                     error->message);
                         g_object_unref (from);
                         g_object_unref (to);
