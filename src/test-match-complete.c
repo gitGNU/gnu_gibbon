@@ -95,9 +95,23 @@ main(int argc, char *argv[])
                 action = play->action;
                 side = play->side;
                 if (!gibbon_match_add_action (from, side, action, &error)) {
-                        g_printerr ("Error applying match action %s: %s\n",
+                        g_printerr ("Completing `%s' to `%s':\n",
+                                    argv[1], argv[2]);
+                        g_printerr ("Error applying match action %s for %s: %s\n",
                                     G_OBJECT_TYPE_NAME (action),
+                                    side < 0 ? "black" : side > 0 ? "white"
+                                                    : "none",
                                     error->message);
+                        g_printerr ("Completed match so far:\n");
+                        out = G_OUTPUT_STREAM (g_memory_output_stream_new (NULL, 0,
+                                                                           g_realloc,
+                                                                           g_free));
+                        writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
+                        gibbon_match_writer_write_stream (writer, out, from, NULL);
+                        g_printerr ("%s",
+                                    (gchar *) g_memory_output_stream_get_data  (
+                                                    G_MEMORY_OUTPUT_STREAM (out)));
+                        g_object_unref (out);
                         g_object_unref (from);
                         g_object_unref (to);
                         g_slist_free_full (iter,
