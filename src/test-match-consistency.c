@@ -409,6 +409,15 @@ check_double (GibbonMatch *match, GError **error)
         gibbon_error_reset (*error);
         g_object_unref (action);
 
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
+                                     action, error)) {
+                g_printerr ("Black can double, when not on turn!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
         return TRUE;
 }
 
