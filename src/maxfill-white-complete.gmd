@@ -10,4 +10,6 @@ Accept:W
 Game:
 Roll:-: 4 2
 Move:W: 8/4 6/4
+Double:B
+Take:W
 Roll:B: 5 2

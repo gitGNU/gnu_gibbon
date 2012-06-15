@@ -76,6 +76,12 @@ static GSList *gibbon_match_try_roll (const GibbonMatch *self,
 static GSList *gibbon_match_try_accept (const GibbonMatch *self,
                                         GibbonPosition *current,
                                         const GibbonPosition *target);
+static GSList *gibbon_match_try_double (const GibbonMatch *self,
+                                        GibbonPosition *current,
+                                        const GibbonPosition *target);
+static GSList *gibbon_match_try_take (const GibbonMatch *self,
+                                      GibbonPosition *current,
+                                      const GibbonPosition *target);
 
 static void 
 gibbon_match_init (GibbonMatch *self)
@@ -564,9 +570,21 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                 try_move);
                 try_move = FALSE;
         } else if (GIBBON_IS_MOVE (last_action)) {
+                retval = gibbon_match_try_double (self, current, target);
+                if (!retval)
+                        retval = gibbon_match_try_roll (self, current, target,
+                                                        try_move);
+        } else if (GIBBON_IS_DOUBLE (last_action)) {
+                retval = gibbon_match_try_take (self, current, target);
+        } else if (GIBBON_IS_TAKE (last_action)) {
                 retval = gibbon_match_try_roll (self, current, target,
                                                 try_move);
+                try_move = FALSE;
+        } else {
+                g_printerr ("unhandled action: %s\n", G_OBJECT_TYPE_NAME (last_action));
         }
+        /* TODO: GIBBON_IS_RESIGN */
+        /* TODO: GIBBON_IS_REJECT */
 
         if (!retval)
                 return NULL;
@@ -759,4 +777,83 @@ gibbon_match_try_accept (const GibbonMatch *self,
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
 
         return g_slist_prepend (NULL, gibbon_match_play_new (action, -side));
+}
+
+static GSList *
+gibbon_match_try_double (const GibbonMatch *self,
+                         GibbonPosition *current,
+                         const GibbonPosition *target)
+{
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+
+        if (current->turn < 0) {
+                if (!current->may_double[1])
+                        return NULL;
+                if (target->cube_turned) {
+                        if (target->cube_turned != GIBBON_POSITION_SIDE_BLACK)
+                                return NULL;
+                } else if (target->cube == 1) {
+                        if (current->scores[1] + current->cube
+                                        != target->scores[1])
+                                return NULL;
+                } else if (current->cube << 1 != target->cube) {
+                        return NULL;
+                }
+                side = GIBBON_POSITION_SIDE_BLACK;
+        } else if (current->turn > 0) {
+                if (!current->may_double[0])
+                        return NULL;
+                if (target->cube_turned) {
+                        if (target->cube_turned != GIBBON_POSITION_SIDE_WHITE)
+                                return NULL;
+                } else if (target->cube == 1) {
+                        if (current->scores[0] + current->cube
+                                        != target->scores[0])
+                                return NULL;
+                } else if ((current->cube << 1) != target->cube) {
+                        return NULL;
+                }
+                side = GIBBON_POSITION_SIDE_WHITE;
+        } else {
+                return NULL;
+        }
+
+        current->cube_turned = side;
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+
+        return g_slist_prepend (NULL, gibbon_match_play_new (action, -side));
+}
+
+static GSList *
+gibbon_match_try_take (const GibbonMatch *self,
+                       GibbonPosition *current,
+                       const GibbonPosition *target)
+{
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+
+        if (current->cube_turned != current->turn)
+                return NULL;
+
+        if (current->cube << 1 != target->cube)
+                return NULL;
+
+        if (current->cube_turned < 0) {
+                current->may_double[0] = TRUE;
+                current->may_double[1] = FALSE;
+                side = GIBBON_POSITION_SIDE_BLACK;
+        } else {
+                current->may_double[0] = FALSE;
+                current->may_double[1] = TRUE;
+                side = GIBBON_POSITION_SIDE_WHITE;
+        }
+
+        current->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        current->cube <<= 1;
+
+        action = GIBBON_GAME_ACTION (gibbon_take_new ());
+
+        return g_slist_prepend (NULL, gibbon_match_play_new (action, side));
 }

@@ -9,5 +9,7 @@ Resign:W:1
 Accept:B
 Game:
 Roll:-: 2 4
-Move:B: 17/21 19/21 
+Move:B: 17/21 19/21
+Double:W
+Take:B
 Roll:W: 5 2
