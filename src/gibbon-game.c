@@ -56,6 +56,7 @@ struct _GibbonGamePrivate {
         gboolean resigned;
 
         gboolean is_crawford;
+        gboolean rolled;
 };
 
 #define GIBBON_GAME_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -114,6 +115,7 @@ gibbon_game_init (GibbonGame *self)
         self->priv->resigned = FALSE;
 
         self->priv->is_crawford = FALSE;
+        self->priv->rolled = FALSE;
 }
 
 static void
@@ -156,10 +158,8 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
         self->priv->initial_position = gibbon_position_copy (pos);
         self->priv->is_crawford = is_crawford;
 
-        if (is_crawford) {
-                self->priv->initial_position->may_double[0] = FALSE;
-                self->priv->initial_position->may_double[1] = FALSE;
-        }
+        self->priv->initial_position->may_double[0] = FALSE;
+        self->priv->initial_position->may_double[1] = FALSE;
 
         return self;
 }
@@ -304,6 +304,14 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
         } else {
                 pos->dice[0] = +abs (roll->die1);
                 pos->dice[1] = -abs (roll->die2);
+        }
+
+        if (!self->priv->rolled) {
+                self->priv->rolled = TRUE;
+                if (!self->priv->is_crawford) {
+                        pos->may_double[0] = TRUE;
+                        pos->may_double[1] = TRUE;
+                }
         }
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (roll), side, pos);

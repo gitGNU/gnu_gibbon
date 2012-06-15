@@ -51,6 +51,7 @@ static gboolean check_move (GibbonMatch *match, GError **error);
 static gboolean check_double (GibbonMatch *match, GError **error);
 static gboolean check_resignation (GibbonMatch *match, GError **error);
 static gboolean check_crawford (GibbonMatch *match, GError **error);
+static gboolean check_premature_double (GibbonMatch *match, GError **error);
 
 static test_function tests[] = {
     check_opening,
@@ -58,7 +59,8 @@ static test_function tests[] = {
     check_move,
     check_double,
     check_resignation,
-    check_crawford
+    check_crawford,
+    check_premature_double
 };
 
 int
@@ -600,6 +602,91 @@ check_crawford (GibbonMatch *match, GError **error)
         if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK,
                                      action, error)) {
                 g_printerr ("Double during Crawford game possible!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        return TRUE;
+}
+
+
+static gboolean
+check_premature_double (GibbonMatch *match, GError **error)
+{
+        GibbonGameAction *action;
+
+        gibbon_match_set_length (match, 5);
+        gibbon_match_set_crawford (match, TRUE);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("White double before opening roll possible!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("Black double before opening roll possible!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("White resignation failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                      error)) {
+                g_printerr ("Black rejection failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+        action = GIBBON_GAME_ACTION (gibbon_resign_new (2));
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_BLACK, action,
+                                      error)) {
+                g_printerr ("Black resignation failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+        action = GIBBON_GAME_ACTION (gibbon_reject_new ());
+        if (!gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE, action,
+                                      error)) {
+                g_printerr ("White rejection failed: %s\n",
+                            (*error)->message);
+                g_object_unref (action);
+                return FALSE;
+        }
+
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("White double before opening roll after"
+                            " rejection possible!\n");
+                return FALSE;
+        }
+        gibbon_error_reset (*error);
+        g_object_unref (action);
+
+        action = GIBBON_GAME_ACTION (gibbon_double_new ());
+        if (gibbon_match_add_action (match, GIBBON_POSITION_SIDE_WHITE,
+                                     action, error)) {
+                g_printerr ("Black double before opening roll after"
+                            " rejection possible!\n");
                 return FALSE;
         }
         gibbon_error_reset (*error);
