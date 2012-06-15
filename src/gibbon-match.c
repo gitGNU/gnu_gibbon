@@ -823,7 +823,7 @@ gibbon_match_try_double (const GibbonMatch *self,
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
 
-        return g_slist_prepend (NULL, gibbon_match_play_new (action, -side));
+        return g_slist_prepend (NULL, gibbon_match_play_new (action, side));
 }
 
 static GSList *
@@ -843,11 +843,11 @@ gibbon_match_try_take (const GibbonMatch *self,
         if (current->cube_turned < 0) {
                 current->may_double[0] = TRUE;
                 current->may_double[1] = FALSE;
-                side = GIBBON_POSITION_SIDE_BLACK;
+                side = GIBBON_POSITION_SIDE_WHITE;
         } else {
                 current->may_double[0] = FALSE;
                 current->may_double[1] = TRUE;
-                side = GIBBON_POSITION_SIDE_WHITE;
+                side = GIBBON_POSITION_SIDE_BLACK;
         }
 
         current->cube_turned = GIBBON_POSITION_SIDE_NONE;
