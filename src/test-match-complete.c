@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "gibbon-gmd-reader.h"
+#include "gibbon-gmd-writer.h"
 #include "gibbon-match.h"
 #include "gibbon-match-play.h"
 
@@ -44,6 +45,8 @@ main(int argc, char *argv[])
         GibbonGameAction *action;
         GibbonPositionSide side;
         GError *error = NULL;
+        GOutputStream *out;
+        GibbonMatchWriter *writer;
 
         g_type_init ();
 
@@ -109,7 +112,17 @@ main(int argc, char *argv[])
         target_pos = gibbon_match_get_current_position (to);
         if (!gibbon_position_equals_technically (current_pos, target_pos)) {
                 g_printerr ("Match positions differ after replaying"
-                            " missed actions.\n");
+                            " missed actions.  Wanted contents of `%s', got:\n",
+                            argv[2]);
+                out = G_OUTPUT_STREAM (g_memory_output_stream_new (NULL, 0,
+                                                                   g_realloc,
+                                                                   g_free));
+                writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
+                gibbon_match_writer_write_stream (writer, out, from, NULL);
+                g_printerr ("%s",
+                            (gchar *) g_memory_output_stream_get_data  (
+                                            G_MEMORY_OUTPUT_STREAM (out)));
+                g_object_unref (out);
                 g_object_unref (from);
                 g_object_unref (to);
                 return -1;
