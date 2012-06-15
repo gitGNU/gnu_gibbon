@@ -246,6 +246,7 @@ test_match_complete_SOURCES = $(common_SOURCES) test-match-complete.c
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
 MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
-	incomplete-resign.gmd complete-resign.gmd
+	maxfill-black-incomplete.gmd maxfill-black-complete.gmd \
+	maxfill-white-incomplete.gmd maxfill-white-complete.gmd
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
