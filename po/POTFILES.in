@@ -82,6 +82,11 @@ src/gibbon-game-action.c
 src/gibbon-game.c
 src/gibbon-game-chat.c
 src/gibbon-geo-ip-updater.c
+src/gibbon-gmd-lexer.c
+src/gibbon-gmd-lexer.l
+src/gibbon-gmd-parser.c
+src/gibbon-gmd-parser.y
+src/gibbon-gmd-reader.c
 src/gibbon-help.c
 src/gibbon-inviter-list.c
 src/gibbon-inviter-list-view.c
@@ -94,6 +99,7 @@ src/gibbon-java-fibs-reader.c
 src/gibbon-java-fibs-writer.c
 src/gibbon-jelly-fish-lexer.l
 src/gibbon-jelly-fish-parser.c
+src/gibbon-jelly-fish-parser.y
 src/gibbon-jelly-fish-reader.c
 src/gibbon-jelly-fish-writer.c
 src/gibbon-match.c
@@ -115,6 +121,7 @@ src/gibbon-server-console.c
 src/gibbon-session.c
 src/gibbon-settings.c
 src/gibbon-setup.c
+src/gibbon-sgf-reader.c
 src/gibbon-sgf-writer.c
 src/gibbon-shouts.c
 src/gibbon-signal.c
