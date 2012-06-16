@@ -574,9 +574,11 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 try_move = FALSE;
         } else if (GIBBON_IS_MOVE (last_action)) {
                 retval = gibbon_match_try_double (self, current, target);
-                if (!retval)
+                if (!retval) {
                         retval = gibbon_match_try_roll (self, current, target,
                                                         try_move);
+                        try_move = FALSE;
+                }
         } else if (GIBBON_IS_DOUBLE (last_action)) {
                 retval = gibbon_match_try_take (self, current, target);
                 if (!retval)
@@ -589,10 +591,14 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 retval = gibbon_match_try_roll (self, current, target,
                                                 try_move);
                 try_move = FALSE;
-        } else {
-                g_printerr ("unhandled action: %s\n", G_OBJECT_TYPE_NAME (last_action));
+        } else if (GIBBON_IS_REJECT (last_action)) {
+                retval = gibbon_match_try_double (self, current, target);
+                if (!retval) {
+                        retval = gibbon_match_try_roll (self, current, target,
+                                                        try_move);
+                        try_move = FALSE;
+                }
         }
-        /* TODO: GIBBON_IS_REJECT */
 
         if (!retval)
                 return NULL;
@@ -881,10 +887,10 @@ gibbon_match_try_drop (const GibbonMatch *self,
         if (target->cube != 1)
                 return NULL;
 
-        if (current->cube_turned > 0) {
+        if (current->cube_turned < 0) {
                 side = GIBBON_POSITION_SIDE_WHITE;
                 current->scores[1] += current->cube;
-        } else if (current->cube_turned < 0) {
+        } else if (current->cube_turned > 0) {
                 side = GIBBON_POSITION_SIDE_BLACK;
                 current->scores[0] += current->cube;
         } else {
