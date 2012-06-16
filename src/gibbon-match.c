@@ -588,11 +588,6 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         } else if (GIBBON_IS_DROP (last_action)) {
                 retval = gibbon_match_try_roll (self, current, target,
                                                 try_move);
-                g_printerr ("After drop: %p\n", retval);
-                if (retval)
-                        g_printerr ("After drop (%p): %s\n",
-                                        retval->data,
-                                        G_OBJECT_TYPE_NAME (retval->data));
                 try_move = FALSE;
         } else {
                 g_printerr ("unhandled action: %s\n", G_OBJECT_TYPE_NAME (last_action));
@@ -698,7 +693,7 @@ gibbon_match_try_roll (const GibbonMatch *self,
          */
         reverse = current->turn < 0 ? TRUE : FALSE;
         for (die1 = 6; die1 > 1; --die1) {
-                for (die2 = 5; die2 > 0; --die2) {
+                for (die2 = die1 - 1; die2 > 0; --die2) {
                         current->dice[0] = current->turn * die1;
                         current->dice[1] = current->turn * die2;
                         move = gibbon_position_check_move (current, target, current->turn);
@@ -722,6 +717,8 @@ gibbon_match_try_roll (const GibbonMatch *self,
                         retval = g_slist_prepend (retval, play);
                         break;
                 }
+                if (retval)
+                        break;
         }
         for (die1 = 6; !retval && die1 > 0; --die1) {
                 current->dice[0] = current->turn * die1;
@@ -755,6 +752,7 @@ gibbon_match_try_roll (const GibbonMatch *self,
                 else
                         current->scores[0] += score;
         }
+
         return retval;
 }
 
@@ -808,7 +806,8 @@ gibbon_match_try_double (const GibbonMatch *self,
                                 return NULL;
                 } else if (target->cube == 1) {
                         if (current->scores[1] + current->cube
-                                        != target->scores[1])
+                                        != target->scores[1]
+                            || current->scores[0] != target->scores[0])
                                 return NULL;
                 } else if (current->cube << 1 != target->cube) {
                         return NULL;
@@ -822,7 +821,8 @@ gibbon_match_try_double (const GibbonMatch *self,
                                 return NULL;
                 } else if (target->cube == 1) {
                         if (current->scores[0] + current->cube
-                                        != target->scores[0])
+                                        != target->scores[0]
+                            || current->scores[1] != target->scores[1])
                                 return NULL;
                 } else if ((current->cube << 1) != target->cube) {
                         return NULL;
@@ -854,10 +854,12 @@ gibbon_match_try_take (const GibbonMatch *self,
                 current->may_double[0] = TRUE;
                 current->may_double[1] = FALSE;
                 side = GIBBON_POSITION_SIDE_WHITE;
-        } else {
+        } else if (current->cube_turned > 0) {
                 current->may_double[0] = FALSE;
                 current->may_double[1] = TRUE;
                 side = GIBBON_POSITION_SIDE_BLACK;
+        } else {
+                return NULL;
         }
 
         current->cube_turned = GIBBON_POSITION_SIDE_NONE;
@@ -879,12 +881,14 @@ gibbon_match_try_drop (const GibbonMatch *self,
         if (target->cube != 1)
                 return NULL;
 
-        if (current->cube_turned < 0) {
+        if (current->cube_turned > 0) {
                 side = GIBBON_POSITION_SIDE_WHITE;
                 current->scores[1] += current->cube;
-        } else {
+        } else if (current->cube_turned < 0) {
                 side = GIBBON_POSITION_SIDE_BLACK;
                 current->scores[0] += current->cube;
+        } else {
+                return NULL;
         }
 
         gibbon_position_reset (current);
