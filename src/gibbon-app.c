@@ -217,7 +217,7 @@ static void gibbon_app_class_init(GibbonAppClass *klass)
  */
 GibbonApp *
 gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
-               const gchar *data_dir)
+               const gchar *data_dir, const gchar *match_file)
 {
         GibbonApp *self = g_object_new(GIBBON_TYPE_APP, NULL);
         gchar *board_filename;

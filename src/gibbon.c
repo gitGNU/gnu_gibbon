@@ -36,6 +36,8 @@ static gchar *program_name;
 
 static gchar *data_dir = NULL;
 static gchar *pixmaps_dir = NULL;
+static gchar *match_file = NULL;
+
 gboolean version;
 
 static const GOptionEntry options[] =
@@ -132,7 +134,8 @@ main (int argc, char *argv[])
         }
 
         app = gibbon_app_new (builder_filename, pixmaps_dir,
-                              data_dir ? data_dir : GIBBON_DATADIR);
+                              data_dir ? data_dir : GIBBON_DATADIR,
+                              argv[1]);
         if (!app)
                 return -1;
 
@@ -190,6 +193,14 @@ parse_command_line (int argc, char *argv[])
         if (error) {
                 usage_error (error->message);
                 return FALSE;
+        }
+
+        if (argc > 2) {
+                g_printerr ("%s: Too many arguments!\n", argv[0]);
+                g_printerr ("Try `%s --help' for more information!\n", argv[0]);
+                return FALSE;
+        } else if (argc == 1) {
+                match_file = argv[1];
         }
         
         return TRUE;
