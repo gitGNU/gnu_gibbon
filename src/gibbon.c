@@ -176,7 +176,8 @@ parse_command_line (int argc, char *argv[])
         GOptionContext *context;
         GError *error = NULL;
 
-        context = g_option_context_new (_("- Gtk+ frontend for FIBS"));
+        context = g_option_context_new (_("[MATCH-FILE]"
+                                          " - GTK+ frontend for FIBS"));
         g_option_context_set_summary (context, "Play backgammon online.");
         g_option_context_set_description (context,
            _("Report bugs at https://savannah.nongnu.org/projects/gibbon."));
