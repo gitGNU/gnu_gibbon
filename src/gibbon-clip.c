@@ -2649,6 +2649,19 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
         if (0 == g_strcmp0 ("reject.", tokens[1]))
                 return gibbon_clip_parse_rejects (line, tokens, result);
 
+        if (0 == g_strcmp0 ("stop", tokens[1])
+            && 0 == g_strcmp0 ("watching", tokens[2])
+            && tokens[3]
+            && !tokens[4]) {
+                gibbon_clip_chomp (tokens[3], '.');
+                *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
+                                                GIBBON_CLIP_CODE_STOP_WATCHING);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_NAME,
+                                                    tokens[3]);
+                return TRUE;
+        }
+
         return FALSE;
 }
 

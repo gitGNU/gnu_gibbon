@@ -84,6 +84,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_WAIT_JOIN_TOO = 312,
                         GIBBON_CLIP_CODE_RESUME_CONFIRMATION = 313,
                         GIBBON_CLIP_CODE_WIN_MATCH = 314,
+                        GIBBON_CLIP_CODE_STOP_WATCHING = 315,
 
                         /* Various.  */
                         GIBBON_CLIP_CODE_START_MATCH = 400,
