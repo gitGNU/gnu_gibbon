@@ -1081,7 +1081,6 @@ gibbon_app_set_state_watching (const GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 }
 
-
 void
 gibbon_app_set_state_not_playing (const GibbonApp *self)
 {
@@ -1100,6 +1099,20 @@ gibbon_app_set_state_not_playing (const GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 
         obj = gibbon_app_find_object (self, "board-resign",
+                                      GTK_TYPE_TOOL_BUTTON);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
+
+        obj = gibbon_app_find_object (self, "open_menu_item",
+                                      GTK_TYPE_MENU_ITEM);
+        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
+}
+
+void
+gibbon_app_set_state_not_watching (const GibbonApp *self)
+{
+        GObject *obj;
+
+        obj = gibbon_app_find_object (self, "board-refresh",
                                       GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), FALSE);
 

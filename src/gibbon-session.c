@@ -601,6 +601,10 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
                 break;
+        case GIBBON_CLIP_CODE_STOP_WATCHING:
+                gibbon_app_set_state_not_watching (self->priv->app);
+                retval = GIBBON_CLIP_CODE_STOP_WATCHING;
+                break;
         case GIBBON_CLIP_CODE_ASYNC_WIN_MATCH:
                 retval = gibbon_session_handle_async_win_match (self, iter);
                 break;
