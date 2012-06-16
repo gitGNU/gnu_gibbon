@@ -14,3 +14,7 @@ dir=${srcdir:='.'}
         $dir/reject-white-complete.gmd || exit 1
 ./test_match_complete $dir/reject-black-incomplete.gmd \
         $dir/reject-black-complete.gmd || exit 1
+./test_match_complete $dir/reject2-white-incomplete.gmd \
+        $dir/reject2-white-complete.gmd || exit 1
+./test_match_complete $dir/reject2-black-incomplete.gmd \
+        $dir/reject2-black-complete.gmd || exit 1

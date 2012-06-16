@@ -1,0 +1,9 @@
+GMD-1 # Created by Gibbon version 0.2.0
+Length: 7
+Rule: Crawford
+Game:
+Roll:-: 2 4
+Move:B: 17/21 19/21
+Roll:W: 3 1
+Resign:B:1
+Reject:W
