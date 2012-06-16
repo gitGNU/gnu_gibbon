@@ -425,7 +425,7 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        if (side && pos->turn && side != pos->turn) {
+        if (!side || side != pos->turn) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_NOT_ON_TURN,
                                      _("This player is not on turn!"));
@@ -443,18 +443,17 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
             || (side < 0 && !pos->may_double[1])) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_DOUBLE_NOT_CUBE_OWNER,
-                                     _("Double but cube is neither centered"
-                                       " nor owned!"));
+                                     _("Double not allowed!"));
                 return FALSE;
         }
 
         g_free (pos->status);
         if (side == GIBBON_POSITION_SIDE_WHITE) {
-                pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
+                pos->cube_turned = GIBBON_POSITION_SIDE_WHITE;
                 pos->status = g_strdup_printf (_("%s offers a double."),
                                                pos->players[0]);
         } else {
-                pos->cube_turned = GIBBON_POSITION_SIDE_WHITE;
+                pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
                 pos->status = g_strdup_printf (_("%s offers a double."),
                                                pos->players[1]);
         }
@@ -483,7 +482,7 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
-        if (!pos->cube_turned || pos->cube_turned != side) {
+        if (!side || !pos->cube_turned || pos->cube_turned != -side) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_DROP_WITHOUT_DOUBLE,
                                      _("Opponent did not double!"));
@@ -525,7 +524,7 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
         }
 
         pos = gibbon_position_copy (gibbon_game_get_position (self));
-        if (!pos->cube_turned || pos->cube_turned != side) {
+        if (!side || !pos->cube_turned || pos->cube_turned != -side) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_TAKE_WITHOUT_DOUBLE,
                                      _("Opponent did not double!"));
@@ -553,6 +552,8 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
                         GibbonResign *resign, GError **error)
 {
         GibbonPosition *pos;
+
+        gibbon_match_return_val_if_fail (side, FALSE, error);
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
@@ -585,6 +586,8 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
         gchar *player;
         GibbonPositionSide other;
         const GibbonGameSnapshot *snapshot = NULL;
+
+        gibbon_match_return_val_if_fail (side, FALSE, error);
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
@@ -630,6 +633,8 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         const GibbonGameSnapshot *snapshot = NULL;
         GibbonPositionSide other;
         GibbonResign* resign;
+
+        gibbon_match_return_val_if_fail (side, FALSE, error);
 
         if (gibbon_game_over (self)) {
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
