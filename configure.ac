@@ -182,6 +182,8 @@ AC_CONFIG_FILES([
     src/Makefile
     src/gibbon.rc
     data/Makefile
+    data/gibbon.1
+    data/gibbon-convert.1
     data/gibbon.desktop.in
     pixmaps/Makefile
     pixmaps/boards/Makefile

@@ -1,0 +1,66 @@
+.TH GIBBON 1 "17 June 2012" "Gibbon @VERSION@"
+.SH NAME
+\fBgibbon\fP \- GTK+ frontend for FIBS
+.SH SYNOPSIS
+.B gibbon
+[\fIOPTION\fR...] [\fIMATCH_FILE\fR...]
+.SH DESCRIPTION
+.B Gibbon
+is graphical frontend to the First Internet Backgammon Server FIBS
+or other servers compatible to FIBS.  It is platform-independent and known to
+run and compile on Unix, Linux, Mac OS X and Microsoft Windows.
+.LP
+.SH OPTIONS
+.PP Mandatory arguments to long options are mandatory for short options, too.
+Similarly for optional arguments.
+.SS "Input file location:
+.TP
+MATCH_FILE
+optional backgammon match file to load for replay
+
+Match files can be in several formats.
+.B Gibbon
+supports the Smart Game Format SGF, JavaFIBS internal 
+match representations, 
+JellyFish match files (notposition files), and
+.B Gibbon\'s
+internal Gibbon Match Dump (GMD) files.
+.SS "Help Options:"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+show help options
+.TP
+\fB\-\-help-all
+show all help options
+.TP
+\fB\-\-help-gtk
+show GTK+ options
+.SS "Application Options:"
+.TP
+\fB\-d\fR, \fB\-\-data\-dir\fR=\fIDIRECTORY\fR
+path to the data directory (developers only)
+
+.B Gibbon
+will search the graphical user interface definitions in GtkBuilder format
+in this directory.  The option is only useful for developers.
+.TP
+\fB\-p\fR, \fB\-\-pixmaps\-dir\fR=\fIDIRECTORY\fR
+path to the pixmaps directory (developers only)
+
+.B Gibbon
+will search board definitions in this directory.  Board definitions are
+Scalable Vector Graphics (SVG) files.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+output version information and exit
+.TP
+\fB\-\-display\fR=\fIDISPLAY\fR
+X display to use (ignored on Microsoft Windows)
+.SH
+BUGS
+Please report bugs at https://savannah.nongnu.org/projects/gibbon.
+.SH
+FILES
+\fI~/gibbon/db.sqlite\fR, \fI~/gibbon/servers/\fR
+
+

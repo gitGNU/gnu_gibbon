@@ -1,0 +1,65 @@
+.TH GIBBON 1 "17 June 2012" "Gibbon @VERSION@"
+.SH NAME
+\fBgibbon\-convert\fP \- Gibbon match converter
+.SH SYNOPSIS
+.B gibbon-convert
+[\fIOPTION\fR...]
+.SS "Alternative usages:"
+
+.B gibbon-convert
+[\fIOPTION\fR...] \fIINPUTFILE\fR
+
+.B gibbon-convert
+[\fIOPTION\fR...] \fIINPUTFILE\fR \fIOUTPUTFILE\fR
+.SH DESCRIPTION
+Convert popular backgammon formats.
+
+The program supports the Smart Game Format SGF, JavaFIBS internal 
+match representations, JellyFish match files (notposition files), and
+.B Gibbon\'s
+internal Gibbon Match Dump (GMD) files.
+.LP
+.SH OPTIONS
+.PP Mandatory arguments to long options are mandatory for short options, too.
+Similarly for optional arguments.
+.SS "Help Options:"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+show help options
+.SS "Application Options:"
+.TP
+\fB\-i\fR, \fB\-\-input\-file\fR=\fIFILENAME\fR
+input filename or "-" for standard input
+.TP
+\fB\-o\fR, \fB\-\-output\-file\fR=\fIFILENAME\fR
+output filename or "-" for standard output
+.TP
+\fB\-f\fR, \fB\-\-from\-format\fR=\fIFORMAT\fR
+input format (omit for automatic detection)
+.TP
+\fB\-t\fR, \fB\-\-to\-format\fR=\fIFORMAT\fR
+output format (omit for automatic detection)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+output version information and exit
+
+If you specify one non-option argument it is interpreted as the name of an
+input file.  Two arguments are interpreted as the names of an input and
+output file.
+.SH
+FORMATS
+Recognized values for \fIFORMAT\fR are "SGF" for the Smart Game Format
+SGF, "GMD" for the Gibbon Match Dump format, "JellyFish" and "JavaFIBS".
+Format identifiers are case-insensitive and can be abbreviated as long
+as they are unique.
+
+For automatic detection from filename extensions, ".sgf" is expected for
+SGF, ".mat" for JellyFish", ".gmd" for the Gibbon Match Dump format, and
+".match" for JavaFIBS' internal format.
+.SH
+BUGS
+Please report bugs at https://savannah.nongnu.org/projects/gibbon.
+.SH
+SEE ALSO
+\fBgibbon(3)\fR
+

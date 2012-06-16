@@ -27,6 +27,9 @@ gsettings_SCHEMAS = $(gsettings_files:.xml.in=.xml)
 @INTLTOOL_XML_NOMERGE_RULE@
 @GSETTINGS_RULES@
 
+man_MANS = gibbon.1 gibbon-convert.1
+man_in_files = gibbon.1.in gibbon-convert.1.in
+
 gtkbuilderdir = $(datadir)/$(PACKAGE)
 gtkbuilder_DATA = $(PACKAGE).ui
 
@@ -34,7 +37,8 @@ EXTRA_DIST = \
 	$(desktop_in_files) \
 	$(schemas_in_files) \
 	$(gtkbuilder_DATA) \
-	$(gsettings_files)
+	$(gsettings_files) \
+	$(man_in_files)
 
 CLEANFILES = \
 	$(desktop_DATA) \

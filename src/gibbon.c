@@ -52,7 +52,7 @@ static const GOptionEntry options[] =
                 },
                 { "version", 'V', 0, G_OPTION_ARG_NONE, &version,
                   N_("output version information and exit"),
-                  N_("FORMAT")
+                  NULL
                 },
 	        { NULL }
 };
