@@ -582,6 +582,11 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                         try_move);
                         try_move = FALSE;
                 }
+        } else if (GIBBON_IS_ROLL (last_action)) {
+                if (try_move) {
+                        retval = gibbon_match_try_move (self, current, target);
+                        try_move = FALSE;
+                }
         } else if (GIBBON_IS_DOUBLE (last_action)) {
                 retval = gibbon_match_try_take (self, current, target);
                 if (!retval)

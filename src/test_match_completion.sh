@@ -10,6 +10,10 @@ dir=${srcdir:='.'}
         $dir/drop-white-complete.gmd || exit 1
 ./test_match_complete $dir/drop-black-incomplete.gmd \
         $dir/drop-black-complete.gmd || exit 1
+./test_match_complete $dir/roll-white-incomplete.gmd \
+        $dir/roll-white-complete.gmd || exit 1
+./test_match_complete $dir/roll-black-incomplete.gmd \
+        $dir/roll-black-complete.gmd || exit 1
 ./test_match_complete $dir/reject-white-incomplete.gmd \
         $dir/reject-white-complete.gmd || exit 1
 ./test_match_complete $dir/reject-black-incomplete.gmd \

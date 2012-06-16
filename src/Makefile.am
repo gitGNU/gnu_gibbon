@@ -250,6 +250,8 @@ MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
 	maxfill-white-incomplete.gmd maxfill-white-complete.gmd \
 	drop-black-incomplete.gmd drop-black-complete.gmd \
 	drop-white-incomplete.gmd drop-white-complete.gmd \
+	roll-white-incomplete.gmd roll-white-complete.gmd \
+	roll-black-incomplete.gmd roll-black-complete.gmd \
 	reject-white-incomplete.gmd reject-white-complete.gmd \
 	reject-black-incomplete.gmd reject-black-complete.gmd \
 	reject2-white-incomplete.gmd reject2-white-complete.gmd \
