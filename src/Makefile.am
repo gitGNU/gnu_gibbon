@@ -54,6 +54,7 @@ AM_CPPFLAGS = 				\
         -D_ISOC99_SOURCE		\
         $(GIBBON_GTK_MIGRATION_CFLAGS)	\
 	-DABS_BUILDDIR=\""$(abs_builddir)"\"	\
+	-DABS_SRCDIR=\""$(abs_srcdir)"\"	\
         -D_SVID_SOURCE
 
 common_SOURCES = 			\
