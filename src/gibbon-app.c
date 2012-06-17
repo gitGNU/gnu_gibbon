@@ -301,8 +301,8 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
                 if (!match) {
                         gibbon_app_display_error (self, match_file,
-                                                  _("Error loading `%s': %s"),
-                                                  match_file, error->message);
+                                                  _("%s"),
+                                                  error->message);
                         g_object_unref (loader);
                         g_error_free (error);
                         g_object_unref (self);
