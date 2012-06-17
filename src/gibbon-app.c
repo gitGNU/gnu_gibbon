@@ -99,8 +99,8 @@ G_DEFINE_TYPE (GibbonApp, gibbon_app, G_TYPE_OBJECT)
 static GtkBuilder *gibbon_app_get_builder (GibbonApp *self, const gchar *path);
 static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
                                                 const gchar *board_filename);
-static GibbonMatchList *gibbon_app_init_match_list (GibbonApp *self,
-                                                    const gchar *filename);
+static gboolean gibbon_app_init_match_list (GibbonApp *self,
+                                            const gchar *filename);
 
 static void gibbon_app_connect_signals (const GibbonApp *self);
 
@@ -298,8 +298,7 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         gibbon_app_set_icon(self, data_dir);
 
-        self->priv->match_list = gibbon_app_init_match_list (self, match_file);
-        if (!self->priv->match_list) {
+        if (!gibbon_app_init_match_list (self, match_file)) {
                 g_object_unref (self);
                 return NULL;
         }
@@ -308,7 +307,7 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
         return self;
 }
 
-static GibbonMatchList *
+gboolean
 gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
 {
         GibbonMatchList *list = gibbon_match_list_new ();
@@ -328,7 +327,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                         g_object_unref (loader);
                         g_error_free (error);
                         g_object_unref (self);
-                        return NULL;
+                        return FALSE;
                 }
 
                 gibbon_match_list_set_match (list, match);
@@ -336,7 +335,9 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                 g_object_unref (loader);
         }
 
-        return list;
+        self->priv->match_list = list;
+
+        return TRUE;
 }
 
 static GtkBuilder *
