@@ -88,6 +88,7 @@ extern void _gibbon_gmd_reader_yyerror (const gchar *msg);
 %option noinput
 %option case-insensitive
 %option stack
+%option noyy_top_state
 
 /* %option debug */
 
@@ -303,6 +304,5 @@ yywrap ()
 {
 	BEGIN (0);
 
-	/* Make compiler happy.  */
-	return yy_top_state () || 1;
+	return 1;
 }
