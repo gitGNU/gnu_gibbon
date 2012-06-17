@@ -89,7 +89,8 @@ common_SOURCES = 			\
         gibbon-take.c                   \
         gibbon-util.c			\
         gibbon-sgf-reader.c		\
-        gibbon-sgf-writer.c
+        gibbon-sgf-writer.c			\
+	gibbon-match-list.c	
 
 AM_YFLAGS = -d -v
 
@@ -197,7 +198,8 @@ noinst_HEADERS =			\
         gibbon-take.h			\
         gibbon-util.h			\
         html-entities.h			\
-        svg-util.h
+        svg-util.h			\
+	gibbon-match-list.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.
