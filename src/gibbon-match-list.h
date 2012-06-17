@@ -27,7 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include <gibbon-match.h>
+#include "gibbon-app.h"
+#include "gibbon-match.h"
 
 #define GIBBON_TYPE_MATCH_LIST \
         (gibbon_match_list_get_type ())
@@ -74,6 +75,7 @@ struct _GibbonMatchListClass
 
 GType gibbon_match_list_get_type (void) G_GNUC_CONST;
 
-GibbonMatchList *gibbon_match_list_new (void);
+GibbonMatchList *gibbon_match_list_new (GibbonApp *app);
+void gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match);
 
 #endif

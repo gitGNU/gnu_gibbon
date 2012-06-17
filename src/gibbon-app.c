@@ -53,6 +53,7 @@
 #include "gibbon-client-icons.h"
 #include "gibbon-settings.h"
 #include "gibbon-register-dialog.h"
+#include "gibbon-match-list.h"
 #include "gibbon-match-loader.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
@@ -86,6 +87,8 @@ struct _GibbonAppPrivate {
         GibbonInviterListView *inviter_list_view;
 
         GibbonClientIcons *client_icons;
+
+        GibbonMatchList *match_list;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -222,6 +225,9 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 {
         GibbonApp *self = g_object_new(GIBBON_TYPE_APP, NULL);
         gchar *board_filename;
+        GError *error = NULL;
+        GibbonMatchLoader *loader;
+        GibbonMatch *match;
 
         g_return_val_if_fail (singleton == NULL, singleton);
 
@@ -292,12 +298,12 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         gibbon_app_set_icon(self, data_dir);
 
+        self->priv->match_list = gibbon_match_list_new (self);
+
         if (match_file) {
-                GError *error = NULL;
-                GibbonMatchLoader *loader = gibbon_match_loader_new ();
-                GibbonMatch *match =
-                                gibbon_match_loader_read_match (
-                                                loader, match_file, &error);
+                loader = gibbon_match_loader_new ();
+                match = gibbon_match_loader_read_match (loader, match_file,
+                                                        &error);
 
                 if (!match) {
                         gibbon_app_display_error (self, match_file,
@@ -309,7 +315,8 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                         return NULL;
                 }
 
-                g_object_unref (match);
+                gibbon_match_list_set_match (self->priv->match_list, match);
+
                 g_object_unref (loader);
         }
 
