@@ -53,6 +53,7 @@
 #include "gibbon-client-icons.h"
 #include "gibbon-settings.h"
 #include "gibbon-register-dialog.h"
+#include "gibbon-match-loader.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -290,6 +291,27 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                         self->priv->inviter_list);
 
         gibbon_app_set_icon(self, data_dir);
+
+        if (match_file) {
+                GError *error = NULL;
+                GibbonMatchLoader *loader = gibbon_match_loader_new ();
+                GibbonMatch *match =
+                                gibbon_match_loader_read_match (
+                                                loader, match_file, &error);
+
+                if (!match) {
+                        gibbon_app_display_error (self, match_file,
+                                                  _("Error loading `%s': %s"),
+                                                  match_file, error->message);
+                        g_object_unref (loader);
+                        g_error_free (error);
+                        g_object_unref (self);
+                        return NULL;
+                }
+
+                g_object_unref (match);
+                g_object_unref (loader);
+        }
 
         singleton = self;
 
