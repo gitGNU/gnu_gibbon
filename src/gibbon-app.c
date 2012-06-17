@@ -99,6 +99,9 @@ G_DEFINE_TYPE (GibbonApp, gibbon_app, G_TYPE_OBJECT)
 static GtkBuilder *gibbon_app_get_builder (GibbonApp *self, const gchar *path);
 static GibbonCairoboard *gibbon_app_init_board (GibbonApp *self,
                                                 const gchar *board_filename);
+static GibbonMatchList *gibbon_app_init_match_list (GibbonApp *self,
+                                                    const gchar *filename);
+
 static void gibbon_app_connect_signals (const GibbonApp *self);
 
 /* Signal handlers.  */
@@ -225,9 +228,6 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 {
         GibbonApp *self = g_object_new(GIBBON_TYPE_APP, NULL);
         gchar *board_filename;
-        GError *error = NULL;
-        GibbonMatchLoader *loader;
-        GibbonMatch *match;
 
         g_return_val_if_fail (singleton == NULL, singleton);
 
@@ -298,7 +298,23 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         gibbon_app_set_icon(self, data_dir);
 
-        self->priv->match_list = gibbon_match_list_new (self);
+        self->priv->match_list = gibbon_app_init_match_list (self, match_file);
+        if (!self->priv->match_list) {
+                g_object_unref (self);
+                return NULL;
+        }
+        singleton = self;
+
+        return self;
+}
+
+static GibbonMatchList *
+gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
+{
+        GibbonMatchList *list = gibbon_match_list_new ();
+        GError *error = NULL;
+        GibbonMatchLoader *loader;
+        GibbonMatch *match;
 
         if (match_file) {
                 loader = gibbon_match_loader_new ();
@@ -315,14 +331,12 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                         return NULL;
                 }
 
-                gibbon_match_list_set_match (self->priv->match_list, match);
+                gibbon_match_list_set_match (list, match);
 
                 g_object_unref (loader);
         }
 
-        singleton = self;
-
-        return self;
+        return list;
 }
 
 static GtkBuilder *

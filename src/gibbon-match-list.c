@@ -33,8 +33,6 @@
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
-        GibbonApp *app;
-
         GibbonMatch *match;
 };
 
@@ -48,8 +46,6 @@ gibbon_match_list_init (GibbonMatchList *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MATCH_LIST, GibbonMatchListPrivate);
-
-        self->priv->app = NULL;
 
         self->priv->match = NULL;
 }
@@ -77,18 +73,15 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
 
 /**
  * gibbon_match_list_new:
- * @app: The #GibbonApp.
  *
  * Creates a new #GibbonMatchList.
  *
  * Returns: The newly created #GibbonMatchList or %NULL in case of failure.
  */
 GibbonMatchList *
-gibbon_match_list_new (GibbonApp *app)
+gibbon_match_list_new (void)
 {
         GibbonMatchList *self = g_object_new (GIBBON_TYPE_MATCH_LIST, NULL);
-
-        self->priv->app = app;
 
         return self;
 }
