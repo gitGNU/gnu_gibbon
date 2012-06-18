@@ -37,6 +37,7 @@ struct _GibbonMatchListPrivate {
         GibbonMatch *match;
 
         GtkListStore *games;
+        GtkListStore *moves;
 };
 
 #define GIBBON_MATCH_LIST_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -53,6 +54,7 @@ gibbon_match_list_init (GibbonMatchList *self)
         self->priv->match = NULL;
 
         self->priv->games = NULL;
+        self->priv->moves = NULL;
 }
 
 static void
@@ -87,8 +89,15 @@ GibbonMatchList *
 gibbon_match_list_new (void)
 {
         GibbonMatchList *self = g_object_new (GIBBON_TYPE_MATCH_LIST, NULL);
+        GtkListStore *moves;
 
         self->priv->games = gtk_list_store_new (1, G_TYPE_STRING);
+
+        moves = gtk_list_store_new (GIBBON_MATCH_LIST_N_COLUMNS,
+                                    G_TYPE_UINT,
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING);
+        self->priv->moves = moves;
 
         return self;
 }
@@ -134,4 +143,20 @@ gibbon_match_list_get_games_store (const GibbonMatchList *self)
         g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
 
         return self->priv->games;
+}
+
+GtkListStore *
+gibbon_match_list_get_moves_store (const GibbonMatchList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
+
+        return self->priv->moves;
+}
+
+void
+gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
+{
+        g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
+
+
 }

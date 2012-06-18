@@ -27,12 +27,14 @@
  */
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #include "gibbon-move-list-view.h"
 
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
         GtkTreeView *view;
+        const GibbonMatchList *match_list;
 };
 
 #define GIBBON_MOVE_LIST_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -47,6 +49,7 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
                 GIBBON_TYPE_MOVE_LIST_VIEW, GibbonMoveListViewPrivate);
 
         self->priv->view = NULL;
+        self->priv->match_list = NULL;
 }
 
 static void
@@ -68,18 +71,37 @@ gibbon_move_list_view_class_init (GibbonMoveListViewClass *klass)
 /**
  * gibbon_move_list_view_new:
  * @view: The #GtkTreeView.a
- * @list: The #GibbonMatchList holding the match information.
+ * @match_list: The #GibbonMatchList holding the match information.
  *
  * Creates a new #GibbonMoveListView.
  *
  * Returns: The newly created #GibbonMoveListView or %NULL in case of failure.
  */
 GibbonMoveListView *
-gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *list)
+gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
 {
-        GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW, NULL);
+        GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
+                                                 NULL);
+        GtkListStore *model;
 
         self->priv->view = view;
+        self->priv->match_list = match_list;
+
+        gtk_tree_view_insert_column_with_attributes (view, -1, _("#"),
+                        gtk_cell_renderer_text_new (),
+                        "text", GIBBON_MATCH_LIST_COL_MOVENO,
+                        NULL);
+        gtk_tree_view_insert_column_with_attributes (view, -1, _("Black"),
+                        gtk_cell_renderer_text_new (),
+                        "text", GIBBON_MATCH_LIST_COL_BLACK,
+                        NULL);
+        gtk_tree_view_insert_column_with_attributes (view, -1, _("White"),
+                        gtk_cell_renderer_text_new (),
+                        "text", GIBBON_MATCH_LIST_COL_WHITE,
+                        NULL);
+
+        model = gibbon_match_list_get_moves_store (self->priv->match_list);
+        gtk_tree_view_set_model (view, GTK_TREE_MODEL (model));
 
         return self;
 }

@@ -45,6 +45,13 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_MATCH_LIST, GibbonMatchListClass))
 
+enum {
+        GIBBON_MATCH_LIST_COL_MOVENO = 0,
+        GIBBON_MATCH_LIST_COL_BLACK,
+        GIBBON_MATCH_LIST_COL_WHITE,
+        GIBBON_MATCH_LIST_N_COLUMNS
+};
+
 /**
  * GibbonMatchList:
  *
@@ -77,5 +84,8 @@ GibbonMatchList *gibbon_match_list_new (void);
 void gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match);
 
 GtkListStore *gibbon_match_list_get_games_store (const GibbonMatchList *self);
+GtkListStore *gibbon_match_list_get_moves_store (const GibbonMatchList *self);
+
+void gibbon_match_list_set_active_game (GibbonMatchList *self, gint active);
 
 #endif

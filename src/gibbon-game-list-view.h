@@ -71,6 +71,6 @@ struct _GibbonGameListViewClass
 GType gibbon_game_list_view_get_type (void) G_GNUC_CONST;
 
 GibbonGameListView *gibbon_game_list_view_new (GtkComboBox *combo,
-                                               const GibbonMatchList *list);
+                                               GibbonMatchList *list);
 
 #endif
