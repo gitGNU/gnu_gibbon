@@ -26,14 +26,17 @@
  * A #GibbonMatchList is the model for the match listing in the moves tab.
  */
 
-#include <glib.h>
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-match-list.h"
+#include "gibbon-game.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
         GibbonMatch *match;
+
+        GtkListStore *games;
 };
 
 #define GIBBON_MATCH_LIST_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -48,6 +51,8 @@ gibbon_match_list_init (GibbonMatchList *self)
                 GIBBON_TYPE_MATCH_LIST, GibbonMatchListPrivate);
 
         self->priv->match = NULL;
+
+        self->priv->games = NULL;
 }
 
 static void
@@ -83,15 +88,50 @@ gibbon_match_list_new (void)
 {
         GibbonMatchList *self = g_object_new (GIBBON_TYPE_MATCH_LIST, NULL);
 
+        self->priv->games = gtk_list_store_new (1, G_TYPE_STRING);
+
         return self;
 }
 
 void
 gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 {
+        gsize i, num_games;
+        GtkTreeIter iter;
+        gchar *text;
+        const GibbonGame *game;
+        const GibbonPosition *pos;
+        gchar *comment;
+
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
         if (self->priv->match)
                 g_object_unref (self->priv->match);
         self->priv->match = match;
+
+        gtk_list_store_clear (self->priv->games);
+        num_games = gibbon_match_get_number_of_games (match);
+
+        for (i = 0; i < num_games; ++i) {
+                game = gibbon_match_get_nth_game (match, i);
+                pos = gibbon_game_get_initial_position (game);
+                comment = gibbon_game_is_crawford (game) ?
+                                _("(Crawford)") : "";
+                text = g_strdup_printf (_("Game %u: %u-%u %s"),
+                                        (unsigned int) i + 1,
+                                        pos->scores[1], pos->scores[0],
+                                        comment);
+                gtk_list_store_append (self->priv->games, &iter);
+                gtk_list_store_set (self->priv->games, &iter,
+                                    0, text, -1);
+                g_free (text);
+        }
+}
+
+GtkListStore *
+gibbon_match_list_get_games_store (const GibbonMatchList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
+
+        return self->priv->games;
 }

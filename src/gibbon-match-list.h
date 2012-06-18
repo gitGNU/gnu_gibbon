@@ -24,8 +24,7 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-match.h"
 
@@ -76,5 +75,7 @@ GType gibbon_match_list_get_type (void) G_GNUC_CONST;
 
 GibbonMatchList *gibbon_match_list_new (void);
 void gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match);
+
+GtkListStore *gibbon_match_list_get_games_store (const GibbonMatchList *self);
 
 #endif

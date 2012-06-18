@@ -54,6 +54,7 @@
 #include "gibbon-settings.h"
 #include "gibbon-register-dialog.h"
 #include "gibbon-match-list.h"
+#include "gibbon-game-list-view.h"
 #include "gibbon-match-loader.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
@@ -89,6 +90,7 @@ struct _GibbonAppPrivate {
         GibbonClientIcons *client_icons;
 
         GibbonMatchList *match_list;
+        GibbonGameListView *game_list_view;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -169,6 +171,9 @@ static void gibbon_app_init(GibbonApp *self)
         self->priv->inviter_list_view = NULL;
 
         self->priv->client_icons = NULL;
+
+        self->priv->match_list = NULL;
+        self->priv->game_list_view = NULL;
 }
 
 static void gibbon_app_finalize(GObject *object)
@@ -314,6 +319,14 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GError *error = NULL;
         GibbonMatchLoader *loader;
         GibbonMatch *match;
+        GibbonGameListView *game_list_view;
+        GObject *obj;
+
+        obj = gibbon_app_find_object (self, "combo-game-select",
+                                      GTK_TYPE_COMBO_BOX);
+
+        game_list_view = gibbon_game_list_view_new (GTK_COMBO_BOX (obj), list);
+        self->priv->game_list_view = game_list_view;
 
         if (match_file) {
                 loader = gibbon_match_loader_new ();

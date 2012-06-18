@@ -89,10 +89,7 @@ common_SOURCES = 			\
         gibbon-take.c                   \
         gibbon-util.c			\
         gibbon-sgf-reader.c		\
-        gibbon-sgf-writer.c			\
-	gibbon-match-list.c				\
-	gibbon-match-loader.c				\
-	gibbon-game-list-view.c	
+        gibbon-sgf-writer.c
 
 AM_YFLAGS = -d -v
 
@@ -131,6 +128,10 @@ gibbon_SOURCES = 			\
         gibbon-signal.c			\
         html-entities.c			\
         svg-util.c			\
+	gibbon-match-list.c		\
+	gibbon-match-loader.c		\
+	gibbon-game-list-view.c		\
+	gibbon-move-list-view.c		\
         $(common_SOURCES)
 
 gibbon_convert_SOURCES =                \
@@ -201,9 +202,10 @@ noinst_HEADERS =			\
         gibbon-util.h			\
         html-entities.h			\
         svg-util.h			\
-	gibbon-match-list.h			\
-	gibbon-match-loader.h			\
-	gibbon-game-list-view.h
+	gibbon-match-list.h		\
+	gibbon-match-loader.h		\
+	gibbon-game-list-view.h		\
+	gibbon-move-list-view.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.

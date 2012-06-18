@@ -20,10 +20,6 @@
 #ifndef _GIBBON_GAME_LIST_VIEW_H
 # define _GIBBON_GAME_LIST_VIEW_H
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include <glib.h>
 #include <glib-object.h>
 
@@ -49,8 +45,8 @@
 /**
  * GibbonGameListView:
  *
- * Visual representation of the game list combo in the moves tab.
- */
+ * One instance of a #GibbonGameListView.  All properties are private.
+ **/
 typedef struct _GibbonGameListView GibbonGameListView;
 struct _GibbonGameListView
 {
@@ -63,8 +59,8 @@ struct _GibbonGameListView
 /**
  * GibbonGameListViewClass:
  *
- * Class definition for a #GibbonGameListView.
- */
+ * Visual representation of the game list!
+ **/
 typedef struct _GibbonGameListViewClass GibbonGameListViewClass;
 struct _GibbonGameListViewClass
 {
@@ -74,6 +70,7 @@ struct _GibbonGameListViewClass
 
 GType gibbon_game_list_view_get_type (void) G_GNUC_CONST;
 
-GibbonGameListView *gibbon_game_list_view_new (const GibbonMatchList *list);
+GibbonGameListView *gibbon_game_list_view_new (GtkComboBox *combo,
+                                               const GibbonMatchList *list);
 
 #endif
