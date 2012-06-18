@@ -65,3 +65,4 @@
 - Segfault: Unlimited match, resumed, rejected recube from opponent with 
   right-click.
 - Make sure that src/test-match-complete does not leak memory.
+- gibbon_player_list_column_types and similar arrays seem to be unneeded.
