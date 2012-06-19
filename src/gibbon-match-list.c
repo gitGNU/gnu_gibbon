@@ -31,6 +31,9 @@
 
 #include "gibbon-match-list.h"
 #include "gibbon-game.h"
+#include "gibbon-roll.h"
+#include "gibbon-reject.h"
+#include "gibbon-accept.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -47,7 +50,10 @@ G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 
 static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
                                               const GibbonGameAction *action,
-                                              GibbonPositionSide side);
+                                              GibbonPositionSide side,
+                                              const GibbonPosition *pos);
+static gchar *gibbon_match_list_format_roll (GibbonMatchList *self,
+                                             GibbonRoll *roll);
 
 static void 
 gibbon_match_list_init (GibbonMatchList *self)
@@ -98,11 +104,12 @@ gibbon_match_list_new (void)
         self->priv->games = gtk_list_store_new (1, G_TYPE_STRING);
 
         moves = gtk_list_store_new (GIBBON_MATCH_LIST_N_COLUMNS,
-                                    G_TYPE_UINT,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
-                                    G_TYPE_STRING);
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    G_TYPE_UINT);
         self->priv->moves = moves;
 
         return self;
@@ -167,6 +174,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         gsize i, num_actions;
         const GibbonGameAction *action;
         GibbonPositionSide side;
+        const GibbonPosition *pos;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
@@ -185,7 +193,8 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 
         for (i = 0; i < num_actions; ++i) {
                 action = gibbon_game_get_nth_action (game, i, &side);
-                if (!gibbon_match_list_add_action (self, action, side))
+                pos = gibbon_game_get_nth_position (game, i);
+                if (!gibbon_match_list_add_action (self, action, side, pos))
                         break;
         }
 }
@@ -193,8 +202,103 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 static gboolean
 gibbon_match_list_add_action (GibbonMatchList *self,
                               const GibbonGameAction *action,
-                              GibbonPositionSide side)
+                              GibbonPositionSide side,
+                              const GibbonPosition *pos)
 {
-        /* TODO! */
-        return FALSE;
+        GtkTreeIter last_row;
+        GtkTreeIter iter;
+        gint rows;
+        guint moveno, last_moveno;
+        guint colno;
+        gchar *buf;
+
+        /* Get an iter to the last row.  */
+        rows = gtk_tree_model_iter_n_children (
+                        GTK_TREE_MODEL (self->priv->moves), NULL);
+
+        /* Do we need a new row? */
+        if (!rows) {
+                gtk_list_store_append (self->priv->moves, &iter);
+                if (!side && GIBBON_IS_ROLL (action)) {
+                        moveno = 0;
+                } else {
+                        moveno = 1;
+                }
+                gtk_list_store_set (self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
+                                    moveno,
+                                    -1);
+                last_row = iter;
+        } else {
+                g_return_val_if_fail (gtk_tree_model_iter_nth_child (
+                                GTK_TREE_MODEL (self->priv->moves),
+                                &last_row, NULL, rows - 1), FALSE);
+        }
+
+        /* Determine the column that has to be manipulated.  */
+        if (GIBBON_IS_ROLL (action)) {
+                if (side > 0)
+                        colno = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                else
+                        colno = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        } else {
+                if (side > 0)
+                        colno = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                else
+                        colno = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        }
+
+        gtk_tree_model_get (GTK_TREE_MODEL (self->priv->moves), &last_row,
+                                            colno, &buf,
+                                            GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
+                                            &last_moveno,
+                                            -1);
+        if (buf) {
+                /* We must add a new row.  */
+                gtk_list_store_append (self->priv->moves, &iter);
+
+                if (!(!side || GIBBON_IS_REJECT (action)
+                      || GIBBON_IS_ACCEPT (action))) {
+                        g_free (buf);
+                        buf = g_strdup_printf ("%u", last_moveno + 1);
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            GIBBON_MATCH_LIST_COL_MOVENO, buf,
+                                            GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
+                                            last_moveno + 1,
+                                            -1);
+                } else {
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
+                                            last_moveno,
+                                            -1);
+                }
+        } else {
+                iter = last_row;
+        }
+        g_free (buf);
+        buf = NULL;
+
+        if (GIBBON_IS_ROLL (action)) {
+                buf = gibbon_match_list_format_roll (self,
+                                                     GIBBON_ROLL (action));
+        }
+
+        if (buf) {
+                gtk_list_store_set (self->priv->moves, &iter,
+                                    colno, buf, -1);
+                g_free (buf);
+        }
+
+        return TRUE;
+}
+
+static gchar *
+gibbon_match_list_format_roll (GibbonMatchList *self, GibbonRoll *roll)
+{
+        /*
+         * TRANSLATORS: This is how a roll is formatted in the move list.
+         * Normally this string can be copied verbatim unless another format
+         * is usual for your language.
+         */
+        return g_strdup_printf (_("%u%u:"), roll->die1, roll->die2);
 }
