@@ -902,3 +902,11 @@ gibbon_game_resignation (const GibbonGame *self)
 
         return self->priv->resigned;
 }
+
+gsize
+gibbon_game_get_num_actions (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), 1);
+
+        return self->priv->num_snapshots;
+}
