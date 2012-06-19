@@ -38,6 +38,7 @@
 #include "gibbon-reject.h"
 #include "gibbon-accept.h"
 #include "gibbon-move.h"
+#include "gibbon-double.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -62,6 +63,8 @@ static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
                                              const GibbonMove *move,
                                              GibbonPositionSide side,
                                              const GibbonPosition *pos);
+static gchar *gibbon_match_list_format_double (GibbonMatchList *self,
+                                              const GibbonPosition *pos);
 
 static void 
 gibbon_match_list_init (GibbonMatchList *self)
@@ -293,6 +296,8 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 buf = gibbon_match_list_format_move (self,
                                                      GIBBON_MOVE (action),
                                                      side, pos);
+        } else if (GIBBON_IS_DOUBLE (action)) {
+                buf = gibbon_match_list_format_double (self, pos);
         }
 
         if (buf) {
@@ -322,4 +327,11 @@ gibbon_match_list_format_move (GibbonMatchList *self,
                                const GibbonPosition *pos)
 {
         return gibbon_position_format_move (pos, move, side, FALSE);
+}
+
+static gchar *
+gibbon_match_list_format_double (GibbonMatchList *self,
+                                 const GibbonPosition *pos)
+{
+        return g_strdup_printf (_("Double to %u"), pos->cube << 1);
 }
