@@ -39,6 +39,8 @@
 #include "gibbon-accept.h"
 #include "gibbon-move.h"
 #include "gibbon-double.h"
+#include "gibbon-take.h"
+#include "gibbon-drop.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -298,6 +300,10 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                                                      side, pos);
         } else if (GIBBON_IS_DOUBLE (action)) {
                 buf = gibbon_match_list_format_double (self, pos);
+        } else if (GIBBON_IS_TAKE (action)) {
+                buf = g_strdup (_("Take"));
+        } else if (GIBBON_IS_DROP (action)) {
+                buf = g_strdup (_("Drop"));
         }
 
         if (buf) {
