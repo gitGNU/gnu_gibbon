@@ -45,6 +45,10 @@ struct _GibbonMatchListPrivate {
 
 G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 
+static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
+                                              const GibbonGameAction *action,
+                                              GibbonPositionSide side);
+
 static void 
 gibbon_match_list_init (GibbonMatchList *self)
 {
@@ -158,7 +162,39 @@ gibbon_match_list_get_moves_store (const GibbonMatchList *self)
 void
 gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 {
+        GibbonGame *game;
+        gsize num_games;
+        gsize i, num_actions;
+        const GibbonGameAction *action;
+        GibbonPositionSide side;
+
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
+        gtk_list_store_clear (self->priv->moves);
 
+        if (active < 0)
+                return;
+
+        num_games = gibbon_match_get_number_of_games (self->priv->match);
+        g_return_if_fail (num_games > active);
+
+        game = gibbon_match_get_nth_game (self->priv->match, active);
+        g_return_if_fail (game != NULL);
+
+        num_actions = gibbon_game_get_num_actions (game);
+
+        for (i = 0; i < num_actions; ++i) {
+                action = gibbon_game_get_nth_action (game, i, &side);
+                if (!gibbon_match_list_add_action (self, action, side))
+                        break;
+        }
+}
+
+static gboolean
+gibbon_match_list_add_action (GibbonMatchList *self,
+                              const GibbonGameAction *action,
+                              GibbonPositionSide side)
+{
+        /* TODO! */
+        return FALSE;
 }
