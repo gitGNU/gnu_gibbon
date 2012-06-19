@@ -91,13 +91,21 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         gtk_cell_renderer_text_new (),
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
+        gtk_tree_view_insert_column_with_attributes (view, -1, "  ",
+                        gtk_cell_renderer_text_new (),
+                        "text", GIBBON_MATCH_LIST_COL_BLACK_ROLL,
+                        NULL);
         gtk_tree_view_insert_column_with_attributes (view, -1, _("Black"),
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_BLACK,
+                        "text", GIBBON_MATCH_LIST_COL_BLACK_MOVE,
+                        NULL);
+        gtk_tree_view_insert_column_with_attributes (view, -1, "  ",
+                        gtk_cell_renderer_text_new (),
+                        "text", GIBBON_MATCH_LIST_COL_WHITE_ROLL,
                         NULL);
         gtk_tree_view_insert_column_with_attributes (view, -1, _("White"),
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_WHITE,
+                        "text", GIBBON_MATCH_LIST_COL_WHITE_MOVE,
                         NULL);
 
         model = gibbon_match_list_get_moves_store (self->priv->match_list);

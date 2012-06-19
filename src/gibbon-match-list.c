@@ -96,6 +96,8 @@ gibbon_match_list_new (void)
         moves = gtk_list_store_new (GIBBON_MATCH_LIST_N_COLUMNS,
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING);
         self->priv->moves = moves;
 
