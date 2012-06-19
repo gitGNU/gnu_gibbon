@@ -953,15 +953,16 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkTreeView" id="moves-view">
+                      <object class="GtkScrolledWindow" id="scrolledwindow6">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <child>
+                          <object class="GtkTreeView" id="moves-view">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </object>
+                        </child>
                       </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
