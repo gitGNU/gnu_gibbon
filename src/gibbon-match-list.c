@@ -30,10 +30,14 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-match-list.h"
+
+#include "gibbon-position.h"
+
 #include "gibbon-game.h"
 #include "gibbon-roll.h"
 #include "gibbon-reject.h"
 #include "gibbon-accept.h"
+#include "gibbon-move.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -54,6 +58,10 @@ static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
                                               const GibbonPosition *pos);
 static gchar *gibbon_match_list_format_roll (GibbonMatchList *self,
                                              GibbonRoll *roll);
+static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
+                                             const GibbonMove *move,
+                                             GibbonPositionSide side,
+                                             const GibbonPosition *pos);
 
 static void 
 gibbon_match_list_init (GibbonMatchList *self)
@@ -281,6 +289,10 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         if (GIBBON_IS_ROLL (action)) {
                 buf = gibbon_match_list_format_roll (self,
                                                      GIBBON_ROLL (action));
+        } else if (GIBBON_IS_MOVE (action)) {
+                buf = gibbon_match_list_format_move (self,
+                                                     GIBBON_MOVE (action),
+                                                     side, pos);
         }
 
         if (buf) {
@@ -301,4 +313,13 @@ gibbon_match_list_format_roll (GibbonMatchList *self, GibbonRoll *roll)
          * is usual for your language.
          */
         return g_strdup_printf (_("%u%u:"), roll->die1, roll->die2);
+}
+
+static gchar *
+gibbon_match_list_format_move (GibbonMatchList *self,
+                               const GibbonMove *move,
+                               GibbonPositionSide side,
+                               const GibbonPosition *pos)
+{
+        return gibbon_position_format_move (pos, move, side, FALSE);
 }
