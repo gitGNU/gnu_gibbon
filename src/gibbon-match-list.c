@@ -41,6 +41,9 @@
 #include "gibbon-double.h"
 #include "gibbon-take.h"
 #include "gibbon-drop.h"
+#include "gibbon-resign.h"
+#include "gibbon-accept.h"
+#include "gibbon-reject.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -66,7 +69,10 @@ static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
                                              GibbonPositionSide side,
                                              const GibbonPosition *pos);
 static gchar *gibbon_match_list_format_double (GibbonMatchList *self,
-                                              const GibbonPosition *pos);
+                                               const GibbonPosition *pos);
+static gchar *gibbon_match_list_format_resign (GibbonMatchList *self,
+                                               const GibbonResign *resign,
+                                               const GibbonPosition *pos);
 
 static void 
 gibbon_match_list_init (GibbonMatchList *self)
@@ -332,9 +338,17 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         } else if (GIBBON_IS_DOUBLE (action)) {
                 buf = gibbon_match_list_format_double (self, pos);
         } else if (GIBBON_IS_TAKE (action)) {
-                buf = g_strdup (_("Take"));
+                buf = g_strdup (_("Takes"));
         } else if (GIBBON_IS_DROP (action)) {
-                buf = g_strdup (_("Drop"));
+                buf = g_strdup (_("Drops"));
+        } else if (GIBBON_IS_RESIGN (action)) {
+                buf = gibbon_match_list_format_resign (self,
+                                                       GIBBON_RESIGN (action),
+                                                       pos);
+        } else if (GIBBON_IS_ACCEPT (action)) {
+                buf = g_strdup (_("Accepts"));
+        } else if (GIBBON_IS_REJECT (action)) {
+                buf = g_strdup (_("Rejects"));
         }
 
         if (buf) {
@@ -371,7 +385,23 @@ gibbon_match_list_format_double (GibbonMatchList *self,
                                  const GibbonPosition *pos)
 {
         if (pos->cube > 1)
-                return g_strdup_printf (_("Redouble to %u"), pos->cube << 1);
+                return g_strdup_printf (_("Redoubles to %u"), pos->cube << 1);
         else
-                return g_strdup_printf (_("Double to %u"), pos->cube << 1);
+                return g_strdup_printf (_("Doubles to %u"), pos->cube << 1);
+}
+
+static gchar *
+gibbon_match_list_format_resign (GibbonMatchList *self,
+                                 const GibbonResign *resign,
+                                 const GibbonPosition *pos)
+{
+        if (resign->value == pos->cube)
+                return g_strdup (_("Resigns"));
+        else if (resign->value == (pos->cube << 1))
+                return g_strdup (_("Resigns gammon"));
+        else if (resign->value == (pos->cube + (pos->cube << 1)))
+                return g_strdup (_("Resigns backgammon"));
+        else
+                return g_strdup_printf (_("Resigns with %u points"),
+                                        resign->value);
 }
