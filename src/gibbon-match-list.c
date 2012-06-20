@@ -222,7 +222,7 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         GtkTreeIter iter;
         gint rows;
         guint moveno, last_moveno;
-        guint colno;
+        guint colno, colno2;
         gchar *buf;
 
         /* Get an iter to the last row.  */
@@ -242,6 +242,17 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                                     moveno,
                                     -1);
                 last_row = iter;
+
+                if (side > 0) {
+                        /*
+                         * If the very first action will be listed on white's
+                         * side we add a placeholder for black's move.
+                         */
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            GIBBON_MATCH_LIST_COL_BLACK_MOVE,
+                                            "",
+                                            -1);
+                }
         } else {
                 g_return_val_if_fail (gtk_tree_model_iter_nth_child (
                                 GTK_TREE_MODEL (self->priv->moves),
@@ -261,11 +272,29 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                         colno = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
         }
 
+        /*
+         * Check whether the column that has to be manipulated is already
+         * filled.  If it is we definitely have to add a new row.
+         */
         gtk_tree_model_get (GTK_TREE_MODEL (self->priv->moves), &last_row,
                                             colno, &buf,
                                             GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
                                             &last_moveno,
                                             -1);
+        if (!buf && GIBBON_IS_ROLL (action)) {
+                 /*
+                  * If this is a roll make sure that we do not write overwrite
+                  * a possible resignation or rejected resignation.
+                  */
+                if (side > 0)
+                        colno2 = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                else
+                        colno2 = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                gtk_tree_model_get (GTK_TREE_MODEL (self->priv->moves),
+                                                    &last_row,
+                                                    colno2, &buf,
+                                                    -1);
+        }
         if (buf) {
                 /* We must add a new row.  */
                 gtk_list_store_append (self->priv->moves, &iter);
