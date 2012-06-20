@@ -237,10 +237,12 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 } else {
                         moveno = 1;
                 }
+                buf = g_strdup_printf ("%u", moveno);
                 gtk_list_store_set (self->priv->moves, &iter,
-                                    GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO,
-                                    moveno,
+                                    GIBBON_MATCH_LIST_COL_MOVENO, buf,
+                                    GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO, moveno,
                                     -1);
+                g_free (buf);
                 last_row = iter;
 
                 if (side > 0) {
@@ -368,5 +370,8 @@ static gchar *
 gibbon_match_list_format_double (GibbonMatchList *self,
                                  const GibbonPosition *pos)
 {
-        return g_strdup_printf (_("Double to %u"), pos->cube << 1);
+        if (pos->cube > 1)
+                return g_strdup_printf (_("Redouble to %u"), pos->cube << 1);
+        else
+                return g_strdup_printf (_("Double to %u"), pos->cube << 1);
 }
