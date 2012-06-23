@@ -252,21 +252,43 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkTreeIter *iter)
 {
         gchar *roll_string;
+        gdouble luck;
+        PangoStyle style;
+        PangoWeight weight;
 
         if (side < 0)
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_BLACK_ROLL,
                                     &roll_string,
+                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK,
+                                    &luck,
                                     -1);
         else
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_ROLL,
                                     &roll_string,
+                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK,
+                                    &luck,
                                     -1);
 
-        g_object_set (cell, "text", roll_string, NULL);
+        if (luck >= 0.6) {
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_BOLD;
+        } else if (luck <= -0.6) {
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_NORMAL;
+        } else {
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_NORMAL;
+        }
 
+        g_object_set (cell,
+                      "text", roll_string,
+                      "weight", weight,
+                      "style", style,
+                      NULL);
         g_free (roll_string);
+
 }
 
 
