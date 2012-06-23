@@ -46,6 +46,28 @@ G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 
 static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
 
+static void gibbon_move_list_view_black_roll_data_func (GtkTreeViewColumn
+                                                        *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel
+                                                        *tree_model,
+                                                        GtkTreeIter *iter,
+                                                        GibbonMoveListView
+                                                        *self);
+static void gibbon_move_list_view_white_roll_data_func (GtkTreeViewColumn
+                                                        *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel
+                                                        *tree_model,
+                                                        GtkTreeIter *iter,
+                                                        GibbonMoveListView
+                                                        *self);
+static void gibbon_move_list_view_roll (GibbonMoveListView *self,
+                                        GibbonPositionSide side,
+                                        GtkCellRenderer *cell,
+                                        GtkTreeModel *tree_model,
+                                        GtkTreeIter *iter);
+
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
 {
@@ -100,18 +122,20 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         gtk_cell_renderer_text_new (),
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
-        gtk_tree_view_insert_column_with_attributes (view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_BLACK_ROLL,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_black_roll_data_func,
+                        self, NULL);
         gtk_tree_view_insert_column_with_attributes (view, -1, _("Black"),
                         gtk_cell_renderer_text_new (),
                         "text", GIBBON_MATCH_LIST_COL_BLACK_MOVE,
                         NULL);
-        gtk_tree_view_insert_column_with_attributes (view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_WHITE_ROLL,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_white_roll_data_func,
+                        self, NULL);
         gtk_tree_view_insert_column_with_attributes (view, -1, _("White"),
                         gtk_cell_renderer_text_new (),
                         "text", GIBBON_MATCH_LIST_COL_WHITE_MOVE,
@@ -154,4 +178,52 @@ gibbon_move_list_view_on_insert (const GibbonMoveListView *self)
                                       0.0, 0.0);
 
         gtk_tree_path_free (path);
+}
+
+static void
+gibbon_move_list_view_black_roll_data_func (GtkTreeViewColumn *tree_column,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel *tree_model,
+                                            GtkTreeIter *iter,
+                                            GibbonMoveListView *self)
+{
+        gibbon_move_list_view_roll (self, GIBBON_POSITION_SIDE_BLACK,
+                                    cell, tree_model, iter);
+}
+
+static void
+gibbon_move_list_view_white_roll_data_func (GtkTreeViewColumn *tree_column,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel *tree_model,
+                                            GtkTreeIter *iter,
+                                            GibbonMoveListView *self)
+{
+        gibbon_move_list_view_roll (self, GIBBON_POSITION_SIDE_BLACK,
+                                    cell, tree_model, iter);
+}
+
+static void
+gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
+                            GtkCellRenderer *cell, GtkTreeModel *tree_model,
+                            GtkTreeIter *iter)
+{
+        gchar *roll_string;
+
+        if (side < 0)
+                gtk_tree_model_get (tree_model, iter,
+                                    GIBBON_MATCH_LIST_COL_BLACK_ROLL,
+                                    &roll_string,
+                                    -1);
+        else
+                gtk_tree_model_get (tree_model, iter,
+                                    GIBBON_MATCH_LIST_COL_WHITE_ROLL,
+                                    &roll_string,
+                                    -1);
+
+        if (!roll_string)
+                return;
+
+        g_object_set (cell, "text", roll_string, NULL);
+
+        g_free (roll_string);
 }
