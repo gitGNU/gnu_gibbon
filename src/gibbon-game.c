@@ -825,6 +825,20 @@ gibbon_game_get_nth_position (const GibbonGame *self, gint n)
                 return NULL;
 }
 
+const GibbonAnalysis *
+gibbon_game_get_nth_analysis (const GibbonGame *self, gint n)
+{
+        const GibbonGameSnapshot *snapshot;
+
+        g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        snapshot = gibbon_game_get_nth_snapshot (self, n);
+
+        if (snapshot)
+                return snapshot->analysis;
+        else
+                return NULL;
+}
 
 static const GibbonGameSnapshot *
 gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
