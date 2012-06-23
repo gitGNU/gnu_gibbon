@@ -131,6 +131,8 @@ gibbon_game_finalize (GObject *object)
         for (i = 0; i < self->priv->num_snapshots; ++i) {
                 snapshot = &self->priv->snapshots[i];
                 g_object_unref (snapshot->action);
+                if (snapshot->analysis)
+                        g_object_unref (snapshot->analysis);
                 gibbon_position_free (snapshot->resulting_position);
        }
         g_free (self->priv->snapshots);
@@ -236,6 +238,36 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                             " %s!", G_OBJECT_TYPE_NAME (action));
                 return FALSE;
         }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_game_add_action_with_analysis (GibbonGame *self, GibbonPositionSide side,
+                                      GibbonGameAction *action,
+                                      GibbonAnalysis *analysis,
+                                      GError **error)
+{
+        GibbonGameSnapshot *snapshot;
+
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME (self), FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
+                                         error);
+        gibbon_match_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
+                                         || GIBBON_POSITION_SIDE_BLACK,
+                                         FALSE, error);
+        if (analysis)
+                gibbon_match_return_val_if_fail (GIBBON_IS_ANALYSIS (analysis),
+                                                 FALSE, error);
+
+        if (!gibbon_game_add_action (self, side, action, error))
+                return FALSE;
+
+        if (!analysis)
+                return TRUE;
+
+        snapshot = self->priv->snapshots + self->priv->num_snapshots - 1;
+        snapshot->analysis = analysis;
 
         return TRUE;
 }
@@ -750,6 +782,7 @@ gibbon_game_add_snapshot (GibbonGame *self, GibbonGameAction *action,
         snapshot->action = action;
         snapshot->side = side;
         snapshot->resulting_position = position;
+        snapshot->analysis = NULL;
 }
 
 static const GibbonGameSnapshot *

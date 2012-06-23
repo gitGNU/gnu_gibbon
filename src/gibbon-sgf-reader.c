@@ -49,6 +49,8 @@
 #include "gibbon-reject.h"
 #include "gibbon-accept.h"
 
+#include "gibbon-analysis-roll.h"
+
 typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
@@ -73,6 +75,7 @@ static gboolean gibbon_sgf_reader_add_action (GibbonSGFReader *self,
                                               GibbonMatch *match,
                                               GibbonPositionSide side,
                                               GibbonGameAction *action,
+                                              GibbonAnalysis *analysis,
                                               GError **error);
 static gboolean gibbon_sgf_reader_game (GibbonSGFReader *self,
                                         GibbonMatch *match,
@@ -89,6 +92,7 @@ static gboolean gibbon_sgf_reader_match_info_item (GibbonSGFReader *self,
 static gboolean gibbon_sgf_reader_move (GibbonSGFReader *self,
                                         GibbonMatch *match,
                                         const GSGFProperty *prop,
+                                        const GSGFNode *node,
                                         GibbonPositionSide side,
                                         GError **error);
 
@@ -238,7 +242,8 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 static gboolean
 gibbon_sgf_reader_add_action (GibbonSGFReader *self, GibbonMatch *match,
                               GibbonPositionSide side,
-                              GibbonGameAction *action, GError **error)
+                              GibbonGameAction *action,
+                              GibbonAnalysis *analysis, GError **error)
 {
         GibbonGame *game;
 
@@ -246,11 +251,16 @@ gibbon_sgf_reader_add_action (GibbonSGFReader *self, GibbonMatch *match,
         if (!game) {
                 g_set_error_literal (error, 0, -1, _("No game in progress!"));
                 g_object_unref (action);
+                if (analysis)
+                        g_object_unref (analysis);
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, error)) {
+        if (!gibbon_game_add_action_with_analysis (game, side, action,
+                                                   analysis, error)) {
                 g_object_unref (action);
+                if (analysis)
+                        g_object_unref (analysis);
                 return FALSE;
         }
 
@@ -306,8 +316,8 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                         prop = gsgf_node_get_property (node, "W");
                         side = GIBBON_POSITION_SIDE_BLACK;
                 }
-                if (prop && !gibbon_sgf_reader_move (self, match, prop, side,
-                                                     error))
+                if (prop && !gibbon_sgf_reader_move (self, match, prop, node,
+                                                     side, error))
                                 return FALSE;
         }
 
@@ -331,11 +341,11 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                 resign = gibbon_resign_new (gsgf_result_get_score (result));
                 action = GIBBON_GAME_ACTION (resign);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
                 action = GIBBON_GAME_ACTION (gibbon_accept_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, -side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         }
 
@@ -447,8 +457,8 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
 
 static gboolean
 gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
-                        const GSGFProperty *prop, GibbonPositionSide side,
-                        GError **error)
+                        const GSGFProperty *prop, const GSGFNode *node,
+                        GibbonPositionSide side, GError **error)
 {
         GSGFMoveBackgammon *gsgf_move;
         guint dice[2];
@@ -457,6 +467,9 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         gsize num_movements, i;
         guint from, to;
         GibbonMovement *movement;
+        GSGFProperty *analysis_property;
+        GibbonAnalysis *analysis = NULL;
+        GSGFReal *gsgf_real;
 
         gsgf_move = GSGF_MOVE_BACKGAMMON (gsgf_property_get_value (prop));
 
@@ -465,8 +478,16 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 dice[1] = gsgf_move_backgammon_get_die (gsgf_move, 1);
                 action = GIBBON_GAME_ACTION (gibbon_roll_new (dice[0],
                                                               dice[1]));
+                analysis_property = gsgf_node_get_property (node, "LU");
+                if (analysis_property) {
+                        gsgf_real = GSGF_REAL (
+                                gsgf_property_get_value (analysis_property));
+                        analysis = GIBBON_ANALYSIS (gibbon_analysis_roll_new (
+                                gsgf_real_get_value (gsgf_real)));
+                }
+
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   analysis, error))
                         return FALSE;
                 num_movements = gsgf_move_backgammon_get_num_moves (gsgf_move);
                 move = gibbon_move_new (dice[0], dice[1], num_movements);
@@ -496,38 +517,38 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 }
                 action = GIBBON_GAME_ACTION (move);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_double_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_resign (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_resign_new (
                                 gsgf_move_backgammon_is_resign (gsgf_move)));
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_accept (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_accept_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_reject (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_reject_new ());
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   error))
+                                                   NULL, error))
                         return FALSE;
         }
 

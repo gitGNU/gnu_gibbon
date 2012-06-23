@@ -30,6 +30,7 @@
 #include "gibbon-match.h"
 #include "gibbon-game-action.h"
 #include "gibbon-position.h"
+#include "gibbon-analysis.h"
 
 #define GIBBON_TYPE_GAME \
         (gibbon_game_get_type ())
@@ -53,6 +54,7 @@ struct _GibbonGameSnapshot {
         GibbonGameAction *action;
         GibbonPositionSide side;
         GibbonPosition *resulting_position;
+        GibbonAnalysis *analysis;
 };
 
 /**
@@ -88,6 +90,11 @@ GibbonGame *gibbon_game_new (GibbonMatch *match,
                              gboolean crawford, gboolean is_crawford);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                                  GibbonGameAction *action, GError **error);
+gboolean gibbon_game_add_action_with_analysis (GibbonGame *self,
+                                               GibbonPositionSide side,
+                                               GibbonGameAction *action,
+                                               GibbonAnalysis *analysis,
+                                               GError **error);
 gint gibbon_game_over (const GibbonGame *self);
 gboolean gibbon_game_resignation (const GibbonGame *self);
 
