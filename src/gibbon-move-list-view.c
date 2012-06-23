@@ -249,9 +249,6 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                                     &roll_string,
                                     -1);
 
-        if (!roll_string)
-                return;
-
         g_object_set (cell, "text", roll_string, NULL);
 
         g_free (roll_string);
@@ -297,8 +294,6 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_WHITE_MOVE,
                                     &move_string,
                                     -1);
-        if (!move_string)
-                return;
 
         g_object_set (cell, "text", move_string, NULL);
 
