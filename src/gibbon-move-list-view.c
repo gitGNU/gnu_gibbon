@@ -34,6 +34,7 @@
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
         GtkTreeView *view;
+        GtkTreeModel *model;
         const GibbonMatchList *match_list;
 };
 
@@ -42,6 +43,9 @@ struct _GibbonMoveListViewPrivate {
 
 G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 
+
+static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
+
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
 {
@@ -49,6 +53,7 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
                 GIBBON_TYPE_MOVE_LIST_VIEW, GibbonMoveListViewPrivate);
 
         self->priv->view = NULL;
+        self->priv->model = NULL;
         self->priv->match_list = NULL;
 }
 
@@ -83,8 +88,12 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
                                                  NULL);
         GtkListStore *model;
+        GtkTreeSelection *selection;
 
         self->priv->view = view;
+        selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+        gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
+
         self->priv->match_list = match_list;
 
         gtk_tree_view_insert_column_with_attributes (view, -1, _("#"),
@@ -109,7 +118,40 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         NULL);
 
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
+        self->priv->model = GTK_TREE_MODEL (model);
+
         gtk_tree_view_set_model (view, GTK_TREE_MODEL (model));
 
+        g_signal_connect_swapped (G_OBJECT (model), "row-inserted",
+                                  (GCallback) gibbon_move_list_view_on_insert,
+                                  self);
+
         return self;
+}
+
+static void
+gibbon_move_list_view_on_insert (const GibbonMoveListView *self)
+{
+        gint num_rows = gtk_tree_model_iter_n_children (self->priv->model,
+                                                        NULL);
+        GtkTreeIter iter;
+        GtkTreePath *path;
+
+        if (!num_rows)
+                return;
+
+        if (!gtk_tree_model_iter_nth_child (self->priv->model, &iter, NULL,
+                                            num_rows - 1))
+                return;
+
+        path = gtk_tree_model_get_path (self->priv->model, &iter);
+
+        /* FIXME! Only scroll if the last row is currently visible.  If
+         * not, the user has scrolled the
+         */
+
+        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
+                                      0.0, 0.0);
+
+        gtk_tree_path_free (path);
 }
