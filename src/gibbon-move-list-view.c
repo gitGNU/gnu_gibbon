@@ -37,6 +37,8 @@ struct _GibbonMoveListViewPrivate {
         GtkTreeView *view;
         GtkTreeViewColumn *black_roll_column;
         GtkTreeViewColumn *white_roll_column;
+        GtkTreeViewColumn *black_move_column;
+        GtkTreeViewColumn *white_move_column;
         GtkTreeModel *model;
         const GibbonMatchList *match_list;
 
@@ -119,6 +121,8 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
         self->priv->view = NULL;
         self->priv->black_roll_column = NULL;
         self->priv->white_roll_column = NULL;
+        self->priv->black_move_column = NULL;
+        self->priv->white_move_column = NULL;
         self->priv->model = NULL;
         self->priv->match_list = NULL;
 
@@ -174,11 +178,13 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         self, NULL);
         self->priv->black_roll_column = gtk_tree_view_get_column (view,
                                                                   colno - 1);
-        gtk_tree_view_insert_column_with_data_func (view, -1, _("Black"),
+        colno = gtk_tree_view_insert_column_with_data_func (view, -1, _("Black"),
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_move_data_func,
                         self, NULL);
+        self->priv->black_move_column = gtk_tree_view_get_column (view,
+                                                                  colno - 1);
         colno = gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
@@ -186,11 +192,13 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         self, NULL);
         self->priv->white_roll_column = gtk_tree_view_get_column (view,
                                                                   colno - 1);
-        gtk_tree_view_insert_column_with_data_func (view, -1, _("White"),
+        colno = gtk_tree_view_insert_column_with_data_func (view, -1, _("White"),
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_move_data_func,
                         self, NULL);
+        self->priv->white_move_column = gtk_tree_view_get_column (view,
+                                                                  colno - 1);
 
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
         self->priv->model = GTK_TREE_MODEL (model);
@@ -364,19 +372,45 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkTreeIter *iter)
 {
         gchar *move_string;
+        GtkStyle *gtk_style;
+        gsize offset;
+        gint col, row = -1;
+        GtkTreePath *path;
+        gboolean selected = FALSE;
+        gint *indices;
 
-        if (side < 0)
+        if (side < 0) {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_BLACK_MOVE,
                                     &move_string,
                                     -1);
-        else
+                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        } else {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_MOVE,
                                     &move_string,
                                     -1);
+                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+        }
 
-        g_object_set (cell, "text", move_string, NULL);
+        if (col == self->priv->selected_col) {
+                path = gtk_tree_model_get_path (self->priv->model, iter);
+                indices = gtk_tree_path_get_indices (path);
+                row = indices[0];
+                gtk_tree_path_free (path);
+        }
+
+        selected = self->priv->selected_row == row
+                   && self->priv->selected_col == col;
+
+        gtk_style = gtk_widget_get_style (GTK_WIDGET (self->priv->view));
+        offset = selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL;
+
+        g_object_set (cell,
+                      "text", move_string,
+                      "foreground-gdk", gtk_style->text + offset,
+                      "background-gdk", gtk_style->base + offset,
+                      NULL);
 
         g_free (move_string);
 }
@@ -446,7 +480,7 @@ gibbon_move_list_view_on_query_tooltip (GtkTreeView *view, gint x, gint y,
                 else if (luck <= -0.3)
                         text = g_strdup_printf (_("Luck: %g (unlucky)"),
                                                 luck);
-                else if (luck < 0.)
+                else if (luck < 0.0)
                         text = g_strdup_printf (_("Luck: %g"),
                                                 luck);
         } else if (column == self->priv->white_roll_column) {
@@ -468,7 +502,7 @@ gibbon_move_list_view_on_query_tooltip (GtkTreeView *view, gint x, gint y,
                 else if (luck <= -0.3)
                         text = g_strdup_printf (_("Luck: %g (unlucky)"),
                                                 luck);
-                else if (luck < 0.)
+                else if (luck < 0.0)
                         text = g_strdup_printf (_("Luck: %g"),
                                                 luck);
         }
@@ -518,6 +552,10 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                         col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
                 else if (column == self->priv->white_roll_column)
                         col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                else if (column == self->priv->black_move_column)
+                        col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                else if (column == self->priv->white_move_column)
+                        col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
 
                 indices = gtk_tree_path_get_indices (path);
                 row = indices[0];
@@ -531,4 +569,10 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
 
         self->priv->selected_col = col;
         self->priv->selected_row = row;
+
+        /*
+         * FIXME! We can reduce that to the area covered by the two cells
+         * involved.
+         */
+        gtk_widget_queue_draw (GTK_WIDGET (self->priv->view));
 }
