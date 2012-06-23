@@ -62,7 +62,28 @@ static void gibbon_move_list_view_white_roll_data_func (GtkTreeViewColumn
                                                         GtkTreeIter *iter,
                                                         GibbonMoveListView
                                                         *self);
+static void gibbon_move_list_view_black_move_data_func (GtkTreeViewColumn
+                                                        *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel
+                                                        *tree_model,
+                                                        GtkTreeIter *iter,
+                                                        GibbonMoveListView
+                                                        *self);
+static void gibbon_move_list_view_white_move_data_func (GtkTreeViewColumn
+                                                        *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel
+                                                        *tree_model,
+                                                        GtkTreeIter *iter,
+                                                        GibbonMoveListView
+                                                        *self);
 static void gibbon_move_list_view_roll (GibbonMoveListView *self,
+                                        GibbonPositionSide side,
+                                        GtkCellRenderer *cell,
+                                        GtkTreeModel *tree_model,
+                                        GtkTreeIter *iter);
+static void gibbon_move_list_view_move (GibbonMoveListView *self,
                                         GibbonPositionSide side,
                                         GtkCellRenderer *cell,
                                         GtkTreeModel *tree_model,
@@ -127,19 +148,21 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_roll_data_func,
                         self, NULL);
-        gtk_tree_view_insert_column_with_attributes (view, -1, _("Black"),
+       gtk_tree_view_insert_column_with_data_func (view, -1, _("Black"),
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_BLACK_MOVE,
-                        NULL);
-        gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_black_move_data_func,
+                        self, NULL);
+       gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_roll_data_func,
                         self, NULL);
-        gtk_tree_view_insert_column_with_attributes (view, -1, _("White"),
+       gtk_tree_view_insert_column_with_data_func (view, -1, _("White"),
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_WHITE_MOVE,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_white_move_data_func,
+                        self, NULL);
 
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
         self->priv->model = GTK_TREE_MODEL (model);
@@ -198,7 +221,7 @@ gibbon_move_list_view_white_roll_data_func (GtkTreeViewColumn *tree_column,
                                             GtkTreeIter *iter,
                                             GibbonMoveListView *self)
 {
-        gibbon_move_list_view_roll (self, GIBBON_POSITION_SIDE_BLACK,
+        gibbon_move_list_view_roll (self, GIBBON_POSITION_SIDE_WHITE,
                                     cell, tree_model, iter);
 }
 
@@ -226,4 +249,52 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
         g_object_set (cell, "text", roll_string, NULL);
 
         g_free (roll_string);
+}
+
+
+static void
+gibbon_move_list_view_black_move_data_func (GtkTreeViewColumn *tree_column,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel *tree_model,
+                                            GtkTreeIter *iter,
+                                            GibbonMoveListView *self)
+{
+        gibbon_move_list_view_move (self, GIBBON_POSITION_SIDE_BLACK,
+                                    cell, tree_model, iter);
+}
+
+static void
+gibbon_move_list_view_white_move_data_func (GtkTreeViewColumn *tree_column,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel *tree_model,
+                                            GtkTreeIter *iter,
+                                            GibbonMoveListView *self)
+{
+        gibbon_move_list_view_move (self, GIBBON_POSITION_SIDE_WHITE,
+                                    cell, tree_model, iter);
+}
+
+static void
+gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
+                            GtkCellRenderer *cell, GtkTreeModel *tree_model,
+                            GtkTreeIter *iter)
+{
+        gchar *move_string;
+
+        if (side < 0)
+                gtk_tree_model_get (tree_model, iter,
+                                    GIBBON_MATCH_LIST_COL_BLACK_MOVE,
+                                    &move_string,
+                                    -1);
+        else
+                gtk_tree_model_get (tree_model, iter,
+                                    GIBBON_MATCH_LIST_COL_WHITE_MOVE,
+                                    &move_string,
+                                    -1);
+        if (!move_string)
+                return;
+
+        g_object_set (cell, "text", move_string, NULL);
+
+        g_free (move_string);
 }
