@@ -162,13 +162,21 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                                                  NULL);
         GtkListStore *model;
         gint colno;
+        GtkStyle *style;
+        GtkCellRenderer *renderer;
 
         self->priv->view = view;
 
         self->priv->match_list = match_list;
 
+        style = gtk_widget_get_style (GTK_WIDGET (view));
+        renderer = gtk_cell_renderer_text_new ();
+        g_object_set (renderer,
+                     "background-gdk", style->bg + GTK_STATE_NORMAL,
+                     "xpad", 10,
+                     NULL);
         gtk_tree_view_insert_column_with_attributes (view, -1, _("#"),
-                        gtk_cell_renderer_text_new (),
+                        renderer,
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
         colno = gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
