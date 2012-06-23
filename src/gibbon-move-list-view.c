@@ -34,6 +34,8 @@
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
         GtkTreeView *view;
+        GtkTreeViewColumn *black_roll_column;
+        GtkTreeViewColumn *white_roll_column;
         GtkTreeModel *model;
         const GibbonMatchList *match_list;
 };
@@ -47,6 +49,12 @@ G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
 static void gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
                                                 const GibbonMatchList *list);
+static gboolean gibbon_move_list_view_on_query_tooltip (GtkTreeView *view,
+                                                        gint x, gint y,
+                                                        gboolean keyboard_tip,
+                                                        GtkTooltip *tooltip,
+                                                        const GibbonMoveListView
+                                                        *self);
 
 static void gibbon_move_list_view_black_roll_data_func (GtkTreeViewColumn
                                                         *tree_column,
@@ -98,6 +106,8 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
                 GIBBON_TYPE_MOVE_LIST_VIEW, GibbonMoveListViewPrivate);
 
         self->priv->view = NULL;
+        self->priv->black_roll_column = NULL;
+        self->priv->white_roll_column = NULL;
         self->priv->model = NULL;
         self->priv->match_list = NULL;
 }
@@ -133,11 +143,9 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
                                                  NULL);
         GtkListStore *model;
-        GtkTreeSelection *selection;
+        gint colno;
 
         self->priv->view = view;
-        selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-        gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
 
         self->priv->match_list = match_list;
 
@@ -145,22 +153,26 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                         gtk_cell_renderer_text_new (),
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
-        gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
+        colno = gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_roll_data_func,
                         self, NULL);
-       gtk_tree_view_insert_column_with_data_func (view, -1, _("Black"),
+        self->priv->black_roll_column = gtk_tree_view_get_column (view,
+                                                                  colno - 1);
+        gtk_tree_view_insert_column_with_data_func (view, -1, _("Black"),
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_move_data_func,
                         self, NULL);
-       gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
+        colno = gtk_tree_view_insert_column_with_data_func (view, -1, "  ",
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_roll_data_func,
                         self, NULL);
-       gtk_tree_view_insert_column_with_data_func (view, -1, _("White"),
+        self->priv->white_roll_column = gtk_tree_view_get_column (view,
+                                                                  colno - 1);
+        gtk_tree_view_insert_column_with_data_func (view, -1, _("White"),
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_move_data_func,
@@ -178,6 +190,9 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                                   (GCallback)
                                   gibbon_move_list_view_on_new_match,
                                   self);
+        g_signal_connect (G_OBJECT (view), "query-tooltip",
+                          (GCallback) gibbon_move_list_view_on_query_tooltip,
+                          self);
 
         return self;
 }
@@ -318,4 +333,87 @@ gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
         gtk_tree_view_column_set_title (column, gibbon_match_get_black (match));
         column = gtk_tree_view_get_column (self->priv->view, 4);
         gtk_tree_view_column_set_title (column, gibbon_match_get_white (match));
+}
+
+static gboolean
+gibbon_move_list_view_on_query_tooltip (GtkTreeView *view, gint x, gint y,
+                                        gboolean keyboard_tip,
+                                        GtkTooltip *tooltip,
+                                        const GibbonMoveListView *self)
+{
+        GtkTreeModel *model;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        GtkTreeViewColumn *column;
+        gchar *text = NULL;
+        gdouble luck;
+
+        g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
+        g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
+        g_return_val_if_fail (view == self->priv->view, FALSE);
+
+        if (!gtk_tree_view_get_tooltip_context (view, &x, &y,
+                                                keyboard_tip,
+                                                &model, &path, &iter))
+                return FALSE;
+        gtk_tree_view_get_path_at_pos (view, x, y, NULL,
+                                       &column, NULL, NULL);
+        if (!column)
+                return FALSE;
+
+        if (column == self->priv->black_roll_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK, &luck,
+                                    -1);
+                if (luck >= 0.6)
+                        text = g_strdup_printf (_("Luck: %g (very lucky)"),
+                                                luck);
+                else if (luck >= 0.3)
+                        text = g_strdup_printf (_("Luck: %g (lucky)"),
+                                                luck);
+                else if (luck > 0.0)
+                        text = g_strdup_printf (_("Luck: %g"),
+                                                luck);
+                else if (luck <= -0.6)
+                        text = g_strdup_printf (_("Luck: %g (very unlucky)"),
+                                                luck);
+                else if (luck <= -0.3)
+                        text = g_strdup_printf (_("Luck: %g (unlucky)"),
+                                                luck);
+                else if (luck < 0.)
+                        text = g_strdup_printf (_("Luck: %g"),
+                                                luck);
+        } else if (column == self->priv->white_roll_column) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK, &luck,
+                                    -1);
+                if (luck >= 0.6)
+                        text = g_strdup_printf (_("Luck: %g (very lucky)"),
+                                                luck);
+                else if (luck >= 0.3)
+                        text = g_strdup_printf (_("Luck: %g (lucky)"),
+                                                luck);
+                else if (luck > 0.0)
+                        text = g_strdup_printf (_("Luck: %g"),
+                                                luck);
+                else if (luck <= -0.6)
+                        text = g_strdup_printf (_("Luck: %g (very unlucky)"),
+                                                luck);
+                else if (luck <= -0.3)
+                        text = g_strdup_printf (_("Luck: %g (unlucky)"),
+                                                luck);
+                else if (luck < 0.)
+                        text = g_strdup_printf (_("Luck: %g"),
+                                                luck);
+        }
+
+        if (text) {
+                gtk_tooltip_set_text (tooltip, text);
+                gtk_tree_view_set_tooltip_row (view, tooltip, path);
+                g_free (text);
+        }
+
+        gtk_tree_path_free (path);
+
+        return text ? TRUE : FALSE;
 }
