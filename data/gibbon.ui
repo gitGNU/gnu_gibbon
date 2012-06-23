@@ -748,6 +748,7 @@
                               <object class="GtkTreeView" id="inviter-view">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="has_tooltip">True</property>
                               </object>
                             </child>
                           </object>
@@ -764,6 +765,7 @@
                               <object class="GtkTreeView" id="player_view">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="has_tooltip">True</property>
                               </object>
                             </child>
                           </object>
@@ -960,6 +962,7 @@
                           <object class="GtkTreeView" id="moves-view">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_tooltip">True</property>
                           </object>
                         </child>
                       </object>
