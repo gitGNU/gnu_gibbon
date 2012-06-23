@@ -44,6 +44,7 @@
 #include "gibbon-resign.h"
 #include "gibbon-accept.h"
 #include "gibbon-reject.h"
+#include "gibbon-setup.h"
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
@@ -349,6 +350,8 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 buf = g_strdup (_("Accepts"));
         } else if (GIBBON_IS_REJECT (action)) {
                 buf = g_strdup (_("Rejects"));
+        } else if (GIBBON_IS_SETUP (action)) {
+                buf = g_strdup (_("Position set up"));
         }
 
         if (buf) {
