@@ -45,6 +45,8 @@ G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 
 
 static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
+static void gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
+                                                const GibbonMatchList *list);
 
 static void gibbon_move_list_view_black_roll_data_func (GtkTreeViewColumn
                                                         *tree_column,
@@ -172,6 +174,10 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         g_signal_connect_swapped (G_OBJECT (model), "row-inserted",
                                   (GCallback) gibbon_move_list_view_on_insert,
                                   self);
+        g_signal_connect_swapped (G_OBJECT (match_list), "new-match",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_new_match,
+                                  self);
 
         return self;
 }
@@ -297,4 +303,24 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
         g_object_set (cell, "text", move_string, NULL);
 
         g_free (move_string);
+}
+
+static void
+gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
+                                    const GibbonMatchList *list)
+{
+        const GibbonMatch *match;
+        GtkTreeViewColumn *column;
+
+        g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
+
+        if (self->priv->match_list != list)
+                return;
+
+        match = gibbon_match_list_get_match (list);
+
+        column = gtk_tree_view_get_column (self->priv->view, 2);
+        gtk_tree_view_column_set_title (column, gibbon_match_get_black (match));
+        column = gtk_tree_view_get_column (self->priv->view, 4);
+        gtk_tree_view_column_set_title (column, gibbon_match_get_white (match));
 }

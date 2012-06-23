@@ -426,3 +426,11 @@ gibbon_match_list_format_resign (GibbonMatchList *self,
                 return g_strdup_printf (_("Resigns with %u points"),
                                         resign->value);
 }
+
+const GibbonMatch *
+gibbon_match_list_get_match (const GibbonMatchList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
+
+        return self->priv->match;
+}
