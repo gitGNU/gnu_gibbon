@@ -46,6 +46,8 @@
 #include "gibbon-reject.h"
 #include "gibbon-setup.h"
 
+#include "gibbon-analysis-roll.h"
+
 enum gibbon_match_list_signal {
         NEW_MATCH,
         LAST_SIGNAL
@@ -68,7 +70,8 @@ G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
                                               const GibbonGameAction *action,
                                               GibbonPositionSide side,
-                                              const GibbonPosition *pos);
+                                              const GibbonPosition *pos,
+                                              const GibbonAnalysis *analysis);
 static gchar *gibbon_match_list_format_roll (GibbonMatchList *self,
                                              GibbonRoll *roll);
 static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
@@ -142,8 +145,10 @@ gibbon_match_list_new (void)
         moves = gtk_list_store_new (GIBBON_MATCH_LIST_N_COLUMNS,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    G_TYPE_DOUBLE,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
+                                    G_TYPE_DOUBLE,
                                     G_TYPE_STRING,
                                     G_TYPE_UINT);
         self->priv->moves = moves;
@@ -213,6 +218,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         const GibbonGameAction *action;
         GibbonPositionSide side;
         const GibbonPosition *pos;
+        const GibbonAnalysis *analysis;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
@@ -232,7 +238,9 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         for (i = 0; i < num_actions; ++i) {
                 action = gibbon_game_get_nth_action (game, i, &side);
                 pos = gibbon_game_get_nth_position (game, i);
-                if (!gibbon_match_list_add_action (self, action, side, pos))
+                analysis = gibbon_game_get_nth_analysis (game, i);
+                if (!gibbon_match_list_add_action (self, action, side, pos,
+                                                   analysis))
                         break;
         }
 }
@@ -241,7 +249,8 @@ static gboolean
 gibbon_match_list_add_action (GibbonMatchList *self,
                               const GibbonGameAction *action,
                               GibbonPositionSide side,
-                              const GibbonPosition *pos)
+                              const GibbonPosition *pos,
+                              const GibbonAnalysis *analysis)
 {
         GtkTreeIter last_row;
         GtkTreeIter iter;
@@ -249,6 +258,7 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         guint moveno, last_moveno;
         guint colno, colno2;
         gchar *buf;
+        GibbonAnalysisRoll *ra;
 
         /* Get an iter to the last row.  */
         rows = gtk_tree_model_iter_n_children (
@@ -350,6 +360,16 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         if (GIBBON_IS_ROLL (action)) {
                 buf = gibbon_match_list_format_roll (self,
                                                      GIBBON_ROLL (action));
+                if (buf && GIBBON_IS_ANALYSIS_ROLL (analysis)) {
+                        ra = GIBBON_ANALYSIS_ROLL (analysis);
+                        colno2 = side < 0
+                            ? GIBBON_MATCH_LIST_COL_BLACK_LUCK
+                            : GIBBON_MATCH_LIST_COL_WHITE_LUCK;
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            colno2,
+                                            gibbon_analysis_roll_get_luck (ra),
+                                            -1);
+                }
         } else if (GIBBON_IS_MOVE (action)) {
                 buf = gibbon_match_list_format_move (self,
                                                      GIBBON_MOVE (action),
