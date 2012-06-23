@@ -721,7 +721,7 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
         GtkTreePath *path = NULL;
         GtkTreeViewColumn *column = NULL;
         GibbonPlayerListView *self;
-        gchar *player_name;
+        gchar *player_name = NULL;
         gchar *available = NULL;
         gchar *text = NULL;
         GibbonReliability *rel;
@@ -813,6 +813,8 @@ gibbon_player_list_view_on_query_tooltip (GtkWidget *widget,
                                                 player_name);
                 }
         } else {
+                gtk_tree_path_free (path);
+                g_free (player_name);
                 return FALSE;
         }
 
