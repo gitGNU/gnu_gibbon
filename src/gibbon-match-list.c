@@ -46,6 +46,12 @@
 #include "gibbon-reject.h"
 #include "gibbon-setup.h"
 
+enum gibbon_match_list_signal {
+        NEW_MATCH,
+        LAST_SIGNAL
+};
+static guint gibbon_match_list_signals[LAST_SIGNAL] = { 0 };
+
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
         GibbonMatch *match;
@@ -105,6 +111,16 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
         
         g_type_class_add_private (klass, sizeof (GibbonMatchListPrivate));
 
+        gibbon_match_list_signals[NEW_MATCH] =
+                g_signal_new ("new-match",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
         object_class->finalize = gibbon_match_list_finalize;
 }
 
@@ -168,6 +184,8 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
                                     0, text, -1);
                 g_free (text);
         }
+
+        g_signal_emit (self, gibbon_match_list_signals[NEW_MATCH], 0, self);
 }
 
 GtkListStore *
