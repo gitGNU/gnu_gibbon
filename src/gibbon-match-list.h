@@ -99,5 +99,6 @@ GtkListStore *gibbon_match_list_get_games_store (const GibbonMatchList *self);
 GtkListStore *gibbon_match_list_get_moves_store (const GibbonMatchList *self);
 
 void gibbon_match_list_set_active_game (GibbonMatchList *self, gint active);
+gint gibbon_match_list_get_active_game (const GibbonMatchList *self);
 
 #endif

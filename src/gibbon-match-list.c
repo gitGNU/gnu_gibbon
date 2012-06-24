@@ -62,6 +62,7 @@ struct _GibbonMatchListPrivate {
         GibbonMatch *match;
 
         GtkListStore *games;
+        gint active;
         GtkListStore *moves;
 };
 
@@ -97,6 +98,7 @@ gibbon_match_list_init (GibbonMatchList *self)
         self->priv->match = NULL;
 
         self->priv->games = NULL;
+        self->priv->active = -1;
         self->priv->moves = NULL;
 }
 
@@ -189,11 +191,13 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
         self->priv->match = match;
+        self->priv->active = -1;
 
         gtk_list_store_clear (self->priv->games);
         num_games = gibbon_match_get_number_of_games (match);
 
         for (i = 0; i < num_games; ++i) {
+                self->priv->active = i;
                 game = gibbon_match_get_nth_game (match, i);
                 pos = gibbon_game_get_initial_position (game);
                 comment = gibbon_game_is_crawford (game) ?
@@ -251,6 +255,8 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         game = gibbon_match_get_nth_game (self->priv->match, active);
         g_return_if_fail (game != NULL);
 
+        self->priv->active = active;
+
         num_actions = gibbon_game_get_num_actions (game);
 
         for (i = 0; i < num_actions; ++i) {
@@ -261,6 +267,14 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
                                                    analysis))
                         break;
         }
+}
+
+gint
+gibbon_match_list_get_active_game (const GibbonMatchList *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), -1);
+
+        return self->priv->active;
 }
 
 static gboolean
