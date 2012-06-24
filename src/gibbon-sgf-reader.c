@@ -480,8 +480,7 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 action = GIBBON_GAME_ACTION (gibbon_roll_new (dice[0],
                                                               dice[1]));
                 analysis = gibbon_sgf_reader_roll_analysis (self, node, side);
-                if (analysis &&
-                    !gibbon_sgf_reader_add_action (self, match, side, action,
+                if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
                 num_movements = gsgf_move_backgammon_get_num_moves (gsgf_move);
