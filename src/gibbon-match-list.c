@@ -290,6 +290,7 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         gint rows;
         guint moveno, last_moveno;
         guint colno, colno2, colno3;
+        gint roll_col = -1;
         gchar *buf;
         GibbonAnalysisRoll *ra;
         GibbonAnalysisRollLuck luck_type;
@@ -339,11 +340,19 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                         colno = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
                 else
                         colno = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        } else {
+        } else if (GIBBON_IS_MOVE (action)) {
                 if (side > 0)
                         colno = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
                 else
                         colno = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        } else {
+                if (side > 0) {
+                        colno = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                        roll_col = GIBBON_MATCH_LIST_COL_WHITE_ROLL_ACTION;
+                } else {
+                        colno = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                        roll_col = GIBBON_MATCH_LIST_COL_BLACK_ROLL_ACTION;
+                }
         }
 
         /*
@@ -435,8 +444,16 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         }
 
         if (buf) {
+                /*
+                 * If this is neither a move nor a roll, the roll column
+                 * will be empty.  Make it point to the following action
+                 * in these cases.  And since roll_col is initialized to
+                 * the function guard -1, this happens only in these cases.
+                 */
                 gtk_list_store_set (self->priv->moves, &iter,
-                                    colno, buf, colno + 1, action_no, -1);
+                                    colno, buf, colno + 1, action_no,
+                                    roll_col, action_no,
+                                    -1);
                 g_free (buf);
         }
 
