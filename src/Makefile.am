@@ -91,7 +91,8 @@ common_SOURCES = 			\
         gibbon-sgf-reader.c		\
         gibbon-sgf-writer.c		\
 	gibbon-analysis.c		\
-	gibbon-analysis-roll.c	
+	gibbon-analysis-roll.c		\
+	gibbon-analysis-move.c	
 
 AM_YFLAGS = -d -v
 
@@ -209,7 +210,8 @@ noinst_HEADERS =			\
 	gibbon-game-list-view.h		\
 	gibbon-move-list-view.h		\
 	gibbon-analysis.h		\
-	gibbon-analysis-roll.h
+	gibbon-analysis-roll.h		\
+	gibbon-analysis-move.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.
