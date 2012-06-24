@@ -441,6 +441,8 @@ gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
         gtk_tree_view_column_set_title (column, gibbon_match_get_black (match));
         column = gtk_tree_view_get_column (self->priv->view, 4);
         gtk_tree_view_column_set_title (column, gibbon_match_get_white (match));
+
+        self->priv->selected_row = self->priv->selected_col = -1;
 }
 
 static gboolean
@@ -536,11 +538,22 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 
         if (!gtk_tree_view_get_path_at_pos (view, event->x, event->y,
                                             &path, &column, NULL, NULL)) {
+                if (!gtk_widget_has_focus (GTK_WIDGET (view)))
+                        gtk_widget_grab_focus (GTK_WIDGET (view));
                 return TRUE;
         }
 
+        /*
+         * The normal behavior of a GtkTreeView is to unselect the current
+         * selection if it is clicked again.  We decide against that because
+         * our view is coupled to the board and the analysis window and
+         * we could not propagate the unselect there.
+         */
         gibbon_move_list_view_select_cell (self, path, column);
         gtk_tree_path_free (path);
+
+        if (!gtk_widget_has_focus (GTK_WIDGET (view)))
+                gtk_widget_grab_focus (GTK_WIDGET (view));
 
         return TRUE;
 }
