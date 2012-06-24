@@ -480,44 +480,44 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK, &luck,
                                     -1);
                 if (luck >= 0.6)
-                        text = g_strdup_printf (_("Luck: %g (very lucky)"),
+                        text = g_strdup_printf (_("Luck: %f (very lucky)"),
                                                 luck);
                 else if (luck >= 0.3)
-                        text = g_strdup_printf (_("Luck: %g (lucky)"),
+                        text = g_strdup_printf (_("Luck: %f (lucky)"),
                                                 luck);
                 else if (luck > 0.0)
-                        text = g_strdup_printf (_("Luck: %g"),
+                        text = g_strdup_printf (_("Luck: %f"),
                                                 luck);
                 else if (luck <= -0.6)
-                        text = g_strdup_printf (_("Luck: %g (very unlucky)"),
+                        text = g_strdup_printf (_("Luck: %f (very unlucky)"),
                                                 luck);
                 else if (luck <= -0.3)
-                        text = g_strdup_printf (_("Luck: %g (unlucky)"),
+                        text = g_strdup_printf (_("Luck: %f (unlucky)"),
                                                 luck);
-                else if (luck < 0.0)
-                        text = g_strdup_printf (_("Luck: %g"),
+                else if (luck <= 0.0)
+                        text = g_strdup_printf (_("Luck: %f"),
                                                 luck);
         } else if (column == self->priv->white_roll_column) {
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK, &luck,
                                     -1);
                 if (luck >= 0.6)
-                        text = g_strdup_printf (_("Luck: %g (very lucky)"),
+                        text = g_strdup_printf (_("Luck: %f (very lucky)"),
                                                 luck);
                 else if (luck >= 0.3)
-                        text = g_strdup_printf (_("Luck: %g (lucky)"),
+                        text = g_strdup_printf (_("Luck: %f (lucky)"),
                                                 luck);
                 else if (luck > 0.0)
-                        text = g_strdup_printf (_("Luck: %g"),
+                        text = g_strdup_printf (_("Luck: %f"),
                                                 luck);
                 else if (luck <= -0.6)
-                        text = g_strdup_printf (_("Luck: %g (very unlucky)"),
+                        text = g_strdup_printf (_("Luck: %f (very unlucky)"),
                                                 luck);
                 else if (luck <= -0.3)
-                        text = g_strdup_printf (_("Luck: %g (unlucky)"),
+                        text = g_strdup_printf (_("Luck: %f (unlucky)"),
                                                 luck);
-                else if (luck < 0.0)
-                        text = g_strdup_printf (_("Luck: %g"),
+                else if (luck <= 0.0)
+                        text = g_strdup_printf (_("Luck: %f"),
                                                 luck);
         }
 
