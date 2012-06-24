@@ -57,6 +57,7 @@
 #include "gibbon-game-list-view.h"
 #include "gibbon-move-list-view.h"
 #include "gibbon-match-loader.h"
+#include "gibbon-game.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -108,6 +109,7 @@ static gboolean gibbon_app_init_match_list (GibbonApp *self,
                                             const gchar *filename);
 
 static void gibbon_app_connect_signals (const GibbonApp *self);
+static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter);
@@ -129,7 +131,7 @@ static void gibbon_app_on_board_resign (GibbonApp *self);
 static void gibbon_app_on_board_undo (GibbonApp *self);
 static void gibbon_app_on_board_accept (GibbonApp *self);
 static void gibbon_app_on_board_reject (GibbonApp *self);
-static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
+static void gibbon_app_on_action_selected (GibbonApp *self, gint action_no);
 
 static GibbonApp *singleton = NULL;
 GibbonApp *app;
@@ -291,8 +293,6 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         gibbon_app_set_state_disconnected(self);
 
-        gibbon_app_connect_signals(self);
-
         self->priv->archive = gibbon_archive_new(self);
         if (!self->priv->archive) {
                 g_object_unref(self);
@@ -316,6 +316,8 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                 return NULL;
         }
         singleton = self;
+
+        gibbon_app_connect_signals (self);
 
         return self;
 }
@@ -369,6 +371,8 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                 gibbon_match_list_set_match (list, match);
 
                 g_object_unref (loader);
+
+                self->priv->match = match;
         }
 
         self->priv->match_list = list;
@@ -648,6 +652,11 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                                      GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_reject),
+                                  (gpointer) self);
+
+        g_signal_connect_swapped (G_OBJECT (self->priv->move_list_view),
+                                  "action-selected",
+                                  G_CALLBACK (gibbon_app_on_action_selected),
                                   (gpointer) self);
 }
 
@@ -1653,4 +1662,32 @@ gibbon_app_on_toggle_ready (GibbonApp *self)
                 gibbon_app_set_state_available (self);
                 gibbon_session_set_available (session, TRUE);
         }
+}
+
+static void
+gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
+{
+        gint game_no;
+        GibbonGame *game;
+        const GibbonPosition *pos;
+
+        if (action_no < 0)
+                return;
+
+        game_no = gibbon_match_list_get_active_game (self->priv->match_list);
+        if (game_no < 0)
+                return;
+
+        if (!self->priv->match)
+                return;
+
+        game = gibbon_match_get_nth_game (self->priv->match, game_no);
+        if (!game)
+                return;
+
+        pos = gibbon_game_get_nth_position (game, action_no);
+        if (!pos)
+                return;
+
+        gibbon_board_set_position (GIBBON_BOARD (self->priv->board), pos);
 }
