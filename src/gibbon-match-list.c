@@ -71,6 +71,7 @@ struct _GibbonMatchListPrivate {
 G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 
 static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
+                                              gint action_no,
                                               const GibbonGameAction *action,
                                               GibbonPositionSide side,
                                               const GibbonPosition *pos,
@@ -256,7 +257,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
                 action = gibbon_game_get_nth_action (game, i, &side);
                 pos = gibbon_game_get_nth_position (game, i);
                 analysis = gibbon_game_get_nth_analysis (game, i);
-                if (!gibbon_match_list_add_action (self, action, side, pos,
+                if (!gibbon_match_list_add_action (self, i, action, side, pos,
                                                    analysis))
                         break;
         }
@@ -264,6 +265,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 
 static gboolean
 gibbon_match_list_add_action (GibbonMatchList *self,
+                              gint action_no,
                               const GibbonGameAction *action,
                               GibbonPositionSide side,
                               const GibbonPosition *pos,
@@ -395,14 +397,6 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                                             colno2, luck_value,
                                             colno3, luck_type,
                                             -1);
-                } else {
-                        /*
-                         * Store a ridiculously high number.  It would be
-                         * cleaner to use NaN instead but we cannot portably
-                         * set it.
-                         */
-                        gtk_list_store_set (self->priv->moves, &iter,
-                                            colno2, 1e24, -1);
                 }
         } else if (GIBBON_IS_MOVE (action)) {
                 buf = gibbon_match_list_format_move (self,
@@ -428,7 +422,7 @@ gibbon_match_list_add_action (GibbonMatchList *self,
 
         if (buf) {
                 gtk_list_store_set (self->priv->moves, &iter,
-                                    colno, buf, -1);
+                                    colno, buf, colno + 1, action_no, -1);
                 g_free (buf);
         }
 
