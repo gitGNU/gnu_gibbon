@@ -52,7 +52,10 @@ struct _GibbonMoveListViewPrivate {
 G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 
 
-static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
+static void gibbon_move_list_view_on_change (GibbonMoveListView *self,
+                                             GtkTreePath *path,
+                                             GtkTreeIter *iter,
+                                             GtkTreeModel *model);
 static void gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
                                                 const GibbonMatchList *list);
 static gboolean gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView
@@ -112,8 +115,7 @@ static void gibbon_move_list_view_move (GibbonMoveListView *self,
                                         GtkTreeModel *tree_model,
                                         GtkTreeIter *iter);
 static void gibbon_move_list_view_select_cell (GibbonMoveListView *self,
-                                               GtkTreePath *path,
-                                               GtkTreeViewColumn *column);
+                                               gint row, gint col);
 static gboolean gibbon_move_list_view_cell_valid (const GibbonMoveListView
                                                   *self,
                                                   GtkTreeIter *iter,
@@ -220,8 +222,8 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
 
         gtk_tree_view_set_model (view, GTK_TREE_MODEL (model));
 
-        g_signal_connect_swapped (G_OBJECT (model), "row-inserted",
-                                  (GCallback) gibbon_move_list_view_on_insert,
+        g_signal_connect_swapped (G_OBJECT (model), "row-changed",
+                                  (GCallback) gibbon_move_list_view_on_change,
                                   self);
         g_signal_connect_swapped (G_OBJECT (match_list), "new-match",
                                   (GCallback)
@@ -243,30 +245,48 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
 }
 
 static void
-gibbon_move_list_view_on_insert (const GibbonMoveListView *self)
+gibbon_move_list_view_on_change (GibbonMoveListView *self,
+                                 GtkTreePath *path,
+                                 GtkTreeIter *iter,
+                                 GtkTreeModel *model)
 {
-        gint num_rows = gtk_tree_model_iter_n_children (self->priv->model,
-                                                        NULL);
-        GtkTreeIter iter;
-        GtkTreePath *path;
+        gint *indices;
+        gint changed_col;
+        gint changed_row;
 
-        if (!num_rows)
-                return;
-
-        if (!gtk_tree_model_iter_nth_child (self->priv->model, &iter, NULL,
-                                            num_rows - 1))
-                return;
-
-        path = gtk_tree_model_get_path (self->priv->model, &iter);
-
-        /* FIXME! Only scroll if the last row is currently visible.  If
-         * not, the user has scrolled the
+        /*
+         * Check for the rightmost "valid" column.  If there is none, no
+         * user relevant content is available in this row, and we can postpone
+         * all actions.
          */
+        if (gibbon_move_list_view_cell_valid (self, iter,
+                                              GIBBON_MATCH_LIST_COL_WHITE_MOVE))
+                changed_col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+        else if (gibbon_move_list_view_cell_valid (self, iter,
+                                              GIBBON_MATCH_LIST_COL_WHITE_ROLL))
+                changed_col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+        else if (gibbon_move_list_view_cell_valid (self, iter,
+                                              GIBBON_MATCH_LIST_COL_BLACK_MOVE))
+                changed_col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        else if (gibbon_move_list_view_cell_valid (self, iter,
+                                              GIBBON_MATCH_LIST_COL_BLACK_ROLL))
+                changed_col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        else
+                return;
+
+        indices = gtk_tree_path_get_indices (path);
+        changed_row = indices[0];
+
+        /*
+         * Unconditionally select this cell.  The user is either in the middle
+         * of a match and should be notified about every change in the match
+         * or we are currently loading a match from disk.  Either way we
+         * don't care about a previous selection.
+         */
+        gibbon_move_list_view_select_cell (self, changed_row, changed_col);
 
         gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
                                       0.0, 0.0);
-
-        gtk_tree_path_free (path);
 }
 
 static void
@@ -550,6 +570,7 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
         GtkTreeView *view = self->priv->view;
         GtkTreePath *path;
         GtkTreeViewColumn *column;
+        gint col, row, *indices;
 
         if (!gtk_tree_view_get_path_at_pos (view, event->x, event->y,
                                             &path, &column, NULL, NULL)) {
@@ -564,7 +585,20 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
          * our view is coupled to the board and the analysis window and
          * we could not propagate the unselect there.
          */
-        gibbon_move_list_view_select_cell (self, path, column);
+        if (column == self->priv->black_roll_column)
+                col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        else if (column == self->priv->white_roll_column)
+                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+        else if (column == self->priv->black_move_column)
+                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        else if (column == self->priv->white_move_column)
+                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+        else
+                return TRUE;
+
+        indices = gtk_tree_path_get_indices (path);
+        row = indices[0];
+        gibbon_move_list_view_select_cell (self, row, col);
         gtk_tree_path_free (path);
 
         if (!gtk_widget_has_focus (GTK_WIDGET (view)))
@@ -575,34 +609,19 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 
 static void
 gibbon_move_list_view_select_cell (GibbonMoveListView *self,
-                                   GtkTreePath *path,
-                                   GtkTreeViewColumn *column)
+                                   gint row, gint col)
 {
-        gint col = -1, row = -1;
         GtkTreeIter iter;
-        gint *indices;
+        GtkTreePath *path = gtk_tree_path_new_from_indices (row, -1);
 
-        if (gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
-                /* Path is valid.  */
-                if (column == self->priv->black_roll_column)
-                        col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-                else if (column == self->priv->white_roll_column)
-                        col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-                else if (column == self->priv->black_move_column)
-                        col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-                else if (column == self->priv->white_move_column)
-                        col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
-
-                if (!gibbon_move_list_view_cell_valid (self, &iter, col)) {
-                        col = -1;
-                } else {
-                        indices = gtk_tree_path_get_indices (path);
-                        row = indices[0];
-                }
-        }
-
-        if (col < 0 || row < 0)
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
                 return;
+        }
+        if (!gibbon_move_list_view_cell_valid (self, &iter, col)) {
+                gtk_tree_path_free (path);
+                return;
+        }
 
         if (col == self->priv->selected_col && row == self->priv->selected_row)
                 return;
