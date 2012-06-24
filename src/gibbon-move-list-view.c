@@ -65,6 +65,9 @@ static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
                                                          *self,
                                                          GdkEventButton
                                                          *event);
+static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
+                                                  GtkTreePath  *path,
+                                                  GtkTreeModel *tree_model);
 
 static void gibbon_move_list_view_black_roll_data_func (GtkTreeViewColumn
                                                         *tree_column,
@@ -230,6 +233,10 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         g_signal_connect_swapped (G_OBJECT (view), "button-press-event",
                                   (GCallback)
                                   gibbon_move_list_view_on_button_pressed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (model), "row-deleted",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_row_deleted,
                                   self);
         return self;
 }
@@ -441,8 +448,6 @@ gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
         gtk_tree_view_column_set_title (column, gibbon_match_get_black (match));
         column = gtk_tree_view_get_column (self->priv->view, 4);
         gtk_tree_view_column_set_title (column, gibbon_match_get_white (match));
-
-        self->priv->selected_row = self->priv->selected_col = -1;
 }
 
 static gboolean
@@ -596,4 +601,15 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
          * involved.
          */
         gtk_widget_queue_draw (GTK_WIDGET (self->priv->view));
+}
+
+static void
+gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
+                                      GtkTreePath  *path,
+                                      GtkTreeModel *model)
+{
+        g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
+        g_return_if_fail (GTK_IS_TREE_MODEL (model));
+
+        self->priv->selected_col = self->priv->selected_row = -1;
 }
