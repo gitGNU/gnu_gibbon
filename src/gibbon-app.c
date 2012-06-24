@@ -339,6 +339,10 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         self->priv->move_list_view = move_list_view;
 
         if (match_file) {
+                /*
+                 * FIXME! The whole thing should be more generic so that
+                 * whenever a new match is loaded the same things happen.
+                 */
                 loader = gibbon_match_loader_new ();
                 match = gibbon_match_loader_read_match (loader, match_file,
                                                         &error);
@@ -352,6 +356,10 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                         g_object_unref (self);
                         return FALSE;
                 }
+
+                obj = gibbon_app_find_object (self, "notebook-info-area",
+                                              GTK_TYPE_NOTEBOOK);
+                gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
 
                 gibbon_match_list_set_match (list, match);
 
