@@ -114,6 +114,10 @@ static void gibbon_move_list_view_move (GibbonMoveListView *self,
 static void gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                                GtkTreePath *path,
                                                GtkTreeViewColumn *column);
+static gboolean gibbon_move_list_view_cell_valid (const GibbonMoveListView
+                                                  *self,
+                                                  GtkTreeIter *iter,
+                                                  gint col);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -582,12 +586,16 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                 else if (column == self->priv->white_move_column)
                         col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
 
-                indices = gtk_tree_path_get_indices (path);
-                row = indices[0];
+                if (!gibbon_move_list_view_cell_valid (self, &iter, col)) {
+                        col = -1;
+                } else {
+                        indices = gtk_tree_path_get_indices (path);
+                        row = indices[0];
+                }
         }
 
         if (col < 0 || row < 0)
-                col = row = -1;
+                return;
 
         if (col == self->priv->selected_col && row == self->priv->selected_row)
                 return;
@@ -611,4 +619,52 @@ gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
         g_return_if_fail (GTK_IS_TREE_MODEL (model));
 
         self->priv->selected_col = self->priv->selected_row = -1;
+}
+
+/*
+ * Check whether a selected cell is really used.  A cell in a roll column
+ * is valid if either the cell itself has content or its peer move column.
+ * A cell in a move column is valid if either the cell itself or the peer
+ * roll column has content.
+ */
+static gboolean
+gibbon_move_list_view_cell_valid (const GibbonMoveListView *self,
+                                  GtkTreeIter *iter, gint col)
+{
+        gint peer;
+        gchar c, *content;
+
+        switch (col) {
+        case GIBBON_MATCH_LIST_COL_BLACK_ROLL:
+                peer = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                break;
+        case GIBBON_MATCH_LIST_COL_BLACK_MOVE:
+                peer = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+                break;
+        case GIBBON_MATCH_LIST_COL_WHITE_ROLL:
+                peer = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                break;
+        case GIBBON_MATCH_LIST_COL_WHITE_MOVE:
+                peer = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                break;
+        default:
+                return FALSE;
+        }
+
+        gtk_tree_model_get (self->priv->model, iter, col, &content, -1);
+        if (content) {
+                c = *content;
+                g_free (content);
+                if (c)
+                        return TRUE;
+        }
+        gtk_tree_model_get (self->priv->model, iter, peer, &content, -1);
+        if (content) {
+                c = *content;
+                g_free (content);
+                if (c)
+                        return TRUE;
+        }
+
+        return FALSE;
 }

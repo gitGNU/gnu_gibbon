@@ -283,7 +283,9 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 if (side > 0) {
                         /*
                          * If the very first action will be listed on white's
-                         * side we add a placeholder for black's move.
+                         * side we add a placeholder for black's move.  That
+                         * is more efficent than wasting an entire column
+                         * for that purpose.
                          */
                         gtk_list_store_set (self->priv->moves, &iter,
                                             GIBBON_MATCH_LIST_COL_BLACK_MOVE,
