@@ -33,6 +33,12 @@
 #include "gibbon-move-list-view.h"
 #include "gibbon-analysis-roll.h"
 
+enum gibbon_move_list_view_signal {
+        ACTION_SELECTED,
+        LAST_SIGNAL
+};
+static guint gibbon_move_list_view_signals[LAST_SIGNAL] = { 0 };
+
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
         GtkTreeView *view;
@@ -116,7 +122,8 @@ static void gibbon_move_list_view_move (GibbonMoveListView *self,
                                         GtkTreeModel *tree_model,
                                         GtkTreeIter *iter);
 static void gibbon_move_list_view_select_cell (GibbonMoveListView *self,
-                                               gint row, gint col);
+                                               gint row, gint col,
+                                               gboolean send_signal);
 static gboolean gibbon_move_list_view_cell_valid (const GibbonMoveListView
                                                   *self,
                                                   GtkTreeIter *iter,
@@ -152,6 +159,17 @@ gibbon_move_list_view_class_init (GibbonMoveListViewClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonMoveListViewPrivate));
+
+        gibbon_move_list_view_signals[ACTION_SELECTED] =
+                g_signal_new ("action-selected",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__INT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_INT);
 
         object_class->finalize = gibbon_move_list_view_finalize;
 }
@@ -284,7 +302,8 @@ gibbon_move_list_view_on_change (GibbonMoveListView *self,
          * or we are currently loading a match from disk.  Either way we
          * don't care about a previous selection.
          */
-        gibbon_move_list_view_select_cell (self, changed_row, changed_col);
+        gibbon_move_list_view_select_cell (self, changed_row, changed_col,
+                                           FALSE);
 }
 
 static void
@@ -591,7 +610,7 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 
         indices = gtk_tree_path_get_indices (path);
         row = indices[0];
-        gibbon_move_list_view_select_cell (self, row, col);
+        gibbon_move_list_view_select_cell (self, row, col, TRUE);
         gtk_tree_path_free (path);
 
         if (!gtk_widget_has_focus (GTK_WIDGET (view)))
@@ -602,10 +621,12 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 
 static void
 gibbon_move_list_view_select_cell (GibbonMoveListView *self,
-                                   gint row, gint col)
+                                   gint row, gint col,
+                                   gboolean send_signal)
 {
         GtkTreeIter iter;
         GtkTreePath *path = gtk_tree_path_new_from_indices (row, -1);
+        gint action_no;
 
         if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
                 gtk_tree_path_free (path);
@@ -633,6 +654,15 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                       0.0, 0.0);
 
         gtk_tree_path_free (path);
+
+        if (send_signal) {
+                gtk_tree_model_get (self->priv->model, &iter,
+                                    col + 1, &action_no,
+                                    -1);
+                g_signal_emit (self,
+                               gibbon_move_list_view_signals[ACTION_SELECTED],
+                               0, action_no);
+        }
 }
 
 static void
