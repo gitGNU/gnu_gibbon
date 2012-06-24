@@ -325,7 +325,10 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                 col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
         }
 
-        if (luck >= 0.6) {
+        if (luck > 1e9) {
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_NORMAL;
+        } else if (luck >= 0.6) {
                 style = PANGO_STYLE_NORMAL;
                 weight = PANGO_WEIGHT_BOLD;
         } else if (luck <= -0.6) {
@@ -483,7 +486,9 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK, &luck,
                                     -1);
-                if (luck >= 0.6)
+                if (luck > 1e9)
+                        text = NULL;
+                else if (luck >= 0.6)
                         text = g_strdup_printf (_("Luck: %f (very lucky)"),
                                                 luck);
                 else if (luck >= 0.3)
@@ -505,7 +510,9 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK, &luck,
                                     -1);
-                if (luck >= 0.6)
+                if (luck > 1e9)
+                        text = NULL;
+                else if (luck >= 0.6)
                         text = g_strdup_printf (_("Luck: %f (very lucky)"),
                                                 luck);
                 else if (luck >= 0.3)

@@ -362,15 +362,23 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         if (GIBBON_IS_ROLL (action)) {
                 buf = gibbon_match_list_format_roll (self,
                                                      GIBBON_ROLL (action));
+                colno2 = side < 0
+                    ? GIBBON_MATCH_LIST_COL_BLACK_LUCK
+                    : GIBBON_MATCH_LIST_COL_WHITE_LUCK;
                 if (buf && GIBBON_IS_ANALYSIS_ROLL (analysis)) {
                         ra = GIBBON_ANALYSIS_ROLL (analysis);
-                        colno2 = side < 0
-                            ? GIBBON_MATCH_LIST_COL_BLACK_LUCK
-                            : GIBBON_MATCH_LIST_COL_WHITE_LUCK;
                         gtk_list_store_set (self->priv->moves, &iter,
                                             colno2,
                                             gibbon_analysis_roll_get_luck (ra),
                                             -1);
+                } else {
+                        /*
+                         * Store a ridiculously high number.  It would be
+                         * cleaner to use NaN instead but we cannot portably
+                         * set it.
+                         */
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            colno2, 1e24, -1);
                 }
         } else if (GIBBON_IS_MOVE (action)) {
                 buf = gibbon_match_list_format_move (self,
