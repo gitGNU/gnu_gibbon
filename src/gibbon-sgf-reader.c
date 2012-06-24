@@ -50,6 +50,7 @@
 #include "gibbon-accept.h"
 
 #include "gibbon-analysis-roll.h"
+#include "gibbon-analysis-move.h"
 
 typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
@@ -98,6 +99,8 @@ static gboolean gibbon_sgf_reader_move (GibbonSGFReader *self,
 static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
                                                         const GSGFNode *node,
                                                         GibbonPositionSide side);
+static GibbonAnalysis *gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
+                                                        const GSGFNode *node);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -510,23 +513,27 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                         movement->to = to;
                 }
                 action = GIBBON_GAME_ACTION (move);
+                analysis = gibbon_sgf_reader_move_analysis (self, node);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   NULL, error))
+                                                   analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_double_new ());
+                analysis = gibbon_sgf_reader_move_analysis (self, node);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   NULL, error))
+                                                   analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
+                analysis = gibbon_sgf_reader_move_analysis (self, node);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   NULL, error))
+                                                   analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
+                analysis = gibbon_sgf_reader_move_analysis (self, node);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
-                                                   NULL, error))
+                                                   analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_resign (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_resign_new (
@@ -599,4 +606,19 @@ gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
                 type = GIBBON_ANALYSIS_ROLL_LUCK_NONE;
 
         return GIBBON_ANALYSIS (gibbon_analysis_roll_new (type, luck));
+}
+
+static GibbonAnalysis *
+gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
+                                 const GSGFNode *node)
+{
+        gboolean valid = FALSE;
+        GibbonAnalysisMove *a = gibbon_analysis_move_new ();
+
+        if (!valid) {
+                g_object_unref (a);
+                return NULL;
+        }
+
+        return GIBBON_ANALYSIS (a);
 }
