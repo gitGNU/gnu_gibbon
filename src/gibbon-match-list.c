@@ -140,17 +140,36 @@ gibbon_match_list_new (void)
 
         self->priv->games = gtk_list_store_new (1, G_TYPE_STRING);
 
-        moves = gtk_list_store_new (GIBBON_MATCH_LIST_N_COLUMNS,
-                                    G_TYPE_STRING,
-                                    G_TYPE_STRING,
-                                    G_TYPE_DOUBLE,
-                                    G_TYPE_INT,
-                                    G_TYPE_STRING,
-                                    G_TYPE_STRING,
-                                    G_TYPE_DOUBLE,
-                                    G_TYPE_INT,
-                                    G_TYPE_STRING,
-                                    G_TYPE_UINT);
+        moves = gtk_list_store_new (
+                        GIBBON_MATCH_LIST_N_COLUMNS,
+                        /* GIBBON_MATCH_LIST_COL_MOVENO */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_ROLL */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_ROLL_ACTION */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_LUCK */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE_ACTION */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_ROLL */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_ROLL_ACTION */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_LUCK */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE_ACTION */
+                        G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO */
+                        G_TYPE_UINT);
         self->priv->moves = moves;
 
         return self;
