@@ -55,12 +55,12 @@ G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 static void gibbon_move_list_view_on_insert (const GibbonMoveListView *self);
 static void gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
                                                 const GibbonMatchList *list);
-static gboolean gibbon_move_list_view_on_query_tooltip (GtkTreeView *view,
+static gboolean gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView
+                                                        *self,
                                                         gint x, gint y,
                                                         gboolean keyboard_tip,
                                                         GtkTooltip *tooltip,
-                                                        const GibbonMoveListView
-                                                        *self);
+                                                        GtkTreeView *view);
 static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
                                                          *self,
                                                          GdkEventButton
@@ -223,13 +223,10 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                                   (GCallback)
                                   gibbon_move_list_view_on_new_match,
                                   self);
-        /*
-         * FIXME! How can we swap that?
-         */
-        g_signal_connect (G_OBJECT (view), "query-tooltip",
-                          (GCallback) gibbon_move_list_view_on_query_tooltip,
-                          self);
-
+        g_signal_connect_swapped (G_OBJECT (view), "query-tooltip",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_query_tooltip,
+                                  self);
         g_signal_connect_swapped (G_OBJECT (view), "button-press-event",
                                   (GCallback)
                                   gibbon_move_list_view_on_button_pressed,
@@ -451,10 +448,11 @@ gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
 }
 
 static gboolean
-gibbon_move_list_view_on_query_tooltip (GtkTreeView *view, gint x, gint y,
+gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
+                                        gint x, gint y,
                                         gboolean keyboard_tip,
                                         GtkTooltip *tooltip,
-                                        const GibbonMoveListView *self)
+                                        GtkTreeView *view)
 {
         GtkTreeModel *model;
         GtkTreePath *path;
@@ -466,6 +464,7 @@ gibbon_move_list_view_on_query_tooltip (GtkTreeView *view, gint x, gint y,
         g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
         g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
         g_return_val_if_fail (view == self->priv->view, FALSE);
+        g_return_val_if_fail (GTK_IS_TOOLTIP (tooltip), FALSE);
 
         if (!gtk_tree_view_get_tooltip_context (view, &x, &y,
                                                 keyboard_tip,
