@@ -34,6 +34,7 @@
 
 typedef struct _GibbonAnalysisRollPrivate GibbonAnalysisRollPrivate;
 struct _GibbonAnalysisRollPrivate {
+        GibbonAnalysisRollLuck type;
         gdouble luck;
 };
 
@@ -48,7 +49,8 @@ gibbon_analysis_roll_init (GibbonAnalysisRoll *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_ANALYSIS_ROLL, GibbonAnalysisRollPrivate);
 
-        self->priv->luck = FALSE;
+        self->priv->type = GIBBON_ANALYSIS_ROLL_LUCK_UNKNOWN;
+        self->priv->luck = 0.0;
 }
 
 static void
@@ -69,6 +71,7 @@ gibbon_analysis_roll_class_init (GibbonAnalysisRollClass *klass)
 
 /**
  * gibbon_analysis_roll_new:
+ * @type: Luck estimation for that roll.
  * @luck: Luck measurement of that roll.
  *
  * Creates a new #GibbonAnalysisRoll.
@@ -76,20 +79,30 @@ gibbon_analysis_roll_class_init (GibbonAnalysisRollClass *klass)
  * Returns: The newly created #GibbonAnalysisRoll or %NULL in case of failure.
  */
 GibbonAnalysisRoll *
-gibbon_analysis_roll_new (gdouble luck)
+gibbon_analysis_roll_new (GibbonAnalysisRollLuck type, gdouble luck)
 {
         GibbonAnalysisRoll *self = g_object_new (GIBBON_TYPE_ANALYSIS_ROLL, NULL);
 
+        self->priv->type = type;
         self->priv->luck = luck;
 
         return self;
 }
 
 gdouble
-gibbon_analysis_roll_get_luck (const GibbonAnalysisRoll *self)
+gibbon_analysis_roll_get_luck_value (const GibbonAnalysisRoll *self)
 {
         g_return_val_if_fail (GIBBON_IS_ANALYSIS_ROLL (self), 0.0);
 
         return self->priv->luck;
+}
+
+GibbonAnalysisRollLuck
+gibbon_analysis_roll_get_luck_type (const GibbonAnalysisRoll *self)
+{
+        g_return_val_if_fail (GIBBON_IS_ANALYSIS_ROLL (self),
+                              GIBBON_ANALYSIS_ROLL_LUCK_UNKNOWN);
+
+        return self->priv->type;
 }
 

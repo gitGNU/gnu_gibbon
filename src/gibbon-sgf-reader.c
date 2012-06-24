@@ -95,6 +95,9 @@ static gboolean gibbon_sgf_reader_move (GibbonSGFReader *self,
                                         const GSGFNode *node,
                                         GibbonPositionSide side,
                                         GError **error);
+static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
+                                                        const GSGFNode *node,
+                                                        GibbonPositionSide side);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -467,9 +470,7 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         gsize num_movements, i;
         guint from, to;
         GibbonMovement *movement;
-        GSGFProperty *analysis_property;
         GibbonAnalysis *analysis = NULL;
-        GSGFReal *gsgf_real;
 
         gsgf_move = GSGF_MOVE_BACKGAMMON (gsgf_property_get_value (prop));
 
@@ -478,15 +479,9 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 dice[1] = gsgf_move_backgammon_get_die (gsgf_move, 1);
                 action = GIBBON_GAME_ACTION (gibbon_roll_new (dice[0],
                                                               dice[1]));
-                analysis_property = gsgf_node_get_property (node, "LU");
-                if (analysis_property) {
-                        gsgf_real = GSGF_REAL (
-                                gsgf_property_get_value (analysis_property));
-                        analysis = GIBBON_ANALYSIS (gibbon_analysis_roll_new (
-                                gsgf_real_get_value (gsgf_real)));
-                }
-
-                if (!gibbon_sgf_reader_add_action (self, match, side, action,
+                analysis = gibbon_sgf_reader_roll_analysis (self, node, side);
+                if (analysis &&
+                    !gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
                 num_movements = gsgf_move_backgammon_get_num_moves (gsgf_move);
@@ -553,4 +548,56 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         }
 
         return TRUE;
+}
+
+static GibbonAnalysis *
+gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
+                                 const GSGFNode *node,
+                                 GibbonPositionSide side)
+{
+        GSGFProperty *prop;
+        GSGFValue *value;
+        GibbonAnalysisRollLuck type = GIBBON_ANALYSIS_ROLL_LUCK_UNKNOWN;
+        gdouble luck = 0.0;
+        gboolean valid = FALSE;
+        gboolean reverse = side == GIBBON_POSITION_SIDE_BLACK;
+
+        prop = gsgf_node_get_property (node, "LU");
+        if (prop) {
+                valid = TRUE;
+                value = gsgf_property_get_value (prop);
+                luck = gsgf_real_get_value (GSGF_REAL (value));
+        }
+
+        prop = gsgf_node_get_property (node, "GW");
+        if (!prop) {
+                reverse = !reverse;
+                prop = gsgf_node_get_property (node, "GB");
+        }
+        if (prop) {
+                valid = TRUE;
+                value = gsgf_property_get_value (prop);
+                switch (gsgf_double_get_value (GSGF_DOUBLE (value))) {
+                case GSGF_DOUBLE_NORMAL:
+                        if (reverse)
+                                type = GIBBON_ANALYSIS_ROLL_LUCK_LUCKY;
+                        else
+                                type = GIBBON_ANALYSIS_ROLL_LUCK_UNLUCKY;
+                        break;
+                case GSGF_DOUBLE_VERY:
+                        if (reverse)
+                                type = GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY;
+                        else
+                                type = GIBBON_ANALYSIS_ROLL_LUCK_VERY_UNLUCKY;
+                        break;
+                }
+        }
+
+        if (!valid)
+                return NULL;
+
+        if (!type)
+                type = GIBBON_ANALYSIS_ROLL_LUCK_NONE;
+
+        return GIBBON_ANALYSIS (gibbon_analysis_roll_new (type, luck));
 }

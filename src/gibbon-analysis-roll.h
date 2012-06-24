@@ -46,6 +46,15 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_ANALYSIS_ROLL, GibbonAnalysisRollClass))
 
+typedef enum {
+        GIBBON_ANALYSIS_ROLL_LUCK_NONE = -1,
+        GIBBON_ANALYSIS_ROLL_LUCK_UNKNOWN = 0,
+        GIBBON_ANALYSIS_ROLL_LUCK_LUCKY,
+        GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY,
+        GIBBON_ANALYSIS_ROLL_LUCK_UNLUCKY,
+        GIBBON_ANALYSIS_ROLL_LUCK_VERY_UNLUCKY
+} GibbonAnalysisRollLuck;
+
 /**
  * GibbonAnalysisRoll:
  *
@@ -74,7 +83,11 @@ struct _GibbonAnalysisRollClass
 
 GType gibbon_analysis_roll_get_type (void) G_GNUC_CONST;
 
-GibbonAnalysisRoll *gibbon_analysis_roll_new (gdouble luck);
-gdouble gibbon_analysis_roll_get_luck (const GibbonAnalysisRoll *self);
+GibbonAnalysisRoll *gibbon_analysis_roll_new (GibbonAnalysisRollLuck type,
+                                              gdouble luck);
+gdouble gibbon_analysis_roll_get_luck_value (const GibbonAnalysisRoll *self);
+GibbonAnalysisRollLuck gibbon_analysis_roll_get_luck_type (const
+                                                           GibbonAnalysisRoll
+                                                           *self);
 
 #endif

@@ -146,9 +146,11 @@ gibbon_match_list_new (void)
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE,
+                                    G_TYPE_INT,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_DOUBLE,
+                                    G_TYPE_INT,
                                     G_TYPE_STRING,
                                     G_TYPE_UINT);
         self->priv->moves = moves;
@@ -256,9 +258,11 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         GtkTreeIter iter;
         gint rows;
         guint moveno, last_moveno;
-        guint colno, colno2;
+        guint colno, colno2, colno3;
         gchar *buf;
         GibbonAnalysisRoll *ra;
+        GibbonAnalysisRollLuck luck_type;
+        gdouble luck_value;
 
         /* Get an iter to the last row.  */
         rows = gtk_tree_model_iter_n_children (
@@ -365,11 +369,16 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 colno2 = side < 0
                     ? GIBBON_MATCH_LIST_COL_BLACK_LUCK
                     : GIBBON_MATCH_LIST_COL_WHITE_LUCK;
+                colno3 = side < 0
+                    ? GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE
+                    : GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE;
                 if (buf && GIBBON_IS_ANALYSIS_ROLL (analysis)) {
                         ra = GIBBON_ANALYSIS_ROLL (analysis);
+                        luck_type = gibbon_analysis_roll_get_luck_type (ra);
+                        luck_value = gibbon_analysis_roll_get_luck_value (ra);
                         gtk_list_store_set (self->priv->moves, &iter,
-                                            colno2,
-                                            gibbon_analysis_roll_get_luck (ra),
+                                            colno2, luck_value,
+                                            colno3, luck_type,
                                             -1);
                 } else {
                         /*

@@ -31,6 +31,7 @@
 #include <gdk/gdk.h>
 
 #include "gibbon-move-list-view.h"
+#include "gibbon-analysis-roll.h"
 
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
@@ -314,7 +315,8 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkTreeIter *iter)
 {
         gchar *roll_string;
-        gdouble luck;
+        gdouble luck_value;
+        GibbonAnalysisRollLuck luck_type;
         PangoStyle style;
         PangoWeight weight;
         GtkStyle *gtk_style;
@@ -329,7 +331,9 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_BLACK_ROLL,
                                     &roll_string,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK,
-                                    &luck,
+                                    &luck_value,
+                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
+                                    &luck_type,
                                     -1);
                 col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
         } else {
@@ -337,23 +341,26 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_WHITE_ROLL,
                                     &roll_string,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK,
-                                    &luck,
+                                    &luck_value,
+                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE,
+                                    &luck_type,
                                     -1);
                 col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
         }
 
-        if (luck > 1e9) {
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_NORMAL;
-        } else if (luck >= 0.6) {
+        switch (luck_type) {
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY:
                 style = PANGO_STYLE_NORMAL;
                 weight = PANGO_WEIGHT_BOLD;
-        } else if (luck <= -0.6) {
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_UNLUCKY:
                 style = PANGO_STYLE_ITALIC;
                 weight = PANGO_WEIGHT_NORMAL;
-        } else {
+                break;
+        default:
                 style = PANGO_STYLE_NORMAL;
                 weight = PANGO_WEIGHT_NORMAL;
+                break;
         }
 
         if (col == self->priv->selected_col) {
@@ -483,7 +490,8 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         GtkTreeIter iter;
         GtkTreeViewColumn *column;
         gchar *text = NULL;
-        gdouble luck;
+        gdouble luck_value;
+        GibbonAnalysisRollLuck luck_type;
 
         g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
         g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
@@ -501,55 +509,43 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
 
         if (column == self->priv->black_roll_column) {
                 gtk_tree_model_get (model, &iter,
-                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK, &luck,
+                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK,
+                                    &luck_value,
+                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
+                                    &luck_type,
                                     -1);
-                if (luck > 1e9)
-                        text = NULL;
-                else if (luck >= 0.6)
-                        text = g_strdup_printf (_("Luck: %f (very lucky)"),
-                                                luck);
-                else if (luck >= 0.3)
-                        text = g_strdup_printf (_("Luck: %f (lucky)"),
-                                                luck);
-                else if (luck > 0.0)
-                        text = g_strdup_printf (_("Luck: %f"),
-                                                luck);
-                else if (luck <= -0.6)
-                        text = g_strdup_printf (_("Luck: %f (very unlucky)"),
-                                                luck);
-                else if (luck <= -0.3)
-                        text = g_strdup_printf (_("Luck: %f (unlucky)"),
-                                                luck);
-                else if (luck <= 0.0)
-                        text = g_strdup_printf (_("Luck: %f"),
-                                                luck);
         } else if (column == self->priv->white_roll_column) {
                 gtk_tree_model_get (model, &iter,
-                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK, &luck,
+                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK,
+                                    &luck_value,
+                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE,
+                                    &luck_type,
                                     -1);
-                if (luck > 1e9)
-                        text = NULL;
-                else if (luck >= 0.6)
-                        text = g_strdup_printf (_("Luck: %f (very lucky)"),
-                                                luck);
-                else if (luck >= 0.3)
-                        text = g_strdup_printf (_("Luck: %f (lucky)"),
-                                                luck);
-                else if (luck > 0.0)
-                        text = g_strdup_printf (_("Luck: %f"),
-                                                luck);
-                else if (luck <= -0.6)
-                        text = g_strdup_printf (_("Luck: %f (very unlucky)"),
-                                                luck);
-                else if (luck <= -0.3)
-                        text = g_strdup_printf (_("Luck: %f (unlucky)"),
-                                                luck);
-                else if (luck <= 0.0)
-                        text = g_strdup_printf (_("Luck: %f"),
-                                                luck);
         }
 
-        if (text) {
+        switch (luck_type) {
+        case GIBBON_ANALYSIS_ROLL_LUCK_UNKNOWN:
+                gtk_tree_path_free (path);
+                return FALSE;
+        case GIBBON_ANALYSIS_ROLL_LUCK_NONE:
+                text = g_strdup_printf (_("Luck: %f"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_LUCKY:
+                text = g_strdup_printf (_("Luck: %f (lucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY:
+                text = g_strdup_printf (_("Luck: %f (very lucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_UNLUCKY:
+                text = g_strdup_printf (_("Luck: %f (unlucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_UNLUCKY:
+                text = g_strdup_printf (_("Luck: %f (very unlucky)"),
+                                        luck_value);
+                break;
+        }
+
+        if (text) { /* Make gcc -Wall happy! */
                 gtk_tooltip_set_text (tooltip, text);
                 gtk_tree_view_set_tooltip_row (view, tooltip, path);
                 g_free (text);
