@@ -284,9 +284,6 @@ gibbon_move_list_view_on_change (GibbonMoveListView *self,
          * don't care about a previous selection.
          */
         gibbon_move_list_view_select_cell (self, changed_row, changed_col);
-
-        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
-                                      0.0, 0.0);
 }
 
 static void
@@ -634,6 +631,12 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
          * involved.
          */
         gtk_widget_queue_draw (GTK_WIDGET (self->priv->view));
+
+
+        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
+                                      0.0, 0.0);
+
+        gtk_tree_path_free (path);
 }
 
 static void
