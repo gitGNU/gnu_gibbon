@@ -56,6 +56,9 @@ static guint gibbon_match_list_signals[LAST_SIGNAL] = { 0 };
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
+        /*
+         * This is only a copy of the global match owned by the GibbonApp.
+         */
         GibbonMatch *match;
 
         GtkListStore *games;
@@ -99,11 +102,6 @@ gibbon_match_list_init (GibbonMatchList *self)
 static void
 gibbon_match_list_finalize (GObject *object)
 {
-        GibbonMatchList *self = GIBBON_MATCH_LIST (object);
-
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
-
         G_OBJECT_CLASS (gibbon_match_list_parent_class)->finalize(object);
 }
 
@@ -170,8 +168,6 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
         self->priv->match = match;
 
         gtk_list_store_clear (self->priv->games);

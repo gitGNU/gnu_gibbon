@@ -90,6 +90,7 @@ struct _GibbonAppPrivate {
 
         GibbonClientIcons *client_icons;
 
+        GibbonMatch *match;
         GibbonMatchList *match_list;
         GibbonGameListView *game_list_view;
         GibbonMoveListView *move_list_view;
@@ -174,6 +175,7 @@ static void gibbon_app_init(GibbonApp *self)
 
         self->priv->client_icons = NULL;
 
+        self->priv->match = NULL;
         self->priv->match_list = NULL;
         self->priv->game_list_view = NULL;
         self->priv->move_list_view = NULL;
@@ -184,6 +186,9 @@ static void gibbon_app_finalize(GObject *object)
         GibbonApp *self = GIBBON_APP (object);
 
         gibbon_app_disconnect(self);
+
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
 
         if (self->priv->client_icons)
                 g_object_unref(self->priv->client_icons);
