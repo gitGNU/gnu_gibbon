@@ -29,6 +29,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "gibbon-move-list-view.h"
 #include "gibbon-analysis-roll.h"
@@ -74,7 +75,12 @@ static gboolean gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView
 static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
                                                          *self,
                                                          GdkEventButton
-                                                         *event);
+                                                         *event,
+                                                         GtkWidget *widget);
+static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
+                                                    GdkEventKey *event,
+                                                    GtkWidget *widget);
+static void gibbon_move_list_view_to_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -128,6 +134,10 @@ static gboolean gibbon_move_list_view_cell_valid (const GibbonMoveListView
                                                   *self,
                                                   GtkTreeIter *iter,
                                                   gint col);
+static gboolean gibbon_move_list_view_cell_filled (const GibbonMoveListView
+                                                   *self,
+                                                   GtkTreeIter *iter,
+                                                   gint col);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -255,6 +265,10 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         g_signal_connect_swapped (G_OBJECT (view), "button-press-event",
                                   (GCallback)
                                   gibbon_move_list_view_on_button_pressed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (view), "key-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_key_press,
                                   self);
         g_signal_connect_swapped (G_OBJECT (model), "row-deleted",
                                   (GCallback)
@@ -577,7 +591,8 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
 
 static gboolean
 gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
-                                         GdkEventButton *event)
+                                         GdkEventButton *event,
+                                         GtkWidget *widget)
 {
         GtkTreeView *view = self->priv->view;
         GtkTreePath *path;
@@ -617,6 +632,32 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                 gtk_widget_grab_focus (GTK_WIDGET (view));
 
         return TRUE;
+}
+
+
+static gboolean
+gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
+                                    GdkEventKey *event,
+                                    GtkWidget *widget)
+{
+        g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
+        g_return_val_if_fail (event != NULL, FALSE);
+        g_return_val_if_fail (GTK_IS_TREE_VIEW (widget), FALSE);
+        g_return_val_if_fail (GTK_WIDGET (self->priv->view) == widget, FALSE);
+
+        /*
+         * We can ignore modifier keys.  None of them has any semantics that
+         * fits for our purposes.  Alternatively: Discard all events with
+         * modifier keys?
+         */
+        switch (event->keyval) {
+        case GDK_KEY_Left:
+                gibbon_move_list_view_to_left (self);
+                return TRUE;
+        }
+
+        /* Propagate further.  */
+        return FALSE;
 }
 
 static void
@@ -722,4 +763,84 @@ gibbon_move_list_view_cell_valid (const GibbonMoveListView *self,
         }
 
         return FALSE;
+}
+
+/*
+ * Check whether a selected cell has relevant content.  The content is not
+ * valid if it is either not present, the emtpy string or a lone dash.
+ */
+static gboolean
+gibbon_move_list_view_cell_filled (const GibbonMoveListView *self,
+                                   GtkTreeIter *iter, gint col)
+{
+        gchar *content;
+
+        gtk_tree_model_get (self->priv->model, iter, col, &content, -1);
+        if (content) {
+                if (!content[0] || (content[0] == '-' && !content[1])) {
+                        g_free (content);
+                        return FALSE;
+                }
+                g_free (content);
+                return TRUE;
+        }
+
+        return FALSE;
+}
+
+static void
+gibbon_move_list_view_to_left (GibbonMoveListView *self)
+{
+        GtkTreeIter iter;
+        GtkTreePath *path;
+        gint prev, row;
+
+        if (self->priv->selected_row < 0 || self->priv->selected_col < 0)
+                return;
+
+        path = gtk_tree_path_new_from_indices (self->priv->selected_row, -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return;
+        }
+        gtk_tree_path_free (path);
+
+        row = self->priv->selected_row;
+
+        switch (self->priv->selected_col) {
+        case GIBBON_MATCH_LIST_COL_WHITE_MOVE:
+                if (gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_WHITE_ROLL)) {
+                        prev = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                        gibbon_move_list_view_select_cell (self, row, prev,
+                                                           TRUE);
+                        break;
+                }
+                /* FALLTHROUGH.  No break.  */
+        case GIBBON_MATCH_LIST_COL_WHITE_ROLL:
+                /*
+                 * This can be invalid if white has the first roll of the
+                 * game.  But this case is caught, when actually selecting
+                 * the cell.
+                 */
+                prev = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                gibbon_move_list_view_select_cell (self, row, prev, TRUE);
+                break;
+        case GIBBON_MATCH_LIST_COL_BLACK_MOVE:
+                if (gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_BLACK_ROLL)) {
+                        prev = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+                        gibbon_move_list_view_select_cell (self, row, prev,
+                                                           TRUE);
+                        break;
+                }
+                /* FALLTHROUGH.  No break.  */
+        case GIBBON_MATCH_LIST_COL_BLACK_ROLL:
+                /*
+                 * Again, possible errors are caught, when selecting a cell.
+                 */
+                prev = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                gibbon_move_list_view_select_cell (self, row - 1, prev, TRUE);
+                break;
+        }
 }
