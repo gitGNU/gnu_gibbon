@@ -81,6 +81,7 @@ static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
                                                     GdkEventKey *event,
                                                     GtkWidget *widget);
 static void gibbon_move_list_view_to_left (GibbonMoveListView *self);
+static void gibbon_move_list_view_to_right (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -654,6 +655,9 @@ gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
         case GDK_KEY_Left:
                 gibbon_move_list_view_to_left (self);
                 return TRUE;
+        case GDK_KEY_Right:
+                gibbon_move_list_view_to_right (self);
+                return TRUE;
         }
 
         /* Propagate further.  */
@@ -841,6 +845,69 @@ gibbon_move_list_view_to_left (GibbonMoveListView *self)
                  */
                 prev = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
                 gibbon_move_list_view_select_cell (self, row - 1, prev, TRUE);
+                break;
+        }
+}
+
+static void
+gibbon_move_list_view_to_right (GibbonMoveListView *self)
+{
+        GtkTreeIter iter;
+        GtkTreePath *path;
+        gint next, row;
+
+        if (self->priv->selected_row < 0 || self->priv->selected_col < 0)
+                return;
+
+        path = gtk_tree_path_new_from_indices (self->priv->selected_row, -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return;
+        }
+        gtk_tree_path_free (path);
+
+        row = self->priv->selected_row;
+
+        switch (self->priv->selected_col) {
+        case GIBBON_MATCH_LIST_COL_BLACK_ROLL:
+                /*
+                 * This can be invalid if white has the first roll of the
+                 * game.  But this case is caught, when actually selecting
+                 * the cell.
+                 */
+                next = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                gibbon_move_list_view_select_cell (self, row, next, TRUE);
+                break;
+        case GIBBON_MATCH_LIST_COL_BLACK_MOVE:
+                if (gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_WHITE_ROLL)) {
+                        next = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                        gibbon_move_list_view_select_cell (self, row, next,
+                                                           TRUE);
+                        break;
+                }
+                /* FALLTHROUGH.  No break.  */
+        case GIBBON_MATCH_LIST_COL_WHITE_ROLL:
+                /*
+                 * This can be invalid if white has the first roll of the
+                 * game.  But this case is caught, when actually selecting
+                 * the cell.
+                 */
+                next = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                gibbon_move_list_view_select_cell (self, row, next, TRUE);
+                break;
+        case GIBBON_MATCH_LIST_COL_WHITE_MOVE:
+                if (!gtk_tree_model_iter_next (self->priv->model, &iter))
+                        return;
+                ++row;
+                if (gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_BLACK_ROLL)) {
+                        next = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+                } else {
+                        next = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                }
+                gibbon_move_list_view_select_cell (self, row, next,
+                                                   TRUE);
                 break;
         }
 }
