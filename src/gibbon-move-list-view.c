@@ -977,12 +977,23 @@ gibbon_move_list_view_on_page_up (GibbonMoveListView *self)
         GtkTreePath *before, *after;
         gint *ibefore, *iafter;
         gint row;
+        GtkTreeIter iter;
 
         gtk_tree_view_get_visible_rect (self->priv->view, &visible);
 
         /* Already at the top? */
-        if (!visible.y)
+        if (!visible.y) {
+                row = 0;
+                if (!gtk_tree_model_get_iter_first (self->priv->model, &iter))
+                        return;
+                if (!gibbon_move_list_view_cell_valid (self, &iter,
+                                                       self->priv->selected_col))
+                        ++row;
+                gibbon_move_list_view_select_cell (self, row,
+                                                   self->priv->selected_col,
+                                                   TRUE);
                 return;
+        }
 
         visible.y -= visible.height;
         if (visible.y < 0)
