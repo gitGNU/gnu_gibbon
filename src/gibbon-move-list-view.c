@@ -83,6 +83,7 @@ static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
 static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_up (GibbonMoveListView *self);
+static void gibbon_move_list_view_on_down (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -662,6 +663,9 @@ gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
         case GDK_KEY_Up:
                 gibbon_move_list_view_on_up (self);
                 return TRUE;
+        case GDK_KEY_Down:
+                gibbon_move_list_view_on_down (self);
+                return TRUE;
         }
 
         /* Propagate further.  */
@@ -935,6 +939,29 @@ gibbon_move_list_view_on_up (GibbonMoveListView *self)
 
         gibbon_move_list_view_select_cell (self,
                                            self->priv->selected_row - 1,
+                                           self->priv->selected_col,
+                                           TRUE);
+}
+
+static void
+gibbon_move_list_view_on_down (GibbonMoveListView *self)
+{
+        GtkTreeIter iter;
+        GtkTreePath *path;
+
+        if (self->priv->selected_row < 0 || self->priv->selected_col < 0)
+                return;
+
+        path = gtk_tree_path_new_from_indices (self->priv->selected_row + 1,
+                                               -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return;
+        }
+        gtk_tree_path_free (path);
+
+        gibbon_move_list_view_select_cell (self,
+                                           self->priv->selected_row + 1,
                                            self->priv->selected_col,
                                            TRUE);
 }
