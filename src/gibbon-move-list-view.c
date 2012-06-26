@@ -84,6 +84,7 @@ static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_up (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_down (GibbonMoveListView *self);
+static void gibbon_move_list_view_on_page_up (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -666,6 +667,9 @@ gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
         case GDK_KEY_Down:
                 gibbon_move_list_view_on_down (self);
                 return TRUE;
+        case GDK_KEY_Page_Up:
+                gibbon_move_list_view_on_page_up (self);
+                return TRUE;
         }
 
         /* Propagate further.  */
@@ -963,5 +967,49 @@ gibbon_move_list_view_on_down (GibbonMoveListView *self)
         gibbon_move_list_view_select_cell (self,
                                            self->priv->selected_row + 1,
                                            self->priv->selected_col,
+                                           TRUE);
+}
+
+static void
+gibbon_move_list_view_on_page_up (GibbonMoveListView *self)
+{
+        GdkRectangle visible;
+        GtkTreePath *before, *after;
+        gint *ibefore, *iafter;
+        gint row;
+
+        gtk_tree_view_get_visible_rect (self->priv->view, &visible);
+
+        /* Already at the top? */
+        if (!visible.y)
+                return;
+
+        visible.y -= visible.height;
+        if (visible.y < 0)
+                visible.y = 0;
+
+        if (!gtk_tree_view_get_path_at_pos (self->priv->view, 0, 0, &before,
+                                            NULL, NULL, NULL))
+                return;
+        ibefore = gtk_tree_path_get_indices (before);
+
+        gtk_tree_view_scroll_to_point (self->priv->view, visible.x, visible.y);
+
+        if (!gtk_tree_view_get_path_at_pos (self->priv->view, 0, 0, &after,
+                                            NULL, NULL, NULL)) {
+                gtk_tree_path_free (before);
+                return;
+        }
+        iafter = gtk_tree_path_get_indices (after);
+
+        row = self->priv->selected_row - ibefore[0] + iafter[0];
+
+        gtk_tree_path_free (after);
+        gtk_tree_path_free (before);
+
+        if (row < 0)
+                row = 0;
+
+        gibbon_move_list_view_select_cell (self, row, self->priv->selected_col,
                                            TRUE);
 }
