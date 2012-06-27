@@ -207,8 +207,12 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         gint colno;
         GtkStyle *style;
         GtkCellRenderer *renderer;
+        GtkTreeSelection *selection;
 
         self->priv->view = view;
+
+        selection = gtk_tree_view_get_selection (view);
+        gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
 
         self->priv->match_list = match_list;
 
