@@ -58,6 +58,7 @@
 #include "gibbon-move-list-view.h"
 #include "gibbon-match-loader.h"
 #include "gibbon-game.h"
+#include "gibbon-grid-view.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -332,6 +333,8 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GibbonGameListView *game_list_view;
         GibbonMoveListView *move_list_view;
         GObject *obj;
+        GtkWidget *parent;
+        GibbonGridView *grid_view;
 
         obj = gibbon_app_find_object (self, "combo-game-select",
                                       GTK_TYPE_COMBO_BOX);
@@ -339,10 +342,19 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         game_list_view = gibbon_game_list_view_new (GTK_COMBO_BOX (obj), list);
         self->priv->game_list_view = game_list_view;
 
+        /*
+         * Replace the GtkTreeView with an instance of our own wrapper class.
+         */
         obj = gibbon_app_find_object (self, "moves-view",
                                       GTK_TYPE_TREE_VIEW);
 
-        move_list_view = gibbon_move_list_view_new (GTK_TREE_VIEW (obj), list);
+        parent = gtk_widget_get_parent (GTK_WIDGET (obj));
+        grid_view = gibbon_grid_view_new ();
+        gtk_widget_show_all (GTK_WIDGET (grid_view));
+        gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (obj));
+        gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (grid_view));
+        move_list_view = gibbon_move_list_view_new (GTK_TREE_VIEW (grid_view),
+                                                    list);
         self->priv->move_list_view = move_list_view;
 
         if (match_file) {
