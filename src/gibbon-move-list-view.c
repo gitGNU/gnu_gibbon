@@ -80,12 +80,6 @@ static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
 static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
                                                     GdkEventKey *event,
                                                     GtkWidget *widget);
-static gboolean gibbon_move_list_view_on_focus_in (GibbonMoveListView *self,
-                                                   GdkEventFocus *event,
-                                                   GtkWidget *widget);
-static gboolean gibbon_move_list_view_on_focus_after (GtkWidget *widget,
-                                                   GdkEventFocus *event,
-                                                   GibbonMoveListView *self);
 static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_up (GibbonMoveListView *self);
@@ -289,14 +283,7 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
                                   (GCallback)
                                   gibbon_move_list_view_on_row_deleted,
                                   self);
-        g_signal_connect_swapped (G_OBJECT (view), "focus-in-event",
-                                  (GCallback)
-                                  gibbon_move_list_view_on_focus_in,
-                                  self);
-        g_signal_connect_after (G_OBJECT (view), "focus-in-event",
-                                  (GCallback)
-                                  gibbon_move_list_view_on_focus_after,
-                                  self);
+
         return self;
 }
 
@@ -613,28 +600,6 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
 }
 
 static gboolean
-gibbon_move_list_view_on_focus_in (GibbonMoveListView *self,
-                                   GdkEventFocus *event,
-                                   GtkWidget *widget)
-{
-        gtk_widget_set_sensitive (GTK_WIDGET (self->priv->view), FALSE);
-
-        return FALSE;
-}
-
-static gboolean
-gibbon_move_list_view_on_focus_after (GtkWidget *widget,
-                                      GdkEventFocus *event,
-                                      GibbonMoveListView *self)
-{
-        g_printerr ("resetting to sensitive.\n");
-        gtk_widget_set_sensitive (GTK_WIDGET (self->priv->view), TRUE);
-        g_printerr ("done.\n");
-
-        return FALSE;
-}
-
-static gboolean
 gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                                          GdkEventButton *event,
                                          GtkWidget *widget)
@@ -676,11 +641,8 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
         gibbon_move_list_view_select_cell (self, row, col, TRUE);
         gtk_tree_path_free (path);
 
-        if (!gtk_widget_has_focus (GTK_WIDGET (view))) {
-                gtk_widget_set_sensitive (GTK_WIDGET (view), FALSE);
+        if (!gtk_widget_has_focus (GTK_WIDGET (view)))
                 gtk_widget_grab_focus (GTK_WIDGET (view));
-                gtk_widget_set_sensitive (GTK_WIDGET (view), TRUE);
-        }
 
         return TRUE;
 }
