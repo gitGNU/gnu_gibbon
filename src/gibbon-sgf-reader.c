@@ -101,6 +101,10 @@ static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *s
                                                         GibbonPositionSide side);
 static GibbonAnalysis *gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                                         const GSGFNode *node);
+static void gibbon_sgf_reader_doubling_analysis (
+                const GibbonSGFReader *self,
+                GibbonAnalysisMove *analysis,
+                const GSGFNode *node);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -612,13 +616,44 @@ static GibbonAnalysis *
 gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                  const GSGFNode *node)
 {
-        gboolean valid = FALSE;
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
 
-        if (!valid) {
-                g_object_unref (a);
-                return NULL;
-        }
+        gibbon_sgf_reader_doubling_analysis (self, a, node);
 
         return GIBBON_ANALYSIS (a);
+}
+
+static void
+gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
+                                     GibbonAnalysisMove *a,
+                                     const GSGFNode *node)
+{
+        GSGFProperty *prop;
+        GSGFText *text;
+        const gchar *str_value;
+        gchar **tokens;
+
+        prop = gsgf_node_get_property (node, "DA");
+        if (!prop)
+                return;
+
+        text = GSGF_TEXT (gsgf_property_get_value (prop));
+        str_value = gsgf_text_get_value (text);
+        tokens = g_strsplit_set (str_value, " \t\r\n\f\v", 0);
+
+        if (!tokens)
+                return;
+        if (!tokens[0])
+                return;
+        if (tokens[0][1])
+                return;
+
+        switch (tokens[0][0]) {
+        case 'E':
+                break;
+        case 'X':
+                break;
+        }
+
+        g_strfreev (tokens);
 }
