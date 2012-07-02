@@ -105,6 +105,14 @@ static void gibbon_sgf_reader_doubling_analysis (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 const GSGFNode *node);
+static void gibbon_sgf_reader_doubling_analysis_normal (
+                const GibbonSGFReader *self,
+                GibbonAnalysisMove *analysis,
+                gchar **tokens);
+static void gibbon_sgf_reader_doubling_analysis_rollout (
+                const GibbonSGFReader *self,
+                GibbonAnalysisMove *analysis,
+                gchar **tokens);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -650,10 +658,28 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
 
         switch (tokens[0][0]) {
         case 'E':
+                gibbon_sgf_reader_doubling_analysis_normal (self, a, tokens);
                 break;
         case 'X':
+                gibbon_sgf_reader_doubling_analysis_rollout (self, a, tokens);
                 break;
         }
 
         g_strfreev (tokens);
+}
+
+static void
+gibbon_sgf_reader_doubling_analysis_normal (const GibbonSGFReader *self,
+                                            GibbonAnalysisMove *a,
+                                            gchar **tokens)
+{
+
+}
+
+static void
+gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
+                                             GibbonAnalysisMove *a,
+                                             gchar **tokens)
+{
+
 }
