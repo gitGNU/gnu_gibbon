@@ -47,6 +47,7 @@ enum GibbonClientType gibbon_get_client_type (const gchar *client_name,
                                               const gchar *host_name,
                                               guint port);
 void gibbon_safe_object_unref (gpointer data);
+gboolean gibbon_chareq (const char *str1, const char *str2);
 
 G_END_DECLS
 
