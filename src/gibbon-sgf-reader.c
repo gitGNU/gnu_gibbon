@@ -36,6 +36,7 @@
 
 #include <libgsgf/gsgf.h>
 
+#include "gibbon-util.h"
 #include "gibbon-sgf-reader.h"
 
 #include "gibbon-game.h"
@@ -105,7 +106,7 @@ static void gibbon_sgf_reader_doubling_analysis (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 const GSGFNode *node);
-static void gibbon_sgf_reader_doubling_analysis_normal (
+static void gibbon_sgf_reader_doubling_analysis_eval (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 gchar **tokens);
@@ -658,7 +659,7 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
 
         switch (tokens[0][0]) {
         case 'E':
-                gibbon_sgf_reader_doubling_analysis_normal (self, a, tokens);
+                gibbon_sgf_reader_doubling_analysis_eval (self, a, tokens);
                 break;
         case 'X':
                 gibbon_sgf_reader_doubling_analysis_rollout (self, a, tokens);
@@ -669,11 +670,67 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
 }
 
 static void
-gibbon_sgf_reader_doubling_analysis_normal (const GibbonSGFReader *self,
-                                            GibbonAnalysisMove *a,
-                                            gchar **tokens)
+gibbon_sgf_reader_doubling_analysis_eval (const GibbonSGFReader *self,
+                                          GibbonAnalysisMove *a,
+                                          gchar **tokens)
 {
+        guint64 plies;
+        gchar *endptr;
+        gboolean cubeful;
+        gboolean deterministic;
+        gboolean use_prune;
+        gdouble noise;
+        gdouble p[2][7];
+        guint i, j;
 
+        if (21 != g_strv_length (tokens))
+                return;
+
+        if (g_strcmp0 ("ver", tokens[1]))
+                return;
+        if (!gibbon_chareq ("3", tokens[2])) {
+                g_message (_("Unsupported version %s for DA property."),
+                           tokens[2]);
+                return;
+        }
+
+        errno = 0;
+        plies = g_ascii_strtoull (tokens[3], &endptr, 10);
+        if (errno || !endptr)
+                return;
+        if (!*endptr)
+                cubeful = FALSE;
+        else if (gibbon_chareq ("C", endptr))
+                cubeful = TRUE;
+        else
+                return;
+
+        if ('1' == tokens[4][0])
+                deterministic = TRUE;
+        else if ('0' == tokens[4][0])
+                deterministic = FALSE;
+        if (tokens[4][1])
+                return;
+
+        noise = g_ascii_strtod (tokens[5], &endptr);
+        if (errno || !endptr)
+                return;
+
+        if ('1' == tokens[6][0])
+                use_prune = TRUE;
+        else if ('0' == tokens[6][0])
+                use_prune = FALSE;
+        if (tokens[6][1])
+                return;
+
+        for (i = 0; i < 2; ++i) {
+                for (j = 0; j < 7; ++j) {
+                        p[i][j] = g_ascii_strtod (tokens[7 + 7 * i + j],
+                                                  &endptr);
+                        if (errno || !endptr)
+                                return;
+                }
+        }
 }
 
 static void
@@ -681,5 +738,12 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
                                              GibbonAnalysisMove *a,
                                              gchar **tokens)
 {
+        if (g_strcmp0 ("ver", tokens[1]))
+                return;
+        if (!gibbon_chareq ("3", tokens[2])) {
+                g_message (_("Unsupported version %s for DA property."),
+                           tokens[2]);
+                return;
+        }
 
 }
