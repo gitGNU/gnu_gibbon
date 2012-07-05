@@ -57,6 +57,7 @@ typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
         gpointer user_data;
+        GibbonMatch *match;
 
         /* Per-instance data.  */
         const gchar *filename;
@@ -120,6 +121,9 @@ gibbon_sgf_reader_init (GibbonSGFReader *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_SGF_READER, GibbonSGFReaderPrivate);
+
+        self->priv->match = NULL;
+        self->priv->filename = NULL;
 
         self->priv->yyerror = NULL;
         self->priv->user_data = NULL;
@@ -208,6 +212,7 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         }
 
         match = gibbon_match_new (NULL, NULL, 0, FALSE);
+        self->priv->match = match;
 
         iter = gsgf_collection_get_game_trees (collection);
 
@@ -626,8 +631,24 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                  const GSGFNode *node)
 {
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
+        GSGFProperty *prop;
+        GSGFDouble *gsgf_double;
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
+
+        while (1 || a->ma) {
+                prop = gsgf_node_get_property (node, "DO");
+                if (prop) {
+                        a->ma_bad = 1;
+                        break;
+                }
+                prop = gsgf_node_get_property (node, "BM");
+                if (!prop)
+                        break;
+                gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
+                a->ma_bad = 1 + gsgf_double_get_value (gsgf_double);
+                break;
+        }
 
         return GIBBON_ANALYSIS (a);
 }
@@ -641,6 +662,7 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
         GSGFText *text;
         const gchar *str_value;
         gchar **tokens;
+        GSGFDouble *gsgf_double;
 
         prop = gsgf_node_get_property (node, "DA");
         if (!prop)
@@ -666,6 +688,20 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
                 break;
         }
 
+        while (a->da) {
+                prop = gsgf_node_get_property (node, "DC");
+                if (prop) {
+                        a->da_bad = 1;
+                        break;
+                }
+                prop = gsgf_node_get_property (node, "BC");
+                if (!prop)
+                        break;
+                gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
+                a->da_bad = 1 + gsgf_double_get_value (gsgf_double);
+                break;
+        }
+
         g_strfreev (tokens);
 }
 
@@ -674,13 +710,7 @@ gibbon_sgf_reader_doubling_analysis_eval (const GibbonSGFReader *self,
                                           GibbonAnalysisMove *a,
                                           gchar **tokens)
 {
-        guint64 plies;
         gchar *endptr;
-        gboolean cubeful;
-        gboolean deterministic;
-        gboolean use_prune;
-        gdouble noise;
-        gdouble p[2][7];
         guint i, j;
 
         if (21 != g_strv_length (tokens))
@@ -695,42 +725,45 @@ gibbon_sgf_reader_doubling_analysis_eval (const GibbonSGFReader *self,
         }
 
         errno = 0;
-        plies = g_ascii_strtoull (tokens[3], &endptr, 10);
+        a->da_plies = g_ascii_strtoull (tokens[3], &endptr, 10);
         if (errno || !endptr)
                 return;
         if (!*endptr)
-                cubeful = FALSE;
+                a->da_cubeful = FALSE;
         else if (gibbon_chareq ("C", endptr))
-                cubeful = TRUE;
+                a->da_cubeful = TRUE;
         else
                 return;
 
         if ('1' == tokens[4][0])
-                deterministic = TRUE;
+                a->da_deterministic = TRUE;
         else if ('0' == tokens[4][0])
-                deterministic = FALSE;
+                a->da_deterministic = FALSE;
         if (tokens[4][1])
                 return;
 
-        noise = g_ascii_strtod (tokens[5], &endptr);
+        a->da_noise = g_ascii_strtod (tokens[5], &endptr);
         if (errno || !endptr)
                 return;
 
         if ('1' == tokens[6][0])
-                use_prune = TRUE;
+                a->da_use_prune = TRUE;
         else if ('0' == tokens[6][0])
-                use_prune = FALSE;
+                a->da_use_prune = FALSE;
         if (tokens[6][1])
                 return;
 
         for (i = 0; i < 2; ++i) {
                 for (j = 0; j < 7; ++j) {
-                        p[i][j] = g_ascii_strtod (tokens[7 + 7 * i + j],
-                                                  &endptr);
+                        a->da_p[i][j] = g_ascii_strtod (tokens[7 + 7 * i + j],
+                                                        &endptr);
                         if (errno || !endptr)
                                 return;
                 }
         }
+
+        a->da = TRUE;
+        a->da_rollout = FALSE;
 }
 
 static void
