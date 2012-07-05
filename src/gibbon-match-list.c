@@ -47,6 +47,7 @@
 #include "gibbon-setup.h"
 
 #include "gibbon-analysis-roll.h"
+#include "gibbon-analysis-move.h"
 
 enum gibbon_match_list_signal {
         NEW_MATCH,
@@ -159,6 +160,8 @@ gibbon_match_list_new (void)
                         G_TYPE_STRING,
                         /* GIBBON_MATCH_LIST_COL_BLACK_MOVE_ACTION */
                         G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS */
+                        G_TYPE_UINT,
                         /* GIBBON_MATCH_LIST_COL_WHITE_ROLL */
                         G_TYPE_STRING,
                         /* GIBBON_MATCH_LIST_COL_WHITE_ROLL_ACTION */
@@ -171,6 +174,8 @@ gibbon_match_list_new (void)
                         G_TYPE_STRING,
                         /* GIBBON_MATCH_LIST_COL_WHITE_MOVE_ACTION */
                         G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS */
+                        G_TYPE_UINT,
                         /* GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO */
                         G_TYPE_UINT);
         self->priv->moves = moves;
@@ -295,6 +300,11 @@ gibbon_match_list_add_action (GibbonMatchList *self,
         GibbonAnalysisRoll *ra;
         GibbonAnalysisRollLuck luck_type;
         gdouble luck_value;
+        gchar *tmp;
+        GibbonAnalysisMove *ma;
+        const gchar *dbl_mark = NULL;
+        const gchar *move_mark = NULL;
+        guint badness = 0;
 
         /* Get an iter to the last row.  */
         rows = gtk_tree_model_iter_n_children (
@@ -441,6 +451,67 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                 buf = g_strdup (_("Rejects"));
         } else if (GIBBON_IS_SETUP (action)) {
                 buf = g_strdup (_("Position set up"));
+        }
+
+        if (buf && analysis && GIBBON_IS_ANALYSIS_MOVE (analysis)) {
+                ma = GIBBON_ANALYSIS_MOVE (analysis);
+                if (ma->da) {
+                        badness += ma->da_bad;
+                        switch (ma->da_bad) {
+                        case 0:
+                                break;
+                        case 1:
+                                /* This is an inverted (Spanish) "?!".  */
+                                dbl_mark = "\xc2\xbf\xc2\xa1";
+                                break;
+                        case 2:
+                                /* This is an inverted (Spanish) "?".  */
+                                dbl_mark = "\xc2\xbf";
+                                break;
+                        default:
+                                /* This is an inverted (Spanish) "??".  */
+                                dbl_mark = "\xc2\xbf\xc2\xbf";
+                                break;
+                        }
+                }
+                if (dbl_mark) {
+                        tmp = g_strdup_printf ("%s %s", buf, dbl_mark);
+                        g_free (buf);
+                        buf = tmp;
+                }
+
+                if (1 || ma->ma) {
+                        badness += ma->ma_bad;
+                        switch (ma->ma_bad) {
+                        case 0:
+                                break;
+                        case 1:
+                                move_mark = "?!";
+                                break;
+                        case 2:
+                                move_mark = "?f";
+                                break;
+                        default:
+                                move_mark = "??";
+                                break;
+                        }
+                }
+                if (move_mark) {
+                        tmp = g_strdup_printf ("%s %s", buf, move_mark);
+                        g_free (buf);
+                        buf = tmp;
+                }
+                if (side > 0) {
+                        gtk_list_store_set (
+                                self->priv->moves, &iter,
+                                GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS,
+                                badness, -1);
+                } else {
+                        gtk_list_store_set (
+                                self->priv->moves, &iter,
+                                GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS,
+                                badness, -1);
+                }
         }
 
         if (buf) {

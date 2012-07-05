@@ -464,17 +464,24 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
         GtkTreePath *path;
         gboolean selected = FALSE;
         gint *indices;
+        guint badness;
+        PangoStyle style;
+        PangoWeight weight;
 
         if (side < 0) {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_BLACK_MOVE,
                                     &move_string,
+                                    GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS,
+                                    &badness,
                                     -1);
                 col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
         } else {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_MOVE,
                                     &move_string,
+                                    GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS,
+                                    &badness,
                                     -1);
                 col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
         }
@@ -492,10 +499,31 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
         gtk_style = gtk_widget_get_style (GTK_WIDGET (self->priv->view));
         offset = selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL;
 
+        switch (badness) {
+        case 0:
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 1:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 2:
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        default:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        }
+
         g_object_set (cell,
                       "text", move_string,
                       "foreground-gdk", gtk_style->text + offset,
                       "background-gdk", gtk_style->base + offset,
+                      "style", style,
+                      "weight", weight,
                       NULL);
 
         g_free (move_string);
