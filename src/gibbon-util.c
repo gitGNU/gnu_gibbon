@@ -23,6 +23,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-util.h"
+#include "gibbon-analysis-move.h"
 
 /* FIXME! These lists should  be retrieved online!  */
 static gboolean initialized = FALSE;
@@ -267,4 +268,15 @@ gibbon_chareq (const char *str1, const char *str2)
             || !str2 || !str2[0] || str2[1])
                 return FALSE;
         return str1[1] ==  str2[1];
+}
+
+gdouble
+gibbon_money_equity (const gdouble p[7])
+{
+        return 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN] - 1.0f
+                        + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+                        + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
+                        - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
+                        - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
+
 }
