@@ -323,6 +323,27 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
         return self;
 }
 
+void
+gibbon_app_post_init (const GibbonApp *self)
+{
+        GObject *obj;
+
+        g_return_if_fail (GIBBON_IS_APP (self));
+
+        obj = gibbon_app_find_object (self, "label-no-analysis",
+                                      GTK_TYPE_LABEL);
+        gtk_widget_hide (GTK_WIDGET (obj));
+        obj = gibbon_app_find_object (self, "hbox-analysis-detail",
+                                      GTK_TYPE_BOX);
+        gtk_widget_hide (GTK_WIDGET (obj));
+        obj = gibbon_app_find_object (self, "notebook-analysis",
+                                      GTK_TYPE_NOTEBOOK);
+        gtk_widget_hide (GTK_WIDGET (obj));
+        obj = gibbon_app_find_object (self, "hbuttonbox-analysis",
+                                      GTK_TYPE_BUTTON_BOX);
+        gtk_widget_hide (GTK_WIDGET (obj));
+}
+
 gboolean
 gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
 {

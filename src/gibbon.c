@@ -144,6 +144,9 @@ main (int argc, char *argv[])
         g_free (builder_filename);
 
         gtk_widget_show (gibbon_app_get_window (app));
+
+        gibbon_app_post_init (app);
+
         gtk_main ();
 
         g_object_unref (app);

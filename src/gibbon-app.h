@@ -76,6 +76,7 @@ gchar *gibbon_app_pixmaps_directory;
 
 GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir,
                            const gchar *data_dir, const gchar *match_file);
+void gibbon_app_post_init (const GibbonApp *self);
 void gibbon_app_display_error (const GibbonApp *self, const gchar *headline,
                                const gchar *message_format, ...);
 void gibbon_app_display_info (const GibbonApp *self, const gchar *headline,
