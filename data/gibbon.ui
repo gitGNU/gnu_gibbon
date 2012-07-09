@@ -1044,6 +1044,8 @@
                               <object class="GtkLabel" id="label-cube-equity-summary">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="ypad">5</property>
                                 <property name="label" translatable="yes">Cubeless 3-ply MWC: 50.28 % (Money: +0.017)</property>
                               </object>
                               <packing>
@@ -1058,6 +1060,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="n_rows">2</property>
                                 <property name="n_columns">6</property>
+                                <property name="column_spacing">15</property>
                                 <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkLabel" id="label3">
@@ -1125,7 +1128,7 @@
                                   <object class="GtkLabel" id="label-cube-win">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">1</property>
@@ -1136,7 +1139,7 @@
                                   <object class="GtkLabel" id="label-cube-win-g">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -1149,7 +1152,7 @@
                                   <object class="GtkLabel" id="label-cube-win-bg">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -1162,7 +1165,7 @@
                                   <object class="GtkLabel" id="label-cube-lose">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1175,7 +1178,7 @@
                                   <object class="GtkLabel" id="label-cube-lose-g">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1188,7 +1191,7 @@
                                   <object class="GtkLabel" id="label-cube-lose-bg">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">50.28 %</property>
+                                    <property name="label" translatable="yes">50.28%</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">5</property>
@@ -1208,11 +1211,13 @@
                               <object class="GtkLabel" id="label11">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="ypad">5</property>
                                 <property name="label" translatable="yes">Cubeful equities</property>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -1261,18 +1266,20 @@
                                   <object class="GtkLabel" id="label-cube-action1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">No double</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-action2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Double, take</property>
                                   </object>
                                   <packing>
@@ -1280,13 +1287,14 @@
                                     <property name="right_attach">2</property>
                                     <property name="top_attach">1</property>
                                     <property name="bottom_attach">2</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-action3">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Double, pass</property>
                                   </object>
                                   <packing>
@@ -1294,25 +1302,29 @@
                                     <property name="right_attach">2</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq1-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="xpad">10</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="right_attach">3</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq2-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="xpad">10</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
@@ -1320,13 +1332,15 @@
                                     <property name="right_attach">3</property>
                                     <property name="top_attach">1</property>
                                     <property name="bottom_attach">2</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq3-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="xpad">10</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
@@ -1334,25 +1348,27 @@
                                     <property name="right_attach">3</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq1-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
                                     <property name="right_attach">4</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq2-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
@@ -1360,13 +1376,14 @@
                                     <property name="right_attach">4</property>
                                     <property name="top_attach">1</property>
                                     <property name="bottom_attach">2</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label-cube-eq3-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">+0.000</property>
                                   </object>
                                   <packing>
@@ -1374,7 +1391,7 @@
                                     <property name="right_attach">4</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
-                                    <property name="x_options"/>
+                                    <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1388,6 +1405,8 @@
                               <object class="GtkLabel" id="label-proper-cube-action">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="ypad">5</property>
                                 <property name="label" translatable="yes">Proper cube action: No double, take</property>
                               </object>
                               <packing>
