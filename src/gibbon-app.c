@@ -330,9 +330,6 @@ gibbon_app_post_init (const GibbonApp *self)
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
-        obj = gibbon_app_find_object (self, "label-no-analysis",
-                                      GTK_TYPE_LABEL);
-        gtk_widget_hide (GTK_WIDGET (obj));
         obj = gibbon_app_find_object (self, "hbox-analysis-detail",
                                       GTK_TYPE_BOX);
         gtk_widget_hide (GTK_WIDGET (obj));

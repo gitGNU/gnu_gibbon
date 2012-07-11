@@ -685,7 +685,7 @@
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <child>
+                         <child>
                           <object class="GtkComboBoxText" id="combo-game-chat">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -985,19 +985,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label-no-analysis">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;i&gt;No analysis available.&lt;/i&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkHBox" id="hbox-analysis-detail">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1029,7 +1016,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">3</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -1459,7 +1446,7 @@
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">4</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
@@ -1498,7 +1485,7 @@
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">5</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>
