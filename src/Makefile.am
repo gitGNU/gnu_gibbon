@@ -136,6 +136,7 @@ gibbon_SOURCES = 			\
 	gibbon-game-list-view.c		\
 	gibbon-move-list-view.c		\
 	gibbon-grid-view.c		\
+	gibbon-analysis-view.c		\
         $(common_SOURCES)
 
 gibbon_convert_SOURCES =                \
@@ -213,7 +214,8 @@ noinst_HEADERS =			\
 	gibbon-analysis.h		\
 	gibbon-analysis-roll.h		\
 	gibbon-analysis-move.h		\
-	gibbon-grid-view.h
+	gibbon-grid-view.h			\
+	gibbon-analysis-view.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.

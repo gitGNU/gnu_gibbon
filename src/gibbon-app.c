@@ -59,6 +59,7 @@
 #include "gibbon-match-loader.h"
 #include "gibbon-game.h"
 #include "gibbon-grid-view.h"
+#include "gibbon-analysis-view.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -96,6 +97,7 @@ struct _GibbonAppPrivate {
         GibbonMatchList *match_list;
         GibbonGameListView *game_list_view;
         GibbonMoveListView *move_list_view;
+        GibbonAnalysisView *analysis_view;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -182,6 +184,7 @@ static void gibbon_app_init(GibbonApp *self)
         self->priv->match_list = NULL;
         self->priv->game_list_view = NULL;
         self->priv->move_list_view = NULL;
+        self->priv->analysis_view = NULL;
 }
 
 static void gibbon_app_finalize(GObject *object)
@@ -216,6 +219,9 @@ static void gibbon_app_finalize(GObject *object)
 
         if (self->priv->chats)
                 g_hash_table_destroy(self->priv->chats);
+
+        if (self->priv->analysis_view)
+                g_object_unref (self->priv->analysis_view);
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -326,19 +332,9 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 void
 gibbon_app_post_init (const GibbonApp *self)
 {
-        GObject *obj;
-
         g_return_if_fail (GIBBON_IS_APP (self));
 
-        obj = gibbon_app_find_object (self, "hbox-analysis-detail",
-                                      GTK_TYPE_BOX);
-        gtk_widget_hide (GTK_WIDGET (obj));
-        obj = gibbon_app_find_object (self, "notebook-analysis",
-                                      GTK_TYPE_NOTEBOOK);
-        gtk_widget_hide (GTK_WIDGET (obj));
-        obj = gibbon_app_find_object (self, "hbuttonbox-analysis",
-                                      GTK_TYPE_BUTTON_BOX);
-        gtk_widget_hide (GTK_WIDGET (obj));
+        self->priv->analysis_view = gibbon_analysis_view_new (self);
 }
 
 gboolean
