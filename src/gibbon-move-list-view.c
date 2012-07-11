@@ -64,7 +64,7 @@ static void gibbon_move_list_view_on_change (GibbonMoveListView *self,
                                              GtkTreePath *path,
                                              GtkTreeIter *iter,
                                              GtkTreeModel *model);
-static void gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
+static void gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
                                                 const GibbonMatchList *list);
 static gboolean gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView
                                                         *self,
@@ -530,11 +530,14 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
 }
 
 static void
-gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
+gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
                                     const GibbonMatchList *list)
 {
         const GibbonMatch *match;
         GtkTreeViewColumn *column;
+        gint action_no;
+        GtkTreeIter iter;
+        GtkTreePath *path;
 
         g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
 
@@ -547,6 +550,28 @@ gibbon_move_list_view_on_new_match (const GibbonMoveListView *self,
         gtk_tree_view_column_set_title (column, gibbon_match_get_black (match));
         column = gtk_tree_view_get_column (self->priv->view, 4);
         gtk_tree_view_column_set_title (column, gibbon_match_get_white (match));
+
+        /*
+         * Signalize that the last cell is selected so that the analysis view
+         * can update its data.
+         */
+        path = gtk_tree_path_new_from_indices (self->priv->selected_row, -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return;
+        }
+        if (!gibbon_move_list_view_cell_valid (self, &iter,
+                                               self->priv->selected_col)) {
+                gtk_tree_path_free (path);
+                return;
+        }
+
+        gtk_tree_model_get (self->priv->model, &iter,
+                            self->priv->selected_col + 1, &action_no,
+                            -1);
+        g_signal_emit (self,
+                       gibbon_move_list_view_signals[ACTION_SELECTED],
+                       0, action_no);
 }
 
 static gboolean

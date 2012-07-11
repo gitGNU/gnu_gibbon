@@ -332,9 +332,33 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 void
 gibbon_app_post_init (const GibbonApp *self)
 {
+        gint game_no;
+        GibbonGame *game;
+        const GibbonAnalysis *analysis;
+
         g_return_if_fail (GIBBON_IS_APP (self));
 
         self->priv->analysis_view = gibbon_analysis_view_new (self);
+
+        /*
+         * If a match was passed on the command line it is already loaded
+         * and set to the last action in the match.  Make sure that the
+         * analysis data displayed is up-to-date.
+         */
+        game_no = gibbon_match_list_get_active_game (self->priv->match_list);
+        if (game_no < 0)
+                return;
+
+        if (!self->priv->match)
+                return;
+
+        game = gibbon_match_get_nth_game (self->priv->match, game_no);
+        if (!game)
+                return;
+
+        analysis = gibbon_game_get_nth_analysis (game, -1);
+        gibbon_analysis_view_set_analysis (self->priv->analysis_view,
+                                           analysis);
 }
 
 gboolean
