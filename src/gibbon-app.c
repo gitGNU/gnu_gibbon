@@ -380,7 +380,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         /*
          * Replace the GtkTreeView with an instance of our own wrapper class.
          */
-        obj = gibbon_app_find_object (self, "moves-view",
+        obj = gibbon_app_find_object (self, "moves-view-white-move",
                                       GTK_TYPE_TREE_VIEW);
 
         move_list_view = gibbon_move_list_view_new (GTK_TREE_VIEW (obj),
