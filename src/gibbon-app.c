@@ -1696,6 +1696,7 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
         gint game_no;
         GibbonGame *game;
         const GibbonPosition *pos;
+        const GibbonAnalysis *analysis;
 
         if (action_no < 0)
                 return;
@@ -1716,4 +1717,8 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
                 return;
 
         gibbon_board_set_position (GIBBON_BOARD (self->priv->board), pos);
+
+        analysis = gibbon_game_get_nth_analysis (game, action_no);
+        gibbon_analysis_view_set_analysis (self->priv->analysis_view,
+                                           analysis);
 }

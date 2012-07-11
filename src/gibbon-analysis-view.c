@@ -102,3 +102,19 @@ gibbon_analysis_view_new (const GibbonApp *app)
 
         return self;
 }
+
+void
+gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
+                                   const GibbonAnalysis* analysis)
+{
+        g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+        if (analysis)
+                g_return_if_fail (GIBBON_IS_ANALYSIS (analysis));
+
+        if (!analysis) {
+                gtk_widget_hide (GTK_WIDGET (self->priv->detail_box));
+                gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+                gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
+                return;
+        }
+}
