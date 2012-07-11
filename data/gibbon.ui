@@ -685,7 +685,7 @@
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                         <child>
+                        <child>
                           <object class="GtkComboBoxText" id="combo-game-chat">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -989,21 +989,25 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkLabel" id="label-move-summary">
+                          <object class="GtkLabel" id="label-cube-summary">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">5</property>
                             <property name="ypad">5</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
+                            <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label-cube-summary">
+                          <object class="GtkLabel" id="label-move-summary">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">5</property>
                             <property name="ypad">5</property>
                           </object>
                           <packing>
@@ -1444,8 +1448,8 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
@@ -1483,8 +1487,8 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">4</property>
                       </packing>
                     </child>
