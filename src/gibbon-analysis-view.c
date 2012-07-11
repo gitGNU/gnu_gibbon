@@ -32,18 +32,28 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-analysis-view.h"
+#include "gibbon-analysis-roll.h"
+#include "gibbon-analysis-move.h"
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
         GtkBox *detail_box;
         GtkNotebook *notebook;
         GtkButtonBox *button_box;
+
+        GtkLabel *move_summary;
+        GtkLabel *cube_summary;
 };
 
 #define GIBBON_ANALYSIS_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_ANALYSIS_VIEW, GibbonAnalysisViewPrivate))
 
 G_DEFINE_TYPE (GibbonAnalysisView, gibbon_analysis_view, G_TYPE_OBJECT)
+
+static void gibbon_analysis_view_set_move (GibbonAnalysisView *self,
+                                           GibbonAnalysisMove *a);
+static void gibbon_analysis_view_set_roll (GibbonAnalysisView *self,
+                                           GibbonAnalysisRoll *a);
 
 static void 
 gibbon_analysis_view_init (GibbonAnalysisView *self)
@@ -52,6 +62,11 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
                 GIBBON_TYPE_ANALYSIS_VIEW, GibbonAnalysisViewPrivate);
 
         self->priv->detail_box = NULL;
+        self->priv->notebook = NULL;
+        self->priv->button_box = NULL;
+
+        self->priv->move_summary = NULL;
+        self->priv->cube_summary = NULL;
 }
 
 static void
@@ -90,6 +105,13 @@ gibbon_analysis_view_new (const GibbonApp *app)
         gtk_widget_hide (GTK_WIDGET (obj));
         self->priv->detail_box = GTK_BOX (obj);
 
+        obj = gibbon_app_find_object (app, "label-move-summary",
+                                      GTK_TYPE_LABEL);
+        self->priv->move_summary = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-summary",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_summary = GTK_LABEL (obj);
+
         obj = gibbon_app_find_object (app, "notebook-analysis",
                                       GTK_TYPE_NOTEBOOK);
         gtk_widget_hide (GTK_WIDGET (obj));
@@ -105,16 +127,66 @@ gibbon_analysis_view_new (const GibbonApp *app)
 
 void
 gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
-                                   const GibbonAnalysis* analysis)
+                                   const GibbonAnalysis* a)
 {
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
-        if (analysis)
-                g_return_if_fail (GIBBON_IS_ANALYSIS (analysis));
+        if (a)
+                g_return_if_fail (GIBBON_IS_ANALYSIS (a));
 
-        if (!analysis) {
+        if (!a) {
                 gtk_widget_hide (GTK_WIDGET (self->priv->detail_box));
                 gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
                 gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
                 return;
+        } else if (GIBBON_IS_ANALYSIS_MOVE (a)) {
+                gibbon_analysis_view_set_move (self, GIBBON_ANALYSIS_MOVE (a));
+        } else if (GIBBON_IS_ANALYSIS_ROLL (a)) {
+                gibbon_analysis_view_set_roll (self, GIBBON_ANALYSIS_ROLL (a));
         }
+}
+
+static void
+gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
+{
+        gtk_widget_show (GTK_WIDGET (self->priv->detail_box));
+        gtk_widget_show (GTK_WIDGET (self->priv->notebook));
+        gtk_widget_show (GTK_WIDGET (self->priv->button_box));
+}
+
+static void
+gibbon_analysis_view_set_roll (GibbonAnalysisView *self, GibbonAnalysisRoll *a)
+{
+        GibbonAnalysisRollLuck luck_type;
+        gchar *text;
+        gdouble luck_value;
+
+        gtk_widget_show (GTK_WIDGET (self->priv->detail_box));
+        gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+        gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
+
+        gtk_label_set_text (self->priv->move_summary, NULL);
+
+        luck_type = gibbon_analysis_roll_get_luck_type (a);
+        luck_value = gibbon_analysis_roll_get_luck_value (a);
+        switch (luck_type) {
+        default:
+                text = g_strdup_printf (_("Luck: %f"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_LUCKY:
+                text = g_strdup_printf (_("Luck: %f (lucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY:
+                text = g_strdup_printf (_("Luck: %f (very lucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_UNLUCKY:
+                text = g_strdup_printf (_("Luck: %f (unlucky)"), luck_value);
+                break;
+        case GIBBON_ANALYSIS_ROLL_LUCK_VERY_UNLUCKY:
+                text = g_strdup_printf (_("Luck: %f (very unlucky)"),
+                                        luck_value);
+                break;
+        }
+
+        gtk_label_set_text (self->priv->cube_summary, text);
+        g_free (text);
 }
