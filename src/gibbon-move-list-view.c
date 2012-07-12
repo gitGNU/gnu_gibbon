@@ -191,7 +191,11 @@ gibbon_move_list_view_class_init (GibbonMoveListViewClass *klass)
 
 /**
  * gibbon_move_list_view_new:
- * @view: The #GtkTreeView.a
+ * @number_view: A #GibbonNoFocusTreeVew.
+ * @black_roll_view: A #GtkTreeVew.
+ * @black_move_view: A #GtkTreeVew.
+ * @white_roll_view: A #GtkTreeVew.
+ * @white_move_view: A #GtkTreeVew.
  * @match_list: The #GibbonMatchList holding the match information.
  *
  * Creates a new #GibbonMoveListView.
@@ -199,7 +203,12 @@ gibbon_move_list_view_class_init (GibbonMoveListViewClass *klass)
  * Returns: The newly created #GibbonMoveListView or %NULL in case of failure.
  */
 GibbonMoveListView *
-gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
+gibbon_move_list_view_new (GtkTreeView *number_view,
+                           GtkTreeView *black_roll_view,
+                           GtkTreeView *black_move_view,
+                           GtkTreeView *white_roll_view,
+                           GtkTreeView *white_move_view,
+                           const GibbonMatchList *match_list)
 {
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
                                                  NULL);
@@ -208,10 +217,11 @@ gibbon_move_list_view_new (GtkTreeView *view, const GibbonMatchList *match_list)
         GtkStyle *style;
         GtkCellRenderer *renderer;
         GtkTreeSelection *selection;
+        GtkTreeView *view;
 
-        self->priv->view = view;
+        view = self->priv->view = black_roll_view;
 
-        selection = gtk_tree_view_get_selection (view);
+        selection = gtk_tree_view_get_selection (number_view);
         gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
 
         self->priv->match_list = match_list;

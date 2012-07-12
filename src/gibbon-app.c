@@ -370,6 +370,8 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GibbonGameListView *game_list_view;
         GibbonMoveListView *move_list_view;
         GObject *obj;
+        GtkTreeView *number_view, *black_roll_view, *black_move_view,
+                    *white_roll_view, *white_move_view;
 
         obj = gibbon_app_find_object (self, "combo-game-select",
                                       GTK_TYPE_COMBO_BOX);
@@ -377,14 +379,31 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         game_list_view = gibbon_game_list_view_new (GTK_COMBO_BOX (obj), list);
         self->priv->game_list_view = game_list_view;
 
-        /*
-         * Replace the GtkTreeView with an instance of our own wrapper class.
-         */
+        obj = gibbon_app_find_object (self, "moves-view-number",
+                                      GTK_TYPE_TREE_VIEW);
+        number_view = GTK_TREE_VIEW (obj);
+
+        obj = gibbon_app_find_object (self, "moves-view-black-roll",
+                                      GTK_TYPE_TREE_VIEW);
+        black_roll_view = GTK_TREE_VIEW (obj);
+
+        obj = gibbon_app_find_object (self, "moves-view-black-move",
+                                      GTK_TYPE_TREE_VIEW);
+        black_move_view = GTK_TREE_VIEW (obj);
+
+        obj = gibbon_app_find_object (self, "moves-view-white-roll",
+                                      GTK_TYPE_TREE_VIEW);
+        white_roll_view = GTK_TREE_VIEW (obj);
+
         obj = gibbon_app_find_object (self, "moves-view-white-move",
                                       GTK_TYPE_TREE_VIEW);
+        white_move_view = GTK_TREE_VIEW (obj);
 
-        move_list_view = gibbon_move_list_view_new (GTK_TREE_VIEW (obj),
-                                                    list);
+        move_list_view = gibbon_move_list_view_new (number_view,
+                                                    black_roll_view,
+                                                    black_move_view,
+                                                    white_roll_view,
+                                                    white_move_view, list);
         self->priv->move_list_view = move_list_view;
 
         if (match_file) {
