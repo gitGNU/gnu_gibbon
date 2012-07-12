@@ -233,6 +233,7 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
 
         self->priv->number_view = number_view;
         gtk_tree_view_set_model (number_view, GTK_TREE_MODEL (model));
+        g_object_set (G_OBJECT (number_view), "can-focus", FALSE, NULL);
         self->priv->black_roll_view = black_roll_view;
         gtk_tree_view_set_model (black_roll_view, GTK_TREE_MODEL (model));
         self->priv->black_move_view = black_move_view;
