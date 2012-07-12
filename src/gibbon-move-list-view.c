@@ -3,18 +3,18 @@
  * Gibbon is a Gtk+ frontend for the First Internet Backgammon Server FIBS.
  * Copyright (C) 2009-2012 Guido Flohr, http://guido-flohr.net/.
  *
- * gibbon is free software: you can redistribute it and/or modify 
+ * Gibbon is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * gibbon is distributed in the hope that it will be useful,
+ * Gibbon is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -222,10 +222,9 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
         gint colno;
         GtkStyle *style;
         GtkCellRenderer *renderer;
-        GtkTreeSelection *selection;
         GtkTreeView *view;
 
-        view = self->priv->view = black_roll_view;
+        view = self->priv->view = white_move_view;
 
         self->priv->match_list = match_list;
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
@@ -242,9 +241,6 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
         gtk_tree_view_set_model (white_roll_view, GTK_TREE_MODEL (model));
         self->priv->white_move_view = white_move_view;
         gtk_tree_view_set_model (white_move_view, GTK_TREE_MODEL (model));
-
-        selection = gtk_tree_view_get_selection (self->priv->number_view);
-        gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
 
         style = gtk_widget_get_style (GTK_WIDGET (view));
 
