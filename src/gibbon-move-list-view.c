@@ -219,7 +219,6 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
                                                  NULL);
         GtkListStore *model;
-        gint colno;
         GtkStyle *style;
         GtkCellRenderer *renderer;
         GtkTreeSelection *selection;
@@ -249,31 +248,35 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
 
         self->priv->black_roll_view = black_roll_view;
         gtk_tree_view_set_model (black_roll_view, GTK_TREE_MODEL (model));
-        gtk_tree_view_insert_column_with_attributes (black_roll_view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (black_roll_view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_BLACK_ROLL,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_black_roll_data_func,
+                        self, NULL);
 
         self->priv->black_move_view = black_move_view;
         gtk_tree_view_set_model (black_move_view, GTK_TREE_MODEL (model));
-        gtk_tree_view_insert_column_with_attributes (black_move_view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (black_move_view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_BLACK_MOVE,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_black_move_data_func,
+                        self, NULL);
 
         self->priv->white_roll_view = white_roll_view;
         gtk_tree_view_set_model (white_roll_view, GTK_TREE_MODEL (model));
-        gtk_tree_view_insert_column_with_attributes (white_roll_view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (white_roll_view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_WHITE_ROLL,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_white_roll_data_func,
+                        self, NULL);
 
         self->priv->white_move_view = white_move_view;
         gtk_tree_view_set_model (white_move_view, GTK_TREE_MODEL (model));
-        gtk_tree_view_insert_column_with_attributes (white_move_view, -1, "  ",
+        gtk_tree_view_insert_column_with_data_func (white_move_view, -1, "  ",
                         gtk_cell_renderer_text_new (),
-                        "text", GIBBON_MATCH_LIST_COL_WHITE_MOVE,
-                        NULL);
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_white_move_data_func,
+                        self, NULL);
 
 /*
         g_signal_connect_swapped (G_OBJECT (model), "row-changed",
