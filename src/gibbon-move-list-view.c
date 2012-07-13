@@ -382,12 +382,6 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
         GibbonAnalysisRollLuck luck_type;
         PangoStyle style;
         PangoWeight weight;
-        GtkStyle *gtk_style;
-        gsize offset;
-        gint col, row = -1;
-        GtkTreePath *path;
-        gboolean selected = FALSE;
-        gint *indices;
 
         if (side < 0) {
                 gtk_tree_model_get (tree_model, iter,
@@ -398,7 +392,6 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
                                     &luck_type,
                                     -1);
-                col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
         } else {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_ROLL,
@@ -408,7 +401,6 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE,
                                     &luck_type,
                                     -1);
-                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
         }
 
         switch (luck_type) {
@@ -426,25 +418,10 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                 break;
         }
 
-        if (col == self->priv->selected_col) {
-                path = gtk_tree_model_get_path (self->priv->model, iter);
-                indices = gtk_tree_path_get_indices (path);
-                row = indices[0];
-                gtk_tree_path_free (path);
-        }
-
-        selected = self->priv->selected_row == row
-                   && self->priv->selected_col == col;
-
-        gtk_style = gtk_widget_get_style (GTK_WIDGET (self->priv->view));
-        offset = selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL;
-
         g_object_set (cell,
                       "text", roll_string,
                       "weight", weight,
                       "style", style,
-                      "foreground-gdk", gtk_style->text + offset,
-                      "background-gdk", gtk_style->base + offset,
                       NULL);
         g_free (roll_string);
 }
@@ -478,12 +455,6 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkTreeIter *iter)
 {
         gchar *move_string;
-        GtkStyle *gtk_style;
-        gsize offset;
-        gint col, row = -1;
-        GtkTreePath *path;
-        gboolean selected = FALSE;
-        gint *indices;
         guint badness;
         PangoStyle style;
         PangoWeight weight;
@@ -495,7 +466,6 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS,
                                     &badness,
                                     -1);
-                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
         } else {
                 gtk_tree_model_get (tree_model, iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_MOVE,
@@ -503,21 +473,7 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                                     GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS,
                                     &badness,
                                     -1);
-                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
         }
-
-        if (col == self->priv->selected_col) {
-                path = gtk_tree_model_get_path (self->priv->model, iter);
-                indices = gtk_tree_path_get_indices (path);
-                row = indices[0];
-                gtk_tree_path_free (path);
-        }
-
-        selected = self->priv->selected_row == row
-                   && self->priv->selected_col == col;
-
-        gtk_style = gtk_widget_get_style (GTK_WIDGET (self->priv->view));
-        offset = selected ? GTK_STATE_SELECTED : GTK_STATE_NORMAL;
 
         switch (badness) {
         case 0:
@@ -540,8 +496,6 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
 
         g_object_set (cell,
                       "text", move_string,
-                      "foreground-gdk", gtk_style->text + offset,
-                      "background-gdk", gtk_style->base + offset,
                       "style", style,
                       "weight", weight,
                       NULL);
