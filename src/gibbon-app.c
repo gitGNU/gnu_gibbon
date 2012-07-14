@@ -59,6 +59,7 @@
 #include "gibbon-match-loader.h"
 #include "gibbon-game.h"
 #include "gibbon-analysis-view.h"
+#include "gibbon-met.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -97,6 +98,8 @@ struct _GibbonAppPrivate {
         GibbonGameListView *game_list_view;
         GibbonMoveListView *move_list_view;
         GibbonAnalysisView *analysis_view;
+
+        GibbonMET *met;
 };
 
 #define GIBBON_APP_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -251,6 +254,8 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
         gchar *board_filename;
 
         g_return_val_if_fail (singleton == NULL, singleton);
+
+        self->priv->met = gibbon_met_new ();
 
         self->priv->builder = gibbon_app_get_builder(self, builder_path);
         if (!self->priv->builder) {
