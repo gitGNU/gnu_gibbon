@@ -44,7 +44,7 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_MET, GibbonMETClass))
 
-#define GIBBON_MET_MAX_LENGTH 64
+#define GIBBON_MET_MAX_LENGTH 100
 
 
 /**
