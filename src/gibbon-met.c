@@ -26,12 +26,14 @@
  * Abstraction for a match equity table in Gibbon.
  */
 
+#include <math.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-met.h"
 
-static gdouble rockwell_kazaross_pre[25][25] = {
+static gfloat rockwell_kazaross_pre[25][25] = {
         {
                 0.500000f,
                 0.676888f,
@@ -709,7 +711,7 @@ static gdouble rockwell_kazaross_pre[25][25] = {
         }
 };
 
-static gdouble rockwell_kazaross_post[25] = {
+static gfloat rockwell_kazaross_post[25] = {
         0.500000f,
         0.487677f,
         0.323112f,
@@ -737,6 +739,15 @@ static gdouble rockwell_kazaross_post[25] = {
         0.00123f,
 };
 
+typedef struct _GibbonMETPrivate GibbonMETPrivate;
+struct _GibbonMETPrivate {
+        gfloat **pre;
+        gfloat *post;
+};
+
+#define GIBBON_MET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+        GIBBON_TYPE_MET, GibbonMETPrivate))
+
 G_DEFINE_TYPE (GibbonMET, gibbon_met, G_TYPE_OBJECT)
 
 static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
@@ -744,11 +755,26 @@ static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
 static void 
 gibbon_met_init (GibbonMET *self)
 {
+        self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                GIBBON_TYPE_MET, GibbonMETPrivate);
+
+        self->priv->pre = NULL;
+        self->priv->post = NULL;
 }
 
 static void
 gibbon_met_finalize (GObject *object)
 {
+        GibbonMET *self = GIBBON_MET (object);
+        gsize i;
+
+        if (self->priv->pre) {
+                for (i = 0; i < GIBBON_MET_MAX_LENGTH; ++i)
+                        g_free (self->priv->pre[i]);
+                g_free (self->priv->pre);
+        }
+        g_free (self->priv->post);
+
         G_OBJECT_CLASS (gibbon_met_parent_class)->finalize(object);
 }
 
@@ -757,6 +783,8 @@ gibbon_met_class_init (GibbonMETClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
+        g_type_class_add_private (klass, sizeof (GibbonMETPrivate));
+
         object_class->finalize = gibbon_met_finalize;
 }
 
@@ -773,9 +801,19 @@ gibbon_met_new (void)
         GibbonMET *self = g_object_new (GIBBON_TYPE_MET, NULL);
         gsize i, j;
 
+        self->priv->pre = g_malloc (GIBBON_MET_MAX_LENGTH
+                                    * sizeof *self->priv->pre);
+        for (i = 0; i < GIBBON_MET_MAX_LENGTH; ++i)
+                self->priv->pre[i] =
+                                g_malloc (GIBBON_MET_MAX_LENGTH
+                                          * sizeof **self->priv->pre);
+
+        self->priv->post = g_malloc (GIBBON_MET_MAX_LENGTH
+                                     * sizeof *self->priv->post);
+
         for (i = 0; i < 25; ++i) {
                 for (j = 0; j < 25; ++j) {
-                        self->pre[i][j] = rockwell_kazaross_pre[i][j];
+                        self->priv->pre[i][j] = rockwell_kazaross_pre[i][j];
                 }
         }
 
@@ -791,9 +829,42 @@ gibbon_met_new (void)
 static void
 gibbon_met_extend_pre (GibbonMET *self, gsize native)
 {
-        static const gdouble stddevs[] = {
+        static const gfloat stddevs[] = {
                                 0.00f, 1.24f, 1.27f, 1.47f, 1.50f, 1.60f,
                                 1.61f, 1.66f, 1.68f, 1.70f, 1.72f, 1.77f };
-        gint i;
-        gdouble max_stddev = stddevs[- 1 + sizeof stddevs / sizeof stddevs[0]];
+        gsize i, j;
+        gsize max_stddevs = sizeof stddevs / sizeof stddevs[0];
+        gfloat max_stddev = stddevs[max_stddevs - 1];
+        gint score0, score1;
+        gfloat games, sigma, stddev0, stddev1;
+        gfloat left, right;
+        gfloat int1, int2;
+        gfloat sqrt2 = sqrtf (2);
+
+        max_stddevs = 11;
+        for (i = native; i < GIBBON_MET_MAX_LENGTH; ++i) {
+                score0 = i + 1;
+                stddev0 = score0 >= max_stddevs ? max_stddev : stddevs[score0];
+                for (j = 0; j <= i; ++j) {
+                        score1 = j + 1;
+                        games = (score0 + score1) / 2.0f;
+                        stddev1 = score1 >= max_stddevs ? max_stddev : stddevs[score1];
+                        sigma = sqrtf (stddev0 * stddev0 + stddev1 * stddev1)
+                                        * sqrtf (games);
+                        g_assert (6 * sigma > score0 - score1);
+                        left = (gfloat) (score0 - score1);
+                        right = 6 * sigma;
+                        int1 = (erf ((left / sigma) / sqrt2) + 1.0f) / 2.0f;
+                        int2 = (erf ((right / sigma) / sqrt2) + 1.0f) / 2.0f;
+                        self->priv->pre[i][j] = int2 - int1;
+                }
+        }
+
+        for (i = 0; i < GIBBON_MET_MAX_LENGTH; i++ ) {
+                for (j = ((i < native) ? native : i + 1);
+                     j < GIBBON_MET_MAX_LENGTH;
+                     ++j) {
+                        self->priv->pre[i][j] = 1.0f - self->priv->pre[j][i];
+                }
+        }
 }

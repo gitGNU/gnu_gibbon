@@ -44,7 +44,7 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_MET, GibbonMETClass))
 
-#define GIBBON_MET_MAX_LENGTH 100
+#define GIBBON_MET_MAX_LENGTH 64
 
 
 /**
@@ -57,8 +57,8 @@ struct _GibbonMET
 {
         GObject parent_instance;
 
-        gdouble pre[GIBBON_MET_MAX_LENGTH][GIBBON_MET_MAX_LENGTH];
-        gdouble post[GIBBON_MET_MAX_LENGTH][GIBBON_MET_MAX_LENGTH];
+        /*< private >*/
+        struct _GibbonMETPrivate *priv;
 };
 
 /**
