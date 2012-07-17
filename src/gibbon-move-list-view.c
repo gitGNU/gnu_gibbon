@@ -82,7 +82,7 @@ static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
                                                          *self,
                                                          GdkEventButton
                                                          *event,
-                                                         GtkWidget *widget);
+                                                         GtkTreeView *view);
 static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
                                                     GdkEventKey *event,
                                                     GtkWidget *widget);
@@ -278,7 +278,27 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                         gibbon_move_list_view_white_move_data_func,
                         self, NULL);
 
-/*
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
+                                  "button-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_button_pressed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_move_view),
+                                  "button-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_button_pressed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_roll_view),
+                                  "button-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_button_pressed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_move_view),
+                                  "button-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_button_pressed,
+                                  self);
+        /*
         g_signal_connect_swapped (G_OBJECT (model), "row-changed",
                                   (GCallback) gibbon_move_list_view_on_change,
                                   self);
@@ -629,20 +649,51 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
 static gboolean
 gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                                          GdkEventButton *event,
-                                         GtkWidget *widget)
+                                         GtkTreeView *view)
 {
-        GtkTreeView *view = self->priv->view;
         GtkTreePath *path;
-        GtkTreeViewColumn *column;
-        gint col, row, *indices;
+        gint col, row;
+        GtkTreeSelection *selection;
+
+        if (event->type != GDK_BUTTON_PRESS)
+                return FALSE;
 
         if (!gtk_tree_model_iter_n_children (self->priv->model, NULL))
-                return TRUE;
+                return FALSE;
+
+        /*
+         * We ignore all modifier keys.
+         */
+        event->state = 0;
+
+        if (view != self->priv->black_roll_view) {
+                selection = gtk_tree_view_get_selection (
+                                self->priv->black_roll_view);
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+
+        if (view != self->priv->black_move_view) {
+                selection = gtk_tree_view_get_selection (
+                                self->priv->black_move_view);
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+        if (view != self->priv->white_roll_view) {
+                selection = gtk_tree_view_get_selection (
+                                self->priv->white_roll_view);
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+        if (view != self->priv->white_move_view) {
+                selection = gtk_tree_view_get_selection (
+                                self->priv->white_move_view);
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
 
         if (!gtk_tree_view_get_path_at_pos (view, event->x, event->y,
-                                            &path, &column, NULL, NULL)) {
-                if (!gtk_widget_has_focus (GTK_WIDGET (view)))
-                        gtk_widget_grab_focus (GTK_WIDGET (view));
+                                            &path, NULL, NULL, NULL)) {
                 return TRUE;
         }
 
@@ -652,26 +703,18 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
          * our view is coupled to the board and the analysis window and
          * we could not propagate the unselect there.
          */
-        if (column == self->priv->black_roll_column)
+        if (view == self->priv->black_roll_view)
                 col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        else if (column == self->priv->white_roll_column)
+        else if (view == self->priv->white_roll_view)
                 col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-        else if (column == self->priv->black_move_column)
+        else if (view == self->priv->black_move_view)
                 col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-        else if (column == self->priv->white_move_column)
+        else if (view == self->priv->white_move_view)
                 col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
         else
                 return TRUE;
 
-        indices = gtk_tree_path_get_indices (path);
-        row = indices[0];
-        gibbon_move_list_view_select_cell (self, row, col, TRUE);
-        gtk_tree_path_free (path);
-
-        if (!gtk_widget_has_focus (GTK_WIDGET (view)))
-                gtk_widget_grab_focus (GTK_WIDGET (view));
-
-        return TRUE;
+        return FALSE;
 }
 
 static gboolean
