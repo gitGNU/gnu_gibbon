@@ -652,7 +652,7 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
         GtkTreePath *path;
-        gint col, row;
+        gint col, row, *indices;
         GtkTreeSelection *selection;
 
         if (event->type != GDK_BUTTON_PRESS)
@@ -714,6 +714,12 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
         else
                 return TRUE;
 
+        indices = gtk_tree_path_get_indices (path);
+        row = indices[0];
+
+        gibbon_move_list_view_select_cell (self, row, col, TRUE);
+
+        /* Propagate event further.  */
         return FALSE;
 }
 
@@ -783,13 +789,6 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
 
         self->priv->selected_col = col;
         self->priv->selected_row = row;
-
-        /*
-         * FIXME! We can reduce that to the area covered by the two cells
-         * involved.
-         */
-        gtk_widget_queue_draw (GTK_WIDGET (self->priv->view));
-
 
         gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
                                       0.0, 0.0);
