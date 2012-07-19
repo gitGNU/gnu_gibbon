@@ -85,6 +85,8 @@ static gboolean gibbon_move_list_view_on_button_pressed (GibbonMoveListView
 static gboolean gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
                                                     GdkEventKey *event,
                                                     GtkWidget *widget);
+static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
+                                                     GtkTreeView *view);
 static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
@@ -290,6 +292,26 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                                   gibbon_move_list_view_on_button_pressed,
                                   self);
 
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
+                                  "cursor-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_cursor_changed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_move_view),
+                                  "cursor-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_cursor_changed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_roll_view),
+                                  "cursor-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_cursor_changed,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_move_view),
+                                  "cursor-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_cursor_changed,
+                                  self);
         /*
         g_signal_connect_swapped (G_OBJECT (model), "row-changed",
                                   (GCallback) gibbon_move_list_view_on_change,
@@ -637,6 +659,13 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         gtk_tree_path_free (path);
 
         return text ? TRUE : FALSE;
+}
+
+void
+gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
+                                         GtkTreeView *view)
+{
+
 }
 
 static gboolean
