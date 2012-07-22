@@ -751,6 +751,7 @@ struct _GibbonMETPrivate {
 G_DEFINE_TYPE (GibbonMET, gibbon_met, G_TYPE_OBJECT)
 
 static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
+static void gibbon_met_extend_post (GibbonMET *self, gsize native);
 
 static void 
 gibbon_met_init (GibbonMET *self)
@@ -823,6 +824,8 @@ gibbon_met_new (void)
                 self->priv->post[i] = rockwell_kazaross_post[i];
         }
 
+        gibbon_met_extend_post (self, 25);
+
         return self;
 }
 
@@ -882,6 +885,46 @@ gibbon_met_extend_pre (GibbonMET *self, gsize native)
                         g_print ("met[%u|%u]: %f ", i, j, self->priv->pre[i][j]);
                 }
                 g_print ("\n");
+        }
+#endif
+}
+
+
+/*
+ * Extend post-Crawford match equity table to native size.  This code is
+ * also stolen from gnubg.
+ */
+static void
+gibbon_met_extend_post (GibbonMET *self, gsize native)
+{
+        gsize i;
+
+        for (i = native; i < GIBBON_MET_MAX_LENGTH; ++i) {
+                self->priv->post[i] = GIBBON_MET_GAMMON_RATE * 0.5f
+                        * ((i - 4 >= 0) ? self->priv->post[i - 4] : 1.0f)
+                        + (1.0f - GIBBON_MET_GAMMON_RATE) * 0.5f
+                        * ((i - 2 >= 0) ? self->priv->post[i - 2] : 1.0f);
+
+                g_assert (self->priv->post[i] >= 0.0f
+                          && self->priv->post[i] <= 1.0f);
+
+                /*
+                 * Add free drop vigorish at 1-away, 2-away and 1-away, 4-away.
+                 */
+                if (i == 1) {
+                        self->priv->post[i] -= GIBBON_MET_FD2;
+                        g_assert (self->priv->post[i] >= 0.0f
+                                  && self->priv->post[i] <= 1.0f);
+                } else if (i == 3) {
+                        self->priv->post[i] -= GIBBON_MET_FD4;
+                        g_assert (self->priv->post[i] >= 0.0f
+                                  && self->priv->post[i] <= 1.0f);
+                }
+        }
+
+#if (0)
+        for (i = 0; i < GIBBON_MET_MAX_LENGTH; ++i) {
+                g_print ("met[%u]: %f\n", i, self->priv->post[i]);
         }
 #endif
 }

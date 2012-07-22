@@ -46,6 +46,11 @@
 
 #define GIBBON_MET_MAX_LENGTH 100
 
+#define GIBBON_MET_GAMMON_RATE 0.25f
+
+/* Free drop vigorish.  */
+#define GIBBON_MET_FD2 0.015f
+#define GIBBON_MET_FD4 0.004f
 
 /**
  * GibbonMET:
