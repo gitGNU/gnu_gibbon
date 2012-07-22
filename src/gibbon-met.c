@@ -819,6 +819,10 @@ gibbon_met_new (void)
 
         gibbon_met_extend_pre (self, 25);
 
+        for (i = 0; i < 25; ++i) {
+                self->priv->post[i] = rockwell_kazaross_post[i];
+        }
+
         return self;
 }
 
