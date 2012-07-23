@@ -899,7 +899,18 @@ gibbon_met_extend_post (GibbonMET *self, gsize native)
 {
         gsize i;
 
-        for (i = native; i < GIBBON_MET_MAX_LENGTH; ++i) {
+
+        /*
+         * GNUBG throws away the last value read from a MET table.  The idea
+         * is that an n-match table cannot possible hold the first legal
+         * post-Crawford score which is n-1 away.
+         *
+         * It would maybe better to simply assume that the table has taken
+         * that into account already.  Anyway, we apply the same correction
+         * here so that the analysis results match those of GNUBG.
+         */
+        g_assert (native);
+        for (i = native - 1; i < GIBBON_MET_MAX_LENGTH; ++i) {
                 self->priv->post[i] = GIBBON_MET_GAMMON_RATE * 0.5f
                         * ((i - 4 >= 0) ? self->priv->post[i - 4] : 1.0f)
                         + (1.0f - GIBBON_MET_GAMMON_RATE) * 0.5f
