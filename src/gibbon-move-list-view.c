@@ -146,6 +146,9 @@ static gboolean gibbon_move_list_view_cell_filled (const GibbonMoveListView
                                                    *self,
                                                    GtkTreeIter *iter,
                                                    gint col);
+static guint gibbon_move_list_view_fall_left (const GibbonMoveListView *self,
+                                              GtkTreeIter *iter,
+                                              guint col);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -246,6 +249,9 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_roll_data_func,
                         self, NULL);
+        self->priv->black_roll_column =
+                        gtk_tree_view_get_column (self->priv->black_roll_view,
+                                                  0);
 
         self->priv->black_move_view = black_move_view;
         gtk_tree_view_set_model (black_move_view, GTK_TREE_MODEL (model));
@@ -254,6 +260,9 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_black_move_data_func,
                         self, NULL);
+        self->priv->black_move_column =
+                        gtk_tree_view_get_column (self->priv->black_move_view,
+                                                  0);
 
         self->priv->white_roll_view = white_roll_view;
         gtk_tree_view_set_model (white_roll_view, GTK_TREE_MODEL (model));
@@ -262,6 +271,9 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_roll_data_func,
                         self, NULL);
+        self->priv->white_roll_column =
+                        gtk_tree_view_get_column (self->priv->white_roll_view,
+                                                  0);
 
         self->priv->white_move_view = white_move_view;
         gtk_tree_view_set_model (white_move_view, GTK_TREE_MODEL (model));
@@ -270,6 +282,9 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_white_move_data_func,
                         self, NULL);
+        self->priv->white_move_column =
+                        gtk_tree_view_get_column (self->priv->white_move_view,
+                                                  0);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
                                   "button-press-event",
@@ -665,7 +680,29 @@ void
 gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
+        GtkTreePath *path;
 
+        gint col, row, *indices;
+
+        if (view == self->priv->black_roll_view) {
+                col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        } else if (view == self->priv->black_move_view) {
+                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        } else if (view == self->priv->white_roll_view) {
+                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+        } else if (view == self->priv->white_move_view) {
+                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+        } else {
+                return;
+        }
+
+        gtk_tree_view_get_cursor (view, &path, NULL);
+        indices = gtk_tree_path_get_indices (path);
+        row = indices[0];
+
+        gibbon_move_list_view_select_cell (self, row, col, TRUE);
+
+        gtk_tree_path_free (path);
 }
 
 static gboolean
@@ -675,7 +712,6 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 {
         GtkTreePath *path;
         gint col, row, *indices;
-        GtkTreeSelection *selection;
 
         if (event->type != GDK_BUTTON_PRESS)
                 return FALSE;
@@ -687,32 +723,6 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
          * We ignore all modifier keys.
          */
         event->state = 0;
-
-        if (view != self->priv->black_roll_view) {
-                selection = gtk_tree_view_get_selection (
-                                self->priv->black_roll_view);
-                if (selection)
-                        gtk_tree_selection_unselect_all (selection);
-        }
-
-        if (view != self->priv->black_move_view) {
-                selection = gtk_tree_view_get_selection (
-                                self->priv->black_move_view);
-                if (selection)
-                        gtk_tree_selection_unselect_all (selection);
-        }
-        if (view != self->priv->white_roll_view) {
-                selection = gtk_tree_view_get_selection (
-                                self->priv->white_roll_view);
-                if (selection)
-                        gtk_tree_selection_unselect_all (selection);
-        }
-        if (view != self->priv->white_move_view) {
-                selection = gtk_tree_view_get_selection (
-                                self->priv->white_move_view);
-                if (selection)
-                        gtk_tree_selection_unselect_all (selection);
-        }
 
         if (!gtk_tree_view_get_path_at_pos (view, event->x, event->y,
                                             &path, NULL, NULL, NULL)) {
@@ -741,7 +751,6 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 
         gibbon_move_list_view_select_cell (self, row, col, TRUE);
 
-        /* Propagate event further.  */
         return FALSE;
 }
 
@@ -783,29 +792,121 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
         GtkTreeIter iter;
         GtkTreePath *path = gtk_tree_path_new_from_indices (row, -1);
         gint action_no;
+        gboolean select_black_roll = FALSE;
+        gboolean select_black_move = FALSE;
+        gboolean select_white_roll = FALSE;
+        gboolean select_white_move = FALSE;
+        GtkTreeSelection *selection;
+
+        if (col == self->priv->selected_col
+            && row == self->priv->selected_row) {
+                return;
+        }
 
         if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
                 gtk_tree_path_free (path);
                 return;
         }
-        if (!gibbon_move_list_view_cell_valid (self, &iter, col)) {
-                gtk_tree_path_free (path);
-                return;
+
+        /*
+         * The first row is special.  If the first move is made by white
+         * the two leftmost columns are usually empty.
+         */
+        if (!row) {
+                if (col == GIBBON_MATCH_LIST_COL_BLACK_ROLL
+                    && !gibbon_move_list_view_cell_filled (self, &iter, col)) {
+                        col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                        if (!gibbon_move_list_view_cell_filled (self, &iter,
+                                                                col)) {
+                                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                        }
+                } else if (col == GIBBON_MATCH_LIST_COL_BLACK_MOVE
+                           && !gibbon_move_list_view_cell_filled (self, &iter,
+                                                                  col)) {
+                        col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                }
         }
 
-        if (col == self->priv->selected_col && row == self->priv->selected_row)
-                return;
+        /*
+         * Likewise, the last row is special because it could be
+         * filled incompletely.
+         */
+        if (row + 1 == gtk_tree_model_iter_n_children (self->priv->model,
+                                                       NULL))
+                col = gibbon_move_list_view_fall_left (self, &iter, col);
 
         self->priv->selected_col = col;
         self->priv->selected_row = row;
 
-        /*
-         * FIXME!
-        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
-                                      0.0, 0.0);
-                                      */
+        switch (col) {
+        case GIBBON_MATCH_LIST_COL_BLACK_ROLL:
+                select_black_roll = TRUE;
+                if (!gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_BLACK_MOVE))
+                        select_black_move = TRUE;
+                break;
+        case GIBBON_MATCH_LIST_COL_BLACK_MOVE:
+                select_black_move = TRUE;
+                if (!gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_BLACK_ROLL))
+                        select_black_roll = TRUE;
+                break;
+        case GIBBON_MATCH_LIST_COL_WHITE_ROLL:
+                select_white_roll = TRUE;
+                if (!gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_WHITE_MOVE))
+                        select_white_move = TRUE;
+                break;
+        case GIBBON_MATCH_LIST_COL_WHITE_MOVE:
+                select_white_move = TRUE;
+                if (!gibbon_move_list_view_cell_filled (self, &iter,
+                                GIBBON_MATCH_LIST_COL_WHITE_ROLL))
+                        select_white_roll = TRUE;
+                break;
+        }
 
-        gtk_tree_path_free (path);
+        selection = gtk_tree_view_get_selection (self->priv->black_roll_view);
+        if (select_black_roll) {
+                if (!selection)
+                        gtk_tree_view_set_cursor (self->priv->black_roll_view,
+                                                  path, NULL, FALSE);
+        } else {
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+
+        selection = gtk_tree_view_get_selection (self->priv->black_move_view);
+        if (select_black_move) {
+                if (!selection) {
+                        gtk_tree_view_set_cursor (self->priv->black_move_view,
+                                                  path, NULL, FALSE);
+                }
+        } else {
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+
+        selection = gtk_tree_view_get_selection (self->priv->white_roll_view);
+        if (select_white_roll) {
+                if (!selection) {
+                        gtk_tree_view_set_cursor (self->priv->white_roll_view,
+                                                  path, NULL, FALSE);
+                }
+        } else {
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
+
+        selection = gtk_tree_view_get_selection (self->priv->white_move_view);
+        if (select_white_move) {
+                if (!selection) {
+                        gtk_tree_view_set_cursor (self->priv->white_move_view,
+                                                  path, NULL, FALSE);
+                }
+        } else {
+                if (selection)
+                        gtk_tree_selection_unselect_all (selection);
+        }
 
         if (send_signal) {
                 gtk_tree_model_get (self->priv->model, &iter,
@@ -815,6 +916,14 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                gibbon_move_list_view_signals[ACTION_SELECTED],
                                0, action_no);
         }
+
+        /*
+         * FIXME!
+        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
+                                      0.0, 0.0);
+                                      */
+
+        gtk_tree_path_free (path);
 }
 
 static void
@@ -888,7 +997,7 @@ gibbon_move_list_view_cell_filled (const GibbonMoveListView *self,
 
         gtk_tree_model_get (self->priv->model, iter, col, &content, -1);
         if (content) {
-                if (!content[0] || (content[0] == '-' && !content[1])) {
+                if (!content[0]) {
                         g_free (content);
                         return FALSE;
                 }
@@ -1017,4 +1126,39 @@ gibbon_move_list_view_on_right (GibbonMoveListView *self)
                                                    TRUE);
                 break;
         }
+}
+
+static guint
+gibbon_move_list_view_fall_left (const GibbonMoveListView *self,
+                                 GtkTreeIter *iter,
+                                 guint col)
+{
+        if (col == GIBBON_MATCH_LIST_COL_WHITE_MOVE) {
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        } else if (col == GIBBON_MATCH_LIST_COL_WHITE_ROLL) {
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                return col;
+                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        } else if (col == GIBBON_MATCH_LIST_COL_BLACK_MOVE) {
+                if (gibbon_move_list_view_cell_filled (self, iter, col))
+                        return col;
+                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        }
+
+        return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
 }
