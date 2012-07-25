@@ -90,6 +90,7 @@ static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                                      GtkTreeView *view);
 static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
+static void gibbon_move_list_view_on_tab (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -343,11 +344,27 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                                   (GCallback)
                                   gibbon_move_list_view_on_query_tooltip,
                                   self);
-        g_signal_connect_swapped (G_OBJECT (view), "key-press-event",
+        */
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
+                                  "key-press-event",
                                   (GCallback)
                                   gibbon_move_list_view_on_key_press,
                                   self);
-        */
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_move_view),
+                                  "key-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_key_press,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_roll_view),
+                                  "key-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_key_press,
+                                  self);
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_move_view),
+                                  "key-press-event",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_key_press,
+                                  self);
 
         g_signal_connect_swapped (G_OBJECT (model), "row-deleted",
                                   (GCallback)
@@ -777,6 +794,9 @@ gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
          * modifier keys?
          */
         switch (event->keyval) {
+        case GDK_KEY_Tab:
+                gibbon_move_list_view_on_tab (self);
+                break;
         case GDK_KEY_Left:
                 gibbon_move_list_view_on_left (self);
                 return TRUE;
@@ -1135,6 +1155,12 @@ gibbon_move_list_view_on_right (GibbonMoveListView *self)
                                                    TRUE);
                 break;
         }
+}
+
+
+static void
+gibbon_move_list_view_on_tab (GibbonMoveListView *self)
+{
 }
 
 static guint
