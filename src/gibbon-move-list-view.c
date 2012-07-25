@@ -57,6 +57,7 @@ struct _GibbonMoveListViewPrivate {
 
         gint selected_row;
         gint selected_col;
+        gboolean defer_cursor_signal;
 };
 
 #define GIBBON_MOVE_LIST_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -165,6 +166,7 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
 
         self->priv->selected_row = -1;
         self->priv->selected_col = -1;
+        self->priv->defer_cursor_signal = FALSE;
 }
 
 static void
@@ -684,6 +686,9 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
 
         gint col, row, *indices;
 
+        if (self->priv->defer_cursor_signal)
+                return;
+
         if (view == self->priv->black_roll_view) {
                 col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
         } else if (view == self->priv->black_move_view) {
@@ -841,69 +846,75 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
         switch (col) {
         case GIBBON_MATCH_LIST_COL_BLACK_ROLL:
                 select_black_roll = TRUE;
+                gtk_widget_grab_focus (GTK_WIDGET (self->priv->black_roll_view));
                 if (!gibbon_move_list_view_cell_filled (self, &iter,
                                 GIBBON_MATCH_LIST_COL_BLACK_MOVE))
                         select_black_move = TRUE;
                 break;
         case GIBBON_MATCH_LIST_COL_BLACK_MOVE:
                 select_black_move = TRUE;
+                gtk_widget_grab_focus (GTK_WIDGET (self->priv->black_move_view));
                 if (!gibbon_move_list_view_cell_filled (self, &iter,
                                 GIBBON_MATCH_LIST_COL_BLACK_ROLL))
                         select_black_roll = TRUE;
                 break;
         case GIBBON_MATCH_LIST_COL_WHITE_ROLL:
                 select_white_roll = TRUE;
+                gtk_widget_grab_focus (GTK_WIDGET (self->priv->white_roll_view));
                 if (!gibbon_move_list_view_cell_filled (self, &iter,
                                 GIBBON_MATCH_LIST_COL_WHITE_MOVE))
                         select_white_move = TRUE;
                 break;
         case GIBBON_MATCH_LIST_COL_WHITE_MOVE:
                 select_white_move = TRUE;
+                gtk_widget_grab_focus (GTK_WIDGET (self->priv->white_move_view));
                 if (!gibbon_move_list_view_cell_filled (self, &iter,
                                 GIBBON_MATCH_LIST_COL_WHITE_ROLL))
                         select_white_roll = TRUE;
                 break;
         }
 
-        selection = gtk_tree_view_get_selection (self->priv->black_roll_view);
         if (select_black_roll) {
-                if (!selection)
-                        gtk_tree_view_set_cursor (self->priv->black_roll_view,
-                                                  path, NULL, FALSE);
+                self->priv->defer_cursor_signal = TRUE;
+                gtk_tree_view_set_cursor (self->priv->black_roll_view,
+                                          path, NULL, FALSE);
+                self->priv->defer_cursor_signal = FALSE;
         } else {
+                selection = gtk_tree_view_get_selection (
+                                self->priv->black_roll_view);
                 if (selection)
                         gtk_tree_selection_unselect_all (selection);
         }
 
-        selection = gtk_tree_view_get_selection (self->priv->black_move_view);
         if (select_black_move) {
-                if (!selection) {
-                        gtk_tree_view_set_cursor (self->priv->black_move_view,
-                                                  path, NULL, FALSE);
-                }
+                self->priv->defer_cursor_signal = TRUE;
+                gtk_tree_view_set_cursor (self->priv->black_move_view,
+                                          path, NULL, FALSE);
+                self->priv->defer_cursor_signal = FALSE;
         } else {
+                selection = gtk_tree_view_get_selection (self->priv->black_move_view);
                 if (selection)
                         gtk_tree_selection_unselect_all (selection);
         }
 
-        selection = gtk_tree_view_get_selection (self->priv->white_roll_view);
         if (select_white_roll) {
-                if (!selection) {
-                        gtk_tree_view_set_cursor (self->priv->white_roll_view,
-                                                  path, NULL, FALSE);
-                }
+                self->priv->defer_cursor_signal = TRUE;
+                gtk_tree_view_set_cursor (self->priv->white_roll_view,
+                                          path, NULL, FALSE);
+                self->priv->defer_cursor_signal = FALSE;
         } else {
+                selection = gtk_tree_view_get_selection (self->priv->white_roll_view);
                 if (selection)
                         gtk_tree_selection_unselect_all (selection);
         }
 
-        selection = gtk_tree_view_get_selection (self->priv->white_move_view);
         if (select_white_move) {
-                if (!selection) {
-                        gtk_tree_view_set_cursor (self->priv->white_move_view,
-                                                  path, NULL, FALSE);
-                }
+                self->priv->defer_cursor_signal = TRUE;
+                gtk_tree_view_set_cursor (self->priv->white_move_view,
+                                          path, NULL, FALSE);
+                self->priv->defer_cursor_signal = FALSE;
         } else {
+                selection = gtk_tree_view_get_selection (self->priv->white_move_view);
                 if (selection)
                         gtk_tree_selection_unselect_all (selection);
         }
@@ -917,11 +928,9 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                0, action_no);
         }
 
-        /*
-         * FIXME!
-        gtk_tree_view_scroll_to_cell (self->priv->view, path, NULL, FALSE,
-                                      0.0, 0.0);
-                                      */
+        /* FIXME! This does not work! */
+        gtk_tree_view_scroll_to_cell (self->priv->white_move_view, path, NULL,
+                                      FALSE, 0.0, 0.0);
 
         gtk_tree_path_free (path);
 }
