@@ -336,12 +336,16 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                                   (GCallback)
                                   gibbon_move_list_view_on_new_match,
                                   self);
-        /*
-        g_signal_connect_swapped (G_OBJECT (view), "query-tooltip",
+        g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
+                                  "query-tooltip",
                                   (GCallback)
                                   gibbon_move_list_view_on_query_tooltip,
                                   self);
-        */
+        g_signal_connect_swapped (G_OBJECT (self->priv->white_roll_view),
+                                  "query-tooltip",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_query_tooltip,
+                                  self);
         g_signal_connect_swapped (G_OBJECT (self->priv->black_roll_view),
                                   "key-press-event",
                                   (GCallback)
@@ -625,11 +629,11 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         GtkTreeModel *model;
         GtkTreePath *path;
         GtkTreeIter iter;
-        GtkTreeViewColumn *column;
         gchar *text = NULL;
         gdouble luck_value;
         GibbonAnalysisRollLuck luck_type;
 
+        g_printerr ("on query tooltip\n");
         g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
         g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
         g_return_val_if_fail (GTK_IS_TOOLTIP (tooltip), FALSE);
@@ -638,25 +642,23 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                                                 keyboard_tip,
                                                 &model, &path, &iter))
                 return FALSE;
-        gtk_tree_view_get_path_at_pos (view, x, y, NULL,
-                                       &column, NULL, NULL);
-        if (!column)
-                return FALSE;
 
-        if (column == self->priv->black_roll_column) {
+        if (view == self->priv->black_roll_view) {
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK,
                                     &luck_value,
                                     GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
                                     &luck_type,
                                     -1);
-        } else if (column == self->priv->white_roll_column) {
+        } else if (view == self->priv->white_roll_view) {
                 gtk_tree_model_get (model, &iter,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK,
                                     &luck_value,
                                     GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE,
                                     &luck_type,
                                     -1);
+        } else {
+                return FALSE;
         }
 
         switch (luck_type) {
