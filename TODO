@@ -69,3 +69,5 @@
 - Rewrite the move list view to use individual GtkTreeView objects for
   each column instead of hacking the regular selection scheme.
 - Check the desctructor of GibbonApp.  More objects should be destroyed.
+- The query tooltips in the move list view do not get displayed.  Maybe
+  because of the multi-column stuff?
