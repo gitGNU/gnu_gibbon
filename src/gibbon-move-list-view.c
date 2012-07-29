@@ -947,14 +947,7 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
         /* FIXME! This does not work! */
         gtk_tree_view_scroll_to_cell (self->priv->number_view, path, NULL,
                                       FALSE, 0.0, 0.0);
-        gtk_tree_view_scroll_to_cell (self->priv->black_roll_view, path, NULL,
-                                      FALSE, 0.0, 0.0);
-        gtk_tree_view_scroll_to_cell (self->priv->white_move_view, path, NULL,
-                                      FALSE, 0.0, 0.0);
-        gtk_tree_view_scroll_to_cell (self->priv->white_roll_view, path, NULL,
-                                      FALSE, 0.0, 0.0);
-        gtk_tree_view_scroll_to_cell (self->priv->white_move_view, path, NULL,
-                                      FALSE, 0.0, 0.0);
+
 
         gtk_tree_path_free (path);
 }
