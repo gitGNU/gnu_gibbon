@@ -42,6 +42,8 @@ static guint gibbon_move_list_view_signals[LAST_SIGNAL] = { 0 };
 
 typedef struct _GibbonMoveListViewPrivate GibbonMoveListViewPrivate;
 struct _GibbonMoveListViewPrivate {
+        GtkViewport *viewport;
+
         GtkTreeView *number_view;
         GtkTreeView *black_roll_view;
         GtkTreeView *black_move_view;
@@ -157,6 +159,8 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MOVE_LIST_VIEW, GibbonMoveListViewPrivate);
 
+        self->priv->viewport = NULL;
+
         self->priv->black_roll_column = NULL;
         self->priv->white_roll_column = NULL;
         self->priv->black_move_column = NULL;
@@ -215,6 +219,7 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
                            GtkTreeView *black_move_view,
                            GtkTreeView *white_roll_view,
                            GtkTreeView *white_move_view,
+                           GtkViewport *viewport,
                            const GibbonMatchList *match_list)
 {
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
@@ -223,6 +228,8 @@ gibbon_move_list_view_new (GtkTreeView *number_view,
         GtkStyle *style;
         GtkCellRenderer *renderer;
         GtkTreeSelection *selection;
+
+        self->priv->viewport = viewport;
 
         self->priv->match_list = match_list;
         model = gibbon_match_list_get_moves_store (self->priv->match_list);

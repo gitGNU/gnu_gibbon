@@ -78,6 +78,7 @@ GibbonMoveListView *gibbon_move_list_view_new (GtkTreeView *number_view,
                                                GtkTreeView *black_move_view,
                                                GtkTreeView *white_roll_view,
                                                GtkTreeView *white_move_view,
+                                               GtkViewport *viewport,
                                                const GibbonMatchList *list);
 
 #endif

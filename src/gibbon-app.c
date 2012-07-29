@@ -377,6 +377,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GObject *obj;
         GtkTreeView *number_view, *black_roll_view, *black_move_view,
                     *white_roll_view, *white_move_view;
+        GtkViewport *viewport;
 
         obj = gibbon_app_find_object (self, "combo-game-select",
                                       GTK_TYPE_COMBO_BOX);
@@ -404,11 +405,17 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                                       GTK_TYPE_TREE_VIEW);
         white_move_view = GTK_TREE_VIEW (obj);
 
+        obj = gibbon_app_find_object (self, "viewport-moves-view",
+                                      GTK_TYPE_VIEWPORT);
+        viewport = GTK_VIEWPORT (obj);
+
         move_list_view = gibbon_move_list_view_new (number_view,
                                                     black_roll_view,
                                                     black_move_view,
                                                     white_roll_view,
-                                                    white_move_view, list);
+                                                    white_move_view,
+                                                    viewport,
+                                                    list);
         self->priv->move_list_view = move_list_view;
 
         if (match_file) {
