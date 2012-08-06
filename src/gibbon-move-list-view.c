@@ -825,6 +825,10 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
         gboolean select_white_roll = FALSE;
         gboolean select_white_move = FALSE;
         GtkTreeSelection *selection;
+        GtkAdjustment *adj;
+        GdkRectangle cell, visible;
+        gint widget_x, widget_y;
+        gdouble val, page_size;
 
         if (col == self->priv->selected_col
             && row == self->priv->selected_row) {
@@ -951,10 +955,36 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                0, action_no);
         }
 
-        /* FIXME! This does not work! */
-        gtk_tree_view_scroll_to_cell (self->priv->number_view, path, NULL,
-                                      FALSE, 0.0, 0.0);
+        if (!gtk_widget_get_realized (GTK_WIDGET (self->priv->number_view))) {
+                gtk_tree_path_free (path);
+                return;
+        }
 
+        /*
+         * We have to scroll the viewport ourselves.
+         */
+        gtk_tree_view_get_background_area (self->priv->number_view, path, NULL,
+                                           &cell);
+        gtk_tree_view_get_visible_rect (self->priv->number_view, &visible);
+
+        gtk_tree_view_convert_tree_to_widget_coords (self->priv->number_view,
+                        cell.x, cell.y, &widget_x, &widget_y);
+
+        adj = gtk_viewport_get_vadjustment (self->priv->viewport);
+        val = gtk_adjustment_get_value (adj);
+        page_size = gtk_adjustment_get_page_size (adj);
+        if (widget_y + cell.height > val + page_size) {
+                gtk_adjustment_set_value (adj, widget_y + cell.height
+                                          - page_size);
+        } else if (widget_y < val) {
+                gtk_adjustment_set_value (adj, widget_y);
+        }
+
+        /*
+         * FIXME! If the top-most cell is currently selected, we should
+         * still move up and set the adjustment to 0 so that the user
+         * can scroll to the top with the keyboard.
+         */
 
         gtk_tree_path_free (path);
 }
