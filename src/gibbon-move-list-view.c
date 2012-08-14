@@ -739,7 +739,8 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
         GtkTreePath *path;
-        gint col, row, *indices;
+        GtkTreeIter iter;
+        gint col, peer, row, *indices;
 
         if (event->type != GDK_BUTTON_PRESS)
                 return FALSE;
@@ -763,19 +764,35 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
          * our view is coupled to the board and the analysis window and
          * we could not propagate the unselect there.
          */
-        if (view == self->priv->black_roll_view)
+        if (view == self->priv->black_roll_view) {
                 col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        else if (view == self->priv->white_roll_view)
-                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-        else if (view == self->priv->black_move_view)
+                peer = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
+        } else if (view == self->priv->black_move_view) {
                 col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-        else if (view == self->priv->white_move_view)
+                peer = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
+        } else if (view == self->priv->white_roll_view) {
+                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+                peer = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
+        } else if (view == self->priv->white_move_view) {
                 col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
-        else
+                peer = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
+        } else {
                 return TRUE;
+        }
 
         indices = gtk_tree_path_get_indices (path);
         row = indices[0];
+
+        if (!row || row == -1 + gtk_tree_model_iter_n_children (
+                        self->priv->model, NULL)) {
+                if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                        gtk_tree_path_free (path);
+                        return TRUE;
+                }
+                if (!gibbon_move_list_view_cell_filled (self, &iter, col)
+                    && !gibbon_move_list_view_cell_filled (self, &iter, peer))
+                        return TRUE;
+        }
 
         gibbon_move_list_view_select_cell (self, row, col, TRUE);
 
