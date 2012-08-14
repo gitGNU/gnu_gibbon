@@ -740,7 +740,7 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
 {
         GtkTreePath *path;
         GtkTreeIter iter;
-        gint col, peer, row, *indices;
+        gint col, row, *indices;
 
         if (event->type != GDK_BUTTON_PRESS)
                 return FALSE;
@@ -766,16 +766,12 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
          */
         if (view == self->priv->black_roll_view) {
                 col = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-                peer = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
         } else if (view == self->priv->black_move_view) {
                 col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-                peer = GIBBON_MATCH_LIST_COL_BLACK_ROLL;
         } else if (view == self->priv->white_roll_view) {
                 col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-                peer = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
         } else if (view == self->priv->white_move_view) {
                 col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
-                peer = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
         } else {
                 return TRUE;
         }
@@ -789,8 +785,7 @@ gibbon_move_list_view_on_button_pressed (GibbonMoveListView *self,
                         gtk_tree_path_free (path);
                         return TRUE;
                 }
-                if (!gibbon_move_list_view_cell_filled (self, &iter, col)
-                    && !gibbon_move_list_view_cell_filled (self, &iter, peer))
+                if (!gibbon_move_list_view_cell_valid (self, &iter, col))
                         return TRUE;
         }
 
