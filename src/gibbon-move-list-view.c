@@ -92,6 +92,8 @@ static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                                      GtkTreeView *view);
 static void gibbon_move_list_view_on_left (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_right (GibbonMoveListView *self);
+static gboolean gibbon_move_list_view_on_up (GibbonMoveListView *self);
+static gboolean gibbon_move_list_view_on_down (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_row_deleted (GibbonMoveListView *self,
                                                   GtkTreePath  *path,
                                                   GtkTreeModel *tree_model);
@@ -818,6 +820,10 @@ gibbon_move_list_view_on_key_press (GibbonMoveListView *self,
         case GDK_KEY_Right:
                 gibbon_move_list_view_on_right (self);
                 return TRUE;
+        case GDK_KEY_Up:
+                return gibbon_move_list_view_on_up (self);
+        case GDK_KEY_Down:
+                return gibbon_move_list_view_on_down (self);
         }
 
         /* Propagate further.  */
@@ -1201,6 +1207,58 @@ gibbon_move_list_view_on_right (GibbonMoveListView *self)
                                                    TRUE);
                 break;
         }
+}
+
+static gboolean
+gibbon_move_list_view_on_up (GibbonMoveListView *self)
+{
+        GtkTreeIter iter;
+        GtkTreePath *path;
+        gint col, row;
+
+        if (self->priv->selected_row < 1 || self->priv->selected_col < 0)
+                return FALSE;
+
+        row = self->priv->selected_row - 1;
+        path = gtk_tree_path_new_from_indices (row, -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return FALSE;
+        }
+        gtk_tree_path_free (path);
+
+        col = self->priv->selected_col;
+
+        if (!gibbon_move_list_view_cell_valid (self, &iter, col))
+                return TRUE;
+
+        return FALSE;
+}
+
+static gboolean
+gibbon_move_list_view_on_down (GibbonMoveListView *self)
+{
+        GtkTreeIter iter;
+        GtkTreePath *path;
+        gint col, row;
+
+        if (self->priv->selected_row < 0 || self->priv->selected_col < 0)
+                return FALSE;
+
+        row = self->priv->selected_row + 1;
+        path = gtk_tree_path_new_from_indices (row, -1);
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                return FALSE;
+        }
+        gtk_tree_path_free (path);
+
+        col = self->priv->selected_col;
+
+        if (!gibbon_move_list_view_cell_valid (self, &iter, col))
+                return TRUE;
+
+        return FALSE;
 }
 
 static guint
