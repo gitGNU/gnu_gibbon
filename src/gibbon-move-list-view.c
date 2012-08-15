@@ -708,7 +708,6 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
         GtkTreePath *path;
-
         gint col, row, *indices;
 
         if (self->priv->defer_cursor_signal)
@@ -836,7 +835,6 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                                    gboolean send_signal)
 {
         GtkTreeIter iter;
-        GtkTreePath *path = gtk_tree_path_new_from_indices (row, -1);
         gint action_no;
         gboolean select_black_roll = FALSE;
         gboolean select_black_move = FALSE;
@@ -847,6 +845,7 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
         GdkRectangle cell, visible;
         gint widget_x, widget_y;
         gdouble val, page_size;
+        GtkTreePath *path = gtk_tree_path_new_from_indices (row, -1);
 
         if (col == self->priv->selected_col
             && row == self->priv->selected_row) {
@@ -857,33 +856,6 @@ gibbon_move_list_view_select_cell (GibbonMoveListView *self,
                 gtk_tree_path_free (path);
                 return;
         }
-
-        /*
-         * The first row is special.  If the first move is made by white
-         * the two leftmost columns are usually empty.
-         */
-        if (!row) {
-                if (col == GIBBON_MATCH_LIST_COL_BLACK_ROLL
-                    && !gibbon_move_list_view_cell_filled (self, &iter, col)) {
-                        col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-                        if (!gibbon_move_list_view_cell_filled (self, &iter,
-                                                                col)) {
-                                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-                        }
-                } else if (col == GIBBON_MATCH_LIST_COL_BLACK_MOVE
-                           && !gibbon_move_list_view_cell_filled (self, &iter,
-                                                                  col)) {
-                        col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-                }
-        }
-
-        /*
-         * Likewise, the last row is special because it could be
-         * filled incompletely.
-         */
-        if (row + 1 == gtk_tree_model_iter_n_children (self->priv->model,
-                                                       NULL))
-                col = gibbon_move_list_view_fall_left (self, &iter, col);
 
         self->priv->selected_col = col;
         self->priv->selected_row = row;
