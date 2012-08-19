@@ -3,3 +3,4 @@ gibbon.desktop.in
 gibbon.schemas
 bg.Gibbon.gschema.xml
 bg.Gibbon.gschema.valid
+*.[1-9]
