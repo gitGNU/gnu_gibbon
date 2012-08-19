@@ -41,6 +41,12 @@
       <_summary>Ready to play</_summary>
       <_description>Can other players invite you to a match?</_description>
     </key>
+    <key name="show-equity" type="b">
+      <default>false</default>
+      <_summary>Show equity</_summary>
+      <_description>Display match equity instead of match winning chances
+                    in analysis</_description>
+    </key>
   </schema>
   <schema id="bg.Gibbon.preferences.server"
           path="/apps/gibbon/preferences/server/">
