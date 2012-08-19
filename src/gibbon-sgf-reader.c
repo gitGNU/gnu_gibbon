@@ -102,7 +102,8 @@ static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *s
                                                         const GSGFNode *node,
                                                         GibbonPositionSide side);
 static GibbonAnalysis *gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
-                                                        const GSGFNode *node);
+                                                        const GSGFNode *node,
+                                                        GibbonPositionSide side);
 static void gibbon_sgf_reader_doubling_analysis (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
@@ -531,25 +532,25 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                         movement->to = to;
                 }
                 action = GIBBON_GAME_ACTION (move);
-                analysis = gibbon_sgf_reader_move_analysis (self, node);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_double_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
@@ -628,13 +629,30 @@ gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
 
 static GibbonAnalysis *
 gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
-                                 const GSGFNode *node)
+                                 const GSGFNode *node,
+                                 GibbonPositionSide side)
 {
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
         GSGFProperty *prop;
         GSGFDouble *gsgf_double;
+        const GibbonPosition *pos;
+        const GibbonGame *game;
+
+        pos = gibbon_match_get_current_position (self->priv->match);
+        game = gibbon_match_get_current_game (self->priv->match);
 
         a->match_length = gibbon_match_get_length (self->priv->match);
+        a->cube = pos->cube;
+        a->my_score = side > 0 ? pos->scores[0] : pos->scores[1];
+        a->opp_score = side > 0 ? pos->scores[1] : pos->scores[0];
+        a->crawford = gibbon_match_get_crawford (self->priv->match);
+        a->is_crawford = gibbon_game_is_crawford (game);
+        if (a->match_length > 0 && a->crawford && !a->is_crawford
+            && (a->my_score == a->match_length - 1
+                || a->opp_score == a->match_length - 1))
+                a->post_crawford = TRUE;
+        else
+                a->post_crawford = FALSE;
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 
