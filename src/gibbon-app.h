@@ -107,6 +107,7 @@ struct _GibbonArchive *gibbon_app_get_archive (const GibbonApp *self);
 struct _GibbonPlayerList *gibbon_app_get_player_list (const GibbonApp *self);
 struct _GibbonInviterList *gibbon_app_get_inviter_list (const GibbonApp *self);
 struct _GibbonClientIcons *gibbon_app_get_client_icons (const GibbonApp *self);
+const struct _GibbonMET *gibbon_app_get_met (const GibbonApp *self);
 
 void gibbon_app_start_chat (GibbonApp *self, const gchar *peer);
 void gibbon_app_close_chat (GibbonApp *self, const gchar *peer);

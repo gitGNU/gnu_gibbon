@@ -1776,3 +1776,11 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no);
 }
+
+const struct _GibbonMET *
+gibbon_app_get_met (const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->met;
+}
