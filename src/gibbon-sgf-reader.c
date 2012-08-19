@@ -634,6 +634,8 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         GSGFProperty *prop;
         GSGFDouble *gsgf_double;
 
+        a->match_length = gibbon_match_get_length (self->priv->match);
+
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 
         while (1 || a->ma) {

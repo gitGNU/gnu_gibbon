@@ -36,6 +36,7 @@
 #include "gibbon-analysis-move.h"
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
+#include "gibbon-settings.h"
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
@@ -45,6 +46,19 @@ struct _GibbonAnalysisViewPrivate {
 
         GtkLabel *move_summary;
         GtkLabel *cube_summary;
+
+        GtkLabel *cube_equity_summary;
+
+        GtkLabel *cube_win;
+        GtkLabel *cube_win_g;
+        GtkLabel *cube_win_bg;
+        GtkLabel *cube_lose;
+        GtkLabel *cube_lose_g;
+        GtkLabel *cube_lose_bg;
+
+        GtkToggleButton *show_equity;
+
+        GibbonAnalysisMove *ma;
 };
 
 #define GIBBON_ANALYSIS_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -54,8 +68,11 @@ G_DEFINE_TYPE (GibbonAnalysisView, gibbon_analysis_view, G_TYPE_OBJECT)
 
 static void gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                                            GibbonAnalysisMove *a);
+static void gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self);
+static void gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self);
 static void gibbon_analysis_view_set_roll (GibbonAnalysisView *self,
                                            GibbonAnalysisRoll *a);
+static void gibbon_analysis_view_on_toggle_show_mwc (GibbonAnalysisView *self);
 
 static void 
 gibbon_analysis_view_init (GibbonAnalysisView *self)
@@ -69,6 +86,17 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
 
         self->priv->move_summary = NULL;
         self->priv->cube_summary = NULL;
+
+        self->priv->cube_equity_summary = NULL;
+
+        self->priv->cube_win = NULL;
+        self->priv->cube_win_g = NULL;
+        self->priv->cube_win_bg = NULL;
+        self->priv->cube_lose = NULL;
+        self->priv->cube_lose_g = NULL;
+        self->priv->cube_lose_bg = NULL;
+
+        self->priv->ma = NULL;
 }
 
 static void
@@ -101,6 +129,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         GibbonAnalysisView *self = g_object_new (GIBBON_TYPE_ANALYSIS_VIEW,
                                                  NULL);
         GObject *obj;
+        GSettings *settings;
 
         obj = gibbon_app_find_object (app, "hbox-analysis-detail",
                                       GTK_TYPE_BOX);
@@ -123,6 +152,42 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                       GTK_TYPE_BUTTON_BOX);
         gtk_widget_hide (GTK_WIDGET (obj));
         self->priv->button_box = GTK_BUTTON_BOX (obj);
+
+        obj = gibbon_app_find_object (app, "label-cube-equity-summary",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_equity_summary = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "label-cube-win",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-win-g",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win_g = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-win-bg",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win_bg = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose-g",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose_g = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose-bg",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose_bg = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "toggle-mwc-eq",
+                                      GTK_TYPE_TOGGLE_BUTTON);
+        self->priv->show_equity = GTK_TOGGLE_BUTTON (obj);
+        settings = g_settings_new (GIBBON_PREFS_MATCH_SCHEMA);
+        g_settings_bind (settings, GIBBON_PREFS_MATCH_SHOW_EQUITY, obj,
+                         "active",
+                         G_SETTINGS_BIND_DEFAULT
+                         | G_SETTINGS_BIND_INVERT_BOOLEAN);
+        g_signal_connect_swapped (obj, "toggled",
+                                  (GCallback)
+                                  gibbon_analysis_view_on_toggle_show_mwc,
+                                  self);
 
         return self;
 }
@@ -175,20 +240,105 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
 
         action = gibbon_game_get_nth_action (game, action_number, NULL);
         if (action) {
-                if (roll_analysis && GIBBON_IS_ROLL (action)) {
+                if (GIBBON_IS_ROLL (action) && roll_analysis
+                    && move_analysis
+                    && GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
                         gtk_notebook_set_current_page (self->priv->notebook, 0);
                 } else if (move_analysis) {
                         gtk_notebook_set_current_page (self->priv->notebook, 1);
                 }
+        }
+
+        if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
+                /* FIXME! Disable this page! */
         }
 }
 
 static void
 gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
 {
+        gchar *buf;
+        gboolean show_mwc;
+
+        if (self->priv->ma)
+                g_object_unref (self->priv->ma);
+        self->priv->ma = g_object_ref (a);
+
         gtk_widget_show (GTK_WIDGET (self->priv->detail_box));
         gtk_widget_show (GTK_WIDGET (self->priv->notebook));
         gtk_widget_show (GTK_WIDGET (self->priv->button_box));
+
+        buf = g_strdup_printf ("%.2f %%",
+                               100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
+        gtk_label_set_text (self->priv->cube_win, buf);
+        g_free (buf);
+
+        buf = g_strdup_printf ("%.2f %%",
+                         100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
+        gtk_label_set_text (self->priv->cube_win_g, buf);
+        g_free (buf);
+
+        buf = g_strdup_printf ("%.2f %%",
+                     100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
+        gtk_label_set_text (self->priv->cube_win_bg, buf);
+        g_free (buf);
+
+        buf = g_strdup_printf ("%.2f %%", 100 * (1 - a->da_p[0][0]));
+        gtk_label_set_text (self->priv->cube_lose, buf);
+        g_free (buf);
+
+        buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[0][3]);
+        gtk_label_set_text (self->priv->cube_lose_g, buf);
+        g_free (buf);
+
+        buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[0][4]);
+        gtk_label_set_text (self->priv->cube_lose_bg, buf);
+        g_free (buf);
+
+        g_object_get (G_OBJECT (self->priv->show_equity),
+                      "active", &show_mwc,
+                      NULL);
+
+        if (show_mwc && a->match_length > 0)
+                gibbon_analysis_view_set_move_mwc (self);
+        else
+                gibbon_analysis_view_set_move_equity (self);
+}
+
+static void
+gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
+{
+        GibbonAnalysisMove *a = self->priv->ma;
+        gchar *buf;
+        gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
+
+        if (a->da_rollout) {
+                buf = g_strdup_printf (_("Cubeless rollout MWC: %s (Money: %.3f)"),
+                                       "???", equity);
+        } else {
+                buf = g_strdup_printf (_("Cubeless %llu-ply MWC: %s (Money: %.3f)"),
+                                       (unsigned long long) a->da_plies,
+                                       "???", equity);
+        }
+        gtk_label_set_text (self->priv->cube_equity_summary, buf);
+        g_free (buf);
+}
+
+static void
+gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
+{
+
+}
+
+void
+gibbon_analysis_view_set_toggle_sensitive (GibbonAnalysisView *self,
+                                           gboolean sensitive)
+{
+        g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+
+        g_object_set (G_OBJECT (self->priv->show_equity),
+                      "sensitive", sensitive,
+                      NULL);
 }
 
 static void
@@ -227,4 +377,22 @@ gibbon_analysis_view_set_roll (GibbonAnalysisView *self, GibbonAnalysisRoll *a)
 
         gtk_label_set_text (self->priv->cube_summary, text);
         g_free (text);
+}
+
+static void
+gibbon_analysis_view_on_toggle_show_mwc (GibbonAnalysisView *self)
+{
+        g_printerr ("Toggled!\n");
+
+        if (!self->priv->ma)
+                return;
+
+        /*
+         * g_analysis_view_set_move() unreference an existing analysis.  We
+         * temporarily increase the reference count, so that it cannot drop
+         * to zero here.
+         */
+        g_object_ref (self->priv->ma);
+        gibbon_analysis_view_set_move (self, self->priv->ma);
+        g_object_unref (self->priv->ma);
 }
