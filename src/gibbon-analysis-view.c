@@ -40,6 +40,8 @@
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
+        const GibbonApp *app;
+
         GtkBox *detail_box;
         GtkNotebook *notebook;
         GtkButtonBox *button_box;
@@ -79,6 +81,8 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_ANALYSIS_VIEW, GibbonAnalysisViewPrivate);
+
+        self->priv->app = NULL;
 
         self->priv->detail_box = NULL;
         self->priv->notebook = NULL;
@@ -130,6 +134,8 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                                  NULL);
         GObject *obj;
         GSettings *settings;
+
+        self->priv->app = app;
 
         obj = gibbon_app_find_object (app, "hbox-analysis-detail",
                                       GTK_TYPE_BOX);
