@@ -26,7 +26,7 @@
 
 #include <gtk/gtk.h>
 #include "gibbon-app.h"
-#include "gibbon-analysis.h"
+#include "gibbon-game.h"
 
 #define GIBBON_TYPE_ANALYSIS_VIEW \
         (gibbon_analysis_view_get_type ())
@@ -75,6 +75,7 @@ GType gibbon_analysis_view_get_type (void) G_GNUC_CONST;
 
 GibbonAnalysisView *gibbon_analysis_view_new (const GibbonApp *app);
 void gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
-                                        const GibbonAnalysis* analysis);
+                                        const GibbonGame *game,
+                                        guint action_number);
 
 #endif

@@ -337,8 +337,8 @@ void
 gibbon_app_post_init (const GibbonApp *self)
 {
         gint game_no;
-        GibbonGame *game;
-        const GibbonAnalysis *analysis;
+        const GibbonGame *game;
+        guint action_no;
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
@@ -360,9 +360,9 @@ gibbon_app_post_init (const GibbonApp *self)
         if (!game)
                 return;
 
-        analysis = gibbon_game_get_nth_analysis (game, -1);
+        action_no = gibbon_game_get_num_actions (game);
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
-                                           analysis);
+                                           game, action_no - 1);
 }
 
 gboolean
@@ -1741,9 +1741,8 @@ static void
 gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
 {
         gint game_no;
-        GibbonGame *game;
+        const GibbonGame *game;
         const GibbonPosition *pos;
-        const GibbonAnalysis *analysis;
 
         if (action_no < 0)
                 return;
@@ -1765,7 +1764,6 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
 
         gibbon_board_set_position (GIBBON_BOARD (self->priv->board), pos);
 
-        analysis = gibbon_game_get_nth_analysis (game, action_no);
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
-                                           analysis);
+                                           game, action_no);
 }

@@ -34,6 +34,8 @@
 #include "gibbon-analysis-view.h"
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
+#include "gibbon-roll.h"
+#include "gibbon-move.h"
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
@@ -127,9 +129,51 @@ gibbon_analysis_view_new (const GibbonApp *app)
 
 void
 gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
-                                   const GibbonAnalysis* a)
+                                   const GibbonGame *game, guint action_number)
 {
+        gint i;
+        const GibbonGameAction *action;
+        const GibbonAnalysis *move_analysis = NULL;
+        const GibbonAnalysis *roll_analysis = NULL;
+
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+
+        /* First find the corresponding roll.  */
+        for (i = action_number; i >= 0; --i) {
+                action = gibbon_game_get_nth_action (game, i, NULL);
+                if (GIBBON_IS_ROLL (action)) {
+                        roll_analysis = gibbon_game_get_nth_analysis (game, i);
+                        break;
+                }
+        }
+
+        /* Then find the corresponding move.  */
+        for (i = action_number; ; ++i) {
+                action = gibbon_game_get_nth_action (game, i, NULL);
+                if (!action)
+                        break;
+                if (GIBBON_IS_MOVE (action)) {
+                        move_analysis = gibbon_game_get_nth_analysis (game, i);
+                        break;
+                }
+        }
+
+        if (roll_analysis) {
+                gibbon_analysis_view_set_roll (self, GIBBON_ANALYSIS_ROLL (
+                                roll_analysis));
+        } else {
+                gtk_widget_hide (GTK_WIDGET (self->priv->detail_box));
+        }
+
+        if (move_analysis) {
+                gibbon_analysis_view_set_move (self, GIBBON_ANALYSIS_MOVE (
+                                move_analysis));
+        } else {
+                gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+                gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
+        }
+
+#if 0
         if (a)
                 g_return_if_fail (GIBBON_IS_ANALYSIS (a));
 
@@ -143,6 +187,7 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         } else if (GIBBON_IS_ANALYSIS_ROLL (a)) {
                 gibbon_analysis_view_set_roll (self, GIBBON_ANALYSIS_ROLL (a));
         }
+#endif
 }
 
 static void
