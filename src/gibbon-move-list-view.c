@@ -151,9 +151,6 @@ static gboolean gibbon_move_list_view_cell_filled (const GibbonMoveListView
                                                    *self,
                                                    GtkTreeIter *iter,
                                                    gint col);
-static guint gibbon_move_list_view_fall_left (const GibbonMoveListView *self,
-                                              GtkTreeIter *iter,
-                                              guint col);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -1231,39 +1228,4 @@ gibbon_move_list_view_on_down (GibbonMoveListView *self)
                 return TRUE;
 
         return FALSE;
-}
-
-static guint
-gibbon_move_list_view_fall_left (const GibbonMoveListView *self,
-                                 GtkTreeIter *iter,
-                                 guint col)
-{
-        if (col == GIBBON_MATCH_LIST_COL_WHITE_MOVE) {
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                col = GIBBON_MATCH_LIST_COL_WHITE_ROLL;
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        } else if (col == GIBBON_MATCH_LIST_COL_WHITE_ROLL) {
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                col = GIBBON_MATCH_LIST_COL_WHITE_MOVE;
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                return col;
-                col = GIBBON_MATCH_LIST_COL_BLACK_MOVE;
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        } else if (col == GIBBON_MATCH_LIST_COL_BLACK_MOVE) {
-                if (gibbon_move_list_view_cell_filled (self, iter, col))
-                        return col;
-                return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
-        }
-
-        return GIBBON_MATCH_LIST_COL_BLACK_ROLL;
 }
