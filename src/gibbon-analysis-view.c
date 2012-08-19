@@ -173,21 +173,14 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
         }
 
-#if 0
-        if (a)
-                g_return_if_fail (GIBBON_IS_ANALYSIS (a));
-
-        if (!a) {
-                gtk_widget_hide (GTK_WIDGET (self->priv->detail_box));
-                gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
-                gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
-                return;
-        } else if (GIBBON_IS_ANALYSIS_MOVE (a)) {
-                gibbon_analysis_view_set_move (self, GIBBON_ANALYSIS_MOVE (a));
-        } else if (GIBBON_IS_ANALYSIS_ROLL (a)) {
-                gibbon_analysis_view_set_roll (self, GIBBON_ANALYSIS_ROLL (a));
+        action = gibbon_game_get_nth_action (game, action_number, NULL);
+        if (action) {
+                if (roll_analysis && GIBBON_IS_ROLL (action)) {
+                        gtk_notebook_set_current_page (self->priv->notebook, 0);
+                } else if (move_analysis) {
+                        gtk_notebook_set_current_page (self->priv->notebook, 1);
+                }
         }
-#endif
 }
 
 static void
