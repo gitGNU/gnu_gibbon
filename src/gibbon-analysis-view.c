@@ -37,6 +37,7 @@
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
 #include "gibbon-settings.h"
+#include "gibbon-met.h"
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
@@ -317,14 +318,22 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         GibbonAnalysisMove *a = self->priv->ma;
         gchar *buf;
         gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
+        const GibbonMET *met;
+
+        met = gibbon_app_get_met (self->priv->app);
 
         if (a->da_rollout) {
                 buf = g_strdup_printf (_("Cubeless rollout MWC: %s (Money: %.3f)"),
                                        "???", equity);
         } else {
-                buf = g_strdup_printf (_("Cubeless %llu-ply MWC: %s (Money: %.3f)"),
-                                       (unsigned long long) a->da_plies,
-                                       "???", equity);
+                buf = g_strdup_printf (
+                        _("Cubeless %llu-ply MWC: %.2f %% (Money: %.3f)"),
+                        (unsigned long long) a->da_plies,
+                        100.0f * gibbon_met_get_mwc (met, equity,
+                                                     a->match_length,
+                                                     a->is_crawford,
+                                                     a->my_score, a->opp_score),
+                        equity);
         }
         gtk_label_set_text (self->priv->cube_equity_summary, buf);
         g_free (buf);

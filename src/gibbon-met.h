@@ -81,5 +81,8 @@ struct _GibbonMETClass
 GType gibbon_met_get_type (void) G_GNUC_CONST;
 
 GibbonMET *gibbon_met_new (void);
+gdouble gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
+                            gsize match_length, gboolean is_crawford,
+                            guint my_score, guint opp_score);
 
 #endif

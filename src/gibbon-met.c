@@ -752,6 +752,9 @@ G_DEFINE_TYPE (GibbonMET, gibbon_met, G_TYPE_OBJECT)
 
 static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
 static void gibbon_met_extend_post (GibbonMET *self, gsize native);
+static void gibbon_met_get_me (const GibbonMET *self,
+                               gsize match_length, gboolean is_crawford,
+                               guint my_score, guint opp_score);
 
 static void 
 gibbon_met_init (GibbonMET *self)
@@ -927,10 +930,31 @@ gibbon_met_extend_post (GibbonMET *self, gsize native)
                                   && self->priv->post[i] <= 1.0f);
                 }
         }
+}
 
-#if (0)
-        for (i = 0; i < GIBBON_MET_MAX_LENGTH; ++i) {
-                g_print ("met[%u]: %f\n", i, self->priv->post[i]);
-        }
-#endif
+gdouble
+gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
+                    gsize match_length, gboolean is_crawford,
+                    guint my_score, guint opp_score)
+{
+        gint me_away, opp_away;
+
+        g_return_val_if_fail (GIBBON_IS_MET (self), 0.0f);
+
+        me_away = match_length - my_score;
+        opp_away = match_length - opp_score;
+
+        if (me_away <= 0)
+                return 1.0f;
+        if (opp_away <= 0)
+                return 0.0f;
+
+        if (my_score == opp_score)
+                return 0.5f;
+        if (my_score > opp_score)
+                return 0.78f;
+        if (opp_score > my_score)
+                return 0.22f;
+
+        return 0;
 }
