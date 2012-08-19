@@ -363,6 +363,8 @@ gibbon_app_post_init (const GibbonApp *self)
         action_no = gibbon_game_get_num_actions (game);
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no - 1);
+
+        gibbon_move_list_view_reset_scrollbar (self->priv->move_list_view);
 }
 
 gboolean

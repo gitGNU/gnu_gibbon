@@ -80,5 +80,6 @@ GibbonMoveListView *gibbon_move_list_view_new (GtkTreeView *number_view,
                                                GtkTreeView *white_move_view,
                                                GtkViewport *viewport,
                                                const GibbonMatchList *list);
+void gibbon_move_list_view_reset_scrollbar (GibbonMoveListView *self);
 
 #endif

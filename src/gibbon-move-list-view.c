@@ -1229,3 +1229,19 @@ gibbon_move_list_view_on_down (GibbonMoveListView *self)
 
         return FALSE;
 }
+
+void
+gibbon_move_list_view_reset_scrollbar (GibbonMoveListView *self)
+{
+        gint col, row;
+
+        g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
+
+        /*
+         * Make sure that cell and row differ so that everything gets updated.
+         */
+        col = self->priv->selected_col++;
+        row = self->priv->selected_row++;
+
+        gibbon_move_list_view_select_cell (self, row, col, FALSE);
+}
