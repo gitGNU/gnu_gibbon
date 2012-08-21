@@ -331,7 +331,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                         (unsigned long long) a->da_plies,
                         100.0f * gibbon_met_get_mwc (met, equity,
                                                      a->match_length,
-                                                     a->is_crawford,
+                                                     a->cube,
                                                      a->my_score, a->opp_score),
                         equity);
         }

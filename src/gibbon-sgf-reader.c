@@ -645,14 +645,6 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         a->cube = pos->cube;
         a->my_score = side > 0 ? pos->scores[0] : pos->scores[1];
         a->opp_score = side > 0 ? pos->scores[1] : pos->scores[0];
-        a->crawford = gibbon_match_get_crawford (self->priv->match);
-        a->is_crawford = gibbon_game_is_crawford (game);
-        if (a->match_length > 0 && a->crawford && !a->is_crawford
-            && (a->my_score == a->match_length - 1
-                || a->opp_score == a->match_length - 1))
-                a->post_crawford = TRUE;
-        else
-                a->post_crawford = FALSE;
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 

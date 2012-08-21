@@ -32,6 +32,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-met.h"
+#include "gibbon-position.h"
 
 static gfloat rockwell_kazaross_pre[25][25] = {
         {
@@ -752,9 +753,9 @@ G_DEFINE_TYPE (GibbonMET, gibbon_met, G_TYPE_OBJECT)
 
 static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
 static void gibbon_met_extend_post (GibbonMET *self, gsize native);
-static void gibbon_met_get_me (const GibbonMET *self,
-                               gsize match_length, gboolean is_crawford,
-                               guint my_score, guint opp_score);
+static gdouble gibbon_met_get_match_equity (const GibbonMET *self,
+                                            gsize match_length, guint cube,
+                                            guint my_score, guint opp_score);
 
 static void 
 gibbon_met_init (GibbonMET *self)
@@ -881,15 +882,6 @@ gibbon_met_extend_pre (GibbonMET *self, gsize native)
                         self->priv->pre[i][j] = 1.0f - self->priv->pre[j][i];
                 }
         }
-
-#if (0)
-        for (i = 0; i < GIBBON_MET_MAX_LENGTH; ++i) {
-                for (j = 0; j < GIBBON_MET_MAX_LENGTH; ++j) {
-                        g_print ("met[%u|%u]: %f ", i, j, self->priv->pre[i][j]);
-                }
-                g_print ("\n");
-        }
-#endif
 }
 
 
@@ -932,16 +924,14 @@ gibbon_met_extend_post (GibbonMET *self, gsize native)
         }
 }
 
-gdouble
-gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
-                    gsize match_length, gboolean is_crawford,
-                    guint my_score, guint opp_score)
+static gdouble
+gibbon_met_get_match_equity (const GibbonMET *self,
+                             gsize match_length, guint cube,
+                             guint my_score, guint opp_score)
 {
         gint me_away, opp_away;
 
-        g_return_val_if_fail (GIBBON_IS_MET (self), 0.0f);
-
-        me_away = match_length - my_score;
+        me_away = match_length - my_score - cube;
         opp_away = match_length - opp_score;
 
         if (me_away <= 0)
@@ -949,12 +939,32 @@ gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
         if (opp_away <= 0)
                 return 0.0f;
 
-        if (my_score == opp_score)
-                return 0.5f;
-        if (my_score > opp_score)
-                return 0.78f;
-        if (opp_score > my_score)
-                return 0.22f;
+        g_return_val_if_fail (match_length <= GIBBON_MET_MAX_LENGTH, 0.5f);
 
-        return 0;
+        if (opp_away == 1) {
+                return self->priv->post[me_away - 1];
+        } else if (me_away == 1) {
+                return 1 - self->priv->post[opp_away - 1];
+        }
+
+        return self->priv->pre[me_away - 1][opp_away - 1];
+}
+
+gdouble
+gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
+                    gsize match_length, guint cube,
+                    guint my_score, guint opp_score)
+{
+        gdouble eq_win, eq_lose;
+
+        g_return_val_if_fail (GIBBON_IS_MET (self), 0.0f);
+
+        eq_win = gibbon_met_get_match_equity (self,
+                                              match_length, cube,
+                                              my_score, opp_score);
+        eq_lose = 1 - gibbon_met_get_match_equity (self,
+                                                   match_length, cube,
+                                                   opp_score, my_score);
+
+        return 0.5f * (equity * (eq_win - eq_lose) + eq_win + eq_lose);
 }
