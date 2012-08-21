@@ -319,6 +319,8 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         gchar *buf;
         gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
         const GibbonMET *met;
+        gdouble *p;
+        gdouble money_equity;
 
         met = gibbon_app_get_met (self->priv->app);
 
@@ -326,6 +328,12 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                 buf = g_strdup_printf (_("Cubeless rollout MWC: %s (Money: %.3f)"),
                                        "???", equity);
         } else {
+                p = a->da_p[0];
+                money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
+                    -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+                    + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
+                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
+                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
                 buf = g_strdup_printf (
                         _("Cubeless %llu-ply MWC: %.2f %% (Money: %.3f)"),
                         (unsigned long long) a->da_plies,
@@ -333,7 +341,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                                                      a->match_length,
                                                      a->cube,
                                                      a->my_score, a->opp_score),
-                        equity);
+                        money_equity);
         }
         gtk_label_set_text (self->priv->cube_equity_summary, buf);
         g_free (buf);
