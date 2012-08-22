@@ -59,6 +59,19 @@ struct _GibbonAnalysisViewPrivate {
         GtkLabel *cube_lose_g;
         GtkLabel *cube_lose_bg;
 
+        GtkLabel *no_1;
+        GtkLabel *no_2;
+        GtkLabel *no_3;
+        GtkLabel *action_1;
+        GtkLabel *action_2;
+        GtkLabel *action_3;
+        GtkLabel *value_1;
+        GtkLabel *value_2;
+        GtkLabel *value_3;
+        GtkLabel *diff_1;
+        GtkLabel *diff_2;
+        GtkLabel *diff_3;
+
         GtkToggleButton *show_equity;
 
         GibbonAnalysisMove *ma;
@@ -100,6 +113,19 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
         self->priv->cube_lose = NULL;
         self->priv->cube_lose_g = NULL;
         self->priv->cube_lose_bg = NULL;
+
+        self->priv->no_1 = NULL;
+        self->priv->no_2 = NULL;
+        self->priv->no_3 = NULL;
+        self->priv->action_1 = NULL;
+        self->priv->action_2 = NULL;
+        self->priv->action_3 = NULL;
+        self->priv->value_1 = NULL;
+        self->priv->value_2 = NULL;
+        self->priv->value_3 = NULL;
+        self->priv->diff_1 = NULL;
+        self->priv->diff_2 = NULL;
+        self->priv->diff_3 = NULL;
 
         self->priv->ma = NULL;
 }
@@ -182,6 +208,43 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "label-cube-lose-bg",
                                       GTK_TYPE_LABEL);
         self->priv->cube_lose_bg = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "label-cube-action-no1",
+                                      GTK_TYPE_LABEL);
+        self->priv->no_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-action-no2",
+                                      GTK_TYPE_LABEL);
+        self->priv->no_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-action-no3",
+                                      GTK_TYPE_LABEL);
+        self->priv->no_3 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-action1",
+                                      GTK_TYPE_LABEL);
+        self->priv->action_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-action2",
+                                      GTK_TYPE_LABEL);
+        self->priv->action_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-action3",
+                                      GTK_TYPE_LABEL);
+        self->priv->action_3 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq1-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->value_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq2-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->value_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq3-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->value_3 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq1-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->diff_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq2-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->diff_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-eq3-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->diff_3 = GTK_LABEL (obj);
 
         obj = gibbon_app_find_object (app, "toggle-mwc-eq",
                                       GTK_TYPE_TOGGLE_BUTTON);
@@ -321,13 +384,14 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         const GibbonMET *met;
         gdouble *p;
         gdouble money_equity;
-        gdouble eq_nodouble, eq_take, eq_drop;
+        gdouble p_nodouble, p_take, p_drop, p_best;
 
         met = gibbon_app_get_met (self->priv->app);
 
         if (a->da_rollout) {
+                /* FIXME! */
                 buf = g_strdup_printf (_("Cubeless rollout MWC: %s (Money: %.3f)"),
-                                       "???", equity);
+                                       "??????????????????????", equity);
         } else {
                 p = a->da_p[0];
                 money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
@@ -348,29 +412,20 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         g_free (buf);
 
         /*
-         * Find the correct cube decision.
+         * Cubeful equities.
          */
-        eq_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
-        eq_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
-        if (a->match_length > 0) {
-                eq_drop = gibbon_met_get_match_equity (met,
-                                                       a->match_length,
-                                                       a->cube,
-                                                       a->my_score,
-                                                       a->opp_score);
-                /* Now convert to normalized money equity.  */
-                eq_drop = gibbon_met_mwc2eq (met, eq_drop,
-                                             a->match_length, a->cube,
-                                             a->my_score, a->opp_score);
-                eq_take = gibbon_met_mwc2eq (met, eq_take,
-                                             a->match_length, a->cube,
-                                             a->my_score, a->opp_score);
-                eq_nodouble = gibbon_met_mwc2eq (met, eq_nodouble,
-                                                 a->match_length, a->cube,
-                                                 a->my_score, a->opp_score);
-        } else {
-                eq_drop = 1.0f;
-        }
+        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        p_drop = gibbon_met_get_match_equity (met, a->match_length,
+                                              a->cube, a->my_score,
+                                              a->opp_score);
+
+        p_best = p_nodouble;
+        if (p_take > p_best)
+                p_best = p_take;
+        if (p_drop > p_best)
+                p_best = p_drop;
+
 }
 
 static void
