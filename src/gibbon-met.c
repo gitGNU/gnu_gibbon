@@ -753,9 +753,6 @@ G_DEFINE_TYPE (GibbonMET, gibbon_met, G_TYPE_OBJECT)
 
 static void gibbon_met_extend_pre (GibbonMET *self, gsize native);
 static void gibbon_met_extend_post (GibbonMET *self, gsize native);
-static gdouble gibbon_met_get_match_equity (const GibbonMET *self,
-                                            gsize match_length, guint cube,
-                                            guint my_score, guint opp_score);
 
 static void 
 gibbon_met_init (GibbonMET *self)
@@ -924,7 +921,7 @@ gibbon_met_extend_post (GibbonMET *self, gsize native)
         }
 }
 
-static gdouble
+gdouble
 gibbon_met_get_match_equity (const GibbonMET *self,
                              gsize match_length, guint cube,
                              guint my_score, guint opp_score)

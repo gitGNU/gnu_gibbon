@@ -84,5 +84,8 @@ GibbonMET *gibbon_met_new (void);
 gdouble gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
                             gsize match_length, guint cube,
                             guint my_score, guint opp_score);
+gdouble gibbon_met_get_match_equity (const GibbonMET *self,
+                                     gsize match_length, guint cube,
+                                     guint my_score, guint opp_score);
 
 #endif
