@@ -59,9 +59,6 @@ struct _GibbonAnalysisViewPrivate {
         GtkLabel *cube_lose_g;
         GtkLabel *cube_lose_bg;
 
-        GtkLabel *no_1;
-        GtkLabel *no_2;
-        GtkLabel *no_3;
         GtkLabel *action_1;
         GtkLabel *action_2;
         GtkLabel *action_3;
@@ -114,9 +111,6 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
         self->priv->cube_lose_g = NULL;
         self->priv->cube_lose_bg = NULL;
 
-        self->priv->no_1 = NULL;
-        self->priv->no_2 = NULL;
-        self->priv->no_3 = NULL;
         self->priv->action_1 = NULL;
         self->priv->action_2 = NULL;
         self->priv->action_3 = NULL;
@@ -209,15 +203,6 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                       GTK_TYPE_LABEL);
         self->priv->cube_lose_bg = GTK_LABEL (obj);
 
-        obj = gibbon_app_find_object (app, "label-cube-action-no1",
-                                      GTK_TYPE_LABEL);
-        self->priv->no_1 = GTK_LABEL (obj);
-        obj = gibbon_app_find_object (app, "label-cube-action-no2",
-                                      GTK_TYPE_LABEL);
-        self->priv->no_2 = GTK_LABEL (obj);
-        obj = gibbon_app_find_object (app, "label-cube-action-no3",
-                                      GTK_TYPE_LABEL);
-        self->priv->no_3 = GTK_LABEL (obj);
         obj = gibbon_app_find_object (app, "label-cube-action1",
                                       GTK_TYPE_LABEL);
         self->priv->action_1 = GTK_LABEL (obj);
@@ -384,7 +369,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         const GibbonMET *met;
         gdouble *p;
         gdouble money_equity;
-        gdouble p_nodouble, p_take, p_drop, p_best;
+        gdouble p_nodouble, p_take, p_drop;
 
         met = gibbon_app_get_met (self->priv->app);
 
@@ -420,12 +405,19 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                                               a->cube, a->my_score,
                                               a->opp_score);
 
-        p_best = p_nodouble;
-        if (p_take > p_best)
-                p_best = p_take;
-        if (p_drop > p_best)
-                p_best = p_drop;
+        gtk_label_set_text (self->priv->action_1, _("No double"));
+        gtk_label_set_text (self->priv->action_2, _("Double, take"));
+        gtk_label_set_text (self->priv->action_3, _("Double, drop"));
 
+        buf = g_strdup_printf ("%.2f %%", 100 * p_nodouble);
+        gtk_label_set_text (self->priv->value_1, buf);
+        g_free (buf);
+        buf = g_strdup_printf ("%.2f %%", 100 * p_take);
+        gtk_label_set_text (self->priv->value_2, buf);
+        g_free (buf);
+        buf = g_strdup_printf ("%.2f %%", 100 * p_drop);
+        gtk_label_set_text (self->priv->value_3, buf);
+        g_free (buf);
 }
 
 static void
