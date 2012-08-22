@@ -35,6 +35,7 @@
 #include "gibbon-position.h"
 
 static gfloat rockwell_kazaross_pre[25][25] = {
+        /* 1-away.  */
         {
                 0.500000f,
                 0.676888f,
@@ -62,6 +63,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.99884f,
                 0.99905f,
         },
+        /* 2-away.  */
         {
                 0.323112f,
                 0.500000f,
@@ -89,6 +91,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.99746f,
                 0.99802f,
         },
+        /* 3-away.  */
         {
                 0.248821f,
                 0.401006f,
@@ -116,6 +119,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.99407f,
                 0.99527f,
         },
+        /* 4-away.  */
         {
                 0.186228f,
                 0.331414f,
@@ -143,6 +147,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.98975f,
                 0.99174f,
         },
+        /* 5-away.  */
         {
                 0.158059f,
                 0.256553f,
@@ -170,6 +175,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.98283f,
                 0.98600f,
         },
+        /* 6-away.  */
         {
                 0.113133f,
                 0.201009f,
@@ -197,6 +203,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.97432f,
                 0.97879f,
         },
+        /* 7-away.  */
         {
                 0.092812f,
                 0.157859f,
@@ -224,6 +231,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.96276f,
                 0.96887f,
         },
+        /* 8-away.  */
         {
                 0.067687f,
                 0.124802f,
@@ -251,6 +259,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.94891f,
                 0.95682f,
         },
+        /* 9-away.  */
         {
                 0.056025f,
                 0.098280f,
@@ -278,6 +287,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.93240f,
                 0.94230f,
         },
+        /* 10-away.  */
         {
                 0.040725f,
                 0.076966f,
@@ -305,6 +315,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.91353f,
                 0.92550f,
         },
+        /* 11-away.  */
         {
                 0.033558f,
                 0.060689f,
@@ -332,6 +343,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.89214f,
                 0.90622f,
         },
+        /* 12-away.  */
         {
                 0.024466f,
                 0.047530f,
@@ -359,6 +371,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.86856f,
                 0.88476f,
         },
+        /* 13-away.  */
         {
                 0.020155f,
                 0.037505f,
@@ -386,6 +399,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.84295f,
                 0.86123f,
         },
+        /* 14-away.  */
         {
                 0.014727f,
                 0.029299f,
@@ -413,6 +427,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.81559f,
                 0.83586f,
         },
+        /* 15-away.  */
         {
                 0.012107f,
                 0.023113f,
@@ -440,6 +455,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.78669f,
                 0.80883f,
         },
+        /* 16-away.  */
         {
                 0.00886f,
                 0.01804f,
@@ -467,6 +483,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.75657f,
                 0.78046f,
         },
+        /* 17-away.  */
         {
                 0.00727f,
                 0.01420f,
@@ -494,6 +511,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.72542f,
                 0.75087f,
         },
+        /* 18-away.  */
         {
                 0.00533f,
                 0.01107f,
@@ -521,6 +539,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.69356f,
                 0.72038f,
         },
+        /* 19-away.  */
         {
                 0.00437f,
                 0.00871f,
@@ -548,6 +567,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.66122f,
                 0.68921f,
         },
+        /* 20-away.  */
         {
                 0.00321f,
                 0.00678f,
@@ -575,6 +595,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.62864f,
                 0.65760f,
         },
+        /* 21-away.  */
         {
                 0.00263f,
                 0.00534f,
@@ -602,6 +623,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.59603f,
                 0.62576f,
         },
+        /* 22-away.  */
         {
                 0.00193f,
                 0.00415f,
@@ -629,6 +651,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.56360f,
                 0.59391f,
         },
+        /* 23-away.  */
         {
                 0.00158f,
                 0.00325f,
@@ -656,6 +679,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.53153f,
                 0.56221f,
         },
+        /* 24-away.  */
         {
                 0.00116f,
                 0.00254f,
@@ -683,6 +707,7 @@ static gfloat rockwell_kazaross_pre[25][25] = {
                 0.50000f,
                 0.53086f,
         },
+        /* 25-away.  */
         {
                 0.00095f,
                 0.00198f,
@@ -982,5 +1007,5 @@ gibbon_met_mwc2eq (const GibbonMET *self, gdouble mwc,
                                                    match_length, cube,
                                                    opp_score, my_score);
 
-        return 2.0f * mwc - (eq_win + eq_lose) / (eq_win - eq_lose);
+        return (2.0f * mwc - (eq_win + eq_lose)) / (eq_win - eq_lose);
 }
