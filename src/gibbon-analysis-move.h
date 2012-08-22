@@ -68,6 +68,7 @@ struct _GibbonAnalysisMove
         gsize match_length;
         guint cube;
         guint my_score, opp_score;
+        gboolean crawford, is_crawford, post_crawford;
 
         gboolean ma;
         guint ma_bad;
