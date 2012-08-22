@@ -321,6 +321,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         const GibbonMET *met;
         gdouble *p;
         gdouble money_equity;
+        gdouble eq_nodouble, eq_take, eq_drop;
 
         met = gibbon_app_get_met (self->priv->app);
 
@@ -337,14 +338,39 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                 buf = g_strdup_printf (
                         _("Cubeless %llu-ply MWC: %.2f %% (Money: %.3f)"),
                         (unsigned long long) a->da_plies,
-                        100.0f * gibbon_met_get_mwc (met, equity,
-                                                     a->match_length,
-                                                     a->cube,
-                                                     a->my_score, a->opp_score),
+                        100.0f * gibbon_met_eq2mwc (met, equity,
+                                                    a->match_length,
+                                                    a->cube,
+                                                    a->my_score, a->opp_score),
                         money_equity);
         }
         gtk_label_set_text (self->priv->cube_equity_summary, buf);
         g_free (buf);
+
+        /*
+         * Find the correct cube decision.
+         */
+        eq_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        eq_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        if (a->match_length > 0) {
+                eq_drop = gibbon_met_get_match_equity (met,
+                                                       a->match_length,
+                                                       a->cube,
+                                                       a->my_score,
+                                                       a->opp_score);
+                /* Now convert to normalized money equity.  */
+                eq_drop = gibbon_met_mwc2eq (met, eq_drop,
+                                             a->match_length, a->cube,
+                                             a->my_score, a->opp_score);
+                eq_take = gibbon_met_mwc2eq (met, eq_take,
+                                             a->match_length, a->cube,
+                                             a->my_score, a->opp_score);
+                eq_nodouble = gibbon_met_mwc2eq (met, eq_nodouble,
+                                                 a->match_length, a->cube,
+                                                 a->my_score, a->opp_score);
+        } else {
+                eq_drop = 1.0f;
+        }
 }
 
 static void

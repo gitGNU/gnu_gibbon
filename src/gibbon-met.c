@@ -948,9 +948,9 @@ gibbon_met_get_match_equity (const GibbonMET *self,
 }
 
 gdouble
-gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
-                    gsize match_length, guint cube,
-                    guint my_score, guint opp_score)
+gibbon_met_eq2mwc (const GibbonMET *self, gdouble equity,
+                   gsize match_length, guint cube,
+                   guint my_score, guint opp_score)
 {
         gdouble eq_win, eq_lose;
 
