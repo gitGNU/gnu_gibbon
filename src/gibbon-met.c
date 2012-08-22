@@ -965,3 +965,22 @@ gibbon_met_get_mwc (const GibbonMET *self, gdouble equity,
 
         return 0.5f * (equity * (eq_win - eq_lose) + eq_win + eq_lose);
 }
+
+gdouble
+gibbon_met_mwc2eq (const GibbonMET *self, gdouble mwc,
+                   gsize match_length, guint cube,
+                   guint my_score, guint opp_score)
+{
+        gdouble eq_win, eq_lose;
+
+        g_return_val_if_fail (GIBBON_IS_MET (self), 0.0f);
+
+        eq_win = gibbon_met_get_match_equity (self,
+                                              match_length, cube,
+                                              my_score, opp_score);
+        eq_lose = 1 - gibbon_met_get_match_equity (self,
+                                                   match_length, cube,
+                                                   opp_score, my_score);
+
+        return 2.0f * mwc - (eq_win + eq_lose) / (eq_win - eq_lose);
+}
