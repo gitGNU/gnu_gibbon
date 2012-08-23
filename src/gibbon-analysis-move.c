@@ -135,13 +135,15 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
                 }
         }
 
+
+
         return GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE;
 }
 
 gchar *
 gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
 {
-        const gchar *s;
+        const gchar *s = NULL;
         GibbonAnalysisMoveCubeDecision cd;
 
         cd = _gibbon_analysis_move_cube_decision (self);
@@ -155,10 +157,10 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
         case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE:
                 s = _("Never redouble, take (dead cube)");
                 break;
-        default:
-                s = _("No idea");
-                break;
         }
+
+        if (!s)
+                s = _("No idea");
 
         return g_strdup_printf (_("Proper cube action: %s"), s);
 }
