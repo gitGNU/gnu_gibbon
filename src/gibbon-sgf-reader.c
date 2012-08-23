@@ -653,6 +653,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 a->post_crawford = TRUE;
         else
                 a->post_crawford = FALSE;
+        a->may_double = side > 0 ? pos->may_double[0] : pos->may_double[1];
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 
