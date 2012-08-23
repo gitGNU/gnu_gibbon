@@ -28,6 +28,8 @@
  * analysis of an implicit doubling decision.
  */
 
+#include <math.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -73,6 +75,8 @@ typedef enum {
         GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_PASS,
         GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_PASS
 } GibbonAnalysisMoveCubeDecision;
+
+#define GIBBON_ANALYSIS_MOVE_IS_OPTIONAL(d1, d2) (fabs (d1 - d2) <= 0.00001)
 
 static void 
 gibbon_analysis_move_init (GibbonAnalysisMove *self)
@@ -121,9 +125,24 @@ gibbon_analysis_move_new ()
         return self;
 }
 
+/*
+ * Find the best cube decision.  The function closely follows
+ * FindBestCubeDecision() in GNUBG because they are supposed to trigger the
+ * same results.
+ *
+ * NB! Some results produced by this function can never happen.  For example
+ * FIBS does not support the Jacoby rule, and we should never see a cube
+ * that is not available (unless dead).
+ *
+ * FIXME! A bit mask is better suited for the cube decision.
+ */
 static GibbonAnalysisMoveCubeDecision
-_gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
+_gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
+                                     gdouble eq_nodouble, gdouble eq_take,
+                                     gdouble eq_drop)
 {
+        gboolean is_optional;
+
         if (!self->may_double)
                 return GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE;
 
@@ -135,27 +154,171 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
                 }
         }
 
+        if (eq_take > eq_nodouble && eq_drop >= eq_nodouble) {
+                /* Double.  */
+                if (eq_drop > eq_take) {
+                        /* Double, take.  */
+                        is_optional = GIBBON_ANALYSIS_MOVE_IS_OPTIONAL (eq_take,
+                                                                        eq_nodouble);
+                        if (self->beavers
+                            && self->match_length < 1
+                            && eq_take >= -2.0f
+                            && eq_take <= 0.0f) {
+                                if (2.0f * eq_take < eq_nodouble)
+                                        return GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER;
+                                else
+                                        return is_optional ?
+                                               GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_BEAVER
+                                               : GIBBON_ANALYSIS_MOVE_CD_DOUBLE_BEAVER;
+                        } else if (is_optional) {
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_TAKE
+                                        : GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_TAKE;
+                        } else {
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_TAKE
+                                        : GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_TAKE;
+                        }
+                } else {
+                        /* Double, drop.  */
+                        is_optional = GIBBON_ANALYSIS_MOVE_IS_OPTIONAL (eq_drop,
+                                                                        eq_nodouble);
+                        if (is_optional &&
+                            self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+                            > 0.0f
+                            && (self->match_length > 0 || self->opp_may_double
+                                || !self->jacoby))
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_PASS
+                                        : GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_PASS;
+                        else
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS
+                                        : GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS;
+                }
+        } else {
+                /* No double.  */
+                if (eq_nodouble > eq_take) {
+                        if (eq_take > eq_drop) {
+                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]) {
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS
+                                                : GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS;
+                                } else {
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS
+                                                : GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS;
+                                }
+                        } else if (eq_nodouble > eq_drop) {
+                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]) {
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE
+                                                : GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE;
+                                } else {
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE
+                                                : GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE;
 
-
-        return GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE;
+                                }
+                        } else {
+                                if (eq_take >= -2.0f
+                                    && eq_take <= 0.0f
+                                    && self->match_length < 0
+                                    && self->beavers)
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER :
+                                                GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_BEAVER;
+                                else
+                                        return self->cube < 2 ?
+                                                GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE :
+                                                GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE;
+                        }
+                } else {
+                        if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON])
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS :
+                                        GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS;
+                        else
+                                return self->cube < 2 ?
+                                        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS :
+                                        GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS;
+                }
+        }
 }
 
 gchar *
-gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
+gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
+                                    gdouble eq_nodouble, gdouble eq_take,
+                                    gdouble eq_drop)
 {
         const gchar *s = NULL;
         GibbonAnalysisMoveCubeDecision cd;
 
-        cd = _gibbon_analysis_move_cube_decision (self);
+        cd = _gibbon_analysis_move_cube_decision (self, eq_nodouble,
+                                                  eq_take, eq_drop);
         switch (cd) {
-        case GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE:
-                s = _("Doubling not allowed");
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_TAKE:
+                s = _("Double, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS:
+                s = _("Double, drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE:
+                s = _("No double, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE:
+                s = _("Too good to double, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS:
+                s = _("Too good to double, drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_BEAVER:
+                s = _("Double, beaver");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER:
+                s = _("No double, beaver");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_TAKE:
+                s = _("Redouble, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS:
+                s = _("Redouble, drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE:
+                s = _("No redouble, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE:
+                s = _("Too good to redouble, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS:
+                s = _("Too good to redouble, drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_BEAVER:
+                s = _("No redouble, beaver");
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE:
                 s = _("Never double, take (dead cube)");
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE:
                 s = _("Never redouble, take (dead cube)");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE:
+                s = _("Doubling not possible");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_BEAVER:
+                s = _("Optional double, beaver");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_TAKE:
+                s = _("Optional double, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_TAKE:
+                s = _("Optional redouble, take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_PASS:
+                s = _("Optional double, drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_PASS:
+                s = _("Optional redouble, drop");
                 break;
         }
 

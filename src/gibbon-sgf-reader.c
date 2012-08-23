@@ -654,6 +654,14 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         else
                 a->post_crawford = FALSE;
         a->may_double = side > 0 ? pos->may_double[0] : pos->may_double[1];
+        a->opp_may_double = side > 0 ? pos->may_double[1] : pos->may_double[0];
+
+        /*
+         * Beavers are currently not supported by Gibbon.  Jacoby is
+         * currently not supported by FIBS itself.
+         */
+        a->beavers = FALSE;
+        a->jacoby = FALSE;
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 

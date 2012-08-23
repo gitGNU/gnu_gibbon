@@ -425,7 +425,21 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         gtk_label_set_text (self->priv->value_3, buf);
         g_free (buf);
 
-        buf = gibbon_analysis_move_cube_decision (a);
+        /*
+         * The cube decision is based on equities, not on probabilities.
+         */
+        p_nodouble = gibbon_met_mwc2eq (met, p_nodouble,
+                                        a->match_length, a->cube,
+                                        a->my_score, a->opp_score);
+        p_take = gibbon_met_mwc2eq (met, p_take,
+                                    a->match_length, a->cube,
+                                        a->my_score, a->opp_score);
+        p_drop = gibbon_met_mwc2eq (met, p_drop,
+                                    a->match_length, a->cube,
+                                    a->my_score, a->opp_score);
+
+        buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
+                                                  p_take, p_drop);
         gtk_label_set_text (self->priv->proper_action, buf);
         g_free (buf);
 }

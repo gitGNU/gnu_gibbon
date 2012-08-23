@@ -68,8 +68,12 @@ struct _GibbonAnalysisMove
         gsize match_length;
         guint cube;
         guint my_score, opp_score;
-        gboolean crawford, is_crawford, post_crawford;
+        gboolean crawford;
+        gboolean beavers;
+        gboolean jacoby;
+        gboolean is_crawford, post_crawford;
         gboolean may_double;
+        gboolean opp_may_double;
 
         gboolean ma;
         guint ma_bad;
@@ -103,6 +107,8 @@ struct _GibbonAnalysisMoveClass
 GType gibbon_analysis_move_get_type (void) G_GNUC_CONST;
 
 GibbonAnalysisMove *gibbon_analysis_move_new ();
-gchar *gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self);
+gchar *gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
+                                           gdouble eq_nodouble,
+                                           gdouble eq_take, gdouble eq_drop);
 
 #endif
