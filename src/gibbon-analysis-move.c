@@ -124,6 +124,17 @@ gibbon_analysis_move_new ()
 static GibbonAnalysisMoveCubeDecision
 _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
 {
+        if (!self->may_double)
+                return GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE;
+
+        if (self->match_length > 0) {
+                if (self->my_score + self->cube >= self->match_length) {
+                        return self->cube > 1 ?
+                                GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE
+                                : GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE;
+                }
+        }
+
         return GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE;
 }
 
@@ -135,6 +146,15 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
 
         cd = _gibbon_analysis_move_cube_decision (self);
         switch (cd) {
+        case GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE:
+                s = _("Doubling not allowed");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE:
+                s = _("Never double, take (dead cube)");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE:
+                s = _("Never redouble, take (dead cube)");
+                break;
         default:
                 s = _("No idea");
                 break;
