@@ -102,5 +102,6 @@ struct _GibbonAnalysisMoveClass
 GType gibbon_analysis_move_get_type (void) G_GNUC_CONST;
 
 GibbonAnalysisMove *gibbon_analysis_move_new ();
+gchar *gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self);
 
 #endif

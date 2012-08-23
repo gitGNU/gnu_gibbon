@@ -68,6 +68,7 @@ struct _GibbonAnalysisViewPrivate {
         GtkLabel *diff_1;
         GtkLabel *diff_2;
         GtkLabel *diff_3;
+        GtkLabel *proper_action;
 
         GtkToggleButton *show_equity;
 
@@ -120,6 +121,7 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
         self->priv->diff_1 = NULL;
         self->priv->diff_2 = NULL;
         self->priv->diff_3 = NULL;
+        self->priv->proper_action = NULL;
 
         self->priv->ma = NULL;
 }
@@ -230,6 +232,10 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "label-cube-eq3-r",
                                       GTK_TYPE_LABEL);
         self->priv->diff_3 = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "label-proper-cube-action",
+                                      GTK_TYPE_LABEL);
+        self->priv->proper_action = GTK_LABEL (obj);
 
         obj = gibbon_app_find_object (app, "toggle-mwc-eq",
                                       GTK_TYPE_TOGGLE_BUTTON);
@@ -417,6 +423,10 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         g_free (buf);
         buf = g_strdup_printf ("%.2f %%", 100 * p_drop);
         gtk_label_set_text (self->priv->value_3, buf);
+        g_free (buf);
+
+        buf = gibbon_analysis_move_cube_decision (a);
+        gtk_label_set_text (self->priv->proper_action, buf);
         g_free (buf);
 }
 

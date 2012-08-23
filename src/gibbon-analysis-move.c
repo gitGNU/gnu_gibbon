@@ -44,6 +44,36 @@ struct _GibbonAnalysisMovePrivate {
 
 G_DEFINE_TYPE (GibbonAnalysisMove, gibbon_analysis_move, GIBBON_TYPE_ANALYSIS)
 
+/*
+ * Taken from GNUBG.
+ */
+typedef enum {
+        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS,
+        GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS,
+        GIBBON_ANALYSIS_MOVE_CD_DOUBLE_BEAVER,
+        GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER,
+        GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS,
+        GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS,
+        GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_BEAVER,
+        /* Cube is dead (match play only).  */
+        GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE,
+        /* Cube is dead (match play only).  */
+        GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE,
+        /* Cube is not available.  */
+        GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE,
+        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_TAKE,
+        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_BEAVER,
+        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_PASS,
+        GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_PASS
+} GibbonAnalysisMoveCubeDecision;
+
 static void 
 gibbon_analysis_move_init (GibbonAnalysisMove *self)
 {
@@ -89,4 +119,26 @@ gibbon_analysis_move_new ()
                                                  NULL);
 
         return self;
+}
+
+static GibbonAnalysisMoveCubeDecision
+_gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
+{
+        return GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE;
+}
+
+gchar *
+gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self)
+{
+        const gchar *s;
+        GibbonAnalysisMoveCubeDecision cd;
+
+        cd = _gibbon_analysis_move_cube_decision (self);
+        switch (cd) {
+        default:
+                s = _("No idea");
+                break;
+        }
+
+        return g_strdup_printf (_("Proper cube action: %s"), s);
 }
