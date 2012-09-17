@@ -73,13 +73,7 @@ struct _GibbonMoveListViewClass
 
 GType gibbon_move_list_view_get_type (void) G_GNUC_CONST;
 
-GibbonMoveListView *gibbon_move_list_view_new (GtkTreeView *number_view,
-                                               GtkTreeView *black_roll_view,
-                                               GtkTreeView *black_move_view,
-                                               GtkTreeView *white_roll_view,
-                                               GtkTreeView *white_move_view,
-                                               GtkViewport *viewport,
+GibbonMoveListView *gibbon_move_list_view_new (GtkTreeView *view,
                                                const GibbonMatchList *list);
-void gibbon_move_list_view_reset_scrollbar (GibbonMoveListView *self);
 
 #endif

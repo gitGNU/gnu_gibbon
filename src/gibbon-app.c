@@ -225,6 +225,9 @@ static void gibbon_app_finalize(GObject *object)
         if (self->priv->analysis_view)
                 g_object_unref (self->priv->analysis_view);
 
+        if (self->priv->match_list)
+                g_object_unref (self->priv->match_list);
+
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
 
@@ -370,8 +373,6 @@ gibbon_app_post_init (const GibbonApp *self)
                 toggle_sensitive = FALSE;
         gibbon_analysis_view_set_toggle_sensitive (self->priv->analysis_view,
                                                    toggle_sensitive);
-
-        gibbon_move_list_view_reset_scrollbar (self->priv->move_list_view);
 }
 
 gboolean
@@ -382,11 +383,8 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GibbonMatchLoader *loader;
         GibbonMatch *match;
         GibbonGameListView *game_list_view;
-        GibbonMoveListView *move_list_view;
         GObject *obj;
-        GtkTreeView *number_view, *black_roll_view, *black_move_view,
-                    *white_roll_view, *white_move_view;
-        GtkViewport *viewport;
+        GtkTreeView *move_list_view;
 
         obj = gibbon_app_find_object (self, "combo-game-select",
                                       GTK_TYPE_COMBO_BOX);
@@ -394,38 +392,12 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         game_list_view = gibbon_game_list_view_new (GTK_COMBO_BOX (obj), list);
         self->priv->game_list_view = game_list_view;
 
-        obj = gibbon_app_find_object (self, "moves-view-number",
+        obj = gibbon_app_find_object (self, "move-list-view",
                                       GTK_TYPE_TREE_VIEW);
-        number_view = GTK_TREE_VIEW (obj);
+        move_list_view = GTK_TREE_VIEW (obj);
 
-        obj = gibbon_app_find_object (self, "moves-view-black-roll",
-                                      GTK_TYPE_TREE_VIEW);
-        black_roll_view = GTK_TREE_VIEW (obj);
-
-        obj = gibbon_app_find_object (self, "moves-view-black-move",
-                                      GTK_TYPE_TREE_VIEW);
-        black_move_view = GTK_TREE_VIEW (obj);
-
-        obj = gibbon_app_find_object (self, "moves-view-white-roll",
-                                      GTK_TYPE_TREE_VIEW);
-        white_roll_view = GTK_TREE_VIEW (obj);
-
-        obj = gibbon_app_find_object (self, "moves-view-white-move",
-                                      GTK_TYPE_TREE_VIEW);
-        white_move_view = GTK_TREE_VIEW (obj);
-
-        obj = gibbon_app_find_object (self, "viewport-moves-view",
-                                      GTK_TYPE_VIEWPORT);
-        viewport = GTK_VIEWPORT (obj);
-
-        move_list_view = gibbon_move_list_view_new (number_view,
-                                                    black_roll_view,
-                                                    black_move_view,
-                                                    white_roll_view,
-                                                    white_move_view,
-                                                    viewport,
-                                                    list);
-        self->priv->move_list_view = move_list_view;
+        self->priv->move_list_view = gibbon_move_list_view_new (move_list_view,
+                                                                list);
 
         if (match_file) {
                 /*
