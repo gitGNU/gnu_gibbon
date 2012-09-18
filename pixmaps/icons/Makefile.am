@@ -21,8 +21,6 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)/icons
 pixmap_DATA = \
 	say.svg	\
 	whisper.svg \
-	white_flag.svg \
-	move-list-checker.svg \
-	move-list-cube.svg
+	white_flag.svg
 
 EXTRA_DIST = $(pixmap_DATA) LICENSE
