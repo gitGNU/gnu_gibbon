@@ -73,11 +73,8 @@ struct _GibbonMatchListPrivate {
 G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 
 static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
-                                              gint action_no,
-                                              const GibbonGameAction *action,
-                                              GibbonPositionSide side,
-                                              const GibbonPosition *pos,
-                                              const GibbonAnalysis *analysis);
+                                              GibbonGame *game,
+                                              gint action_no);
 static gchar *gibbon_match_list_format_roll (GibbonMatchList *self,
                                              GibbonRoll *roll);
 static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
@@ -146,37 +143,23 @@ gibbon_match_list_new (void)
 
         moves = gtk_list_store_new (
                         GIBBON_MATCH_LIST_N_COLUMNS,
+                        /* GIBBON_MATCH_LIST_COL_SIDE */
+                        G_TYPE_INT,
                         /* GIBBON_MATCH_LIST_COL_MOVENO */
-                        G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_ROLL */
-                        G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_ROLL_ACTION */
-                        G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_LUCK */
-                        G_TYPE_DOUBLE,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE */
-                        G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE */
-                        G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE_ACTION */
-                        G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS */
                         G_TYPE_UINT,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_ROLL */
+                        /* GIBBON_MATCH_LIST_COL_ROLL */
                         G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_ROLL_ACTION */
+                        /* GIBBON_MATCH_LIST_COL_ROLL_ACTION */
                         G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_LUCK */
+                        /* GIBBON_MATCH_LIST_COL_LUCK */
                         G_TYPE_DOUBLE,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE */
+                        /* GIBBON_MATCH_LIST_COL_LUCK_TYPE */
                         G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE */
+                        /* GIBBON_MATCH_LIST_COL_MOVE */
                         G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE_ACTION */
+                        /* GIBBON_MATCH_LIST_COL_MOVE_ACTION */
                         G_TYPE_INT,
-                        /* GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS */
-                        G_TYPE_UINT,
-                        /* GIBBON_MATCH_LIST_COL_LOGICAL_MOVENO */
+                        /* GIBBON_MATCH_LIST_COL_MOVE_BADNESS */
                         G_TYPE_UINT);
         self->priv->moves = moves;
 
@@ -265,11 +248,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         num_actions = gibbon_game_get_num_actions (game);
 
         for (i = 0; i < num_actions; ++i) {
-                action = gibbon_game_get_nth_action (game, i, &side);
-                pos = gibbon_game_get_nth_position (game, i);
-                analysis = gibbon_game_get_nth_analysis (game, i);
-                if (!gibbon_match_list_add_action (self, i, action, side, pos,
-                                                   analysis))
+                if (!gibbon_match_list_add_action (self, game, i))
                         break;
         }
 }
@@ -283,13 +262,37 @@ gibbon_match_list_get_active_game (const GibbonMatchList *self)
 }
 
 static gboolean
-gibbon_match_list_add_action (GibbonMatchList *self,
-                              gint action_no,
-                              const GibbonGameAction *action,
-                              GibbonPositionSide side,
-                              const GibbonPosition *pos,
-                              const GibbonAnalysis *analysis)
+gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
+                              gint action_no)
 {
+        GibbonPositionSide side;
+        const GibbonGameAction *action;
+        const GibbonPosition *pos;
+        const GibbonAnalysis *analysis;
+        GtkTreeIter iter;
+
+        action = gibbon_game_get_nth_action (game, action_no, &side);
+        pos = gibbon_game_get_nth_position (game, action_no);
+        analysis = gibbon_game_get_nth_analysis (game, action_no);
+
+        /*
+         * Always insert a dummy row if the first action of a game is not a
+         * position setup.
+         */
+        if (!action_no && !GIBBON_IS_SETUP (action)) {
+                g_printerr ("Append a row\n");
+                gtk_list_store_append (self->priv->moves, &iter);
+                gtk_list_store_set (self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_MOVENO, 0,
+                                    GIBBON_MATCH_LIST_COL_MOVE,
+                                    _("Initial position"),
+                                    -1);
+
+        }
+
+        return TRUE;
+
+#if 0
         GtkTreeIter last_row;
         GtkTreeIter iter;
         gint rows;
@@ -527,8 +530,7 @@ gibbon_match_list_add_action (GibbonMatchList *self,
                                     -1);
                 g_free (buf);
         }
-
-        return TRUE;
+#endif
 }
 
 static gchar *

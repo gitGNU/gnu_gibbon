@@ -114,6 +114,8 @@ gibbon_move_list_view_new (GtkTreeView *view,
                                                  NULL);
         GtkListStore *model;
         GtkTreeSelection *selection;
+        GtkCellRenderer *renderer;
+        GtkStyle *style;
 
         self->priv->match_list = match_list;
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
@@ -123,6 +125,18 @@ gibbon_move_list_view_new (GtkTreeView *view,
         selection = gtk_tree_view_get_selection (view);
         gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
         gtk_tree_view_set_model (view, GTK_TREE_MODEL (model));
+
+        style = gtk_widget_get_style (GTK_WIDGET (view));
+        renderer = gtk_cell_renderer_text_new ();
+        g_object_set (renderer,
+                     "background-gdk", style->bg + GTK_STATE_NORMAL,
+                     "xpad", 10,
+                     NULL);
+
+        gtk_tree_view_insert_column_with_attributes (view, -1, _("#"),
+                        renderer,
+                        "text", GIBBON_MATCH_LIST_COL_MOVENO,
+                        NULL);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->tree_view),
                                   "query-tooltip",
@@ -139,6 +153,7 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkCellRenderer *cell, GtkTreeModel *tree_model,
                             GtkTreeIter *iter)
 {
+#if 0
         gchar *roll_string;
         gdouble luck_value;
         GibbonAnalysisRollLuck luck_type;
@@ -186,6 +201,7 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                       "style", style,
                       NULL);
         g_free (roll_string);
+#endif
 }
 
 /* Data function.  */
@@ -194,6 +210,7 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                             GtkCellRenderer *cell, GtkTreeModel *tree_model,
                             GtkTreeIter *iter)
 {
+#if 0
         gchar *move_string;
         guint badness;
         PangoStyle style;
@@ -241,6 +258,7 @@ gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
                       NULL);
 
         g_free (move_string);
+#endif
 }
 
 static gboolean
@@ -250,6 +268,7 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                                         GtkTooltip *tooltip,
                                         GtkTreeView *view)
 {
+#if 0
         GtkTreeModel *model;
         GtkTreePath *path;
         GtkTreeIter iter;
@@ -306,4 +325,6 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         gtk_tree_path_free (path);
 
         return text ? TRUE : FALSE;
+#endif
+        return FALSE;
 }
