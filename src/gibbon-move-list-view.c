@@ -281,56 +281,6 @@ gibbon_move_list_view_move_data_func (GtkTreeViewColumn *tree_column,
                       NULL);
 
         g_free (move_string);
-
-#if 0
-        gchar *move_string;
-        guint badness;
-        PangoStyle style;
-        PangoWeight weight;
-
-        if (side < 0) {
-                gtk_tree_model_get (tree_model, iter,
-                                    GIBBON_MATCH_LIST_COL_BLACK_MOVE,
-                                    &move_string,
-                                    GIBBON_MATCH_LIST_COL_BLACK_MOVE_BADNESS,
-                                    &badness,
-                                    -1);
-        } else {
-                gtk_tree_model_get (tree_model, iter,
-                                    GIBBON_MATCH_LIST_COL_WHITE_MOVE,
-                                    &move_string,
-                                    GIBBON_MATCH_LIST_COL_WHITE_MOVE_BADNESS,
-                                    &badness,
-                                    -1);
-        }
-
-        switch (badness) {
-        case 0:
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 1:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 2:
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        default:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        }
-
-        g_object_set (cell,
-                      "text", move_string,
-                      "style", style,
-                      "weight", weight,
-                      NULL);
-
-        g_free (move_string);
-#endif
 }
 
 static gboolean
