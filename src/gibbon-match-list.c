@@ -158,6 +158,14 @@ gibbon_match_list_new (void)
                         /* GIBBON_MATCH_LIST_COL_MOVE */
                         G_TYPE_STRING,
                         /* GIBBON_MATCH_LIST_COL_MOVE_BADNESS */
+                        G_TYPE_UINT,
+                        /* GIBBON_MATCH_LIST_COL_CHECKER_MARK */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_CHECKER_BADNESS */
+                        G_TYPE_UINT,
+                        /* GIBBON_MATCH_LIST_COL_CUBE_MARK */
+                        G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_CUBE_BADNESS */
                         G_TYPE_UINT);
         self->priv->moves = moves;
 
