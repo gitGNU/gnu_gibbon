@@ -58,6 +58,12 @@ static void gibbon_move_list_view_move_data_func (GtkTreeViewColumn
                                                   GtkTreeModel *tree_model,
                                                   GtkTreeIter *iter,
                                                   GibbonMoveListView *self);
+static void gibbon_move_list_view_cube_mark_data_func (GtkTreeViewColumn
+                                                       *tree_column,
+                                                       GtkCellRenderer *cell,
+                                                       GtkTreeModel *tree_model,
+                                                       GtkTreeIter *iter,
+                                                       GibbonMoveListView *self);
 static void gibbon_move_list_view_roll_data_func (GtkTreeViewColumn
                                                   *tree_column,
                                                   GtkCellRenderer *cell,
@@ -165,6 +171,7 @@ gibbon_move_list_view_new (GtkTreeView *view,
                         self, NULL);
 
         column = gtk_tree_view_column_new ();
+        gtk_tree_view_append_column (view, column);
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_column_pack_start (column, renderer, FALSE);
         gtk_tree_view_column_set_cell_data_func (
@@ -172,7 +179,6 @@ gibbon_move_list_view_new (GtkTreeView *view,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_move_data_func,
                         self, NULL);
-        gtk_tree_view_append_column (view, column);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->tree_view),
                                   "query-tooltip",
@@ -275,12 +281,57 @@ gibbon_move_list_view_move_data_func (GtkTreeViewColumn *tree_column,
         }
 
         g_object_set (cell,
-                      "text", move_string,
+                      "markup", move_string,
+                      NULL);
+
+        g_free (move_string);
+}
+
+static void
+gibbon_move_list_view_cube_mark_data_func (GtkTreeViewColumn *tree_column,
+                                           GtkCellRenderer *cell,
+                                           GtkTreeModel *tree_model,
+                                           GtkTreeIter *iter,
+                                           GibbonMoveListView *self)
+{
+        gchar *mark_string;
+        guint badness;
+        PangoStyle style;
+        PangoWeight weight;
+
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_MATCH_LIST_COL_CUBE_MARK,
+                            &mark_string,
+                            GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
+                            &badness,
+                            -1);
+
+        switch (badness) {
+        case 0:
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 1:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 2:
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        default:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        }
+
+        g_object_set (cell,
+                      "text", mark_string,
                       "style", style,
                       "weight", weight,
                       NULL);
 
-        g_free (move_string);
+        g_free (mark_string);
 }
 
 static gboolean

@@ -276,13 +276,18 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         gint moveno;
         const gchar *player;
         gint colno;
-        gchar *text, *mark;
-        gboolean show_icon;
+        gchar *text;
+        const gchar *dbl_mark = NULL;
+        const gchar *chk_mark = NULL;
+        GString *formatted;
         GibbonAnalysisRoll *ra;
         GibbonAnalysisRollLuck luck_type;
         gdouble luck_value;
         GibbonAnalysisMove *ma;
         guint badness = 0;
+        const gchar *open_tag;
+        const gchar *close_tag;
+        const gchar *sup;
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
         if (action_no)
@@ -382,62 +387,37 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 if (ma->da) {
                         badness += ma->da_bad;
-                        mark = NULL;
-                        show_icon = FALSE;
                         switch (ma->da_bad) {
                         case 0:
                                 break;
                         case 1:
-                                mark = _("?!");
+                                dbl_mark = _("?!");
                                 break;
                         case 2:
                                 /* TRANSLATORS: Mark for bad move!  */
-                                mark = _("?");
+                                dbl_mark = _("?");
                                 break;
                         default:
-                                mark = _("??");
+                                dbl_mark = _("??");
                                 break;
-                        }
-                        if (ma->da_bad) {
-                                if (GIBBON_IS_MOVE (action))
-                                        show_icon = TRUE;
-                                else
-                                        show_icon = FALSE;
-                                gtk_list_store_set (
-                                    self->priv->moves, &iter,
-                                    GIBBON_MATCH_LIST_COL_CUBE_MARK, mark,
-                                    GIBBON_MATCH_LIST_COL_CUBE_ICON, show_icon,
-                                    -1);
                         }
                 }
 
                 if (ma->ma) {
                         badness += ma->ma_bad;
-                        mark = NULL;
-                        show_icon = FALSE;
+                        chk_mark = NULL;
                         switch (ma->ma_bad) {
                         case 0:
                                 break;
                         case 1:
-                                mark = _("?!");
+                                chk_mark = _("?!");
                                 break;
                         case 2:
-                                mark = _("?");
+                                chk_mark = _("?");
                                 break;
                         default:
-                                mark = _("??");
+                                chk_mark = _("??");
                                 break;
-                        }
-                        if (ma->ma_bad) {
-                                if (GIBBON_IS_MOVE (action))
-                                        show_icon = TRUE;
-                                else
-                                        show_icon = FALSE;
-                                gtk_list_store_set (
-                                    self->priv->moves, &iter,
-                                    GIBBON_MATCH_LIST_COL_CHECKER_MARK, mark,
-                                    GIBBON_MATCH_LIST_COL_CHECKER_ICON, show_icon,
-                                    -1);
                         }
                 }
                 gtk_list_store_set (self->priv->moves, &iter,
@@ -445,7 +425,52 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                     badness, -1);
         }
 
-        gtk_list_store_set (self->priv->moves, &iter, colno, text, -1);
+        switch (badness) {
+        case 0:
+                open_tag = "";
+                close_tag = "";
+                break;
+        case 1:
+                open_tag = "<i>";
+                close_tag = "</i>";
+                break;
+        case 2:
+                open_tag = "<b>";
+                close_tag = "</b>";
+                break;
+        default:
+                open_tag = "<b><i>";
+                close_tag = "</i></b>";
+                break;
+        }
+
+        formatted = g_string_new_len ("", 80);
+        g_string_printf (formatted, "%s%s%s", open_tag, text, close_tag);
+        g_free (text);
+
+        if (dbl_mark) {
+                if (GIBBON_IS_MOVE (action))
+                        sup = "\xc2\xb2"; /* Superscript two.  */
+                else
+                        sup = "";
+                g_string_append_printf (formatted, " %s%s%s%s",
+                                        open_tag, dbl_mark, close_tag, sup);
+
+        }
+
+        if (chk_mark) {
+                if (GIBBON_IS_MOVE (action))
+                        sup = "\xc2\xb2"; /* Superscript two.  */
+                else
+                        sup = "";
+                g_string_append_printf (formatted, " %s%s%s%s",
+                                        open_tag, chk_mark, close_tag, sup);
+
+        }
+
+        gtk_list_store_set (self->priv->moves, &iter, colno, formatted->str,
+                            -1);
+        g_string_free (formatted, TRUE);
 
         return TRUE;
 
