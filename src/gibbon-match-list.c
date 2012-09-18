@@ -161,12 +161,12 @@ gibbon_match_list_new (void)
                         G_TYPE_UINT,
                         /* GIBBON_MATCH_LIST_COL_CHECKER_MARK */
                         G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_CHECKER_BADNESS */
-                        G_TYPE_UINT,
+                        /* GIBBON_MATCH_LIST_COL_CHECKER_ICON */
+                        G_TYPE_BOOLEAN,
                         /* GIBBON_MATCH_LIST_COL_CUBE_MARK */
                         G_TYPE_STRING,
-                        /* GIBBON_MATCH_LIST_COL_CUBE_BADNESS */
-                        G_TYPE_UINT);
+                        /* GIBBON_MATCH_LIST_COL_CUBE_ICON */
+                        G_TYPE_BOOLEAN);
         self->priv->moves = moves;
 
         return self;
@@ -276,14 +276,12 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         gint moveno;
         const gchar *player;
         gint colno;
-        gchar *text;
+        gchar *text, *mark;
+        gboolean show_icon;
         GibbonAnalysisRoll *ra;
         GibbonAnalysisRollLuck luck_type;
         gdouble luck_value;
-        gchar *tmp;
         GibbonAnalysisMove *ma;
-        const gchar *dbl_mark = NULL;
-        const gchar *move_mark = NULL;
         guint badness = 0;
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
@@ -384,49 +382,63 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 if (ma->da) {
                         badness += ma->da_bad;
+                        mark = NULL;
+                        show_icon = FALSE;
                         switch (ma->da_bad) {
                         case 0:
                                 break;
                         case 1:
-                                /* This is an inverted (Spanish) "?!".  */
-                                dbl_mark = "\xc2\xbf\xc2\xa1";
+                                mark = _("?!");
                                 break;
                         case 2:
-                                /* This is an inverted (Spanish) "?".  */
-                                dbl_mark = "\xc2\xbf";
+                                /* TRANSLATORS: Mark for bad move!  */
+                                mark = _("?");
                                 break;
                         default:
-                                /* This is an inverted (Spanish) "??".  */
-                                dbl_mark = "\xc2\xbf\xc2\xbf";
+                                mark = _("??");
                                 break;
                         }
-                }
-                if (dbl_mark) {
-                        tmp = g_strdup_printf ("%s %s", text, dbl_mark);
-                        g_free (text);
-                        text = tmp;
+                        if (ma->da_bad) {
+                                if (GIBBON_IS_MOVE (action))
+                                        show_icon = TRUE;
+                                else
+                                        show_icon = FALSE;
+                                gtk_list_store_set (
+                                    self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_CUBE_MARK, mark,
+                                    GIBBON_MATCH_LIST_COL_CUBE_ICON, show_icon,
+                                    -1);
+                        }
                 }
 
                 if (ma->ma) {
                         badness += ma->ma_bad;
+                        mark = NULL;
+                        show_icon = FALSE;
                         switch (ma->ma_bad) {
                         case 0:
                                 break;
                         case 1:
-                                move_mark = "?!";
+                                mark = _("?!");
                                 break;
                         case 2:
-                                move_mark = "?f";
+                                mark = _("?");
                                 break;
                         default:
-                                move_mark = "??";
+                                mark = _("??");
                                 break;
                         }
-                }
-                if (move_mark) {
-                        tmp = g_strdup_printf ("%s %s", text, move_mark);
-                        g_free (text);
-                        text = tmp;
+                        if (ma->ma_bad) {
+                                if (GIBBON_IS_MOVE (action))
+                                        show_icon = TRUE;
+                                else
+                                        show_icon = FALSE;
+                                gtk_list_store_set (
+                                    self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_CHECKER_MARK, mark,
+                                    GIBBON_MATCH_LIST_COL_CHECKER_ICON, show_icon,
+                                    -1);
+                        }
                 }
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
