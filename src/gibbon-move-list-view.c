@@ -136,13 +136,23 @@ gibbon_move_list_view_new (GtkTreeView *view,
         renderer = gtk_cell_renderer_text_new ();
         g_object_set (renderer,
                      "background-gdk", style->bg + GTK_STATE_NORMAL,
-                     "xpad", 10,
+                     "xalign", 0.5f,
+                     "xpad", 3,
                      NULL);
-
         gtk_tree_view_insert_column_with_attributes (view, -1, _("#"),
                         renderer,
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
+        g_object_set (renderer,
+                     "style", PANGO_STYLE_ITALIC,
+                     NULL);
+        gtk_tree_view_insert_column_with_attributes (view, -1, _("Player"),
+                        renderer,
+                        "text", GIBBON_MATCH_LIST_COL_PLAYER,
+                        NULL);
+
         gtk_tree_view_insert_column_with_data_func (view, -1, _("Move"),
                         gtk_cell_renderer_text_new (),
                         (GtkTreeCellDataFunc)
