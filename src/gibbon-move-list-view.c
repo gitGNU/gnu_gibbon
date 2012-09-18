@@ -58,12 +58,6 @@ static void gibbon_move_list_view_move_data_func (GtkTreeViewColumn
                                                   GtkTreeModel *tree_model,
                                                   GtkTreeIter *iter,
                                                   GibbonMoveListView *self);
-static void gibbon_move_list_view_cube_mark_data_func (GtkTreeViewColumn
-                                                       *tree_column,
-                                                       GtkCellRenderer *cell,
-                                                       GtkTreeModel *tree_model,
-                                                       GtkTreeIter *iter,
-                                                       GibbonMoveListView *self);
 static void gibbon_move_list_view_roll_data_func (GtkTreeViewColumn
                                                   *tree_column,
                                                   GtkCellRenderer *cell,
@@ -242,96 +236,17 @@ gibbon_move_list_view_move_data_func (GtkTreeViewColumn *tree_column,
                                       GibbonMoveListView *self)
 {
         gchar *move_string;
-        guint badness;
-        GibbonPositionSide side;
-        PangoStyle style;
-        PangoWeight weight;
 
         gtk_tree_model_get (tree_model, iter,
-                            GIBBON_MATCH_LIST_COL_SIDE,
-                            &side,
                             GIBBON_MATCH_LIST_COL_MOVE,
                             &move_string,
-                            GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
-                            &badness,
                             -1);
-
-        switch (badness) {
-        case 0:
-                if (!side) {
-                        /* This will be a setup or the initial position.  */
-                        style = PANGO_STYLE_ITALIC;
-                } else {
-                        style = PANGO_STYLE_NORMAL;
-                }
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 1:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 2:
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        default:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        }
 
         g_object_set (cell,
                       "markup", move_string,
                       NULL);
 
         g_free (move_string);
-}
-
-static void
-gibbon_move_list_view_cube_mark_data_func (GtkTreeViewColumn *tree_column,
-                                           GtkCellRenderer *cell,
-                                           GtkTreeModel *tree_model,
-                                           GtkTreeIter *iter,
-                                           GibbonMoveListView *self)
-{
-        gchar *mark_string;
-        guint badness;
-        PangoStyle style;
-        PangoWeight weight;
-
-        gtk_tree_model_get (tree_model, iter,
-                            GIBBON_MATCH_LIST_COL_CUBE_MARK,
-                            &mark_string,
-                            GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
-                            &badness,
-                            -1);
-
-        switch (badness) {
-        case 0:
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 1:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_NORMAL;
-                break;
-        case 2:
-                style = PANGO_STYLE_NORMAL;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        default:
-                style = PANGO_STYLE_ITALIC;
-                weight = PANGO_WEIGHT_BOLD;
-                break;
-        }
-
-        g_object_set (cell,
-                      "text", mark_string,
-                      "style", style,
-                      "weight", weight,
-                      NULL);
-
-        g_free (mark_string);
 }
 
 static gboolean
