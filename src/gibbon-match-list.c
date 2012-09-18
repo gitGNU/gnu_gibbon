@@ -145,6 +145,8 @@ gibbon_match_list_new (void)
                         GIBBON_MATCH_LIST_N_COLUMNS,
                         /* GIBBON_MATCH_LIST_COL_SIDE */
                         G_TYPE_INT,
+                        /* GIBBON_MATCH_LIST_COL_PLAYER */
+                        G_TYPE_STRING,
                         /* GIBBON_MATCH_LIST_COL_MOVENO */
                         G_TYPE_UINT,
                         /* GIBBON_MATCH_LIST_COL_ROLL */
@@ -267,13 +269,22 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
 {
         GibbonPositionSide side;
         const GibbonGameAction *action;
+        const GibbonGameAction *last_action = NULL;
         const GibbonPosition *pos;
         const GibbonAnalysis *analysis;
         GtkTreeIter iter;
+        gint moveno;
+        const gchar *player;
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
+        if (action_no)
+                last_action = gibbon_game_get_nth_action (game, action_no - 1,
+                                                          NULL);
         pos = gibbon_game_get_nth_position (game, action_no);
         analysis = gibbon_game_get_nth_analysis (game, action_no);
+
+        moveno = gtk_tree_model_iter_n_children (
+                        GTK_TREE_MODEL (self->priv->moves), NULL);
 
         /*
          * Always insert a dummy row if the first action of a game is not a
@@ -286,7 +297,31 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                     GIBBON_MATCH_LIST_COL_MOVE,
                                     _("Initial position"),
                                     -1);
+                ++moveno;
+        }
 
+        /*
+         * Normally, we do not have to add a row for a move because there
+         * is already one for the roll.  However, this could be intercepted
+         * by a resignation or a position setup.
+         */
+        if (action_no && GIBBON_IS_MOVE (action) && last_action
+            && GIBBON_IS_ROLL (last_action)) {
+                g_return_val_if_fail (gtk_tree_model_iter_nth_child (
+                                GTK_TREE_MODEL (self->priv->moves),
+                                &iter, NULL, moveno - 1), FALSE);
+        } else {
+                gtk_list_store_append (self->priv->moves, &iter);
+                if (side <  0)
+                        player = gibbon_match_get_white (self->priv->match);
+                else if (side > 0)
+                        player = gibbon_match_get_black (self->priv->match);
+                else
+                        player = NULL;
+                gtk_list_store_set (self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_MOVENO, moveno,
+                                    GIBBON_MATCH_LIST_COL_PLAYER, player,
+                                    -1);
         }
 
         return TRUE;
