@@ -58,6 +58,12 @@ static gboolean gibbon_move_list_view_on_query_tooltip (
                 gboolean keyboard_tip,
                 GtkTooltip *tooltip,
                 GtkTreeView *view);
+static void gibbon_move_list_view_move_data_func (GtkTreeViewColumn
+                                                  *tree_column,
+                                                  GtkCellRenderer *cell,
+                                                  GtkTreeModel *tree_model,
+                                                  GtkTreeIter *iter,
+                                                  GibbonMoveListView *self);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -137,6 +143,11 @@ gibbon_move_list_view_new (GtkTreeView *view,
                         renderer,
                         "text", GIBBON_MATCH_LIST_COL_MOVENO,
                         NULL);
+        gtk_tree_view_insert_column_with_data_func (view, -1, _("Move"),
+                        gtk_cell_renderer_text_new (),
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_move_data_func,
+                        self, NULL);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->tree_view),
                                   "query-tooltip",
@@ -206,10 +217,59 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
 
 /* Data function.  */
 static void
-gibbon_move_list_view_move (GibbonMoveListView *self, GibbonPositionSide side,
-                            GtkCellRenderer *cell, GtkTreeModel *tree_model,
-                            GtkTreeIter *iter)
+gibbon_move_list_view_move_data_func (GtkTreeViewColumn *tree_column,
+                                      GtkCellRenderer *cell,
+                                      GtkTreeModel *tree_model,
+                                      GtkTreeIter *iter,
+                                      GibbonMoveListView *self)
 {
+        gchar *move_string;
+        guint badness;
+        GibbonPositionSide side;
+        PangoStyle style;
+        PangoWeight weight;
+
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_MATCH_LIST_COL_SIDE,
+                            &side,
+                            GIBBON_MATCH_LIST_COL_MOVE,
+                            &move_string,
+                            GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
+                            &badness,
+                            -1);
+
+        switch (badness) {
+        case 0:
+                if (!side) {
+                        /* This will be a setup or the initial position.  */
+                        style = PANGO_STYLE_ITALIC;
+                } else {
+                        style = PANGO_STYLE_NORMAL;
+                }
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 1:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_NORMAL;
+                break;
+        case 2:
+                style = PANGO_STYLE_NORMAL;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        default:
+                style = PANGO_STYLE_ITALIC;
+                weight = PANGO_WEIGHT_BOLD;
+                break;
+        }
+
+        g_object_set (cell,
+                      "text", move_string,
+                      "style", style,
+                      "weight", weight,
+                      NULL);
+
+        g_free (move_string);
+
 #if 0
         gchar *move_string;
         guint badness;

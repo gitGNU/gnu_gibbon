@@ -280,7 +280,6 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
          * position setup.
          */
         if (!action_no && !GIBBON_IS_SETUP (action)) {
-                g_printerr ("Append a row\n");
                 gtk_list_store_append (self->priv->moves, &iter);
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVENO, 0,
