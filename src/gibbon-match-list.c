@@ -354,10 +354,10 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                 text = gibbon_match_list_format_double (self, pos);
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_TAKE (action)) {
-                text = g_strdup (_("Takes"));
+                text = g_strdup (_("takes"));
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_DROP (action)) {
-                text = g_strdup (_("Drops"));
+                text = g_strdup (_("drops"));
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_RESIGN (action)) {
                 text = gibbon_match_list_format_resign (self,
@@ -365,10 +365,10 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                                         pos);
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_ACCEPT (action)) {
-                text = g_strdup (_("Accepts"));
+                text = g_strdup (_("accepts"));
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_REJECT (action)) {
-                text = g_strdup (_("Rejects"));
+                text = g_strdup (_("rejects"));
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_SETUP (action)) {
                 text = g_strdup (_("Position set up"));
@@ -732,9 +732,9 @@ gibbon_match_list_format_double (GibbonMatchList *self,
                                  const GibbonPosition *pos)
 {
         if (pos->cube > 1)
-                return g_strdup_printf (_("Redoubles to %u"), pos->cube << 1);
+                return g_strdup_printf (_("redoubles to %u"), pos->cube << 1);
         else
-                return g_strdup_printf (_("Doubles to %u"), pos->cube << 1);
+                return g_strdup_printf (_("doubles to %u"), pos->cube << 1);
 }
 
 static gchar *
@@ -743,13 +743,13 @@ gibbon_match_list_format_resign (GibbonMatchList *self,
                                  const GibbonPosition *pos)
 {
         if (resign->value == pos->cube)
-                return g_strdup (_("Resigns"));
+                return g_strdup (_("resigns"));
         else if (resign->value == (pos->cube << 1))
-                return g_strdup (_("Resigns gammon"));
+                return g_strdup (_("resigns gammon"));
         else if (resign->value == (pos->cube + (pos->cube << 1)))
-                return g_strdup (_("Resigns backgammon"));
+                return g_strdup (_("resigns backgammon"));
         else
-                return g_strdup_printf (_("Resigns with %u points"),
+                return g_strdup_printf (_("resigns with %u points"),
                                         resign->value);
 }
 
