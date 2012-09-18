@@ -227,10 +227,6 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         GibbonGame *game;
         gsize num_games;
         gsize i, num_actions;
-        const GibbonGameAction *action;
-        GibbonPositionSide side;
-        const GibbonPosition *pos;
-        const GibbonAnalysis *analysis;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
@@ -275,6 +271,16 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         GtkTreeIter iter;
         gint moveno;
         const gchar *player;
+        gint colno;
+        gchar *text;
+        GibbonAnalysisRoll *ra;
+        GibbonAnalysisRollLuck luck_type;
+        gdouble luck_value;
+        gchar *tmp;
+        GibbonAnalysisMove *ma;
+        const gchar *dbl_mark = NULL;
+        const gchar *move_mark = NULL;
+        guint badness = 0;
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
         if (action_no)
@@ -313,16 +319,117 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         } else {
                 gtk_list_store_append (self->priv->moves, &iter);
                 if (side <  0)
-                        player = gibbon_match_get_white (self->priv->match);
-                else if (side > 0)
                         player = gibbon_match_get_black (self->priv->match);
+                else if (side > 0)
+                        player = gibbon_match_get_white (self->priv->match);
                 else
                         player = NULL;
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVENO, moveno,
                                     GIBBON_MATCH_LIST_COL_PLAYER, player,
+                                    GIBBON_MATCH_LIST_COL_SIDE, side,
                                     -1);
         }
+
+        if (GIBBON_IS_ROLL (action)) {
+                text = gibbon_match_list_format_roll (self,
+                                                      GIBBON_ROLL (action));
+                colno = GIBBON_MATCH_LIST_COL_ROLL;
+                if (text && GIBBON_IS_ANALYSIS_ROLL (analysis)) {
+                        ra = GIBBON_ANALYSIS_ROLL (analysis);
+                        luck_type = gibbon_analysis_roll_get_luck_type (ra);
+                        luck_value = gibbon_analysis_roll_get_luck_value (ra);
+                        gtk_list_store_set (self->priv->moves, &iter,
+                                            GIBBON_MATCH_LIST_COL_LUCK,
+                                            luck_value,
+                                            GIBBON_MATCH_LIST_COL_LUCK_TYPE,
+                                            luck_type,
+                                            -1);
+                }
+        } else if (GIBBON_IS_MOVE (action)) {
+                text = gibbon_match_list_format_move (self,
+                                                      GIBBON_MOVE (action),
+                                                      side, pos);
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_DOUBLE (action)) {
+                text = gibbon_match_list_format_double (self, pos);
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_TAKE (action)) {
+                text = g_strdup (_("Takes"));
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_DROP (action)) {
+                text = g_strdup (_("Drops"));
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_RESIGN (action)) {
+                text = gibbon_match_list_format_resign (self,
+                                                        GIBBON_RESIGN (action),
+                                                        pos);
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_ACCEPT (action)) {
+                text = g_strdup (_("Accepts"));
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_REJECT (action)) {
+                text = g_strdup (_("Rejects"));
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        } else if (GIBBON_IS_SETUP (action)) {
+                text = g_strdup (_("Position set up"));
+                colno = GIBBON_MATCH_LIST_COL_MOVE;
+        }
+
+        if (analysis && GIBBON_IS_ANALYSIS_MOVE (analysis)) {
+                ma = GIBBON_ANALYSIS_MOVE (analysis);
+                if (ma->da) {
+                        badness += ma->da_bad;
+                        switch (ma->da_bad) {
+                        case 0:
+                                break;
+                        case 1:
+                                /* This is an inverted (Spanish) "?!".  */
+                                dbl_mark = "\xc2\xbf\xc2\xa1";
+                                break;
+                        case 2:
+                                /* This is an inverted (Spanish) "?".  */
+                                dbl_mark = "\xc2\xbf";
+                                break;
+                        default:
+                                /* This is an inverted (Spanish) "??".  */
+                                dbl_mark = "\xc2\xbf\xc2\xbf";
+                                break;
+                        }
+                }
+                if (dbl_mark) {
+                        tmp = g_strdup_printf ("%s %s", text, dbl_mark);
+                        g_free (text);
+                        text = tmp;
+                }
+
+                if (ma->ma) {
+                        badness += ma->ma_bad;
+                        switch (ma->ma_bad) {
+                        case 0:
+                                break;
+                        case 1:
+                                move_mark = "?!";
+                                break;
+                        case 2:
+                                move_mark = "?f";
+                                break;
+                        default:
+                                move_mark = "??";
+                                break;
+                        }
+                }
+                if (move_mark) {
+                        tmp = g_strdup_printf ("%s %s", text, move_mark);
+                        g_free (text);
+                        text = tmp;
+                }
+                gtk_list_store_set (self->priv->moves, &iter,
+                                    GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
+                                    badness, -1);
+        }
+
+        gtk_list_store_set (self->priv->moves, &iter, colno, text, -1);
 
         return TRUE;
 

@@ -52,18 +52,24 @@ struct _GibbonMoveListViewPrivate {
 
 G_DEFINE_TYPE (GibbonMoveListView, gibbon_move_list_view, G_TYPE_OBJECT)
 
-static gboolean gibbon_move_list_view_on_query_tooltip (
-                const GibbonMoveListView *self,
-                gint x, gint y,
-                gboolean keyboard_tip,
-                GtkTooltip *tooltip,
-                GtkTreeView *view);
 static void gibbon_move_list_view_move_data_func (GtkTreeViewColumn
                                                   *tree_column,
                                                   GtkCellRenderer *cell,
                                                   GtkTreeModel *tree_model,
                                                   GtkTreeIter *iter,
                                                   GibbonMoveListView *self);
+static void gibbon_move_list_view_roll_data_func (GtkTreeViewColumn
+                                                  *tree_column,
+                                                  GtkCellRenderer *cell,
+                                                  GtkTreeModel *tree_model,
+                                                  GtkTreeIter *iter,
+                                                  GibbonMoveListView *self);
+static gboolean gibbon_move_list_view_on_query_tooltip (
+                const GibbonMoveListView *self,
+                gint x, gint y,
+                gboolean keyboard_tip,
+                GtkTooltip *tooltip,
+                GtkTreeView *view);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -119,17 +125,15 @@ gibbon_move_list_view_new (GtkTreeView *view,
         GibbonMoveListView *self = g_object_new (GIBBON_TYPE_MOVE_LIST_VIEW,
                                                  NULL);
         GtkListStore *model;
-        GtkTreeSelection *selection;
         GtkCellRenderer *renderer;
         GtkStyle *style;
+        GtkTreeViewColumn *column;
 
         self->priv->match_list = match_list;
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
         self->priv->model = GTK_TREE_MODEL (model);
 
         self->priv->tree_view = view;
-        selection = gtk_tree_view_get_selection (view);
-        gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
         gtk_tree_view_set_model (view, GTK_TREE_MODEL (model));
 
         style = gtk_widget_get_style (GTK_WIDGET (view));
@@ -148,16 +152,26 @@ gibbon_move_list_view_new (GtkTreeView *view,
         g_object_set (renderer,
                      "style", PANGO_STYLE_ITALIC,
                      NULL);
-        gtk_tree_view_insert_column_with_attributes (view, -1, _("Player"),
+        gtk_tree_view_insert_column_with_attributes (view, -1, NULL,
                         renderer,
                         "text", GIBBON_MATCH_LIST_COL_PLAYER,
                         NULL);
 
-        gtk_tree_view_insert_column_with_data_func (view, -1, _("Move"),
+        gtk_tree_view_insert_column_with_data_func (view, -1, NULL,
                         gtk_cell_renderer_text_new (),
+                        (GtkTreeCellDataFunc)
+                        gibbon_move_list_view_roll_data_func,
+                        self, NULL);
+
+        column = gtk_tree_view_column_new ();
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_column_pack_start (column, renderer, FALSE);
+        gtk_tree_view_column_set_cell_data_func (
+                        column, renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_move_list_view_move_data_func,
                         self, NULL);
+        gtk_tree_view_append_column (view, column);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->tree_view),
                                   "query-tooltip",
@@ -168,38 +182,27 @@ gibbon_move_list_view_new (GtkTreeView *view,
         return self;
 }
 
-/* Data function.  */
 static void
-gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
-                            GtkCellRenderer *cell, GtkTreeModel *tree_model,
-                            GtkTreeIter *iter)
+gibbon_move_list_view_roll_data_func (GtkTreeViewColumn *tree_column,
+                                      GtkCellRenderer *cell,
+                                      GtkTreeModel *tree_model,
+                                      GtkTreeIter *iter,
+                                      GibbonMoveListView *self)
 {
-#if 0
         gchar *roll_string;
         gdouble luck_value;
         GibbonAnalysisRollLuck luck_type;
         PangoStyle style;
         PangoWeight weight;
 
-        if (side < 0) {
-                gtk_tree_model_get (tree_model, iter,
-                                    GIBBON_MATCH_LIST_COL_BLACK_ROLL,
-                                    &roll_string,
-                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK,
-                                    &luck_value,
-                                    GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
-                                    &luck_type,
-                                    -1);
-        } else {
-                gtk_tree_model_get (tree_model, iter,
-                                    GIBBON_MATCH_LIST_COL_WHITE_ROLL,
-                                    &roll_string,
-                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK,
-                                    &luck_value,
-                                    GIBBON_MATCH_LIST_COL_WHITE_LUCK_TYPE,
-                                    &luck_type,
-                                    -1);
-        }
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_MATCH_LIST_COL_ROLL,
+                            &roll_string,
+                            GIBBON_MATCH_LIST_COL_LUCK,
+                            &luck_value,
+                            GIBBON_MATCH_LIST_COL_LUCK_TYPE,
+                            &luck_type,
+                            -1);
 
         switch (luck_type) {
         case GIBBON_ANALYSIS_ROLL_LUCK_VERY_LUCKY:
@@ -222,10 +225,8 @@ gibbon_move_list_view_roll (GibbonMoveListView *self, GibbonPositionSide side,
                       "style", style,
                       NULL);
         g_free (roll_string);
-#endif
 }
 
-/* Data function.  */
 static void
 gibbon_move_list_view_move_data_func (GtkTreeViewColumn *tree_column,
                                       GtkCellRenderer *cell,
