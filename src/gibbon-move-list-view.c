@@ -174,8 +174,7 @@ gibbon_move_list_view_new (GtkTreeView *view,
                         gibbon_move_list_view_move_data_func,
                         self, NULL);
 
-        g_signal_connect_swapped (G_OBJECT (self->priv->tree_view),
-                                  "query-tooltip",
+        g_signal_connect_swapped (GTK_WIDGET (view), "query-tooltip",
                                   (GCallback)
                                   gibbon_move_list_view_on_query_tooltip,
                                   self);
@@ -256,7 +255,6 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                                         GtkTooltip *tooltip,
                                         GtkTreeView *view)
 {
-#if 0
         GtkTreeModel *model;
         GtkTreePath *path;
         GtkTreeIter iter;
@@ -264,9 +262,9 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         gdouble luck_value;
         GibbonAnalysisRollLuck luck_type;
 
-        g_printerr ("on query tooltip\n");
         g_return_val_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self), FALSE);
         g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
+        g_return_val_if_fail (view == self->priv->tree_view, FALSE);
         g_return_val_if_fail (GTK_IS_TOOLTIP (tooltip), FALSE);
 
         if (!gtk_tree_view_get_tooltip_context (view, &x, &y,
@@ -274,11 +272,10 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
                                                 &model, &path, &iter))
                 return FALSE;
 
-        /* FIXME! */
         gtk_tree_model_get (model, &iter,
-                            GIBBON_MATCH_LIST_COL_BLACK_LUCK,
+                            GIBBON_MATCH_LIST_COL_LUCK,
                             &luck_value,
-                            GIBBON_MATCH_LIST_COL_BLACK_LUCK_TYPE,
+                            GIBBON_MATCH_LIST_COL_LUCK_TYPE,
                             &luck_type,
                             -1);
 
@@ -313,6 +310,4 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         gtk_tree_path_free (path);
 
         return text ? TRUE : FALSE;
-#endif
-        return FALSE;
 }
