@@ -151,12 +151,16 @@ gibbon_match_list_new (void)
                         G_TYPE_UINT,
                         /* GIBBON_MATCH_LIST_COL_ROLL */
                         G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_ROLL_ACTION */
+                        G_TYPE_INT,
                         /* GIBBON_MATCH_LIST_COL_LUCK */
                         G_TYPE_DOUBLE,
                         /* GIBBON_MATCH_LIST_COL_LUCK_TYPE */
                         G_TYPE_INT,
                         /* GIBBON_MATCH_LIST_COL_MOVE */
                         G_TYPE_STRING,
+                        /* GIBBON_MATCH_LIST_COL_MOVE_ACTION */
+                        G_TYPE_INT,
                         /* GIBBON_MATCH_LIST_COL_MOVE_BADNESS */
                         G_TYPE_UINT);
         self->priv->moves = moves;
@@ -301,6 +305,8 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                     GIBBON_MATCH_LIST_COL_MOVENO, 0,
                                     GIBBON_MATCH_LIST_COL_MOVE,
                                     _("Initial position"),
+                                    GIBBON_MATCH_LIST_COL_ROLL_ACTION, -1,
+                                    GIBBON_MATCH_LIST_COL_MOVE_ACTION, -1,
                                     -1);
                 ++moveno;
         }
@@ -327,6 +333,8 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                     GIBBON_MATCH_LIST_COL_MOVENO, moveno,
                                     GIBBON_MATCH_LIST_COL_PLAYER, player,
                                     GIBBON_MATCH_LIST_COL_SIDE, side,
+                                    GIBBON_MATCH_LIST_COL_ROLL_ACTION, -1,
+                                    GIBBON_MATCH_LIST_COL_MOVE_ACTION, -1,
                                     -1);
         }
 
@@ -460,7 +468,9 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
 
         }
 
-        gtk_list_store_set (self->priv->moves, &iter, colno, formatted->str,
+        gtk_list_store_set (self->priv->moves, &iter,
+                            colno, formatted->str,
+                            colno + 1, action_no,
                             -1);
         g_string_free (formatted, TRUE);
 
