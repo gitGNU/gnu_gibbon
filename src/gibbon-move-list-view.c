@@ -70,6 +70,11 @@ static gboolean gibbon_move_list_view_on_query_tooltip (
                 gboolean keyboard_tip,
                 GtkTooltip *tooltip,
                 GtkTreeView *view);
+static void gibbon_move_list_view_on_row_changed (GibbonMoveListView *self,
+                                                  GtkTreePath *path,
+                                                  GtkTreeIter *iter);
+static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
+                                                     GtkTreeView *view);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -174,10 +179,19 @@ gibbon_move_list_view_new (GtkTreeView *view,
                         gibbon_move_list_view_move_data_func,
                         self, NULL);
 
-        g_signal_connect_swapped (GTK_WIDGET (view), "query-tooltip",
+        g_signal_connect_swapped (G_OBJECT (view), "query-tooltip",
                                   (GCallback)
                                   gibbon_move_list_view_on_query_tooltip,
                                   self);
+
+        g_signal_connect_swapped (G_OBJECT (view), "cursor-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_cursor_changed,
+                                  self);
+
+        g_signal_connect_swapped (G_OBJECT (model), "row-changed",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_row_changed, self);
 
         return self;
 }
@@ -310,4 +324,25 @@ gibbon_move_list_view_on_query_tooltip (const GibbonMoveListView *self,
         gtk_tree_path_free (path);
 
         return text ? TRUE : FALSE;
+}
+
+static void
+gibbon_move_list_view_on_row_changed (GibbonMoveListView *self,
+                                      GtkTreePath *path,
+                                      GtkTreeIter *iter)
+{
+        GtkTreeView *view = self->priv->tree_view;
+        GtkTreeViewColumn *number_column = gtk_tree_view_get_column (view, 0);
+
+        gtk_tree_view_set_cursor (self->priv->tree_view, path, NULL, FALSE);
+
+        gtk_tree_view_scroll_to_cell (view, path, number_column,
+                                      FALSE, 0.0f, 0.0f);
+}
+
+static void
+gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
+                                         GtkTreeView *view)
+{
+        /* TODO */
 }
