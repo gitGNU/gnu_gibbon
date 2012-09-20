@@ -51,6 +51,7 @@
 
 enum gibbon_match_list_signal {
         NEW_MATCH,
+        MATCH_LOADED,
         LAST_SIGNAL
 };
 static guint gibbon_match_list_signals[LAST_SIGNAL] = { 0 };
@@ -123,6 +124,16 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
                               G_TYPE_NONE,
                               1,
                               G_TYPE_OBJECT);
+        gibbon_match_list_signals[MATCH_LOADED] =
+                g_signal_new ("match-loaded",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
         object_class->finalize = gibbon_match_list_finalize;
 }
 
@@ -180,6 +191,8 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
+        g_signal_emit (self, gibbon_match_list_signals[NEW_MATCH], 0, self);
+
         self->priv->match = match;
         self->priv->active = -1;
 
@@ -202,7 +215,7 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
                 g_free (text);
         }
 
-        g_signal_emit (self, gibbon_match_list_signals[NEW_MATCH], 0, self);
+        g_signal_emit (self, gibbon_match_list_signals[MATCH_LOADED], 0, self);
 }
 
 GtkListStore *

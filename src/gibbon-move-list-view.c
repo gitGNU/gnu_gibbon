@@ -75,6 +75,8 @@ static void gibbon_move_list_view_on_row_changed (GibbonMoveListView *self,
                                                   GtkTreeIter *iter);
 static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                                      GtkTreeView *view);
+static void gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
+                                                GibbonMatchList *matches);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -192,6 +194,10 @@ gibbon_move_list_view_new (GtkTreeView *view,
         g_signal_connect_swapped (G_OBJECT (model), "row-changed",
                                   (GCallback)
                                   gibbon_move_list_view_on_row_changed, self);
+
+        g_signal_connect_swapped (G_OBJECT (match_list), "new-match",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_new_match, self);
 
         return self;
 }
@@ -345,4 +351,12 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
         /* TODO */
+        g_printerr ("cursor changed!\n");
+}
+
+static void
+gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
+                                    GibbonMatchList *matches)
+{
+        g_printerr ("new match!\n");
 }
