@@ -50,7 +50,9 @@
 #include "gibbon-analysis-move.h"
 
 enum gibbon_match_list_signal {
-        NEW_MATCH,
+        SELECT_GAME,
+        GAME_SELECTED,
+        LOAD_MATCH,
         MATCH_LOADED,
         LAST_SIGNAL
 };
@@ -114,8 +116,8 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
         
         g_type_class_add_private (klass, sizeof (GibbonMatchListPrivate));
 
-        gibbon_match_list_signals[NEW_MATCH] =
-                g_signal_new ("new-match",
+        gibbon_match_list_signals[LOAD_MATCH] =
+                g_signal_new ("load-match",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -126,6 +128,26 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
                               G_TYPE_OBJECT);
         gibbon_match_list_signals[MATCH_LOADED] =
                 g_signal_new ("match-loaded",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
+        gibbon_match_list_signals[SELECT_GAME] =
+                g_signal_new ("select-game",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
+        gibbon_match_list_signals[GAME_SELECTED] =
+                g_signal_new ("game-selected",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -191,7 +213,7 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
-        g_signal_emit (self, gibbon_match_list_signals[NEW_MATCH], 0, self);
+        g_signal_emit (self, gibbon_match_list_signals[LOAD_MATCH], 0, self);
 
         self->priv->match = match;
         self->priv->active = -1;
@@ -258,10 +280,12 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 
         num_actions = gibbon_game_get_num_actions (game);
 
+        g_signal_emit (self, gibbon_match_list_signals[SELECT_GAME], 0, self);
         for (i = 0; i < num_actions; ++i) {
                 if (!gibbon_match_list_add_action (self, game, i))
                         break;
         }
+        g_signal_emit (self, gibbon_match_list_signals[GAME_SELECTED], 0, self);
 }
 
 gint
