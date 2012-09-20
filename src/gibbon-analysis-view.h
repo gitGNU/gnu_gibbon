@@ -76,7 +76,7 @@ GType gibbon_analysis_view_get_type (void) G_GNUC_CONST;
 GibbonAnalysisView *gibbon_analysis_view_new (const GibbonApp *app);
 void gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                                         const GibbonGame *game,
-                                        guint action_number);
+                                        gint action_number);
 void gibbon_analysis_view_set_toggle_sensitive (GibbonAnalysisView *self,
                                                 gboolean sensitive);
 

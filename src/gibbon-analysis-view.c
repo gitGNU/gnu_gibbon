@@ -255,7 +255,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
 
 void
 gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
-                                   const GibbonGame *game, guint action_number)
+                                   const GibbonGame *game, gint action_number)
 {
         gint i;
         const GibbonGameAction *action;
@@ -263,6 +263,11 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         const GibbonAnalysis *roll_analysis = NULL;
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+
+        if (action_number < 0) {
+                gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+                return;
+        }
 
         /* First find the corresponding roll.  */
         for (i = action_number; i >= 0; --i) {
