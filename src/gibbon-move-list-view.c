@@ -376,14 +376,46 @@ static void
 gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
+        GtkTreeSelection *selection;
+        gint action_no = -1, move_action_no, roll_action_no;
+        GList *selected;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+
         /* Defer action, while loading a new game.  */
         if (self->priv->game_changing)
                 return;
 
-        /* FIXME!  Find the correct action number, not 3! */
+        selection = gtk_tree_view_get_selection (self->priv->tree_view);
+        if (selection) {
+                selected = gtk_tree_selection_get_selected_rows (
+                                selection,
+                                &self->priv->model);
+                if (selected) {
+                        path = (GtkTreePath *) selected->data;
+                        if (gtk_tree_model_get_iter (self->priv->model, &iter,
+                                                     path)) {
+                                gtk_tree_model_get (
+                                        self->priv->model, &iter,
+                                        GIBBON_MATCH_LIST_COL_MOVE_ACTION,
+                                        &move_action_no,
+                                        GIBBON_MATCH_LIST_COL_ROLL_ACTION,
+                                        &roll_action_no,
+                                        -1);
+                                if (move_action_no < 0)
+                                        action_no = roll_action_no;
+                                else
+                                        action_no = move_action_no;
+                        }
+                        g_list_foreach (selected, (GFunc) gtk_tree_path_free,
+                                        NULL);
+                        g_list_free (selected);
+                }
+        }
+
         g_signal_emit (self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
-                       0, 3);
+                       0, action_no);
 }
 
 static void
