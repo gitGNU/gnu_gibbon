@@ -350,13 +350,13 @@ static void
 gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                          GtkTreeView *view)
 {
-        /* TODO */
-        g_printerr ("cursor changed!\n");
+        g_signal_emit (self,
+                       gibbon_move_list_view_signals[ACTION_SELECTED],
+                       0, 3);
 }
 
 static void
 gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
                                     GibbonMatchList *matches)
 {
-        g_printerr ("new match!\n");
 }
