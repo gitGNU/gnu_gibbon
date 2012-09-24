@@ -481,7 +481,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                       GtkTreeView *view)
 {
         GtkTreeSelection *selection;
-        gint move_action_no = -2, roll_action_no = -2;
+        gint action_no, move_action_no = -2, roll_action_no = -2;
         GList *selected;
         GtkTreePath *path;
         GtkTreeIter iter;
@@ -539,7 +539,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                 }
 
                 /* Move to the previous node.  */
-                --self->priv->last_action_no;
+                action_no = self->priv->last_action_no - 1;
                 gtk_tree_path_prev (path);
         } else {
                 /* Display the roll? */
@@ -556,7 +556,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                 }
 
                 /* Move to the next node.  */
-                ++self->priv->last_action_no;
+                action_no = self->priv->last_action_no + 1;
                 gtk_tree_path_next (path);
         }
 
@@ -577,6 +577,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                       FALSE, 0.0f, 0.0f);
         gtk_tree_path_free (path);
 
+        self->priv->last_action_no = action_no;
         g_signal_emit (self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
                        0, self->priv->last_action_no);
