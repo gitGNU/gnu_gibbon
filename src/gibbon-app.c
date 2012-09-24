@@ -1725,9 +1725,6 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
         const GibbonGame *game;
         const GibbonPosition *pos;
 
-        if (action_no < 0)
-                return;
-
         game_no = gibbon_match_list_get_active_game (self->priv->match_list);
         if (game_no < 0)
                 return;
@@ -1739,7 +1736,10 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
         if (!game)
                 return;
 
-        pos = gibbon_game_get_nth_position (game, action_no);
+        if (action_no < 0)
+                pos = gibbon_game_get_initial_position (game);
+        else
+                pos = gibbon_game_get_nth_position (game, action_no);
         if (!pos)
                 return;
 
