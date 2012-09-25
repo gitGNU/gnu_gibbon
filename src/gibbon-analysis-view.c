@@ -380,7 +380,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         const GibbonMET *met;
         gdouble *p;
         gdouble money_equity;
-        gdouble p_nodouble, p_take, p_drop;
+        gdouble p_nodouble, p_take, p_drop, p_optimal;
 
         met = gibbon_app_get_met (self->priv->app);
 
@@ -429,6 +429,42 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         buf = g_strdup_printf ("%.2f %%", 100 * p_drop);
         gtk_label_set_text (self->priv->value_3, buf);
         g_free (buf);
+
+        if (p_take > p_nodouble) {
+                if (p_drop < p_take)
+                        p_optimal = p_drop;
+                else
+                        p_optimal = p_take;
+        } else {
+                p_optimal = p_nodouble;
+        }
+
+        if (p_nodouble == p_optimal) {
+                gtk_label_set_text (self->priv->diff_1, "");
+        } else {
+                buf = g_strdup_printf ("%.2f %%",
+                                       100 * (p_nodouble - p_optimal));
+                gtk_label_set_text (self->priv->diff_1, buf);
+                g_free (buf);
+        }
+
+        if (p_take == p_optimal) {
+                gtk_label_set_text (self->priv->diff_2, "");
+        } else {
+                buf = g_strdup_printf ("%.2f %%",
+                                       100 * (p_take - p_optimal));
+                gtk_label_set_text (self->priv->diff_2, buf);
+                g_free (buf);
+        }
+
+        if (p_drop == p_optimal) {
+                gtk_label_set_text (self->priv->diff_3, "");
+        } else {
+                buf = g_strdup_printf ("%.2f %%",
+                                       100 * (p_drop - p_optimal));
+                gtk_label_set_text (self->priv->diff_3, buf);
+                g_free (buf);
+        }
 
         /*
          * The cube decision is based on equities, not on probabilities.
