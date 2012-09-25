@@ -79,6 +79,7 @@ static void gibbon_move_list_view_on_row_changed (GibbonMoveListView *self,
                                                   GtkTreeIter *iter);
 static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                                      GtkTreeView *view);
+static gboolean gibbon_move_list_view_on_resize (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_load_match (GibbonMoveListView *self,
                                                  GibbonMatchList *matches);
 static void gibbon_move_list_view_on_match_loaded (GibbonMoveListView *self,
@@ -427,6 +428,50 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
         g_signal_emit (self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
                        0, action_no);
+
+        /*
+         * Sending the signal may cause the analysis widgets to be shown.
+         * This may shrink the tree view and may make the selected row
+         * be invisible.
+         *
+         * Scrolling here has no effect because it happens too early.  We
+         * have to schedule that manually instead.
+         */
+        g_timeout_add (1, (GSourceFunc) gibbon_move_list_view_on_resize, self);
+}
+
+static gboolean
+gibbon_move_list_view_on_resize (GibbonMoveListView *self)
+{
+        GtkTreeSelection *selection;
+        GList *selected;
+        GtkTreePath *path;
+        GtkTreeView *view;
+
+        /* Defer action, while loading a new game.  */
+        if (self->priv->game_changing)
+                return FALSE;
+
+        view = self->priv->tree_view;
+
+        selection = gtk_tree_view_get_selection (self->priv->tree_view);
+        if (!selection)
+                return FALSE;
+
+        selected = gtk_tree_selection_get_selected_rows (
+                        selection,
+                        &self->priv->model);
+        if (!selected)
+                return FALSE;
+
+        path = (GtkTreePath *) selected->data;
+
+        gtk_tree_view_scroll_to_cell (view, path, NULL, FALSE, 0.0f, 0.0f);
+
+        g_list_foreach (selected, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected);
+
+        return FALSE;
 }
 
 static void
