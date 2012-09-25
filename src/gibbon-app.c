@@ -257,7 +257,7 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         g_return_val_if_fail (singleton == NULL, singleton);
 
-        self = g_object_new(GIBBON_TYPE_APP, NULL);
+        app = self = g_object_new (GIBBON_TYPE_APP, NULL);
 
         self->priv->met = gibbon_met_new ();
 

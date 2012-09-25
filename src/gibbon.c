@@ -132,9 +132,9 @@ main (int argc, char *argv[])
 #endif
         }
 
-        app = gibbon_app_new (builder_filename, pixmaps_dir,
-                              data_dir ? data_dir : GIBBON_DATADIR,
-                              argv[1]);
+        gibbon_app_new (builder_filename, pixmaps_dir,
+                        data_dir ? data_dir : GIBBON_DATADIR,
+                        argv[1]);
         if (!app)
                 return -1;
 
