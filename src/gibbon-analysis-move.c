@@ -253,6 +253,7 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
 {
         const gchar *s = NULL;
         GibbonAnalysisMoveCubeDecision cd;
+        gdouble percent = -1.0f;
 
         cd = _gibbon_analysis_move_cube_decision (self, eq_nodouble,
                                                   eq_take, eq_drop);
@@ -265,18 +266,25 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE:
                 s = _("No double, take");
+                if (eq_drop - eq_take != 0.0f)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE:
                 s = _("Too good to double, take");
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS:
                 s = _("Too good to double, drop");
+                if (eq_drop - eq_take != 0.0f
+                    && eq_nodouble <= eq_take)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_BEAVER:
                 s = _("Double, beaver");
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER:
                 s = _("No double, beaver");
+                if (eq_drop - eq_take != 0.0f)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_TAKE:
                 s = _("Redouble, take");
@@ -286,15 +294,22 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE:
                 s = _("No redouble, take");
+                if (eq_drop - eq_take != 0.0f)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE:
                 s = _("Too good to redouble, take");
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS:
                 s = _("Too good to redouble, drop");
+                if (eq_drop - eq_take != 0.0f
+                    && eq_nodouble <= eq_take)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_BEAVER:
                 s = _("No redouble, beaver");
+                if (eq_drop - eq_take != 0.0f)
+                        percent = (eq_nodouble - eq_take) / (eq_drop - eq_take);
                 break;
         case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE:
                 s = _("Never double, take (dead cube)");
@@ -325,5 +340,9 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
         if (!s)
                 s = _("No idea");
 
-        return g_strdup_printf (_("Proper cube action: %s"), s);
+        if (percent >= 0.0f)
+                return g_strdup_printf (_("Proper cube action: %s (%.1f %%)"),
+                                        s, 100 * percent);
+        else
+                return g_strdup_printf (_("Proper cube action: %s"), s);
 }
