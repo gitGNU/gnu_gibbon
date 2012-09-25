@@ -70,7 +70,6 @@ static void init_i18n (void);
 int
 main (int argc, char *argv[])
 {	
-        GibbonApp *app;
         gchar *builder_filename;
         gchar *pixmaps_dir_buf = NULL;
 #ifdef G_OS_WIN32

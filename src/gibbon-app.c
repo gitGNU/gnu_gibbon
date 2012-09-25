@@ -139,7 +139,6 @@ static void gibbon_app_on_board_reject (GibbonApp *self);
 static void gibbon_app_on_action_selected (GibbonApp *self, gint action_no);
 
 static GibbonApp *singleton = NULL;
-GibbonApp *app;
 
 static const char * const gibbon_app_icon_sizes[] = { "16x16", "22x22",
                 "24x24", "32x32", "48x48", "128x128",
@@ -253,10 +252,12 @@ GibbonApp *
 gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
                const gchar *data_dir, const gchar *match_file)
 {
-        GibbonApp *self = g_object_new(GIBBON_TYPE_APP, NULL);
+        GibbonApp *self;
         gchar *board_filename;
 
         g_return_val_if_fail (singleton == NULL, singleton);
+
+        self = g_object_new(GIBBON_TYPE_APP, NULL);
 
         self->priv->met = gibbon_met_new ();
 
