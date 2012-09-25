@@ -488,7 +488,31 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
 static void
 gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
 {
+        GibbonAnalysisMove *a = self->priv->ma;
+        gchar *buf;
+        gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
+        gdouble *p;
+        gdouble money_equity;
 
+        if (a->da_rollout) {
+                /* FIXME! */
+                buf = g_strdup_printf (_("Cubeless rollout equity: %s (Money: %.3f)"),
+                                       "??????????????????????", equity);
+        } else {
+                p = a->da_p[0];
+                money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
+                    -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+                    + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
+                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
+                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
+                buf = g_strdup_printf (
+                        _("Cubeless %llu-ply equity: %.3f (Money: %.3f)"),
+                        (unsigned long long) a->da_plies,
+                        equity,
+                        money_equity);
+        }
+        gtk_label_set_text (self->priv->cube_equity_summary, buf);
+        g_free (buf);
 }
 
 void
@@ -543,8 +567,6 @@ gibbon_analysis_view_set_roll (GibbonAnalysisView *self, GibbonAnalysisRoll *a)
 static void
 gibbon_analysis_view_on_toggle_show_mwc (GibbonAnalysisView *self)
 {
-        g_printerr ("Toggled!\n");
-
         if (!self->priv->ma)
                 return;
 
