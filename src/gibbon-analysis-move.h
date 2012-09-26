@@ -87,6 +87,7 @@ struct _GibbonAnalysisMove
         gdouble da_noise;
         gboolean da_use_prune;
         gdouble da_p[2][7];
+        guint da_trials;
 
         /*< private >*/
         struct _GibbonAnalysisMovePrivate *priv;

@@ -63,6 +63,8 @@ struct _GibbonSGFReaderPrivate {
         const gchar *filename;
 };
 
+#define GIBBON_SGF_READER_DEBUG 0
+
 GibbonSGFReader *_gibbon_sgf_reader_instance = NULL;
 
 #define GIBBON_SGF_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -800,12 +802,90 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
                                              GibbonAnalysisMove *a,
                                              gchar **tokens)
 {
-        if (g_strcmp0 ("ver", tokens[1]))
+        gchar *endptr;
+        guint i, j;
+
+        if (g_strcmp0 ("ver", tokens[1])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'ver', not '%s'.", tokens[1]);
+#endif
                 return;
+        }
+
         if (!gibbon_chareq ("3", tokens[2])) {
                 g_message (_("Unsupported version %s for DA property."),
                            tokens[2]);
                 return;
         }
 
+        if (g_strcmp0 ("Eq", tokens[3])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'Eq', not '%s'.", tokens[3]);
+#endif
+                return;
+        }
+
+        if (g_strcmp0 ("Trials", tokens[4])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'Trials', not '%s'.", tokens[4]);
+#endif
+                return;
+        }
+
+        if (!tokens[5]) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Number of trials missing.");
+#endif
+                return;
+        }
+
+        errno = 0;
+        a->da_trials = g_ascii_strtoull (tokens[5], &endptr, 10);
+        if (errno || !endptr || *endptr) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid number of trials '%s': %s.",
+                           tokens[5], strerror (errno));
+#endif
+        }
+
+        for (i = 0; i < 2; ++i) {
+                if (i == 0) {
+                        if (g_strcmp0 ("NoDouble", tokens[6 + 17 * i])) {
+#if GIBBON_SGF_READER_DEBUG
+                                g_message ("Expected 'NoDouble', not '%s'.",
+                                           tokens[6 + 16 * i]);
+#endif
+                                return;
+                        }
+                } else {
+                        if (g_strcmp0 ("DoubleTake", tokens[6 + 17 * i])) {
+#if GIBBON_SGF_READER_DEBUG
+                                g_message ("Expected 'DoubleTake', not '%s'.",
+                                           tokens[6 + 16 * i]);
+#endif
+                                return;
+                        }
+                }
+                if (g_strcmp0 ("Output", tokens[7 + 17 * i])) {
+#if GIBBON_SGF_READER_DEBUG
+                        g_message ("Expected 'Output', not '%s'.",
+                                   tokens[7 + 16 * i]);
+#endif
+                        return;
+                }
+
+                for (j = 0; j < 7; ++j) {
+                        a->da_p[i][j] = g_ascii_strtod (tokens[8 + 17 * i + j],
+                                                        &endptr);
+                        if (errno || !endptr || *endptr)
+                                return;
+                }
+
+                /* Discard standard deviations.  We do not display them.  */
+        }
+
+        /* Discard the rollout context.  */
+
+        a->da = TRUE;
+        a->da_rollout = TRUE;
 }
