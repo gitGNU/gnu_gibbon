@@ -665,7 +665,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 
-        while (1 || a->ma) {
+        while (a->ma) {
                 prop = gsgf_node_get_property (node, "DO");
                 if (prop) {
                         a->ma_bad = 1;
