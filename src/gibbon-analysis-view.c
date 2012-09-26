@@ -52,12 +52,20 @@ struct _GibbonAnalysisViewPrivate {
 
         GtkLabel *cube_equity_summary;
 
+        GtkLabel *cube_percents;
         GtkLabel *cube_win;
         GtkLabel *cube_win_g;
         GtkLabel *cube_win_bg;
         GtkLabel *cube_lose;
         GtkLabel *cube_lose_g;
         GtkLabel *cube_lose_bg;
+        GtkLabel *cube_percents1;
+        GtkLabel *cube_win1;
+        GtkLabel *cube_win_g1;
+        GtkLabel *cube_win_bg1;
+        GtkLabel *cube_lose1;
+        GtkLabel *cube_lose_g1;
+        GtkLabel *cube_lose_bg1;
 
         GtkLabel *action_1;
         GtkLabel *action_2;
@@ -105,12 +113,20 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
 
         self->priv->cube_equity_summary = NULL;
 
+        self->priv->cube_percents = NULL;
         self->priv->cube_win = NULL;
         self->priv->cube_win_g = NULL;
         self->priv->cube_win_bg = NULL;
         self->priv->cube_lose = NULL;
         self->priv->cube_lose_g = NULL;
         self->priv->cube_lose_bg = NULL;
+        self->priv->cube_percents1 = NULL;
+        self->priv->cube_win1 = NULL;
+        self->priv->cube_win_g1 = NULL;
+        self->priv->cube_win_bg1 = NULL;
+        self->priv->cube_lose1 = NULL;
+        self->priv->cube_lose_g1 = NULL;
+        self->priv->cube_lose_bg1 = NULL;
 
         self->priv->action_1 = NULL;
         self->priv->action_2 = NULL;
@@ -186,6 +202,9 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                       GTK_TYPE_LABEL);
         self->priv->cube_equity_summary = GTK_LABEL (obj);
 
+        obj = gibbon_app_find_object (app, "label-cube-percents",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_percents = GTK_LABEL (obj);
         obj = gibbon_app_find_object (app, "label-cube-win",
                                       GTK_TYPE_LABEL);
         self->priv->cube_win = GTK_LABEL (obj);
@@ -204,6 +223,28 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "label-cube-lose-bg",
                                       GTK_TYPE_LABEL);
         self->priv->cube_lose_bg = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "label-cube-percents1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_percents1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-win1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-win-g1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win_g1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-win-bg1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_win_bg1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose-g1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose_g1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-lose-bg1",
+                                      GTK_TYPE_LABEL);
+        self->priv->cube_lose_bg1 = GTK_LABEL (obj);
 
         obj = gibbon_app_find_object (app, "label-cube-action1",
                                       GTK_TYPE_LABEL);
@@ -361,6 +402,52 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
         gtk_label_set_text (self->priv->cube_lose_bg, buf);
         g_free (buf);
 
+        if (a->da_rollout) {
+                buf = g_strdup_printf ("%.2f %%",
+                                       100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
+                gtk_label_set_text (self->priv->cube_win1, buf);
+                g_free (buf);
+
+                buf = g_strdup_printf ("%.2f %%",
+                                 100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
+                gtk_label_set_text (self->priv->cube_win_g1, buf);
+                g_free (buf);
+
+                buf = g_strdup_printf ("%.2f %%",
+                             100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
+                gtk_label_set_text (self->priv->cube_win_bg1, buf);
+                g_free (buf);
+
+                buf = g_strdup_printf ("%.2f %%", 100 * (1 - a->da_p[1][0]));
+                gtk_label_set_text (self->priv->cube_lose1, buf);
+                g_free (buf);
+
+                buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[1][3]);
+                gtk_label_set_text (self->priv->cube_lose_g1, buf);
+                g_free (buf);
+
+                buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[1][4]);
+                gtk_label_set_text (self->priv->cube_lose_bg1, buf);
+                g_free (buf);
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_percents));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_percents1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_win1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_win_g1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_win_bg1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_lose1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_lose_g1));
+                gtk_widget_show (GTK_WIDGET (self->priv->cube_lose_bg1));
+        } else {
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_percents));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_percents1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_win1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_win_g1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_win_bg1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_lose1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_lose_g1));
+                gtk_widget_hide (GTK_WIDGET (self->priv->cube_lose_bg1));
+        }
+
         g_object_get (G_OBJECT (self->priv->show_equity),
                       "active", &show_mwc,
                       NULL);
@@ -384,17 +471,25 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
 
         met = gibbon_app_get_met (self->priv->app);
 
+        p = a->da_p[0];
+        money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
+            -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+            + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
+
         if (a->da_rollout) {
-                /* FIXME! */
-                buf = g_strdup_printf (_("Cubeless rollout MWC: %s (Money: %.3f)"),
-                                       "??????????????????????", equity);
+                buf = g_strdup_printf (
+                        _("Cubeless rollout MWC (%llu trials):"
+                          " %.2f (Money: %.3f)"),
+                        (unsigned long long) a->da_trials,
+                        100.0f * gibbon_met_eq2mwc (met, equity,
+                                                    a->match_length,
+                                                    a->cube,
+                                                    a->my_score,
+                                                    a->opp_score),
+                        money_equity);
         } else {
-                p = a->da_p[0];
-                money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
-                    -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
-                    + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
-                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
-                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
                 buf = g_strdup_printf (
                         _("Cubeless %llu-ply MWC: %.2f %% (Money: %.3f)"),
                         (unsigned long long) a->da_plies,
@@ -498,22 +593,39 @@ gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
 
         met = gibbon_app_get_met (self->priv->app);
 
-        if (a->da_rollout) {
-                /* FIXME! */
-                buf = g_strdup_printf (_("Cubeless rollout equity: %s (Money: %.3f)"),
-                                       "??????????????????????", equity);
+        p = a->da_p[0];
+        money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
+            -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+            + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
+        if (a->match_length > 0) {
+                if (a->da_rollout) {
+                        buf = g_strdup_printf (
+                                _("Cubeless rollout equity (%llu trials):"
+                                  " %.3f (Money: %.3f)"),
+                                (unsigned long long) a->da_trials,
+                                equity,
+                                money_equity);
+                } else {
+                        buf = g_strdup_printf (
+                                _("Cubeless %llu-ply equity: %.3f (Money: %.3f)"),
+                                (unsigned long long) a->da_plies,
+                                equity,
+                                money_equity);
+                }
         } else {
-                p = a->da_p[0];
-                money_equity = 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
-                    -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
-                    + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
-                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
-                    - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
-                buf = g_strdup_printf (
-                        _("Cubeless %llu-ply equity: %.3f (Money: %.3f)"),
-                        (unsigned long long) a->da_plies,
-                        equity,
-                        money_equity);
+                if (a->da_rollout) {
+                        buf = g_strdup_printf (
+                                _("Cubeless rollout equity (%llu trials): %.3f"),
+                                (unsigned long long) a->da_trials,
+                                money_equity);
+                } else {
+                        buf = g_strdup_printf (
+                                _("Cubeless %llu-ply equity: %.3f"),
+                                (unsigned long long) a->da_plies,
+                                money_equity);
+                }
         }
         gtk_label_set_text (self->priv->cube_equity_summary, buf);
         g_free (buf);
