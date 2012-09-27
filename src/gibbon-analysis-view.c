@@ -36,6 +36,9 @@
 #include "gibbon-analysis-move.h"
 #include "gibbon-roll.h"
 #include "gibbon-move.h"
+#include "gibbon-double.h"
+#include "gibbon-take.h"
+#include "gibbon-drop.h"
 #include "gibbon-settings.h"
 #include "gibbon-met.h"
 
@@ -324,7 +327,10 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 action = gibbon_game_get_nth_action (game, i, NULL);
                 if (!action)
                         break;
-                if (GIBBON_IS_MOVE (action)) {
+                if (GIBBON_IS_MOVE (action)
+                    || GIBBON_IS_DOUBLE (action)
+                    || GIBBON_IS_TAKE (action)
+                    || GIBBON_IS_DROP (action)) {
                         move_analysis = gibbon_game_get_nth_analysis (game, i);
                         break;
                 }
