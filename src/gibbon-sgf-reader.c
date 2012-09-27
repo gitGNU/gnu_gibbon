@@ -549,6 +549,13 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
+                /*
+                 * Make sure that the may double flag is set.  Otherwise,
+                 * the cube decision would return "cube not available" for
+                 * redoubles.
+                 */
+                ma->may_double = TRUE;
+                ma->opp_may_double = TRUE;
                 ma->da_take_analysis = TRUE;
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
@@ -557,6 +564,13 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
+                /*
+                 * Make sure that the may double flag is set.  Otherwise,
+                 * the cube decision would return "cube not available" for
+                 * redoubles.
+                 */
+                ma->may_double = TRUE;
+                ma->opp_may_double = TRUE;
                 ma->da_take_analysis = TRUE;
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
