@@ -348,3 +348,51 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
         else
                 return g_strdup_printf (_("Proper cube action: %s"), s);
 }
+
+gchar *
+gibbon_analysis_move_take_decision (GibbonAnalysisMove *self,
+                                    gdouble eq_nodouble, gdouble eq_take,
+                                    gdouble eq_drop)
+{
+        const gchar *s = NULL;
+        GibbonAnalysisMoveCubeDecision cd;
+
+        cd = _gibbon_analysis_move_cube_decision (self, eq_nodouble,
+                                                  eq_take, eq_drop);
+        switch (cd) {
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_DEADCUBE:
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_DEADCUBE:
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_TAKE:
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_TAKE:
+                s = _("Take");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_PASS:
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS:
+        case GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS:
+        case GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS:
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_PASS:
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_REDOUBLE_PASS:
+                s = _("Drop");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_DOUBLE_BEAVER:
+        case GIBBON_ANALYSIS_MOVE_CD_NODOUBLE_BEAVER:
+        case GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_BEAVER:
+        case GIBBON_ANALYSIS_MOVE_CD_OPTIONAL_DOUBLE_BEAVER:
+                s = _("Beaver");
+                break;
+        case GIBBON_ANALYSIS_MOVE_CD_NOT_AVAILABLE:
+                s = _("Huh?");
+                break;
+        }
+
+        if (!s)
+                s = _("No idea");
+
+        return g_strdup_printf (_("Proper response: %s"), s);
+}

@@ -112,5 +112,8 @@ GibbonAnalysisMove *gibbon_analysis_move_new ();
 gchar *gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                                            gdouble eq_nodouble,
                                            gdouble eq_take, gdouble eq_drop);
+gchar *gibbon_analysis_move_take_decision (GibbonAnalysisMove *self,
+                                           gdouble eq_nodouble,
+                                           gdouble eq_take, gdouble eq_drop);
 
 #endif
