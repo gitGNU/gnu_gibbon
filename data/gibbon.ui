@@ -1057,7 +1057,7 @@
                                     <property name="can_focus">False</property>
                                     <property name="n_rows">3</property>
                                     <property name="n_columns">7</property>
-                                    <property name="column_spacing">15</property>
+                                    <property name="column_spacing">0</property>
                                     <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel" id="label10">
