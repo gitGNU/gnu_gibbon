@@ -92,6 +92,7 @@ gibbon_analysis_move_init (GibbonAnalysisMove *self)
         self->da_use_prune = FALSE;
         self->da_deterministic = FALSE;
         self->da_trials = 0;
+        self->da_take_analysis = FALSE;
 }
 
 static void

@@ -88,6 +88,7 @@ struct _GibbonAnalysisMove
         gboolean da_use_prune;
         gdouble da_p[2][7];
         guint da_trials;
+        gboolean da_take_analysis;
 
         /*< private >*/
         struct _GibbonAnalysisMovePrivate *priv;

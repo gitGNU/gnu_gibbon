@@ -495,6 +495,7 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         guint from, to;
         GibbonMovement *movement;
         GibbonAnalysis *analysis = NULL;
+        GibbonAnalysisMove *ma;
 
         gsgf_move = GSGF_MOVE_BACKGAMMON (gsgf_property_get_value (prop));
 
@@ -547,12 +548,16 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                ma = GIBBON_ANALYSIS_MOVE (analysis);
+                ma->da_take_analysis = TRUE;
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                ma = GIBBON_ANALYSIS_MOVE (analysis);
+                ma->da_take_analysis = TRUE;
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
