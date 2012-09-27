@@ -616,8 +616,12 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                                     a->match_length, a->cube,
                                     a->my_score, a->opp_score);
 
-        buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
-                                                  p_take, p_drop);
+        if (a->da_take_analysis)
+                buf = gibbon_analysis_move_take_decision (a, p_nodouble,
+                                                          p_take, p_drop);
+        else
+                buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
+                                                          p_take, p_drop);
         gtk_label_set_text (self->priv->proper_action, buf);
         g_free (buf);
 }
@@ -736,8 +740,12 @@ gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
                 g_free (buf);
         }
 
-        buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
-                                                  p_take, p_drop);
+        if (a->da_take_analysis)
+                buf = gibbon_analysis_move_take_decision (a, p_nodouble,
+                                                          p_take, p_drop);
+        else
+                buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
+                                                          p_take, p_drop);
         gtk_label_set_text (self->priv->proper_action, buf);
         g_free (buf);
 }
