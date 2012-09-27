@@ -383,57 +383,93 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
 
         buf = g_strdup_printf ("%.2f %%",
                                100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
-        gtk_label_set_text (self->priv->cube_win, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_lose, buf);
+        else
+                gtk_label_set_text (self->priv->cube_win, buf);
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%",
                          100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
-        gtk_label_set_text (self->priv->cube_win_g, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_lose_g, buf);
+        else
+                gtk_label_set_text (self->priv->cube_win_g, buf);
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%",
                      100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
-        gtk_label_set_text (self->priv->cube_win_bg, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_lose_bg, buf);
+        else
+                gtk_label_set_text (self->priv->cube_win_bg, buf);
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%", 100 * (1 - a->da_p[0][0]));
-        gtk_label_set_text (self->priv->cube_lose, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_win, buf);
+        else
+                gtk_label_set_text (self->priv->cube_lose, buf);
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[0][3]);
-        gtk_label_set_text (self->priv->cube_lose_g, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_win_g, buf);
+        else
+                gtk_label_set_text (self->priv->cube_lose_g, buf);
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[0][4]);
-        gtk_label_set_text (self->priv->cube_lose_bg, buf);
+        if (a->da_take_analysis)
+                gtk_label_set_text (self->priv->cube_win_bg, buf);
+        else
+                gtk_label_set_text (self->priv->cube_lose_bg, buf);
         g_free (buf);
 
         if (a->da_rollout) {
                 buf = g_strdup_printf ("%.2f %%",
                                        100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
-                gtk_label_set_text (self->priv->cube_win1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_lose1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_win1, buf);
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%",
                                  100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
-                gtk_label_set_text (self->priv->cube_win_g1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_lose_g1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_win_g1, buf);
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%",
                              100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
-                gtk_label_set_text (self->priv->cube_win_bg1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_lose_bg1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_win_bg1, buf);
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%", 100 * (1 - a->da_p[1][0]));
-                gtk_label_set_text (self->priv->cube_lose1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_win1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_lose1, buf);
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[1][3]);
-                gtk_label_set_text (self->priv->cube_lose_g1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_win_g1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_lose_g1, buf);
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%", 100 * a->da_p[1][4]);
-                gtk_label_set_text (self->priv->cube_lose_bg1, buf);
+                if (a->da_take_analysis)
+                        gtk_label_set_text (self->priv->cube_win_bg1, buf);
+                else
+                        gtk_label_set_text (self->priv->cube_lose_bg1, buf);
                 g_free (buf);
                 gtk_widget_show (GTK_WIDGET (self->priv->cube_percents));
                 gtk_widget_show (GTK_WIDGET (self->priv->cube_percents1));
