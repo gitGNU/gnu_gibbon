@@ -568,20 +568,20 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
 
         if (a->da_take_analysis) {
                 gtk_label_set_text (self->priv->value_1, NULL);
-                buf = g_strdup_printf ("%.2f %%", 100 - 100 * p_take);
+                buf = g_strdup_printf ("%.3f %%", 100 - 100 * p_take);
                 gtk_label_set_text (self->priv->value_2, buf);
                 g_free (buf);
-                buf = g_strdup_printf ("%.2f %%", 100 - 100 * p_drop);
+                buf = g_strdup_printf ("%.3f %%", 100 - 100 * p_drop);
                 gtk_label_set_text (self->priv->value_3, buf);
                 g_free (buf);
         } else {
-                buf = g_strdup_printf ("%.2f %%", 100 * p_nodouble);
+                buf = g_strdup_printf ("%.3f %%", 100 * p_nodouble);
                 gtk_label_set_text (self->priv->value_1, buf);
                 g_free (buf);
-                buf = g_strdup_printf ("%.2f %%", 100 * p_take);
+                buf = g_strdup_printf ("%.3f %%", 100 * p_take);
                 gtk_label_set_text (self->priv->value_2, buf);
                 g_free (buf);
-                buf = g_strdup_printf ("%.2f %%", 100 * p_drop);
+                buf = g_strdup_printf ("%.3f %%", 100 * p_drop);
                 gtk_label_set_text (self->priv->value_3, buf);
                 g_free (buf);
         }
@@ -600,7 +600,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
                 if (p_nodouble == p_optimal) {
                         gtk_label_set_text (self->priv->diff_1, "");
                 } else {
-                        buf = g_strdup_printf ("%.2f %%",
+                        buf = g_strdup_printf ("%.3f %%",
                                                100 * f * (p_nodouble - p_optimal));
                         gtk_label_set_text (self->priv->diff_1, buf);
                         g_free (buf);
@@ -610,7 +610,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         if (p_take == p_optimal) {
                 gtk_label_set_text (self->priv->diff_2, "");
         } else {
-                buf = g_strdup_printf ("%.2f %%",
+                buf = g_strdup_printf ("%.3f %%",
                                        100 * f * (p_take - p_optimal));
                 gtk_label_set_text (self->priv->diff_2, buf);
                 g_free (buf);
@@ -619,7 +619,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         if (p_drop == p_optimal) {
                 gtk_label_set_text (self->priv->diff_3, "");
         } else {
-                buf = g_strdup_printf ("%.2f %%",
+                buf = g_strdup_printf ("%.3f %%",
                                        100 * f * (p_drop - p_optimal));
                 gtk_label_set_text (self->priv->diff_3, buf);
                 g_free (buf);
