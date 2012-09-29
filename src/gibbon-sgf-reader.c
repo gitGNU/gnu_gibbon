@@ -658,6 +658,11 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         GSGFDouble *gsgf_double;
         const GibbonPosition *pos;
         const GibbonGame *game;
+        GSGFListOf *list;
+        gsize num_items;
+        GSGFText *text;
+        const gchar *str_value;
+        gchar *endptr;
 
         pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
@@ -699,6 +704,27 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 a->ma_bad = 1 + gsgf_double_get_value (gsgf_double);
                 break;
         }
+
+        prop = gsgf_node_get_property (node, "A");
+        if (!prop)
+                return GIBBON_ANALYSIS (a);
+
+        list = GSGF_LIST_OF (gsgf_property_get_value (prop));
+        num_items = gsgf_list_of_get_number_of_items (list);
+        if (!num_items)
+                return GIBBON_ANALYSIS (a);
+
+        /*
+         * The first element is the index of the actual move made into the
+         * following move list.
+         */
+        text = GSGF_TEXT (gsgf_list_of_get_nth_item (list, 0));
+        str_value = gsgf_text_get_value (text);
+
+        errno = 0;
+        a->ma_imove = g_ascii_strtoull (str_value, &endptr, 10);
+        if (errno || !endptr)
+                return GIBBON_ANALYSIS (a);
 
         return GIBBON_ANALYSIS (a);
 }

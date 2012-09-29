@@ -55,6 +55,7 @@ enum {
         GIBBON_ANALYSIS_MOVE_DA_EQUITY,
         GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY,
 };
+
 /**
  * GibbonAnalysisMove:
  *
@@ -77,6 +78,10 @@ struct _GibbonAnalysisMove
 
         gboolean ma;
         guint ma_bad;
+        /*
+         * Index of the actual move made into the following move list(s).
+         */
+        guint64 ma_imove;
 
         gboolean da;
         guint da_bad;
