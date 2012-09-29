@@ -78,6 +78,9 @@ struct _GibbonAnalysisMove
 
         gboolean ma;
         guint ma_bad;
+        /* List of GibbonAnalysisMoveRecord objects.  */
+        GSList *ma_records;
+
         /*
          * Index of the actual move made into the following move list(s).
          */

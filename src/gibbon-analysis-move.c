@@ -34,6 +34,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-analysis-move.h"
+#include "gibbon-analysis-move-record.h"
 #include "gibbon-util.h"
 
 typedef struct _GibbonAnalysisMovePrivate GibbonAnalysisMovePrivate;
@@ -84,6 +85,9 @@ gibbon_analysis_move_init (GibbonAnalysisMove *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_ANALYSIS_MOVE, GibbonAnalysisMovePrivate);
 
+        self->ma = FALSE;
+        self->ma_records = NULL;
+
         self->da = FALSE;
         self->da_bad = 0;
         self->da_rollout = FALSE;
@@ -98,6 +102,11 @@ gibbon_analysis_move_init (GibbonAnalysisMove *self)
 static void
 gibbon_analysis_move_finalize (GObject *object)
 {
+        GibbonAnalysisMove *self = GIBBON_ANALYSIS_MOVE (object);
+
+        g_slist_free_full (self->ma_records,
+                           (GDestroyNotify) gibbon_analysis_move_record_free);
+
         G_OBJECT_CLASS (gibbon_analysis_move_parent_class)->finalize (object);
 }
 
