@@ -549,9 +549,15 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
          */
         p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
         p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
-        p_drop = gibbon_met_get_match_equity (met, a->match_length,
-                                              a->cube, a->my_score,
-                                              a->opp_score);
+        if (a->da_take_analysis) {
+                p_drop = gibbon_met_get_match_equity (met, a->match_length,
+                                a->cube, a->opp_score,
+                                a->my_score);
+        } else {
+                p_drop = gibbon_met_get_match_equity (met, a->match_length,
+                                a->cube, a->my_score,
+                                a->opp_score);
+        }
 
         if (a->da_take_analysis)
                 gtk_label_set_text (self->priv->action_1, NULL);
