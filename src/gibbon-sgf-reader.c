@@ -52,6 +52,7 @@
 
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
+#include "gibbon-analysis-move-record.h"
 
 typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
@@ -105,7 +106,8 @@ static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *s
                                                         GibbonPositionSide side);
 static GibbonAnalysis *gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                                         const GSGFNode *node,
-                                                        GibbonPositionSide side);
+                                                        GibbonPositionSide side,
+                                                        guint die1, guint die2);
 static void gibbon_sgf_reader_doubling_analysis (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
@@ -118,6 +120,9 @@ static void gibbon_sgf_reader_doubling_analysis_rollout (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 gchar **tokens);
+GibbonAnalysisMoveRecord *gibbon_sgf_reader_move_analysis_record (
+                const GibbonSGFReader *self, gchar **tokens,
+                guint die1, guint die2);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -535,19 +540,22 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                         movement->to = to;
                 }
                 action = GIBBON_GAME_ACTION (move);
-                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side,
+                                                            dice[0], dice[1]);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_double_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side,
+                                                            0, 0);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side,
+                                                            0, 0);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 /*
                  * Make sure that the may double flag is set.  Otherwise,
@@ -562,7 +570,8 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                         return FALSE;
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
-                analysis = gibbon_sgf_reader_move_analysis (self, node, side);
+                analysis = gibbon_sgf_reader_move_analysis (self, node, side,
+                                                            0, 0);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 /*
                  * Make sure that the may double flag is set.  Otherwise,
@@ -650,8 +659,8 @@ gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
 
 static GibbonAnalysis *
 gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
-                                 const GSGFNode *node,
-                                 GibbonPositionSide side)
+                                 const GSGFNode *node, GibbonPositionSide side,
+                                 guint die1, guint die2)
 {
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
         GSGFProperty *prop;
@@ -663,6 +672,9 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         GSGFText *text;
         const gchar *str_value;
         gchar *endptr;
+        gsize i;
+        GibbonAnalysisMoveRecord *record;
+        gchar **tokens;
 
         pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
@@ -711,7 +723,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
 
         list = GSGF_LIST_OF (gsgf_property_get_value (prop));
         num_items = gsgf_list_of_get_number_of_items (list);
-        if (!num_items)
+        if (num_items < 2)
                 return GIBBON_ANALYSIS (a);
 
         /*
@@ -725,6 +737,25 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         a->ma_imove = g_ascii_strtoull (str_value, &endptr, 10);
         if (errno || !endptr)
                 return GIBBON_ANALYSIS (a);
+
+        for (i = 1; i < num_items; ++i) {
+                text = GSGF_TEXT (gsgf_list_of_get_nth_item (list, i));
+                str_value = gsgf_text_get_value (text);
+                tokens = g_strsplit_set (str_value, " \t\r\n\f\v", 0);
+
+                if (!tokens || !tokens[0]) {
+                        return GIBBON_ANALYSIS (a);
+                }
+                record = gibbon_sgf_reader_move_analysis_record (self,
+                                                                 tokens,
+                                                                 die1, die2);
+                g_strfreev (tokens);
+
+                if (!record)
+                        return GIBBON_ANALYSIS (a);
+
+                a->ma_records = g_slist_append (a->ma_records, record);
+        }
 
         return GIBBON_ANALYSIS (a);
 }
@@ -933,4 +964,175 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
 
         a->da = TRUE;
         a->da_rollout = TRUE;
+}
+
+GibbonAnalysisMoveRecord *
+gibbon_sgf_reader_move_analysis_record (const GibbonSGFReader *self,
+                                        gchar **tokens,
+                                        guint die1, guint die2)
+{
+        gchar *endptr;
+        guint i;
+        guint64 plies;
+        gboolean rollout, cubeful, deterministic, use_prune;
+        gchar *encoded_move;
+        gdouble p[6];
+        gdouble noise;
+        gsize l;
+        GibbonAnalysisMoveRecord *record;
+        GibbonMovement *movement;
+        gint from, to;
+
+        if (15 != g_strv_length (tokens)) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid number of tokens %u in A record.",
+                           g_strv_length (tokens));
+#endif
+                return NULL;
+        }
+        encoded_move = tokens[0];
+        l = strlen (encoded_move);
+        if (l != 2 && l != 4 && l != 6 && l != 8) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid encoded move '%s' in A record.",
+                           encoded_move);
+#endif
+        }
+        for (i = 0; i < l; ++i) {
+                if (encoded_move[i] < 'a' || encoded_move[i] > 'z') {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid encoded move '%s' in A record.",
+                           encoded_move);
+#endif
+                }
+        }
+
+        if (!gibbon_chareq ("E", tokens[1])) {
+                g_message (_("Unsupported move analysis type '%s'."),
+                           tokens[1]);
+                return NULL;
+        }
+
+        rollout = FALSE;
+
+        if (g_strcmp0 ("ver", tokens[2])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'ver' not '%s' in A record.",
+                           tokens[2]);
+#endif
+                return NULL;
+        }
+        if (!gibbon_chareq ("3", tokens[3])) {
+                g_message (_("Unsupported version %s for A property."),
+                           tokens[3]);
+                return NULL;
+        }
+
+        errno = 0;
+        for (i = 0; i < 6; ++i) {
+                p[i] = g_ascii_strtod (tokens[4 + i], &endptr);
+                        if (errno || !endptr) {
+#if GIBBON_SGF_READER_DEBUG
+                                g_message ("Garbage number in A record: %s.",
+                                           tokens[4 + i]);
+#endif
+                                return NULL;
+                        }
+        }
+
+        errno = 0;
+        plies = g_ascii_strtoull (tokens[10], &endptr, 10);
+        if (errno || !endptr)
+                return NULL;
+        if (!*endptr)
+                cubeful = FALSE;
+        else if (gibbon_chareq ("C", endptr))
+                cubeful = TRUE;
+        else
+                return NULL;
+
+        /* Token #11 is always 0.  Ignore it.  */
+
+        if ('1' == tokens[12][0])
+                deterministic = TRUE;
+        else if ('0' == tokens[12][0])
+                deterministic = FALSE;
+        else {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected [01] in det. flag for A not '%s'.",
+                           tokens[12]);
+#endif
+        }
+        if (tokens[12][1]) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected [01] in det. flag for A not '%s'.",
+                           tokens[12]);
+#endif
+                return NULL;
+        }
+
+        errno = 0;
+        noise = g_ascii_strtod (tokens[13], &endptr);
+        if (errno || !endptr) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Garbage number in A record: %s.",
+                           tokens[13]);
+#endif
+                return NULL;
+        }
+
+        if ('1' == tokens[14][0])
+                use_prune = TRUE;
+        else if ('0' == tokens[6][0])
+                use_prune = FALSE;
+        else {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected [01] in prune flag for A not '%s'.",
+                           tokens[14]);
+#endif
+        }
+        if (tokens[14][1]) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected [01] in prune flag for A not '%s'.",
+                           tokens[14]);
+#endif
+                return NULL;
+        }
+
+        record = gibbon_analysis_move_record_new ();
+        record->move = gibbon_move_new (die1, die2, l >> 1);
+        record->move->number = l >> 1;
+        for (i = 0; i < l >> 1; ++i) {
+                movement = record->move->movements + i;
+                from = encoded_move[i] - 'a';
+                to = encoded_move[i + 1] - 'a';
+                if (from == 24) {
+                        if (to < 6)
+                                from = 0;
+                        else
+                                from = 25;
+                } else {
+                        ++from;
+                }
+                if (to == 25) {
+                        if (from <= 6)
+                                to = 0;
+                } else {
+                        ++to;
+                }
+                from = 25 - from;
+                to = 25 - to;
+                movement->from = from;
+                movement->to = to;
+        }
+
+        record->cubeful = cubeful;
+        record->deterministic = deterministic;
+        record->noise = noise;
+        memcpy (record->p, p, sizeof p);
+        record->plies = plies;
+        record->rollout = rollout;
+        record->use_prune = use_prune;
+
+        return record;
 }
