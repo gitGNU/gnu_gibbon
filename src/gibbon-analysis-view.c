@@ -317,6 +317,7 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         const GibbonGameAction *action;
         const GibbonAnalysis *move_analysis = NULL;
         const GibbonAnalysis *roll_analysis = NULL;
+        GtkListStore *store;
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
 
@@ -374,8 +375,10 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 }
         }
 
+        store = gibbon_variant_list_get_store (
+                        GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants);
         gtk_tree_view_set_model (self->priv->variants_view,
-            GTK_TREE_MODEL (GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants));
+                                 GTK_TREE_MODEL (store));
 
         if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
                 /* FIXME! Disable this page! */

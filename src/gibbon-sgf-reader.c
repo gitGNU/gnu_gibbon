@@ -52,7 +52,7 @@
 
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
-#include "gibbon-move-variant.h"
+#include "gibbon-variant-list.h"
 
 typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
@@ -120,9 +120,10 @@ static void gibbon_sgf_reader_doubling_analysis_rollout (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 gchar **tokens);
-GibbonMoveVariant *gibbon_sgf_reader_move_variant (
-                const GibbonSGFReader *self, gchar **tokens,
-                guint die1, guint die2);
+gboolean gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
+                                         GtkTreeIter *iter,
+                                         gchar **tokens,
+                                         guint die1, guint die2);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -673,9 +674,9 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         const gchar *str_value;
         gchar *endptr;
         gsize i;
-        GibbonMoveVariant *variant;
         gchar **tokens;
         GtkTreeIter iter;
+        GtkListStore *store;
 
         pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
@@ -739,11 +740,8 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         if (errno || !endptr)
                 return GIBBON_ANALYSIS (a);
 
-        /*
-         * This is an ultra-simpel tree model.  We just have one column with
-         * our boxed type.
-         */
-        a->ma_variants = gtk_list_store_new (1, GIBBON_TYPE_MOVE_VARIANT);
+        a->ma_variants = gibbon_variant_list_new ();
+        store = gibbon_variant_list_get_store (a->ma_variants);
 
         for (i = 1; i < num_items; ++i) {
                 text = GSGF_TEXT (gsgf_list_of_get_nth_item (list, i));
@@ -753,16 +751,17 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 if (!tokens || !tokens[0]) {
                         return GIBBON_ANALYSIS (a);
                 }
-                variant = gibbon_sgf_reader_move_variant (self, tokens,
-                                                          die1, die2);
-                g_strfreev (tokens);
+                gtk_list_store_append (store, &iter);
+                gtk_list_store_set (store, &iter,
+                                    GIBBON_VARIANT_LIST_COL_NUMBER, i,
+                                    -1);
 
-                if (!variant)
+                if (!gibbon_sgf_reader_move_variant (self, &iter, tokens,
+                                                     die1, die2)) {
+                        g_strfreev (tokens);
                         return GIBBON_ANALYSIS (a);
-
-                gtk_list_store_append (a->ma_variants, &iter);
-                gtk_list_store_set (a->ma_variants, &iter, 0, variant, -1);
-                gibbon_move_variant_free (variant);
+                }
+                g_strfreev (tokens);
         }
 
         return GIBBON_ANALYSIS (a);
@@ -974,8 +973,9 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
         a->da_rollout = TRUE;
 }
 
-GibbonMoveVariant *
-gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
+gboolean
+gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
+                                GtkTreeIter *iter, gchar **tokens,
                                 guint die1, guint die2)
 {
         gchar *endptr;
@@ -986,7 +986,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
         gdouble p[6];
         gdouble noise;
         gsize l;
-        GibbonMoveVariant *variant;
+        GibbonMove *move;
         GibbonMovement *movement;
         gint from, to;
 
@@ -995,7 +995,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 g_message ("Invalid number of tokens %u in A record.",
                            g_strv_length (tokens));
 #endif
-                return NULL;
+                return FALSE;
         }
         encoded_move = tokens[0];
         l = strlen (encoded_move);
@@ -1017,7 +1017,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
         if (!gibbon_chareq ("E", tokens[1])) {
                 g_message (_("Unsupported move analysis type '%s'."),
                            tokens[1]);
-                return NULL;
+                return FALSE;
         }
 
         rollout = FALSE;
@@ -1027,12 +1027,12 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 g_message ("Expected 'ver' not '%s' in A record.",
                            tokens[2]);
 #endif
-                return NULL;
+                return FALSE;
         }
         if (!gibbon_chareq ("3", tokens[3])) {
                 g_message (_("Unsupported version %s for A property."),
                            tokens[3]);
-                return NULL;
+                return FALSE;
         }
 
         errno = 0;
@@ -1043,20 +1043,20 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                                 g_message ("Garbage number in A record: %s.",
                                            tokens[4 + i]);
 #endif
-                                return NULL;
+                                return FALSE;
                         }
         }
 
         errno = 0;
         plies = g_ascii_strtoull (tokens[10], &endptr, 10);
         if (errno || !endptr)
-                return NULL;
+                return FALSE;
         if (!*endptr)
                 cubeful = FALSE;
         else if (gibbon_chareq ("C", endptr))
                 cubeful = TRUE;
         else
-                return NULL;
+                return FALSE;
 
         /* Token #11 is always 0.  Ignore it.  */
 
@@ -1075,7 +1075,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 g_message ("Expected [01] in det. flag for A not '%s'.",
                            tokens[12]);
 #endif
-                return NULL;
+                return FALSE;
         }
 
         errno = 0;
@@ -1085,7 +1085,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 g_message ("Garbage number in A record: %s.",
                            tokens[13]);
 #endif
-                return NULL;
+                return FALSE;
         }
 
         if ('1' == tokens[14][0])
@@ -1103,14 +1103,13 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 g_message ("Expected [01] in prune flag for A not '%s'.",
                            tokens[14]);
 #endif
-                return NULL;
+                return FALSE;
         }
 
-        variant = gibbon_move_variant_new ();
-        variant->move = gibbon_move_new (die1, die2, l >> 1);
-        variant->move->number = l >> 1;
+        move = gibbon_move_new (die1, die2, l >> 1);
+        move->number = l >> 1;
         for (i = 0; i < l >> 1; ++i) {
-                movement = variant->move->movements + i;
+                movement = move->movements + i;
                 from = encoded_move[i] - 'a';
                 to = encoded_move[i + 1] - 'a';
                 if (from == 24) {
@@ -1133,13 +1132,5 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
                 movement->to = to;
         }
 
-        variant->cubeful = cubeful;
-        variant->deterministic = deterministic;
-        variant->noise = noise;
-        memcpy (variant->p, p, sizeof p);
-        variant->plies = plies;
-        variant->rollout = rollout;
-        variant->use_prune = use_prune;
-
-        return variant;
+        return TRUE;
 }

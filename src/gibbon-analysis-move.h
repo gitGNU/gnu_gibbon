@@ -27,6 +27,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-analysis.h"
+#include "gibbon-variant-list.h"
 
 #define GIBBON_TYPE_ANALYSIS_MOVE \
         (gibbon_analysis_move_get_type ())
@@ -83,7 +84,7 @@ struct _GibbonAnalysisMove
          */
         guint64 ma_imove;
         /* List of GibbonAnalysisMoveRecord objects.  */
-        GtkListStore *ma_variants;
+        GibbonVariantList *ma_variants;
 
         gboolean da;
         guint da_bad;
