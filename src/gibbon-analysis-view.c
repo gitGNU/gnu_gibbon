@@ -382,7 +382,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
         gtk_widget_show (GTK_WIDGET (self->priv->button_box));
 
         buf = g_strdup_printf ("%.2f %%",
-                               100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
+                               100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN]);
         if (a->da_take_analysis)
                 gtk_label_set_text (self->priv->cube_lose, buf);
         else
@@ -390,7 +390,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%",
-                         100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
+                         100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]);
         if (a->da_take_analysis)
                 gtk_label_set_text (self->priv->cube_lose_g, buf);
         else
@@ -398,7 +398,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
         g_free (buf);
 
         buf = g_strdup_printf ("%.2f %%",
-                     100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
+                     100 * a->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]);
         if (a->da_take_analysis)
                 gtk_label_set_text (self->priv->cube_lose_bg, buf);
         else
@@ -428,7 +428,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
 
         if (a->da_rollout) {
                 buf = g_strdup_printf ("%.2f %%",
-                                       100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN]);
+                                       100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_PWIN]);
                 if (a->da_take_analysis)
                         gtk_label_set_text (self->priv->cube_lose1, buf);
                 else
@@ -436,7 +436,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%",
-                                 100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]);
+                                 100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]);
                 if (a->da_take_analysis)
                         gtk_label_set_text (self->priv->cube_lose_g1, buf);
                 else
@@ -444,7 +444,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
                 g_free (buf);
 
                 buf = g_strdup_printf ("%.2f %%",
-                             100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]);
+                             100 * a->da_p[1][GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]);
                 if (a->da_take_analysis)
                         gtk_label_set_text (self->priv->cube_lose_bg1, buf);
                 else
@@ -505,7 +505,7 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
 {
         GibbonAnalysisMove *a = self->priv->ma;
         gchar *buf;
-        gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
+        gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_EQUITY];
         const GibbonMET *met;
         gdouble *p;
         gdouble money_equity, mwc;
@@ -515,11 +515,11 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         met = gibbon_app_get_met (self->priv->app);
 
         p = a->da_p[0];
-        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
-            -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
-            + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON]);
+        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN]
+            -1.0f + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
+            + p[GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_PLOSE_GAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON]);
 
         mwc = 100.0f * gibbon_met_eq2mwc (met, equity,
                                           a->match_length,
@@ -547,8 +547,8 @@ gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
         /*
          * Cubeful equities.
          */
-        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
-        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
+        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
         if (a->da_take_analysis) {
                 p_drop = gibbon_met_get_match_equity (met, a->match_length,
                                 a->cube, a->opp_score,
@@ -658,16 +658,16 @@ gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
         gdouble money_equity;
         gdouble p_nodouble, p_take, p_drop, p_optimal;
         gint f = a->da_take_analysis ? -1 : 1;
-        gdouble equity = f * a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_EQUITY];
+        gdouble equity = f * a->da_p[0][GIBBON_ANALYSIS_MOVE_EQUITY];
 
         met = gibbon_app_get_met (self->priv->app);
 
         p = a->da_p[0];
-        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN]
-            -1.0f + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
-            + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON]);
+        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN]
+            -1.0f + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
+            + p[GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_PLOSE_GAMMON]
+            - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON]);
         if (a->match_length > 0) {
                 if (a->da_rollout) {
                         buf = g_strdup_printf (
@@ -702,8 +702,8 @@ gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
         /*
          * Cubeful equities.
          */
-        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
-        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_DA_CUBEFUL_EQUITY];
+        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
+        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
 
         if (a->da_take_analysis) {
                 p_nodouble = gibbon_met_mwc2eq (met, p_nodouble,

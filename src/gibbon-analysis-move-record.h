@@ -50,8 +50,8 @@ struct _GibbonAnalysisMoveRecord
         gboolean use_prune;
 
         /*
-         * You can use the constants GIBBON_ANALYSIS_MOVE_DA_PWIN to
-         * GIBBON_ANALYSIS_MOVE_DA_EQUITY for indexes into this array.
+         * You can use the constants GIBBON_ANALYSIS_MOVE_PWIN to
+         * GIBBON_ANALYSIS_MOVE_EQUITY for indexes into this array.
          */
         gdouble p[6];
 };

@@ -195,7 +195,7 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                         is_optional = GIBBON_ANALYSIS_MOVE_IS_OPTIONAL (eq_drop,
                                                                         eq_nodouble);
                         if (is_optional &&
-                            self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
+                            self->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
                             > 0.0f
                             && (self->match_length > 0 || self->opp_may_double
                                 || !self->jacoby))
@@ -211,7 +211,7 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                 /* No double.  */
                 if (eq_nodouble > eq_take) {
                         if (eq_take > eq_drop) {
-                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]) {
+                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]) {
                                         return self->cube < 2 ?
                                                 GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS
                                                 : GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS;
@@ -221,7 +221,7 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                                                 : GIBBON_ANALYSIS_MOVE_CD_REDOUBLE_PASS;
                                 }
                         } else if (eq_nodouble > eq_drop) {
-                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]) {
+                                if (self->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]) {
                                         return self->cube < 2 ?
                                                 GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_TAKE
                                                 : GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_TAKE;
@@ -245,7 +245,7 @@ _gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                                                 GIBBON_ANALYSIS_MOVE_CD_NO_REDOUBLE_TAKE;
                         }
                 } else {
-                        if (self->da_p[0][GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON])
+                        if (self->da_p[0][GIBBON_ANALYSIS_MOVE_PWIN_GAMMON])
                                 return self->cube < 2 ?
                                         GIBBON_ANALYSIS_MOVE_CD_TOOGOOD_PASS :
                                         GIBBON_ANALYSIS_MOVE_CD_TOOGOODRE_PASS;

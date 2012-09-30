@@ -273,10 +273,10 @@ gibbon_chareq (const char *str1, const char *str2)
 gdouble
 gibbon_money_equity (const gdouble p[7])
 {
-        return 2.0f * p[GIBBON_ANALYSIS_MOVE_DA_PWIN] - 1.0f
-                        + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_GAMMON]
-                        + p[GIBBON_ANALYSIS_MOVE_DA_PWIN_BACKGAMMON]
-                        - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_GAMMON]
-                        - p[GIBBON_ANALYSIS_MOVE_DA_PLOSE_BACKGAMMON];
+        return 2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN] - 1.0f
+                        + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
+                        + p[GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]
+                        - p[GIBBON_ANALYSIS_MOVE_PLOSE_GAMMON]
+                        - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON];
 
 }
