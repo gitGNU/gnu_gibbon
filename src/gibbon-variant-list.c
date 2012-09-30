@@ -88,6 +88,7 @@ gibbon_variant_list_new ()
         store = gtk_list_store_new (GIBBON_INVITER_LIST_N_COLUMNS,
                                     G_TYPE_UINT,
                                     G_TYPE_UINT,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING);
 
         self->priv->store = store;

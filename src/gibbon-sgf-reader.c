@@ -123,6 +123,8 @@ static void gibbon_sgf_reader_doubling_analysis_rollout (
 gboolean gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                                          GtkListStore *store, GtkTreeIter *iter,
                                          gchar **tokens,
+                                         const GibbonPosition *pos,
+                                         GibbonPositionSide side,
                                          guint die1, guint die2);
 
 static void 
@@ -763,6 +765,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                     -1);
 
                 if (!gibbon_sgf_reader_move_variant (self, store, &iter, tokens,
+                                                     pos, side,
                                                      die1, die2)) {
                         g_strfreev (tokens);
                         return GIBBON_ANALYSIS (a);
@@ -983,6 +986,8 @@ gboolean
 gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                                 GtkListStore *store, GtkTreeIter *iter,
                                 gchar **tokens,
+                                const GibbonPosition *pos,
+                                GibbonPositionSide side,
                                 guint die1, guint die2)
 {
         gchar *endptr;
@@ -997,6 +1002,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         GibbonMovement *movement;
         gint from, to;
         gchar *analysis_type;
+        gchar *formatted_move;
 
         if (15 != g_strv_length (tokens)) {
 #if GIBBON_SGF_READER_DEBUG
@@ -1147,10 +1153,15 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                 analysis_type = g_strdup_printf (_("Cubeless %llu-ply"),
                                 (unsigned long long) plies);
 
+        formatted_move = gibbon_position_format_move (pos, move, side, FALSE);
+
         gtk_list_store_set (store, iter,
                             GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                             analysis_type,
+                            GIBBON_VARIANT_LIST_COL_MOVE, formatted_move,
                             -1);
+        g_free (analysis_type);
+        g_free (formatted_move);
 
         return TRUE;
 }

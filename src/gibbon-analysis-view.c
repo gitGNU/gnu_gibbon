@@ -300,11 +300,20 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "variants-view",
                                       GTK_TYPE_TREE_VIEW);
         self->priv->variants_view = GTK_TREE_VIEW (obj);
+
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
                         -1, NULL, renderer,
                         "text", GIBBON_VARIANT_LIST_COL_NUMBER,
+                        "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
+                        NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (
+                        self->priv->variants_view,
+                        -1, NULL, renderer,
+                        "text", GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                         "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
                         NULL);
 
