@@ -32,7 +32,8 @@
 #include "gibbon-analysis-move-record.h"
 
 G_DEFINE_BOXED_TYPE (GibbonAnalysisMoveRecord, gibbon_analysis_move_record,  \
-                     NULL, gibbon_analysis_move_record_free)
+                     gibbon_analysis_move_record_copy,
+                     gibbon_analysis_move_record_free)
 
 GibbonAnalysisMoveRecord *
 gibbon_analysis_move_record_new (void)
@@ -52,4 +53,19 @@ gibbon_analysis_move_record_free (GibbonAnalysisMoveRecord *self)
                         g_object_unref (self->move);
                 g_free (self);
         }
+}
+
+GibbonAnalysisMoveRecord *
+gibbon_analysis_move_record_copy (const GibbonAnalysisMoveRecord *self)
+{
+        GibbonAnalysisMoveRecord *copy;
+
+        g_return_val_if_fail (self != NULL, NULL);
+
+        copy = gibbon_analysis_move_record_new ();
+        *copy = *self;
+        if (self->move)
+                copy->move = gibbon_move_copy (self->move);
+
+        return copy;
 }

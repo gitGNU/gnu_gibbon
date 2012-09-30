@@ -60,5 +60,7 @@ GType gibbon_analysis_move_record_get_type (void) G_GNUC_CONST;
 
 GibbonAnalysisMoveRecord *gibbon_analysis_move_record_new (void);
 void gibbon_analysis_move_record_free (GibbonAnalysisMoveRecord *self);
+GibbonAnalysisMoveRecord *gibbon_analysis_move_record_copy (
+                const GibbonAnalysisMoveRecord *self);
 
 #endif
