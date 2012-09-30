@@ -49,6 +49,7 @@ struct _GibbonAnalysisViewPrivate {
         GtkBox *detail_box;
         GtkNotebook *notebook;
         GtkButtonBox *button_box;
+        GtkTreeView *variants_view;
 
         GtkLabel *move_summary;
         GtkLabel *cube_summary;
@@ -110,6 +111,7 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
         self->priv->detail_box = NULL;
         self->priv->notebook = NULL;
         self->priv->button_box = NULL;
+        self->priv->variants_view = NULL;
 
         self->priv->move_summary = NULL;
         self->priv->cube_summary = NULL;
@@ -176,6 +178,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                                  NULL);
         GObject *obj;
         GSettings *settings;
+        GtkCellRenderer *renderer;
 
         self->priv->app = app;
 
@@ -294,6 +297,15 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                   gibbon_analysis_view_on_toggle_show_mwc,
                                   self);
 
+        obj = gibbon_app_find_object (app, "variants-view",
+                                      GTK_TYPE_TREE_VIEW);
+        self->priv->variants_view = GTK_TREE_VIEW (obj);
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (self->priv->variants_view,
+                                                     -1, NULL, renderer,
+                                                     "text", 0,
+                                                     NULL);
+
         return self;
 }
 
@@ -361,6 +373,9 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                         gtk_notebook_set_current_page (self->priv->notebook, 1);
                 }
         }
+
+        gtk_tree_view_set_model (self->priv->variants_view,
+            GTK_TREE_MODEL (GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants));
 
         if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
                 /* FIXME! Disable this page! */
