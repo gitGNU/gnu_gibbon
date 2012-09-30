@@ -121,7 +121,7 @@ static void gibbon_sgf_reader_doubling_analysis_rollout (
                 GibbonAnalysisMove *analysis,
                 gchar **tokens);
 gboolean gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
-                                         GtkTreeIter *iter,
+                                         GtkListStore *store, GtkTreeIter *iter,
                                          gchar **tokens,
                                          guint die1, guint die2);
 
@@ -762,7 +762,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                     GIBBON_VARIANT_LIST_COL_WEIGHT, weight,
                                     -1);
 
-                if (!gibbon_sgf_reader_move_variant (self, &iter, tokens,
+                if (!gibbon_sgf_reader_move_variant (self, store, &iter, tokens,
                                                      die1, die2)) {
                         g_strfreev (tokens);
                         return GIBBON_ANALYSIS (a);
@@ -981,7 +981,8 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
 
 gboolean
 gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
-                                GtkTreeIter *iter, gchar **tokens,
+                                GtkListStore *store, GtkTreeIter *iter,
+                                gchar **tokens,
                                 guint die1, guint die2)
 {
         gchar *endptr;
@@ -995,6 +996,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         GibbonMove *move;
         GibbonMovement *movement;
         gint from, to;
+        gchar *analysis_type;
 
         if (15 != g_strv_length (tokens)) {
 #if GIBBON_SGF_READER_DEBUG
@@ -1137,6 +1139,18 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                 movement->from = from;
                 movement->to = to;
         }
+
+        if (cubeful)
+                analysis_type = g_strdup_printf (_("Cubeful %llu-ply"),
+                                (unsigned long long) plies);
+        else
+                analysis_type = g_strdup_printf (_("Cubeless %llu-ply"),
+                                (unsigned long long) plies);
+
+        gtk_list_store_set (store, iter,
+                            GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
+                            analysis_type,
+                            -1);
 
         return TRUE;
 }
