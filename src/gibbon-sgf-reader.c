@@ -675,6 +675,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         gsize i;
         GibbonAnalysisMoveRecord *record;
         gchar **tokens;
+        GtkTreeIter iter;
 
         pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
@@ -738,6 +739,12 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         if (errno || !endptr)
                 return GIBBON_ANALYSIS (a);
 
+        /*
+         * This is an ultra-simpel tree model.  We just have one column with
+         * our boxed type.
+         */
+        a->ma_variants = gtk_list_store_new (1, GIBBON_TYPE_ANALYSIS_MOVE_RECORD);
+
         for (i = 1; i < num_items; ++i) {
                 text = GSGF_TEXT (gsgf_list_of_get_nth_item (list, i));
                 str_value = gsgf_text_get_value (text);
@@ -754,7 +761,9 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 if (!record)
                         return GIBBON_ANALYSIS (a);
 
-                a->ma_records = g_slist_append (a->ma_records, record);
+                gtk_list_store_append (a->ma_variants, &iter);
+                gtk_list_store_set (a->ma_variants, &iter, 0, record, -1);
+                gibbon_analysis_move_record_free (record);
         }
 
         return GIBBON_ANALYSIS (a);

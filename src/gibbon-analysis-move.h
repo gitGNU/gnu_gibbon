@@ -24,8 +24,7 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gibbon-analysis.h"
 
@@ -78,13 +77,13 @@ struct _GibbonAnalysisMove
 
         gboolean ma;
         guint ma_bad;
-        /* List of GibbonAnalysisMoveRecord objects.  */
-        GSList *ma_records;
 
         /*
          * Index of the actual move made into the following move list(s).
          */
         guint64 ma_imove;
+        /* List of GibbonAnalysisMoveRecord objects.  */
+        GtkListStore *ma_variants;
 
         gboolean da;
         guint da_bad;
