@@ -29,16 +29,16 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include "gibbon-analysis-move-record.h"
+#include "gibbon-move-variant.h"
 
-G_DEFINE_BOXED_TYPE (GibbonAnalysisMoveRecord, gibbon_analysis_move_record,  \
-                     gibbon_analysis_move_record_copy,
-                     gibbon_analysis_move_record_free)
+G_DEFINE_BOXED_TYPE (GibbonMoveVariant, gibbon_move_variant,  \
+                     gibbon_move_variant_copy,
+                     gibbon_move_variant_free)
 
-GibbonAnalysisMoveRecord *
-gibbon_analysis_move_record_new (void)
+GibbonMoveVariant *
+gibbon_move_variant_new (void)
 {
-        GibbonAnalysisMoveRecord *self;
+        GibbonMoveVariant *self;
 
         self = g_malloc0 (sizeof *self);
 
@@ -46,7 +46,7 @@ gibbon_analysis_move_record_new (void)
 }
 
 void
-gibbon_analysis_move_record_free (GibbonAnalysisMoveRecord *self)
+gibbon_move_variant_free (GibbonMoveVariant *self)
 {
         if (self) {
                 if (self->move)
@@ -55,14 +55,14 @@ gibbon_analysis_move_record_free (GibbonAnalysisMoveRecord *self)
         }
 }
 
-GibbonAnalysisMoveRecord *
-gibbon_analysis_move_record_copy (const GibbonAnalysisMoveRecord *self)
+GibbonMoveVariant *
+gibbon_move_variant_copy (const GibbonMoveVariant *self)
 {
-        GibbonAnalysisMoveRecord *copy;
+        GibbonMoveVariant *copy;
 
         g_return_val_if_fail (self != NULL, NULL);
 
-        copy = gibbon_analysis_move_record_new ();
+        copy = gibbon_move_variant_new ();
         *copy = *self;
         if (self->move)
                 copy->move = gibbon_move_copy (self->move);

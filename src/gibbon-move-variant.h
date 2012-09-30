@@ -17,8 +17,8 @@
  * along with gibbon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GIBBON_ANALYSIS_MOVE_RECORD_H
-# define _GIBBON_ANALYSIS_MOVE_RECORD_H
+#ifndef _GIBBON_MOVE_VARIANT_H
+# define _GIBBON_MOVE_VARIANT_H
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -29,16 +29,16 @@
 
 #include "gibbon-move.h"
 
-#define GIBBON_TYPE_ANALYSIS_MOVE_RECORD \
-        (gibbon_analysis_move_record_get_type ())
+#define GIBBON_TYPE_MOVE_VARIANT \
+        (gibbon_move_variant_get_type ())
 
 /**
- * GibbonAnalysisMoveRecord:
+ * GibbonMoveVariant:
  *
  * Boxed type for a move analysis record.
  */
-typedef struct _GibbonAnalysisMoveRecord GibbonAnalysisMoveRecord;
-struct _GibbonAnalysisMoveRecord
+typedef struct _GibbonMoveVariant GibbonMoveVariant;
+struct _GibbonMoveVariant
 {
         GibbonMove *move;
 
@@ -56,11 +56,10 @@ struct _GibbonAnalysisMoveRecord
         gdouble p[6];
 };
 
-GType gibbon_analysis_move_record_get_type (void) G_GNUC_CONST;
+GType gibbon_move_variant_get_type (void) G_GNUC_CONST;
 
-GibbonAnalysisMoveRecord *gibbon_analysis_move_record_new (void);
-void gibbon_analysis_move_record_free (GibbonAnalysisMoveRecord *self);
-GibbonAnalysisMoveRecord *gibbon_analysis_move_record_copy (
-                const GibbonAnalysisMoveRecord *self);
+GibbonMoveVariant *gibbon_move_variant_new (void);
+void gibbon_move_variant_free (GibbonMoveVariant *self);
+GibbonMoveVariant *gibbon_move_variant_copy (const GibbonMoveVariant *self);
 
 #endif

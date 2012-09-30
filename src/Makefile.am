@@ -94,7 +94,7 @@ common_SOURCES = 			\
 	gibbon-analysis-roll.c		\
 	gibbon-analysis-move.c		\
 	gibbon-met.c			\
-	gibbon-analysis-move-record.c	
+	gibbon-move-variant.c	
 
 AM_YFLAGS = -d -v
 
@@ -217,7 +217,7 @@ noinst_HEADERS =			\
 	gibbon-analysis-move.h		\
 	gibbon-analysis-view.h		\
 	gibbon-met.h			\
-	gibbon-analysis-move-record.h
+	gibbon-move-variant.h
 
 # These dependencies are not automatically detected by GNU autotools.
 # See https://savannah.nongnu.org/bugs/?35578.

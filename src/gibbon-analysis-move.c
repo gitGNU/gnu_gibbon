@@ -34,7 +34,6 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-analysis-move.h"
-#include "gibbon-analysis-move-record.h"
 #include "gibbon-util.h"
 
 typedef struct _GibbonAnalysisMovePrivate GibbonAnalysisMovePrivate;

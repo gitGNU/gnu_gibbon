@@ -52,7 +52,7 @@
 
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
-#include "gibbon-analysis-move-record.h"
+#include "gibbon-move-variant.h"
 
 typedef struct _GibbonSGFReaderPrivate GibbonSGFReaderPrivate;
 struct _GibbonSGFReaderPrivate {
@@ -120,7 +120,7 @@ static void gibbon_sgf_reader_doubling_analysis_rollout (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
                 gchar **tokens);
-GibbonAnalysisMoveRecord *gibbon_sgf_reader_move_analysis_record (
+GibbonMoveVariant *gibbon_sgf_reader_move_variant (
                 const GibbonSGFReader *self, gchar **tokens,
                 guint die1, guint die2);
 
@@ -673,7 +673,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         const gchar *str_value;
         gchar *endptr;
         gsize i;
-        GibbonAnalysisMoveRecord *record;
+        GibbonMoveVariant *variant;
         gchar **tokens;
         GtkTreeIter iter;
 
@@ -743,7 +743,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
          * This is an ultra-simpel tree model.  We just have one column with
          * our boxed type.
          */
-        a->ma_variants = gtk_list_store_new (1, GIBBON_TYPE_ANALYSIS_MOVE_RECORD);
+        a->ma_variants = gtk_list_store_new (1, GIBBON_TYPE_MOVE_VARIANT);
 
         for (i = 1; i < num_items; ++i) {
                 text = GSGF_TEXT (gsgf_list_of_get_nth_item (list, i));
@@ -753,17 +753,16 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 if (!tokens || !tokens[0]) {
                         return GIBBON_ANALYSIS (a);
                 }
-                record = gibbon_sgf_reader_move_analysis_record (self,
-                                                                 tokens,
-                                                                 die1, die2);
+                variant = gibbon_sgf_reader_move_variant (self, tokens,
+                                                          die1, die2);
                 g_strfreev (tokens);
 
-                if (!record)
+                if (!variant)
                         return GIBBON_ANALYSIS (a);
 
                 gtk_list_store_append (a->ma_variants, &iter);
-                gtk_list_store_set (a->ma_variants, &iter, 0, record, -1);
-                gibbon_analysis_move_record_free (record);
+                gtk_list_store_set (a->ma_variants, &iter, 0, variant, -1);
+                gibbon_move_variant_free (variant);
         }
 
         return GIBBON_ANALYSIS (a);
@@ -975,10 +974,9 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
         a->da_rollout = TRUE;
 }
 
-GibbonAnalysisMoveRecord *
-gibbon_sgf_reader_move_analysis_record (const GibbonSGFReader *self,
-                                        gchar **tokens,
-                                        guint die1, guint die2)
+GibbonMoveVariant *
+gibbon_sgf_reader_move_variant (const GibbonSGFReader *self, gchar **tokens,
+                                guint die1, guint die2)
 {
         gchar *endptr;
         guint i;
@@ -988,7 +986,7 @@ gibbon_sgf_reader_move_analysis_record (const GibbonSGFReader *self,
         gdouble p[6];
         gdouble noise;
         gsize l;
-        GibbonAnalysisMoveRecord *record;
+        GibbonMoveVariant *variant;
         GibbonMovement *movement;
         gint from, to;
 
@@ -1108,11 +1106,11 @@ gibbon_sgf_reader_move_analysis_record (const GibbonSGFReader *self,
                 return NULL;
         }
 
-        record = gibbon_analysis_move_record_new ();
-        record->move = gibbon_move_new (die1, die2, l >> 1);
-        record->move->number = l >> 1;
+        variant = gibbon_move_variant_new ();
+        variant->move = gibbon_move_new (die1, die2, l >> 1);
+        variant->move->number = l >> 1;
         for (i = 0; i < l >> 1; ++i) {
-                movement = record->move->movements + i;
+                movement = variant->move->movements + i;
                 from = encoded_move[i] - 'a';
                 to = encoded_move[i + 1] - 'a';
                 if (from == 24) {
@@ -1135,13 +1133,13 @@ gibbon_sgf_reader_move_analysis_record (const GibbonSGFReader *self,
                 movement->to = to;
         }
 
-        record->cubeful = cubeful;
-        record->deterministic = deterministic;
-        record->noise = noise;
-        memcpy (record->p, p, sizeof p);
-        record->plies = plies;
-        record->rollout = rollout;
-        record->use_prune = use_prune;
+        variant->cubeful = cubeful;
+        variant->deterministic = deterministic;
+        variant->noise = noise;
+        memcpy (variant->p, p, sizeof p);
+        variant->plies = plies;
+        variant->rollout = rollout;
+        variant->use_prune = use_prune;
 
-        return record;
+        return variant;
 }
