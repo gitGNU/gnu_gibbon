@@ -677,6 +677,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         gchar **tokens;
         GtkTreeIter iter;
         GtkListStore *store;
+        PangoWeight weight;
 
         pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
@@ -752,8 +753,13 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                         return GIBBON_ANALYSIS (a);
                 }
                 gtk_list_store_append (store, &iter);
+
+                weight = (i == a->ma_imove + 1) ?
+                                PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL;
+
                 gtk_list_store_set (store, &iter,
                                     GIBBON_VARIANT_LIST_COL_NUMBER, i,
+                                    GIBBON_VARIANT_LIST_COL_WEIGHT, weight,
                                     -1);
 
                 if (!gibbon_sgf_reader_move_variant (self, &iter, tokens,
