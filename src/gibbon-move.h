@@ -122,4 +122,14 @@ GibbonMove *gibbon_move_newv (gint die1, gint die2, ...);
 
 GibbonMove *gibbon_move_copy (const GibbonMove *self);
 
+/*
+ * Bring the movements in a consistent order.  The sorting order (ascending
+ * vs. descending) depends on the move direction:  Movements with the
+ * rearmost checkers are always sorted first.  If two movements use the same
+ * starting point, the short mover is sorted before the longer one.
+ *
+ * the The direction of the move is deduced from the first checker movement.
+ */
+void gibbon_move_sort (GibbonMove *self);
+
 #endif

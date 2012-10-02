@@ -29,9 +29,14 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <stdlib.h>
+
 #include "gibbon-move.h"
 
 G_DEFINE_TYPE (GibbonMove, gibbon_move, GIBBON_TYPE_GAME_ACTION)
+
+static int gibbon_move_cmp_forward (const void *_a, const void *_b);
+static int gibbon_move_cmp_reverse (const void *_a, const void *_b);
 
 static void 
 gibbon_move_init (GibbonMove *self)
@@ -142,4 +147,56 @@ gibbon_move_copy (const GibbonMove *self)
         }
 
         return copy;
+}
+
+void
+gibbon_move_sort (GibbonMove *self)
+{
+        g_return_if_fail (GIBBON_IS_MOVE (self));
+
+        if (!self->movements)
+                return;
+
+        if (self->movements[0].from < self->movements[0].to)
+                qsort (self->movements, self->number, sizeof self->movements[0],
+                       gibbon_move_cmp_forward);
+        else
+                qsort (self->movements, self->number, sizeof self->movements[0],
+                       gibbon_move_cmp_reverse);
+}
+
+static int
+gibbon_move_cmp_forward (const void *_a, const void *_b)
+{
+        const GibbonMovement *a = (const GibbonMovement *) _a;
+        const GibbonMovement *b = (const GibbonMovement *) _b;
+
+        if (a->from < b->from)
+                return -1;
+        else if (a->from > b->from)
+                return 1;
+        else if (a->to < b->to)
+                return -1;
+        else if (a->to > b->to)
+                return 1;
+        else
+                return 0;
+}
+
+static int
+gibbon_move_cmp_reverse (const void *_a, const void *_b)
+{
+        const GibbonMovement *a = (const GibbonMovement *) _a;
+        const GibbonMovement *b = (const GibbonMovement *) _b;
+
+        if (a->from > b->from)
+                return -1;
+        else if (a->from < b->from)
+                return 1;
+        else if (a->to > b->to)
+                return -1;
+        else if (a->to < b->to)
+                return 1;
+        else
+                return 0;
 }
