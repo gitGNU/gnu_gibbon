@@ -668,8 +668,9 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
         GSGFProperty *prop;
         GSGFDouble *gsgf_double;
-        const GibbonPosition *pos;
         const GibbonGame *game;
+        gsize num_actions;
+        const GibbonPosition *pos;
         GSGFListOf *list;
         gsize num_items;
         GSGFText *text;
@@ -681,8 +682,12 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         GtkListStore *store;
         PangoWeight weight;
 
-        pos = gibbon_match_get_current_position (self->priv->match);
         game = gibbon_match_get_current_game (self->priv->match);
+        num_actions = gibbon_game_get_num_actions (game);
+        if (num_actions)
+                pos = gibbon_game_get_nth_position (game, num_actions - 1);
+        else
+                pos = gibbon_game_get_initial_position (game);
 
         a->match_length = gibbon_match_get_length (self->priv->match);
         a->cube = pos->cube;
@@ -997,7 +1002,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         gchar *encoded_move;
         gdouble p[6];
         gdouble noise;
-        gsize l;
+        gsize l, num_movements;
         GibbonMove *move;
         GibbonMovement *movement;
         gint from, to;
@@ -1120,12 +1125,13 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                 return FALSE;
         }
 
-        move = gibbon_move_new (die1, die2, l >> 1);
-        move->number = l >> 1;
-        for (i = 0; i < l >> 1; ++i) {
+        num_movements = l >> 1;
+        move = gibbon_move_new (die1, die2, num_movements);
+        move->number = num_movements;
+        for (i = 0; i < num_movements; ++i) {
                 movement = move->movements + i;
-                from = encoded_move[i] - 'a';
-                to = encoded_move[i + 1] - 'a';
+                from = encoded_move[2 * i] - 'a';
+                to = encoded_move[2 * i + 1] - 'a';
                 if (from == 24) {
                         if (to < 6)
                                 from = 0;
