@@ -71,3 +71,7 @@
 - Check the desctructor of GibbonApp.  More objects should be destroyed.
 - The query tooltips in the move list view do not get displayed.  Maybe
   because of the multi-column stuff?
+- In the test 7pointer, game #9, move #8, this move is formatted
+  incorrectly:
+     
+      22: 13/11(2) 23(21) 13/11
