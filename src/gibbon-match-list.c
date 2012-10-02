@@ -303,7 +303,7 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         GibbonPositionSide side;
         const GibbonGameAction *action;
         const GibbonGameAction *last_action = NULL;
-        const GibbonPosition *pos;
+        const GibbonPosition *pos, *last_pos;
         const GibbonAnalysis *analysis;
         GtkTreeIter iter;
         gint moveno;
@@ -391,9 +391,14 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                                             -1);
                 }
         } else if (GIBBON_IS_MOVE (action)) {
+                if (action_no)
+                        last_pos = gibbon_game_get_nth_position (game,
+                                                                 action_no - 1);
+                else
+                        last_pos = gibbon_game_get_initial_position (game);
                 text = gibbon_match_list_format_move (self,
                                                       GIBBON_MOVE (action),
-                                                      side, pos);
+                                                      side, last_pos);
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_DOUBLE (action)) {
                 text = gibbon_match_list_format_double (self, pos);
