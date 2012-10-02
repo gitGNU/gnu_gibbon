@@ -542,6 +542,8 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
                         movement->from = from;
                         movement->to = to;
                 }
+                gibbon_move_sort (move);
+
                 action = GIBBON_GAME_ACTION (move);
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side,
                                                             dice[0], dice[1]);
@@ -1151,6 +1153,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                 movement->from = from;
                 movement->to = to;
         }
+        gibbon_move_sort (move);
 
         if (cubeful)
                 analysis_type = g_strdup_printf (_("Cubeful %llu-ply"),
