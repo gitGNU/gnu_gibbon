@@ -48,6 +48,7 @@ struct _GibbonAnalysisViewPrivate {
 
         GtkBox *detail_box;
         GtkNotebook *notebook;
+        gboolean notebook_sized;
         GtkButtonBox *button_box;
         GtkTreeView *variants_view;
 
@@ -110,6 +111,7 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
 
         self->priv->detail_box = NULL;
         self->priv->notebook = NULL;
+        self->priv->notebook_sized = FALSE;
         self->priv->button_box = NULL;
         self->priv->variants_view = NULL;
 
@@ -339,8 +341,24 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         GibbonAnalysisMove *move_analysis = NULL;
         GtkListStore *store;
         GtkWidget *cube_page, *move_page;
+        GtkAllocation alloc;
+        GtkWidget *nbw;
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+
+        /*
+         * Set the minimum size of the notebook so that it can accommodate the
+         * cube decision page of the notebook, no matter whether we display
+         * a cube analysis or not.
+         */
+        if (!self->priv->notebook_sized
+            && gtk_widget_get_realized (GTK_WIDGET (self->priv->notebook))) {
+                nbw = GTK_WIDGET (self->priv->notebook);
+                gtk_widget_show (nbw);
+                gtk_widget_get_allocation (nbw, &alloc);
+                gtk_widget_set_size_request (nbw, alloc.width, alloc.height);
+                self->priv->notebook_sized = TRUE;
+        }
 
         if (action_number < 0) {
                 gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
