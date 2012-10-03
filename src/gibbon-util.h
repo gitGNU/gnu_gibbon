@@ -49,7 +49,7 @@ enum GibbonClientType gibbon_get_client_type (const gchar *client_name,
 void gibbon_safe_object_unref (gpointer data);
 gboolean gibbon_chareq (const char *str1, const char *str2);
 
-gdouble gibbon_money_equity (const gdouble p[7]);
+gdouble gibbon_money_equity (const gdouble p[5]);
 
 G_END_DECLS
 

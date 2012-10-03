@@ -271,7 +271,7 @@ gibbon_chareq (const char *str1, const char *str2)
 }
 
 gdouble
-gibbon_money_equity (const gdouble p[7])
+gibbon_money_equity (const gdouble p[5])
 {
         return 2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN] - 1.0f
                         + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
