@@ -67,3 +67,4 @@
 - Make sure that src/test-match-complete does not leak memory.
 - gibbon_player_list_column_types and similar arrays seem to be unneeded.
 - Check the desctructor of GibbonApp.  More objects should be destroyed.
+- This move gets displayed incorrectly: 55: 16/6/1 8/3.
