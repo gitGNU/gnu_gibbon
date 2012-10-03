@@ -394,7 +394,8 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 }
         }
 
-        if (GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants) {
+        if (move_analysis
+            && GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants) {
                 store = gibbon_variant_list_get_store (
                         GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants);
                 gtk_tree_view_set_model (self->priv->variants_view,
@@ -404,7 +405,7 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         }
 
         if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
-                /* FIXME! Disable this page! */
+                /* FIXME! Disable the cube analysis page! */
         }
 }
 
