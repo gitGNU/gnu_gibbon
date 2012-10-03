@@ -825,7 +825,7 @@ gibbon_game_get_nth_position (const GibbonGame *self, gint n)
                 return NULL;
 }
 
-const GibbonAnalysis *
+GibbonAnalysis *
 gibbon_game_get_nth_analysis (const GibbonGame *self, gint n)
 {
         const GibbonGameSnapshot *snapshot;

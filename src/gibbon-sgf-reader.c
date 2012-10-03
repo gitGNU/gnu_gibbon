@@ -780,6 +780,8 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                 g_strfreev (tokens);
         }
 
+        a->ma = TRUE;
+
         return GIBBON_ANALYSIS (a);
 }
 

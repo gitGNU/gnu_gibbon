@@ -334,9 +334,11 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
 {
         gint i;
         const GibbonGameAction *action;
-        const GibbonAnalysis *move_analysis = NULL;
-        const GibbonAnalysis *roll_analysis = NULL;
+        GibbonAnalysis *analysis;
+        GibbonAnalysisRoll *roll_analysis = NULL;
+        GibbonAnalysisMove *move_analysis = NULL;
         GtkListStore *store;
+        GtkWidget *cube_page, *move_page;
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
 
@@ -349,7 +351,8 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         for (i = action_number; i >= 0; --i) {
                 action = gibbon_game_get_nth_action (game, i, NULL);
                 if (GIBBON_IS_ROLL (action)) {
-                        roll_analysis = gibbon_game_get_nth_analysis (game, i);
+                        analysis = gibbon_game_get_nth_analysis (game, i);
+                        roll_analysis = GIBBON_ANALYSIS_ROLL (analysis);
                         break;
                 }
         }
@@ -363,7 +366,8 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                     || GIBBON_IS_DOUBLE (action)
                     || GIBBON_IS_TAKE (action)
                     || GIBBON_IS_DROP (action)) {
-                        move_analysis = gibbon_game_get_nth_analysis (game, i);
+                        analysis = gibbon_game_get_nth_analysis (game, i);
+                        move_analysis = GIBBON_ANALYSIS_MOVE (analysis);
                         break;
                 }
         }
@@ -375,42 +379,51 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 gtk_widget_hide (GTK_WIDGET (self->priv->detail_box));
         }
 
-        if (move_analysis) {
-                gibbon_analysis_view_set_move (self, GIBBON_ANALYSIS_MOVE (
-                                move_analysis));
-        } else {
+        if (!move_analysis) {
                 gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
                 gtk_widget_hide (GTK_WIDGET (self->priv->button_box));
+                return;
         }
+
+        gibbon_analysis_view_set_move (self, move_analysis);
 
         action = gibbon_game_get_nth_action (game, action_number, NULL);
         if (action) {
                 if (GIBBON_IS_ROLL (action) && roll_analysis
                     && move_analysis
-                    && GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
+                    && move_analysis->da) {
                         gtk_notebook_set_current_page (self->priv->notebook, 0);
                 } else if (move_analysis) {
                         gtk_notebook_set_current_page (self->priv->notebook, 1);
                 }
         }
 
-        if (move_analysis
-            && GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants) {
+        if (move_analysis->ma_variants) {
                 store = gibbon_variant_list_get_store (
-                        GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants);
+                                move_analysis->ma_variants);
                 gtk_tree_view_set_model (self->priv->variants_view,
                                          GTK_TREE_MODEL (store));
         } else {
                 gtk_tree_view_set_model (self->priv->variants_view, NULL);
         }
 
-        if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
-                /* FIXME! Disable the cube analysis page! */
+        cube_page = gtk_notebook_get_nth_page (self->priv->notebook, 0);
+        move_page = gtk_notebook_get_nth_page (self->priv->notebook, 1);
+        if (move_analysis->ma && move_analysis->da) {
+                gtk_widget_show (cube_page);
+                gtk_widget_show (move_page);
+        } else if (move_analysis->ma) {
+                gtk_widget_hide (cube_page);
+                gtk_widget_show (move_page);
+        } else {
+                gtk_widget_show (cube_page);
+                gtk_widget_hide (move_page);
         }
 }
 
 static void
-gibbon_analysis_view_set_move (GibbonAnalysisView *self, GibbonAnalysisMove *a)
+gibbon_analysis_view_set_move (GibbonAnalysisView *self,
+                               GibbonAnalysisMove *a)
 {
         gchar *buf;
         gboolean show_mwc;
