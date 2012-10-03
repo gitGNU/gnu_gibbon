@@ -85,12 +85,27 @@ gibbon_variant_list_new ()
         GibbonVariantList *self = g_object_new (GIBBON_TYPE_VARIANT_LIST, NULL);
         GtkListStore *store;
 
-        store = gtk_list_store_new (GIBBON_INVITER_LIST_N_COLUMNS,
-                                    G_TYPE_UINT,
-                                    G_TYPE_UINT,
-                                    G_TYPE_STRING,
-                                    G_TYPE_STRING,
-                                    G_TYPE_DOUBLE);
+        store = gtk_list_store_new (
+                        GIBBON_INVITER_LIST_N_COLUMNS,
+                        /* GIBBON_VARIANT_LIST_COL_NUMBER.  */
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_WEIGHT.  */
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE.  */
+                        G_TYPE_STRING,
+                        /* GIBBON_VARIANT_LIST_COL_MOVE.  */
+                        G_TYPE_STRING,
+                        /* GIBBON_VARIANT_LIST_COL_EQUITY.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_MATCH_LENGTH.  */
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_CUBE.  */
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_MY_SCORE.  */
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_OPP_SCORE.  */
+                        G_TYPE_UINT
+                        );
 
         self->priv->store = store;
 
