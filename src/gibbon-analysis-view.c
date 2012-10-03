@@ -394,10 +394,14 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 }
         }
 
-        store = gibbon_variant_list_get_store (
+        if (GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants) {
+                store = gibbon_variant_list_get_store (
                         GIBBON_ANALYSIS_MOVE (move_analysis)->ma_variants);
-        gtk_tree_view_set_model (self->priv->variants_view,
-                                 GTK_TREE_MODEL (store));
+                gtk_tree_view_set_model (self->priv->variants_view,
+                                         GTK_TREE_MODEL (store));
+        } else {
+                gtk_tree_view_set_model (self->priv->variants_view, NULL);
+        }
 
         if (!move_analysis || !GIBBON_ANALYSIS_MOVE (move_analysis)->da) {
                 /* FIXME! Disable this page! */
