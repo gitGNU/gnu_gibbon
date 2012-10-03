@@ -90,7 +90,7 @@ gibbon_variant_list_new ()
                                     G_TYPE_UINT,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
-                                    G_TYPE_STRING);
+                                    G_TYPE_DOUBLE);
 
         self->priv->store = store;
 

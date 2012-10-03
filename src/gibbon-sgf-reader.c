@@ -1013,7 +1013,6 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         gchar *analysis_type;
         gchar *formatted_move;
         gdouble equity;
-        gchar *formatted_equity;
 
         if (15 != g_strv_length (tokens)) {
 #if GIBBON_SGF_READER_DEBUG
@@ -1173,17 +1172,14 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         if (errno || !endptr)
                 return FALSE;
 
-        formatted_equity = g_strdup_printf ("%+.3f", equity);
-
         gtk_list_store_set (store, iter,
                             GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                             analysis_type,
                             GIBBON_VARIANT_LIST_COL_MOVE, formatted_move,
-                            GIBBON_VARIANT_LIST_COL_EQUITY, formatted_equity,
+                            GIBBON_VARIANT_LIST_COL_EQUITY, equity,
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
-        g_free (formatted_equity);
 
         return TRUE;
 }
