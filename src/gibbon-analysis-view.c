@@ -370,6 +370,14 @@ gibbon_analysis_view_new (const GibbonApp *app)
                         self, NULL);
 
         renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_data_func (
+                        self->priv->variants_view,
+                        -1, NULL, renderer,
+                        (GtkTreeCellDataFunc)
+                        gibbon_analysis_view_mwc_diff_data_func,
+                        self, NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
                         -1, NULL, renderer,
@@ -1081,4 +1089,60 @@ gibbon_analysis_view_mwc_data_func (GtkTreeViewColumn *tree_column,
                       NULL);
 
         g_free (formatted_mwc);
+}
+
+static void
+gibbon_analysis_view_mwc_diff_data_func (GtkTreeViewColumn *tree_column,
+                                         GtkCellRenderer *cell,
+                                         GtkTreeModel *tree_model,
+                                         GtkTreeIter *iter,
+                                         GibbonAnalysisView *self)
+{
+        PangoWeight weight;
+        gdouble equity;
+        gdouble mwc;
+        guint match_length;
+        guint cube, scores[2];
+        GtkTreeIter best_iter;
+        gdouble best_equity;
+        gdouble best_mwc;
+        gchar *formatted_mwc_diff = NULL;
+        guint rank;
+
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_VARIANT_LIST_COL_NUMBER, &rank,
+                            GIBBON_VARIANT_LIST_COL_WEIGHT, &weight,
+                            GIBBON_VARIANT_LIST_COL_EQUITY, &equity,
+                            GIBBON_VARIANT_LIST_COL_MATCH_LENGTH, &match_length,
+                            GIBBON_VARIANT_LIST_COL_CUBE, &cube,
+                            GIBBON_VARIANT_LIST_COL_MY_SCORE, &scores[0],
+                            GIBBON_VARIANT_LIST_COL_OPP_SCORE, &scores[1],
+                            -1);
+
+        if (rank != 1
+            && gtk_tree_model_get_iter_first (tree_model, &best_iter)) {
+                gtk_tree_model_get (tree_model, &best_iter,
+                                    GIBBON_VARIANT_LIST_COL_EQUITY,
+                                    &best_equity,
+                                    -1);
+
+                if (best_equity != equity) {
+                        mwc = gibbon_met_eq2mwc (gibbon_app_get_met (app),
+                                                 equity, match_length, cube,
+                                                 scores[0], scores[1]);
+                        best_mwc = gibbon_met_eq2mwc (gibbon_app_get_met (app),
+                                                      best_equity, match_length,
+                                                      cube,
+                                                      scores[0], scores[1]);
+                        formatted_mwc_diff = g_strdup_printf (
+                                        "%.2f %%", 100 * (mwc - best_mwc));
+                }
+        }
+
+        g_object_set (cell,
+                      "text", formatted_mwc_diff,
+                      "weight", weight,
+                      NULL);
+
+        g_free (formatted_mwc_diff);
 }
