@@ -31,6 +31,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "gibbon-app.h"
 #include "gibbon-analysis-view.h"
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
@@ -106,6 +107,11 @@ static void gibbon_analysis_view_equity_data_func (GtkTreeViewColumn
                                                    GtkTreeModel *tree_model,
                                                    GtkTreeIter *iter,
                                                    GibbonAnalysisView *self);
+static void gibbon_analysis_view_mwc_data_func (GtkTreeViewColumn *tree_column,
+                                                GtkCellRenderer *cell,
+                                                GtkTreeModel *tree_model,
+                                                GtkTreeIter *iter,
+                                                GibbonAnalysisView *self);
 
 static void 
 gibbon_analysis_view_init (GibbonAnalysisView *self)
@@ -331,6 +337,14 @@ gibbon_analysis_view_new (const GibbonApp *app)
                         -1, NULL, renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_equity_data_func,
+                        self, NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_data_func (
+                        self->priv->variants_view,
+                        -1, NULL, renderer,
+                        (GtkTreeCellDataFunc)
+                        gibbon_analysis_view_mwc_data_func,
                         self, NULL);
 
         renderer = gtk_cell_renderer_text_new ();
@@ -968,4 +982,38 @@ gibbon_analysis_view_equity_data_func (GtkTreeViewColumn *tree_column,
                       NULL);
 
         g_free (formatted_equity);
+}
+
+static void
+gibbon_analysis_view_mwc_data_func (GtkTreeViewColumn *tree_column,
+                                    GtkCellRenderer *cell,
+                                    GtkTreeModel *tree_model,
+                                    GtkTreeIter *iter,
+                                    GibbonAnalysisView *self)
+{
+        PangoWeight weight;
+        gdouble equity;
+        guint match_length;
+        guint cube, scores[2];
+        gdouble mwc;
+        gchar *formatted_mwc;
+
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_VARIANT_LIST_COL_WEIGHT, &weight,
+                            GIBBON_VARIANT_LIST_COL_EQUITY, &equity,
+                            GIBBON_VARIANT_LIST_COL_MATCH_LENGTH, &match_length,
+                            GIBBON_VARIANT_LIST_COL_CUBE, &cube,
+                            GIBBON_VARIANT_LIST_COL_MY_SCORE, &scores[0],
+                            GIBBON_VARIANT_LIST_COL_OPP_SCORE, &scores[1],
+                            -1);
+        mwc = gibbon_met_eq2mwc (gibbon_app_get_met (app), equity,
+                                 match_length, cube, scores[0], scores[1]);
+        formatted_mwc = g_strdup_printf ("%.2f %%", 100 * mwc);
+
+        g_object_set (cell,
+                      "text", formatted_mwc,
+                      "weight", weight,
+                      NULL);
+
+        g_free (formatted_mwc);
 }

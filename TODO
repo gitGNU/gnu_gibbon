@@ -68,3 +68,6 @@
 - gibbon_player_list_column_types and similar arrays seem to be unneeded.
 - Check the desctructor of GibbonApp.  More objects should be destroyed.
 - This move gets displayed incorrectly: 55: 16/6/1 8/3.
+- There is no point in using separate data functions for equity and MWC
+  columns in the variant list.  It /could/ make sense, when allowing to display
+  MWC and equity side by side.
