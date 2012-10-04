@@ -332,7 +332,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("Rank"), renderer,
                         "text", GIBBON_VARIANT_LIST_COL_NUMBER,
                         "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
                         NULL);
@@ -340,7 +340,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("Eval. Context"), renderer,
                         "text", GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                         "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
                         NULL);
@@ -348,7 +348,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("Equity"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_equity_data_func,
                         self, NULL);
@@ -356,7 +356,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("(\xce\x94)"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_equity_diff_data_func,
                         self, NULL);
@@ -364,7 +364,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("MWC"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_mwc_data_func,
                         self, NULL);
@@ -372,7 +372,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("(\xce\x94)"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_mwc_diff_data_func,
                         self, NULL);
@@ -380,7 +380,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
-                        -1, NULL, renderer,
+                        -1, _("Move"), renderer,
                         "text", GIBBON_VARIANT_LIST_COL_MOVE,
                         "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
                         NULL);
@@ -1009,6 +1009,7 @@ gibbon_analysis_view_equity_data_func (GtkTreeViewColumn *tree_column,
         g_object_set (cell,
                       "text", formatted_equity,
                       "weight", weight,
+                      "xalign", 1.0f,
                       NULL);
 
         g_free (formatted_equity);
@@ -1052,6 +1053,7 @@ gibbon_analysis_view_equity_diff_data_func (GtkTreeViewColumn *tree_column,
         g_object_set (cell,
                       "text", formatted_equity_diff,
                       "weight", weight,
+                      "xalign", 1.0f,
                       NULL);
 
         g_free (formatted_equity_diff);
@@ -1086,6 +1088,7 @@ gibbon_analysis_view_mwc_data_func (GtkTreeViewColumn *tree_column,
         g_object_set (cell,
                       "text", formatted_mwc,
                       "weight", weight,
+                      "xalign", 1.0f,
                       NULL);
 
         g_free (formatted_mwc);
@@ -1142,6 +1145,7 @@ gibbon_analysis_view_mwc_diff_data_func (GtkTreeViewColumn *tree_column,
         g_object_set (cell,
                       "text", formatted_mwc_diff,
                       "weight", weight,
+                      "xalign", 1.0f,
                       NULL);
 
         g_free (formatted_mwc_diff);
