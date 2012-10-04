@@ -107,11 +107,25 @@ static void gibbon_analysis_view_equity_data_func (GtkTreeViewColumn
                                                    GtkTreeModel *tree_model,
                                                    GtkTreeIter *iter,
                                                    GibbonAnalysisView *self);
+static void gibbon_analysis_view_equity_diff_data_func (GtkTreeViewColumn
+                                                        *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel
+                                                        *tree_model,
+                                                        GtkTreeIter *iter,
+                                                        GibbonAnalysisView
+                                                        *self);
 static void gibbon_analysis_view_mwc_data_func (GtkTreeViewColumn *tree_column,
                                                 GtkCellRenderer *cell,
                                                 GtkTreeModel *tree_model,
                                                 GtkTreeIter *iter,
                                                 GibbonAnalysisView *self);
+static void gibbon_analysis_view_mwc_diff_data_func (GtkTreeViewColumn
+                                                     *tree_column,
+                                                     GtkCellRenderer *cell,
+                                                     GtkTreeModel *tree_model,
+                                                     GtkTreeIter *iter,
+                                                     GibbonAnalysisView *self);
 
 static void 
 gibbon_analysis_view_init (GibbonAnalysisView *self)
@@ -337,6 +351,14 @@ gibbon_analysis_view_new (const GibbonApp *app)
                         -1, NULL, renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_equity_data_func,
+                        self, NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_data_func (
+                        self->priv->variants_view,
+                        -1, NULL, renderer,
+                        (GtkTreeCellDataFunc)
+                        gibbon_analysis_view_equity_diff_data_func,
                         self, NULL);
 
         renderer = gtk_cell_renderer_text_new ();
@@ -982,6 +1004,49 @@ gibbon_analysis_view_equity_data_func (GtkTreeViewColumn *tree_column,
                       NULL);
 
         g_free (formatted_equity);
+}
+
+static void
+gibbon_analysis_view_equity_diff_data_func (GtkTreeViewColumn *tree_column,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel *tree_model,
+                                            GtkTreeIter *iter,
+                                            GibbonAnalysisView *self)
+{
+        PangoWeight weight;
+        gdouble equity;
+        GtkTreeIter best_iter;
+        gdouble best_equity;
+        gchar *formatted_equity_diff = NULL;
+        guint rank;
+
+        gtk_tree_model_get (tree_model, iter,
+                            GIBBON_VARIANT_LIST_COL_NUMBER,
+                            &rank,
+                            GIBBON_VARIANT_LIST_COL_WEIGHT,
+                            &weight,
+                            GIBBON_VARIANT_LIST_COL_EQUITY,
+                            &equity,
+                            -1);
+
+        if (rank != 1
+            && gtk_tree_model_get_iter_first (tree_model, &best_iter)) {
+                gtk_tree_model_get (tree_model, &best_iter,
+                                    GIBBON_VARIANT_LIST_COL_EQUITY,
+                                    &best_equity,
+                                    -1);
+
+                if (best_equity != equity)
+                        formatted_equity_diff = g_strdup_printf (
+                                        "%+.3f", equity - best_equity);
+        }
+
+        g_object_set (cell,
+                      "text", formatted_equity_diff,
+                      "weight", weight,
+                      NULL);
+
+        g_free (formatted_equity_diff);
 }
 
 static void
