@@ -1013,6 +1013,7 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         gchar *analysis_type;
         gchar *formatted_move;
         gdouble equity;
+        guint scores[2];
 
         if (15 != g_strv_length (tokens)) {
 #if GIBBON_SGF_READER_DEBUG
@@ -1172,11 +1173,23 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         if (errno || !endptr)
                 return FALSE;
 
+        if (side > 0) {
+                scores[0] = pos->scores[0];
+                scores[1] = pos->scores[1];
+        } else {
+                scores[0] = pos->scores[1];
+                scores[1] = pos->scores[0];
+        }
         gtk_list_store_set (store, iter,
                             GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                             analysis_type,
                             GIBBON_VARIANT_LIST_COL_MOVE, formatted_move,
                             GIBBON_VARIANT_LIST_COL_EQUITY, equity,
+                            GIBBON_VARIANT_LIST_COL_MATCH_LENGTH,
+                            pos->match_length,
+                            GIBBON_VARIANT_LIST_COL_CUBE, pos->cube,
+                            GIBBON_VARIANT_LIST_COL_MY_SCORE, scores[0],
+                            GIBBON_VARIANT_LIST_COL_OPP_SCORE, scores[1],
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
