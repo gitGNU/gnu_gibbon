@@ -343,7 +343,6 @@ gibbon_app_post_init (const GibbonApp *self)
         gint game_no;
         const GibbonGame *game;
         guint action_no;
-        gboolean toggle_sensitive;
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
@@ -368,12 +367,6 @@ gibbon_app_post_init (const GibbonApp *self)
         action_no = gibbon_game_get_num_actions (game);
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no - 1);
-        if (0 < gibbon_match_get_length (self->priv->match))
-                toggle_sensitive = TRUE;
-        else
-                toggle_sensitive = FALSE;
-        gibbon_analysis_view_set_toggle_sensitive (self->priv->analysis_view,
-                                                   toggle_sensitive);
 }
 
 gboolean
