@@ -41,6 +41,7 @@
 #include "gibbon-take.h"
 #include "gibbon-drop.h"
 #include "gibbon-met.h"
+#include "gibbon-board.h"
 
 typedef struct _GibbonAnalysisViewPrivate GibbonAnalysisViewPrivate;
 struct _GibbonAnalysisViewPrivate {
@@ -135,6 +136,8 @@ static gboolean gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView
                                                        gboolean keyboard_tip,
                                                        GtkTooltip *tooltip,
                                                        GtkTreeView *view);
+static void gibbon_analysis_view_on_cursor_changed (GibbonAnalysisView *self,
+                                                    GtkTreeView *view);
 
 
 /* TRANSLATORS: This is used for displaying equities!  */
@@ -230,6 +233,14 @@ gibbon_analysis_view_class_init (GibbonAnalysisViewClass *klass)
  *
  * Returns: The newly created #GibbonAnalysisView or %NULL in case of failure.
  */
+void cursor_changed (void)
+{
+        g_message ("cursor changed");
+}
+void row_activated (void)
+{
+        g_message ("row activated");
+}
 GibbonAnalysisView *
 gibbon_analysis_view_new (const GibbonApp *app)
 {
@@ -437,6 +448,12 @@ gibbon_analysis_view_new (const GibbonApp *app)
                                   "query-tooltip",
                                   (GCallback)
                                   gibbon_analysis_view_on_query_tooltip,
+                                  self);
+
+        g_signal_connect_swapped (G_OBJECT (self->priv->variants_view),
+                                  "cursor-changed",
+                                  (GCallback)
+                                  gibbon_analysis_view_on_cursor_changed,
                                   self);
 
         return self;
@@ -1153,4 +1170,47 @@ gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView *self,
         gtk_tree_path_free (path);
 
         return TRUE;
+}
+
+static void
+gibbon_analysis_view_on_cursor_changed (GibbonAnalysisView *self,
+                                        GtkTreeView *view)
+{
+        GtkTreeSelection *selection;
+        GList *selected;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        GtkTreeModel *model = NULL;
+        GibbonPosition *pos = NULL;
+        GibbonBoard *board;
+
+        g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+        g_return_if_fail (GTK_IS_TREE_VIEW (view));
+        g_return_if_fail (view == self->priv->variants_view);
+
+        selection = gtk_tree_view_get_selection (view);
+        if (!selection)
+                return;
+
+        selected = gtk_tree_selection_get_selected_rows (selection, &model);
+        if (!selected)
+                return;
+        g_return_if_fail (model != NULL);
+
+        path = (GtkTreePath *) selected->data;
+        if (gtk_tree_model_get_iter (model, &iter, path)) {
+                gtk_tree_model_get (model, &iter,
+                                    GIBBON_VARIANT_LIST_COL_POSITION, &pos,
+                                    -1);
+        }
+        g_list_foreach (selected, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected);
+
+        if (!pos)
+                return;
+
+        board = gibbon_app_get_board (app);
+        gibbon_board_set_position (board, pos);
+
+        gibbon_position_free (pos);
 }
