@@ -104,7 +104,19 @@ gibbon_variant_list_new ()
                         /* GIBBON_VARIANT_LIST_COL_MY_SCORE.  */
                         G_TYPE_UINT,
                         /* GIBBON_VARIANT_LIST_COL_OPP_SCORE.  */
-                        G_TYPE_UINT
+                        G_TYPE_UINT,
+                        /* GIBBON_VARIANT_LIST_COL_P_WIN.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_P_WIN_G.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_P_WIN_BG.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_P_LOSE.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_P_LOSE_G.  */
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_P_LOSE_BG.  */
+                        G_TYPE_DOUBLE
                         );
 
         self->priv->store = store;
