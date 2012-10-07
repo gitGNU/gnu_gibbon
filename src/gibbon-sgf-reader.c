@@ -729,18 +729,15 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
 
         gibbon_sgf_reader_doubling_analysis (self, a, node);
 
-        while (a->ma) {
-                prop = gsgf_node_get_property (node, "DO");
-                if (prop) {
-                        a->ma_bad = 1;
-                        break;
-                }
+        prop = gsgf_node_get_property (node, "DO");
+        if (prop) {
+                a->ma_bad = 1;
+        } else {
                 prop = gsgf_node_get_property (node, "BM");
-                if (!prop)
-                        break;
-                gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
-                a->ma_bad = 1 + gsgf_double_get_value (gsgf_double);
-                break;
+                if (prop) {
+                        gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
+                        a->ma_bad = 1 + gsgf_double_get_value (gsgf_double);
+                }
         }
 
         prop = gsgf_node_get_property (node, "A");
@@ -834,18 +831,15 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
                 break;
         }
 
-        while (a->da) {
-                prop = gsgf_node_get_property (node, "DC");
-                if (prop) {
-                        a->da_bad = 1;
-                        break;
-                }
+        prop = gsgf_node_get_property (node, "DC");
+        if (prop) {
+                a->da_bad = 1;
+        } else {
                 prop = gsgf_node_get_property (node, "BC");
-                if (!prop)
-                        break;
-                gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
-                a->da_bad = 1 + gsgf_double_get_value (gsgf_double);
-                break;
+                if (prop) {
+                        gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
+                        a->da_bad = 1 + gsgf_double_get_value (gsgf_double);
+                }
         }
 
         g_strfreev (tokens);
