@@ -1109,6 +1109,7 @@ gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView *self,
         GtkTreeIter iter;
         gchar *text = NULL;
         guint row_num;
+        gdouble p[6];
 
         g_return_val_if_fail (GIBBON_IS_ANALYSIS_VIEW (self), FALSE);
         g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
@@ -1121,8 +1122,13 @@ gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView *self,
                 return FALSE;
 
         gtk_tree_model_get (model, &iter,
-                            GIBBON_VARIANT_LIST_COL_NUMBER,
-                            &row_num,
+                            GIBBON_VARIANT_LIST_COL_NUMBER, &row_num,
+                            GIBBON_VARIANT_LIST_COL_PWIN, &p[0],
+                            GIBBON_VARIANT_LIST_COL_PWIN_G, &p[1],
+                            GIBBON_VARIANT_LIST_COL_PWIN_BG, &p[2],
+                            GIBBON_VARIANT_LIST_COL_PLOSE, &p[3],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_G, &p[4],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_BG, &p[5],
                             -1);
 
         if (!row_num) {
@@ -1131,7 +1137,15 @@ gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView *self,
                 return FALSE;
         }
 
-        text = g_strdup ("???");
+        /*
+         * TRANSLATORS: This is the tooltip displayed for a move variant.  The
+         * six numbers give the probabilities for winning, winning a gammon,
+         * winning a backgammon, and losing, losing a gammon, and losing a
+         * backgammon.
+         */
+        text = g_strdup_printf ("%.2f%% %.2f%% %.2f%% - %.2f%% %.2f%% %.2f%%",
+                                100.f * p[0], 100.f * p[1], 100.f * p[2],
+                                100.f * p[3], 100.f * p[4], 100.f * p[5]);
         gtk_tooltip_set_text (tooltip, text);
         gtk_tree_view_set_tooltip_row (view, tooltip, path);
         g_free (text);
