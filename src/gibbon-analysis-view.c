@@ -371,7 +371,15 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
-                        -1, _("Eval. Context"), renderer,
+                        -1, _("Move"), renderer,
+                        "text", GIBBON_VARIANT_LIST_COL_MOVE,
+                        "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
+                        NULL);
+
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (
+                        self->priv->variants_view,
+                        -1, _("Type"), renderer,
                         "text", GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
                         "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
                         NULL);
@@ -407,14 +415,6 @@ gibbon_analysis_view_new (const GibbonApp *app)
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_mwc_diff_data_func,
                         self, NULL);
-
-        renderer = gtk_cell_renderer_text_new ();
-        gtk_tree_view_insert_column_with_attributes (
-                        self->priv->variants_view,
-                        -1, _("Move"), renderer,
-                        "text", GIBBON_VARIANT_LIST_COL_MOVE,
-                        "weight", GIBBON_VARIANT_LIST_COL_WEIGHT,
-                        NULL);
 
         return self;
 }
