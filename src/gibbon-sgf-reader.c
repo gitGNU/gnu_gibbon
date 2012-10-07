@@ -133,6 +133,13 @@ gboolean gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
                                               const GibbonPosition *pos,
                                               GibbonPositionSide side,
                                               guint die1, guint die2);
+gboolean gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
+                                                 GtkListStore *store,
+                                                 GtkTreeIter *iter,
+                                                 gchar **tokens,
+                                                 const GibbonPosition *pos,
+                                                 GibbonPositionSide side,
+                                                 guint die1, guint die2);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -754,7 +761,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
 
         errno = 0;
         a->ma_imove = g_ascii_strtoull (str_value, &endptr, 10);
-        if (errno || !endptr)
+        if (errno || !endptr || *endptr)
                 return GIBBON_ANALYSIS (a);
 
         a->ma_variants = gibbon_variant_list_new ();
@@ -882,7 +889,7 @@ gibbon_sgf_reader_doubling_analysis_eval (const GibbonSGFReader *self,
                 return;
 
         a->da_noise = g_ascii_strtod (tokens[5], &endptr);
-        if (errno || !endptr)
+        if (errno || !endptr || *endptr)
                 return;
 
         if ('1' == tokens[6][0])
@@ -896,7 +903,7 @@ gibbon_sgf_reader_doubling_analysis_eval (const GibbonSGFReader *self,
                 for (j = 0; j < 7; ++j) {
                         a->da_p[i][j] = g_ascii_strtod (tokens[7 + 7 * i + j],
                                                         &endptr);
-                        if (errno || !endptr)
+                        if (errno || !endptr || *endptr)
                                 return;
                 }
         }
@@ -1023,9 +1030,15 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                            tokens[1]);
                 return FALSE;
         } else if ('E' == tokens[1][0]) {
-                return gibbon_sgf_reader_move_variant_eval (self, store, iter,
-                                                            tokens, pos, side,
+                return gibbon_sgf_reader_move_variant_eval (self, store,
+                                                            iter, tokens,
+                                                            pos, side,
                                                             die1, die1);
+        } else if ('X' == tokens[1][0]) {
+                return gibbon_sgf_reader_move_variant_rollout (self, store,
+                                                               iter, tokens,
+                                                               pos, side,
+                                                               die1, die1);
         } else {
                 g_message (_("Unsupported move analysis type '%s'."),
                            tokens[1]);
@@ -1044,7 +1057,7 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         gchar *endptr;
         guint i;
         guint64 plies;
-        gboolean rollout, cubeful, deterministic, use_prune;
+        gboolean cubeful, deterministic, use_prune;
         gchar *encoded_move;
         gdouble p[6];
         gdouble noise;
@@ -1056,35 +1069,25 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         gchar *formatted_move;
         gdouble equity;
         guint scores[2];
-        guint num_tokens;
 
-        num_tokens = g_strv_length (tokens);
-
-        if (15 > num_tokens) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid number of tokens %u in A record.",
-                           num_tokens);
-#endif
-                return FALSE;
-        }
         encoded_move = tokens[0];
         l = strlen (encoded_move);
-        if (l != 2 && l != 4 && l != 6 && l != 8) {
+        if (!l || (l & 1) || l > 8) {
 #if GIBBON_SGF_READER_DEBUG
                 g_message ("Invalid encoded move '%s' in A record.",
                            encoded_move);
 #endif
+                return FALSE;
         }
         for (i = 0; i < l; ++i) {
                 if (encoded_move[i] < 'a' || encoded_move[i] > 'z') {
 #if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid encoded move '%s' in A record.",
-                           encoded_move);
+                        g_message ("Invalid encoded move '%s' in A record.",
+                                   encoded_move);
 #endif
+                        return FALSE;
                 }
         }
-
-        rollout = FALSE;
 
         if (g_strcmp0 ("ver", tokens[2])) {
 #if GIBBON_SGF_READER_DEBUG
@@ -1102,7 +1105,7 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         errno = 0;
         for (i = 0; i < 6; ++i) {
                 p[i] = g_ascii_strtod (tokens[4 + i], &endptr);
-                        if (errno || !endptr) {
+                        if (errno || !endptr || *endptr) {
 #if GIBBON_SGF_READER_DEBUG
                                 g_message ("Garbage number in A record: %s.",
                                            tokens[4 + i]);
@@ -1144,7 +1147,7 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
 
         errno = 0;
         noise = g_ascii_strtod (tokens[13], &endptr);
-        if (errno || !endptr) {
+        if (errno || !endptr || *endptr) {
 #if GIBBON_SGF_READER_DEBUG
                 g_message ("Garbage number in A record: %s.",
                            tokens[13]);
@@ -1208,9 +1211,7 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         formatted_move = gibbon_position_format_move (pos, move, side, FALSE);
 
         errno = 0;
-        equity = g_ascii_strtod (tokens[9], &endptr);
-        if (errno || !endptr)
-                return FALSE;
+        equity = p[5];
 
         if (side > 0) {
                 scores[0] = pos->scores[0];
@@ -1236,3 +1237,166 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         return TRUE;
 }
 
+
+gboolean
+gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
+                                     GtkListStore *store, GtkTreeIter *iter,
+                                     gchar **tokens,
+                                     const GibbonPosition *pos,
+                                     GibbonPositionSide side,
+                                     guint die1, guint die2)
+{
+        gchar *endptr;
+        guint i;
+        guint64 trials;
+        gchar *encoded_move;
+        gdouble p[6];
+        gsize l, num_movements;
+        GibbonMove *move;
+        GibbonMovement *movement;
+        gint from, to;
+        gchar *analysis_type;
+        gchar *formatted_move;
+        gdouble equity;
+        guint scores[2];
+        guint num_tokens;
+
+        num_tokens = g_strv_length (tokens);
+
+        if (17 > num_tokens) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid number of tokens %u in A record.",
+                           num_tokens);
+#endif
+                return FALSE;
+        }
+
+        encoded_move = tokens[0];
+        l = strlen (encoded_move);
+        if (!l || (l & 1) || l > 8) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid encoded move '%s' in A record.",
+                           encoded_move);
+#endif
+                return FALSE;
+        }
+
+        for (i = 0; i < l; ++i) {
+                if (encoded_move[i] < 'a' || encoded_move[i] > 'z') {
+#if GIBBON_SGF_READER_DEBUG
+                        g_message ("Invalid encoded move '%s' in A record.",
+                                   encoded_move);
+#endif
+                        return FALSE;
+                }
+        }
+
+        if (g_strcmp0 ("ver", tokens[2])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'ver' not '%s' in A record.",
+                           tokens[2]);
+#endif
+                return FALSE;
+        }
+        if (!gibbon_chareq ("3", tokens[3])) {
+                g_message (_("Unsupported version %s for A property."),
+                           tokens[3]);
+                return FALSE;
+        }
+
+        if (g_strcmp0 ("Trials", tokens[7])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'Trials' not '%s' in A record.",
+                           tokens[4]);
+#endif
+                return FALSE;
+        }
+
+        errno = 0;
+        trials = g_ascii_strtoull (tokens[8], &endptr, 10);
+        if (errno || !endptr || *endptr) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid number of trials in A record: %s.",
+                           tokens[8]);
+#endif
+                return FALSE;
+        }
+
+        if (g_strcmp0 ("Output", tokens[9])) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Expected 'Output' not '%s' in A record.",
+                           tokens[4]);
+#endif
+                return FALSE;
+        }
+
+        errno = 0;
+        for (i = 0; i < 6; ++i) {
+                p[i] = g_ascii_strtod (tokens[10 + i], &endptr);
+                        if (errno || !endptr || *endptr) {
+#if GIBBON_SGF_READER_DEBUG
+                                g_message ("Garbage number in A record: %s.",
+                                           tokens[4 + i]);
+#endif
+                                return FALSE;
+                        }
+        }
+
+        num_movements = l >> 1;
+        move = gibbon_move_new (die1, die2, num_movements);
+        move->number = num_movements;
+        for (i = 0; i < num_movements; ++i) {
+                movement = move->movements + i;
+                from = encoded_move[2 * i] - 'a';
+                to = encoded_move[2 * i + 1] - 'a';
+                if (from == 24) {
+                        if (to < 6)
+                                from = 0;
+                        else
+                                from = 25;
+                } else {
+                        ++from;
+                }
+                if (to == 25) {
+                        if (from <= 6)
+                                to = 0;
+                } else {
+                        ++to;
+                }
+                from = 25 - from;
+                to = 25 - to;
+                movement->from = from;
+                movement->to = to;
+        }
+        gibbon_move_sort (move);
+
+        analysis_type = g_strdup_printf (_("Rollout (%llu trials)"),
+                                         (unsigned long long) trials);
+
+        formatted_move = gibbon_position_format_move (pos, move, side, FALSE);
+
+        equity = p[5];
+
+        if (side > 0) {
+                scores[0] = pos->scores[0];
+                scores[1] = pos->scores[1];
+        } else {
+                scores[0] = pos->scores[1];
+                scores[1] = pos->scores[0];
+        }
+        gtk_list_store_set (store, iter,
+                            GIBBON_VARIANT_LIST_COL_ANALYSIS_TYPE,
+                            analysis_type,
+                            GIBBON_VARIANT_LIST_COL_MOVE, formatted_move,
+                            GIBBON_VARIANT_LIST_COL_EQUITY, equity,
+                            GIBBON_VARIANT_LIST_COL_MATCH_LENGTH,
+                            pos->match_length,
+                            GIBBON_VARIANT_LIST_COL_CUBE, pos->cube,
+                            GIBBON_VARIANT_LIST_COL_MY_SCORE, scores[0],
+                            GIBBON_VARIANT_LIST_COL_OPP_SCORE, scores[1],
+                            -1);
+        g_free (analysis_type);
+        g_free (formatted_move);
+
+        return TRUE;
+}
