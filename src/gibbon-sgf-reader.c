@@ -1230,6 +1230,12 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
                             GIBBON_VARIANT_LIST_COL_CUBE, pos->cube,
                             GIBBON_VARIANT_LIST_COL_MY_SCORE, scores[0],
                             GIBBON_VARIANT_LIST_COL_OPP_SCORE, scores[1],
+                            GIBBON_VARIANT_LIST_COL_PWIN, p[0],
+                            GIBBON_VARIANT_LIST_COL_PWIN_G, p[1],
+                            GIBBON_VARIANT_LIST_COL_PWIN_BG, p[2],
+                            GIBBON_VARIANT_LIST_COL_PLOSE, 1.0f - p[0],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_G, p[3],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_BG, p[4],
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
@@ -1394,6 +1400,12 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
                             GIBBON_VARIANT_LIST_COL_CUBE, pos->cube,
                             GIBBON_VARIANT_LIST_COL_MY_SCORE, scores[0],
                             GIBBON_VARIANT_LIST_COL_OPP_SCORE, scores[1],
+                            GIBBON_VARIANT_LIST_COL_PWIN, p[0],
+                            GIBBON_VARIANT_LIST_COL_PWIN_G, p[1],
+                            GIBBON_VARIANT_LIST_COL_PWIN_BG, p[2],
+                            GIBBON_VARIANT_LIST_COL_PLOSE, 1.0f - p[0],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_G, p[3],
+                            GIBBON_VARIANT_LIST_COL_PLOSE_BG, p[4],
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
