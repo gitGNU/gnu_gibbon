@@ -395,7 +395,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, _("(\xce\x94)"), renderer,
+                        -1, _("\xce\x94"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_equity_diff_data_func,
                         self, NULL);
@@ -411,10 +411,20 @@ gibbon_analysis_view_new (const GibbonApp *app)
         renderer = gtk_cell_renderer_text_new ();
         gtk_tree_view_insert_column_with_data_func (
                         self->priv->variants_view,
-                        -1, _("(\xce\x94)"), renderer,
+                        -1, _("\xce\x94"), renderer,
                         (GtkTreeCellDataFunc)
                         gibbon_analysis_view_mwc_diff_data_func,
                         self, NULL);
+
+        /*
+         * Dummy column.  The rightmost column is right-aligned but we do not
+         * want it to expand and fill all the remaining space.
+         */
+        renderer = gtk_cell_renderer_text_new ();
+        gtk_tree_view_insert_column_with_attributes (
+                        self->priv->variants_view,
+                        -1, NULL, renderer,
+                        NULL);
 
         return self;
 }
