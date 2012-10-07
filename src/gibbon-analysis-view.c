@@ -358,6 +358,9 @@ gibbon_analysis_view_new (const GibbonApp *app)
         self->priv->variants_view = GTK_TREE_VIEW (obj);
 
         renderer = gtk_cell_renderer_text_new ();
+        g_object_set (G_OBJECT (renderer),
+                      "xalign", 1.0f,
+                      NULL);
         gtk_tree_view_insert_column_with_attributes (
                         self->priv->variants_view,
                         -1, _("Rank"), renderer,
