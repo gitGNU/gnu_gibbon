@@ -320,7 +320,6 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
         guint badness = 0;
         const gchar *open_tag;
         const gchar *close_tag;
-        const gchar *sup;
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
         if (action_no)
@@ -427,41 +426,38 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
 
         if (analysis && GIBBON_IS_ANALYSIS_MOVE (analysis)) {
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
-                if (ma->da) {
-                        badness += ma->da_bad;
-                        switch (ma->da_bad) {
-                        case 0:
-                                break;
-                        case 1:
-                                dbl_mark = _("?!");
-                                break;
-                        case 2:
-                                /* TRANSLATORS: Mark for bad move!  */
-                                dbl_mark = _("?");
-                                break;
-                        default:
-                                dbl_mark = _("??");
-                                break;
-                        }
+                badness += ma->da_bad;
+                switch (ma->da_bad) {
+                case 0:
+                        break;
+                case 1:
+                        dbl_mark = _("?!");
+                        break;
+                case 2:
+                        /* TRANSLATORS: Mark for bad move!  */
+                        dbl_mark = _("?");
+                        break;
+                default:
+                        dbl_mark = _("??");
+                        break;
                 }
 
-                if (ma->ma) {
-                        badness += ma->ma_bad;
-                        chk_mark = NULL;
-                        switch (ma->ma_bad) {
-                        case 0:
-                                break;
-                        case 1:
-                                chk_mark = _("?!");
-                                break;
-                        case 2:
-                                chk_mark = _("?");
-                                break;
-                        default:
-                                chk_mark = _("??");
-                                break;
-                        }
+                badness += ma->ma_bad;
+                chk_mark = NULL;
+                switch (ma->ma_bad) {
+                case 0:
+                        break;
+                case 1:
+                        chk_mark = _("?!");
+                        break;
+                case 2:
+                        chk_mark = _("?");
+                        break;
+                default:
+                        chk_mark = _("??");
+                        break;
                 }
+
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVE_BADNESS,
                                     badness, -1);
@@ -486,29 +482,19 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                 break;
         }
 
-        formatted = g_string_new_len ("", 80);
-        g_string_printf (formatted, "%s%s%s", open_tag, text, close_tag);
+        formatted = g_string_new (open_tag);
+        if (dbl_mark && GIBBON_IS_MOVE (action)) {
+                g_string_append (formatted, dbl_mark);
+                g_string_append_c (formatted, ' ');
+        }
+        g_string_append (formatted, text);
         g_free (text);
 
-        if (dbl_mark) {
-                if (GIBBON_IS_MOVE (action))
-                        sup = "\xc2\xb2"; /* Superscript two.  */
-                else
-                        sup = "";
-                g_string_append_printf (formatted, " %s%s%s%s",
-                                        open_tag, dbl_mark, close_tag, sup);
+        if (chk_mark && GIBBON_IS_MOVE (action))
+                g_string_append (formatted, chk_mark);
 
-        }
-
-        if (chk_mark) {
-                if (GIBBON_IS_MOVE (action))
-                        sup = "\xc2\xb2"; /* Superscript two.  */
-                else
-                        sup = "";
-                g_string_append_printf (formatted, " %s%s%s%s",
-                                        open_tag, chk_mark, close_tag, sup);
-
-        }
+        if (*close_tag)
+                g_string_append (formatted, close_tag);
 
         gtk_list_store_set (self->priv->moves, &iter,
                             colno, formatted->str,
