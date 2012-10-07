@@ -102,8 +102,6 @@ G_DEFINE_TYPE (GibbonAnalysisView, gibbon_analysis_view, G_TYPE_OBJECT)
 
 static void gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                                            GibbonAnalysisMove *a);
-static void gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self);
-static void gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self);
 static void gibbon_analysis_view_set_roll (GibbonAnalysisView *self,
                                            GibbonAnalysisRoll *a);
 static void gibbon_analysis_view_equity_data_func (GtkTreeViewColumn
@@ -793,6 +791,20 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                                                f * (eq_nodouble - eq_optimal));
                         gtk_label_set_text (self->priv->eq_delta_1, buf);
                         g_free (buf);
+                        if (a->match_length > 0 ) {
+                                if (p_nodouble == p_optimal) {
+                                        gtk_label_set_text (
+                                                self->priv->mwc_delta_1, NULL);
+                                } else {
+                                        buf = g_strdup_printf (
+                                                MWC_DIFF_FORMAT,
+                                                100 * f
+                                                * (p_nodouble - p_optimal));
+                                        gtk_label_set_text (
+                                                self->priv->mwc_delta_1, buf);
+                                        g_free (buf);
+                                }
+                        }
                 }
         }
 
@@ -805,7 +817,18 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 g_free (buf);
         }
 
-        if (p_drop == eq_optimal) {
+        if (a->match_length > 0) {
+                if (p_take == p_optimal) {
+                        gtk_label_set_text (self->priv->mwc_delta_2, NULL);
+                } else {
+                        buf = g_strdup_printf (MWC_DIFF_FORMAT,
+                                               100 * f * (p_take - p_optimal));
+                        gtk_label_set_text (self->priv->eq_delta_2, buf);
+                        g_free (buf);
+                }
+        }
+
+        if (eq_drop == eq_optimal) {
                 gtk_label_set_text (self->priv->eq_delta_3, NULL);
         } else {
                 buf = g_strdup_printf (EQ_DIFF_FORMAT,
@@ -814,255 +837,23 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 g_free (buf);
         }
 
+        if (a->match_length > 0) {
+                if (p_drop == p_optimal) {
+                        gtk_label_set_text (self->priv->eq_delta_3, NULL);
+                } else {
+                        buf = g_strdup_printf (MWC_DIFF_FORMAT,
+                                               100 * f * (p_drop - p_optimal));
+                        gtk_label_set_text (self->priv->eq_delta_3, buf);
+                        g_free (buf);
+                }
+        }
+
         if (a->da_take_analysis)
                 buf = gibbon_analysis_move_take_decision (a, eq_nodouble,
                                                           eq_take, eq_drop);
         else
                 buf = gibbon_analysis_move_cube_decision (a, eq_nodouble,
                                                           eq_take, eq_drop);
-        gtk_label_set_text (self->priv->proper_action, buf);
-        g_free (buf);
-}
-
-static void
-gibbon_analysis_view_set_move_mwc (GibbonAnalysisView *self)
-{
-        GibbonAnalysisMove *a = self->priv->ma;
-        gchar *buf;
-        gdouble equity = a->da_p[0][GIBBON_ANALYSIS_MOVE_EQUITY];
-        const GibbonMET *met;
-        gdouble *p;
-        gdouble money_equity, mwc;
-        gdouble p_nodouble, p_take, p_drop, p_optimal;
-        gint f = a->da_take_analysis ? -1 : 1;
-
-        met = gibbon_app_get_met (self->priv->app);
-
-        p = a->da_p[0];
-        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN]
-            -1.0f + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
-            + p[GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_PLOSE_GAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON]);
-
-        mwc = 100.0f * gibbon_met_eq2mwc (met, equity,
-                                          a->match_length,
-                                          a->cube,
-                                          a->my_score,
-                                          a->opp_score);
-        if (a->da_take_analysis)
-                mwc = 100.0f - mwc;
-
-        /*
-         * Cubeful equities.
-         */
-        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
-        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
-        if (a->da_take_analysis) {
-                p_drop = gibbon_met_get_match_equity (met, a->match_length,
-                                a->cube, a->opp_score,
-                                a->my_score);
-        } else {
-                p_drop = gibbon_met_get_match_equity (met, a->match_length,
-                                a->cube, a->my_score,
-                                a->opp_score);
-        }
-
-        if (a->da_take_analysis)
-                gtk_label_set_text (self->priv->action_1, NULL);
-        else
-                gtk_label_set_text (self->priv->action_1, _("No double"));
-        gtk_label_set_text (self->priv->action_2, _("Double, take"));
-        gtk_label_set_text (self->priv->action_3, _("Double, drop"));
-
-        if (a->da_take_analysis) {
-                gtk_label_set_text (self->priv->eq_1, NULL);
-                buf = g_strdup_printf ("%.3f %%", 100 - 100 * p_take);
-                gtk_label_set_text (self->priv->eq_2, buf);
-                g_free (buf);
-                buf = g_strdup_printf ("%.3f %%", 100 - 100 * p_drop);
-                gtk_label_set_text (self->priv->eq_3, buf);
-                g_free (buf);
-        } else {
-                buf = g_strdup_printf ("%.3f %%", 100 * p_nodouble);
-                gtk_label_set_text (self->priv->eq_1, buf);
-                g_free (buf);
-                buf = g_strdup_printf ("%.3f %%", 100 * p_take);
-                gtk_label_set_text (self->priv->eq_2, buf);
-                g_free (buf);
-                buf = g_strdup_printf ("%.3f %%", 100 * p_drop);
-                gtk_label_set_text (self->priv->eq_3, buf);
-                g_free (buf);
-        }
-        if (p_take > p_nodouble) {
-                if (p_drop < p_take)
-                        p_optimal = p_drop;
-                else
-                        p_optimal = p_take;
-        } else {
-                p_optimal = p_nodouble;
-        }
-
-        if (a->da_take_analysis) {
-                gtk_label_set_text (self->priv->eq_delta_1, NULL);
-        } else {
-                if (p_nodouble == p_optimal) {
-                        gtk_label_set_text (self->priv->eq_delta_1, "");
-                } else {
-                        buf = g_strdup_printf ("%.3f %%",
-                                               100 * f * (p_nodouble - p_optimal));
-                        gtk_label_set_text (self->priv->eq_delta_1, buf);
-                        g_free (buf);
-                }
-        }
-
-        if (p_take == p_optimal) {
-                gtk_label_set_text (self->priv->eq_delta_2, "");
-        } else {
-                buf = g_strdup_printf ("%.3f %%",
-                                       100 * f * (p_take - p_optimal));
-                gtk_label_set_text (self->priv->eq_delta_2, buf);
-                g_free (buf);
-        }
-
-        if (p_drop == p_optimal) {
-                gtk_label_set_text (self->priv->eq_delta_3, "");
-        } else {
-                buf = g_strdup_printf ("%.3f %%",
-                                       100 * f * (p_drop - p_optimal));
-                gtk_label_set_text (self->priv->eq_delta_3, buf);
-                g_free (buf);
-        }
-
-        /*
-         * The cube decision is based on equities, not on probabilities.
-         */
-        p_nodouble = gibbon_met_mwc2eq (met, p_nodouble,
-                                        a->match_length, a->cube,
-                                        a->my_score, a->opp_score);
-        p_take = gibbon_met_mwc2eq (met, p_take,
-                                    a->match_length, a->cube,
-                                        a->my_score, a->opp_score);
-        p_drop = gibbon_met_mwc2eq (met, p_drop,
-                                    a->match_length, a->cube,
-                                    a->my_score, a->opp_score);
-
-        if (a->da_take_analysis)
-                buf = gibbon_analysis_move_take_decision (a, p_nodouble,
-                                                          p_take, p_drop);
-        else
-                buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
-                                                          p_take, p_drop);
-        gtk_label_set_text (self->priv->proper_action, buf);
-        g_free (buf);
-}
-
-static void
-gibbon_analysis_view_set_move_equity (GibbonAnalysisView *self)
-{
-        GibbonAnalysisMove *a = self->priv->ma;
-        gchar *buf;
-        const GibbonMET *met;
-        gdouble *p;
-        gdouble money_equity;
-        gdouble p_nodouble, p_take, p_drop, p_optimal;
-        gint f = a->da_take_analysis ? -1 : 1;
-
-        met = gibbon_app_get_met (self->priv->app);
-
-        p = a->da_p[0];
-        money_equity = f * (2.0f * p[GIBBON_ANALYSIS_MOVE_PWIN]
-            -1.0f + p[GIBBON_ANALYSIS_MOVE_PWIN_GAMMON]
-            + p[GIBBON_ANALYSIS_MOVE_PWIN_BACKGAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_PLOSE_GAMMON]
-            - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON]);
-
-        /*
-         * Cubeful equities.
-         */
-        p_nodouble = a->da_p[0][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
-        p_take = a->da_p[1][GIBBON_ANALYSIS_MOVE_CUBEFUL_EQUITY];
-        if (a->da_take_analysis) {
-                p_nodouble = gibbon_met_mwc2eq (met, p_nodouble,
-                                                a->match_length, a->cube,
-                                                a->opp_score, a->my_score);
-                p_take = gibbon_met_mwc2eq (met, p_take,
-                                            a->match_length, a->cube,
-                                                a->opp_score, a->my_score);
-        } else {
-                p_nodouble = gibbon_met_mwc2eq (met, p_nodouble,
-                                                a->match_length, a->cube,
-                                                a->my_score, a->opp_score);
-                p_take = gibbon_met_mwc2eq (met, p_take,
-                                            a->match_length, a->cube,
-                                                a->my_score, a->opp_score);
-        }
-        p_drop = 1.0f;
-
-        gtk_label_set_text (self->priv->action_1, _("No double"));
-        gtk_label_set_text (self->priv->action_2, _("Double, take"));
-        gtk_label_set_text (self->priv->action_3, _("Double, drop"));
-
-        if (a->da_take_analysis) {
-                gtk_label_set_text (self->priv->eq_1, NULL);
-        } else {
-                buf = g_strdup_printf (EQ_FORMAT, f * p_nodouble);
-                gtk_label_set_text (self->priv->eq_1, buf);
-                g_free (buf);
-        }
-        buf = g_strdup_printf (EQ_FORMAT, f * p_take);
-        gtk_label_set_text (self->priv->eq_2, buf);
-        g_free (buf);
-        buf = g_strdup_printf (EQ_FORMAT, f * p_drop);
-        gtk_label_set_text (self->priv->eq_3, buf);
-        g_free (buf);
-
-        if (p_take > p_nodouble) {
-                if (p_drop < p_take)
-                        p_optimal = p_drop;
-                else
-                        p_optimal = p_take;
-        } else {
-                p_optimal = p_nodouble;
-        }
-
-        if (a->da_take_analysis) {
-                gtk_label_set_text (self->priv->eq_delta_1, NULL);
-        } else {
-                if (p_nodouble == p_optimal) {
-                        gtk_label_set_text (self->priv->eq_delta_1, NULL);
-                } else {
-                        buf = g_strdup_printf ("%.3f",
-                                               f * (p_nodouble - p_optimal));
-                        gtk_label_set_text (self->priv->eq_delta_1, buf);
-                        g_free (buf);
-                }
-        }
-
-        if (p_take == p_optimal) {
-                gtk_label_set_text (self->priv->eq_delta_2, NULL);
-        } else {
-                buf = g_strdup_printf ("%.3f",
-                                       f * (p_take - p_optimal));
-                gtk_label_set_text (self->priv->eq_delta_2, buf);
-                g_free (buf);
-        }
-
-        if (p_drop == p_optimal) {
-                gtk_label_set_text (self->priv->eq_delta_3, NULL);
-        } else {
-                buf = g_strdup_printf ("%.3f",
-                                       f * (p_drop - p_optimal));
-                gtk_label_set_text (self->priv->eq_delta_3, buf);
-                g_free (buf);
-        }
-
-        if (a->da_take_analysis)
-                buf = gibbon_analysis_move_take_decision (a, p_nodouble,
-                                                          p_take, p_drop);
-        else
-                buf = gibbon_analysis_move_cube_decision (a, p_nodouble,
-                                                          p_take, p_drop);
         gtk_label_set_text (self->priv->proper_action, buf);
         g_free (buf);
 }
