@@ -1069,6 +1069,7 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         gchar *formatted_move;
         gdouble equity;
         guint scores[2];
+        GibbonPosition *new_pos;
 
         encoded_move = tokens[0];
         l = strlen (encoded_move);
@@ -1210,6 +1211,9 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
 
         formatted_move = gibbon_position_format_move (pos, move, side, FALSE);
 
+        new_pos = gibbon_position_copy (pos);
+        gibbon_position_apply_move (new_pos, move, side, FALSE);
+
         errno = 0;
         equity = p[5];
 
@@ -1236,13 +1240,14 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
                             GIBBON_VARIANT_LIST_COL_PLOSE, 1.0f - p[0],
                             GIBBON_VARIANT_LIST_COL_PLOSE_G, p[3],
                             GIBBON_VARIANT_LIST_COL_PLOSE_BG, p[4],
+                            GIBBON_VARIANT_LIST_COL_POSITION, new_pos,
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
+        gibbon_position_free (new_pos);
 
         return TRUE;
 }
-
 
 gboolean
 gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
@@ -1266,6 +1271,7 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
         gdouble equity;
         guint scores[2];
         guint num_tokens;
+        GibbonPosition* new_pos;
 
         num_tokens = g_strv_length (tokens);
 
@@ -1381,6 +1387,9 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
 
         formatted_move = gibbon_position_format_move (pos, move, side, FALSE);
 
+        new_pos = gibbon_position_copy (pos);
+        gibbon_position_apply_move (new_pos, move, side, FALSE);
+
         equity = p[5];
 
         if (side > 0) {
@@ -1406,9 +1415,11 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
                             GIBBON_VARIANT_LIST_COL_PLOSE, 1.0f - p[0],
                             GIBBON_VARIANT_LIST_COL_PLOSE_G, p[3],
                             GIBBON_VARIANT_LIST_COL_PLOSE_BG, p[4],
+                            GIBBON_VARIANT_LIST_COL_POSITION, new_pos,
                             -1);
         g_free (analysis_type);
         g_free (formatted_move);
+        gibbon_position_free (new_pos);
 
         return TRUE;
 }

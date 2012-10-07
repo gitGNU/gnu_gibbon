@@ -31,6 +31,7 @@
 #include <glib/gi18n.h>
 
 #include "gibbon-variant-list.h"
+#include "gibbon-position.h"
 
 typedef struct _GibbonVariantListPrivate GibbonVariantListPrivate;
 struct _GibbonVariantListPrivate {
@@ -116,7 +117,9 @@ gibbon_variant_list_new ()
                         /* GIBBON_VARIANT_LIST_COL_P_LOSE_G.  */
                         G_TYPE_DOUBLE,
                         /* GIBBON_VARIANT_LIST_COL_P_LOSE_BG.  */
-                        G_TYPE_DOUBLE
+                        G_TYPE_DOUBLE,
+                        /* GIBBON_VARIANT_LIST_COL_POSITION.  */
+                        GIBBON_TYPE_POSITION
                         );
 
         self->priv->store = store;
