@@ -1508,7 +1508,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-r1">
+                                  <object class="GtkLabel" id="label-cube-mwc1-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>
@@ -1523,7 +1523,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-r2">
+                                  <object class="GtkLabel" id="label-cube-mwc2-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>
@@ -1538,7 +1538,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-r3">
+                                  <object class="GtkLabel" id="label-cube-mwc3-r">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>
@@ -1567,7 +1567,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-l1">
+                                  <object class="GtkLabel" id="label-cube-mwc1-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>
@@ -1583,7 +1583,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-l2">
+                                  <object class="GtkLabel" id="label-cube-mwc2-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>
@@ -1599,7 +1599,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label-cube-mwc-l3">
+                                  <object class="GtkLabel" id="label-cube-mwc3-l">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">1</property>

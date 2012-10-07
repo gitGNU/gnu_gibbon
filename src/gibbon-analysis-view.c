@@ -75,12 +75,21 @@ struct _GibbonAnalysisViewPrivate {
         GtkLabel *action_1;
         GtkLabel *action_2;
         GtkLabel *action_3;
+
         GtkLabel *eq_1;
         GtkLabel *eq_2;
         GtkLabel *eq_3;
         GtkLabel *eq_delta_1;
         GtkLabel *eq_delta_2;
         GtkLabel *eq_delta_3;
+
+        GtkLabel *mwc_1;
+        GtkLabel *mwc_2;
+        GtkLabel *mwc_3;
+        GtkLabel *mwc_delta_1;
+        GtkLabel *mwc_delta_2;
+        GtkLabel *mwc_delta_3;
+
         GtkLabel *proper_action;
 
         GibbonAnalysisMove *ma;
@@ -172,12 +181,21 @@ gibbon_analysis_view_init (GibbonAnalysisView *self)
         self->priv->action_1 = NULL;
         self->priv->action_2 = NULL;
         self->priv->action_3 = NULL;
+
         self->priv->eq_1 = NULL;
         self->priv->eq_2 = NULL;
         self->priv->eq_3 = NULL;
         self->priv->eq_delta_1 = NULL;
         self->priv->eq_delta_2 = NULL;
         self->priv->eq_delta_3 = NULL;
+
+        self->priv->mwc_1 = NULL;
+        self->priv->mwc_2 = NULL;
+        self->priv->mwc_3 = NULL;
+        self->priv->mwc_delta_1 = NULL;
+        self->priv->mwc_delta_2 = NULL;
+        self->priv->mwc_delta_3 = NULL;
+
         self->priv->proper_action = NULL;
 
         self->priv->ma = NULL;
@@ -294,6 +312,7 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "label-cube-action3",
                                       GTK_TYPE_LABEL);
         self->priv->action_3 = GTK_LABEL (obj);
+
         obj = gibbon_app_find_object (app, "label-cube-eq1-l",
                                       GTK_TYPE_LABEL);
         self->priv->eq_1 = GTK_LABEL (obj);
@@ -312,6 +331,25 @@ gibbon_analysis_view_new (const GibbonApp *app)
         obj = gibbon_app_find_object (app, "label-cube-eq3-r",
                                       GTK_TYPE_LABEL);
         self->priv->eq_delta_3 = GTK_LABEL (obj);
+
+        obj = gibbon_app_find_object (app, "label-cube-mwc1-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-mwc2-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-mwc3-l",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_3 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-mwc1-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_delta_1 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-mwc2-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_delta_2 = GTK_LABEL (obj);
+        obj = gibbon_app_find_object (app, "label-cube-mwc3-r",
+                                      GTK_TYPE_LABEL);
+        self->priv->mwc_delta_3 = GTK_LABEL (obj);
 
         obj = gibbon_app_find_object (app, "label-proper-cube-action",
                                       GTK_TYPE_LABEL);
@@ -671,6 +709,9 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 eq_take = gibbon_met_mwc2eq (met, p_take,
                                              a->match_length, a->cube,
                                              a->opp_score, a->my_score);
+                p_drop = gibbon_met_get_match_equity (met, a->match_length,
+                                                      a->cube, a->opp_score,
+                                                      a->my_score);
         } else {
                 eq_nodouble = gibbon_met_mwc2eq (met, p_nodouble,
                                                  a->match_length, a->cube,
@@ -678,8 +719,11 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 eq_take = gibbon_met_mwc2eq (met, p_take,
                                              a->match_length, a->cube,
                                              a->my_score, a->opp_score);
+                p_drop = gibbon_met_get_match_equity (met, a->match_length,
+                                                      a->cube, a->my_score,
+                                                      a->opp_score);
         }
-        p_drop = eq_drop = 1.0f;
+        eq_drop = 1.0f;
 
         gtk_label_set_text (self->priv->action_1, _("No double"));
         gtk_label_set_text (self->priv->action_2, _("Double, take"));
@@ -692,6 +736,7 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 gtk_label_set_text (self->priv->eq_1, buf);
                 g_free (buf);
         }
+
         buf = g_strdup_printf (EQ_FORMAT, f * eq_take);
         gtk_label_set_text (self->priv->eq_2, buf);
         g_free (buf);
@@ -699,13 +744,43 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
         gtk_label_set_text (self->priv->eq_3, buf);
         g_free (buf);
 
+        if (a->match_length > 0) {
+                /* Display MWC.  */
+                if (a->da_take_analysis) {
+                        gtk_label_set_text (self->priv->mwc_1, NULL);
+                        buf = g_strdup_printf (MWC_FORMAT, 100 - 100 * p_take);
+                        gtk_label_set_text (self->priv->mwc_2, buf);
+                        g_free (buf);
+                        buf = g_strdup_printf (MWC_FORMAT, 100 - 100 * p_drop);
+                        gtk_label_set_text (self->priv->mwc_3, buf);
+                        g_free (buf);
+                } else {
+                        buf = g_strdup_printf (MWC_FORMAT, 100 * p_nodouble);
+                        gtk_label_set_text (self->priv->mwc_1, buf);
+                        g_free (buf);
+                        buf = g_strdup_printf (MWC_FORMAT, 100 * p_take);
+                        gtk_label_set_text (self->priv->mwc_2, buf);
+                        g_free (buf);
+                        buf = g_strdup_printf (MWC_FORMAT, 100 * p_drop);
+                        gtk_label_set_text (self->priv->mwc_3, buf);
+                        g_free (buf);
+                }
+        } else {
+                gtk_label_set_text (self->priv->mwc_1, NULL);
+                gtk_label_set_text (self->priv->mwc_2, NULL);
+                gtk_label_set_text (self->priv->mwc_3, NULL);
+        }
+
         if (eq_take > eq_nodouble) {
-                if (eq_drop < eq_take)
+                if (eq_drop < eq_take) {
                         eq_optimal = eq_drop;
-                else
+                        p_optimal = p_drop;
+                } else {
                         eq_optimal = eq_take;
+                }
         } else {
                 eq_optimal = eq_nodouble;
+                p_optimal = p_nodouble;
         }
 
         if (a->da_take_analysis) {
