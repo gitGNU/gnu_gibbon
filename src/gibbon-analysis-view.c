@@ -129,6 +129,13 @@ static void gibbon_analysis_view_mwc_diff_data_func (GtkTreeViewColumn
                                                      GtkTreeModel *tree_model,
                                                      GtkTreeIter *iter,
                                                      GibbonAnalysisView *self);
+static gboolean gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView
+                                                       *self,
+                                                       gint x, gint y,
+                                                       gboolean keyboard_tip,
+                                                       GtkTooltip *tooltip,
+                                                       GtkTreeView *view);
+
 
 /* TRANSLATORS: This is used for displaying equities!  */
 #define EQ_FORMAT _("%+.3f")
@@ -425,6 +432,12 @@ gibbon_analysis_view_new (const GibbonApp *app)
                         self->priv->variants_view,
                         -1, NULL, renderer,
                         NULL);
+
+        g_signal_connect_swapped (G_OBJECT (self->priv->variants_view),
+                                  "query-tooltip",
+                                  (GCallback)
+                                  gibbon_analysis_view_on_query_tooltip,
+                                  self);
 
         return self;
 }
@@ -1082,4 +1095,48 @@ gibbon_analysis_view_mwc_diff_data_func (GtkTreeViewColumn *tree_column,
                       NULL);
 
         g_free (formatted_mwc_diff);
+}
+
+static gboolean
+gibbon_analysis_view_on_query_tooltip (const GibbonAnalysisView *self,
+                                       gint x, gint y,
+                                       gboolean keyboard_tip,
+                                       GtkTooltip *tooltip,
+                                       GtkTreeView *view)
+{
+        GtkTreeModel *model;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        gchar *text = NULL;
+        guint row_num;
+
+        g_return_val_if_fail (GIBBON_IS_ANALYSIS_VIEW (self), FALSE);
+        g_return_val_if_fail (GTK_IS_TREE_VIEW (view), FALSE);
+        g_return_val_if_fail (view == self->priv->variants_view, FALSE);
+        g_return_val_if_fail (GTK_IS_TOOLTIP (tooltip), FALSE);
+
+        if (!gtk_tree_view_get_tooltip_context (view, &x, &y,
+                                                keyboard_tip,
+                                                &model, &path, &iter))
+                return FALSE;
+
+        gtk_tree_model_get (model, &iter,
+                            GIBBON_VARIANT_LIST_COL_NUMBER,
+                            &row_num,
+                            -1);
+
+        if (!row_num) {
+                /* Should not happen ... */
+                gtk_tree_path_free (path);
+                return FALSE;
+        }
+
+        text = g_strdup ("???");
+        gtk_tooltip_set_text (tooltip, text);
+        gtk_tree_view_set_tooltip_row (view, tooltip, path);
+        g_free (text);
+
+        gtk_tree_path_free (path);
+
+        return TRUE;
 }
