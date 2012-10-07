@@ -64,7 +64,7 @@ struct _GibbonSGFReaderPrivate {
         const gchar *filename;
 };
 
-#define GIBBON_SGF_READER_DEBUG 0
+#define GIBBON_SGF_READER_DEBUG 1
 
 GibbonSGFReader *_gibbon_sgf_reader_instance = NULL;
 
@@ -126,6 +126,13 @@ gboolean gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                                          const GibbonPosition *pos,
                                          GibbonPositionSide side,
                                          guint die1, guint die2);
+gboolean gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
+                                              GtkListStore *store,
+                                              GtkTreeIter *iter,
+                                              gchar **tokens,
+                                              const GibbonPosition *pos,
+                                              GibbonPositionSide side,
+                                              guint die1, guint die2);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -999,6 +1006,41 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                                 GibbonPositionSide side,
                                 guint die1, guint die2)
 {
+        guint num_tokens;
+
+        num_tokens = g_strv_length (tokens);
+
+        if (15 > num_tokens) {
+#if GIBBON_SGF_READER_DEBUG
+                g_message ("Invalid number of tokens %u in A record.",
+                           num_tokens);
+#endif
+                return FALSE;
+        }
+
+        if (tokens[1][1]) {
+                g_message (_("Unsupported move analysis type '%s'."),
+                           tokens[1]);
+                return FALSE;
+        } else if ('E' == tokens[1][0]) {
+                return gibbon_sgf_reader_move_variant_eval (self, store, iter,
+                                                            tokens, pos, side,
+                                                            die1, die1);
+        } else {
+                g_message (_("Unsupported move analysis type '%s'."),
+                           tokens[1]);
+                return FALSE;
+        }
+}
+
+gboolean
+gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
+                                     GtkListStore *store, GtkTreeIter *iter,
+                                     gchar **tokens,
+                                     const GibbonPosition *pos,
+                                     GibbonPositionSide side,
+                                     guint die1, guint die2)
+{
         gchar *endptr;
         guint i;
         guint64 plies;
@@ -1014,11 +1056,14 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         gchar *formatted_move;
         gdouble equity;
         guint scores[2];
+        guint num_tokens;
 
-        if (15 != g_strv_length (tokens)) {
+        num_tokens = g_strv_length (tokens);
+
+        if (15 > num_tokens) {
 #if GIBBON_SGF_READER_DEBUG
                 g_message ("Invalid number of tokens %u in A record.",
-                           g_strv_length (tokens));
+                           num_tokens);
 #endif
                 return FALSE;
         }
@@ -1037,12 +1082,6 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
                            encoded_move);
 #endif
                 }
-        }
-
-        if (!gibbon_chareq ("E", tokens[1])) {
-                g_message (_("Unsupported move analysis type '%s'."),
-                           tokens[1]);
-                return FALSE;
         }
 
         rollout = FALSE;
@@ -1196,3 +1235,4 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
 
         return TRUE;
 }
+
