@@ -791,21 +791,28 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                                                f * (eq_nodouble - eq_optimal));
                         gtk_label_set_text (self->priv->eq_delta_1, buf);
                         g_free (buf);
-                        if (a->match_length > 0 ) {
-                                if (p_nodouble == p_optimal) {
-                                        gtk_label_set_text (
-                                                self->priv->mwc_delta_1, NULL);
-                                } else {
-                                        buf = g_strdup_printf (
-                                                MWC_DIFF_FORMAT,
-                                                100 * f
-                                                * (p_nodouble - p_optimal));
-                                        gtk_label_set_text (
-                                                self->priv->mwc_delta_1, buf);
-                                        g_free (buf);
-                                }
+                }
+        }
+
+        if (a->match_length > 0 ) {
+                if (a->da_take_analysis) {
+                        gtk_label_set_text (self->priv->eq_delta_1, NULL);
+                } else {
+                        if (p_nodouble == p_optimal) {
+                                gtk_label_set_text (
+                                        self->priv->mwc_delta_1, NULL);
+                        } else {
+                                buf = g_strdup_printf (
+                                        MWC_DIFF_FORMAT,
+                                        100 * f
+                                        * (p_nodouble - p_optimal));
+                                gtk_label_set_text (
+                                        self->priv->mwc_delta_1, buf);
+                                g_free (buf);
                         }
                 }
+        } else {
+                gtk_label_set_text (self->priv->eq_delta_1, NULL);
         }
 
         if (eq_take == eq_optimal) {
@@ -823,9 +830,11 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
                 } else {
                         buf = g_strdup_printf (MWC_DIFF_FORMAT,
                                                100 * f * (p_take - p_optimal));
-                        gtk_label_set_text (self->priv->eq_delta_2, buf);
+                        gtk_label_set_text (self->priv->mwc_delta_2, buf);
                         g_free (buf);
                 }
+        } else {
+                gtk_label_set_text (self->priv->eq_delta_2, NULL);
         }
 
         if (eq_drop == eq_optimal) {
@@ -839,13 +848,15 @@ gibbon_analysis_view_set_move (GibbonAnalysisView *self,
 
         if (a->match_length > 0) {
                 if (p_drop == p_optimal) {
-                        gtk_label_set_text (self->priv->eq_delta_3, NULL);
+                        gtk_label_set_text (self->priv->mwc_delta_3, NULL);
                 } else {
                         buf = g_strdup_printf (MWC_DIFF_FORMAT,
                                                100 * f * (p_drop - p_optimal));
-                        gtk_label_set_text (self->priv->eq_delta_3, buf);
+                        gtk_label_set_text (self->priv->mwc_delta_3, buf);
                         g_free (buf);
                 }
+        } else {
+                gtk_label_set_text (self->priv->eq_delta_3, NULL);
         }
 
         if (a->da_take_analysis)
