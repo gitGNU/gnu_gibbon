@@ -400,8 +400,7 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
         selection = gtk_tree_view_get_selection (self->priv->tree_view);
         if (selection) {
                 selected = gtk_tree_selection_get_selected_rows (
-                                selection,
-                                &self->priv->model);
+                                selection, NULL);
                 if (selected) {
                         path = (GtkTreePath *) selected->data;
                         if (gtk_tree_model_get_iter (self->priv->model, &iter,
