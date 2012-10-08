@@ -482,15 +482,20 @@ gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
                 break;
         }
 
+        if (dbl_mark && !GIBBON_IS_MOVE (action)) {
+                chk_mark = dbl_mark;
+                dbl_mark = NULL;
+        }
+
         formatted = g_string_new (open_tag);
-        if (dbl_mark && GIBBON_IS_MOVE (action)) {
+        if (dbl_mark) {
                 g_string_append (formatted, dbl_mark);
                 g_string_append_c (formatted, ' ');
         }
         g_string_append (formatted, text);
         g_free (text);
 
-        if (chk_mark && GIBBON_IS_MOVE (action))
+        if (chk_mark)
                 g_string_append (formatted, chk_mark);
 
         if (*close_tag)
