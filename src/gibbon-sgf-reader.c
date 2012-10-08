@@ -734,7 +734,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         gibbon_sgf_reader_doubling_analysis (self, a, node, cube_response);
 
         prop = gsgf_node_get_property (node, "DO");
-        if (prop) {
+        if (prop && !cube_response) {
                 a->ma_bad = 1;
         } else {
                 prop = gsgf_node_get_property (node, "BM");
