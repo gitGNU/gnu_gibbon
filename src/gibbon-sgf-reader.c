@@ -107,11 +107,13 @@ static GibbonAnalysis *gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *s
 static GibbonAnalysis *gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                                         const GSGFNode *node,
                                                         GibbonPositionSide side,
-                                                        guint die1, guint die2);
+                                                        guint die1, guint die2,
+                                                        gboolean cube_response);
 static void gibbon_sgf_reader_doubling_analysis (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
-                const GSGFNode *node);
+                const GSGFNode *node,
+                gboolean cube_response);
 static void gibbon_sgf_reader_doubling_analysis_eval (
                 const GibbonSGFReader *self,
                 GibbonAnalysisMove *analysis,
@@ -560,21 +562,22 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
 
                 action = GIBBON_GAME_ACTION (move);
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side,
-                                                            dice[0], dice[1]);
+                                                            dice[0], dice[1],
+                                                            FALSE);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_double (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_double_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side,
-                                                            0, 0);
+                                                            0, 0, FALSE);
                 if (!gibbon_sgf_reader_add_action (self, match, side, action,
                                                    analysis, error))
                         return FALSE;
         } else if (gsgf_move_backgammon_is_drop (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_drop_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side,
-                                                            0, 0);
+                                                            0, 0, TRUE);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 /*
                  * Make sure that the may double flag is set.  Otherwise,
@@ -590,7 +593,7 @@ gibbon_sgf_reader_move (GibbonSGFReader *self, GibbonMatch *match,
         } else if (gsgf_move_backgammon_is_take (gsgf_move)) {
                 action = GIBBON_GAME_ACTION (gibbon_take_new ());
                 analysis = gibbon_sgf_reader_move_analysis (self, node, side,
-                                                            0, 0);
+                                                            0, 0, TRUE);
                 ma = GIBBON_ANALYSIS_MOVE (analysis);
                 /*
                  * Make sure that the may double flag is set.  Otherwise,
@@ -679,7 +682,8 @@ gibbon_sgf_reader_roll_analysis (const GibbonSGFReader *self,
 static GibbonAnalysis *
 gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
                                  const GSGFNode *node, GibbonPositionSide side,
-                                 guint die1, guint die2)
+                                 guint die1, guint die2,
+                                 gboolean cube_response)
 {
         GibbonAnalysisMove *a = gibbon_analysis_move_new ();
         GSGFProperty *prop;
@@ -727,7 +731,7 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
         a->beavers = FALSE;
         a->jacoby = FALSE;
 
-        gibbon_sgf_reader_doubling_analysis (self, a, node);
+        gibbon_sgf_reader_doubling_analysis (self, a, node, cube_response);
 
         prop = gsgf_node_get_property (node, "DO");
         if (prop) {
@@ -799,13 +803,16 @@ gibbon_sgf_reader_move_analysis (const GibbonSGFReader *self,
 static void
 gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
                                      GibbonAnalysisMove *a,
-                                     const GSGFNode *node)
+                                     const GSGFNode *node,
+                                     gboolean cube_response)
 {
         GSGFProperty *prop;
         GSGFText *text;
         const gchar *str_value;
         gchar **tokens;
         GSGFDouble *gsgf_double;
+        const gchar *doubtful_propname;
+        const gchar *bad_propname;
 
         prop = gsgf_node_get_property (node, "DA");
         if (!prop)
@@ -831,11 +838,19 @@ gibbon_sgf_reader_doubling_analysis (const GibbonSGFReader *self,
                 break;
         }
 
-        prop = gsgf_node_get_property (node, "DC");
+        if (cube_response) {
+                doubtful_propname = "DO";
+                bad_propname = "BC";
+        } else {
+                doubtful_propname = "DC";
+                bad_propname = "BC";
+        }
+
+        prop = gsgf_node_get_property (node, doubtful_propname);
         if (prop) {
                 a->da_bad = 1;
         } else {
-                prop = gsgf_node_get_property (node, "BC");
+                prop = gsgf_node_get_property (node, bad_propname);
                 if (prop) {
                         gsgf_double = GSGF_DOUBLE (gsgf_property_get_value (prop));
                         a->da_bad = 1 + gsgf_double_get_value (gsgf_double);
