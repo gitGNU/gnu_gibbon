@@ -1120,7 +1120,6 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
         obj = gibbon_app_find_object(self, "shout-entry", GTK_TYPE_ENTRY);
         gtk_editable_set_editable(GTK_EDITABLE (obj), FALSE);
 
-#if 0
         obj = gibbon_app_find_object(self, "board-refresh", GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         obj = gibbon_app_find_object(self, "board-undo", GTK_TYPE_TOOL_BUTTON);
@@ -1147,7 +1146,6 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         obj = gibbon_app_find_object(self, "board-leave", GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-#endif
 }
 
 void
