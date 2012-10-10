@@ -29,11 +29,15 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-game-list-view.h"
+#include "gibbon-app.h"
 
 typedef struct _GibbonGameListViewPrivate GibbonGameListViewPrivate;
 struct _GibbonGameListViewPrivate {
         GibbonMatchList *match_list;
         GtkComboBox *combo;
+
+        GtkWidget *game_back;
+        GtkWidget *game_forward;
 };
 
 #define GIBBON_GAME_LIST_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -43,6 +47,7 @@ G_DEFINE_TYPE (GibbonGameListView, gibbon_game_list_view, G_TYPE_OBJECT)
 
 static void gibbon_game_list_view_on_change (const GibbonGameListView *self);
 static void gibbon_game_list_view_on_select (const GibbonGameListView *self);
+static void gibbon_game_list_view_set_state (const GibbonGameListView *self);
 
 static void
 gibbon_game_list_view_init (GibbonGameListView *self)
@@ -52,6 +57,9 @@ gibbon_game_list_view_init (GibbonGameListView *self)
 
         self->priv->combo = NULL;
         self->priv->match_list = NULL;
+
+        self->priv->game_back = NULL;
+        self->priv->game_forward = NULL;
 }
 
 static void
@@ -87,6 +95,7 @@ gibbon_game_list_view_new (GtkComboBox *combo,
                                                  NULL);
         GtkCellRenderer *cell;
         GtkListStore *model = gibbon_match_list_get_games_store (match_list);
+        GObject *obj;
 
         self->priv->combo = combo;
         self->priv->match_list = match_list;
@@ -100,6 +109,13 @@ gibbon_game_list_view_new (GtkComboBox *combo,
                                         "text", 0,
                                         NULL);
 
+        obj = gibbon_app_find_object (app, "board-game-back",
+                                      GTK_TYPE_TOOL_BUTTON);
+        self->priv->game_back = GTK_WIDGET (obj);
+        obj = gibbon_app_find_object (app, "board-next-game",
+                                      GTK_TYPE_TOOL_BUTTON);
+        self->priv->game_forward = GTK_WIDGET (obj);
+
         g_signal_connect_swapped (G_OBJECT (model), "row-inserted",
                                   (GCallback) gibbon_game_list_view_on_change,
                                   self);
@@ -109,6 +125,8 @@ gibbon_game_list_view_new (GtkComboBox *combo,
         g_signal_connect_swapped (G_OBJECT (combo), "changed",
                                   (GCallback) gibbon_game_list_view_on_select,
                                   self);
+
+        gibbon_game_list_view_set_state (self);
 
         return self;
 }
@@ -124,6 +142,8 @@ gibbon_game_list_view_on_change (const GibbonGameListView *self)
         model = gtk_combo_box_get_model (self->priv->combo);
         num_items = gtk_tree_model_iter_n_children (model, NULL);
         gtk_combo_box_set_active (self->priv->combo, num_items - 1);
+
+        gibbon_game_list_view_set_state (self);
 }
 
 static void
@@ -138,4 +158,43 @@ gibbon_game_list_view_on_select (const GibbonGameListView *self)
         active = gtk_combo_box_get_active (self->priv->combo);
 
         gibbon_match_list_set_active_game (self->priv->match_list, active);
+
+        gibbon_game_list_view_set_state (self);
+}
+
+
+static void
+gibbon_game_list_view_set_state (const GibbonGameListView *self)
+{
+        GtkTreeModel *model;
+        gsize num_items;
+        gint active;
+
+        model = gtk_combo_box_get_model (self->priv->combo);
+        num_items = gtk_tree_model_iter_n_children (model, NULL);
+        active = gtk_combo_box_get_active (self->priv->combo);
+
+        if (!num_items || active < 0) {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_back),
+                                          FALSE);
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_forward),
+                                          FALSE);
+                return;
+        }
+
+        if (active == num_items - 1) {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_forward),
+                                          FALSE);
+        } else {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_forward),
+                                          TRUE);
+        }
+
+        if (active == 0) {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_back),
+                                          FALSE);
+        } else {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_back),
+                                          TRUE);
+        }
 }

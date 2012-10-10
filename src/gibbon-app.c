@@ -1136,14 +1136,6 @@ gibbon_app_set_state_disconnected (GibbonApp *self)
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         obj = gibbon_app_find_object(self, "board-record", GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-        obj = gibbon_app_find_object(self, "board-game-back", GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-        obj = gibbon_app_find_object(self, "board-move-back", GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-        obj = gibbon_app_find_object(self, "board-next-move", GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
-        obj = gibbon_app_find_object(self, "board-next-game", GTK_TYPE_TOOL_BUTTON);
-        gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
         obj = gibbon_app_find_object(self, "board-leave", GTK_TYPE_TOOL_BUTTON);
         gtk_widget_set_sensitive(GTK_WIDGET (obj), TRUE);
 }
