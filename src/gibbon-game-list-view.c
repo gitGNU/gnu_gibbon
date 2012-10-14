@@ -48,6 +48,8 @@ G_DEFINE_TYPE (GibbonGameListView, gibbon_game_list_view, G_TYPE_OBJECT)
 static void gibbon_game_list_view_on_change (const GibbonGameListView *self);
 static void gibbon_game_list_view_on_select (const GibbonGameListView *self);
 static void gibbon_game_list_view_set_state (const GibbonGameListView *self);
+static void gibbon_game_list_view_back (const GibbonGameListView *self);
+static void gibbon_game_list_view_forward (const GibbonGameListView *self);
 
 static void
 gibbon_game_list_view_init (GibbonGameListView *self)
@@ -112,9 +114,16 @@ gibbon_game_list_view_new (GtkComboBox *combo,
         obj = gibbon_app_find_object (app, "board-game-back",
                                       GTK_TYPE_TOOL_BUTTON);
         self->priv->game_back = GTK_WIDGET (obj);
+        g_signal_connect_swapped (obj, "clicked",
+                                  (GCallback) gibbon_game_list_view_back,
+                                  self);
+
         obj = gibbon_app_find_object (app, "board-next-game",
                                       GTK_TYPE_TOOL_BUTTON);
         self->priv->game_forward = GTK_WIDGET (obj);
+        g_signal_connect_swapped (obj, "clicked",
+                                  (GCallback) gibbon_game_list_view_forward,
+                                  self);
 
         g_signal_connect_swapped (G_OBJECT (model), "row-inserted",
                                   (GCallback) gibbon_game_list_view_on_change,
@@ -149,12 +158,10 @@ gibbon_game_list_view_on_change (const GibbonGameListView *self)
 static void
 gibbon_game_list_view_on_select (const GibbonGameListView *self)
 {
-        GtkTreeModel *model;
         gint active;
 
         g_return_if_fail (GIBBON_IS_GAME_LIST_VIEW (self));
 
-        model = gtk_combo_box_get_model (self->priv->combo);
         active = gtk_combo_box_get_active (self->priv->combo);
 
         gibbon_match_list_set_active_game (self->priv->match_list, active);
@@ -197,4 +204,40 @@ gibbon_game_list_view_set_state (const GibbonGameListView *self)
                 gtk_widget_set_sensitive (GTK_WIDGET (self->priv->game_back),
                                           TRUE);
         }
+}
+
+static void
+gibbon_game_list_view_back (const GibbonGameListView *self)
+{
+        GtkTreeModel *model;
+        gint active;
+
+        g_return_if_fail (GIBBON_IS_GAME_LIST_VIEW (self));
+
+        model = gtk_combo_box_get_model (self->priv->combo);
+        active = gtk_combo_box_get_active (self->priv->combo);
+
+        if (active < 1)
+                return;
+
+        gtk_combo_box_set_active (self->priv->combo, active - 1);
+}
+
+static void
+gibbon_game_list_view_forward (const GibbonGameListView *self)
+{
+        GtkTreeModel *model;
+        gsize num_items;
+        gint active;
+
+        g_return_if_fail (GIBBON_IS_GAME_LIST_VIEW (self));
+
+        model = gtk_combo_box_get_model (self->priv->combo);
+        num_items = gtk_tree_model_iter_n_children (model, NULL);
+        active = gtk_combo_box_get_active (self->priv->combo);
+
+        if (active == num_items - 1)
+                return;
+
+        gtk_combo_box_set_active (self->priv->combo, active + 1);
 }
