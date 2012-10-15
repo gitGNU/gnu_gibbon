@@ -34,6 +34,7 @@
 #include "gibbon-game.h"
 #include "gibbon-move-list-view.h"
 #include "gibbon-analysis-roll.h"
+#include "gibbon-app.h"
 
 enum gibbon_move_list_view_signal {
         ACTION_SELECTED,
@@ -49,6 +50,9 @@ struct _GibbonMoveListViewPrivate {
 
         gboolean game_changing;
         gint last_action_no;
+
+        GtkWidget *move_back;
+        GtkWidget *move_forward;
 };
 
 #define GIBBON_MOVE_LIST_VIEW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -91,6 +95,7 @@ static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
 static gboolean gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                                       GdkEventKey *event,
                                                       GtkTreeView *view);
+static void gibbon_move_list_view_set_state (const GibbonMoveListView *self);
 
 static void 
 gibbon_move_list_view_init (GibbonMoveListView *self)
@@ -104,6 +109,9 @@ gibbon_move_list_view_init (GibbonMoveListView *self)
 
         self->priv->game_changing = FALSE;
         self->priv->last_action_no = -1;
+
+        self->priv->move_back = NULL;
+        self->priv->move_forward = NULL;
 }
 
 static void
@@ -152,6 +160,7 @@ gibbon_move_list_view_new (GtkTreeView *view,
         GtkCellRenderer *renderer;
         GtkStyle *style;
         GtkTreeViewColumn *column;
+        GObject *obj;
 
         self->priv->match_list = match_list;
         model = gibbon_match_list_get_moves_store (self->priv->match_list);
@@ -229,6 +238,16 @@ gibbon_move_list_view_new (GtkTreeView *view,
         g_signal_connect_swapped (G_OBJECT (view), "key-press-event",
                                   (GCallback)
                                   gibbon_move_list_view_on_key_pressed, self);
+
+        obj = gibbon_app_find_object (app, "board-move-back",
+                                      GTK_TYPE_TOOL_BUTTON);
+        self->priv->move_back = GTK_WIDGET (obj);
+
+        obj = gibbon_app_find_object (app, "board-next-move",
+                                      GTK_TYPE_TOOL_BUTTON);
+        self->priv->move_forward = GTK_WIDGET (obj);
+
+        gibbon_move_list_view_set_state (self);
 
         return self;
 }
@@ -428,6 +447,8 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
                        0, action_no);
 
+        gibbon_move_list_view_set_state (self);
+
         /*
          * Sending the signal may cause the analysis widgets to be shown.
          * This may shrink the tree view and may make the selected row
@@ -575,6 +596,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                     && roll_action_no >= 0) {
                         gtk_tree_path_free (path);
                         self->priv->last_action_no = roll_action_no;
+                        gibbon_move_list_view_set_state (self);
                         g_signal_emit (
                                 self,
                                 gibbon_move_list_view_signals[ACTION_SELECTED],
@@ -592,6 +614,7 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                     && move_action_no >= 0) {
                         gtk_tree_path_free (path);
                         self->priv->last_action_no = move_action_no;
+                        gibbon_move_list_view_set_state (self);
                         g_signal_emit (
                                 self,
                                 gibbon_move_list_view_signals[ACTION_SELECTED],
@@ -622,9 +645,52 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
         gtk_tree_path_free (path);
 
         self->priv->last_action_no = action_no;
+
+        gibbon_move_list_view_set_state (self);
+
         g_signal_emit (self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
                        0, self->priv->last_action_no);
 
         return TRUE;
+}
+
+static void
+gibbon_move_list_view_set_state (const GibbonMoveListView *self)
+{
+        const GibbonMatch *match;
+        const GibbonGame *game;
+        gint active;
+        gsize num_actions;
+
+        match = gibbon_match_list_get_match (self->priv->match_list);
+
+        /*
+         * Already at the start of the list?
+         */
+        if (!match) {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_back),
+                                          FALSE);
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_forward),
+                                          FALSE);
+                return;
+        }
+
+        if (self->priv->last_action_no < 0)
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_back),
+                                          FALSE);
+        else
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_back),
+                                          TRUE);
+
+        active = gibbon_match_list_get_active_game (self->priv->match_list);
+        game = gibbon_match_get_nth_game (match, active);
+        num_actions = gibbon_game_get_num_actions (game);
+
+        if (!num_actions || self->priv->last_action_no == num_actions - 1)
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_forward),
+                                          FALSE);
+        else
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_forward),
+                                          TRUE);
 }
