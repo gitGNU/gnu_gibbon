@@ -90,8 +90,7 @@ static void gibbon_move_list_view_on_match_loaded (GibbonMoveListView *self,
                                                    GibbonMatchList *matches);
 static void gibbon_move_list_view_on_select_game (GibbonMoveListView *self,
                                                   GibbonMatchList *matches);
-static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
-                                                    GibbonMatchList *matches);
+static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self);
 static gboolean gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                                       GdkEventKey *event,
                                                       GtkTreeView *view);
@@ -522,8 +521,7 @@ gibbon_move_list_view_on_select_game (GibbonMoveListView *self,
 }
 
 static void
-gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
-                                        GibbonMatchList *matches)
+gibbon_move_list_view_on_game_selected (GibbonMoveListView *self)
 {
         gint num_rows;
         GtkTreeIter iter;
