@@ -95,6 +95,10 @@ static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
 static gboolean gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                                       GdkEventKey *event,
                                                       GtkTreeView *view);
+static gboolean gibbon_move_list_view_prev_move (GibbonMoveListView *self,
+                                                 GtkTreeView *view);
+static gboolean gibbon_move_list_view_next_move (GibbonMoveListView *self,
+                                                 GtkTreeView *view);
 static void gibbon_move_list_view_set_state (const GibbonMoveListView *self);
 
 static void 
@@ -545,6 +549,16 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                       GdkEventKey *event,
                                       GtkTreeView *view)
 {
+        if (event->keyval == GDK_KEY_Left)
+                return gibbon_move_list_view_prev_move (self, view);
+        if (event->keyval == GDK_KEY_Right)
+                return gibbon_move_list_view_next_move (self, view);
+        return FALSE;
+}
+
+static gboolean
+gibbon_move_list_view_prev_move (GibbonMoveListView *self, GtkTreeView *view)
+{
         GtkTreeSelection *selection;
         gint action_no, move_action_no = -2, roll_action_no = -2;
         GList *selected;
@@ -552,9 +566,95 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
         GtkTreeIter iter;
         GtkTreeViewColumn *number_column;
 
-        if (event->keyval != GDK_KEY_Left
-            && event->keyval != GDK_KEY_Right)
-                return FALSE;
+        selection = gtk_tree_view_get_selection (self->priv->tree_view);
+        if (!selection)
+                return TRUE;
+
+        selected = gtk_tree_selection_get_selected_rows (selection,
+                                                         &self->priv->model);
+        if (!selected)
+                return TRUE;
+
+        path = (GtkTreePath *) selected->data;
+        /* The path gets freed with the list.  We need a copy.  */
+        if (path)
+                path = gtk_tree_path_copy (path);
+
+        if (gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_model_get (self->priv->model, &iter,
+                                    GIBBON_MATCH_LIST_COL_MOVE_ACTION,
+                                    &move_action_no,
+                                    GIBBON_MATCH_LIST_COL_ROLL_ACTION,
+                                    &roll_action_no,
+                                    -1);
+        }
+        g_list_foreach (selected, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (selected);
+        if (!path)
+                return TRUE;
+
+        /* Already at the start of game? */
+        if (self->priv->last_action_no < 0) {
+                gtk_tree_path_free (path);
+                gtk_widget_error_bell (GTK_WIDGET (view));
+                return TRUE;
+        }
+
+        /* Display the roll? */
+        if (move_action_no >= 0
+            && move_action_no == self->priv->last_action_no
+            && roll_action_no >= 0) {
+                gtk_tree_path_free (path);
+                self->priv->last_action_no = roll_action_no;
+                gibbon_move_list_view_set_state (self);
+                g_signal_emit (
+                        self,
+                        gibbon_move_list_view_signals[ACTION_SELECTED],
+                        0, roll_action_no);
+                return TRUE;
+        }
+
+        /* Move to the previous node.  */
+        action_no = self->priv->last_action_no - 1;
+        gtk_tree_path_prev (path);
+
+        if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
+                gtk_tree_path_free (path);
+                gtk_widget_error_bell (GTK_WIDGET (view));
+                return TRUE;
+        }
+
+        number_column = gtk_tree_view_get_column (view, 0);
+
+        /* Defer signal delivery while setting the cursor.  */
+        self->priv->game_changing = TRUE;
+        gtk_tree_view_set_cursor (self->priv->tree_view, path, NULL, FALSE);
+        self->priv->game_changing = FALSE;
+
+        gtk_tree_view_scroll_to_cell (view, path, number_column,
+                                      FALSE, 0.0f, 0.0f);
+        gtk_tree_path_free (path);
+
+        self->priv->last_action_no = action_no;
+
+        gibbon_move_list_view_set_state (self);
+
+        g_signal_emit (self,
+                       gibbon_move_list_view_signals[ACTION_SELECTED],
+                       0, self->priv->last_action_no);
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_move_list_view_next_move (GibbonMoveListView *self, GtkTreeView *view)
+{
+        GtkTreeSelection *selection;
+        gint action_no, move_action_no = -2, roll_action_no = -2;
+        GList *selected;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        GtkTreeViewColumn *number_column;
 
         selection = gtk_tree_view_get_selection (self->priv->tree_view);
         if (!selection)
@@ -582,50 +682,23 @@ gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
         if (!path)
                 return TRUE;
 
-        if (event->keyval == GDK_KEY_Left) {
-                /* Already at the start of game? */
-                if (self->priv->last_action_no < 0) {
-                        gtk_tree_path_free (path);
-                        gtk_widget_error_bell (GTK_WIDGET (view));
-                        return TRUE;
-                }
-
-                /* Display the roll? */
-                if (move_action_no >= 0
-                    && move_action_no == self->priv->last_action_no
-                    && roll_action_no >= 0) {
-                        gtk_tree_path_free (path);
-                        self->priv->last_action_no = roll_action_no;
-                        gibbon_move_list_view_set_state (self);
-                        g_signal_emit (
-                                self,
-                                gibbon_move_list_view_signals[ACTION_SELECTED],
-                                0, roll_action_no);
-                        return TRUE;
-                }
-
-                /* Move to the previous node.  */
-                action_no = self->priv->last_action_no - 1;
-                gtk_tree_path_prev (path);
-        } else {
-                /* Display the roll? */
-                if (roll_action_no >= 0
-                    && roll_action_no == self->priv->last_action_no
-                    && move_action_no >= 0) {
-                        gtk_tree_path_free (path);
-                        self->priv->last_action_no = move_action_no;
-                        gibbon_move_list_view_set_state (self);
-                        g_signal_emit (
-                                self,
-                                gibbon_move_list_view_signals[ACTION_SELECTED],
-                                0, move_action_no);
-                        return TRUE;
-                }
-
-                /* Move to the next node.  */
-                action_no = self->priv->last_action_no + 1;
-                gtk_tree_path_next (path);
+        /* Display the roll? */
+        if (roll_action_no >= 0
+            && roll_action_no == self->priv->last_action_no
+            && move_action_no >= 0) {
+                gtk_tree_path_free (path);
+                self->priv->last_action_no = move_action_no;
+                gibbon_move_list_view_set_state (self);
+                g_signal_emit (
+                        self,
+                        gibbon_move_list_view_signals[ACTION_SELECTED],
+                        0, move_action_no);
+                return TRUE;
         }
+
+        /* Move to the next node.  */
+        action_no = self->priv->last_action_no + 1;
+        gtk_tree_path_next (path);
 
         if (!gtk_tree_model_get_iter (self->priv->model, &iter, path)) {
                 gtk_tree_path_free (path);
