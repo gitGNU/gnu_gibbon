@@ -52,7 +52,6 @@
 enum gibbon_match_list_signal {
         SELECT_GAME,
         GAME_SELECTED,
-        LOAD_MATCH,
         MATCH_LOADED,
         LAST_SIGNAL
 };
@@ -116,16 +115,6 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
         
         g_type_class_add_private (klass, sizeof (GibbonMatchListPrivate));
 
-        gibbon_match_list_signals[LOAD_MATCH] =
-                g_signal_new ("load-match",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__OBJECT,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_OBJECT);
         gibbon_match_list_signals[MATCH_LOADED] =
                 g_signal_new ("match-loaded",
                               G_TYPE_FROM_CLASS (klass),
@@ -212,8 +201,6 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
         gchar *comment;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
-
-        g_signal_emit (self, gibbon_match_list_signals[LOAD_MATCH], 0, self);
 
         self->priv->match = match;
         self->priv->active = -1;
