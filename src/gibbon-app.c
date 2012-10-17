@@ -346,8 +346,6 @@ gibbon_app_post_init (const GibbonApp *self)
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
-        self->priv->analysis_view = gibbon_analysis_view_new (self);
-
         /*
          * If a match was passed on the command line it is already loaded
          * and set to the last action in the match.  Make sure that the
@@ -393,6 +391,14 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         self->priv->move_list_view = gibbon_move_list_view_new (move_list_view,
                                                                 list);
 
+        g_signal_connect_swapped (G_OBJECT (self->priv->move_list_view),
+                                  "action-selected",
+                                  G_CALLBACK (gibbon_app_on_action_selected),
+                                  (gpointer) self);
+
+        self->priv->match_list = list;
+        self->priv->analysis_view = gibbon_analysis_view_new (self);
+
         if (match_file) {
                 /*
                  * FIXME! The whole thing should be more generic so that
@@ -412,6 +418,8 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                         return FALSE;
                 }
 
+                self->priv->match = match;
+
                 obj = gibbon_app_find_object (self, "notebook-info-area",
                                               GTK_TYPE_NOTEBOOK);
                 gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
@@ -419,11 +427,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                 gibbon_match_list_set_match (list, match);
 
                 g_object_unref (loader);
-
-                self->priv->match = match;
         }
-
-        self->priv->match_list = list;
 
         return TRUE;
 }
@@ -700,11 +704,6 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                                      GTK_TYPE_TOOL_BUTTON);
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_reject),
-                                  (gpointer) self);
-
-        g_signal_connect_swapped (G_OBJECT (self->priv->move_list_view),
-                                  "action-selected",
-                                  G_CALLBACK (gibbon_app_on_action_selected),
                                   (gpointer) self);
 }
 
@@ -1728,7 +1727,6 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
                 return;
 
         gibbon_board_set_position (GIBBON_BOARD (self->priv->board), pos);
-
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no);
 }
