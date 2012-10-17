@@ -475,6 +475,9 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
 
+        cube_page = gtk_notebook_get_nth_page (self->priv->notebook, 0);
+        move_page = gtk_notebook_get_nth_page (self->priv->notebook, 1);
+
         /*
          * Set the minimum size of the notebook so that it can accommodate the
          * cube decision page of the notebook, no matter whether we display
@@ -483,6 +486,8 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         if (!self->priv->notebook_sized
             && gtk_widget_get_realized (GTK_WIDGET (self->priv->notebook))) {
                 nbw = GTK_WIDGET (self->priv->notebook);
+                gtk_widget_show (cube_page);
+                gtk_widget_hide (move_page);
                 gtk_widget_show (nbw);
                 gtk_widget_get_allocation (nbw, &alloc);
                 gtk_widget_set_size_request (nbw, alloc.width, alloc.height);
@@ -553,17 +558,17 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                 gtk_tree_view_set_model (self->priv->variants_view, NULL);
         }
 
-        cube_page = gtk_notebook_get_nth_page (self->priv->notebook, 0);
-        move_page = gtk_notebook_get_nth_page (self->priv->notebook, 1);
-        if (move_analysis->ma && move_analysis->da) {
-                gtk_widget_show (cube_page);
-                gtk_widget_show (move_page);
-        } else if (move_analysis->ma) {
-                gtk_widget_hide (cube_page);
-                gtk_widget_show (move_page);
-        } else {
-                gtk_widget_show (cube_page);
-                gtk_widget_hide (move_page);
+        if (self->priv->notebook_sized) {
+                if (move_analysis->ma && move_analysis->da) {
+                        gtk_widget_show (cube_page);
+                        gtk_widget_show (move_page);
+                } else if (move_analysis->ma) {
+                        gtk_widget_hide (cube_page);
+                        gtk_widget_show (move_page);
+                } else {
+                        gtk_widget_show (cube_page);
+                        gtk_widget_hide (move_page);
+                }
         }
 }
 
