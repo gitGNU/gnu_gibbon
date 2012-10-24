@@ -189,6 +189,7 @@ struct _GibbonSessionPrivate {
         gboolean expect_saved;
         gboolean saved_finished;
         gboolean expect_notify;
+        gboolean expect_autoboard;
         GSList *expect_who_infos;
         GSList *expect_saved_counts;
         gboolean expect_address;
@@ -237,6 +238,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->expect_saved = FALSE;
         self->priv->saved_finished = FALSE;
         self->priv->expect_notify = FALSE;
+        self->priv->expect_autoboard = FALSE;
         self->priv->expect_who_infos = NULL;
         self->priv->expect_saved_counts = NULL;
         self->priv->expect_address = FALSE;
@@ -792,6 +794,8 @@ gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
 
         if (!notify)
                 self->priv->expect_notify = TRUE;
+        if (!autoboard)
+                self->priv->expect_autoboard = TRUE;
         if (ready) {
                 self->priv->available = TRUE;
                 gibbon_app_set_state_available (self->priv->app);
@@ -2199,6 +2203,12 @@ gibbon_session_handle_show_toggle (GibbonSession *self, GSList *iter)
                 self->priv->expect_notify = !value;
                 if (check_queue)
                         gibbon_session_check_expect_queues (self, TRUE);
+        } else if (0 == g_strcmp0 ("autoboard", key)) {
+                if (self->priv->expect_autoboard)
+                        check_queue = TRUE;
+                self->priv->expect_autoboard = !value;
+                if (check_queue)
+                        gibbon_session_check_expect_queues (self, TRUE);
         } else if (0 == g_strcmp0 ("ready", key)) {
                 self->priv->available = value;
                 if (value) {
@@ -2804,6 +2814,7 @@ gibbon_session_timeout (GibbonSession *self)
         } else if (self->priv->expect_boardstyle
                    || self->priv->expect_saved
                    || self->priv->expect_notify
+                   || self->priv->expect_autoboard
                    || self->priv->expect_saved_counts
                    || self->priv->expect_who_infos
                    || self->priv->expect_address) {
@@ -2841,6 +2852,9 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
         } else if (self->priv->expect_notify) {
                 gibbon_connection_queue_command (self->priv->connection, TRUE,
                                                  "toggle notify");
+        } else if (self->priv->expect_autoboard) {
+                gibbon_connection_queue_command (self->priv->connection, TRUE,
+                                                 "toggle autoboard");
         } else if (self->priv->expect_saved_counts) {
                 info = self->priv->expect_saved_counts->data;
                 gibbon_connection_queue_command (self->priv->connection, FALSE,
