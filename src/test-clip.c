@@ -1843,6 +1843,26 @@ static struct test_case test_toggles19 = {
                 }
 };
 
+static struct test_case test_toggles20 = {
+                "** You won't be notified when new users log in.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "autoboard" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
+static struct test_case test_toggles21 = {
+                "** You'll be notified when new users log in.",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "407" },
+                                { GIBBON_CLIP_TYPE_STRING, "autoboard" },
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_saved00 = {
         "  opponent          matchlength   score (your points first)",
         {
@@ -2141,6 +2161,8 @@ static struct test_case *test_cases[] = {
                 &test_toggles17,
                 &test_toggles18,
                 &test_toggles19,
+                &test_toggles20,
+                &test_toggles21,
 
                 &test_saved00,
                 &test_saved01,
