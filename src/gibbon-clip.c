@@ -2247,6 +2247,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
 {
         gchar *str;
         gint64 match_length;
+        gboolean toggle;
 
         if (0 == g_strcmp0 ("You", tokens[1]))
                 return gibbon_clip_parse_2stars_you (line, tokens, result);
@@ -2370,6 +2371,30 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[6]);
+                return TRUE;
+        } else if (0 == g_strcmp0 ("The", tokens[1])
+                   && 0 == g_strcmp0 ("board", tokens[2])
+                   && tokens[3]
+                   && 0 == g_strcmp0 ("be", tokens[4])
+                   && 0 == g_strcmp0 ("refreshed", tokens[5])
+                   && 0 == g_strcmp0 ("after", tokens[6])
+                   && 0 == g_strcmp0 ("every", tokens[7])
+                   && 0 == g_strcmp0 ("move.", tokens[8])) {
+                if (0 == g_strcmp0 ("will", tokens[3]))
+                        toggle = TRUE;
+                else if (0 == g_strcmp0 ("won't", tokens[3]))
+                        toggle = FALSE;
+                else
+                        return FALSE;
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_UINT,
+                                                 GIBBON_CLIP_CODE_SHOW_TOGGLE);
+                *result = gibbon_clip_alloc_string (*result,
+                                                    GIBBON_CLIP_TYPE_STRING,
+                                                    "autoboard");
+                *result = gibbon_clip_alloc_int (*result,
+                                                 GIBBON_CLIP_TYPE_BOOLEAN,
+                                                 toggle);
                 return TRUE;
         }
 
