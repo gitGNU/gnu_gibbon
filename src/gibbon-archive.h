@@ -106,5 +106,8 @@ struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
 
 GSList *gibbon_archive_get_accounts (const GibbonArchive *self,
                                      const gchar *hostname, guint port);
+gchar *gibbon_archive_get_saved_name (const GibbonArchive *self,
+                                      const gchar *player1,
+                                      const gchar *player2);
 
 #endif

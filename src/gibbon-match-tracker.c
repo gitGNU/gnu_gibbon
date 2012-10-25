@@ -33,6 +33,8 @@
 
 #include "gibbon-match-tracker.h"
 #include "gibbon-match.h"
+#include "gibbon-app.h"
+#include "gibbon-archive.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -91,6 +93,11 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
                           gsize length, gboolean resume)
 {
         GibbonMatchTracker *self = g_object_new (GIBBON_TYPE_MATCH_TRACKER, NULL);
+        GibbonArchive *archive = gibbon_app_get_archive (app);
+        gchar *saved_name;
+
+        saved_name = gibbon_archive_get_saved_name (archive, player1, player2);
+        g_free (saved_name);
 
         /*
          * We always assume that the Crawford rule applies for fixed-length

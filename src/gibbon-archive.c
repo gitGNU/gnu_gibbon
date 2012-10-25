@@ -102,6 +102,7 @@ struct _GibbonArchivePrivate {
         GibbonApp *app;
 
         gchar *servers_directory;
+        gchar *server_directory;
         gchar *session_directory;
 
         GibbonDatabase *db;
@@ -128,6 +129,7 @@ static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
 static void gibbon_archive_on_resolve_ip (GObject *resolver,
                                           GAsyncResult *result,
                                           gpointer data);
+static gchar *gibbon_archive_get_saved_directory (const GibbonArchive *self);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -137,6 +139,8 @@ gibbon_archive_init (GibbonArchive *self)
 
         self->priv->app = NULL;
         self->priv->servers_directory = NULL;
+        self->priv->server_directory = NULL;
+        self->priv->session_directory = NULL;
         self->priv->db = NULL;
         self->priv->droppers = NULL;
         self->priv->match = NULL;
@@ -148,11 +152,9 @@ gibbon_archive_finalize (GObject *object)
 {
         GibbonArchive *self = GIBBON_ARCHIVE (object);
 
-        if (self->priv->servers_directory)
-                g_free (self->priv->servers_directory);
-
-        if (self->priv->session_directory)
-                g_free (self->priv->session_directory);
+        g_free (self->priv->servers_directory);
+        g_free (self->priv->server_directory);
+        g_free (self->priv->session_directory);
 
         if (self->priv->droppers)
                 g_hash_table_destroy (self->priv->droppers);
@@ -280,8 +282,11 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
                 g_free (session_directory);
                 session_directory = buf;
         }
+
+        g_free (self->priv->session_directory);
+        self->priv->server_directory = session_directory;
+
         buf = g_build_filename (session_directory, login, NULL);
-        g_free (session_directory);
 
         if (self->priv->session_directory)
                 g_free (self->priv->session_directory);
@@ -755,6 +760,62 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
         }
 
         return accounts;
+}
+
+static gchar *
+gibbon_archive_get_saved_directory (const GibbonArchive *self)
+{
+        gchar *saved_directory;
+        gint mode;
+
+        g_return_val_if_fail (self->priv->server_directory != NULL, NULL);
+
+        saved_directory = g_build_filename (self->priv->server_directory,
+                                            "%saved",
+                                            NULL);
+
+        if (!g_file_test (saved_directory, G_FILE_TEST_IS_DIR)) {
+#ifdef G_OS_WIN32
+                mode = S_IRWXU;
+#else
+                mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+                if (0 != g_mkdir_with_parents (saved_directory, mode)) {
+                        gibbon_app_display_error (self->priv->app, NULL,
+                                                  _("Failed to create"
+                                                    " directory `%s': %s!\n\n"
+                                                    "It will be impossible to save"
+                                                    " your matches and other data."),
+                                                  saved_directory,
+                                                  strerror (errno));
+                        g_free (saved_directory);
+                        return NULL;
+                }
+        }
+
+        return saved_directory;
+}
+
+gchar *
+gibbon_archive_get_saved_name (const GibbonArchive *self,
+                               const gchar *player1,
+                               const gchar *player2)
+{
+        gchar *saved_directory;
+        gchar *filename, *path;
+
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+        g_return_val_if_fail (player1 != NULL, NULL);
+        g_return_val_if_fail (player2 != NULL, NULL);
+
+        saved_directory = gibbon_archive_get_saved_directory (self);
+
+        filename = g_strdup_printf ("%s-%s.gmd", player1, player2);
+        path = g_build_filename (saved_directory, filename, NULL);
+        g_free (filename);
+        g_free (saved_directory);
+
+        return path;
 }
 
 # if 0
