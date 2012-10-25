@@ -45,6 +45,7 @@
 #include "gibbon-client-icons.h"
 #include "gibbon-country.h"
 #include "gibbon-settings.h"
+#include "gibbon-match-tracker.h"
 
 typedef enum {
         GIBBON_SESSION_PLAYER_YOU = 0,
@@ -177,6 +178,7 @@ struct _GibbonSessionPrivate {
         GibbonPlayerList *player_list;
         GibbonInviterList *inviter_list;
 
+        GibbonMatchTracker *tracker;
         GibbonArchive *archive;
 
         gboolean guest_login;
@@ -227,6 +229,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->player_list = NULL;
         self->priv->inviter_list = NULL;
         self->priv->archive = NULL;
+        self->priv->tracker = NULL;
 
         self->priv->guest_login = FALSE;
         self->priv->rstate = GIBBON_SESSION_REGISTER_WAIT_INIT;
@@ -1645,7 +1648,6 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
         const gchar *player;
-        GibbonMatch *match;
         guint length;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
@@ -1670,10 +1672,11 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
         gibbon_inviter_list_clear (self->priv->inviter_list);
         g_hash_table_remove (self->priv->saved_games, player);
 
-        match = gibbon_match_new (
+        if (self->priv->tracker)
+                g_object_unref (self->priv->tracker);
+        self->priv->tracker = gibbon_match_tracker_new (
                         gibbon_connection_get_login (self->priv->connection),
-                        player, length, TRUE);
-        gibbon_archive_set_match (self->priv->archive, match);
+                        player, length, FALSE);
 
         return GIBBON_CLIP_CODE_NOW_PLAYING;
 }

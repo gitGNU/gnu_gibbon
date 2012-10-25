@@ -757,6 +757,7 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
         return accounts;
 }
 
+# if 0
 void
 gibbon_archive_set_match (GibbonArchive *self, GibbonMatch *match)
 {
@@ -768,7 +769,6 @@ gibbon_archive_set_match (GibbonArchive *self, GibbonMatch *match)
         GError *error = NULL;
         GibbonMatchWriter *writer;
 
-        g_printerr ("setting match\n");
         g_return_if_fail (self != NULL);
         g_return_if_fail (GIBBON_IS_MATCH (match));
 
@@ -836,3 +836,5 @@ gibbon_archive_set_match (GibbonArchive *self, GibbonMatch *match)
 
         g_free (path);
 }
+#endif
+
