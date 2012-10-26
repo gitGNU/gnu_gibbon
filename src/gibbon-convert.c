@@ -216,7 +216,7 @@ main (int argc, char *argv[])
 
         if (output_filename) {
                 file = g_file_new_for_commandline_arg (output_filename);
-                fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_NONE,
+                fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
                                        NULL, &error);
                 g_object_unref (file);
                 if (!fout) {
