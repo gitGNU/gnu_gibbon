@@ -152,6 +152,8 @@ void gibbon_match_set_black (GibbonMatch *self, const gchar *black);
 const gchar *gibbon_match_get_black (const GibbonMatch *self);
 void gibbon_match_set_length (GibbonMatch *self, gsize length);
 gsize gibbon_match_get_length (const GibbonMatch *self);
+void gibbon_match_set_location (GibbonMatch *self, const gchar *location);
+const gchar *gibbon_match_get_location (const GibbonMatch *self);
 
 gboolean gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                                   GibbonGameAction *action, GError **error);

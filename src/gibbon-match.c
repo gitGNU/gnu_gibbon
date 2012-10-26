@@ -56,6 +56,7 @@ struct _GibbonMatchPrivate {
         gchar *black;
         gboolean crawford;
         gsize length;
+        gchar *location;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -101,6 +102,7 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->black = NULL;
         self->priv->crawford = TRUE;
         self->priv->length = 0;
+        self->priv->location = NULL;
 }
 
 static void
@@ -117,6 +119,7 @@ gibbon_match_finalize (GObject *object)
 
         g_free (self->priv->white);
         g_free (self->priv->black);
+        g_free (self->priv->location);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
 }
@@ -369,6 +372,25 @@ gibbon_match_get_length (const GibbonMatch *self)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
 
         return self->priv->length;
+}
+
+void
+gibbon_match_set_location (GibbonMatch *self, const gchar *location)
+{
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        g_free (self->priv->location);
+
+        /* g_strdup () returns NULL if the argument is NULL.  */
+        self->priv->location = g_strdup (location);
+}
+
+const gchar *
+gibbon_match_get_location (const GibbonMatch *self)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        return self->priv->location;
 }
 
 gsize
