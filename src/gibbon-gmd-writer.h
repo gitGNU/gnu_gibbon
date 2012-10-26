@@ -46,7 +46,7 @@
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
                 GIBBON_TYPE_GMD_WRITER, GibbonGMDWriterClass))
 
-#define GIBBON_GMD_REVISION 1
+#define GIBBON_GMD_REVISION 2
 
 /**
  * GibbonGMDWriter:
