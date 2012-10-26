@@ -80,6 +80,8 @@ GibbonApp *gibbon_app_new (const gchar *builder_name, const gchar *pixmaps_dir,
 void gibbon_app_post_init (const GibbonApp *self);
 void gibbon_app_display_error (const GibbonApp *self, const gchar *headline,
                                const gchar *message_format, ...);
+void gibbon_app_fatal_error (const GibbonApp *self, const gchar *headline,
+                             const gchar *message_format, ...);
 void gibbon_app_display_info (const GibbonApp *self, const gchar *headline,
                               const gchar *message_format, ...);
 GObject *gibbon_app_find_object (const GibbonApp *self, const gchar *id,

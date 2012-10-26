@@ -484,6 +484,43 @@ void gibbon_app_display_error(const GibbonApp* self, const gchar *headline,
         gtk_widget_destroy(GTK_WIDGET (dialog));
 }
 
+void gibbon_app_fatal_error(const GibbonApp* self, const gchar *headline,
+                            const gchar *message_format, ...)
+{
+        va_list args;
+        gchar *message;
+        GtkWidget *dialog;
+
+        va_start (args, message_format);
+        message = g_strdup_vprintf(message_format, args);
+        va_end (args);
+
+        if (headline)
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                "<span weight='bold' size='larger'>"
+                                "%s: %s</span>\n%s",
+                                _("Fatal error"), headline, message);
+        else
+                dialog = gtk_message_dialog_new_with_markup(
+                                GTK_WINDOW (self->priv->window),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_ERROR,
+                                GTK_BUTTONS_CLOSE,
+                                _("Fatal error: %s"), message);
+
+        g_free(message);
+
+        gtk_dialog_run(GTK_DIALOG (dialog));
+
+        gtk_widget_destroy(GTK_WIDGET (dialog));
+
+        gtk_main_quit ();
+}
+
 void gibbon_app_display_info(const GibbonApp *self, const gchar *headline,
                              const gchar *message_format, ...)
 {
