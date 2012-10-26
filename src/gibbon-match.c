@@ -54,6 +54,8 @@ struct _GibbonMatchPrivate {
 
         gchar *white;
         gchar *black;
+        gchar *wrank;
+        gchar *brank;
         gboolean crawford;
         gsize length;
         gchar *location;
@@ -100,6 +102,8 @@ gibbon_match_init (GibbonMatch *self)
 
         self->priv->white = NULL;
         self->priv->black = NULL;
+        self->priv->wrank = NULL;
+        self->priv->brank = NULL;
         self->priv->crawford = TRUE;
         self->priv->length = 0;
         self->priv->location = NULL;
@@ -119,6 +123,8 @@ gibbon_match_finalize (GObject *object)
 
         g_free (self->priv->white);
         g_free (self->priv->black);
+        g_free (self->priv->wrank);
+        g_free (self->priv->brank);
         g_free (self->priv->location);
 
         G_OBJECT_CLASS (gibbon_match_parent_class)->finalize(object);
@@ -304,8 +310,6 @@ gibbon_match_set_white (GibbonMatch *self, const gchar *white)
                 gibbon_game_set_white (game, self->priv->white);
                 iter = iter->next;
         }
-
-        return;
 }
 
 const gchar *
@@ -336,8 +340,6 @@ gibbon_match_set_black (GibbonMatch *self, const gchar *black)
                 gibbon_game_set_black (game, self->priv->black);
                 iter = iter->next;
         }
-
-        return;
 }
 const gchar *
 gibbon_match_get_black (const GibbonMatch *self)
@@ -345,6 +347,34 @@ gibbon_match_get_black (const GibbonMatch *self)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
         return self->priv->black;
+}
+
+void
+gibbon_match_set_rank (GibbonMatch *self, GibbonPositionSide side,
+                       const gchar *rank)
+{
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+        g_return_if_fail (side != GIBBON_POSITION_SIDE_NONE);
+
+        if (side < 0) {
+                g_free (self->priv->brank);
+                self->priv->brank = g_strdup (rank);
+        } else {
+                g_free (self->priv->wrank);
+                self->priv->brank = g_strdup (rank);
+        }
+}
+
+const gchar *
+gibbon_match_get_rank (const GibbonMatch *self, GibbonPositionSide side)
+{
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
+        g_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE, NULL);
+
+        if (side < 0)
+                return self->priv->brank;
+        else
+                return self->priv->wrank;
 }
 
 void
