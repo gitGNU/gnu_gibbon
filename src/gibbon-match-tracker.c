@@ -145,7 +145,6 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
          * matches.  We will find out whether this is correct or not later.
          */
         self->priv->match = gibbon_match_new (player1, player2, length, length);
-        gibbon_app_set_match (app, self->priv->match);
 
         connection = gibbon_app_get_connection (app);
         host = gibbon_connection_get_hostname (connection);
@@ -172,6 +171,8 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
                                         error->message);
         }
         g_output_stream_flush (self->priv->out, NULL, NULL);
+
+        gibbon_app_set_match (app, self->priv->match);
 
         return self;
 }
