@@ -114,6 +114,7 @@ const GibbonGameAction *gibbon_game_get_nth_action (const GibbonGame *self,
                                                     gint n,
                                                     GibbonPositionSide *side);
 GibbonAnalysis *gibbon_game_get_nth_analysis (const GibbonGame *self, gint n);
+guint64 gibbon_game_get_nth_timestamp (const GibbonGame *self, gint n);
 gsize gibbon_game_get_num_actions (const GibbonGame *self);
 
 void gibbon_game_set_white (GibbonGame *self, const gchar *white);

@@ -870,6 +870,21 @@ gibbon_game_get_nth_analysis (const GibbonGame *self, gint n)
                 return NULL;
 }
 
+guint64
+gibbon_game_get_nth_timestamp (const GibbonGame *self, gint n)
+{
+        const GibbonGameSnapshot *snapshot;
+
+        g_return_val_if_fail (GIBBON_IS_GAME (self), G_MININT64);
+
+        snapshot = gibbon_game_get_nth_snapshot (self, n);
+
+        if (snapshot)
+                return snapshot->timestamp;
+        else
+                return G_MININT64;
+}
+
 static const GibbonGameSnapshot *
 gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
 {
