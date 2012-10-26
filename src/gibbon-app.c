@@ -418,18 +418,33 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                         return FALSE;
                 }
 
-                self->priv->match = match;
-
-                obj = gibbon_app_find_object (self, "notebook-info-area",
-                                              GTK_TYPE_NOTEBOOK);
-                gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
-
-                gibbon_match_list_set_match (list, match);
+                gibbon_app_set_match (self, match);
 
                 g_object_unref (loader);
         }
 
         return TRUE;
+}
+
+void
+gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
+{
+        GObject *obj;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_APP (self));
+        g_return_if_fail (match != NULL);
+        g_return_if_fail (GIBBON_IS_MATCH (match));
+
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
+        self->priv->match = match;
+
+        obj = gibbon_app_find_object (self, "notebook-info-area",
+                                      GTK_TYPE_NOTEBOOK);
+        gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
+
+        gibbon_match_list_set_match (self->priv->match_list, match);
 }
 
 static GtkBuilder *

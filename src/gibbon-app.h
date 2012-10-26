@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-fibs-message.h"
+#include "gibbon-match.h"
 
 #define GIBBON_TYPE_APP \
         (gibbon_app_get_type ())
@@ -122,6 +123,7 @@ void gibbon_app_show_game_chat (GibbonApp *self,
 void gibbon_app_configure_player_menu (const GibbonApp *self,
                                        const gchar *player,
                                        GtkMenu *menu);
+void gibbon_app_set_match (GibbonApp *self, struct _GibbonMatch *match);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
