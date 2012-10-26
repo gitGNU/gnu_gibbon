@@ -80,7 +80,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -89,7 +89,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, 8, 5, 6, 5, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -98,7 +98,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 2));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -107,7 +107,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -116,7 +116,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 5));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -126,7 +126,7 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
                                                        6, 1, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -135,7 +135,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (4, 5));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -144,7 +144,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (4, 5, 0, 4, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -153,7 +153,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -168,7 +168,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -193,7 +193,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 2));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -202,7 +202,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 2, 12, 17, 1, 3, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -211,7 +211,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (5, 5));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -221,7 +221,7 @@ fill_match (void)
         action = GIBBON_GAME_ACTION (gibbon_move_newv (5, 5, 8, 3, 8, 3, 6, 1,
                                                        6, 1, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -230,7 +230,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -239,7 +239,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -248,7 +248,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (3, 1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -256,7 +256,7 @@ fill_match (void)
         }
         action = GIBBON_GAME_ACTION (gibbon_move_newv (3, 1, -1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -265,7 +265,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (1));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -274,7 +274,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_reject_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -283,7 +283,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (8));
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_WHITE, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);
@@ -292,7 +292,7 @@ fill_match (void)
 
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
         if (!gibbon_game_add_action (game, GIBBON_POSITION_SIDE_BLACK, action,
-                                     &error)) {
+                                     G_MININT64, &error)) {
                 g_object_unref (match);
                 g_printerr ("Cannot add game action: %s\n", error->message);
                 g_error_free (error);

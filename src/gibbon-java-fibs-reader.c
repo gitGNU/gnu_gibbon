@@ -545,7 +545,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
                 }
         }
 
-        if (!gibbon_game_add_action (game, side, action, &error)) {
+        if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
                 _gibbon_java_fibs_reader_yyerror (error->message);
                 g_object_unref (action);
                 return FALSE;

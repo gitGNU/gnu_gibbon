@@ -160,7 +160,8 @@ const gchar *gibbon_match_get_rank (const GibbonMatch *self,
                                     GibbonPositionSide side);
 
 gboolean gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
-                                  GibbonGameAction *action, GError **error);
+                                  GibbonGameAction *action,
+                                  guint64 timestamp, GError **error);
 
 gboolean gibbon_match_get_missing_actions (const GibbonMatch *self,
                                            const GibbonPosition *target,

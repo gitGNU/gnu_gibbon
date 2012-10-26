@@ -466,7 +466,8 @@ gibbon_match_set_crawford (GibbonMatch *self, gboolean crawford)
 
 gboolean
 gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
-                         GibbonGameAction *action, GError **error)
+                         GibbonGameAction *action, guint64 timestamp,
+                         GError **error)
 {
         GibbonGame *game;
         const GibbonPosition *current;
@@ -483,7 +484,7 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, error))
+        if (!gibbon_game_add_action (game, side, action, timestamp, error))
                 return FALSE;
 
         if (gibbon_game_over (game)) {

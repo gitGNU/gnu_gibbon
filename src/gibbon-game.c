@@ -66,35 +66,45 @@ G_DEFINE_TYPE (GibbonGame, gibbon_game, G_TYPE_OBJECT)
 
 static gboolean gibbon_game_add_roll (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonRoll *roll, GError **error);
+                                      GibbonRoll *roll, guint64 timestamp,
+                                      GError **error);
 static gboolean gibbon_game_add_move (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonMove *move, GError **error);
+                                      GibbonMove *move, guint64 timestamp,
+                                      GError **error);
 static gboolean gibbon_game_add_double (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonDouble *dbl, GError **error);
+                                      GibbonDouble *dbl, guint64 timestamp,
+                                      GError **error);
 static gboolean gibbon_game_add_drop (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonDrop *drop, GError **error);
+                                      GibbonDrop *drop, guint64 timestamp,
+                                      GError **error);
 static gboolean gibbon_game_add_take (GibbonGame *self,
                                       GibbonPositionSide side,
-                                      GibbonTake *take, GError **error);
+                                      GibbonTake *take, guint64 timestamp,
+                                      GError **error);
 static gboolean gibbon_game_add_resign (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonResign *resign, GError **error);
+                                        GibbonResign *resign, guint64 timestamp,
+                                        GError **error);
 static gboolean gibbon_game_add_reject (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonReject *reject, GError **error);
+                                        GibbonReject *reject, guint64 timestamp,
+                                        GError **error);
 static gboolean gibbon_game_add_accept (GibbonGame *self,
                                         GibbonPositionSide side,
-                                        GibbonAccept *accept, GError **error);
+                                        GibbonAccept *accept, guint64 timestamp,
+                                        GError **error);
 static gboolean gibbon_game_add_setup (GibbonGame *self,
                                        GibbonPositionSide side,
-                                       GibbonSetup *setup, GError **error);
+                                       GibbonSetup *setup, guint64 timestamp,
+                                       GError **error);
 static void gibbon_game_add_snapshot (GibbonGame *self,
                                       GibbonGameAction *action,
                                       GibbonPositionSide side,
-                                      GibbonPosition *position);
+                                      GibbonPosition *position,
+                                      guint64 timestamp);
 static const GibbonGameSnapshot *gibbon_game_get_snapshot (const GibbonGame
                                                            *self);
 static const GibbonGameSnapshot *gibbon_game_get_nth_snapshot (const GibbonGame
@@ -134,7 +144,7 @@ gibbon_game_finalize (GObject *object)
                 if (snapshot->analysis)
                         g_object_unref (snapshot->analysis);
                 gibbon_position_free (snapshot->resulting_position);
-       }
+        }
         g_free (self->priv->snapshots);
 
         G_OBJECT_CLASS (gibbon_game_parent_class)->finalize(object);
@@ -168,7 +178,8 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
 
 gboolean
 gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
-                        GibbonGameAction *action, GError **error)
+                        GibbonGameAction *action, guint64 timestamp,
+                        GError **error)
 {
         const GibbonPosition *current;
 
@@ -202,31 +213,38 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
 
         if (GIBBON_IS_ROLL (action)) {
                 return gibbon_game_add_roll (self, side, GIBBON_ROLL (action),
-                                             error);
+                                             timestamp, error);
         } else if (GIBBON_IS_MOVE (action)) {
                 return gibbon_game_add_move (self, side, GIBBON_MOVE (action),
-                                             error);
+                                             timestamp, error);
         } else if (GIBBON_IS_DOUBLE (action)) {
                 return gibbon_game_add_double (self, side,
-                                               GIBBON_DOUBLE (action), error);
+                                               GIBBON_DOUBLE (action),
+                                               timestamp, error);
         } else if (GIBBON_IS_DROP (action)) {
                 return gibbon_game_add_drop (self, side,
-                                             GIBBON_DROP (action), error);
+                                             GIBBON_DROP (action),
+                                             timestamp, error);
         } else if (GIBBON_IS_TAKE (action)) {
                 return gibbon_game_add_take (self, side,
-                                             GIBBON_TAKE (action), error);
+                                             GIBBON_TAKE (action),
+                                             timestamp, error);
         } else if (GIBBON_IS_RESIGN (action)) {
                 return gibbon_game_add_resign (self, side,
-                                               GIBBON_RESIGN (action), error);
+                                               GIBBON_RESIGN (action),
+                                               timestamp, error);
         } else if (GIBBON_IS_REJECT (action)) {
                 return gibbon_game_add_reject (self, side,
-                                               GIBBON_REJECT (action), error);
+                                               GIBBON_REJECT (action),
+                                               timestamp, error);
         } else if (GIBBON_IS_ACCEPT (action)) {
                 return gibbon_game_add_accept (self, side,
-                                               GIBBON_ACCEPT (action), error);
+                                               GIBBON_ACCEPT (action),
+                                               timestamp, error);
         } else if (GIBBON_IS_SETUP (action)) {
                 return gibbon_game_add_setup (self, side,
-                                              GIBBON_SETUP (action), error);
+                                              GIBBON_SETUP (action),
+                                              timestamp, error);
         } else {
                 /*
                  * We do not bother to translate this message.  It can only
@@ -246,6 +264,7 @@ gboolean
 gibbon_game_add_action_with_analysis (GibbonGame *self, GibbonPositionSide side,
                                       GibbonGameAction *action,
                                       GibbonAnalysis *analysis,
+                                      guint64 timestamp,
                                       GError **error)
 {
         GibbonGameSnapshot *snapshot;
@@ -260,7 +279,7 @@ gibbon_game_add_action_with_analysis (GibbonGame *self, GibbonPositionSide side,
                 gibbon_match_return_val_if_fail (GIBBON_IS_ANALYSIS (analysis),
                                                  FALSE, error);
 
-        if (!gibbon_game_add_action (self, side, action, error))
+        if (!gibbon_game_add_action (self, side, action, timestamp, error))
                 return FALSE;
 
         if (!analysis)
@@ -274,7 +293,7 @@ gibbon_game_add_action_with_analysis (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
-                      GibbonRoll *roll, GError **error)
+                      GibbonRoll *roll, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot;
@@ -346,14 +365,15 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 }
         }
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (roll), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (roll), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
-                      GibbonMove *move, GError **error)
+                      GibbonMove *move, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
         gchar *pretty_move;
@@ -418,7 +438,8 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
                                                : pos->players[0]);
         }
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (move), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (move), side, pos,
+                                  timestamp);
 
         score = gibbon_position_game_over (pos);
         if (score < 0) {
@@ -434,7 +455,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 
 static gboolean
 gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
-                        GibbonDouble *dbl, GError **error)
+                        GibbonDouble *dbl, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot;
@@ -495,14 +516,15 @@ gibbon_game_add_double (GibbonGame *self, GibbonPositionSide side,
         if (snapshot && GIBBON_IS_DOUBLE (snapshot->action))
                 pos->cube <<= 1;
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (dbl), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (dbl), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
-                      GibbonDrop *drop, GError **error)
+                      GibbonDrop *drop, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
 
@@ -537,14 +559,15 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
 
         pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (drop), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (drop), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
-                      GibbonTake *take, GError **error)
+                      GibbonTake *take, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
 
@@ -574,14 +597,15 @@ gibbon_game_add_take (GibbonGame *self, GibbonPositionSide side,
         pos->cube <<= 1;
         pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (take), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (take), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
-                        GibbonResign *resign, GError **error)
+                        GibbonResign *resign, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
 
@@ -605,14 +629,15 @@ gibbon_game_add_resign (GibbonGame *self, GibbonPositionSide side,
         pos->resigned = side == GIBBON_POSITION_SIDE_BLACK ?
                         -resign->value : resign->value;
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (resign), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (resign), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
-                        GibbonReject *reject, GError **error)
+                        GibbonReject *reject, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
         gchar *player;
@@ -652,14 +677,15 @@ gibbon_game_add_reject (GibbonGame *self, GibbonPositionSide side,
         g_free (pos->status);
         pos->status = g_strdup_printf (_("%s rejects."), player);
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (reject), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (reject), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
-                        GibbonAccept *accept, GError **error)
+                        GibbonAccept *accept, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
         const GibbonGameSnapshot *snapshot = NULL;
@@ -712,14 +738,15 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
 
         self->priv->resigned = TRUE;
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos,
+                                  timestamp);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
-                       GibbonSetup *setup, GError **error)
+                       GibbonSetup *setup, guint64 timestamp, GError **error)
 {
         GibbonPosition *pos;
 
@@ -732,7 +759,8 @@ gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
 
         pos = gibbon_position_copy (setup->position);
 
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (setup), side, pos);
+        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (setup), side, pos,
+                                  timestamp);
 
         /*
          * This is just a safe guess.  If the rest of the code detects that
@@ -769,7 +797,8 @@ gibbon_game_get_position (const GibbonGame *self)
 
 static void
 gibbon_game_add_snapshot (GibbonGame *self, GibbonGameAction *action,
-                          GibbonPositionSide side, GibbonPosition *position)
+                          GibbonPositionSide side, GibbonPosition *position,
+                          guint64 timestamp)
 {
         GibbonGameSnapshot *snapshot;
 
@@ -783,6 +812,7 @@ gibbon_game_add_snapshot (GibbonGame *self, GibbonGameAction *action,
         snapshot->side = side;
         snapshot->resulting_position = position;
         snapshot->analysis = NULL;
+        snapshot->timestamp = timestamp;
 }
 
 static const GibbonGameSnapshot *

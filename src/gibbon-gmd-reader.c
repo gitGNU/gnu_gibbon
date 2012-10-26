@@ -522,7 +522,7 @@ gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, &error)) {
+        if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
                 _gibbon_gmd_reader_yyerror (error->message);
                 g_object_unref (action);
                 return FALSE;

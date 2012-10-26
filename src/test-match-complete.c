@@ -94,7 +94,8 @@ main(int argc, char *argv[])
                 play = (GibbonMatchPlay *) iter->data;
                 action = play->action;
                 side = play->side;
-                if (!gibbon_match_add_action (from, side, action, &error)) {
+                if (!gibbon_match_add_action (from, side, action, G_MININT64,
+                                              &error)) {
                         g_printerr ("Completing `%s' to `%s':\n",
                                     argv[1], argv[2]);
                         g_printerr ("Error applying match action %s for %s: %s\n",

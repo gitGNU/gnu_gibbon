@@ -62,6 +62,7 @@ struct _GibbonSGFReaderPrivate {
 
         /* Per-instance data.  */
         const gchar *filename;
+        guint64 timestamp;
 };
 
 #define GIBBON_SGF_READER_DEBUG 1
@@ -151,6 +152,7 @@ gibbon_sgf_reader_init (GibbonSGFReader *self)
 
         self->priv->match = NULL;
         self->priv->filename = NULL;
+        self->priv->timestamp = G_MININT64;
 
         self->priv->yyerror = NULL;
         self->priv->user_data = NULL;
@@ -214,6 +216,7 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         self = GIBBON_SGF_READER (_self);
 
         self->priv->filename = filename;
+        self->priv->timestamp = G_MININT64;
 
         if (!filename) {
                 gibbon_sgf_reader_yyerror (self,
@@ -308,7 +311,9 @@ gibbon_sgf_reader_add_action (GibbonSGFReader *self, GibbonMatch *match,
         }
 
         if (!gibbon_game_add_action_with_analysis (game, side, action,
-                                                   analysis, error)) {
+                                                   analysis,
+                                                   self->priv->timestamp,
+                                                   error)) {
                 g_object_unref (action);
                 if (analysis)
                         g_object_unref (analysis);

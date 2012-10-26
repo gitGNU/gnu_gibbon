@@ -55,6 +55,7 @@ struct _GibbonGameSnapshot {
         GibbonPositionSide side;
         GibbonPosition *resulting_position;
         GibbonAnalysis *analysis;
+        guint64 timestamp;
 };
 
 /**
@@ -89,11 +90,13 @@ GibbonGame *gibbon_game_new (GibbonMatch *match,
                              const GibbonPosition *initial_position,
                              gboolean crawford, gboolean is_crawford);
 gboolean gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
-                                 GibbonGameAction *action, GError **error);
+                                 GibbonGameAction *action, guint64 timestamp,
+                                 GError **error);
 gboolean gibbon_game_add_action_with_analysis (GibbonGame *self,
                                                GibbonPositionSide side,
                                                GibbonGameAction *action,
                                                GibbonAnalysis *analysis,
+                                               guint64 timestamp,
                                                GError **error);
 gint gibbon_game_over (const GibbonGame *self);
 gboolean gibbon_game_resignation (const GibbonGame *self);

@@ -492,7 +492,7 @@ gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, &error)) {
+        if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
                 _gibbon_jelly_fish_reader_yyerror (error->message);
                 g_object_unref (action);
                 return FALSE;
