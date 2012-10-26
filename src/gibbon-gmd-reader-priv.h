@@ -35,6 +35,8 @@ void _gibbon_gmd_reader_yyerror (const gchar *msg);
 void _gibbon_gmd_reader_set_player (GibbonGMDReader *self,
                                     GibbonPositionSide side,
                                     const gchar *white);
+void _gibbon_gmd_reader_set_location (GibbonGMDReader *self,
+                                      const gchar *location);
 void _gibbon_gmd_reader_set_match_length (GibbonGMDReader *self, gint length);
 gboolean _gibbon_gmd_reader_add_game (GibbonGMDReader *self);
 void _gibbon_gmd_reader_set_crawford (GibbonGMDReader *self);

@@ -102,6 +102,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %token <name> NAME
 %token LENGTH
 %token PLAYER
+%token LOCATION
 %token RULE
 %token CRAWFORD
 %token GAME
@@ -150,7 +151,7 @@ thing
 	;
 
 property
-	: length | player | rule | game | unknown
+	: length | player | location | rule | game | unknown
 	;
 	
 length
@@ -164,6 +165,13 @@ player
 	: PLAYER COLON color COLON NAME
 		{
 			_gibbon_gmd_reader_set_player (reader, $3, $5);
+		}
+	;
+
+location
+	: LOCATION COLON NAME
+		{
+			_gibbon_gmd_reader_set_location (reader, $3);
 		}
 	;
 

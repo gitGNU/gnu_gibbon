@@ -249,6 +249,16 @@ _gibbon_gmd_reader_set_player (GibbonGMDReader *self,
 }
 
 void
+_gibbon_gmd_reader_set_location (GibbonGMDReader *self,
+                                 const gchar *location)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        gibbon_match_set_location (self->priv->match, location);
+}
+
+void
 _gibbon_gmd_reader_set_match_length (GibbonGMDReader *self, gint length)
 {
         g_return_if_fail (GIBBON_IS_GMD_READER (self));
@@ -534,10 +544,12 @@ gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
 gchar *
 _gibbon_gmd_reader_alloc_name (GibbonGMDReader *self, const gchar *name)
 {
+        gchar *unescaped;
+
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), NULL);
 
-        self->priv->names = g_slist_prepend (self->priv->names,
-                                             g_strdup (name));
+        unescaped = g_strcompress (name);
+        self->priv->names = g_slist_prepend (self->priv->names, unescaped);
 
         return self->priv->names->data;
 }

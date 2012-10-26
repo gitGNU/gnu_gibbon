@@ -152,6 +152,11 @@ NL (\r\n|\n|\r\n|\r)
 		yy_push_state (SCOLON);
 		return PLAYER;
 	}
+<OPCODE>location                {
+		BEGIN (SNAME);
+		yy_push_state (SCOLON);
+		return LOCATION;
+	}
 <SNAME>.*{NL}			{
 		BEGIN (OPCODE);
 		yylval.name = alloc_name (gibbon_trim (yytext));

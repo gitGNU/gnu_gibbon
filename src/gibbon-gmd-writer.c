@@ -86,6 +86,7 @@ static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
                                           gchar color,
                                           const GibbonResign *resign,
                                           GError **error);
+static gchar *gibbon_gmd_writer_strescape (const gchar *str);
 
 static void 
 gibbon_gmd_writer_init (GibbonGMDWriter *self)
@@ -137,6 +138,7 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         gchar *buffer;
         gsize match_length;
         gsize num_games;
+        gchar *raw;
 
         self = GIBBON_GMD_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
@@ -158,13 +160,26 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         }
         GIBBON_WRITE_ALL (buffer);
 
-        buffer = g_strdup_printf ("Player:W: %s\nPlayer:B: %s\n",
-                                  gibbon_match_get_white (match),
-                                  gibbon_match_get_black (match));
+        raw = gibbon_gmd_writer_strescape (gibbon_match_get_white (match));
+        buffer = g_strdup_printf ("Player:W: %s\n", raw);
+        g_free (raw);
+        GIBBON_WRITE_ALL (buffer);
+
+        raw = gibbon_gmd_writer_strescape (gibbon_match_get_black (match));
+        buffer = g_strdup_printf ("Player:B: %s\n", raw);
+        g_free (raw);
         GIBBON_WRITE_ALL (buffer);
 
         if (gibbon_match_get_crawford (match)) {
                 buffer = g_strdup_printf ("Rule: Crawford\n");
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        if (gibbon_match_get_location (match)) {
+                raw = gibbon_gmd_writer_strescape (gibbon_match_get_location (
+                                match));
+                buffer = g_strdup_printf ("Location: %s\n", raw);
+                g_free (raw);
                 GIBBON_WRITE_ALL (buffer);
         }
 
@@ -343,4 +358,78 @@ gibbon_gmd_writer_resign (const GibbonGMDWriter *self, GOutputStream *out,
         g_free (buffer);
 
         return TRUE;
+}
+
+/*
+ * Ths is more or less the same as g_strescape() but it does not accept
+ * exceptions, and it does not escape 8-bit characters (we only allow utf-8
+ * strings).
+ *
+ * We can use g_strcompress() for unescaping.
+ */
+gchar *
+gibbon_gmd_writer_strescape (const gchar *source)
+{
+        const guchar *p;
+        gchar *dest;
+        gchar *q;
+
+        g_return_val_if_fail (source != NULL, NULL);
+
+        p = (guchar *) source;
+
+        /* Each source byte needs maximally four destination chars (\777) */
+        q = dest = g_malloc (strlen (source) * 4 + 1);
+
+        while (*p) {
+                switch (*p) {
+                case '\b':
+                  *q++ = '\\';
+                  *q++ = 'b';
+                  break;
+                case '\f':
+                  *q++ = '\\';
+                  *q++ = 'f';
+                  break;
+                case '\n':
+                  *q++ = '\\';
+                  *q++ = 'n';
+                  break;
+                case '\r':
+                  *q++ = '\\';
+                  *q++ = 'r';
+                  break;
+                case '\t':
+                  *q++ = '\\';
+                  *q++ = 't';
+                  break;
+                case '\v':
+                  *q++ = '\\';
+                  *q++ = 'v';
+                  break;
+                case '\\':
+                  *q++ = '\\';
+                  *q++ = '\\';
+                  break;
+                case '"':
+                  *q++ = '\\';
+                  *q++ = '"';
+                  break;
+                default:
+                  if ((*p < ' ') || (*p == 0177)) {
+                          *q++ = '\\';
+                          *q++ = '0' + (((*p) >> 6) & 07);
+                          *q++ = '0' + (((*p) >> 3) & 07);
+                          *q++ = '0' + ((*p) & 07);
+                  } else {
+                          *q++ = *p;
+                  }
+                  break;
+                }
+                p++;
+        }
+
+        *q = 0;
+
+        return dest;
 }
