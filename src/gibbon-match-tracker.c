@@ -145,6 +145,7 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
          * matches.  We will find out whether this is correct or not later.
          */
         self->priv->match = gibbon_match_new (player1, player2, length, length);
+        gibbon_app_set_match (app, self->priv->match);
 
         connection = gibbon_app_get_connection (app);
         host = gibbon_connection_get_hostname (connection);
@@ -155,6 +156,10 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
                 location = g_strdup_printf ("fibs://%s:%u", host, port);
         gibbon_match_set_location (self->priv->match, location);
         g_free (location);
+
+        if (!gibbon_match_add_game (self->priv->match, &error))
+                gibbon_app_fatal_error (app, _("This should not happen ..."),
+                                        "%s", error->message);
 
         self->priv->writer = gibbon_gmd_writer_new ();
         writer = GIBBON_MATCH_WRITER (self->priv->writer);
