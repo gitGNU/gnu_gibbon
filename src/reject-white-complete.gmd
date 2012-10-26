@@ -2,12 +2,12 @@ GMD-1 # Created by Gibbon version 0.2.0
 Length: 7
 Rule: Crawford
 Game:
-Roll:-: 4 2
-Move:W: 8/4 6/4
-Resign:W:1
-Reject:B
-Double:B
-Take:W
-Roll:B: 3 1
-Move:B: 17/20 19/20
-Roll:W: 4 4
+Roll:-:: 4 2
+Move:W:: 8/4 6/4
+Resign:W:: 1
+Reject:B:
+Double:B:
+Take:W:
+Roll:B:: 3 1
+Move:B:: 17/20 19/20
+Roll:W:: 4 4

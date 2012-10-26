@@ -89,7 +89,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %}
 
 %union {
-	guint64 num;
+	gint64 num;
 	gdouble dbl;
 	gchar *name;
 	gint side;
@@ -210,17 +210,17 @@ color
 	;
 
 roll
-	: ROLL COLON color COLON INTEGER INTEGER
+	: ROLL COLON color COLON INTEGER COLON INTEGER INTEGER
 		{
-			if (!_gibbon_gmd_reader_roll (reader, $3, $5, $6))
+			if (!_gibbon_gmd_reader_roll (reader, $3, $5, $7, $8))
 				YYABORT;
 		}
 	;
 
 move
-	: MOVE COLON color COLON movements
+	: MOVE COLON color COLON INTEGER COLON movements
 		{
-			if (!_gibbon_gmd_reader_move (reader, $3, $5))
+			if (!_gibbon_gmd_reader_move (reader, $3, $5, $7))
 				YYABORT;
 		}
 	;
@@ -269,54 +269,54 @@ point
 	;
 
 double
-	: DOUBLE COLON color
+	: DOUBLE COLON color COLON INTEGER
 		{
-			if (!_gibbon_gmd_reader_double (reader, $3))
+			if (!_gibbon_gmd_reader_double (reader, $3, $5))
 				YYABORT;
 		}
 	;
 
 drop
-	: DROP COLON color
+	: DROP COLON color COLON INTEGER
 		{
-			if (!_gibbon_gmd_reader_drop (reader, $3))
+			if (!_gibbon_gmd_reader_drop (reader, $3, $5))
 				YYABORT;
 		}
 	;
 
 take
-	: TAKE COLON color
+	: TAKE COLON color COLON INTEGER
 		{
-			if (!_gibbon_gmd_reader_take (reader, $3))
+			if (!_gibbon_gmd_reader_take (reader, $3, $5))
 				YYABORT;
 		}
 	;
 
 resign
-	: RESIGN COLON color COLON INTEGER
+	: RESIGN COLON color COLON INTEGER COLON INTEGER
 		{
 			if (!$5) {
 				yyerror (_("Resignation value cannot be"
 				           " zero!"));
 				YYABORT;
 			}
-			if (!_gibbon_gmd_reader_resign (reader, $3, $5))
+			if (!_gibbon_gmd_reader_resign (reader, $3, $5, $7))
 				YYABORT;
 		}
 	;
 
 reject
-	: REJ COLON color
+	: REJ COLON color COLON INTEGER
 		{
-			if (!_gibbon_gmd_reader_reject (reader, $3))
+			if (!_gibbon_gmd_reader_reject (reader, $3, $5))
 				YYABORT;
 		}
 	;
 
 accept
-	: ACCEPT COLON color
+	: ACCEPT COLON color COLON INTEGER
 		{
-			if (!_gibbon_gmd_reader_accept (reader, $3))
+			if (!_gibbon_gmd_reader_accept (reader, $3, $5))
 				YYABORT;
 		}
 	;

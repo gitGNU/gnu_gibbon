@@ -97,6 +97,7 @@ NL (\r\n|\n|\r\n|\r)
 %s OPCODE
 %s SCOLON
 %s SCOLOR
+%s STIMESTAMP
 %s SLENGTH
 %s SRULE
 %s SNAME
@@ -140,6 +141,18 @@ NL (\r\n|\n|\r\n|\r)
 		return INTEGER;
 	}
 	
+<STIMESTAMP>:|{NL}             	{
+		yy_pop_state ();
+		yyless (0);
+		yylval.num = G_MININT64;
+		return INTEGER;
+	}
+<STIMESTAMP>-?[1-9][0-9]*       {
+        	yylval.num = (gint64) g_ascii_strtoll (yytext, NULL, 10);
+        	yy_pop_state ();
+        	return INTEGER;
+        }
+
 <OPCODE>game                    {
 		yy_push_state (SCOLON);
 		return GAME;
@@ -192,6 +205,8 @@ NL (\r\n|\n|\r\n|\r)
 <OPCODE>roll			{
 		BEGIN (OPCODE);
 		yy_push_state (SCOLON);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return ROLL;
@@ -199,6 +214,8 @@ NL (\r\n|\n|\r\n|\r)
 		
 <OPCODE>move			{
 		BEGIN (SMOVE);
+		yy_push_state (SCOLON);
+		yy_push_state (STIMESTAMP);
 		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
@@ -219,6 +236,8 @@ NL (\r\n|\n|\r\n|\r)
 	
 <OPCODE>double			{
 		BEGIN (OPCODE);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return DOUBLE;
@@ -226,6 +245,8 @@ NL (\r\n|\n|\r\n|\r)
 
 <OPCODE>drop			{
 		BEGIN (OPCODE);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return DROP;
@@ -233,6 +254,8 @@ NL (\r\n|\n|\r\n|\r)
 
 <OPCODE>take			{
 		BEGIN (OPCODE);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return TAKE;
@@ -241,6 +264,8 @@ NL (\r\n|\n|\r\n|\r)
 <OPCODE>resign			{
 		BEGIN (OPCODE);
 		yy_push_state (SCOLON);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return RESIGN;
@@ -248,6 +273,8 @@ NL (\r\n|\n|\r\n|\r)
 	
 <OPCODE>reject			{
 		BEGIN (OPCODE);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return REJ;
@@ -255,6 +282,8 @@ NL (\r\n|\n|\r\n|\r)
 
 <OPCODE>accept			{
 		BEGIN (OPCODE);
+		yy_push_state (STIMESTAMP);
+		yy_push_state (SCOLON);
 		yy_push_state (SCOLOR);
 		yy_push_state (SCOLON);
 		return ACCEPT;

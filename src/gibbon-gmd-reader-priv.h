@@ -45,22 +45,30 @@ gboolean _gibbon_gmd_reader_add_game (GibbonGMDReader *self);
 void _gibbon_gmd_reader_set_crawford (GibbonGMDReader *self);
 gboolean _gibbon_gmd_reader_roll (GibbonGMDReader *self,
                                   GibbonPositionSide side,
+                                  gint64 timestamp,
                                   guint64 die1, guint64 die2);
 gboolean _gibbon_gmd_reader_move (GibbonGMDReader *self,
                                   GibbonPositionSide side,
+                                  gint64 timestamp,
                                   guint64 encoded);
 gboolean _gibbon_gmd_reader_double (GibbonGMDReader *self,
-                                    GibbonPositionSide side);
+                                    GibbonPositionSide side,
+                                    gint64 timestamp);
 gboolean _gibbon_gmd_reader_drop (GibbonGMDReader *self,
-                                  GibbonPositionSide side);
+                                  GibbonPositionSide side,
+                                  gint64 timestamp);
 gboolean _gibbon_gmd_reader_take (GibbonGMDReader *self,
-                                  GibbonPositionSide side);
+                                  GibbonPositionSide side,
+                                  gint64 timestamp);
 gboolean _gibbon_gmd_reader_resign (GibbonGMDReader *self,
-                                    GibbonPositionSide side, guint value);
+                                    GibbonPositionSide side,
+                                    gint64 timestamp, guint value);
 gboolean _gibbon_gmd_reader_reject (GibbonGMDReader *self,
-                                    GibbonPositionSide side);
+                                    GibbonPositionSide side,
+                                    gint64 timestamp);
 gboolean _gibbon_gmd_reader_accept (GibbonGMDReader *self,
-                                    GibbonPositionSide side);
+                                    GibbonPositionSide side,
+                                    gint64 timestamp);
 gchar *_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
                                              const gchar *name);
 void _gibbon_gmd_reader_free_names (GibbonGMDReader *self);

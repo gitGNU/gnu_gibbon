@@ -62,7 +62,7 @@ struct _GibbonSGFReaderPrivate {
 
         /* Per-instance data.  */
         const gchar *filename;
-        guint64 timestamp;
+        gint64 timestamp;
 };
 
 #define GIBBON_SGF_READER_DEBUG 1

@@ -70,21 +70,25 @@ static gboolean gibbon_gmd_writer_roll (const GibbonGMDWriter *self,
                                         GOutputStream *out,
                                         gchar color,
                                         const GibbonRoll *roll,
+                                        const gchar *timestamp,
                                         GError **error);
 static gboolean gibbon_gmd_writer_move (const GibbonGMDWriter *self,
                                         GOutputStream *out,
                                         gchar color,
                                         const GibbonMove *move,
+                                        const gchar *timestamp,
                                         GError **error);
 static gboolean gibbon_gmd_writer_simple (const GibbonGMDWriter *self,
                                         GOutputStream *out,
                                         gchar color,
                                         const gchar *action,
+                                        const gchar *timestamp,
                                         GError **error);
 static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
                                           GOutputStream *out,
                                           gchar color,
                                           const GibbonResign *resign,
+                                          const gchar *timestamp,
                                           GError **error);
 static gchar *gibbon_gmd_writer_strescape (const gchar *str);
 
@@ -222,6 +226,8 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
         GibbonPositionSide side;
         const GibbonGameAction *action = NULL;
         gchar color;
+        gint64 timestamp;
+        gchar *buf;
 
         for (action_num = 0; ; ++action_num) {
                 action = gibbon_game_get_nth_action (game, action_num, &side);
@@ -234,44 +240,52 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
                 else
                         color = '-';
 
+                timestamp = gibbon_game_get_nth_timestamp (game, action_num);
+                if (timestamp == G_MININT64) {
+                        buf = g_strdup ("");
+                } else {
+                        buf = g_strdup_printf ("%llu",
+                                               (unsigned long long) timestamp);
+                }
                 if (GIBBON_IS_ROLL (action)) {
                         if (!gibbon_gmd_writer_roll (self, out, color,
                                                      GIBBON_ROLL (action),
-                                                     error))
+                                                     buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_MOVE (action)) {
                         if (!gibbon_gmd_writer_move (self, out, color,
                                                      GIBBON_MOVE (action),
-                                                     error))
+                                                     buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_DOUBLE (action)) {
                         if (!gibbon_gmd_writer_simple (self, out, color,
-                                                      "Double", error))
+                                                      "Double", buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_TAKE (action)) {
                         if (!gibbon_gmd_writer_simple (self, out, color,
-                                                      "Take", error))
+                                                      "Take", buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_DROP (action)) {
                         if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Drop", error))
+                                                       "Drop", buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_RESIGN (action)) {
                         if (!gibbon_gmd_writer_resign (self, out, color,
                                                        GIBBON_RESIGN (action),
-                                                       error))
+                                                       buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_ACCEPT (action)) {
                         if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Accept", error))
+                                                       "Accept", buf, error))
                                 return FALSE;
                 } else if (GIBBON_IS_REJECT (action)) {
                         if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Reject", error))
+                                                       "Reject", buf, error))
                                 return FALSE;
                 } else {
                         g_printerr ("Action %p is not supported.\n", action);
                 }
+                g_free (buf);
         }
 
         return TRUE;
@@ -279,11 +293,12 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
 
 static gboolean
 gibbon_gmd_writer_roll (const GibbonGMDWriter *self, GOutputStream *out,
-                        gchar color, const GibbonRoll *roll, GError **error)
+                        gchar color, const GibbonRoll *roll,
+                        const gchar *timestamp, GError **error)
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("Roll:%c: %d %d\n", color,
+        buffer = g_strdup_printf ("Roll:%c:%s: %d %d\n", color, timestamp,
                                   roll->die1, roll->die2);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
@@ -298,14 +313,15 @@ gibbon_gmd_writer_roll (const GibbonGMDWriter *self, GOutputStream *out,
 
 static gboolean
 gibbon_gmd_writer_move (const GibbonGMDWriter *self, GOutputStream *out,
-                        gchar color, const GibbonMove *move, GError **error)
+                        gchar color, const GibbonMove *move,
+                        const gchar *timestamp, GError **error)
 {
         gchar *buffer;
         gsize i;
         GibbonMovement *movement;
         gint from, to;
 
-        buffer = g_strdup_printf ("Move:%c:", color);
+        buffer = g_strdup_printf ("Move:%c:%s:", color, timestamp);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
@@ -341,11 +357,12 @@ gibbon_gmd_writer_move (const GibbonGMDWriter *self, GOutputStream *out,
 
 static gboolean
 gibbon_gmd_writer_simple (const GibbonGMDWriter *self, GOutputStream *out,
-                          gchar color, const gchar *action, GError **error)
+                          gchar color, const gchar *action,
+                          const gchar *timestamp, GError **error)
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("%s:%c\n", action, color);
+        buffer = g_strdup_printf ("%s:%c:%s\n", action, color, timestamp);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {
@@ -360,11 +377,12 @@ gibbon_gmd_writer_simple (const GibbonGMDWriter *self, GOutputStream *out,
 static gboolean
 gibbon_gmd_writer_resign (const GibbonGMDWriter *self, GOutputStream *out,
                           gchar color, const GibbonResign *resign,
-                          GError **error)
+                          const gchar *timestamp, GError **error)
 {
         gchar *buffer;
 
-        buffer = g_strdup_printf ("Resign:%c:%u\n", color, resign->value);
+        buffer = g_strdup_printf ("Resign:%c:%s: %u\n", color, timestamp,
+                                  resign->value);
 
         if (!g_output_stream_write_all (out, buffer, strlen (buffer),
                                         NULL, NULL, error)) {

@@ -68,6 +68,7 @@ static GibbonMatch *gibbon_gmd_reader_parse (GibbonMatchReader *match_reader,
                                              const gchar *filename);
 static gboolean gibbon_gmd_reader_add_action (GibbonGMDReader *self,
                                               GibbonPositionSide side,
+                                              gint64 timestamp,
                                               GibbonGameAction *action);
 
 static void 
@@ -309,7 +310,7 @@ _gibbon_gmd_reader_add_game (GibbonGMDReader *self)
 
 gboolean
 _gibbon_gmd_reader_roll (GibbonGMDReader *self, GibbonPositionSide side,
-                         guint64 die1, guint64 die2)
+                         gint64 timestamp, guint64 die1, guint64 die2)
 {
         GibbonGameAction *action;
 
@@ -318,14 +319,12 @@ _gibbon_gmd_reader_roll (GibbonGMDReader *self, GibbonPositionSide side,
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (die1, die2));
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
 _gibbon_gmd_reader_move (GibbonGMDReader *self, GibbonPositionSide side,
-                         guint64 encoded)
+                         gint64 timestamp, guint64 encoded)
 {
         GibbonMove *move;
         guint p[8], i;
@@ -437,12 +436,13 @@ _gibbon_gmd_reader_move (GibbonGMDReader *self, GibbonPositionSide side,
                 move = gibbon_move_newv (0, 0, -1);
         }
 
-         return gibbon_gmd_reader_add_action (self, side,
+         return gibbon_gmd_reader_add_action (self, side, timestamp,
                                               GIBBON_GAME_ACTION (move));
 }
 
 gboolean
-_gibbon_gmd_reader_double (GibbonGMDReader *self, GibbonPositionSide side)
+_gibbon_gmd_reader_double (GibbonGMDReader *self, GibbonPositionSide side,
+                           gint64 timestamp)
 {
         GibbonGameAction *action;
 
@@ -451,13 +451,12 @@ _gibbon_gmd_reader_double (GibbonGMDReader *self, GibbonPositionSide side)
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
-_gibbon_gmd_reader_drop (GibbonGMDReader *self, GibbonPositionSide side)
+_gibbon_gmd_reader_drop (GibbonGMDReader *self, GibbonPositionSide side,
+                         gint64 timestamp)
 {
         GibbonGameAction *action;
 
@@ -466,13 +465,12 @@ _gibbon_gmd_reader_drop (GibbonGMDReader *self, GibbonPositionSide side)
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
-_gibbon_gmd_reader_take (GibbonGMDReader *self, GibbonPositionSide side)
+_gibbon_gmd_reader_take (GibbonGMDReader *self, GibbonPositionSide side,
+                         gint64 timestamp)
 {
         GibbonGameAction *action;
 
@@ -481,14 +479,12 @@ _gibbon_gmd_reader_take (GibbonGMDReader *self, GibbonPositionSide side)
 
         action = GIBBON_GAME_ACTION (gibbon_take_new ());
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
 _gibbon_gmd_reader_resign (GibbonGMDReader *self, GibbonPositionSide side,
-                           guint value)
+                           gint64 timestamp, guint value)
 {
         GibbonGameAction *action;
 
@@ -497,13 +493,12 @@ _gibbon_gmd_reader_resign (GibbonGMDReader *self, GibbonPositionSide side,
 
         action = GIBBON_GAME_ACTION (gibbon_resign_new (value));
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
-_gibbon_gmd_reader_reject (GibbonGMDReader *self, GibbonPositionSide side)
+_gibbon_gmd_reader_reject (GibbonGMDReader *self, GibbonPositionSide side,
+                           gint64 timestamp)
 {
         GibbonGameAction *action;
 
@@ -512,13 +507,12 @@ _gibbon_gmd_reader_reject (GibbonGMDReader *self, GibbonPositionSide side)
 
         action = GIBBON_GAME_ACTION (gibbon_reject_new ());
 
-        return gibbon_gmd_reader_add_action (self, side, action);
-
-        return TRUE;
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 }
 
 gboolean
-_gibbon_gmd_reader_accept (GibbonGMDReader *self, GibbonPositionSide side)
+_gibbon_gmd_reader_accept (GibbonGMDReader *self, GibbonPositionSide side,
+                           gint64 timestamp)
 {
         GibbonGameAction *action;
 
@@ -527,14 +521,14 @@ _gibbon_gmd_reader_accept (GibbonGMDReader *self, GibbonPositionSide side)
 
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
 
-        return gibbon_gmd_reader_add_action (self, side, action);
+        return gibbon_gmd_reader_add_action (self, side, timestamp, action);
 
         return TRUE;
 }
 
 static gboolean
 gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
-                              GibbonGameAction *action)
+                              gint64 timestamp, GibbonGameAction *action)
 {
         GibbonGame *game;
         GError *error = NULL;
@@ -546,7 +540,7 @@ gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
                 return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
+        if (!gibbon_game_add_action (game, side, action, timestamp, &error)) {
                 _gibbon_gmd_reader_yyerror (error->message);
                 g_object_unref (action);
                 return FALSE;
