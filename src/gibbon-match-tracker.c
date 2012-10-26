@@ -36,6 +36,7 @@
 #include "gibbon-app.h"
 #include "gibbon-archive.h"
 #include "gibbon-gmd-writer.h"
+#include "gibbon-connection.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -119,12 +120,16 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         GFileOutputStream *fout;
         GError *error = NULL;
         GibbonMatchWriter *writer;
+        GibbonConnection *connection;
+        const gchar *host;
+        guint16 port;
+        gchar *location;
 
         self->priv->outname = gibbon_archive_get_saved_name (archive, player1,
                                                              player2);
 
         file = g_file_new_for_path (self->priv->outname);
-        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_NONE,
+        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
                                NULL, &error);
         g_object_unref (file);
         if (!fout) {
@@ -140,6 +145,17 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
          * matches.  We will find out whether this is correct or not later.
          */
         self->priv->match = gibbon_match_new (player1, player2, length, length);
+
+        connection = gibbon_app_get_connection (app);
+        host = gibbon_connection_get_hostname (connection);
+        port = gibbon_connection_get_port (connection);
+        if (port == 4321)
+                location = g_strdup_printf ("fibs://%s", host);
+        else
+                location = g_strdup_printf ("fibs://%s:%u", host, port);
+        gibbon_match_set_location (self->priv->match, location);
+        g_free (location);
+
         self->priv->writer = gibbon_gmd_writer_new ();
         writer = GIBBON_MATCH_WRITER (self->priv->writer);
 
@@ -150,6 +166,7 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
                                         self->priv->outname,
                                         error->message);
         }
+        g_output_stream_flush (self->priv->out, NULL, NULL);
 
         return self;
 }
