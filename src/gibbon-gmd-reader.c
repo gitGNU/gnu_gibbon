@@ -249,6 +249,20 @@ _gibbon_gmd_reader_set_player (GibbonGMDReader *self,
 }
 
 void
+_gibbon_gmd_reader_set_rank (GibbonGMDReader *self,
+                               GibbonPositionSide side,
+                               const gchar *rank)
+{
+        g_return_if_fail (GIBBON_IS_GMD_READER (self));
+        g_return_if_fail (self->priv->match);
+
+        if (!side)
+                return;
+
+        gibbon_match_set_rank (self->priv->match, side, rank);
+}
+
+void
 _gibbon_gmd_reader_set_location (GibbonGMDReader *self,
                                  const gchar *location)
 {

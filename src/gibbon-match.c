@@ -361,7 +361,7 @@ gibbon_match_set_rank (GibbonMatch *self, GibbonPositionSide side,
                 self->priv->brank = g_strdup (rank);
         } else {
                 g_free (self->priv->wrank);
-                self->priv->brank = g_strdup (rank);
+                self->priv->wrank = g_strdup (rank);
         }
 }
 

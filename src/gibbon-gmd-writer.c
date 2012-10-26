@@ -170,8 +170,19 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
         g_free (raw);
         GIBBON_WRITE_ALL (buffer);
 
-        if (gibbon_match_get_crawford (match)) {
-                buffer = g_strdup_printf ("Rule: Crawford\n");
+        if (gibbon_match_get_rank (match, GIBBON_POSITION_SIDE_WHITE)) {
+                raw = gibbon_gmd_writer_strescape (gibbon_match_get_rank (
+                                match, GIBBON_POSITION_SIDE_WHITE));
+                buffer = g_strdup_printf ("Rank:W: %s\n", raw);
+                g_free (raw);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        if (gibbon_match_get_rank (match, GIBBON_POSITION_SIDE_WHITE)) {
+                raw = gibbon_gmd_writer_strescape (gibbon_match_get_rank (
+                                match, GIBBON_POSITION_SIDE_BLACK));
+                buffer = g_strdup_printf ("Rank:B: %s\n", raw);
+                g_free (raw);
                 GIBBON_WRITE_ALL (buffer);
         }
 
@@ -180,6 +191,11 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
                                 match));
                 buffer = g_strdup_printf ("Location: %s\n", raw);
                 g_free (raw);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        if (gibbon_match_get_crawford (match)) {
+                buffer = g_strdup_printf ("Rule: Crawford\n");
                 GIBBON_WRITE_ALL (buffer);
         }
 

@@ -152,6 +152,13 @@ NL (\r\n|\n|\r\n|\r)
 		yy_push_state (SCOLON);
 		return PLAYER;
 	}
+<OPCODE>rank                    {
+		BEGIN (SNAME);
+		yy_push_state (SCOLON);
+		yy_push_state (SCOLOR);
+		yy_push_state (SCOLON);
+		return RANK;
+	}
 <OPCODE>location                {
 		BEGIN (SNAME);
 		yy_push_state (SCOLON);

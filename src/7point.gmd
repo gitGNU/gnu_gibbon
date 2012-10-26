@@ -2,8 +2,10 @@ GMD-2 # Created by Gibbon version 0.2.0
 Length: 7
 Player:W: SnowWhite
 Player:B: JoeBlack
-Rule: Crawford
+Rank:W: 1234.56 123 (FIBS), 0.984 31 (Gibbon)
+Rank:B: 2345.67 234 (FIBS), 0.845 266 (Gibbon)
 Location: София (България)
+Rule: Crawford
 Game:
 Roll:-: 4 2
 Move:W: 8/4 6/4
