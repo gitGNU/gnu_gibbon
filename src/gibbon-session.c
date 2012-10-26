@@ -272,6 +272,10 @@ gibbon_session_finalize (GObject *object)
 
         G_OBJECT_CLASS (gibbon_session_parent_class)->finalize (object);
 
+        /* We do this as soon as possible to prevent data loss.  */
+        if (self->priv->tracker)
+                g_object_unref (self->priv->tracker);
+
         if (self->priv->opponent) {
                 hostname = gibbon_connection_get_hostname (self->priv->connection);
                 port = gibbon_connection_get_port (self->priv->connection);
