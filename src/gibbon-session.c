@@ -1651,10 +1651,17 @@ static gint
 gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 {
         GibbonBoard *board;
-        const gchar *player;
+        const gchar *opponent;
         guint length;
+        gdouble rating;
+        guint experience;
+        GibbonReliability *rel;
+        GtkTreeIter tree_iter;
+        GtkListStore *store;
+        const gchar *player;
+        gchar *rank;
 
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &player))
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &opponent))
                 return -1;
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_UINT,
                                   (gint*) &length))
@@ -1662,7 +1669,7 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 
         g_free (self->priv->opponent);
         g_free (self->priv->watching);
-        self->priv->opponent = g_strdup (player);
+        self->priv->opponent = g_strdup (opponent);
 
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
@@ -1674,13 +1681,70 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
         gibbon_app_set_state_playing (self->priv->app);
 
         gibbon_inviter_list_clear (self->priv->inviter_list);
-        g_hash_table_remove (self->priv->saved_games, player);
+        g_hash_table_remove (self->priv->saved_games, opponent);
+
+        player = gibbon_connection_get_login (self->priv->connection);
 
         if (self->priv->tracker)
                 g_object_unref (self->priv->tracker);
-        self->priv->tracker = gibbon_match_tracker_new (
-                        gibbon_connection_get_login (self->priv->connection),
-                        player, length, FALSE);
+        self->priv->tracker = gibbon_match_tracker_new (player, opponent,
+                                                        length, FALSE);
+
+        store = gibbon_player_list_get_store (self->priv->player_list);
+
+        if (gibbon_player_list_get_iter (self->priv->player_list, player,
+                                         &tree_iter)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (store), &tree_iter,
+                                    GIBBON_PLAYER_LIST_COL_RATING, &rating,
+                                    GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                                            &experience,
+                                    GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                                            &rel,
+                                    -1);
+
+                if (rel && rel->confidence) {
+                        rank = g_strdup_printf ("%f %u (FIBS), %f %u (Gibbon)",
+                                                 rating, experience,
+                                                 rel->value, rel->confidence);
+                } else {
+                        rank = g_strdup_printf ("%f %u (FIBS), %f %u (Gibbon)",
+                                                 rating, experience,
+                                                 rel->value, rel->confidence);
+                }
+
+                gibbon_match_tracker_store_rank (self->priv->tracker, rank,
+                                                 GIBBON_POSITION_SIDE_WHITE);
+
+                g_free (rank);
+                if (rel) gibbon_reliability_free (rel);
+        }
+
+        if (gibbon_player_list_get_iter (self->priv->player_list, opponent,
+                                         &tree_iter)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (store), &tree_iter,
+                                    GIBBON_PLAYER_LIST_COL_RATING, &rating,
+                                    GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                                            &experience,
+                                    GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                                            &rel,
+                                    -1);
+
+                if (rel && rel->confidence) {
+                        rank = g_strdup_printf ("%f %u (FIBS), %f %u (Gibbon)",
+                                                 rating, experience,
+                                                 rel->value, rel->confidence);
+                } else {
+                        rank = g_strdup_printf ("%f %u (FIBS), %f %u (Gibbon)",
+                                                 rating, experience,
+                                                 rel->value, rel->confidence);
+                }
+
+                gibbon_match_tracker_store_rank (self->priv->tracker, rank,
+                                                 GIBBON_POSITION_SIDE_BLACK);
+
+                g_free (rank);
+                if (rel) gibbon_reliability_free (rel);
+        }
 
         return GIBBON_CLIP_CODE_NOW_PLAYING;
 }
