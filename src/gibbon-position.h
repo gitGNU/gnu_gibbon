@@ -178,6 +178,8 @@ gchar *gibbon_position_fibs_move (const GibbonPosition *self,
                                   const struct _GibbonMove *move,
                                   GibbonPositionSide side,
                                   gboolean reverse);
+const GibbonPosition *gibbon_position_initial ();
+
 /*
  * Reset position to beginning-of-game state.
  */

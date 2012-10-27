@@ -69,7 +69,7 @@
 G_DEFINE_BOXED_TYPE (GibbonPosition, gibbon_position,            \
                      gibbon_position_copy, gibbon_position_free)
 
-GibbonPosition initial = {
+static GibbonPosition initial = {
                 /* match_length */
                 0,
                 /* points */
@@ -1384,4 +1384,10 @@ gibbon_position_match_over (const GibbonPosition *self)
                 return GIBBON_POSITION_SIDE_BLACK;
 
         return GIBBON_POSITION_SIDE_NONE;
+}
+
+const GibbonPosition *
+gibbon_position_initial ()
+{
+        return &initial;
 }
