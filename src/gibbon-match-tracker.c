@@ -30,6 +30,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "gibbon-match-tracker.h"
 #include "gibbon-match.h"
@@ -37,6 +38,7 @@
 #include "gibbon-archive.h"
 #include "gibbon-gmd-writer.h"
 #include "gibbon-connection.h"
+#include "gibbon-gmd-reader.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -52,6 +54,12 @@ struct _GibbonMatchTrackerPrivate {
         GIBBON_TYPE_MATCH_TRACKER, GibbonMatchTrackerPrivate))
 
 G_DEFINE_TYPE (GibbonMatchTracker, gibbon_match_tracker, G_TYPE_OBJECT)
+
+static void gibbon_match_tracker_archive (GibbonMatchTracker *self,
+                                          const gchar *player1,
+                                          const gchar *player2);
+static void gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
+                                            const gchar *msg);
 
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
@@ -130,6 +138,9 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         const gchar *host;
         guint16 port;
         gchar *location;
+
+        if (!resume)
+                gibbon_match_tracker_archive (self, player1, player2);
 
         self->priv->outname = gibbon_archive_get_saved_name (archive, player1,
                                                              player2);
@@ -210,4 +221,50 @@ gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
                                         error->message);
         }
         g_output_stream_flush (self->priv->out, NULL, NULL);
+}
+
+static void
+gibbon_match_tracker_archive (GibbonMatchTracker *self,
+                              const gchar *player1, const gchar *player2)
+{
+        gchar *path;
+        GibbonArchive *archive = gibbon_app_get_archive (app);
+        GibbonMatchReader *reader;
+        GibbonMatch *match;
+        GibbonMatchReaderErrorFunc yyerror;
+
+        path = gibbon_archive_get_saved_name (archive, player1, player2);
+        if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+                path = gibbon_archive_get_saved_name (archive,
+                                                      player2, player1);
+                if (!g_file_test (path, G_FILE_TEST_EXISTS))
+                        return;
+        }
+
+        yyerror = (GibbonMatchReaderErrorFunc) gibbon_match_reader_no_yyerror;
+        reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (yyerror,
+                                                             (gpointer) self));
+        match = gibbon_match_reader_parse (reader, path);
+        g_printerr ("Match: %p\n", match);
+        if (!match) {
+                g_remove (path);
+                return;
+        }
+        if (!gibbon_match_get_current_game (match)) {
+                g_remove (path);
+                g_object_unref (match);
+                return;
+        }
+
+        g_object_unref (match);
+
+        gibbon_app_fatal_error (app, _("Aborting"),
+                                _("Archiving not yet implemented!\n"));
+}
+
+static void
+gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
+                                const gchar *msg)
+{
+        /* Do nothing.  */
 }
