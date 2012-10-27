@@ -286,6 +286,7 @@ gibbon_match_get_current_position (const GibbonMatch *self)
         g_return_val_if_fail (GIBBON_IS_MATCH (self), NULL);
 
         game = gibbon_match_get_current_game (self);
+        if (!game) return NULL;
 
         return gibbon_game_get_position (game);
 }
@@ -732,8 +733,25 @@ gibbon_match_try_roll (const GibbonMatch *self,
 
                 if (white_moved)
                         current->turn = GIBBON_POSITION_SIDE_WHITE;
-                else
+                else if (black_moved)
                         current->turn = GIBBON_POSITION_SIDE_BLACK;
+                else {
+                        /*
+                         * The roll will be copied from the target position.
+                         */
+                        if (target->dice[0] > target->dice[1])
+                                current->turn = GIBBON_POSITION_SIDE_WHITE;
+                        else if (target->dice[0] < target->dice[1])
+                                current->turn = GIBBON_POSITION_SIDE_BLACK;
+                        else
+                                current->turn = GIBBON_POSITION_SIDE_NONE;
+
+                        /*
+                         * And ignore the may double flags in the comparison.
+                         */
+                        current->may_double[0] = target->may_double[0];
+                        current->may_double[1] = target->may_double[1];
+                }
         }
 
         if (memcmp (current->points, target->points, sizeof current->points))
