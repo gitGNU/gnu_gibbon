@@ -163,7 +163,8 @@ static void gibbon_session_unqueue_who_request (GibbonSession *self,
 static void gibbon_session_start_playing (GibbonSession *self,
                                           const gchar *player1,
                                           const gchar *player2,
-                                          guint length);
+                                          guint length,
+                                          gboolean resumption);
 static void gibbon_session_stop_playing (GibbonSession *self);
 
 struct _GibbonSessionPrivate {
@@ -1599,7 +1600,8 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                         gibbon_session_start_playing (self,
                                                       pos->players[0],
                                                       pos->players[1],
-                                                      pos->match_length);
+                                                      pos->match_length,
+                                                      TRUE);
         }
 
         return GIBBON_CLIP_CODE_BOARD;
@@ -1704,7 +1706,7 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 
         player = gibbon_connection_get_login (self->priv->connection);
 
-        gibbon_session_start_playing (self, player, opponent, length);
+        gibbon_session_start_playing (self, player, opponent, length, FALSE);
 
         return GIBBON_CLIP_CODE_NOW_PLAYING;
 }
@@ -1757,8 +1759,6 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "board");
         gibbon_app_set_state_playing (self->priv->app);
-
-        gibbon_session_start_playing (self, login, player, 0);
 
         return GIBBON_CLIP_CODE_RESUME;
 }
@@ -3564,7 +3564,7 @@ gibbon_session_unqueue_who_request (GibbonSession *self, const gchar *who)
 static void
 gibbon_session_start_playing (GibbonSession *self,
                               const gchar *player, const gchar *opponent,
-                              guint length)
+                              guint length, gboolean resumption)
 {
         gdouble rating;
         guint experience;
@@ -3576,7 +3576,7 @@ gibbon_session_start_playing (GibbonSession *self,
         if (self->priv->tracker)
                 g_object_unref (self->priv->tracker);
         self->priv->tracker = gibbon_match_tracker_new (player, opponent,
-                                                        length, FALSE);
+                                                        length, resumption);
 
         store = gibbon_player_list_get_store (self->priv->player_list);
 
