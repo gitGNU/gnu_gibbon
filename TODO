@@ -71,4 +71,6 @@
 - The cubeful equities at the end of the 8th game in 7point-analysed.sgf
   are wrong.
 - Switch to libgda.
-- Reset autoboard toggle to YES on login.
+- Common messages should be hidden from the user.  Examples are
+  "** You invited ...", "** The board won't be refreshed after every move".
+- Why is the login phase so slow?
