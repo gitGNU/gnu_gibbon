@@ -150,15 +150,11 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         host = gibbon_connection_get_hostname (connection);
         port = gibbon_connection_get_port (connection);
         if (port == 4321)
-                location = g_strdup_printf ("fibs://%s", host);
+                location = g_strdup_printf ("x-fibs://%s", host);
         else
-                location = g_strdup_printf ("fibs://%s:%u", host, port);
+                location = g_strdup_printf ("x-fibs://%s:%u", host, port);
         gibbon_match_set_location (self->priv->match, location);
         g_free (location);
-
-        if (!gibbon_match_add_game (self->priv->match, &error))
-                gibbon_app_fatal_error (app, _("This should not happen ..."),
-                                        "%s", error->message);
 
         self->priv->writer = gibbon_gmd_writer_new ();
         writer = GIBBON_MATCH_WRITER (self->priv->writer);
@@ -175,4 +171,29 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         gibbon_app_set_match (app, self->priv->match);
 
         return self;
+}
+
+void
+gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
+                                 const gchar *rank,
+                                 GibbonPositionSide side)
+{
+        GError *error;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (rank != NULL);
+        g_return_if_fail (side != GIBBON_POSITION_SIDE_NONE);
+        g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+
+        gibbon_match_set_rank (self->priv->match, side, rank);
+        if (!gibbon_gmd_writer_update_rank (self->priv->writer,
+                                            self->priv->out,
+                                            self->priv->match, side,
+                                            &error)) {
+                gibbon_app_fatal_error (app, _("Write Error"),
+                                        _("Error writing to `%s': %s!\n"),
+                                        self->priv->outname,
+                                        error->message);
+        }
+        g_output_stream_flush (self->priv->out, NULL, NULL);
 }

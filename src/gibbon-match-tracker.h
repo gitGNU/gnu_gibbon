@@ -27,6 +27,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gibbon-position.h"
+
 #define GIBBON_TYPE_MATCH_TRACKER \
         (gibbon_match_tracker_get_type ())
 #define GIBBON_MATCH_TRACKER(obj) \
@@ -80,5 +82,8 @@ GibbonMatchTracker *gibbon_match_tracker_new (const gchar *player1,
                                               const gchar *player2,
                                               gsize length,
                                               gboolean resume);
+void gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
+                                      const gchar *rank,
+                                      GibbonPositionSide side);
 
 #endif
