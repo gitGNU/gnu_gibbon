@@ -85,5 +85,7 @@ GibbonMatchTracker *gibbon_match_tracker_new (const gchar *player1,
 void gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
                                       const gchar *rank,
                                       GibbonPositionSide side);
+void gibbon_match_tracker_update (const GibbonMatchTracker *self,
+                                  const GibbonPosition *pos);
 
 #endif

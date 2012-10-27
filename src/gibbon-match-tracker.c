@@ -39,6 +39,7 @@
 #include "gibbon-gmd-writer.h"
 #include "gibbon-connection.h"
 #include "gibbon-gmd-reader.h"
+#include "gibbon-match-play.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -267,4 +268,52 @@ gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
                                 const gchar *msg)
 {
         /* Do nothing.  */
+}
+
+void
+gibbon_match_tracker_update (const GibbonMatchTracker *self,
+                             const GibbonPosition *target)
+{
+        GSList *iter = NULL;
+        const GibbonPosition *c = NULL;
+        GibbonPosition *current;
+        GibbonMatchPlay *play;
+        GibbonGameAction *action;
+        GibbonPositionSide side;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (target != NULL);
+        g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+
+        c = gibbon_match_get_current_position (self->priv->match);
+        if (c) {
+                current = gibbon_position_copy (c);
+        } else {
+                current = gibbon_position_copy (gibbon_position_initial ());
+                current->match_length = target->match_length;
+                current->may_double[0] = target->may_double[0];
+                current->may_double[1] = target->may_double[1];
+        }
+        if (!gibbon_match_get_missing_actions (self->priv->match, target,
+                                               &iter))
+                goto bail_out;
+
+        while (iter) {
+                play = (GibbonMatchPlay *) iter->data;
+                action = play->action;
+                side = play->side;
+                if (!gibbon_match_add_action (self->priv->match, side, action,
+                                              G_MININT64, NULL))
+                        goto bail_out;
+        }
+
+        gibbon_position_free (current);
+        g_slist_free_full (iter, (GDestroyNotify) gibbon_match_play_free);
+
+        return;
+
+        bail_out:
+
+        gibbon_position_free (current);
+        g_slist_free_full (iter, (GDestroyNotify) gibbon_match_play_free);
 }

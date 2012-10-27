@@ -1602,6 +1602,9 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                                       pos->players[1],
                                                       pos->match_length,
                                                       TRUE);
+
+                if (self->priv->tracker)
+                        gibbon_match_tracker_update (self->priv->tracker, pos);
         }
 
         return GIBBON_CLIP_CODE_BOARD;
