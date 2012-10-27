@@ -44,6 +44,8 @@ struct _GibbonMatchTrackerPrivate {
         gchar *outname;
         GibbonGMDWriter *writer;
         GOutputStream *out;
+        gchar *wrank;
+        gchar *brank;
 };
 
 #define GIBBON_MATCH_TRACKER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -60,6 +62,7 @@ gibbon_match_tracker_init (GibbonMatchTracker *self)
         self->priv->match = NULL;
         self->priv->outname = NULL;
         self->priv->writer = NULL;
+        self->priv->wrank = self->priv->brank = NULL;
 }
 
 static void
@@ -83,6 +86,9 @@ gibbon_match_tracker_finalize (GObject *object)
 
         if (self->priv->writer)
                 g_object_unref (self->priv->writer);
+
+        g_free (self->priv->wrank);
+        g_free (self->priv->brank);
 
         G_OBJECT_CLASS (gibbon_match_tracker_parent_class)->finalize(object);
 }
@@ -184,6 +190,14 @@ gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
         g_return_if_fail (rank != NULL);
         g_return_if_fail (side != GIBBON_POSITION_SIDE_NONE);
         g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+
+        if (side < 0) {
+                g_free (self->priv->brank);
+                self->priv->brank = g_strdup (rank);
+        } else {
+                g_free (self->priv->wrank);
+                self->priv->brank = g_strdup (rank);
+        }
 
         gibbon_match_set_rank (self->priv->match, side, rank);
         if (!gibbon_gmd_writer_update_rank (self->priv->writer,
