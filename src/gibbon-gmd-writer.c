@@ -467,3 +467,33 @@ gibbon_gmd_writer_strescape (const gchar *source)
 
         return dest;
 }
+
+gboolean
+gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self, GOutputStream *out,
+                               const GibbonMatch *match,
+                               GibbonPositionSide side, GError **error)
+{
+        gchar *raw, *buffer;
+
+        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (match != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE,
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (match),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+                                         FALSE, error);
+
+        if (gibbon_match_get_rank (match, side)) {
+                raw = gibbon_gmd_writer_strescape (gibbon_match_get_rank (
+                                match, side));
+                buffer = g_strdup_printf ("Rank:%c: %s\n",
+                                          side < 0 ? 'B' : 'W', raw);
+                g_free (raw);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        return TRUE;
+}

@@ -28,6 +28,7 @@
 #include <glib-object.h>
 
 #include "gibbon-match-writer.h"
+#include "gibbon-position.h"
 
 #define GIBBON_TYPE_GMD_WRITER \
         (gibbon_gmd_writer_get_type ())
@@ -74,5 +75,11 @@ struct _GibbonGMDWriterClass
 GType gibbon_gmd_writer_get_type (void) G_GNUC_CONST;
 
 GibbonGMDWriter *gibbon_gmd_writer_new (void);
+
+gboolean gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self,
+                                        GOutputStream *out,
+                                        const GibbonMatch *match,
+                                        GibbonPositionSide side,
+                                        GError **error);
 
 #endif
