@@ -1554,8 +1554,29 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (pos->dice[0] == pos->dice[1])
                 pos->unused_dice[2] = pos->unused_dice[3] = pos->unused_dice[0];
 
+        if (!memcmp (pos->points, (gibbon_position_initial ())->points,
+                     sizeof (pos->points))) {
+                /*
+                 * Correct the opening roll so that it matches our expectations.
+                 */
+                if (pos->turn == GIBBON_POSITION_SIDE_WHITE) {
+                        if (pos->dice[0] < pos->dice[1]) {
+                                tmp = pos->dice[0];
+                                pos->dice[0] = pos->dice[1];
+                                pos->dice[1] = tmp;
+                        }
+                } else if (pos->turn == GIBBON_POSITION_SIDE_BLACK) {
+                        if (pos->dice[0] > pos->dice[1]) {
+                                tmp = pos->dice[0];
+                                pos->dice[0] = pos->dice[1];
+                                pos->dice[1] = tmp;
+                        }
+                }
+        }
+
         if (self->priv->position)
                 gibbon_position_free (self->priv->position);
+
         self->priv->position = gibbon_position_copy (pos);
 
         board = gibbon_app_get_board (self->priv->app);
