@@ -225,67 +225,18 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
         glong action_num;
         GibbonPositionSide side;
         const GibbonGameAction *action;
-        gchar color;
         gint64 timestamp;
-        gchar *buf;
 
         for (action_num = 0; ; ++action_num) {
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
                         break;
-                if (side < 0)
-                        color = 'B';
-                else if (color > 0)
-                        color = 'W';
-                else
-                        color = '-';
 
                 timestamp = gibbon_game_get_nth_timestamp (game, action_num);
-                if (timestamp == G_MININT64) {
-                        buf = g_strdup ("");
-                } else {
-                        buf = g_strdup_printf ("%llu",
-                                               (unsigned long long) timestamp);
-                }
-                if (GIBBON_IS_ROLL (action)) {
-                        if (!gibbon_gmd_writer_roll (self, out, color,
-                                                     GIBBON_ROLL (action),
-                                                     buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_MOVE (action)) {
-                        if (!gibbon_gmd_writer_move (self, out, color,
-                                                     GIBBON_MOVE (action),
-                                                     buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_DOUBLE (action)) {
-                        if (!gibbon_gmd_writer_simple (self, out, color,
-                                                      "Double", buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_TAKE (action)) {
-                        if (!gibbon_gmd_writer_simple (self, out, color,
-                                                      "Take", buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_DROP (action)) {
-                        if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Drop", buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_RESIGN (action)) {
-                        if (!gibbon_gmd_writer_resign (self, out, color,
-                                                       GIBBON_RESIGN (action),
-                                                       buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_ACCEPT (action)) {
-                        if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Accept", buf, error))
-                                return FALSE;
-                } else if (GIBBON_IS_REJECT (action)) {
-                        if (!gibbon_gmd_writer_simple (self, out, color,
-                                                       "Reject", buf, error))
-                                return FALSE;
-                } else {
-                        g_printerr ("Action %p is not supported.\n", action);
-                }
-                g_free (buf);
+
+                if (!gibbon_gmd_writer_write_action (self, out, game, action,
+                                                     side, timestamp, error))
+                        return FALSE;
         }
 
         return TRUE;
