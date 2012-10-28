@@ -280,6 +280,9 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         GibbonMatchPlay *play;
         GibbonGameAction *action;
         GibbonPositionSide side;
+        const GibbonGame *game;
+        const GibbonGame *last_game;
+        GError *error = NULL;
 
         g_return_if_fail (self != NULL);
         g_return_if_fail (target != NULL);
@@ -295,6 +298,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                                &iter))
                 goto bail_out;
 
+        last_game = gibbon_match_get_current_game (self->priv->match);
         while (iter) {
                 play = (GibbonMatchPlay *) iter->data;
                 action = play->action;
@@ -302,6 +306,19 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                 if (!gibbon_match_add_action (self->priv->match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
+                game = gibbon_match_get_current_game (self->priv->match);
+                if (game != last_game) {
+                        if (!gibbon_gmd_writer_add_game (self->priv->writer,
+                                                         self->priv->out,
+                                                         &error)) {
+                                gibbon_app_fatal_error (app, _("Write Error"),
+                                                        _("Error writing to"
+                                                          " `%s': %s!\n"),
+                                                        self->priv->outname,
+                                                        error->message);
+                        }
+                }
+                last_game = game;
                 iter = iter->next;
         }
 
