@@ -615,6 +615,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         GibbonGameAction *last_action = last_play->action;
         GSList *head;
         GibbonMatchPlay *play;
+        const GibbonPosition *initial;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
         g_return_val_if_fail (target != NULL, FALSE);
@@ -637,7 +638,14 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         try_move = FALSE;
                 }
         } else if (GIBBON_IS_ROLL (last_action)) {
-                if (try_move) {
+                initial = gibbon_position_initial ();
+                /*
+                 * Handle the case after an initial opening double.
+                 */
+                if (!current->turn) {
+                        retval = gibbon_match_try_roll (self, current, target,
+                                                        try_move);
+                } else if (!retval && try_move) {
                         retval = gibbon_match_try_move (self, current, target);
                         try_move = FALSE;
                 }
@@ -739,9 +747,9 @@ gibbon_match_try_roll (const GibbonMatch *self,
                         /*
                          * The roll will be copied from the target position.
                          */
-                        if (target->dice[0] > target->dice[1])
+                        if (abs (target->dice[0]) > abs (target->dice[1]))
                                 current->turn = GIBBON_POSITION_SIDE_WHITE;
-                        else if (target->dice[0] < target->dice[1])
+                        else if (abs (target->dice[0]) < abs (target->dice[1]))
                                 current->turn = GIBBON_POSITION_SIDE_BLACK;
                         else
                                 current->turn = GIBBON_POSITION_SIDE_NONE;
@@ -786,7 +794,8 @@ gibbon_match_try_roll (const GibbonMatch *self,
                 for (die2 = die1 - 1; die2 > 0; --die2) {
                         current->dice[0] = current->turn * die1;
                         current->dice[1] = current->turn * die2;
-                        move = gibbon_position_check_move (current, target, current->turn);
+                        move = gibbon_position_check_move (current, target,
+                                                           current->turn);
                         if (move->status != GIBBON_MOVE_LEGAL) {
                                 g_object_unref (move);
                                 continue;
