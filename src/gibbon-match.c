@@ -479,10 +479,9 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
 
         game = gibbon_match_get_current_game (self);
         if (!game) {
-                g_set_error_literal (error, GIBBON_MATCH_ERROR,
-                                     GIBBON_MATCH_ERROR_GENERIC,
-                                     _("No current game in match!"));
-                return FALSE;
+                game = gibbon_match_add_game (self, error);
+                if (!game)
+                        return FALSE;
         }
 
         if (!gibbon_game_add_action (game, side, action, timestamp, error))
@@ -546,49 +545,65 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
         g_return_val_if_fail (target != NULL, FALSE);
 
         last_pos = gibbon_match_get_current_position (self);
-        if (gibbon_position_equals_technically (last_pos, target)) {
-                *_result = NULL;
-                return TRUE;
+        if (last_pos) {
+                if (gibbon_position_equals_technically (last_pos, target)) {
+                        *_result = NULL;
+                        return TRUE;
+                }
+
+                /*
+                 * Pre-flight check.  We sort out match pairs that obviously do
+                 * not fit as well as hopeless cases.
+                 */
+                if (g_strcmp0 (target->players[0], last_pos->players[0]))
+                        return FALSE;
+                if (g_strcmp0 (target->players[1], last_pos->players[1]))
+                        return FALSE;
+                if (target->match_length != last_pos->match_length)
+                        return FALSE;
+                if (target->scores[0] != last_pos->scores[0]
+                    && target->scores[1] != last_pos->scores[1])
+                        return FALSE;
+                if (target->scores[0] < last_pos->scores[0])
+                        return FALSE;
+                if (target->scores[1] < last_pos->scores[1])
+                        return FALSE;
+                if (target->scores[0] - last_pos->scores[0]
+                    > 6 * last_pos->cube)
+                        return FALSE;
+                if (target->scores[1] - last_pos->scores[1]
+                    > 6 * last_pos->cube)
+                        return FALSE;
+
+                current_game = gibbon_match_get_current_game (self);
+
+                /*
+                 * The cast removes the const from the return value.  But in
+                 * absence of a copy function for GibbonGameAction we have no
+                 * other chance here.
+                 */
+                last_action = GIBBON_GAME_ACTION (gibbon_game_get_nth_action (
+                                current_game, -1, &last_side));
+                last_play = gibbon_match_play_new (last_action, last_side);
+                if (last_action)
+                        g_object_ref (last_action);
+
+                current = gibbon_position_copy (last_pos);
+        } else {
+                /* No last position.  That means that we are at the beginning
+                 * of the match.
+                 */
+                last_pos = gibbon_position_initial ();
+                if (gibbon_position_equals_technically (last_pos, target)) {
+                        *_result = NULL;
+                        return TRUE;
+                }
+                current = gibbon_position_copy (last_pos);
+                current->match_length = target->match_length;
+                last_play = gibbon_match_play_new (NULL,
+                                                   GIBBON_POSITION_SIDE_NONE);
         }
 
-        /*
-         * Pre-flight check.  We sort out match pairs that obviously do not fit
-         * as well as hopeless cases.
-         */
-        if (g_strcmp0 (target->players[0], last_pos->players[0]))
-                return FALSE;
-        if (g_strcmp0 (target->players[1], last_pos->players[1]))
-                return FALSE;
-        if (target->match_length != last_pos->match_length)
-                return FALSE;
-        if (target->scores[0] != last_pos->scores[0]
-            && target->scores[1] != last_pos->scores[1])
-                return FALSE;
-        if (target->scores[0] < last_pos->scores[0])
-                return FALSE;
-        if (target->scores[1] < last_pos->scores[1])
-                return FALSE;
-        if (target->scores[0] - last_pos->scores[0]
-            > 6 * last_pos->cube)
-                return FALSE;
-        if (target->scores[1] - last_pos->scores[1]
-            > 6 * last_pos->cube)
-                return FALSE;
-
-        current_game = gibbon_match_get_current_game (self);
-
-        /*
-         * The cast removes the const from the return value.  But in
-         * absence of a copy function for GibbonGameAction we have no
-         * other chance here.
-         */
-        last_action = GIBBON_GAME_ACTION (gibbon_game_get_nth_action (
-                        current_game, -1, &last_side));
-        last_play = gibbon_match_play_new (last_action, last_side);
-        if (last_action)
-                g_object_ref (last_action);
-
-        current = gibbon_position_copy (last_pos);
         result = _gibbon_match_get_missing_actions (self, current,
                                                     target, last_play,
                                                     TRUE);
