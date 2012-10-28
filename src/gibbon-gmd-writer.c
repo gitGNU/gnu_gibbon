@@ -208,8 +208,8 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
                 if (!game)
                         break;
 
-                buffer = g_strdup_printf ("Game:\n");
-                GIBBON_WRITE_ALL (buffer);
+                if (!gibbon_gmd_writer_add_game (self, out, error))
+                        return FALSE;
 
                 if (!gibbon_gmd_writer_write_game (self, out, game, error))
                         return FALSE;
@@ -494,6 +494,24 @@ gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self, GOutputStream *out,
                 g_free (raw);
                 GIBBON_WRITE_ALL (buffer);
         }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_gmd_writer_add_game (const GibbonGMDWriter *self, GOutputStream *out,
+                            GError **error)
+{
+        gchar *buffer;
+
+        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+                                         FALSE, error);
+
+        buffer = g_strdup_printf ("Game:\n");
+        GIBBON_WRITE_ALL (buffer);
 
         return TRUE;
 }

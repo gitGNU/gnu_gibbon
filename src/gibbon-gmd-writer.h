@@ -28,6 +28,8 @@
 #include <glib-object.h>
 
 #include "gibbon-match-writer.h"
+#include "gibbon-match.h"
+#include "gibbon-game.h"
 #include "gibbon-position.h"
 
 #define GIBBON_TYPE_GMD_WRITER \
@@ -81,5 +83,13 @@ gboolean gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self,
                                         const GibbonMatch *match,
                                         GibbonPositionSide side,
                                         GError **error);
+gboolean gibbon_gmd_writer_write_action (const GibbonGMDWriter *self,
+                                         GOutputStream *out,
+                                         const GibbonGame *game,
+                                         GibbonPositionSide side,
+                                         GError **error);
+gboolean gibbon_gmd_writer_add_game (const GibbonGMDWriter *self,
+                                     GOutputStream *out,
+                                     GError **error);
 
 #endif
