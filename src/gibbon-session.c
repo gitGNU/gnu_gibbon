@@ -1474,12 +1474,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (!gibbon_clip_get_int (&iter, GIBBON_CLIP_TYPE_INT,
                                   &pos->dice[1]))
                 goto bail_out_board;
-        
-        /*
-         * Swap the dice if the lower one is left.
-         * FIXME! This should be configurable!
-         * FIXME! This should maybe be locale-dependent (rtl).
-         */
+
+        pos->dice[0] = abs (pos->dice[0]);
+        pos->dice[1] = abs (pos->dice[1]);
+
         if ((pos->dice[0] > 0 && pos->dice[0] < pos->dice[1])
             || (pos->dice[0] < 0 && pos->dice[0] > pos->dice[1])) {
                 tmp = pos->dice[0];
