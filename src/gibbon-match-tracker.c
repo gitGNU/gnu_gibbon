@@ -246,7 +246,7 @@ gibbon_match_tracker_archive (GibbonMatchTracker *self,
         reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (yyerror,
                                                              (gpointer) self));
         match = gibbon_match_reader_parse (reader, path);
-        g_printerr ("Match: %p\n", match);
+
         if (!match) {
                 g_remove (path);
                 return;
@@ -290,9 +290,6 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                 current = gibbon_position_copy (c);
         } else {
                 current = gibbon_position_copy (gibbon_position_initial ());
-                current->match_length = target->match_length;
-                current->may_double[0] = target->may_double[0];
-                current->may_double[1] = target->may_double[1];
         }
         if (!gibbon_match_get_missing_actions (self->priv->match, target,
                                                &iter))
@@ -305,6 +302,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                 if (!gibbon_match_add_action (self->priv->match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
+                iter = iter->next;
         }
 
         gibbon_position_free (current);
@@ -316,4 +314,9 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
 
         gibbon_position_free (current);
         g_slist_free_full (iter, (GDestroyNotify) gibbon_match_play_free);
+
+        /*
+         * TODO: Archive current match and create a new one with
+         * with the current position as the initial setup.
+         */
 }
