@@ -343,16 +343,14 @@ gibbon_position_check_move (const GibbonPosition *_before,
 
         g_return_val_if_fail (die1 != 0, move);
         g_return_val_if_fail (die2 != 0, move);
-        g_return_val_if_fail (side == GIBBON_POSITION_SIDE_WHITE
-                              || side == GIBBON_POSITION_SIDE_BLACK,
-                              move);
+        g_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE, move);
 
         /* This structure is handier for us.  It would probably be easier
          * if we also change GibbonPosition accordingly.
          */
         memcpy (before + 1, _before->points, 24 * sizeof *before);
         memcpy (after + 1, _after->points, 24 * sizeof *after);
-        if (side == GIBBON_POSITION_SIDE_WHITE) {
+        if (side > 0) {
                 before[0] = _before->bar[1];
                 after[0] = _after->bar[1];
                 before[25] = _before->bar[0];
