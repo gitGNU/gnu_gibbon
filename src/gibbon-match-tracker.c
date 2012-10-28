@@ -298,11 +298,11 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                                &iter))
                 goto bail_out;
 
-        last_game = gibbon_match_get_current_game (self->priv->match);
         while (iter) {
                 play = (GibbonMatchPlay *) iter->data;
                 action = play->action;
                 side = play->side;
+                last_game = gibbon_match_get_current_game (self->priv->match);
                 if (!gibbon_match_add_action (self->priv->match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
