@@ -318,6 +318,17 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                                         error->message);
                         }
                 }
+                if (!gibbon_gmd_writer_write_action (self->priv->writer,
+                                                     self->priv->out,
+                                                     game, action, side,
+                                                     g_get_real_time (),
+                                                     &error)) {
+                        gibbon_app_fatal_error (app, _("Write Error"),
+                                                _("Error writing to"
+                                                  " `%s': %s!\n"),
+                                                self->priv->outname,
+                                                error->message);
+                }
                 last_game = game;
                 iter = iter->next;
         }

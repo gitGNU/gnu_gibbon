@@ -224,7 +224,7 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
 {
         glong action_num;
         GibbonPositionSide side;
-        const GibbonGameAction *action = NULL;
+        const GibbonGameAction *action;
         gchar color;
         gint64 timestamp;
         gchar *buf;
@@ -512,6 +512,91 @@ gibbon_gmd_writer_add_game (const GibbonGMDWriter *self, GOutputStream *out,
 
         buffer = g_strdup_printf ("Game:\n");
         GIBBON_WRITE_ALL (buffer);
+
+        return TRUE;
+}
+
+gboolean
+gibbon_gmd_writer_write_action (const GibbonGMDWriter *self, GOutputStream *out,
+                                const GibbonGame *game,
+                                const GibbonGameAction *action,
+                                GibbonPositionSide side, gint64 timestamp,
+                                GError **error)
+{
+        gchar color;
+        gchar *buf;
+
+        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (out != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (game != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (action != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME (game),
+                                         FALSE, error);
+        gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action),
+                                         FALSE, error);
+
+        if (side < 0)
+                color = 'B';
+        else if (side > 0)
+                color = 'W';
+        else
+                color = '-';
+
+        if (timestamp == G_MININT64) {
+                buf = g_strdup ("");
+        } else {
+                buf = g_strdup_printf ("%llu",
+                                       (unsigned long long) timestamp);
+        }
+
+        if (GIBBON_IS_ROLL (action)) {
+                if (!gibbon_gmd_writer_roll (self, out, color,
+                                             GIBBON_ROLL (action),
+                                             buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_MOVE (action)) {
+                if (!gibbon_gmd_writer_move (self, out, color,
+                                             GIBBON_MOVE (action),
+                                             buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_DOUBLE (action)) {
+                if (!gibbon_gmd_writer_simple (self, out, color,
+                                              "Double", buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_TAKE (action)) {
+                if (!gibbon_gmd_writer_simple (self, out, color,
+                                              "Take", buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_DROP (action)) {
+                if (!gibbon_gmd_writer_simple (self, out, color,
+                                               "Drop", buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_RESIGN (action)) {
+                if (!gibbon_gmd_writer_resign (self, out, color,
+                                               GIBBON_RESIGN (action),
+                                               buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_ACCEPT (action)) {
+                if (!gibbon_gmd_writer_simple (self, out, color,
+                                               "Accept", buf, error))
+                        return FALSE;
+        } else if (GIBBON_IS_REJECT (action)) {
+                if (!gibbon_gmd_writer_simple (self, out, color,
+                                               "Reject", buf, error))
+                        return FALSE;
+        } else {
+                g_free (buf);
+                g_set_error (error, GIBBON_MATCH_ERROR,
+                             GIBBON_MATCH_ERROR_GENERIC,
+                             _("Action %p is not supported.\n"),
+                             action);
+                return FALSE;
+        }
+        g_free (buf);
 
         return TRUE;
 }
