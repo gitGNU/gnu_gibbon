@@ -76,3 +76,6 @@
 - Why is the login phase so slow?
 - implement a counter in the match completion code to prevent infinite loops.
   Print a warning, when the counter drops to zero.
+- Relax gibbon_position_technically_equal in the dice comparison part.
+  It is sufficient that the absolute values of the two dice in arbitrary
+  order are equal.
