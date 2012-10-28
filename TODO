@@ -74,3 +74,5 @@
 - Common messages should be hidden from the user.  Examples are
   "** You invited ...", "** The board won't be refreshed after every move".
 - Why is the login phase so slow?
+- implement a counter in the match completion code to prevent infinite loops.
+  Print a warning, when the counter drops to zero.
