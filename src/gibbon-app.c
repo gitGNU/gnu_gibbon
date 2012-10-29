@@ -1657,6 +1657,14 @@ gibbon_app_get_inviter_list(const GibbonApp *self)
         return self->priv->inviter_list;
 }
 
+GibbonMatchList *
+gibbon_app_get_match_list(const GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->match_list;
+}
+
 void gibbon_app_configure_player_menu(const GibbonApp *self,
                                       const gchar *player, GtkMenu *menu)
 {

@@ -110,6 +110,7 @@ struct _GibbonGameChat *gibbon_app_get_game_chat (const GibbonApp *self);
 struct _GibbonArchive *gibbon_app_get_archive (const GibbonApp *self);
 struct _GibbonPlayerList *gibbon_app_get_player_list (const GibbonApp *self);
 struct _GibbonInviterList *gibbon_app_get_inviter_list (const GibbonApp *self);
+struct _GibbonMatchList *gibbon_app_get_match_list (const GibbonApp *self);
 struct _GibbonClientIcons *gibbon_app_get_client_icons (const GibbonApp *self);
 const struct _GibbonMET *gibbon_app_get_met (const GibbonApp *self);
 
