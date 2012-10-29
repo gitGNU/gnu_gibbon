@@ -23,8 +23,7 @@
  *
  * Since: 0.1.1
  *
- * A #GibbonGame represents a single game of backgammon in Gibbon!  It is
- * always associated with a #GSGFGameTree that is used as a backend.
+ * A #GibbonGame represents a single game of backgammon in Gibbon!
  **/
 
 #include <stdlib.h>
