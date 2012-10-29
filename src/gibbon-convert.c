@@ -182,7 +182,7 @@ main (int argc, char *argv[])
                 reader =
                    GIBBON_MATCH_READER (gibbon_jelly_fish_reader_new (NULL,
                                                                       NULL));
-                return 1;
+                break;
         }
 
         match = gibbon_match_reader_parse (reader, input_filename);
