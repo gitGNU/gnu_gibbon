@@ -477,10 +477,6 @@ gibbon_gmd_writer_write_action (const GibbonGMDWriter *self, GOutputStream *out,
         gchar color;
         gchar *buf;
 
-        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (out != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (game != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (action != NULL, FALSE, error);
         gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
                                          FALSE, error);
         gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
