@@ -7,7 +7,7 @@ Rank:B: 2345.67 234 (FIBS), 0.845 266 (Gibbon)
 Location: София (България)
 Rule: Crawford
 Game:
-Roll:-:12345: 4 2
+Roll:W:12345: 4 2
 Move:W:: 8/4 6/4
 Roll:B:: 3 2
 Move:B:: 1/3 12/15
@@ -187,7 +187,7 @@ Move:B:: 19/24 19/21
 Resign:W:: 2
 Accept:B:
 Game:
-Roll:-:: 5 1
+Roll:W:: 5 1
 Move:W:: 24/23 13/8
 Roll:B:: 5 1
 Move:B:: 1/2 12/17
@@ -615,7 +615,7 @@ Move:W:: 10/7 7/6
 Double:B:
 Drop:W:
 Game:
-Roll:-:: 6 5
+Roll:W:: 6 5
 Move:W:: 24/18 18/13
 Roll:B:: 3 1
 Move:B:: 17/20 19/20
