@@ -27,6 +27,7 @@
 #include <gtk/gtk.h>
 
 #include "gibbon-match.h"
+#include "gibbon-game.h"
 
 #define GIBBON_TYPE_MATCH_LIST \
         (gibbon_match_list_get_type ())
@@ -96,5 +97,7 @@ GtkListStore *gibbon_match_list_get_moves_store (const GibbonMatchList *self);
 
 void gibbon_match_list_set_active_game (GibbonMatchList *self, gint active);
 gint gibbon_match_list_get_active_game (const GibbonMatchList *self);
+
+void gibbon_match_list_add_game (GibbonMatchList *self, const GibbonGame *game);
 
 #endif

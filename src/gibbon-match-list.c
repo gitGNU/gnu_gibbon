@@ -200,11 +200,7 @@ void
 gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 {
         gsize i, num_games;
-        GtkTreeIter iter;
-        gchar *text;
         const GibbonGame *game;
-        const GibbonPosition *pos;
-        gchar *comment;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
@@ -221,17 +217,7 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
         for (i = 0; i < num_games; ++i) {
                 self->priv->active = i;
                 game = gibbon_match_get_nth_game (match, i);
-                pos = gibbon_game_get_initial_position (game);
-                comment = gibbon_game_is_crawford (game) ?
-                                _("(Crawford)") : "";
-                text = g_strdup_printf (_("Game %u: %u-%u %s"),
-                                        (unsigned int) i + 1,
-                                        pos->scores[1], pos->scores[0],
-                                        comment);
-                gtk_list_store_append (self->priv->games, &iter);
-                gtk_list_store_set (self->priv->games, &iter,
-                                    0, text, -1);
-                g_free (text);
+                gibbon_match_list_add_game (self, game);
         }
 
         g_signal_emit (self, gibbon_match_list_signals[MATCH_LOADED], 0, self);
@@ -559,4 +545,31 @@ gibbon_match_list_get_match (const GibbonMatchList *self)
         g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
 
         return self->priv->match;
+}
+
+void
+gibbon_match_list_add_game (GibbonMatchList *self, const GibbonGame *game)
+{
+        const GibbonPosition *pos;
+        const gchar *comment;
+        gchar *text;
+        GtkTreeIter iter;
+        gint gameno;
+
+        g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
+        g_return_if_fail (GIBBON_IS_GAME (game));
+
+        pos = gibbon_game_get_initial_position (game);
+        comment = gibbon_game_is_crawford (game) ?
+                        _("(Crawford)") : "";
+        gtk_list_store_append (self->priv->games, &iter);
+        gameno = gtk_tree_model_iter_n_children (
+                        GTK_TREE_MODEL (self->priv->games), NULL);
+        text = g_strdup_printf (_("Game %d: %u-%u %s"),
+                                gameno,
+                                pos->scores[1], pos->scores[0],
+                                comment);
+        gtk_list_store_set (self->priv->games, &iter,
+                            0, text, -1);
+        g_free (text);
 }

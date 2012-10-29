@@ -40,6 +40,7 @@
 #include "gibbon-connection.h"
 #include "gibbon-gmd-reader.h"
 #include "gibbon-match-play.h"
+#include "gibbon-match-list.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -283,6 +284,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         const GibbonGame *game;
         const GibbonGame *last_game;
         GError *error = NULL;
+        GibbonMatchList *list;
 
         g_return_if_fail (self != NULL);
         g_return_if_fail (target != NULL);
@@ -297,6 +299,8 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         if (!gibbon_match_get_missing_actions (self->priv->match, target,
                                                &iter))
                 goto bail_out;
+
+        list = gibbon_app_get_match_list (app);
 
         while (iter) {
                 play = (GibbonMatchPlay *) iter->data;
@@ -317,6 +321,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                                         self->priv->outname,
                                                         error->message);
                         }
+                        gibbon_match_list_add_game (list, game);
                 }
                 if (!gibbon_gmd_writer_write_action (self->priv->writer,
                                                      self->priv->out,
