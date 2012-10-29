@@ -80,3 +80,4 @@
   It is sufficient that the absolute values of the two dice in arbitrary
   order are equal.
 - Refactor macro gibbon_match_return_val_if_fail to gibbon_return_val_if_fail.
+- Bring player list to front on connect
