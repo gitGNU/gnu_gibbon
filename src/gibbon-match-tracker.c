@@ -57,9 +57,9 @@ struct _GibbonMatchTrackerPrivate {
 
 G_DEFINE_TYPE (GibbonMatchTracker, gibbon_match_tracker, G_TYPE_OBJECT)
 
-static void gibbon_match_tracker_archive (GibbonMatchTracker *self,
-                                          const gchar *player1,
-                                          const gchar *player2);
+static void gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
+                                                    const gchar *player1,
+                                                    const gchar *player2);
 static void gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
                                             const gchar *msg);
 
@@ -142,7 +142,7 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         gchar *location;
 
         if (!resume)
-                gibbon_match_tracker_archive (self, player1, player2);
+                gibbon_match_tracker_unlink_or_archive (self, player1, player2);
 
         self->priv->outname = gibbon_archive_get_saved_name (archive, player1,
                                                              player2);
@@ -226,8 +226,9 @@ gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
 }
 
 static void
-gibbon_match_tracker_archive (GibbonMatchTracker *self,
-                              const gchar *player1, const gchar *player2)
+gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
+                                        const gchar *player1,
+                                        const gchar *player2)
 {
         gchar *path;
         GibbonArchive *archive = gibbon_app_get_archive (app);
