@@ -235,6 +235,7 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
         GibbonMatchReader *reader;
         GibbonMatch *match;
         GibbonMatchReaderErrorFunc yyerror;
+        GError *error = NULL;
 
         path = gibbon_archive_get_saved_name (archive, player1, player2);
         if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
@@ -259,10 +260,12 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
                 return;
         }
 
-        g_object_unref (match);
+        if (!gibbon_archive_archive_match_file (archive, match, path, &error))
+                gibbon_app_fatal_error (app, _("Write Error"),
+                                        _("Cannot archive match `%s': %s\n"),
+                                        path, error->message);
 
-        gibbon_app_fatal_error (app, _("Aborting"),
-                                _("Archiving not yet implemented!\n"));
+        g_object_unref (match);
 }
 
 static void
