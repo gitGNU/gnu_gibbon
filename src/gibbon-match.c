@@ -1055,3 +1055,17 @@ gibbon_match_try_drop (const GibbonMatch *self,
 
         return g_slist_prepend (NULL, gibbon_match_play_new (action, side));
 }
+
+gint64
+gibbon_match_get_start_time (const GibbonMatch *self)
+{
+        const GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), G_MININT64);
+
+        game = gibbon_match_get_nth_game (self, 0);
+        if (!game)
+                return G_MININT64;
+
+        return gibbon_game_get_nth_timestamp (game, 0);
+}

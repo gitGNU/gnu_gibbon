@@ -166,5 +166,6 @@ gboolean gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
 gboolean gibbon_match_get_missing_actions (const GibbonMatch *self,
                                            const GibbonPosition *target,
                                            GSList **result);
+gint64 gibbon_match_get_start_time (const GibbonMatch *self);
 
 #endif
