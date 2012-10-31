@@ -99,5 +99,8 @@ void gibbon_match_list_set_active_game (GibbonMatchList *self, gint active);
 gint gibbon_match_list_get_active_game (const GibbonMatchList *self);
 
 void gibbon_match_list_add_game (GibbonMatchList *self, const GibbonGame *game);
+gboolean gibbon_match_list_add_action (GibbonMatchList *self,
+                                       const GibbonGame *game,
+                                       gint action_no);
 
 #endif

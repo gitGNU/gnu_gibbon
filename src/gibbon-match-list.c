@@ -71,9 +71,6 @@ struct _GibbonMatchListPrivate {
 
 G_DEFINE_TYPE (GibbonMatchList, gibbon_match_list, G_TYPE_OBJECT)
 
-static gboolean gibbon_match_list_add_action (GibbonMatchList *self,
-                                              GibbonGame *game,
-                                              gint action_no);
 static gchar *gibbon_match_list_format_roll (GibbonMatchList *self,
                                              GibbonRoll *roll);
 static gchar *gibbon_match_list_format_move (GibbonMatchList *self,
@@ -279,8 +276,8 @@ gibbon_match_list_get_active_game (const GibbonMatchList *self)
         return self->priv->active;
 }
 
-static gboolean
-gibbon_match_list_add_action (GibbonMatchList *self, GibbonGame *game,
+gboolean
+gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
                               gint action_no)
 {
         GibbonPositionSide side;
