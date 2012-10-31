@@ -289,6 +289,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         const GibbonGame *last_game;
         GError *error = NULL;
         GibbonMatchList *list;
+        int num_actions;
 
         g_return_if_fail (self != NULL);
         g_return_if_fail (target != NULL);
@@ -326,6 +327,11 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                                         error->message);
                         }
                         gibbon_match_list_add_game (list, game);
+                } else {
+                        /* Show the new game action(s).  */
+                        num_actions = gibbon_game_get_num_actions (game);
+                        gibbon_match_list_add_action (list, game,
+                                                      num_actions - 1);
                 }
                 if (!gibbon_gmd_writer_write_action (self->priv->writer,
                                                      self->priv->out,
