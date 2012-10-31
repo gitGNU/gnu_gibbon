@@ -81,4 +81,5 @@
   order are equal.
 - Refactor macro gibbon_match_return_val_if_fail to gibbon_return_val_if_fail.
 - Bring player list to front on connect
-- Loading a match with a syntax error does not bring up the GUI
+- Loading a match with a syntax error does not bring up the GUI.
+- When dropping the cube, the drop gets saved in the next game already.
