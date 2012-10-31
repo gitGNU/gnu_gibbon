@@ -2,7 +2,6 @@
   constructor fails.
 - Are esacped values in SGF files passed through?
 - Remove all traces of backgammon from gsgf.h.
-- Better formatting of libgsgf output.
 - Check that write_stream methods do not leak memory (pointer to
   temporary buffer must be freed, or alloca() must be used).
 - Trade memory for performance: Avoid NULL pointers in gsgf-flavor.c.
@@ -12,7 +11,6 @@
 - Refactor set_value() method of GSGFText.  It must be possible to
   return an error.
 - Remove the constructs if (*error) *error = NULL; fix caller instead.
-- Make archive directory configurable.
 - gsgf_node_get_property_cooked() must return a GSGFValue and should therefore
   be renamed.
 - When setting the value of a GSGFProperty, that property must be
@@ -45,14 +43,10 @@
 - In the shout room, make TAB-expansion work on know user names.
 - Write a GSettings mapping functions for hostnames that turns the entry
   into a canonical form.
-- No need to send a "toggle" command after connect.  All toggles are sent
-  by the server after login.
 - Implement some sort of auto-idle that sets you to `not ready' after some
   time of inactivity.
 - FIBS messages (** ...) should be displayed in a non-modal dialog.
-- Check that the FIBS spanner bug as in "someplayer accepts the double. The 
-  cube shows 2.13 anotherplayer Anybody for a 5 point match?" is also handled 
-  correctly.
+- Remove code that handles the FIBS spanner bug.  It is fixed by now.
 - IMPORTANT: If a saved match was an unlimited one, only optionally allow
   resuming it but display the normal match length selection.  Otherwise,
   both opponents have to wait until the match expires.
@@ -73,13 +67,19 @@
 - Switch to libgda.
 - Common messages should be hidden from the user.  Examples are
   "** You invited ...", "** The board won't be refreshed after every move".
-- Why is the login phase so slow?
+- Why is the login phase so slow?  There are long gaps between the server
+  replies and the commands send by us.
 - implement a counter in the match completion code to prevent infinite loops.
   Print a warning, when the counter drops to zero.
 - Relax gibbon_position_technically_equal in the dice comparison part.
   It is sufficient that the absolute values of the two dice in arbitrary
   order are equal.
 - Refactor macro gibbon_match_return_val_if_fail to gibbon_return_val_if_fail.
-- Bring player list to front on connect
+- Bring player list to front on connect.
 - Loading a match with a syntax error does not bring up the GUI.
 - When dropping the cube, the drop gets saved in the next game already.
+- Move animation does not work.
+- When starting a game, mouse clicks on checkers are (always?) ignored.  You
+  have to click the dice, wait for an error message ("You have to use
+  ... dice"), and then you can move.
+- Implement simple bear-offs by clicking on the bear-off tray.
