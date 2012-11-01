@@ -83,3 +83,6 @@
   have to click the dice, wait for an error message ("You have to use
   ... dice"), and then you can move.
 - Implement simple bear-offs by clicking on the bear-off tray.
+- When leaving a match after an offered double, the double is not saved.
+- When dancing, and at least 2 points are closed, we cannot continue the
+  match.  Instead just guess a roll.
