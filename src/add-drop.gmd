@@ -1,0 +1,10 @@
+GMD-2 # Created by Gibbon version 0.2.0
+Length: 7
+Rule: Crawford
+Game:
+Roll:W:: 2 1 
+Move:W:: 24/23 13/11
+Double:B:
+Drop:W:
+Game:
+Roll:W:: 3 1
