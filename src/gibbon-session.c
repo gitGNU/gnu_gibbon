@@ -1713,6 +1713,7 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
         self->priv->position = gibbon_position_new ();
 
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (GIBBON_BOARD (board), self->priv->position);
 
         gibbon_app_set_state_playing (self->priv->app);
@@ -1770,6 +1771,7 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
         self->priv->position = gibbon_position_new ();
 
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (GIBBON_BOARD (board), self->priv->position);
 
         gibbon_connection_queue_command (self->priv->connection, FALSE,
@@ -1941,11 +1943,9 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
                 tmp = pos->dice[0];
                 pos->dice[0] = pos->dice[1];
                 pos->dice[1] = tmp;
-                tmp = pos->unused_dice[0];
-                pos->unused_dice[0] = pos->unused_dice[1];
-                pos->unused_dice[1] = tmp;
         }
 
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
 
         return GIBBON_CLIP_CODE_ROLLS;
@@ -2054,6 +2054,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
         self->priv->position->turn = -self->priv->position->turn;
 
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         if (0 == g_strcmp0 ("You", player)) {
                 gibbon_board_set_position (board,
                                            self->priv->position);
@@ -2495,6 +2496,7 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
         }
 
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
         if (must_fade) {
                 gibbon_board_fade_out_dice (board);
@@ -2530,6 +2532,7 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
@@ -2569,6 +2572,7 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
         }
 
         self->priv->position->cube <<= 1;
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
@@ -2603,6 +2607,7 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
@@ -2614,6 +2619,7 @@ gibbon_session_handle_rejects (GibbonSession *self, GSList *iter)
 {
         self->priv->position->resigned = 0;
 
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
@@ -2674,6 +2680,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
@@ -3331,6 +3338,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
 
         if (move->status != GIBBON_MOVE_LEGAL) {
                 g_object_unref (move);
+                gibbon_position_reset_unused_dice (self->priv->position);
                 gibbon_board_set_position (board, self->priv->position);
                 return;
         }
@@ -3348,6 +3356,7 @@ gibbon_session_on_dice_picked_up (const GibbonSession *self)
         self->priv->position->turn = GIBBON_POSITION_SIDE_BLACK;
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3374,6 +3383,7 @@ gibbon_session_on_cube_turned (const GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "double");
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3399,6 +3409,7 @@ gibbon_session_on_cube_taken (const GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "accept");
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3422,6 +3433,7 @@ gibbon_session_on_cube_dropped (const GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "reject");
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3443,6 +3455,7 @@ gibbon_session_on_resignation_accepted (const GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "accept");
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3464,6 +3477,7 @@ gibbon_session_on_resignation_rejected (const GibbonSession *self)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "reject");
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3475,6 +3489,7 @@ gibbon_session_reset_position (GibbonSession *self)
         g_return_if_fail (GIBBON_IS_SESSION (self));
 
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
@@ -3530,6 +3545,7 @@ gibbon_session_resign (GibbonSession *self, guint value)
         gibbon_connection_queue_command (self->priv->connection, FALSE,
                                          "resign %s", value_string);
         board = gibbon_app_get_board (self->priv->app);
+        gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 }
 
