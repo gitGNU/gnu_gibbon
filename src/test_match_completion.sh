@@ -37,5 +37,7 @@ exit_code=0
         $dir/opening-black-double-complete.gmd || exit_code=1
 ./test_match_complete $dir/initial-with-one-double.gmd \
         $dir/initial-with-two-doubles.gmd || exit_code=1
+./test_match_complete $dir/dance-incomplete.gmd \
+        $dir/dance-complete.gmd || exit_code=1
 
 exit $exit_code
