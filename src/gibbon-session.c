@@ -23,8 +23,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "gibbon-connection.h"
 #include "gibbon-session.h"
@@ -1542,15 +1542,9 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
             && !pos->dice[0] && !pos->dice[1]
             && !pos->may_double[0] && !pos->may_double[1]) {
                 pos->cube_turned = self->priv->position->turn;
-        } else if (pos->turn == GIBBON_POSITION_SIDE_WHITE) {
-                pos->unused_dice[0] = abs (pos->dice[0]);
-                pos->unused_dice[1] = abs (pos->dice[1]);
-        } else if (pos->turn == GIBBON_POSITION_SIDE_BLACK) {
-                pos->unused_dice[0] = -abs (pos->dice[0]);
-                pos->unused_dice[1] = -abs (pos->dice[1]);
+        } else if (pos->turn) {
+                gibbon_position_reset_unused_dice (pos);
         }
-        if (pos->dice[0] == pos->dice[1])
-                pos->unused_dice[2] = pos->unused_dice[3] = pos->unused_dice[0];
 
         if (!memcmp (pos->points, (gibbon_position_initial ())->points,
                      sizeof (pos->points))) {

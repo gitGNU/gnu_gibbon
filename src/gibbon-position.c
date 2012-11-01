@@ -1389,3 +1389,21 @@ gibbon_position_initial ()
 {
         return &initial;
 }
+
+void
+gibbon_position_reset_unused_dice (GibbonPosition *self)
+{
+        g_return_if_fail (self != NULL);
+
+        self->unused_dice[0] = self->unused_dice[2] = 0;
+
+        if (!self->turn)
+                return;
+        self->unused_dice[0] = abs (self->dice[0]);
+        self->unused_dice[1] = abs (self->dice[1]);
+        if (abs (self->dice[0]) == abs (self->dice[1]))
+                self->unused_dice[2]
+                                  = self->unused_dice[3]
+                                  = self->unused_dice[0];
+
+}
