@@ -30,6 +30,7 @@
 #include "gibbon-move.h"
 #include "gibbon-double.h"
 #include "gibbon-drop.h"
+#include "gibbon-gmd-writer.h"
 
 int
 main(int argc, char *argv[])
@@ -39,10 +40,25 @@ main(int argc, char *argv[])
         const GibbonGame *last_game;
         GibbonGameAction *action;
         GError *error = NULL;
+        GOutputStream *out;
+        GibbonGMDWriter *writer;
+        gchar *gmd_out;
 
         g_type_init ();
 
+        out = G_OUTPUT_STREAM (g_memory_output_stream_new (NULL, 0,
+                                                           g_realloc,
+                                                           g_free));
+        writer = gibbon_gmd_writer_new ();
+
         match = gibbon_match_new (NULL, NULL, 0, FALSE);
+        if (!gibbon_match_writer_write_stream (GIBBON_MATCH_WRITER (writer),
+                                               out, match, &error)) {
+                g_printerr ("Error writing initial match: $s\n",
+                            error->message);
+                return 1;
+        }
+
         last_game = gibbon_match_get_current_game (match);
 
         action = GIBBON_GAME_ACTION (gibbon_roll_new (2, 1));
@@ -58,6 +74,12 @@ main(int argc, char *argv[])
         game = gibbon_match_get_current_game (match);
         if (!game) {
                 g_printerr ("No current game after roll.\n");
+                return 1;
+        }
+        if (!gibbon_gmd_writer_write_action (writer, out, game, action,
+                                             GIBBON_POSITION_SIDE_WHITE,
+                                             G_MININT64, &error)) {
+                g_printerr ("Cannot add roll 21: %s\n", error->message);
                 return 1;
         }
         last_game = game;
@@ -115,6 +137,11 @@ main(int argc, char *argv[])
         last_game = game;
 
         g_object_unref (match);
+
+        gmd_out = g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out));
+g_printerr (gmd_out);
+
+        g_object_unref (out);
 
         return 0;
 }
