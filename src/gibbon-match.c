@@ -782,10 +782,12 @@ gibbon_match_try_roll (const GibbonMatch *self,
         else
                 must_move = FALSE;
 
-        if (!must_move) {
-                if (!target->dice[0] || !target->dice[1])
-                        return NULL;
-
+        /*
+         * Can we just copy the dice from the target position? We have to make
+         * sure that this is not really a case of "cannot move".
+         */
+        if (!must_move && target->dice[0] && target->dice[1]
+            && target->turn == current->turn) {
                 current->dice[0] = target->dice[0];
                 current->dice[1] = target->dice[1];
 
