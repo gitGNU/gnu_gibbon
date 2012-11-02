@@ -84,3 +84,5 @@
   ... dice"), and then you can move.  This happens only if we win the
   opening roll (or only, when we lose?)
 - Implement simple bear-offs by clicking on the bear-off tray.
+- When recording the third game, the first position is initialized to a 
+  score of 0:0.  That leads to a continuation error.
