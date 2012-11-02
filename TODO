@@ -81,8 +81,6 @@
 - Move animation does not work.
 - When starting a game, mouse clicks on checkers are (always?) ignored.  You
   have to click the dice, wait for an error message ("You have to use
-  ... dice"), and then you can move.
+  ... dice"), and then you can move.  This happens only if we win the
+  opening roll (or only, when we lose?)
 - Implement simple bear-offs by clicking on the bear-off tray.
-- When leaving a match after an offered double, the double is not saved.
-- When dancing, and at least 2 points are closed, we cannot continue the
-  match.  Instead just guess a roll.
