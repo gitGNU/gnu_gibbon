@@ -43,6 +43,7 @@ main(int argc, char *argv[])
         GOutputStream *out;
         GibbonGMDWriter *writer;
         gchar *gmd_out;
+        gchar *wanted;
 
         g_type_init ();
 
@@ -55,6 +56,11 @@ main(int argc, char *argv[])
         if (!gibbon_match_writer_write_stream (GIBBON_MATCH_WRITER (writer),
                                                out, match, &error)) {
                 g_printerr ("Error writing initial match: $s\n",
+                            error->message);
+                return 1;
+        }
+        if (!gibbon_gmd_writer_add_game (writer, out, &error)) {
+                g_printerr ("Error writing 1st game start: %s\n",
                             error->message);
                 return 1;
         }
@@ -79,7 +85,7 @@ main(int argc, char *argv[])
         if (!gibbon_gmd_writer_write_action (writer, out, game, action,
                                              GIBBON_POSITION_SIDE_WHITE,
                                              G_MININT64, &error)) {
-                g_printerr ("Cannot add roll 21: %s\n", error->message);
+                g_printerr ("Cannot write roll 21: %s\n", error->message);
                 return 1;
         }
         last_game = game;
@@ -95,6 +101,12 @@ main(int argc, char *argv[])
                 g_printerr ("Game changed after move.\n");
                 return 1;
         }
+        if (!gibbon_gmd_writer_write_action (writer, out, game, action,
+                                             GIBBON_POSITION_SIDE_WHITE,
+                                             G_MININT64, &error)) {
+                g_printerr ("Cannot write move: %s\n", error->message);
+                return 1;
+        }
         last_game = game;
 
         action = GIBBON_GAME_ACTION (gibbon_double_new ());
@@ -108,6 +120,12 @@ main(int argc, char *argv[])
                 g_printerr ("Game changed after double.\n");
                 return 1;
         }
+        if (!gibbon_gmd_writer_write_action (writer, out, game, action,
+                                             GIBBON_POSITION_SIDE_WHITE,
+                                             G_MININT64, &error)) {
+                g_printerr ("Cannot write double: %s\n", error->message);
+                return 1;
+        }
         last_game = game;
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
@@ -118,7 +136,13 @@ main(int argc, char *argv[])
         }
         game = gibbon_match_get_current_game (match);
         if (game == last_game) {
-                g_printerr ("Game did not change after double.\n");
+                g_printerr ("Game did not change after drop.\n");
+                return 1;
+        }
+        if (!gibbon_gmd_writer_write_action (writer, out, game, action,
+                                             GIBBON_POSITION_SIDE_WHITE,
+                                             G_MININT64, &error)) {
+                g_printerr ("Cannot write drop: %s\n", error->message);
                 return 1;
         }
         last_game = game;
@@ -134,12 +158,39 @@ main(int argc, char *argv[])
                 g_printerr ("Game changed after first roll in 2nd game.\n");
                 return 1;
         }
+        if (!gibbon_gmd_writer_add_game (writer, out, &error)) {
+                g_printerr ("Error writing 2nd game start: %s\n",
+                            error->message);
+                return 1;
+        }
+        if (!gibbon_gmd_writer_write_action (writer, out, game, action,
+                                             GIBBON_POSITION_SIDE_WHITE,
+                                             G_MININT64, &error)) {
+                g_printerr ("Cannot first roll in 2nd game: %s\n",
+                            error->message);
+                return 1;
+        }
         last_game = game;
 
         g_object_unref (match);
 
         gmd_out = g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out));
-g_printerr (gmd_out);
+        wanted = g_strdup_printf ("GMD-2 # Created by Gibbon version %s\n"
+                        "Length: 0\n"
+                        "Player:W: white\n"
+                        "Player:B: black\n"
+                        "Game:\n"
+                        "Roll:W:: 2 1\n"
+                        "Move:W:: 13/11 24/21\n"
+                        "Double:W:\n"
+                        "Drop:W:\n"
+                        "Game:\n"
+                        "Roll:W:: 3 1\n", VERSION);
+        if (g_strcmp0 (gmd_out, wanted)) {
+                g_printerr ("Recorded match differs, wanted: %s", wanted);
+                g_printerr ("Got: %s", gmd_out);
+                return 1;
+        }
 
         g_object_unref (out);
 
