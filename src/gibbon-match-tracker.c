@@ -319,6 +319,7 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         } else {
                 current = gibbon_position_copy (gibbon_position_initial ());
         }
+
         if (!gibbon_match_get_missing_actions (self->priv->match, target,
                                                &iter))
                 goto bail_out;
@@ -334,6 +335,17 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                                               G_MININT64, NULL))
                         goto bail_out;
                 game = gibbon_match_get_current_game (self->priv->match);
+                if (!gibbon_gmd_writer_write_action (self->priv->writer,
+                                                     self->priv->out,
+                                                     game, action, side,
+                                                     g_get_real_time (),
+                                                     &error)) {
+                        gibbon_app_fatal_error (app, _("Write Error"),
+                                                _("Error writing to"
+                                                  " `%s': %s!\n"),
+                                                self->priv->outname,
+                                                error->message);
+                }
                 if (game != last_game) {
                         if (!gibbon_gmd_writer_add_game (self->priv->writer,
                                                          self->priv->out,
@@ -350,17 +362,6 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                         num_actions = gibbon_game_get_num_actions (game);
                         gibbon_match_list_add_action (list, game,
                                                       num_actions - 1);
-                }
-                if (!gibbon_gmd_writer_write_action (self->priv->writer,
-                                                     self->priv->out,
-                                                     game, action, side,
-                                                     g_get_real_time (),
-                                                     &error)) {
-                        gibbon_app_fatal_error (app, _("Write Error"),
-                                                _("Error writing to"
-                                                  " `%s': %s!\n"),
-                                                self->priv->outname,
-                                                error->message);
                 }
                 last_game = game;
                 iter = iter->next;
