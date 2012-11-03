@@ -300,7 +300,7 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
         if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
                 gibbon_app_fatal_error (self->priv->app, NULL,
                                           _("Failed to create"
-                                            " directory `%s': %s!\n\n"),
+                                            " directory `%s': %s!"),
                                self->priv->servers_directory,
                                strerror (errno));
         }
@@ -781,7 +781,7 @@ gibbon_archive_get_saved_directory (const GibbonArchive *self)
                 if (0 != g_mkdir_with_parents (saved_directory, mode)) {
                         gibbon_app_fatal_error (self->priv->app, NULL,
                                                 _("Failed to create"
-                                                  " directory `%s': %s!\n\n"),
+                                                  " directory `%s': %s!"),
                                                 saved_directory,
                                                 strerror (errno));
                         g_free (saved_directory);

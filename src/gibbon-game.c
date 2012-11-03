@@ -325,7 +325,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                         gibbon_position_free (pos);
                         g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                              GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-                                             _("aThe dice have already been"
+                                             _("The dice have already been"
                                                " rolled!"));
                         return FALSE;
                 }
@@ -334,7 +334,7 @@ gibbon_game_add_roll (GibbonGame *self, GibbonPositionSide side,
                 gibbon_position_free (pos);
                 g_set_error_literal (error, GIBBON_MATCH_ERROR,
                                      GIBBON_MATCH_ERROR_ALREADY_ROLLED,
-                                     _("bThe dice have already been"
+                                     _("The dice have already been"
                                        " rolled!"));
                 return FALSE;
         } else if (!side) {
