@@ -1395,9 +1395,6 @@ gibbon_position_reset_unused_dice (GibbonPosition *self)
 {
         g_return_if_fail (self != NULL);
 
-        if (self->turn <= 0)
-                return;
-
         self->unused_dice[0] = self->unused_dice[2] = 0;
 
         self->unused_dice[0] = abs (self->dice[0]);
