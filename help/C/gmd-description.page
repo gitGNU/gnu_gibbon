@@ -1,0 +1,299 @@
+<!DOCTYPE page [
+<!ENTITY mdash "&#8212;">
+<!ENTITY nbsp "&#160;">
+]>
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="gmd-spec">
+  <info>
+    <link type="guide" xref="developer-resources"/>
+    <desc>
+      GMD is the internal format for saving matches
+      in <app>Gibbon</app>.
+    </desc>
+    <credit type="author">
+      <name>Guido Flohr</name>
+      <email>guido@imperia.net</email>
+    </credit>
+    <license>
+      <p>Creative Commons Share Alike 3.0</p>
+    </license>
+  </info>
+
+  <title>Gibbon Match Data (GMD), Version 2.0</title>
+  <p>
+    GMD is the internal format of <app>Gibbon</app> for saving backgammon
+    matches.  The design goals of GMD are:
+  </p>
+  <list>
+    <item><p>GMD should be easy to parse for computers, avoiding ambiguities.</p></item>
+    <item><p>GMD should &mdash; to a certain extent &mdash; be readable and editablel for humans.</p></item>
+    <item><p>GMD should be able to updated by appending only, while a match proceeds.</p></item>
+    <item><p>GMD should be complete, i.&nbsp;e. allow storing all aspects of
+             a backgammon match that <app>Gibbon</app> is aware of.</p></item>
+    <item><p>GMD should have room for future and application-specific extensions.</p></item>
+  </list>
+  <p>
+    The format is not meant as a competitor to other well established
+    formats for saving backgammon matches.  For that reason, there is
+    no formal specification but only a description.
+  </p>
+  <p>
+    GMD files are always expected to be in UTF-8.  The structure elements
+    do only use US-ASCII characters, but other textual data (names, locations,
+    and so on) are expected to be in UTF-8.
+  </p>
+  <p>
+    GMD is a line-based format.  Four-different new line conventions are supported:
+  </p>
+  <list>
+    <item><p><sys>LF</sys></p></item>
+    <item><p><sys>CR</sys></p></item>
+    <item><p><sys>CR LF</sys></p></item>
+    <item><p><sys>LF CR</sys></p></item>
+  </list>
+  <p>
+    As you may have guessed, <sys>LF</sys> stands for a single line-feed
+    (ASCII 10) and <sys>CR</sys> for a single carriage return (ASCII 13).
+  </p>
+  <p>
+    Other whitespace, namely space (ASCII 32), horizontal tab (ASCII 9),
+    form feed (ASCII 12), and vertical tab (ASCII 11) are ignored everywhere,
+    unless they are part of another token (for example a name or a location).
+  </p>
+  <p>
+    The hash sign (#) starts a comment, unless it is encountered as part
+    of another token (for example a name or a location).  A comment ends 
+    at the end of a line.  Comments are ignored everywhere, even at the
+    beginning of a file.
+  </p>
+  <p>
+    Empty lines are ignored everywhere, even at the beginning of the file.
+  </p>
+  <section id="header">
+    <title>Header</title>
+    <p>
+    The first significant line of each GMD file must start with the sequence
+    "GMD", a hyphen ("-"), and an integer giving the version number (currently 2).
+    </p>
+    <listing>
+      <title>Example:</title>
+      <code>GMD-2 # Created by Gibbon version 0.2.0</code>
+    </listing>
+    <p>
+      It is recommded that all GMD files start with the string "GMD-" immediately
+      followed by the version number, without any extra whitespace or comments.
+    </p>
+  </section>
+  <section id="items">
+    <title>Items</title>
+    <p>
+      The rest of the file consists of an arbitrary (zero to infinity) number of 
+      items.  An item contains of an item type, followed by a colon, followed
+      by additional data.  A colon is normally used to split that additional data
+      up into smaller syntactic units.
+    </p>
+    <listing>
+      <title>Example:</title>
+      <code>Move:W:: 8/4 6/4</code>
+    </listing>
+    <p>
+      All values are subject to space-trimming.  That means that possible white-space
+      left and right of the value (in the above example before and after "8/4 6/4")
+      should be discarded.  In the rare case that space is significant, you must
+      <link xref="#escaping">escape</link> it.
+    </p>
+    <p>
+      There are two different types of items, 
+      <link xref="#properties"><em>properties</em></link> and
+      <link xref="#actions"><em>actions</em></link>.
+    </p>
+    <p>
+      All item types must start with an alphabetic ASCII character (a-z, A-Z),
+      followed by zero or more ASCII characters, the hyphen (-) or
+      decimal digits (0-9).  Items types are case-insensitive!
+    </p>
+    <p>
+      Private or application specific item types must start with the string "x-"
+      or "X-".
+    </p>
+    <listing>
+      <title>Example:</title>
+      <code>X-Kibitz:Hi-Ho-Silver:: Time to run, dude ...\nyou're not gonna hit him.</code>
+    </listing>
+    <p>
+      An application should ignore 
+    </p>
+  </section>
+  <section id="properties">
+    <title>Properties</title>
+    <p>
+      Properties can occur everywhere after the header.  They can all be
+      given multiple times.  In that case, the value of the new property
+      overwrites a previously specified value.
+    </p>
+  </section>
+  <section id="length">
+    <title>The "Length" Property</title>
+    <p>
+      An integer number giving the length of the match.  Positive values
+      are used for fixed-length matches:
+    </p>
+    <listing>
+      <title>Examples for a 7-point match:</title>
+      <code>Length: 7
+Length: +7</code>
+    </listing>
+    <p>
+      Values less or equal than zero are used for unlimited matches
+      (money games).
+    </p>
+    <listing>
+      <title>Examples for unlimited matches:</title>
+      <code>Length: 0
+Length: -1</code>
+    </listing>
+    <p>
+      In absence of a length property, a default match length
+      of 0 (unlimited) must be assumed.
+    </p>
+  </section>
+  <section id="player">
+    <title>The "Player" Property</title>
+    <p>
+      The player property must be followed by a <link xref="#colors">color</link>
+      and the name of the corresponding players:
+    </p>
+    <listing>
+      <title>Examples:</title>
+      <code>Player:W: John Doe
+Player:B: GNU Backgammon Supremo</code>
+    </listing>
+  </section>
+  <section id="rank">
+    <title>The "Rank" Property</title>
+    <p>
+      The rank property must be followed by a <link xref="#colors">color</link>
+      and a free-form description (subject to <link xref="#escaping">escaping</link>
+      of the rank of the player:
+    </p>
+    <listing>
+      <title>Examples:</title>
+      <code>Rank:W: Supremo
+Player:B: Advanced</code>
+    </listing>
+    <p>
+      Gibbon uses the following convention for describing ranks:
+    </p>
+    <listing>
+      <title>Examples</title>
+      <code>Rank:W: 1976.130000 3197 (FIBS)
+Player:B: 1812.460000 1144 (FIBS), 0.973251 97 (Gibbon)</code>
+    </listing>
+    <p>
+      In the above example, the white first has a <link xref="rating">FIBS
+      rating</link> of 1976.13 and an experience of 3197.  The second
+      player has a <link xref="rating">FIBS rating</link> of 1812.46 and an 
+      experience of 1144, and a <link xref="reliability">reliability</link>
+      according to <app>Gibbon</app> of 0.973251 with a confidence of
+      97.  <app>Gibbon</app> omits either information if it is not 
+      available.
+    </p>
+  </section>
+  <section id="actions">
+    <title>Actions</title>
+    <p>
+      Actions semantically differ from <link xref="#properties">properties</link>
+      in that they are only allowed <em>after</em> the first
+      <link xref="#game">game</link> action.  The first <link xref="#game">game</link>
+      <link xref="#items">item</link> &mdash; being an action itself &mdash; is,
+      of course, an exception to that rule.
+    </p>
+  </section>
+  <section id="game">
+    <title>The "Game" Action</title>
+  </section>
+  <section id="colors">
+    <title>Colors</title>
+    <p>
+      The "color" used by either of the two opponents can be given in a variety
+      of formats:
+    </p>
+    <p>
+      One player is specified by "W", "w", "White" (case-insensitive), "0" (zero),
+      or "O" (the letter O, again case-insensitive).
+    </p>
+    <p>
+      The opponent is specified by "B", "b", "Black" (case-insensitive), "1" ,
+      or "X" (again case-insensitive).
+    </p>
+    <p>
+      If a certain action cannot be associated with one of the two players,
+      for example the opening roll, you can specify that by a hyphen (-) or
+      the empty string.
+    </p>
+  </section>
+  <section id="escaping">
+    <title>Escaping</title>
+    <p>
+      In order to be able to encode various values, values &mdash; where 
+      specified by refering here &mdash; have to be escaped,
+      when they contain "illegal" characters.  Escaping is done in a way very
+      similar to the programming language C.
+    </p>
+    <p>
+      Every backslash (\) <em>must</em> be escaped by another
+      backslash.
+    </p>
+    <listing>
+      <title>Example:</title>
+      <code>X-File: C:\\Gibbon\\Saved\\my-great-match.gmd</code>
+    </listing>
+    <p>
+      Every newline <em>must</em> be escaped by "\n".  Note!
+      This encoding is independent of the platform-dependent
+      line-break conventions.  In other words, if you want to
+      encode a new line, use "\n".
+    </p>
+    <p>
+      Every linefeed (ASCII 10) byte <em>must</em> be encoded as
+      either
+    </p>
+    <list>
+      <item><p>\x0a</p></item>, or
+      <item><p>\012.</p></item>
+    </list>
+    <p>
+      Every carriage return (ASCII 13) byte <em>must</em> be encoded as
+      either
+    </p>
+    <list>
+      <item><p>\r</p></item>, or
+      <item><p>\x0d</p></item>, or
+      <item><p>\015.</p></item>
+    </list>
+    <p>
+      All whitespace that would be discarded according to the general
+      rules above <em>must</em>, and all other bytes <em>may</em> be 
+      encoded in one of the following ways:
+    </p>
+    <list>
+      <item><p><code>\<var>DDD</var></code> where <var>DDD</var> is the
+            octal representation of the byte</p></item>
+      <item><p><code>\x<var>XX</var></code> where <var>XX</var> is the
+            hexa-decimal representation of the byte</p></item>
+      <item><p><code>\<var>C</var></code> where <var>C</var> is one of
+            </p>
+        <list>
+          <item><p>\a for backspace (ASCII 8)</p></item>
+          <item><p>\t for horizontal tab (ASCII 9)</p></item>
+          <item><p>\n for line-break (new line) according to
+                    the local conventions</p></item>
+          <item><p>\v for a vertical tab (ASCII 11)</p></item>
+          <item><p>\f for a form-feed (ASCII 11)</p></item>
+          <item><p>\r for a carriage-return (ASCII 11)</p></item>
+        </list>
+      </item>
+    </list>
+  </section>
+</page>

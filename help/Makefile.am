@@ -68,6 +68,7 @@ HELP_FILES = \
 	game-chat-concept.page \
 	geo-ip.page \
 	gibbon-unicode.page \
+	gmd-description.page \
 	gui.page \
 	gui-overview.page \
 	index.page \
