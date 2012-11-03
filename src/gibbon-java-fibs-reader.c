@@ -39,14 +39,7 @@
 
 #include "gibbon-game.h"
 #include "gibbon-game-action.h"
-#include "gibbon-roll.h"
-#include "gibbon-move.h"
-#include "gibbon-double.h"
-#include "gibbon-drop.h"
-#include "gibbon-take.h"
-#include "gibbon-resign.h"
-#include "gibbon-reject.h"
-#include "gibbon-accept.h"
+#include "gibbon-game-actions.h"
 
 typedef struct _GibbonJavaFIBSReaderPrivate GibbonJavaFIBSReaderPrivate;
 struct _GibbonJavaFIBSReaderPrivate {

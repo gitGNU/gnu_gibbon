@@ -24,18 +24,10 @@
 #include <glib.h>
 #include <string.h>
 
-#include <gibbon-match.h>
-#include <gibbon-game.h>
-#include <gibbon-position.h>
-#include <gibbon-move.h>
-#include <gibbon-double.h>
-#include <gibbon-drop.h>
-#include <gibbon-roll.h>
-#include <gibbon-take.h>
-#include <gibbon-resign.h>
-#include <gibbon-reject.h>
-#include <gibbon-accept.h>
-#include <gibbon-setup.h>
+#include "gibbon-match.h"
+#include "gibbon-game.h"
+#include "gibbon-position.h"
+#include "gibbon-game-actions.h"
 
 #define gibbon_error_reset(error)       \
 	{                               \

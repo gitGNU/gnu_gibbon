@@ -31,7 +31,6 @@
 #include <gibbon-reject.h>
 #include <gibbon-resign.h>
 #include <gibbon-roll.h>
-#include <gibbon-setup.h>
 #include <gibbon-take.h>
 
 #endif

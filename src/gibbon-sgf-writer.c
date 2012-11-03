@@ -34,15 +34,7 @@
 #include "gibbon-sgf-writer.h"
 #include "gibbon-match.h"
 #include "gibbon-game.h"
-
-#include "gibbon-roll.h"
-#include "gibbon-move.h"
-#include "gibbon-double.h"
-#include "gibbon-drop.h"
-#include "gibbon-take.h"
-#include "gibbon-resign.h"
-#include "gibbon-accept.h"
-#include "gibbon-reject.h"
+#include "gibbon-game-actions.h"
 
 G_DEFINE_TYPE (GibbonSGFWriter, gibbon_sgf_writer, GIBBON_TYPE_MATCH_WRITER)
 

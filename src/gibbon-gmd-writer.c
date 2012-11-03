@@ -33,15 +33,7 @@
 #include "gibbon-gmd-writer.h"
 #include "gibbon-match.h"
 #include "gibbon-game.h"
-
-#include "gibbon-roll.h"
-#include "gibbon-move.h"
-#include "gibbon-double.h"
-#include "gibbon-drop.h"
-#include "gibbon-take.h"
-#include "gibbon-resign.h"
-#include "gibbon-accept.h"
-#include "gibbon-reject.h"
+#include "gibbon-game-actions.h"
 
 #define GIBBON_GMD_WRITER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_GMD_WRITER, GibbonGMDWriterPrivate))

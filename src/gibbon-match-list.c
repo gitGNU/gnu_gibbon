@@ -34,17 +34,7 @@
 #include "gibbon-position.h"
 
 #include "gibbon-game.h"
-#include "gibbon-roll.h"
-#include "gibbon-reject.h"
-#include "gibbon-accept.h"
-#include "gibbon-move.h"
-#include "gibbon-double.h"
-#include "gibbon-take.h"
-#include "gibbon-drop.h"
-#include "gibbon-resign.h"
-#include "gibbon-accept.h"
-#include "gibbon-reject.h"
-#include "gibbon-setup.h"
+#include "gibbon-game-actions.h"
 
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
@@ -311,11 +301,7 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
         moveno = gtk_tree_model_iter_n_children (
                         GTK_TREE_MODEL (self->priv->moves), NULL);
 
-        /*
-         * Always insert a dummy row if the first action of a game is not a
-         * position setup.
-         */
-        if (!action_no && !GIBBON_IS_SETUP (action)) {
+        if (!action_no) {
                 gtk_list_store_append (self->priv->moves, &iter);
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVENO, 0,
@@ -398,9 +384,6 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         } else if (GIBBON_IS_REJECT (action)) {
                 text = g_strdup (_("rejects"));
-                colno = GIBBON_MATCH_LIST_COL_MOVE;
-        } else if (GIBBON_IS_SETUP (action)) {
-                text = g_strdup (_("Position set up"));
                 colno = GIBBON_MATCH_LIST_COL_MOVE;
         }
 

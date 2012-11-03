@@ -33,15 +33,7 @@
 
 #include "gibbon-game.h"
 #include "gibbon-position.h"
-#include "gibbon-roll.h"
-#include "gibbon-move.h"
-#include "gibbon-double.h"
-#include "gibbon-drop.h"
-#include "gibbon-take.h"
-#include "gibbon-resign.h"
-#include "gibbon-accept.h"
-#include "gibbon-reject.h"
-#include "gibbon-setup.h"
+#include "gibbon-game-actions.h"
 
 typedef struct _GibbonGamePrivate GibbonGamePrivate;
 struct _GibbonGamePrivate {
@@ -95,10 +87,6 @@ static gboolean gibbon_game_add_accept (GibbonGame *self,
                                         GibbonPositionSide side,
                                         GibbonAccept *accept, gint64 timestamp,
                                         GError **error);
-static gboolean gibbon_game_add_setup (GibbonGame *self,
-                                       GibbonPositionSide side,
-                                       GibbonSetup *setup, gint64 timestamp,
-                                       GError **error);
 static void gibbon_game_add_snapshot (GibbonGame *self,
                                       GibbonGameAction *action,
                                       GibbonPositionSide side,
@@ -240,10 +228,6 @@ gibbon_game_add_action (GibbonGame *self, GibbonPositionSide side,
                 return gibbon_game_add_accept (self, side,
                                                GIBBON_ACCEPT (action),
                                                timestamp, error);
-        } else if (GIBBON_IS_SETUP (action)) {
-                return gibbon_game_add_setup (self, side,
-                                              GIBBON_SETUP (action),
-                                              timestamp, error);
         } else {
                 /*
                  * We do not bother to translate this message.  It can only
@@ -739,34 +723,6 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
 
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (accept), side, pos,
                                   timestamp);
-
-        return TRUE;
-}
-
-static gboolean
-gibbon_game_add_setup (GibbonGame *self, GibbonPositionSide side,
-                       GibbonSetup *setup, gint64 timestamp, GError **error)
-{
-        GibbonPosition *pos;
-
-        if (gibbon_game_over (self)) {
-                g_set_error_literal (error, GIBBON_MATCH_ERROR,
-                                     GIBBON_MATCH_ERROR_END_OF_GAME,
-                                     _("Game is already over!"));
-                return FALSE;
-        }
-
-        pos = gibbon_position_copy (setup->position);
-
-        gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (setup), side, pos,
-                                  timestamp);
-
-        /*
-         * This is just a safe guess.  If the rest of the code detects that
-         * this is actually the Crawford game, we simply set the flag
-         * correctly.
-         */
-        self->priv->is_crawford = FALSE;
 
         return TRUE;
 }

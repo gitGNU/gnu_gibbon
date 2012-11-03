@@ -85,7 +85,6 @@ common_SOURCES = 			\
         gibbon-reject.c                 \
         gibbon-resign.c                 \
         gibbon-roll.c                   \
-        gibbon-setup.c                  \
         gibbon-take.c                   \
         gibbon-util.c			\
         gibbon-sgf-reader.c		\
@@ -200,7 +199,6 @@ noinst_HEADERS =			\
         gibbon-server-console.h		\
         gibbon-session.h		\
         gibbon-settings.h		\
-        gibbon-setup.h			\
         gibbon-sgf-reader.h		\
         gibbon-sgf-writer.h		\
         gibbon-shouts.h			\
