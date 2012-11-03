@@ -82,3 +82,7 @@
 - Implement simple bear-offs by clicking on the bear-off tray.
 - When recording the third game, the first position is initialized to a 
   score of 0:0.  That leads to a continuation error.
+- The reset button for the board should always work, and reset the position
+  to the initial one.  That allows to always move the checkers around,
+  provided that the board keeps track of two positions.  Harder than it
+  looks because the checker movement is not handed by the board atm.
