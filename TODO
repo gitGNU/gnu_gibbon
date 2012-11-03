@@ -79,10 +79,6 @@
 - Loading a match with a syntax error does not bring up the GUI.
 - When dropping the cube, the drop gets saved in the next game already.
 - Move animation does not work.
-- When starting a game, mouse clicks on checkers are (always?) ignored.  You
-  have to click the dice, wait for an error message ("You have to use
-  ... dice"), and then you can move.  This happens only if we win the
-  opening roll (or only, when we lose?)
 - Implement simple bear-offs by clicking on the bear-off tray.
 - When recording the third game, the first position is initialized to a 
   score of 0:0.  That leads to a continuation error.

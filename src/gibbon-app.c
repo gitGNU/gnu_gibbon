@@ -1771,7 +1771,8 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
 {
         gint game_no;
         const GibbonGame *game;
-        const GibbonPosition *pos;
+        const GibbonPosition *current;
+        GibbonPosition *pos;
 
         game_no = gibbon_match_list_get_active_game (self->priv->match_list);
         if (game_no < 0)
@@ -1785,13 +1786,17 @@ gibbon_app_on_action_selected (GibbonApp *self, gint action_no)
                 return;
 
         if (action_no < 0)
-                pos = gibbon_game_get_initial_position (game);
+                current = gibbon_game_get_initial_position (game);
         else
-                pos = gibbon_game_get_nth_position (game, action_no);
-        if (!pos)
+                current = gibbon_game_get_nth_position (game, action_no);
+        if (!current)
                 return;
 
+        pos = gibbon_position_copy (current);
+        gibbon_position_reset_unused_dice (pos);
         gibbon_board_set_position (GIBBON_BOARD (self->priv->board), pos);
+        gibbon_position_free (pos);
+
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no);
 }
