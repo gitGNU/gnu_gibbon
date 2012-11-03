@@ -60,6 +60,8 @@ libgsgf/tests/test-real.c
 libgsgf/tests/test-really-empty.c
 libgsgf/tests/test-write-empty.c
 src/gibbon-accept.c
+src/gibbon-analysis-view.c
+src/gibbon-analysis-move.c
 src/gibbon-app.c
 src/gibbon-archive.c
 src/gibbon-board.c
@@ -87,6 +89,7 @@ src/gibbon-gmd-lexer.l
 src/gibbon-gmd-parser.c
 src/gibbon-gmd-parser.y
 src/gibbon-gmd-reader.c
+src/gibbon-gmd-writer.c
 src/gibbon-help.c
 src/gibbon-inviter-list.c
 src/gibbon-inviter-list-view.c
@@ -103,9 +106,13 @@ src/gibbon-jelly-fish-parser.y
 src/gibbon-jelly-fish-reader.c
 src/gibbon-jelly-fish-writer.c
 src/gibbon-match.c
+src/gibbon-match-list.c
+src/gibbon-match-loader.c
 src/gibbon-match-reader.c
+src/gibbon-match-tracker.c
 src/gibbon-match-writer.c
 src/gibbon-move.c
+src/gibbon-move-list-view.c
 src/gibbon-movement.c
 src/gibbon-player-list.c
 src/gibbon-player-list-view.c
