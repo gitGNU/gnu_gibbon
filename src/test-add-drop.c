@@ -55,7 +55,7 @@ main(int argc, char *argv[])
         match = gibbon_match_new (NULL, NULL, 0, FALSE);
         if (!gibbon_match_writer_write_stream (GIBBON_MATCH_WRITER (writer),
                                                out, match, &error)) {
-                g_printerr ("Error writing initial match: $s\n",
+                g_printerr ("Error writing initial match: %s\n",
                             error->message);
                 return 1;
         }
