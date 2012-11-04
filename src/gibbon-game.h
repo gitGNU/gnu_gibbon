@@ -106,6 +106,7 @@ const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
 gboolean gibbon_game_is_crawford (const GibbonGame *self);
 
 const GibbonPosition *gibbon_game_get_initial_position (const GibbonGame *self);
+GibbonPosition *gibbon_game_get_initial_position_editable (const GibbonGame *self);
 
 /* Yes! N can be negative, think Perl! */
 const GibbonPosition *gibbon_game_get_nth_position (const GibbonGame *self,
