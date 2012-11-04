@@ -98,6 +98,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %token MAGIC
 %token HYPHEN
 %token COLON
+%token <num> POSITIVE
 %token <num> INTEGER
 %token <name> NAME
 %token LENGTH
@@ -123,6 +124,8 @@ extern int gibbon_gmd_lexer_lex (void);
 %token ACCEPT
 %token UNKNOWN
 %token GARBAGE
+%token POINTS
+%token LBRACE RBRACE
 
 %type <side> color
 %type <num> movements
@@ -132,7 +135,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %%
 
 gmd_file
-	: { yydebug = 0; } MAGIC HYPHEN INTEGER things
+	: { yydebug = 0; } MAGIC HYPHEN POSITIVE things
 		{
 			_gibbon_gmd_reader_free_names (reader);
 		}
@@ -156,7 +159,7 @@ property
 	;
 	
 length
-	: LENGTH COLON INTEGER
+	: LENGTH COLON POSITIVE
 		{
 			_gibbon_gmd_reader_set_match_length (reader, $3);
 		}
@@ -184,11 +187,33 @@ location
 	;
 
 game
-	: GAME COLON
+	: GAME 
 		{
 			if (!_gibbon_gmd_reader_add_game (reader))
 				YYABORT;
 		}
+	  COLON setups	
+	;
+
+setups
+	: /* empty */
+	| setups setup
+	;
+
+setup
+	: points
+	;
+
+points
+	: POINTS 
+	  LBRACE 
+	  INTEGER
+	  INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
+	  INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
+	  INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
+	  INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
+	  INTEGER
+	  RBRACE
 	;
 
 rule
@@ -210,7 +235,7 @@ color
 	;
 
 roll
-	: ROLL COLON color COLON INTEGER COLON INTEGER INTEGER
+	: ROLL COLON color COLON POSITIVE COLON POSITIVE POSITIVE
 		{
 			if (!_gibbon_gmd_reader_roll (reader, $3, $5, $7, $8))
 				YYABORT;
@@ -218,7 +243,7 @@ roll
 	;
 
 move
-	: MOVE COLON color COLON INTEGER COLON movements
+	: MOVE COLON color COLON POSITIVE COLON movements
 		{
 			if (!_gibbon_gmd_reader_move (reader, $3, $5, $7))
 				YYABORT;
@@ -253,7 +278,7 @@ movement
 	;
 
 point
-	: INTEGER
+	: POSITIVE
 		{ 
 			if (!$$ || $$ > 24) {
 				yyerror (_("Point out of range (1-24)!"));
@@ -269,7 +294,7 @@ point
 	;
 
 double
-	: DOUBLE COLON color COLON INTEGER
+	: DOUBLE COLON color COLON POSITIVE
 		{
 			if (!_gibbon_gmd_reader_double (reader, $3, $5))
 				YYABORT;
@@ -277,7 +302,7 @@ double
 	;
 
 drop
-	: DROP COLON color COLON INTEGER
+	: DROP COLON color COLON POSITIVE
 		{
 			if (!_gibbon_gmd_reader_drop (reader, $3, $5))
 				YYABORT;
@@ -285,7 +310,7 @@ drop
 	;
 
 take
-	: TAKE COLON color COLON INTEGER
+	: TAKE COLON color COLON POSITIVE
 		{
 			if (!_gibbon_gmd_reader_take (reader, $3, $5))
 				YYABORT;
@@ -293,7 +318,7 @@ take
 	;
 
 resign
-	: RESIGN COLON color COLON INTEGER COLON INTEGER
+	: RESIGN COLON color COLON POSITIVE COLON POSITIVE
 		{
 			if (!$5) {
 				yyerror (_("Resignation value cannot be"
@@ -306,7 +331,7 @@ resign
 	;
 
 reject
-	: REJ COLON color COLON INTEGER
+	: REJ COLON color COLON POSITIVE
 		{
 			if (!_gibbon_gmd_reader_reject (reader, $3, $5))
 				YYABORT;
@@ -314,7 +339,7 @@ reject
 	;
 
 accept
-	: ACCEPT COLON color COLON INTEGER
+	: ACCEPT COLON color COLON POSITIVE
 		{
 			if (!_gibbon_gmd_reader_accept (reader, $3, $5))
 				YYABORT;

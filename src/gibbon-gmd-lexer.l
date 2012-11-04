@@ -103,6 +103,9 @@ NL (\r\n|\n|\r\n|\r)
 %s SNAME
 %s SMOVE
 %s EAT_UP
+%s SGAME
+%s SLBRACE
+%s STUPLE
 
 %%
 
@@ -133,29 +136,54 @@ NL (\r\n|\n|\r\n|\r)
 <SLENGTH>unlimited		{
 		BEGIN (OPCODE);
 		yylval.num = -1;
-		return INTEGER;
+		return POSITIVE;
 	}
 <SLENGTH>money    		{
 		BEGIN (OPCODE);
 		yylval.num = -1;
-		return INTEGER;
+		return POSITIVE;
 	}
 	
 <STIMESTAMP>:|{NL}             	{
 		yy_pop_state ();
 		yyless (0);
 		yylval.num = G_MININT64;
-		return INTEGER;
+		return POSITIVE;
 	}
 <STIMESTAMP>-?[1-9][0-9]*       {
         	yylval.num = (gint64) g_ascii_strtoll (yytext, NULL, 10);
         	yy_pop_state ();
-        	return INTEGER;
+        	return POSITIVE;
         }
 
 <OPCODE>game                    {
+                yy_push_state (SGAME);
 		yy_push_state (SCOLON);
 		return GAME;
+	}
+
+<SGAME>{NL}			{
+		BEGIN (OPCODE);
+	}
+	
+<SGAME>Points			{
+		yy_push_state (SLBRACE);
+		return POINTS;
+}
+
+<SLBRACE>\{			{
+		yy_push_state (STUPLE);
+		return LBRACE;
+}
+
+<STUPLE>[+-]?[0-9]+             {
+		yylval.num = (gint) g_ascii_strtoll (yytext, NULL, 10);
+		return INTEGER;
+	}
+
+<STUPLE>\}             		{
+		yy_pop_state ();
+		return RBRACE;
 	}
 
 <OPCODE>player                  {
@@ -334,7 +362,7 @@ NL (\r\n|\n|\r\n|\r)
 
 [0-9]+                          {
 		yylval.num = (gint) g_ascii_strtoull (yytext, NULL, 10);
-		return INTEGER;
+		return POSITIVE;
 	}
 
 .				return yytext[0];
