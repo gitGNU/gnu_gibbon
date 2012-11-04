@@ -88,3 +88,6 @@
   looks because the checker movement is not handed by the board atm.
 - Check that a setup where the game is over is handled correctly, when
   reading GMD.
+- Add the row "Initial position", when adding a game to the move list view,
+  not when adding the first action.  When done, check whether the position
+  is really edited, and display "Setup ..." instead.
