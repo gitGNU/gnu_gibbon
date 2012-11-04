@@ -577,3 +577,94 @@ _gibbon_gmd_reader_check_setup (GibbonGMDReader *self)
         }
         return TRUE;
 }
+
+gboolean
+_gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
+                                   gint64 p1, gint64 p2, gint64 p3,
+                                   gint64 p4, gint64 p5, gint64 p6,
+                                   gint64 p7, gint64 p8, gint64 p9,
+                                   gint64 p10, gint64 p11, gint64 p12,
+                                   gint64 p13, gint64 p14, gint64 p15,
+                                   gint64 p16, gint64 p17, gint64 p18,
+                                   gint64 p19, gint64 p20, gint64 p21,
+                                   gint64 p22, gint64 p23, gint64 p24,
+                                   gint64 b2)
+{
+        GibbonPosition *pos;
+        GibbonGame *game;
+        gint i;
+        guint64 wcheckers, bcheckers;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+
+        if (b1 < 0) {
+                _gibbon_gmd_reader_yyerror (_("Only positive number allowed"
+                                              " for white's bar!"));
+                return FALSE;
+        }
+        if (b2 > 0) {
+                _gibbon_gmd_reader_yyerror (_("Only negative number allowed"
+                                              " for black's bar!"));
+                return FALSE;
+        }
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        pos->bar[0] = b1;
+        pos->bar[1] = b2;
+        pos->points[0] = p1;
+        pos->points[1] = p2;
+        pos->points[2] = p3;
+        pos->points[3] = p4;
+        pos->points[4] = p5;
+        pos->points[5] = p6;
+        pos->points[6] = p7;
+        pos->points[7] = p8;
+        pos->points[8] = p9;
+        pos->points[9] = p10;
+        pos->points[10] = p11;
+        pos->points[11] = p12;
+        pos->points[12] = p13;
+        pos->points[13] = p14;
+        pos->points[14] = p15;
+        pos->points[15] = p16;
+        pos->points[16] = p17;
+        pos->points[17] = p18;
+        pos->points[18] = p19;
+        pos->points[19] = p20;
+        pos->points[20] = p21;
+        pos->points[21] = p22;
+        pos->points[22] = p23;
+        pos->points[23] = p24;
+
+        /*
+         * Check the sum of black's and white's checkers.  There is no need
+         * to bother about overflow here.  The parser already checked that
+         * all values are in the range [-15 ... +15].
+         */
+        wcheckers = pos->bar[0];
+        bcheckers = -pos->bar[1];
+        for (i = 0; i < 24; ++i) {
+                if (pos->points[i] < 0)
+                        bcheckers -= pos->points[i];
+                else
+                        wcheckers += pos->points[i];
+        }
+        if (wcheckers > 15 || bcheckers > 15) {
+                _gibbon_gmd_reader_yyerror (_("Number of checkers out of"
+                                              " range (must be less or equal"
+                                              " than 15)!"));
+                return FALSE;
+        }
+        if (!wcheckers && !bcheckers) {
+                _gibbon_gmd_reader_yyerror (_("Impossible position!"));
+                return FALSE;
+        }
+
+        /*
+         * There are more impossible positions but we allow them deliberately.
+         */
+
+        return TRUE;
+}

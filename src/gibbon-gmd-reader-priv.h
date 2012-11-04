@@ -74,6 +74,16 @@ gchar *_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
 void _gibbon_gmd_reader_free_names (GibbonGMDReader *self);
 
 gboolean _gibbon_gmd_reader_check_setup (GibbonGMDReader *self);
+gboolean _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
+                                            gint64 p1, gint64 p2, gint64 p3,
+                                            gint64 p4, gint64 p5, gint64 p6,
+                                            gint64 p7, gint64 p8, gint64 p9,
+                                            gint64 p10, gint64 p11, gint64 p12,
+                                            gint64 p13, gint64 p14, gint64 p15,
+                                            gint64 p16, gint64 p17, gint64 p18,
+                                            gint64 p19, gint64 p20, gint64 p21,
+                                            gint64 p22, gint64 p23, gint64 p24,
+                                            gint64 b2);
 
 G_END_DECLS
 
