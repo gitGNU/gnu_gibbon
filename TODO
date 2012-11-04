@@ -86,3 +86,5 @@
   to the initial one.  That allows to always move the checkers around,
   provided that the board keeps track of two positions.  Harder than it
   looks because the checker movement is not handed by the board atm.
+- Check that a setup where the game is over is handled correctly, when
+  reading GMD.
