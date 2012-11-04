@@ -514,8 +514,12 @@ gibbon_move_list_view_on_match_loaded (GibbonMoveListView *self)
 
         /* Mark the last row as dirty.  */
         num_rows = gtk_tree_model_iter_n_children (self->priv->model, NULL);
-        if (!num_rows)
+        if (!num_rows) {
+                g_signal_emit (self,
+                               gibbon_move_list_view_signals[ACTION_SELECTED],
+                               0, -1);
                 return;
+        }
 
         if (!gtk_tree_model_iter_nth_child (self->priv->model, &iter, NULL,
                                             num_rows - 1))
