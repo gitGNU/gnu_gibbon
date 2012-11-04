@@ -73,6 +73,8 @@ gchar *_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
                                              const gchar *name);
 void _gibbon_gmd_reader_free_names (GibbonGMDReader *self);
 
+gboolean _gibbon_gmd_reader_check_setup (GibbonGMDReader *self);
+
 G_END_DECLS
 
 #endif

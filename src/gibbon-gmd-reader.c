@@ -564,3 +564,16 @@ _gibbon_gmd_reader_free_names (GibbonGMDReader *self)
         g_slist_free (self->priv->names);
         self->priv->names = NULL;
 }
+
+gboolean
+_gibbon_gmd_reader_check_setup (GibbonGMDReader *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+
+        if (1 != gibbon_match_get_number_of_games (self->priv->match)) {
+                _gibbon_gmd_reader_yyerror (_("Position setup is only"
+                                              " allowed for first game!"));
+                return FALSE;
+        }
+        return TRUE;
+}

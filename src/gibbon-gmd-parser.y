@@ -192,12 +192,22 @@ game
 			if (!_gibbon_gmd_reader_add_game (reader))
 				YYABORT;
 		}
-	  COLON setups	
+	  COLON setups
 	;
 
 setups
 	: /* empty */
 	| setups setup
+		/*
+		 * This is redundant as it will check for each component of the
+		 * setup.  But this is so fast that there is no justification
+		 * to complicate the grammar for a more efficienct check
+		 * instead.
+		 */
+	        {
+	        	if (!_gibbon_gmd_reader_check_setup (reader))
+	        		YYABORT;
+	        }	
 	;
 
 setup
