@@ -310,6 +310,7 @@ cube
 	   	                                    GIBBON_POSITION_SIDE_NONE))
 	        	YYABORT;
 	  }
+	  RBRACE;
 	;
 
 turn
@@ -318,6 +319,7 @@ turn
 	   	if (!_gibbon_gmd_reader_setup_turn (reader, $3))
 	        	YYABORT;
 	  }
+	  RBRACE
 	;
 
 post_crawford

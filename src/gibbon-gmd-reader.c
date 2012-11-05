@@ -727,7 +727,12 @@ _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
         pos = gibbon_game_get_initial_position_editable (game);
 
         pos->cube = cube;
-        pos->cube_turned = turned;
+        if (turned < 0)
+                pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
+        else if (turned > 0)
+                pos->cube_turned = GIBBON_POSITION_SIDE_WHITE;
+        else
+                pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
 
         return TRUE;
 }
