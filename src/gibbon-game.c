@@ -787,6 +787,13 @@ gibbon_game_is_crawford (const GibbonGame *self)
         return self->priv->is_crawford;
 }
 
+void gibbon_game_set_is_crawford (GibbonGame *self, gboolean crawford)
+{
+        g_return_if_fail (GIBBON_IS_GAME (self));
+
+        self->priv->is_crawford = crawford;
+}
+
 const GibbonPosition *
 gibbon_game_get_initial_position (const GibbonGame *self)
 {

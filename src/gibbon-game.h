@@ -104,6 +104,7 @@ gboolean gibbon_game_resignation (const GibbonGame *self);
 const GibbonPosition *gibbon_game_get_position (const GibbonGame *self);
 
 gboolean gibbon_game_is_crawford (const GibbonGame *self);
+void gibbon_game_set_is_crawford (GibbonGame *self, gboolean crawford);
 
 const GibbonPosition *gibbon_game_get_initial_position (const GibbonGame *self);
 GibbonPosition *gibbon_game_get_initial_position_editable (const GibbonGame *self);

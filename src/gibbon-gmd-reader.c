@@ -771,7 +771,7 @@ _gibbon_gmd_reader_setup_post_crawford (GibbonGMDReader *self, gint64 flag)
         if (length != pos->scores[0] + 1 && length != pos->scores[1] + 1)
                 return TRUE;
 
-        g_printerr ("want to set post-crawford but don't know how to ...\n");
+        gibbon_game_set_is_crawford (game, TRUE);
 
         return TRUE;
 }
