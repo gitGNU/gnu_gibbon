@@ -409,11 +409,13 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                                                         &error);
 
                 if (!match) {
-                        gibbon_app_display_error (self, match_file,
-                                                  _("%s"),
-                                                  error->message);
+                        if (error) {
+                                gibbon_app_display_error (self, match_file,
+                                                          _("%s"),
+                                                          error->message);
+                                g_error_free (error);
+                        }
                         g_object_unref (loader);
-                        g_error_free (error);
                         g_object_unref (self);
                         return FALSE;
                 }
