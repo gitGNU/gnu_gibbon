@@ -714,7 +714,8 @@ _gibbon_gmd_reader_setup_scores (GibbonGMDReader *self,
 }
 
 gboolean
-_gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube)
+_gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
+                               GibbonPositionSide turned)
 {
         GibbonPosition *pos;
         GibbonGame *game;
@@ -726,6 +727,7 @@ _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube)
         pos = gibbon_game_get_initial_position_editable (game);
 
         pos->cube = cube;
+        pos->cube_turned = turned;
 
         return TRUE;
 }

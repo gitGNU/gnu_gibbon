@@ -306,7 +306,8 @@ cube
 	        	_gibbon_gmd_reader_yyerror (_("Invalid cube!"));
 	        	YYABORT;
 	        }
-	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3))
+	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3, 
+	   	                                    GIBBON_POSITION_SIDE_NONE))
 	        	YYABORT;
 	  }
 	  RBRACE
