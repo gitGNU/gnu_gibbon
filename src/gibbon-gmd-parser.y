@@ -126,6 +126,9 @@ extern int gibbon_gmd_lexer_lex (void);
 %token GARBAGE
 %token POINTS
 %token DICE
+%token SCORES
+%token CUBE
+%token TURN
 %token LBRACE RBRACE
 
 %type <side> color
@@ -133,6 +136,9 @@ extern int gibbon_gmd_lexer_lex (void);
 %type <num> movement
 %type <num> point
 %type <num> die
+%type <num> score
+%type <num> cube
+%type <num> turn
 
 %%
 
@@ -213,7 +219,7 @@ setups
 	;
 
 setup
-	: points | dice
+	: points | dice | scores | cube | turn
 	;
 
 points
@@ -270,6 +276,54 @@ die
 	  	$$ = $1;
 	  }
 	  ;
+
+scores
+	: SCORES LBRACE  score score
+	  {
+	          if (!_gibbon_gmd_reader_setup_scores (reader, $3, $4))
+	                  YYABORT;
+	  }
+	  RBRACE
+	;
+
+score
+	: INTEGER
+	  {
+	  	if ($1 < 0) {
+	  		_gibbon_gmd_reader_yyerror (_("Invalid score!"));
+	  	        YYABORT;
+	  	}
+	  	$$ = $1;
+	  }
+	  ;
+
+cube
+	: CUBE LBRACE INTEGER
+	  {
+	        if ($3 <= 0) {
+	        	_gibbon_gmd_reader_yyerror (_("Invalid cube!"));
+	        	YYABORT;
+	        }
+	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3))
+	        	YYABORT;
+	  }
+	  RBRACE
+	  {
+	  	return $3;
+	  }
+	;
+
+turn
+	: TURN LBRACE INTEGER
+	  {
+	   	if (!_gibbon_gmd_reader_setup_turn (reader, $3))
+	        	YYABORT;
+	  }
+	  RBRACE
+	  {
+	  	return $3;
+	  }
+	;
 
 rule
 	: RULE COLON CRAWFORD

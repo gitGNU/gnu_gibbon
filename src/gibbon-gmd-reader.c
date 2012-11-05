@@ -670,7 +670,6 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
         return TRUE;
 }
 
-
 gboolean
 _gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1, gint64 die2)
 {
@@ -690,6 +689,64 @@ _gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1, gint64 die2)
 
         pos->dice[0] = abs (die1);
         pos->dice[1] = abs (die2);
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_setup_scores (GibbonGMDReader *self,
+                                 gint64 score1, gint64 score2)
+{
+        GibbonPosition *pos;
+        GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (score1 < 0, FALSE);
+        g_return_val_if_fail (score2 < 0, FALSE);
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        pos->scores[0] = score1;
+        pos->scores[1] = score2;
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube)
+{
+        GibbonPosition *pos;
+        GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+        g_return_val_if_fail (cube <= 0, FALSE);
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        pos->cube = cube;
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn)
+{
+        GibbonPosition *pos;
+        GibbonGame *game;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        if (turn < 0)
+                pos->turn = GIBBON_POSITION_SIDE_BLACK;
+        else if (turn > 0)
+                pos->turn = GIBBON_POSITION_SIDE_WHITE;
+        else
+                pos->turn = GIBBON_POSITION_SIDE_NONE;
 
         return TRUE;
 }

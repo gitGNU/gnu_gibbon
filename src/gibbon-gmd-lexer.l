@@ -176,6 +176,21 @@ NL (\r\n|\n|\r\n|\r)
 		return DICE;
 }
 
+<SGAME>Scores			{
+		yy_push_state (SLBRACE);
+		return SCORES;
+}
+
+<SGAME>Turn			{
+		yy_push_state (SLBRACE);
+		return TURN;
+}
+
+<SGAME>Cube			{
+		yy_push_state (SLBRACE);
+		return CUBE;
+}
+
 <SLBRACE>\{			{
 		yy_push_state (STUPLE);
 		return LBRACE;

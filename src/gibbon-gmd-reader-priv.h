@@ -86,6 +86,10 @@ gboolean _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
                                             gint64 b2);
 gboolean _gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1,
                                         gint64 die2);
+gboolean _gibbon_gmd_reader_setup_scores (GibbonGMDReader *self, gint64 score1,
+                                          gint64 score2);
+gboolean _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube);
+gboolean _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn);
 
 G_END_DECLS
 
