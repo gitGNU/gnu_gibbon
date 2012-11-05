@@ -125,12 +125,14 @@ extern int gibbon_gmd_lexer_lex (void);
 %token UNKNOWN
 %token GARBAGE
 %token POINTS
+%token DICE
 %token LBRACE RBRACE
 
 %type <side> color
 %type <num> movements
 %type <num> movement
 %type <num> point
+%type <num> die
 
 %%
 
@@ -211,7 +213,7 @@ setups
 	;
 
 setup
-	: points
+	: points | dice
 	;
 
 points
@@ -247,6 +249,26 @@ point
 	  	$$ = $1;
 	  }
 	  
+	  ;
+
+dice
+	: DICE LBRACE die die
+	  {
+	          if (!_gibbon_gmd_reader_setup_dice (reader, $3, $4))
+	                  YYABORT;
+	  }
+	  RBRACE
+	;
+
+die
+	: INTEGER
+	  {
+	  	if ($1 < -6 || $1 > 6 || $1 == 0) {
+	  		_gibbon_gmd_reader_yyerror (_("Invalid dice!"));
+	  	        YYABORT;
+	  	}
+	  	$$ = $1;
+	  }
 	  ;
 
 rule

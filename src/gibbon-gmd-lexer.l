@@ -171,6 +171,11 @@ NL (\r\n|\n|\r\n|\r)
 		return POINTS;
 }
 
+<SGAME>Dice			{
+		yy_push_state (SLBRACE);
+		return DICE;
+}
+
 <SLBRACE>\{			{
 		yy_push_state (STUPLE);
 		return LBRACE;
@@ -183,6 +188,7 @@ NL (\r\n|\n|\r\n|\r)
 
 <STUPLE>\}             		{
 		yy_pop_state ();
+		BEGIN (SGAME);
 		return RBRACE;
 	}
 

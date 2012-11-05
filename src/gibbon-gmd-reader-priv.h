@@ -84,6 +84,8 @@ gboolean _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
                                             gint64 p19, gint64 p20, gint64 p21,
                                             gint64 p22, gint64 p23, gint64 p24,
                                             gint64 b2);
+gboolean _gibbon_gmd_reader_setup_dice (GibbonGMDReader *self, gint64 die1,
+                                        gint64 die2);
 
 G_END_DECLS
 
