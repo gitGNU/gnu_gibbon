@@ -701,8 +701,8 @@ _gibbon_gmd_reader_setup_scores (GibbonGMDReader *self,
         GibbonGame *game;
 
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
-        g_return_val_if_fail (score1 < 0, FALSE);
-        g_return_val_if_fail (score2 < 0, FALSE);
+        g_return_val_if_fail (score1 >= 0, FALSE);
+        g_return_val_if_fail (score2 >= 0, FALSE);
 
         game = gibbon_match_get_current_game (self->priv->match);
         pos = gibbon_game_get_initial_position_editable (game);
@@ -747,6 +747,31 @@ _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn)
                 pos->turn = GIBBON_POSITION_SIDE_WHITE;
         else
                 pos->turn = GIBBON_POSITION_SIDE_NONE;
+
+        return TRUE;
+}
+
+gboolean
+_gibbon_gmd_reader_setup_post_crawford (GibbonGMDReader *self, gint64 flag)
+{
+        GibbonPosition *pos;
+        GibbonGame *game;
+        gsize length;
+
+        g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
+
+        /* Ignore all other errors silently.  */
+        length = gibbon_match_get_length (self->priv->match);
+        if (!length)
+                return TRUE;
+
+        game = gibbon_match_get_current_game (self->priv->match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        if (length != pos->scores[0] + 1 && length != pos->scores[1] + 1)
+                return TRUE;
+
+        g_printerr ("want to set post-crawford but don't know how to ...\n");
 
         return TRUE;
 }

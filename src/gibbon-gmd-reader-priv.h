@@ -90,6 +90,8 @@ gboolean _gibbon_gmd_reader_setup_scores (GibbonGMDReader *self, gint64 score1,
                                           gint64 score2);
 gboolean _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube);
 gboolean _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn);
+gboolean _gibbon_gmd_reader_setup_post_crawford (GibbonGMDReader *self,
+                                                 gint64 flag);
 
 G_END_DECLS
 
