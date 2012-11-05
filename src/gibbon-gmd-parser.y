@@ -138,8 +138,6 @@ extern int gibbon_gmd_lexer_lex (void);
 %type <num> point
 %type <num> die
 %type <num> score
-%type <num> cube
-%type <num> turn
 %type <num> post_crawford
 
 %%
@@ -310,7 +308,17 @@ cube
 	   	                                    GIBBON_POSITION_SIDE_NONE))
 	        	YYABORT;
 	  }
-	  RBRACE;
+	  RBRACE
+	| CUBE LBRACE INTEGER INTEGER
+	  {
+	        if ($3 <= 0) {
+	        	_gibbon_gmd_reader_yyerror (_("Invalid cube!"));
+	        	YYABORT;
+	        }
+	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3, $4))
+	        	YYABORT;
+	  }
+	  RBRACE
 	;
 
 turn
