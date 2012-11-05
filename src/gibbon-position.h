@@ -179,6 +179,7 @@ gchar *gibbon_position_fibs_move (const GibbonPosition *self,
                                   GibbonPositionSide side,
                                   gboolean reverse);
 const GibbonPosition *gibbon_position_initial ();
+gboolean gibbon_position_is_initial (const GibbonPosition *position);
 
 void gibbon_position_reset_unused_dice (GibbonPosition *self);
 

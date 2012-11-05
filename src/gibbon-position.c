@@ -1390,6 +1390,37 @@ gibbon_position_initial ()
         return &initial;
 }
 
+gboolean
+gibbon_position_is_initial (const GibbonPosition *self)
+{
+        if (memcmp (self->points, initial.points, sizeof initial.points))
+                return FALSE;
+
+        if (self->scores[0])
+                return FALSE;
+        if (self->scores[1])
+                return FALSE;
+        if (self->dice[0])
+                return FALSE;
+        if (self->dice[1])
+                return FALSE;
+        if (self->cube > 1)
+                return FALSE;
+        if (self->cube_turned)
+                return FALSE;
+        if (self->turn)
+                return FALSE;
+
+        /*
+         * Why not check the bar? We already compared the position to the
+         * backgammon starting position.  If there are checkers on the bar
+         * these are excess checkers, and we are in trouble anyway.  There is
+         * no point in doing further consistency checks here.
+         */
+
+        return TRUE;
+}
+
 void
 gibbon_position_reset_unused_dice (GibbonPosition *self)
 {
