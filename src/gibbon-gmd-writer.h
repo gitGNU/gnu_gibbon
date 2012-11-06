@@ -92,6 +92,7 @@ gboolean gibbon_gmd_writer_write_action (const GibbonGMDWriter *self,
                                          GError **error);
 gboolean gibbon_gmd_writer_add_game (const GibbonGMDWriter *self,
                                      GOutputStream *out,
+                                     const GibbonGame *game,
                                      GError **error);
 
 #endif
