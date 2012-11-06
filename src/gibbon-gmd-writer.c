@@ -83,6 +83,10 @@ static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
                                           const gchar *timestamp,
                                           GError **error);
 static gchar *gibbon_gmd_writer_strescape (const gchar *str);
+static gboolean gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self,
+                                               GOutputStream *out,
+                                               const GibbonGame *game,
+                                               GError **error);
 
 static void 
 gibbon_gmd_writer_init (GibbonGMDWriter *self)
@@ -200,9 +204,16 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
                 if (!game)
                         break;
 
-                if (!gibbon_gmd_writer_add_game (self, out, error))
-                        return FALSE;
-
+                if (!game_number
+                    && !gibbon_position_is_initial (
+                                    gibbon_game_get_initial_position (game))) {
+                        if (!gibbon_gmd_writer_write_setup (self, out,
+                                                            game, error))
+                                return FALSE;
+                } else {
+                        if (!gibbon_gmd_writer_add_game (self, out, error))
+                                return FALSE;
+                }
                 if (!gibbon_gmd_writer_write_game (self, out, game, error))
                         return FALSE;
         }
@@ -230,6 +241,47 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
                                                      side, timestamp, error))
                         return FALSE;
         }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
+                              const GibbonGame *game, GError **error)
+{
+        gchar *buffer;
+        const GibbonPosition *pos = gibbon_game_get_initial_position (game);
+
+        buffer = g_strdup_printf ("Game:");
+        GIBBON_WRITE_ALL (buffer);
+
+        if (memcmp (pos->points, gibbon_position_initial ()->points,
+                    sizeof pos->points)) {
+                buffer = g_strdup_printf (" Points{%d"
+                                " %d %d %d %d %d %d"
+                                " %d %d %d %d %d %d"
+                                " %d %d %d %d %d %d"
+                                " %d %d %d %d %d %d"
+                                " %d}",
+                                pos->bar[0],
+                                pos->points[0], pos->points[1],
+                                pos->points[2], pos->points[3],
+                                pos->points[4], pos->points[5],
+                                pos->points[6], pos->points[7],
+                                pos->points[8], pos->points[9],
+                                pos->points[10], pos->points[11],
+                                pos->points[12], pos->points[13],
+                                pos->points[14], pos->points[15],
+                                pos->points[16], pos->points[17],
+                                pos->points[18], pos->points[19],
+                                pos->points[20], pos->points[21],
+                                pos->points[22], pos->points[23],
+                                pos->bar[1]);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        buffer = g_strdup_printf ("\n");
+        GIBBON_WRITE_ALL (buffer);
 
         return TRUE;
 }
