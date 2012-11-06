@@ -349,7 +349,6 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
                 if (game != last_game) {
                         if (!gibbon_gmd_writer_add_game (self->priv->writer,
                                                          self->priv->out,
-                                                         game,
                                                          &error)) {
                                 gibbon_app_fatal_error (app, _("Write Error"),
                                                         _("Error writing to"

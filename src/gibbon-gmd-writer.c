@@ -200,7 +200,7 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
                 if (!game)
                         break;
 
-                if (!gibbon_gmd_writer_add_game (self, out, game, error))
+                if (!gibbon_gmd_writer_add_game (self, out, error))
                         return FALSE;
 
                 if (!gibbon_gmd_writer_write_game (self, out, game, error))
@@ -443,7 +443,7 @@ gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self, GOutputStream *out,
 
 gboolean
 gibbon_gmd_writer_add_game (const GibbonGMDWriter *self, GOutputStream *out,
-                            const GibbonGame *game, GError **error)
+                            GError **error)
 {
         gchar *buffer;
 
