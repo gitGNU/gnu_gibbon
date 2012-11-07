@@ -138,7 +138,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %type <num> point
 %type <num> die
 %type <num> score
-%type <num> post_crawford
+%type <num> crawford
 
 %%
 
@@ -219,7 +219,7 @@ setups
 	;
 
 setup
-	: points | dice | scores | cube | turn | post_crawford
+	: points | dice | scores | cube | turn | crawford
 	;
 
 points
@@ -330,10 +330,10 @@ turn
 	  RBRACE
 	;
 
-post_crawford
-	: POST_CRAWFORD LBRACE INTEGER
+crawford
+	: CRAWFORD LBRACE INTEGER
 	  {
-	   	if (!_gibbon_gmd_reader_setup_post_crawford (reader, $3))
+	   	if (!_gibbon_gmd_reader_setup_crawford (reader, $3))
 	        	YYABORT;
 	  }
 	  RBRACE

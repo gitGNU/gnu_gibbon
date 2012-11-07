@@ -316,8 +316,8 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         if (gibbon_match_get_crawford (match)
             && (pos->scores[0] + 1 == length
                 || pos->scores[1] + 1 == length)
-            && !gibbon_game_is_crawford (game)) {
-                buffer = g_strdup (" Post-Crawford{1}");
+            && gibbon_game_is_crawford (game)) {
+                buffer = g_strdup (" Crawford{1}");
                 GIBBON_WRITE_ALL (buffer);
         }
 

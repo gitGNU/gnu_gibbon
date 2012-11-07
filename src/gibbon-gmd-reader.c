@@ -759,7 +759,7 @@ _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn)
 }
 
 gboolean
-_gibbon_gmd_reader_setup_post_crawford (GibbonGMDReader *self, gint64 flag)
+_gibbon_gmd_reader_setup_crawford (GibbonGMDReader *self, gint64 flag)
 {
         GibbonPosition *pos;
         GibbonGame *game;
@@ -778,7 +778,7 @@ _gibbon_gmd_reader_setup_post_crawford (GibbonGMDReader *self, gint64 flag)
         if (length != pos->scores[0] + 1 && length != pos->scores[1] + 1)
                 return TRUE;
 
-        gibbon_game_set_is_crawford (game, !flag);
+        gibbon_game_set_is_crawford (game, flag);
 
         return TRUE;
 }
