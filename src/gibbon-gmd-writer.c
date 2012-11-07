@@ -30,6 +30,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <stdlib.h>
+
 #include "gibbon-gmd-writer.h"
 #include "gibbon-match.h"
 #include "gibbon-game.h"
@@ -256,7 +258,7 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         GIBBON_WRITE_ALL (buffer);
 
         if (pos->scores[0] || pos->scores[1]) {
-                buffer = g_strdup_printf (" Scores{%d %d}",
+                buffer = g_strdup_printf (" Scores{%u %u}",
                                           pos->scores[0], pos->scores[1]);
                 GIBBON_WRITE_ALL (buffer);
         }
@@ -283,6 +285,13 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
                                 pos->points[20], pos->points[21],
                                 pos->points[22], pos->points[23],
                                 pos->bar[1]);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        if (pos->dice[0] || pos->dice[1]) {
+                buffer = g_strdup_printf (" Dice{%u %u}",
+                                          abs (pos->dice[0]),
+                                          abs (pos->dice[1]));
                 GIBBON_WRITE_ALL (buffer);
         }
 
