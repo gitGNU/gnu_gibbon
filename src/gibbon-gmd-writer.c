@@ -295,6 +295,20 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
                 GIBBON_WRITE_ALL (buffer);
         }
 
+        if (pos->cube_turned) {
+                buffer = g_strdup_printf (" Cube{%u %d}",
+                                          pos->cube, pos->cube_turned);
+                GIBBON_WRITE_ALL (buffer);
+        } else if (pos->cube > 1) {
+                buffer = g_strdup_printf (" Cube{%u} Turn{%d}",
+                                          pos->cube, pos->turn);
+                GIBBON_WRITE_ALL (buffer);
+        } else {
+                buffer = g_strdup_printf (" Turn{%d}",
+                                          pos->turn);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
         buffer = g_strdup_printf ("\n");
         GIBBON_WRITE_ALL (buffer);
 
