@@ -87,6 +87,7 @@ static gboolean gibbon_gmd_writer_resign (const GibbonGMDWriter *self,
 static gchar *gibbon_gmd_writer_strescape (const gchar *str);
 static gboolean gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self,
                                                GOutputStream *out,
+                                               const GibbonMatch *match,
                                                const GibbonGame *game,
                                                GError **error);
 
@@ -209,7 +210,7 @@ gibbon_gmd_writer_write_stream (const GibbonMatchWriter *_self,
                 if (!game_number
                     && !gibbon_position_is_initial (
                                     gibbon_game_get_initial_position (game))) {
-                        if (!gibbon_gmd_writer_write_setup (self, out,
+                        if (!gibbon_gmd_writer_write_setup (self, out, match,
                                                             game, error))
                                 return FALSE;
                 } else {
@@ -249,10 +250,12 @@ gibbon_gmd_writer_write_game (const GibbonGMDWriter *self, GOutputStream *out,
 
 static gboolean
 gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
-                              const GibbonGame *game, GError **error)
+                               const GibbonMatch *match, const GibbonGame *game,
+                               GError **error)
 {
         gchar *buffer;
         const GibbonPosition *pos = gibbon_game_get_initial_position (game);
+        gsize length;
 
         buffer = g_strdup_printf ("Game:");
         GIBBON_WRITE_ALL (buffer);
@@ -306,6 +309,15 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         } else {
                 buffer = g_strdup_printf (" Turn{%d}",
                                           pos->turn);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
+        length = gibbon_match_get_length (match);
+        if (gibbon_match_get_crawford (match)
+            && (pos->scores[0] + 1 == length
+                || pos->scores[1] + 1 == length)
+            && !gibbon_game_is_crawford (game)) {
+                buffer = g_strdup (" Post-Crawford{1}");
                 GIBBON_WRITE_ALL (buffer);
         }
 
