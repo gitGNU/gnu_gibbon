@@ -255,6 +255,12 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         buffer = g_strdup_printf ("Game:");
         GIBBON_WRITE_ALL (buffer);
 
+        if (pos->scores[0] || pos->scores[1]) {
+                buffer = g_strdup_printf (" Scores{%d %d}",
+                                          pos->scores[0], pos->scores[1]);
+                GIBBON_WRITE_ALL (buffer);
+        }
+
         if (memcmp (pos->points, gibbon_position_initial ()->points,
                     sizeof pos->points)) {
                 buffer = g_strdup_printf (" Points{%d"
