@@ -419,16 +419,35 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         gint i, j;
         GSGFPointBackgammon *point;
         GSGFStoneBackgammon *stone;
+        guint borne_off;
 
         flavor = gsgf_flavor_backgammon_new ();
 
-        node = gsgf_game_tree_add_node (game_tree);
-
+        /*
+         * Set black and white points.  Be careful to swap sides to ensure
+         * compatibility with GNUBG.
+         */
         if (memcmp (pos->points, gibbon_position_initial ()->points,
                     sizeof pos->points)) {
+                node = gsgf_game_tree_add_node (game_tree);
+
+                /*
+                 * Clear empty points.  GNUBG currently clears all points
+                 * plus the bar, no matter what the distribution of checkers
+                 * is.  That violates the SGF specification which explicitely
+                 * states that stones/points for AE, AB, and AW should not
+                 * overwrite each other.
+                 *
+                 * Besides, the bar is shared between black and white, and it
+                 * makes no sense to clear it.
+                 *
+                 * However, we must follow the bad example and clear at leaste
+                 * all regular points because GNUBG will not recognize
+                 * correctly encoded positions.
+                 */
                 list_of = gsgf_list_of_new (GSGF_TYPE_POINT_BACKGAMMON, flavor);
-                for (i = 0; i < 24; ++i) {
-                        point = gsgf_point_backgammon_new (i);
+                for (i = 23; i >= 0; --i) {
+                        point = gsgf_point_backgammon_new (23 - i);
                         if (!gsgf_list_of_append (list_of,
                                                   GSGF_COOKED_VALUE (point),
                                                   error)) {
@@ -465,6 +484,17 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                                 return FALSE;
                         }
                 }
+                borne_off = gibbon_position_get_borne_off (pos,
+                                                    GIBBON_POSITION_SIDE_BLACK);
+                for (j = borne_off; j < 0; ++j) {
+                        stone = gsgf_stone_backgammon_new (25);
+                        if (!gsgf_list_of_append (list_of,
+                                              GSGF_COOKED_VALUE (stone),
+                                                 error)) {
+                                g_object_unref (list_of);
+                                return FALSE;
+                        }
+                }
                 if (!gsgf_node_set_property (node, "AW",
                                              GSGF_VALUE (list_of),
                                              error)) {
@@ -488,6 +518,18 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                 }
                 for (j = 0; j < pos->bar[0]; ++j) {
                         stone = gsgf_stone_backgammon_new (24);
+                        if (!gsgf_list_of_append (list_of,
+                                              GSGF_COOKED_VALUE (stone),
+                                                 error)) {
+                                g_object_unref (list_of);
+                                return FALSE;
+                        }
+                }
+
+                borne_off = gibbon_position_get_borne_off (pos,
+                                                    GIBBON_POSITION_SIDE_WHITE);
+                for (j = borne_off; j < 0; ++j) {
+                        stone = gsgf_stone_backgammon_new (25);
                         if (!gsgf_list_of_append (list_of,
                                               GSGF_COOKED_VALUE (stone),
                                                  error)) {
