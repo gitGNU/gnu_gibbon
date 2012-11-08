@@ -26,6 +26,8 @@
  * A #GibbonMatchWriter for SGF.
  */
 
+#include <stdlib.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -420,8 +422,41 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         GSGFPointBackgammon *point;
         GSGFStoneBackgammon *stone;
         guint borne_off;
+        GSGFColor *color;
+        GSGFNumber *number;
 
         flavor = gsgf_flavor_backgammon_new ();
+
+        /*
+         * GNUBG expects the PL and DI properties separated from the
+         * subsequent AE, AB, and AW properties.
+         */
+        if (pos->turn || pos->dice[0] || pos->dice[1]) {
+                node = gsgf_game_tree_add_node (game_tree);
+                if (pos->dice[0] || pos->dice[1]) {
+
+                }
+                if (pos->turn) {
+                        color = gsgf_color_new (pos->turn < 0
+                                        ? GSGF_COLOR_WHITE : GSGF_COLOR_BLACK);
+                        if (!gsgf_node_set_property (node, "PL",
+                                                     GSGF_VALUE (color),
+                                                     error)) {
+                                g_object_unref (color);
+                                return FALSE;
+                        }
+                }
+                if (pos->dice[0] || pos->dice[1]) {
+                        number = gsgf_number_new (abs (pos->dice[0] * 10)
+                                                  + abs (pos->dice[1]));
+                        if (!gsgf_node_set_property (node, "DI",
+                                                      GSGF_VALUE (number),
+                                                      error)) {
+                                g_object_unref (color);
+                                return FALSE;
+                        }
+                }
+        }
 
         /*
          * Set black and white points.  Be careful to swap sides to ensure
