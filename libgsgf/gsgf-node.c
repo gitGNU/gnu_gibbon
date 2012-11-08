@@ -542,11 +542,15 @@ compare_property_ids (gconstpointer _a, gconstpointer _b)
                 return 1;
 
         /*
-         * Gnubg needs thos as well.
+         * Gnubg needs those as well.
          */
         if (0 == g_strcmp0 (a, "PL"))
                 return -1;
         if (0 == g_strcmp0 (b, "PL"))
+                return 1;
+        if (0 == g_strcmp0 (a, "AE"))
+                return -1;
+        if (0 == g_strcmp0 (b, "AE"))
                 return 1;
 
         return retval;
