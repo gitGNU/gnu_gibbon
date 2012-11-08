@@ -42,11 +42,15 @@ static gboolean gibbon_sgf_writer_write_stream (const GibbonMatchWriter *writer,
                                                 GOutputStream *out,
                                                 const GibbonMatch *match,
                                                 GError **error);
+static gboolean gibbon_sgf_writer_add_game (const GibbonSGFWriter *self,
+                                            GSGFGameTree *game_tree,
+                                            const GibbonGame *game,
+                                            guint game_number,
+                                            const GibbonMatch *match,
+                                            GError **error);
 static gboolean gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                                               GSGFGameTree *game_tree,
                                               const GibbonGame *game,
-                                              guint game_number,
-                                              const GibbonMatch *match,
                                               GError **error);
 static gboolean gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
                                         GSGFGameTree *game_tree,
@@ -66,6 +70,11 @@ static gboolean gibbon_sgf_writer_resign (const GibbonSGFWriter *self,
                                           GibbonPositionSide side,
                                           GibbonResign *resign, GError **error);
 static guint translate_point (guint point, GibbonPositionSide side);
+static gboolean gibbon_sgf_writer_setup (const GibbonSGFWriter *self,
+                                         GSGFGameTree *game_tree,
+                                         const GibbonGame *game,
+                                         const GibbonMatch *match,
+                                         GError **error);
 
 static void 
 gibbon_sgf_writer_init (GibbonSGFWriter *self)
@@ -134,17 +143,37 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
         flavor = gsgf_flavor_backgammon_new ();
 
         collection = gsgf_collection_new ();
+
         for (game_number = 0; ; ++game_number) {
                 game = gibbon_match_get_nth_game (match, game_number);
                 if (!game)
                         break;
-                game_tree = gsgf_collection_add_game_tree (collection, flavor);
+
+                game_tree = gsgf_collection_add_game_tree (collection,
+                                                           flavor);
                 if (!game_tree) {
                         g_object_unref (collection);
                         return FALSE;
                 }
+
+                if (!gibbon_sgf_writer_add_game (self, game_tree, game,
+                                                 game_number, match, error)) {
+                        g_object_unref (collection);
+                        return FALSE;
+                }
+
+                if (!game_number
+                    && !gibbon_position_is_initial (
+                                    gibbon_game_get_initial_position (game))) {
+                        if (!gibbon_sgf_writer_setup (self, game_tree,
+                                                      game, match, error)) {
+                                g_object_unref (collection);
+                                return FALSE;
+                        }
+                }
+
                 if (!gibbon_sgf_writer_write_game (self, game_tree, game,
-                                                   game_number, match, error)) {
+                                                   error)) {
                         g_object_unref (collection);
                         return FALSE;
                 }
@@ -159,11 +188,11 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
  * and white matches that of GNU Backgammon.
  */
 static gboolean
-gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
-                              GSGFGameTree *game_tree,
-                              const GibbonGame *game, guint game_number,
-                              const GibbonMatch *match,
-                              GError **error)
+gibbon_sgf_writer_add_game (const GibbonSGFWriter *self,
+                            GSGFGameTree *game_tree,
+                            const GibbonGame *game, guint game_number,
+                            const GibbonMatch *match,
+                            GError **error)
 {
         GSGFNode *root;
         const gchar *text;
@@ -177,9 +206,6 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         gint score;
         GSGFValue *result = NULL;
         GSGFResultCause cause;
-        glong action_num;
-        GibbonPositionSide side;
-        const GibbonGameAction *action = NULL;
 
         if (!gsgf_game_tree_set_application (game_tree,
                                              PACKAGE, VERSION,
@@ -298,6 +324,23 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
                         return FALSE;
         }
 
+        return TRUE;
+}
+
+/*
+ * Note that we swap black and white on output so that Gibbon's notion of black
+ * and white matches that of GNU Backgammon.
+ */
+static gboolean
+gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
+                              GSGFGameTree *game_tree,
+                              const GibbonGame *game,
+                              GError **error)
+{
+        glong action_num;
+        GibbonPositionSide side;
+        const GibbonGameAction *action = NULL;
+
         for (action_num = 0; ; ++action_num) {
                 action = gibbon_game_get_nth_action (game, action_num, &side);
                 if (!action)
@@ -364,11 +407,93 @@ gibbon_sgf_writer_write_game (const GibbonSGFWriter *self,
         return TRUE;
 }
 
-static
-gboolean gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
-                                 GSGFGameTree *game_tree,
-                                 GibbonPositionSide side,
-                                 GibbonRoll *roll, GError **error)
+static gboolean
+gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
+                         const GibbonGame *game, const GibbonMatch *match,
+                         GError **error)
+{
+        gchar *buffer;
+        GSGFNode *node;
+        const GibbonPosition *pos = gibbon_game_get_initial_position (game);
+        GSGFListOf *list_of;
+        GSGFFlavor *flavor;
+        gint i, j;
+        GSGFPointBackgammon *point;
+        GSGFStoneBackgammon *stone;
+
+        flavor = gsgf_flavor_backgammon_new ();
+
+        node = gsgf_game_tree_add_node (game_tree);
+
+        if (memcmp (pos->points, gibbon_position_initial ()->points,
+                    sizeof pos->points)) {
+                list_of = gsgf_list_of_new (GSGF_TYPE_POINT_BACKGAMMON, flavor);
+                for (i = 0; i < 26; ++i) {
+                        point = gsgf_point_backgammon_new (i);
+                        if (!gsgf_list_of_append (list_of,
+                                                  GSGF_COOKED_VALUE (point),
+                                                  error)) {
+                                g_object_unref (list_of);
+                                return FALSE;
+                        }
+                }
+                if (!gsgf_node_set_property (node, "AE",
+                                             GSGF_VALUE (list_of), error)) {
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                list_of = gsgf_list_of_new (GSGF_TYPE_STONE_BACKGAMMON, flavor);
+                for (i = 0; i < 24; ++i) {
+                        if (pos->points[i] >= 0)
+                                continue;
+                        for (j = pos->points[i]; j < 0; ++j) {
+                                stone = gsgf_stone_backgammon_new (i);
+                                if (!gsgf_list_of_append (list_of,
+                                                      GSGF_COOKED_VALUE (stone),
+                                                         error)) {
+                                        g_object_unref (list_of);
+                                        return FALSE;
+                                }
+                        }
+                }
+                if (!gsgf_node_set_property (node, "AW",
+                                             GSGF_VALUE (list_of),
+                                             error)) {
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+
+                list_of = gsgf_list_of_new (GSGF_TYPE_STONE_BACKGAMMON, flavor);
+                for (i = 0; i < 24; ++i) {
+                        if (pos->points[i] <= 0)
+                                continue;
+                        for (j = 0; j < pos->points[i]; ++j) {
+                                stone = gsgf_stone_backgammon_new (i);
+                                if (!gsgf_list_of_append (list_of,
+                                                      GSGF_COOKED_VALUE (stone),
+                                                         error)) {
+                                        g_object_unref (list_of);
+                                        return FALSE;
+                                }
+                        }
+                }
+                if (!gsgf_node_set_property (node, "AB",
+                                             GSGF_VALUE (list_of),
+                                             error)) {
+                        g_object_unref (list_of);
+                        return FALSE;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_writer_roll (const GibbonSGFWriter *self,
+                        GSGFGameTree *game_tree,
+                        GibbonPositionSide side,
+                        GibbonRoll *roll, GError **error)
 {
         gchar *buffer;
         GSGFValue *simple_text;
