@@ -91,3 +91,5 @@
 - Add the row "Initial position", when adding a game to the move list view,
   not when adding the first action.  When done, check whether the position
   is really edited, and display "Setup ..." instead.
+- check whether gsgf_flavor_backgammon_new() creates memory leaks in
+  the SGF reader.
