@@ -412,7 +412,6 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                          const GibbonGame *game, const GibbonMatch *match,
                          GError **error)
 {
-        gchar *buffer;
         GSGFNode *node;
         const GibbonPosition *pos = gibbon_game_get_initial_position (game);
         GSGFListOf *list_of;
@@ -428,7 +427,7 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         if (memcmp (pos->points, gibbon_position_initial ()->points,
                     sizeof pos->points)) {
                 list_of = gsgf_list_of_new (GSGF_TYPE_POINT_BACKGAMMON, flavor);
-                for (i = 0; i < 26; ++i) {
+                for (i = 0; i < 24; ++i) {
                         point = gsgf_point_backgammon_new (i);
                         if (!gsgf_list_of_append (list_of,
                                                   GSGF_COOKED_VALUE (point),
@@ -444,17 +443,26 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                 }
 
                 list_of = gsgf_list_of_new (GSGF_TYPE_STONE_BACKGAMMON, flavor);
-                for (i = 0; i < 24; ++i) {
+                for (i = 23; i >= 0; --i) {
                         if (pos->points[i] >= 0)
                                 continue;
                         for (j = pos->points[i]; j < 0; ++j) {
-                                stone = gsgf_stone_backgammon_new (i);
+                                stone = gsgf_stone_backgammon_new (23 - i);
                                 if (!gsgf_list_of_append (list_of,
                                                       GSGF_COOKED_VALUE (stone),
                                                          error)) {
                                         g_object_unref (list_of);
                                         return FALSE;
                                 }
+                        }
+                }
+                for (j = pos->bar[1]; j < 0; ++j) {
+                        stone = gsgf_stone_backgammon_new (24);
+                        if (!gsgf_list_of_append (list_of,
+                                              GSGF_COOKED_VALUE (stone),
+                                                 error)) {
+                                g_object_unref (list_of);
+                                return FALSE;
                         }
                 }
                 if (!gsgf_node_set_property (node, "AW",
@@ -465,17 +473,26 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                 }
 
                 list_of = gsgf_list_of_new (GSGF_TYPE_STONE_BACKGAMMON, flavor);
-                for (i = 0; i < 24; ++i) {
+                for (i = 23; i >= 0; --i) {
                         if (pos->points[i] <= 0)
                                 continue;
                         for (j = 0; j < pos->points[i]; ++j) {
-                                stone = gsgf_stone_backgammon_new (i);
+                                stone = gsgf_stone_backgammon_new (23 - i);
                                 if (!gsgf_list_of_append (list_of,
                                                       GSGF_COOKED_VALUE (stone),
                                                          error)) {
                                         g_object_unref (list_of);
                                         return FALSE;
                                 }
+                        }
+                }
+                for (j = 0; j < pos->bar[0]; ++j) {
+                        stone = gsgf_stone_backgammon_new (24);
+                        if (!gsgf_list_of_append (list_of,
+                                              GSGF_COOKED_VALUE (stone),
+                                                 error)) {
+                                g_object_unref (list_of);
+                                return FALSE;
                         }
                 }
                 if (!gsgf_node_set_property (node, "AB",
