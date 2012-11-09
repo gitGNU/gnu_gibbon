@@ -555,6 +555,14 @@
       <para>
         See <ulink url="http://www.red-bean.com/sgf/properties.html#CP">http://www.red-bean.com/sgf/properties.html#CP</ulink>.
       </para>
+      <important>
+        <para>
+          <ulink url="http://www.gnubg.org/">GNU Backgammon</ulink>
+          uses this property instead of <link linkend="bg-property-CO">CO</link>
+          for encoding the cube owner.  The possible values are
+          w and b for white and black respectively.
+        </para>
+      </important>
     </sect2>
     <sect2 id="property-DT">
       <title>DT (date)</title>

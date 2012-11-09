@@ -131,6 +131,16 @@
       <para>
         See <ulink url="http://www.red-bean.com/sgf/backgammon.html#CO">http://www.red-bean.com/sgf/backgammon.html#CO</ulink>.
       </para>
+      <important>
+        <para>
+          <ulink url="http://www.gnubg.org/">GNU Backgammon</ulink> uses
+          the <link linkend="property-CP">CP property</link> instead.
+          This is most probably a bug or typo but it unlikely to change
+          in the future.  For compatibility with GNUBG, 
+          <ulink url="http://www.gibbon.bg/">Gibbon</ulink> does the
+          same!
+        </para>
+      </important>
     </sect2>
     <sect2 id="bg-property-CV">
       <title>CV (Cube Value)</title>
