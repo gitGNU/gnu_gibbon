@@ -256,7 +256,6 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         gchar *buffer;
         const GibbonPosition *pos = gibbon_game_get_initial_position (game);
         gsize length;
-        gint cube;
 
         buffer = g_strdup_printf ("Game:");
         GIBBON_WRITE_ALL (buffer);
@@ -299,12 +298,11 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
                 GIBBON_WRITE_ALL (buffer);
         }
 
-        if (pos->may_double[0]) {
-                cube = pos->cube;
-        } else {
-                cube = -pos->cube;
-        }
-
+        /*
+         * FIXME! We have to encode the cube owner.  Otherwise, automatic
+         * doubles at the beginning of the game cannot be encoded.  Either
+         * blow up the Cube property, or rather a new may-double property.
+         */
         if (pos->cube_turned) {
                 buffer = g_strdup_printf (" Cube{%u %d}",
                                           pos->cube, pos->cube_turned);
