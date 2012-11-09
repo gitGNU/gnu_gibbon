@@ -300,10 +300,6 @@ score
 cube
 	: CUBE LBRACE INTEGER
 	  {
-	        if ($3 <= 0) {
-	        	_gibbon_gmd_reader_yyerror (_("Invalid cube!"));
-	        	YYABORT;
-	        }
 	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3, 
 	   	                                    GIBBON_POSITION_SIDE_NONE))
 	        	YYABORT;

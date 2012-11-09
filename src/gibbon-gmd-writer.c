@@ -256,6 +256,7 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
         gchar *buffer;
         const GibbonPosition *pos = gibbon_game_get_initial_position (game);
         gsize length;
+        gint cube;
 
         buffer = g_strdup_printf ("Game:");
         GIBBON_WRITE_ALL (buffer);
@@ -296,6 +297,12 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
                                           abs (pos->dice[0]),
                                           abs (pos->dice[1]));
                 GIBBON_WRITE_ALL (buffer);
+        }
+
+        if (pos->may_double[0]) {
+                cube = pos->cube;
+        } else {
+                cube = -pos->cube;
         }
 
         if (pos->cube_turned) {

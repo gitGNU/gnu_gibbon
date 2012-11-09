@@ -723,17 +723,28 @@ _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
         g_return_val_if_fail (cube <= 0, FALSE);
 
-        game = gibbon_match_get_current_game (self->priv->match);
-        pos = gibbon_game_get_initial_position_editable (game);
+        if (cube < -1 || cube > 1) {
+                game = gibbon_match_get_current_game (self->priv->match);
+                pos = gibbon_game_get_initial_position_editable (game);
 
-        pos->cube = cube;
-        pos->turn = turned;
-        if (turned < 0)
-                pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
-        else if (turned > 0)
-                pos->cube_turned = GIBBON_POSITION_SIDE_WHITE;
-        else
-                pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
+                pos->cube = abs (cube);
+                pos->turn = turned;
+
+                if (cube < -1) {
+                        pos->may_double[0] = TRUE;
+                        pos->may_double[1] = FALSE;
+                } else {
+                        pos->may_double[0] = FALSE;
+                        pos->may_double[1] = TRUE;
+                }
+
+                if (turned < 0)
+                        pos->cube_turned = GIBBON_POSITION_SIDE_BLACK;
+                else if (turned > 0)
+                        pos->cube_turned = GIBBON_POSITION_SIDE_WHITE;
+                else
+                        pos->cube_turned = GIBBON_POSITION_SIDE_NONE;
+        }
 
         return TRUE;
 }
