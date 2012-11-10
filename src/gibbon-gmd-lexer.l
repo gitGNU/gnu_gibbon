@@ -191,11 +191,6 @@ NL (\r\n|\n|\r\n|\r)
 		return CUBE;
 }
 
-<SGAME>Crawford			{
-		yy_push_state (SLBRACE);
-		return CRAWFORD;
-}
-
 <SLBRACE>\{			{
 		yy_push_state (STUPLE);
 		return LBRACE;

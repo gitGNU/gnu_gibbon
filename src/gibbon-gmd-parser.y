@@ -129,7 +129,6 @@ extern int gibbon_gmd_lexer_lex (void);
 %token SCORES
 %token CUBE
 %token TURN
-%token POST_CRAWFORD
 %token LBRACE RBRACE
 
 %type <side> color
@@ -138,7 +137,6 @@ extern int gibbon_gmd_lexer_lex (void);
 %type <num> point
 %type <num> die
 %type <num> score
-%type <num> crawford
 
 %%
 
@@ -219,7 +217,7 @@ setups
 	;
 
 setup
-	: points | dice | scores | cube | turn | crawford
+	: points | dice | scores | cube | turn
 	;
 
 points
@@ -324,18 +322,6 @@ turn
 	        	YYABORT;
 	  }
 	  RBRACE
-	;
-
-crawford
-	: CRAWFORD LBRACE INTEGER
-	  {
-	   	if (!_gibbon_gmd_reader_setup_crawford (reader, $3))
-	        	YYABORT;
-	  }
-	  RBRACE
-	  {
-	  	$$ = $3;
-	  }
 	;
 
 rule
