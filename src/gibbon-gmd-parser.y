@@ -129,6 +129,7 @@ extern int gibbon_gmd_lexer_lex (void);
 %token SCORES
 %token CUBE
 %token TURN
+%token MAY_DOUBLE
 %token LBRACE RBRACE
 
 %type <side> color
@@ -217,7 +218,7 @@ setups
 	;
 
 setup
-	: points | dice | scores | cube | turn
+	: points | dice | scores | cube | turn | may_double
 	;
 
 points
@@ -323,6 +324,14 @@ turn
 	  }
 	  RBRACE
 	;
+
+may_double
+	: MAY_DOUBLE LBRACE INTEGER INTEGER
+	  {
+	  	if (!_gibbon_gmd_reader_setup_may_double (reader, $3, $4))
+	  		YYABORT;
+	  }
+	  RBRACE
 
 rule
 	: RULE COLON CRAWFORD

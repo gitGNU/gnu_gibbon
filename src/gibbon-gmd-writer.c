@@ -255,7 +255,6 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
 {
         gchar *buffer;
         const GibbonPosition *pos = gibbon_game_get_initial_position (game);
-        gsize length;
 
         buffer = g_strdup_printf ("Game:");
         GIBBON_WRITE_ALL (buffer);
@@ -317,16 +316,9 @@ gibbon_gmd_writer_write_setup (const GibbonGMDWriter *self, GOutputStream *out,
                 GIBBON_WRITE_ALL (buffer);
         }
 
-        length = gibbon_match_get_length (match);
-        if (gibbon_match_get_crawford (match)
-            && (pos->scores[0] + 1 == length
-                || pos->scores[1] + 1 == length)
-            && gibbon_game_is_crawford (game)) {
-                buffer = g_strdup (" Crawford{1}");
-                GIBBON_WRITE_ALL (buffer);
-        }
-
-        buffer = g_strdup_printf ("\n");
+        buffer = g_strdup_printf (" May-Double{%u %u}\n",
+                                  pos->may_double[0] ? 1 : 0,
+                                  pos->may_double[1] ? 1 : 0);
         GIBBON_WRITE_ALL (buffer);
 
         return TRUE;

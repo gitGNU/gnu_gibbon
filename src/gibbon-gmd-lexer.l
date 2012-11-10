@@ -191,6 +191,11 @@ NL (\r\n|\n|\r\n|\r)
 		return CUBE;
 }
 
+<SGAME>May-Double		{
+		yy_push_state (SLBRACE);
+		return MAY_DOUBLE;
+}
+
 <SLBRACE>\{			{
 		yy_push_state (STUPLE);
 		return LBRACE;

@@ -771,7 +771,8 @@ _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn)
 }
 
 gboolean
-_gibbon_gmd_reader_setup_crawford (GibbonGMDReader *self, gint64 flag)
+_gibbon_gmd_reader_setup_may_double (GibbonGMDReader *self,
+                                     gint64 flag1, gint64 flag2)
 {
         GibbonPosition *pos;
         GibbonGame *game;
@@ -787,10 +788,16 @@ _gibbon_gmd_reader_setup_crawford (GibbonGMDReader *self, gint64 flag)
         game = gibbon_match_get_current_game (self->priv->match);
         pos = gibbon_game_get_initial_position_editable (game);
 
+        pos->may_double[0] = flag1 ? TRUE : FALSE;
+        pos->may_double[1] = flag2 ? TRUE : FALSE;
+
         if (length != pos->scores[0] + 1 && length != pos->scores[1] + 1)
                 return TRUE;
 
-        gibbon_game_set_is_crawford (game, flag);
+        if (pos->cube > 1 && flag1 && flag2)
+                gibbon_game_set_is_crawford (game, FALSE);
+        else
+                gibbon_game_set_is_crawford (game, TRUE);
 
         return TRUE;
 }

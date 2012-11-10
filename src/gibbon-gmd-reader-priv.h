@@ -91,7 +91,8 @@ gboolean _gibbon_gmd_reader_setup_scores (GibbonGMDReader *self, gint64 score1,
 gboolean _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
                                         GibbonPositionSide turned);
 gboolean _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn);
-gboolean _gibbon_gmd_reader_setup_crawford (GibbonGMDReader *self, gint64 flag);
+gboolean _gibbon_gmd_reader_setup_may_double (GibbonGMDReader *self,
+                                              gint64 flag1, gint64 flag2);
 
 G_END_DECLS
 
