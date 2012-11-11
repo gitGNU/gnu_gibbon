@@ -353,7 +353,7 @@ gibbon_archive_update_rank (GibbonArchive *self,
         if (!dt) {
                 gibbon_app_fatal_error (self->priv->app, _("Internal Error"),
                                         "%s",
-                                        _("Error retrieving current time!!"));
+                                        _("Error retrieving current time!"));
                 /* NOTREACHED */
                 return;
         }

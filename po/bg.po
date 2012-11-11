@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gibbon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-11 14:00+0200\n"
+"POT-Creation-Date: 2012-11-11 22:27+0200\n"
 "PO-Revision-Date: 2011-09-03 08:49+0300\n"
 "Last-Translator: Guido Flohr <guido@imperia.net>\n"
 "Language-Team: Bulgarian <guido@imperia.net>\n"
@@ -172,7 +172,7 @@ msgstr "Покана"
 msgid "Look"
 msgstr "Изглед"
 
-#: ../data/gibbon.ui.h:4 ../src/gibbon-session.c:2767
+#: ../data/gibbon.ui.h:4 ../src/gibbon-session.c:2794
 msgid "Watch"
 msgstr "Кибичене"
 
@@ -984,7 +984,7 @@ msgstr ""
 
 #: ../src/gibbon-analysis-move.c:354
 #, c-format
-msgid "Proper cube action: %s (%.1f %%)"
+msgid "Proper cube action: %s (%.1f%%)"
 msgstr ""
 
 #: ../src/gibbon-analysis-move.c:357
@@ -1017,11 +1017,6 @@ msgstr ""
 #: ../src/gibbon-app.c:292
 msgid "Disconnected"
 msgstr "Изключен"
-
-#: ../src/gibbon-app.c:414
-#, c-format
-msgid "%s"
-msgstr ""
 
 #: ../src/gibbon-app.c:465
 msgid "Do you need to pass the option `--data-dir'?\n"
@@ -1139,7 +1134,7 @@ msgstr ""
 msgid "Cannot determine user data directory!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:231
+#: ../src/gibbon-archive.c:231 ../src/gibbon-archive.c:381
 #, c-format
 msgid "Failed to create server directory `%s': %s!"
 msgstr "Неуспешно създаване на сървър папка: „%s“: %s!"
@@ -1150,17 +1145,25 @@ msgid ""
 "`Extras' to see if your old client software is supported!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:302 ../src/gibbon-archive.c:783
-#: ../src/gibbon-archive.c:880
+#: ../src/gibbon-archive.c:302 ../src/gibbon-archive.c:887
+#: ../src/gibbon-archive.c:984
 #, fuzzy, c-format
 msgid "Failed to create directory `%s': %s!"
 msgstr "Неуспешно създаване на сървър папка: „%s“: %s!"
 
-#: ../src/gibbon-archive.c:845
+#: ../src/gibbon-archive.c:354 ../src/gibbon-match-tracker.c:453
+msgid "Internal Error"
+msgstr ""
+
+#: ../src/gibbon-archive.c:356
+msgid "Error retrieving current time!!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:949
 msgid "No start time in match file!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:853
+#: ../src/gibbon-archive.c:957
 #, c-format
 msgid "Match start time `%lld' out of range!"
 msgstr ""
@@ -1187,7 +1190,7 @@ msgid "[MATCH-FILE] - GTK+ frontend for FIBS"
 msgstr ""
 
 #: ../src/gibbon.c:188 ../src/gibbon-convert.c:331
-msgid "Report bugs at https://savannah.nongnu.org/projects/gibbon."
+msgid "Report bugs at <https://savannah.nongnu.org/projects/gibbon>!"
 msgstr ""
 
 #: ../src/gibbon.c:225
@@ -2753,18 +2756,18 @@ msgstr "Зимбабве"
 msgid "Invalid IP address"
 msgstr ""
 
-#: ../src/gibbon-database.c:247 ../src/gibbon-database.c:255
+#: ../src/gibbon-database.c:267 ../src/gibbon-database.c:275
 #, c-format
 msgid "Error opening database `%s'!"
 msgstr ""
 
-#: ../src/gibbon-database.c:270
+#: ../src/gibbon-database.c:290
 msgid ""
 "Your sqlite installation seems to be crippled.  It does not support foreign "
 "key constraints.  This is not a bug in Gibbon!"
 msgstr ""
 
-#: ../src/gibbon-database.c:351
+#: ../src/gibbon-database.c:371
 msgid ""
 "Your database was created with a more recent version of Gibbon.  With a "
 "downgrade you will not lose data but you must repopulate your database which "
@@ -2774,7 +2777,7 @@ msgid ""
 "Do you want to downgrade the database?"
 msgstr ""
 
-#: ../src/gibbon-database.c:362
+#: ../src/gibbon-database.c:382
 msgid ""
 "Your database was created with an older version of Gibbon.  With the upgrade "
 "you will not lose data but you must repopulate your database which can be a "
@@ -2783,32 +2786,32 @@ msgid ""
 "Proceed anyway?"
 msgstr ""
 
-#: ../src/gibbon-database.c:488
+#: ../src/gibbon-database.c:524
 msgid "You should now repopulate your database (menu `Options')."
 msgstr ""
 
-#: ../src/gibbon-database.c:530 ../src/gibbon-database.c:559
-#: ../src/gibbon-database.c:587
+#: ../src/gibbon-database.c:566 ../src/gibbon-database.c:595
+#: ../src/gibbon-database.c:623
 msgid "Internal error"
 msgstr ""
 
-#: ../src/gibbon-database.c:531
+#: ../src/gibbon-database.c:567
 msgid "Nested transaction."
 msgstr ""
 
-#: ../src/gibbon-database.c:561
+#: ../src/gibbon-database.c:597
 msgid "Commit outside transaction."
 msgstr ""
 
-#: ../src/gibbon-database.c:589
+#: ../src/gibbon-database.c:625
 msgid "Rollback outside transaction."
 msgstr ""
 
-#: ../src/gibbon-database.c:623
+#: ../src/gibbon-database.c:659
 msgid "Database failure"
 msgstr ""
 
-#: ../src/gibbon-database.c:741 ../src/gibbon-database.c:812
+#: ../src/gibbon-database.c:777 ../src/gibbon-database.c:848
 #, c-format
 msgid "Unknown data type %d!"
 msgstr ""
@@ -3026,12 +3029,12 @@ msgid "Resignation value cannot be zero!"
 msgstr ""
 
 #: ../src/gibbon-gmd-reader.c:215 ../src/gibbon-java-fibs-reader.c:230
-#: ../src/gibbon-jelly-fish-reader.c:219
+#: ../src/gibbon-jelly-fish-reader.c:219 ../src/gibbon-sgf-reader.c:365
 msgid "[standard input]"
 msgstr ""
 
 #: ../src/gibbon-gmd-reader.c:532 ../src/gibbon-java-fibs-reader.c:515
-#: ../src/gibbon-jelly-fish-reader.c:490
+#: ../src/gibbon-jelly-fish-reader.c:490 ../src/gibbon-sgf-reader.c:335
 msgid "No game in progress!"
 msgstr ""
 
@@ -3235,16 +3238,18 @@ msgstr ""
 msgid "resigns backgammon"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:518
+#: ../src/gibbon-match-list.c:523
 #, c-format
-msgid "resigns with %u points"
-msgstr ""
+msgid "resigns with one point"
+msgid_plural "resigns with %u points"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../src/gibbon-match-list.c:544
+#: ../src/gibbon-match-list.c:551
 msgid "(Crawford)"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:548
+#: ../src/gibbon-match-list.c:555
 #, c-format
 msgid "Game %d: %u-%u %s"
 msgstr ""
@@ -3253,22 +3258,22 @@ msgstr ""
 msgid "Premature end of input file!"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:89 ../src/gibbon-match-tracker.c:170
-#: ../src/gibbon-match-tracker.c:200 ../src/gibbon-match-tracker.c:238
-#: ../src/gibbon-match-tracker.c:282 ../src/gibbon-match-tracker.c:343
-#: ../src/gibbon-match-tracker.c:353 ../src/gibbon-match-tracker.c:427
+#: ../src/gibbon-match-tracker.c:94 ../src/gibbon-match-tracker.c:189
+#: ../src/gibbon-match-tracker.c:233 ../src/gibbon-match-tracker.c:312
+#: ../src/gibbon-match-tracker.c:322 ../src/gibbon-match-tracker.c:396
+#: ../src/gibbon-match-tracker.c:435 ../src/gibbon-match-tracker.c:476
 msgid "Write Error"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:90 ../src/gibbon-match-tracker.c:171
-#: ../src/gibbon-match-tracker.c:201 ../src/gibbon-match-tracker.c:239
-#: ../src/gibbon-match-tracker.c:344 ../src/gibbon-match-tracker.c:354
-#: ../src/gibbon-match-tracker.c:428
+#: ../src/gibbon-match-tracker.c:95 ../src/gibbon-match-tracker.c:190
+#: ../src/gibbon-match-tracker.c:313 ../src/gibbon-match-tracker.c:323
+#: ../src/gibbon-match-tracker.c:397 ../src/gibbon-match-tracker.c:436
+#: ../src/gibbon-match-tracker.c:477
 #, c-format
 msgid "Error writing to `%s': %s!\n"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:283
+#: ../src/gibbon-match-tracker.c:234
 #, c-format
 msgid "Cannot archive match `%s': %s\n"
 msgstr ""
@@ -3445,37 +3450,37 @@ msgstr ""
 msgid "Unable to write to logfile `%s': %s.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:720
+#: ../src/gibbon-session.c:738
 #, fuzzy, c-format
 msgid "Last login on %s from `%s'."
 msgstr "Неуспех при възстановяване на „%s“ от „%s“: %s"
 
-#: ../src/gibbon-session.c:1050 ../src/gibbon-session.c:1058
+#: ../src/gibbon-session.c:1077 ../src/gibbon-session.c:1085
 #, c-format
 msgid "%s logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1053 ../src/gibbon-session.c:1070
+#: ../src/gibbon-session.c:1080 ../src/gibbon-session.c:1097
 #, c-format
 msgid "Player `%s' logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1101
+#: ../src/gibbon-session.c:1128
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr ""
 
-#: ../src/gibbon-session.c:1116
+#: ../src/gibbon-session.c:1143
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1132
+#: ../src/gibbon-session.c:1159
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1518
+#: ../src/gibbon-session.c:1545
 msgid "Crawford game"
 msgstr ""
 
@@ -3486,184 +3491,254 @@ msgstr ""
 #. * after all, almost nobody plays without the Crawford rule
 #. * and we ignore that problem.
 #.
-#: ../src/gibbon-session.c:1528
+#: ../src/gibbon-session.c:1555
 msgid "Post-Crawford game"
 msgstr ""
 
-#: ../src/gibbon-session.c:1909
+#: ../src/gibbon-session.c:1936
 #, c-format
 msgid "You roll %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1920 ../src/gibbon-session.c:1928
+#: ../src/gibbon-session.c:1947 ../src/gibbon-session.c:1955
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:2004 ../src/gibbon-session.c:2017
+#: ../src/gibbon-session.c:2031 ../src/gibbon-session.c:2044
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2011
+#: ../src/gibbon-session.c:2038
 #, c-format
 msgid "%d%d: You move %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2044
+#: ../src/gibbon-session.c:2071
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:2397
+#: ../src/gibbon-session.c:2424
 #, fuzzy, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr "Потребителят отказа заявката за подписване"
 
-#: ../src/gibbon-session.c:2430
+#: ../src/gibbon-session.c:2457
 #, c-format
 msgid "Your opponent %s has left the match."
 msgstr ""
 
-#: ../src/gibbon-session.c:2437
+#: ../src/gibbon-session.c:2464
 msgid "Your opponent has left the game."
 msgstr ""
 
-#: ../src/gibbon-session.c:2438
+#: ../src/gibbon-session.c:2465
 #, c-format
 msgid ""
 "Your opponent %s has left the the match.  The server will save it for some "
 "time.  You can try to resume it at a later time by inviting %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2482 ../src/gibbon-session.c:2489
+#: ../src/gibbon-session.c:2509 ../src/gibbon-session.c:2516
 #, c-format
 msgid "%s cannot move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2493
+#: ../src/gibbon-session.c:2520
 msgid "You cannot move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2645 ../src/gibbon-session.c:2671
+#: ../src/gibbon-session.c:2672 ../src/gibbon-session.c:2698
 #, c-format
 msgid "%s has won the game and one point!"
 msgid_plural "%s has won the game and %d points!"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-session.c:2658
+#: ../src/gibbon-session.c:2685
 #, c-format
 msgid "You have won the game and one point!"
 msgid_plural "You have won the game and %d points!"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-session.c:2698
+#: ../src/gibbon-session.c:2725
 msgid "Message from server"
 msgstr ""
 
-#: ../src/gibbon-session.c:2764
+#: ../src/gibbon-session.c:2791
 msgid "Stop watching"
 msgstr ""
 
-#: ../src/gibbon-session.c:2864
+#: ../src/gibbon-session.c:2891
 msgid "Timeout during during registration!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2963 ../src/gibbon-session.c:3011
+#: ../src/gibbon-session.c:2990 ../src/gibbon-session.c:3038
 msgid "Unexpected reply from server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2974 ../src/gibbon-session.c:3026
+#: ../src/gibbon-session.c:3001 ../src/gibbon-session.c:3053
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3070
+#: ../src/gibbon-session.c:3097
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3076
+#: ../src/gibbon-session.c:3103
 #, c-format
 msgid "Registration failure: %s!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3110
+#: ../src/gibbon-session.c:3137
 msgid "Registration successful!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3112
+#: ../src/gibbon-session.c:3139
 msgid ""
 "Please do not forget your password! It cannot be recovered.\n"
 "You have to connect to the server again to start playing."
 msgstr ""
 
-#: ../src/gibbon-session.c:3161
+#: ../src/gibbon-session.c:3188
 msgid "This will end your saved match!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3162
+#: ../src/gibbon-session.c:3189
 msgid ""
 "You still have a saved match of unlimited length with that player.  If you "
 "accept the invitation, your saved match will be terminated.\n"
 "Do you really want to accept the invitation?"
 msgstr ""
 
-#: ../src/gibbon-session.c:3186
+#: ../src/gibbon-session.c:3213
 msgid "Decline Invitation"
 msgstr ""
 
-#: ../src/gibbon-session.c:3190
+#: ../src/gibbon-session.c:3217
 msgid "Decline with message"
 msgstr ""
 
-#: ../src/gibbon-session.c:3192
+#: ../src/gibbon-session.c:3219
 msgid "Ignore"
 msgstr ""
 
-#: ../src/gibbon-session.c:3293
+#: ../src/gibbon-session.c:3320
 msgid "Illegal move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3298
+#: ../src/gibbon-session.c:3325
 msgid "You moved too many checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3303
+#: ../src/gibbon-session.c:3330
 msgid ""
 "You cannot move to a point that is blocked by two or more of your opponent's "
 "checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3309
+#: ../src/gibbon-session.c:3336
 msgid "You have to use both dice!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3313
+#: ../src/gibbon-session.c:3340
 msgid "You have to use the higher die!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3317
+#: ../src/gibbon-session.c:3344
 msgid ""
 "You have to use both dice if possible (hint: try to use the other die first)!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3323
+#: ../src/gibbon-session.c:3350
 msgid ""
 "You must move all checkers into your home board before you can start bearing-"
 "off!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3329
+#: ../src/gibbon-session.c:3356
 msgid "You must move your checkers from the higher points first!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3334
+#: ../src/gibbon-session.c:3361
 msgid "You must bring in checkers from the bar first!"
 msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:250
+msgid "SGF cannot be parsed from standard input."
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:563 ../src/gibbon-sgf-reader.c:581
+#: ../src/gibbon-sgf-reader.c:591
+#, fuzzy, c-format
+msgid "Invalid match length: %s!"
+msgstr "Невалиден синтаксис „%s“ за ход"
+
+#: ../src/gibbon-sgf-reader.c:570
+#, c-format
+msgid "Match length %llu out of range!"
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:969 ../src/gibbon-sgf-reader.c:1032
+#, c-format
+msgid "Unsupported version %s for DA property."
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1130 ../src/gibbon-sgf-reader.c:1144
+#, c-format
+msgid "Unsupported move analysis type '%s'."
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1202 ../src/gibbon-sgf-reader.c:1415
+#, c-format
+msgid "Unsupported version %s for A property."
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1307
+#, c-format
+msgid "Cubeful %llu-ply"
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1310
+#, c-format
+msgid "Cubeless %llu-ply"
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1486
+#, c-format
+msgid "Rollout (%llu trials)"
+msgstr ""
+
+#: ../src/gibbon-sgf-reader.c:1539
+#, fuzzy, c-format
+msgid "SGF setup property `%s' only allowed in first game!"
+msgstr "Свойството само позволено в коренов възел"
+
+#: ../src/gibbon-sgf-reader.c:1547
+#, fuzzy, c-format
+msgid "SGF setup property `%s' only allowed before first regular game action!"
+msgstr "Свойството само позволено в коренов възел"
+
+#: ../src/gibbon-sgf-reader.c:1601
+#, fuzzy, c-format
+msgid "Invalid dice value `%lld' in SGF setup property DI!"
+msgstr "Невалиден етикет към точка в стойност"
+
+#: ../src/gibbon-sgf-reader.c:1630
+#, fuzzy, c-format
+msgid "Invalid cube value `%lld' in SGF setup property CV!"
+msgstr "Невалиден етикет към точка в стойност"
+
+#: ../src/gibbon-sgf-reader.c:1688
+#, fuzzy, c-format
+msgid "Invalid cube owner `%s' in SGF setup property %s!"
+msgstr "Невалиден етикет към точка в стойност"
 
 #: ../src/gibbon-sgf-writer.c:140
 msgid "Empty matches cannot be written as SGF"
@@ -3720,18 +3795,6 @@ msgstr ""
 #, c-format
 msgid "Error getting SVG dimensions of `%s': %s.\n"
 msgstr ""
-
-#, fuzzy
-#~ msgid "Invalid match length: %s!"
-#~ msgstr "Невалиден синтаксис „%s“ за ход"
-
-#, fuzzy
-#~ msgid "SGF setup property `%s' only allowed in first game!"
-#~ msgstr "Свойството само позволено в коренов възел"
-
-#, fuzzy
-#~ msgid "Invalid dice value `%lld' in SGF setup property DI!"
-#~ msgstr "Невалиден етикет към точка в стойност"
 
 #, fuzzy
 #~ msgid ""
