@@ -185,7 +185,7 @@ parse_command_line (int argc, char *argv[])
                                           " - GTK+ frontend for FIBS"));
         g_option_context_set_summary (context, "Play backgammon online.");
         g_option_context_set_description (context,
-           _("Report bugs at https://savannah.nongnu.org/projects/gibbon."));
+           _("Report bugs at <https://savannah.nongnu.org/projects/gibbon>!"));
         g_option_context_add_main_entries (context, options, PACKAGE);
         g_option_context_add_group (context, gtk_get_option_group (TRUE));
         g_option_context_parse (context, &argc, &argv, &error);

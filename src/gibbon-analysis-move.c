@@ -351,7 +351,7 @@ gibbon_analysis_move_cube_decision (GibbonAnalysisMove *self,
                 s = _("No idea");
 
         if (percent >= 0.0f)
-                return g_strdup_printf (_("Proper cube action: %s (%.1f %%)"),
+                return g_strdup_printf (_("Proper cube action: %s (%.1f%%)"),
                                         s, 100 * percent);
         else
                 return g_strdup_printf (_("Proper cube action: %s"), s);

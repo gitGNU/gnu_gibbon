@@ -515,8 +515,15 @@ gibbon_match_list_format_resign (GibbonMatchList *self,
         else if (resign->value == (pos->cube + (pos->cube << 1)))
                 return g_strdup (_("resigns backgammon"));
         else
-                return g_strdup_printf (_("resigns with %u points"),
-                                        resign->value);
+	  /*
+	   * Yes, the case for one point is already handled.  But other
+	   * languages than English may require the plural handling here.
+	   */
+	  return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+					       "resigns with one point",
+                                               "resigns with %u points",
+					       resign->value), 
+				  resign->value);
 }
 
 const GibbonMatch *

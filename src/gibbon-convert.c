@@ -329,7 +329,7 @@ parse_command_line (int argc, char *argv[])
                           " Gibbon match format, and\n"
                           "'.match' for the internal format of JavaFIBS.\n"),
                         _("Report bugs at"
-                          " https://savannah.nongnu.org/projects/gibbon."));
+                          " <https://savannah.nongnu.org/projects/gibbon>!"));
         g_free (alt_usage);
         g_option_context_set_description (context, description);
         g_free (description);

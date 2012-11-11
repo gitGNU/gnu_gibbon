@@ -411,7 +411,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                 if (!match) {
                         if (error) {
                                 gibbon_app_display_error (self, match_file,
-                                                          _("%s"),
+                                                          "%s",
                                                           error->message);
                                 g_error_free (error);
                         }
