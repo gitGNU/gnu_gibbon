@@ -955,6 +955,53 @@ gibbon_database_update_rank (GibbonDatabase *self,
 }
 
 gboolean
+gibbon_database_get_rank (GibbonDatabase *self,
+                          const gchar *hostname, guint port,
+                          const gchar *login,
+                          gdouble *rating, guint64 *experience)
+{
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (rating != NULL, FALSE);
+        g_return_val_if_fail (experience != NULL, FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+
+        if (!gibbon_database_get_statement (self, &self->priv->select_rank,
+                                            GIBBON_DATABASE_SELECT_RANK))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        if (!gibbon_database_sql_execute (self, self->priv->select_rank,
+                                          GIBBON_DATABASE_SELECT_RANK,
+                                          G_TYPE_STRING, &login,
+                                          G_TYPE_STRING, &hostname,
+                                          G_TYPE_UINT, &port,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_sql_select_row (self, self->priv->select_rank,
+                                             GIBBON_DATABASE_SELECT_RANK,
+                                             G_TYPE_DOUBLE, rating,
+                                             G_TYPE_UINT64, experience,
+                                            -1)) {
+                gibbon_database_rollback (self);
+                return -1;
+        }
+
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
 gibbon_database_insert_activity (GibbonDatabase *self,
                                  const gchar *hostname, guint port,
                                  const gchar *login,
