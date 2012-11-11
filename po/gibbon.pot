@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-03 20:12+0200\n"
+"POT-Creation-Date: 2012-11-11 14:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -193,7 +193,7 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: ../data/gibbon.ui.h:13 ../src/gibbon-app.c:1722
+#: ../data/gibbon.ui.h:13 ../src/gibbon-app.c:1724
 msgid "Ready"
 msgstr ""
 
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Undo"
 msgstr ""
 
-#: ../data/gibbon.ui.h:18 ../src/gibbon-app.c:1033
+#: ../data/gibbon.ui.h:18 ../src/gibbon-app.c:1035
 msgid "Resign"
 msgstr ""
 
@@ -991,120 +991,120 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: ../src/gibbon-app.c:413
+#: ../src/gibbon-app.c:414
 #, c-format
 msgid "%s"
 msgstr ""
 
-#: ../src/gibbon-app.c:463
+#: ../src/gibbon-app.c:465
 msgid "Do you need to pass the option `--data-dir'?\n"
 msgstr ""
 
-#: ../src/gibbon-app.c:526
+#: ../src/gibbon-app.c:528
 msgid "Fatal error"
 msgstr ""
 
-#: ../src/gibbon-app.c:533
+#: ../src/gibbon-app.c:535
 #, c-format
 msgid "Fatal error: %s"
 msgstr ""
 
-#: ../src/gibbon-app.c:593
+#: ../src/gibbon-app.c:595
 #, c-format
 msgid "Object `%s' not found in UI definition!"
 msgstr ""
 
-#: ../src/gibbon-app.c:601
+#: ../src/gibbon-app.c:603
 #, c-format
 msgid "Object `%s' is not a GObject!"
 msgstr ""
 
-#: ../src/gibbon-app.c:610
+#: ../src/gibbon-app.c:612
 #, c-format
 msgid "Object `%s' is not of type `%s' but `%s'!"
 msgstr ""
 
-#: ../src/gibbon-app.c:786
+#: ../src/gibbon-app.c:788
 msgid "You cannot register an account while you are connected to a server!"
 msgstr ""
 
-#: ../src/gibbon-app.c:900
+#: ../src/gibbon-app.c:902
 msgid "No hostname given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:911
+#: ../src/gibbon-app.c:913
 msgid "No user name given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:920 ../src/gibbon-register-dialog.c:309
+#: ../src/gibbon-app.c:922 ../src/gibbon-register-dialog.c:309
 #, c-format
 msgid "The login `%s' is reserved!"
 msgstr ""
 
-#: ../src/gibbon-app.c:934 ../src/gibbon-register-dialog.c:390
+#: ../src/gibbon-app.c:936 ../src/gibbon-register-dialog.c:390
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr ""
 
-#: ../src/gibbon-app.c:946
+#: ../src/gibbon-app.c:948
 msgid "No password given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1046
+#: ../src/gibbon-app.c:1048
 #, c-format
 msgid "_normal (one point)"
 msgid_plural "_normal (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1055
+#: ../src/gibbon-app.c:1057
 #, c-format
 msgid "_gammon (one point)"
 msgid_plural "_gammon (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1064
+#: ../src/gibbon-app.c:1066
 #, c-format
 msgid "_backgammon (one point)"
 msgid_plural "_backgammon (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1106
+#: ../src/gibbon-app.c:1108
 msgid ""
 "Leaving in the middle of a game is normally considered bad behavior.  Do you "
 "really want to leave?"
 msgstr ""
 
-#: ../src/gibbon-app.c:1400
+#: ../src/gibbon-app.c:1402
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1416
+#: ../src/gibbon-app.c:1418
 #, c-format
 msgid "Connected with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1435
+#: ../src/gibbon-app.c:1437
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1495
+#: ../src/gibbon-app.c:1497
 #, c-format
 msgid "Error loading image `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1726
+#: ../src/gibbon-app.c:1728
 msgid "Click to set yourself busy."
 msgstr ""
 
-#: ../src/gibbon-app.c:1739
+#: ../src/gibbon-app.c:1741
 msgid "Busy"
 msgstr ""
 
-#: ../src/gibbon-app.c:1743
+#: ../src/gibbon-app.c:1745
 msgid "Click to set yourself ready to play."
 msgstr ""
 
@@ -2779,92 +2779,92 @@ msgstr ""
 msgid "Unknown data type %d!"
 msgstr ""
 
-#: ../src/gibbon-game.c:197
+#: ../src/gibbon-game.c:185
 #, c-format
 msgid "A reply to the resignation is required!"
 msgstr ""
 
-#: ../src/gibbon-game.c:207
+#: ../src/gibbon-game.c:195
 #, c-format
 msgid "A reply to the double is required!"
 msgstr ""
 
-#: ../src/gibbon-game.c:303 ../src/gibbon-game.c:386 ../src/gibbon-game.c:467
-#: ../src/gibbon-game.c:533 ../src/gibbon-game.c:576 ../src/gibbon-game.c:616
-#: ../src/gibbon-game.c:651 ../src/gibbon-game.c:699 ../src/gibbon-game.c:755
+#: ../src/gibbon-game.c:287 ../src/gibbon-game.c:370 ../src/gibbon-game.c:451
+#: ../src/gibbon-game.c:517 ../src/gibbon-game.c:560 ../src/gibbon-game.c:600
+#: ../src/gibbon-game.c:635 ../src/gibbon-game.c:683
 msgid "Game is already over!"
 msgstr ""
 
-#: ../src/gibbon-game.c:319 ../src/gibbon-game.c:396 ../src/gibbon-game.c:483
+#: ../src/gibbon-game.c:303 ../src/gibbon-game.c:380 ../src/gibbon-game.c:467
 msgid "This player is not on turn!"
 msgstr ""
 
-#: ../src/gibbon-game.c:328 ../src/gibbon-game.c:337
+#: ../src/gibbon-game.c:312 ../src/gibbon-game.c:321
 msgid "The dice have already been rolled!"
 msgstr ""
 
-#: ../src/gibbon-game.c:404
+#: ../src/gibbon-game.c:388
 msgid "Move without a roll!"
 msgstr ""
 
-#: ../src/gibbon-game.c:415
+#: ../src/gibbon-game.c:399
 msgid "Invalid move!"
 msgstr ""
 
-#: ../src/gibbon-game.c:423
+#: ../src/gibbon-game.c:407
 #, c-format
 msgid "%d%d: %s has moved %s."
 msgstr ""
 
-#: ../src/gibbon-game.c:432
+#: ../src/gibbon-game.c:416
 #, c-format
 msgid "%d%d: %s cannot move!"
 msgstr ""
 
-#: ../src/gibbon-game.c:476
+#: ../src/gibbon-game.c:460
 msgid "Double after dice have been rolled!"
 msgstr ""
 
-#: ../src/gibbon-game.c:490
+#: ../src/gibbon-game.c:474
 msgid "Double during Crawford game!"
 msgstr ""
 
-#: ../src/gibbon-game.c:498
+#: ../src/gibbon-game.c:482
 msgid "Double not allowed!"
 msgstr ""
 
-#: ../src/gibbon-game.c:505 ../src/gibbon-game.c:509
+#: ../src/gibbon-game.c:489 ../src/gibbon-game.c:493
 #, c-format
 msgid "%s offers a double."
 msgstr ""
 
-#: ../src/gibbon-game.c:541 ../src/gibbon-game.c:584
+#: ../src/gibbon-game.c:525 ../src/gibbon-game.c:568
 msgid "Opponent did not double!"
 msgstr ""
 
-#: ../src/gibbon-game.c:549 ../src/gibbon-game.c:555
+#: ../src/gibbon-game.c:533 ../src/gibbon-game.c:539
 #, c-format
 msgid "%s refuses the cube."
 msgstr ""
 
-#: ../src/gibbon-game.c:623
+#: ../src/gibbon-game.c:607
 msgid "Resignation without a value!"
 msgstr ""
 
-#: ../src/gibbon-game.c:664
+#: ../src/gibbon-game.c:648
 msgid "Reject without resignation!"
 msgstr ""
 
-#: ../src/gibbon-game.c:677
+#: ../src/gibbon-game.c:661
 #, c-format
 msgid "%s rejects."
 msgstr ""
 
-#: ../src/gibbon-game.c:711
+#: ../src/gibbon-game.c:695
 msgid "Accept without resignation!"
 msgstr ""
 
-#: ../src/gibbon-game.c:721
+#: ../src/gibbon-game.c:705
 #, c-format
 msgid "%s resigns and gives up one point."
 msgid_plural "%s resigns and gives up %d points."
@@ -2950,36 +2950,72 @@ msgstr ""
 msgid "%s: line %u: Unexpected end of line!"
 msgstr ""
 
-#: gibbon-gmd-lexer.l:196 ../src/gibbon-gmd-lexer.l:196
+#: gibbon-gmd-lexer.l:250 ../src/gibbon-gmd-lexer.l:250
 #, c-format
 msgid "warning: unknown rule `%s'"
 msgstr ""
 
-#: gibbon-gmd-lexer.l:293 ../src/gibbon-gmd-lexer.l:293
+#: gibbon-gmd-lexer.l:347 ../src/gibbon-gmd-lexer.l:347
 #, c-format
 msgid "warning: unknown opcode `%s'"
 msgstr ""
 
-#: gibbon-gmd-parser.y:259 ../src/gibbon-gmd-parser.y:259
+#: gibbon-gmd-parser.y:250 ../src/gibbon-gmd-parser.y:250
+msgid "Number of checkers on point out of range!"
+msgstr ""
+
+#: gibbon-gmd-parser.y:272 ../src/gibbon-gmd-parser.y:272
+msgid "Invalid dice!"
+msgstr ""
+
+#: gibbon-gmd-parser.y:292 ../src/gibbon-gmd-parser.y:292
+msgid "Invalid score!"
+msgstr ""
+
+#: gibbon-gmd-parser.y:310 ../src/gibbon-gmd-parser.y:310
+msgid "Invalid cube!"
+msgstr ""
+
+#: gibbon-gmd-parser.y:401 ../src/gibbon-gmd-parser.y:401
 #: gibbon-java-fibs-parser.y:265 ../src/gibbon-java-fibs-parser.y:265
 msgid "Point out of range (1-24)!"
 msgstr ""
 
-#: gibbon-gmd-parser.y:299 ../src/gibbon-gmd-parser.y:299
+#: gibbon-gmd-parser.y:441 ../src/gibbon-gmd-parser.y:441
 msgid "Resignation value cannot be zero!"
 msgstr ""
 
-#: ../src/gibbon-gmd-reader.c:221 ../src/gibbon-java-fibs-reader.c:237
-#: ../src/gibbon-jelly-fish-reader.c:219 ../src/gibbon-sgf-reader.c:336
+#: ../src/gibbon-gmd-reader.c:215 ../src/gibbon-java-fibs-reader.c:230
+#: ../src/gibbon-jelly-fish-reader.c:219
 msgid "[standard input]"
 msgstr ""
 
-#: ../src/gibbon-gmd-reader.c:538 ../src/gibbon-java-fibs-reader.c:522
-#: ../src/gibbon-jelly-fish-reader.c:490 ../src/gibbon-sgf-reader.c:306
+#: ../src/gibbon-gmd-reader.c:532 ../src/gibbon-java-fibs-reader.c:515
+#: ../src/gibbon-jelly-fish-reader.c:490
 msgid "No game in progress!"
 msgstr ""
 
-#: ../src/gibbon-gmd-writer.c:542
+#: ../src/gibbon-gmd-reader.c:575
+msgid "Position setup is only allowed for first game!"
+msgstr ""
+
+#: ../src/gibbon-gmd-reader.c:602
+msgid "Only positive number allowed for white's bar!"
+msgstr ""
+
+#: ../src/gibbon-gmd-reader.c:607
+msgid "Only negative number allowed for black's bar!"
+msgstr ""
+
+#: ../src/gibbon-gmd-reader.c:656
+msgid "Number of checkers out of range (must be less or equal than 15)!"
+msgstr ""
+
+#: ../src/gibbon-gmd-reader.c:662
+msgid "Impossible position!"
+msgstr ""
+
+#: ../src/gibbon-gmd-writer.c:624
 #, c-format
 msgid "Action %p is not supported.\n"
 msgstr ""
@@ -3079,49 +3115,45 @@ msgstr ""
 msgid "Start and end point are equal!"
 msgstr ""
 
-#: ../src/gibbon-java-fibs-reader.c:429 ../src/gibbon-java-fibs-reader.c:485
+#: ../src/gibbon-java-fibs-reader.c:422 ../src/gibbon-java-fibs-reader.c:478
 #: ../src/gibbon-jelly-fish-reader.c:416 ../src/gibbon-jelly-fish-reader.c:453
 msgid "Syntax error!"
 msgstr ""
 
-#: ../src/gibbon-match.c:218
+#: ../src/gibbon-match.c:209
 msgid "Match is already over!"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:323
+#: ../src/gibbon-match-list.c:309
 msgid "Initial position"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:386
+#: ../src/gibbon-match-list.c:372
 msgid "takes"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:389
+#: ../src/gibbon-match-list.c:375
 msgid "drops"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:397
+#: ../src/gibbon-match-list.c:383
 msgid "accepts"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:400
+#: ../src/gibbon-match-list.c:386
 msgid "rejects"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:403
-msgid "Position set up"
-msgstr ""
-
-#: ../src/gibbon-match-list.c:414 ../src/gibbon-match-list.c:431
+#: ../src/gibbon-match-list.c:397 ../src/gibbon-match-list.c:414
 msgid "?!"
 msgstr ""
 
 #. TRANSLATORS: Mark for bad move!
-#: ../src/gibbon-match-list.c:418 ../src/gibbon-match-list.c:434
+#: ../src/gibbon-match-list.c:401 ../src/gibbon-match-list.c:417
 msgid "?"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:421 ../src/gibbon-match-list.c:437
+#: ../src/gibbon-match-list.c:404 ../src/gibbon-match-list.c:420
 msgid "??"
 msgstr ""
 
@@ -3130,43 +3162,43 @@ msgstr ""
 #. * Normally this string can be copied verbatim unless another format
 #. * is usual for your language.
 #.
-#: ../src/gibbon-match-list.c:501
+#: ../src/gibbon-match-list.c:484
 #, c-format
 msgid "%u%u:"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:518
+#: ../src/gibbon-match-list.c:501
 #, c-format
 msgid "redoubles to %u"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:520
+#: ../src/gibbon-match-list.c:503
 #, c-format
 msgid "doubles to %u"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:529
+#: ../src/gibbon-match-list.c:512
 msgid "resigns"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:531
+#: ../src/gibbon-match-list.c:514
 msgid "resigns gammon"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:533
+#: ../src/gibbon-match-list.c:516
 msgid "resigns backgammon"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:535
+#: ../src/gibbon-match-list.c:518
 #, c-format
 msgid "resigns with %u points"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:561
+#: ../src/gibbon-match-list.c:544
 msgid "(Crawford)"
 msgstr ""
 
-#: ../src/gibbon-match-list.c:565
+#: ../src/gibbon-match-list.c:548
 #, c-format
 msgid "Game %d: %u-%u %s"
 msgstr ""
@@ -3577,51 +3609,7 @@ msgstr ""
 msgid "You must bring in checkers from the bar first!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:223
-msgid "SGF cannot be parsed from standard input."
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:497
-#, c-format
-msgid "Invalid match length: %s!"
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:504
-#, c-format
-msgid "Match length %llu out of range!"
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:882 ../src/gibbon-sgf-reader.c:945
-#, c-format
-msgid "Unsupported version %s for DA property."
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:1043 ../src/gibbon-sgf-reader.c:1057
-#, c-format
-msgid "Unsupported move analysis type '%s'."
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:1115 ../src/gibbon-sgf-reader.c:1328
-#, c-format
-msgid "Unsupported version %s for A property."
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:1220
-#, c-format
-msgid "Cubeful %llu-ply"
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:1223
-#, c-format
-msgid "Cubeless %llu-ply"
-msgstr ""
-
-#: ../src/gibbon-sgf-reader.c:1399
-#, c-format
-msgid "Rollout (%llu trials)"
-msgstr ""
-
-#: ../src/gibbon-sgf-writer.c:137
+#: ../src/gibbon-sgf-writer.c:140
 msgid "Empty matches cannot be written as SGF"
 msgstr ""
 
