@@ -367,6 +367,9 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 {
         GibbonSession *self = g_object_new (GIBBON_TYPE_SESSION, NULL);
         GibbonBoard *board;
+        const gchar *hostname;
+        guint port;
+        const gchar *login;
 
         self->priv->connection = connection;
         self->priv->app = app;
@@ -379,12 +382,22 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         self->priv->player_list = gibbon_app_get_player_list (app);
         self->priv->inviter_list = gibbon_app_get_inviter_list (app);
 
-        if (!g_strcmp0 ("guest", gibbon_connection_get_login (connection)))
+        self->priv->archive = gibbon_app_get_archive (app);
+
+        login = gibbon_connection_get_login (connection);
+        hostname = gibbon_connection_get_hostname (connection);
+        port = gibbon_connection_get_port (connection);
+
+        if (!g_strcmp0 ("guest", login))
                 self->priv->guest_login = TRUE;
+        else if (gibbon_archive_get_rank (self->priv->archive,
+                                          hostname, port, login,
+                                          &self->priv->rating,
+                                          &self->priv->experience))
+                self->priv->rating_seen = TRUE;
 
         self->priv->position = gibbon_position_new ();
 
-        self->priv->archive = gibbon_app_get_archive (app);
 
         board = gibbon_app_get_board (self->priv->app);
         self->priv->dice_picked_up_handler =

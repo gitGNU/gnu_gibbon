@@ -541,6 +541,25 @@ gibbon_archive_get_reliability (GibbonArchive *self,
                                                 login, value, confidence);
 }
 
+gboolean
+gibbon_archive_get_rank (GibbonArchive *self,
+                         const gchar *hostname, guint port,
+                         const gchar *login,
+                         gdouble *rating, guint64 *experience)
+{
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (port <= 65536, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+        g_return_val_if_fail (rating != NULL, FALSE);
+        g_return_val_if_fail (experience != NULL, FALSE);
+
+        return gibbon_database_get_rank (self->priv->db,
+                                         hostname, port,
+                                         login, rating, experience);
+}
+
 GibbonCountry *
 gibbon_archive_get_country (const GibbonArchive *self,
                             const gchar *_hostname,
