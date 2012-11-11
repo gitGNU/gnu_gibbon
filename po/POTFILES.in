@@ -127,7 +127,6 @@ src/gibbon-saved-info.c
 src/gibbon-server-console.c
 src/gibbon-session.c
 src/gibbon-settings.c
-src/gibbon-setup.c
 src/gibbon-sgf-reader.c
 src/gibbon-sgf-writer.c
 src/gibbon-shouts.c
