@@ -721,7 +721,7 @@ _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
         GibbonGame *game;
 
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
-        g_return_val_if_fail (cube <= 0, FALSE);
+        g_return_val_if_fail (cube >= 1, FALSE);
 
         if (cube < -1 || cube > 1) {
                 game = gibbon_match_get_current_game (self->priv->match);
@@ -794,10 +794,10 @@ _gibbon_gmd_reader_setup_may_double (GibbonGMDReader *self,
         if (length != pos->scores[0] + 1 && length != pos->scores[1] + 1)
                 return TRUE;
 
-        if (pos->cube > 1 && flag1 && flag2)
-                gibbon_game_set_is_crawford (game, FALSE);
-        else
+        if (pos->cube == 1 && !flag1 && !flag2)
                 gibbon_game_set_is_crawford (game, TRUE);
+        else
+                gibbon_game_set_is_crawford (game, FALSE);
 
         return TRUE;
 }

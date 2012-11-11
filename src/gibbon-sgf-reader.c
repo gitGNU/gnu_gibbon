@@ -135,6 +135,14 @@ gboolean gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
                                                  const GibbonPosition *pos,
                                                  GibbonPositionSide side,
                                                  guint die1, guint die2);
+static gboolean gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
+                                                   const GibbonMatch *match,
+                                                   const gchar *prop,
+                                                   GError **error);
+static gboolean gibbon_sgf_reader_setup_turn (GibbonSGFReader *self,
+                                              GibbonMatch *match,
+                                              const GSGFProperty *prop,
+                                              GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -357,11 +365,18 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
 
         for (iter = iter->next; iter; iter = iter->next) {
                 node = GSGF_NODE (iter->data);
+                prop = gsgf_node_get_property (node, "PL");
+                if (prop && !gibbon_sgf_reader_setup_turn (self, match, prop,
+                                                           error))
+                        return FALSE;
+
                 prop = gsgf_node_get_property (node, "B");
                 if (prop) {
                         side = GIBBON_POSITION_SIDE_WHITE;
                 } else {
                         prop = gsgf_node_get_property (node, "W");
+                        if (!prop)
+                                continue;
                         side = GIBBON_POSITION_SIDE_BLACK;
                 }
                 if (prop && !gibbon_sgf_reader_move (self, match, prop, node,
@@ -1427,5 +1442,56 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
         g_free (formatted_move);
         gibbon_position_free (new_pos);
 
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
+                                   const GibbonMatch *match,
+                                   const gchar *prop,
+                                   GError **error)
+{
+        const GibbonGame *game;
+
+        if (1 != gibbon_match_get_number_of_games (match)) {
+                g_set_error (error, 0, -1,
+                             _("SGF setup property `%s' only allowed in"
+                               " first game!"), prop);
+                return FALSE;
+        }
+
+        game = gibbon_match_get_current_game (match);
+        if (gibbon_game_get_num_actions (game)) {
+                g_set_error (error, 0, -1,
+                             _("SGF setup property `%s' only allowed before"
+                               " first regular game action!"), prop);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_turn (GibbonSGFReader *self, GibbonMatch *match,
+                              const GSGFProperty *prop, GError **error)
+{
+        GSGFColor *color;
+        GibbonGame *game;
+        GibbonPosition *pos;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+                return FALSE;
+
+        color = GSGF_COLOR (gsgf_property_get_value (prop));
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+        switch (gsgf_color_get_color (color)) {
+        case GSGF_COLOR_WHITE:
+                pos->turn = GIBBON_POSITION_SIDE_BLACK;
+                break;
+        case GSGF_COLOR_BLACK:
+                pos->turn = GIBBON_POSITION_SIDE_WHITE;
+                break;
+        };
         return TRUE;
 }

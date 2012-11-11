@@ -424,6 +424,9 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         guint borne_off;
         GSGFColor *color;
         GSGFNumber *number;
+        gchar *buffer;
+        GSGFValue *simple_text;
+        gchar cube_position[2];
 
         flavor = gsgf_flavor_backgammon_new ();
 
@@ -457,6 +460,42 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
                         }
                 }
         }
+
+        if (pos->cube > 1) {
+                buffer = g_strdup_printf ("%u", pos->cube);
+                simple_text = GSGF_VALUE (gsgf_simple_text_new (buffer));
+                g_free (buffer);
+
+                node = gsgf_game_tree_add_node (game_tree);
+                if (!gsgf_node_set_property (node, "CV", simple_text, error)) {
+                        g_object_unref (simple_text);
+                        return FALSE;
+                }
+        }
+
+        if (pos->may_double[0] && pos->may_double[1])
+                cube_position[0] = 'c';
+        else if (pos->may_double[0])
+                cube_position[0] = 'b';
+        else if (pos->may_double[1])
+                cube_position[0] = 'w';
+        else
+                cube_position[0] = 'n';
+        cube_position[1] = 0;
+        simple_text = GSGF_VALUE (gsgf_simple_text_new (cube_position));
+
+        node = gsgf_game_tree_add_node (game_tree);
+        /*
+         * This is plain wrong.  CP is used for copyright notices, not for
+         * cube positions.  The correct property would be CO.  But as long
+         * as GNUBG does not fix that bug, there is no point on insisting on
+         * the correct syntax.
+         */
+        if (!gsgf_node_set_property (node, "CP", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
+
 
         /*
          * Set black and white points.  Be careful to swap sides to ensure
