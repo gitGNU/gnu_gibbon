@@ -80,11 +80,8 @@ void gibbon_archive_on_login (GibbonArchive *self,
                               const gchar *login);
 void gibbon_archive_update_user (GibbonArchive *self,
                                  const gchar *hostname, guint port,
-                                 const gchar *login);
-void gibbon_archive_update_user_full (GibbonArchive *self,
-                                      const gchar *hostname, guint port,
-                                      const gchar *login, gdouble rating,
-                                      gint experience);
+                                 const gchar *user, gdouble rating,
+                                 gint experience);
 void gibbon_archive_save_win (GibbonArchive *self,
                               const gchar *hostname, guint port,
                               const gchar *winner, const gchar *loser);

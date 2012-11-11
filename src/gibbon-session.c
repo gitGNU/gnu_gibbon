@@ -969,8 +969,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         archive = gibbon_app_get_archive (self->priv->app);
         connection = self->priv->connection;
 
-        gibbon_archive_update_user_full (archive, server, port, account,
-                                         rating, experience);
+        gibbon_archive_update_user (archive, server, port, account,
+                                    rating, experience);
 
         return GIBBON_CLIP_CODE_WHO_INFO;
 }

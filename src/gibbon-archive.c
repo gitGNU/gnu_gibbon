@@ -312,17 +312,17 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
 }
 
 void
-gibbon_archive_update_user_full (GibbonArchive *self,
-                                 const gchar *hostname, guint port,
-                                 const gchar *login, gdouble rating,
-                                 gint experience)
+gibbon_archive_update_user (GibbonArchive *self,
+                            const gchar *hostname, guint port,
+                            const gchar *user, gdouble rating,
+                            gint experience)
 {
         g_return_if_fail (GIBBON_IS_ARCHIVE (self));
         g_return_if_fail (hostname != NULL);
-        g_return_if_fail (login != NULL);
+        g_return_if_fail (user != NULL);
 
         gibbon_database_update_user_full (self->priv->db,
-                                          hostname, port, login,
+                                          hostname, port, user,
                                           rating, experience);
 }
 
