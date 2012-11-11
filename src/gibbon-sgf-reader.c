@@ -51,6 +51,7 @@ struct _GibbonSGFReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
         gpointer user_data;
         GibbonMatch *match;
+        guint scores[2];
 
         /* Per-instance data.  */
         const gchar *filename;
@@ -159,6 +160,14 @@ static gboolean gibbon_sgf_reader_setup_add_empty (GibbonSGFReader *self,
                                                    GibbonMatch *match,
                                                    const GSGFProperty *prop,
                                                    GError **error);
+static gboolean gibbon_sgf_reader_setup_add_white (GibbonSGFReader *self,
+                                                   GibbonMatch *match,
+                                                   const GSGFProperty *prop,
+                                                   GError **error);
+static gboolean gibbon_sgf_reader_setup_add_black (GibbonSGFReader *self,
+                                                   GibbonMatch *match,
+                                                   const GSGFProperty *prop,
+                                                   GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -167,6 +176,8 @@ gibbon_sgf_reader_init (GibbonSGFReader *self)
                 GIBBON_TYPE_SGF_READER, GibbonSGFReaderPrivate);
 
         self->priv->match = NULL;
+        self->priv->scores[0] = 0;
+        self->priv->scores[1] = 0;
         self->priv->filename = NULL;
         self->priv->timestamp = G_MININT64;
 
@@ -259,6 +270,8 @@ gibbon_sgf_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 
         match = gibbon_match_new (NULL, NULL, 0, FALSE);
         self->priv->match = match;
+        self->priv->scores[0] = 0;
+        self->priv->scores[1] = 0;
 
         iter = gsgf_collection_get_game_trees (collection);
 
@@ -410,6 +423,14 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                 if (prop && !gibbon_sgf_reader_setup_add_empty (self, match,
                                                                 prop, error))
                         return FALSE;
+                prop = gsgf_node_get_property (node, "AB");
+                if (prop && !gibbon_sgf_reader_setup_add_white (self, match,
+                                                                prop, error))
+                        return FALSE;
+                prop = gsgf_node_get_property (node, "AW");
+                if (prop && !gibbon_sgf_reader_setup_add_black (self, match,
+                                                                prop, error))
+                        return FALSE;
 
                 prop = gsgf_node_get_property (node, "B");
                 if (prop) {
@@ -534,27 +555,45 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
         if (!*string_value)
                 return TRUE;
 
-        /* The only property we are currently interested in is the length.  */
-        if (g_strcmp0 ("length", key))
-                return TRUE;
+        if (!g_strcmp0 ("length", key)) {
+                errno = 0;
+                value = g_ascii_strtoull (string_value, &endptr, 010);
+                if (errno) {
+                        g_set_error (error, 0, -1,
+                                     _("Invalid match length: %s!"),
+                                     strerror (errno));
+                        return FALSE;
+                }
 
-        errno = 0;
-        value = g_ascii_strtoull (string_value, &endptr, 010);
-        if (errno) {
-                g_set_error (error, 0, -1,
-                             _("Invalid match length: %s!"),
-                             strerror (errno));
-                return FALSE;
+                if (value > G_MAXSIZE) {
+                        g_set_error (error, 0, -1,
+                                     _("Match length %llu out of range!"),
+                                     (unsigned long long) value);
+                        return FALSE;
+                }
+
+                gibbon_match_set_length (match, value);
+        } else if (!g_strcmp0 ("bs", key)) {
+                errno = 0;
+                value = g_ascii_strtoull (string_value, &endptr, 010);
+                if (errno) {
+                        g_set_error (error, 0, -1,
+                                     _("Invalid match length: %s!"),
+                                     strerror (errno));
+                        return FALSE;
+                }
+                self->priv->scores[0] = value;
+        } else if (!g_strcmp0 ("ws", key)) {
+                errno = 0;
+                value = g_ascii_strtoull (string_value, &endptr, 010);
+                if (errno) {
+                        g_set_error (error, 0, -1,
+                                     _("Invalid match length: %s!"),
+                                     strerror (errno));
+                        return FALSE;
+                }
+                self->priv->scores[1] = value;
         }
-
-        if (value > G_MAXSIZE) {
-                g_set_error (error, 0, -1,
-                             _("Match length %llu out of range!"),
-                             (unsigned long long) value);
-                return FALSE;
-        }
-
-        gibbon_match_set_length (match, value);
 
         return TRUE;
 }
@@ -1493,6 +1532,7 @@ gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
                                    GError **error)
 {
         const GibbonGame *game;
+        GibbonPosition *pos;
 
         if (1 != gibbon_match_get_number_of_games (match)) {
                 g_set_error (error, 0, -1,
@@ -1508,6 +1548,10 @@ gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
                                " first regular game action!"), prop);
                 return FALSE;
         }
+
+        pos = gibbon_game_get_initial_position_editable (game);
+        pos->scores[0] = self->priv->scores[0];
+        pos->scores[1] = self->priv->scores[1];
 
         return TRUE;
 }
@@ -1546,7 +1590,7 @@ gibbon_sgf_reader_setup_dice (GibbonSGFReader *self, GibbonMatch *match,
         GibbonPosition *pos;
         gint64 encoded;
 
-        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "DI", error))
                 return FALSE;
 
         number = GSGF_NUMBER (gsgf_property_get_value (prop));
@@ -1576,7 +1620,7 @@ gibbon_sgf_reader_setup_cube (GibbonSGFReader *self, GibbonMatch *match,
         GibbonPosition *pos;
         gint64 cube;
 
-        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "CV", error))
                 return FALSE;
 
         number = GSGF_NUMBER (gsgf_property_get_value (prop));
@@ -1607,7 +1651,9 @@ gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self, GibbonMatch *match,
         GibbonPosition *pos;
         gchar *owner;
 
-        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+        if (!gibbon_sgf_reader_setup_pre_check (self, match,
+                                                gsgf_property_get_id (prop),
+                                                error))
                 return FALSE;
 
         text = GSGF_TEXT (gsgf_property_get_value (prop));
@@ -1659,7 +1705,7 @@ gibbon_sgf_reader_setup_add_empty (GibbonSGFReader *self, GibbonMatch *match,
         GSGFPointBackgammon *gsgf_point;
         gint point;
 
-        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "AE", error))
                 return FALSE;
 
         game = gibbon_match_get_current_game (match);
@@ -1676,7 +1722,75 @@ gibbon_sgf_reader_setup_add_empty (GibbonSGFReader *self, GibbonMatch *match,
                  * sense because it would clear both bars.
                  */
                 if (point >= 0 && point < 24) {
-                        pos->points[point] = 0;
+                        pos->points[23 - point] = 0;
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_add_white (GibbonSGFReader *self, GibbonMatch *match,
+                                   const GSGFProperty *prop, GError **error)
+{
+        GSGFListOf *values;
+        GibbonGame *game;
+        GibbonPosition *pos;
+        gsize num_items, i;
+        GSGFStoneBackgammon *gsgf_stone;
+        gint point;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "AB", error))
+                return FALSE;
+
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        values = GSGF_LIST_OF (gsgf_property_get_value (prop));
+        num_items = gsgf_list_of_get_number_of_items (values);
+        for (i = 0; i < num_items; ++i) {
+                gsgf_stone = GSGF_STONE_BACKGAMMON (
+                                gsgf_list_of_get_nth_item (values, i));
+                point = gsgf_stone_backgammon_get_stone (gsgf_stone);
+
+                if (point >= 0 && point < 24) {
+                        ++pos->points[23 - point];
+                } else if (point == 24) {
+                        ++pos->bar[0];
+                }
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_add_black (GibbonSGFReader *self, GibbonMatch *match,
+                                   const GSGFProperty *prop, GError **error)
+{
+        GSGFListOf *values;
+        GibbonGame *game;
+        GibbonPosition *pos;
+        gsize num_items, i;
+        GSGFStoneBackgammon *gsgf_stone;
+        gint point;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "AW", error))
+                return FALSE;
+
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        values = GSGF_LIST_OF (gsgf_property_get_value (prop));
+        num_items = gsgf_list_of_get_number_of_items (values);
+        for (i = 0; i < num_items; ++i) {
+                gsgf_stone = GSGF_STONE_BACKGAMMON (
+                                gsgf_list_of_get_nth_item (values, i));
+                point = gsgf_stone_backgammon_get_stone (gsgf_stone);
+
+                if (point >= 0 && point < 24) {
+                        --pos->points[23 - point];
+                } else if (point == 24) {
+                        --pos->bar[1];
                 }
         }
 
