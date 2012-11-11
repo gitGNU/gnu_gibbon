@@ -155,6 +155,10 @@ static gboolean gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self,
                                                     GibbonMatch *match,
                                                     const GSGFProperty *prop,
                                                     GError **error);
+static gboolean gibbon_sgf_reader_setup_add_empty (GibbonSGFReader *self,
+                                                   GibbonMatch *match,
+                                                   const GSGFProperty *prop,
+                                                   GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -400,6 +404,11 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                 prop = gsgf_node_get_property (node, "CP");
                 if (prop && !gibbon_sgf_reader_setup_cube_owner (self, match,
                                                                  prop, error))
+                        return FALSE;
+
+                prop = gsgf_node_get_property (node, "AE");
+                if (prop && !gibbon_sgf_reader_setup_add_empty (self, match,
+                                                                prop, error))
                         return FALSE;
 
                 prop = gsgf_node_get_property (node, "B");
@@ -1634,6 +1643,41 @@ gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self, GibbonMatch *match,
                                " property `%s'!"),
                              owner, gsgf_property_get_id (prop));
                 return FALSE;
+        }
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_add_empty (GibbonSGFReader *self, GibbonMatch *match,
+                                   const GSGFProperty *prop, GError **error)
+{
+        GSGFListOf *values;
+        GibbonGame *game;
+        GibbonPosition *pos;
+        gsize num_items, i;
+        GSGFPointBackgammon *gsgf_point;
+        gint point;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+                return FALSE;
+
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        values = GSGF_LIST_OF (gsgf_property_get_value (prop));
+        num_items = gsgf_list_of_get_number_of_items (values);
+        for (i = 0; i < num_items; ++i) {
+                gsgf_point = GSGF_POINT_BACKGAMMON (
+                                gsgf_list_of_get_nth_item (values, i));
+                point = gsgf_point_backgammon_get_point (gsgf_point);
+                /*
+                 * GNUBG used to clear the bar as well.  But that makes no
+                 * sense because it would clear both bars.
+                 */
+                if (point >= 0 && point < 24) {
+                        pos->points[point] = 0;
+                }
         }
 
         return TRUE;
