@@ -972,3 +972,15 @@ gibbon_game_get_num_actions (const GibbonGame *self)
 
         return self->priv->num_snapshots;
 }
+
+void
+gibbon_game_set_initial_position (GibbonGame *self,
+                                  const GibbonPosition *position)
+{
+        g_return_if_fail (GIBBON_IS_GAME (self));
+        g_return_if_fail (position != NULL);
+
+        if (self->priv->initial_position)
+                gibbon_position_free (self->priv->initial_position);
+        self->priv->initial_position = gibbon_position_copy (position);
+}

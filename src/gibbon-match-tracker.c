@@ -65,6 +65,11 @@ static void gibbon_match_tracker_resume (GibbonMatchTracker *self,
                                          const gchar *player2);
 static void gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
                                             const gchar *msg);
+static void gibbon_match_tracker_init_match (GibbonMatchTracker *self,
+                                             gsize length,
+                                             const gchar *player1,
+                                             const gchar *player2,
+                                             const GibbonPosition *initial);
 
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
@@ -134,15 +139,6 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
 {
         GibbonMatchTracker *self = g_object_new (GIBBON_TYPE_MATCH_TRACKER,
                                                  NULL);
-        GibbonArchive *archive = gibbon_app_get_archive (app);
-        GFile *file;
-        GFileOutputStream *fout;
-        GError *error = NULL;
-        GibbonMatchWriter *writer;
-        GibbonConnection *connection;
-        const gchar *host;
-        guint16 port;
-        gchar *location;
 
         /*
          * This constructor is a conceptual mess.  If we resume a match, we
@@ -157,55 +153,10 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         else
                 gibbon_match_tracker_resume (self, player1, player2);
 
-        if (!self->priv->match) {
-                self->priv->outname = gibbon_archive_get_saved_name (archive,
-                                                                     player1,
-                                                                     player2);
-
-                file = g_file_new_for_path (self->priv->outname);
-                fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
-                                       NULL, &error);
-                g_object_unref (file);
-                if (!fout) {
-                        gibbon_app_fatal_error (app, _("Write Error"),
-                                                _("Error writing to `%s': %s!\n"),
-                                                self->priv->outname,
-                                                error->message);
-                }
-                self->priv->out = G_OUTPUT_STREAM (fout);
-
-                /*
-                 * We always assume that the Crawford rule applies for
-                 * fixed-length matches.  We will find out whether this is
-                 * correct or not later.
-                 */
-                self->priv->match = gibbon_match_new (player1, player2, length,
-                                                      length);
-
-                connection = gibbon_app_get_connection (app);
-                host = gibbon_connection_get_hostname (connection);
-                port = gibbon_connection_get_port (connection);
-                if (port == 4321)
-                        location = g_strdup_printf ("x-fibs://%s", host);
-                else
-                        location = g_strdup_printf ("x-fibs://%s:%u",
-                                                    host, port);
-                gibbon_match_set_location (self->priv->match, location);
-                g_free (location);
-                self->priv->writer = gibbon_gmd_writer_new ();
-                writer = GIBBON_MATCH_WRITER (self->priv->writer);
-
-                if (!gibbon_match_writer_write_stream (writer, self->priv->out,
-                                                       self->priv->match, &error)) {
-                        gibbon_app_fatal_error (app, _("Write Error"),
-                                                _("Error writing to `%s': %s!\n"),
-                                                self->priv->outname,
-                                                error->message);
-                }
-                g_output_stream_flush (self->priv->out, NULL, NULL);
-        }
-
-        gibbon_app_set_match (app, self->priv->match);
+        if (!self->priv->match)
+                gibbon_match_tracker_init_match (self, length,
+                                                 player1, player2,
+                                                 NULL);
 
         return self;
 }
@@ -294,7 +245,7 @@ gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
 }
 
 void
-gibbon_match_tracker_update (const GibbonMatchTracker *self,
+gibbon_match_tracker_update (GibbonMatchTracker *self,
                              const GibbonPosition *target)
 {
         GSList *iter = NULL;
@@ -321,8 +272,26 @@ gibbon_match_tracker_update (const GibbonMatchTracker *self,
         }
 
         if (!gibbon_match_get_missing_actions (self->priv->match, target,
-                                               &iter))
-                goto bail_out;
+                                               &iter)) {
+                /*
+                 * This case is not necessarily in error.  It also happens,
+                 * if we have a saved match for the two opponents that
+                 * has expired on the server.
+                 *
+                 * Archive the currently saved match, if possible, and
+                 * start a new one with the new position as the starting
+                 * position.
+                 */
+                gibbon_match_tracker_unlink_or_archive (self,
+                                                        current->players[0],
+                                                        current->players[1]);
+                g_object_unref (self->priv->match);
+                gibbon_match_tracker_init_match (self, target->match_length,
+                                                 target->players[0],
+                                                 target->players[1],
+                                                 target);
+                current = gibbon_position_copy (target);
+        }
 
         list = gibbon_app_get_match_list (app);
 
@@ -438,3 +407,78 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
         self->priv->writer = gibbon_gmd_writer_new ();
 }
 
+static void
+gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
+                                 const gchar *player1, const gchar *player2,
+                                 const GibbonPosition *initial)
+{
+        GibbonArchive *archive = gibbon_app_get_archive (app);
+        GFile *file;
+        GFileOutputStream *fout;
+        GError *error = NULL;
+        GibbonMatchWriter *writer;
+        GibbonConnection *connection;
+        const gchar *host;
+        guint16 port;
+        gchar *location;
+        GibbonGame *game;
+
+        self->priv->outname = gibbon_archive_get_saved_name (archive,
+                                                             player1,
+                                                             player2);
+
+        file = g_file_new_for_path (self->priv->outname);
+        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
+                               NULL, &error);
+        g_object_unref (file);
+        if (!fout) {
+                gibbon_app_fatal_error (app, _("Write Error"),
+                                        _("Error writing to `%s': %s!\n"),
+                                        self->priv->outname,
+                                        error->message);
+        }
+        self->priv->out = G_OUTPUT_STREAM (fout);
+
+        /*
+         * We always assume that the Crawford rule applies for
+         * fixed-length matches.  We will find out whether this is
+         * correct or not later.
+         */
+        self->priv->match = gibbon_match_new (player1, player2, length,
+                                              length);
+
+        if (initial) {
+                game = gibbon_match_add_game (self->priv->match, &error);
+                if (!game) {
+                        gibbon_app_fatal_error (app, _("Internal Error"),
+                                                "%s", error->message);
+                        /* NOTREACHED */
+                        return;
+                }
+                gibbon_game_set_initial_position (game, initial);
+        }
+
+        connection = gibbon_app_get_connection (app);
+        host = gibbon_connection_get_hostname (connection);
+        port = gibbon_connection_get_port (connection);
+        if (port == 4321)
+                location = g_strdup_printf ("x-fibs://%s", host);
+        else
+                location = g_strdup_printf ("x-fibs://%s:%u",
+                                            host, port);
+        gibbon_match_set_location (self->priv->match, location);
+        g_free (location);
+        self->priv->writer = gibbon_gmd_writer_new ();
+        writer = GIBBON_MATCH_WRITER (self->priv->writer);
+
+        if (!gibbon_match_writer_write_stream (writer, self->priv->out,
+                                               self->priv->match, &error)) {
+                gibbon_app_fatal_error (app, _("Write Error"),
+                                        _("Error writing to `%s': %s!\n"),
+                                        self->priv->outname,
+                                        error->message);
+        }
+        g_output_stream_flush (self->priv->out, NULL, NULL);
+
+        gibbon_app_set_match (app, self->priv->match);
+}
