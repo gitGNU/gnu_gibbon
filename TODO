@@ -98,3 +98,5 @@
 - On login, retrieve the last known rank on the server and keep track of it
   during the entire session.  If a who info with a new rank arrives,
   update the archived value.
+- when adding actions to a match, check whether we may double, and update
+  information about the Crawford rule.
