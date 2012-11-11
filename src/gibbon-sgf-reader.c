@@ -1686,7 +1686,7 @@ gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self, GibbonMatch *match,
         } else {
                 g_set_error (error, 0, -1,
                              _("Invalid cube owner `%s' in SGF setup"
-                               " property `%s'!"),
+                               " property %s!"),
                              owner, gsgf_property_get_id (prop));
                 return FALSE;
         }
