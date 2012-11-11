@@ -485,17 +485,22 @@ gibbon_sgf_writer_setup (const GibbonSGFWriter *self, GSGFGameTree *game_tree,
         simple_text = GSGF_VALUE (gsgf_simple_text_new (cube_position));
 
         node = gsgf_game_tree_add_node (game_tree);
-        /*
-         * This is plain wrong.  CP is used for copyright notices, not for
-         * cube positions.  The correct property would be CO.  But as long
-         * as GNUBG does not fix that bug, there is no point on insisting on
-         * the correct syntax.
-         */
-        if (!gsgf_node_set_property (node, "CP", simple_text, error)) {
+        if (!gsgf_node_set_property (node, "CO", simple_text, error)) {
                 g_object_unref (simple_text);
                 return FALSE;
         }
 
+        /*
+         * This is plain wrong.  CP is used for copyright notices, not for
+         * cube positions.  The correct property would be CO.  But as long
+         * as GNUBG does not fix that bug, there is no point on insisting on
+         * the correct syntax.  Instead, we write both properties.
+         */
+        node = gsgf_game_tree_add_node (game_tree);
+        if (!gsgf_node_set_property (node, "CP", simple_text, error)) {
+                g_object_unref (simple_text);
+                return FALSE;
+        }
 
         /*
          * Set black and white points.  Be careful to swap sides to ensure

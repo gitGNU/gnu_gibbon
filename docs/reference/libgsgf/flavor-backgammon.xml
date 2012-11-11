@@ -138,7 +138,7 @@
           This is most probably a bug or typo but it unlikely to change
           in the future.  For compatibility with GNUBG, 
           <ulink url="http://www.gibbon.bg/">Gibbon</ulink> does the
-          same!
+          same but it additionally sets the correct property CO!
         </para>
       </important>
     </sect2>
