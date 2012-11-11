@@ -327,6 +327,91 @@ gibbon_archive_update_user (GibbonArchive *self,
 }
 
 void
+gibbon_archive_update_rank (GibbonArchive *self,
+                            const gchar *hostname, guint port,
+                            const gchar *user, gdouble rating,
+                            gint experience)
+{
+        gchar *path;
+        gchar *directory;
+        mode_t mode;
+        GFile *file;
+        GFileOutputStream *fout;
+        gchar *buffer;
+        GDateTime *dt;
+        gchar *year;
+        gchar month[3];
+        gchar day[3];
+        gint y, m, d;
+        guint64 now;
+
+        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
+        g_return_if_fail (hostname != NULL);
+        g_return_if_fail (user != NULL);
+
+        dt = g_date_time_new_now_local ();
+        if (!dt) {
+                gibbon_app_fatal_error (self->priv->app, _("Internal Error"),
+                                        "%s",
+                                        _("Error retrieving current time!!"));
+                /* NOTREACHED */
+                return;
+        }
+
+        now = g_get_real_time ();
+        g_date_time_get_ymd (dt, &y, &m, &d);
+        g_date_time_unref (dt);
+        year = g_strdup_printf ("%4d", y);
+        month[0] = '0' + m / 10;
+        month[1] = '0' + m % 10;
+        month[2] = 0;
+        day[0] = '0' + d / 10;
+        day[1] = '0' + d % 10;
+        day[2] = 0;
+
+        directory = g_build_filename (self->priv->session_directory,
+                                      year, month, day, NULL);
+#ifdef G_OS_WIN32
+        mode = S_IRWXU;
+#else
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+        if (0 != g_mkdir_with_parents (directory, mode)) {
+                gibbon_app_fatal_error (app, NULL,
+                                        _("Failed to create"
+                                        " server directory `%s': %s!"),
+                               self->priv->servers_directory,
+                               strerror (errno));
+                /* NOTREACHED */
+                return;
+        }
+        g_free (directory);
+
+        path = g_build_filename (self->priv->session_directory,
+                                 year, month, day, "ratings", NULL);
+        g_free (year);
+        file = g_file_new_for_path (path);
+        g_free (path);
+        fout = g_file_append_to (file, G_FILE_CREATE_NONE, NULL, NULL);
+        g_object_unref (file);
+        if (fout) {
+                buffer = g_strdup_printf ("%lld %f %llu\n",
+                                          (long long) g_get_real_time (),
+                                          rating,
+                                          (unsigned long long) experience);
+                g_output_stream_write_all (G_OUTPUT_STREAM (fout),
+                                           buffer, strlen (buffer),
+                                           NULL, NULL, NULL);
+                g_free (buffer);
+                g_object_unref (fout);
+        }
+
+        gibbon_database_update_rank (self->priv->db,
+                                     hostname, port, user,
+                                     rating, experience, now);
+}
+
+void
 gibbon_archive_save_win (GibbonArchive *self,
                          const gchar *hostname, guint port,
                          const gchar *winner, const gchar *loser)
@@ -857,8 +942,8 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
         g_date_time_get_ymd (dt, &y, &m, &d);
         g_date_time_unref (dt);
         year = g_strdup_printf ("%4d", y);
-        month[0] = '0' + (m + 1) / 10;
-        month[1] = '0' + (m + 1) % 10;
+        month[0] = '0' + m / 10;
+        month[1] = '0' + m % 10;
         month[2] = 0;
         day[0] = '0' + d / 10;
         day[1] = '0' + d % 10;

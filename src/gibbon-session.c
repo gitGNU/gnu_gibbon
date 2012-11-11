@@ -175,6 +175,10 @@ struct _GibbonSessionPrivate {
         gchar *opponent;
         gboolean available;
 
+        gboolean rating_seen;
+        gdouble rating;
+        guint64 experience;
+
         /* This is the approved position.   It is the result of a "board"
          * message, or of a move, roll, or other game play action made.
          */
@@ -230,6 +234,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->watching = NULL;
         self->priv->opponent = NULL;
         self->priv->available = FALSE;
+        self->priv->rating_seen = FALSE;
         self->priv->position = NULL;
         self->priv->direction = FALSE;
         self->priv->player_list = NULL;
@@ -839,7 +844,6 @@ gibbon_session_clip_who_info (GibbonSession *self,
         const gchar *email;
         const gchar *hostname;
         GibbonCountry *country;
-        GibbonConnection *connection;
         GibbonArchive *archive;
         gdouble reliability;
         guint confidence;
@@ -951,6 +955,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         g_free (client);
 
+        archive = gibbon_app_get_archive (self->priv->app);
+
         if (!g_strcmp0 (who, account)) {
                 if (!opponent[0])
                         opponent = NULL;
@@ -964,10 +970,18 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         gibbon_session_stop_playing (self);
                         self->priv->watching = g_strdup (watching);
                 }
-        }
 
-        archive = gibbon_app_get_archive (self->priv->app);
-        connection = self->priv->connection;
+                if (!self->priv->rating_seen
+                    || rating != self->priv->rating
+                    || experience != self->priv->experience) {
+                        self->priv->rating_seen = TRUE;
+                        self->priv->rating = rating;
+                        self->priv->experience = experience;
+                        gibbon_archive_update_rank (archive, server, port,
+                                                    account, rating,
+                                                    experience);
+                }
+        }
 
         gibbon_archive_update_user (archive, server, port, account,
                                     rating, experience);

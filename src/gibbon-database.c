@@ -31,7 +31,6 @@
 #include <glib/gi18n.h>
 #include <stdarg.h>
 #include <sqlite3.h>
-#include <time.h>
 
 #include "gibbon-database.h"
 #include "gibbon-geo-ip-updater.h"
@@ -44,7 +43,7 @@
 /* Differences in the minor schema version require conditional creation of
  * new tables or indexes.
  */
-#define GIBBON_DATABASE_SCHEMA_MINOR 3
+#define GIBBON_DATABASE_SCHEMA_MINOR 4
 
 /* Differences in the schema revision are for cosmetic changes that will
  * not have any impact on existing databases (case, column order, ...).
@@ -83,6 +82,12 @@ struct _GibbonDatabasePrivate {
          " VALUES ((SELECT id FROM servers WHERE name = ? AND port = ?),"    \
          "          ?, ?, ?, ?)"
         sqlite3_stmt *update_user;
+
+#define GIBBON_DATABASE_UPDATE_RANK                                          \
+        "INSERT INTO ratings (server_id, name, date_time, experience, rating)" \
+         " VALUES ((SELECT id FROM servers WHERE name = ? AND port = ?),"    \
+         "          ?, ?, ?, ?)"
+        sqlite3_stmt *update_rank;
 
 #define GIBBON_DATABASE_INSERT_ACTIVITY                                       \
         "INSERT INTO activities (user_id, value, date_time) VALUES (?, ?, ?)"
@@ -159,6 +164,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->select_user_id = NULL;
         self->priv->insert_user = NULL;
         self->priv->update_user = NULL;
+        self->priv->update_rank = NULL;
         self->priv->insert_activity = NULL;
         self->priv->select_activity = NULL;
         self->priv->delete_activity = NULL;
@@ -196,6 +202,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->insert_user);
                 if (self->priv->update_user)
                         sqlite3_finalize (self->priv->update_user);
+                if (self->priv->update_rank)
+                        sqlite3_finalize (self->priv->update_rank);
                 if (self->priv->insert_activity)
                         sqlite3_finalize (self->priv->insert_activity);
                 if (self->priv->select_activity)
@@ -467,6 +475,23 @@ gibbon_database_initialize (GibbonDatabase *self)
         if (!gibbon_database_sql_do (self, "CREATE TABLE"
                                            " IF NOT EXISTS ip2country_update ("
                                            " last_update INT64 NOT NULL)"))
+                return FALSE;
+
+        if (drop_first
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS ratings"))
+                return FALSE;
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE TABLE IF NOT EXISTS ratings ("
+                                     "  id INTEGER PRIMARY KEY,"
+                                     "  name TEXT NOT NULL,"
+                                     "  server_id INTEGER NOT NULL,"
+                                     "  experience INTEGER,"
+                                     "  rating REAL,"
+                                     "  date_time INT64 NOT NULL,"
+                                     "  FOREIGN KEY (server_id)"
+                                     "    REFERENCES servers (id)"
+                                     "    ON DELETE CASCADE"
+                                     ")"))
                 return FALSE;
 
         if (!gibbon_database_sql_do (self, "DELETE FROM version"))
@@ -856,13 +881,53 @@ gibbon_database_update_user_full (GibbonDatabase *self,
         if (!gibbon_database_begin_transaction (self))
                 return FALSE;
 
-        now = (gint64) time (NULL);
+        now = g_get_real_time ();
         if (!gibbon_database_sql_execute (self, self->priv->update_user,
                                           GIBBON_DATABASE_UPDATE_USER,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           G_TYPE_INT64, &now,
+                                          G_TYPE_UINT, &experience,
+                                          G_TYPE_DOUBLE, &rating,
+                                          -1)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        if (!gibbon_database_commit (self)) {
+                gibbon_database_rollback (self);
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
+gboolean
+gibbon_database_update_rank (GibbonDatabase *self,
+                             const gchar *hostname, guint port,
+                             const gchar *login,
+                             gdouble rating, guint experience,
+                             gint64 timestamp)
+{
+        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
+        g_return_val_if_fail (hostname != NULL, FALSE);
+        g_return_val_if_fail (port != 0, FALSE);
+        g_return_val_if_fail (login != NULL, FALSE);
+
+        if (!gibbon_database_get_statement (self, &self->priv->update_rank,
+                                            GIBBON_DATABASE_UPDATE_RANK))
+                return FALSE;
+
+        if (!gibbon_database_begin_transaction (self))
+                return FALSE;
+
+        if (!gibbon_database_sql_execute (self, self->priv->update_rank,
+                                          GIBBON_DATABASE_UPDATE_RANK,
+                                          G_TYPE_STRING, &hostname,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_STRING, &login,
+                                          G_TYPE_INT64, &timestamp,
                                           G_TYPE_UINT, &experience,
                                           G_TYPE_DOUBLE, &rating,
                                           -1)) {
@@ -907,7 +972,7 @@ gibbon_database_insert_activity (GibbonDatabase *self,
         if (!gibbon_database_begin_transaction (self))
                 return FALSE;
 
-        now = (gint64) time (NULL);
+        now = g_get_real_time ();
         if (!gibbon_database_sql_execute (self, self->priv->insert_activity,
                                           GIBBON_DATABASE_INSERT_ACTIVITY,
                                           G_TYPE_UINT, &user_id,
@@ -939,8 +1004,8 @@ gibbon_database_maintain (GibbonDatabase *self)
         /* Delete all activities older than 100 days.  Also handle
          * clock skews gracefully.
          */
-        now = time (NULL);
-        then = now - 100 * 24 * 60 * 60;
+        now = g_get_real_time ();
+        then = now - 100ULL * 24 * 60 * 60 * 1000000;
         sql = "DELETE FROM activities WHERE (date_time < ? OR date_time > ?)";
         if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
                                              -1, &stmt, NULL)) {
@@ -1058,7 +1123,7 @@ gibbon_database_get_user_id (GibbonDatabase *self,
                 return 0;
         }
 
-        now = (gint64) time (NULL);
+        now = g_get_real_time ();
         /*
          * We do not return on failure here.  Maybe the same user was created
          * by a parallel process.
@@ -1260,10 +1325,10 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
                                              -1))
                 last_update = 0;
 
-        now = time (NULL);
+        now = g_get_real_time ();
         diff = now - last_update;
 
-        if (now - last_update >= 30 * 24 * 60 * 60)
+        if (now - last_update >= 30ULL * 24 * 60 * 60 * 1000000)
                 self->priv->geo_ip_updater =
                                 gibbon_geo_ip_updater_new (self->priv->app,
                                                            self, last_update);
@@ -1295,7 +1360,7 @@ gibbon_database_cancel_geo_ip_update (GibbonDatabase *self)
 void
 gibbon_database_close_geo_ip_update (GibbonDatabase *self)
 {
-        gint64 now = time (NULL);
+        gint64 now = g_get_real_time ();
 
         g_return_if_fail (GIBBON_IS_DATABASE (self));
         g_return_if_fail (self->priv->geo_ip_updater != NULL);
