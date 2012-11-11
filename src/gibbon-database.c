@@ -91,7 +91,7 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *update_rank;
 
 #define GIBBON_DATABASE_SELECT_RANK                                          \
-        "SELECT r.id, r.rating, r.experience" \
+        "SELECT r.rating, r.experience" \
         " FROM ranks r, users u, servers s" \
         " WHERE r.user_id = u.id AND u.name = ? AND u.server_id = s.id" \
         "   AND s.name = ? AND s.port = ?" \
