@@ -90,6 +90,14 @@ struct _GibbonDatabasePrivate {
 	" ?, ?, ?)"
         sqlite3_stmt *update_rank;
 
+#define GIBBON_DATABASE_SELECT_RANK                                          \
+        "SELECT r.id, r.rating, r.experience" \
+        " FROM ranks r, users u, servers s" \
+        " WHERE r.user_id = u.id AND u.name = ? AND u.server_id = s.id" \
+        "   AND s.name = ? AND s.port = ?" \
+        " ORDER BY r.date_time DESC LIMIT 1"
+        sqlite3_stmt *select_rank;
+
 #define GIBBON_DATABASE_INSERT_ACTIVITY                                       \
         "INSERT INTO activities (user_id, value, date_time) VALUES (?, ?, ?)"
         sqlite3_stmt *insert_activity;
@@ -166,6 +174,7 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->insert_user = NULL;
         self->priv->update_user = NULL;
         self->priv->update_rank = NULL;
+        self->priv->select_rank = NULL;
         self->priv->insert_activity = NULL;
         self->priv->select_activity = NULL;
         self->priv->delete_activity = NULL;
@@ -205,6 +214,8 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->update_user);
                 if (self->priv->update_rank)
                         sqlite3_finalize (self->priv->update_rank);
+                if (self->priv->select_rank)
+                        sqlite3_finalize (self->priv->select_rank);
                 if (self->priv->insert_activity)
                         sqlite3_finalize (self->priv->insert_activity);
                 if (self->priv->select_activity)
