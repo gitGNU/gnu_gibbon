@@ -235,6 +235,7 @@ TESTS_C = test_html_entities test_build_match test_position test_moves \
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_add_drop test_gmd_reader_edited \
+	test_sgf_reader_edited \
         test_gary_wong_movegen
 TESTS_SH = test_match_completion.sh
 
@@ -245,7 +246,7 @@ check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_match_complete test_add_drop \
-	test_gmd_reader_edited \
+	test_gmd_reader_edited test_sgf_reader_edited \
         test_gary_wong_movegen
 
 test_html_entities_SOURCES = $(common_SOURCES) html-entities.c \
@@ -266,6 +267,7 @@ test_match_consistency_SOURCES = $(common_SOURCES) test-match-consistency.c
 test_match_complete_SOURCES = $(common_SOURCES) test-match-complete.c
 test_add_drop_SOURCES = $(common_SOURCES) test-add-drop.c
 test_gmd_reader_edited_SOURCES = $(common_SOURCES) test-gmd-reader-edited.c
+test_sgf_reader_edited_SOURCES = $(common_SOURCES) test-sgf-reader-edited.c
 
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
@@ -281,6 +283,6 @@ MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
 	reject2-white-incomplete.gmd reject2-white-complete.gmd \
 	reject2-black-incomplete.gmd reject2-black-complete.gmd \
 	dance-incomplete.gmd dance-complete0.gmd \
-	dance-complete1.gmd dance-complete2.gmd edited.gmd
+	dance-complete1.gmd dance-complete2.gmd edited.gmd edited.sgf
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
