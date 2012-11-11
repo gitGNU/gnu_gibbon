@@ -151,6 +151,10 @@ static gboolean gibbon_sgf_reader_setup_cube (GibbonSGFReader *self,
                                               GibbonMatch *match,
                                               const GSGFProperty *prop,
                                               GError **error);
+static gboolean gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self,
+                                                    GibbonMatch *match,
+                                                    const GSGFProperty *prop,
+                                                    GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -384,6 +388,18 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                 prop = gsgf_node_get_property (node, "CV");
                 if (prop && !gibbon_sgf_reader_setup_cube (self, match, prop,
                                                            error))
+                        return FALSE;
+                prop = gsgf_node_get_property (node, "CO");
+                if (prop && !gibbon_sgf_reader_setup_cube_owner (self, match,
+                                                                 prop, error))
+                        return FALSE;
+                /*
+                 * GNUBG uses the CP property (copyright) instead of CO
+                 * (cube owner).  For compatibility, we allow both here.
+                 */
+                prop = gsgf_node_get_property (node, "CP");
+                if (prop && !gibbon_sgf_reader_setup_cube_owner (self, match,
+                                                                 prop, error))
                         return FALSE;
 
                 prop = gsgf_node_get_property (node, "B");
@@ -1532,7 +1548,6 @@ gibbon_sgf_reader_setup_dice (GibbonSGFReader *self, GibbonMatch *match,
                              _("Invalid dice value `%lld' in SGF setup"
                                " property DI!"),
                              (long long) encoded);
-                             ;
                 return FALSE;
         }
         game = gibbon_match_get_current_game (match);
@@ -1562,7 +1577,6 @@ gibbon_sgf_reader_setup_cube (GibbonSGFReader *self, GibbonMatch *match,
                              _("Invalid cube value `%lld' in SGF setup"
                                " property CV!"),
                              (long long) cube);
-                             ;
                 return FALSE;
         }
         if (!cube)
@@ -1571,6 +1585,56 @@ gibbon_sgf_reader_setup_cube (GibbonSGFReader *self, GibbonMatch *match,
         game = gibbon_match_get_current_game (match);
         pos = gibbon_game_get_initial_position_editable (game);
         pos->cube = cube;
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self, GibbonMatch *match,
+                                    const GSGFProperty *prop, GError **error)
+{
+        GSGFText *text;
+        GibbonGame *game;
+        GibbonPosition *pos;
+        gchar *owner;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+                return FALSE;
+
+        text = GSGF_TEXT (gsgf_property_get_value (prop));
+        owner = gsgf_text_get_value (text);
+
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+
+        if (!g_ascii_strcasecmp ("b", owner)
+            || !g_ascii_strcasecmp ("black", owner)) {
+                pos->may_double[0] = TRUE;
+                pos->may_double[1] = FALSE;
+        } else if (!g_ascii_strcasecmp ("w", owner)
+                   || !g_ascii_strcasecmp ("white", owner)) {
+                        pos->may_double[0] = FALSE;
+                        pos->may_double[1] = TRUE;
+        } else if (!g_ascii_strcasecmp ("n", owner)
+                   || !g_ascii_strcasecmp ("none", owner)
+                   || !g_ascii_strcasecmp ("nobody", owner)
+                   || !g_ascii_strcasecmp ("noone", owner)) {
+                        pos->may_double[0] = FALSE;
+                        pos->may_double[1] = FALSE;
+        } else if (!g_ascii_strcasecmp ("c", owner)
+                   || !g_ascii_strcasecmp ("centered", owner)
+                   || !g_ascii_strcasecmp ("centred", owner)
+                   || !g_ascii_strcasecmp ("center", owner)
+                   || !g_ascii_strcasecmp ("centre", owner)) {
+                        pos->may_double[0] = FALSE;
+                        pos->may_double[1] = FALSE;
+        } else {
+                g_set_error (error, 0, -1,
+                             _("Invalid cube owner `%s' in SGF setup"
+                               " property `%s'!"),
+                             owner, gsgf_property_get_id (prop));
+                return FALSE;
+        }
 
         return TRUE;
 }
