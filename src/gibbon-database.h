@@ -87,6 +87,10 @@ gboolean gibbon_database_update_rank (GibbonDatabase *self,
                                       const gchar *login,
                                       gdouble rating, guint experience,
                                       gint64 timestamp);
+gboolean gibbon_database_get_rank (GibbonDatabase *self,
+                                   const gchar *hostname, guint port,
+                                   const gchar *login,
+                                   gdouble *rating, guint64 experience);
 gboolean gibbon_database_insert_activity (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login,

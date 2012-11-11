@@ -84,9 +84,10 @@ struct _GibbonDatabasePrivate {
         sqlite3_stmt *update_user;
 
 #define GIBBON_DATABASE_UPDATE_RANK                                          \
-        "INSERT INTO ratings (server_id, name, date_time, experience, rating)" \
-         " VALUES ((SELECT id FROM servers WHERE name = ? AND port = ?),"    \
-         "          ?, ?, ?, ?)"
+	"INSERT INTO ranks (user_id, rating, experience, date_time)" \
+	" VALUES ((SELECT id FROM users WHERE name = ? AND server_id =" \
+	"         (SELECT id FROM servers WHERE name = ? AND port = ?)), " \
+	" ?, ?, ?)"
         sqlite3_stmt *update_rank;
 
 #define GIBBON_DATABASE_INSERT_ACTIVITY                                       \
@@ -478,18 +479,17 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS ratings"))
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS ranks"))
                 return FALSE;
         if (!gibbon_database_sql_do (self,
-                                     "CREATE TABLE IF NOT EXISTS ratings ("
+                                     "CREATE TABLE IF NOT EXISTS ranks ("
                                      "  id INTEGER PRIMARY KEY,"
-                                     "  name TEXT NOT NULL,"
-                                     "  server_id INTEGER NOT NULL,"
+                                     "  user_id INTEGER NOT NULL,"
                                      "  experience INTEGER,"
                                      "  rating REAL,"
                                      "  date_time INT64 NOT NULL,"
-                                     "  FOREIGN KEY (server_id)"
-                                     "    REFERENCES servers (id)"
+                                     "  FOREIGN KEY (user_id)"
+                                     "    REFERENCES users (id)"
                                      "    ON DELETE CASCADE"
                                      ")"))
                 return FALSE;
@@ -924,12 +924,12 @@ gibbon_database_update_rank (GibbonDatabase *self,
 
         if (!gibbon_database_sql_execute (self, self->priv->update_rank,
                                           GIBBON_DATABASE_UPDATE_RANK,
+                                          G_TYPE_STRING, &login,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
-                                          G_TYPE_STRING, &login,
-                                          G_TYPE_INT64, &timestamp,
-                                          G_TYPE_UINT, &experience,
                                           G_TYPE_DOUBLE, &rating,
+                                          G_TYPE_UINT, &experience,
+                                          G_TYPE_INT64, &timestamp,
                                           -1)) {
                 gibbon_database_rollback (self);
                 return FALSE;
