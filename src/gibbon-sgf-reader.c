@@ -147,6 +147,10 @@ static gboolean gibbon_sgf_reader_setup_dice (GibbonSGFReader *self,
                                               GibbonMatch *match,
                                               const GSGFProperty *prop,
                                               GError **error);
+static gboolean gibbon_sgf_reader_setup_cube (GibbonSGFReader *self,
+                                              GibbonMatch *match,
+                                              const GSGFProperty *prop,
+                                              GError **error);
 
 static void 
 gibbon_sgf_reader_init (GibbonSGFReader *self)
@@ -375,6 +379,10 @@ gibbon_sgf_reader_game (GibbonSGFReader *self, GibbonMatch *match,
                         return FALSE;
                 prop = gsgf_node_get_property (node, "DI");
                 if (prop && !gibbon_sgf_reader_setup_dice (self, match, prop,
+                                                           error))
+                        return FALSE;
+                prop = gsgf_node_get_property (node, "CV");
+                if (prop && !gibbon_sgf_reader_setup_cube (self, match, prop,
                                                            error))
                         return FALSE;
 
@@ -1531,6 +1539,38 @@ gibbon_sgf_reader_setup_dice (GibbonSGFReader *self, GibbonMatch *match,
         pos = gibbon_game_get_initial_position_editable (game);
         pos->dice[0] = encoded / 10;
         pos->dice[1] = encoded % 10;
+
+        return TRUE;
+}
+
+static gboolean
+gibbon_sgf_reader_setup_cube (GibbonSGFReader *self, GibbonMatch *match,
+                              const GSGFProperty *prop, GError **error)
+{
+        GSGFNumber *number;
+        GibbonGame *game;
+        GibbonPosition *pos;
+        gint64 cube;
+
+        if (!gibbon_sgf_reader_setup_pre_check (self, match, "PL", error))
+                return FALSE;
+
+        number = GSGF_NUMBER (gsgf_property_get_value (prop));
+        cube = gsgf_number_get_value (number);
+        if (cube < 0) {
+                g_set_error (error, 0, -1,
+                             _("Invalid cube value `%lld' in SGF setup"
+                               " property CV!"),
+                             (long long) cube);
+                             ;
+                return FALSE;
+        }
+        if (!cube)
+                cube = 1;
+
+        game = gibbon_match_get_current_game (match);
+        pos = gibbon_game_get_initial_position_editable (game);
+        pos->cube = cube;
 
         return TRUE;
 }
