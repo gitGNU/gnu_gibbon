@@ -388,7 +388,7 @@ gibbon_archive_update_rank (GibbonArchive *self,
         g_free (directory);
 
         path = g_build_filename (self->priv->session_directory,
-                                 year, month, day, "ratings", NULL);
+                                 year, month, day, "ranks", NULL);
         g_free (year);
         file = g_file_new_for_path (path);
         g_free (path);
