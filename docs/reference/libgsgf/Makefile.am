@@ -55,6 +55,7 @@ GTKDOC_LIBS =					\
 MKDB_OPTIONS = --output-format=xml --sgml-mode --name-space=gsgf
 
 content_files = version.xml overview.xml 	\
+	flavors.xml				\
 	flavor-general.xml			\
 	flavor-backgammon.xml
 
