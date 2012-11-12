@@ -233,18 +233,32 @@ gsgf_flavor_backgammon_write_compressed_list (const GSGFFlavor *flavor,
                         }
                         pending = 0;
                 } else if (this_point != last_point + 1) {
-                        buffer[0] = ':';
-                        buffer[1] = 'a' + last_point;
-                        buffer[2] = ']';
-                        buffer[3] = '[';
-                        buffer[4] = 'a' + this_point;
-                        if (!g_output_stream_write_all(out, buffer, 5,
-                                                       &written_here,
-                                                       cancellable, error)) {
-                                *bytes_written += written_here;
-                                return FALSE;
+                        if (pending) {
+                                buffer[0] = ':';
+                                buffer[1] = 'a' + last_point;
+                                buffer[2] = ']';
+                                buffer[3] = '[';
+                                buffer[4] = 'a' + this_point;
+                                if (!g_output_stream_write_all(out, buffer, 5,
+                                                               &written_here,
+                                                               cancellable,
+                                                               error)) {
+                                        *bytes_written += written_here;
+                                        return FALSE;
+                                }
+                                pending = 0;
+                        } else {
+                                buffer[0] = ']';
+                                buffer[1] = '[';
+                                buffer[2] = 'a' + this_point;
+                                if (!g_output_stream_write_all(out, buffer, 3,
+                                                               &written_here,
+                                                               cancellable,
+                                                               error)) {
+                                        *bytes_written += written_here;
+                                        return FALSE;
+                                }
                         }
-                        pending = 0;
                 } else {
                         ++pending;
                 }
