@@ -3,10 +3,17 @@ Version 0.2.0
 
 Version 0.2.0 implements some milestones:
 
+* Matches are tracked and displayed in the move list.  You can navigate
+  through previously played matches with the mouse or the cursor keys.
+
+* Matches are recorded as GMD files.
+
+* You can pass a match file in one of the supported formats on the command
+  line.  If it is SGF with GNUBG analysis data, the analysis is displayed
+  as well.
+
 * gibbon-convert converts between SGF, GMD, JellyFish and JavaFIBS match
   files.
-
-* All matches are recorded as GMD files.
 
 Version 0.1.2
 =============
