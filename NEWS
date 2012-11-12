@@ -1,3 +1,13 @@
+Version 0.2.0
+=============
+
+Version 0.2.0 implements some milestones:
+
+* gibbon-convert converts between SGF, GMD, JellyFish and JavaFIBS match
+  files.
+
+* All matches are recorded as GMD files.
+
 Version 0.1.2
 =============
 
@@ -13,7 +23,7 @@ Version 0.1.1
 
 Version 0.1.1 is a mainly a bugfix release.
 
-* Point labels are now updated dynamically
+* Point labels are now updated dynamically.
 
 * Online help will now be displayed under Windows.
 
