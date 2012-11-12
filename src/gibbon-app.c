@@ -120,6 +120,7 @@ static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 static void gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_register_request (GibbonApp *self);
 static void gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter);
+static void gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_connecting (GibbonApp *self,
                                       GibbonConnection *connection);
 static void gibbon_app_on_connected (GibbonApp *self,
@@ -671,6 +672,12 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_app_on_quit_request),
                         (gpointer) self);
 
+        obj = gibbon_app_find_object(self, "open_menu_item",
+                                     GTK_TYPE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                        G_CALLBACK (gibbon_app_on_open),
+                        (gpointer) self);
+
         obj = gibbon_app_find_object(self, "quit_menu_item",
                                      GTK_TYPE_MENU_ITEM);
         g_signal_connect_swapped (obj, "activate",
@@ -770,6 +777,29 @@ static void
 gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
 {
         gtk_main_quit();
+}
+
+static void
+gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
+{
+        GtkWidget *dialog;
+        char *filename;
+
+        dialog = gtk_file_chooser_dialog_new (_("Open File"),
+                                              GTK_WINDOW (self->priv->window),
+                                              GTK_FILE_CHOOSER_ACTION_OPEN,
+                                              GTK_STOCK_CANCEL,
+                                              GTK_RESPONSE_CANCEL,
+                                              GTK_STOCK_OPEN,
+                                              GTK_RESPONSE_ACCEPT,
+                                              NULL);
+        if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+                filename = gtk_file_chooser_get_filename (
+                                GTK_FILE_CHOOSER (dialog));
+                /* g_printerr ("open filename %s\n", filename); */
+                g_free (filename);
+        }
+        gtk_widget_destroy (dialog);
 }
 
 static void
