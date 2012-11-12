@@ -283,6 +283,10 @@ MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
 	reject2-white-incomplete.gmd reject2-white-complete.gmd \
 	reject2-black-incomplete.gmd reject2-black-complete.gmd \
 	dance-incomplete.gmd dance-complete0.gmd \
-	dance-complete1.gmd dance-complete2.gmd edited.gmd edited.sgf
+	dance-complete1.gmd dance-complete2.gmd edited.gmd edited.sgf \
+	initial-with-game.gmd initial.gmd initial-with-double.gmd \
+	initial-with-one-double.gmd opening-white-complete.gmd \
+	opening-black-complete.gmd opening-white-double-complete.gmd \
+	opening-black-double-complete.gmd initial-with-two-doubles.gmd
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc
