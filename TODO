@@ -90,8 +90,7 @@
   is really edited, and display "Setup ..." instead.
 - check whether gsgf_flavor_backgammon_new() creates memory leaks in
   the SGF reader.
-- lists are not properly compressed in GSGF.  For example we see things
-  likeAE[c:c].
 - when adding actions to a match, check whether we may double, and update
   information about the Crawford rule.
 - Move animation got lost and should be rewritten anyway.
+- Make all scanners and parsers reentrant.
