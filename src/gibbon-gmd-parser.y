@@ -33,7 +33,7 @@
 #include "gibbon-gmd-parser.h"
 #include "gibbon-gmd-reader-priv.h"
 
-#define reader _gibbon_gmd_reader_instance
+#define reader gibbon_gmd_lexer_get_extra(scanner)
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -46,10 +46,10 @@
  */
 
 #define yymaxdepth gibbon_gmd_parser_maxdepth
-#define yyparse    gibbon_gmd_parser_parse
+#define yyparse(s)    gibbon_gmd_parser_parse(s)
 #define yylex      gibbon_gmd_lexer_lex
-extern int gibbon_gmd_lexer_lex (void);
-#define yyerror    _gibbon_gmd_reader_yyerror
+extern int gibbon_gmd_lexer_lex (YYSTYPE * lvalp, void *scanner);
+#define yyerror    gibbon_gmd_reader_yyerror
 #define yylval     gibbon_gmd_parser_lval
 #define yychar     gibbon_gmd_parser_char
 #define yydebug    gibbon_gmd_parser_debug
@@ -138,6 +138,10 @@ extern int gibbon_gmd_lexer_lex (void);
 %type <num> point
 %type <num> die
 %type <num> score
+
+%pure-parser
+%lex-param {void *scanner}
+%parse-param {void *scanner}
 
 %%
 
@@ -247,8 +251,9 @@ point
 	: INTEGER
 	  {
 	  	if ($1 < -15 || $1 > 15) {
-	  		_gibbon_gmd_reader_yyerror (_("Number of checkers on"
-	  		                              " point out of range!"));
+	  		gibbon_gmd_reader_yyerror (scanner,
+	  		                           _("Number of checkers on"
+	  		                             " point out of range!"));
 	  	        YYABORT;
 	  	}
 	  	$$ = $1;
@@ -269,7 +274,8 @@ die
 	: INTEGER
 	  {
 	  	if ($1 < -6 || $1 > 6 || $1 == 0) {
-	  		_gibbon_gmd_reader_yyerror (_("Invalid dice!"));
+	  		gibbon_gmd_reader_yyerror (scanner,
+	  		                           _("Invalid dice!"));
 	  	        YYABORT;
 	  	}
 	  	$$ = $1;
@@ -289,7 +295,8 @@ score
 	: INTEGER
 	  {
 	  	if ($1 < 0) {
-	  		_gibbon_gmd_reader_yyerror (_("Invalid score!"));
+	  		gibbon_gmd_reader_yyerror (scanner,
+	  		                           _("Invalid score!"));
 	  	        YYABORT;
 	  	}
 	  	$$ = $1;
@@ -307,7 +314,8 @@ cube
 	| CUBE LBRACE INTEGER INTEGER
 	  {
 	        if ($3 <= 0) {
-	        	_gibbon_gmd_reader_yyerror (_("Invalid cube!"));
+	        	gibbon_gmd_reader_yyerror (scanner,
+	        	                           _("Invalid cube!"));
 	        	YYABORT;
 	        }
 	   	if (!_gibbon_gmd_reader_setup_cube (reader, $3, $4))
@@ -398,7 +406,9 @@ point
 	: POSITIVE
 		{ 
 			if (!$$ || $$ > 24) {
-				yyerror (_("Point out of range (1-24)!"));
+				gibbon_gmd_reader_yyerror (scanner,
+				                           _("Point out of"
+				                             " range (1-24)!"));
 				YYABORT;
 			}
 		}
@@ -438,7 +448,8 @@ resign
 	: RESIGN COLON color COLON POSITIVE COLON POSITIVE
 		{
 			if (!$5) {
-				yyerror (_("Resignation value cannot be"
+				yyerror (scanner,
+				         _("Resignation value cannot be"
 				           " zero!"));
 				YYABORT;
 			}

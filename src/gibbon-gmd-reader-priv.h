@@ -24,13 +24,13 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+
 #include "gibbon-gmd-reader.h"
 
 G_BEGIN_DECLS
 
 extern GibbonGMDReader *_gibbon_gmd_reader_instance;
-
-void _gibbon_gmd_reader_yyerror (const gchar *msg);
 
 void _gibbon_gmd_reader_set_player (GibbonGMDReader *self,
                                     GibbonPositionSide side,
@@ -69,8 +69,8 @@ gboolean _gibbon_gmd_reader_reject (GibbonGMDReader *self,
 gboolean _gibbon_gmd_reader_accept (GibbonGMDReader *self,
                                     GibbonPositionSide side,
                                     gint64 timestamp);
-gchar *_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
-                                             const gchar *name);
+gchar *gibbon_gmd_reader_alloc_name (GibbonGMDReader *self,
+                                     const gchar *name);
 void _gibbon_gmd_reader_free_names (GibbonGMDReader *self);
 
 gboolean _gibbon_gmd_reader_check_setup (GibbonGMDReader *self);
@@ -93,6 +93,14 @@ gboolean _gibbon_gmd_reader_setup_cube (GibbonGMDReader *self, gint64 cube,
 gboolean _gibbon_gmd_reader_setup_turn (GibbonGMDReader *self, gint64 turn);
 gboolean _gibbon_gmd_reader_setup_may_double (GibbonGMDReader *self,
                                               gint64 flag1, gint64 flag2);
+void gibbon_gmd_reader_yyerror (void *scanner, const gchar *msg);
+
+
+void gibbon_gmd_lexer_set_in (FILE *input, void *yyscanner);
+int gibbon_gmd_lexer_lex_init_extra (void *self, void **yyscanner);
+int gibbon_gmd_lexer_lex_destroy (void *yyscanner);
+void *gibbon_gmd_lexer_get_extra (void *yyscanner);
+int gibbon_gmd_parser_parse ();
 
 G_END_DECLS
 

@@ -37,6 +37,7 @@
 
 #include "gibbon-gmd-reader-priv.h"
 
+#include "gibbon-app.h"
 #include "gibbon-game.h"
 #include "gibbon-game-action.h"
 #include "gibbon-game-actions.h"
@@ -46,12 +47,11 @@ struct _GibbonGMDReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
         gpointer user_data;
         const gchar *filename;
+        void *yyscanner;
         GibbonMatch *match;
 
         GSList *names;
 };
-
-GibbonGMDReader *_gibbon_gmd_reader_instance = NULL;
 
 #define GIBBON_GMD_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_GMD_READER, GibbonGMDReaderPrivate))
@@ -64,6 +64,8 @@ static gboolean gibbon_gmd_reader_add_action (GibbonGMDReader *self,
                                               GibbonPositionSide side,
                                               gint64 timestamp,
                                               GibbonGameAction *action);
+static void gibbon_gmd_reader_error (const GibbonGMDReader *self,
+                                     const gchar *msg);
 
 static void 
 gibbon_gmd_reader_init (GibbonGMDReader *self)
@@ -131,24 +133,21 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 {
         GibbonGMDReader *self;
         FILE *in;
-        extern FILE *gibbon_gmd_lexer_in;
-        extern int gibbon_gmd_parser_parse ();
         int parse_status;
+        void *yyscanner;
 
         g_return_val_if_fail (GIBBON_IS_GMD_READER (_self), NULL);
         self = GIBBON_GMD_READER (_self);
 
-        gdk_threads_enter ();
-        if (_gibbon_gmd_reader_instance) {
-                g_critical ("Another instance of GibbonGMDReader is"
-                            " currently active!");
-                gdk_threads_leave ();
+        if (gibbon_gmd_lexer_lex_init_extra (self, &yyscanner)) {
+                g_error (_("Error creating tokenizer: %s!"),
+                         strerror (errno));
+                /* NOTREACHED */
                 return NULL;
         }
-        _gibbon_gmd_reader_instance = self;
-        gdk_threads_leave ();
 
         self->priv->filename = filename;
+        self->priv->yyscanner = yyscanner;
         if (self->priv->match)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
@@ -158,10 +157,11 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 in = fopen (filename, "rb");
         else
                 in = stdin;
-        if (in) {
-                gibbon_gmd_lexer_in = in;
 
-                parse_status = gibbon_gmd_parser_parse ();
+        if (in) {
+                gibbon_gmd_lexer_set_in (in, yyscanner);
+
+                parse_status = gibbon_gmd_parser_parse (yyscanner);
                 if (filename)
                         fclose (in);
                 if (parse_status) {
@@ -171,62 +171,54 @@ gibbon_gmd_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         } else {
                 g_object_unref (self->priv->match);
                 self->priv->match = NULL;
-                _gibbon_gmd_reader_yyerror (strerror (errno));
+                gibbon_gmd_reader_error (self, strerror (errno));
         }
 
         self->priv->filename = NULL;
+        self->priv->yyscanner = NULL;
 
-        gdk_threads_enter ();
-        if (!_gibbon_gmd_reader_instance
-             || _gibbon_gmd_reader_instance != self) {
-                if (self->priv->match)
-                        g_object_unref (self->priv->match);
-                self->priv->match = NULL;
-                _gibbon_gmd_reader_free_names (self);
-                g_critical ("Another instance of GibbonGMDReader has"
-                            " reset this one!");
-                gdk_threads_leave ();
-                return NULL;
-        }
-        _gibbon_gmd_reader_instance = NULL;
-        gdk_threads_leave ();
+        gibbon_gmd_lexer_lex_destroy (yyscanner);
 
         return self->priv->match;
 }
 
-void
-_gibbon_gmd_reader_yyerror (const gchar *msg)
+static void
+gibbon_gmd_reader_error (const GibbonGMDReader *self, const gchar *msg)
 {
         gchar *full_msg;
         const gchar *filename;
         extern int gibbon_gmd_lexer_get_lineno ();
         int lineno;
-        GibbonGMDReader *instance = _gibbon_gmd_reader_instance;
 
-        if (!instance || !GIBBON_IS_GMD_READER (instance)) {
-                g_critical ("gibbon_gmd_reader_yyerror() called without"
-                            " an instance");
-                return;
-        }
-
-        if (instance->priv->filename)
-                filename = instance->priv->filename;
+        if (self->priv->filename)
+                filename = self->priv->filename;
         else
                 filename = _("[standard input]");
 
-        lineno = gibbon_gmd_lexer_get_lineno ();
+        lineno = gibbon_gmd_lexer_get_lineno (self->priv->yyscanner);
 
         if (lineno)
                 full_msg = g_strdup_printf ("%s:%d: %s", filename, lineno, msg);
         else
                 full_msg = g_strdup_printf ("%s: %s", filename, msg);
 
-        if (instance->priv->yyerror)
-                instance->priv->yyerror (instance->priv->user_data, full_msg);
+        if (self->priv->yyerror)
+                self->priv->yyerror (self->priv->user_data, full_msg);
         else
                 g_printerr ("%s\n", full_msg);
 
         g_free (full_msg);
+}
+
+void
+gibbon_gmd_reader_yyerror (void *scanner, const gchar *msg)
+{
+        const GibbonGMDReader *reader;
+
+        reader = (GibbonGMDReader *) gibbon_gmd_lexer_get_extra (scanner);
+
+        if (reader)
+                gibbon_gmd_reader_error (reader, msg);
 }
 
 void
@@ -294,7 +286,7 @@ _gibbon_gmd_reader_add_game (GibbonGMDReader *self)
         g_return_val_if_fail (self->priv->match, FALSE);
 
         if (!gibbon_match_add_game (self->priv->match, &error)) {
-                _gibbon_gmd_reader_yyerror (error->message);
+                gibbon_gmd_reader_error (self, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -529,13 +521,13 @@ gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_gmd_reader_yyerror (_("No game in progress!"));
+                gibbon_gmd_reader_error (self, _("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
         }
 
         if (!gibbon_game_add_action (game, side, action, timestamp, &error)) {
-                _gibbon_gmd_reader_yyerror (error->message);
+                gibbon_gmd_reader_error (self, error->message);
                 g_object_unref (action);
                 return FALSE;
         }
@@ -544,7 +536,7 @@ gibbon_gmd_reader_add_action (GibbonGMDReader *self, GibbonPositionSide side,
 }
 
 gchar *
-_gibbon_gmd_reader_alloc_name (GibbonGMDReader *self, const gchar *name)
+gibbon_gmd_reader_alloc_name (GibbonGMDReader *self, const gchar *name)
 {
         gchar *unescaped;
 
@@ -572,8 +564,9 @@ _gibbon_gmd_reader_check_setup (GibbonGMDReader *self)
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
 
         if (1 != gibbon_match_get_number_of_games (self->priv->match)) {
-                _gibbon_gmd_reader_yyerror (_("Position setup is only"
-                                              " allowed for first game!"));
+                gibbon_gmd_reader_error (self,
+                                         _("Position setup is only"
+                                           " allowed for first game!"));
                 return FALSE;
         }
         return TRUE;
@@ -599,13 +592,15 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
         g_return_val_if_fail (GIBBON_IS_GMD_READER (self), FALSE);
 
         if (b1 < 0) {
-                _gibbon_gmd_reader_yyerror (_("Only positive number allowed"
-                                              " for white's bar!"));
+                gibbon_gmd_reader_error (self,
+                                         _("Only positive number allowed"
+                                           " for white's bar!"));
                 return FALSE;
         }
         if (b2 > 0) {
-                _gibbon_gmd_reader_yyerror (_("Only negative number allowed"
-                                              " for black's bar!"));
+                gibbon_gmd_reader_error (self,
+                                         _("Only negative number allowed"
+                                           " for black's bar!"));
                 return FALSE;
         }
 
@@ -653,13 +648,14 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
                         wcheckers += pos->points[i];
         }
         if (wcheckers > 15 || bcheckers > 15) {
-                _gibbon_gmd_reader_yyerror (_("Number of checkers out of"
-                                              " range (must be less or equal"
-                                              " than 15)!"));
+                gibbon_gmd_reader_error (self,
+                                         _("Number of checkers out of"
+                                           " range (must be less or equal"
+                                           " than 15)!"));
                 return FALSE;
         }
         if (!wcheckers && !bcheckers) {
-                _gibbon_gmd_reader_yyerror (_("Impossible position!"));
+                gibbon_gmd_reader_error (self, _("Impossible position!"));
                 return FALSE;
         }
 
