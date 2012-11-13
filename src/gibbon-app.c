@@ -785,6 +785,9 @@ gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
         GtkWidget *dialog;
         gchar *filename;
         GtkFileFilter *filter;
+        GibbonMatchLoader *loader;
+        GibbonMatch *match;
+        GError *error = NULL;
 
         dialog = gtk_file_chooser_dialog_new (_("Open File"),
                                               GTK_WINDOW (self->priv->window),
@@ -827,6 +830,23 @@ gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
                 filename = gtk_file_chooser_get_filename (
                                 GTK_FILE_CHOOSER (dialog));
                 /* g_printerr ("open filename %s\n", filename); */
+                loader = gibbon_match_loader_new ();
+                match = gibbon_match_loader_read_match (loader, filename,
+                                                        &error);
+
+                if (!match) {
+                        if (error) {
+                                gibbon_app_display_error (self, filename,
+                                                          "%s",
+                                                          error->message);
+                                g_error_free (error);
+                        }
+                        g_object_unref (loader);
+                        g_object_unref (self);
+                } else {
+                        gibbon_app_set_match (self, match);
+                }
+                g_object_unref (loader);
                 g_free (filename);
         }
 
