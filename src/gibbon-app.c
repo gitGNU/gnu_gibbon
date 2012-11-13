@@ -783,7 +783,8 @@ static void
 gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
 {
         GtkWidget *dialog;
-        char *filename;
+        gchar *filename;
+        GtkFileFilter *filter;
 
         dialog = gtk_file_chooser_dialog_new (_("Open File"),
                                               GTK_WINDOW (self->priv->window),
@@ -793,12 +794,42 @@ gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
                                               GTK_STOCK_OPEN,
                                               GTK_RESPONSE_ACCEPT,
                                               NULL);
+        filter = gtk_file_filter_new ();
+        gtk_file_filter_set_name (filter, _("GNUBG files (*.sgf)"));
+        gtk_file_filter_add_pattern (filter, "*.sgf");
+        gtk_file_filter_add_pattern (filter, "*.SGF");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+        filter = gtk_file_filter_new ();
+        gtk_file_filter_set_name (filter, _("Gibbon files (*.gmd)"));
+        gtk_file_filter_add_pattern (filter, "*.gmd");
+        gtk_file_filter_add_pattern (filter, "*.GMD");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+        filter = gtk_file_filter_new ();
+        gtk_file_filter_set_name (filter, _("JavaFIBS files (*.match)"));
+        gtk_file_filter_add_pattern (filter, "*.match");
+        gtk_file_filter_add_pattern (filter, "*.MATCH");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+        filter = gtk_file_filter_new ();
+        gtk_file_filter_set_name (filter, _("JellyFish files (*.match)"));
+        gtk_file_filter_add_pattern (filter, "*.match");
+        gtk_file_filter_add_pattern (filter, "*.MATCH");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+        filter = gtk_file_filter_new ();
+        gtk_file_filter_set_name (filter, _("All files"));
+        gtk_file_filter_add_pattern (filter, "*");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
         if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
                 filename = gtk_file_chooser_get_filename (
                                 GTK_FILE_CHOOSER (dialog));
                 /* g_printerr ("open filename %s\n", filename); */
                 g_free (filename);
         }
+
         gtk_widget_destroy (dialog);
 }
 
