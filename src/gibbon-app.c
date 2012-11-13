@@ -347,6 +347,8 @@ gibbon_app_post_init (const GibbonApp *self)
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
+        gibbon_analysis_view_fixup_layout (self->priv->analysis_view);
+
         /*
          * If a match was passed on the command line it is already loaded
          * and set to the last action in the match.  Make sure that the

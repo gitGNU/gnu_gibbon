@@ -265,7 +265,6 @@ gibbon_analysis_view_new (const GibbonApp *app)
 
         obj = gibbon_app_find_object (app, "notebook-analysis",
                                       GTK_TYPE_NOTEBOOK);
-        gtk_widget_hide (GTK_WIDGET (obj));
         self->priv->notebook = GTK_NOTEBOOK (obj);
 
         obj = gibbon_app_find_object (app, "label-cube-equity-type",
@@ -460,6 +459,26 @@ gibbon_analysis_view_new (const GibbonApp *app)
 }
 
 void
+gibbon_analysis_view_fixup_layout (const GibbonAnalysisView *self)
+{
+        GtkWidget *nbw;
+        GtkAllocation alloc;
+
+        g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
+
+        /*
+         * Set the minimum size of the notebook so that it can accommodate the
+         * cube decision page of the notebook, no matter whether we display
+         * a cube analysis or not.
+         */
+        nbw = GTK_WIDGET (self->priv->notebook);
+        gtk_widget_show_all (nbw);
+        gtk_widget_get_allocation (nbw, &alloc);
+        gtk_widget_set_size_request (nbw, alloc.width, alloc.height);
+        gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+}
+
+void
 gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
                                    const GibbonGame *game, gint action_number)
 {
@@ -470,27 +489,11 @@ gibbon_analysis_view_set_analysis (GibbonAnalysisView *self,
         GibbonAnalysisMove *move_analysis = NULL;
         GtkListStore *store;
         GtkWidget *cube_page, *move_page;
-        GtkAllocation alloc;
-        GtkWidget *nbw;
 
         g_return_if_fail (GIBBON_IS_ANALYSIS_VIEW (self));
 
         cube_page = gtk_notebook_get_nth_page (self->priv->notebook, 0);
         move_page = gtk_notebook_get_nth_page (self->priv->notebook, 1);
-
-        /*
-         * Set the minimum size of the notebook so that it can accommodate the
-         * cube decision page of the notebook, no matter whether we display
-         * a cube analysis or not.
-         */
-        if (!self->priv->notebook_sized
-            && gtk_widget_get_realized (GTK_WIDGET (self->priv->notebook))) {
-                nbw = GTK_WIDGET (self->priv->notebook);
-                gtk_widget_show_all (nbw);
-                gtk_widget_get_allocation (nbw, &alloc);
-                gtk_widget_set_size_request (nbw, alloc.width, alloc.height);
-                self->priv->notebook_sized = TRUE;
-        }
 
         if (action_number < 0) {
                 gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
