@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.24"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-naming-policy project-wide -->
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -686,13 +686,13 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkComboBoxText" id="combo-game-chat">
+                          <object class="GtkComboBox" id="combo-game-chat">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -708,7 +708,7 @@
                           <packing>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
@@ -1422,8 +1422,8 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
-                                <property name="ypad">2</property>
                                 <property name="xpad">5</property>
+                                <property name="ypad">2</property>
                                 <property name="label" translatable="yes">Cubeful equities</property>
                                 <attributes>
                                   <attribute name="weight" value="semibold"/>
@@ -1887,8 +1887,8 @@
                               <object class="GtkTreeView" id="variants-view">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="rules_hint">True</property>
                                 <property name="has_tooltip">True</property>
+                                <property name="rules_hint">True</property>
                               </object>
                             </child>
                           </object>
