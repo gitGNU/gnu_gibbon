@@ -43,7 +43,7 @@
 /* Differences in the minor schema version require conditional creation of
  * new tables or indexes.
  */
-#define GIBBON_DATABASE_SCHEMA_MINOR 4
+#define GIBBON_DATABASE_SCHEMA_MINOR 5
 
 /* Differences in the schema revision are for cosmetic changes that will
  * not have any impact on existing databases (case, column order, ...).
@@ -500,6 +500,50 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      "  rating REAL,"
                                      "  date_time INT64 NOT NULL,"
                                      "  FOREIGN KEY (user_id)"
+                                     "    REFERENCES users (id)"
+                                     "    ON DELETE CASCADE"
+                                     ")"))
+                return FALSE;
+
+        if (drop_first
+            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS matches"))
+                return FALSE;
+        if (!gibbon_database_sql_do (self,
+                                     "CREATE TABLE IF NOT EXISTS matches ("
+                                     "  id INTEGER PRIMARY KEY,"
+                                     "  user_id1 INTEGER NOT NULL,"
+                                     "  user_id2 INTEGER NOT NULL,"
+                                     "  match_length INTEGER NOT NULL,"
+                                     "  score1 INTEGER NOT NULL,"
+                                     "  score2 INTEGER NOT NULL,"
+                                     "  date_time INT64 NOT NULL,"
+                                     "  experience1 INTEGER,"
+                                     "  experience2 INTEGER,"
+                                     "  rating1 REAL,"
+                                     "  rating2 REAL,"
+                                     "  error_EMG1 REAL,"
+                                     "  error_EMG2 REAL,"
+                                     "  error_MWC1 REAL,"
+                                     "  error_MWC2 REAL,"
+                                     "  error_FIBS1 REAL,"
+                                     "  error_FIBS2 REAL,"
+                                     "  checker_error_EMG1 REAL,"
+                                     "  checker_error_EMG2 REAL,"
+                                     "  checker_error_MWC1 REAL,"
+                                     "  checker_error_MWC2 REAL,"
+                                     "  cube_error_EMG1 REAL,"
+                                     "  cube_error_EMG2 REAL,"
+                                     "  cube_error_MWC1 REAL,"
+                                     "  cube_error_MWC2 REAL,"
+                                     "  luck_EMG1 REAL,"
+                                     "  luck_EMG2 REAL,"
+                                     "  luck_MWC1 REAL,"
+                                     "  luck_MWC2 REAL,"
+                                     "  UNIQUE(user_id1, user_id2, date_time),"
+                                     "  FOREIGN KEY (user_id1)"
+                                     "    REFERENCES users (id)"
+                                     "    ON DELETE CASCADE,"
+                                     "  FOREIGN KEY (user_id2)"
                                      "    REFERENCES users (id)"
                                      "    ON DELETE CASCADE"
                                      ")"))
