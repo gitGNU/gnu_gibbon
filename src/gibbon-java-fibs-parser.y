@@ -34,7 +34,7 @@
 #include "gibbon-java-fibs-parser.h"
 #include "gibbon-java-fibs-reader-priv.h"
 
-#define reader _gibbon_java_fibs_reader_instance
+#define reader gibbon_java_fibs_lexer_get_extra(scanner)
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -47,10 +47,10 @@
  */
 
 #define yymaxdepth gibbon_java_fibs_parser_maxdepth
-#define yyparse    gibbon_java_fibs_parser_parse
+#define yyparse(s)    gibbon_java_fibs_parser_parse(s)
 #define yylex      gibbon_java_fibs_lexer_lex
-extern int gibbon_java_fibs_lexer_lex (void);
-#define yyerror    _gibbon_java_fibs_reader_yyerror
+extern int gibbon_java_fibs_lexer_lex (YYSTYPE * lvalp, void *scanner);
+#define yyerror    gibbon_java_fibs_reader_yyerror
 #define yylval     gibbon_java_fibs_parser_lval
 #define yychar     gibbon_java_fibs_parser_char
 #define yydebug    gibbon_java_fibs_parser_debug
@@ -119,6 +119,10 @@ static guint gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to);
 %type <num>movement
 %type <num>movements
 
+%pure-parser
+%lex-param {void *scanner}
+%parse-param {void *scanner}
+
 %%
 
 java_fibs_file
@@ -128,7 +132,7 @@ java_fibs_file
 	 * handle the error.
 	 */
 	: /* empty */
-        | PROLOG match  { _gibbon_java_fibs_reader_free_names (reader); }
+        | PROLOG match  { gibbon_java_fibs_reader_free_names (reader); }
         ;
 
 match
@@ -187,7 +191,7 @@ opponents
 
 actions
 	: /* empty */
-	| actions action { _gibbon_java_fibs_reader_free_names (reader); }
+	| actions action { gibbon_java_fibs_reader_free_names (reader); }
 	;
 	
 action
@@ -251,7 +255,8 @@ movement
 	: point HYPHEN point 
 		{
 			if ($1 == $3) {
-				yyerror (_("Start and end point are equal!"));
+				yyerror (scanner,
+				         _("Start and end point are equal!"));
 				YYABORT;
 			} 
 			$$ = gibbon_java_fibs_parser_encode_movement ($1, $3);
@@ -262,7 +267,8 @@ point
 	: INTEGER 
 		{ 
 			if (!$$ || $$ > 24) {
-				yyerror (_("Point out of range (1-24)!"));
+				yyerror (scanner,
+				         _("Point out of range (1-24)!"));
 				YYABORT;
 			}
 		}

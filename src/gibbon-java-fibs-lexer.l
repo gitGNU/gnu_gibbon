@@ -28,58 +28,59 @@
 # include "config.h"
 #endif
 
-static int yywrap ();
-
 #include <glib.h>
 #include <glib/gi18n.h>
-
-#define yylval gibbon_java_fibs_parser_lval
 
 #include "gibbon-java-fibs-parser.h"
 #include "gibbon-java-fibs-reader-priv.h"
 
-#define alloc_name(s) \
-	_gibbon_java_fibs_reader_alloc_name(_gibbon_java_fibs_reader_instance, \
-	                                    s)
+#define alloc_name(s) gibbon_java_fibs_reader_alloc_name(		\
+	gibbon_java_fibs_lexer_get_extra(yyscanner), s)
+
 %}
 
 %top{
-#define yy_create_buffer gibbon_java_fibs_lexer_create_buffer
-#define yy_delete_buffer gibbon_java_fibs_lexer_delete_buffer
-#define yy_flush_buffer gibbon_java_fibs_lexer_flush_buffer
-#define yy_scan_buffer gibbon_java_fibs_lexer_scan_buffer
-#define yy_scan_bytes gibbon_java_fibs_lexer_scan_bytes
-#define yy_scan_string gibbon_java_fibs_lexer_scan_string
-#define yy_switch_to_buffer gibbon_java_fibs_lexer_switch_to_buffer
+#define yy_create_buffer gibbon_java_fibs_lexer__create_buffer
+#define yy_delete_buffer gibbon_java_fibs_lexer__delete_buffer
+#define yy_flush_buffer gibbon_java_fibs_lexer__flush_buffer
+#define yy_scan_buffer gibbon_java_fibs_lexer__scan_buffer
+#define yy_scan_bytes gibbon_java_fibs_lexer__scan_bytes
+#define yy_scan_string gibbon_java_fibs_lexer__scan_string
+#define yy_switch_to_buffer gibbon_java_fibs_lexer__switch_to_buffer
 #define yyalloc gibbon_java_fibs_lexer_alloc
 #define yyfree gibbon_java_fibs_lexer_free
+#define yyget_column gibbon_java_fibs_lexer_get_column
 #define yyget_debug gibbon_java_fibs_lexer_get_debug
+#define yyget_extra gibbon_java_fibs_lexer_get_extra
 #define yyget_in gibbon_java_fibs_lexer_get_in
 #define yyget_leng gibbon_java_fibs_lexer_get_leng
 #define yyget_lineno gibbon_java_fibs_lexer_get_lineno
+#define yyget_lval gibbon_java_fibs_lexer_get_lval
 #define yyget_out gibbon_java_fibs_lexer_get_out
 #define yyget_text gibbon_java_fibs_lexer_get_text
 #define yylex gibbon_java_fibs_lexer_lex
 #define yylex_destroy gibbon_java_fibs_lexer_lex_destroy
+#define yylex_init gibbon_java_fibs_lexer_lex_init
+#define yylex_init_extra gibbon_java_fibs_lexer_lex_init_extra
 #define yypop_buffer_state gibbon_java_fibs_lexer_pop_buffer_state
 #define yypush_buffer_state gibbon_java_fibs_lexer_push_buffer_state
 #define yyrealloc gibbon_java_fibs_lexer_realloc
 #define yyrestart gibbon_java_fibs_lexer_restart
+#define yyset_column gibbon_java_fibs_lexer_set_column
 #define yyset_debug gibbon_java_fibs_lexer_set_debug
+#define yyset_extra gibbon_java_fibs_lexer_set_extra
 #define yyset_in gibbon_java_fibs_lexer_set_in
 #define yyset_lineno gibbon_java_fibs_lexer_set_lineno
+#define yyset_lval gibbon_java_fibs_lexer_set_lval
 #define yyset_out gibbon_java_fibs_lexer_set_out
-#define yy_flex_debug gibbon_java_fibs_lexer_flex_debug
-#define yyin gibbon_java_fibs_lexer_in
-#define yyleng gibbon_java_fibs_lexer_leng
-#define yylineno gibbon_java_fibs_lexer_lineno
-#define yyout gibbon_java_fibs_lexer_out
-#define yytext gibbon_java_fibs_lexer_text
 }
 
 %option yylineno
 %option nounput
 %option noinput
+%option noyywrap
+%option reentrant
+%option bison-bridge
 
 /* %option debug */
 
@@ -211,10 +212,11 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
    * about a missing colon are left to the parser.                           *
    ***************************************************************************/
 <WHO>[^-: \t\r\n]+		{
-					BEGIN (WHAT);
-					yylval.name = alloc_name (yytext);
-					return PLAYER;
-				}
+		BEGIN (WHAT);
+		((struct yyguts_t *) yyscanner)->yylval_r->name 
+			= alloc_name (yytext);
+		return PLAYER;
+	}
 <WHO>.|\n			return yytext[0];
 
   /***************************************************************************
@@ -225,30 +227,23 @@ JavaFIBS[ \t]+internal[ \t]+match[ \t]+representation[ \t]+v[0-9.]+ {
 <WHAT>bar			return BAR;
 <WHAT>o(ff)?			return OFF;
 <WHAT>[1-9][0-9]*		{
-					/* We leave all complaints
-					 * about conversion errors to 
-					 * the higher-level analysis.  
-					 */
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10); 
-					return INTEGER;
-				}
+		/* We leave all complaints about conversion errors to 
+	 	* the higher-level analysis.  
+	 	*/
+		((struct yyguts_t *) yyscanner)->yylval_r->num 
+			= (gint) g_ascii_strtoull (yytext, NULL, 10); 
+		return INTEGER;
+	}
 <WHAT>0				{
-					yylval.num = 0; 
-					return INTEGER;
-				}
+		((struct yyguts_t *) yyscanner)->yylval_r->num = 0;
+		return INTEGER;
+	}
 <WHAT>[^-: \t\r\n]+		{
-					BEGIN (WHAT);
-					yylval.name = alloc_name (yytext);
-					return PLAYER;
-				}
+		BEGIN (WHAT);
+		((struct yyguts_t *) yyscanner)->yylval_r->name 
+			= alloc_name (yytext);
+		return PLAYER;
+	}
 <WHAT>\n			BEGIN (OPCODE);
 .				return yytext[0];
 %%
-
-static int
-yywrap ()
-{
-        BEGIN (0);
-	return 1;
-}

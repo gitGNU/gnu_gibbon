@@ -24,13 +24,13 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+
 #include "gibbon-java-fibs-reader.h"
 
 G_BEGIN_DECLS
 
 extern GibbonJavaFIBSReader *_gibbon_java_fibs_reader_instance;
-
-void _gibbon_java_fibs_reader_yyerror (const gchar *msg);
 
 void _gibbon_java_fibs_reader_set_white (GibbonJavaFIBSReader *self,
                                          const gchar *white);
@@ -64,9 +64,17 @@ gboolean _gibbon_java_fibs_reader_score (GibbonJavaFIBSReader *self,
                                          guint points_winner,
                                          const gchar *loser,
                                          guint points_loser);
-gchar *_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
-                                          const gchar *name);
-void _gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self);
+gchar *gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
+                                           const gchar *name);
+void gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self);
+
+int gibbon_java_fibs_lexer_get_lineno (void *);
+void gibbon_java_fibs_reader_yyerror (void *scanner, const gchar *msg);
+void gibbon_java_fibs_lexer_set_in (FILE *input, void *yyscanner);
+int gibbon_java_fibs_lexer_lex_init_extra (void *self, void **yyscanner);
+int gibbon_java_fibs_lexer_lex_destroy (void *yyscanner);
+void *gibbon_java_fibs_lexer_get_extra (void *yyscanner);
+int gibbon_java_fibs_parser_parse ();
 
 G_END_DECLS
 

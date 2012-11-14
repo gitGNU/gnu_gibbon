@@ -46,14 +46,13 @@ struct _GibbonJavaFIBSReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
         gpointer user_data;
         const gchar *filename;
+        void *yyscanner;
         GibbonMatch *match;
 
         GSList *names;
 
         gchar *white;
 };
-
-GibbonJavaFIBSReader *_gibbon_java_fibs_reader_instance = NULL;
 
 #define GIBBON_JAVA_FIBS_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_JAVA_FIBS_READER, GibbonJavaFIBSReaderPrivate))
@@ -65,6 +64,8 @@ static GibbonMatch *gibbon_java_fibs_reader_parse (GibbonMatchReader *match_read
 static gboolean gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
                                                     const gchar *name,
                                                     GibbonGameAction *action);
+static void gibbon_java_fibs_reader_error (const GibbonJavaFIBSReader *self,
+                                           const gchar *msg);
 
 static void 
 gibbon_java_fibs_reader_init (GibbonJavaFIBSReader *self)
@@ -87,7 +88,7 @@ gibbon_java_fibs_reader_finalize (GObject *object)
 {
         GibbonJavaFIBSReader *self = GIBBON_JAVA_FIBS_READER (object);
 
-        _gibbon_java_fibs_reader_free_names (self);
+        gibbon_java_fibs_reader_free_names (self);
 
         G_OBJECT_CLASS (gibbon_java_fibs_reader_parent_class)->finalize(object);
 }
@@ -133,28 +134,25 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 {
         GibbonJavaFIBSReader *self;
         FILE *in;
-        extern FILE *gibbon_java_fibs_lexer_in;
-        extern int gibbon_java_fibs_parser_parse ();
         int parse_status;
+        void *yyscanner;
 
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (_self), NULL);
         self = GIBBON_JAVA_FIBS_READER (_self);
 
-        gdk_threads_enter ();
-        if (_gibbon_java_fibs_reader_instance) {
-                g_critical ("Another instance of GibbonJavaFIBSReader is"
-                            " currently active!");
-                gdk_threads_leave ();
+        if (gibbon_java_fibs_lexer_lex_init_extra (self, &yyscanner)) {
+                g_error (_("Error creating tokenizer: %s!"),
+                         strerror (errno));
+                /* NOTREACHED */
                 return NULL;
         }
-        _gibbon_java_fibs_reader_instance = self;
-        gdk_threads_leave ();
 
         self->priv->filename = filename;
+        self->priv->yyscanner = yyscanner;
         if (self->priv->match)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
-        _gibbon_java_fibs_reader_free_names (self);
+        gibbon_java_fibs_reader_free_names (self);
         g_free (self->priv->white);
         self->priv->white = NULL;
 
@@ -163,9 +161,10 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         else
                 in = stdin;
         if (in) {
-                gibbon_java_fibs_lexer_in = in;
+                gibbon_java_fibs_lexer_set_in (in, yyscanner);
 
-                parse_status = gibbon_java_fibs_parser_parse ();
+                parse_status = gibbon_java_fibs_parser_parse (yyscanner);
+
                 if (filename)
                         fclose (in);
                 if (parse_status) {
@@ -179,27 +178,13 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 self->priv->match = NULL;
                 g_free (self->priv->white);
                 self->priv->white = NULL;
-                _gibbon_java_fibs_reader_yyerror (strerror (errno));
+                gibbon_java_fibs_reader_error (self, strerror (errno));
         }
 
         self->priv->filename = NULL;
+        self->priv->yyscanner = NULL;
 
-        gdk_threads_enter ();
-        if (!_gibbon_java_fibs_reader_instance
-             || _gibbon_java_fibs_reader_instance != self) {
-                if (self->priv->match)
-                        g_object_unref (self->priv->match);
-                self->priv->match = NULL;
-                _gibbon_java_fibs_reader_free_names (self);
-                g_free (self->priv->white);
-                self->priv->white = NULL;
-                g_critical ("Another instance of GibbonJavaFIBSReader has"
-                            " reset this one!");
-                gdk_threads_leave ();
-                return NULL;
-        }
-        _gibbon_java_fibs_reader_instance = NULL;
-        gdk_threads_leave ();
+        gibbon_java_fibs_lexer_lex_destroy (yyscanner);
 
         if (self->priv->white && self->priv->match)
                 gibbon_match_set_white (self->priv->match, self->priv->white);
@@ -209,39 +194,43 @@ gibbon_java_fibs_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         return self->priv->match;
 }
 
-void
-_gibbon_java_fibs_reader_yyerror (const gchar *msg)
+static void
+gibbon_java_fibs_reader_error (const GibbonJavaFIBSReader *self,
+                               const gchar *msg)
 {
         gchar *full_msg;
         const gchar *filename;
-        extern int gibbon_java_fibs_lexer_get_lineno ();
         int lineno;
-        GibbonJavaFIBSReader *instance = _gibbon_java_fibs_reader_instance;
 
-        if (!instance || !GIBBON_IS_JAVA_FIBS_READER (instance)) {
-                g_critical ("gibbon_java_fibs_reader_yyerror() called without"
-                            " an instance");
-                return;
-        }
-
-        if (instance->priv->filename)
-                filename = instance->priv->filename;
+        if (self->priv->filename)
+                filename = self->priv->filename;
         else
                 filename = _("[standard input]");
 
-        lineno = gibbon_java_fibs_lexer_get_lineno ();
+        lineno = gibbon_java_fibs_lexer_get_lineno (self->priv->yyscanner);
 
         if (lineno)
                 full_msg = g_strdup_printf ("%s:%d: %s", filename, lineno, msg);
         else
                 full_msg = g_strdup_printf ("%s: %s", filename, msg);
 
-        if (instance->priv->yyerror)
-                instance->priv->yyerror (instance->priv->user_data, full_msg);
+        if (self->priv->yyerror)
+                self->priv->yyerror (self->priv->user_data, full_msg);
         else
                 g_printerr ("%s\n", full_msg);
 
         g_free (full_msg);
+}
+
+void
+gibbon_java_fibs_reader_yyerror (void *scanner, const gchar *msg)
+{
+        const GibbonJavaFIBSReader *reader;
+
+        reader = (GibbonJavaFIBSReader *) gibbon_java_fibs_lexer_get_extra (scanner);
+
+        if (reader)
+                gibbon_java_fibs_reader_error (reader, msg);
 }
 
 void
@@ -288,7 +277,7 @@ _gibbon_java_fibs_reader_add_game (GibbonJavaFIBSReader *self)
         g_return_val_if_fail (self->priv->match, FALSE);
 
         if (!gibbon_match_add_game (self->priv->match, &error)) {
-                _gibbon_java_fibs_reader_yyerror (error->message);
+                gibbon_java_fibs_reader_error (self, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -419,7 +408,7 @@ _gibbon_java_fibs_reader_win_game (GibbonJavaFIBSReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_java_fibs_reader_yyerror (_("Syntax error!"));
+                gibbon_java_fibs_reader_error (self, _("Syntax error!"));
                 return TRUE;
         }
 
@@ -475,7 +464,7 @@ _gibbon_java_fibs_reader_resign (GibbonJavaFIBSReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_java_fibs_reader_yyerror (_("Syntax error!"));
+                gibbon_java_fibs_reader_error (self, _("Syntax error!"));
                 return TRUE;
         }
 
@@ -512,7 +501,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_java_fibs_reader_yyerror (_("No game in progress!"));
+                gibbon_java_fibs_reader_error (self, _("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
         }
@@ -539,7 +528,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         }
 
         if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
-                _gibbon_java_fibs_reader_yyerror (error->message);
+                gibbon_java_fibs_reader_error (self, error->message);
                 g_object_unref (action);
                 return FALSE;
         }
@@ -548,7 +537,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
 }
 
 gchar *
-_gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
+gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
                                      const gchar *name)
 {
         g_return_val_if_fail (GIBBON_IS_JAVA_FIBS_READER (self), NULL);
@@ -560,7 +549,7 @@ _gibbon_java_fibs_reader_alloc_name (GibbonJavaFIBSReader *self,
 }
 
 void
-_gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self)
+gibbon_java_fibs_reader_free_names (GibbonJavaFIBSReader *self)
 {
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_READER (self));
 
