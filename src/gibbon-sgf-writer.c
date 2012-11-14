@@ -78,6 +78,8 @@ static gboolean gibbon_sgf_writer_setup (const GibbonSGFWriter *self,
                                          const GibbonMatch *match,
                                          GError **error);
 
+static const GSGFFlavor *gibbon_sgf_writer_flavor;
+
 static void 
 gibbon_sgf_writer_init (GibbonSGFWriter *self)
 {
@@ -95,6 +97,8 @@ gibbon_sgf_writer_class_init (GibbonSGFWriterClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         GibbonMatchWriterClass *gibbon_match_writer_class =
                         GIBBON_MATCH_WRITER_CLASS (klass);
+
+        gibbon_sgf_writer_flavor = gsgf_flavor_backgammon_new ();
 
         gibbon_match_writer_class->write_stream =
                         gibbon_sgf_writer_write_stream;
@@ -124,11 +128,11 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
 {
         const GibbonSGFWriter *self;
         GibbonGame *game;
-        GSGFFlavor *flavor;
         GSGFCollection *collection;
         GSGFGameTree *game_tree;
         gsize bytes_written;
         gsize game_number;
+        GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
 
         self = GIBBON_SGF_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
@@ -142,9 +146,8 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
                 return FALSE;
         }
 
-        flavor = gsgf_flavor_backgammon_new ();
-
         collection = gsgf_collection_new ();
+
 
         for (game_number = 0; ; ++game_number) {
                 game = gibbon_match_get_nth_game (match, game_number);
@@ -203,7 +206,7 @@ gibbon_sgf_writer_add_game (const GibbonSGFWriter *self,
         GSGFValue *match_info;
         GSGFCookedValue *mi_key, *mi_value;
         GSGFCookedValue *mi_compose;
-        const GSGFFlavor *flavor;
+        GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
         const GibbonPosition *pos;
         gint score;
         GSGFValue *result = NULL;
