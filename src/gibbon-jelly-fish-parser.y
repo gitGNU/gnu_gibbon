@@ -28,7 +28,7 @@
 #include "gibbon-jelly-fish-parser.h"
 #include "gibbon-jelly-fish-reader-priv.h"
 
-#define reader _gibbon_jelly_fish_reader_instance
+#define reader gibbon_jelly_fish_lexer_get_extra(scanner)
 
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
@@ -41,10 +41,10 @@
  */
 
 #define yymaxdepth gibbon_jelly_fish_parser_maxdepth
-#define yyparse    gibbon_jelly_fish_parser_parse
+#define yyparse(s)    gibbon_jelly_fish_parser_parse(s)
 #define yylex      gibbon_jelly_fish_lexer_lex
-extern int gibbon_jelly_fish_lexer_lex (void);
-#define yyerror    _gibbon_jelly_fish_reader_yyerror
+extern int gibbon_jelly_fish_lexer_lex (YYSTYPE * lvalp, void *scanner);
+#define yyerror    gibbon_jelly_fish_reader_yyerror
 #define yylval     gibbon_jelly_fish_parser_lval
 #define yychar     gibbon_jelly_fish_parser_char
 #define yydebug    gibbon_jelly_fish_parser_debug
@@ -109,10 +109,14 @@ static guint gibbon_jelly_fish_parser_encode_movement (guint64 from,
 %type <num> movement
 %type <num> movements
 
+%pure-parser
+%lex-param {void *scanner}
+%parse-param {void *scanner}
+
 %%
 
 jelly_fish_file
-        : prolog games { _gibbon_jelly_fish_reader_free_names (reader); }
+        : prolog games { gibbon_jelly_fish_reader_free_names (reader); }
         ;
 
 prolog
@@ -151,7 +155,7 @@ opponents
 		{
 			_gibbon_jelly_fish_reader_set_black (reader, $1);
 			_gibbon_jelly_fish_reader_set_white (reader, $2);
-			_gibbon_jelly_fish_reader_free_names (reader);
+			gibbon_jelly_fish_reader_free_names (reader);
 		}
 	;
 
@@ -295,7 +299,8 @@ movement
 	: POINT SLASH POINT
 		{
 			if ($1 == $3) {
-				yyerror (_("Start and end point are equal!"));
+				yyerror (scanner, 
+				         _("Start and end point are equal!"));
 				YYABORT;
 			} 
 			$$ = gibbon_jelly_fish_parser_encode_movement ($1, $3);

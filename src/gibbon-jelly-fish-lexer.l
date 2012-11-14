@@ -22,60 +22,60 @@
 # include "config.h"
 #endif
 
-static int yywrap ();
-
 #include <glib.h>
 #include <glib/gi18n.h>
-
-#define yylval gibbon_jelly_fish_parser_lval
 
 #include "gibbon-jelly-fish-parser.h"
 #include "gibbon-jelly-fish-reader-priv.h"
 
-#define alloc_name(s) \
-      _gibbon_jelly_fish_reader_alloc_name(_gibbon_jelly_fish_reader_instance, \
-	                                   s)
+#define alloc_name(s) gibbon_jelly_fish_reader_alloc_name(		\
+	gibbon_jelly_fish_lexer_get_extra(yyscanner), s)
 
 %}
 
 %top{
-#define yy_create_buffer gibbon_jelly_fish_lexer_create_buffer
-#define yy_delete_buffer gibbon_jelly_fish_lexer_delete_buffer
-#define yy_flush_buffer gibbon_jelly_fish_lexer_flush_buffer
-#define yy_scan_buffer gibbon_jelly_fish_lexer_scan_buffer
-#define yy_scan_bytes gibbon_jelly_fish_lexer_scan_bytes
-#define yy_scan_string gibbon_jelly_fish_lexer_scan_string
-#define yy_switch_to_buffer gibbon_jelly_fish_lexer_switch_to_buffer
+#define yy_create_buffer gibbon_jelly_fish_lexer__create_buffer
+#define yy_delete_buffer gibbon_jelly_fish_lexer__delete_buffer
+#define yy_flush_buffer gibbon_jelly_fish_lexer__flush_buffer
+#define yy_scan_buffer gibbon_jelly_fish_lexer__scan_buffer
+#define yy_scan_bytes gibbon_jelly_fish_lexer__scan_bytes
+#define yy_scan_string gibbon_jelly_fish_lexer__scan_string
+#define yy_switch_to_buffer gibbon_jelly_fish_lexer__switch_to_buffer
 #define yyalloc gibbon_jelly_fish_lexer_alloc
 #define yyfree gibbon_jelly_fish_lexer_free
+#define yyget_column gibbon_jelly_fish_lexer_get_column
 #define yyget_debug gibbon_jelly_fish_lexer_get_debug
+#define yyget_extra gibbon_jelly_fish_lexer_get_extra
 #define yyget_in gibbon_jelly_fish_lexer_get_in
 #define yyget_leng gibbon_jelly_fish_lexer_get_leng
 #define yyget_lineno gibbon_jelly_fish_lexer_get_lineno
+#define yyget_lval gibbon_jelly_fish_lexer_get_lval
 #define yyget_out gibbon_jelly_fish_lexer_get_out
 #define yyget_text gibbon_jelly_fish_lexer_get_text
 #define yylex gibbon_jelly_fish_lexer_lex
 #define yylex_destroy gibbon_jelly_fish_lexer_lex_destroy
+#define yylex_init gibbon_jelly_fish_lexer_lex_init
+#define yylex_init_extra gibbon_jelly_fish_lexer_lex_init_extra
 #define yypop_buffer_state gibbon_jelly_fish_lexer_pop_buffer_state
 #define yypush_buffer_state gibbon_jelly_fish_lexer_push_buffer_state
 #define yyrealloc gibbon_jelly_fish_lexer_realloc
 #define yyrestart gibbon_jelly_fish_lexer_restart
+#define yyset_column gibbon_jelly_fish_lexer_set_column
 #define yyset_debug gibbon_jelly_fish_lexer_set_debug
+#define yyset_extra gibbon_jelly_fish_lexer_set_extra
 #define yyset_in gibbon_jelly_fish_lexer_set_in
 #define yyset_lineno gibbon_jelly_fish_lexer_set_lineno
+#define yyset_lval gibbon_jelly_fish_lexer_set_lval
 #define yyset_out gibbon_jelly_fish_lexer_set_out
-#define yy_flex_debug gibbon_jelly_fish_lexer_flex_debug
-#define yyin gibbon_jelly_fish_lexer_in
-#define yyleng gibbon_jelly_fish_lexer_leng
-#define yylineno gibbon_jelly_fish_lexer_lineno
-#define yyout gibbon_jelly_fish_lexer_out
-#define yytext gibbon_jelly_fish_lexer_text
 }
 
 %option yylineno
 %option nounput
 %option noinput
+%option noyywrap
 %option case-insensitive
+%option reentrant
+%option bison-bridge
 
 /* %option debug */
 
@@ -93,22 +93,21 @@ static int yywrap ();
 %%
 
 <INITIAL>[1-9][0-9]*	{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10); 
-					return INTEGER;
-
-                                }
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		return INTEGER;
+	}
+	
 <INITIAL>point[ \t\r][ \t\r]*match	BEGIN (GAME_START); return MATCH_LENGTH;
 <INITIAL>[ \t\r\n]+		;
 
 <GAME_START>Game		return GAME;
 <GAME_START>[1-9][0-9]*		{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					BEGIN (OPPONENTS1); 
-					return INTEGER;
-
-                                }
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		BEGIN (OPPONENTS1); 
+		return INTEGER;
+	}
 
   /***************************************************************************
    * The line with the opponents.                                            
@@ -116,41 +115,41 @@ static int yywrap ();
    * simple tokens.  But I cannot see a simpler solution right now.
    ***************************************************************************/
 <OPPONENTS1>[\x21-\xff]+	{
-					yylval.name = alloc_name (yytext);
-					BEGIN (OPPONENTS2);
-					return PLAYER;
-				}
+		((struct yyguts_t *) yyscanner)->yylval_r->name = alloc_name (yytext);
+		BEGIN (OPPONENTS2);
+		return PLAYER;
+	}
 <OPPONENTS2>:			{
 					BEGIN (OPPONENTS3);
 					return COLON;
 				}
 <OPPONENTS3>0|[1-9][0-9]*	{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					BEGIN (OPPONENTS4); 
-					return INTEGER;
-                                }
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		BEGIN (OPPONENTS4); 
+		return INTEGER;
+	}
 <OPPONENTS4>[\x21-\xff]+	{
-					yylval.name = alloc_name (yytext);
-					BEGIN (OPPONENTS5);
-					return PLAYER;
-				}
+		((struct yyguts_t *) yyscanner)->yylval_r->name = alloc_name (yytext);
+		BEGIN (OPPONENTS5);
+		return PLAYER;
+	}
 <OPPONENTS5>:			{
 					BEGIN (OPPONENTS6);
 					return COLON;
 				}
 <OPPONENTS6>0|[1-9][0-9]*	{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					BEGIN (MOVES); 
-					return INTEGER;
-                                }
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		BEGIN (MOVES); 
+		return INTEGER;
+	}
 
 <MOVES>[1-9][0-9]*		{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					return INTEGER;
-                                }
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		return INTEGER;
+	}
 <MOVES>[)]			{
 					BEGIN (HALF_MOVE);
 					return PAREN;
@@ -159,16 +158,16 @@ static int yywrap ();
 					return WHITESPACE;
 				}
 <HALF_MOVE,ACTION>[1-6][1-6][ \t]*:	{
-					yylval.num = (yytext[0] - '0') * 10
-						+ yytext[1] - '0';
-					BEGIN (ACTION);
-					return ROLL; 
-				}
+		((struct yyguts_t *) yyscanner)->yylval_r->num 
+			= (yytext[0] - '0') * 10 + yytext[1] - '0';
+		BEGIN (ACTION);
+		return ROLL; 
+	}
 <ACTION>[0-9]|1[0-9]|2[0-5]	{
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					return POINT;
-				}
+		((struct yyguts_t *) yyscanner)->yylval_r->num
+			= (gint) g_ascii_strtoull (yytext, NULL, 10);
+		return POINT;
+	}
 <ACTION>\/			{
 					return SLASH;
 				}
@@ -186,13 +185,13 @@ static int yywrap ();
 				}
 <ACTION,HALF_MOVE,MOVES>
 	Wins?[ \t]*[1-9][0-9]*[ \t]*points?([ \t]*and[ \t]*the[ \t]*match)? {
-					while (*yytext < '1' || *yytext > '9')
-						++yytext;
-					yylval.num = (gint) g_ascii_strtoull 
-							     (yytext, NULL, 10);
-					BEGIN (GAME_START);					
-					return WINS;
-				}
+		while (*yytext < '1' || *yytext > '9')
+			++yytext;
+			((struct yyguts_t *) yyscanner)->yylval_r->num
+				= (gint) g_ascii_strtoull (yytext, NULL, 10);
+			BEGIN (GAME_START);					
+			return WINS;
+		}
 <ACTION>\n			BEGIN (MOVES);
 
   /***************************************************************************
@@ -203,10 +202,3 @@ static int yywrap ();
 <*>[ \t\r\n]			;
 <*>.				return yytext[0];
 %%
-
-static int
-yywrap ()
-{
-        BEGIN (0);
-	return 1;
-}

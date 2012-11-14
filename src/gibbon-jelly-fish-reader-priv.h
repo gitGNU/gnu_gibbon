@@ -24,13 +24,11 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+
 #include "gibbon-jelly-fish-reader.h"
 
 G_BEGIN_DECLS
-
-extern GibbonJellyFishReader *_gibbon_jelly_fish_reader_instance;
-
-void _gibbon_jelly_fish_reader_yyerror (const gchar *msg);
 
 void _gibbon_jelly_fish_reader_set_white (GibbonJellyFishReader *self,
                                           const gchar *white);
@@ -48,9 +46,17 @@ gboolean _gibbon_jelly_fish_reader_drop (GibbonJellyFishReader *self);
 gboolean _gibbon_jelly_fish_reader_take (GibbonJellyFishReader *self);
 gboolean _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
                                              guint points);
-gchar *_gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
+gchar *gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
                                              const gchar *name);
-void _gibbon_jelly_fish_reader_free_names (GibbonJellyFishReader *self);
+void gibbon_jelly_fish_reader_free_names (GibbonJellyFishReader *self);
+
+int gibbon_jelly_fish_lexer_get_lineno (void *);
+void gibbon_jelly_fish_reader_yyerror (void *scanner, const gchar *msg);
+void gibbon_jelly_fish_lexer_set_in (FILE *input, void *yyscanner);
+int gibbon_jelly_fish_lexer_lex_init_extra (void *self, void **yyscanner);
+int gibbon_jelly_fish_lexer_lex_destroy (void *yyscanner);
+void *gibbon_jelly_fish_lexer_get_extra (void *yyscanner);
+int gibbon_jelly_fish_parser_parse ();
 
 G_END_DECLS
 

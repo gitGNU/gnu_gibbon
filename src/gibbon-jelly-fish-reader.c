@@ -45,6 +45,7 @@ struct _GibbonJellyFishReaderPrivate {
         GibbonMatchReaderErrorFunc yyerror;
         gpointer user_data;
         const gchar *filename;
+        void *yyscanner;
         GibbonMatch *match;
 
         GSList *names;
@@ -63,6 +64,8 @@ static GibbonMatch *gibbon_jelly_fish_reader_parse (GibbonMatchReader *match_rea
                                                    const gchar *filename);
 static gboolean gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
                                                     GibbonGameAction *action);
+static void gibbon_jelly_fish_reader_error (const GibbonJellyFishReader *self,
+                                            const gchar *msg);
 
 static void 
 gibbon_jelly_fish_reader_init (GibbonJellyFishReader *self)
@@ -85,7 +88,7 @@ gibbon_jelly_fish_reader_finalize (GObject *object)
 {
         GibbonJellyFishReader *self = GIBBON_JELLY_FISH_READER (object);
 
-        _gibbon_jelly_fish_reader_free_names (self);
+        gibbon_jelly_fish_reader_free_names (self);
 
         G_OBJECT_CLASS (gibbon_jelly_fish_reader_parent_class)->finalize(object);
 }
@@ -115,7 +118,7 @@ gibbon_jelly_fish_reader_class_init (GibbonJellyFishReaderClass *klass)
  */
 GibbonJellyFishReader *
 gibbon_jelly_fish_reader_new (GibbonMatchReaderErrorFunc yyerror,
-                             gpointer user_data)
+                              gpointer user_data)
 {
         GibbonJellyFishReader *self = g_object_new (GIBBON_TYPE_JELLY_FISH_READER,
                                                    NULL);
@@ -131,28 +134,25 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
 {
         GibbonJellyFishReader *self;
         FILE *in;
-        extern FILE *gibbon_jelly_fish_lexer_in;
-        extern int gibbon_jelly_fish_parser_parse ();
         int parse_status;
+        void *yyscanner;
 
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (_self), NULL);
         self = GIBBON_JELLY_FISH_READER (_self);
 
-        gdk_threads_enter ();
-        if (_gibbon_jelly_fish_reader_instance) {
-                g_critical ("Another instance of GibbonJellyFishReader is"
-                            " currently active!");
-                gdk_threads_leave ();
+        if (gibbon_jelly_fish_lexer_lex_init_extra (self, &yyscanner)) {
+                g_error (_("Error creating tokenizer: %s!"),
+                         strerror (errno));
+                /* NOTREACHED */
                 return NULL;
         }
-        _gibbon_jelly_fish_reader_instance = self;
-        gdk_threads_leave ();
 
         self->priv->filename = filename;
+        self->priv->yyscanner = yyscanner;
         if (self->priv->match)
                 g_object_unref (self->priv->match);
         self->priv->match = gibbon_match_new (NULL, NULL, 0, FALSE);
-        _gibbon_jelly_fish_reader_free_names (self);
+        gibbon_jelly_fish_reader_free_names (self);
         self->priv->side = GIBBON_POSITION_SIDE_NONE;
 
         if (filename)
@@ -160,9 +160,9 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
         else
                 in = stdin;
         if (in) {
-                gibbon_jelly_fish_lexer_in = in;
+                gibbon_jelly_fish_lexer_set_in (in, yyscanner);
 
-                parse_status = gibbon_jelly_fish_parser_parse ();
+                parse_status = gibbon_jelly_fish_parser_parse (yyscanner);
                 if (filename)
                         fclose (in);
                 if (parse_status) {
@@ -174,63 +174,54 @@ gibbon_jelly_fish_reader_parse (GibbonMatchReader *_self, const gchar *filename)
                 g_object_unref (self->priv->match);
                 self->priv->match = NULL;
                 self->priv->side = GIBBON_POSITION_SIDE_NONE;
-                _gibbon_jelly_fish_reader_yyerror (strerror (errno));
+                gibbon_jelly_fish_reader_error (self, strerror (errno));
         }
 
         self->priv->filename = NULL;
         self->priv->side = GIBBON_POSITION_SIDE_NONE;
 
-        gdk_threads_enter ();
-        if (!_gibbon_jelly_fish_reader_instance
-             || _gibbon_jelly_fish_reader_instance != self) {
-                if (self->priv->match)
-                        g_object_unref (self->priv->match);
-                self->priv->match = NULL;
-                _gibbon_jelly_fish_reader_free_names (self);
-                g_critical ("Another instance of GibbonJellyFishReader has"
-                            " reset this one!");
-                gdk_threads_leave ();
-                return NULL;
-        }
-        _gibbon_jelly_fish_reader_instance = NULL;
-        gdk_threads_leave ();
+        gibbon_jelly_fish_lexer_lex_destroy (yyscanner);
 
         return self->priv->match;
 }
 
-void
-_gibbon_jelly_fish_reader_yyerror (const gchar *msg)
+static void
+gibbon_jelly_fish_reader_error (const GibbonJellyFishReader *self,
+                                const gchar *msg)
 {
         gchar *full_msg;
         const gchar *filename;
-        extern int gibbon_jelly_fish_lexer_get_lineno ();
         int lineno;
-        GibbonJellyFishReader *instance = _gibbon_jelly_fish_reader_instance;
 
-        if (!instance || !GIBBON_IS_JELLY_FISH_READER (instance)) {
-                g_critical ("gibbon_jelly_fish_reader_yyerror() called without"
-                            " an instance");
-                return;
-        }
-
-        if (instance->priv->filename)
-                filename = instance->priv->filename;
+        if (self->priv->filename)
+                filename = self->priv->filename;
         else
                 filename = _("[standard input]");
 
-        lineno = gibbon_jelly_fish_lexer_get_lineno ();
+        lineno = gibbon_jelly_fish_lexer_get_lineno (self->priv->yyscanner);
 
         if (lineno)
                 full_msg = g_strdup_printf ("%s:%d: %s", filename, lineno, msg);
         else
                 full_msg = g_strdup_printf ("%s: %s", filename, msg);
 
-        if (instance->priv->yyerror)
-                instance->priv->yyerror (instance->priv->user_data, full_msg);
+        if (self->priv->yyerror)
+                self->priv->yyerror (self->priv->user_data, full_msg);
         else
                 g_printerr ("%s\n", full_msg);
 
         g_free (full_msg);
+}
+
+void
+gibbon_jelly_fish_reader_yyerror (void *scanner, const gchar *msg)
+{
+        const GibbonJellyFishReader *reader;
+
+        reader = (GibbonJellyFishReader *) gibbon_jelly_fish_lexer_get_extra (scanner);
+
+        if (reader)
+                gibbon_jelly_fish_reader_error (reader, msg);
 }
 
 void
@@ -278,7 +269,7 @@ _gibbon_jelly_fish_reader_add_game (GibbonJellyFishReader *self)
         g_return_val_if_fail (self->priv->match, FALSE);
 
         if (!gibbon_match_add_game (self->priv->match, &error)) {
-                _gibbon_jelly_fish_reader_yyerror (error->message);
+                gibbon_jelly_fish_reader_error (self, error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -413,7 +404,7 @@ _gibbon_jelly_fish_reader_win_game (GibbonJellyFishReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_jelly_fish_reader_yyerror (_("Syntax error!"));
+                gibbon_jelly_fish_reader_yyerror (self, _("Syntax error!"));
                 return TRUE;
         }
 
@@ -450,7 +441,7 @@ _gibbon_jelly_fish_reader_resign (GibbonJellyFishReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_jelly_fish_reader_yyerror (_("Syntax error!"));
+                gibbon_jelly_fish_reader_error (self, _("Syntax error!"));
                 return TRUE;
         }
 
@@ -487,13 +478,14 @@ gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
-                _gibbon_jelly_fish_reader_yyerror (_("No game in progress!"));
+                gibbon_jelly_fish_reader_error (self,
+                                                _("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
         }
 
         if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
-                _gibbon_jelly_fish_reader_yyerror (error->message);
+                gibbon_jelly_fish_reader_error (self, error->message);
                 g_object_unref (action);
                 return FALSE;
         }
@@ -502,7 +494,7 @@ gibbon_jelly_fish_reader_add_action (GibbonJellyFishReader *self,
 }
 
 gchar *
-_gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
+gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
                                      const gchar *name)
 {
         g_return_val_if_fail (GIBBON_IS_JELLY_FISH_READER (self), NULL);
@@ -514,7 +506,7 @@ _gibbon_jelly_fish_reader_alloc_name (GibbonJellyFishReader *self,
 }
 
 void
-_gibbon_jelly_fish_reader_free_names (GibbonJellyFishReader *self)
+gibbon_jelly_fish_reader_free_names (GibbonJellyFishReader *self)
 {
         g_return_if_fail (GIBBON_IS_JELLY_FISH_READER (self));
 
