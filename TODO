@@ -92,3 +92,5 @@
   information about the Crawford rule.
 - Move animation got lost and should be rewritten anyway.
 - help is not listed in SUBDIRS, even on Unix.
+- Watching aborts program: Continuation doesn't work, and we'll also get a 
+  "match without start time".
