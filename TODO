@@ -88,9 +88,7 @@
 - Add the row "Initial position", when adding a game to the move list view,
   not when adding the first action.  When done, check whether the position
   is really edited, and display "Setup ..." instead.
-- check whether gsgf_flavor_backgammon_new() creates memory leaks in
-  the SGF reader.
 - when adding actions to a match, check whether we may double, and update
   information about the Crawford rule.
 - Move animation got lost and should be rewritten anyway.
-- Make all scanners and parsers reentrant.
+- help is not listed in SUBDIRS, even on Unix.
