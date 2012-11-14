@@ -26,7 +26,7 @@ AC_INIT([gibbon],[gibbon_version],[mailto:guido@imperia.net],[gibbon],[http://gu
 AC_CONFIG_SRCDIR(src/gibbon.c)
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.11.1 gnu])
+AM_INIT_AUTOMAKE([1.11.1 gnu dist-xz dist-bzip2])
 AM_SILENT_RULES([yes])
 
 AC_CANONICAL_HOST
