@@ -132,7 +132,7 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
         GSGFGameTree *game_tree;
         gsize bytes_written;
         gsize game_number;
-        GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
+        const GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
 
         self = GIBBON_SGF_WRITER (_self);
         g_return_val_if_fail (self != NULL, FALSE);
@@ -206,7 +206,7 @@ gibbon_sgf_writer_add_game (const GibbonSGFWriter *self,
         GSGFValue *match_info;
         GSGFCookedValue *mi_key, *mi_value;
         GSGFCookedValue *mi_compose;
-        GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
+        const GSGFFlavor *flavor = gibbon_sgf_writer_flavor;
         const GibbonPosition *pos;
         gint score;
         GSGFValue *result = NULL;
@@ -247,7 +247,6 @@ gibbon_sgf_writer_add_game (const GibbonSGFWriter *self,
                  }
         }
 
-        flavor = gsgf_game_tree_get_flavor (game_tree);
         match_info = GSGF_VALUE (gsgf_list_of_new (gsgf_compose_get_type (),
                                                    flavor));
         if (!gsgf_node_set_property (root, "MI", match_info, error)) {
