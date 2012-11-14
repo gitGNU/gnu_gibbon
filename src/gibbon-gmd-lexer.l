@@ -28,8 +28,6 @@
 
 #include "gibbon-util.h"
 
-static int yywrap ();
-
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -85,6 +83,7 @@ extern void gibbon_gmd_reader_yyerror (void *scanner, const gchar *msg);
 %option yylineno
 %option nounput
 %option noinput
+%option noyywrap
 %option case-insensitive
 %option stack
 %option noyy_top_state
@@ -398,13 +397,3 @@ NL (\r\n|\n|\r\n|\r)
 
 .				return yytext[0];
 %%
-
-static int
-yywrap (yyscan_t yyscanner)
-{
-	struct yyguts_t *yyg = yyscanner;
-	
-	BEGIN (0);
-
-	return 1;
-}
