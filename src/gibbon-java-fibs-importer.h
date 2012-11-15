@@ -69,7 +69,7 @@ struct _GibbonJavaFIBSImporterClass
 
 GType gibbon_java_fibs_importer_get_type (void) G_GNUC_CONST;
 
-GibbonJavaFIBSImporter *gibbon_java_fibs_importer_new (GibbonApp *app);
+GibbonJavaFIBSImporter *gibbon_java_fibs_importer_new ();
 void gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self);
 
 #endif

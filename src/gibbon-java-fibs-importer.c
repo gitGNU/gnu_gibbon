@@ -29,25 +29,16 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include "gibbon-app.h"
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
+#include "gibbon-util.h"
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
-        GibbonApp *app;
-
         GibbonArchive *archive;
-
-        GtkAssistant *assistant;
-        GtkFileChooserButton *file_chooser_button;
-
-        gulong apply;
-        gulong prepare;
-        gulong cancel;
-        gulong close;
-        gulong directory_selected;
-
-        gboolean signals_connected;
+        gchar *directory;
+        gchar *user;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -55,16 +46,19 @@ struct _GibbonJavaFIBSImporterPrivate {
 
 G_DEFINE_TYPE (GibbonJavaFIBSImporter, gibbon_java_fibs_importer, G_TYPE_OBJECT)
 
-static void gibbon_java_fibs_importer_on_cancel (GibbonJavaFIBSImporter *self,
-                                                 GtkAssistant *assistant);
-static void gibbon_java_fibs_importer_on_close (GibbonJavaFIBSImporter *self,
-                                                GtkAssistant *assistant);
-static void gibbon_java_fibs_importer_on_apply (GibbonJavaFIBSImporter *self,
-                                                GtkAssistant *assistant);
-static void gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
-                                                  GtkAssistant *assistant);
-static void gibbon_java_fibs_importer_on_directory_selected (GtkObject *object,
-                                                  GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_select_directory (
+                GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_check_directory (
+                GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_select_user (
+                GibbonJavaFIBSImporter *self);
+static gboolean gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter
+                                                      *self,
+                                                      gchar *path_to_prefs,
+                                                      gchar **server,
+                                                      guint *port,
+                                                      gchar **password,
+                                                      GError **error);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -72,41 +66,25 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_JAVA_FIBS_IMPORTER, GibbonJavaFIBSImporterPrivate);
 
-        self->priv->app = NULL;
         self->priv->archive = NULL;
-        self->priv->assistant = NULL;
-        self->priv->file_chooser_button = NULL;
+        self->priv->directory = NULL;
+        self->priv->user = NULL;
 }
 
 static void
 gibbon_java_fibs_importer_finalize (GObject *object)
 {
         GibbonJavaFIBSImporter *self = GIBBON_JAVA_FIBS_IMPORTER (object);
+        GObject *obj;
 
         if (self->priv->archive)
                 g_object_unref (self->priv->archive);
-        self->priv->archive = NULL;
+        obj = gibbon_app_find_object (app, "import-java-fibs-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
 
-        if (self->priv->assistant) {
-                g_signal_handler_disconnect (self->priv->assistant,
-                                             self->priv->apply);
-                g_signal_handler_disconnect (self->priv->assistant,
-                                             self->priv->close);
-                g_signal_handler_disconnect (self->priv->assistant,
-                                             self->priv->cancel);
-                g_signal_handler_disconnect (self->priv->assistant,
-                                             self->priv->prepare);
-                g_signal_handler_disconnect (
-                                self->priv->file_chooser_button,
-                                self->priv->directory_selected);
-        }
-
-        if (self->priv->file_chooser_button) {
-                g_signal_handler_disconnect (self->priv->file_chooser_button,
-                                             self->priv->directory_selected);
-        }
-
-        self->priv->app = NULL;
+        g_free (self->priv->directory);
+        g_free (self->priv->user);
 
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
@@ -126,64 +104,6 @@ gibbon_java_fibs_importer_new (GibbonApp *app)
 {
         GibbonJavaFIBSImporter *self =
                         g_object_new (GIBBON_TYPE_JAVA_FIBS_IMPORTER, NULL);
-        GtkWidget *widget;
-        gchar *selected_directory;
-
-        GtkAssistant *assistant =
-                GTK_ASSISTANT (gibbon_app_find_object (app,
-                                                       "java_fibs_assistant",
-                                                       GTK_TYPE_ASSISTANT));
-
-        if (!assistant) {
-                g_object_unref (self);
-                return NULL;
-        }
-
-        self->priv->app = app;
-
-        self->priv->assistant = assistant;
-
-        self->priv->apply =
-                g_signal_connect_swapped (G_OBJECT (assistant), "apply",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_apply), self);
-        self->priv->close =
-                g_signal_connect_swapped (G_OBJECT (assistant), "close",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_close), self);
-        self->priv->cancel =
-                g_signal_connect_swapped (G_OBJECT (assistant), "cancel",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_cancel), self);
-        self->priv->prepare =
-                g_signal_connect_swapped (G_OBJECT (assistant), "prepare",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_prepare), self);
-
-        widget = GTK_WIDGET (gibbon_app_find_object (app,
-                                                     "java_fibs_file_chooser_button",
-                                                     GTK_TYPE_FILE_CHOOSER_BUTTON));
-        self->priv->file_chooser_button = (GTK_FILE_CHOOSER_BUTTON (widget));
-
-        selected_directory =
-            gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget));
-        if (selected_directory) {
-                /* TODO: Write a validation function that checks for
-                 * the required directory structure.
-                 */
-                g_printerr ("Currently selected: %s\n", selected_directory);
-                g_free (selected_directory);
-        } else {
-                g_printerr ("No filename selected????\n");
-        }
-        self->priv->directory_selected =
-                g_signal_connect_swapped (G_OBJECT (widget), "file-set",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_directory_selected),
-                        self);
-
-        /* Set the first page to complete.  */
-        widget = gtk_assistant_get_nth_page (assistant, 0);
-        gtk_assistant_set_page_complete (assistant, widget, TRUE);
-
-        /* Same for the second page.  */
-        widget = gtk_assistant_get_nth_page (assistant, 1);
-        gtk_assistant_set_page_complete (assistant, widget, TRUE);
 
         return self;
 }
@@ -191,43 +111,241 @@ gibbon_java_fibs_importer_new (GibbonApp *app)
 void
 gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 {
+        GtkWidget *dialog;
+        gint reply;
+
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
 
-        gtk_widget_show_all (GTK_WIDGET (self->priv->assistant));
+        dialog = gtk_message_dialog_new_with_markup (
+                                GTK_WINDOW (gibbon_app_get_window (app)),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_QUESTION,
+                                GTK_BUTTONS_OK_CANCEL,
+                                "<span weight='bold' size='larger'>"
+                                "%s</span>\n%s",
+                                _("Import from JavaFIBS"),
+                                _("In order to import your saved matches and"
+                                  " settings from JavaFIBS you first have to"
+                                  " select the JavaFIBS installation"
+                                  " directory (that is the directory that"
+                                  " contains the .jar file)."));
+
+        reply = gtk_dialog_run(GTK_DIALOG (dialog));
+        gtk_widget_destroy(GTK_WIDGET (dialog));
+
+        if (reply != GTK_RESPONSE_OK) {
+                g_object_unref (self);
+                return;
+        }
+
+        gibbon_java_fibs_importer_select_directory (self);
+
+        g_object_unref (self);
 }
 
 static void
-gibbon_java_fibs_importer_on_cancel (GibbonJavaFIBSImporter *self,
-                                     GtkAssistant *assistant)
+gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
 {
-        gtk_widget_hide (GTK_WIDGET (assistant));
-        g_object_unref (G_OBJECT (self));
+        GtkWidget *dialog;
+        gint reply;
+        gchar *path;
+
+        dialog = gtk_file_chooser_dialog_new (
+                        _("Select JavaFIBS Directory"),
+                        GTK_WINDOW (gibbon_app_get_window (app)),
+                        GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                        GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+                        NULL);
+        gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (dialog), FALSE);
+        gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), FALSE);
+        g_printerr ("Remove line %s:%d!\n", __FILE__, __LINE__ + 1);
+        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog),
+                                              "/home/guido/java/JavaFIBS2001",
+                                              NULL);
+        reply = gtk_dialog_run(GTK_DIALOG (dialog));
+        if (reply != GTK_RESPONSE_OK) {
+                gtk_widget_destroy (dialog);
+                return;
+        }
+
+        path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+        gtk_widget_destroy (dialog);
+
+        self->priv->directory = path;
+
+        gibbon_java_fibs_importer_check_directory (self);
 }
 
 static void
-gibbon_java_fibs_importer_on_close (GibbonJavaFIBSImporter *self,
-                                    GtkAssistant *assistant)
+gibbon_java_fibs_importer_check_directory (GibbonJavaFIBSImporter *self)
 {
-        g_printerr ("Close ...\n");
+        gchar *path_to_last_user;
+        GError *error = NULL;
+        gchar *buffer;
+        gsize bytes_read;
+
+        /*
+         * If we cannot find the file user/last.user
+         */
+        path_to_last_user = g_build_filename (self->priv->directory,
+                                              "user", "last.user", NULL);
+        if (!g_file_test (path_to_last_user, G_FILE_TEST_EXISTS)) {
+                gibbon_app_display_error (app, _("Not a JavaFIBS Installation"),
+                                          _("The directory `%s' does not look"
+                                            " like a JavaFIBS installation. "
+                                            " The file `%s' is missing."),
+                                            self->priv->directory,
+                                            path_to_last_user);
+                g_free (path_to_last_user);
+                gibbon_java_fibs_importer_select_directory (self);
+                return;
+        }
+
+        if (!gibbon_slurp_file (path_to_last_user, &buffer, &bytes_read,
+                                NULL, &error)) {
+                gibbon_app_display_error (app, _("Read Error"),
+                                          _("Error reading `%s': %s!"),
+                                            path_to_last_user,
+                                            error->message);
+                g_free (path_to_last_user);
+                g_error_free (error);
+                /* No point falling back to last step here.  */;
+                return;
+        }
+
+        g_free (path_to_last_user);
+
+        buffer = g_realloc (buffer, bytes_read + 1);
+        buffer[bytes_read] = 0;
+
+        self->priv->user = g_strdup (gibbon_trim (buffer));
+        if (!*self->priv->user) {
+                g_free (self->priv->user);
+                self->priv->user = NULL;
+        }
+        g_free (buffer);
+
+        gibbon_java_fibs_importer_select_user (self);
 }
 
-static void
-gibbon_java_fibs_importer_on_apply (GibbonJavaFIBSImporter *self,
-                                    GtkAssistant *assistant)
+static
+void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
 {
-        g_printerr ("Apply ...\n");
+        gchar *path_to_user = g_build_filename (self->priv->directory,
+                                                "user", NULL);
+        GError *error = NULL;
+        GDir *dir = g_dir_open (path_to_user, 0, &error);
+        const gchar *user_dir;
+        gchar *path_to_prefs;
+        gchar *server; guint port; gchar *password;
+
+        if (!dir) {
+                gibbon_app_display_error (app, NULL,
+                                          _("Error opening directory `%s': %s!"),
+                                            path_to_user,
+                                            error->message);
+                g_free (path_to_user);
+                g_error_free (error);
+                /* No point falling back to last step here.  */;
+                return;
+        }
+
+        do {
+                user_dir = g_dir_read_name (dir);
+                if (!user_dir)
+                        break;
+                if (user_dir[0] == '.')
+                        continue;
+                path_to_prefs = g_build_filename (path_to_user, user_dir,
+                                                  "preferences", NULL);
+                if (!g_file_test (path_to_prefs, G_FILE_TEST_EXISTS))
+                        continue;
+
+                if (gibbon_java_fibs_importer_read_prefs (self, path_to_prefs,
+                                                          &server, &port,
+                                                          &password, NULL))
+                        continue;
+        } while (user_dir != NULL);
+
+        g_dir_close (dir);
+
+        g_free (path_to_user);
 }
 
-static void
-gibbon_java_fibs_importer_on_prepare (GibbonJavaFIBSImporter *self,
-                                      GtkAssistant *assistant)
+static gboolean
+gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
+                                      gchar *path_to_prefs,
+                                      gchar **server,
+                                      guint *port,
+                                      gchar **password,
+                                      GError **error)
 {
-        g_printerr ("Prepare ...\n");
-}
+        gsize filesize;
+        gchar *buffer;
+        guint32 *ui32;
+        guint32 password_length, server_length;
+        gchar *server_utf16;
+        gsize bytes_read, bytes_written;
 
-static void
-gibbon_java_fibs_importer_on_directory_selected (GtkObject *object,
-                                                 GibbonJavaFIBSImporter *self)
-{
-        g_printerr ("Directory selected ...\n");
+        if (!gibbon_slurp_file (path_to_prefs, &buffer, &filesize,
+                                NULL, error))
+                return FALSE;
+
+        if (filesize < 8) {
+                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_free (buffer);
+                return FALSE;
+        }
+
+        ui32 = (guint32 *) buffer;
+        ++ui32;
+        password_length = GUINT32_FROM_BE (*ui32);
+        ++ui32;
+
+        if (filesize < 8 + 4 * password_length) {
+                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_free (buffer);
+                return FALSE;
+        }
+        if (password_length) {
+                /* TODO: unscramble password.  */
+                ui32 += password_length;
+        }
+
+        server_length = GUINT32_FROM_BE (*ui32);
+        ++ui32;
+
+        if (filesize < 16 + 4 * password_length + 2 * server_length) {
+                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_free (buffer);
+                return FALSE;
+        }
+        if (!server_length) {
+                g_set_error_literal (error, 0, -1, _("no server name"));
+                g_free (buffer);
+                return FALSE;
+        }
+
+        server_utf16 = (gchar *) ui32;
+        *server = g_convert (server_utf16, 2 * server_length,
+                             "utf-8", "utf-16be",
+                             &bytes_read, &bytes_written, error);
+        if (!*server) {
+                g_free (buffer);
+                return FALSE;
+        }
+        /*
+        if (bytes_read != 2 * server_length
+            || bytes_written != server_length) {
+                g_set_error_literal (error, 0, 1, _("error converting hostname"));
+                return FALSE;
+        }
+        */
+
+        g_printerr ("%s: %s\n", path_to_prefs, *server);
+
+        g_free (buffer);
+
+        return TRUE;
 }

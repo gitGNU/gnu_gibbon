@@ -60,6 +60,7 @@
 #include "gibbon-game.h"
 #include "gibbon-analysis-view.h"
 #include "gibbon-met.h"
+#include "gibbon-java-fibs-importer.h"
 
 gchar *gibbon_app_pixmaps_directory = NULL;
 
@@ -130,6 +131,7 @@ static void gibbon_app_on_logged_in (GibbonApp *self,
 static void gibbon_app_on_network_error (GibbonApp *self,
                                          const gchar *error_msg);
 static void gibbon_app_on_account_prefs (GibbonApp *self);
+static void gibbon_app_on_java_fibs_import (GibbonApp *self);
 static void gibbon_app_on_toggle_ready (GibbonApp *self);
 static void gibbon_app_on_board_refresh (GibbonApp *self);
 static void gibbon_app_on_board_leave (GibbonApp *self);
@@ -725,8 +727,13 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                         G_CALLBACK (gibbon_app_on_account_prefs),
                         (gpointer) self);
 
-        obj
-                        = gibbon_app_find_object(self, "help-menu-item",
+        obj = gibbon_app_find_object(self, "import-java-fibs-menu-item",
+                        GTK_TYPE_MENU_ITEM);
+        g_signal_connect_swapped (obj, "activate",
+                        G_CALLBACK (gibbon_app_on_java_fibs_import),
+                        (gpointer) self);
+
+        obj = gibbon_app_find_object(self, "help-menu-item",
                                         GTK_TYPE_MENU_ITEM);
         g_signal_connect (obj, "activate",
                         G_CALLBACK (gibbon_help_show_help),
@@ -1892,4 +1899,18 @@ gibbon_app_get_met (const GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->met;
+}
+
+static void
+gibbon_app_on_java_fibs_import (GibbonApp *self)
+{
+        GObject *obj;
+        GibbonJavaFIBSImporter *importer;
+
+        obj = gibbon_app_find_object (self, "import-java-fibs-menu-item",
+                                      GTK_TYPE_MENU_ITEM);
+        gtk_widget_set_sensitive (GTK_WIDGET (obj), FALSE);
+
+        importer = gibbon_java_fibs_importer_new ();
+        gibbon_java_fibs_importer_run (importer);
 }
