@@ -56,10 +56,7 @@ typedef enum {
  *          that point.  A negative value means that this point is occupied
  *          by black, a positive value means that it is occupied by white.
  * @bar: bar[0] holds the number of white checkers on the bar, bar[1] the
- *       number of black checkers on the bar.  For consistency, black's
- *       checkers are negative, white's checkers are positive.  Yes, and
- *       for consistency this should be called bars not bar but that sounds
- *       too ugly.
+ *       number of black checkers on the bar.  Both numbers are positive!
  * @dice: value of the two dice if currently visible.  Negative values are
  *        used for black's dice, positive ones for white's dice.  In the
  *        opening roll(s) the signs of the two integers may differ from

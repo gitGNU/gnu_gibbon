@@ -597,9 +597,9 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
                                            " for white's bar!"));
                 return FALSE;
         }
-        if (b2 > 0) {
+        if (b2 < 0) {
                 gibbon_gmd_reader_error (self,
-                                         _("Only negative number allowed"
+                                         _("Only positive number allowed"
                                            " for black's bar!"));
                 return FALSE;
         }
@@ -640,7 +640,7 @@ _gibbon_gmd_reader_setup_position (GibbonGMDReader *self, gint64 b1,
          * all values are in the range [-15 ... +15].
          */
         wcheckers = pos->bar[0];
-        bcheckers = -pos->bar[1];
+        bcheckers = pos->bar[1];
         for (i = 0; i < 24; ++i) {
                 if (pos->points[i] < 0)
                         bcheckers -= pos->points[i];
