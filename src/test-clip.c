@@ -476,6 +476,8 @@ static struct test_case test_board00 =  {
                                 /* Player's and opponent's bar.  */
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* No Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 /* Post-Crawford? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -537,6 +539,8 @@ static struct test_case test_board01 =  {
                                 /* Player's and opponent's bar.  */
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* No Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 /* Post-Crawford? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }
@@ -598,6 +602,8 @@ static struct test_case test_board02 =  {
                                 /* Player's and opponent's bar.  */
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
                                 { GIBBON_CLIP_TYPE_UINT, "0" },
+                                /* No Crawford? */
+                                { GIBBON_CLIP_TYPE_BOOLEAN, "FALSE" },
                                 /* Post-Crawford? */
                                 { GIBBON_CLIP_TYPE_BOOLEAN, "TRUE" },
                                 { GIBBON_CLIP_TYPE_END, NULL }

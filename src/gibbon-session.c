@@ -1438,7 +1438,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         const gchar *str;
         gint retval = -1;
         gboolean is_crawford = FALSE;
-        gboolean post_crawford;
+        gboolean post_crawford, no_crawford;
         const gchar *login = NULL;
 
         pos = gibbon_position_new ();
@@ -1535,35 +1535,33 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 goto bail_out_board;
         
         if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
+                                      &no_crawford))
+                goto bail_out_board;
+
+        if (!gibbon_clip_get_boolean (&iter, GIBBON_CLIP_TYPE_BOOLEAN,
                                       &post_crawford))
                 goto bail_out_board;
 
         if (pos->match_length
             && (pos->scores[0] == pos->match_length - 1
                 || pos->scores[1] == pos->match_length - 1)) {
-            if (!post_crawford) {
-                pos->game_info = g_strdup (_("Crawford game"));
-                is_crawford = TRUE;
-            } else {
-                /*
-                 * If we are playing without the Crawford rule this is
-                 * not really accurate as we will display "Post Crawford" for
-                 * the game already, that would be the Crawford game.  But
-                 * after all, almost nobody plays without the Crawford rule
-                 * and we ignore that problem.
-                 */
-                pos->game_info = g_strdup (_("Post-Crawford game"));
-            }
+                if (no_crawford) {
+                        gibbon_match_tracker_set_crawford (self->priv->tracker,
+                                                           FALSE);
+                } else if (post_crawford) {
+                        pos->game_info = g_strdup (_("Post-Crawford game"));
+                } else {
+                        pos->game_info = g_strdup (_("Crawford game"));
+                        is_crawford = TRUE;
+                        pos->may_double[0] = FALSE;
+                        pos->may_double[1] = FALSE;
+                }
         }
 
         /*
          * If one of the opponents turned the cube, the value of both dice
          * is 0 (of course), and FIBS will set the may_double flag of both
          * players to false.
-         *
-         * One of the check for Crawford or the may_double flags is redundant,
-         * at least with FIBS, because FIBS will set the may_double flags
-         * for both players to TRUE during the Crawford game.
          */
         if (!is_crawford
             && !pos->dice[0] && !pos->dice[1]
@@ -3546,7 +3544,7 @@ void
 gibbon_session_resign (GibbonSession *self, guint value)
 {
         GibbonBoard *board;
-        const gchar *value_string;
+        gchar value_string;
 
         g_return_if_fail (GIBBON_IS_SESSION (self));
 
@@ -3559,18 +3557,18 @@ gibbon_session_resign (GibbonSession *self, guint value)
         switch (value) {
                 case 1:
                 default:
-                        value_string = "normal";
+                        value_string = 'n';
                         break;
                 case 2:
-                        value_string = "gammon";
+                        value_string = 'g';
                         break;
                 case 3:
-                        value_string = "backgammon";
+                        value_string = 'b';
                         break;
         }
 
         gibbon_connection_queue_command (self->priv->connection, FALSE,
-                                         "resign %s", value_string);
+                                         "resign %c", value_string);
         board = gibbon_app_get_board (self->priv->app);
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
