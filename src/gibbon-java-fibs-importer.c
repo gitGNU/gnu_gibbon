@@ -242,6 +242,9 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
         const gchar *user_dir;
         gchar *path_to_prefs;
         gchar *server; guint port; gchar *password;
+        GtkListStore *store;
+        GtkTreeIter iter;
+        gsize n_users = 0;
 
         if (!dir) {
                 gibbon_app_display_error (app, NULL,
@@ -253,6 +256,7 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 /* No point falling back to last step here.  */;
                 return;
         }
+        store = gtk_list_store_new (1, G_TYPE_STRING);
 
         do {
                 user_dir = g_dir_read_name (dir);
@@ -265,14 +269,37 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 if (!g_file_test (path_to_prefs, G_FILE_TEST_EXISTS))
                         continue;
 
-                if (gibbon_java_fibs_importer_read_prefs (self, path_to_prefs,
-                                                          &server, &port,
-                                                          &password, NULL))
+                if (!gibbon_java_fibs_importer_read_prefs (self, path_to_prefs,
+                                                           &server, &port,
+                                                           &password, NULL))
                         continue;
+                gtk_list_store_append (store, &iter);
+                gtk_list_store_set (store, &iter, 0, user_dir, -1);
+                ++n_users;
         } while (user_dir != NULL);
 
         g_dir_close (dir);
 
+        if (!n_users) {
+                gibbon_app_display_error (app, NULL,
+                                          _("No user data found in `%s'!"),
+                                            path_to_user);
+                g_object_unref (store);
+                g_free (path_to_user);
+                return;
+        } else if (n_users == 1) {
+                /* Iter was initialized above.  */
+                g_free (self->priv->user);
+                gtk_tree_model_get (GTK_TREE_MODEL (store), &iter,
+                                    0, &self->priv->user,
+                                    -1);
+                g_object_unref (store);
+                g_free (path_to_user);
+                /* TODO: Call next step.  */
+                return;
+        }
+
+        g_object_unref (store);
         g_free (path_to_user);
 }
 
