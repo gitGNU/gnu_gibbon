@@ -71,6 +71,8 @@ static void gibbon_match_tracker_init_match (GibbonMatchTracker *self,
                                              const gchar *player2,
                                              const GibbonPosition *initial);
 
+#define DEBUG_CONTINUATION 1
+
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
 {
@@ -205,6 +207,7 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
         GibbonMatch *match;
         GibbonMatchReaderErrorFunc yyerror;
         GError *error = NULL;
+        gint64 start;
 
         path = gibbon_archive_get_saved_name (archive, player1, player2);
         if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
@@ -221,6 +224,13 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
 
         if (!match) {
                 g_remove (path);
+                return;
+        }
+        start = gibbon_match_get_start_time (match);
+        if (start == G_MININT64) {
+                /* Either corrupt or only a starting position.  */
+                g_remove (path);
+                g_object_unref (match);
                 return;
         }
         if (!gibbon_match_get_current_game (match)) {
@@ -282,6 +292,13 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                  * start a new one with the new position as the starting
                  * position.
                  */
+#if DEBUG_CONTINUATION
+                g_printerr ("Could not guess missing actions from here:\n");
+                gibbon_position_dump_position (current);
+                g_printerr ("to here:\n");
+                gibbon_position_dump_position (current);
+                gtk_widget_error_bell (gibbon_app_get_window (app));
+#endif
                 gibbon_match_tracker_unlink_or_archive (self,
                                                         current->players[0],
                                                         current->players[1]);
@@ -300,6 +317,17 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 action = play->action;
                 side = play->side;
                 last_game = gibbon_match_get_current_game (self->priv->match);
+                if (!last_game) {
+                        if (!gibbon_gmd_writer_add_game (self->priv->writer,
+                                                         self->priv->out,
+                                                         &error)) {
+                                gibbon_app_fatal_error (app, _("Write Error"),
+                                                        _("Error writing to"
+                                                          " `%s': %s!\n"),
+                                                        self->priv->outname,
+                                                        error->message);
+                        }
+                }
                 if (!gibbon_match_add_action (self->priv->match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
@@ -315,7 +343,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                                 self->priv->outname,
                                                 error->message);
                 }
-                if (game != last_game) {
+                if (last_game && last_game != game) {
                         if (!gibbon_gmd_writer_add_game (self->priv->writer,
                                                          self->priv->out,
                                                          &error)) {
@@ -325,6 +353,8 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                                         self->priv->outname,
                                                         error->message);
                         }
+                }
+                if (last_game != game) {
                         gibbon_match_list_add_game (list, game);
                 } else {
                         /* Show the new game action(s).  */
