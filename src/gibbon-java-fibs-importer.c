@@ -59,6 +59,9 @@ static gboolean gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter
                                                       guint *port,
                                                       gchar **password,
                                                       GError **error);
+static gchar *gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
+                                                 guint32 *buffer,
+                                                 gsize password_length);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -309,9 +312,10 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
                 return FALSE;
         }
         if (password_length) {
-                /* TODO: unscramble password.  */
+                *password = gibbon_java_fibs_importer_decrypt (self,
+                                                               ui32,
+                                                               password_length);
                 ui32 += password_length;
-                *password = g_malloc (password_length + 1);
         } else {
                 *password = NULL;
         }
@@ -349,9 +353,57 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
 
         *port = GUINT32_FROM_BE (*ui32);
 
-        g_printerr ("%s: %s:%u\n", path_to_prefs, *server, *port);
-
         g_free (buffer);
 
         return TRUE;
+}
+
+static gchar *
+gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
+                                   guint32 *buffer,
+                                   gsize password_length)
+{
+        gchar *password = g_malloc (password_length + 1);
+        guchar *dest;
+        guint32 s;
+        guint32 *src;
+        gint i;
+
+        /*
+         * This routine only "decrypts" passwords with characters in the
+         * range from 32 to 127.  Other characters are not allowed anyway.
+         *
+         * BTW, this is not really encryption.  JavaFIBS scrambles passwords
+         * by converting characters to floats.  The restriction to codes
+         * 32-127 makes parsing the floats very simple.
+         */
+        src = buffer;
+        dest = (guchar *) password;
+        for (i = 0; i < password_length; ++i) {
+                s = *src++;
+                s = GUINT32_FROM_BE (s);
+                if ((s & 0xff000000) != 0x42000000) {
+                        g_free (password);
+                        return NULL;
+                }
+                s = s & 0xff0000;
+                s >>= 16;
+
+                if (s < 0x80) {
+                        if (s & 0x3) {
+                                g_free (password);
+                                return NULL;
+                        }
+                        *dest++ = (s / 4) + 32;
+                } else {
+                        if (s & 0x1) {
+                                g_free (password);
+                                return NULL;
+                        }
+                        *dest++ = (s / 2);
+                }
+        }
+        *dest = 0;
+
+        return password;
 }
