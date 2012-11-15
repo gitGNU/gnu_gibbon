@@ -311,6 +311,9 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
         if (password_length) {
                 /* TODO: unscramble password.  */
                 ui32 += password_length;
+                *password = g_malloc (password_length + 1);
+        } else {
+                *password = NULL;
         }
 
         server_length = GUINT32_FROM_BE (*ui32);
@@ -335,15 +338,18 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
                 g_free (buffer);
                 return FALSE;
         }
-        /*
+
         if (bytes_read != 2 * server_length
             || bytes_written != server_length) {
                 g_set_error_literal (error, 0, 1, _("error converting hostname"));
                 return FALSE;
         }
-        */
+        server_utf16 += 2 * server_length;
+        ui32 = (guint32 *) server_utf16;
 
-        g_printerr ("%s: %s\n", path_to_prefs, *server);
+        *port = GUINT32_FROM_BE (*ui32);
+
+        g_printerr ("%s: %s:%u\n", path_to_prefs, *server, *port);
 
         g_free (buffer);
 
