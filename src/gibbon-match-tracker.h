@@ -87,5 +87,7 @@ void gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
                                       GibbonPositionSide side);
 void gibbon_match_tracker_update (GibbonMatchTracker *self,
                                   const GibbonPosition *pos);
+void gibbon_match_tracker_set_crawford (GibbonMatchTracker *self,
+                                        gboolean flag);
 
 #endif

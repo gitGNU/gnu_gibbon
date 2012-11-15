@@ -512,3 +512,19 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
 
         gibbon_app_set_match (app, self->priv->match);
 }
+
+void
+gibbon_match_tracker_set_crawford (GibbonMatchTracker *self, gboolean flag)
+{
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+
+        gibbon_match_set_crawford (self->priv->match, flag);
+
+        if (!flag) {
+                game = gibbon_match_get_current_game (self->priv->match);
+                if (game)
+                        gibbon_game_set_is_crawford (game, FALSE);
+        }
+}
