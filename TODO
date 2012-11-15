@@ -94,3 +94,13 @@
 - help is not listed in SUBDIRS, even on Unix.
 - Watching aborts program: Continuation doesn't work, and we'll also get a 
   "match without start time".
+- Check whether it is possible to end a saved game of fixed length by
+  inviting to a new one.
+- When leaving a match, we necessarily have a saved match with the opponent.
+  Add the opponent to the internal list.
+- At the end of a game, assertion G_IS_OBJECT for g_object_unref fails.
+- A finished match does not get archived!  But that is because we never
+  get notified about that.
+- In a post-crawford game, the display switches between Crawford and
+  Post-Crawford.
+- Implement Patti's new admin tell command.
