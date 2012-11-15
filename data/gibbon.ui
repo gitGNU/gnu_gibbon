@@ -206,6 +206,9 @@
               <placeholder/>
             </child>
             <child>
+              <placeholder/>
+            </child>
+            <child>
               <object class="GtkLabel" id="label26">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -297,9 +300,6 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
-            </child>
-            <child>
               <object class="GtkScrolledWindow" id="scrolledwindow9">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -318,6 +318,9 @@
                 <property name="top_attach">1</property>
                 <property name="bottom_attach">2</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>
@@ -518,11 +521,12 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="edit_menu_item">
+                      <object class="GtkMenuItem" id="import-java-fibs-menu-item">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">_Import from FIBS ...</property>
+                        <property name="tooltip_text" translatable="yes">Imports matches and settings from JavaFIBS, another client for FIBS.</property>
+                        <property name="label" translatable="yes">_Import from JavaFIBS ...</property>
                         <property name="use_underline">True</property>
                       </object>
                     </child>
