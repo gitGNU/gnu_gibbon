@@ -280,3 +280,49 @@ gibbon_money_equity (const gdouble p[5])
                         - p[GIBBON_ANALYSIS_MOVE_PLOSE_BACKGAMMON];
 
 }
+
+#define GIBBON_CHUNK_SIZE 8192
+gboolean
+gibbon_slurp_file (const gchar *path, char **buffer, gsize *bytes_read_out,
+                   GCancellable *cancellable, GError **error)
+{
+        gsize bytes_allocated = 0;
+        gsize bytes_read = 0;
+        gssize chunk_size;
+        GFile *file = g_file_new_for_path (path);
+        GInputStream *fstream = G_INPUT_STREAM (g_file_read (file, NULL, error));
+
+        *buffer = NULL;
+
+        g_object_unref (file);
+
+        if (!fstream)
+                return FALSE;
+
+        do {
+                if (bytes_read <= bytes_allocated) {
+                        bytes_allocated += GIBBON_CHUNK_SIZE;
+                        *buffer = g_realloc (*buffer, bytes_allocated);
+                }
+                chunk_size = g_input_stream_read (fstream, *buffer + bytes_read,
+                                                  GIBBON_CHUNK_SIZE,
+                                                  cancellable, error);
+                if (chunk_size > 0) {
+                        bytes_read += chunk_size;
+                }
+        } while (chunk_size > 0);
+
+        g_object_unref (fstream);
+
+        if (chunk_size < 0) {
+                g_free (*buffer);
+                return FALSE;
+        }
+
+        *buffer = g_realloc (*buffer, bytes_read);
+
+        if (bytes_read_out)
+                *bytes_read_out = bytes_read;
+
+        return TRUE;
+}

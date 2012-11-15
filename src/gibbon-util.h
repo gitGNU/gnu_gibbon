@@ -25,6 +25,7 @@
 #endif
 
 #include <glib.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -50,6 +51,9 @@ void gibbon_safe_object_unref (gpointer data);
 gboolean gibbon_chareq (const char *str1, const char *str2);
 
 gdouble gibbon_money_equity (const gdouble p[5]);
+gboolean gibbon_slurp_file (const gchar *path, char **buffer,
+                            gsize *bytes_read,
+                            GCancellable *cancellable, GError **error);
 
 G_END_DECLS
 
