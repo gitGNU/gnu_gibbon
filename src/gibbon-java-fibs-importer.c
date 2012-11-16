@@ -49,11 +49,11 @@ struct _GibbonJavaFIBSImporterPrivate {
 
 G_DEFINE_TYPE (GibbonJavaFIBSImporter, gibbon_java_fibs_importer, G_TYPE_OBJECT)
 
-static void gibbon_java_fibs_importer_select_directory (
+static gboolean gibbon_java_fibs_importer_select_directory (
                 GibbonJavaFIBSImporter *self);
-static void gibbon_java_fibs_importer_check_directory (
+static gboolean gibbon_java_fibs_importer_check_directory (
                 GibbonJavaFIBSImporter *self);
-static void gibbon_java_fibs_importer_select_user (
+static gboolean gibbon_java_fibs_importer_select_user (
                 GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter
                                                       *self,
@@ -149,12 +149,17 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
                 return;
         }
 
-        gibbon_java_fibs_importer_select_directory (self);
+        if (!gibbon_java_fibs_importer_select_directory (self)) {
+                g_object_unref (self);
+                return;
+        }
 
-        g_object_unref (self);
+        g_printerr ("Must now import data for %s on %s port %u with password %s.\n",
+                    self->priv->user, self->priv->server, self->priv->port,
+                    self->priv->password);
 }
 
-static void
+static gboolean
 gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
 {
         GtkWidget *dialog;
@@ -177,7 +182,7 @@ gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
         reply = gtk_dialog_run(GTK_DIALOG (dialog));
         if (reply != GTK_RESPONSE_OK) {
                 gtk_widget_destroy (dialog);
-                return;
+                return FALSE;
         }
 
         path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -185,10 +190,10 @@ gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
 
         self->priv->directory = path;
 
-        gibbon_java_fibs_importer_check_directory (self);
+        return gibbon_java_fibs_importer_check_directory (self);
 }
 
-static void
+static gboolean
 gibbon_java_fibs_importer_check_directory (GibbonJavaFIBSImporter *self)
 {
         gchar *path_to_last_user;
@@ -209,8 +214,7 @@ gibbon_java_fibs_importer_check_directory (GibbonJavaFIBSImporter *self)
                                             self->priv->directory,
                                             path_to_last_user);
                 g_free (path_to_last_user);
-                gibbon_java_fibs_importer_select_directory (self);
-                return;
+                return gibbon_java_fibs_importer_select_directory (self);
         }
 
         if (!gibbon_slurp_file (path_to_last_user, &buffer, &bytes_read,
@@ -222,7 +226,7 @@ gibbon_java_fibs_importer_check_directory (GibbonJavaFIBSImporter *self)
                 g_free (path_to_last_user);
                 g_error_free (error);
                 /* No point falling back to last step here.  */;
-                return;
+                return FALSE;
         }
 
         g_free (path_to_last_user);
@@ -237,11 +241,11 @@ gibbon_java_fibs_importer_check_directory (GibbonJavaFIBSImporter *self)
         }
         g_free (buffer);
 
-        gibbon_java_fibs_importer_select_user (self);
+        return gibbon_java_fibs_importer_select_user (self);
 }
 
-static
-void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
+static gboolean
+gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
 {
         gchar *path_to_user = g_build_filename (self->priv->directory,
                                                 "user", NULL);
@@ -267,7 +271,7 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 g_free (path_to_user);
                 g_error_free (error);
                 /* No point falling back to last step here.  */;
-                return;
+                return FALSE;
         }
         store = gtk_list_store_new (5,
                                     G_TYPE_STRING,
@@ -317,7 +321,7 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                                             path_to_user);
                 g_object_unref (store);
                 g_free (path_to_user);
-                return;
+                return FALSE;
         } else if (n_users == 1) {
                 /* Iter was initialized above.  */
                 g_free (self->priv->user);
@@ -329,8 +333,8 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                                     -1);
                 g_object_unref (store);
                 g_free (path_to_user);
-                /* TODO: Call next step.  */
-                return;
+
+                return TRUE;
         }
 
         window = gibbon_app_get_window (app);
@@ -374,7 +378,7 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 gtk_widget_destroy (dialog);
                 g_object_unref (store);
                 g_free (path_to_user);
-                return;
+                return FALSE;
         }
 
         gtk_widget_destroy (dialog);
@@ -388,6 +392,8 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
 
         g_object_unref (store);
         g_free (path_to_user);
+
+        return TRUE;
 }
 
 static gboolean
