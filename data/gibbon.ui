@@ -125,8 +125,8 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="java-fibs-importer-cancel">
-                <property name="label">gtk-cancel</property>
+              <object class="GtkButton" id="java-fibs-importer-stop">
+                <property name="label">gtk-stop</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -325,6 +325,9 @@
             <child>
               <placeholder/>
             </child>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -335,7 +338,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">java-fibs-importer-cancel</action-widget>
+      <action-widget response="0">java-fibs-importer-stop</action-widget>
       <action-widget response="0">java-fibs-importer-ok</action-widget>
     </action-widgets>
   </object>

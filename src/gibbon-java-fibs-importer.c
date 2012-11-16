@@ -65,6 +65,8 @@ static gboolean gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter
 static gchar *gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
                                                  guint32 *buffer,
                                                  gsize password_length);
+static void gibbon_java_fibs_importer_on_stop (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -124,6 +126,7 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 {
         GtkWidget *dialog;
         gint reply;
+        GtkWidget *widget;
 
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
 
@@ -154,9 +157,26 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
                 return;
         }
 
-        g_printerr ("Must now import data for %s on %s port %u with password %s.\n",
-                    self->priv->user, self->priv->server, self->priv->port,
-                    self->priv->password);
+        dialog = gibbon_app_find_widget (app, "java-fibs-importer-dialog",
+                                         GTK_TYPE_DIALOG);
+
+        widget = gibbon_app_find_widget (app, "java-fibs-importer-stop",
+                                         GTK_TYPE_BUTTON);
+        g_signal_connect_swapped (
+                        G_OBJECT (widget), "clicked",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_stop),
+                        self);
+        gtk_widget_set_sensitive (widget, TRUE);
+
+        widget = gibbon_app_find_widget (app, "java-fibs-importer-ok",
+                                         GTK_TYPE_BUTTON);
+        g_signal_connect_swapped (
+                        G_OBJECT (widget), "clicked",
+                        G_CALLBACK (gibbon_java_fibs_importer_on_okay),
+                        self);
+        gtk_widget_set_sensitive (widget, FALSE);
+
+        gtk_widget_show_all (dialog);
 }
 
 static gboolean
@@ -526,4 +546,29 @@ gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
         *dest = 0;
 
         return password;
+}
+
+static void
+gibbon_java_fibs_importer_on_stop (GibbonJavaFIBSImporter *self)
+{
+        GtkWidget *button;
+
+        button = gibbon_app_find_widget (app, "java-fibs-importer-stop",
+                                         GTK_TYPE_BUTTON);
+        gtk_widget_set_sensitive (button, FALSE);
+        button = gibbon_app_find_widget (app, "java-fibs-importer-ok",
+                                         GTK_TYPE_BUTTON);
+        gtk_widget_set_sensitive (button, TRUE);
+}
+
+static void
+gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self)
+{
+        GtkWidget *dialog;
+
+        dialog = gibbon_app_find_widget (app, "java-fibs-importer-dialog",
+                                         GTK_TYPE_DIALOG);
+        gtk_widget_hide (dialog);
+
+        g_object_unref (self);
 }
