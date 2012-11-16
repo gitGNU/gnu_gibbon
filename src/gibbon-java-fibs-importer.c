@@ -365,9 +365,26 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
 
         gtk_widget_show_all (dialog);
 
+        gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
         response = gtk_dialog_run (GTK_DIALOG (dialog));
+        active = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
+
+        if (response != GTK_RESPONSE_OK
+            || !gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter)) {
+                gtk_widget_destroy (dialog);
+                g_object_unref (store);
+                g_free (path_to_user);
+                return;
+        }
 
         gtk_widget_destroy (dialog);
+
+        gtk_tree_model_get (GTK_TREE_MODEL (store), &iter,
+                            1, &self->priv->user,
+                            2, &self->priv->server,
+                            3, &self->priv->port,
+                            4, &self->priv->password,
+                            -1);
 
         g_object_unref (store);
         g_free (path_to_user);
