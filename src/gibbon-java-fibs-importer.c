@@ -253,6 +253,11 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
         GtkListStore *store;
         GtkTreeIter iter;
         gsize n_users = 0;
+        gint active = -1;
+        gchar *text;
+        GtkWidget *window, *dialog, *content_area, *label, *combo;
+        GtkCellRenderer *cell;
+        gint response;
 
         if (!dir) {
                 gibbon_app_display_error (app, NULL,
@@ -264,7 +269,8 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 /* No point falling back to last step here.  */;
                 return;
         }
-        store = gtk_list_store_new (4,
+        store = gtk_list_store_new (5,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_UINT,
@@ -286,12 +292,20 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                                                            &password, NULL))
                         continue;
                 gtk_list_store_append (store, &iter);
+                text = g_strdup_printf (_("%s on %s port %u"),
+                                        user_dir, server, port);
                 gtk_list_store_set (store, &iter,
-                                    0, user_dir,
-                                    1, server,
-                                    2, port,
-                                    3, password,
+                                    0, text,
+                                    1, user_dir,
+                                    2, server,
+                                    3, port,
+                                    4, password,
                                     -1);
+                g_free (text);
+
+                if (!g_strcmp0 (user_dir, self->priv->user))
+                        active = n_users;
+
                 ++n_users;
         } while (user_dir != NULL);
 
@@ -308,16 +322,52 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 /* Iter was initialized above.  */
                 g_free (self->priv->user);
                 gtk_tree_model_get (GTK_TREE_MODEL (store), &iter,
-                                    0, &self->priv->user,
-                                    1, &self->priv->server,
-                                    2, &self->priv->port,
-                                    3, &self->priv->password,
+                                    1, &self->priv->user,
+                                    2, &self->priv->server,
+                                    3, &self->priv->port,
+                                    4, &self->priv->password,
                                     -1);
                 g_object_unref (store);
                 g_free (path_to_user);
                 /* TODO: Call next step.  */
                 return;
         }
+
+        window = gibbon_app_get_window (app);
+        dialog = gtk_dialog_new_with_buttons (_("Select Account"),
+                                              GTK_WINDOW (window),
+                                              GTK_DIALOG_DESTROY_WITH_PARENT
+                                              | GTK_DIALOG_MODAL,
+                                              GTK_STOCK_CANCEL,
+                                              GTK_RESPONSE_CANCEL,
+                                              GTK_STOCK_OK,
+                                              GTK_RESPONSE_OK,
+                                              NULL);
+
+        content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+
+        label = gtk_label_new (_("Multiple accounts found.   Please select"
+                                 " one identity:"));
+        gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+        gtk_container_add (GTK_CONTAINER (content_area), label);
+
+        combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
+        cell = gtk_cell_renderer_text_new ();
+        gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
+        gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
+                                        "text", 0,
+                                        NULL);
+
+        gtk_combo_box_set_entry_text_column (GTK_COMBO_BOX (combo), 0);
+        gtk_combo_box_set_active (GTK_COMBO_BOX (combo), active);
+
+        gtk_container_add (GTK_CONTAINER (content_area), combo);
+
+        gtk_widget_show_all (dialog);
+
+        response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+        gtk_widget_destroy (dialog);
 
         g_object_unref (store);
         g_free (path_to_user);
