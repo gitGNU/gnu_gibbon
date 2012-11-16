@@ -39,6 +39,9 @@ struct _GibbonJavaFIBSImporterPrivate {
         GibbonArchive *archive;
         gchar *directory;
         gchar *user;
+        gchar *server;
+        guint port;
+        gchar *password;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -72,6 +75,9 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv->archive = NULL;
         self->priv->directory = NULL;
         self->priv->user = NULL;
+        self->priv->server = NULL;
+        self->priv->port = 0;
+        self->priv->password = NULL;
 }
 
 static void
@@ -88,6 +94,8 @@ gibbon_java_fibs_importer_finalize (GObject *object)
 
         g_free (self->priv->directory);
         g_free (self->priv->user);
+        g_free (self->priv->server);
+        g_free (self->priv->password);
 
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
@@ -256,7 +264,11 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 /* No point falling back to last step here.  */;
                 return;
         }
-        store = gtk_list_store_new (1, G_TYPE_STRING);
+        store = gtk_list_store_new (4,
+                                    G_TYPE_STRING,
+                                    G_TYPE_STRING,
+                                    G_TYPE_UINT,
+                                    G_TYPE_STRING);
 
         do {
                 user_dir = g_dir_read_name (dir);
@@ -274,7 +286,12 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                                                            &password, NULL))
                         continue;
                 gtk_list_store_append (store, &iter);
-                gtk_list_store_set (store, &iter, 0, user_dir, -1);
+                gtk_list_store_set (store, &iter,
+                                    0, user_dir,
+                                    1, server,
+                                    2, port,
+                                    3, password,
+                                    -1);
                 ++n_users;
         } while (user_dir != NULL);
 
@@ -292,6 +309,9 @@ void gibbon_java_fibs_importer_select_user (GibbonJavaFIBSImporter *self)
                 g_free (self->priv->user);
                 gtk_tree_model_get (GTK_TREE_MODEL (store), &iter,
                                     0, &self->priv->user,
+                                    1, &self->priv->server,
+                                    2, &self->priv->port,
+                                    3, &self->priv->password,
                                     -1);
                 g_object_unref (store);
                 g_free (path_to_user);
