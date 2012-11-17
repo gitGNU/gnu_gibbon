@@ -36,12 +36,24 @@
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
+        gboolean running;
+
         GibbonArchive *archive;
         gchar *directory;
         gchar *user;
         gchar *server;
         guint port;
         gchar *password;
+
+        guint okay_handler;
+        guint stop_handler;
+
+        GThread *worker;
+        GMutex mutex;
+        gint jobs;
+        gint finished;
+        guint timeout;
+        gboolean cancelled;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -67,6 +79,9 @@ static gchar *gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
                                                  gsize password_length);
 static void gibbon_java_fibs_importer_on_stop (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self);
+static gpointer gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self);
+static gboolean gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_ready (GibbonJavaFIBSImporter *self);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -74,12 +89,23 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_JAVA_FIBS_IMPORTER, GibbonJavaFIBSImporterPrivate);
 
+        self->priv->running = FALSE;
+
         self->priv->archive = NULL;
         self->priv->directory = NULL;
         self->priv->user = NULL;
         self->priv->server = NULL;
         self->priv->port = 0;
         self->priv->password = NULL;
+
+        self->priv->worker = NULL;
+        self->priv->jobs = -1;
+        self->priv->finished = 0;
+        self->priv->timeout = 0;
+        self->priv->cancelled = FALSE;
+
+        self->priv->okay_handler = 0;
+        self->priv->stop_handler = 0;
 }
 
 static void
@@ -87,6 +113,24 @@ gibbon_java_fibs_importer_finalize (GObject *object)
 {
         GibbonJavaFIBSImporter *self = GIBBON_JAVA_FIBS_IMPORTER (object);
         GObject *obj;
+
+        if (self->priv->stop_handler) {
+                obj = gibbon_app_find_object (app, "java-fibs-importer-stop",
+                                              GTK_TYPE_BUTTON);
+                g_signal_handler_disconnect (obj, self->priv->stop_handler);
+        }
+
+        if (self->priv->okay_handler) {
+                obj = gibbon_app_find_object (app, "java-fibs-importer-ok",
+                                              GTK_TYPE_BUTTON);
+                g_signal_handler_disconnect (obj, self->priv->okay_handler);
+        }
+
+        if (self->priv->timeout)
+                g_source_remove (self->priv->timeout);
+
+        if (self->priv->worker)
+                g_thread_join (self->priv->worker);
 
         if (self->priv->archive)
                 g_object_unref (self->priv->archive);
@@ -127,8 +171,15 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         GtkWidget *dialog;
         gint reply;
         GtkWidget *widget;
+        GError *error = NULL;
+        guint id;
 
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
+
+        if (self->priv->running)
+                return;
+
+        self->priv->running = TRUE;
 
         dialog = gtk_message_dialog_new_with_markup (
                                 GTK_WINDOW (gibbon_app_get_window (app)),
@@ -162,21 +213,39 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 
         widget = gibbon_app_find_widget (app, "java-fibs-importer-stop",
                                          GTK_TYPE_BUTTON);
-        g_signal_connect_swapped (
-                        G_OBJECT (widget), "clicked",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_stop),
-                        self);
+        self->priv->stop_handler = g_signal_connect_swapped (
+                                G_OBJECT (widget), "clicked",
+                                G_CALLBACK (gibbon_java_fibs_importer_on_stop),
+                                self);
         gtk_widget_set_sensitive (widget, TRUE);
 
         widget = gibbon_app_find_widget (app, "java-fibs-importer-ok",
                                          GTK_TYPE_BUTTON);
-        g_signal_connect_swapped (
-                        G_OBJECT (widget), "clicked",
-                        G_CALLBACK (gibbon_java_fibs_importer_on_okay),
-                        self);
+        self->priv->okay_handler =
+                        g_signal_connect_swapped (
+                                        G_OBJECT (widget), "clicked",
+                                        G_CALLBACK (gibbon_java_fibs_importer_on_okay),
+                                        self);
         gtk_widget_set_sensitive (widget, FALSE);
 
+        g_mutex_init (&self->priv->mutex);
+        id = g_timeout_add (10, (GSourceFunc) gibbon_java_fibs_importer_poll,
+                            self);
+        self->priv->timeout = id;
+
         gtk_widget_show_all (dialog);
+
+        if (!g_thread_try_new ("java-fibs-importer-worker",
+                               (GThreadFunc) gibbon_java_fibs_importer_work,
+                               self, &error)) {
+                gibbon_app_display_error (app, _("System Error"),
+                                          _("Error creating new thread: %s!"),
+                                            error->message);
+                g_object_unref (self);
+                gtk_widget_hide (dialog);
+
+                return;
+        }
 }
 
 static gboolean
@@ -551,14 +620,11 @@ gibbon_java_fibs_importer_decrypt (GibbonJavaFIBSImporter *self,
 static void
 gibbon_java_fibs_importer_on_stop (GibbonJavaFIBSImporter *self)
 {
-        GtkWidget *button;
+        gibbon_java_fibs_importer_ready (self);
 
-        button = gibbon_app_find_widget (app, "java-fibs-importer-stop",
-                                         GTK_TYPE_BUTTON);
-        gtk_widget_set_sensitive (button, FALSE);
-        button = gibbon_app_find_widget (app, "java-fibs-importer-ok",
-                                         GTK_TYPE_BUTTON);
-        gtk_widget_set_sensitive (button, TRUE);
+        g_mutex_lock (&self->priv->mutex);
+        self->priv->cancelled = TRUE;
+        g_mutex_unlock (&self->priv->mutex);
 }
 
 static void
@@ -571,4 +637,59 @@ gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self)
         gtk_widget_hide (dialog);
 
         g_object_unref (self);
+}
+
+static gpointer
+gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
+{
+        gint i;
+
+        g_mutex_lock (&self->priv->mutex);
+        self->priv->jobs = 10;
+        self->priv->finished = 0;
+        g_mutex_unlock (&self->priv->mutex);
+
+        for (i = 0; i < 10; ++i) {
+                g_mutex_lock (&self->priv->mutex);
+                if (self->priv->cancelled) {
+                        g_mutex_unlock (&self->priv->mutex);
+                        return NULL;
+                }
+                ++self->priv->finished;
+                g_mutex_unlock (&self->priv->mutex);
+
+                g_usleep (G_USEC_PER_SEC);
+        }
+
+        return NULL;
+}
+
+static gboolean
+gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
+{
+        g_mutex_lock (&self->priv->mutex);
+
+        if (self->priv->jobs == self->priv->finished) {
+                gibbon_java_fibs_importer_ready (self);
+                g_mutex_unlock (&self->priv->mutex);
+
+                return FALSE;
+        }
+
+        g_mutex_unlock (&self->priv->mutex);
+
+        return TRUE;
+}
+
+static void
+gibbon_java_fibs_importer_ready (GibbonJavaFIBSImporter *self)
+{
+        GtkWidget *button;
+
+        button = gibbon_app_find_widget (app, "java-fibs-importer-stop",
+                                         GTK_TYPE_BUTTON);
+        gtk_widget_set_sensitive (button, FALSE);
+        button = gibbon_app_find_widget (app, "java-fibs-importer-ok",
+                                         GTK_TYPE_BUTTON);
+        gtk_widget_set_sensitive (button, TRUE);
 }
