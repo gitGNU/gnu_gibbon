@@ -45,6 +45,9 @@ struct _GibbonJavaFIBSImporterPrivate {
         guint port;
         gchar *password;
 
+        GtkWidget *progress;
+        gchar *status;
+
         guint okay_handler;
         guint stop_handler;
 
@@ -98,6 +101,9 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv->port = 0;
         self->priv->password = NULL;
 
+        self->priv->progress = NULL;
+        self->priv->status = NULL;
+
         self->priv->worker = NULL;
         self->priv->jobs = -1;
         self->priv->finished = 0;
@@ -138,6 +144,8 @@ gibbon_java_fibs_importer_finalize (GObject *object)
                                       GTK_TYPE_MENU_ITEM);
         gtk_widget_set_sensitive (GTK_WIDGET (obj), TRUE);
 
+        g_free (self->priv->status);
+
         g_free (self->priv->directory);
         g_free (self->priv->user);
         g_free (self->priv->server);
@@ -157,10 +165,19 @@ gibbon_java_fibs_importer_class_init (GibbonJavaFIBSImporterClass *klass)
 }
 
 GibbonJavaFIBSImporter *
-gibbon_java_fibs_importer_new (GibbonApp *app)
+gibbon_java_fibs_importer_new ()
 {
         GibbonJavaFIBSImporter *self =
                         g_object_new (GIBBON_TYPE_JAVA_FIBS_IMPORTER, NULL);
+
+        self->priv->progress = gibbon_app_find_widget (
+                        app, "java-fibs-importer-progressbar",
+                        GTK_TYPE_PROGRESS_BAR);
+        gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->priv->progress),
+                                       0.0);
+        gtk_progress_bar_pulse (GTK_PROGRESS_BAR (self->priv->progress));
+        gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->priv->progress),
+                                   NULL);
 
         return self;
 }
@@ -645,9 +662,17 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         gint i;
 
         g_mutex_lock (&self->priv->mutex);
+        self->priv->status = g_strdup (_("Collecting data"));
+        g_mutex_unlock (&self->priv->mutex);
+
+        g_usleep (G_USEC_PER_SEC);
+
+        g_mutex_lock (&self->priv->mutex);
         self->priv->jobs = 10;
         self->priv->finished = 0;
         g_mutex_unlock (&self->priv->mutex);
+
+        g_usleep (G_USEC_PER_SEC);
 
         for (i = 0; i < 10; ++i) {
                 g_mutex_lock (&self->priv->mutex);
@@ -655,6 +680,10 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
                         g_mutex_unlock (&self->priv->mutex);
                         return NULL;
                 }
+                if (self->priv->status)
+                        g_free (self->priv->status);
+                self->priv->status = g_strdup_printf ("Doing thing #%u.",
+                                                      self->priv->finished + 1);
                 ++self->priv->finished;
                 g_mutex_unlock (&self->priv->mutex);
 
@@ -667,7 +696,26 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 static gboolean
 gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
 {
+        gdouble fraction;
+
         g_mutex_lock (&self->priv->mutex);
+
+        if (self->priv->jobs <= 0)
+                gtk_progress_bar_pulse (GTK_PROGRESS_BAR (self->priv->progress));
+        else {
+                fraction = (gdouble) self->priv->finished / self->priv->jobs;
+                gtk_progress_bar_set_fraction (
+                                GTK_PROGRESS_BAR (self->priv->progress),
+                                fraction);
+        }
+
+        if (self->priv->status) {
+                gtk_progress_bar_set_text (
+                                GTK_PROGRESS_BAR (self->priv->progress),
+                                self->priv->status);
+                g_free (self->priv->status);
+                self->priv->status = NULL;
+        }
 
         if (self->priv->jobs == self->priv->finished) {
                 gibbon_java_fibs_importer_ready (self);
