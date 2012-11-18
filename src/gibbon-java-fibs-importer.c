@@ -55,6 +55,7 @@ struct _GibbonJavaFIBSImporterPrivate {
         GMutex mutex;
         GtkWidget *summary;
         gint jobs;
+        GHashTable *matches;
         gint finished;
         guint finished_ratings;
         guint finished_friends;
@@ -92,6 +93,9 @@ static gpointer gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_ready (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self);
+static gboolean gibbon_java_fibs_importer_collect_matches (
+                GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_mi_free (gchar **record);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -113,6 +117,7 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
 
         self->priv->worker = NULL;
         self->priv->jobs = -1;
+        self->priv->matches = NULL;
         self->priv->finished = 0;
         self->priv->finished_ratings = 0;
         self->priv->finished_friends = 0;
@@ -162,6 +167,8 @@ gibbon_java_fibs_importer_finalize (GObject *object)
         g_free (self->priv->user);
         g_free (self->priv->server);
         g_free (self->priv->password);
+        if (self->priv->matches)
+                g_hash_table_destroy (self->priv->matches);
 
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
@@ -195,6 +202,11 @@ gibbon_java_fibs_importer_new ()
                         app, "java-fibs-importer-summary",
                         GTK_TYPE_LABEL);
 
+        self->priv->matches = g_hash_table_new_full (
+                        g_str_hash,
+                        g_str_equal,
+                        g_free,
+                        (GDestroyNotify) gibbon_java_fibs_importer_mi_free);
         return self;
 }
 
@@ -301,7 +313,7 @@ gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
         gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), FALSE);
         g_printerr ("Remove line %s:%d!\n", __FILE__, __LINE__ + 1);
         gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog),
-                                              "/home/guido/java/JavaFIBS2001",
+                                              "/home/guido/java/JavaFIBS2001.test",
                                               NULL);
         reply = gtk_dialog_run(GTK_DIALOG (dialog));
         if (reply != GTK_RESPONSE_OK) {
@@ -678,21 +690,27 @@ static gpointer
 gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 {
         gint i;
+        guint jobs;
 
         g_mutex_lock (&self->priv->mutex);
         self->priv->status = g_strdup (_("Collecting data"));
         g_mutex_unlock (&self->priv->mutex);
 
-        g_usleep (G_USEC_PER_SEC);
+        /*
+         * The first 3 jobs are always the ratings, the friends and villains
+         * list.
+         */
+        /* FIXME! (void) */ gibbon_java_fibs_importer_collect_matches (self);
+        jobs = 3 + g_hash_table_size (self->priv->matches);
 
         g_mutex_lock (&self->priv->mutex);
-        self->priv->jobs = 10;
+        self->priv->jobs = jobs;
         self->priv->finished = 0;
         g_mutex_unlock (&self->priv->mutex);
 
         g_usleep (G_USEC_PER_SEC);
 
-        for (i = 0; i < 10; ++i) {
+        for (i = 0; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
@@ -812,4 +830,55 @@ gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self)
         gtk_label_set_text (GTK_LABEL (self->priv->summary), escaped);
 
         g_free (escaped);
+}
+
+static gboolean
+gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
+{
+        gchar *directory;
+        GDir *dir;
+        GError *error = NULL;
+        const gchar *filename;
+        const gchar *last_dot;
+        gchar **record;
+        gchar *stem;
+
+        directory = g_build_filename (self->priv->directory,
+                                      "matches", "internal",
+                                      NULL);
+        dir = g_dir_open (directory, 0, &error);
+        if (dir) {
+                while ((filename = g_dir_read_name (dir)) != NULL) {
+                        last_dot = rindex (filename, '.');
+                        if (!last_dot)
+                                continue;
+                        if (g_ascii_strcasecmp (last_dot, ".match"))
+                                continue;
+                        record = g_malloc (2 * sizeof filename);
+                        record[0] = g_strdup (filename);
+                        record[1] = NULL;
+                        stem = g_strdup (filename);
+                        stem[strlen (stem) - 8] = 0;
+                        g_hash_table_insert (self->priv->matches, stem, record);
+                }
+        } else {
+                /*
+                 * FIXME! This error is unlikely but has to be reported to the
+                 * main thread somehow later.
+                 */
+                g_error_free (error);
+        }
+        g_free (directory);
+
+        return TRUE;
+}
+
+static void
+gibbon_java_fibs_importer_mi_free (gchar **record)
+{
+        if (record) {
+                g_free (record[0]);
+                g_free (record[1]);
+                g_free (record);
+        }
 }
