@@ -854,12 +854,46 @@ gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
                                 continue;
                         if (g_ascii_strcasecmp (last_dot, ".match"))
                                 continue;
+                        stem = g_strdup (filename);
+                        stem[strlen (stem) - 6] = 0;
                         record = g_malloc (2 * sizeof filename);
                         record[0] = g_strdup (filename);
                         record[1] = NULL;
-                        stem = g_strdup (filename);
-                        stem[strlen (stem) - 8] = 0;
                         g_hash_table_insert (self->priv->matches, stem, record);
+                }
+        } else {
+                /*
+                 * FIXME! This error is unlikely but has to be reported to the
+                 * main thread somehow later.
+                 */
+                g_error_free (error);
+        }
+        g_free (directory);
+
+        return TRUE;
+
+        directory = g_build_filename (self->priv->directory,
+                                      "matches", "jellyfish",
+                                      NULL);
+        dir = g_dir_open (directory, 0, &error);
+        if (dir) {
+                while ((filename = g_dir_read_name (dir)) != NULL) {
+                        last_dot = rindex (filename, '.');
+                        if (!last_dot)
+                                continue;
+                        if (g_ascii_strcasecmp (last_dot, ".mat"))
+                                continue;
+                        stem = g_strdup (filename);
+                        stem[strlen (stem) - 4] = 0;
+                        record = (gchar **) g_hash_table_lookup (
+                                        self->priv->matches, stem);
+                        if (!record) {
+                                record = g_malloc (2 * sizeof filename);
+                                record[0] = NULL;
+                                g_hash_table_insert (self->priv->matches, stem,
+                                                     record);
+                        }
+                        record[1] = g_strdup (filename);
                 }
         } else {
                 /*
