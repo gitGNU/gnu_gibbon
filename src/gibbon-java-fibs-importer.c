@@ -53,8 +53,14 @@ struct _GibbonJavaFIBSImporterPrivate {
 
         GThread *worker;
         GMutex mutex;
+        GtkWidget *summary;
         gint jobs;
         gint finished;
+        guint finished_ratings;
+        guint finished_friends;
+        guint finished_villains;
+        guint finished_matches;
+        guint error_matches;
         guint timeout;
         gboolean cancelled;
 };
@@ -85,6 +91,7 @@ static void gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self);
 static gpointer gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_ready (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -107,6 +114,11 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv->worker = NULL;
         self->priv->jobs = -1;
         self->priv->finished = 0;
+        self->priv->finished_ratings = 0;
+        self->priv->finished_friends = 0;
+        self->priv->finished_villains = 0;
+        self->priv->finished_matches = 0;
+        self->priv->error_matches = 0;
         self->priv->timeout = 0;
         self->priv->cancelled = FALSE;
 
@@ -179,6 +191,10 @@ gibbon_java_fibs_importer_new ()
         gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->priv->progress),
                                    NULL);
 
+        self->priv->summary = gibbon_app_find_widget (
+                        app, "java-fibs-importer-summary",
+                        GTK_TYPE_LABEL);
+
         return self;
 }
 
@@ -249,6 +265,8 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         id = g_timeout_add (10, (GSourceFunc) gibbon_java_fibs_importer_poll,
                             self);
         self->priv->timeout = id;
+
+        gibbon_java_fibs_importer_summary (self);
 
         gtk_widget_show_all (dialog);
 
@@ -740,4 +758,58 @@ gibbon_java_fibs_importer_ready (GibbonJavaFIBSImporter *self)
         button = gibbon_app_find_widget (app, "java-fibs-importer-ok",
                                          GTK_TYPE_BUTTON);
         gtk_widget_set_sensitive (button, TRUE);
+}
+
+static void
+gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self)
+{
+        const gchar *password;
+        gchar *summary;
+        gchar *ratings;
+        gchar *friends;
+        gchar *villains;
+        gchar *matches;
+        gchar *errors;
+        gchar *escaped;
+
+        password = self->priv->password ?
+                 _("Password recovered.") : _("Password not recovered.");
+
+        ratings = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                _("one rating record"),
+                                                _("%u rating records"),
+                                                self->priv->finished_ratings),
+                                   self->priv->finished_friends);
+        friends = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                _("one friend"),
+                                                _("%u friends"),
+                                                self->priv->finished_friends),
+                                   self->priv->finished_friends);
+        villains = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                 _("one villain"),
+                                                 _("%u villains"),
+                                                 self->priv->finished_villains),
+                                    self->priv->finished_villains);
+        matches = g_strdup_printf (
+                        g_dngettext (GETTEXT_PACKAGE,
+                                     _("one match successfully imported"),
+                                     _("%u matches successfully imported"),
+                                     self->priv->finished_matches),
+                        self->priv->finished_matches);
+        errors = g_strdup_printf (
+                        g_dngettext (GETTEXT_PACKAGE,
+                                     _("one match had errors"),
+                                     _("%u matches had errors"),
+                                     self->priv->error_matches),
+                        self->priv->error_matches);
+
+        summary = g_strdup_printf ("%s\n%s\n%s\n%s\n%s\n%s",
+                                   password, ratings, friends, villains,
+                                   matches, errors);
+        escaped = g_markup_escape_text (summary, -1);
+        g_free (summary);
+
+        gtk_label_set_text (GTK_LABEL (self->priv->summary), escaped);
+
+        g_free (escaped);
 }
