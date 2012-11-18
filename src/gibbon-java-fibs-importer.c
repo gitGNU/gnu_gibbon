@@ -64,6 +64,10 @@ struct _GibbonJavaFIBSImporterPrivate {
         guint error_matches;
         guint timeout;
         gboolean cancelled;
+
+        GSList *msg_queue;
+        GtkWidget *msg_view;
+        GtkTextBuffer *msg_buffer;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -96,6 +100,7 @@ static void gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_collect_matches (
                 GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_mi_free (gchar **record);
+static void gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -129,6 +134,10 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
 
         self->priv->okay_handler = 0;
         self->priv->stop_handler = 0;
+
+        self->priv->msg_queue = NULL;
+        self->priv->msg_view = NULL;
+        self->priv->msg_buffer = NULL;
 }
 
 static void
@@ -170,6 +179,10 @@ gibbon_java_fibs_importer_finalize (GObject *object)
         if (self->priv->matches)
                 g_hash_table_destroy (self->priv->matches);
 
+        if (self->priv->msg_buffer)
+                g_object_unref (self->priv->msg_buffer);
+        g_slist_free_full (self->priv->msg_queue, g_free);
+
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
 
@@ -188,6 +201,8 @@ gibbon_java_fibs_importer_new ()
 {
         GibbonJavaFIBSImporter *self =
                         g_object_new (GIBBON_TYPE_JAVA_FIBS_IMPORTER, NULL);
+        GtkTextTagTable *tags;
+        GtkTextTag *error_tag;
 
         self->priv->progress = gibbon_app_find_widget (
                         app, "java-fibs-importer-progressbar",
@@ -207,6 +222,21 @@ gibbon_java_fibs_importer_new ()
                         g_str_equal,
                         g_free,
                         (GDestroyNotify) gibbon_java_fibs_importer_mi_free);
+
+        self->priv->msg_view = gibbon_app_find_widget (
+                        app, "java-fibs-importer-text-view",
+                        GTK_TYPE_TEXT_VIEW);
+        tags = gtk_text_tag_table_new ();
+        error_tag = gtk_text_tag_new ("error");
+        g_object_set (G_OBJECT (error_tag),
+                      "foreground", "red",
+                      "weight", PANGO_WEIGHT_BOLD,
+                      NULL);
+        gtk_text_tag_table_add (tags, error_tag);
+        self->priv->msg_buffer = gtk_text_buffer_new (tags);
+
+        gtk_text_view_set_buffer (GTK_TEXT_VIEW (self->priv->msg_view),
+                                  self->priv->msg_buffer);
         return self;
 }
 
@@ -705,12 +735,11 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 
         g_mutex_lock (&self->priv->mutex);
         self->priv->jobs = jobs;
-        self->priv->finished = 0;
         g_mutex_unlock (&self->priv->mutex);
 
-        g_usleep (G_USEC_PER_SEC);
+        gibbon_java_fibs_importer_friends (self);
 
-        for (i = 0; i < jobs; ++i) {
+        for (i = 3; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
@@ -915,4 +944,10 @@ gibbon_java_fibs_importer_mi_free (gchar **record)
                 g_free (record[1]);
                 g_free (record);
         }
+}
+
+static void
+gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
+{
+
 }
