@@ -705,7 +705,6 @@ gibbon_database_display_error (GibbonDatabase *self, const gchar *msg_fmt, ...)
 
         gibbon_app_display_error (self->priv->app, message,
                                   ("%s"),
-                                  message,
                                   sqlite3_errmsg (self->priv->dbh));
 
         /* Convenience: Return FALSE, so that function call can be used for
