@@ -697,12 +697,14 @@ parse_error:
                                           _("%s: line %u: Parse error near"
                                             " `%s'!"),
                                            self->priv->uri,
-                                           self->priv->lineno, ptr);
+                                           (unsigned) self->priv->lineno,
+                                           ptr);
         else
                 gibbon_app_display_error (self->priv->app, NULL,
                                           _("%s: line %u: Unexpected end of"
                                             " line!"),
-                                           self->priv->uri, self->priv->lineno);
+                                           self->priv->uri,
+                                           (unsigned) self->priv->lineno);
 
         return FALSE;
 }
