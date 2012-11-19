@@ -39,6 +39,7 @@ struct _GibbonJavaFIBSImporterPrivate {
         gboolean running;
 
         GibbonArchive *archive;
+
         gchar *directory;
         gchar *user;
         gchar *server;
@@ -248,6 +249,9 @@ gibbon_java_fibs_importer_new ()
 
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (self->priv->msg_view),
                                   self->priv->msg_buffer);
+
+        self->priv->archive = gibbon_archive_new (app);
+
         return self;
 }
 
