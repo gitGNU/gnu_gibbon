@@ -242,7 +242,6 @@ gibbon_java_fibs_importer_new ()
         error_tag = gtk_text_tag_new ("error");
         g_object_set (G_OBJECT (error_tag),
                       "foreground", "red",
-                      "weight", PANGO_WEIGHT_BOLD,
                       NULL);
         gtk_text_tag_table_add (tags, error_tag);
         self->priv->msg_buffer = gtk_text_buffer_new (tags);
@@ -748,7 +747,19 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         g_mutex_unlock (&self->priv->mutex);
 
         gibbon_java_fibs_importer_friends (self);
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
+
         gibbon_java_fibs_importer_villains (self);
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
+
+        /* Import ratings.  */
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
 
         for (i = 3; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
@@ -758,14 +769,11 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
                 }
                 g_mutex_unlock (&self->priv->mutex);
 
-                gibbon_java_fibs_importer_status (self, "Doing thing #%u.",
-                                                  self->priv->finished + 1);
+                /* Do things.  */
 
                 g_mutex_lock (&self->priv->mutex);
                 ++self->priv->finished;
                 g_mutex_unlock (&self->priv->mutex);
-
-                g_usleep (G_USEC_PER_SEC);
         }
 
         return NULL;
@@ -794,6 +802,9 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                 g_free (self->priv->status);
                 self->priv->status = NULL;
         }
+
+        self->priv->msg_queue = g_slist_reverse (self->priv->msg_queue);
+        self->priv->msg_tags = g_slist_reverse (self->priv->msg_tags);
 
         while (self->priv->msg_queue) {
                 gibbon_java_fibs_importer_update (self,
@@ -976,17 +987,71 @@ gibbon_java_fibs_importer_mi_free (gchar **record)
 static void
 gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
 {
-        gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Importing group `%s'.\n"),
+        gchar *path;
+        gchar *buffer;
+        gsize bytes_read;
+        GError *error = NULL;
+        gchar **lines;
+        gsize i, num_lines;
+        gchar *line;
+        gchar **tokens;
+
+        gibbon_java_fibs_importer_status (self,
+                                          _("Importing group `%s'."),
                                           "friends");
+
+        path = g_build_filename (self->priv->directory, "user",
+                                 self->priv->user, "friends", NULL);
+        gibbon_java_fibs_importer_output (self, NULL, _("Reading `%s' ... "),
+                                          path);
+
+        if (!gibbon_slurp_file (path, &buffer, &bytes_read, NULL, &error)) {
+                gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                                  _("error.\n"));
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  /*
+                                                   * TRANSLATORS: The first
+                                                   * placeholder is a filename,
+                                                   * the second an error
+                                                   * occurring for that file.
+                                                   */
+                                                  _("%s: %s!\n"),
+                                                  path, error->message);
+                g_free (path);
+                g_error_free (error);
+                return;
+        }
+        gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                          _("success.\n"));
+
+        buffer = g_realloc (buffer, bytes_read + 1);
+        buffer[bytes_read] = 0;
+        lines = g_strsplit_set (buffer, "\012\015", -1);
+        g_free (buffer);
+
+        num_lines = g_strv_length (lines);
+        for (i = 0; i < num_lines; ++i) {
+                line = gibbon_trim (lines[i]);
+                if (!*line)
+                        continue;
+
+                tokens = g_strsplit_set (line, " \t", 3);
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("Importing user `%s' ... "),
+                                                  tokens[0]);
+
+                gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                                  _("success.\n"));
+                g_strfreev (tokens);
+        }
+
+        g_strfreev (lines);
+        g_free (path);
 }
 
 static void
 gibbon_java_fibs_importer_villains (GibbonJavaFIBSImporter *self)
 {
-        gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Importing group `%s'.\n"),
-                                          "villains");
 }
 
 static void
@@ -1035,17 +1100,14 @@ gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
 
         buffer = self->priv->msg_buffer;
         length = gtk_text_buffer_get_char_count (buffer);
-        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
-        gtk_text_buffer_place_cursor (buffer, &start);
 
         gtk_text_buffer_insert_at_cursor (buffer, message, -1);
 
-        gtk_text_buffer_get_end_iter (buffer, &end);
-        if (tag)
+        if (tag) {
+                gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
+                gtk_text_buffer_get_end_iter (buffer, &end);
                 gtk_text_buffer_apply_tag_by_name (buffer, tag, &start, &end);
-
-        gtk_text_buffer_place_cursor (buffer, &end);
-
+        }
         gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (self->priv->msg_view),
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
