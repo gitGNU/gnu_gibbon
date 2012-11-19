@@ -66,6 +66,7 @@ struct _GibbonJavaFIBSImporterPrivate {
         gboolean cancelled;
 
         GSList *msg_queue;
+        GSList *msg_tags;
         GtkWidget *msg_view;
         GtkTextBuffer *msg_buffer;
 };
@@ -101,6 +102,15 @@ static gboolean gibbon_java_fibs_importer_collect_matches (
                 GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_mi_free (gchar **record);
 static void gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_villains (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
+                                              const gchar *format,
+                                              ...) G_GNUC_PRINTF (2, 3);
+static void gibbon_java_fibs_importer_output (GibbonJavaFIBSImporter *self,
+                                              gchar *tag, const gchar *format,
+                                              ...) G_GNUC_PRINTF (3, 4);
+static void gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
+                                              gchar *tag, const gchar *message);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -136,6 +146,7 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv->stop_handler = 0;
 
         self->priv->msg_queue = NULL;
+        self->priv->msg_tags = NULL;
         self->priv->msg_view = NULL;
         self->priv->msg_buffer = NULL;
 }
@@ -182,6 +193,7 @@ gibbon_java_fibs_importer_finalize (GObject *object)
         if (self->priv->msg_buffer)
                 g_object_unref (self->priv->msg_buffer);
         g_slist_free_full (self->priv->msg_queue, g_free);
+        g_slist_free_full (self->priv->msg_tags, g_free);
 
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
@@ -722,9 +734,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         gint i;
         guint jobs;
 
-        g_mutex_lock (&self->priv->mutex);
-        self->priv->status = g_strdup (_("Collecting data"));
-        g_mutex_unlock (&self->priv->mutex);
+        gibbon_java_fibs_importer_status (self, _("Collecting data"));
 
         /*
          * The first 3 jobs are always the ratings, the friends and villains
@@ -738,6 +748,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         g_mutex_unlock (&self->priv->mutex);
 
         gibbon_java_fibs_importer_friends (self);
+        gibbon_java_fibs_importer_villains (self);
 
         for (i = 3; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
@@ -745,10 +756,12 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
                         g_mutex_unlock (&self->priv->mutex);
                         return NULL;
                 }
-                if (self->priv->status)
-                        g_free (self->priv->status);
-                self->priv->status = g_strdup_printf ("Doing thing #%u.",
-                                                      self->priv->finished + 1);
+                g_mutex_unlock (&self->priv->mutex);
+
+                gibbon_java_fibs_importer_status (self, "Doing thing #%u.",
+                                                  self->priv->finished + 1);
+
+                g_mutex_lock (&self->priv->mutex);
                 ++self->priv->finished;
                 g_mutex_unlock (&self->priv->mutex);
 
@@ -780,6 +793,20 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                                 self->priv->status);
                 g_free (self->priv->status);
                 self->priv->status = NULL;
+        }
+
+        while (self->priv->msg_queue) {
+                gibbon_java_fibs_importer_update (self,
+                                                  self->priv->msg_tags->data,
+                                                  self->priv->msg_queue->data);
+                g_free (self->priv->msg_queue->data);
+                g_free (self->priv->msg_tags->data);
+                self->priv->msg_queue =
+                                g_slist_remove_link (self->priv->msg_queue,
+                                                     self->priv->msg_queue);
+                self->priv->msg_tags =
+                                g_slist_remove_link (self->priv->msg_tags,
+                                                     self->priv->msg_tags);
         }
 
         if (self->priv->jobs == self->priv->finished) {
@@ -949,5 +976,77 @@ gibbon_java_fibs_importer_mi_free (gchar **record)
 static void
 gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
 {
+        gibbon_java_fibs_importer_output (self, NULL,
+                                          _("Importing group `%s'.\n"),
+                                          "friends");
+}
 
+static void
+gibbon_java_fibs_importer_villains (GibbonJavaFIBSImporter *self)
+{
+        gibbon_java_fibs_importer_output (self, NULL,
+                                          _("Importing group `%s'.\n"),
+                                          "villains");
+}
+
+static void
+gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
+                                  const gchar *format, ...)
+{
+        va_list args;
+        gchar *message;
+
+        va_start (args, format);
+        message = g_strdup_vprintf(format, args);
+        va_end (args);
+
+        g_mutex_lock (&self->priv->mutex);
+        g_free (self->priv->status);
+        self->priv->status = message;
+        g_mutex_unlock (&self->priv->mutex);
+}
+
+static void
+gibbon_java_fibs_importer_output (GibbonJavaFIBSImporter *self,
+                                  gchar *tag, const gchar *format, ...)
+{
+        va_list args;
+        gchar *message;
+
+        va_start (args, format);
+        message = g_strdup_vprintf(format, args);
+        va_end (args);
+
+        g_mutex_lock (&self->priv->mutex);
+        self->priv->msg_queue = g_slist_prepend (self->priv->msg_queue,
+                                                 message);
+        self->priv->msg_tags = g_slist_prepend (self->priv->msg_tags,
+                                                g_strdup (tag));
+        g_mutex_unlock (&self->priv->mutex);
+}
+
+static void
+gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
+                                  gchar *tag, const gchar *message)
+{
+        GtkTextBuffer *buffer;
+        gint length;
+        GtkTextIter start, end;
+
+        buffer = self->priv->msg_buffer;
+        length = gtk_text_buffer_get_char_count (buffer);
+        gtk_text_buffer_get_iter_at_offset (buffer, &start, length);
+        gtk_text_buffer_place_cursor (buffer, &start);
+
+        gtk_text_buffer_insert_at_cursor (buffer, message, -1);
+
+        gtk_text_buffer_get_end_iter (buffer, &end);
+        if (tag)
+                gtk_text_buffer_apply_tag_by_name (buffer, tag, &start, &end);
+
+        gtk_text_buffer_place_cursor (buffer, &end);
+
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (self->priv->msg_view),
+                gtk_text_buffer_get_insert (buffer),
+                0.0, TRUE, 0.5, 1);
 }
