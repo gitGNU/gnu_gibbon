@@ -104,3 +104,6 @@
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - Implement Patti's new admin tell command.
+- GibbonArchive and GibbonDatabase are not always used from the main thread
+  or not even from the GUI at all.  We must therefore eliminate all
+  references to GibbonApp.
