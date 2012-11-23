@@ -118,5 +118,16 @@ gboolean gibbon_archive_archive_match_file (const GibbonArchive *self,
                                             const GibbonMatch *match,
                                             const gchar *match_file,
                                             GError **error);
+gboolean gibbon_archive_create_group (const GibbonArchive *self,
+                                      const gchar *hostname, guint port,
+                                      const gchar *login, const gchar *group,
+                                      GError **error);
+gboolean gibbon_archive_create_relation (const GibbonArchive *self,
+                                         const gchar *hostname,
+                                         guint port,
+                                         const gchar *login,
+                                         const gchar *group,
+                                         const gchar *peer,
+                                         GError **error);
 
 #endif

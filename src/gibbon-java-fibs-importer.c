@@ -102,6 +102,7 @@ static void gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_collect_matches (
                 GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_mi_free (gchar **record);
+static void gibbon_java_fibs_importer_user (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_villains (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
@@ -250,8 +251,6 @@ gibbon_java_fibs_importer_new ()
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (self->priv->msg_view),
                                   self->priv->msg_buffer);
 
-        self->priv->archive = gibbon_archive_new (app);
-
         return self;
 }
 
@@ -268,6 +267,8 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
 
         if (self->priv->running)
                 return;
+
+        self->priv->archive = gibbon_archive_new (app);
 
         self->priv->running = TRUE;
 
@@ -740,14 +741,19 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         gibbon_java_fibs_importer_status (self, _("Collecting data"));
 
         /*
-         * The first 3 jobs are always the ratings, the friends and villains
-         * list.
+         * The first 4 jobs are always creating the user, and importing
+         * ratings, the friends and villains list.
          */
         /* FIXME! (void) */ gibbon_java_fibs_importer_collect_matches (self);
-        jobs = 3 + g_hash_table_size (self->priv->matches);
+        jobs = 4 + g_hash_table_size (self->priv->matches);
 
         g_mutex_lock (&self->priv->mutex);
         self->priv->jobs = jobs;
+        g_mutex_unlock (&self->priv->mutex);
+
+        gibbon_java_fibs_importer_user (self);
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
         gibbon_java_fibs_importer_friends (self);
@@ -765,7 +771,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
-        for (i = 3; i < jobs; ++i) {
+        for (i = 4; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
@@ -1028,6 +1034,25 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
         gibbon_java_fibs_importer_output (self, NULL, "%s",
                                           _("success.\n"));
 
+        gibbon_java_fibs_importer_output (self, NULL,
+                                          _("Creating/checking group `%s' ... "),
+                                          "friends");
+
+        if (!gibbon_archive_create_group (self->priv->archive,
+                                          self->priv->server,
+                                          self->priv->port,
+                                          self->priv->user,
+                                          "friends", &error)) {
+                gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                                  _("error.\n"));
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s", error->message);
+                g_free (path);
+                g_error_free (error);
+        }
+        gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                          _("success.\n"));
+
         buffer = g_realloc (buffer, bytes_read + 1);
         buffer[bytes_read] = 0;
         lines = g_strsplit_set (buffer, "\012\015", -1);
@@ -1040,9 +1065,28 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
                         continue;
 
                 tokens = g_strsplit_set (line, " \t", 3);
+                if (!tokens || !*tokens[0]) {
+                        g_strfreev (tokens);
+                        continue;
+                }
                 gibbon_java_fibs_importer_output (self, NULL,
                                                   _("Importing user `%s' ... "),
                                                   tokens[0]);
+
+                if (!gibbon_archive_create_relation (self->priv->archive,
+                                                     self->priv->server,
+                                                     self->priv->port,
+                                                     self->priv->user,
+                                                     "friends", tokens[0],
+                                                     &error)) {
+                        g_strfreev (tokens);
+                        gibbon_java_fibs_importer_output (self, NULL, "%s",
+                                                          _("error.\n"));
+                        gibbon_java_fibs_importer_output (self, "error",
+                                                          "%s", error->message);
+                        g_free (path);
+                        g_error_free (error);
+                }
 
                 gibbon_java_fibs_importer_output (self, NULL, "%s",
                                                   _("success.\n"));
@@ -1115,4 +1159,23 @@ gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
         gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (self->priv->msg_view),
                 gtk_text_buffer_get_insert (buffer),
                 0.0, TRUE, 0.5, 1);
+}
+
+static void
+gibbon_java_fibs_importer_user (GibbonJavaFIBSImporter *self)
+{
+        gibbon_java_fibs_importer_status (self,
+                                          _("Creating user `%s' on %s:%u."),
+                                          self->priv->user, self->priv->server,
+                                          self->priv->port);
+        gibbon_java_fibs_importer_output (self, NULL,
+                                          _("Creating user `%s' on %s:%u."),
+                                          self->priv->user, self->priv->server,
+                                          self->priv->port);
+
+        /*
+         * FIXME! Error checking!
+         */
+        gibbon_archive_on_login (self->priv->archive, self->priv->server,
+                                 self->priv->port, self->priv->user);
 }

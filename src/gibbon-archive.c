@@ -1010,3 +1010,132 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
 
         return result;
 }
+
+gboolean
+gibbon_archive_create_group (const GibbonArchive *self,
+                             const gchar *hostname, guint port,
+                             const gchar *login,
+                             const gchar *group,
+                             GError **error)
+{
+        gchar *groups_dir;
+        gchar *groups_file;
+        gint mode;
+        GFile *file;
+        GFileOutputStream *out;
+
+        gibbon_match_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
+
+        groups_dir = g_build_filename (self->priv->session_directory, "groups",
+                                       NULL);
+
+        if (!g_file_test (groups_dir, G_FILE_TEST_IS_DIR)) {
+#ifdef G_OS_WIN32
+                mode = S_IRWXU;
+#else
+                mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+                if (0 != g_mkdir_with_parents (groups_dir, mode)) {
+                        g_set_error_literal (error, 0, -1, strerror (errno));
+                        g_free (groups_dir);
+                        return FALSE;
+                }
+        }
+
+        groups_file = g_build_filename (groups_dir, group, NULL);
+
+        g_free (groups_dir);
+
+        if (!g_file_test (groups_file, G_FILE_TEST_EXISTS)) {
+                file = g_file_new_for_path (groups_file);
+                out = g_file_replace (file, NULL, FALSE,
+                                      G_FILE_CREATE_REPLACE_DESTINATION,
+                                      NULL, error);
+                g_object_unref (file);
+                if (!out) {
+                        g_free (groups_file);
+                        return FALSE;
+                }
+                g_object_unref (out);
+        }
+
+        g_free (groups_file);
+
+        if (!gibbon_database_create_group (self->priv->db,
+                                           hostname, port, login, group, error))
+                return FALSE;
+
+        return TRUE;
+}
+
+gboolean
+gibbon_archive_create_relation (const GibbonArchive *self,
+                                const gchar *hostname, guint port,
+                                const gchar *login, const gchar *group,
+                                const gchar *peer, GError **error)
+{
+        gchar *groups_file;
+        GFile *file;
+        GFileOutputStream *out;
+        gchar *tmp;
+        gchar *buffer;
+
+        gibbon_match_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
+        gibbon_match_return_val_if_fail (peer != NULL, FALSE, error);
+
+        if (gibbon_database_exists_relation (self->priv->db, hostname, port,
+                                             login, group, peer))
+                return TRUE;
+
+        groups_file = g_build_filename (self->priv->session_directory, "groups",
+                                        group, NULL);
+
+        file = g_file_new_for_path (groups_file);
+        out = g_file_append_to (file,
+                                G_FILE_CREATE_REPLACE_DESTINATION,
+                                NULL, error);
+        if (!out) {
+                tmp = (*error)->message;
+                (*error)->message = g_strdup_printf (_("Error writing `%s': %s"),
+                                                     groups_file, tmp);
+                g_free (tmp);
+                return FALSE;
+        }
+
+        buffer = g_strdup_printf ("%s\n", peer);
+        if (!g_output_stream_write_all (G_OUTPUT_STREAM (out), buffer,
+                                        strlen (buffer), NULL, NULL, error)) {
+                tmp = (*error)->message;
+                (*error)->message = g_strdup_printf (_("Error writing `%s': %s"),
+                                                     groups_file, tmp);
+                g_free (tmp);
+                g_free (buffer);
+                return FALSE;
+        }
+        g_free (buffer);
+
+        if (!g_output_stream_close (G_OUTPUT_STREAM (out), NULL, error)) {
+                tmp = (*error)->message;
+                (*error)->message = g_strdup_printf (_("Error closing `%s': %s"),
+                                                     groups_file, tmp);
+                g_free (tmp);
+                return FALSE;
+        }
+
+        g_free (groups_file);
+        g_object_unref (out);
+
+        if (!gibbon_database_create_relation (self->priv->db, hostname, port,
+                                              login, group, peer, error))
+                return FALSE;
+
+        return TRUE;
+}

@@ -113,5 +113,17 @@ void gibbon_database_set_geo_ip (GibbonDatabase *self,
                                  const gchar *alpha2);
 void gibbon_database_cancel_geo_ip_update (GibbonDatabase *self);
 void gibbon_database_close_geo_ip_update (GibbonDatabase *self);
+gboolean gibbon_database_create_group (GibbonDatabase *self,
+                                       const gchar *hostname, guint port,
+                                       const gchar *login, const gchar *group,
+                                       GError **error);
+gboolean gibbon_database_create_relation (GibbonDatabase *self,
+                                          const gchar *hostname, guint port,
+                                          const gchar *login, const gchar *group,
+                                          const gchar *peer, GError **error);
+gboolean gibbon_database_exists_relation (GibbonDatabase *self,
+                                          const gchar *hostname, guint port,
+                                          const gchar *login, const gchar *group,
+                                          const gchar *peer);
 
 #endif
