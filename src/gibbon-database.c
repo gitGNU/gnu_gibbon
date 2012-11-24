@@ -754,7 +754,6 @@ gibbon_database_begin_transaction (GibbonDatabase *self, GError **error)
         if (!gibbon_database_sql_execute (self, self->priv->begin_transaction,
                                           error,
                                           "BEGIN TRANSACTION", -1)) {
-                sqlite3_reset (self->priv->begin_transaction);
                 return FALSE;
         }
 
@@ -785,7 +784,6 @@ gibbon_database_commit (GibbonDatabase *self, GError **error)
         if (!gibbon_database_sql_execute (self, self->priv->commit,
                                           error,
                                           "COMMIT", -1)) {
-                sqlite3_reset (self->priv->commit);
                 return FALSE;
         }
 
@@ -817,7 +815,6 @@ gibbon_database_rollback (GibbonDatabase *self, GError **error)
         if (!gibbon_database_sql_execute (self, self->priv->rollback,
                                           error,
                                           "ROLLBACK", -1)) {
-                sqlite3_reset (self->priv->rollback);
                 return FALSE;
         }
 
@@ -1416,11 +1413,8 @@ gibbon_database_get_user_id (GibbonDatabase *self,
                                             GIBBON_DATABASE_SELECT_USER_ID,
                                             G_TYPE_UINT, &user_id,
                                            -1)) {
-                gibbon_database_commit (self, NULL);
                 return user_id;
         }
-
-        gibbon_database_commit (self, NULL);
 
         g_assert (!error || *error);
 
@@ -1483,7 +1477,6 @@ gibbon_database_get_server_id (GibbonDatabase *self,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           -1)) {
-                gibbon_database_commit (self, NULL);
                 return 0;
         }
 
@@ -1492,11 +1485,8 @@ gibbon_database_get_server_id (GibbonDatabase *self,
                                             GIBBON_DATABASE_SELECT_SERVER_ID,
                                             G_TYPE_UINT, &server_id,
                                            -1)) {
-                gibbon_database_commit (self, NULL);
                 return server_id;
         }
-
-        gibbon_database_commit (self, NULL);
 
         g_assert (!error || *error);
 
@@ -1583,8 +1573,6 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
                                              -1)) {
                 return NULL;
         }
-
-        gibbon_database_commit (self, NULL);
 
         alpha2 = g_strdup (alpha2);
 
@@ -1720,8 +1708,6 @@ gibbon_database_set_geo_ip (GibbonDatabase *self,
                                           G_TYPE_STRING, &alpha2,
                                           -1)) {
                 gibbon_database_cancel_geo_ip_update (self);
-        } else if (!gibbon_database_commit (self, NULL)) {
-                gibbon_database_rollback (self, NULL);
         }
 }
 
@@ -1760,7 +1746,6 @@ gibbon_database_create_group (GibbonDatabase *self,
                                             GIBBON_DATABASE_SELECT_GROUP_ID,
                                             G_TYPE_UINT, &group_id,
                                             -1)) {
-                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
 
@@ -1812,11 +1797,8 @@ gibbon_database_create_group (GibbonDatabase *self,
                 g_set_error (error, 0, -1, _("Database error: freshly created"
                                              " group `%s' has vanished!"),
                              group);
-                gibbon_database_commit (self, NULL);
                 return FALSE;
         }
-
-        gibbon_database_commit (self, NULL);
 
         return TRUE;
 }
@@ -1866,7 +1848,6 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                             GIBBON_DATABASE_SELECT_RELATION_ID,
                                             G_TYPE_UINT, &relation_id,
                                             -1)) {
-                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
 
@@ -1902,7 +1883,6 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &peer,
                                           -1)) {
-                gibbon_database_commit (self, NULL);
 
                 return FALSE;
         }
@@ -1916,7 +1896,6 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                              " user `%s' in group `%s' has"
                                              " vanished!"),
                              peer, group);
-                gibbon_database_commit (self, NULL);
                 return FALSE;
         }
 
@@ -1961,11 +1940,8 @@ gibbon_database_exists_relation (GibbonDatabase *self,
                                             GIBBON_DATABASE_SELECT_RELATION_ID,
                                             G_TYPE_UINT, &relation_id,
                                             -1)) {
-                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
-
-        gibbon_database_commit (self, NULL);
 
         return FALSE;
 }
