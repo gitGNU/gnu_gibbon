@@ -1663,6 +1663,8 @@ gibbon_database_close_geo_ip_update (GibbonDatabase *self)
 
         g_object_unref (self->priv->geo_ip_updater);
         self->priv->geo_ip_updater = NULL;
+
+        gibbon_database_commit (self, NULL);
 }
 
 void
