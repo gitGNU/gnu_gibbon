@@ -140,7 +140,7 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
 
         game = gibbon_match_get_current_game (match);
         if (!game) {
-                g_set_error_literal (error, 0, -1,
+                g_set_error_literal (error, GIBBON_ERROR, -1,
                                      _("Empty matches cannot be written as"
                                        " SGF"));
                 return FALSE;

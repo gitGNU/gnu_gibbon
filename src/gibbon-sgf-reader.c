@@ -332,7 +332,8 @@ gibbon_sgf_reader_add_action (GibbonSGFReader *self, GibbonMatch *match,
 
         game = gibbon_match_get_current_game (match);
         if (!game) {
-                g_set_error_literal (error, 0, -1, _("No game in progress!"));
+                g_set_error_literal (error, GIBBON_ERROR, -1,
+                                     _("No game in progress!"));
                 g_object_unref (action);
                 if (analysis)
                         g_object_unref (analysis);
@@ -559,14 +560,14 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
                 errno = 0;
                 value = g_ascii_strtoull (string_value, &endptr, 010);
                 if (errno) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Invalid match length: %s!"),
                                      strerror (errno));
                         return FALSE;
                 }
 
                 if (value > G_MAXSIZE) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Match length %llu out of range!"),
                                      (unsigned long long) value);
                         return FALSE;
@@ -577,7 +578,7 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
                 errno = 0;
                 value = g_ascii_strtoull (string_value, &endptr, 010);
                 if (errno) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Invalid match length: %s!"),
                                      strerror (errno));
                         return FALSE;
@@ -587,7 +588,7 @@ gibbon_sgf_reader_match_info_item (GibbonSGFReader *self, GibbonMatch *match,
                 errno = 0;
                 value = g_ascii_strtoull (string_value, &endptr, 010);
                 if (errno) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Invalid match length: %s!"),
                                      strerror (errno));
                         return FALSE;
@@ -1535,7 +1536,7 @@ gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
         GibbonPosition *pos;
 
         if (1 != gibbon_match_get_number_of_games (match)) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("SGF setup property `%s' only allowed in"
                                " first game!"), prop);
                 return FALSE;
@@ -1543,7 +1544,7 @@ gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
 
         game = gibbon_match_get_current_game (match);
         if (gibbon_game_get_num_actions (game)) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("SGF setup property `%s' only allowed before"
                                " first regular game action!"), prop);
                 return FALSE;
@@ -1597,7 +1598,7 @@ gibbon_sgf_reader_setup_dice (GibbonSGFReader *self, GibbonMatch *match,
         encoded = gsgf_number_get_value (number);
         if (encoded > 66 || encoded < 11 || !encoded % 10
             || encoded % 10 > 6) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Invalid dice value `%lld' in SGF setup"
                                " property DI!"),
                              (long long) encoded);
@@ -1626,7 +1627,7 @@ gibbon_sgf_reader_setup_cube (GibbonSGFReader *self, GibbonMatch *match,
         number = GSGF_NUMBER (gsgf_property_get_value (prop));
         cube = gsgf_number_get_value (number);
         if (cube < 0) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Invalid cube value `%lld' in SGF setup"
                                " property CV!"),
                              (long long) cube);
@@ -1684,7 +1685,7 @@ gibbon_sgf_reader_setup_cube_owner (GibbonSGFReader *self, GibbonMatch *match,
                         pos->may_double[0] = FALSE;
                         pos->may_double[1] = FALSE;
         } else {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Invalid cube owner `%s' in SGF setup"
                                " property %s!"),
                              owner, gsgf_property_get_id (prop));

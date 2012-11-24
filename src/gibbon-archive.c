@@ -204,7 +204,7 @@ gibbon_archive_new (GError **error)
         documents_servers_directory = g_get_user_data_dir ();
 
         if (!documents_servers_directory) {
-                g_set_error_literal (error, 0, -1,
+                g_set_error_literal (error, GIBBON_ERROR, -1,
                                      _("Cannot determine user data"
                                        " directory!"));
                 g_object_unref (self);
@@ -223,7 +223,7 @@ gibbon_archive_new (GError **error)
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Failed to create"
                                " server directory `%s': %s!"),
                               self->priv->servers_directory,
@@ -285,7 +285,7 @@ gibbon_archive_login (GibbonArchive *self, const gchar *hostname,
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Failed to create directory `%s': %s!"),
                              self->priv->servers_directory,
                              strerror (errno));
@@ -344,7 +344,7 @@ gibbon_archive_update_rank (GibbonArchive *self,
 
         dt = g_date_time_new_now_local ();
         if (!dt) {
-                g_set_error_literal (error, 0, -1, 
+                g_set_error_literal (error, GIBBON_ERROR, -1,
                                      _("Error retrieving current time!"));
                 return FALSE;
         }
@@ -368,7 +368,7 @@ gibbon_archive_update_rank (GibbonArchive *self,
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (directory, mode)) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Failed to create server directory `%s': %s!"),
                              self->priv->servers_directory,
                              strerror (errno));
@@ -894,7 +894,7 @@ gibbon_archive_get_saved_directory (const GibbonArchive *self, GError **error)
                 mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
                 if (0 != g_mkdir_with_parents (saved_directory, mode)) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Failed to create directory `%s': %s!"),
                                      saved_directory,
                                      strerror (errno));
@@ -1051,7 +1051,8 @@ gibbon_archive_create_group (const GibbonArchive *self,
                 mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
                 if (0 != g_mkdir_with_parents (groups_dir, mode)) {
-                        g_set_error_literal (error, 0, -1, strerror (errno));
+                        g_set_error_literal (error, GIBBON_ERROR, -1,
+                                             strerror (errno));
                         g_free (groups_dir);
                         return FALSE;
                 }

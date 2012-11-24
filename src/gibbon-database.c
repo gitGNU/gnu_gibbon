@@ -341,7 +341,7 @@ gibbon_database_new (const gchar *path, GError **error)
 
         if (SQLITE_OK != sqlite3_open (path, &dbh)) {
                 if (!dbh) {
-                        g_set_error (error, 0, -1,
+                        g_set_error (error, GIBBON_ERROR, -1,
                                      _("Error opening database `%s':"),
                                      path);
                         g_object_unref (self);
@@ -362,7 +362,7 @@ gibbon_database_new (const gchar *path, GError **error)
          * function coded.
          */
         if (!gibbon_database_sql_do (self, NULL, "PRAGMA foreign_keys = ON")) {
-                g_set_error_literal (error, 0, -1,
+                g_set_error_literal (error, GIBBON_ERROR, -1,
                                      _("Your sqlite installation seems"
                                        " to be crippled.  It does not"
                                        " support foreign key constraints. "
@@ -486,7 +486,7 @@ gibbon_database_initialize (GibbonDatabase *self, GError **error)
                         gtk_widget_destroy (dialog);
 
                         if (reply != GTK_RESPONSE_YES) {
-                                g_set_error_literal (error, 0, -1,
+                                g_set_error_literal (error, GIBBON_ERROR, -1,
                                                      _("Cancelled on user"
                                                        " request!"));
                                 return FALSE;
@@ -733,7 +733,7 @@ static gboolean
 gibbon_database_begin_transaction (GibbonDatabase *self, GError **error)
 {
         if (self->priv->in_transaction) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Internal error: Nested transaction!"));
                 return FALSE;
         }
@@ -764,7 +764,7 @@ static gboolean
 gibbon_database_commit (GibbonDatabase *self, GError **error)
 {
         if (!self->priv->in_transaction) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Internal error: Commit outside transaction!"));
                 return FALSE;
         }
@@ -794,7 +794,7 @@ static gboolean
 gibbon_database_rollback (GibbonDatabase *self, GError **error)
 {
         if (!self->priv->in_transaction) {
-                g_set_error (error, 0, -1,
+                g_set_error (error, GIBBON_ERROR, -1,
                              _("Internal error: Rollback outside transaction!"));
                 return FALSE;
         }
@@ -837,7 +837,7 @@ gibbon_database_set_error (GibbonDatabase *self, GError **error,
         }
 
         g_printerr ("%s: %s\n", message, sqlite3_errmsg (self->priv->dbh));
-        g_set_error (error, 0, -1, "%s: %s\n", 
+        g_set_error (error, GIBBON_ERROR, -1, "%s: %s\n",
                      message, sqlite3_errmsg (self->priv->dbh));
 
         /* Convenience: Return FALSE, so that function call can be used for
@@ -1794,8 +1794,9 @@ gibbon_database_create_group (GibbonDatabase *self,
                                              GIBBON_DATABASE_SELECT_GROUP_ID,
                                              G_TYPE_UINT, &group_id,
                                             -1)) {
-                g_set_error (error, 0, -1, _("Database error: freshly created"
-                                             " group `%s' has vanished!"),
+                g_set_error (error, GIBBON_ERROR, -1,
+                             _("Database error: freshly created"
+                               " group `%s' has vanished!"),
                              group);
                 return FALSE;
         }
@@ -1892,9 +1893,9 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                              GIBBON_DATABASE_SELECT_RELATION_ID,
                                              G_TYPE_UINT, &relation_id,
                                             -1)) {
-                g_set_error (error, 0, -1, _("Database error: freshly added"
-                                             " user `%s' in group `%s' has"
-                                             " vanished!"),
+                g_set_error (error, GIBBON_ERROR, -1,
+                             _("Database error: freshly added"
+                               " user `%s' in group `%s' has vanished!"),
                              peer, group);
                 return FALSE;
         }

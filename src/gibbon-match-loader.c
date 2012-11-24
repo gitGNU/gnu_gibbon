@@ -36,6 +36,7 @@
 #include "gibbon-sgf-reader.h"
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-jelly-fish-reader.h"
+#include "gibbon-util.h"
 
 G_DEFINE_TYPE (GibbonMatchLoader, gibbon_match_loader, G_TYPE_OBJECT)
 
@@ -134,7 +135,7 @@ gibbon_match_loader_get_reader (const GibbonMatchLoader *self,
                 }
 
                 if (!read_bytes) {
-                        g_set_error_literal (error, 0, -1,
+                        g_set_error_literal (error, GIBBON_ERROR, -1,
                                              _("Premature end of input file!"));
                         g_object_unref (stream);
                         return NULL;
@@ -185,5 +186,5 @@ gibbon_match_loader_yyerror (GError **error, const gchar *msg)
         if (*error)
                 return;
 
-        g_set_error_literal (error, 0, -1, msg);
+        g_set_error_literal (error, GIBBON_ERROR, -1, msg);
 }

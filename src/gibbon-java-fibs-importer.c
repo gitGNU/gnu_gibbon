@@ -602,7 +602,8 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
                 return FALSE;
 
         if (filesize < 8) {
-                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_set_error_literal (error, GIBBON_ERROR, -1,
+                                     _("premature end of file"));
                 g_free (buffer);
                 return FALSE;
         }
@@ -613,7 +614,8 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
         ++ui32;
 
         if (filesize < 8 + 4 * password_length) {
-                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_set_error_literal (error, GIBBON_ERROR, -1,
+                                     _("premature end of file"));
                 g_free (buffer);
                 return FALSE;
         }
@@ -630,12 +632,14 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
         ++ui32;
 
         if (filesize < 16 + 4 * password_length + 2 * server_length) {
-                g_set_error_literal (error, 0, -1, _("premature end of file"));
+                g_set_error_literal (error, GIBBON_ERROR, -1,
+                                     _("premature end of file"));
                 g_free (buffer);
                 return FALSE;
         }
         if (!server_length) {
-                g_set_error_literal (error, 0, -1, _("no server name"));
+                g_set_error_literal (error, GIBBON_ERROR, -1,
+                                     _("no server name"));
                 g_free (buffer);
                 return FALSE;
         }
@@ -651,7 +655,8 @@ gibbon_java_fibs_importer_read_prefs (GibbonJavaFIBSImporter *self,
 
         if (bytes_read != 2 * server_length
             || bytes_written != server_length) {
-                g_set_error_literal (error, 0, 1, _("error converting hostname"));
+                g_set_error_literal (error, GIBBON_ERROR, 1,
+                                     _("error converting hostname"));
                 return FALSE;
         }
         server_utf16 += 2 * server_length;
