@@ -1404,7 +1404,6 @@ gibbon_database_get_user_id (GibbonDatabase *self,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           -1)) {
-                gibbon_database_commit (self, NULL);
                 return 0;
         }
 
