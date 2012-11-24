@@ -326,3 +326,10 @@ gibbon_slurp_file (const gchar *path, char **buffer, gsize *bytes_read_out,
 
         return TRUE;
 }
+
+GQuark
+gibbon_error_quark (void)
+{
+        return g_quark_from_static_string ("gibbon-error-quark");
+}
+

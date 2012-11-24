@@ -99,8 +99,6 @@ typedef struct _GibbonArchiveLookupInfo {
 
 typedef struct _GibbonArchivePrivate GibbonArchivePrivate;
 struct _GibbonArchivePrivate {
-        GibbonApp *app;
-
         gchar *servers_directory;
         gchar *server_directory;
         gchar *session_directory;
@@ -129,7 +127,8 @@ static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
 static void gibbon_archive_on_resolve_ip (GObject *resolver,
                                           GAsyncResult *result,
                                           gpointer data);
-static gchar *gibbon_archive_get_saved_directory (const GibbonArchive *self);
+static gchar *gibbon_archive_get_saved_directory (const GibbonArchive *self,
+                                                  GError **error);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -137,7 +136,6 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_ARCHIVE, GibbonArchivePrivate);
 
-        self->priv->app = NULL;
         self->priv->servers_directory = NULL;
         self->priv->server_directory = NULL;
         self->priv->session_directory = NULL;
@@ -193,7 +191,7 @@ gibbon_archive_class_init (GibbonArchiveClass *klass)
 }
 
 GibbonArchive *
-gibbon_archive_new (GibbonApp *app)
+gibbon_archive_new (GError **error)
 {
         GibbonArchive *self;
         const gchar *documents_servers_directory;
@@ -203,14 +201,12 @@ gibbon_archive_new (GibbonApp *app)
 
         self = g_object_new (GIBBON_TYPE_ARCHIVE, NULL);
 
-        self->priv->app = app;
-
         documents_servers_directory = g_get_user_data_dir ();
 
         if (!documents_servers_directory) {
-                gibbon_app_fatal_error (app, NULL,
-                                        _("Cannot determine user data"
-                                          " directory!"));
+                g_set_error_literal (error, 0, -1,
+                                     _("Cannot determine user data"
+                                       " directory!"));
                 g_object_unref (self);
                 return NULL;
         }
@@ -227,18 +223,18 @@ gibbon_archive_new (GibbonApp *app)
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->servers_directory, mode)) {
-                gibbon_app_fatal_error (app, NULL,
-                                        _("Failed to create"
-                                        " server directory `%s': %s!"),
-                               self->priv->servers_directory,
-                               strerror (errno));
+                g_set_error (error, 0, -1,
+                             _("Failed to create"
+                               " server directory `%s': %s!"),
+                              self->priv->servers_directory,
+                              strerror (errno));
                 g_object_unref (self);
                 return NULL;
         }
 
         db_path = g_build_filename (documents_servers_directory,
                                     PACKAGE, "db.sqlite", NULL);
-        self->priv->db = gibbon_database_new (app, db_path);
+        self->priv->db = gibbon_database_new (db_path, error);
         g_free (db_path);
 
         if (!self->priv->db) {
@@ -249,31 +245,22 @@ gibbon_archive_new (GibbonApp *app)
         self->priv->droppers = g_hash_table_new_full (g_str_hash, g_str_equal,
                                                       g_free, NULL);
 
-#if 0
-        if (first_run)
-                gibbon_app_display_info (app, NULL,
-                                         _("You can import settings and saved"
-                                           " games from your old client."
-                                           " Check the menu `Extras' to see if"
-                                           " your old client software is"
-                                           " supported!"));
-#endif
-
         return self;
 }
 
-void
-gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
-                         guint port, const gchar *login)
+gboolean
+gibbon_archive_login (GibbonArchive *self, const gchar *hostname,
+                      guint port, const gchar *login, GError **error)
 {
         gchar *session_directory;
         gchar *buf;
         mode_t mode;
 
-        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
-        g_return_if_fail (hostname != NULL);
-        g_return_if_fail (port > 0);
-        g_return_if_fail (login != NULL);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, 
+                                         error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
 
         session_directory = g_build_filename (self->priv->servers_directory,
                                               hostname, NULL);
@@ -298,17 +285,23 @@ gibbon_archive_on_login (GibbonArchive *self, const gchar *hostname,
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (self->priv->session_directory, mode)) {
-                gibbon_app_fatal_error (self->priv->app, NULL,
-                                          _("Failed to create"
-                                            " directory `%s': %s!"),
-                               self->priv->servers_directory,
-                               strerror (errno));
+                g_set_error (error, 0, -1,
+                             _("Failed to create directory `%s': %s!"),
+                             self->priv->servers_directory,
+                             strerror (errno));
+                return FALSE;
         }
 
-        if (gibbon_database_get_server_id (self->priv->db, hostname, port)) {
-                (void) gibbon_database_get_user_id (self->priv->db,
-                                                    hostname, port, login);
-        }
+        if (!gibbon_database_get_server_id (self->priv->db, hostname, port,
+                                            error))
+                return FALSE;
+
+        if (!gibbon_database_get_user_id (self->priv->db,
+                                          hostname, port, login,
+                                          error))
+                return FALSE;
+
+        return TRUE;
 }
 
 void
@@ -323,14 +316,14 @@ gibbon_archive_update_user (GibbonArchive *self,
 
         gibbon_database_update_user_full (self->priv->db,
                                           hostname, port, user,
-                                          rating, experience);
+                                          rating, experience, NULL);
 }
 
-void
+gboolean
 gibbon_archive_update_rank (GibbonArchive *self,
                             const gchar *hostname, guint port,
                             const gchar *user, gdouble rating,
-                            gint experience)
+                            gint experience, GError **error)
 {
         gchar *path;
         gchar *directory;
@@ -345,17 +338,15 @@ gibbon_archive_update_rank (GibbonArchive *self,
         gint y, m, d;
         guint64 now;
 
-        g_return_if_fail (GIBBON_IS_ARCHIVE (self));
-        g_return_if_fail (hostname != NULL);
-        g_return_if_fail (user != NULL);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (user != NULL, FALSE, error);
 
         dt = g_date_time_new_now_local ();
         if (!dt) {
-                gibbon_app_fatal_error (self->priv->app, _("Internal Error"),
-                                        "%s",
-                                        _("Error retrieving current time!"));
-                /* NOTREACHED */
-                return;
+                g_set_error_literal (error, 0, -1, 
+                                     _("Error retrieving current time!"));
+                return FALSE;
         }
 
         now = g_get_real_time ();
@@ -377,13 +368,11 @@ gibbon_archive_update_rank (GibbonArchive *self,
         mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
         if (0 != g_mkdir_with_parents (directory, mode)) {
-                gibbon_app_fatal_error (app, NULL,
-                                        _("Failed to create"
-                                        " server directory `%s': %s!"),
-                               self->priv->servers_directory,
-                               strerror (errno));
-                /* NOTREACHED */
-                return;
+                g_set_error (error, 0, -1,
+                             _("Failed to create server directory `%s': %s!"),
+                             self->priv->servers_directory,
+                             strerror (errno));
+                return FALSE;
         }
         g_free (directory);
 
@@ -408,7 +397,9 @@ gibbon_archive_update_rank (GibbonArchive *self,
 
         gibbon_database_update_rank (self->priv->db,
                                      hostname, port, user,
-                                     rating, experience, now);
+                                     rating, experience, now, NULL);
+
+        return TRUE;
 }
 
 void
@@ -427,10 +418,10 @@ gibbon_archive_save_win (GibbonArchive *self,
 
         (void) gibbon_database_insert_activity (self->priv->db,
                                                 hostname, port,
-                                                winner, 1.0);
+                                                winner, 1.0, NULL);
         (void) gibbon_database_insert_activity (self->priv->db,
                                                 hostname, port,
-                                                loser, 1.0);
+                                                loser, 1.0, NULL);
 }
 
 void
@@ -452,7 +443,7 @@ gibbon_archive_save_drop (GibbonArchive *self,
 
         (void) gibbon_database_insert_activity (self->priv->db,
                                                 hostname, port,
-                                                dropper, -1.0);
+                                                dropper, -1.0, NULL);
 }
 
 void
@@ -480,11 +471,13 @@ gibbon_archive_save_resume (GibbonArchive *self,
                 if (type == GibbonClientBot) {
                         (void) gibbon_database_void_activity (self->priv->db,
                                                               hostname, port,
-                                                              player1, -1.0);
+                                                              player1, -1.0,
+                                                              NULL);
                 } else {
                         (void) gibbon_database_insert_activity (self->priv->db,
                                                                 hostname, port,
-                                                                player1, 1.5);
+                                                                player1, 1.5,
+                                                                NULL);
                 }
 
                 return;
@@ -497,11 +490,13 @@ gibbon_archive_save_resume (GibbonArchive *self,
                 if (type == GibbonClientBot) {
                         (void) gibbon_database_void_activity (self->priv->db,
                                                               hostname, port,
-                                                              player2, -1.0);
+                                                              player2, -1.0,
+                                                              NULL);
                 } else {
                         (void) gibbon_database_insert_activity (self->priv->db,
                                                                 hostname, port,
-                                                                player2, 1.5);
+                                                                player2, 1.5,
+                                                                NULL);
                 }
 
                 return;
@@ -526,38 +521,54 @@ gboolean
 gibbon_archive_get_reliability (GibbonArchive *self,
                                 const gchar *hostname, guint port,
                                 const gchar *login,
-                                gdouble *value, guint *confidence)
+                                gdouble *value, guint *confidence,
+                                GError **error)
 {
-        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
-        g_return_val_if_fail (port <= 65536, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (value != NULL, FALSE);
-        g_return_val_if_fail (confidence != NULL, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
+        gibbon_return_val_if_fail (port <= 65536, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (value != NULL, FALSE, error);
+        gibbon_return_val_if_fail (confidence != NULL, FALSE, error);
 
         return gibbon_database_get_reliability (self->priv->db,
                                                 hostname, port,
-                                                login, value, confidence);
+                                                login, value, confidence,
+                                                error);
 }
 
 gboolean
 gibbon_archive_get_rank (GibbonArchive *self,
                          const gchar *hostname, guint port,
                          const gchar *login,
-                         gdouble *rating, guint64 *experience)
+                         gdouble *rating, guint64 *experience,
+                         GError **error)
 {
-        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
-        g_return_val_if_fail (port <= 65536, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (rating != NULL, FALSE);
-        g_return_val_if_fail (experience != NULL, FALSE);
+        gboolean r;
 
-        return gibbon_database_get_rank (self->priv->db,
-                                         hostname, port,
-                                         login, rating, experience);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
+        gibbon_return_val_if_fail (port <= 65536, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (rating != NULL, FALSE, error);
+        gibbon_return_val_if_fail (experience != NULL, FALSE, error);
+
+        r = gibbon_database_get_rank (self->priv->db,
+                                      hostname, port,
+                                      login, rating, experience,
+                                      error);
+        if (r)
+                return TRUE;
+
+        *rating = 1500.0;
+        *experience = 0;
+
+        if (error && !*error)
+                return TRUE;
+
+        return FALSE;
 }
 
 GibbonCountry *
@@ -865,7 +876,7 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
 }
 
 static gchar *
-gibbon_archive_get_saved_directory (const GibbonArchive *self)
+gibbon_archive_get_saved_directory (const GibbonArchive *self, GError **error)
 {
         gchar *saved_directory;
         gint mode;
@@ -883,11 +894,10 @@ gibbon_archive_get_saved_directory (const GibbonArchive *self)
                 mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
 #endif
                 if (0 != g_mkdir_with_parents (saved_directory, mode)) {
-                        gibbon_app_fatal_error (self->priv->app, NULL,
-                                                _("Failed to create"
-                                                  " directory `%s': %s!"),
-                                                saved_directory,
-                                                strerror (errno));
+                        g_set_error (error, 0, -1,
+                                     _("Failed to create directory `%s': %s!"),
+                                     saved_directory,
+                                     strerror (errno));
                         g_free (saved_directory);
                         return NULL;
                 }
@@ -899,16 +909,17 @@ gibbon_archive_get_saved_directory (const GibbonArchive *self)
 gchar *
 gibbon_archive_get_saved_name (const GibbonArchive *self,
                                const gchar *player1,
-                               const gchar *player2)
+                               const gchar *player2,
+                               GError **error)
 {
         gchar *saved_directory;
         gchar *filename, *path;
 
-        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
-        g_return_val_if_fail (player1 != NULL, NULL);
-        g_return_val_if_fail (player2 != NULL, NULL);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL, error);
+        gibbon_return_val_if_fail (player1 != NULL, NULL, error);
+        gibbon_return_val_if_fail (player2 != NULL, NULL, error);
 
-        saved_directory = gibbon_archive_get_saved_directory (self);
+        saved_directory = gibbon_archive_get_saved_directory (self, error);
 
         filename = g_strdup_printf ("%s%%%s.gmd", player1, player2);
         path = g_build_filename (saved_directory, filename, NULL);
@@ -938,22 +949,22 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
         GFile *src, *dest;
         gboolean result;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
 
         start = gibbon_match_get_start_time (match);
         if (start == G_MININT64) {
                 g_set_error_literal (error,
-                                     GIBBON_MATCH_ERROR,
-                                     GIBBON_MATCH_ERROR_GENERIC,
+                                     GIBBON_ERROR,
+                                     -1,
                                      _("No start time in match file!"));
                 return FALSE;
         }
         dt = g_date_time_new_from_unix_local (start / 1000000);
         if (!dt) {
                 g_set_error (error,
-                             GIBBON_MATCH_ERROR,
-                             GIBBON_MATCH_ERROR_GENERIC,
+                             GIBBON_ERROR,
+                             -1,
                              _("Match start time `%lld' out of range!"),
                              (long long) start);
                 return FALSE;
@@ -979,8 +990,8 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
 #endif
         if (0 != g_mkdir_with_parents (directory, mode)) {
                 g_set_error (error,
-                             GIBBON_MATCH_ERROR,
-                             GIBBON_MATCH_ERROR_GENERIC,
+                             GIBBON_ERROR,
+                             -1,
                              _("Failed to create directory `%s': %s!"),
                                directory,
                                strerror (errno));
@@ -1024,11 +1035,11 @@ gibbon_archive_create_group (const GibbonArchive *self,
         GFile *file;
         GFileOutputStream *out;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
-        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
-        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (group != NULL, FALSE, error);
 
         groups_dir = g_build_filename (self->priv->session_directory, "groups",
                                        NULL);
@@ -1084,12 +1095,12 @@ gibbon_archive_create_relation (const GibbonArchive *self,
         gchar *tmp;
         gchar *buffer;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
-        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
-        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (peer != NULL, FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (group != NULL, FALSE, error);
+        gibbon_return_val_if_fail (peer != NULL, FALSE, error);
 
         if (gibbon_database_exists_relation (self->priv->db, hostname, port,
                                              login, group, peer))

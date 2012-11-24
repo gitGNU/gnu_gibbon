@@ -114,23 +114,6 @@ typedef enum {
 
 GType gibbon_match_get_type (void) G_GNUC_CONST;
 
-#define GIBBON_MATCH_ERROR gibbon_match_error_quark ()
-
-GQuark gibbon_match_error_quark (void);
-
-#define gibbon_match_return_val_if_fail(expr, val, error) G_STMT_START{      \
-     if G_LIKELY(expr) { } else                                              \
-       {                                                                     \
-         g_set_error (error, GIBBON_MATCH_ERROR, GIBBON_MATCH_ERROR_GENERIC, \
-                      _("In function `%s': assertion `%s' failed."),         \
-                      __PRETTY_FUNCTION__, #expr);                           \
-         g_return_if_fail_warning (G_LOG_DOMAIN,                             \
-                                   __PRETTY_FUNCTION__,                      \
-                                   #expr);                                   \
-         return (val);                                                       \
-       };                               }G_STMT_END
-
-
 GibbonMatch *gibbon_match_new (const gchar *white, const gchar *black,
                                gsize length, gboolean crawford);
 

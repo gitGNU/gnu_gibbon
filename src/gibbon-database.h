@@ -27,8 +27,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "gibbon-app.h"
-
 #define GIBBON_TYPE_DATABASE \
         (gibbon_database_get_type ())
 #define GIBBON_DATABASE(obj) \
@@ -74,38 +72,49 @@ struct _GibbonDatabaseClass
 
 GType gibbon_database_get_type (void) G_GNUC_CONST;
 
-GibbonDatabase *gibbon_database_new (GibbonApp *app, const gchar *path);
+GibbonDatabase *gibbon_database_new (const gchar *path, GError **error);
 
 guint gibbon_database_get_server_id (GibbonDatabase *self,
-                                     const gchar *hostname, guint port);
+                                     const gchar *hostname, guint port,
+                                     GError **error);
 gboolean gibbon_database_update_user_full (GibbonDatabase *self,
                                            const gchar *hostname, guint port,
                                            const gchar *login,
-                                           gdouble rating, guint experience);
+                                           gdouble rating, guint experience,
+                                           GError **error);
 gboolean gibbon_database_update_rank (GibbonDatabase *self,
                                       const gchar *hostname, guint port,
                                       const gchar *login,
                                       gdouble rating, guint experience,
-                                      gint64 timestamp);
+                                      gint64 timestamp,
+                                      GError **error);
 gboolean gibbon_database_get_rank (GibbonDatabase *self,
                                    const gchar *hostname, guint port,
                                    const gchar *login,
-                                   gdouble *rating, guint64 *experience);
+                                   gdouble *rating, guint64 *experience,
+                                   GError **error);
 gboolean gibbon_database_insert_activity (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login,
-                                          gdouble value);
+                                          gdouble value,
+                                          GError **error);
 gboolean gibbon_database_void_activity (GibbonDatabase *self,
                                         const gchar *hostname, guint port,
                                         const gchar *login,
-                                        gdouble value);
+                                        gdouble value,
+                                        GError **error);
 gboolean gibbon_database_get_reliability (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login,
-                                          gdouble *value, guint *confidence);
+                                          gdouble *value, guint *confidence,
+                                          GError **error);
 guint gibbon_database_get_user_id (GibbonDatabase *self,
                                    const gchar *hostname, guint port,
-                                   const gchar *login);
+                                   const gchar *login, GError **error);
+/*
+ * This function does not report errors because it can theoretically
+ * happen that it returns NULL without an error.
+ */
 gchar *gibbon_database_get_country (GibbonDatabase *self, guint32 address);
 void gibbon_database_on_start_geo_ip_update (GibbonDatabase *self);
 void gibbon_database_set_geo_ip (GibbonDatabase *self,

@@ -209,10 +209,17 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
         GError *error = NULL;
         gint64 start;
 
-        path = gibbon_archive_get_saved_name (archive, player1, player2);
+        path = gibbon_archive_get_saved_name (archive, player1, player2,
+                                              &error);
         if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
                 path = gibbon_archive_get_saved_name (archive,
-                                                      player2, player1);
+                                                      player2, player1,
+                                                      &error);
+                if (!path) {
+                        gibbon_app_fatal_error (app, NULL, "%s", error->message);
+                        /* NOTREACHED */
+                }
+
                 if (!g_file_test (path, G_FILE_TEST_EXISTS))
                         return;
         }
@@ -396,10 +403,17 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
         GFile *file;
         GFileOutputStream *out;
 
-        path = gibbon_archive_get_saved_name (archive, player1, player2);
+        path = gibbon_archive_get_saved_name (archive, player1, player2,
+                                              &error);
         if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
                 path = gibbon_archive_get_saved_name (archive,
-                                                      player2, player1);
+                                                      player2, player1,
+                                                      &error);
+                if (!path) {
+                        gibbon_app_fatal_error (app, NULL, "%s", error->message);
+                        /* NOTREACHED */
+                }
+
                 if (!g_file_test (path, G_FILE_TEST_EXISTS))
                         return;
         }
@@ -455,7 +469,12 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
 
         self->priv->outname = gibbon_archive_get_saved_name (archive,
                                                              player1,
-                                                             player2);
+                                                             player2,
+                                                             &error);
+        if (!self->priv->outname) {
+                gibbon_app_fatal_error (app, NULL, "%s", error->message);
+                /* NOTREACHED */
+        }
 
         file = g_file_new_for_path (self->priv->outname);
         fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,

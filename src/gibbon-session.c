@@ -370,6 +370,7 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         const gchar *hostname;
         guint port;
         const gchar *login;
+        GError *error = NULL;
 
         self->priv->connection = connection;
         self->priv->app = app;
@@ -388,13 +389,22 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
         hostname = gibbon_connection_get_hostname (connection);
         port = gibbon_connection_get_port (connection);
 
-        if (!g_strcmp0 ("guest", login))
+        if (!g_strcmp0 ("guest", login)) {
                 self->priv->guest_login = TRUE;
-        else if (gibbon_archive_get_rank (self->priv->archive,
-                                          hostname, port, login,
-                                          &self->priv->rating,
-                                          &self->priv->experience))
-                self->priv->rating_seen = TRUE;
+        } else {
+                if (gibbon_archive_get_rank (self->priv->archive,
+                                             hostname, port, login,
+                                             &self->priv->rating,
+                                             &self->priv->experience,
+                                             &error)) {
+                        self->priv->rating_seen = TRUE;
+                } else {
+                        gibbon_app_display_error (app, _("Database Error"),
+                                                  "%s", error->message);
+                        g_error_free (error);
+                        error = NULL;
+                }
+        }
 
         self->priv->position = gibbon_position_new ();
 
@@ -865,6 +875,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         const gchar *server;
         gboolean has_saved;
         GibbonSavedInfo *saved_info;
+        GError *error = NULL;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -921,9 +932,14 @@ gibbon_session_clip_who_info (GibbonSession *self,
 
         if (!gibbon_archive_get_reliability (self->priv->archive,
                                              server, port, who,
-                                             &reliability, &confidence)) {
-                confidence = 123;
-                reliability = 4.56;
+                                             &reliability, &confidence,
+                                             &error)) {
+                gibbon_app_display_error (self->priv->app, _("Database Error"),
+                                          "%s", error->message);
+                g_error_free (error);
+                error = NULL;
+                confidence = 0;
+                reliability = 0;
         }
 
         client_type = gibbon_get_client_type (client, who, server, port);
@@ -990,9 +1006,16 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         self->priv->rating_seen = TRUE;
                         self->priv->rating = rating;
                         self->priv->experience = experience;
-                        gibbon_archive_update_rank (archive, server, port,
-                                                    account, rating,
-                                                    experience);
+                        if (!gibbon_archive_update_rank (archive, server, port,
+                                                         account, rating,
+                                                         experience, &error)) {
+                                gibbon_app_display_error (self->priv->app,
+                                                          _("Database Failure"),
+                                                          "%s",
+                                                          error->message);
+                                g_error_free (error);
+                                error = NULL;
+                        }
                 }
         }
 
@@ -3118,6 +3141,7 @@ gibbon_session_registration_success (GibbonSession *self)
         const gchar *hostname;
         guint port;
         gchar *login;
+        GError *error = NULL;
 
         if (self->priv->timeout_id)
                 g_source_remove (self->priv->timeout_id);
@@ -3128,7 +3152,12 @@ gibbon_session_registration_success (GibbonSession *self)
         g_object_unref (settings);
         hostname = gibbon_connection_get_hostname (self->priv->connection);
         port = gibbon_connection_get_port (self->priv->connection);
-        gibbon_archive_on_login (self->priv->archive, hostname, port, login);
+        if (!gibbon_archive_login (self->priv->archive, hostname, port,
+                                   login, &error)) {
+                gibbon_app_fatal_error (self->priv->app, _("Database Failure"),
+                                        "%s", error->message);
+                /* NOTREACHED */
+        }
         g_free (login);
 
         gibbon_app_display_info (self->priv->app,

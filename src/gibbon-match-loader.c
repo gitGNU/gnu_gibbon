@@ -134,9 +134,8 @@ gibbon_match_loader_get_reader (const GibbonMatchLoader *self,
                 }
 
                 if (!read_bytes) {
-                        g_set_error_literal (error, GIBBON_MATCH_ERROR,
-                                        GIBBON_MATCH_ERROR_GENERIC,
-                                        _("Premature end of input file!"));
+                        g_set_error_literal (error, 0, -1,
+                                             _("Premature end of input file!"));
                         g_object_unref (stream);
                         return NULL;
                 }
@@ -186,6 +185,5 @@ gibbon_match_loader_yyerror (GError **error, const gchar *msg)
         if (*error)
                 return;
 
-        g_set_error_literal (error, GIBBON_MATCH_ERROR,
-                             GIBBON_MATCH_ERROR_GENERIC, msg);
+        g_set_error_literal (error, 0, -1, msg);
 }

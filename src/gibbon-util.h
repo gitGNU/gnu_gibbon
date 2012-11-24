@@ -29,6 +29,21 @@
 
 G_BEGIN_DECLS
 
+#define GIBBON_ERROR gibbon_error_quark ()
+
+GQuark gibbon_error_quark (void);
+
+#define gibbon_return_val_if_fail(expr, val, error) G_STMT_START{      \
+     if G_LIKELY(expr) { } else {                                            \
+             g_set_error (error, GIBBON_ERROR, -1,                     \
+                          _("In function `%s': assertion `%s' failed."),     \
+                          __PRETTY_FUNCTION__, #expr);                       \
+             g_return_if_fail_warning (G_LOG_DOMAIN,                         \
+                                       __PRETTY_FUNCTION__,                  \
+                                       #expr);                               \
+             return (val);                                                   \
+     };                               }G_STMT_END
+
 enum GibbonClientType {
         GibbonClientUnknown = 0,
         GibbonClientGibbon = 1,

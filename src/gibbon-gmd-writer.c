@@ -36,6 +36,7 @@
 #include "gibbon-match.h"
 #include "gibbon-game.h"
 #include "gibbon-game-actions.h"
+#include "gibbon-util.h"
 
 #define GIBBON_GMD_WRITER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
         GIBBON_TYPE_GMD_WRITER, GibbonGMDWriterPrivate))
@@ -508,15 +509,15 @@ gibbon_gmd_writer_update_rank (const GibbonGMDWriter *self, GOutputStream *out,
 {
         gchar *raw, *buffer;
 
-        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (match != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE,
+        gibbon_return_val_if_fail (self != NULL, FALSE, error);
+        gibbon_return_val_if_fail (match != NULL, FALSE, error);
+        gibbon_return_val_if_fail (side != GIBBON_POSITION_SIDE_NONE,
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+        gibbon_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_MATCH (match),
+        gibbon_return_val_if_fail (GIBBON_IS_MATCH (match),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+        gibbon_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
                                          FALSE, error);
 
         if (gibbon_match_get_rank (match, side)) {
@@ -537,10 +538,10 @@ gibbon_gmd_writer_add_game (const GibbonGMDWriter *self, GOutputStream *out,
 {
         gchar *buffer;
 
-        gibbon_match_return_val_if_fail (self != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+        gibbon_return_val_if_fail (self != NULL, FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+        gibbon_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
                                          FALSE, error);
 
         buffer = g_strdup_printf ("Game:\n");
@@ -559,13 +560,13 @@ gibbon_gmd_writer_write_action (const GibbonGMDWriter *self, GOutputStream *out,
         gchar color;
         gchar *buf;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
+        gibbon_return_val_if_fail (GIBBON_IS_GMD_WRITER (self),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
+        gibbon_return_val_if_fail (G_IS_OUTPUT_STREAM (out),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_GAME (game),
+        gibbon_return_val_if_fail (GIBBON_IS_GAME (game),
                                          FALSE, error);
-        gibbon_match_return_val_if_fail (GIBBON_IS_GAME_ACTION (action),
+        gibbon_return_val_if_fail (GIBBON_IS_GAME_ACTION (action),
                                          FALSE, error);
 
         if (side < 0)
@@ -619,7 +620,7 @@ gibbon_gmd_writer_write_action (const GibbonGMDWriter *self, GOutputStream *out,
                         return FALSE;
         } else {
                 g_free (buf);
-                g_set_error (error, GIBBON_MATCH_ERROR,
+                g_set_error (error, GIBBON_ERROR,
                              GIBBON_MATCH_ERROR_GENERIC,
                              _("Action %p is not supported.\n"),
                              action);

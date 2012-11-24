@@ -31,12 +31,12 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include "gibbon-app.h"
 #include "gibbon-geo-ip-updater.h"
 #include "gibbon-geo-ip-data.h"
 
 typedef struct _GibbonGeoIPUpdaterPrivate GibbonGeoIPUpdaterPrivate;
 struct _GibbonGeoIPUpdaterPrivate {
-        const GibbonApp *app;
         GibbonDatabase *database;
 
         GtkWidget *dialog;
@@ -78,7 +78,6 @@ gibbon_geo_ip_updater_init (GibbonGeoIPUpdater *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_GEO_IP_UPDATER, GibbonGeoIPUpdaterPrivate);
 
-        self->priv->app = NULL;
         self->priv->database = NULL;
 
         self->priv->dialog = NULL;
@@ -139,7 +138,6 @@ gibbon_geo_ip_updater_class_init (GibbonGeoIPUpdaterClass *klass)
 
 /**
  * gibbon_geo_ip_updater_new:
- * @app: The #GibbonApp.
  * @database: The #GibbonDatabase.
  *
  * Creates a new #GibbonGeoIPUpdater.
@@ -147,8 +145,7 @@ gibbon_geo_ip_updater_class_init (GibbonGeoIPUpdaterClass *klass)
  * Returns: The newly created #GibbonGeoIPUpdater or %NULL in case of failure.
  */
 GibbonGeoIPUpdater *
-gibbon_geo_ip_updater_new (const GibbonApp *app,
-                           GibbonDatabase *database,
+gibbon_geo_ip_updater_new (GibbonDatabase *database,
                            gint64 _last_update)
 {
         GibbonGeoIPUpdater *self = g_object_new (GIBBON_TYPE_GEO_IP_UPDATER, NULL);
@@ -166,7 +163,6 @@ gibbon_geo_ip_updater_new (const GibbonApp *app,
         gchar *win32_dir;
 #endif
 
-        self->priv->app = app;
         self->priv->database = database;
 
         main_window = GTK_WINDOW (gibbon_app_get_window (app));
@@ -278,7 +274,7 @@ gibbon_geo_ip_updater_on_response (GibbonGeoIPUpdater *self,
                 self->priv->cancellable = NULL;
         }
         gtk_widget_hide (self->priv->dialog);
-        gibbon_app_display_info (self->priv->app, NULL, "%s",
+        gibbon_app_display_info (app, NULL, "%s",
                                  _("The information about other"
                                    " players' geographic location"
                                    " will not be accurate."));
@@ -299,7 +295,7 @@ gibbon_geo_ip_updater_start (GibbonGeoIPUpdater *self)
 
         g_return_if_fail (GIBBON_IS_GEO_IP_UPDATER (self));
 
-        main_window = GTK_WINDOW (gibbon_app_get_window (self->priv->app));
+        main_window = GTK_WINDOW (gibbon_app_get_window (app));
 
         self->priv->dialog =
                         gtk_dialog_new_with_buttons (_("Update Geo IP database"),
@@ -362,7 +358,7 @@ gibbon_geo_ip_updater_on_open (GFile *file, GAsyncResult *res,
         self->priv->file = NULL;
         if (!fstream) {
                 gtk_widget_hide (self->priv->dialog);
-                gibbon_app_display_error (self->priv->app, NULL,
+                gibbon_app_display_error (app, NULL,
                                           _("Cannot open `%s': %s!"),
                                           self->priv->uri, error->message);
                 g_error_free (error);
@@ -416,7 +412,7 @@ gibbon_geo_ip_updater_on_read (GInputStream *stream, GAsyncResult *res,
         read_bytes = g_input_stream_read_finish (stream, res, &error);
         if (read_bytes < 0) {
                 gtk_widget_hide (self->priv->dialog);
-                gibbon_app_display_error (self->priv->app, NULL,
+                gibbon_app_display_error (app, NULL,
                                           _("Error reading `%s': %s!"),
                                           self->priv->uri, error->message);
                 g_error_free (error);
@@ -693,14 +689,14 @@ gibbon_geo_ip_updater_parse (GibbonGeoIPUpdater *self, const gchar *line_start,
 parse_error:
         gtk_widget_hide (self->priv->dialog);
         if (*ptr)
-                gibbon_app_display_error (self->priv->app, NULL,
+                gibbon_app_display_error (app, NULL,
                                           _("%s: line %u: Parse error near"
                                             " `%s'!"),
                                            self->priv->uri,
                                            (unsigned) self->priv->lineno,
                                            ptr);
         else
-                gibbon_app_display_error (self->priv->app, NULL,
+                gibbon_app_display_error (app, NULL,
                                           _("%s: line %u: Unexpected end of"
                                             " line!"),
                                            self->priv->uri,

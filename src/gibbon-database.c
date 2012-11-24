@@ -32,8 +32,10 @@
 #include <stdarg.h>
 #include <sqlite3.h>
 
+#include "gibbon-app.h"
 #include "gibbon-database.h"
 #include "gibbon-geo-ip-updater.h"
+#include "gibbon-util.h"
 
 /* Differences in the major schema version require a complete rebuild of the
  * database.
@@ -163,8 +165,8 @@ struct _GibbonDatabasePrivate {
         gboolean in_transaction;
 
         gchar *path;
-        GibbonApp *app;
         GibbonGeoIPUpdater *geo_ip_updater;
+        gboolean allow_gdk;
 };
 
 #define GIBBON_DATABASE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -172,27 +174,39 @@ struct _GibbonDatabasePrivate {
 
 G_DEFINE_TYPE (GibbonDatabase, gibbon_database, G_TYPE_OBJECT)
 
-static gboolean gibbon_database_initialize (GibbonDatabase *self);
-static gboolean gibbon_database_check_ip2country (GibbonDatabase *self);
+static GibbonDatabase *singleton = NULL;
+static gchar *last_path = NULL;
+
+static gboolean gibbon_database_initialize (GibbonDatabase *self, 
+                                            GError **error);
+static gboolean gibbon_database_check_ip2country (GibbonDatabase *self,
+                                                  GError **error);
 static gboolean gibbon_database_exists_table (GibbonDatabase *self,
                                               const gchar *table);
-static gboolean gibbon_database_begin_transaction (GibbonDatabase *self);
-static gboolean gibbon_database_commit (GibbonDatabase *self);
-static gboolean gibbon_database_rollback (GibbonDatabase *self);
-static gboolean gibbon_database_maintain (GibbonDatabase *self);
-static gboolean gibbon_database_display_error (GibbonDatabase *self,
-                                               const gchar *msg_fmt, ...);
-static gboolean gibbon_database_sql_do (GibbonDatabase *self,
+static gboolean gibbon_database_begin_transaction (GibbonDatabase *self,
+                                                   GError **error);
+static gboolean gibbon_database_commit (GibbonDatabase *self,
+                                        GError **error);
+static gboolean gibbon_database_rollback (GibbonDatabase *self,
+                                          GError **error);
+static gboolean gibbon_database_maintain (GibbonDatabase *self,
+                                          GError **error);
+static gboolean gibbon_database_set_error (GibbonDatabase *self, GError **error,
+                                           const gchar *msg_fmt, ...);
+static gboolean gibbon_database_sql_do (GibbonDatabase *self, GError **error,
                                         const gchar *sql_fmt, ...);
 static gboolean gibbon_database_sql_execute (GibbonDatabase *self,
                                              sqlite3_stmt *stmt,
+                                             GError **error,
                                              const gchar *sql, ...);
 static gboolean gibbon_database_sql_select_row (GibbonDatabase *self,
                                                 sqlite3_stmt *stmt,
+                                                GError **error,
                                                 const gchar *sql, ...);
 static gboolean gibbon_database_get_statement (GibbonDatabase *self,
                                                sqlite3_stmt **stmt,
-                                               const gchar *sql);
+                                               const gchar *sql,
+                                               GError **error);
 
 static void 
 gibbon_database_init (GibbonDatabase *self)
@@ -226,6 +240,8 @@ gibbon_database_init (GibbonDatabase *self)
 
         self->priv->path = NULL;
         self->priv->geo_ip_updater = NULL;
+
+        self->priv->allow_gdk = FALSE;
 }
 
 static void
@@ -298,7 +314,6 @@ gibbon_database_class_init (GibbonDatabaseClass *klass)
 
 /**
  * gibbon_database_new:
- * @app: Our application.
  * @path: Path to the sqlite database.
  *
  * Creates a new #GibbonDatabase.
@@ -306,28 +321,36 @@ gibbon_database_class_init (GibbonDatabaseClass *klass)
  * Returns: The newly created #GibbonDatabase or %NULL in case of failure.
  */
 GibbonDatabase *
-gibbon_database_new (GibbonApp *app, const gchar *path)
+gibbon_database_new (const gchar *path, GError **error)
 {
-        GibbonDatabase *self = g_object_new (GIBBON_TYPE_DATABASE, NULL);
+        GibbonDatabase *self;
         sqlite3 *dbh;
 
+        if (singleton) {
+                g_assert (last_path);
+                g_assert (!g_strcmp0 (last_path, path));
+
+                g_object_ref (singleton);
+
+                return singleton;
+        }
+        last_path = g_strdup (path);
+
+        self = g_object_new (GIBBON_TYPE_DATABASE, NULL);
         self->priv->path = g_strdup (path);
-        self->priv->app = app;
 
         if (SQLITE_OK != sqlite3_open (path, &dbh)) {
                 if (!dbh) {
-                        gibbon_app_display_error (app, NULL,
-                                                  _("Error opening database"
-                                                    " `%s'!"),
-                                                  path);
+                        g_set_error (error, 0, -1,
+                                     _("Error opening database `%s':"),
+                                     path);
                         g_object_unref (self);
                         return NULL;
                 }
 
-                gibbon_database_display_error (self,
-                                               _("Error opening database"
-                                                 " `%s'!"),
-                                               path);
+                gibbon_database_set_error (self, error,
+                                           _("Error opening database `%s':"),
+                                           path);
                 g_object_unref (self);
                 return NULL;
         }
@@ -338,36 +361,39 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
          * the property.  We will do that later, once we have our select
          * function coded.
          */
-        if (!gibbon_database_sql_do (self, "PRAGMA foreign_keys = ON")) {
-                gibbon_app_display_error (app, NULL,
-                                          _("Your sqlite installation seems"
-                                            " to be crippled.  It does not"
-                                            " support foreign key constraints. "
-                                            " This is not a bug in Gibbon!"));
+        if (!gibbon_database_sql_do (self, NULL, "PRAGMA foreign_keys = ON")) {
+                g_set_error_literal (error, 0, -1,
+                                     _("Your sqlite installation seems"
+                                       " to be crippled.  It does not"
+                                       " support foreign key constraints. "
+                                       " This is not a bug in Gibbon!"));
                 g_object_unref (self);
                 return NULL;
         }
-        if (!gibbon_database_begin_transaction (self)) {
+        if (!gibbon_database_begin_transaction (self, error)) {
                 g_object_unref (self);
                 return NULL;
         }
-        if (!gibbon_database_initialize (self)) {
-                (void) gibbon_database_rollback (self);
-                g_object_unref (self);
-                return NULL;
-        }
-
-        if (!gibbon_database_commit (self)) {
+        if (!gibbon_database_initialize (self, error)) {
+                (void) gibbon_database_rollback (self, NULL);
                 g_object_unref (self);
                 return NULL;
         }
 
-        if (!gibbon_database_check_ip2country (self)) {
+        if (!gibbon_database_commit (self, error)) {
                 g_object_unref (self);
                 return NULL;
         }
 
-        (void) gibbon_database_maintain (self);
+        if (!gibbon_database_check_ip2country (self, error)) {
+                g_object_unref (self);
+                return NULL;
+        }
+
+        if (!gibbon_database_maintain (self, error)) {
+                g_object_unref (self);
+                return NULL;
+        }
 
         g_timeout_add_seconds (60 * 60, (GSourceFunc) gibbon_database_maintain,
                                (gpointer) self);
@@ -376,7 +402,7 @@ gibbon_database_new (GibbonApp *app, const gchar *path)
 }
 
 static gboolean
-gibbon_database_initialize (GibbonDatabase *self)
+gibbon_database_initialize (GibbonDatabase *self, GError **error)
 {
         int major = 0;
         int minor = 0;
@@ -400,10 +426,11 @@ gibbon_database_initialize (GibbonDatabase *self)
                                              sql_select_version,
                                              -1, &stmt, NULL);
 
-                if (status != SQLITE_OK)
-                        return FALSE;
+                if (status != SQLITE_OK) {
+                        return gibbon_database_set_error (self, error, NULL);
+                }
 
-                (void) gibbon_database_sql_select_row (self, stmt,
+                (void) gibbon_database_sql_select_row (self, stmt, NULL,
                                                        sql_select_version,
                                                        G_TYPE_INT, &major,
                                                        G_TYPE_INT, &minor,
@@ -445,7 +472,11 @@ gibbon_database_initialize (GibbonDatabase *self)
                 }
 
                 if (msg) {
-                        main_window = gibbon_app_get_window (self->priv->app);
+                        /*
+                         * FIXME! This can only be done from the main
+                         * thread!
+                         */
+                        main_window = gibbon_app_get_window (app);
                         dialog = gtk_message_dialog_new (GTK_WINDOW (main_window),
                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
                                                  GTK_MESSAGE_QUESTION,
@@ -454,8 +485,12 @@ gibbon_database_initialize (GibbonDatabase *self)
                         reply = gtk_dialog_run (GTK_DIALOG (dialog));
                         gtk_widget_destroy (dialog);
 
-                        if (reply != GTK_RESPONSE_YES)
+                        if (reply != GTK_RESPONSE_YES) {
+                                g_set_error_literal (error, 0, -1,
+                                                     _("Cancelled on user"
+                                                       " request!"));
                                 return FALSE;
+                        }
                 }
         }
 
@@ -463,9 +498,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 drop_first = TRUE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS version"))
+            && !gibbon_database_sql_do (self, error, 
+                                        "DROP TABLE IF EXISTS version"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS version ("
                                      "  major INTEGER,"
                                      "  minor INTEGER,"
@@ -475,9 +511,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS servers"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS servers"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS servers ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  name TEXT NOT NULL,"
@@ -487,9 +524,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS users"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS users"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS users ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  name TEXT NOT NULL,"
@@ -508,7 +546,7 @@ gibbon_database_initialize (GibbonDatabase *self)
          * We do not drop the activities table because it contains semi-
          * precious data.
          */
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS activities ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  user_id INTEGER NOT NULL,"
@@ -521,31 +559,35 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         /* Needed for clean-up.  */
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE INDEX IF NOT EXISTS"
                                      " actitivities_date_time_index"
                                      " ON activities (date_time)"))
                 return FALSE;
 
-        if (!gibbon_database_sql_do (self, "DROP TABLE IF EXISTS geoip"))
+        if (!gibbon_database_sql_do (self, error, 
+                                     "DROP TABLE IF EXISTS geoip"))
                 return FALSE;
 
-        if (!gibbon_database_sql_do (self, "CREATE TABLE"
-                                           " IF NOT EXISTS ip2country ("
-                                           " start_ip UINT32 NOT NULL,"
-                                           " end_ip UINT32 NOT NULL,"
-                                           " code CHAR(2) NOT NULL,"
-                                           " PRIMARY KEY (start_ip, end_ip))"))
+        if (!gibbon_database_sql_do (self, error,
+                                     "CREATE TABLE"
+                                     " IF NOT EXISTS ip2country ("
+                                     " start_ip UINT32 NOT NULL,"
+                                     " end_ip UINT32 NOT NULL,"
+                                     " code CHAR(2) NOT NULL,"
+                                     " PRIMARY KEY (start_ip, end_ip))"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self, "CREATE TABLE"
-                                           " IF NOT EXISTS ip2country_update ("
-                                           " last_update INT64 NOT NULL)"))
+        if (!gibbon_database_sql_do (self, error,
+                                     "CREATE TABLE"
+                                     " IF NOT EXISTS ip2country_update ("
+                                     " last_update INT64 NOT NULL)"))
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS ranks"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS ranks"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS ranks ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  user_id INTEGER NOT NULL,"
@@ -559,9 +601,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS matches"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS matches"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS matches ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  user_id1 INTEGER NOT NULL,"
@@ -603,9 +646,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS groups"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS groups"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS groups ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  user_id INTEGER NOT NULL,"
@@ -618,9 +662,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                 return FALSE;
 
         if (drop_first
-            && !gibbon_database_sql_do (self, "DROP TABLE IF EXISTS relations"))
+            && !gibbon_database_sql_do (self, error,
+                                        "DROP TABLE IF EXISTS relations"))
                 return FALSE;
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS relations ("
                                      "  id INTEGER PRIMARY KEY,"
                                      "  group_id INTEGER NOT NULL,"
@@ -635,10 +680,10 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      ")"))
                 return FALSE;
 
-        if (!gibbon_database_sql_do (self, "DELETE FROM version"))
+        if (!gibbon_database_sql_do (self, error, "DELETE FROM version"))
                 return FALSE;
 
-        if (!gibbon_database_sql_do (self,
+        if (!gibbon_database_sql_do (self, error,
                                      "INSERT INTO version (major, minor,\n"
                                      "                     revision,\n"
                                      "                     app_version)\n"
@@ -649,14 +694,9 @@ gibbon_database_initialize (GibbonDatabase *self)
                                      PACKAGE, VERSION))
                 return FALSE;
 
-        if (drop_first && !new_database)
-                gibbon_app_display_info (self->priv->app, NULL,
-                                         _("You should now repopulate your"
-                                           " database (menu `Options')."));
-
-        if (!gibbon_database_get_statement (self,
-                                          &self->priv->select_ip2country_update,
-                                      GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE))
+        if (!gibbon_database_get_statement (
+                        self, &self->priv->select_ip2country_update,
+                        GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE, error))
                 return FALSE;
 
         return TRUE;
@@ -690,11 +730,11 @@ gibbon_database_exists_table (GibbonDatabase *self, const char *name)
 }
 
 static gboolean
-gibbon_database_begin_transaction (GibbonDatabase *self)
+gibbon_database_begin_transaction (GibbonDatabase *self, GError **error)
 {
         if (self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app, _("Internal error"),
-                                          _("Nested transaction."));
+                g_set_error (error, 0, -1,
+                             _("Internal error: Nested transaction!"));
                 return FALSE;
         }
         self->priv->in_transaction = TRUE;
@@ -703,15 +743,16 @@ gibbon_database_begin_transaction (GibbonDatabase *self)
                 if (sqlite3_prepare_v2 (self->priv->dbh,
                                         "BEGIN TRANSACTION",
                                         -1, &self->priv->begin_transaction,
-                                         NULL))
-                        return gibbon_database_display_error (self,
-                                                              "BEGIN"
-                                                              " TRANSACTION");
+                                         NULL)) {
+                        return gibbon_database_set_error (self, error,
+                                                          "BEGIN TRANSACTION");
+                }
         } else {
                 sqlite3_reset (self->priv->begin_transaction);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->begin_transaction,
+                                          error,
                                           "BEGIN TRANSACTION", -1)) {
                 sqlite3_reset (self->priv->begin_transaction);
                 return FALSE;
@@ -721,12 +762,11 @@ gibbon_database_begin_transaction (GibbonDatabase *self)
 }
 
 static gboolean
-gibbon_database_commit (GibbonDatabase *self)
+gibbon_database_commit (GibbonDatabase *self, GError **error)
 {
         if (!self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app, _("Internal error"),
-                                          "%s",
-                                          _("Commit outside transaction."));
+                g_set_error (error, 0, -1,
+                             _("Internal error: Commit outside transaction!"));
                 return FALSE;
         }
         self->priv->in_transaction = FALSE;
@@ -735,13 +775,15 @@ gibbon_database_commit (GibbonDatabase *self)
                 if (sqlite3_prepare_v2 (self->priv->dbh,
                                         "COMMIT",
                                         -1, &self->priv->commit,
-                                        NULL))
-                        return gibbon_database_display_error (self, "COMMIT");
+                                        NULL)) {
+                        return gibbon_database_set_error (self, error, "COMMIT");
+                }
         } else {
                 sqlite3_reset (self->priv->commit);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->commit,
+                                          error,
                                           "COMMIT", -1)) {
                 sqlite3_reset (self->priv->commit);
                 return FALSE;
@@ -751,12 +793,11 @@ gibbon_database_commit (GibbonDatabase *self)
 }
 
 static gboolean
-gibbon_database_rollback (GibbonDatabase *self)
+gibbon_database_rollback (GibbonDatabase *self, GError **error)
 {
         if (!self->priv->in_transaction) {
-                gibbon_app_display_error (self->priv->app, _("Internal error"),
-                                          "%s",
-                                          _("Rollback outside transaction."));
+                g_set_error (error, 0, -1,
+                             _("Internal error: Rollback outside transaction!"));
                 return FALSE;
         }
         self->priv->in_transaction = FALSE;
@@ -765,14 +806,16 @@ gibbon_database_rollback (GibbonDatabase *self)
                 if (sqlite3_prepare_v2 (self->priv->dbh,
                                         "ROLLBACK",
                                         -1, &self->priv->rollback,
-                                        NULL))
-                        return gibbon_database_display_error (self,
-                                                              "ROLLBACK");
+                                        NULL)) {
+                        return gibbon_database_set_error (self, error, 
+                                                          "ROLLBACK");
+                 }
         } else {
                 sqlite3_reset (self->priv->rollback);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->rollback,
+                                          error,
                                           "ROLLBACK", -1)) {
                 sqlite3_reset (self->priv->rollback);
                 return FALSE;
@@ -782,7 +825,8 @@ gibbon_database_rollback (GibbonDatabase *self)
 }
 
 static gboolean
-gibbon_database_display_error (GibbonDatabase *self, const gchar *msg_fmt, ...)
+gibbon_database_set_error (GibbonDatabase *self, GError **error,
+                               const gchar *msg_fmt, ...)
 {
         va_list args;
         gchar *message;
@@ -796,9 +840,8 @@ gibbon_database_display_error (GibbonDatabase *self, const gchar *msg_fmt, ...)
         }
 
         g_printerr ("%s: %s\n", message, sqlite3_errmsg (self->priv->dbh));
-        gibbon_app_display_error (self->priv->app, message,
-                                  ("%s"),
-                                  sqlite3_errmsg (self->priv->dbh));
+        g_set_error (error, 0, -1, "%s: %s\n", 
+                     message, sqlite3_errmsg (self->priv->dbh));
 
         /* Convenience: Return FALSE, so that function call can be used for
          * a return statement.
@@ -807,7 +850,8 @@ gibbon_database_display_error (GibbonDatabase *self, const gchar *msg_fmt, ...)
 }
 
 static gboolean
-gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
+gibbon_database_sql_do (GibbonDatabase *self, GError **error,
+                        const gchar *sql_fmt, ...)
 {
         va_list args;
         gchar *sql;
@@ -824,7 +868,7 @@ gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
                                      NULL);
 
         if (status != SQLITE_OK) {
-                (void) gibbon_database_display_error (self, sql);
+                gibbon_database_set_error (self, error, sql);
                 g_free (sql);
                 return FALSE;
         }
@@ -832,7 +876,7 @@ gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
         status = sqlite3_step (stmt);
         if (status != SQLITE_DONE) {
                 retval = FALSE;
-                (void) gibbon_database_display_error (self, sql);
+                gibbon_database_set_error (self, error, sql);
         }
 
         g_free (sql);
@@ -844,6 +888,7 @@ gibbon_database_sql_do (GibbonDatabase *self, const gchar *sql_fmt, ...)
 static gboolean
 gibbon_database_sql_execute (GibbonDatabase *self,
                              sqlite3_stmt *stmt,
+                             GError **error,
                              const gchar *sql, ...)
 {
         gint type;
@@ -875,8 +920,8 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                 if (sqlite3_bind_int (stmt, i,
                                                       *((gint *) ptr))) {
                                         va_end (args);
-                                        return gibbon_database_display_error (
-                                                        self, sql);
+                                        return gibbon_database_set_error (
+                                                        self, error, sql);
                                 }
                                 break;
                         case G_TYPE_INT64:
@@ -884,16 +929,16 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                 if (sqlite3_bind_int64 (stmt, i,
                                                         *((sqlite3_int64 *) ptr))) {
                                         va_end (args);
-                                        return gibbon_database_display_error (
-                                                        self, sql);
+                                        return gibbon_database_set_error (
+                                                        self, error, sql);
                                 }
                                 break;
                         case G_TYPE_DOUBLE:
                                 if (sqlite3_bind_double (stmt, i,
                                                          *((gdouble *) ptr))) {
                                         va_end (args);
-                                        return gibbon_database_display_error (
-                                                        self, sql);
+                                        return gibbon_database_set_error (
+                                                        self, error, sql);
                                 }
                                 break;
                         case G_TYPE_STRING:
@@ -902,17 +947,16 @@ gibbon_database_sql_execute (GibbonDatabase *self,
                                                        SQLITE_STATIC
                                                        )) {
                                         va_end (args);
-                                        return gibbon_database_display_error (
-                                                        self, sql);
+                                        return gibbon_database_set_error (
+                                                        self, error, sql);
                                 }
                                 break;
                         default:
                                 va_end (args);
-                                gibbon_app_display_error (self->priv->app,
-                                                          NULL,
-                                                          _("Unknown data"
-                                                            " type %d!"),
-                                                            type);
+                                gibbon_database_set_error (self, error,
+                                                           _("Unknown data"
+                                                             " type %d!"),
+                                                             type);
                                 return FALSE;
                 }
 
@@ -921,11 +965,9 @@ gibbon_database_sql_execute (GibbonDatabase *self,
 
         va_end (args);
 
-        g_printerr ("SQL: %s\n", sql);
         if (g_ascii_strncasecmp (sql, "SELECT", 6)) {
-                g_printerr ("Step!\n");
                 if (!sqlite3_step (stmt))
-                        return gibbon_database_display_error (self, sql);
+                        return gibbon_database_set_error (self, error, sql);
         }
 
         return TRUE;
@@ -934,6 +976,7 @@ gibbon_database_sql_execute (GibbonDatabase *self,
 static gboolean
 gibbon_database_sql_select_row (GibbonDatabase *self,
                                 sqlite3_stmt *stmt,
+                                GError **error,
                                 const gchar *sql, ...)
 {
         gint type;
@@ -944,13 +987,10 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
 
         status = sqlite3_step (stmt);
         if (SQLITE_DONE == status) {
-                g_printerr ("Step done\n");
                 return FALSE;
         } else if (SQLITE_ROW != status) {
-                g_printerr ("Step error\n");
-                return gibbon_database_display_error (self, sql);
+                return gibbon_database_set_error (self, error, sql);
         }
-        g_printerr ("Step row!\n");
 
         va_start (args, sql);
 
@@ -984,11 +1024,10 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
                                 break;
                         default:
                                 va_end (args);
-                                gibbon_app_display_error (self->priv->app,
-                                                          NULL,
-                                                          _("Unknown data"
-                                                            " type %d!"),
-                                                            type);
+                                gibbon_database_set_error (self, error,
+                                                           _("Unknown data"
+                                                             " type %d!"),
+                                                             type);
                                 return FALSE;
                 }
 
@@ -1002,13 +1041,13 @@ gibbon_database_sql_select_row (GibbonDatabase *self,
 static gboolean
 gibbon_database_get_statement (GibbonDatabase *self,
                                sqlite3_stmt **stmt,
-                               const gchar *sql)
+                               const gchar *sql, GError **error)
 {
         if (*stmt)
                 return TRUE;
 
         if (sqlite3_prepare_v2 (self->priv->dbh, sql, -1, stmt, NULL))
-                return gibbon_database_display_error (self, sql);
+                return gibbon_database_set_error (self, error, sql);
 
         return TRUE;
 }
@@ -1017,24 +1056,27 @@ gboolean
 gibbon_database_update_user_full (GibbonDatabase *self,
                                   const gchar *hostname, guint port,
                                   const gchar *login,
-                                  gdouble rating, guint experience)
+                                  gdouble rating, guint experience,
+                                  GError **error)
 {
         gint64 now;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->update_user,
-                                            GIBBON_DATABASE_UPDATE_USER))
+                                            GIBBON_DATABASE_UPDATE_USER,
+                                            error))
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
         now = g_get_real_time ();
         if (!gibbon_database_sql_execute (self, self->priv->update_user,
+                                          error,
                                           GIBBON_DATABASE_UPDATE_USER,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1043,12 +1085,12 @@ gibbon_database_update_user_full (GibbonDatabase *self,
                                           G_TYPE_UINT, &experience,
                                           G_TYPE_DOUBLE, &rating,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1060,21 +1102,23 @@ gibbon_database_update_rank (GibbonDatabase *self,
                              const gchar *hostname, guint port,
                              const gchar *login,
                              gdouble rating, guint experience,
-                             gint64 timestamp)
+                             gint64 timestamp, GError **error)
 {
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->update_rank,
-                                            GIBBON_DATABASE_UPDATE_RANK))
+                                            GIBBON_DATABASE_UPDATE_RANK,
+                                            error))
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
         if (!gibbon_database_sql_execute (self, self->priv->update_rank,
+                                          error,
                                           GIBBON_DATABASE_UPDATE_RANK,
                                           G_TYPE_STRING, &login,
                                           G_TYPE_STRING, &hostname,
@@ -1083,12 +1127,12 @@ gibbon_database_update_rank (GibbonDatabase *self,
                                           G_TYPE_UINT, &experience,
                                           G_TYPE_INT64, &timestamp,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1099,43 +1143,46 @@ gboolean
 gibbon_database_get_rank (GibbonDatabase *self,
                           const gchar *hostname, guint port,
                           const gchar *login,
-                          gdouble *rating, guint64 *experience)
+                          gdouble *rating, guint64 *experience, GError **error)
 {
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (rating != NULL, FALSE);
-        g_return_val_if_fail (experience != NULL, FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (rating != NULL, FALSE, error);
+        gibbon_return_val_if_fail (experience != NULL, FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_rank,
-                                            GIBBON_DATABASE_SELECT_RANK))
+                                            GIBBON_DATABASE_SELECT_RANK,
+                                            error))
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
         if (!gibbon_database_sql_execute (self, self->priv->select_rank,
+                                          error,
                                           GIBBON_DATABASE_SELECT_RANK,
                                           G_TYPE_STRING, &login,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           -1)) {
-                gibbon_database_rollback (self);
-                return -1;
+                gibbon_database_rollback (self, NULL);
+                return FALSE;
         }
 
         if (!gibbon_database_sql_select_row (self, self->priv->select_rank,
+                                             error,
                                              GIBBON_DATABASE_SELECT_RANK,
                                              G_TYPE_DOUBLE, rating,
                                              G_TYPE_UINT64, experience,
                                             -1)) {
-                gibbon_database_rollback (self);
-                return -1;
+                gibbon_database_rollback (self, NULL);
+                return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1146,44 +1193,47 @@ gboolean
 gibbon_database_insert_activity (GibbonDatabase *self,
                                  const gchar *hostname, guint port,
                                  const gchar *login,
-                                 gdouble value)
+                                 gdouble value, GError **error)
 {
         gint64 now;
         guint user_id;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (port > 0, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->insert_activity,
-                                            GIBBON_DATABASE_INSERT_ACTIVITY))
+                                            GIBBON_DATABASE_INSERT_ACTIVITY,
+                                            error))
                 return FALSE;
 
         /*
          * A subselect would be more efficient but retrieving the user
          * id implicitly creates unknown users.
          */
-        user_id = gibbon_database_get_user_id (self, hostname, port, login);
+        user_id = gibbon_database_get_user_id (self, hostname, port, login,
+                                               error);
         if (!user_id)
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
         now = g_get_real_time ();
         if (!gibbon_database_sql_execute (self, self->priv->insert_activity,
+                                          error,
                                           GIBBON_DATABASE_INSERT_ACTIVITY,
                                           G_TYPE_UINT, &user_id,
                                           G_TYPE_DOUBLE, &value,
                                           G_TYPE_INT64, &now,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1191,13 +1241,13 @@ gibbon_database_insert_activity (GibbonDatabase *self,
 }
 
 static gboolean
-gibbon_database_maintain (GibbonDatabase *self)
+gibbon_database_maintain (GibbonDatabase *self, GError **error)
 {
         const gchar *sql;
         sqlite3_stmt *stmt;
         gint64 now, then;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return TRUE;
 
         /* Delete all activities older than 100 days.  Also handle
@@ -1208,7 +1258,7 @@ gibbon_database_maintain (GibbonDatabase *self)
         sql = "DELETE FROM activities WHERE (date_time < ? OR date_time > ?)";
         if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
                                              -1, &stmt, NULL)) {
-                (void) gibbon_database_sql_execute (self, stmt, sql,
+                (void) gibbon_database_sql_execute (self, stmt, NULL, sql,
                                                     G_TYPE_INT64, &then,
                                                     G_TYPE_INT64, &now,
                                                     -1);
@@ -1218,12 +1268,12 @@ gibbon_database_maintain (GibbonDatabase *self)
         sql = "VACUUM";
         if (SQLITE_OK == sqlite3_prepare_v2 (self->priv->dbh, sql,
                                              -1, &stmt, NULL)) {
-                (void) gibbon_database_sql_execute (self, stmt, sql, -1);
+                (void) gibbon_database_sql_execute (self, stmt, NULL, sql, -1);
                 sqlite3_finalize (stmt);
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1234,47 +1284,52 @@ gboolean
 gibbon_database_get_reliability (GibbonDatabase *self,
                                  const gchar *hostname, guint port,
                                  const gchar *login,
-                                 gdouble *value, guint *confidence)
+                                 gdouble *value, guint *confidence,
+                                 GError **error)
 {
         guint user_id;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
-        g_return_val_if_fail (value != NULL, FALSE);
-        g_return_val_if_fail (confidence != NULL, FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (value != NULL, FALSE, error);
+        gibbon_return_val_if_fail (confidence != NULL, FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_activity,
-                                            GIBBON_DATABASE_SELECT_ACTIVITY))
+                                            GIBBON_DATABASE_SELECT_ACTIVITY,
+                                            error))
                 return FALSE;
 
-        user_id = gibbon_database_get_user_id (self, hostname, port, login);
+        user_id = gibbon_database_get_user_id (self, hostname, port, login,
+                                               error);
         if (!user_id)
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
         if (!gibbon_database_sql_execute (self, self->priv->select_activity,
+                                          error,
                                           GIBBON_DATABASE_SELECT_ACTIVITY,
                                           G_TYPE_UINT, &user_id,
                                           -1)) {
-                gibbon_database_rollback (self);
-                return -1;
+                gibbon_database_rollback (self, NULL);
+                return FALSE;
         }
 
         if (!gibbon_database_sql_select_row (self, self->priv->select_activity,
+                                             error,
                                              GIBBON_DATABASE_SELECT_ACTIVITY,
                                              G_TYPE_DOUBLE, value,
                                              G_TYPE_UINT, confidence,
                                             -1)) {
-                gibbon_database_rollback (self);
-                return -1;
+                gibbon_database_rollback (self, NULL);
+                return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1284,21 +1339,24 @@ gibbon_database_get_reliability (GibbonDatabase *self,
 guint
 gibbon_database_get_user_id (GibbonDatabase *self,
                              const gchar *hostname, guint port,
-                             const gchar *login)
+                             const gchar *login,
+                             GError **error)
 {
         guint user_id;
         gint64 now;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), 0);
-        g_return_val_if_fail (hostname != NULL, 0);
-        g_return_val_if_fail (port != 0, 0);
-        g_return_val_if_fail (login != NULL, 0);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), 0, error);
+        gibbon_return_val_if_fail (hostname != NULL, 0, error);
+        gibbon_return_val_if_fail (port != 0, 0, error);
+        gibbon_return_val_if_fail (login != NULL, 0, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_user_id,
-                                            GIBBON_DATABASE_SELECT_USER_ID))
+                                            GIBBON_DATABASE_SELECT_USER_ID,
+                                            error))
                 return 0;
 
         if (!gibbon_database_sql_execute (self, self->priv->select_user_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_USER_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1307,18 +1365,20 @@ gibbon_database_get_user_id (GibbonDatabase *self,
                 return 0;
 
         if (gibbon_database_sql_select_row (self, self->priv->select_user_id,
-                                             GIBBON_DATABASE_SELECT_USER_ID,
-                                             G_TYPE_UINT, &user_id,
-                                            -1))
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_USER_ID,
+                                            G_TYPE_UINT, &user_id,
+                                           -1))
                 return user_id;
 
         /* We have to create a new user.  */
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return 0;
 
         if (!gibbon_database_get_statement (self, &self->priv->insert_user,
-                                            GIBBON_DATABASE_INSERT_USER)) {
-                gibbon_database_rollback (self);
+                                            GIBBON_DATABASE_INSERT_USER,
+                                            error)) {
+                gibbon_database_rollback (self, NULL);
                 return 0;
         }
 
@@ -1328,55 +1388,63 @@ gibbon_database_get_user_id (GibbonDatabase *self,
          * by a parallel process.
          */
         if (!gibbon_database_sql_execute (self, self->priv->insert_user,
+                                          NULL,
                                           GIBBON_DATABASE_INSERT_USER,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           G_TYPE_INT64, &now,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
         } else {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_user_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_USER_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           -1)) {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return 0;
         }
 
         if (gibbon_database_sql_select_row (self, self->priv->select_user_id,
-                                             GIBBON_DATABASE_SELECT_USER_ID,
-                                             G_TYPE_UINT, &user_id,
-                                            -1)) {
-                gibbon_database_commit (self);
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_USER_ID,
+                                            G_TYPE_UINT, &user_id,
+                                           -1)) {
+                gibbon_database_commit (self, NULL);
                 return user_id;
         }
 
-        gibbon_database_commit (self);
+        gibbon_database_commit (self, NULL);
+
+        g_assert (!error || *error);
 
         return 0;
 }
 
 guint
 gibbon_database_get_server_id (GibbonDatabase *self,
-                               const gchar *hostname, guint port)
+                               const gchar *hostname, guint port,
+                               GError **error)
 {
         guint server_id;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), 0);
-        g_return_val_if_fail (hostname != NULL, 0);
-        g_return_val_if_fail (port != 0, 0);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), 0, error);
+        gibbon_return_val_if_fail (hostname != NULL, 0, error);
+        gibbon_return_val_if_fail (port != 0, 0, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_server_id,
-                                            GIBBON_DATABASE_SELECT_SERVER_ID))
+                                            GIBBON_DATABASE_SELECT_SERVER_ID,
+                                            error))
                 return 0;
 
         if (!gibbon_database_sql_execute (self, self->priv->select_server_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_SERVER_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1384,46 +1452,53 @@ gibbon_database_get_server_id (GibbonDatabase *self,
                 return 0;
 
         if (gibbon_database_sql_select_row (self, self->priv->select_server_id,
-                                             GIBBON_DATABASE_SELECT_SERVER_ID,
-                                             G_TYPE_UINT, &server_id,
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_SERVER_ID,
+                                            G_TYPE_UINT, &server_id,
                                             -1))
                 return server_id;
 
         /* We have to create a new server.  */
         if (!gibbon_database_get_statement (self, &self->priv->insert_server,
-                                            GIBBON_DATABASE_INSERT_SERVER))
+                                            GIBBON_DATABASE_INSERT_SERVER,
+                                            error))
                 return 0;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                         return 0;
 
         if (!gibbon_database_sql_execute (self, self->priv->insert_server,
+                                          NULL,
                                           GIBBON_DATABASE_INSERT_SERVER,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           -1))
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
         else
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
 
         if (!gibbon_database_sql_execute (self, self->priv->select_server_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_SERVER_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           -1)) {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return 0;
         }
 
         if (gibbon_database_sql_select_row (self, self->priv->select_server_id,
-                                             GIBBON_DATABASE_SELECT_SERVER_ID,
-                                             G_TYPE_UINT, &server_id,
-                                            -1)) {
-                gibbon_database_commit (self);
+                                            error,
+                                            GIBBON_DATABASE_SELECT_SERVER_ID,
+                                            G_TYPE_UINT, &server_id,
+                                           -1)) {
+                gibbon_database_commit (self, NULL);
                 return server_id;
         }
 
-        gibbon_database_commit (self);
+        gibbon_database_commit (self, NULL);
+
+        g_assert (!error || *error);
 
         return 0;
 }
@@ -1432,38 +1507,42 @@ gboolean
 gibbon_database_void_activity (GibbonDatabase *self,
                                const gchar *hostname, guint port,
                                const gchar *login,
-                               gdouble value)
+                               gdouble value,
+                               GError **error)
 {
         guint user_id;
 
-        g_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE);
-        g_return_val_if_fail (hostname != NULL, FALSE);
-        g_return_val_if_fail (port != 0, FALSE);
-        g_return_val_if_fail (login != NULL, FALSE);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port != 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->delete_activity,
-                                            GIBBON_DATABASE_DELETE_ACTIVITY))
+                                            GIBBON_DATABASE_DELETE_ACTIVITY,
+                                            error))
                 return FALSE;
 
-        user_id = gibbon_database_get_user_id (self, hostname, port, login);
+        user_id = gibbon_database_get_user_id (self, hostname, port, login,
+                                               error);
         if (!user_id)
                 return FALSE;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
 
 
         if (!gibbon_database_sql_execute (self, self->priv->delete_activity,
+                                          error,
                                           GIBBON_DATABASE_DELETE_ACTIVITY,
                                           G_TYPE_UINT, &user_id,
                                           G_TYPE_DOUBLE, &value,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1479,7 +1558,8 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
         g_return_val_if_fail (GIBBON_IS_DATABASE (self), NULL);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_ip2country,
-                                            GIBBON_DATABASE_SELECT_IP2COUNTRY)) {
+                                            GIBBON_DATABASE_SELECT_IP2COUNTRY,
+                                            NULL)) {
                 return NULL;
         }
 
@@ -1487,6 +1567,7 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
 
         if (!gibbon_database_sql_execute (self,
                                           self->priv->select_ip2country,
+                                          NULL,
                                           GIBBON_DATABASE_SELECT_IP2COUNTRY,
                                           G_TYPE_UINT64, &address,
                                           G_TYPE_UINT64, &address,
@@ -1496,13 +1577,14 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
 
         if (!gibbon_database_sql_select_row (self,
                                              self->priv->select_ip2country,
+                                             NULL,
                                              GIBBON_DATABASE_SELECT_IP2COUNTRY,
                                              G_TYPE_STRING, &alpha2,
                                              -1)) {
                 return NULL;
         }
 
-        gibbon_database_commit (self);
+        gibbon_database_commit (self, NULL);
 
         alpha2 = g_strdup (alpha2);
 
@@ -1510,31 +1592,33 @@ gibbon_database_get_country (GibbonDatabase *self, guint32 _address)
 }
 
 static gboolean
-gibbon_database_check_ip2country (GibbonDatabase *self)
+gibbon_database_check_ip2country (GibbonDatabase *self, GError **error)
 {
         gint64 last_update;
         gint64 now;
         guint64 diff;
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, NULL))
                 return FALSE;
 
-        if (!gibbon_database_get_statement (self,
-                                          &self->priv->select_ip2country_update,
-                                      GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE))
+        if (!gibbon_database_get_statement (
+                        self, &self->priv->select_ip2country_update,
+                        GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE, error))
                 return FALSE;
 
-        if (!gibbon_database_sql_execute (self,
-                                          self->priv->select_ip2country_update,
-                                       GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
-                                          -1))
+        if (!gibbon_database_sql_execute (
+                        self, self->priv->select_ip2country_update,
+                        error,
+                        GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
+                        -1))
                 return FALSE;
 
-        if (!gibbon_database_sql_select_row (self,
-                                           self->priv->select_ip2country_update,
-                                       GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
-                                             G_TYPE_INT64, &last_update,
-                                             -1))
+        if (!gibbon_database_sql_select_row (
+                        self, self->priv->select_ip2country_update,
+                        NULL,
+                        GIBBON_DATABASE_SELECT_IP2COUNTRY_UPDATE,
+                        G_TYPE_INT64, &last_update,
+                        -1))
                 last_update = 0;
 
         now = g_get_real_time ();
@@ -1542,13 +1626,12 @@ gibbon_database_check_ip2country (GibbonDatabase *self)
 
         if (now - last_update >= 30ULL * 24 * 60 * 60 * 1000000)
                 self->priv->geo_ip_updater =
-                                gibbon_geo_ip_updater_new (self->priv->app,
-                                                           self, last_update);
+                                gibbon_geo_ip_updater_new (self, last_update);
         if (self->priv->geo_ip_updater)
                 gibbon_geo_ip_updater_start (self->priv->geo_ip_updater);
 
-        if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        if (!gibbon_database_commit (self, error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1566,7 +1649,7 @@ gibbon_database_cancel_geo_ip_update (GibbonDatabase *self)
         }
 
         if (self->priv->in_transaction)
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
 }
 
 void
@@ -1577,21 +1660,21 @@ gibbon_database_close_geo_ip_update (GibbonDatabase *self)
         g_return_if_fail (GIBBON_IS_DATABASE (self));
         g_return_if_fail (self->priv->geo_ip_updater != NULL);
 
-        if (!gibbon_database_sql_do (self, "DELETE FROM ip2country_update")) {
+        if (!gibbon_database_sql_do (self, NULL,
+                                     "DELETE FROM ip2country_update")) {
                 gibbon_database_cancel_geo_ip_update (self);
                 return;
         }
-        if (!gibbon_database_sql_do (self, "INSERT INTO"
-                                           " ip2country_update (last_update)"
-                                           " VALUES (%llu)", now)) {
+        if (!gibbon_database_sql_do (self, NULL,
+                                     "INSERT INTO"
+                                     " ip2country_update (last_update)"
+                                     " VALUES (%llu)", now)) {
                 gibbon_database_cancel_geo_ip_update (self);
                 return;
         }
 
         g_object_unref (self->priv->geo_ip_updater);
         self->priv->geo_ip_updater = NULL;
-
-        gibbon_database_commit (self);
 }
 
 void
@@ -1600,10 +1683,10 @@ gibbon_database_on_start_geo_ip_update (GibbonDatabase *self)
         g_return_if_fail (GIBBON_IS_DATABASE (self));
         g_return_if_fail (self->priv->geo_ip_updater != NULL);
 
-        if (!gibbon_database_begin_transaction (self))
+        if (!gibbon_database_begin_transaction (self, NULL))
                 gibbon_database_cancel_geo_ip_update (self);
 
-        if (!gibbon_database_sql_do (self, "%s", "DELETE FROM ip2country"))
+        if (!gibbon_database_sql_do (self, NULL, "%s", "DELETE FROM ip2country"))
                 gibbon_database_cancel_geo_ip_update (self);
 }
 
@@ -1622,21 +1705,23 @@ gibbon_database_set_geo_ip (GibbonDatabase *self,
 
         if (!gibbon_database_get_statement (self,
                                             &self->priv->insert_ip2country,
-                                            GIBBON_DATABASE_INSERT_IP2COUNTRY)) {
+                                            GIBBON_DATABASE_INSERT_IP2COUNTRY,
+                                            NULL)) {
                 gibbon_database_cancel_geo_ip_update (self);
                 return;
         }
 
         if (!gibbon_database_sql_execute (self,
                                           self->priv->insert_ip2country,
+                                          NULL,
                                           GIBBON_DATABASE_INSERT_IP2COUNTRY,
                                           G_TYPE_STRING, &from_ip,
                                           G_TYPE_STRING, &to_ip,
                                           G_TYPE_STRING, &alpha2,
                                           -1)) {
                 gibbon_database_cancel_geo_ip_update (self);
-        } else if (!gibbon_database_commit (self)) {
-                gibbon_database_rollback (self);
+        } else if (!gibbon_database_commit (self, NULL)) {
+                gibbon_database_rollback (self, NULL);
         }
 }
 
@@ -1649,49 +1734,44 @@ gibbon_database_create_group (GibbonDatabase *self,
 {
         guint group_id;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
-        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
-        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (group != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (self, &self->priv->select_group_id,
-                                            GIBBON_DATABASE_SELECT_GROUP_ID)) {
-                g_set_error_literal (error, 0, -1, _("Database errror!"));
+                                            GIBBON_DATABASE_SELECT_GROUP_ID,
+                                            error))
                 return FALSE;
-        }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_group_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_GROUP_ID,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
-                                          -1)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
+                                          -1))
                 return FALSE;
-        }
 
         if (gibbon_database_sql_select_row (self, self->priv->select_group_id,
-                                             GIBBON_DATABASE_SELECT_GROUP_ID,
-                                             G_TYPE_UINT, &group_id,
+                                            error,
+                                            GIBBON_DATABASE_SELECT_GROUP_ID,
+                                            G_TYPE_UINT, &group_id,
                                             -1)) {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
 
         /* We have to create a new group.  */
-        if (!gibbon_database_begin_transaction (self)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
+        if (!gibbon_database_begin_transaction (self, error))
                 return FALSE;
-        }
 
         if (!gibbon_database_get_statement (self, &self->priv->create_group,
-                                            GIBBON_DATABASE_CREATE_GROUP)) {
-                gibbon_database_rollback (self);
-                g_set_error_literal (error, 0, -1, _("Database errror!"));
+                                            GIBBON_DATABASE_CREATE_GROUP,
+                                            error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
@@ -1700,41 +1780,43 @@ gibbon_database_create_group (GibbonDatabase *self,
          * by a parallel process.
          */
         if (!gibbon_database_sql_execute (self, self->priv->create_group,
+                                          NULL,
                                           GIBBON_DATABASE_CREATE_GROUP,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
         } else {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_group_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_GROUP_ID,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &login,
                                           -1)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
         if (!gibbon_database_sql_select_row (self, self->priv->select_group_id,
+                                             NULL,
                                              GIBBON_DATABASE_SELECT_GROUP_ID,
                                              G_TYPE_UINT, &group_id,
                                             -1)) {
                 g_set_error (error, 0, -1, _("Database error: freshly created"
                                              " group `%s' has vanished!"),
                              group);
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return FALSE;
         }
 
-        gibbon_database_commit (self);
+        gibbon_database_commit (self, NULL);
 
         return TRUE;
 }
@@ -1748,30 +1830,26 @@ gibbon_database_create_relation (GibbonDatabase *self,
 {
         guint relation_id = 1234;
 
-        gibbon_match_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
-        gibbon_match_return_val_if_fail (hostname != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (port > 0, FALSE, error);
-        gibbon_match_return_val_if_fail (login != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (group != NULL, FALSE, error);
-        gibbon_match_return_val_if_fail (peer != NULL, FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (login != NULL, FALSE, error);
+        gibbon_return_val_if_fail (group != NULL, FALSE, error);
+        gibbon_return_val_if_fail (peer != NULL, FALSE, error);
 
         if (!gibbon_database_get_statement (
                         self, &self->priv->select_relation_id,
-                        GIBBON_DATABASE_SELECT_RELATION_ID)) {
-                g_set_error_literal (error, 0, -1, _("Database errror!"));
+                        GIBBON_DATABASE_SELECT_RELATION_ID, error))
                 return FALSE;
-        }
 
         /* Shudder ... This creates the user implicitely.  */
-        (void) gibbon_database_get_user_id (self, hostname, port, peer);
+        (void) gibbon_database_get_user_id (self, hostname, port, peer, NULL);
 
-        if (!gibbon_database_begin_transaction (self)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
+        if (!gibbon_database_begin_transaction (self, NULL))
                 return FALSE;
-        }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_relation_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_RELATION_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1779,28 +1857,28 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &peer,
                                           -1)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
         if (gibbon_database_sql_select_row (self, self->priv->select_relation_id,
-                                             GIBBON_DATABASE_SELECT_RELATION_ID,
-                                             G_TYPE_UINT, &relation_id,
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_RELATION_ID,
+                                            G_TYPE_UINT, &relation_id,
                                             -1)) {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
 
         if (!gibbon_database_get_statement (self, &self->priv->create_relation,
-                                            GIBBON_DATABASE_CREATE_RELATION)) {
-                gibbon_database_rollback (self);
-                g_set_error_literal (error, 0, -1, _("Database errror!"));
+                                            GIBBON_DATABASE_CREATE_RELATION,
+                                            error)) {
+                gibbon_database_rollback (self, NULL);
                 return FALSE;
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->create_relation,
+                                          NULL,
                                           GIBBON_DATABASE_CREATE_RELATION,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1810,12 +1888,13 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                           G_TYPE_UINT, &port,
                                           G_TYPE_STRING, &peer,
                                           -1)) {
-                gibbon_database_rollback (self);
+                gibbon_database_rollback (self, NULL);
         } else {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_relation_id,
+                                          error,
                                           GIBBON_DATABASE_SELECT_RELATION_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1823,14 +1902,13 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                           G_TYPE_STRING, &group,
                                           G_TYPE_STRING, &peer,
                                           -1)) {
-                g_set_error (error, 0, -1, _("Database error: %s!"),
-                             sqlite3_errmsg (self->priv->dbh));
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
 
                 return FALSE;
         }
 
         if (!gibbon_database_sql_select_row (self, self->priv->select_relation_id,
+                                             NULL,
                                              GIBBON_DATABASE_SELECT_RELATION_ID,
                                              G_TYPE_UINT, &relation_id,
                                             -1)) {
@@ -1838,7 +1916,7 @@ gibbon_database_create_relation (GibbonDatabase *self,
                                              " user `%s' in group `%s' has"
                                              " vanished!"),
                              peer, group);
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return FALSE;
         }
 
@@ -1862,11 +1940,12 @@ gibbon_database_exists_relation (GibbonDatabase *self,
 
         if (!gibbon_database_get_statement (
                         self, &self->priv->select_relation_id,
-                        GIBBON_DATABASE_SELECT_RELATION_ID)) {
+                        GIBBON_DATABASE_SELECT_RELATION_ID, NULL)) {
                 return FALSE;
         }
 
         if (!gibbon_database_sql_execute (self, self->priv->select_relation_id,
+                                          NULL,
                                           GIBBON_DATABASE_SELECT_RELATION_ID,
                                           G_TYPE_STRING, &hostname,
                                           G_TYPE_UINT, &port,
@@ -1878,14 +1957,15 @@ gibbon_database_exists_relation (GibbonDatabase *self,
         }
 
         if (gibbon_database_sql_select_row (self, self->priv->select_relation_id,
-                                             GIBBON_DATABASE_SELECT_RELATION_ID,
-                                             G_TYPE_UINT, &relation_id,
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_RELATION_ID,
+                                            G_TYPE_UINT, &relation_id,
                                             -1)) {
-                gibbon_database_commit (self);
+                gibbon_database_commit (self, NULL);
                 return TRUE;
         }
 
-        gibbon_database_commit (self);
+        gibbon_database_commit (self, NULL);
 
         return FALSE;
 }

@@ -37,6 +37,7 @@
 #include "gibbon-match.h"
 #include "gibbon-game.h"
 #include "gibbon-game-actions.h"
+#include "gibbon-util.h"
 
 G_DEFINE_TYPE (GibbonSGFWriter, gibbon_sgf_writer, GIBBON_TYPE_MATCH_WRITER)
 
@@ -139,8 +140,7 @@ gibbon_sgf_writer_write_stream (const GibbonMatchWriter *_self,
 
         game = gibbon_match_get_current_game (match);
         if (!game) {
-                g_set_error_literal (error, GIBBON_MATCH_ERROR,
-                                     GIBBON_MATCH_ERROR_GENERIC,
+                g_set_error_literal (error, 0, -1,
                                      _("Empty matches cannot be written as"
                                        " SGF"));
                 return FALSE;
@@ -672,7 +672,7 @@ gboolean gibbon_sgf_writer_move (const GibbonSGFWriter *self,
         const gchar *side_str;
         GSGFMoveBackgammon *gsgf_move;
 
-        gibbon_match_return_val_if_fail (move->number < 5, FALSE, error);
+        gibbon_return_val_if_fail (move->number < 5, FALSE, error);
 
         last_element = gsgf_game_tree_get_last_node (game_tree);
         if (last_element) {

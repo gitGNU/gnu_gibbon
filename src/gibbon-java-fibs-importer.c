@@ -268,7 +268,11 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         if (self->priv->running)
                 return;
 
-        self->priv->archive = gibbon_archive_new (app);
+        self->priv->archive = gibbon_archive_new (&error);
+        if (!self->priv->archive) {
+                gibbon_app_fatal_error (app, NULL, "%s", error->message);
+                /* NOTREACHED */
+        }
 
         self->priv->running = TRUE;
 
@@ -1164,18 +1168,25 @@ gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
 static void
 gibbon_java_fibs_importer_user (GibbonJavaFIBSImporter *self)
 {
+        GError *error = NULL;
+
         gibbon_java_fibs_importer_status (self,
                                           _("Creating user `%s' on %s:%u."),
                                           self->priv->user, self->priv->server,
                                           self->priv->port);
         gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Creating user `%s' on %s:%u."),
+                                          _("Creating user `%s' on %s:%u ..."),
                                           self->priv->user, self->priv->server,
                                           self->priv->port);
+        if (gibbon_archive_login (self->priv->archive, self->priv->server,
+                                  self->priv->port, self->priv->user,
+                                  &error)) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  "%s", _("success.\n"));
+                return;
+        }
 
-        /*
-         * FIXME! Error checking!
-         */
-        gibbon_archive_on_login (self->priv->archive, self->priv->server,
-                                 self->priv->port, self->priv->user);
+        gibbon_java_fibs_importer_output (self, NULL, "%s", _("error.\n"));
+        gibbon_java_fibs_importer_output (self, NULL, "%s", error->message);
+        g_error_free (error);
 }

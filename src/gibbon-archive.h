@@ -20,9 +20,9 @@
 #ifndef _GIBBON_ARCHIVE_H
 # define _GIBBON_ARCHIVE_H
 
-#include <gtk/gtk.h>
+#include <glib.h>
+#include <glib-object.h>
 
-#include "gibbon-app.h"
 #include "gibbon-country.h"
 #include "gibbon-match.h"
 
@@ -74,22 +74,28 @@ GType gibbon_archive_get_type (void) G_GNUC_CONST;
 typedef void (*GibbonGeoIPCallback) (GObject *obj, const gchar *hostname,
                                      const GibbonCountry *country);
 
-GibbonArchive *gibbon_archive_new (GibbonApp *app);
-void gibbon_archive_on_login (GibbonArchive *self,
-                              const gchar *hostname, guint port,
-                              const gchar *login);
+GibbonArchive *gibbon_archive_new (GError **error);
+/*
+ * FIXME! The real purpose of this method is to initialize data structures
+ * for the server and user and to set the session_directory private
+ * member.  This should all be done as needed instead.
+ */
+gboolean gibbon_archive_login (GibbonArchive *self,
+                               const gchar *hostname, guint port,
+                               const gchar *login,
+                               GError **error);
 void gibbon_archive_update_user (GibbonArchive *self,
                                  const gchar *hostname, guint port,
                                  const gchar *user, gdouble rating,
                                  gint experience);
-void gibbon_archive_update_rank (GibbonArchive *self,
-                                 const gchar *hostname, guint port,
-                                 const gchar *user, gdouble rating,
-                                 gint experience);
+gboolean gibbon_archive_update_rank (GibbonArchive *self,
+                                     const gchar *hostname, guint port,
+                                     const gchar *user, gdouble rating,
+                                     gint experience, GError **error);
 gboolean gibbon_archive_get_rank (GibbonArchive *self,
                                   const gchar *hostname, guint port,
                                   const gchar *user, gdouble *rating,
-                                  guint64 *experience);
+                                  guint64 *experience, GError **error);
 void gibbon_archive_save_win (GibbonArchive *self,
                               const gchar *hostname, guint port,
                               const gchar *winner, const gchar *loser);
@@ -102,7 +108,8 @@ void gibbon_archive_save_resume (GibbonArchive *self,
 gboolean gibbon_archive_get_reliability (GibbonArchive *self,
                                          const gchar *hostname, guint port,
                                          const gchar *login,
-                                         gdouble *value, guint *confidence);
+                                         gdouble *value, guint *confidence,
+                                         GError **error);
 struct _GibbonCountry *gibbon_archive_get_country (const GibbonArchive *self,
                                                    const gchar *hostname,
                                                    GibbonGeoIPCallback
@@ -113,7 +120,8 @@ GSList *gibbon_archive_get_accounts (const GibbonArchive *self,
                                      const gchar *hostname, guint port);
 gchar *gibbon_archive_get_saved_name (const GibbonArchive *self,
                                       const gchar *player1,
-                                      const gchar *player2);
+                                      const gchar *player2,
+                                      GError **error);
 gboolean gibbon_archive_archive_match_file (const GibbonArchive *self,
                                             const GibbonMatch *match,
                                             const gchar *match_file,

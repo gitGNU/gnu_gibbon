@@ -257,6 +257,7 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 {
         GibbonApp *self;
         gchar *board_filename;
+        GError *error = NULL;
 
         g_return_val_if_fail (singleton == NULL, singleton);
 
@@ -311,8 +312,10 @@ gibbon_app_new(const gchar *builder_path, const gchar *pixmaps_directory,
 
         gibbon_app_set_state_disconnected(self);
 
-        self->priv->archive = gibbon_archive_new(self);
+        self->priv->archive = gibbon_archive_new(&error);
         if (!self->priv->archive) {
+                gibbon_app_display_error (self, NULL, "%s", error->message);
+                g_error_free (error);
                 g_object_unref(self);
                 return NULL;
         }
@@ -1521,6 +1524,7 @@ static void gibbon_app_on_connected(GibbonApp *self, GibbonConnection *conn)
 static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
 {
         GObject *obj;
+        GError *error = NULL;
 
         g_return_if_fail (GIBBON_IS_CONNECTION (conn));
 
@@ -1556,10 +1560,13 @@ static void gibbon_app_on_logged_in(GibbonApp *self, GibbonConnection *conn)
         gibbon_game_chat_set_my_name(self->priv->game_chat,
                         gibbon_connection_get_login(conn));
 
-        gibbon_archive_on_login(self->priv->archive,
+        if (!gibbon_archive_login(self->priv->archive,
                         gibbon_connection_get_hostname(conn),
                         gibbon_connection_get_port(conn),
-                        gibbon_connection_get_login(conn));
+                        gibbon_connection_get_login(conn),
+                        &error)) {
+            gibbon_app_fatal_error (self, NULL, "%s", error->message);
+        }
 }
 
 static void gibbon_app_on_network_error(GibbonApp *self, const gchar *message)
