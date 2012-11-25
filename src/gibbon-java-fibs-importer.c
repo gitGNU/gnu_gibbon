@@ -34,6 +34,16 @@
 #include "gibbon-archive.h"
 #include "gibbon-util.h"
 
+enum GibbonImportTaskType {
+        GIBBON_IMPORT_USER = 0
+};
+
+typedef struct _GibbonImportTask GibbonImportTask;
+struct _GibbonImportTask {
+        enum GibbonImportTaskType type;
+        gpointer payload;
+};
+
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
 struct _GibbonJavaFIBSImporterPrivate {
         gboolean running;
@@ -70,6 +80,8 @@ struct _GibbonJavaFIBSImporterPrivate {
         GSList *msg_tags;
         GtkWidget *msg_view;
         GtkTextBuffer *msg_buffer;
+
+        GSList *tasks;
 };
 
 #define GIBBON_JAVA_FIBS_IMPORTER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -102,7 +114,6 @@ static void gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self);
 static gboolean gibbon_java_fibs_importer_collect_matches (
                 GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_mi_free (gchar **record);
-static void gibbon_java_fibs_importer_user (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_villains (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
@@ -113,6 +124,11 @@ static void gibbon_java_fibs_importer_output (GibbonJavaFIBSImporter *self,
                                               ...) G_GNUC_PRINTF (3, 4);
 static void gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
                                               gchar *tag, const gchar *message);
+static void gibbon_java_fibs_importer_add_task (GibbonJavaFIBSImporter *self,
+                                                enum GibbonImportTaskType type,
+                                                gpointer payload);
+
+static void gibbon_import_task_free (GibbonImportTask *task);
 
 static void 
 gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
@@ -151,6 +167,8 @@ gibbon_java_fibs_importer_init (GibbonJavaFIBSImporter *self)
         self->priv->msg_tags = NULL;
         self->priv->msg_view = NULL;
         self->priv->msg_buffer = NULL;
+
+        self->priv->tasks = NULL;
 }
 
 static void
@@ -196,6 +214,8 @@ gibbon_java_fibs_importer_finalize (GObject *object)
                 g_object_unref (self->priv->msg_buffer);
         g_slist_free_full (self->priv->msg_queue, g_free);
         g_slist_free_full (self->priv->msg_tags, g_free);
+        g_slist_free_full (self->priv->tasks,
+                           (GDestroyNotify) gibbon_import_task_free);
 
         G_OBJECT_CLASS (gibbon_java_fibs_importer_parent_class)->finalize(object);
 }
@@ -299,6 +319,16 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         }
 
         if (!gibbon_java_fibs_importer_select_directory (self)) {
+                g_object_unref (self);
+                return;
+        }
+
+        if (!gibbon_archive_login (self->priv->archive, self->priv->server,
+                                   self->priv->port, self->priv->user,
+                                   &error)) {
+                gibbon_app_display_error (app, NULL, "%s",
+                                          error->message);
+                g_error_free (error);
                 g_object_unref (self);
                 return;
         }
@@ -750,19 +780,14 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         gibbon_java_fibs_importer_status (self, _("Collecting data"));
 
         /*
-         * The first 4 jobs are always creating the user, and importing
-         * ratings, the friends and villains list.
+         * The first 4 jobs are always importing the ratings, and the list
+         * for friends and villains.
          */
         /* FIXME! (void) */ gibbon_java_fibs_importer_collect_matches (self);
-        jobs = 4 + g_hash_table_size (self->priv->matches);
+        jobs = 3 + g_hash_table_size (self->priv->matches);
 
         g_mutex_lock (&self->priv->mutex);
         self->priv->jobs = jobs;
-        g_mutex_unlock (&self->priv->mutex);
-
-        gibbon_java_fibs_importer_user (self);
-        g_mutex_lock (&self->priv->mutex);
-        ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
         gibbon_java_fibs_importer_friends (self);
@@ -780,7 +805,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
-        for (i = 4; i < jobs; ++i) {
+        for (i = 3; i < jobs; ++i) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
@@ -798,10 +823,21 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         return NULL;
 }
 
+/*
+ * In fact, the only real work that the worker thread does is parsing the
+ * matches.  All the rest, especially updating the database, is done by the
+ * main thread.  This is necessary because SQLite is "thread-safe" in that
+ * sense that you can only use it from one thread, even if you protect the
+ * database against concurrent access with mutexes.
+ *
+ * However, we assume here that the database activity is fast, and will not
+ * block very long.
+ */
 static gboolean
 gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
 {
         gdouble fraction;
+        GibbonImportTask *task;
 
         g_mutex_lock (&self->priv->mutex);
 
@@ -837,6 +873,18 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                 self->priv->msg_tags =
                                 g_slist_remove_link (self->priv->msg_tags,
                                                      self->priv->msg_tags);
+        }
+
+        while (self->priv->tasks) {
+                task = (GibbonImportTask *) self->priv->tasks->data;
+                self->priv->tasks = g_slist_remove_link (self->priv->tasks,
+                                                         self->priv->tasks);
+                switch (task->type) {
+                case GIBBON_IMPORT_USER:
+                        /* TODO.  */
+                        break;
+                }
+                gibbon_import_task_free (task);
         }
 
         if (self->priv->jobs == self->priv->finished) {
@@ -1021,12 +1069,10 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
 
         path = g_build_filename (self->priv->directory, "user",
                                  self->priv->user, "friends", NULL);
-        gibbon_java_fibs_importer_output (self, NULL, _("Reading `%s' ... "),
+        gibbon_java_fibs_importer_output (self, NULL, _("Reading `%s'.\n"),
                                           path);
 
         if (!gibbon_slurp_file (path, &buffer, &bytes_read, NULL, &error)) {
-                gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                                  _("error.\n"));
                 gibbon_java_fibs_importer_output (self, "error",
                                                   /*
                                                    * TRANSLATORS: The first
@@ -1040,11 +1086,9 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
                 g_error_free (error);
                 return;
         }
-        gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                          _("success.\n"));
 
         gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Creating/checking group `%s' ... "),
+                                          _("Creating/checking group `%s'.\n"),
                                           "friends");
 
         if (!gibbon_archive_create_group (self->priv->archive,
@@ -1052,15 +1096,11 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
                                           self->priv->port,
                                           self->priv->user,
                                           "friends", &error)) {
-                gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                                  _("error.\n"));
                 gibbon_java_fibs_importer_output (self, "error",
-                                                  "%s", error->message);
+                                                  "%s\n", error->message);
                 g_free (path);
                 g_error_free (error);
         }
-        gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                          _("success.\n"));
 
         buffer = g_realloc (buffer, bytes_read + 1);
         buffer[bytes_read] = 0;
@@ -1079,7 +1119,7 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
                         continue;
                 }
                 gibbon_java_fibs_importer_output (self, NULL,
-                                                  _("Importing user `%s' ... "),
+                                                  _("Importing user `%s'.\n"),
                                                   tokens[0]);
 
                 if (!gibbon_archive_create_relation (self->priv->archive,
@@ -1089,16 +1129,13 @@ gibbon_java_fibs_importer_friends (GibbonJavaFIBSImporter *self)
                                                      "friends", tokens[0],
                                                      &error)) {
                         g_strfreev (tokens);
-                        gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                                          _("error.\n"));
                         gibbon_java_fibs_importer_output (self, "error",
-                                                          "%s", error->message);
+                                                          "%s\n",
+                                                          error->message);
                         g_free (path);
                         g_error_free (error);
                 }
 
-                gibbon_java_fibs_importer_output (self, NULL, "%s",
-                                                  _("success.\n"));
                 g_strfreev (tokens);
         }
 
@@ -1171,27 +1208,29 @@ gibbon_java_fibs_importer_update (GibbonJavaFIBSImporter *self,
 }
 
 static void
-gibbon_java_fibs_importer_user (GibbonJavaFIBSImporter *self)
+gibbon_import_task_free (GibbonImportTask *task)
 {
-        GError *error = NULL;
-
-        gibbon_java_fibs_importer_status (self,
-                                          _("Creating user `%s' on %s:%u."),
-                                          self->priv->user, self->priv->server,
-                                          self->priv->port);
-        gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Creating user `%s' on %s:%u ..."),
-                                          self->priv->user, self->priv->server,
-                                          self->priv->port);
-        if (gibbon_archive_login (self->priv->archive, self->priv->server,
-                                  self->priv->port, self->priv->user,
-                                  &error)) {
-                gibbon_java_fibs_importer_output (self, NULL,
-                                                  "%s", _("success.\n"));
-                return;
+        if (task) {
+                switch (task->type) {
+                case GIBBON_IMPORT_USER:
+                        g_free (task->payload);
+                        break;
+                }
         }
+}
 
-        gibbon_java_fibs_importer_output (self, NULL, "%s", _("error.\n"));
-        gibbon_java_fibs_importer_output (self, NULL, "%s", error->message);
-        g_error_free (error);
+static void
+gibbon_java_fibs_importer_add_task (GibbonJavaFIBSImporter *self,
+                                    enum GibbonImportTaskType type,
+                                    gpointer payload)
+{
+        GibbonImportTask *task = g_malloc (sizeof *task);
+
+        g_mutex_lock (&self->priv->mutex);
+
+        task->type = type;
+        task->payload = payload;
+        self->priv->tasks = g_slist_append (self->priv->tasks, task);
+
+        g_mutex_unlock (&self->priv->mutex);
 }
