@@ -29,6 +29,8 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include <errno.h>
+
 #include "gibbon-app.h"
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
@@ -36,13 +38,16 @@
 
 enum GibbonImportTaskType {
         GIBBON_IMPORT_GROUP = 0,
-        GIBBON_IMPORT_RELATION
+        GIBBON_IMPORT_RELATION,
+        GIBBON_IMPORT_RANK
 };
 
 typedef struct _GibbonImportTask GibbonImportTask;
 struct _GibbonImportTask {
         enum GibbonImportTaskType type;
         gpointer payload;
+        gint64 n1, n2;
+        gdouble d1;
 };
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
@@ -118,6 +123,7 @@ static void gibbon_java_fibs_importer_mi_free (gchar **record);
 static void gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
                                              const gchar *name,
                                              guint *counter);
+static void gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
                                               const gchar *format,
                                               ...) G_GNUC_PRINTF (2, 3);
@@ -808,6 +814,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         g_mutex_unlock (&self->priv->mutex);
 
         /* Import ratings.  */
+        gibbon_java_fibs_importer_ranks (self);
         g_mutex_lock (&self->priv->mutex);
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
@@ -1118,6 +1125,14 @@ gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
 
         path = g_build_filename (self->priv->directory, "user",
                                  self->priv->user, name, NULL);
+        if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("No group `%s'.\n"),
+                                                  name);
+                g_free (path);
+                return;
+        }
+
         gibbon_java_fibs_importer_output (self, NULL, _("Reading `%s'.\n"),
                                           path);
 
@@ -1136,8 +1151,13 @@ gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
                 return;
         }
 
-        if (!bytes_read)
+        if (!bytes_read) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("No group `%s'.\n"),
+                                                  name);
+                g_free (path);
                 return;
+        }
 
         gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_GROUP,
                                             g_strdup (name));
@@ -1163,6 +1183,110 @@ gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
                 gibbon_java_fibs_importer_add_task (self,
                                                     GIBBON_IMPORT_RELATION,
                                                     relation);
+
+                g_strfreev (tokens);
+        }
+
+        g_strfreev (lines);
+        g_free (path);
+}
+
+static void
+gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
+{
+        gchar *path;
+        gchar *buffer;
+        gsize bytes_read;
+        GError *error = NULL;
+        gchar **lines;
+        gsize i, num_lines;
+        gchar *line;
+        gchar **tokens;
+        gint64 timestamp;
+        gdouble rating;
+        guint64 experience;
+        gchar *endptr;
+        gdouble last_rating = 0.0f;
+        guint64 last_experience = 0;
+
+        gibbon_java_fibs_importer_status (self, _("Importing ratings."));
+
+        path = g_build_filename (self->priv->directory, "user",
+                                 self->priv->user, "ratings", NULL);
+        if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("No saved ratings1.\n"));
+                g_free (path);
+                return;
+        }
+
+        gibbon_java_fibs_importer_output (self, NULL, _("Reading `%s'.\n"),
+                                          path);
+
+        if (!gibbon_slurp_file (path, &buffer, &bytes_read, NULL, &error)) {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  /*
+                                                   * TRANSLATORS: The first
+                                                   * placeholder is a filename,
+                                                   * the second an error
+                                                   * occurring for that file.
+                                                   */
+                                                  _("%s: %s!\n"),
+                                                  path, error->message);
+                g_free (path);
+                g_error_free (error);
+                return;
+        }
+
+        if (!bytes_read) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("No saved ratings.\n"));
+                g_free (path);
+                return;
+        }
+
+        buffer = g_realloc (buffer, bytes_read + 1);
+        buffer[bytes_read] = 0;
+        lines = g_strsplit_set (buffer, "\012\015", -1);
+        g_free (buffer);
+
+        num_lines = g_strv_length (lines);
+        for (i = 0; i < num_lines; ++i) {
+                line = gibbon_trim (lines[i]);
+                if (!*line)
+                        continue;
+
+                tokens = g_strsplit_set (line, " \t", 3);
+                if (!tokens || !*tokens[0]) {
+                        g_strfreev (tokens);
+                        continue;
+                }
+
+                if (!tokens[1] || !tokens[2]) {
+                        g_strfreev (tokens);
+                        continue;
+                }
+
+                errno = 0;
+                timestamp = g_ascii_strtoll (tokens[0], &endptr, 10);
+                if (errno || !endptr || *endptr) {
+                        g_strfreev (tokens);
+                        continue;
+                }
+
+                rating = g_ascii_strtod (tokens[0], &endptr);
+                if (errno || !endptr || *endptr) {
+                        g_strfreev (tokens);
+                        continue;
+                }
+
+                experience = g_ascii_strtoull (tokens[0], &endptr, 10);
+                if (errno || !endptr || *endptr) {
+                        g_strfreev (tokens);
+                        continue;
+                }
+
+
 
                 g_strfreev (tokens);
         }
