@@ -397,7 +397,6 @@ gibbon_java_fibs_importer_select_directory (GibbonJavaFIBSImporter *self)
                         NULL);
         gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (dialog), FALSE);
         gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), FALSE);
-        g_printerr ("Remove line %s:%d!\n", __FILE__, __LINE__ + 1);
         gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog),
                                               "/home/guido/java/JavaFIBS2001.test",
                                               NULL);
@@ -906,6 +905,35 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
 
         g_mutex_lock (&self->priv->mutex);
 
+        /*
+         * We have to check again for status updates.  They might have been
+         * sent by ourselves.
+         */
+        if (self->priv->status) {
+                gtk_progress_bar_set_text (
+                                GTK_PROGRESS_BAR (self->priv->progress),
+                                self->priv->status);
+                g_free (self->priv->status);
+                self->priv->status = NULL;
+        }
+
+        self->priv->msg_queue = g_slist_reverse (self->priv->msg_queue);
+        self->priv->msg_tags = g_slist_reverse (self->priv->msg_tags);
+
+        while (self->priv->msg_queue) {
+                gibbon_java_fibs_importer_update (self,
+                                                  self->priv->msg_tags->data,
+                                                  self->priv->msg_queue->data);
+                g_free (self->priv->msg_queue->data);
+                g_free (self->priv->msg_tags->data);
+                self->priv->msg_queue =
+                                g_slist_remove_link (self->priv->msg_queue,
+                                                     self->priv->msg_queue);
+                self->priv->msg_tags =
+                                g_slist_remove_link (self->priv->msg_tags,
+                                                     self->priv->msg_tags);
+        }
+
         if (self->priv->jobs == self->priv->finished) {
                 gibbon_java_fibs_importer_ready (self);
                 g_mutex_unlock (&self->priv->mutex);
@@ -1256,34 +1284,31 @@ gibbon_java_fibs_importer_save_group (GibbonJavaFIBSImporter *self,
 
 static void
 gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *self,
-                                         gchar *user)
+                                         gchar *group)
 {
-        gchar *group;
+        gchar *user;
+        GError *error = NULL;
 
-        group = user + 1;
-        while (*group && !group != '/')
-                ++group;
+        user = group + 1;
+        while (*user && *user != '/')
+                ++user;
 
-        *group++ = 0;
+        *user++ = 0;
 
         gibbon_java_fibs_importer_output (self, NULL,
                                           _("Importing user `%s' into group'"
                                             " `%s'.\n"),
                                           user, group);
-}
-/*
 
-if (!gibbon_archive_create_relation (self->priv->archive,
-                                     self->priv->server,
-                                     self->priv->port,
-                                     self->priv->user,
-                                     name, tokens[0],
-                                     &error)) {
-        g_strfreev (tokens);
-        gibbon_java_fibs_importer_output (self, "error",
-                                          "%s\n",
-                                          error->message);
-        g_free (path);
-        g_error_free (error);
+        if (!gibbon_archive_create_relation (self->priv->archive,
+                                             self->priv->server,
+                                             self->priv->port,
+                                             self->priv->user,
+                                             group, user,
+                                             &error)) {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s\n",
+                                                  error->message);
+                g_error_free (error);
+        }
 }
-*/
