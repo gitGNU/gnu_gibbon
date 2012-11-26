@@ -299,6 +299,9 @@ gibbon_database_finalize (GObject *object)
         if (self->priv->path)
                 g_free (self->priv->path);
 
+        g_free (last_path);
+        singleton = NULL;
+
         G_OBJECT_CLASS (gibbon_database_parent_class)->finalize(object);
 }
 
@@ -326,6 +329,15 @@ gibbon_database_new (const gchar *path, GError **error)
         GibbonDatabase *self;
         sqlite3 *dbh;
 
+        /*
+         * The singleton character of this object is a little obscure.  We
+         * postulate that within one application, it can only be called with
+         * one and the same path attribute.
+         *
+         * Besides, in order to make our singleton construct thread-safe you
+         * must insantiate an object before you create the first thread.
+         */
+
         if (singleton) {
                 g_assert (last_path);
                 g_assert (!g_strcmp0 (last_path, path));
@@ -335,8 +347,8 @@ gibbon_database_new (const gchar *path, GError **error)
                 return singleton;
         }
         last_path = g_strdup (path);
+        singleton = self = g_object_new (GIBBON_TYPE_DATABASE, NULL);
 
-        self = g_object_new (GIBBON_TYPE_DATABASE, NULL);
         self->priv->path = g_strdup (path);
 
         if (SQLITE_OK != sqlite3_open (path, &dbh)) {
