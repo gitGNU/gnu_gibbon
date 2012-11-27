@@ -863,7 +863,6 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
         guint done = 0;
 
         g_mutex_lock (&self->priv->mutex);
-        g_printerr ("polling ... at %u/%d\n", self->priv->finished, self->priv->jobs);
 
         gibbon_java_fibs_importer_summary (self);
 
@@ -964,6 +963,11 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
             && self->priv->finished >= self->priv->jobs) {
                 gibbon_java_fibs_importer_ready (self);
                 g_mutex_unlock (&self->priv->mutex);
+
+                gibbon_java_fibs_importer_summary (self);
+                gtk_progress_bar_set_fraction (
+                                GTK_PROGRESS_BAR (self->priv->progress),
+                                1.0f);
 
                 return FALSE;
         }
@@ -1315,6 +1319,9 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
                         rank->timestamp = timestamp;
                         rank->rating = rating;
                         rank->experience = experience;
+                        g_mutex_lock (&self->priv->mutex);
+                        ++self->priv->jobs;
+                        g_mutex_unlock (&self->priv->mutex);
                         gibbon_java_fibs_importer_add_task (self,
                                                             GIBBON_IMPORT_RANK,
                                                             rank);
@@ -1481,6 +1488,10 @@ gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
         GDateTime *dt;
         gchar *formatted;
 
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
+
         dt = g_date_time_new_from_unix_local (rank->timestamp / 1000);
         if (!dt) {
                 gibbon_java_fibs_importer_output (self, "error",
@@ -1492,7 +1503,7 @@ gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
 
         formatted = g_date_time_format (dt, "%c");
         gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Importing rating %f with"
+                                          _("Importing rating %.2f with"
                                             " experience %llu at %s.\n"),
                                           rank->rating,
                                           (unsigned long long) rank->experience,
