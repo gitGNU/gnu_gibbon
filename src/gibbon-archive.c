@@ -339,8 +339,6 @@ gibbon_archive_update_rank (GibbonArchive *self,
         guint64 now;
         gboolean free_dt;
 
-        g_printerr ("%llu: Updating rank\n", g_get_real_time ());
-
         gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
         gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
         gibbon_return_val_if_fail (user != NULL, FALSE, error);
@@ -404,13 +402,9 @@ gibbon_archive_update_rank (GibbonArchive *self,
                 g_object_unref (fout);
         }
 
-        g_printerr ("%llu: Updating rank in database\n", g_get_real_time ());
-
         gibbon_database_update_rank (self->priv->db,
                                      hostname, port, user,
                                      rating, experience, now, NULL);
-
-        g_printerr ("%llu: Updating rank done\n", g_get_real_time ());
 
         return TRUE;
 }
