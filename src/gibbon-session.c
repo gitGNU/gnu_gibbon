@@ -1008,7 +1008,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
                         self->priv->experience = experience;
                         if (!gibbon_archive_update_rank (archive, server, port,
                                                          account, rating,
-                                                         experience, &error)) {
+                                                         experience, NULL,
+                                                         &error)) {
                                 gibbon_app_display_error (self->priv->app,
                                                           _("Database Failure"),
                                                           "%s",

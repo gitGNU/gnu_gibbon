@@ -91,7 +91,8 @@ void gibbon_archive_update_user (GibbonArchive *self,
 gboolean gibbon_archive_update_rank (GibbonArchive *self,
                                      const gchar *hostname, guint port,
                                      const gchar *user, gdouble rating,
-                                     gint experience, GError **error);
+                                     gint experience, GDateTime *dt,
+                                     GError **error);
 gboolean gibbon_archive_get_rank (GibbonArchive *self,
                                   const gchar *hostname, guint port,
                                   const gchar *user, gdouble *rating,

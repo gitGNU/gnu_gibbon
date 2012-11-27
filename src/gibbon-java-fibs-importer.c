@@ -46,8 +46,13 @@ typedef struct _GibbonImportTask GibbonImportTask;
 struct _GibbonImportTask {
         enum GibbonImportTaskType type;
         gpointer payload;
-        gint64 n1, n2;
-        gdouble d1;
+};
+
+typedef struct _GibbonRank GibbonRank;
+struct _GibbonRank {
+        gint64 timestamp;
+        gdouble rating;
+        guint64 experience;
 };
 
 typedef struct _GibbonJavaFIBSImporterPrivate GibbonJavaFIBSImporterPrivate;
@@ -139,6 +144,8 @@ static void gibbon_java_fibs_importer_save_group (GibbonJavaFIBSImporter *self,
                                                   gchar *group);
 static void gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *self,
                                                      gchar *record);
+static void gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
+                                                 GibbonRank *rank);
 
 static void gibbon_import_task_free (GibbonImportTask *task);
 
@@ -366,8 +373,9 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         gtk_widget_set_sensitive (widget, FALSE);
 
         g_mutex_init (&self->priv->mutex);
-        id = g_timeout_add (10, (GSourceFunc) gibbon_java_fibs_importer_poll,
-                            self);
+        id = g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 1,
+                                 (GSourceFunc) gibbon_java_fibs_importer_poll,
+                                 self, NULL);
         self->priv->timeout = id;
 
         gibbon_java_fibs_importer_summary (self);
@@ -852,8 +860,12 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
 {
         gdouble fraction;
         GibbonImportTask *task;
+        guint done = 0;
 
         g_mutex_lock (&self->priv->mutex);
+        g_printerr ("polling ... at %u/%d\n", self->priv->finished, self->priv->jobs);
+
+        gibbon_java_fibs_importer_summary (self);
 
         if (self->priv->jobs <= 0)
                 gtk_progress_bar_pulse (GTK_PROGRESS_BAR (self->priv->progress));
@@ -886,8 +898,7 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                                                      self->priv->msg_queue);
                 self->priv->msg_tags =
                                 g_slist_remove_link (self->priv->msg_tags,
-                                                     self->priv->msg_tags);
-        }
+                                                     self->priv->msg_tags);        }
 
         g_mutex_unlock (&self->priv->mutex);
 
@@ -906,8 +917,14 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                         gibbon_java_fibs_importer_save_relation (
                                         self, task->payload);
                         break;
+                case GIBBON_IMPORT_RANK:
+                        gibbon_java_fibs_importer_save_rank (
+                                        self, task->payload);
+                        break;
                 }
                 gibbon_import_task_free (task);
+                if (++done > 0)
+                        break;
         }
 
         g_mutex_lock (&self->priv->mutex);
@@ -923,6 +940,8 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                 g_free (self->priv->status);
                 self->priv->status = NULL;
         }
+
+        gibbon_java_fibs_importer_summary (self);
 
         self->priv->msg_queue = g_slist_reverse (self->priv->msg_queue);
         self->priv->msg_tags = g_slist_reverse (self->priv->msg_tags);
@@ -941,7 +960,8 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                                                      self->priv->msg_tags);
         }
 
-        if (self->priv->jobs == self->priv->finished) {
+        if (!self->priv->tasks && self->priv->jobs >= 0
+            && self->priv->finished >= self->priv->jobs) {
                 gibbon_java_fibs_importer_ready (self);
                 g_mutex_unlock (&self->priv->mutex);
 
@@ -985,7 +1005,7 @@ gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self)
                                                 _("one rating record"),
                                                 _("%u rating records"),
                                                 self->priv->finished_ratings),
-                                   self->priv->finished_friends);
+                                   self->priv->finished_ratings);
         friends = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
                                                 _("one friend"),
                                                 _("%u friends"),
@@ -1208,6 +1228,7 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
         gchar *endptr;
         gdouble last_rating = 0.0f;
         guint64 last_experience = 0;
+        GibbonRank *rank;
 
         gibbon_java_fibs_importer_status (self, _("Importing ratings."));
 
@@ -1215,7 +1236,7 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
                                  self->priv->user, "ratings", NULL);
         if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
                 gibbon_java_fibs_importer_output (self, NULL,
-                                                  _("No saved ratings1.\n"));
+                                                  _("No saved ratings.\n"));
                 g_free (path);
                 return;
         }
@@ -1274,21 +1295,33 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
                         continue;
                 }
 
-                rating = g_ascii_strtod (tokens[0], &endptr);
+                rating = g_ascii_strtod (tokens[1], &endptr);
                 if (errno || !endptr || *endptr) {
                         g_strfreev (tokens);
                         continue;
                 }
 
-                experience = g_ascii_strtoull (tokens[0], &endptr, 10);
+                experience = g_ascii_strtoull (tokens[2], &endptr, 10);
                 if (errno || !endptr || *endptr) {
                         g_strfreev (tokens);
                         continue;
                 }
-
-
 
                 g_strfreev (tokens);
+
+                if (rating != last_rating || experience != last_experience
+                    || i == 0) {
+                        rank = g_malloc (sizeof *rank);
+                        rank->timestamp = timestamp;
+                        rank->rating = rating;
+                        rank->experience = experience;
+                        gibbon_java_fibs_importer_add_task (self,
+                                                            GIBBON_IMPORT_RANK,
+                                                            rank);
+                }
+
+                last_rating = rating;
+                last_experience = experience;
         }
 
         g_strfreev (lines);
@@ -1365,6 +1398,9 @@ gibbon_import_task_free (GibbonImportTask *task)
                 case GIBBON_IMPORT_RELATION:
                         g_free (task->payload);
                         break;
+                case GIBBON_IMPORT_RANK:
+                        g_free (task->payload);
+                        break;
                 }
         }
 }
@@ -1435,4 +1471,48 @@ gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *self,
                                                   error->message);
                 g_error_free (error);
         }
+}
+
+static void
+gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
+                                     GibbonRank *rank)
+{
+        GError *error = NULL;
+        GDateTime *dt;
+        gchar *formatted;
+
+        dt = g_date_time_new_from_unix_local (rank->timestamp / 1000);
+        if (!dt) {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  _("Timestramp %lld out of"
+                                                    " rankge!"),
+                                                  (long long) rank->timestamp);
+                return;
+        }
+
+        formatted = g_date_time_format (dt, "%c");
+        gibbon_java_fibs_importer_output (self, NULL,
+                                          _("Importing rating %f with"
+                                            " experience %llu at %s.\n"),
+                                          rank->rating,
+                                          (unsigned long long) rank->experience,
+                                          formatted);
+        g_free (formatted);
+
+        if (!gibbon_archive_update_rank (self->priv->archive,
+                                         self->priv->server, self->priv->port,
+                                         self->priv->user,
+                                         rank->rating, rank->experience, dt,
+                                         &error)) {
+                g_date_time_unref (dt);
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s\n",
+                                                  error->message);
+                g_error_free (error);
+        }
+        g_date_time_unref (dt);
+
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished_ratings;
+        g_mutex_unlock (&self->priv->mutex);
 }

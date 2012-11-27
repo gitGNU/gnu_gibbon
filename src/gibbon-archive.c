@@ -323,7 +323,8 @@ gboolean
 gibbon_archive_update_rank (GibbonArchive *self,
                             const gchar *hostname, guint port,
                             const gchar *user, gdouble rating,
-                            gint experience, GError **error)
+                            gint experience, GDateTime *dt,
+                            GError **error)
 {
         gchar *path;
         gchar *directory;
@@ -331,27 +332,35 @@ gibbon_archive_update_rank (GibbonArchive *self,
         GFile *file;
         GFileOutputStream *fout;
         gchar *buffer;
-        GDateTime *dt;
         gchar *year;
         gchar month[3];
         gchar day[3];
         gint y, m, d;
         guint64 now;
+        gboolean free_dt;
+
+        g_printerr ("%llu: Updating rank\n", g_get_real_time ());
 
         gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
         gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
         gibbon_return_val_if_fail (user != NULL, FALSE, error);
 
-        dt = g_date_time_new_now_local ();
         if (!dt) {
-                g_set_error_literal (error, GIBBON_ERROR, -1,
-                                     _("Error retrieving current time!"));
-                return FALSE;
+                dt = g_date_time_new_now_local ();
+                if (!dt) {
+                        g_set_error_literal (error, GIBBON_ERROR, -1,
+                                             _("Error retrieving current time!"));
+                        return FALSE;
+                }
+                free_dt = TRUE;
+        } else {
+                free_dt = FALSE;
         }
 
         now = g_get_real_time ();
         g_date_time_get_ymd (dt, &y, &m, &d);
-        g_date_time_unref (dt);
+        if (free_dt)
+                g_date_time_unref (dt);
         year = g_strdup_printf ("%4d", y);
         month[0] = '0' + m / 10;
         month[1] = '0' + m % 10;
@@ -395,9 +404,13 @@ gibbon_archive_update_rank (GibbonArchive *self,
                 g_object_unref (fout);
         }
 
+        g_printerr ("%llu: Updating rank in database\n", g_get_real_time ());
+
         gibbon_database_update_rank (self->priv->db,
                                      hostname, port, user,
                                      rating, experience, now, NULL);
+
+        g_printerr ("%llu: Updating rank done\n", g_get_real_time ());
 
         return TRUE;
 }
