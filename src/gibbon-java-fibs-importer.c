@@ -802,7 +802,9 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
          * The first 4 jobs are always importing the ratings, and the list
          * for friends and villains.
          */
-        /* FIXME! (void) */ gibbon_java_fibs_importer_collect_matches (self);
+        if (!gibbon_java_fibs_importer_collect_matches (self))
+                return NULL;
+
         jobs = 3 + g_hash_table_size (self->priv->matches);
 
         g_mutex_lock (&self->priv->mutex);
@@ -1078,7 +1080,9 @@ gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
                  * FIXME! This error is unlikely but has to be reported to the
                  * main thread somehow later.
                  */
+                gibbon_java_fibs_importer_status (self, _("Error"));
                 g_error_free (error);
+                return FALSE;
         }
         g_free (directory);
 
@@ -1109,8 +1113,9 @@ gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
                 }
         } else {
                 /*
-                 * FIXME! This error is unlikely but has to be reported to the
-                 * main thread somehow later.
+                 * We can ignore this error.  Maybe the directory was never
+                 * created, when the user never converted a match to
+                 * JellyFish.
                  */
                 g_error_free (error);
         }
