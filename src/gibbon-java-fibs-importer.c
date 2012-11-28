@@ -793,8 +793,9 @@ gibbon_java_fibs_importer_on_okay (GibbonJavaFIBSImporter *self)
 static gpointer
 gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 {
-        gint i;
         guint jobs;
+        GHashTableIter iter;
+        gpointer key, value;
 
         gibbon_java_fibs_importer_status (self, _("Collecting data"));
 
@@ -829,7 +830,8 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
-        for (i = 3; i < jobs; ++i) {
+        g_hash_table_iter_init (&iter, self->priv->matches);
+        while (g_hash_table_iter_next (&iter, &key, &value)) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
