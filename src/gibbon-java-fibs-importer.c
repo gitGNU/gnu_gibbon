@@ -35,11 +35,14 @@
 #include "gibbon-java-fibs-importer.h"
 #include "gibbon-archive.h"
 #include "gibbon-util.h"
+#include "gibbon-java-fibs-reader.h"
+#include "gibbon-jelly-fish-reader.h"
 
 enum GibbonImportTaskType {
         GIBBON_IMPORT_GROUP = 0,
         GIBBON_IMPORT_RELATION,
-        GIBBON_IMPORT_RANK
+        GIBBON_IMPORT_RANK,
+        GIBBON_IMPORT_MATCH
 };
 
 typedef struct _GibbonImportTask GibbonImportTask;
@@ -129,6 +132,8 @@ static void gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
                                              const gchar *name,
                                              guint *counter);
 static void gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self);
+static void gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
+                                             gchar *stem, gchar **files);
 static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
                                               const gchar *format,
                                               ...) G_GNUC_PRINTF (2, 3);
@@ -146,7 +151,10 @@ static void gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *sel
                                                      gchar *record);
 static void gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
                                                  GibbonRank *rank);
+static void gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
+                                                  GibbonRank *match);
 
+static void gibbon_import_yyerror (GError **error, const gchar *msg);
 static void gibbon_import_task_free (GibbonImportTask *task);
 
 static void 
@@ -795,7 +803,8 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 {
         guint jobs;
         GHashTableIter iter;
-        gpointer key, value;
+        gchar *stem;
+        gchar **files;
 
         gibbon_java_fibs_importer_status (self, _("Collecting data"));
 
@@ -831,7 +840,8 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         g_mutex_unlock (&self->priv->mutex);
 
         g_hash_table_iter_init (&iter, self->priv->matches);
-        while (g_hash_table_iter_next (&iter, &key, &value)) {
+        while (g_hash_table_iter_next (&iter, (gpointer) &stem,
+                                       (gpointer )&files)) {
                 g_mutex_lock (&self->priv->mutex);
                 if (self->priv->cancelled) {
                         g_mutex_unlock (&self->priv->mutex);
@@ -839,11 +849,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
                 }
                 g_mutex_unlock (&self->priv->mutex);
 
-                /* Do things.  */
-
-                g_mutex_lock (&self->priv->mutex);
-                ++self->priv->finished;
-                g_mutex_unlock (&self->priv->mutex);
+                gibbon_java_fibs_importer_match (self, stem, files);
         }
 
         return NULL;
@@ -924,6 +930,10 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                         gibbon_java_fibs_importer_save_rank (
                                         self, task->payload);
                         break;
+                case GIBBON_IMPORT_MATCH:
+                        gibbon_java_fibs_importer_save_match (
+                                        self, task->payload);
+                        break;
                 }
                 gibbon_import_task_free (task);
                 if (++done > 0)
@@ -961,6 +971,15 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                 self->priv->msg_tags =
                                 g_slist_remove_link (self->priv->msg_tags,
                                                      self->priv->msg_tags);
+        }
+
+        if (self->priv->cancelled) {
+                gibbon_java_fibs_importer_ready (self);
+                g_mutex_unlock (&self->priv->mutex);
+
+                gibbon_java_fibs_importer_summary (self);
+
+                return FALSE;
         }
 
         if (!self->priv->tasks && self->priv->jobs >= 0
@@ -1087,8 +1106,6 @@ gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
                 return FALSE;
         }
         g_free (directory);
-
-        return TRUE;
 
         directory = g_build_filename (self->priv->directory,
                                       "matches", "jellyfish",
@@ -1415,6 +1432,9 @@ gibbon_import_task_free (GibbonImportTask *task)
                 case GIBBON_IMPORT_RANK:
                         g_free (task->payload);
                         break;
+                case GIBBON_IMPORT_MATCH:
+                        g_object_unref (task->payload);
+                        break;
                 }
         }
 }
@@ -1533,4 +1553,91 @@ gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
         g_mutex_lock (&self->priv->mutex);
         ++self->priv->finished_ratings;
         g_mutex_unlock (&self->priv->mutex);
+}
+
+static void
+gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
+                                 gchar *stem, gchar **files)
+{
+        GibbonMatchReader *reader;
+        GError *error = NULL;
+        GibbonMatch *match = NULL;
+
+        if (files[0]) {
+                gibbon_java_fibs_importer_status (self,
+                                                  _("Parsing `%s'"),
+                                                   files[0]);
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("Parsing `%s'.\n"),
+                                                   files[0]);
+                reader = GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (
+                                (GibbonMatchReaderErrorFunc)
+                                gibbon_import_yyerror, &error));
+                match = gibbon_match_reader_parse (reader, files[0]);
+                if (!match) {
+                        gibbon_java_fibs_importer_output (self, "error",
+                                                          _("Error parsing"
+                                                            " `%s': %s\n"),
+                                                           files[0],
+                                                           error->message);
+                        g_error_free (error);
+                        error = NULL;
+                }
+                g_object_unref (reader);
+        }
+
+        if (!match && files[1]) {
+                gibbon_java_fibs_importer_status (self,
+                                                  _("Parsing `%s'"),
+                                                   files[1]);
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  _("Parsing `%s'.\n"),
+                                                   files[1]);
+                reader = GIBBON_MATCH_READER (gibbon_jelly_fish_reader_new (
+                                (GibbonMatchReaderErrorFunc)
+                                gibbon_import_yyerror, &error));
+                match = gibbon_match_reader_parse (reader, files[0]);
+                if (!match) {
+                        gibbon_java_fibs_importer_output (self, "error",
+                                                          _("Error parsing"
+                                                            " `%s': %s\n"),
+                                                           files[1],
+                                                           error->message);
+                        g_error_free (error);
+                        error = NULL;
+                }
+                g_object_unref (reader);
+        }
+
+        if (match) {
+
+        } else {
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->finished;
+                ++self->priv->error_matches;
+                g_mutex_unlock (&self->priv->mutex);
+        }
+}
+
+static void
+gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
+                                      GibbonRank *match)
+{
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
+
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->error_matches;
+        g_mutex_unlock (&self->priv->mutex);
+}
+
+static void
+gibbon_import_yyerror (GError **error, const gchar *msg)
+{
+        /* We can only report the first error.  */
+        if (*error)
+                return;
+
+        g_set_error_literal (error, GIBBON_ERROR, -1, msg);
 }
