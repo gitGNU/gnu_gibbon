@@ -409,7 +409,7 @@ _gibbon_java_fibs_reader_win_game (GibbonJavaFIBSReader *self,
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
                 gibbon_java_fibs_reader_error (self, _("Syntax error!"));
-                return TRUE;
+                return FALSE;
         }
 
         last_action = gibbon_game_get_nth_action (game, -1, NULL);
@@ -484,7 +484,7 @@ _gibbon_java_fibs_reader_reject_resign (GibbonJavaFIBSReader *self,
 
         action = GIBBON_GAME_ACTION (gibbon_reject_new ());
 
-        return FALSE;
+        return gibbon_java_fibs_reader_add_action (self, name, action);
 }
 
 static gboolean
