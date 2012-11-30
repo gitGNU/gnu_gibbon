@@ -86,6 +86,8 @@ extern int gibbon_java_fibs_lexer_lex (YYSTYPE * lvalp, void *scanner);
 #define yytable    gibbon_java_fibs_parser_yytable
 #define yycheck    gibbon_java_fibs_parser_yycheck
 
+#define YYDEBUG 42
+
 static guint gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to);
 %}
 
@@ -132,7 +134,8 @@ java_fibs_file
 	 * handle the error.
 	 */
 	: /* empty */
-        | PROLOG match  { gibbon_java_fibs_reader_free_names (reader); }
+        | { yydebug = 0; } 
+          PROLOG match  { gibbon_java_fibs_reader_free_names (reader); }
         ;
 
 match
