@@ -550,6 +550,7 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
 
         if (!gibbon_game_add_action (game, side, action, G_MININT64, &error)) {
                 gibbon_java_fibs_reader_error (self, error->message);
+                g_error_free (error);
                 g_object_unref (action);
                 return FALSE;
         }
