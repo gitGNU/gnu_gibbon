@@ -265,7 +265,7 @@ void
 gibbon_match_tracker_update (GibbonMatchTracker *self,
                              const GibbonPosition *target)
 {
-        GSList *iter = NULL;
+        GSList *iter, *actions = NULL;
         const GibbonPosition *c = NULL;
         GibbonPosition *current;
         GibbonMatchPlay *play;
@@ -289,7 +289,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         }
 
         if (!gibbon_match_get_missing_actions (self->priv->match, target,
-                                               &iter)) {
+                                               &actions)) {
                 /*
                  * This case is not necessarily in error.  It also happens,
                  * if we have a saved match for the two opponents that
@@ -318,7 +318,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         }
 
         list = gibbon_app_get_match_list (app);
-
+        iter = actions;
         while (iter) {
                 play = (GibbonMatchPlay *) iter->data;
                 action = play->action;
@@ -374,14 +374,14 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         }
 
         gibbon_position_free (current);
-        g_slist_free_full (iter, (GDestroyNotify) gibbon_match_play_free);
+        g_slist_free_full (actions, (GDestroyNotify) gibbon_match_play_free);
 
         return;
 
         bail_out:
 
         gibbon_position_free (current);
-        g_slist_free_full (iter, (GDestroyNotify) gibbon_match_play_free);
+        g_slist_free_full (actions, (GDestroyNotify) gibbon_match_play_free);
 
         /*
          * TODO: Archive current match and create a new one with
