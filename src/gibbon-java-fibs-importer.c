@@ -1562,50 +1562,57 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         GibbonMatchReader *reader;
         GError *error = NULL;
         GibbonMatch *match = NULL;
+        gchar *filename;
 
         if (files[0]) {
+                filename = g_build_filename (self->priv->directory, "matches",
+                                             "internal", files[0], NULL);
                 gibbon_java_fibs_importer_status (self,
                                                   _("Parsing `%s'"),
                                                    files[0]);
                 gibbon_java_fibs_importer_output (self, NULL,
                                                   _("Parsing `%s'.\n"),
-                                                   files[0]);
+                                                   filename);
                 reader = GIBBON_MATCH_READER (gibbon_java_fibs_reader_new (
                                 (GibbonMatchReaderErrorFunc)
                                 gibbon_import_yyerror, &error));
-                match = gibbon_match_reader_parse (reader, files[0]);
+                match = gibbon_match_reader_parse (reader, filename);
                 if (!match) {
+                        if (!error)
+                                g_printerr ("no match without error: %s\n", filename);
                         gibbon_java_fibs_importer_output (self, "error",
-                                                          _("Error parsing"
-                                                            " `%s': %s\n"),
-                                                           files[0],
-                                                           error->message);
+                                                          "%s\n",
+                                                          error->message);
                         g_error_free (error);
                         error = NULL;
                 }
+                g_free (filename);
                 g_object_unref (reader);
         }
 
         if (!match && files[1]) {
+                filename = g_build_filename (self->priv->directory, "matches",
+                                             "jellyfish", files[1], NULL);
                 gibbon_java_fibs_importer_status (self,
                                                   _("Parsing `%s'"),
                                                    files[1]);
                 gibbon_java_fibs_importer_output (self, NULL,
                                                   _("Parsing `%s'.\n"),
-                                                   files[1]);
+                                                   filename);
                 reader = GIBBON_MATCH_READER (gibbon_jelly_fish_reader_new (
                                 (GibbonMatchReaderErrorFunc)
                                 gibbon_import_yyerror, &error));
-                match = gibbon_match_reader_parse (reader, files[0]);
+                match = gibbon_match_reader_parse (reader, filename);
                 if (!match) {
+                        if (!error)
+                                g_printerr ("no match without error: %s\n", filename);
                         gibbon_java_fibs_importer_output (self, "error",
-                                                          _("Error parsing"
-                                                            " `%s': %s\n"),
-                                                           files[1],
-                                                           error->message);
+                                                          "%s\n",
+                                                          error->message);
                         g_error_free (error);
                         error = NULL;
                 }
+                g_free (filename);
                 g_object_unref (reader);
         }
 
