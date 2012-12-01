@@ -498,12 +498,33 @@ gibbon_java_fibs_reader_add_action (GibbonJavaFIBSReader *self,
         GError *error = NULL;
         GibbonMove *move;
         gsize i;
+        const GibbonGameAction *last_action;
+        GibbonGameAction *reject;
+        gint last_side;
 
         game = gibbon_match_get_current_game (self->priv->match);
         if (!game) {
                 gibbon_java_fibs_reader_error (self, _("No game in progress!"));
                 g_object_unref (action);
                 return FALSE;
+        }
+
+        last_action = gibbon_game_get_nth_action (game, -1, &last_side);
+        if (last_action && GIBBON_IS_RESIGN (last_action)
+            && !GIBBON_IS_REJECT (action)
+            && !GIBBON_IS_ACCEPT (action)) {
+                /*
+                 * We try to implicitely add the missing rejection.  JavaFIBS
+                 * seems to omit it quite often.
+                 */
+                reject = GIBBON_GAME_ACTION (gibbon_reject_new ());
+                if (!gibbon_game_add_action (game, -last_side, reject,
+                                             G_MININT64, &error)) {
+                        gibbon_java_fibs_reader_error (self, error->message);
+                        g_object_unref (reject);
+                        g_error_free (error);
+                        return FALSE;
+                }
         }
 
         position = gibbon_game_get_position (game);
