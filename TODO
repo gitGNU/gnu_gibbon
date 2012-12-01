@@ -104,3 +104,4 @@
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - Implement Patti's new admin tell command.
+- JavaFIBS parser leaks memory: Not all error objects are freed.
