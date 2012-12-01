@@ -151,7 +151,7 @@ match
 	;
 
 playing
-	: games last_game win_match
+	: games win_match
 	| games incomplete_game
 	;
 
@@ -162,10 +162,7 @@ games
 
 game
 	: start_of_game opponents actions win_game score
-	;
-
-last_game
-	: start_of_game opponents actions win_game
+	| start_of_game opponents actions win_game
 	;
 
 incomplete_game
