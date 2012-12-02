@@ -137,9 +137,6 @@ static void gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
 static void gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self);
 static void gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                              gchar *stem, gchar **files);
-static void gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
-                                              const gchar *format,
-                                              ...) G_GNUC_PRINTF (2, 3);
 static void gibbon_java_fibs_importer_output (GibbonJavaFIBSImporter *self,
                                               gchar *tag, const gchar *format,
                                               ...) G_GNUC_PRINTF (3, 4);
@@ -830,7 +827,10 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         gchar *stem;
         gchar **files;
 
-        gibbon_java_fibs_importer_status (self, _("Collecting data"));
+        g_mutex_lock (&self->priv->mutex);
+        g_free (self->priv->status);
+        self->priv->status = g_strdup (_("Collecting data"));
+        g_mutex_unlock (&self->priv->mutex);
 
         /*
          * The first 4 jobs are always importing the ratings, and the list
@@ -875,6 +875,11 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 
                 gibbon_java_fibs_importer_match (self, stem, files);
         }
+
+        g_mutex_lock (&self->priv->mutex);
+        g_free (self->priv->status);
+        self->priv->status = g_strdup ("");
+        g_mutex_unlock (&self->priv->mutex);
 
         return NULL;
 }
@@ -1125,7 +1130,8 @@ gibbon_java_fibs_importer_collect_matches (GibbonJavaFIBSImporter *self)
                  * FIXME! This error is unlikely but has to be reported to the
                  * main thread somehow later.
                  */
-                gibbon_java_fibs_importer_status (self, _("Error"));
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s", error->message);
                 g_error_free (error);
                 return FALSE;
         }
@@ -1190,10 +1196,6 @@ gibbon_java_fibs_importer_group (GibbonJavaFIBSImporter *self,
         gchar *line;
         gchar **tokens;
         gchar *relation;
-
-        gibbon_java_fibs_importer_status (self,
-                                          _("Importing group `%s'."),
-                                          name);
 
         path = g_build_filename (self->priv->directory, "user",
                                  self->priv->user, name, NULL);
@@ -1281,8 +1283,6 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
         gdouble last_rating = 0.0f;
         guint64 last_experience = 0;
         GibbonRank *rank;
-
-        gibbon_java_fibs_importer_status (self, _("Importing ratings."));
 
         path = g_build_filename (self->priv->directory, "user",
                                  self->priv->user, "ratings", NULL);
@@ -1381,23 +1381,6 @@ gibbon_java_fibs_importer_ranks (GibbonJavaFIBSImporter *self)
 
         g_strfreev (lines);
         g_free (path);
-}
-
-static void
-gibbon_java_fibs_importer_status (GibbonJavaFIBSImporter *self,
-                                  const gchar *format, ...)
-{
-        va_list args;
-        gchar *message;
-
-        va_start (args, format);
-        message = g_strdup_vprintf(format, args);
-        va_end (args);
-
-        g_mutex_lock (&self->priv->mutex);
-        g_free (self->priv->status);
-        self->priv->status = message;
-        g_mutex_unlock (&self->priv->mutex);
 }
 
 static void
@@ -1604,9 +1587,6 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                 file_index = 0;
                 filename = g_build_filename (self->priv->directory, "matches",
                                              "internal", files[0], NULL);
-                gibbon_java_fibs_importer_status (self,
-                                                  _("Parsing `%s'"),
-                                                   files[0]);
                 gibbon_java_fibs_importer_output (self, NULL,
                                                   _("Parsing `%s'.\n"),
                                                    filename);
@@ -1637,9 +1617,6 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                         file_index = 1;
                 filename = g_build_filename (self->priv->directory, "matches",
                                              "jellyfish", files[1], NULL);
-                gibbon_java_fibs_importer_status (self,
-                                                  _("Parsing `%s'"),
-                                                   files[1]);
                 gibbon_java_fibs_importer_output (self, NULL,
                                                   _("Parsing `%s'.\n"),
                                                    filename);
