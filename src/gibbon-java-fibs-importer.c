@@ -28,8 +28,10 @@
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include <gio/gio.h>
 
 #include <errno.h>
+#include <stdio.h>
 
 #include "gibbon-app.h"
 #include "gibbon-java-fibs-importer.h"
@@ -815,7 +817,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
         if (!gibbon_java_fibs_importer_collect_matches (self))
                 return NULL;
 
-        jobs = 3 + g_hash_table_size (self->priv->matches);
+        jobs = 3 + 2 * g_hash_table_size (self->priv->matches);
 
         g_mutex_lock (&self->priv->mutex);
         self->priv->jobs = jobs;
@@ -1563,8 +1565,20 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         GError *error = NULL;
         GibbonMatch *match = NULL;
         gchar *filename;
+        gchar *ptr;
+        GDateTime *dt;
+        gint64 timestamp = G_MININT64;
+        gint file_index = -1;
+        GFile *file;
+        GFileInfo *file_info;
+        gchar *query = G_FILE_ATTRIBUTE_TIME_CHANGED
+                       "," G_FILE_ATTRIBUTE_TIME_CHANGED_USEC;
+        guint year, month, mday, hour, minute, seconds;
+        guint factor;
+        gint i;
 
         if (files[0]) {
+                file_index = 0;
                 filename = g_build_filename (self->priv->directory, "matches",
                                              "internal", files[0], NULL);
                 gibbon_java_fibs_importer_status (self,
@@ -1578,8 +1592,6 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                 gibbon_import_yyerror, &error));
                 match = gibbon_match_reader_parse (reader, filename);
                 if (!match) {
-                        if (!error)
-                                g_printerr ("no match without error: %s\n", filename);
                         gibbon_java_fibs_importer_output (self, "error",
                                                           "%s\n",
                                                           error->message);
@@ -1591,6 +1603,8 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         }
 
         if (!match && files[1]) {
+                if (!files[0])
+                        file_index = 1;
                 filename = g_build_filename (self->priv->directory, "matches",
                                              "jellyfish", files[1], NULL);
                 gibbon_java_fibs_importer_status (self,
@@ -1604,8 +1618,6 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                 gibbon_import_yyerror, &error));
                 match = gibbon_match_reader_parse (reader, filename);
                 if (!match) {
-                        if (!error)
-                                g_printerr ("no match without error: %s\n", filename);
                         gibbon_java_fibs_importer_output (self, "error",
                                                           "%s\n",
                                                           error->message);
@@ -1616,14 +1628,88 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                 g_object_unref (reader);
         }
 
-        if (match) {
+        g_mutex_lock (&self->priv->mutex);
+        ++self->priv->finished;
+        g_mutex_unlock (&self->priv->mutex);
 
-        } else {
+        if (!match) {
                 g_mutex_lock (&self->priv->mutex);
                 ++self->priv->finished;
                 ++self->priv->error_matches;
                 g_mutex_unlock (&self->priv->mutex);
+                return;
         }
+
+        /*
+         * If the two opponents cannot be deduced from the scores, assign it
+         * to the current user.
+         */
+        if (!g_strcmp0 ("You", gibbon_match_get_white (match)))
+                gibbon_match_set_white (match, self->priv->user);
+
+        /*
+         * Try to extract the date and time of the match from the filename.
+         */
+        ptr = stem + strlen (stem) - 1;
+        while (*ptr >= '0' && *ptr <= '9') {
+                --ptr;
+        }
+
+        if (*ptr == '_' && 15 <= strlen (ptr)
+            && 0 < sscanf (ptr, "_%04d%02d%02d%02d%02d%2d",
+                        &year, &month, &mday, &hour, &minute, &seconds)) {
+                dt = g_date_time_new_local (year, month, mday, hour, minute,
+                                            seconds);
+                if (dt) {
+                        timestamp = 1000000 * g_date_time_to_unix (dt);
+                        g_date_time_unref (dt);
+
+                        factor = 100000;
+                        for (i = 0; i < 6 && ptr[15 + i]; ++i) {
+                                timestamp += (ptr[15 + i] - '0') * factor;
+                                factor /= 10;
+                        }
+                }
+        }
+
+        /*
+         * Use the creation date of the file.
+         */
+        if (timestamp == G_MININT64) {
+                if (file_index == 0)
+                        filename = g_build_filename (self->priv->directory,
+                                                     "matches", "internal",
+                                                     files[0], NULL);
+                else
+                        filename = g_build_filename (self->priv->directory,
+                                                     "matches", "jellyfish",
+                                                     files[1], NULL);
+                file = g_file_new_for_path (filename);
+                g_free (filename);
+                file_info = g_file_query_info (file, query,
+                                G_FILE_QUERY_INFO_NONE, NULL, NULL);
+                if (file_info) {
+                        if (g_file_info_has_attribute (
+                                        file_info,
+                                        G_FILE_ATTRIBUTE_TIME_CHANGED))
+                                timestamp = 1000000
+                                        * g_file_info_get_attribute_uint64 (
+                                            file_info,
+                                            G_FILE_ATTRIBUTE_TIME_CHANGED)
+                                + g_file_info_get_attribute_uint32 (
+                                            file_info,
+                                            G_FILE_ATTRIBUTE_TIME_CHANGED_USEC);
+                        g_object_unref (file_info);
+                }
+        }
+
+        /*
+         * If all of the above fails fall back to the current time.
+         */
+        if (timestamp == G_MININT64)
+                timestamp = g_get_real_time ();
+
+        gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_MATCH, match);
 }
 
 static void
@@ -1634,8 +1720,10 @@ gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
 
+
+
         g_mutex_lock (&self->priv->mutex);
-        ++self->priv->error_matches;
+        ++self->priv->finished_matches;
         g_mutex_unlock (&self->priv->mutex);
 }
 
