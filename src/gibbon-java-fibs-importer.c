@@ -39,6 +39,7 @@
 #include "gibbon-util.h"
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-jelly-fish-reader.h"
+#include "gibbon-settings.h"
 
 enum GibbonImportTaskType {
         GIBBON_IMPORT_GROUP = 0,
@@ -311,6 +312,7 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
         GtkWidget *widget;
         GError *error = NULL;
         guint id;
+        GSettings *settings;
 
         g_return_if_fail (GIBBON_IS_JAVA_FIBS_IMPORTER (self));
 
@@ -361,6 +363,26 @@ gibbon_java_fibs_importer_run (GibbonJavaFIBSImporter *self)
                 g_object_unref (self);
                 return;
         }
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        g_settings_delay (settings);
+
+        g_settings_set_string (settings, GIBBON_PREFS_SERVER_HOST,
+                               self->priv->server);
+        g_settings_set_value (settings, GIBBON_PREFS_SERVER_PORT,
+                              g_variant_new_uint16 (self->priv->port));
+        g_settings_set_string (settings, GIBBON_PREFS_SERVER_LOGIN,
+                               self->priv->user);
+        if (self->priv->password) {
+                g_settings_set_string (settings, GIBBON_PREFS_SERVER_PASSWORD,
+                                       self->priv->password);
+                g_settings_set_boolean (settings,
+                                        GIBBON_PREFS_SERVER_SAVE_PASSWORD,
+                                        TRUE);
+        } /* No else.  Leave current settings untouched.  */
+
+        g_settings_apply (settings);
+        g_object_unref (settings);
 
         dialog = gibbon_app_find_widget (app, "java-fibs-importer-dialog",
                                          GTK_TYPE_DIALOG);
@@ -1576,6 +1598,7 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         guint year, month, mday, hour, minute, seconds;
         guint factor;
         gint i;
+        gchar *location;
 
         if (files[0]) {
                 file_index = 0;
@@ -1710,6 +1733,21 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                 timestamp = g_get_real_time ();
 
         gibbon_match_set_start_time (match, timestamp);
+
+        if (self->priv->port == 1234)
+                location = g_strdup_printf ("x-fibs://%s", self->priv->server);
+        else
+                location = g_strdup_printf ("x-fibs://%s:%u",
+                                            self->priv->server,
+                                            self->priv->port);
+        gibbon_match_set_location (match, location);
+        g_free (location);
+
+        /*
+         * We could try to guess the current rating here.  But since the
+         * timestamp may involve a whole lot of guess work, we better
+         * omit that.
+         */
 
         gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_MATCH, match);
 }
