@@ -40,12 +40,14 @@
 #include "gibbon-java-fibs-reader.h"
 #include "gibbon-jelly-fish-reader.h"
 #include "gibbon-settings.h"
+#include "gibbon-gmd-writer.h"
 
 enum GibbonImportTaskType {
         GIBBON_IMPORT_GROUP = 0,
         GIBBON_IMPORT_RELATION,
         GIBBON_IMPORT_RANK,
-        GIBBON_IMPORT_MATCH
+        GIBBON_IMPORT_MATCH,
+        GIBBON_IMPORT_SAVED
 };
 
 typedef struct _GibbonImportTask GibbonImportTask;
@@ -152,6 +154,8 @@ static void gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *sel
 static void gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
                                                  GibbonRank *rank);
 static void gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
+                                                  const GibbonMatch *match);
+static void gibbon_java_fibs_importer_save_saved (GibbonJavaFIBSImporter *self,
                                                   const GibbonMatch *match);
 
 static void gibbon_import_yyerror (GError **error, const gchar *msg);
@@ -963,6 +967,10 @@ gibbon_java_fibs_importer_poll (GibbonJavaFIBSImporter *self)
                         gibbon_java_fibs_importer_save_match (
                                         self, task->payload);
                         break;
+                case GIBBON_IMPORT_SAVED:
+                        gibbon_java_fibs_importer_save_saved (
+                                        self, task->payload);
+                        break;
                 }
                 gibbon_import_task_free (task);
                 if (++done > 0)
@@ -1442,6 +1450,9 @@ gibbon_import_task_free (GibbonImportTask *task)
                 case GIBBON_IMPORT_MATCH:
                         g_object_unref (task->payload);
                         break;
+                case GIBBON_IMPORT_SAVED:
+                        g_object_unref (task->payload);
+                        break;
                 }
         }
 }
@@ -1582,6 +1593,7 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         guint factor;
         gint i;
         gchar *location;
+        enum GibbonImportTaskType type = GIBBON_IMPORT_SAVED;
 
         if (files[0]) {
                 file_index = 0;
@@ -1683,6 +1695,7 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                 timestamp += (ptr[15 + i] - '0') * factor;
                                 factor /= 10;
                         }
+                        type = GIBBON_IMPORT_MATCH;
                 }
         }
 
@@ -1739,7 +1752,7 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
          * timestamp may involve a whole lot of guess work, we better
          * omit that.
          */
-        gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_MATCH, match);
+        gibbon_java_fibs_importer_add_task (self, type, match);
 }
 
 static void
@@ -1749,6 +1762,7 @@ gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
         gchar *formatted;
         GDateTime *dt;
         gint64 timestamp;
+        GError *error = NULL;
 
         g_mutex_lock (&self->priv->mutex);
         ++self->priv->finished;
@@ -1780,11 +1794,121 @@ gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
         }
         g_free (formatted);
 
+        if (!gibbon_archive_save_match (self->priv->archive, match,
+                                        &error)) {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s",
+                                                  error->message);
+                g_error_free (error);
 
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->error_matches;
+                g_mutex_unlock (&self->priv->mutex);
+        } else {
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->finished_matches;
+                g_mutex_unlock (&self->priv->mutex);
+        }
+}
+
+static void
+gibbon_java_fibs_importer_save_saved (GibbonJavaFIBSImporter *self,
+                                      const GibbonMatch *match)
+{
+        gchar *formatted;
+        GDateTime *dt;
+        gint64 timestamp;
+        gchar *saved_name;
+        GFile *file;
+        GError *error = NULL;
+        GFileOutputStream *fout;
+        GOutputStream *out;
+        GibbonMatchWriter *writer;
 
         g_mutex_lock (&self->priv->mutex);
-        ++self->priv->finished_matches;
+        ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
+
+        timestamp = gibbon_match_get_start_time (match);
+        dt = g_date_time_new_from_unix_local (timestamp / 1000000);
+        formatted = g_date_time_format (dt, "%c");
+        g_date_time_unref (dt);
+
+        if (gibbon_match_get_length > 0) {
+                gibbon_java_fibs_importer_output (
+                                self, NULL,
+                                _("Storing saved %llu-point match between %s"
+                                  " and %s from %s in database.\n"),
+                                  (unsigned long long)
+                                  gibbon_match_get_length (match),
+                                  gibbon_match_get_white (match),
+                                  gibbon_match_get_black (match),
+                                  formatted);
+        } else {
+                gibbon_java_fibs_importer_output (
+                                self, NULL,
+                                _("Storing saved unlimited match between %s"
+                                  " and %s from %s in database.\n"),
+                                  gibbon_match_get_white (match),
+                                  gibbon_match_get_black (match),
+                                  formatted);
+        }
+        g_free (formatted);
+
+        /*
+         * If the saved match already exists, keep it untouched.
+         */
+        saved_name = gibbon_archive_get_saved_name (
+                        self->priv->archive,
+                        gibbon_match_get_white (match),
+                        gibbon_match_get_black (match),
+                        NULL);
+        if (saved_name && g_file_test (saved_name, G_FILE_TEST_EXISTS)) {
+                gibbon_java_fibs_importer_output (self, NULL,
+                                                  "%s",
+                                                  _("Skipped (already"
+                                                    " exists).\n"));
+                g_free (saved_name);
+                return;
+        }
+
+        file = g_file_new_for_path (saved_name);
+        g_free (saved_name);
+
+        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
+                               NULL, &error);
+        g_object_unref (file);
+        if (!fout) {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s",
+                                                  error->message);
+                g_error_free (error);
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->error_matches;
+                g_mutex_unlock (&self->priv->mutex);
+                return;
+        }
+
+        out = G_OUTPUT_STREAM (fout);
+
+        writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
+        if (gibbon_match_writer_write_stream (writer, out, match, &error)) {
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->finished_matches;
+                g_mutex_unlock (&self->priv->mutex);
+        } else {
+                gibbon_java_fibs_importer_output (self, "error",
+                                                  "%s",
+                                                  error->message);
+                g_error_free (error);
+
+                g_mutex_lock (&self->priv->mutex);
+                ++self->priv->error_matches;
+                g_mutex_unlock (&self->priv->mutex);
+        }
+
+        g_object_unref (writer);
+        g_object_unref (out);
 }
 
 static void

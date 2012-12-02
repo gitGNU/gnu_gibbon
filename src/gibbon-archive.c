@@ -960,13 +960,8 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
         gibbon_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
 
         start = gibbon_match_get_start_time (match);
-        if (start == G_MININT64) {
-                g_set_error_literal (error,
-                                     GIBBON_ERROR,
-                                     -1,
-                                     _("No start time in match file!"));
-                return FALSE;
-        }
+        if (start == G_MININT64)
+                start = g_get_real_time ();
         dt = g_date_time_new_from_unix_local (start / 1000000);
         if (!dt) {
                 g_set_error (error,
@@ -1025,6 +1020,105 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
         g_object_unref (src);
         g_object_unref (dest);
         g_free (path);
+
+        return result;
+}
+
+gboolean
+gibbon_archive_save_match (const GibbonArchive *self,
+                           const GibbonMatch *match,
+                           GError **error)
+{
+        gchar *year;
+        gchar month[3];
+        gchar day[3];
+        guint64 start;
+        GDateTime *dt;
+        gint y, m, d;
+        gchar *directory;
+        gint mode;
+        const gchar *opponent;
+        gchar *filename;
+        gchar *path;
+        gboolean result;
+        GibbonMatchWriter *writer;
+        GFile *file = NULL;
+        GFileOutputStream *fout;
+        GOutputStream *out;
+
+        gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
+
+        start = gibbon_match_get_start_time (match);
+        if (start == G_MININT64)
+                start = g_get_real_time ();
+        dt = g_date_time_new_from_unix_local (start / 1000000);
+        if (!dt) {
+                g_set_error (error,
+                             GIBBON_ERROR,
+                             -1,
+                             _("Match start time `%lld' out of range!"),
+                             (long long) start);
+                return FALSE;
+        }
+        g_date_time_get_ymd (dt, &y, &m, &d);
+        g_date_time_unref (dt);
+        year = g_strdup_printf ("%4d", y);
+        month[0] = '0' + m / 10;
+        month[1] = '0' + m % 10;
+        month[2] = 0;
+        day[0] = '0' + d / 10;
+        day[1] = '0' + d % 10;
+        day[2] = 0;
+
+        directory = g_build_filename (self->priv->session_directory,
+                                      year, month, day, NULL);
+        g_free (year);
+
+#ifdef G_OS_WIN32
+        mode = S_IRWXU;
+#else
+        mode = S_IRWXU | (S_IRWXG & ~S_IWGRP) | (S_IRWXO & ~S_IWOTH);
+#endif
+        if (0 != g_mkdir_with_parents (directory, mode)) {
+                g_set_error (error,
+                             GIBBON_ERROR,
+                             -1,
+                             _("Failed to create directory `%s': %s!"),
+                               directory,
+                               strerror (errno));
+                return FALSE;
+        }
+
+        opponent = gibbon_match_get_black (match);
+        if (start < 0)
+                filename = g_strdup_printf ("-%016llx-%s.gmd",
+                                            (unsigned long long) -start,
+                                            opponent);
+        else
+                filename = g_strdup_printf ("%016llx-%s.gmd",
+                                            (unsigned long long) start,
+                                            opponent);
+        path = g_build_filename (directory, filename, NULL);
+        g_free (directory);
+        g_free (filename);
+
+        file = g_file_new_for_path (path);
+        g_free (path);
+
+        fout = g_file_replace (file, NULL, FALSE, G_FILE_COPY_OVERWRITE,
+                               NULL, error);
+        g_object_unref (file);
+        if (!fout)
+                return FALSE;
+
+        out = G_OUTPUT_STREAM (fout);
+
+        writer = GIBBON_MATCH_WRITER (gibbon_gmd_writer_new ());
+        result = gibbon_match_writer_write_stream (writer, out, match, error);
+
+        g_object_unref (writer);
+        g_object_unref (out);
 
         return result;
 }
