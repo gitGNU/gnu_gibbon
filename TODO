@@ -104,3 +104,4 @@
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - Implement Patti's new admin tell command.
+- Make sure that parsing an empty file results in an error.
