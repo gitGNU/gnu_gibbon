@@ -1057,3 +1057,17 @@ gibbon_match_get_start_time (const GibbonMatch *self)
 
         return gibbon_game_get_nth_timestamp (game, 0);
 }
+
+void
+gibbon_match_set_start_time (GibbonMatch *self, gint64 timestamp)
+{
+        GibbonGame *game;
+
+        g_return_if_fail (GIBBON_IS_MATCH (self));
+
+        game = gibbon_match_get_nth_game (self, 0);
+        if (!game)
+                return;
+
+        gibbon_game_set_start_time (game, timestamp);
+}

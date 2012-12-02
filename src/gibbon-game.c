@@ -856,6 +856,13 @@ gibbon_game_get_nth_timestamp (const GibbonGame *self, gint n)
                 return G_MININT64;
 }
 
+void
+gibbon_game_set_start_time (GibbonGame *self, gint64 timestamp)
+{
+        if (self->priv->snapshots)
+                self->priv->snapshots->timestamp = timestamp;
+}
+
 static const GibbonGameSnapshot *
 gibbon_game_get_nth_snapshot (const GibbonGame *self, gint n)
 {

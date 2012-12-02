@@ -1709,6 +1709,8 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
         if (timestamp == G_MININT64)
                 timestamp = g_get_real_time ();
 
+        gibbon_match_set_start_time (match, timestamp);
+
         gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_MATCH, match);
 }
 

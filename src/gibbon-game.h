@@ -124,5 +124,6 @@ gsize gibbon_game_get_num_actions (const GibbonGame *self);
 void gibbon_game_set_white (GibbonGame *self, const gchar *white);
 void gibbon_game_set_black (GibbonGame *self, const gchar *black);
 void gibbon_game_set_match_length (GibbonGame *self, gsize length);
+void gibbon_game_set_start_time (GibbonGame *self, gint64 timestamp);
 
 #endif

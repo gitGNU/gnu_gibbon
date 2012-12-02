@@ -150,5 +150,6 @@ gboolean gibbon_match_get_missing_actions (const GibbonMatch *self,
                                            const GibbonPosition *target,
                                            GSList **result);
 gint64 gibbon_match_get_start_time (const GibbonMatch *self);
+void gibbon_match_set_start_time (GibbonMatch *self, gint64 timestamp);
 
 #endif
