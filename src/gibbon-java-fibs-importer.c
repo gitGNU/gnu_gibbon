@@ -155,7 +155,7 @@ static void gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *sel
 static void gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
                                                  GibbonRank *rank);
 static void gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
-                                                  GibbonRank *match);
+                                                  const GibbonMatch *match);
 
 static void gibbon_import_yyerror (GError **error, const gchar *msg);
 static void gibbon_import_task_free (GibbonImportTask *task);
@@ -1620,6 +1620,13 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                                           error->message);
                         g_error_free (error);
                         error = NULL;
+                } else if (!gibbon_match_get_current_game (match)) {
+                        gibbon_java_fibs_importer_output (self, "error",
+                                                          _("Empty or"
+                                                            " incomplete match"
+                                                            "file!\n"));
+                        g_object_unref (match);
+                        match = NULL;
                 }
                 g_free (filename);
                 g_object_unref (reader);
@@ -1646,6 +1653,13 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
                                                           error->message);
                         g_error_free (error);
                         error = NULL;
+                } else if (!gibbon_match_get_current_game (match)) {
+                        gibbon_java_fibs_importer_output (self, "error",
+                                                          _("Empty or"
+                                                            " incomplete match"
+                                                            "file!\n"));
+                        g_object_unref (match);
+                        match = NULL;
                 }
                 g_free (filename);
                 g_object_unref (reader);
@@ -1748,17 +1762,46 @@ gibbon_java_fibs_importer_match (GibbonJavaFIBSImporter *self,
          * timestamp may involve a whole lot of guess work, we better
          * omit that.
          */
-
         gibbon_java_fibs_importer_add_task (self, GIBBON_IMPORT_MATCH, match);
 }
 
 static void
 gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
-                                      GibbonRank *match)
+                                      const GibbonMatch *match)
 {
+        gchar *formatted;
+        GDateTime *dt;
+        gint64 timestamp;
+
         g_mutex_lock (&self->priv->mutex);
         ++self->priv->finished;
         g_mutex_unlock (&self->priv->mutex);
+
+        timestamp = gibbon_match_get_start_time (match);
+        dt = g_date_time_new_from_unix_local (timestamp / 1000000);
+        formatted = g_date_time_format (dt, "%c");
+        g_date_time_unref (dt);
+
+        if (gibbon_match_get_length > 0) {
+                gibbon_java_fibs_importer_output (
+                                self, NULL,
+                                _("Storing %llu-point match between %s and %s"
+                                  " from %s in database.\n"),
+                                  (unsigned long long)
+                                  gibbon_match_get_length (match),
+                                  gibbon_match_get_white (match),
+                                  gibbon_match_get_black (match),
+                                  formatted);
+        } else {
+                gibbon_java_fibs_importer_output (
+                                self, NULL,
+                                _("Storing unlimited match between %s and %s"
+                                  " from %s in database.\n"),
+                                  gibbon_match_get_white (match),
+                                  gibbon_match_get_black (match),
+                                  formatted);
+        }
+        g_free (formatted);
 
 
 
