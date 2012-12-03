@@ -123,6 +123,7 @@ gchar *gibbon_archive_get_saved_name (const GibbonArchive *self,
                                       const gchar *player1,
                                       const gchar *player2,
                                       GError **error);
+const gchar *gibbon_archive_get_servers_directory (const GibbonArchive *self);
 gboolean gibbon_archive_archive_match_file (const GibbonArchive *self,
                                             const GibbonMatch *match,
                                             const gchar *match_file,

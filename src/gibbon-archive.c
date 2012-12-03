@@ -936,6 +936,14 @@ gibbon_archive_get_saved_name (const GibbonArchive *self,
         return path;
 }
 
+const gchar *
+gibbon_archive_get_servers_directory (const GibbonArchive *self)
+{
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), NULL);
+
+        return self->priv->servers_directory;
+}
+
 gboolean
 gibbon_archive_archive_match_file (const GibbonArchive *self,
                                    const GibbonMatch *match,
