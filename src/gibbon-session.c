@@ -2972,6 +2972,7 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
+                g_object_unref (settings);
                 if (mail && *mail) {
                         gibbon_connection_queue_command (self->priv->connection,
                                                          FALSE,
