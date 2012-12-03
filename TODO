@@ -103,5 +103,5 @@
   get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
-- Implement Patti's new admin tell command.
+- Implement Patti's new admin tell command ("alert", CLIP 20).
 - Make sure that parsing an empty file results in an error.
