@@ -800,6 +800,16 @@ gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
         GibbonMatchLoader *loader;
         GibbonMatch *match;
         GError *error = NULL;
+        const gchar *servers_directory;
+        GSettings *settings;
+        GVariant *variant;
+        gchar *host, *login;
+        guint16 port;
+        gchar *buf;
+        gchar *server_path;
+        gchar *year_path;
+        GDateTime *dt;
+        gint i, year;
 
         dialog = gtk_file_chooser_dialog_new (_("Open File"),
                                               GTK_WINDOW (self->priv->window),
@@ -837,6 +847,45 @@ gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter)
         gtk_file_filter_set_name (filter, _("All files"));
         gtk_file_filter_add_pattern (filter, "*");
         gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        host = g_settings_get_string (settings, GIBBON_PREFS_SERVER_HOST);
+        variant = g_settings_get_value (settings, GIBBON_PREFS_SERVER_PORT);
+        login = g_settings_get_string (settings, GIBBON_PREFS_SERVER_LOGIN);
+        dt = g_date_time_new_now_local ();
+
+        if (host && variant && login && dt) {
+                port = g_variant_get_uint16 (variant);
+                servers_directory = gibbon_archive_get_servers_directory (
+                                self->priv->archive);
+                server_path = g_build_filename (servers_directory,
+                                                host, NULL);
+                if (port != 4321) {
+                        buf = g_strdup_printf ("%s_%u", server_path, port);
+                        g_free (server_path);
+                        server_path = buf;
+                }
+
+                year = g_date_time_get_year (dt);
+                for (i = 0; i < 3; ++i) {
+                        buf = g_strdup_printf ("%04d", year - i);
+                        year_path = g_build_filename (server_path, login,
+                                                      buf, NULL);
+                        g_free (buf);
+                        gtk_file_chooser_add_shortcut_folder (
+                                        GTK_FILE_CHOOSER (dialog), year_path,
+                                        NULL);
+                        g_free (year_path);
+                }
+                g_free (server_path);
+        }
+
+        g_free (host);
+        if (variant)
+                g_variant_unref (variant);
+        g_free (login);
+        if (dt)
+                g_date_time_unref (dt);
 
         if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
                 filename = gtk_file_chooser_get_filename (
