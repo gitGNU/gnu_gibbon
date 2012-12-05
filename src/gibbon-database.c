@@ -2024,7 +2024,7 @@ gibbon_database_save_match (GibbonDatabase *self,
 
         if (gibbon_database_sql_select_row (self, self->priv->select_match_id,
                                             NULL,
-                                            GIBBON_DATABASE_SELECT_RELATION_ID,
+                                            GIBBON_DATABASE_SELECT_MATCH_ID,
                                             G_TYPE_UINT, &match_id,
                                             -1)) {
                 return TRUE;
@@ -2062,6 +2062,7 @@ gibbon_database_save_match (GibbonDatabase *self,
                                           G_TYPE_UINT, &match_length,
                                           G_TYPE_UINT, &score1,
                                           G_TYPE_UINT, &score2,
+                                          G_TYPE_UINT64, &date_time,
                                           -1)) {
                 gibbon_database_rollback (self, NULL);
                 return FALSE;
