@@ -105,3 +105,7 @@
   Post-Crawford.
 - Implement Patti's new admin tell command ("alert", CLIP 20).
 - Make sure that parsing an empty file results in an error.
+- Saved matches must not be imported into the database.  They are a distinct
+  import task and must only be stored in the file system.
+- Upon connect, archive our own saved matches that the server does not know
+  about.
