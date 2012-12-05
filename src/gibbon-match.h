@@ -151,5 +151,7 @@ gboolean gibbon_match_get_missing_actions (const GibbonMatch *self,
                                            GSList **result);
 gint64 gibbon_match_get_start_time (const GibbonMatch *self);
 void gibbon_match_set_start_time (GibbonMatch *self, gint64 timestamp);
+guint gibbon_match_get_white_score (const GibbonMatch *self);
+guint gibbon_match_get_black_score (const GibbonMatch *self);
 
 #endif

@@ -1058,6 +1058,32 @@ gibbon_match_get_start_time (const GibbonMatch *self)
         return gibbon_game_get_nth_timestamp (game, 0);
 }
 
+guint
+gibbon_match_get_white_score (const GibbonMatch *self)
+{
+        const GibbonPosition *position;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        position = gibbon_match_get_current_position (self);
+        g_return_val_if_fail (position != NULL, 0);
+
+        return position->scores[0];
+}
+
+guint
+gibbon_match_get_black_score (const GibbonMatch *self)
+{
+        const GibbonPosition *position;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self), 0);
+
+        position = gibbon_match_get_current_position (self);
+        g_return_val_if_fail (position != NULL, 0);
+
+        return position->scores[1];
+}
+
 void
 gibbon_match_set_start_time (GibbonMatch *self, gint64 timestamp)
 {
