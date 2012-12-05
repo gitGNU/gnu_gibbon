@@ -134,5 +134,12 @@ gboolean gibbon_database_exists_relation (GibbonDatabase *self,
                                           const gchar *hostname, guint port,
                                           const gchar *login, const gchar *group,
                                           const gchar *peer);
+gboolean gibbon_database_save_match (GibbonDatabase *self,
+                                     const gchar *hostname, guint port,
+                                     const gchar *player1, const gchar *player2,
+                                     guint match_length,
+                                     guint score1, guint score2,
+                                     guint64 date_time,
+                                     GError **error);
 
 #endif

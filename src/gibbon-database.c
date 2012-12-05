@@ -162,6 +162,21 @@ struct _GibbonDatabasePrivate {
         "             AND u1.name = ? AND u1.server_id = s1.id))"
         sqlite3_stmt *create_relation;
 
+#define GIBBON_DATABASE_SELECT_MATCH_ID                                 \
+        "SELECT m.id FROM matches m, users u1, users u2, servers s"     \
+        " WHERE m.user_id1 = u1.id AND m.user_id2 = u2.id"              \
+        "   AND u1.server_id = s.id AND u2.server_id = s.id"            \
+        "   AND s.name = ? AND s.port = ?"                              \
+        "   AND u1.name = ? AND u2.name = ?"                            \
+        "   AND m.date_time = ?"
+        sqlite3_stmt *select_match_id;
+
+#define GIBBON_DATABASE_CREATE_MATCH                                    \
+        "INSERT INTO matches (user_id1, user_id2, match_length, "       \
+        "                     score1, score2, date_time)"               \
+        " VALUES (?, ?, ?, ?, ?, ?)"
+        sqlite3_stmt *create_match;
+
         gboolean in_transaction;
 
         gchar *path;
@@ -235,6 +250,8 @@ gibbon_database_init (GibbonDatabase *self)
         self->priv->create_group = NULL;
         self->priv->select_relation_id = NULL;
         self->priv->create_relation = NULL;
+        self->priv->select_match_id = NULL;
+        self->priv->create_match = NULL;
 
         self->priv->in_transaction = FALSE;
 
@@ -293,6 +310,10 @@ gibbon_database_finalize (GObject *object)
                         sqlite3_finalize (self->priv->select_relation_id);
                 if (self->priv->create_relation)
                         sqlite3_finalize (self->priv->create_relation);
+                if (self->priv->select_match_id)
+                        sqlite3_finalize (self->priv->select_match_id);
+                if (self->priv->create_match)
+                        sqlite3_finalize (self->priv->create_match);
                 sqlite3_close (self->priv->dbh);
         }
 
@@ -616,6 +637,12 @@ gibbon_database_initialize (GibbonDatabase *self, GError **error)
             && !gibbon_database_sql_do (self, error,
                                         "DROP TABLE IF EXISTS matches"))
                 return FALSE;
+        /*
+         * Theoretically we would want a constraint user_id1 != user_id2.
+         * But when importing matches from JavaFIBS exactly that case
+         * can happen if a user has multiple accounts.  We therefore
+         * allow that.
+         */
         if (!gibbon_database_sql_do (self, error,
                                      "CREATE TABLE IF NOT EXISTS matches ("
                                      "  id INTEGER PRIMARY KEY,"
@@ -1958,4 +1985,90 @@ gibbon_database_exists_relation (GibbonDatabase *self,
         }
 
         return FALSE;
+}
+
+gboolean
+gibbon_database_save_match (GibbonDatabase *self,
+                            const gchar *hostname, guint port,
+                            const gchar *white, const gchar *black,
+                            guint match_length,
+                            guint score1, guint score2,
+                            guint64 date_time,
+                            GError **error)
+{
+        guint match_id;
+        guint user1, user2;
+
+        gibbon_return_val_if_fail (GIBBON_IS_DATABASE (self), FALSE, error);
+        gibbon_return_val_if_fail (hostname != NULL, FALSE, error);
+        gibbon_return_val_if_fail (port > 0, FALSE, error);
+        gibbon_return_val_if_fail (white != NULL, FALSE, error);
+        gibbon_return_val_if_fail (black != NULL, FALSE, error);
+
+        if (!gibbon_database_get_statement (self, &self->priv->select_match_id,
+                                            GIBBON_DATABASE_SELECT_MATCH_ID,
+                                            error)) {
+                return FALSE;
+        }
+
+        if (!gibbon_database_sql_execute (self, self->priv->select_match_id,
+                                          error,
+                                          GIBBON_DATABASE_SELECT_MATCH_ID,
+                                          G_TYPE_STRING, &hostname,
+                                          G_TYPE_UINT, &port,
+                                          G_TYPE_STRING, &white,
+                                          G_TYPE_STRING, &black,
+                                          G_TYPE_INT64, &date_time,
+                                          -1))
+                return FALSE;
+
+        if (gibbon_database_sql_select_row (self, self->priv->select_match_id,
+                                            NULL,
+                                            GIBBON_DATABASE_SELECT_RELATION_ID,
+                                            G_TYPE_UINT, &match_id,
+                                            -1)) {
+                return TRUE;
+        }
+
+        /*
+         * We must create a new match record.  Since we must make sure that
+         * both opponents already exist in the database we first retrieve
+         * their user ids.
+         */
+        user1 = gibbon_database_get_user_id (self, hostname, port, white,
+                                             error);
+        if (!user1)
+                return FALSE;
+
+        user2 = gibbon_database_get_user_id (self, hostname, port, black,
+                                             error);
+        if (!user2)
+                return FALSE;
+
+        if (!gibbon_database_get_statement (self, &self->priv->create_match,
+                                            GIBBON_DATABASE_CREATE_MATCH,
+                                            error)) {
+                return FALSE;
+        }
+
+        if (!gibbon_database_begin_transaction (self, error))
+                return FALSE;
+
+        if (!gibbon_database_sql_execute (self, self->priv->create_match,
+                                          error,
+                                          GIBBON_DATABASE_CREATE_MATCH,
+                                          G_TYPE_UINT, &user1,
+                                          G_TYPE_UINT, &user2,
+                                          G_TYPE_UINT, &match_length,
+                                          G_TYPE_UINT, &score1,
+                                          G_TYPE_UINT, &score2,
+                                          -1)) {
+                gibbon_database_rollback (self, NULL);
+                return FALSE;
+        }
+
+        if (!gibbon_database_commit (self, error))
+                return FALSE;
+
+        return TRUE;
 }

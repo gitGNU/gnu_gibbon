@@ -129,6 +129,9 @@ gboolean gibbon_archive_archive_match_file (const GibbonArchive *self,
                                             const gchar *match_file,
                                             GError **error);
 gboolean gibbon_archive_save_match (const GibbonArchive *self,
+                                    const gchar *hostname,
+                                    guint port,
+                                    const gchar *login,
                                     const GibbonMatch *match,
                                     GError **error);
 gboolean gibbon_archive_create_group (const GibbonArchive *self,

@@ -1794,7 +1794,9 @@ gibbon_java_fibs_importer_save_match (GibbonJavaFIBSImporter *self,
         }
         g_free (formatted);
 
-        if (!gibbon_archive_save_match (self->priv->archive, match,
+        if (!gibbon_archive_save_match (self->priv->archive,
+                                        self->priv->server, self->priv->port,
+                                        self->priv->user, match,
                                         &error)) {
                 gibbon_java_fibs_importer_output (self, "error",
                                                   "%s",

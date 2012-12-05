@@ -1034,6 +1034,8 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
 
 gboolean
 gibbon_archive_save_match (const GibbonArchive *self,
+                           const gchar *hostname, guint port,
+                           const gchar *login,
                            const GibbonMatch *match,
                            GError **error)
 {
@@ -1045,7 +1047,6 @@ gibbon_archive_save_match (const GibbonArchive *self,
         gint y, m, d;
         gchar *directory;
         gint mode;
-        const gchar *opponent;
         gchar *filename;
         gchar *path;
         gboolean result;
@@ -1053,6 +1054,10 @@ gibbon_archive_save_match (const GibbonArchive *self,
         GFile *file = NULL;
         GFileOutputStream *fout;
         GOutputStream *out;
+        gsize match_length;
+        const gchar *white;
+        const gchar *black;
+        guint score1, score2;
 
         gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
         gibbon_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
@@ -1079,7 +1084,10 @@ gibbon_archive_save_match (const GibbonArchive *self,
         day[1] = '0' + d % 10;
         day[2] = 0;
 
-        directory = g_build_filename (self->priv->session_directory,
+        white = gibbon_match_get_white (match);
+        black = gibbon_match_get_black (match);
+
+        directory = g_build_filename (self->priv->server_directory, white,
                                       year, month, day, NULL);
         g_free (year);
 
@@ -1098,15 +1106,14 @@ gibbon_archive_save_match (const GibbonArchive *self,
                 return FALSE;
         }
 
-        opponent = gibbon_match_get_black (match);
         if (start < 0)
                 filename = g_strdup_printf ("-%016llx-%s.gmd",
                                             (unsigned long long) -start,
-                                            opponent);
+                                            black);
         else
                 filename = g_strdup_printf ("%016llx-%s.gmd",
                                             (unsigned long long) start,
-                                            opponent);
+                                            black);
         path = g_build_filename (directory, filename, NULL);
         g_free (directory);
         g_free (filename);
@@ -1128,7 +1135,20 @@ gibbon_archive_save_match (const GibbonArchive *self,
         g_object_unref (writer);
         g_object_unref (out);
 
-        return result;
+        if (!result)
+                return FALSE;
+
+        match_length = gibbon_match_get_length (match);
+        score1 = gibbon_match_get_white_score (match);
+        score2 = gibbon_match_get_black_score (match);
+
+        if (!gibbon_database_save_match (self->priv->db, hostname, port,
+                                         white, black, start,
+                                         match_length, score1, score2,
+                                         error))
+                return FALSE;
+
+        return TRUE;
 }
 
 gboolean
