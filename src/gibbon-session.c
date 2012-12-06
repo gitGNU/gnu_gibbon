@@ -1255,7 +1255,7 @@ gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
 
         fibs_message = gibbon_fibs_message_new (sender, message);
 
-        headline = g_strdup_printf (_("Message from administrator `%s'"),
+        headline = g_strdup_printf (_("Message from administrator `%s':"),
                                     fibs_message->sender);
         gibbon_app_display_info (self->priv->app, headline, "%s",
                                  gibbon_fibs_message_formatted (fibs_message));
