@@ -382,6 +382,17 @@ static struct test_case test_clip19 = {
                 }
 };
 
+static struct test_case test_clip20 = {
+                "12 gflohr Mad world!",
+                {
+                                { GIBBON_CLIP_TYPE_UINT, "20" },
+                                { GIBBON_CLIP_TYPE_NAME, "gflohr" },
+                                { GIBBON_CLIP_TYPE_STRING,
+                                                "Mad world!" },
+                                { GIBBON_CLIP_TYPE_END, NULL }
+                }
+};
+
 static struct test_case test_error00 = {
                 "** Funny new message!",
                 {
@@ -2036,6 +2047,7 @@ static struct test_case *test_cases[] = {
                 &test_clip17,
                 &test_clip18,
                 &test_clip19,
+                &test_clip20,
 
                 &test_error00,
                 &test_error01,
