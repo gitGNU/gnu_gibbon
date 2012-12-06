@@ -340,6 +340,8 @@ gibbon_clip_parse (const gchar *line)
         else if (first[0] == '1' && first[1] >= '0' && first[1] <= '9'
                  && !first[2])
                 success = gibbon_clip_parse_clip (line, tokens, &result);
+        else if (first[0] == '2' && first[1] == '0' && !first[2])
+                success = gibbon_clip_parse_clip (line, tokens, &result);
 
         if (!success) {
                 gibbon_clip_free_result (result);
@@ -750,6 +752,7 @@ gibbon_clip_parse_clip (const gchar *line, gchar **tokens,
                 case GIBBON_CLIP_CODE_KIBITZES:
                 case GIBBON_CLIP_CODE_WHISPERS:
                 case GIBBON_CLIP_CODE_YOU_SAY:
+                case GIBBON_CLIP_CODE_ALERTS:
                         return gibbon_clip_parse_clip_somebody_something (line,
                                                                           tokens,
                                                                           result);

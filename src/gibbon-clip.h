@@ -48,6 +48,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_YOU_SHOUT = 17,
                         GIBBON_CLIP_CODE_YOU_WHISPER = 18,
                         GIBBON_CLIP_CODE_YOU_KIBITZ = 19,
+                        GIBBON_CLIP_CODE_ALERTS = 20,
 
                         /* Error messages.  */
                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE = 100,
