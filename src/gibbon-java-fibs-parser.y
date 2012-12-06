@@ -128,12 +128,12 @@ static guint gibbon_java_fibs_parser_encode_movement (guint64 from, guint64 to);
 %%
 
 java_fibs_file
-	/*
-	 * Yes, sometimes JavaFIBS match files are empty.  We still treat
-	 * that as success on the parser side, and let the application
-	 * handle the error.
-	 */
 	: /* empty */
+		{
+			yyerror (scanner,
+			         _("Empty file!"));
+			YYABORT;
+	        }
         | { yydebug = 0; } 
           PROLOG match  { gibbon_java_fibs_reader_free_names (reader); }
         ;
