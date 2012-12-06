@@ -103,6 +103,7 @@
   get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
-- Implement Patti's new admin tell command ("alert", CLIP 20).
+- Upon reception of administrator alerts (CLIP 20), bring the chat to
+  the front and give it the focus.
 - Upon connect, archive our own saved matches that the server does not know
   about.
