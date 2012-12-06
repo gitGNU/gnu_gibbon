@@ -383,7 +383,7 @@ static struct test_case test_clip19 = {
 };
 
 static struct test_case test_clip20 = {
-                "12 gflohr Mad world!",
+                "20 gflohr Mad world!",
                 {
                                 { GIBBON_CLIP_TYPE_UINT, "20" },
                                 { GIBBON_CLIP_TYPE_NAME, "gflohr" },
