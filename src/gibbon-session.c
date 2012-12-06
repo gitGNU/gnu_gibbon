@@ -84,6 +84,7 @@ static gint gibbon_session_clip_message_delivered (GibbonSession *self,
 static gint gibbon_session_clip_message_saved (GibbonSession *self,
                                                GSList *iter);
 static gint gibbon_session_clip_says (GibbonSession *self, GSList *iter);
+static gint gibbon_session_clip_alerts (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_shouts (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_whispers (GibbonSession *self, GSList *iter);
 static gint gibbon_session_clip_kibitzes (GibbonSession *self, GSList *iter);
@@ -543,6 +544,9 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_YOU_KIBITZ:
                 retval = gibbon_session_clip_you_kibitz (self, iter);
+                break;
+        case GIBBON_CLIP_CODE_ALERTS:
+                retval = gibbon_session_clip_alerts (self, iter);
                 break;
         case GIBBON_CLIP_CODE_UNKNOWN_MESSAGE:
                 retval = gibbon_session_handle_unknown_message (self, iter);
@@ -1225,6 +1229,40 @@ gibbon_session_clip_says (GibbonSession *self, GSList *iter)
         gibbon_fibs_message_free (fibs_message);
 
         return GIBBON_CLIP_CODE_SAYS;
+}
+
+static gint
+gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
+{
+        GibbonFIBSMessage *fibs_message;
+        GibbonConnection *connection;
+        const gchar *message;
+        const gchar *sender;
+        gchar *headline;
+
+        if (GIBBON_CLIP_CODE_SAYS != gibbon_session_clip_says (self, iter))
+                return -1;
+
+        connection = gibbon_app_get_connection (self->priv->app);
+        if (!connection)
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &sender))
+                return -1;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
+                return -1;
+
+        fibs_message = gibbon_fibs_message_new (sender, message);
+
+        headline = g_strdup_printf (_("Message from administrator `%s'"),
+                                    fibs_message->sender);
+        gibbon_app_display_info (self->priv->app, headline, "%s",
+                                 gibbon_fibs_message_formatted (fibs_message));
+        g_free (headline);
+        gibbon_fibs_message_free (fibs_message);
+
+        return GIBBON_CLIP_CODE_ALERTS;
 }
 
 static gint
