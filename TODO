@@ -103,5 +103,3 @@
   get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
-- Upon reception of administrator alerts (CLIP 20), bring the chat to
-  the front and give it the focus.

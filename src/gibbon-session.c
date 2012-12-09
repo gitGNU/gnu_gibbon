@@ -1263,6 +1263,8 @@ gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
         g_free (headline);
         gibbon_fibs_message_free (fibs_message);
 
+        gibbon_app_activate_player_list (self->priv->app);
+
         return GIBBON_CLIP_CODE_ALERTS;
 }
 

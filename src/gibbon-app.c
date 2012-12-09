@@ -462,6 +462,19 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
                                            num_games - 1);
 }
 
+void
+gibbon_app_activate_player_list (const GibbonApp *self)
+{
+        GObject *obj;
+
+        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_APP (self));
+
+        obj = gibbon_app_find_object (self, "notebook-info-area",
+                                      GTK_TYPE_NOTEBOOK);
+        gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 0);
+}
+
 static GtkBuilder *
 gibbon_app_get_builder(GibbonApp *self, const gchar *path)
 {
