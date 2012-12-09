@@ -129,8 +129,6 @@ static void gibbon_archive_on_resolve (GObject *resolver, GAsyncResult *result,
 static void gibbon_archive_on_resolve_ip (GObject *resolver,
                                           GAsyncResult *result,
                                           gpointer data);
-static gchar *gibbon_archive_get_saved_directory (const GibbonArchive *self,
-                                                  GError **error);
 
 static void 
 gibbon_archive_init (GibbonArchive *self)
@@ -884,7 +882,7 @@ gibbon_archive_get_accounts (const GibbonArchive *self,
         return accounts;
 }
 
-static gchar *
+gchar *
 gibbon_archive_get_saved_directory (const GibbonArchive *self, GError **error)
 {
         gchar *saved_directory;
@@ -1375,8 +1373,7 @@ gibbon_archive_get_saved (const GibbonArchive *self,
 
                 saved_info = gibbon_saved_info_new (opponent, match_length,
                                                     white_score, black_score);
-                g_hash_table_insert (table, g_strdup (opponent), saved_info);
-                g_printerr ("Key for %s: %p\n", opponent, saved_info);
+                g_hash_table_insert (table, g_strdup (filename), saved_info);
                 g_object_unref (match);
         }
 
