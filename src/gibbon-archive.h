@@ -145,5 +145,9 @@ gboolean gibbon_archive_create_relation (const GibbonArchive *self,
                                          const gchar *group,
                                          const gchar *peer,
                                          GError **error);
+GHashTable *gibbon_archive_get_saved (const GibbonArchive *self,
+                                      const gchar *hostname,
+                                      guint port,
+                                      const gchar *login);
 
 #endif

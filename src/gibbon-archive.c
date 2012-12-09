@@ -76,7 +76,9 @@
 #include "gibbon-util.h"
 #include "gibbon-country.h"
 #include "gibbon-match.h"
+#include "gibbon-gmd-reader.h"
 #include "gibbon-gmd-writer.h"
+#include "gibbon-saved-info.h"
 
 /* We can safely cache that across sessions.  */
 static GHashTable *gibbon_archive_countries = NULL;
@@ -1279,4 +1281,103 @@ gibbon_archive_create_relation (const GibbonArchive *self,
                 return FALSE;
 
         return TRUE;
+}
+
+GHashTable *
+gibbon_archive_get_saved (const GibbonArchive *self,
+                          const gchar *hostname,
+                          guint port,
+                          const gchar *login)
+{
+        GHashTable *table;
+        gchar *saved_directory;
+        GDir *dir;
+        const gchar *filename;
+        gsize login_length;
+        const gchar *first_percent;
+        gchar *path;
+        GibbonMatchReader *reader;
+        GibbonMatch *match;
+        const gchar *white;
+        const gchar *black;
+        const gchar *opponent;
+        gsize match_length;
+        guint white_score, black_score;
+        GibbonSavedInfo *saved_info;
+
+        /*
+         * The function never fails.  Even in case of errors we still return
+         * an empty hash table.
+         */
+        table = g_hash_table_new_full (g_str_hash,
+                                       g_str_equal,
+                                       g_free,
+                                       (GDestroyNotify) gibbon_saved_info_free);
+        g_return_val_if_fail (GIBBON_IS_ARCHIVE (self), table);
+        g_return_val_if_fail (hostname != NULL, table);
+        g_return_val_if_fail (port != 0, table);
+        g_return_val_if_fail (login != NULL, table);
+
+        saved_directory = gibbon_archive_get_saved_directory (self, NULL);
+        if (!saved_directory)
+                return table;
+
+        dir = g_dir_open (saved_directory, 0, NULL);
+        if (!dir) {
+                g_free (saved_directory);
+                return table;
+        }
+
+        login_length = strlen (login);
+        while ((filename = g_dir_read_name (dir)) != NULL) {
+                first_percent = index (filename, '%');
+                if (!first_percent)
+                        continue;
+
+                if ((strncmp (filename, login, login_length)
+                     || filename[login_length] != '%')
+                     && (strncmp (first_percent + 1, login, login_length)
+                         || g_strcmp0 (first_percent + 1 + login_length,
+                                        ".gmd")))
+                        continue;
+
+                reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (NULL,
+                                                                     NULL));
+                path = g_build_filename (saved_directory, filename, NULL);
+                match = gibbon_match_reader_parse (reader, path);
+                g_object_unref (reader);
+                if (!match || !gibbon_match_get_current_game (match)) {
+                        g_remove (path);
+                        g_free (path);
+                        continue;
+                }
+                g_free (path);
+
+                white = gibbon_match_get_white (match);
+                black = gibbon_match_get_black (match);
+                match_length = gibbon_match_get_length (match);
+                white_score = gibbon_match_get_white_score (match);
+                black_score = gibbon_match_get_black_score (match);
+
+                if (!g_strcmp0 (white, login)) {
+                        opponent = black;
+                } else if (!g_strcmp0 (black, login)) {
+                        opponent = white;
+                } else {
+                        /*
+                         * FIXME! Remove matches that are older than N weeks!
+                         */
+                        g_object_unref (match);
+                        continue;
+                }
+
+                saved_info = gibbon_saved_info_new (opponent, match_length,
+                                                    white_score, black_score);
+                g_hash_table_insert (table, g_strdup (opponent), saved_info);
+                g_object_unref (match);
+        }
+
+        g_free (saved_directory);
+
+        return table;
 }
