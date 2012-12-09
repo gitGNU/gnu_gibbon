@@ -1356,13 +1356,15 @@ gibbon_archive_get_saved (const GibbonArchive *self,
                 white = gibbon_match_get_white (match);
                 black = gibbon_match_get_black (match);
                 match_length = gibbon_match_get_length (match);
-                white_score = gibbon_match_get_white_score (match);
-                black_score = gibbon_match_get_black_score (match);
 
                 if (!g_strcmp0 (white, login)) {
                         opponent = black;
+                        white_score = gibbon_match_get_white_score (match);
+                        black_score = gibbon_match_get_black_score (match);
                 } else if (!g_strcmp0 (black, login)) {
                         opponent = white;
+                        white_score = gibbon_match_get_black_score (match);
+                        black_score = gibbon_match_get_white_score (match);
                 } else {
                         /*
                          * FIXME! Remove matches that are older than N weeks!
@@ -1374,6 +1376,7 @@ gibbon_archive_get_saved (const GibbonArchive *self,
                 saved_info = gibbon_saved_info_new (opponent, match_length,
                                                     white_score, black_score);
                 g_hash_table_insert (table, g_strdup (opponent), saved_info);
+                g_printerr ("Key for %s: %p\n", opponent, saved_info);
                 g_object_unref (match);
         }
 
