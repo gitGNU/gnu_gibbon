@@ -71,3 +71,25 @@ gibbon_saved_info_new (const gchar *opponent, guint match_length,
 
         return self;
 }
+
+gboolean
+gibbon_saved_info_equals (const GibbonSavedInfo *self,
+                          const GibbonSavedInfo *other)
+{
+        if (!self && other)
+                return FALSE;
+        if (self && !other)
+                return FALSE;
+        if (!self && !other)
+                return TRUE;
+        if (self->match_length != other->match_length)
+                return FALSE;
+        if (self->scores[0] != other->scores[0])
+                return FALSE;
+        if (self->scores[1] != other->scores[1])
+                return FALSE;
+        if (g_strcmp0 (self->opponent, other->opponent))
+                return FALSE;
+
+        return TRUE;
+}

@@ -44,5 +44,7 @@ GibbonSavedInfo *gibbon_saved_info_new (const gchar *opponent,
                                         guint match_length,
                                         guint score1, guint score2);
 void gibbon_saved_info_free (GibbonSavedInfo *self);
+gboolean gibbon_saved_info_equals (const GibbonSavedInfo *self,
+                                   const GibbonSavedInfo *other);
 
 #endif
