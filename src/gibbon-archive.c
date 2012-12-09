@@ -963,8 +963,21 @@ gibbon_archive_archive_match_file (const GibbonArchive *self,
         gchar *path;
         GFile *src, *dest;
         gboolean result;
+        GibbonMatchReader *reader;
 
         gibbon_return_val_if_fail (GIBBON_IS_ARCHIVE (self), FALSE, error);
+
+        if (!match) {
+                reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (NULL,
+                                                                     NULL));
+                match = gibbon_match_reader_parse (reader, match_file);
+                if (!match) {
+                        /* Ignore errors.  */
+                        (void) g_remove (match_file);
+                        return TRUE;
+                }
+        }
+
         gibbon_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE, error);
 
         start = gibbon_match_get_start_time (match);
