@@ -167,6 +167,7 @@ static void gibbon_session_start_playing (GibbonSession *self,
                                           guint length,
                                           gboolean resumption);
 static void gibbon_session_stop_playing (GibbonSession *self);
+static void gibbon_session_clean_saved (const GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -3020,10 +3021,16 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                         self->priv->expect_address = FALSE;
                 }
                 g_free (mail);
-        } else {
+        } else if (!self->priv->saved_finished) {
                 self->priv->saved_finished = TRUE;
+                gibbon_session_clean_saved (self);
+                return;
+        } else {
                 return;
         }
+
+        if (saved_finished && !self->priv->saved_finished)
+                gibbon_session_clean_saved (self);
 
         self->priv->saved_finished = saved_finished;
 
@@ -3771,4 +3778,45 @@ gibbon_session_stop_playing (GibbonSession *self)
                 g_object_unref (self->priv->tracker);
                 self->priv->tracker = NULL;
         }
+}
+
+static void
+gibbon_session_clean_saved (const GibbonSession *self)
+{
+        const GibbonConnection *connection = self->priv->connection;
+        const gchar *hostname = gibbon_connection_get_hostname (connection);
+        guint port = gibbon_connection_get_port (connection);
+        const gchar *login = gibbon_connection_get_login (connection);
+        GHashTable *saved = gibbon_archive_get_saved (self->priv->archive,
+                                                      hostname, port, login);
+        GHashTableIter iter;
+        const gchar *saved_name;
+        const GibbonSavedInfo *local_record;
+        const GibbonSavedInfo *remote_record;
+        gchar *path;
+        gchar *saved_directory;
+
+        saved_directory = gibbon_archive_get_saved_directory (
+                        self->priv->archive, NULL);
+        if (!saved_directory)
+                return;
+
+        g_hash_table_iter_init (&iter, saved);
+        while (g_hash_table_iter_next (&iter, (gpointer) &saved_name,
+                                       (gpointer) &local_record)) {
+                remote_record = g_hash_table_lookup (self->priv->saved_games,
+                                                     local_record->opponent);
+                if (gibbon_saved_info_equals (local_record, remote_record))
+                        continue;
+                /*
+                 * Locally saved match is stale.  Archive it.
+                 */
+                path = g_build_filename (saved_directory, saved_name, NULL);
+                (void) gibbon_archive_archive_match_file (self->priv->archive,
+                                                          NULL, path, NULL);
+                g_free (path);
+        }
+
+        g_hash_table_destroy (saved);
+        g_free (saved_directory);
 }
