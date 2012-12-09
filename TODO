@@ -105,5 +105,3 @@
   Post-Crawford.
 - Upon reception of administrator alerts (CLIP 20), bring the chat to
   the front and give it the focus.
-- Upon connect, archive our own saved matches that the server does not know
-  about.
