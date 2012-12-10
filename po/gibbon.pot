@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-14 18:25+0200\n"
+"POT-Creation-Date: 2012-12-10 21:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,47 +150,47 @@ msgid "Chat"
 msgstr ""
 
 #: ../data/gibbon.ui.h:2
-msgid "Invite"
+msgid "Import From JavaFIBS"
 msgstr ""
 
 #: ../data/gibbon.ui.h:3
+msgid "Invite"
+msgstr ""
+
+#: ../data/gibbon.ui.h:4
 msgid "Look"
 msgstr ""
 
-#: ../data/gibbon.ui.h:4 ../src/gibbon-session.c:2794
+#: ../data/gibbon.ui.h:5 ../src/gibbon-session.c:2857
 msgid "Watch"
 msgstr ""
 
-#: ../data/gibbon.ui.h:5
+#: ../data/gibbon.ui.h:6
 msgid "_File"
 msgstr ""
 
-#: ../data/gibbon.ui.h:6
-msgid "Opens matches previously played or currently saved for you on a server."
-msgstr ""
-
 #: ../data/gibbon.ui.h:7
-msgid "Open archived match ..."
-msgstr ""
-
-#: ../data/gibbon.ui.h:8
 msgid "_Options"
 msgstr ""
 
-#: ../data/gibbon.ui.h:9
+#: ../data/gibbon.ui.h:8
 msgid "Account"
 msgstr ""
 
-#: ../data/gibbon.ui.h:10
+#: ../data/gibbon.ui.h:9
 msgid "FIBS options"
 msgstr ""
 
-#: ../data/gibbon.ui.h:11
+#: ../data/gibbon.ui.h:10
 msgid "_Extras"
 msgstr ""
 
+#: ../data/gibbon.ui.h:11
+msgid "Imports matches and settings from JavaFIBS, another client for FIBS."
+msgstr ""
+
 #: ../data/gibbon.ui.h:12
-msgid "_Import from FIBS ..."
+msgid "_Import from JavaFIBS ..."
 msgstr ""
 
 #: ../data/gibbon.ui.h:13
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: ../data/gibbon.ui.h:15 ../src/gibbon-app.c:1807
+#: ../data/gibbon.ui.h:15 ../src/gibbon-app.c:1883
 msgid "Ready"
 msgstr ""
 
@@ -221,7 +221,7 @@ msgstr ""
 msgid "Undo"
 msgstr ""
 
-#: ../data/gibbon.ui.h:20 ../src/gibbon-app.c:1118
+#: ../data/gibbon.ui.h:20 ../src/gibbon-app.c:1190
 msgid "Resign"
 msgstr ""
 
@@ -995,182 +995,178 @@ msgstr ""
 msgid "Proper response: %s"
 msgstr ""
 
-#: ../src/gibbon-app.c:293
+#: ../src/gibbon-app.c:296
 msgid "Disconnected"
 msgstr ""
 
-#: ../src/gibbon-app.c:468
+#: ../src/gibbon-app.c:486
 msgid "Do you need to pass the option `--data-dir'?\n"
 msgstr ""
 
-#: ../src/gibbon-app.c:531
+#: ../src/gibbon-app.c:549
 msgid "Fatal error"
 msgstr ""
 
-#: ../src/gibbon-app.c:538
+#: ../src/gibbon-app.c:556
 #, c-format
 msgid "Fatal error: %s"
 msgstr ""
 
-#: ../src/gibbon-app.c:598
+#: ../src/gibbon-app.c:616
 #, c-format
 msgid "Object `%s' not found in UI definition!"
 msgstr ""
 
-#: ../src/gibbon-app.c:606
+#: ../src/gibbon-app.c:624
 #, c-format
 msgid "Object `%s' is not a GObject!"
 msgstr ""
 
-#: ../src/gibbon-app.c:615
+#: ../src/gibbon-app.c:633
 #, c-format
 msgid "Object `%s' is not of type `%s' but `%s'!"
 msgstr ""
 
-#: ../src/gibbon-app.c:794
+#: ../src/gibbon-app.c:827
 msgid "Open File"
 msgstr ""
 
-#: ../src/gibbon-app.c:803
+#: ../src/gibbon-app.c:836
 msgid "GNUBG files (*.sgf)"
 msgstr ""
 
-#: ../src/gibbon-app.c:809
+#: ../src/gibbon-app.c:842
 msgid "Gibbon files (*.gmd)"
 msgstr ""
 
-#: ../src/gibbon-app.c:815
+#: ../src/gibbon-app.c:848
 msgid "JavaFIBS files (*.match)"
 msgstr ""
 
-#: ../src/gibbon-app.c:821
+#: ../src/gibbon-app.c:854
 msgid "JellyFish files (*.match)"
 msgstr ""
 
-#: ../src/gibbon-app.c:827
+#: ../src/gibbon-app.c:860
 msgid "All files"
 msgstr ""
 
-#: ../src/gibbon-app.c:871
+#: ../src/gibbon-app.c:943
 msgid "You cannot register an account while you are connected to a server!"
 msgstr ""
 
-#: ../src/gibbon-app.c:985
+#: ../src/gibbon-app.c:1057
 msgid "No hostname given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:996
+#: ../src/gibbon-app.c:1068
 msgid "No user name given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1005 ../src/gibbon-register-dialog.c:309
+#: ../src/gibbon-app.c:1077 ../src/gibbon-register-dialog.c:309
 #, c-format
 msgid "The login `%s' is reserved!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1019 ../src/gibbon-register-dialog.c:390
+#: ../src/gibbon-app.c:1091 ../src/gibbon-register-dialog.c:390
 msgid "Invalid port number! In doubt try the default port number 4321."
 msgstr ""
 
-#: ../src/gibbon-app.c:1031
+#: ../src/gibbon-app.c:1103
 msgid "No password given!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1131
+#: ../src/gibbon-app.c:1203
 #, c-format
 msgid "_normal (one point)"
 msgid_plural "_normal (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1140
+#: ../src/gibbon-app.c:1212
 #, c-format
 msgid "_gammon (one point)"
 msgid_plural "_gammon (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1149
+#: ../src/gibbon-app.c:1221
 #, c-format
 msgid "_backgammon (one point)"
 msgid_plural "_backgammon (%d points)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-app.c:1191
+#: ../src/gibbon-app.c:1263
 msgid ""
 "Leaving in the middle of a game is normally considered bad behavior.  Do you "
 "really want to leave?"
 msgstr ""
 
-#: ../src/gibbon-app.c:1485
+#: ../src/gibbon-app.c:1557
 #, c-format
 msgid "Connecting with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1501
+#: ../src/gibbon-app.c:1573
 #, c-format
 msgid "Connected with %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1520
+#: ../src/gibbon-app.c:1593
 #, c-format
 msgid "Logged in as %s on %s port %d."
 msgstr ""
 
-#: ../src/gibbon-app.c:1580
+#: ../src/gibbon-app.c:1656
 #, c-format
 msgid "Error loading image `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-app.c:1811
+#: ../src/gibbon-app.c:1887
 msgid "Click to set yourself busy."
 msgstr ""
 
-#: ../src/gibbon-app.c:1824
+#: ../src/gibbon-app.c:1900
 msgid "Busy"
 msgstr ""
 
-#: ../src/gibbon-app.c:1828
+#: ../src/gibbon-app.c:1904
 msgid "Click to set yourself ready to play."
 msgstr ""
 
-#: ../src/gibbon-archive.c:212
+#: ../src/gibbon-archive.c:208
 msgid "Cannot determine user data directory!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:231 ../src/gibbon-archive.c:381
+#: ../src/gibbon-archive.c:227 ../src/gibbon-archive.c:379
 #, c-format
 msgid "Failed to create server directory `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:255
-msgid ""
-"You can import settings and saved games from your old client. Check the menu "
-"`Extras' to see if your old client software is supported!"
-msgstr ""
-
-#: ../src/gibbon-archive.c:302 ../src/gibbon-archive.c:887
-#: ../src/gibbon-archive.c:984
+#: ../src/gibbon-archive.c:289 ../src/gibbon-archive.c:905
+#: ../src/gibbon-archive.c:1018 ../src/gibbon-archive.c:1116
 #, c-format
 msgid "Failed to create directory `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:354 ../src/gibbon-match-tracker.c:453
-msgid "Internal Error"
-msgstr ""
-
-#: ../src/gibbon-archive.c:356
+#: ../src/gibbon-archive.c:350
 msgid "Error retrieving current time!"
 msgstr ""
 
-#: ../src/gibbon-archive.c:949
-msgid "No start time in match file!"
-msgstr ""
-
-#: ../src/gibbon-archive.c:957
+#: ../src/gibbon-archive.c:991 ../src/gibbon-archive.c:1086
 #, c-format
 msgid "Match start time `%lld' out of range!"
+msgstr ""
+
+#: ../src/gibbon-archive.c:1261 ../src/gibbon-archive.c:1271
+#, c-format
+msgid "Error writing `%s': %s"
+msgstr ""
+
+#: ../src/gibbon-archive.c:1281
+#, c-format
+msgid "Error closing `%s': %s"
 msgstr ""
 
 #: ../src/gibbon.c:46
@@ -1275,26 +1271,26 @@ msgstr ""
 msgid "Really close?"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2111
+#: ../src/gibbon-clip.c:2122
 msgid "You cannot play two matches at once!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2196 ../src/gibbon-clip.c:2405
-#: ../src/gibbon-clip.c:2428
+#: ../src/gibbon-clip.c:2207 ../src/gibbon-clip.c:2416
+#: ../src/gibbon-clip.c:2439
 #, c-format
 msgid "Player `%s' is already playing with someone else!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2217
+#: ../src/gibbon-clip.c:2228
 #, c-format
 msgid "Player `%s' is not logged in!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2301
+#: ../src/gibbon-clip.c:2312
 msgid "Your saved match was corrupted on server.  Please start a new one!"
 msgstr ""
 
-#: ../src/gibbon-clip.c:2448
+#: ../src/gibbon-clip.c:2459
 #, c-format
 msgid "Player `%s' is now refusing matches!"
 msgstr ""
@@ -2754,18 +2750,18 @@ msgstr ""
 msgid "Invalid IP address"
 msgstr ""
 
-#: ../src/gibbon-database.c:267 ../src/gibbon-database.c:275
+#: ../src/gibbon-database.c:378 ../src/gibbon-database.c:385
 #, c-format
-msgid "Error opening database `%s'!"
+msgid "Error opening database `%s':"
 msgstr ""
 
-#: ../src/gibbon-database.c:290
+#: ../src/gibbon-database.c:399
 msgid ""
 "Your sqlite installation seems to be crippled.  It does not support foreign "
 "key constraints.  This is not a bug in Gibbon!"
 msgstr ""
 
-#: ../src/gibbon-database.c:371
+#: ../src/gibbon-database.c:484
 msgid ""
 "Your database was created with a more recent version of Gibbon.  With a "
 "downgrade you will not lose data but you must repopulate your database which "
@@ -2775,7 +2771,7 @@ msgid ""
 "Do you want to downgrade the database?"
 msgstr ""
 
-#: ../src/gibbon-database.c:382
+#: ../src/gibbon-database.c:495
 msgid ""
 "Your database was created with an older version of Gibbon.  With the upgrade "
 "you will not lose data but you must repopulate your database which can be a "
@@ -2784,122 +2780,130 @@ msgid ""
 "Proceed anyway?"
 msgstr ""
 
-#: ../src/gibbon-database.c:568
-msgid "You should now repopulate your database (menu `Options')."
+#: ../src/gibbon-database.c:523
+msgid "Cancelled on user request!"
 msgstr ""
 
-#: ../src/gibbon-database.c:610 ../src/gibbon-database.c:639
-#: ../src/gibbon-database.c:667
-msgid "Internal error"
+#: ../src/gibbon-database.c:776
+#, c-format
+msgid "Internal error: Nested transaction!"
 msgstr ""
 
-#: ../src/gibbon-database.c:611
-msgid "Nested transaction."
+#: ../src/gibbon-database.c:807
+#, c-format
+msgid "Internal error: Commit outside transaction!"
 msgstr ""
 
-#: ../src/gibbon-database.c:641
-msgid "Commit outside transaction."
+#: ../src/gibbon-database.c:837
+#, c-format
+msgid "Internal error: Rollback outside transaction!"
 msgstr ""
 
-#: ../src/gibbon-database.c:669
-msgid "Rollback outside transaction."
-msgstr ""
-
-#: ../src/gibbon-database.c:703
+#: ../src/gibbon-database.c:875
 msgid "Database failure"
 msgstr ""
 
-#: ../src/gibbon-database.c:821 ../src/gibbon-database.c:892
+#: ../src/gibbon-database.c:993 ../src/gibbon-database.c:1064
 #, c-format
 msgid "Unknown data type %d!"
 msgstr ""
 
-#: ../src/gibbon-game.c:185
+#: ../src/gibbon-database.c:1838
+#, c-format
+msgid "Database error: freshly created group `%s' has vanished!"
+msgstr ""
+
+#: ../src/gibbon-database.c:1937
+#, c-format
+msgid "Database error: freshly added user `%s' in group `%s' has vanished!"
+msgstr ""
+
+#: ../src/gibbon-game.c:186
 #, c-format
 msgid "A reply to the resignation is required!"
 msgstr ""
 
-#: ../src/gibbon-game.c:195
+#: ../src/gibbon-game.c:196
 #, c-format
 msgid "A reply to the double is required!"
 msgstr ""
 
-#: ../src/gibbon-game.c:287 ../src/gibbon-game.c:370 ../src/gibbon-game.c:451
-#: ../src/gibbon-game.c:517 ../src/gibbon-game.c:560 ../src/gibbon-game.c:600
-#: ../src/gibbon-game.c:635 ../src/gibbon-game.c:683
+#: ../src/gibbon-game.c:288 ../src/gibbon-game.c:371 ../src/gibbon-game.c:452
+#: ../src/gibbon-game.c:518 ../src/gibbon-game.c:561 ../src/gibbon-game.c:601
+#: ../src/gibbon-game.c:636 ../src/gibbon-game.c:684
 msgid "Game is already over!"
 msgstr ""
 
-#: ../src/gibbon-game.c:303 ../src/gibbon-game.c:380 ../src/gibbon-game.c:467
+#: ../src/gibbon-game.c:304 ../src/gibbon-game.c:381 ../src/gibbon-game.c:468
 msgid "This player is not on turn!"
 msgstr ""
 
-#: ../src/gibbon-game.c:312 ../src/gibbon-game.c:321
+#: ../src/gibbon-game.c:313 ../src/gibbon-game.c:322
 msgid "The dice have already been rolled!"
 msgstr ""
 
-#: ../src/gibbon-game.c:388
+#: ../src/gibbon-game.c:389
 msgid "Move without a roll!"
 msgstr ""
 
-#: ../src/gibbon-game.c:399
+#: ../src/gibbon-game.c:400
 msgid "Invalid move!"
 msgstr ""
 
-#: ../src/gibbon-game.c:407
+#: ../src/gibbon-game.c:408
 #, c-format
 msgid "%d%d: %s has moved %s."
 msgstr ""
 
-#: ../src/gibbon-game.c:416
+#: ../src/gibbon-game.c:417
 #, c-format
 msgid "%d%d: %s cannot move!"
 msgstr ""
 
-#: ../src/gibbon-game.c:460
+#: ../src/gibbon-game.c:461
 msgid "Double after dice have been rolled!"
 msgstr ""
 
-#: ../src/gibbon-game.c:474
+#: ../src/gibbon-game.c:475
 msgid "Double during Crawford game!"
 msgstr ""
 
-#: ../src/gibbon-game.c:482
+#: ../src/gibbon-game.c:483
 msgid "Double not allowed!"
 msgstr ""
 
-#: ../src/gibbon-game.c:489 ../src/gibbon-game.c:493
+#: ../src/gibbon-game.c:490 ../src/gibbon-game.c:494
 #, c-format
 msgid "%s offers a double."
 msgstr ""
 
-#: ../src/gibbon-game.c:525 ../src/gibbon-game.c:568
+#: ../src/gibbon-game.c:526 ../src/gibbon-game.c:569
 msgid "Opponent did not double!"
 msgstr ""
 
-#: ../src/gibbon-game.c:533 ../src/gibbon-game.c:539
+#: ../src/gibbon-game.c:534 ../src/gibbon-game.c:540
 #, c-format
 msgid "%s refuses the cube."
 msgstr ""
 
-#: ../src/gibbon-game.c:607
+#: ../src/gibbon-game.c:608
 msgid "Resignation without a value!"
 msgstr ""
 
-#: ../src/gibbon-game.c:648
+#: ../src/gibbon-game.c:649
 msgid "Reject without resignation!"
 msgstr ""
 
-#: ../src/gibbon-game.c:661
+#: ../src/gibbon-game.c:662
 #, c-format
 msgid "%s rejects."
 msgstr ""
 
-#: ../src/gibbon-game.c:695
+#: ../src/gibbon-game.c:696
 msgid "Accept without resignation!"
 msgstr ""
 
-#: ../src/gibbon-game.c:705
+#: ../src/gibbon-game.c:706
 #, c-format
 msgid "%s resigns and gives up one point."
 msgid_plural "%s resigns and gives up %d points."
@@ -2921,7 +2925,7 @@ msgstr ""
 msgid "Whisper"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:187
+#: ../src/gibbon-geo-ip-updater.c:183
 #, c-format
 msgid ""
 "Your database used for locating other players geographically is more than "
@@ -2932,7 +2936,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:205
+#: ../src/gibbon-geo-ip-updater.c:201
 #, c-format
 msgid ""
 "The database used for locating other players geographically that was "
@@ -2945,42 +2949,42 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-geo-ip-updater.c:282
+#: ../src/gibbon-geo-ip-updater.c:278
 msgid ""
 "The information about other players' geographic location will not be "
 "accurate."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:305
+#: ../src/gibbon-geo-ip-updater.c:301
 msgid "Update Geo IP database"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:323
+#: ../src/gibbon-geo-ip-updater.c:319
 #, c-format
 msgid "Opening `%s' ..."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:366
+#: ../src/gibbon-geo-ip-updater.c:362
 #, c-format
 msgid "Cannot open `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:375
+#: ../src/gibbon-geo-ip-updater.c:371
 #, c-format
 msgid "Reading `%s'."
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:420
+#: ../src/gibbon-geo-ip-updater.c:416 ../src/gibbon-java-fibs-importer.c:491
 #, c-format
 msgid "Error reading `%s': %s!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:697
+#: ../src/gibbon-geo-ip-updater.c:693
 #, c-format
 msgid "%s: line %u: Parse error near `%s'!"
 msgstr ""
 
-#: ../src/gibbon-geo-ip-updater.c:703
+#: ../src/gibbon-geo-ip-updater.c:700
 #, c-format
 msgid "%s: line %u: Unexpected end of line!"
 msgstr ""
@@ -3027,12 +3031,12 @@ msgid "Error creating tokenizer: %s!"
 msgstr ""
 
 #: ../src/gibbon-gmd-reader.c:196 ../src/gibbon-java-fibs-reader.c:208
-#: ../src/gibbon-jelly-fish-reader.c:199 ../src/gibbon-sgf-reader.c:365
+#: ../src/gibbon-jelly-fish-reader.c:199 ../src/gibbon-sgf-reader.c:366
 msgid "[standard input]"
 msgstr ""
 
-#: ../src/gibbon-gmd-reader.c:524 ../src/gibbon-java-fibs-reader.c:504
-#: ../src/gibbon-jelly-fish-reader.c:482 ../src/gibbon-sgf-reader.c:335
+#: ../src/gibbon-gmd-reader.c:524 ../src/gibbon-java-fibs-reader.c:507
+#: ../src/gibbon-jelly-fish-reader.c:482 ../src/gibbon-sgf-reader.c:336
 msgid "No game in progress!"
 msgstr ""
 
@@ -3045,7 +3049,7 @@ msgid "Only positive number allowed for white's bar!"
 msgstr ""
 
 #: ../src/gibbon-gmd-reader.c:602
-msgid "Only negative number allowed for black's bar!"
+msgid "Only positive number allowed for black's bar!"
 msgstr ""
 
 #: ../src/gibbon-gmd-reader.c:652
@@ -3056,7 +3060,7 @@ msgstr ""
 msgid "Impossible position!"
 msgstr ""
 
-#: ../src/gibbon-gmd-writer.c:624
+#: ../src/gibbon-gmd-writer.c:625
 #, c-format
 msgid "Action %p is not supported.\n"
 msgstr ""
@@ -3151,6 +3155,227 @@ msgstr ""
 msgid "unknown"
 msgstr ""
 
+#: ../src/gibbon-java-fibs-importer.c:338
+msgid "Import from JavaFIBS"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:339
+msgid ""
+"In order to import your saved matches and settings from JavaFIBS you first "
+"have to select the JavaFIBS installation directory (that is the directory "
+"that contains the .jar file)."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:421
+msgid "System Error"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:422
+#, c-format
+msgid "Error creating new thread: %s!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:439
+msgid "Select JavaFIBS Directory"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:478
+msgid "Not a JavaFIBS Installation"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:479
+#, c-format
+msgid ""
+"The directory `%s' does not look like a JavaFIBS installation.  The file `"
+"%s' is missing."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:490
+msgid "Read Error"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:536
+#, c-format
+msgid "Error opening directory `%s': %s!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:567
+#, c-format
+msgid "%s on %s port %u"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:588
+#, c-format
+msgid "No user data found in `%s'!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:609
+msgid "Select Account"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:621
+msgid "Multiple accounts found.   Please select one identity:"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:688
+#: ../src/gibbon-java-fibs-importer.c:700
+#: ../src/gibbon-java-fibs-importer.c:718
+msgid "premature end of file"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:724
+msgid "no server name"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:741
+msgid "error converting hostname"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:836
+msgid "Collecting data."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1066
+msgid "Password recovered."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1066
+msgid "Password not recovered."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1069
+msgid "one rating record"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1070
+#, c-format
+msgid "%u rating records"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1074
+msgid "one friend"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1075
+#, c-format
+msgid "%u friends"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1079
+msgid "one villain"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1080
+#, c-format
+msgid "%u villains"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1085
+msgid "one match successfully imported."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1086
+#, c-format
+msgid "%u matches successfully imported."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1091
+msgid "one match had errors."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1092
+#, c-format
+msgid "%u matches had errors."
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1212
+#: ../src/gibbon-java-fibs-importer.c:1238
+#, c-format
+msgid "No group `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1218
+#: ../src/gibbon-java-fibs-importer.c:1304
+#, c-format
+msgid "Reading `%s'.\n"
+msgstr ""
+
+#.
+#. * TRANSLATORS: The first
+#. * placeholder is a filename,
+#. * the second an error
+#. * occurring for that file.
+#.
+#: ../src/gibbon-java-fibs-importer.c:1229
+#: ../src/gibbon-java-fibs-importer.c:1315
+#, c-format
+msgid "%s: %s!\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1299
+#: ../src/gibbon-java-fibs-importer.c:1324
+msgid "No saved ratings.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1483
+#, c-format
+msgid "Creating/checking group `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1511
+#, c-format
+msgid "Importing user `%s' into group `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1543
+#, c-format
+msgid "Timestamp %lld out of range!"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1551
+#, c-format
+msgid "Importing rating %.2f with experience %llu at %s.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1603
+#: ../src/gibbon-java-fibs-importer.c:1633
+#, c-format
+msgid "Parsing `%s'.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1617
+#: ../src/gibbon-java-fibs-importer.c:1647
+msgid "Empty or incomplete matchfile!\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1779
+#, c-format
+msgid "Storing %llu-point match between %s and %s from %s in database.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1789
+#, c-format
+msgid "Storing unlimited match between %s and %s from %s in database.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1842
+#, c-format
+msgid "Storing saved %llu-point match between %s and %s from %s in database.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1852
+#, c-format
+msgid "Storing saved unlimited match between %s and %s from %s in database.\n"
+msgstr ""
+
+#: ../src/gibbon-java-fibs-importer.c:1871
+msgid "Skipped (already exists).\n"
+msgstr ""
+
+#: gibbon-java-fibs-parser.y:134 ../src/gibbon-java-fibs-parser.y:134
+msgid "Empty file!"
+msgstr ""
+
 #: gibbon-java-fibs-parser.y:259 ../src/gibbon-java-fibs-parser.y:259
 #: gibbon-jelly-fish-parser.y:303 ../src/gibbon-jelly-fish-parser.y:303
 msgid "Start and end point are equal!"
@@ -3161,7 +3386,7 @@ msgstr ""
 msgid "Syntax error!"
 msgstr ""
 
-#: ../src/gibbon-match.c:209
+#: ../src/gibbon-match.c:204
 msgid "Match is already over!"
 msgstr ""
 
@@ -3250,24 +3475,29 @@ msgstr ""
 msgid "Premature end of input file!"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:94 ../src/gibbon-match-tracker.c:189
-#: ../src/gibbon-match-tracker.c:233 ../src/gibbon-match-tracker.c:312
-#: ../src/gibbon-match-tracker.c:322 ../src/gibbon-match-tracker.c:396
-#: ../src/gibbon-match-tracker.c:435 ../src/gibbon-match-tracker.c:476
+#: ../src/gibbon-match-tracker.c:96 ../src/gibbon-match-tracker.c:191
+#: ../src/gibbon-match-tracker.c:250 ../src/gibbon-match-tracker.c:331
+#: ../src/gibbon-match-tracker.c:348 ../src/gibbon-match-tracker.c:358
+#: ../src/gibbon-match-tracker.c:441 ../src/gibbon-match-tracker.c:485
+#: ../src/gibbon-match-tracker.c:526
 msgid "Write Error"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:95 ../src/gibbon-match-tracker.c:190
-#: ../src/gibbon-match-tracker.c:313 ../src/gibbon-match-tracker.c:323
-#: ../src/gibbon-match-tracker.c:397 ../src/gibbon-match-tracker.c:436
-#: ../src/gibbon-match-tracker.c:477
+#: ../src/gibbon-match-tracker.c:97 ../src/gibbon-match-tracker.c:192
+#: ../src/gibbon-match-tracker.c:332 ../src/gibbon-match-tracker.c:349
+#: ../src/gibbon-match-tracker.c:359 ../src/gibbon-match-tracker.c:442
+#: ../src/gibbon-match-tracker.c:486 ../src/gibbon-match-tracker.c:527
 #, c-format
 msgid "Error writing to `%s': %s!\n"
 msgstr ""
 
-#: ../src/gibbon-match-tracker.c:234
+#: ../src/gibbon-match-tracker.c:251
 #, c-format
 msgid "Cannot archive match `%s': %s\n"
+msgstr ""
+
+#: ../src/gibbon-match-tracker.c:503
+msgid "Internal Error"
 msgstr ""
 
 #: ../src/gibbon-move-list-view.c:178
@@ -3432,223 +3662,229 @@ msgstr ""
 msgid "Unable to write to logfile `%s': %s.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:738
+#: ../src/gibbon-session.c:404 ../src/gibbon-session.c:942
+msgid "Database Error"
+msgstr ""
+
+#: ../src/gibbon-session.c:753
 #, c-format
 msgid "Last login on %s from `%s'."
 msgstr ""
 
-#: ../src/gibbon-session.c:1077 ../src/gibbon-session.c:1085
+#: ../src/gibbon-session.c:1019 ../src/gibbon-session.c:3206
+msgid "Database Failure"
+msgstr ""
+
+#: ../src/gibbon-session.c:1106 ../src/gibbon-session.c:1114
 #, c-format
 msgid "%s logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1080 ../src/gibbon-session.c:1097
+#: ../src/gibbon-session.c:1109 ../src/gibbon-session.c:1126
 #, c-format
 msgid "Player `%s' logged out!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1128
+#: ../src/gibbon-session.c:1157
 #, c-format
 msgid "User `%s' left you a message at %s: %s"
 msgstr ""
 
-#: ../src/gibbon-session.c:1143
+#: ../src/gibbon-session.c:1172
 #, c-format
 msgid "Your message for user `%s' has been delivered!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1159
+#: ../src/gibbon-session.c:1188
 #, c-format
 msgid "User `%s' is not logged in.  Your message has been saved!"
 msgstr ""
 
-#: ../src/gibbon-session.c:1545
-msgid "Crawford game"
+#: ../src/gibbon-session.c:1259
+#, c-format
+msgid "Message from administrator `%s':"
 msgstr ""
 
-#.
-#. * If we are playing without the Crawford rule this is
-#. * not really accurate as we will display "Post Crawford" for
-#. * the game already, that would be the Crawford game.  But
-#. * after all, almost nobody plays without the Crawford rule
-#. * and we ignore that problem.
-#.
-#: ../src/gibbon-session.c:1555
+#: ../src/gibbon-session.c:1617
 msgid "Post-Crawford game"
 msgstr ""
 
-#: ../src/gibbon-session.c:1936
+#: ../src/gibbon-session.c:1619
+msgid "Crawford game"
+msgstr ""
+
+#: ../src/gibbon-session.c:1999
 #, c-format
 msgid "You roll %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:1947 ../src/gibbon-session.c:1955
+#: ../src/gibbon-session.c:2010 ../src/gibbon-session.c:2018
 #, c-format
 msgid "%s rolls %u and %u."
 msgstr ""
 
-#: ../src/gibbon-session.c:2031 ../src/gibbon-session.c:2044
+#: ../src/gibbon-session.c:2094 ../src/gibbon-session.c:2107
 #, c-format
 msgid "%d%d: %s moves %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2038
+#: ../src/gibbon-session.c:2101
 #, c-format
 msgid "%d%d: You move %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2071
+#: ../src/gibbon-session.c:2134
 #, c-format
 msgid "Error applying move %s to position.\n"
 msgstr ""
 
-#: ../src/gibbon-session.c:2424
+#: ../src/gibbon-session.c:2487
 #, c-format
 msgid "The email address `%s' was rejected by the server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2457
+#: ../src/gibbon-session.c:2520
 #, c-format
 msgid "Your opponent %s has left the match."
 msgstr ""
 
-#: ../src/gibbon-session.c:2464
+#: ../src/gibbon-session.c:2527
 msgid "Your opponent has left the game."
 msgstr ""
 
-#: ../src/gibbon-session.c:2465
+#: ../src/gibbon-session.c:2528
 #, c-format
 msgid ""
 "Your opponent %s has left the the match.  The server will save it for some "
 "time.  You can try to resume it at a later time by inviting %s."
 msgstr ""
 
-#: ../src/gibbon-session.c:2509 ../src/gibbon-session.c:2516
+#: ../src/gibbon-session.c:2572 ../src/gibbon-session.c:2579
 #, c-format
 msgid "%s cannot move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2520
+#: ../src/gibbon-session.c:2583
 msgid "You cannot move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2672 ../src/gibbon-session.c:2698
+#: ../src/gibbon-session.c:2735 ../src/gibbon-session.c:2761
 #, c-format
 msgid "%s has won the game and one point!"
 msgid_plural "%s has won the game and %d points!"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-session.c:2685
+#: ../src/gibbon-session.c:2748
 #, c-format
 msgid "You have won the game and one point!"
 msgid_plural "You have won the game and %d points!"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gibbon-session.c:2725
+#: ../src/gibbon-session.c:2788
 msgid "Message from server"
 msgstr ""
 
-#: ../src/gibbon-session.c:2791
+#: ../src/gibbon-session.c:2854
 msgid "Stop watching"
 msgstr ""
 
-#: ../src/gibbon-session.c:2891
+#: ../src/gibbon-session.c:2954
 msgid "Timeout during during registration!"
 msgstr ""
 
-#: ../src/gibbon-session.c:2990 ../src/gibbon-session.c:3038
+#: ../src/gibbon-session.c:3060 ../src/gibbon-session.c:3108
 msgid "Unexpected reply from server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3001 ../src/gibbon-session.c:3053
+#: ../src/gibbon-session.c:3071 ../src/gibbon-session.c:3123
 msgid "Registration failed.  Please see server console for details!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3097
+#: ../src/gibbon-session.c:3167
 #, c-format
 msgid ""
 "Please use another name.  The name `%s' is already used by someone else on "
 "that server!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3103
+#: ../src/gibbon-session.c:3173
 #, c-format
 msgid "Registration failure: %s!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3137
+#: ../src/gibbon-session.c:3213
 msgid "Registration successful!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3139
+#: ../src/gibbon-session.c:3215
 msgid ""
 "Please do not forget your password! It cannot be recovered.\n"
 "You have to connect to the server again to start playing."
 msgstr ""
 
-#: ../src/gibbon-session.c:3188
+#: ../src/gibbon-session.c:3264
 msgid "This will end your saved match!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3189
+#: ../src/gibbon-session.c:3265
 msgid ""
 "You still have a saved match of unlimited length with that player.  If you "
 "accept the invitation, your saved match will be terminated.\n"
 "Do you really want to accept the invitation?"
 msgstr ""
 
-#: ../src/gibbon-session.c:3213
+#: ../src/gibbon-session.c:3289
 msgid "Decline Invitation"
 msgstr ""
 
-#: ../src/gibbon-session.c:3217
+#: ../src/gibbon-session.c:3293
 msgid "Decline with message"
 msgstr ""
 
-#: ../src/gibbon-session.c:3219
+#: ../src/gibbon-session.c:3295
 msgid "Ignore"
 msgstr ""
 
-#: ../src/gibbon-session.c:3320
+#: ../src/gibbon-session.c:3396
 msgid "Illegal move!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3325
+#: ../src/gibbon-session.c:3401
 msgid "You moved too many checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3330
+#: ../src/gibbon-session.c:3406
 msgid ""
 "You cannot move to a point that is blocked by two or more of your opponent's "
 "checkers!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3336
+#: ../src/gibbon-session.c:3412
 msgid "You have to use both dice!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3340
+#: ../src/gibbon-session.c:3416
 msgid "You have to use the higher die!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3344
+#: ../src/gibbon-session.c:3420
 msgid ""
 "You have to use both dice if possible (hint: try to use the other die first)!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3350
+#: ../src/gibbon-session.c:3426
 msgid ""
 "You must move all checkers into your home board before you can start bearing-"
 "off!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3356
+#: ../src/gibbon-session.c:3432
 msgid "You must move your checkers from the higher points first!"
 msgstr ""
 
-#: ../src/gibbon-session.c:3361
+#: ../src/gibbon-session.c:3437
 msgid "You must bring in checkers from the bar first!"
 msgstr ""
 
@@ -3656,68 +3892,68 @@ msgstr ""
 msgid "SGF cannot be parsed from standard input."
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:563 ../src/gibbon-sgf-reader.c:581
-#: ../src/gibbon-sgf-reader.c:591
+#: ../src/gibbon-sgf-reader.c:564 ../src/gibbon-sgf-reader.c:582
+#: ../src/gibbon-sgf-reader.c:592
 #, c-format
 msgid "Invalid match length: %s!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:570
+#: ../src/gibbon-sgf-reader.c:571
 #, c-format
 msgid "Match length %llu out of range!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:969 ../src/gibbon-sgf-reader.c:1032
+#: ../src/gibbon-sgf-reader.c:970 ../src/gibbon-sgf-reader.c:1033
 #, c-format
 msgid "Unsupported version %s for DA property."
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1130 ../src/gibbon-sgf-reader.c:1144
+#: ../src/gibbon-sgf-reader.c:1131 ../src/gibbon-sgf-reader.c:1145
 #, c-format
 msgid "Unsupported move analysis type '%s'."
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1202 ../src/gibbon-sgf-reader.c:1415
+#: ../src/gibbon-sgf-reader.c:1203 ../src/gibbon-sgf-reader.c:1416
 #, c-format
 msgid "Unsupported version %s for A property."
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1307
+#: ../src/gibbon-sgf-reader.c:1308
 #, c-format
 msgid "Cubeful %llu-ply"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1310
+#: ../src/gibbon-sgf-reader.c:1311
 #, c-format
 msgid "Cubeless %llu-ply"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1486
+#: ../src/gibbon-sgf-reader.c:1487
 #, c-format
 msgid "Rollout (%llu trials)"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1539
+#: ../src/gibbon-sgf-reader.c:1540
 #, c-format
 msgid "SGF setup property `%s' only allowed in first game!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1547
+#: ../src/gibbon-sgf-reader.c:1548
 #, c-format
 msgid "SGF setup property `%s' only allowed before first regular game action!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1601
+#: ../src/gibbon-sgf-reader.c:1602
 #, c-format
 msgid "Invalid dice value `%lld' in SGF setup property DI!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1630
+#: ../src/gibbon-sgf-reader.c:1631
 #, c-format
 msgid "Invalid cube value `%lld' in SGF setup property CV!"
 msgstr ""
 
-#: ../src/gibbon-sgf-reader.c:1688
+#: ../src/gibbon-sgf-reader.c:1689
 #, c-format
 msgid "Invalid cube owner `%s' in SGF setup property %s!"
 msgstr ""
