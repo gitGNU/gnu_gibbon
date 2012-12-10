@@ -833,7 +833,7 @@ gibbon_java_fibs_importer_work (GibbonJavaFIBSImporter *self)
 
         g_mutex_lock (&self->priv->mutex);
         g_free (self->priv->status);
-        self->priv->status = g_strdup (_("Collecting data"));
+        self->priv->status = g_strdup (_("Collecting data."));
         g_mutex_unlock (&self->priv->mutex);
 
         /*
@@ -1082,14 +1082,14 @@ gibbon_java_fibs_importer_summary (GibbonJavaFIBSImporter *self)
                                     self->priv->finished_villains);
         matches = g_strdup_printf (
                         g_dngettext (GETTEXT_PACKAGE,
-                                     _("one match successfully imported"),
-                                     _("%u matches successfully imported"),
+                                     _("one match successfully imported."),
+                                     _("%u matches successfully imported."),
                                      self->priv->finished_matches),
                         self->priv->finished_matches);
         errors = g_strdup_printf (
                         g_dngettext (GETTEXT_PACKAGE,
-                                     _("one match had errors"),
-                                     _("%u matches had errors"),
+                                     _("one match had errors."),
+                                     _("%u matches had errors."),
                                      self->priv->error_matches),
                         self->priv->error_matches);
 
@@ -1508,7 +1508,7 @@ gibbon_java_fibs_importer_save_relation (GibbonJavaFIBSImporter *self,
         *user++ = 0;
 
         gibbon_java_fibs_importer_output (self, NULL,
-                                          _("Importing user `%s' into group'"
+                                          _("Importing user `%s' into group"
                                             " `%s'.\n"),
                                           user, group);
 
@@ -1540,8 +1540,8 @@ gibbon_java_fibs_importer_save_rank (GibbonJavaFIBSImporter *self,
         dt = g_date_time_new_from_unix_local (rank->timestamp / 1000);
         if (!dt) {
                 gibbon_java_fibs_importer_output (self, "error",
-                                                  _("Timestramp %lld out of"
-                                                    " rankge!"),
+                                                  _("Timestamp %lld out of"
+                                                    " range!"),
                                                   (long long) rank->timestamp);
                 return;
         }
