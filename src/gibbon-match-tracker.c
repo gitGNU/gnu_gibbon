@@ -338,6 +338,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 if (!gibbon_match_add_action (self->priv->match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
+                g_object_ref (action);
                 game = gibbon_match_get_current_game (self->priv->match);
                 if (!gibbon_gmd_writer_write_action (self->priv->writer,
                                                      self->priv->out,
