@@ -39,6 +39,9 @@
 typedef GibbonBoardIface GibbonBoardInterface;
 G_DEFINE_INTERFACE (GibbonBoard, gibbon_board, G_TYPE_OBJECT)
 
+static void gibbon_board_quick_bear_off_with_waste (GibbonBoard *self);
+static void gibbon_board_quick_bear_off_with_waste2 (GibbonBoard *self);
+
 static void
 gibbon_board_default_init (GibbonBoardInterface *iface)
 {
@@ -336,31 +339,41 @@ gibbon_board_process_quick_bear_off (GibbonBoard *self)
 
         if (pos->unused_dice[3]) {
                 die = abs (pos->unused_dice[3]);
-                if (pos->points[die - 1] < 4)
+                if (pos->points[die - 1] < 4) {
+                        gibbon_board_quick_bear_off_with_waste (self);
                         return;
+                }
                 new_pos = gibbon_position_copy (pos);
                 new_pos->points[die - 1] -= 4;
         } else if (pos->unused_dice[2]) {
                 die = abs (pos->unused_dice[2]);
-                if (pos->points[die - 1] < 3)
+                if (pos->points[die - 1] < 3) {
+                        gibbon_board_quick_bear_off_with_waste (self);
                         return;
+                }
                 new_pos = gibbon_position_copy (pos);
                 new_pos->points[die - 1] -= 3;
         } else if (pos->unused_dice[1]) {
                 die = abs (pos->unused_dice[1]);
-                if (pos->points[die - 1] < 1)
+                if (pos->points[die - 1] < 1) {
+                        gibbon_board_quick_bear_off_with_waste (self);
                         return;
+                }
                 die = abs (pos->unused_dice[0]);
-                if (pos->points[die - 1] < 1)
+                if (pos->points[die - 1] < 1) {
+                        gibbon_board_quick_bear_off_with_waste (self);
                         return;
+                }
                 new_pos = gibbon_position_copy (pos);
                 --new_pos->points[die - 1];
                 die = abs (pos->unused_dice[1]);
                 --new_pos->points[die - 1];
         } else if (pos->unused_dice[0]) {
                 die = abs (pos->unused_dice[0]);
-                if (pos->points[die - 1] < 1)
+                if (pos->points[die - 1] < 3) {
+                        gibbon_board_quick_bear_off_with_waste (self);
                         return;
+                }
                 new_pos = gibbon_position_copy (pos);
                 --new_pos->points[die - 1];
         } else {
@@ -373,4 +386,128 @@ gibbon_board_process_quick_bear_off (GibbonBoard *self)
         gibbon_board_set_position (self, new_pos);
         gibbon_position_free (new_pos);
         gibbon_board_redraw (self);
+}
+
+static void
+gibbon_board_quick_bear_off_with_waste (GibbonBoard *self)
+{
+        gint i;
+        const GibbonPosition *pos;
+        guint die;
+        guint num_checkers;
+        GibbonPosition *new_pos;
+
+        /*
+         * We have already checked that the player is allowed to bear-off,
+         * but there is no bear-off without waste.
+         */
+
+        pos = gibbon_board_get_position (self);
+
+        if (pos->unused_dice[3]) {
+                die = abs (pos->unused_dice[3]);
+                num_checkers = 4;
+        } else if (pos->unused_dice[2]) {
+                die = abs (pos->unused_dice[2]);
+                num_checkers = 3;
+        } else if (pos->unused_dice[1]
+                   && pos->unused_dice[0] == pos->unused_dice[1]) {
+                die = abs (pos->unused_dice[1]);
+                num_checkers = 2;
+        } else if (pos->unused_dice[0] && !pos->unused_dice[1]) {
+                die = abs (pos->unused_dice[0]);
+                num_checkers = 1;
+        } else {
+                /*
+                 * The difficult case.
+                 */
+                gibbon_board_quick_bear_off_with_waste2 (self);
+                return;
+        }
+
+        for (i = die; i < 6; ++i) {
+                if (pos->points[i] > 0)
+                        return;
+        }
+
+        new_pos = gibbon_position_copy (pos);
+
+        new_pos->unused_dice[0] = new_pos->unused_dice[1]
+            = new_pos->unused_dice[2] = new_pos->unused_dice[3] = 0;
+
+        for (i = die - 2; i > 0; --i) {
+                while (num_checkers && new_pos->points[i] > 0) {
+                        --num_checkers;
+                        --new_pos->points[i];
+                }
+        }
+
+        gibbon_board_set_position (self, new_pos);
+        gibbon_position_free (new_pos);
+        gibbon_board_redraw (self);
+}
+
+static void
+gibbon_board_quick_bear_off_with_waste2 (GibbonBoard *self)
+{
+        const GibbonPosition *pos = gibbon_board_get_position (self);
+        guint die;
+        GibbonPosition *new_pos;
+        gint i;
+
+        new_pos = gibbon_position_copy (pos);
+
+        new_pos->unused_dice[0] = abs (new_pos->unused_dice[0]);
+        new_pos->unused_dice[1] = abs (new_pos->unused_dice[1]);
+
+        die = new_pos->unused_dice[1];
+        if (new_pos->points[die - 1] > 0) {
+                new_pos->unused_dice[1] = 0;
+                --new_pos->points[die - 1];
+        }
+
+        die = new_pos->unused_dice[0];
+        if (new_pos->points[die - 1] > 0) {
+                new_pos->unused_dice[0] = new_pos->unused_dice[1];
+                --new_pos->points[die - 1];
+        }
+
+        if (new_pos->unused_dice[1]
+            && new_pos->unused_dice[1] > new_pos->unused_dice[0]) {
+                new_pos->unused_dice[2] = new_pos->unused_dice[0];
+                new_pos->unused_dice[0] = new_pos->unused_dice[1];
+                new_pos->unused_dice[1] = new_pos->unused_dice[2];
+                new_pos->unused_dice[2] = 0;
+        }
+
+        if (new_pos->unused_dice[1]) {
+                die = new_pos->unused_dice[1];
+                for (i = die - 2; i >= 0; --i) {
+                        while (new_pos->points[i] > 0) {
+                                --new_pos->points[i];
+                                new_pos->unused_dice[1] = 0;
+                                i = 0;
+                                break;
+                        }
+                }
+        }
+
+        die = abs (new_pos->unused_dice[0]);
+        for (i = die - 2; i >= 0; --i) {
+                while (new_pos->points[i] > 0) {
+                        --new_pos->points[i];
+                        new_pos->unused_dice[0] = 0;
+                        i = 0;
+                        break;
+                }
+        }
+
+        if ((!new_pos->unused_dice[0] && !new_pos->unused_dice[1])
+             || 15 == gibbon_position_get_borne_off (
+                            new_pos, GIBBON_POSITION_SIDE_WHITE)) {
+                gibbon_board_set_position (self, new_pos);
+                gibbon_board_redraw (self);
+        }
+
+        gibbon_position_free (new_pos);
 }
