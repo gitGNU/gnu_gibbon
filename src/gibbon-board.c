@@ -28,6 +28,8 @@
  * implement.
  */
 
+#include <stdlib.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -309,4 +311,66 @@ bail_out_bar_click:
         if (button == 1 && pos->unused_dice[1]
             && pos->unused_dice[0] != pos->unused_dice[1])
                 gibbon_board_process_bar_click (self, 3);
+}
+
+void
+gibbon_board_process_quick_bear_off (GibbonBoard *self)
+{
+        const GibbonPosition *pos;
+        guint die;
+        gint i;
+        GibbonPosition *new_pos = NULL;
+
+        g_return_if_fail (GIBBON_IS_BOARD (self));
+
+        pos = gibbon_board_get_position (self);
+
+        if (pos->turn != GIBBON_POSITION_SIDE_WHITE)
+                return;
+
+        for (i = 6; i < 24; ++i)
+                if (pos->points[i] > 0)
+                        return;
+        if (pos->bar[0])
+                return;
+
+        if (pos->unused_dice[3]) {
+                die = abs (pos->unused_dice[3]);
+                if (pos->points[die - 1] < 4)
+                        return;
+                new_pos = gibbon_position_copy (pos);
+                new_pos->points[die - 1] -= 4;
+        } else if (pos->unused_dice[2]) {
+                die = abs (pos->unused_dice[2]);
+                if (pos->points[die - 1] < 3)
+                        return;
+                new_pos = gibbon_position_copy (pos);
+                new_pos->points[die - 1] -= 3;
+        } else if (pos->unused_dice[1]) {
+                die = abs (pos->unused_dice[1]);
+                if (pos->points[die - 1] < 1)
+                        return;
+                die = abs (pos->unused_dice[0]);
+                if (pos->points[die - 1] < 1)
+                        return;
+                new_pos = gibbon_position_copy (pos);
+                --new_pos->points[die - 1];
+                die = abs (pos->unused_dice[1]);
+                --new_pos->points[die - 1];
+        } else if (pos->unused_dice[0]) {
+                die = abs (pos->unused_dice[0]);
+                if (pos->points[die - 1] < 1)
+                        return;
+                new_pos = gibbon_position_copy (pos);
+                --new_pos->points[die - 1];
+        } else {
+                return;
+        }
+
+        new_pos->unused_dice[0] = new_pos->unused_dice[1]
+            = new_pos->unused_dice[2] = new_pos->unused_dice[3] = 0;
+
+        gibbon_board_set_position (self, new_pos);
+        gibbon_position_free (new_pos);
+        gibbon_board_redraw (self);
 }
