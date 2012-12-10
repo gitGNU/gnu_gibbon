@@ -966,6 +966,7 @@
                       <object class="GtkToolbar" id="game-chat-toolbar">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="toolbar_style">icons</property>
                         <child>
                           <object class="GtkToggleToolButton" id="game-chat-say-button">
                             <property name="use_action_appearance">False</property>
