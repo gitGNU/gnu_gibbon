@@ -270,13 +270,12 @@ gibbon_archive_login (GibbonArchive *self, const gchar *hostname,
                 session_directory = buf;
         }
 
-        g_free (self->priv->session_directory);
+        g_free (self->priv->server_directory);
         self->priv->server_directory = session_directory;
 
         buf = g_build_filename (session_directory, login, NULL);
 
-        if (self->priv->session_directory)
-                g_free (self->priv->session_directory);
+        g_free (self->priv->session_directory);
         self->priv->session_directory = buf;
 
 #ifdef G_OS_WIN32
