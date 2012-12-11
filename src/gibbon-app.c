@@ -353,10 +353,30 @@ gibbon_app_post_init (const GibbonApp *self)
         gint game_no;
         const GibbonGame *game;
         guint action_no;
+        GtkWidget *widget;
+        gint maxpos, minpos;
 
         g_return_if_fail (GIBBON_IS_APP (self));
 
         gibbon_analysis_view_fixup_layout (self->priv->analysis_view);
+
+        widget = gibbon_app_find_widget (self, "rinner-vpaned",
+                                         GTK_TYPE_PANED);
+        g_object_get (widget,
+                      "min-position", &minpos,
+                      "max-position", &maxpos,
+                      NULL);
+        gtk_paned_set_position (GTK_PANED (widget),
+                                minpos + (maxpos - minpos) / 4);
+
+        widget = gibbon_app_find_widget (self, "router-vpaned",
+                                         GTK_TYPE_PANED);
+        g_object_get (widget,
+                      "min-position", &minpos,
+                      "max-position", &maxpos,
+                      NULL);
+        gtk_paned_set_position (GTK_PANED (widget),
+                                minpos + 3 * (maxpos - minpos) / 4);
 
         /*
          * If a match was passed on the command line it is already loaded
@@ -377,6 +397,7 @@ gibbon_app_post_init (const GibbonApp *self)
         action_no = gibbon_game_get_num_actions (game);
         gibbon_analysis_view_set_analysis (self->priv->analysis_view,
                                            game, action_no - 1);
+
 }
 
 gboolean
