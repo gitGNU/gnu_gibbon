@@ -49,7 +49,9 @@ struct _GibbonGameChatPrivate {
         GtkComboBox *combo;
 
         GtkToggleToolButton *toggle_say;
+        gboolean toggle_say_allocated;
         GtkToggleToolButton *toggle_whisper;
+        gboolean toggle_whisper_allocated;
 
         enum GibbonGameChatMode mode;
 
@@ -66,7 +68,6 @@ G_DEFINE_TYPE (GibbonGameChat, gibbon_game_chat, G_TYPE_OBJECT)
 static GibbonGameChat *singleton = NULL;
 
 static gboolean gibbon_game_chat_fixup_combo (GibbonGameChat *self);
-static gboolean gibbon_game_chat_fixup_toolbar (GibbonGameChat *self);
 static void gibbon_game_chat_synchronize_toolbar (GibbonGameChat *self);
 
 /* Signal handlers. */
@@ -76,6 +77,9 @@ static void gibbon_game_chat_on_tool_button_toggle (GibbonGameChat *self,
                                                     GtkToggleToolButton *btn);
 static void gibbon_game_chat_on_utter (const GibbonGameChat *self,
                                        GtkEntry *entry);
+static void gibbon_game_chat_tool_button_on_size_allocate (
+                GibbonGameChat *self,
+                GtkAllocation *allocation, GtkWidget *widget);
 
 static void 
 gibbon_game_chat_init (GibbonGameChat *self)
@@ -86,7 +90,9 @@ gibbon_game_chat_init (GibbonGameChat *self)
 
         self->priv->combo = NULL;
         self->priv->toggle_say = NULL;
+        self->priv->toggle_say_allocated = FALSE;
         self->priv->toggle_whisper = NULL;
+        self->priv->toggle_whisper_allocated = FALSE;
 
         self->priv->mode = GIBBON_GAME_CHAT_MODE_SAY;
 
@@ -116,6 +122,14 @@ gibbon_game_chat_new (GibbonApp *app)
         GibbonGameChat *self;
         GtkTextBuffer *buffer;
         GObject *entry;
+        GtkToggleToolButton *toggle_say =
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
+                                                "game-chat-say-button",
+                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
+        GtkToggleToolButton *toggle_whisper =
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
+                                                "game-chat-whisper-button",
+                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
 
         g_return_val_if_fail (!singleton, singleton);
 
@@ -128,11 +142,30 @@ gibbon_game_chat_new (GibbonApp *app)
                 return NULL;
         }
 
-        if (!gibbon_game_chat_fixup_toolbar (self)) {
-                g_object_unref (self);
-                return NULL;
-        }
-
+        self->priv->toggle_say =
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
+                                                "game-chat-say-button",
+                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
+        self->priv->toggle_whisper =
+                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
+                                                "game-chat-whisper-button",
+                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
+        g_signal_connect_swapped (
+                        G_OBJECT (self->priv->toggle_say), "toggled",
+                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
+                        self);
+        g_signal_connect_swapped (
+                G_OBJECT (self->priv->toggle_say), "size-allocate",
+                G_CALLBACK (gibbon_game_chat_tool_button_on_size_allocate),
+                self);
+        g_signal_connect_swapped (
+                        G_OBJECT (self->priv->toggle_whisper), "toggled",
+                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
+                        self);
+        g_signal_connect_swapped (
+                G_OBJECT (self->priv->toggle_whisper), "size_allocate",
+                G_CALLBACK (gibbon_game_chat_tool_button_on_size_allocate),
+                self);
         gibbon_game_chat_synchronize_toolbar (self);
 
         self->priv->view =
@@ -210,67 +243,47 @@ gibbon_game_chat_fixup_combo (GibbonGameChat *self)
         return TRUE;
 }
 
-static gboolean
-gibbon_game_chat_fixup_toolbar (GibbonGameChat *self)
+static void
+gibbon_game_chat_tool_button_on_size_allocate (GibbonGameChat *self,
+                                               GtkAllocation *allocation,
+                                               GtkWidget *widget)
 {
-        const GibbonApp *app = self->priv->app;
-        const gchar *pixmaps_dir = gibbon_app_get_pixmaps_directory (app);
-        GtkToggleToolButton *toggle_say =
-                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
-                                                "game-chat-say-button",
-                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
-        GtkToggleToolButton *toggle_whisper =
-                        GTK_TOGGLE_TOOL_BUTTON (gibbon_app_find_object (app,
-                                                "game-chat-whisper-button",
-                                                GTK_TYPE_TOGGLE_TOOL_BUTTON));
-        GtkRequisition requisition;
+        const gchar *pixmaps_dir = gibbon_app_get_pixmaps_directory (self->priv->app);
+        const gchar *filename;
         gchar *icon_path;
         GtkImage *image;
 
-        if (!toggle_say)
-                return FALSE;
-        if (!toggle_whisper)
-                return FALSE;
+        if (widget == (GtkWidget *) self->priv->toggle_say) {
+                if (self->priv->toggle_say_allocated) {
+                        self->priv->toggle_say_allocated = FALSE;
+                        return;
+                }
+                filename = "say.svg";
+                self->priv->toggle_say_allocated = TRUE;
+        } else if (widget == (GtkWidget *) self->priv->toggle_whisper) {
+                if (self->priv->toggle_whisper_allocated) {
+                        self->priv->toggle_whisper_allocated = FALSE;
+                        return;
+                }
+                filename = "whisper.svg";
+                self->priv->toggle_whisper_allocated = TRUE;
+        } else {
+                return;
+        }
 
-        self->priv->toggle_say = toggle_say;
-        self->priv->toggle_whisper = toggle_whisper;
-
-        gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
-        icon_path = g_build_filename (pixmaps_dir, "icons", "say.svg",
+        icon_path = g_build_filename (pixmaps_dir, "icons", filename,
                                       NULL);
         image = gibbon_app_load_scaled_image (self->priv->app, icon_path,
-                                              requisition.width,
-                                              requisition.height);
-        if (!image)
-                return FALSE;
+                                              (2 * allocation->width) / 3,
+                                              (2 * allocation->height) / 3);
+        g_free (icon_path);
 
-        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toggle_say),
-                                         GTK_WIDGET (image));
-        g_object_unref (image);
-
-        gtk_widget_size_request (GTK_WIDGET (toggle_say), &requisition);
-        icon_path = g_build_filename (pixmaps_dir, "icons", "whisper.svg",
-                                      NULL);
-        image = gibbon_app_load_scaled_image (self->priv->app, icon_path,
-                                              requisition.width,
-                                              requisition.height);
-        if (!image)
-                return FALSE;
-
-        gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toggle_whisper),
-                                         GTK_WIDGET (image));
-        g_object_unref (image);
-
-        g_signal_connect_swapped (
-                        G_OBJECT (toggle_say), "toggled",
-                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
-                        self);
-        g_signal_connect_swapped (
-                        G_OBJECT (toggle_whisper), "toggled",
-                        G_CALLBACK (gibbon_game_chat_on_tool_button_toggle),
-                        self);
-
-        return TRUE;
+        if (image) {
+                gtk_tool_button_set_icon_widget (
+                                GTK_TOOL_BUTTON (widget),
+                                GTK_WIDGET (image));
+                g_object_unref (image);
+        }
 }
 
 static void

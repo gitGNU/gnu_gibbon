@@ -104,3 +104,5 @@
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - Re-connecting to a server results in a fatal error.
+- Use named icons (GtkIconTheme) for the game chat toolbar or get rid of
+  it completely.
