@@ -107,4 +107,7 @@
 - Change the logic that loads a match into the application.  It must happen
   in a well-defined order.  Instead, we have different objects that operate
   on the "current" match but the order in which these match instances get
-  initialized or finalized differs.  
+  initialized or finalized differs.  The classes that have to be changed
+  are GibbonApp, GibbonGameListView, GibbonMatchList, GibbonMatchTracker,
+  and GibbonMoveListView.  All of those should use a central factory method
+  provided by GibbonApp.
