@@ -104,5 +104,7 @@
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - Re-connecting to a server results in a fatal error.
-- Use named icons (GtkIconTheme) for the game chat toolbar or get rid of
-  it completely.
+- Change the logic that loads a match into the application.  It must happen
+  in a well-defined order.  Instead, we have different objects that operate
+  on the "current" match but the order in which these match instances get
+  initialized or finalized differs.  
