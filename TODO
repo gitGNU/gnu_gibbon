@@ -103,3 +103,4 @@
   get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
+- Re-connecting to a server results in a fatal error.
