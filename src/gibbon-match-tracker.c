@@ -71,7 +71,7 @@ static void gibbon_match_tracker_init_match (GibbonMatchTracker *self,
                                              const gchar *player2,
                                              const GibbonPosition *initial);
 
-#define DEBUG_CONTINUATION 1
+#define DEBUG_CONTINUATION 0
 
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
@@ -311,7 +311,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 white = gibbon_match_get_white (self->priv->match);
                 black = gibbon_match_get_black (self->priv->match);
                 gibbon_match_tracker_unlink_or_archive (self, white, black);
-                g_object_unref (self->priv->match);
+
                 gibbon_match_tracker_init_match (self, target->match_length,
                                                  target->players[0],
                                                  target->players[1],
@@ -448,6 +448,8 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
                 return;
         }
 
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
         self->priv->match = match;
         self->priv->outname = path;
         self->priv->out = G_OUTPUT_STREAM (out);
@@ -491,6 +493,9 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
         }
         self->priv->out = G_OUTPUT_STREAM (fout);
 
+        if (self->priv->match)
+                g_object_unref (self->priv->match);
+
         /*
          * We always assume that the Crawford rule applies for
          * fixed-length matches.  We will find out whether this is
@@ -498,6 +503,8 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
          */
         self->priv->match = gibbon_match_new (player1, player2, length,
                                               length);
+
+        gibbon_app_set_match (app, self->priv->match);
 
         if (initial) {
                 game = gibbon_match_add_game (self->priv->match, &error);
@@ -531,8 +538,6 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
                                         error->message);
         }
         g_output_stream_flush (self->priv->out, NULL, NULL);
-
-        gibbon_app_set_match (app, self->priv->match);
 }
 
 void

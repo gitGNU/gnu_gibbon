@@ -193,9 +193,10 @@ gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
 
         if (self->priv->match)
                 g_object_unref (self->priv->match);
-        g_object_ref (match);
 
         self->priv->match = match;
+        g_object_ref (match);
+
         self->priv->active = -1;
 
         gtk_list_store_clear (self->priv->games);

@@ -474,13 +474,16 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
 
         if (self->priv->match)
                 g_object_unref (self->priv->match);
+
+        gibbon_match_list_set_match (self->priv->match_list, match);
+
+        g_object_ref (match);
         self->priv->match = match;
 
         obj = gibbon_app_find_object (self, "notebook-info-area",
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
 
-        gibbon_match_list_set_match (self->priv->match_list, match);
 
         num_games = gibbon_match_get_number_of_games (match);
         gibbon_match_list_set_active_game (self->priv->match_list,
