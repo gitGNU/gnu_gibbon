@@ -276,6 +276,8 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         GError *error = NULL;
         GibbonMatchList *list;
         int num_actions;
+        const gchar *white;
+        const gchar *black;
 
         g_return_if_fail (self != NULL);
         g_return_if_fail (target != NULL);
@@ -306,9 +308,9 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 gibbon_position_dump_position (target);
                 gtk_widget_error_bell (gibbon_app_get_window (app));
 #endif
-                gibbon_match_tracker_unlink_or_archive (self,
-                                                        current->players[0],
-                                                        current->players[1]);
+                white = gibbon_match_get_white (self->priv->match);
+                black = gibbon_match_get_black (self->priv->match);
+                gibbon_match_tracker_unlink_or_archive (self, white, black);
                 g_object_unref (self->priv->match);
                 gibbon_match_tracker_init_match (self, target->match_length,
                                                  target->players[0],
