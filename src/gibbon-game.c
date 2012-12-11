@@ -38,8 +38,6 @@
 
 typedef struct _GibbonGamePrivate GibbonGamePrivate;
 struct _GibbonGamePrivate {
-        GibbonMatch *match;
-
         GibbonPosition *initial_position;
         gsize num_snapshots;
         GibbonGameSnapshot *snapshots;
@@ -104,7 +102,6 @@ gibbon_game_init (GibbonGame *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_GAME, GibbonGamePrivate);
 
-        self->priv->match = NULL;
         self->priv->initial_position = NULL;
         self->priv->snapshots = NULL;
         self->priv->num_snapshots = 0;
@@ -154,7 +151,6 @@ gibbon_game_new (GibbonMatch *match, const GibbonPosition *pos,
 {
         GibbonGame *self = g_object_new (GIBBON_TYPE_GAME, NULL);
 
-        self->priv->match = match;
         self->priv->initial_position = gibbon_position_copy (pos);
         self->priv->is_crawford = is_crawford;
 
