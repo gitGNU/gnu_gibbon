@@ -120,7 +120,8 @@ static void gibbon_app_set_icon (const GibbonApp *self, const gchar *directory);
 /* Signal handlers.  */
 static void gibbon_app_on_connect_request (GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_register_request (GibbonApp *self);
-static void gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter);
+static gboolean gibbon_app_on_quit_request (GibbonApp *self,
+                                            GtkWidget *emitter);
 static void gibbon_app_on_open (GibbonApp *self, GtkWidget *emitter);
 static void gibbon_app_on_connecting (GibbonApp *self,
                                       GibbonConnection *connection);
@@ -229,6 +230,9 @@ static void gibbon_app_finalize(GObject *object)
 
         if (self->priv->match_list)
                 g_object_unref (self->priv->match_list);
+
+        if (self->priv->window)
+                gtk_widget_destroy (self->priv->window);
 
         G_OBJECT_CLASS (gibbon_app_parent_class)->finalize(object);
 }
@@ -733,7 +737,7 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                                   (gpointer) self);
 
         obj = gibbon_app_find_object(self, "window", GTK_TYPE_WINDOW);
-        g_signal_connect_swapped (obj, "destroy",
+        g_signal_connect_swapped (obj, "delete-event",
                         G_CALLBACK (gibbon_app_on_quit_request),
                         (gpointer) self);
 
@@ -798,10 +802,12 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
                                   (gpointer) self);
 }
 
-static void
-gibbon_app_on_quit_request(GibbonApp *self, GtkWidget *emitter)
+static gboolean
+gibbon_app_on_quit_request (GibbonApp *self, GtkWidget *emitter)
 {
-        gtk_main_quit();
+        gtk_main_quit ();
+
+        return TRUE;
 }
 
 static void
