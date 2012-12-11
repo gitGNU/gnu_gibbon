@@ -109,7 +109,6 @@ struct _GibbonArchivePrivate {
 
         GHashTable *droppers;
 
-        GibbonMatch *match;
         GOutputStream *match_out;
 };
 
@@ -141,7 +140,6 @@ gibbon_archive_init (GibbonArchive *self)
         self->priv->session_directory = NULL;
         self->priv->db = NULL;
         self->priv->droppers = NULL;
-        self->priv->match = NULL;
         self->priv->match_out = NULL;
 }
 
@@ -160,8 +158,6 @@ gibbon_archive_finalize (GObject *object)
         if (self->priv->db)
                 g_object_unref (self->priv->db);
 
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
         if (self->priv->match_out)
                 g_object_unref (self->priv->match_out);
 
