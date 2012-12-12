@@ -132,6 +132,9 @@ gibbon_connection_finalize (GObject *object)
 {
         GibbonConnection *self = GIBBON_CONNECTION (object);
 
+        if (self->priv->session)
+                g_object_unref (self->priv->session);
+
         if (self->priv->in_buffer)
                 g_free (self->priv->in_buffer);
         
@@ -174,9 +177,6 @@ gibbon_connection_finalize (GObject *object)
         if (self->priv->login)
                 g_free (self->priv->login);
 
-        if (self->priv->session)
-                g_object_unref (self->priv->session);
-        
         G_OBJECT_CLASS (gibbon_connection_parent_class)->finalize (object);
 }
 
