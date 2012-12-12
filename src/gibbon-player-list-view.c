@@ -202,7 +202,6 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
-        /* Initially sort by name.  */
         gtk_tree_view_column_set_sort_column_id (col,
                                                  GIBBON_PLAYER_LIST_COL_NAME);
 
@@ -219,6 +218,8 @@ gibbon_player_list_view_new (GibbonApp *app, GibbonPlayerList *players)
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_PLAYER_LIST_COL_AVAILABLE);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,

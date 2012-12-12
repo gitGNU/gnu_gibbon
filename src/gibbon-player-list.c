@@ -41,7 +41,12 @@ static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
 #define GIBBON_PLAYER_LIST_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
                                        GIBBON_TYPE_PLAYER_LIST,           \
                                        GibbonPlayerListPrivate))
-                                             
+
+static gint gibbon_player_list_compare_status (GtkTreeModel *model,
+                                               GtkTreeIter *a,
+                                               GtkTreeIter *b,
+                                               gpointer user_data);
+
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
 static void
@@ -83,6 +88,13 @@ gibbon_player_list_init (GibbonPlayerList *self)
         gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
                                               GIBBON_PLAYER_LIST_COL_NAME, 
                                               GTK_SORT_ASCENDING);
+
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_PLAYER_LIST_COL_AVAILABLE,
+                gibbon_player_list_compare_status,
+                GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_AVAILABLE),
+                NULL);
 }
 
 static void
@@ -414,4 +426,41 @@ gibbon_player_list_update_has_saved (GibbonPlayerList *self, const gchar *who,
         gtk_list_store_set (self->priv->store, &iter,
                             GIBBON_PLAYER_LIST_COL_NAME_WEIGHT, weight,
                            -1);
+}
+
+gint
+gibbon_player_list_compare_status (GtkTreeModel *model,
+                                   GtkTreeIter *a, GtkTreeIter *b,
+                                   gpointer user_data)
+{
+        gchar *str_a = NULL;
+        gchar *str_b = NULL;
+        guint key_a, key_b;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &str_a, -1);
+        if (!g_strcmp0 (str_a, GTK_STOCK_YES))
+                key_a = 2;
+        else if (!g_strcmp0 (str_a, GTK_STOCK_NO))
+                key_a = 1;
+        else
+                key_a = 0;
+
+        gtk_tree_model_get (model, b, col, &str_b, -1);
+        if (!g_strcmp0 (str_b, GTK_STOCK_YES))
+                key_b = 2;
+        else if (!g_strcmp0 (str_b, GTK_STOCK_NO))
+                key_b = 1;
+        else
+                key_b = 0;
+
+        result = key_a - key_b;
+
+        g_free (str_a);
+        g_free (str_b);
+
+        return result;
 }
