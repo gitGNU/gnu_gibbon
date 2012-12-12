@@ -50,6 +50,10 @@ static gint gibbon_player_list_compare_country (GtkTreeModel *model,
                                                 GtkTreeIter *a,
                                                 GtkTreeIter *b,
                                                 gpointer user_data);
+static gint gibbon_player_list_compare_reliability (GtkTreeModel *model,
+                                                    GtkTreeIter *a,
+                                                    GtkTreeIter *b,
+                                                    gpointer user_data);
 
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
@@ -126,6 +130,12 @@ gibbon_player_list_init (GibbonPlayerList *self)
                 GIBBON_PLAYER_LIST_COL_CLIENT,
                 gibbon_compare_string_column,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_CLIENT),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_PLAYER_LIST_COL_RELIABILITY,
+                gibbon_player_list_compare_reliability,
+                GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_RELIABILITY),
                 NULL);
 }
 
@@ -527,6 +537,74 @@ gibbon_player_list_compare_country (GtkTreeModel *model,
         g_object_unref (country_b);
         g_free (key_a);
         g_free (key_b);
+
+        return result;
+}
+
+gint
+gibbon_player_list_compare_reliability (GtkTreeModel *model,
+                                        GtkTreeIter *a, GtkTreeIter *b,
+                                        gpointer user_data)
+{
+        GibbonReliability *rel_a = NULL;
+        GibbonReliability *rel_b = NULL;
+        gdouble value_a, value_b;
+        guint grouping_a, grouping_b;
+        guint confidence_a, confidence_b;
+        gint factor_a = -1;
+        gint factor_b = -1;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &rel_a, -1);
+        value_a = rel_a->value;
+        if (value_a >= 0.95) {
+                grouping_a = 3;
+                factor_a = +1;
+        } else if (value_a >= 0.85)
+                grouping_a = 2;
+        else if (value_a >= 0.65)
+                grouping_a = 1;
+        else
+                grouping_a = 0;
+        confidence_a = factor_a * rel_a->confidence;
+
+        gtk_tree_model_get (model, b, col, &rel_b, -1);
+        value_b = rel_b->value;
+        if (value_b >= 0.95) {
+                grouping_b = 3;
+                factor_b = +1;
+        } else if (value_b >= 0.85)
+                grouping_b = 2;
+        else if (value_b >= 0.65)
+                grouping_b = 1;
+        else
+                grouping_b = 0;
+        confidence_b = factor_b * rel_b->confidence;
+
+        if (grouping_a < grouping_b)
+                result = -1;
+        else if (grouping_a > grouping_b)
+                result = +1;
+        else if (!confidence_a && confidence_b && grouping_b < 3)
+                result = +1;
+        else if (!confidence_a && confidence_b)
+                result = -1;
+        else if (!confidence_b && confidence_a && grouping_a < 3)
+                result = -1;
+        else if (!confidence_b && confidence_a)
+                result = +1;
+        else if (confidence_a < confidence_b)
+                result = -1;
+        else if (confidence_a > confidence_b)
+                result = +1;
+        else
+                result = 0;
+
+        gibbon_reliability_free (rel_a);
+        gibbon_reliability_free (rel_b);
 
         return result;
 }
