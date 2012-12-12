@@ -357,6 +357,8 @@ gibbon_compare_string_column (GtkTreeModel *model,
 
         g_free (str_a);
         g_free (str_b);
+        g_free (key_a);
+        g_free (key_b);
 
         return result;
 }
