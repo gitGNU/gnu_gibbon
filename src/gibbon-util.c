@@ -353,7 +353,7 @@ gibbon_compare_string_column (GtkTreeModel *model,
         gtk_tree_model_get (model, b, col, &str_b, -1);
         key_b = g_utf8_collate_key (str_b, -1);
 
-        result = strcmp (key_a, key_b);
+        result = g_strcmp0 (key_a, key_b);
 
         g_free (str_a);
         g_free (str_b);
