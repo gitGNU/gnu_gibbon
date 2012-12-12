@@ -100,7 +100,7 @@
   get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
-- Sorting the player columns does not work
+- Sorting the player columns in the inviters view not yet implemented
 - When terminating the program while we are watching or playing, a drop
   penalty is stored in the database.  At least for watching games, this is
   definitely wrong.
