@@ -758,7 +758,7 @@ gibbon_move_list_view_set_state (const GibbonMoveListView *self)
         gint active;
         gsize num_actions;
 
-        match = gibbon_match_list_get_match (self->priv->match_list);
+        match = gibbon_app_get_match (app);
 
         /*
          * Already at the start of the list?

@@ -90,7 +90,6 @@ GType gibbon_match_list_get_type (void) G_GNUC_CONST;
 
 GibbonMatchList *gibbon_match_list_new (void);
 void gibbon_match_list_on_new_match (GibbonMatchList *self);
-const GibbonMatch *gibbon_match_list_get_match (const GibbonMatchList *self);
 
 GtkListStore *gibbon_match_list_get_games_store (const GibbonMatchList *self);
 GtkListStore *gibbon_match_list_get_moves_store (const GibbonMatchList *self);

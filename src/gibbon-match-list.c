@@ -50,8 +50,6 @@ static guint gibbon_match_list_signals[LAST_SIGNAL] = { 0 };
 
 typedef struct _GibbonMatchListPrivate GibbonMatchListPrivate;
 struct _GibbonMatchListPrivate {
-        GibbonMatch *match;
-
         GtkListStore *games;
         gint active;
         GtkListStore *moves;
@@ -226,6 +224,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         GibbonGame *game;
         gsize num_games;
         gsize i, num_actions;
+        GibbonMatch *match;
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
 
@@ -234,10 +233,13 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
         if (active < 0)
                 return;
 
-        num_games = gibbon_match_get_number_of_games (self->priv->match);
+        match = gibbon_app_get_match (app);
+        g_return_if_fail (GIBBON_IS_MATCH (match));
+
+        num_games = gibbon_match_get_number_of_games (match);
         g_return_if_fail (num_games > active);
 
-        game = gibbon_match_get_nth_game (self->priv->match, active);
+        game = gibbon_match_get_nth_game (match, active);
         g_return_if_fail (game != NULL);
 
         self->priv->active = active;
@@ -284,6 +286,12 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
         guint badness = 0;
         const gchar *open_tag;
         const gchar *close_tag;
+        GibbonMatch *match;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), FALSE);
+        g_return_val_if_fail (GIBBON_IS_GAME (game), FALSE);
+        match = gibbon_app_get_match (app);
+        g_return_val_if_fail (GIBBON_IS_MATCH (match), FALSE);
 
         action = gibbon_game_get_nth_action (game, action_no, &side);
         if (action_no)
@@ -320,9 +328,9 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
         } else {
                 gtk_list_store_append (self->priv->moves, &iter);
                 if (side <  0)
-                        player = gibbon_match_get_black (self->priv->match);
+                        player = gibbon_match_get_black (match);
                 else if (side > 0)
-                        player = gibbon_match_get_white (self->priv->match);
+                        player = gibbon_match_get_white (match);
                 else
                         player = NULL;
                 gtk_list_store_set (self->priv->moves, &iter,
@@ -518,14 +526,6 @@ gibbon_match_list_format_resign (GibbonMatchList *self,
                                                "resigns with %u points",
 					       resign->value), 
 				  resign->value);
-}
-
-const GibbonMatch *
-gibbon_match_list_get_match (const GibbonMatchList *self)
-{
-        g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), NULL);
-
-        return self->priv->match;
 }
 
 void
