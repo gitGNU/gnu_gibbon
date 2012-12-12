@@ -44,13 +44,6 @@ static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
                                              
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
-/* FIXME! Should go into a utility module!  */
-static gint compare_utf8_string (GtkTreeModel *model,
-                                 GtkTreeIter *a,
-                                 GtkTreeIter *b,
-                                 gpointer user_data);
-
-
 static void
 gibbon_player_list_init (GibbonPlayerList *self)
 {
@@ -84,7 +77,7 @@ gibbon_player_list_init (GibbonPlayerList *self)
         gtk_tree_sortable_set_sort_func (
                 GTK_TREE_SORTABLE (store), 
                 GIBBON_PLAYER_LIST_COL_NAME,
-                compare_utf8_string, 
+                gibbon_compare_string_column,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_NAME), 
                 NULL);
         gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
@@ -256,34 +249,6 @@ gibbon_player_list_clear (GibbonPlayerList *self)
         
         g_hash_table_remove_all (self->priv->hash);
         gtk_list_store_clear (self->priv->store);
-}
-
-static gint 
-compare_utf8_string (GtkTreeModel *model,
-                     GtkTreeIter *a, GtkTreeIter *b,
-                     gpointer user_data)
-{
-        gchar *str_a = NULL;
-        gchar *str_b = NULL;
-        gchar *key_a;
-        gchar *key_b;
-        
-        gint result;
-        
-        gint col = GPOINTER_TO_INT(user_data);
-
-        gtk_tree_model_get (model, a, col, &str_a, -1);
-        key_a = g_utf8_collate_key (str_a, -1);
-        
-        gtk_tree_model_get (model, b, col, &str_b, -1);
-        key_b = g_utf8_collate_key (str_b, -1);
-
-        result = strcmp (key_a, key_b);
-        
-        g_free (str_a);
-        g_free (str_b);
-        
-        return result;
 }
 
 gboolean

@@ -333,3 +333,30 @@ gibbon_error_quark (void)
         return g_quark_from_static_string ("gibbon-error-quark");
 }
 
+gint
+gibbon_compare_string_column (GtkTreeModel *model,
+                              GtkTreeIter *a, GtkTreeIter *b,
+                              gpointer user_data)
+{
+        gchar *str_a = NULL;
+        gchar *str_b = NULL;
+        gchar *key_a;
+        gchar *key_b;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &str_a, -1);
+        key_a = g_utf8_collate_key (str_a, -1);
+
+        gtk_tree_model_get (model, b, col, &str_b, -1);
+        key_b = g_utf8_collate_key (str_b, -1);
+
+        result = strcmp (key_a, key_b);
+
+        g_free (str_a);
+        g_free (str_b);
+
+        return result;
+}

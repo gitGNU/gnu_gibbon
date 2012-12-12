@@ -24,8 +24,7 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <gio/gio.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
@@ -69,6 +68,10 @@ gdouble gibbon_money_equity (const gdouble p[5]);
 gboolean gibbon_slurp_file (const gchar *path, char **buffer,
                             gsize *bytes_read,
                             GCancellable *cancellable, GError **error);
+gint gibbon_compare_string_column (GtkTreeModel *model,
+                                   GtkTreeIter *a,
+                                   GtkTreeIter *b,
+                                   gpointer user_data);
 
 G_END_DECLS
 
