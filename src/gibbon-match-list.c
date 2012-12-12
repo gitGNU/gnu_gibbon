@@ -38,6 +38,7 @@
 
 #include "gibbon-analysis-roll.h"
 #include "gibbon-analysis-move.h"
+#include "gibbon-app.h"
 
 enum gibbon_match_list_signal {
         SELECT_GAME,
@@ -79,8 +80,6 @@ gibbon_match_list_init (GibbonMatchList *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MATCH_LIST, GibbonMatchListPrivate);
 
-        self->priv->match = NULL;
-
         self->priv->games = NULL;
         self->priv->active = -1;
         self->priv->moves = NULL;
@@ -91,8 +90,6 @@ gibbon_match_list_finalize (GObject *object)
 {
         GibbonMatchList *self = GIBBON_MATCH_LIST (object);
 
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
         if (self->priv->games)
                 g_object_unref (self->priv->games);
         if (self->priv->moves)
@@ -184,18 +181,14 @@ gibbon_match_list_new (void)
 }
 
 void
-gibbon_match_list_set_match (GibbonMatchList *self, GibbonMatch *match)
+gibbon_match_list_on_new_match (GibbonMatchList *self)
 {
         gsize i, num_games;
         const GibbonGame *game;
+        GibbonMatch *match = gibbon_app_get_match (app);
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
-
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
-
-        self->priv->match = match;
-        g_object_ref (match);
+        g_return_if_fail (GIBBON_IS_MATCH (match));
 
         self->priv->active = -1;
 
@@ -279,8 +272,8 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
         GtkTreeIter iter;
         gint moveno;
         const gchar *player;
-        gint colno;
-        gchar *text;
+        gint colno = 0;
+        gchar *text = NULL;
         const gchar *dbl_mark = NULL;
         const gchar *chk_mark = NULL;
         GString *formatted;

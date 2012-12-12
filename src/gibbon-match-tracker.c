@@ -44,7 +44,6 @@
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
-        GibbonMatch *match;
         gchar *outname;
         GibbonGMDWriter *writer;
         GOutputStream *out;
@@ -60,16 +59,18 @@ G_DEFINE_TYPE (GibbonMatchTracker, gibbon_match_tracker, G_TYPE_OBJECT)
 static void gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
                                                     const gchar *player1,
                                                     const gchar *player2);
-static void gibbon_match_tracker_resume (GibbonMatchTracker *self,
-                                         const gchar *player1,
-                                         const gchar *player2);
+static GibbonMatch *gibbon_match_tracker_resume (
+                GibbonMatchTracker *self,
+                const gchar *player1,
+                const gchar *player2);
 static void gibbon_match_reader_no_yyerror (const GibbonMatchTracker *self,
                                             const gchar *msg);
-static void gibbon_match_tracker_init_match (GibbonMatchTracker *self,
-                                             gsize length,
-                                             const gchar *player1,
-                                             const gchar *player2,
-                                             const GibbonPosition *initial);
+static GibbonMatch *gibbon_match_tracker_init_match (GibbonMatchTracker *self,
+                                                     gsize length,
+                                                     const gchar *player1,
+                                                     const gchar *player2,
+                                                     const GibbonPosition
+                                                     *initial);
 
 #define DEBUG_CONTINUATION 0
 
@@ -79,7 +80,6 @@ gibbon_match_tracker_init (GibbonMatchTracker *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_MATCH_TRACKER, GibbonMatchTrackerPrivate);
 
-        self->priv->match = NULL;
         self->priv->outname = NULL;
         self->priv->writer = NULL;
         self->priv->wrank = self->priv->brank = NULL;
@@ -98,9 +98,6 @@ gibbon_match_tracker_finalize (GObject *object)
                                         self->priv->outname,
                                         error->message);
         }
-
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
 
         g_free (self->priv->outname);
 
@@ -141,21 +138,14 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
 {
         GibbonMatchTracker *self = g_object_new (GIBBON_TYPE_MATCH_TRACKER,
                                                  NULL);
+        GibbonMatch *match = NULL;
 
-        /*
-         * This constructor is a conceptual mess.  If we resume a match, we
-         * try to load the old saved state, initialize a couple of variables,
-         * and assume success if one of them - notably self->priv->match - is
-         * non-NULL.
-         *
-         * Rather let gibbon_match_tracker_resume() return TRUE/FALSE.
-         */
         if (!resume)
                 gibbon_match_tracker_unlink_or_archive (self, player1, player2);
         else
-                gibbon_match_tracker_resume (self, player1, player2);
+                match = gibbon_match_tracker_resume (self, player1, player2);
 
-        if (!self->priv->match)
+        if (!match)
                 gibbon_match_tracker_init_match (self, length,
                                                  player1, player2,
                                                  NULL);
@@ -169,11 +159,11 @@ gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
                                  GibbonPositionSide side)
 {
         GError *error;
+        GibbonMatch *match;
 
-        g_return_if_fail (self != NULL);
+        g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
         g_return_if_fail (rank != NULL);
         g_return_if_fail (side != GIBBON_POSITION_SIDE_NONE);
-        g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
 
         if (side < 0) {
                 g_free (self->priv->brank);
@@ -183,10 +173,11 @@ gibbon_match_tracker_store_rank (const GibbonMatchTracker *self,
                 self->priv->brank = g_strdup (rank);
         }
 
-        gibbon_match_set_rank (self->priv->match, side, rank);
+        match = gibbon_app_get_match (app);
+        gibbon_match_set_rank (match, side, rank);
         if (!gibbon_gmd_writer_update_rank (self->priv->writer,
                                             self->priv->out,
-                                            self->priv->match, side,
+                                            match, side,
                                             &error)) {
                 gibbon_app_fatal_error (app, _("Write Error"),
                                         _("Error writing to `%s': %s!\n"),
@@ -278,20 +269,20 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         int num_actions;
         const gchar *white;
         const gchar *black;
+        GibbonMatch *match = gibbon_app_get_match (app);
 
-        g_return_if_fail (self != NULL);
-        g_return_if_fail (target != NULL);
         g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+        g_return_if_fail (target != NULL);
+        g_return_if_fail (GIBBON_IS_MATCH (match));
 
-        c = gibbon_match_get_current_position (self->priv->match);
+        c = gibbon_match_get_current_position (match);
         if (c) {
                 current = gibbon_position_copy (c);
         } else {
                 current = gibbon_position_copy (gibbon_position_initial ());
         }
 
-        if (!gibbon_match_get_missing_actions (self->priv->match, target,
-                                               &actions)) {
+        if (!gibbon_match_get_missing_actions (match, target, &actions)) {
                 /*
                  * This case is not necessarily in error.  It also happens,
                  * if we have a saved match for the two opponents that
@@ -308,14 +299,15 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 gibbon_position_dump_position (target);
                 gtk_widget_error_bell (gibbon_app_get_window (app));
 #endif
-                white = gibbon_match_get_white (self->priv->match);
-                black = gibbon_match_get_black (self->priv->match);
+                white = gibbon_match_get_white (match);
+                black = gibbon_match_get_black (match);
                 gibbon_match_tracker_unlink_or_archive (self, white, black);
 
-                gibbon_match_tracker_init_match (self, target->match_length,
-                                                 target->players[0],
-                                                 target->players[1],
-                                                 target);
+                match = gibbon_match_tracker_init_match (self,
+                                                         target->match_length,
+                                                         target->players[0],
+                                                         target->players[1],
+                                                         target);
                 current = gibbon_position_copy (target);
         }
 
@@ -325,7 +317,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 play = (GibbonMatchPlay *) iter->data;
                 action = play->action;
                 side = play->side;
-                last_game = gibbon_match_get_current_game (self->priv->match);
+                last_game = gibbon_match_get_current_game (match);
                 if (!last_game) {
                         if (!gibbon_gmd_writer_add_game (self->priv->writer,
                                                          self->priv->out,
@@ -337,11 +329,11 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                                         error->message);
                         }
                 }
-                if (!gibbon_match_add_action (self->priv->match, side, action,
+                if (!gibbon_match_add_action (match, side, action,
                                               G_MININT64, NULL))
                         goto bail_out;
                 g_object_ref (action);
-                game = gibbon_match_get_current_game (self->priv->match);
+                game = gibbon_match_get_current_game (match);
                 if (!gibbon_gmd_writer_write_action (self->priv->writer,
                                                      self->priv->out,
                                                      game, action, side,
@@ -392,7 +384,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
          */
 }
 
-static void
+static GibbonMatch *
 gibbon_match_tracker_resume (GibbonMatchTracker *self,
                              const gchar *player1,
                              const gchar *player2)
@@ -418,7 +410,7 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
                 }
 
                 if (!g_file_test (path, G_FILE_TEST_EXISTS))
-                        return;
+                        return NULL;
         }
 
         yyerror = (GibbonMatchReaderErrorFunc) gibbon_match_reader_no_yyerror;
@@ -428,13 +420,15 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
 
         if (!match) {
                 g_remove (path);
-                return;
+                return NULL;
         }
         if (!gibbon_match_get_current_game (match)) {
                 g_remove (path);
                 g_object_unref (match);
-                return;
+                return NULL;
         }
+
+        gibbon_app_set_match (app, match);
 
         file = g_file_new_for_path (path);
         out = g_file_append_to (file, G_FILE_CREATE_NONE, NULL, &error);
@@ -445,18 +439,17 @@ gibbon_match_tracker_resume (GibbonMatchTracker *self,
                                           " `%s': %s!\n"),
                                         path,
                                         error->message);
-                return;
+                /* NOTREACHED */
         }
 
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
-        self->priv->match = match;
         self->priv->outname = path;
         self->priv->out = G_OUTPUT_STREAM (out);
         self->priv->writer = gibbon_gmd_writer_new ();
+
+        return match;
 }
 
-static void
+static GibbonMatch *
 gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
                                  const gchar *player1, const gchar *player2,
                                  const GibbonPosition *initial)
@@ -471,6 +464,7 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
         guint16 port;
         gchar *location;
         GibbonGame *game;
+        GibbonMatch *match;
 
         self->priv->outname = gibbon_archive_get_saved_name (archive,
                                                              player1,
@@ -493,26 +487,20 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
         }
         self->priv->out = G_OUTPUT_STREAM (fout);
 
-        if (self->priv->match)
-                g_object_unref (self->priv->match);
-
         /*
          * We always assume that the Crawford rule applies for
          * fixed-length matches.  We will find out whether this is
          * correct or not later.
          */
-        self->priv->match = gibbon_match_new (player1, player2, length,
-                                              length);
-
-        gibbon_app_set_match (app, self->priv->match);
+        match = gibbon_match_new (player1, player2, length, length);
+        gibbon_app_set_match (app, match);
 
         if (initial) {
-                game = gibbon_match_add_game (self->priv->match, &error);
+                game = gibbon_match_add_game (match, &error);
                 if (!game) {
                         gibbon_app_fatal_error (app, _("Internal Error"),
                                                 "%s", error->message);
                         /* NOTREACHED */
-                        return;
                 }
                 gibbon_game_set_initial_position (game, initial);
         }
@@ -525,32 +513,36 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
         else
                 location = g_strdup_printf ("x-fibs://%s:%u",
                                             host, port);
-        gibbon_match_set_location (self->priv->match, location);
+        gibbon_match_set_location (match, location);
         g_free (location);
         self->priv->writer = gibbon_gmd_writer_new ();
         writer = GIBBON_MATCH_WRITER (self->priv->writer);
 
         if (!gibbon_match_writer_write_stream (writer, self->priv->out,
-                                               self->priv->match, &error)) {
+                                               match, &error)) {
                 gibbon_app_fatal_error (app, _("Write Error"),
                                         _("Error writing to `%s': %s!\n"),
                                         self->priv->outname,
                                         error->message);
         }
         g_output_stream_flush (self->priv->out, NULL, NULL);
+
+        return match;
 }
 
 void
 gibbon_match_tracker_set_crawford (GibbonMatchTracker *self, gboolean flag)
 {
         GibbonGame *game;
+        GibbonMatch *match = gibbon_app_get_match (app);
 
         g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
+        g_return_if_fail (GIBBON_IS_MATCH (match));
 
-        gibbon_match_set_crawford (self->priv->match, flag);
+        gibbon_match_set_crawford (match, flag);
 
         if (!flag) {
-                game = gibbon_match_get_current_game (self->priv->match);
+                game = gibbon_match_get_current_game (match);
                 if (game)
                         gibbon_game_set_is_crawford (game, FALSE);
         }

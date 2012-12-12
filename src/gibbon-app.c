@@ -467,27 +467,30 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
         GObject *obj;
         gsize num_games;
 
-        g_return_if_fail (self != NULL);
         g_return_if_fail (GIBBON_IS_APP (self));
-        g_return_if_fail (match != NULL);
         g_return_if_fail (GIBBON_IS_MATCH (match));
 
         if (self->priv->match)
                 g_object_unref (self->priv->match);
-
-        gibbon_match_list_set_match (self->priv->match_list, match);
-
-        g_object_ref (match);
         self->priv->match = match;
 
         obj = gibbon_app_find_object (self, "notebook-info-area",
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
 
-
         num_games = gibbon_match_get_number_of_games (match);
+
+        gibbon_match_list_on_new_match (self->priv->match_list);
         gibbon_match_list_set_active_game (self->priv->match_list,
                                            num_games - 1);
+}
+
+GibbonMatch *
+gibbon_app_get_match (GibbonApp *self)
+{
+        g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
+
+        return self->priv->match;
 }
 
 void

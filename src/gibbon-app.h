@@ -128,6 +128,7 @@ void gibbon_app_configure_player_menu (const GibbonApp *self,
                                        const gchar *player,
                                        GtkMenu *menu);
 void gibbon_app_set_match (GibbonApp *self, struct _GibbonMatch *match);
+GibbonMatch *gibbon_app_get_match (GibbonApp *self);
 void gibbon_app_activate_player_list (const GibbonApp *self);
 
 /* State setters.  */
