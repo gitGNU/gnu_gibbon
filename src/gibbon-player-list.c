@@ -46,6 +46,10 @@ static gint gibbon_player_list_compare_status (GtkTreeModel *model,
                                                GtkTreeIter *a,
                                                GtkTreeIter *b,
                                                gpointer user_data);
+static gint gibbon_player_list_compare_country (GtkTreeModel *model,
+                                                GtkTreeIter *a,
+                                                GtkTreeIter *b,
+                                                gpointer user_data);
 
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
@@ -85,6 +89,10 @@ gibbon_player_list_init (GibbonPlayerList *self)
                 gibbon_compare_string_column,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_NAME), 
                 NULL);
+        /*
+         * Initially sort by name.  FIXME! We should save the last sorting
+         * in the user preferences.
+         */
         gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
                                               GIBBON_PLAYER_LIST_COL_NAME, 
                                               GTK_SORT_ASCENDING);
@@ -94,6 +102,12 @@ gibbon_player_list_init (GibbonPlayerList *self)
                 GIBBON_PLAYER_LIST_COL_AVAILABLE,
                 gibbon_player_list_compare_status,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_AVAILABLE),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_PLAYER_LIST_COL_COUNTRY,
+                gibbon_player_list_compare_country,
+                GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_COUNTRY),
                 NULL);
 }
 
@@ -461,6 +475,40 @@ gibbon_player_list_compare_status (GtkTreeModel *model,
 
         g_free (str_a);
         g_free (str_b);
+
+        return result;
+}
+
+gint
+gibbon_player_list_compare_country (GtkTreeModel *model,
+                                   GtkTreeIter *a, GtkTreeIter *b,
+                                   gpointer user_data)
+{
+        GibbonCountry *country_a = NULL;
+        GibbonCountry *country_b = NULL;
+        const gchar *str_a;
+        const gchar *str_b;
+        gchar *key_a;
+        gchar *key_b;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &country_a, -1);
+        str_a = gibbon_country_get_name (country_a);
+        key_a = g_utf8_collate_key (str_a, -1);
+
+        gtk_tree_model_get (model, b, col, &country_b, -1);
+        str_b = gibbon_country_get_name (country_b);
+        key_b = g_utf8_collate_key (str_b, -1);
+
+        result = g_strcmp0 (key_a, key_b);
+
+        g_object_unref (country_a);
+        g_object_unref (country_b);
+        g_free (key_a);
+        g_free (key_b);
 
         return result;
 }
