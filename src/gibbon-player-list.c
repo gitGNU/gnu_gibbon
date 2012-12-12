@@ -44,8 +44,6 @@ static GType gibbon_player_list_column_types[GIBBON_PLAYER_LIST_N_COLUMNS];
                                              
 G_DEFINE_TYPE (GibbonPlayerList, gibbon_player_list, G_TYPE_OBJECT);
 
-static void free_player_name (gpointer name);
-static void free_player (gpointer player);
 /* FIXME! Should go into a utility module!  */
 static gint compare_utf8_string (GtkTreeModel *model,
                                  GtkTreeIter *a,
@@ -63,8 +61,8 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                                   GibbonPlayerListPrivate);
 
         self->priv->hash = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                                  free_player_name,
-                                                  free_player);
+                                                  g_free,
+                                                  g_free);
 
         store = gtk_list_store_new (GIBBON_PLAYER_LIST_N_COLUMNS, 
                                     G_TYPE_STRING,
@@ -153,23 +151,6 @@ gibbon_player_list_new ()
         GibbonPlayerList *self = g_object_new (GIBBON_TYPE_PLAYER_LIST, NULL);
 
         return self;
-}
-
-static void
-free_player_name (gpointer name)
-{
-        if (name)
-                g_free (name);
-}
-
-static void
-free_player (gpointer _player)
-{
-        struct GibbonPlayer *player = (struct GibbonPlayer *) _player;
-        
-        if (player) {
-                g_free (_player);
-        }
 }
 
 void
