@@ -26,7 +26,6 @@
 struct _GibbonPlayerListPrivate {
         GHashTable *hash;
         GtkListStore *store;
-        GtkTreeModel *model;
 };
 
 struct GibbonPlayer {
@@ -58,7 +57,6 @@ static void
 gibbon_player_list_init (GibbonPlayerList *self)
 {
         GtkListStore *store;
-        GtkTreeModel *model;
         
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_PLAYER_LIST, 
@@ -85,16 +83,13 @@ gibbon_player_list_init (GibbonPlayerList *self)
                                     G_TYPE_STRING);
         self->priv->store = store;
         
-        model = gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (store));
-        self->priv->model = model;
-        
         gtk_tree_sortable_set_sort_func (
                 GTK_TREE_SORTABLE (store), 
                 GIBBON_PLAYER_LIST_COL_NAME,
                 compare_utf8_string, 
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_NAME), 
                 NULL);
-        gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
+        gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
                                               GIBBON_PLAYER_LIST_COL_NAME, 
                                               GTK_SORT_ASCENDING);
 }
@@ -107,8 +102,8 @@ gibbon_player_list_finalize (GObject *object)
         if (self->priv->hash)
                 g_hash_table_destroy (self->priv->hash);
         
-        if (self->priv->model)
-                g_object_unref (self->priv->model);
+        if (self->priv->store)
+                g_object_unref (self->priv->store);
 
         G_OBJECT_CLASS (gibbon_player_list_parent_class)->finalize (object);
 }
@@ -270,7 +265,7 @@ gibbon_player_list_connect_view (GibbonPlayerList *self, GtkTreeView *view)
         g_return_if_fail (GIBBON_IS_PLAYER_LIST (self));
         g_return_if_fail (GTK_IS_TREE_VIEW (view));
 
-        gtk_tree_view_set_model (view, self->priv->model);
+        gtk_tree_view_set_model (view, GTK_TREE_MODEL (self->priv->store));
 }
 
 void
