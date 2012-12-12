@@ -109,6 +109,12 @@ gibbon_player_list_init (GibbonPlayerList *self)
                 gibbon_player_list_compare_country,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_COUNTRY),
                 NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_PLAYER_LIST_COL_RATING,
+                gibbon_compare_double_column,
+                GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_RATING),
+                NULL);
 }
 
 static void
