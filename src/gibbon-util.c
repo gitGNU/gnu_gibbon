@@ -382,3 +382,23 @@ gibbon_compare_double_column (GtkTreeModel *model,
         else
                 return 0;
 }
+
+gint
+gibbon_compare_uint_column (GtkTreeModel *model,
+                              GtkTreeIter *a, GtkTreeIter *b,
+                              gpointer user_data)
+{
+        guint u_a = 0, u_b = 0.0f;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &u_a, -1);
+        gtk_tree_model_get (model, b, col, &u_b, -1);
+
+        if (u_a < u_b)
+                return -1;
+        else if (u_a > u_b)
+                return +1;
+        else
+                return 0;
+}
