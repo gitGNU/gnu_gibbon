@@ -72,6 +72,10 @@ gint gibbon_compare_string_column (GtkTreeModel *model,
                                    GtkTreeIter *a,
                                    GtkTreeIter *b,
                                    gpointer user_data);
+gint gibbon_compare_double_column (GtkTreeModel *model,
+                                   GtkTreeIter *a,
+                                   GtkTreeIter *b,
+                                   gpointer user_data);
 
 G_END_DECLS
 
