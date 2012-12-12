@@ -115,6 +115,12 @@ gibbon_player_list_init (GibbonPlayerList *self)
                 gibbon_compare_double_column,
                 GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_RATING),
                 NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_PLAYER_LIST_COL_EXPERIENCE,
+                gibbon_compare_uint_column,
+                GINT_TO_POINTER (GIBBON_PLAYER_LIST_COL_EXPERIENCE),
+                NULL);
 }
 
 static void
