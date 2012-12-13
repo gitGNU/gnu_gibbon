@@ -22,6 +22,7 @@
 
 #include "gibbon-inviter-list.h"
 #include "gibbon-reliability.h"
+#include "gibbon-util.h"
 
 struct _GibbonInviterListPrivate {
         GHashTable *hash;
@@ -45,11 +46,14 @@ G_DEFINE_TYPE (GibbonInviterList, gibbon_inviter_list, G_TYPE_OBJECT);
 
 static void free_inviter_name (gpointer name);
 static void free_inviter (gpointer inviter);
-/* FIXME! Should go into a utility module!  */
-static gint compare_utf8_string (GtkTreeModel *model,
-                                 GtkTreeIter *a,
-                                 GtkTreeIter *b,
-                                 gpointer user_data);
+static gint gibbon_inviter_list_compare_country (GtkTreeModel *model,
+                                                 GtkTreeIter *a,
+                                                 GtkTreeIter *b,
+                                                 gpointer user_data);
+static gint gibbon_inviter_list_compare_reliability (GtkTreeModel *model,
+                                                     GtkTreeIter *a,
+                                                     GtkTreeIter *b,
+                                                     gpointer user_data);
 
 
 static void
@@ -85,12 +89,48 @@ gibbon_inviter_list_init (GibbonInviterList *self)
         gtk_tree_sortable_set_sort_func (
                 GTK_TREE_SORTABLE (store), 
                 GIBBON_INVITER_LIST_COL_NAME,
-                compare_utf8_string, 
+                gibbon_compare_string_column,
                 GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_NAME), 
                 NULL);
+        /*
+         * Initially sort by name.  FIXME! We should save the last sorting
+         * in the user preferences.
+         */
         gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
                                               GIBBON_INVITER_LIST_COL_NAME, 
                                               GTK_SORT_ASCENDING);
+
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_INVITER_LIST_COL_COUNTRY,
+                gibbon_inviter_list_compare_country,
+                GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_COUNTRY),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_INVITER_LIST_COL_RATING,
+                gibbon_compare_double_column,
+                GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_RATING),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_INVITER_LIST_COL_EXPERIENCE,
+                gibbon_compare_uint_column,
+                GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_EXPERIENCE),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_INVITER_LIST_COL_CLIENT,
+                gibbon_compare_string_column,
+                GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_CLIENT),
+                NULL);
+        gtk_tree_sortable_set_sort_func (
+                GTK_TREE_SORTABLE (store),
+                GIBBON_INVITER_LIST_COL_RELIABILITY,
+                gibbon_inviter_list_compare_reliability,
+                GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_RELIABILITY),
+                NULL);
+
 }
 
 static void
@@ -239,34 +279,6 @@ gibbon_inviter_list_clear (GibbonInviterList *self)
         
         g_hash_table_remove_all (self->priv->hash);
         gtk_list_store_clear (self->priv->store);
-}
-
-static gint 
-compare_utf8_string (GtkTreeModel *model,
-                     GtkTreeIter *a, GtkTreeIter *b,
-                     gpointer user_data)
-{
-        gchar *str_a = NULL;
-        gchar *str_b = NULL;
-        gchar *key_a;
-        gchar *key_b;
-        
-        gint result;
-        
-        gint col = GPOINTER_TO_INT(user_data);
-
-        gtk_tree_model_get (model, a, col, &str_a, -1);
-        key_a = g_utf8_collate_key (str_a, -1);
-        
-        gtk_tree_model_get (model, b, col, &str_b, -1);
-        key_b = g_utf8_collate_key (str_b, -1);
-
-        result = strcmp (key_a, key_b);
-        
-        g_free (str_a);
-        g_free (str_b);
-        
-        return result;
 }
 
 gboolean
@@ -464,4 +476,106 @@ gibbon_inviter_list_update_has_saved (GibbonInviterList *self, const gchar *who,
         gtk_list_store_set (self->priv->store, &iter,
                             GIBBON_INVITER_LIST_COL_NAME_WEIGHT, weight,
                            -1);
+}
+
+gint
+gibbon_inviter_list_compare_country (GtkTreeModel *model,
+                                     GtkTreeIter *a, GtkTreeIter *b,
+                                     gpointer user_data)
+{
+        GibbonCountry *country_a = NULL;
+        GibbonCountry *country_b = NULL;
+        const gchar *str_a;
+        const gchar *str_b;
+        gchar *key_a;
+        gchar *key_b;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &country_a, -1);
+        str_a = gibbon_country_get_name (country_a);
+        key_a = g_utf8_collate_key (str_a, -1);
+
+        gtk_tree_model_get (model, b, col, &country_b, -1);
+        str_b = gibbon_country_get_name (country_b);
+        key_b = g_utf8_collate_key (str_b, -1);
+
+        result = g_strcmp0 (key_a, key_b);
+
+        g_object_unref (country_a);
+        g_object_unref (country_b);
+        g_free (key_a);
+        g_free (key_b);
+
+        return result;
+}
+
+gint
+gibbon_inviter_list_compare_reliability (GtkTreeModel *model,
+                                         GtkTreeIter *a, GtkTreeIter *b,
+                                         gpointer user_data)
+{
+        GibbonReliability *rel_a = NULL;
+        GibbonReliability *rel_b = NULL;
+        gdouble value_a, value_b;
+        guint grouping_a, grouping_b;
+        guint confidence_a, confidence_b;
+        gint factor_a = -1;
+        gint factor_b = -1;
+
+        gint result;
+
+        gint col = GPOINTER_TO_INT (user_data);
+
+        gtk_tree_model_get (model, a, col, &rel_a, -1);
+        value_a = rel_a->value;
+        if (value_a >= 0.95) {
+                grouping_a = 3;
+                factor_a = +1;
+        } else if (value_a >= 0.85)
+                grouping_a = 2;
+        else if (value_a >= 0.65)
+                grouping_a = 1;
+        else
+                grouping_a = 0;
+        confidence_a = factor_a * rel_a->confidence;
+
+        gtk_tree_model_get (model, b, col, &rel_b, -1);
+        value_b = rel_b->value;
+        if (value_b >= 0.95) {
+                grouping_b = 3;
+                factor_b = +1;
+        } else if (value_b >= 0.85)
+                grouping_b = 2;
+        else if (value_b >= 0.65)
+                grouping_b = 1;
+        else
+                grouping_b = 0;
+        confidence_b = factor_b * rel_b->confidence;
+
+        if (grouping_a < grouping_b)
+                result = -1;
+        else if (grouping_a > grouping_b)
+                result = +1;
+        else if (!confidence_a && confidence_b && grouping_b < 3)
+                result = +1;
+        else if (!confidence_a && confidence_b)
+                result = -1;
+        else if (!confidence_b && confidence_a && grouping_a < 3)
+                result = -1;
+        else if (!confidence_b && confidence_a)
+                result = +1;
+        else if (confidence_a < confidence_b)
+                result = -1;
+        else if (confidence_a > confidence_b)
+                result = +1;
+        else
+                result = 0;
+
+        gibbon_reliability_free (rel_a);
+        gibbon_reliability_free (rel_b);
+
+        return result;
 }
