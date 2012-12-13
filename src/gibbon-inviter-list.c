@@ -26,7 +26,6 @@
 struct _GibbonInviterListPrivate {
         GHashTable *hash;
         GtkListStore *store;
-        GtkTreeModel *model;
 };
 
 struct GibbonInviter {
@@ -57,7 +56,6 @@ static void
 gibbon_inviter_list_init (GibbonInviterList *self)
 {
         GtkListStore *store;
-        GtkTreeModel *model;
         
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, 
                                                   GIBBON_TYPE_INVITER_LIST, 
@@ -84,16 +82,13 @@ gibbon_inviter_list_init (GibbonInviterList *self)
                                     G_TYPE_BOOLEAN);
         self->priv->store = store;
         
-        model = gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (store));
-        self->priv->model = model;
-        
         gtk_tree_sortable_set_sort_func (
                 GTK_TREE_SORTABLE (store), 
                 GIBBON_INVITER_LIST_COL_NAME,
                 compare_utf8_string, 
                 GINT_TO_POINTER (GIBBON_INVITER_LIST_COL_NAME), 
                 NULL);
-        gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
+        gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
                                               GIBBON_INVITER_LIST_COL_NAME, 
                                               GTK_SORT_ASCENDING);
 }
@@ -106,8 +101,8 @@ gibbon_inviter_list_finalize (GObject *object)
         if (self->priv->hash)
                 g_hash_table_destroy (self->priv->hash);
         
-        if (self->priv->model)
-                g_object_unref (self->priv->model);
+        if (self->priv->store)
+                g_object_unref (self->priv->store);
 
         G_OBJECT_CLASS (gibbon_inviter_list_parent_class)->finalize (object);
 }
@@ -234,7 +229,7 @@ gibbon_inviter_list_connect_view (GibbonInviterList *self, GtkTreeView *view)
         g_return_if_fail (GIBBON_IS_INVITER_LIST (self));
         g_return_if_fail (GTK_IS_TREE_VIEW (view));
 
-        gtk_tree_view_set_model (view, self->priv->model);
+        gtk_tree_view_set_model (view, GTK_TREE_MODEL (self->priv->store));
 }
 
 void
