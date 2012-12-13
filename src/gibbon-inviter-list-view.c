@@ -199,6 +199,8 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_sort_indicator (col, TRUE);
         gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (col,
+                                                 GIBBON_INVITER_LIST_COL_NAME);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -216,6 +218,12 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 "pixbuf", GIBBON_INVITER_LIST_COL_COUNTRY_ICON,
                 NULL);
         self->priv->country_column = gtk_tree_view_get_column (view, colno - 1);
+        col = self->priv->country_column;
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_INVITER_LIST_COL_COUNTRY);
 
         renderer = gtk_cell_renderer_text_new ();
         colno = gtk_tree_view_insert_column_with_attributes (
@@ -229,6 +237,10 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
         gtk_tree_view_column_set_clickable (col, TRUE);
         gtk_tree_view_column_set_cell_data_func (col, renderer,
                 print2digits, (gpointer) GIBBON_INVITER_LIST_COL_RATING, NULL);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_INVITER_LIST_COL_RATING);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -239,6 +251,10 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 NULL);
         col = gtk_tree_view_get_column (view, colno - 1);
         gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_INVITER_LIST_COL_EXPERIENCE);
 
         colno = gtk_tree_view_insert_column_with_attributes (
                 view,
@@ -248,6 +264,12 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 "pixbuf", GIBBON_INVITER_LIST_COL_CLIENT_ICON,
                 NULL);
         self->priv->client_column = gtk_tree_view_get_column (view, colno - 1);
+        col = self->priv->client_column;
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_INVITER_LIST_COL_CLIENT);
 
         renderer = gibbon_reliability_renderer_new ();
         colno = gtk_tree_view_insert_column_with_attributes (
@@ -259,6 +281,12 @@ gibbon_inviter_list_view_new (GibbonApp *app, GibbonInviterList *inviters)
                 NULL);
         self->priv->reliability_column = gtk_tree_view_get_column (view,
                                                                    colno - 1);
+        col = self->priv->reliability_column;
+        gtk_tree_view_column_set_clickable (col, TRUE);
+        gtk_tree_view_column_set_sort_indicator (col, TRUE);
+        gtk_tree_view_column_set_sort_order (col, GTK_SORT_ASCENDING);
+        gtk_tree_view_column_set_sort_column_id (
+                        col, GIBBON_INVITER_LIST_COL_RELIABILITY);
 
         renderer = gtk_cell_renderer_spinner_new ();
         col = gtk_tree_view_column_new ();
