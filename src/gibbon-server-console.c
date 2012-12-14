@@ -44,6 +44,7 @@ static const char * const fibs_commands[] = {
                 "about",
                 "accept",
                 "address",
+                "alert",
                 "autologin",
                 "average",
                 "away",
