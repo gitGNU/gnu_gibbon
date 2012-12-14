@@ -50,15 +50,18 @@ dnl important to increase that with every new version.
 GIBBON_COMMA_VERSION=["]gibbon_major_version","gibbon_minor_version","gibbon_micro_version["]
 AC_SUBST(GIBBON_COMMA_VERSION)
 
+AC_LANG([C])
+
+AC_PREPROC_IFELSE(
+  [AC_LANG_PROGRAM([[#include <Carbon/Carbon.h]],
+                    [[#include <CoreServices/CoreServices.h]])],
+  [gibbon_native_osx=yes],
+  [gibbon_native_osx=no])
 AC_MSG_CHECKING([for Mac OS X Carbon support])
-AC_TRY_CPP([
-#include <Carbon/Carbon.h>
-#include <CoreServices/CoreServices.h>
-], gibbon_native_osx=yes)
 AC_MSG_RESULT([$gibbon_native_osx])
 AM_CONDITIONAL(OSX, test x$gibbon_native_osx = xyes)
 
-AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_win32$platform_osx = xnono)
+AM_CONDITIONAL(BUILD_HELP, test x$gibbon_native_win32$gibbon_native_osx = xnono)
 
 AC_ARG_ENABLE(gtk3-migration,
               AC_HELP_STRING([--enable-gtk3-migration],
