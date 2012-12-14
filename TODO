@@ -103,7 +103,6 @@
 - When terminating the program while we are watching or playing, a drop
   penalty is stored in the database.  At least for watching games, this is
   definitely wrong.
-- Auto-completion for server commands is severely broken.
 - Chatting is still cumbersome with longer messages.
 - Show "logged in", "logged out" à la pidgin in chat windows, maybe also
   "starts playing", "stops playing".
