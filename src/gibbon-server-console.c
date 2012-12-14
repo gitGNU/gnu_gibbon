@@ -118,8 +118,7 @@ static const char * const fibs_commands[] = {
                 "where",
                 "whisper",
                 "who",
-                "whois",
-                NULL
+                "whois"
 };
 
 typedef struct _GibbonServerConsolePrivate GibbonServerConsolePrivate;
@@ -280,6 +279,7 @@ gibbon_server_console_new (GibbonApp *app)
         GtkTreeIter iter;
         gsize num_known;
         gsize i;
+        GHashTable *seen;
 
         self->priv->app = app;
         self->priv->text_view =
@@ -328,8 +328,14 @@ gibbon_server_console_new (GibbonApp *app)
                                        GIBBON_DATA_COMMANDS);
         g_object_unref (settings);
 
+        seen = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
         recent = recents;
         while (*recent) {
+                if (g_hash_table_lookup_extended (seen, *recent, NULL, NULL)) {
+                        ++recent;
+                        continue;
+                }
+                g_hash_table_add (seen, g_strdup (*recent));
                 ++self->priv->num_recents;
                 gtk_list_store_append (self->priv->model, &iter);
                 gtk_list_store_set (self->priv->model, &iter, 0, *recent, -1);
@@ -339,11 +345,16 @@ gibbon_server_console_new (GibbonApp *app)
 
         num_known = (sizeof fibs_commands) / (sizeof fibs_commands[0]);
         for (i = 0; i < num_known; ++i) {
+                if (g_hash_table_lookup_extended (seen, fibs_commands[i],
+                                                  NULL, NULL))
+                        continue;
+                g_hash_table_add (seen, g_strdup (fibs_commands[i]));
                 gtk_list_store_append (self->priv->model, &iter);
                 gtk_list_store_set (self->priv->model, &iter,
                                     0, fibs_commands[i],
                                     -1);
         }
+        g_hash_table_destroy (seen);
 
         gtk_entry_completion_set_model (completion,
                                         GTK_TREE_MODEL (self->priv->model));
