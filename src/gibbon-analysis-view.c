@@ -233,14 +233,6 @@ gibbon_analysis_view_class_init (GibbonAnalysisViewClass *klass)
  *
  * Returns: The newly created #GibbonAnalysisView or %NULL in case of failure.
  */
-void cursor_changed (void)
-{
-        g_message ("cursor changed");
-}
-void row_activated (void)
-{
-        g_message ("row activated");
-}
 GibbonAnalysisView *
 gibbon_analysis_view_new (const GibbonApp *app)
 {
@@ -476,6 +468,8 @@ gibbon_analysis_view_fixup_layout (const GibbonAnalysisView *self)
         gtk_widget_get_allocation (nbw, &alloc);
         gtk_widget_set_size_request (nbw, alloc.width, alloc.height);
         gtk_widget_hide (GTK_WIDGET (self->priv->notebook));
+
+        self->priv->notebook_sized = TRUE;
 }
 
 void
