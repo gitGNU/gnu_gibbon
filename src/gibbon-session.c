@@ -2783,7 +2783,6 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
-        gibbon_position_reset (self->priv->position);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_WIN_GAME;

@@ -380,17 +380,28 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
 
         g_slist_free_full (actions, (GDestroyNotify) gibbon_match_play_free);
 
+        if (gibbon_match_over (match)) {
+                white = gibbon_match_get_white (match);
+                black = gibbon_match_get_black (match);
+                gibbon_match_tracker_unlink_or_archive (self, white, black);
+        }
+
         return;
 
-        bail_out:
+bail_out:
 
         gibbon_position_free (current);
         g_slist_free_full (actions, (GDestroyNotify) gibbon_match_play_free);
 
-        /*
-         * TODO: Archive current match and create a new one with
-         * with the current position as the initial setup.
-         */
+        white = gibbon_match_get_white (match);
+        black = gibbon_match_get_black (match);
+        gibbon_match_tracker_unlink_or_archive (self, white, black);
+
+        match = gibbon_match_tracker_init_match (self,
+                                                 target->match_length,
+                                                 target->players[0],
+                                                 target->players[1],
+                                                 target);
 }
 
 static GibbonMatch *

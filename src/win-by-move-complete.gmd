@@ -1,0 +1,8 @@
+GMD-2 # Created by Gibbon version 0.2.0
+Length: 7
+Player:W: Snow White
+Player:B: Joe Black
+Rule: Crawford
+Game: Scores{3 6} Points{2 0 0 0 0 0 5 0 3 0 1 0 0 4 0 0 0 0 0 0 0 0 -1 0 0 0} Cube{2} Turn{-1} May-Double{0 1}
+Roll:B:: 3 2
+Move:B:: 22-off

@@ -287,6 +287,8 @@ MATCH_FILES = 7point.match 7point.gmd 7point.mat 7point.sgf \
 	initial-with-game.gmd initial.gmd initial-with-double.gmd \
 	initial-with-one-double.gmd opening-white-complete.gmd \
 	opening-black-complete.gmd opening-white-double-complete.gmd \
-	opening-black-double-complete.gmd initial-with-two-doubles.gmd
+	opening-black-double-complete.gmd initial-with-two-doubles.gmd \
+	win-by-move.gmd win-by-move-complete.gmd \
+	win-by-double.gmd win-by-double-complete.gmd
 
 EXTRA_DIST = $(MATCH_FILES) $(TESTS_SH) gibbon.rc

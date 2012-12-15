@@ -1054,14 +1054,14 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
         self->turn = -side;
 
         score = gibbon_position_game_over (self);
+        if (!score)
+                return TRUE;
+
         if (score < 0) {
                 self->scores[1] -= score;
-                self->turn = GIBBON_POSITION_SIDE_NONE;
         } else if (score > 0) {
                 self->scores[0] += score;
-                self->turn = GIBBON_POSITION_SIDE_NONE;
         }
-
 
         return TRUE;
 }

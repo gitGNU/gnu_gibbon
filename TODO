@@ -103,10 +103,6 @@
 - Chatting is still cumbersome with longer messages.
 - Show "logged in", "logged out" à la pidgin in chat windows, maybe also
   "starts playing", "stops playing".
-- In gibbon_game_add_move() check these lines:
-
-        if (score < 0) {
-                self->priv->score = score;
-        } else if (score > 0) {
-                self->priv->score = pos->cube;
-        }
+- Download Geo IP database from original location.
+- When refusing a cube or accepting a resignation, make sure that the
+  corresponding icon is still displayed on the board.

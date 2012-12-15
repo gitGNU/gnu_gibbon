@@ -361,7 +361,6 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
 {
         GibbonPosition *pos;
         gchar *pretty_move;
-        gint score;
 
         gibbon_return_val_if_fail (move->number <= 4, FALSE, error);
 
@@ -425,12 +424,7 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         gibbon_game_add_snapshot (self, GIBBON_GAME_ACTION (move), side, pos,
                                   timestamp);
 
-        score = gibbon_position_game_over (pos);
-        if (score < 0) {
-                self->priv->score = score;
-        } else if (score > 0) {
-                self->priv->score = pos->cube;
-        }
+        self->priv->score = gibbon_position_game_over (pos);
 
         return TRUE;
 }

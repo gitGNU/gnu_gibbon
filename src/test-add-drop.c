@@ -135,8 +135,8 @@ main(int argc, char *argv[])
                 return 1;
         }
         game = gibbon_match_get_current_game (match);
-        if (game == last_game) {
-                g_printerr ("Game did not change after drop.\n");
+        if (!gibbon_game_over (game)) {
+                g_printerr ("Game not over after drop after drop.\n");
                 return 1;
         }
         if (!gibbon_gmd_writer_write_action (writer, out, game, action,
@@ -154,8 +154,9 @@ main(int argc, char *argv[])
                 return 1;
         }
         game = gibbon_match_get_current_game (match);
-        if (game != last_game) {
-                g_printerr ("Game changed after first roll in 2nd game.\n");
+        if (game == last_game) {
+                g_printerr ("Game did not change after first roll"
+                            " in 2nd game.\n");
                 return 1;
         }
         if (!gibbon_gmd_writer_add_game (writer, out, &error)) {

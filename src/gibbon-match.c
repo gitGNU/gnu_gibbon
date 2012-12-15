@@ -470,17 +470,22 @@ gibbon_match_add_action (GibbonMatch *self, GibbonPositionSide side,
                         return FALSE;
         }
 
-        if (!gibbon_game_add_action (game, side, action, timestamp, error))
-                return FALSE;
-
         if (gibbon_game_over (game)) {
                 current = gibbon_game_get_position (game);
-                if (gibbon_position_match_over (current))
-                        return TRUE;
+                if (gibbon_position_match_over (current)) {
+                        g_set_error_literal (error, GIBBON_ERROR,
+                                             GIBBON_MATCH_ERROR_END_OF_MATCH,
+                                             "The match is already over.");
+                        return FALSE;
+                }
 
-                if (!gibbon_match_add_game (self, error))
+                game = gibbon_match_add_game (self, error);
+                if (!game)
                         return FALSE;
         }
+
+        if (!gibbon_game_add_action (game, side, action, timestamp, error))
+                return FALSE;
 
         return TRUE;
 }
@@ -709,7 +714,6 @@ gibbon_match_try_roll (const GibbonMatch *self,
         GibbonMatchPlay *play;
         GSList *retval = NULL;
         gboolean reverse;
-        gint score;
 
         /*
          * When the recorded match was completely empty, it is a little bit
@@ -846,15 +850,6 @@ gibbon_match_try_roll (const GibbonMatch *self,
                 break;
         }
 
-        score = gibbon_position_game_over (current);
-        if (score) {
-                gibbon_position_reset (current);
-                if (score < 0)
-                        current->scores[1] -= score;
-                else
-                        current->scores[0] += score;
-        }
-
         return retval;
 }
 
@@ -867,7 +862,6 @@ gibbon_match_try_move (const GibbonMatch *self,
         GibbonMatchPlay *play;
         GSList *retval = NULL;
         gboolean reverse;
-        gint score;
 
         if (!current->dice[0] || !current->dice[1])
                 return NULL;
@@ -886,15 +880,6 @@ gibbon_match_try_move (const GibbonMatch *self,
         play = gibbon_match_play_new (GIBBON_GAME_ACTION (move),
                                       -current->turn);
         retval = g_slist_prepend (NULL, play);
-
-        score = gibbon_position_game_over (current);
-        if (score) {
-                gibbon_position_reset (current);
-                if (score < 0)
-                        current->scores[1] -= score;
-                else
-                        current->scores[0] += score;
-        }
 
         return retval;
 }
