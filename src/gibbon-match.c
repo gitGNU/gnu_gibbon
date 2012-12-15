@@ -626,6 +626,13 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
         g_return_val_if_fail (target != NULL, FALSE);
 
+        if (gibbon_position_game_over (current)) {
+                gibbon_position_reset (current);
+                /*
+                 * FIXME! We must check for the crawford game here, and see
+                 * whether we have to adjust the may_double flags.
+                 */
+        }
         if (!last_action) {
                 retval = gibbon_match_try_roll (self, current, target,
                                                 try_move);
@@ -673,6 +680,13 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         retval = gibbon_match_try_move (self, current, target);
                         if (retval)
                                 try_move = FALSE;
+                        if (gibbon_position_game_over (current)) {
+                                gibbon_position_reset (current);
+                                /*
+                                 * FIXME! We must check for the crawford game here, and see
+                                 * whether we have to adjust the may_double flags.
+                                 */
+                        }
                 }
                 if (!retval) {
                         retval = gibbon_match_try_roll (self, current, target,
@@ -911,7 +925,7 @@ gibbon_match_try_accept (const GibbonMatch *self,
         current->turn = GIBBON_POSITION_SIDE_NONE;
         current->scores[0] = target->scores[0];
         current->scores[1] = target->scores[1];
-        gibbon_position_reset (current);
+        current->score = current->resigned;
 
         action = GIBBON_GAME_ACTION (gibbon_accept_new ());
 
@@ -1015,14 +1029,14 @@ gibbon_match_try_drop (const GibbonMatch *self,
         if (current->cube_turned < 0) {
                 side = GIBBON_POSITION_SIDE_WHITE;
                 current->scores[1] += current->cube;
+                current->score = -current->cube;
         } else if (current->cube_turned > 0) {
                 side = GIBBON_POSITION_SIDE_BLACK;
                 current->scores[0] += current->cube;
+                current->score = +current->cube;
         } else {
                 return NULL;
         }
-
-        gibbon_position_reset (current);
 
         action = GIBBON_GAME_ACTION (gibbon_drop_new ());
 

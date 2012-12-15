@@ -85,8 +85,8 @@ static GibbonPosition initial = {
                 { TRUE, TRUE }, GIBBON_POSITION_SIDE_NONE,
                 /* scores, turn */
                 { 0, 0 }, GIBBON_POSITION_SIDE_NONE,
-                /* resigned */
-                0,
+                /* resigned, resignation_accepted */
+                0, 0,
                 /* players */
                 { NULL, NULL },
                 /* unused dice */
@@ -1057,6 +1057,8 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
         if (!score)
                 return TRUE;
 
+        self->score = score;
+
         if (score < 0) {
                 self->scores[1] -= score;
         } else if (score > 0) {
@@ -1075,6 +1077,9 @@ gibbon_position_game_over (const GibbonPosition *position)
         guint black_borne_off;
         gint i;
         guint cube = position->cube;
+
+        if (position->score)
+                return position->score;
 
         if (white_borne_off >= 15) {
                 black_borne_off =
@@ -1382,6 +1387,7 @@ gibbon_position_reset (GibbonPosition *self)
         self->cube = 1;
         self->cube_turned = GIBBON_POSITION_SIDE_NONE;
         self->resigned = 0;
+        self->score = 0;
         self->may_double[0] = self->may_double[1] = TRUE;
 }
 

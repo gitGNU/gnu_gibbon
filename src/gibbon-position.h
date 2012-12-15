@@ -77,6 +77,8 @@ typedef enum {
  *               negative for black, even for the opening roll.
  * @resigned: Value of an offered resignation.  This is positive for white
  *            resignation offers, and negative for black ones.
+ * @score: If the game is over, the result of the running game should be
+ *         stored here.
  * @game_info: Free-form string describing the game ("Crawford", ...).
  * @status: Free-form string describing the status ("It's your move", ...).
  *
@@ -114,6 +116,7 @@ struct _GibbonPosition
         GibbonPositionSide turn;
 
         gint resigned;
+        gint score;
 
         /*
          * All properties above this comment are considered `significant'.
