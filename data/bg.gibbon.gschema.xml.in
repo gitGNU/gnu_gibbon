@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-  <schema id="bg.Gibbon" path="/bg/gibbon/">
-    <child name="preferences" schema="bg.Gibbon.preferences"/>
-    <child name="data" schema="bg.Gibbon.data"/>
+  <schema id="bg.gibbon" path="/bg/gibbon/">
+    <child name="preferences" schema="bg.gibbon.preferences"/>
+    <child name="data" schema="bg.gibbon.data"/>
   </schema>
-  <schema id="bg.Gibbon.preferences" path="/bg/gibbon/preferences/">
-    <child name="debugging" schema="bg.Gibbon.preferences.debugging"/>
-    <child name="match" schema="bg.Gibbon.preferences.match"/>
-    <child name="server" schema="bg.Gibbon.preferences.server"/>
+  <schema id="bg.gibbon.preferences" path="/bg/gibbon/preferences/">
+    <child name="debugging" schema="bg.gibbon.preferences.debugging"/>
+    <child name="match" schema="bg.gibbon.preferences.match"/>
+    <child name="server" schema="bg.gibbon.preferences.server"/>
   </schema>
-  <schema id="bg.Gibbon.preferences.debugging" 
+  <schema id="bg.gibbon.preferences.debugging" 
           path="/bg/gibbon/preferences/debugging/">
     <key name="server-communication" type="b">
       <default>false</default>
@@ -27,7 +27,7 @@
       <_description>Log all communication to a file.  The pid of the process will be automatically appended to the filename.</_description>
     </key>
   </schema>
-  <schema id="bg.Gibbon.preferences.match"
+  <schema id="bg.gibbon.preferences.match"
           path="/bg/gibbon/preferences/match/">
     <key name="length" type="u">
       <!-- FIXME! Change unlimited to 0 so that we have a valid range.  -->
@@ -48,7 +48,7 @@
                     in analysis</_description>
     </key>
   </schema>
-  <schema id="bg.Gibbon.preferences.server"
+  <schema id="bg.gibbon.preferences.server"
           path="/bg/gibbon/preferences/server/">
     <key name="address" type="s">
       <default>''</default>
@@ -81,10 +81,10 @@
       <_description>Should your password be stored on your hard disk?</_description>
     </key>
   </schema>
-  <schema id="bg.Gibbon.data" path="/bg/gibbon/data/">
-    <child name="recent" schema="bg.Gibbon.data.recent"/>
+  <schema id="bg.gibbon.data" path="/bg/gibbon/data/">
+    <child name="recent" schema="bg.gibbon.data.recent"/>
   </schema>
-  <schema id="bg.Gibbon.data.recent" path="/bg/gibbon/data/recent/">
+  <schema id="bg.gibbon.data.recent" path="/bg/gibbon/data/recent/">
     <key name="max-commands" type="u">
       <default>100</default>
       <range min="1" max="65535"/>

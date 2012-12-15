@@ -21,7 +21,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
 gsettings_files = \
-	bg.Gibbon.gschema.xml.in \
+	bg.gibbon.gschema.xml.in \
 	$(NULL)
 gsettings_SCHEMAS = $(gsettings_files:.xml.in=.xml)
 @INTLTOOL_XML_NOMERGE_RULE@
