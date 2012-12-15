@@ -85,9 +85,6 @@
   looks because the checker movement is not handed by the board atm.
 - Check that a setup where the game is over is handled correctly, when
   reading GMD.
-- Add the row "Initial position", when adding a game to the move list view,
-  not when adding the first action.  When done, check whether the position
-  is really edited, and display "Setup ..." instead.
 - when adding actions to a match, check whether we may double, and update
   information about the Crawford rule.
 - Move animation got lost and should be rewritten anyway.
@@ -106,4 +103,10 @@
 - Chatting is still cumbersome with longer messages.
 - Show "logged in", "logged out" à la pidgin in chat windows, maybe also
   "starts playing", "stops playing".
+- In gibbon_game_add_move() check these lines:
 
+        if (score < 0) {
+                self->priv->score = score;
+        } else if (score > 0) {
+                self->priv->score = pos->cube;
+        }
