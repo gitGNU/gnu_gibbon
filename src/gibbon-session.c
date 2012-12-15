@@ -168,6 +168,7 @@ static void gibbon_session_start_playing (GibbonSession *self,
                                           gboolean resumption);
 static void gibbon_session_stop_playing (GibbonSession *self);
 static void gibbon_session_clean_saved (const GibbonSession *self);
+static void gibbon_session_update_tracker (GibbonSession *self);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -1706,8 +1707,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                                       pos->match_length,
                                                       TRUE);
 
-                if (self->priv->tracker)
-                        gibbon_match_tracker_update (self->priv->tracker, pos);
+                gibbon_session_update_tracker (self);
         }
 
         return GIBBON_CLIP_CODE_BOARD;
@@ -2038,6 +2038,8 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
 
+        gibbon_session_update_tracker (self);
+
         return GIBBON_CLIP_CODE_ROLLS;
 }
 
@@ -2141,7 +2143,6 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
-        self->priv->position->turn = -self->priv->position->turn;
 
         board = gibbon_app_get_board (self->priv->app);
         gibbon_position_reset_unused_dice (self->priv->position);
@@ -2154,6 +2155,8 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                            -self->priv->position->turn,
                                            target_position);
         }
+
+        gibbon_session_update_tracker (self);
 
         g_object_unref (move);
 
@@ -2626,6 +2629,8 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        gibbon_session_update_tracker (self);
+
         return GIBBON_CLIP_CODE_DOUBLES;
 }
 
@@ -2666,7 +2671,7 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
-        return GIBBON_CLIP_CODE_DOUBLES;
+        return GIBBON_CLIP_CODE_ACCEPTS_DOUBLE;
 }
 
 static gint
@@ -2701,6 +2706,8 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        gibbon_session_update_tracker (self);
+
         return GIBBON_CLIP_CODE_RESIGNS;
 }
 
@@ -2712,6 +2719,8 @@ gibbon_session_handle_rejects (GibbonSession *self, GSList *iter)
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
+
+        gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_REJECTS_RESIGNATION;
 }
@@ -2773,6 +2782,9 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
+
+        gibbon_position_reset (self->priv->position);
+        gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_WIN_GAME;
 }
@@ -3650,6 +3662,8 @@ gibbon_session_resign (GibbonSession *self, guint value)
         board = gibbon_app_get_board (self->priv->app);
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
+
+        gibbon_session_update_tracker (self);
 }
 
 static void
@@ -3821,4 +3835,21 @@ gibbon_session_clean_saved (const GibbonSession *self)
 
         g_hash_table_destroy (saved);
         g_free (saved_directory);
+}
+
+static void
+gibbon_session_update_tracker (GibbonSession *self)
+{
+        GibbonPositionSide winner;
+
+        if (!self->priv->tracker)
+                return;
+
+        gibbon_match_tracker_update (self->priv->tracker, self->priv->position);
+
+        winner = gibbon_match_over (gibbon_app_get_match (app));
+        if (!winner)
+                return;
+
+        gibbon_session_stop_playing (self);
 }

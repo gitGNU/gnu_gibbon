@@ -1097,3 +1097,17 @@ gibbon_match_set_start_time (GibbonMatch *self, gint64 timestamp)
 
         gibbon_game_set_start_time (game, timestamp);
 }
+
+GibbonPositionSide
+gibbon_match_over (const GibbonMatch *self)
+{
+        const GibbonPosition *position;
+
+        g_return_val_if_fail (GIBBON_IS_MATCH (self),
+                              GIBBON_POSITION_SIDE_NONE);
+        position = gibbon_match_get_current_position (self);
+        if (!position)
+                return GIBBON_POSITION_SIDE_NONE;
+
+        return gibbon_position_match_over (position);
+}

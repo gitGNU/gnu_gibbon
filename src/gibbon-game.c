@@ -428,10 +428,8 @@ gibbon_game_add_move (GibbonGame *self, GibbonPositionSide side,
         score = gibbon_position_game_over (pos);
         if (score < 0) {
                 self->priv->score = score;
-                pos->scores[1] -= score;
         } else if (score > 0) {
                 self->priv->score = pos->cube;
-                pos->scores[0] += score;
         }
 
         return TRUE;

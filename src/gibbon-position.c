@@ -968,6 +968,7 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
         GibbonMovement *movement;
         gboolean from_bar, bear_off;
         guint *my_bar, *her_bar;
+        gint score;
 
         g_return_val_if_fail (side, FALSE);
 
@@ -1051,6 +1052,16 @@ gibbon_position_apply_move (GibbonPosition *self, GibbonMove *move,
 
         self->dice[0] = self->dice[1] = 0;
         self->turn = -side;
+
+        score = gibbon_position_game_over (self);
+        if (score < 0) {
+                self->scores[1] -= score;
+                self->turn = GIBBON_POSITION_SIDE_NONE;
+        } else if (score > 0) {
+                self->scores[0] += score;
+                self->turn = GIBBON_POSITION_SIDE_NONE;
+        }
+
 
         return TRUE;
 }
@@ -1355,6 +1366,10 @@ gibbon_position_dump_position (const GibbonPosition *self)
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_printerr ("Game info: %s\n", self->game_info);
         g_printerr ("Status: %s\n", self->status);
+        if (self->turn < 0)
+                g_printerr ("Black (%s) is on turn.\n", self->players[1]);
+        else if (self->turn > 0)
+                g_printerr ("White (%s) is on turn.\n", self->players[0]);
 }
 
 void

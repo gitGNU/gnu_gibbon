@@ -72,7 +72,7 @@ static GibbonMatch *gibbon_match_tracker_init_match (GibbonMatchTracker *self,
                                                      const GibbonPosition
                                                      *initial);
 
-#define DEBUG_CONTINUATION 0
+#define DEBUG_CONTINUATION 1
 
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
@@ -293,11 +293,19 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                  * position.
                  */
 #if DEBUG_CONTINUATION
-                g_printerr ("Could not guess missing actions from here:\n");
-                gibbon_position_dump_position (current);
-                g_printerr ("to here:\n");
-                gibbon_position_dump_position (target);
-                gtk_widget_error_bell (gibbon_app_get_window (app));
+                /*
+                 * If there was nu current position we are most likely
+                 * continuing _watching_ a match.  There is no point in
+                 * displaying an error.
+                 */
+                if (c) {
+                        g_printerr ("Could not guess missing actions from"
+                                    " here:\n");
+                        gibbon_position_dump_position (current);
+                        g_printerr ("to here:\n");
+                        gibbon_position_dump_position (target);
+                        gtk_widget_error_bell (gibbon_app_get_window (app));
+                }
 #endif
                 white = gibbon_match_get_white (match);
                 black = gibbon_match_get_black (match);
@@ -369,6 +377,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         }
 
         gibbon_position_free (current);
+
         g_slist_free_full (actions, (GDestroyNotify) gibbon_match_play_free);
 
         return;
