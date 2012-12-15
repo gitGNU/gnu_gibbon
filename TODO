@@ -93,8 +93,6 @@
   inviting to a new one.
 - When leaving a match, we necessarily have a saved match with the opponent.
   Add the opponent to the internal list.
-- A finished match does not get archived!  But that is because we never
-  get notified about that.
 - In a post-crawford game, the display switches between Crawford and
   Post-Crawford.
 - When terminating the program while we are watching or playing, a drop
@@ -110,3 +108,4 @@
   state.
 - Reactivate debugging code for match continuation.  Currently all matches
   must continue smoothlessly.
+- Getting saved count for inviters no longer works.
