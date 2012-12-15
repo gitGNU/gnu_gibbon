@@ -813,6 +813,14 @@ gibbon_game_get_initial_position_editable (GibbonGame *self)
         return self->priv->initial_position;
 }
 
+gboolean
+gibbon_game_get_edited (const GibbonGame *self)
+{
+        g_return_val_if_fail (GIBBON_IS_GAME (self), FALSE);
+
+        return self->priv->edited;
+}
+
 const GibbonPosition *
 gibbon_game_get_nth_position (const GibbonGame *self, gint n)
 {

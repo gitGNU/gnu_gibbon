@@ -287,6 +287,7 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
         const gchar *open_tag;
         const gchar *close_tag;
         GibbonMatch *match;
+        const gchar *initial_label;
 
         g_return_val_if_fail (GIBBON_IS_MATCH_LIST (self), FALSE);
         g_return_val_if_fail (GIBBON_IS_GAME (game), FALSE);
@@ -304,11 +305,14 @@ gibbon_match_list_add_action (GibbonMatchList *self, const GibbonGame *game,
                         GTK_TREE_MODEL (self->priv->moves), NULL);
 
         if (!action_no) {
+                if (gibbon_game_get_edited (game))
+                        initial_label = _("Setup position");
+                else
+                        initial_label = _("Initial position");
                 gtk_list_store_append (self->priv->moves, &iter);
                 gtk_list_store_set (self->priv->moves, &iter,
                                     GIBBON_MATCH_LIST_COL_MOVENO, 0,
-                                    GIBBON_MATCH_LIST_COL_MOVE,
-                                    _("Initial position"),
+                                    GIBBON_MATCH_LIST_COL_MOVE, initial_label,
                                     GIBBON_MATCH_LIST_COL_ROLL_ACTION, -1,
                                     GIBBON_MATCH_LIST_COL_MOVE_ACTION, -1,
                                     -1);
