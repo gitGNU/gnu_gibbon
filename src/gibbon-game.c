@@ -523,12 +523,14 @@ gibbon_game_add_drop (GibbonGame *self, GibbonPositionSide side,
         if (side == GIBBON_POSITION_SIDE_WHITE) {
                 self->priv->score = -pos->cube;
                 pos->scores[1] += pos->cube;
+                pos->score = pos->cube;
                 pos->status = g_strdup_printf (_("%s refuses the cube."),
                                                pos->players[0]);
 
         } else {
                 self->priv->score = pos->cube;
                 pos->scores[0] += pos->cube;
+                pos->score = -pos->cube;
                 pos->status = g_strdup_printf (_("%s refuses the cube."),
                                                pos->players[1]);
         }
@@ -705,12 +707,12 @@ gibbon_game_add_accept (GibbonGame *self, GibbonPositionSide side,
         if (side == GIBBON_POSITION_SIDE_BLACK) {
                 pos->scores[1] += resign->value;
                 self->priv->score = -resign->value;
+                pos->score = resign->value;
         } else {
                 pos->scores[0] += resign->value;
                 self->priv->score = resign->value;
+                pos->score = resign->value;
         }
-
-        pos->resigned = 0;
 
         self->priv->resigned = TRUE;
 
