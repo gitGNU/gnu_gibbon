@@ -106,3 +106,5 @@
 - Download Geo IP database from original location.
 - When refusing a cube or accepting a resignation, make sure that the
   corresponding icon is still displayed on the board.
+- In the match continuation code, set may double flags according to Crawford
+  state.
