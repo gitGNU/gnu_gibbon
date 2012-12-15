@@ -1532,7 +1532,7 @@ gibbon_sgf_reader_setup_pre_check (GibbonSGFReader *self,
                                    const gchar *prop,
                                    GError **error)
 {
-        const GibbonGame *game;
+        GibbonGame *game;
         GibbonPosition *pos;
 
         if (1 != gibbon_match_get_number_of_games (match)) {

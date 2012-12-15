@@ -107,7 +107,13 @@ gboolean gibbon_game_is_crawford (const GibbonGame *self);
 void gibbon_game_set_is_crawford (GibbonGame *self, gboolean crawford);
 
 const GibbonPosition *gibbon_game_get_initial_position (const GibbonGame *self);
-GibbonPosition *gibbon_game_get_initial_position_editable (const GibbonGame *self);
+
+/*
+ * Calling this method has the side effect of setting the "edited" flat to
+ * TRUE.
+ */
+GibbonPosition *gibbon_game_get_initial_position_editable (GibbonGame *self);
+gboolean gibbon_game_get_edited (const GibbonGame *self);
 void gibbon_game_set_initial_position (GibbonGame *self,
                                        const GibbonPosition *position);
 

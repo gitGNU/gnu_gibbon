@@ -39,6 +39,8 @@
 typedef struct _GibbonGamePrivate GibbonGamePrivate;
 struct _GibbonGamePrivate {
         GibbonPosition *initial_position;
+        gboolean edited;
+
         gsize num_snapshots;
         GibbonGameSnapshot *snapshots;
 
@@ -103,6 +105,8 @@ gibbon_game_init (GibbonGame *self)
                 GIBBON_TYPE_GAME, GibbonGamePrivate);
 
         self->priv->initial_position = NULL;
+        self->priv->edited = FALSE;
+
         self->priv->snapshots = NULL;
         self->priv->num_snapshots = 0;
 
@@ -800,9 +804,11 @@ gibbon_game_get_initial_position (const GibbonGame *self)
 }
 
 GibbonPosition *
-gibbon_game_get_initial_position_editable (const GibbonGame *self)
+gibbon_game_get_initial_position_editable (GibbonGame *self)
 {
         g_return_val_if_fail (GIBBON_IS_GAME (self), NULL);
+
+        self->priv->edited = TRUE;
 
         return self->priv->initial_position;
 }
