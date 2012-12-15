@@ -108,3 +108,4 @@
   corresponding icon is still displayed on the board.
 - In the match continuation code, set may double flags according to Crawford
   state.
+- The Gibbon schema path (/apps/) is now deprecated.
