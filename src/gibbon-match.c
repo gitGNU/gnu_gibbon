@@ -1023,9 +1023,6 @@ gibbon_match_try_drop (const GibbonMatch *self,
         GibbonGameAction *action;
         GibbonPositionSide side;
 
-        if (target->cube != 1)
-                return NULL;
-
         if (current->cube_turned < 0) {
                 side = GIBBON_POSITION_SIDE_WHITE;
                 current->scores[1] += current->cube;

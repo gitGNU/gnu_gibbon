@@ -45,5 +45,7 @@ exit_code=0
         $dir/dance-complete2.gmd || exit_code=1
 ./test_match_complete $dir/win-by-move.gmd \
         $dir/win-by-move-complete.gmd || exit_code=1
+./test_match_complete $dir/win-by-double.gmd \
+        $dir/win-by-double-complete.gmd || exit_code=1
 
 exit $exit_code
