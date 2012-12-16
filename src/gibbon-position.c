@@ -1371,10 +1371,8 @@ gibbon_position_dump_position (const GibbonPosition *self)
                                                    GIBBON_POSITION_SIDE_WHITE));
         g_printerr ("Game info: %s\n", self->game_info);
         g_printerr ("Status: %s\n", self->status);
-        if (self->turn < 0)
-                g_printerr ("Black (%s) is on turn.\n", self->players[1]);
-        else if (self->turn > 0)
-                g_printerr ("White (%s) is on turn.\n", self->players[0]);
+        g_printerr ("Turn: %d, cube turned: %d, resigned: %d, score: %d\n",
+                    self->turn, self->cube_turned, self->resigned, self->score);
 }
 
 void

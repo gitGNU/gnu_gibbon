@@ -72,7 +72,9 @@ static GibbonMatch *gibbon_match_tracker_init_match (GibbonMatchTracker *self,
                                                      const GibbonPosition
                                                      *initial);
 
-#define DEBUG_CONTINUATION 1
+#if !defined DEBUG_CONTINUATION
+# define DEBUG_CONTINUATION 1
+#endif
 
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)

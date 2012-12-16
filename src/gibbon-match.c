@@ -40,6 +40,10 @@
 #include "gibbon-match-play.h"
 #include "gibbon-util.h"
 
+#if !defined DEBUG_CONTINUATION
+# define DEBUG_CONTINUATION 1
+#endif
+
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
         GList *games;
@@ -694,6 +698,18 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         try_move = FALSE;
                 }
         }
+
+#if DEBUG_CONTINUATION
+        if (!retval) {
+                if (last_action) {
+                        g_printerr ("Got stuck after %s:\n",
+                                        G_OBJECT_TYPE_NAME (last_action));
+                } else {
+                        g_printerr ("Got stuck at first action:\n");
+                }
+                gibbon_position_dump_position (current);
+        }
+#endif
 
         if (!retval)
                 return NULL;
