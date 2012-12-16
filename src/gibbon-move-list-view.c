@@ -780,8 +780,12 @@ gibbon_move_list_view_set_state (const GibbonMoveListView *self)
 
         active = gibbon_match_list_get_active_game (self->priv->match_list);
         game = gibbon_match_get_nth_game (match, active);
+        if (!game) {
+                gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_forward),
+                                          FALSE);
+                return;
+        }
         num_actions = gibbon_game_get_num_actions (game);
-
         if (!num_actions || self->priv->last_action_no == num_actions - 1)
                 gtk_widget_set_sensitive (GTK_WIDGET (self->priv->move_forward),
                                           FALSE);
