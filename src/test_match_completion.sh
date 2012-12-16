@@ -47,5 +47,7 @@ exit_code=0
         $dir/win-by-move-complete.gmd || exit_code=1
 ./test_match_complete $dir/win-by-double.gmd \
         $dir/win-by-double-complete.gmd || exit_code=1
+./test_match_complete $dir/win-by-resignation.gmd \
+        $dir/win-by-resignation-complete.gmd || exit_code=1
 
 exit $exit_code
