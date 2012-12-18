@@ -303,9 +303,9 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 if (c) {
                         g_printerr ("Could not guess missing actions from"
                                     " here:\n");
-                        gibbon_position_dump_position (current);
+                        gibbon_dump_position (current);
                         g_printerr ("to here:\n");
-                        gibbon_position_dump_position (target);
+                        gibbon_dump_position (target);
                         gtk_widget_error_bell (gibbon_app_get_window (app));
                 }
 #endif

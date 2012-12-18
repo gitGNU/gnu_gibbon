@@ -1680,7 +1680,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 gibbon_app_set_state_may_double (self->priv->app, FALSE);
 
 #ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-        gibbon_position_dump_position (self->priv->position);
+        gibbon_dump_position (self->priv->position);
 #endif
 
         /*
@@ -2143,7 +2143,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                 g_object_unref (move);
                 return -1;
         }
-        gibbon_position_dump_position (self->priv->position);
+        gibbon_dump_position (self->priv->position);
         g_printerr ("Position after %d%d: %s\n",
                     abs (p->dice[0]), abs (p->dice[1]),
                     pretty_move);

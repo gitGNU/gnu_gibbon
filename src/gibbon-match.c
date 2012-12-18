@@ -707,7 +707,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 } else {
                         g_printerr ("Got stuck at first action:\n");
                 }
-                gibbon_position_dump_position (current);
+                gibbon_dump_position (current);
         }
 #endif
 

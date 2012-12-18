@@ -151,7 +151,7 @@ struct _GibbonMove *gibbon_position_check_move (const GibbonPosition *before,
                                                 GibbonPositionSide side);
 gboolean gibbon_position_equals_technically (const GibbonPosition *self,
                                              const GibbonPosition *other);
-void gibbon_position_dump_position (const GibbonPosition *self);
+void gibbon_dump_position (const GibbonPosition *self);
 
 /* Apply a move to a position.  The function only does a plausability test,
  * not a legality test.
