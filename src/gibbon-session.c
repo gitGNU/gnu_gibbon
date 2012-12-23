@@ -2116,7 +2116,6 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        gibbon_dump_position (self->priv->position);
         if (!gibbon_position_apply_move (self->priv->position, move,
                                          side, !self->priv->direction)) {
                 g_critical ("Error applying move %s to position.",
