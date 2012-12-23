@@ -114,3 +114,4 @@
   action.  If the game was set up, there is no last action.  We therefore
   have to emulate a last action that must be discarded later.
 - BaldLies does not send the last move (the winning move) of a game.
+- Quick bear-off is broken, when dice are swapped.
