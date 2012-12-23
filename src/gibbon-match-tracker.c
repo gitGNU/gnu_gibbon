@@ -49,6 +49,8 @@ struct _GibbonMatchTrackerPrivate {
         GOutputStream *out;
         gchar *wrank;
         gchar *brank;
+
+        gboolean debug;
 };
 
 #define GIBBON_MATCH_TRACKER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -72,10 +74,6 @@ static GibbonMatch *gibbon_match_tracker_init_match (GibbonMatchTracker *self,
                                                      const GibbonPosition
                                                      *initial);
 
-#if !defined DEBUG_CONTINUATION
-# define DEBUG_CONTINUATION 1
-#endif
-
 static void 
 gibbon_match_tracker_init (GibbonMatchTracker *self)
 {
@@ -85,6 +83,8 @@ gibbon_match_tracker_init (GibbonMatchTracker *self)
         self->priv->outname = NULL;
         self->priv->writer = NULL;
         self->priv->wrank = self->priv->brank = NULL;
+
+        self->priv->debug = FALSE;
 }
 
 static void
@@ -141,6 +141,9 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
         GibbonMatchTracker *self = g_object_new (GIBBON_TYPE_MATCH_TRACKER,
                                                  NULL);
         GibbonMatch *match = NULL;
+
+        if (g_getenv ("GIBBON_DEBUG_MATCH"))
+                self->priv->debug = TRUE;
 
         if (!resume)
                 gibbon_match_tracker_unlink_or_archive (self, player1, player2);
@@ -294,13 +297,13 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                  * start a new one with the new position as the starting
                  * position.
                  */
-#if DEBUG_CONTINUATION
+
                 /*
                  * If there was nu current position we are most likely
                  * continuing _watching_ a match.  There is no point in
                  * displaying an error.
                  */
-                if (c) {
+                if (c && self->priv->debug) {
                         g_printerr ("Could not guess missing actions from"
                                     " here:\n");
                         gibbon_dump_position (current);
@@ -308,7 +311,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                         gibbon_dump_position (target);
                         gtk_widget_error_bell (gibbon_app_get_window (app));
                 }
-#endif
+
                 white = gibbon_match_get_white (match);
                 black = gibbon_match_get_black (match);
                 gibbon_match_tracker_unlink_or_archive (self, white, black);

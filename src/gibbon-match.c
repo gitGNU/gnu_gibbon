@@ -40,10 +40,6 @@
 #include "gibbon-match-play.h"
 #include "gibbon-util.h"
 
-#if !defined DEBUG_CONTINUATION
-# define DEBUG_CONTINUATION 1
-#endif
-
 typedef struct _GibbonMatchPrivate GibbonMatchPrivate;
 struct _GibbonMatchPrivate {
         GList *games;
@@ -55,6 +51,8 @@ struct _GibbonMatchPrivate {
         gboolean crawford;
         gsize length;
         gchar *location;
+
+        gboolean debug;
 };
 
 #define GIBBON_MATCH_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -103,6 +101,8 @@ gibbon_match_init (GibbonMatch *self)
         self->priv->crawford = TRUE;
         self->priv->length = 0;
         self->priv->location = NULL;
+
+        self->priv->debug = FALSE;
 }
 
 static void
@@ -156,6 +156,9 @@ gibbon_match_new (const gchar *white, const gchar *black,
         gibbon_match_set_white (self, white);
         gibbon_match_set_black (self, black);
         gibbon_match_set_length (self, length);
+
+        if (g_getenv ("GIBBON_DEBUG_MATCH"))
+                self->priv->debug = TRUE;
 
         return self;
 }
@@ -699,8 +702,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 }
         }
 
-#if DEBUG_CONTINUATION
-        if (!retval) {
+        if (!retval && self->priv->debug) {
                 if (last_action) {
                         g_printerr ("Got stuck after %s:\n",
                                         G_OBJECT_TYPE_NAME (last_action));
@@ -709,7 +711,6 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 }
                 gibbon_dump_position (current);
         }
-#endif
 
         if (!retval)
                 return NULL;
