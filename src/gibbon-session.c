@@ -2116,10 +2116,6 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                 return -1;
         }
 
-        GibbonPosition *p = self->priv->position;
-        g_printerr ("Position before %d%d: %s\n",
-                    abs (p->dice[0]), abs (p->dice[1]),
-                    pretty_move);
         gibbon_dump_position (self->priv->position);
         if (!gibbon_position_apply_move (self->priv->position, move,
                                          side, !self->priv->direction)) {
@@ -2144,16 +2140,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                 g_object_unref (move);
                 return -1;
         }
-        g_printerr ("Position after %d%d: %s\n",
-                    abs (p->dice[0]), abs (p->dice[1]),
-                    pretty_move);
-        gibbon_dump_position (self->priv->position);
         g_free (pretty_move);
-        if (gibbon_position_game_over (self->priv->position)) {
-                g_printerr ("Game is now over.  Position:\n");
-                g_printerr ("Turn: %d, cube turned: %d, resigned: %d, score: %d\n",
-                                p->turn, p->cube_turned, p->resigned, p->score);
-        }
 
         self->priv->position->dice[0] = 0;
         self->priv->position->dice[1] = 0;
