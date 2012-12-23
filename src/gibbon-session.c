@@ -2744,6 +2744,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
         guint points;
+        gint score;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -2752,6 +2753,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
 
         if (0 == g_strcmp0 (who, self->priv->opponent)) {
                 self->priv->position->scores[1] += points;
+                score = -points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
@@ -2765,6 +2767,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                                               who, points);
         } else if (0 == g_strcmp0 (who, "You")) {
                 self->priv->position->scores[0] += points;
+                score = points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
@@ -2778,6 +2781,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                                               points);
         } else if (0 == g_strcmp0 (who, self->priv->watching)) {
                 self->priv->position->scores[0] += points;
+                score = points;
                 g_free (self->priv->position->status);
                 self->priv->position->status =
                                 g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
@@ -2794,6 +2798,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         }
 
         gibbon_position_reset_unused_dice (self->priv->position);
+        self->priv->position->score = score;
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
