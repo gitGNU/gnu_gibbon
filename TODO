@@ -109,3 +109,8 @@
 - Reactivate debugging code for match continuation.  Currently all matches
   must continue smoothlessly.
 - Getting saved count for inviters no longer works.
+- Fix typo: gibbon_dump_position() -> gibbon_position_dump().
+- Match continuation code relies on the correctness of the last recorded
+  action.  If the game was set up, there is no last action.  We therefore
+  have to emulate a last action that must be discarded later.
+- BaldLies does not send the last move (the winning move) of a game.
