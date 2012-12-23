@@ -115,3 +115,5 @@
   have to emulate a last action that must be discarded later.
 - BaldLies does not send the last move (the winning move) of a game.
 - Quick bear-off is broken, when dice are swapped.
+- 33: 3-off 3-off 1-off 1-off is not found.
+- End-of-match is saved wrongly.
