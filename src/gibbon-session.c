@@ -219,6 +219,8 @@ struct _GibbonSessionPrivate {
         guint cube_dropped_handler;
         guint resignation_accepted_handler;
         guint resignation_rejected_handler;
+
+        gboolean debug_board_state;
 };
 
 #define GIBBON_SESSION_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
@@ -272,6 +274,8 @@ gibbon_session_init (GibbonSession *self)
         self->priv->cube_dropped_handler = 0;
         self->priv->resignation_accepted_handler = 0;
         self->priv->resignation_rejected_handler = 0;
+
+        self->priv->debug_board_state = FALSE;
 }
 
 static void
@@ -377,6 +381,8 @@ gibbon_session_new (GibbonApp *app, GibbonConnection *connection)
 
         self->priv->connection = connection;
         self->priv->app = app;
+
+        self->priv->debug_board_state = gibbon_debug ("board-state");
 
         if (self->priv->available) {
                 gibbon_app_set_state_available (app);
@@ -1679,9 +1685,10 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         else
                 gibbon_app_set_state_may_double (self->priv->app, FALSE);
 
-#ifdef GIBBON_SESSION_DEBUG_BOARD_STATE
-        gibbon_dump_position (self->priv->position);
-#endif
+        if (self->priv->debug_board_state) {
+                g_printerr ("Board state:\n");
+                gibbon_dump_position (self->priv->position);
+        }
 
         /*
          * Is this our position?  There is no need to check whether player 2

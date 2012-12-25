@@ -402,3 +402,33 @@ gibbon_compare_uint_column (GtkTreeModel *model,
         else
                 return 0;
 }
+
+gboolean
+gibbon_debug (const gchar *realm)
+{
+        const gchar *gibbon_debug = g_getenv ("GIBBON_DEBUG");
+        gchar **tokens;
+        guint i, num_tokens;
+        gboolean debug = FALSE;
+
+        g_return_val_if_fail (realm != NULL, FALSE);
+        g_return_val_if_fail (*realm != 0, FALSE);
+
+        if (!gibbon_debug)
+                return FALSE;
+
+        tokens = g_strsplit_set (gibbon_debug, " \t,;:", -1);
+        num_tokens = g_strv_length (tokens);
+        for (i = 0; i < num_tokens; ++i) {
+                if (!g_strcmp0 (realm, tokens[i])) {
+                        debug = TRUE;
+                        break;
+                } else if (!g_strcmp0 ("all", tokens[i])) {
+                        debug = TRUE;
+                        break;
+                }
+                g_strfreev (tokens);
+        }
+
+        return debug;
+}

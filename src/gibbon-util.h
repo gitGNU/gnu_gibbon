@@ -80,6 +80,7 @@ gint gibbon_compare_uint_column (GtkTreeModel *model,
                                  GtkTreeIter *a,
                                  GtkTreeIter *b,
                                  gpointer user_data);
+gboolean gibbon_debug (const gchar *realm);
 
 G_END_DECLS
 

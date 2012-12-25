@@ -41,6 +41,7 @@
 #include "gibbon-gmd-reader.h"
 #include "gibbon-match-play.h"
 #include "gibbon-match-list.h"
+#include "gibbon-util.h"
 
 typedef struct _GibbonMatchTrackerPrivate GibbonMatchTrackerPrivate;
 struct _GibbonMatchTrackerPrivate {
@@ -142,7 +143,7 @@ gibbon_match_tracker_new (const gchar *player1, const gchar *player2,
                                                  NULL);
         GibbonMatch *match = NULL;
 
-        if (g_getenv ("GIBBON_DEBUG_MATCH"))
+        if (gibbon_debug ("match-tracking"))
                 self->priv->debug = TRUE;
 
         if (!resume)
@@ -220,7 +221,11 @@ gibbon_match_tracker_unlink_or_archive (GibbonMatchTracker *self,
                         return;
         }
 
-        yyerror = (GibbonMatchReaderErrorFunc) gibbon_match_reader_no_yyerror;
+        if (self->priv->debug)
+                yyerror = NULL;
+        else
+                yyerror =
+                    (GibbonMatchReaderErrorFunc) gibbon_match_reader_no_yyerror;
         reader = GIBBON_MATCH_READER (gibbon_gmd_reader_new (yyerror,
                                                              (gpointer) self));
         match = gibbon_match_reader_parse (reader, path);

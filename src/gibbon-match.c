@@ -157,8 +157,7 @@ gibbon_match_new (const gchar *white, const gchar *black,
         gibbon_match_set_black (self, black);
         gibbon_match_set_length (self, length);
 
-        if (g_getenv ("GIBBON_DEBUG_MATCH"))
-                self->priv->debug = TRUE;
+        self->priv->debug = gibbon_debug ("match-tracking");
 
         return self;
 }

@@ -53,12 +53,12 @@ struct _GibbonSGFReaderPrivate {
         GibbonMatch *match;
         guint scores[2];
 
+        gboolean debug;
+
         /* Per-instance data.  */
         const gchar *filename;
         gint64 timestamp;
 };
-
-#define GIBBON_SGF_READER_DEBUG 1
 
 GibbonSGFReader *_gibbon_sgf_reader_instance = NULL;
 
@@ -175,6 +175,8 @@ gibbon_sgf_reader_init (GibbonSGFReader *self)
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                 GIBBON_TYPE_SGF_READER, GibbonSGFReaderPrivate);
 
+        self->priv->debug = FALSE;
+
         self->priv->match = NULL;
         self->priv->scores[0] = 0;
         self->priv->scores[1] = 0;
@@ -223,6 +225,7 @@ gibbon_sgf_reader_new (GibbonMatchReaderErrorFunc yyerror,
 
         self->priv->user_data = user_data;
         self->priv->yyerror = yyerror;
+        self->priv->debug = gibbon_debug ("sgf-reader");
 
         return self;
 }
@@ -1059,35 +1062,31 @@ gibbon_sgf_reader_doubling_analysis_rollout (const GibbonSGFReader *self,
         errno = 0;
         a->da_trials = g_ascii_strtoull (tokens[5], &endptr, 10);
         if (errno || !endptr || *endptr) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid number of trials '%s': %s.",
-                           tokens[5], strerror (errno));
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid number of trials '%s': %s.",
+                                        tokens[5], strerror (errno));
         }
 
         for (i = 0; i < 2; ++i) {
                 if (i == 0) {
                         if (g_strcmp0 ("NoDouble", tokens[6 + 17 * i])) {
-#if GIBBON_SGF_READER_DEBUG
-                                g_message ("Expected 'NoDouble', not '%s'.",
-                                           tokens[6 + 16 * i]);
-#endif
+                                if (self->priv->debug)
+                                        g_message ("Expected 'NoDouble', not '%s'.",
+                                                        tokens[6 + 16 * i]);
                                 return;
                         }
                 } else {
                         if (g_strcmp0 ("DoubleTake", tokens[6 + 17 * i])) {
-#if GIBBON_SGF_READER_DEBUG
-                                g_message ("Expected 'DoubleTake', not '%s'.",
-                                           tokens[6 + 16 * i]);
-#endif
+                                if (self->priv->debug)
+                                        g_message ("Expected 'DoubleTake', not '%s'.",
+                                                        tokens[6 + 16 * i]);
                                 return;
                         }
                 }
                 if (g_strcmp0 ("Output", tokens[7 + 17 * i])) {
-#if GIBBON_SGF_READER_DEBUG
-                        g_message ("Expected 'Output', not '%s'.",
-                                   tokens[7 + 16 * i]);
-#endif
+                        if (self->priv->debug)
+                                g_message ("Expected 'Output', not '%s'.",
+                                                tokens[7 + 16 * i]);
                         return;
                 }
 
@@ -1120,10 +1119,9 @@ gibbon_sgf_reader_move_variant (const GibbonSGFReader *self,
         num_tokens = g_strv_length (tokens);
 
         if (15 > num_tokens) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid number of tokens %u in A record.",
-                           num_tokens);
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid number of tokens %u in A record.",
+                                        num_tokens);
                 return FALSE;
         }
 
@@ -1176,27 +1174,24 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         encoded_move = tokens[0];
         l = strlen (encoded_move);
         if (!l || (l & 1) || l > 8) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid encoded move '%s' in A record.",
-                           encoded_move);
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid encoded move '%s' in A record.",
+                                        encoded_move);
                 return FALSE;
         }
         for (i = 0; i < l; ++i) {
                 if (encoded_move[i] < 'a' || encoded_move[i] > 'z') {
-#if GIBBON_SGF_READER_DEBUG
-                        g_message ("Invalid encoded move '%s' in A record.",
-                                   encoded_move);
-#endif
+                        if (self->priv->debug)
+                                g_message ("Invalid encoded move '%s' in A record.",
+                                        encoded_move);
                         return FALSE;
                 }
         }
 
         if (g_strcmp0 ("ver", tokens[2])) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected 'ver' not '%s' in A record.",
-                           tokens[2]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected 'ver' not '%s' in A record.",
+                                        tokens[2]);
                 return FALSE;
         }
         if (!gibbon_chareq ("3", tokens[3])) {
@@ -1209,10 +1204,9 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         for (i = 0; i < 6; ++i) {
                 p[i] = g_ascii_strtod (tokens[4 + i], &endptr);
                         if (errno || !endptr || *endptr) {
-#if GIBBON_SGF_READER_DEBUG
-                                g_message ("Garbage number in A record: %s.",
-                                           tokens[4 + i]);
-#endif
+                                if (self->priv->debug)
+                                        g_message ("Garbage number in A record: %s.",
+                                                        tokens[4 + i]);
                                 return FALSE;
                         }
         }
@@ -1235,26 +1229,23 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         else if ('0' == tokens[12][0])
                 deterministic = FALSE;
         else {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected [01] in det. flag for A not '%s'.",
-                           tokens[12]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected [01] in det. flag for A not '%s'.",
+                                        tokens[12]);
         }
         if (tokens[12][1]) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected [01] in det. flag for A not '%s'.",
-                           tokens[12]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected [01] in det. flag for A not '%s'.",
+                                        tokens[12]);
                 return FALSE;
         }
 
         errno = 0;
         noise = g_ascii_strtod (tokens[13], &endptr);
         if (errno || !endptr || *endptr) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Garbage number in A record: %s.",
-                           tokens[13]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Garbage number in A record: %s.",
+                                        tokens[13]);
                 return FALSE;
         }
 
@@ -1263,16 +1254,14 @@ gibbon_sgf_reader_move_variant_eval (const GibbonSGFReader *self,
         else if ('0' == tokens[6][0])
                 use_prune = FALSE;
         else {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected [01] in prune flag for A not '%s'.",
-                           tokens[14]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected [01] in prune flag for A not '%s'.",
+                                        tokens[14]);
         }
         if (tokens[14][1]) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected [01] in prune flag for A not '%s'.",
-                           tokens[14]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected [01] in prune flag for A not '%s'.",
+                                        tokens[14]);
                 return FALSE;
         }
 
@@ -1378,38 +1367,34 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
         num_tokens = g_strv_length (tokens);
 
         if (17 > num_tokens) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid number of tokens %u in A record.",
-                           num_tokens);
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid number of tokens %u in A record.",
+                                        num_tokens);
                 return FALSE;
         }
 
         encoded_move = tokens[0];
         l = strlen (encoded_move);
         if (!l || (l & 1) || l > 8) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid encoded move '%s' in A record.",
-                           encoded_move);
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid encoded move '%s' in A record.",
+                                        encoded_move);
                 return FALSE;
         }
 
         for (i = 0; i < l; ++i) {
                 if (encoded_move[i] < 'a' || encoded_move[i] > 'z') {
-#if GIBBON_SGF_READER_DEBUG
-                        g_message ("Invalid encoded move '%s' in A record.",
-                                   encoded_move);
-#endif
+                        if (self->priv->debug)
+                                g_message ("Invalid encoded move '%s' in A record.",
+                                                encoded_move);
                         return FALSE;
                 }
         }
 
         if (g_strcmp0 ("ver", tokens[2])) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected 'ver' not '%s' in A record.",
-                           tokens[2]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected 'ver' not '%s' in A record.",
+                                        tokens[2]);
                 return FALSE;
         }
         if (!gibbon_chareq ("3", tokens[3])) {
@@ -1419,28 +1404,25 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
         }
 
         if (g_strcmp0 ("Trials", tokens[7])) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected 'Trials' not '%s' in A record.",
-                           tokens[4]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected 'Trials' not '%s' in A record.",
+                                        tokens[4]);
                 return FALSE;
         }
 
         errno = 0;
         trials = g_ascii_strtoull (tokens[8], &endptr, 10);
         if (errno || !endptr || *endptr) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Invalid number of trials in A record: %s.",
-                           tokens[8]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Invalid number of trials in A record: %s.",
+                                        tokens[8]);
                 return FALSE;
         }
 
         if (g_strcmp0 ("Output", tokens[9])) {
-#if GIBBON_SGF_READER_DEBUG
-                g_message ("Expected 'Output' not '%s' in A record.",
-                           tokens[4]);
-#endif
+                if (self->priv->debug)
+                        g_message ("Expected 'Output' not '%s' in A record.",
+                                        tokens[4]);
                 return FALSE;
         }
 
@@ -1448,10 +1430,9 @@ gibbon_sgf_reader_move_variant_rollout (const GibbonSGFReader *self,
         for (i = 0; i < 6; ++i) {
                 p[i] = g_ascii_strtod (tokens[10 + i], &endptr);
                         if (errno || !endptr || *endptr) {
-#if GIBBON_SGF_READER_DEBUG
-                                g_message ("Garbage number in A record: %s.",
-                                           tokens[4 + i]);
-#endif
+                                if (self->priv->debug)
+                                        g_message ("Garbage number in A record: %s.",
+                                                        tokens[4 + i]);
                                 return FALSE;
                         }
         }
