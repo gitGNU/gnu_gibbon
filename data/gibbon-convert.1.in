@@ -57,9 +57,28 @@ For automatic detection from filename extensions, ".sgf" is expected for
 SGF, ".mat" for JellyFish", ".gmd" for the Gibbon Match Dump format, and
 ".match" for JavaFIBS' internal format.
 .SH
+ENVIRONMENT
+Additionally to general environment variables (for example LC_ALL, LANG or 
+LANGUAGE) and glib specific environment variables, you can enable debugging
+output on standard error for specific code sections by setting the environment 
+variable \fBGIBBON_DEBUG\fR to a comma-separated (you can also separate
+with space, tabs, colons, semi-colons, ...) list of values:
+.SS "match-tracking"
+.TP
+debug the match tracking and continuation code
+.SS "board-state"
+.TP
+debug the translation of FIBS board states into the internal representation
+.SS "sgf-reader"
+.TP
+debug reading of faulty SGF files
+.SS "all"
+.TP
+This special value enables debugging for all of the above.
+.SH
 BUGS
 Please report bugs at https://savannah.nongnu.org/projects/gibbon.
 .SH
 SEE ALSO
-\fBgibbon(3)\fR
+\fBgibbon(1)\fR
 
