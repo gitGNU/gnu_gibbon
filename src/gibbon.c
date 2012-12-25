@@ -37,6 +37,7 @@ static gchar *program_name;
 static gchar *data_dir = NULL;
 static gchar *pixmaps_dir = NULL;
 static gchar *match_file = NULL;
+static gchar *debug = NULL;
 
 gboolean version;
 
@@ -49,6 +50,10 @@ static const GOptionEntry options[] =
                 { "pixmaps-dir", 'p', 0, G_OPTION_ARG_FILENAME, &pixmaps_dir,
                   N_("Path to pixmaps directory (developers only)"),
                   N_("DIRECTORY")
+                },
+                { "debug", 'D', 0, G_OPTION_ARG_STRING, &debug,
+                  N_("enable various debugging flags"),
+                  NULL
                 },
                 { "version", 'V', 0, G_OPTION_ARG_NONE, &version,
                   N_("output version information and exit"),
@@ -87,7 +92,6 @@ main (int argc, char *argv[])
         if (!parse_command_line (argc, argv))
                 return 1;
         
-
         if (version) {
                 print_version ();
                 return 0;
@@ -131,6 +135,9 @@ main (int argc, char *argv[])
                                             "pixmaps", PACKAGE, NULL);
 #endif
         }
+
+        if (debug)
+                g_setenv ("GIBBON_DEBUG", debug, TRUE);
 
         gibbon_app_new (builder_filename, pixmaps_dir,
                         data_dir ? data_dir : GIBBON_DATADIR,

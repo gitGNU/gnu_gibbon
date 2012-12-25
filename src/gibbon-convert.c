@@ -56,6 +56,8 @@ GibbonConvertFormat output_format = GIBBON_CONVERT_FORMAT_UNKNOWN;
 
 gboolean version = FALSE;
 
+static gchar *debug;
+
 static const GOptionEntry options[] =
 {
                 { "input-file", 'i', 0, G_OPTION_ARG_FILENAME, &input_filename,
@@ -73,6 +75,10 @@ static const GOptionEntry options[] =
                 { "to-format", 't', 0, G_OPTION_ARG_STRING, &to_format,
                   N_("output format (omit for automatic detection)"),
                   N_("FORMAT")
+                },
+                { "debug", 'D', 0, G_OPTION_ARG_STRING, &debug,
+                  N_("enable various debugging flags"),
+                  NULL
                 },
                 { "version", 'V', 0, G_OPTION_ARG_NONE, &version,
                   N_("output version information and exit"),
@@ -122,6 +128,9 @@ main (int argc, char *argv[])
                 print_version ();
                 return 0;
         }
+
+        if (debug)
+                g_setenv ("GIBBON_DEBUG", debug, TRUE);
 
         if (from_format) {
                 input_format = guess_format_from_id (from_format);
