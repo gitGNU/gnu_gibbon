@@ -348,21 +348,18 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                         }
                 }
                 if (!gibbon_match_add_action (match, side, action,
-                                              G_MININT64, NULL))
+                                              G_MININT64, &error)) {
+                        g_warning ("Error adding action type %s:\n",
+                                   G_OBJECT_TYPE_NAME (action));
+                        gibbon_dump_position (
+                                gibbon_match_get_current_position (match));
+                        g_critical ("Error message was: %s\n", error->message);
+                        g_error_free (error);
+                        error = NULL;
                         goto bail_out;
+                }
                 g_object_ref (action);
                 game = gibbon_match_get_current_game (match);
-                if (!gibbon_gmd_writer_write_action (self->priv->writer,
-                                                     self->priv->out,
-                                                     game, action, side,
-                                                     g_get_real_time (),
-                                                     &error)) {
-                        gibbon_app_fatal_error (app, _("Write Error"),
-                                                _("Error writing to"
-                                                  " `%s': %s!\n"),
-                                                self->priv->outname,
-                                                error->message);
-                }
                 if (last_game && last_game != game) {
                         if (!gibbon_gmd_writer_add_game (self->priv->writer,
                                                          self->priv->out,
@@ -373,6 +370,17 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                                         self->priv->outname,
                                                         error->message);
                         }
+                }
+                if (!gibbon_gmd_writer_write_action (self->priv->writer,
+                                                     self->priv->out,
+                                                     game, action, side,
+                                                     g_get_real_time (),
+                                                     &error)) {
+                        gibbon_app_fatal_error (app, _("Write Error"),
+                                                _("Error writing to"
+                                                  " `%s': %s!\n"),
+                                                self->priv->outname,
+                                                error->message);
                 }
                 if (last_game != game) {
                         gibbon_match_list_add_game (list, game);

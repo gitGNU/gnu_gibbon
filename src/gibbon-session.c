@@ -2737,7 +2737,9 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
         guint points;
-        gint score;
+        gint score, i;
+        GibbonPositionSide side;
+        GibbonPosition *try;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -2788,6 +2790,36 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                                               who, points);
         } else {
                 return -1;
+        }
+
+        /*
+         * If the last recorded action was a roll we may have missed the
+         * winning move.  We detect the situation here, and "correct" the
+         * position instead.
+         */
+        if (!self->priv->position->cube_turned
+            && !self->priv->position->resigned
+            && self->priv->position->dice[0]) {
+                try = gibbon_position_copy (self->priv->position);
+                side = score < 0 ? GIBBON_POSITION_SIDE_BLACK
+                                 : GIBBON_POSITION_SIDE_WHITE;
+                for (i = 0; i < 24; ++i) {
+                        /*
+                         * If the product of the score and the "number" of
+                         * checkers on a point is positive, the point was
+                         * occupied by the winner.
+                         */
+                        if (score * try->points[i] > 0)
+                                try->points[i] = 0;
+                }
+
+                if (gibbon_position_check_move (self->priv->position, try,
+                                                score)) {
+                        gibbon_position_free (self->priv->position);
+                        self->priv->position = try;
+                } else {
+                        gibbon_position_free (self->priv->position);
+                }
         }
 
         gibbon_position_reset_unused_dice (self->priv->position);
