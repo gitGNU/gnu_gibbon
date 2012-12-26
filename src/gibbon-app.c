@@ -62,6 +62,12 @@
 #include "gibbon-met.h"
 #include "gibbon-java-fibs-importer.h"
 
+enum gibbon_app_list_signal {
+        MATCH_SET,
+        LAST_SIGNAL
+};
+static guint gibbon_app_list_signals[LAST_SIGNAL] = { 0 };
+
 gchar *gibbon_app_pixmaps_directory = NULL;
 
 typedef struct _GibbonAppPrivate GibbonAppPrivate;
@@ -242,6 +248,17 @@ static void gibbon_app_class_init(GibbonAppClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
         g_type_class_add_private(klass, sizeof(GibbonAppPrivate));
+
+        gibbon_app_list_signals[MATCH_SET] =
+                g_signal_new ("match-set",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
 
         object_class->finalize = gibbon_app_finalize;
 }
@@ -483,6 +500,9 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
         gibbon_match_list_on_new_match (self->priv->match_list);
         gibbon_match_list_set_active_game (self->priv->match_list,
                                            num_games - 1);
+
+        g_signal_emit (self, gibbon_app_list_signals[MATCH_SET], 0, self);
+
 }
 
 GibbonMatch *

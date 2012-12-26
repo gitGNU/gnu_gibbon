@@ -127,9 +127,22 @@ void gibbon_app_show_game_chat (GibbonApp *self,
 void gibbon_app_configure_player_menu (const GibbonApp *self,
                                        const gchar *player,
                                        GtkMenu *menu);
+void gibbon_app_activate_player_list (const GibbonApp *self);
+
+/*
+ * Getter/setter for the "current" match.
+ */
 void gibbon_app_set_match (GibbonApp *self, struct _GibbonMatch *match);
 GibbonMatch *gibbon_app_get_match (GibbonApp *self);
-void gibbon_app_activate_player_list (const GibbonApp *self);
+
+/*
+ * Wrappers around the corresponding methods for GibbonMatch but for the
+ * current match.  These methods fire signals on success.
+ */
+gboolean gibbon_app_add_action (GibbonMatch *self, GibbonPositionSide side,
+                                GibbonGameAction *action,
+                                gint64 timestamp, GError **error);
+struct _GibbonGame *gibbon_app_add_game (GibbonMatch *self, GError **error);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
