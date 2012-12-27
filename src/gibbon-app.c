@@ -522,7 +522,7 @@ gibbon_app_get_match (GibbonApp *self)
 }
 
 GibbonGame *
-gibbon_app_add_game (const GibbonApp *self, GError **error)
+gibbon_app_add_game (GibbonApp *self, GError **error)
 {
         GibbonGame *game;
 
@@ -532,6 +532,8 @@ gibbon_app_add_game (const GibbonApp *self, GError **error)
         game = gibbon_match_add_game (self->priv->match, error);
         if (!game)
                 return NULL;
+
+        g_signal_emit (self, gibbon_app_list_signals[NEW_GAME], 0, game);
 
         return game;
 }

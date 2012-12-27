@@ -142,7 +142,7 @@ GibbonMatch *gibbon_app_get_match (GibbonApp *self);
 gboolean gibbon_app_add_action (GibbonMatch *self, GibbonPositionSide side,
                                 GibbonGameAction *action,
                                 gint64 timestamp, GError **error);
-struct _GibbonGame *gibbon_app_add_game (const GibbonApp *self, GError **error);
+struct _GibbonGame *gibbon_app_add_game (GibbonApp *self, GError **error);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
