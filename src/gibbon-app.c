@@ -63,7 +63,7 @@
 #include "gibbon-java-fibs-importer.h"
 
 enum gibbon_app_list_signal {
-        MATCH_SET,
+        NEW_MATCH,
         LAST_SIGNAL
 };
 static guint gibbon_app_list_signals[LAST_SIGNAL] = { 0 };
@@ -249,8 +249,8 @@ static void gibbon_app_class_init(GibbonAppClass *klass)
 
         g_type_class_add_private(klass, sizeof(GibbonAppPrivate));
 
-        gibbon_app_list_signals[MATCH_SET] =
-                g_signal_new ("match-set",
+        gibbon_app_list_signals[NEW_MATCH] =
+                g_signal_new ("new-match",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -482,7 +482,6 @@ void
 gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
 {
         GObject *obj;
-        gsize num_games;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (GIBBON_IS_MATCH (match));
@@ -495,14 +494,7 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
 
-        num_games = gibbon_match_get_number_of_games (match);
-
-        gibbon_match_list_on_new_match (self->priv->match_list);
-        gibbon_match_list_set_active_game (self->priv->match_list,
-                                           num_games - 1);
-
-        g_signal_emit (self, gibbon_app_list_signals[MATCH_SET], 0, self);
-
+        g_signal_emit (self, gibbon_app_list_signals[NEW_MATCH], 0, self);
 }
 
 GibbonMatch *
@@ -847,6 +839,10 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_reject),
                                   (gpointer) self);
+
+        g_signal_connect_swapped (G_OBJECT (self), "new-match",
+                                  G_CALLBACK (gibbon_match_list_on_new_match),
+                                  (gpointer) self->priv->match_list);
 }
 
 static gboolean
