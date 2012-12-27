@@ -179,11 +179,11 @@ gibbon_match_list_new (void)
 }
 
 void
-gibbon_match_list_on_new_match (GibbonMatchList *self)
+gibbon_match_list_on_new_match (GibbonMatchList *self,
+                                const GibbonMatch *match)
 {
         gsize i, num_games;
         const GibbonGame *game;
-        GibbonMatch *match = gibbon_app_get_match (app);
 
         g_return_if_fail (GIBBON_IS_MATCH_LIST (self));
         g_return_if_fail (GIBBON_IS_MATCH (match));

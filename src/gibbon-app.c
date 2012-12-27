@@ -64,6 +64,7 @@
 
 enum gibbon_app_list_signal {
         NEW_MATCH,
+        NEW_GAME,
         LAST_SIGNAL
 };
 static guint gibbon_app_list_signals[LAST_SIGNAL] = { 0 };
@@ -251,6 +252,17 @@ static void gibbon_app_class_init(GibbonAppClass *klass)
 
         gibbon_app_list_signals[NEW_MATCH] =
                 g_signal_new ("new-match",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
+
+        gibbon_app_list_signals[NEW_GAME] =
+                g_signal_new ("new-game",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -497,7 +509,8 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
         obj = gibbon_app_find_object (self, "notebook-info-area",
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
-        g_signal_emit (self, gibbon_app_list_signals[NEW_MATCH], 0, self);
+
+        g_signal_emit (self, gibbon_app_list_signals[NEW_MATCH], 0, match);
 }
 
 GibbonMatch *
@@ -506,6 +519,21 @@ gibbon_app_get_match (GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->match;
+}
+
+GibbonGame *
+gibbon_app_add_game (const GibbonApp *self, GError **error)
+{
+        GibbonGame *game;
+
+        gibbon_return_val_if_fail (GIBBON_IS_APP (self), NULL, error);
+        gibbon_return_val_if_fail (GIBBON_IS_MATCH (self->priv->match), NULL,
+                                   error);
+        game = gibbon_match_add_game (self->priv->match, error);
+        if (!game)
+                return NULL;
+
+        return game;
 }
 
 void
