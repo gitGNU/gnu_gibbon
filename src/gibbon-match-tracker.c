@@ -347,8 +347,8 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                                         error->message);
                         }
                 }
-                if (!gibbon_match_add_action (match, side, action,
-                                              G_MININT64, &error)) {
+                if (!gibbon_app_add_action (app, side, action,
+                                            G_MININT64, &error)) {
                         g_warning ("Error adding action type %s:\n",
                                    G_OBJECT_TYPE_NAME (action));
                         gibbon_dump_position (
@@ -531,7 +531,6 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
          * correct or not later.
          */
         match = gibbon_match_new (player1, player2, length, length);
-        gibbon_app_set_match (app, match);
 
         if (initial) {
                 game = gibbon_match_add_game (match, &error);
@@ -542,6 +541,7 @@ gibbon_match_tracker_init_match (GibbonMatchTracker *self, gsize length,
                 }
                 gibbon_game_set_initial_position (game, initial);
         }
+        gibbon_app_set_match (app, match);
 
         connection = gibbon_app_get_connection (app);
         host = gibbon_connection_get_hostname (connection);

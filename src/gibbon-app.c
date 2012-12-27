@@ -64,7 +64,7 @@
 
 enum gibbon_app_list_signal {
         NEW_MATCH,
-        NEW_GAME,
+        ACTION_ADDED,
         LAST_SIGNAL
 };
 static guint gibbon_app_list_signals[LAST_SIGNAL] = { 0 };
@@ -261,8 +261,8 @@ static void gibbon_app_class_init(GibbonAppClass *klass)
                               1,
                               G_TYPE_OBJECT);
 
-        gibbon_app_list_signals[NEW_GAME] =
-                g_signal_new ("new-game",
+        gibbon_app_list_signals[ACTION_ADDED] =
+                g_signal_new ("action-added",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_FIRST,
                               0,
@@ -519,23 +519,6 @@ gibbon_app_get_match (GibbonApp *self)
         g_return_val_if_fail (GIBBON_IS_APP (self), NULL);
 
         return self->priv->match;
-}
-
-GibbonGame *
-gibbon_app_add_game (GibbonApp *self, GError **error)
-{
-        GibbonGame *game;
-
-        gibbon_return_val_if_fail (GIBBON_IS_APP (self), NULL, error);
-        gibbon_return_val_if_fail (GIBBON_IS_MATCH (self->priv->match), NULL,
-                                   error);
-        game = gibbon_match_add_game (self->priv->match, error);
-        if (!game)
-                return NULL;
-
-        g_signal_emit (self, gibbon_app_list_signals[NEW_GAME], 0, game);
-
-        return game;
 }
 
 void
@@ -2060,4 +2043,23 @@ gibbon_app_on_java_fibs_import (GibbonApp *self)
 
         importer = gibbon_java_fibs_importer_new ();
         gibbon_java_fibs_importer_run (importer);
+}
+
+gboolean
+gibbon_app_add_action (GibbonApp *self, GibbonPositionSide side,
+                       GibbonGameAction *action,
+                       gint64 timestamp, GError **error)
+{
+        gibbon_return_val_if_fail (GIBBON_IS_APP (self), FALSE, error);
+        gibbon_return_val_if_fail (GIBBON_IS_GAME_ACTION (action), FALSE,
+                                   error);
+
+        if (!gibbon_match_add_action (self->priv->match, side, action,
+                                      timestamp, error))
+                return FALSE;
+
+
+        g_signal_emit (self, gibbon_app_list_signals[ACTION_ADDED], 0, action);
+
+        return TRUE;
 }

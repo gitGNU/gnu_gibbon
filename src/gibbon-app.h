@@ -136,13 +136,12 @@ void gibbon_app_set_match (GibbonApp *self, struct _GibbonMatch *match);
 GibbonMatch *gibbon_app_get_match (GibbonApp *self);
 
 /*
- * Wrappers around the corresponding methods for GibbonMatch but for the
+ * Wrapper around the corresponding method for GibbonMatch but for the
  * current match.  These methods fire signals on success.
  */
-gboolean gibbon_app_add_action (GibbonMatch *self, GibbonPositionSide side,
+gboolean gibbon_app_add_action (GibbonApp *self, GibbonPositionSide side,
                                 GibbonGameAction *action,
                                 gint64 timestamp, GError **error);
-struct _GibbonGame *gibbon_app_add_game (GibbonApp *self, GError **error);
 
 /* State setters.  */
 void gibbon_app_set_state_disconnected (GibbonApp *self);
