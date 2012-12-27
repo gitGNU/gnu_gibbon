@@ -486,7 +486,6 @@ void
 gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
 {
         GObject *obj;
-        gsize num_games;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (GIBBON_IS_MATCH (match));
@@ -499,11 +498,6 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
         g_signal_emit (self, gibbon_app_list_signals[NEW_MATCH], 0, self);
-
-        num_games = gibbon_match_get_number_of_games (match);
-        gibbon_match_list_set_active_game (self->priv->match_list,
-                                           num_games - 1);
-
 }
 
 GibbonMatch *
