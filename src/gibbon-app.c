@@ -447,6 +447,10 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
                                   (gpointer) self);
 
         self->priv->match_list = list;
+
+        g_signal_connect_swapped (G_OBJECT (self), "new-match",
+                                  G_CALLBACK (gibbon_match_list_on_new_match),
+                                  (gpointer) self->priv->match_list);
         self->priv->analysis_view = gibbon_analysis_view_new (self);
 
         if (match_file) {
@@ -482,6 +486,7 @@ void
 gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
 {
         GObject *obj;
+        gsize num_games;
 
         g_return_if_fail (GIBBON_IS_APP (self));
         g_return_if_fail (GIBBON_IS_MATCH (match));
@@ -493,8 +498,12 @@ gibbon_app_set_match (GibbonApp *self, GibbonMatch *match)
         obj = gibbon_app_find_object (self, "notebook-info-area",
                                       GTK_TYPE_NOTEBOOK);
         gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), 2);
-
         g_signal_emit (self, gibbon_app_list_signals[NEW_MATCH], 0, self);
+
+        num_games = gibbon_match_get_number_of_games (match);
+        gibbon_match_list_set_active_game (self->priv->match_list,
+                                           num_games - 1);
+
 }
 
 GibbonMatch *
@@ -839,10 +848,6 @@ static void gibbon_app_connect_signals(const GibbonApp *self)
         g_signal_connect_swapped (obj, "clicked",
                                   G_CALLBACK (gibbon_app_on_board_reject),
                                   (gpointer) self);
-
-        g_signal_connect_swapped (G_OBJECT (self), "new-match",
-                                  G_CALLBACK (gibbon_match_list_on_new_match),
-                                  (gpointer) self->priv->match_list);
 }
 
 static gboolean
