@@ -477,38 +477,19 @@ void
 gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
                                     GibbonMatch *match)
 {
-        gint num_rows;
-        GtkTreeIter iter;
-        gint action_no, move_action_no, roll_action_no;
+        gsize num_actions = 0;
+        GibbonGame *game;
 
         g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
         g_return_if_fail (GIBBON_IS_MATCH (match));
 
-        /* Mark the last row as dirty.  */
-        num_rows = gtk_tree_model_iter_n_children (self->priv->model, NULL);
-        if (!num_rows) {
-                g_signal_emit (self,
-                               gibbon_move_list_view_signals[ACTION_SELECTED],
-                               0, -1);
-                return;
-        }
-
-        if (!gtk_tree_model_iter_nth_child (self->priv->model, &iter, NULL,
-                                            num_rows - 1))
-                return;
-        gtk_tree_model_get (self->priv->model, &iter,
-                            GIBBON_MATCH_LIST_COL_MOVE_ACTION,
-                            &move_action_no,
-                            GIBBON_MATCH_LIST_COL_ROLL_ACTION,
-                            &roll_action_no,
-                            -1);
-        action_no = move_action_no;
-        if (action_no < 0)
-                action_no = roll_action_no;
+        game = gibbon_match_get_current_game (match);
+        if (game)
+                num_actions = gibbon_game_get_num_actions (game);
 
         g_signal_emit (self,
                        gibbon_move_list_view_signals[ACTION_SELECTED],
-                       0, action_no);
+                       0, (gint) num_actions - 1);
 }
 
 static void
