@@ -41,9 +41,7 @@
 #include "gibbon-app.h"
 
 enum gibbon_match_list_signal {
-        SELECT_GAME,
         GAME_SELECTED,
-        MATCH_LOADED,
         LAST_SIGNAL
 };
 static guint gibbon_match_list_signals[LAST_SIGNAL] = { 0 };
@@ -103,26 +101,6 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
         
         g_type_class_add_private (klass, sizeof (GibbonMatchListPrivate));
 
-        gibbon_match_list_signals[MATCH_LOADED] =
-                g_signal_new ("match-loaded",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__OBJECT,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_OBJECT);
-        gibbon_match_list_signals[SELECT_GAME] =
-                g_signal_new ("select-game",
-                              G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_FIRST,
-                              0,
-                              NULL, NULL,
-                              g_cclosure_marshal_VOID__OBJECT,
-                              G_TYPE_NONE,
-                              1,
-                              G_TYPE_OBJECT);
         gibbon_match_list_signals[GAME_SELECTED] =
                 g_signal_new ("game-selected",
                               G_TYPE_FROM_CLASS (klass),
@@ -198,8 +176,6 @@ gibbon_match_list_on_new_match (GibbonMatchList *self,
                 game = gibbon_match_get_nth_game (match, i);
                 gibbon_match_list_add_game (self, game);
         }
-
-        g_signal_emit (self, gibbon_match_list_signals[MATCH_LOADED], 0, self);
 }
 
 GtkListStore *
@@ -246,7 +222,6 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 
         num_actions = gibbon_game_get_num_actions (game);
 
-        g_signal_emit (self, gibbon_match_list_signals[SELECT_GAME], 0, self);
         for (i = 0; i < num_actions; ++i) {
                 if (!gibbon_match_list_add_action (self, game, i))
                         break;
