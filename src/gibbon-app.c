@@ -439,6 +439,7 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         GibbonGameListView *game_list_view;
         GObject *obj;
         GtkTreeView *move_list_view;
+        GCallback callback;
 
         obj = gibbon_app_find_object (self, "combo-game-select",
                                       GTK_TYPE_COMBO_BOX);
@@ -449,9 +450,11 @@ gibbon_app_init_match_list (GibbonApp *self, const gchar *match_file)
         obj = gibbon_app_find_object (self, "move-list-view",
                                       GTK_TYPE_TREE_VIEW);
         move_list_view = GTK_TREE_VIEW (obj);
-
         self->priv->move_list_view = gibbon_move_list_view_new (move_list_view,
                                                                 list);
+        callback = G_CALLBACK (gibbon_move_list_view_on_new_match);
+        g_signal_connect_swapped (G_OBJECT (self), "new-match", callback,
+                                  (gpointer) self->priv->move_list_view);
 
         g_signal_connect_swapped (G_OBJECT (self->priv->move_list_view),
                                   "action-selected",

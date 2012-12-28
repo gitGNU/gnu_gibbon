@@ -75,5 +75,7 @@ GType gibbon_move_list_view_get_type (void) G_GNUC_CONST;
 
 GibbonMoveListView *gibbon_move_list_view_new (GtkTreeView *view,
                                                const GibbonMatchList *list);
+void gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
+                                         GibbonMatch *match);
 
 #endif

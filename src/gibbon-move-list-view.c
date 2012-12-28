@@ -86,7 +86,6 @@ static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
 static gboolean gibbon_move_list_view_on_resize (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_select_game (GibbonMoveListView *self,
                                                   const GibbonMatchList *matches);
-static void gibbon_move_list_view_on_match_loaded (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
                                                     const GibbonMatchList *matches);
 static gboolean gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
@@ -219,10 +218,6 @@ gibbon_move_list_view_new (GtkTreeView *view,
         g_signal_connect_swapped (G_OBJECT (model), "row-changed",
                                   (GCallback)
                                   gibbon_move_list_view_on_row_changed, self);
-
-        g_signal_connect_swapped (G_OBJECT (match_list), "match-loaded",
-                                  (GCallback)
-                                  gibbon_move_list_view_on_match_loaded, self);
 
         g_signal_connect_swapped (G_OBJECT (match_list), "select-game",
                                   (GCallback)
@@ -503,12 +498,16 @@ gibbon_move_list_view_on_select_game (GibbonMoveListView *self,
         self->priv->game_changing = TRUE;
 }
 
-static void
-gibbon_move_list_view_on_match_loaded (GibbonMoveListView *self)
+void
+gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
+                                    GibbonMatch *match)
 {
         gint num_rows;
         GtkTreeIter iter;
         gint action_no, move_action_no, roll_action_no;
+
+        g_return_if_fail (GIBBON_IS_MOVE_LIST_VIEW (self));
+        g_return_if_fail (GIBBON_IS_MATCH (match));
 
         self->priv->game_changing = FALSE;
 
