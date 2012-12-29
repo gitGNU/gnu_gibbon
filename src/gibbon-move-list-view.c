@@ -84,7 +84,11 @@ static void gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                                      GtkTreeView *view);
 static gboolean gibbon_move_list_view_on_resize (GibbonMoveListView *self);
 static void gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
-                                                    const GibbonMatchList *matches);
+                                                    const GibbonMatchList
+                                                    *matches);
+static void gibbon_move_list_view_on_game_updating (GibbonMoveListView *self,
+                                                    const GibbonMatchList
+                                                    *matches);
 static gboolean gibbon_move_list_view_on_key_pressed (GibbonMoveListView *self,
                                                       GdkEventKey *event,
                                                       GtkTreeView *view);
@@ -218,6 +222,9 @@ gibbon_move_list_view_new (GtkTreeView *view,
         g_signal_connect_swapped (G_OBJECT (match_list), "game-selected",
                                   (GCallback)
                                   gibbon_move_list_view_on_game_selected, self);
+        g_signal_connect_swapped (G_OBJECT (match_list), "game-updating",
+                                  (GCallback)
+                                  gibbon_move_list_view_on_game_updating, self);
 
         g_signal_connect_swapped (G_OBJECT (view), "key-press-event",
                                   (GCallback)
@@ -381,6 +388,14 @@ gibbon_move_list_view_on_row_changed (GibbonMoveListView *self,
         GtkTreeViewColumn *number_column;
 
         view = self->priv->tree_view;
+
+        /*
+         * If the view currently disconnected from the model, there is no
+         * need to update anything.
+         */
+        if (!gtk_tree_view_get_model (view))
+                return;
+
         number_column = gtk_tree_view_get_column (view, 0);
 
         gtk_tree_view_set_cursor (self->priv->tree_view, path, NULL, FALSE);
@@ -493,12 +508,27 @@ gibbon_move_list_view_on_new_match (GibbonMoveListView *self,
 }
 
 static void
+gibbon_move_list_view_on_game_updating (GibbonMoveListView *self,
+                                        const GibbonMatchList *matches)
+{
+        /*
+         * Disconnect the model from the view while updating.
+         */
+        gtk_tree_view_set_model (self->priv->tree_view, NULL);
+}
+
+static void
 gibbon_move_list_view_on_game_selected (GibbonMoveListView *self,
                                         const GibbonMatchList *matches)
 {
         gint num_rows;
         GtkTreeIter iter;
         GtkTreePath *path;
+
+        /*
+         * Reconnect the model from the view after updating.
+         */
+        gtk_tree_view_set_model (self->priv->tree_view, self->priv->model);
 
         /* Mark the last row as dirty.  */
         num_rows = gtk_tree_model_iter_n_children (self->priv->model, NULL);
@@ -599,7 +629,6 @@ gibbon_move_list_view_previous (GibbonMoveListView *self)
 
         number_column = gtk_tree_view_get_column (self->priv->tree_view, 0);
 
-        /* Defer signal delivery while setting the cursor.  */
         gtk_tree_view_set_cursor (self->priv->tree_view, path, NULL, FALSE);
 
         gtk_tree_view_scroll_to_cell (self->priv->tree_view, path,
