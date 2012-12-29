@@ -41,6 +41,7 @@
 #include "gibbon-app.h"
 
 enum gibbon_match_list_signal {
+        GAME_UPDATING,
         GAME_SELECTED,
         LAST_SIGNAL
 };
@@ -101,6 +102,16 @@ gibbon_match_list_class_init (GibbonMatchListClass *klass)
         
         g_type_class_add_private (klass, sizeof (GibbonMatchListPrivate));
 
+        gibbon_match_list_signals[GAME_UPDATING] =
+                g_signal_new ("game-updating",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_FIRST,
+                              0,
+                              NULL, NULL,
+                              g_cclosure_marshal_VOID__OBJECT,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_OBJECT);
         gibbon_match_list_signals[GAME_SELECTED] =
                 g_signal_new ("game-selected",
                               G_TYPE_FROM_CLASS (klass),
@@ -222,6 +233,7 @@ gibbon_match_list_set_active_game (GibbonMatchList *self, gint active)
 
         num_actions = gibbon_game_get_num_actions (game);
 
+        g_signal_emit (self, gibbon_match_list_signals[GAME_UPDATING], 0, self);
         for (i = 0; i < num_actions; ++i) {
                 if (!gibbon_match_list_add_action (self, game, i))
                         break;
