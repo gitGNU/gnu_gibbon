@@ -280,6 +280,8 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
         const gchar *white;
         const gchar *black;
         GibbonMatch *match = gibbon_app_get_match (app);
+        GTimeVal timeval;
+        struct tm *now;
 
         g_return_if_fail (GIBBON_IS_MATCH_TRACKER (self));
         g_return_if_fail (target != NULL);
@@ -309,8 +311,12 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                  * displaying an error.
                  */
                 if (c && self->priv->debug) {
-                        g_printerr ("Could not guess missing actions from"
-                                    " here:\n");
+                        g_get_current_time (&timeval);
+                        now = localtime ((time_t *) &timeval.tv_sec);
+                        g_printerr ("[%02d:%02d:%02d.%06ld] Could not guess"
+                                   " missing actions from here:\n",
+                                   now->tm_hour, now->tm_min, now->tm_sec,
+                                   timeval.tv_usec);
                         gibbon_dump_position (current);
                         g_printerr ("to here:\n");
                         gibbon_dump_position (target);
@@ -349,7 +355,12 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                 }
                 if (!gibbon_app_add_action (app, side, action,
                                             G_MININT64, &error)) {
-                        g_warning ("Error adding action type %s:\n",
+                        g_get_current_time (&timeval);
+                        now = localtime ((time_t *) &timeval.tv_sec);
+                        g_warning ("[%02d:%02d:%02d.%06ld] Error adding action"
+                                   " type %s:\n",
+                                   now->tm_hour, now->tm_min, now->tm_sec,
+                                   timeval.tv_usec,
                                    G_OBJECT_TYPE_NAME (action));
                         gibbon_dump_position (
                                 gibbon_match_get_current_position (match));
