@@ -2740,6 +2740,8 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         gint score, i;
         GibbonPositionSide side;
         GibbonPosition *try;
+        GibbonMove *move;
+        gboolean reverse;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -2813,13 +2815,16 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                 try->points[i] = 0;
                 }
 
-                if (gibbon_position_check_move (self->priv->position, try,
-                                                score)) {
-                        gibbon_position_free (self->priv->position);
-                        self->priv->position = try;
-                } else {
-                        gibbon_position_free (self->priv->position);
+                move = gibbon_position_check_move (self->priv->position, try,
+                                                   score);
+                if (move->status == GIBBON_MOVE_LEGAL) {
+                        reverse = score < 0 ? TRUE : FALSE;
+                        (void)
+                        gibbon_position_apply_move (self->priv->position, move,
+                                                    score, reverse);
                 }
+                g_object_unref (move);
+                gibbon_position_free (try);
         }
 
         self->priv->position->dice[0] = self->priv->position->dice[1] = 0;
