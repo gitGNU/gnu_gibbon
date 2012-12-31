@@ -581,7 +581,6 @@ gibbon_cairoboard_draw (GibbonCairoboard *self, cairo_t *cr)
         gdouble aspect_ratio;
         gdouble width;
         gdouble height;
-        
         gint i;
 
         g_return_if_fail (GIBBON_IS_CAIROBOARD (self));

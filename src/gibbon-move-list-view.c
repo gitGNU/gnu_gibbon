@@ -438,6 +438,11 @@ gibbon_move_list_view_on_cursor_changed (GibbonMoveListView *self,
                                         NULL);
                         g_list_free (selected);
                 }
+                /*
+                 * This can happen for a fresh row.
+                 */
+                if (action_no < 0)
+                        return;
         }
 
         self->priv->last_action_no = action_no;
