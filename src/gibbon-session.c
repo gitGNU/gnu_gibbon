@@ -2822,7 +2822,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                 }
         }
 
-        self->priv->position->dice[0] = self->priv->position->dice[1];
+        self->priv->position->dice[0] = self->priv->position->dice[1] = 0;
         gibbon_position_reset_unused_dice (self->priv->position);
         self->priv->position->score = score;
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
