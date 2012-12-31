@@ -2819,12 +2819,19 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
                                                    score);
                 if (move->status == GIBBON_MOVE_LEGAL) {
                         reverse = score < 0 ? TRUE : FALSE;
+
                         (void)
                         gibbon_position_apply_move (self->priv->position, move,
                                                     score, reverse);
+
+                        /*
+                         * Reset the score as apply_move() has also set it.
+                         */
+                        self->priv->position->scores[0] = try->scores[0];
+                        self->priv->position->scores[1] = try->scores[1];
                 }
-                g_object_unref (move);
                 gibbon_position_free (try);
+                g_object_unref (move);
         }
 
         self->priv->position->dice[0] = self->priv->position->dice[1] = 0;
