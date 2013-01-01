@@ -630,7 +630,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                         try_move);
                         try_move = FALSE;
                 }
-        } else if (current->dice[0]) {
+        } else {
                 initial = gibbon_position_initial ();
                 /*
                  * Handle the case after an initial opening double.
@@ -642,29 +642,6 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         retval = gibbon_match_try_move (self, current, target);
                         try_move = FALSE;
                 }
-        } else if (0) {
-                retval = gibbon_match_try_double (self, current, target);
-                if (!retval && try_move) {
-                        retval = gibbon_match_try_move (self, current, target);
-                        if (retval)
-                                try_move = FALSE;
-                        if (gibbon_position_game_over (current)) {
-                                gibbon_position_reset (current);
-                                /*
-                                 * FIXME! We must check for the crawford game here, and see
-                                 * whether we have to adjust the may_double flags.
-                                 */
-                        }
-                }
-                if (!retval) {
-                        retval = gibbon_match_try_roll (self, current, target,
-                                                        try_move);
-                        try_move = FALSE;
-                }
-        } else {
-                retval = gibbon_match_try_roll (self, current, target,
-                                                try_move);
-                try_move = FALSE;
         }
 
         if (!retval && self->priv->debug) {
