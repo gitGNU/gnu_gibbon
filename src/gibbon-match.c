@@ -63,8 +63,6 @@ G_DEFINE_TYPE (GibbonMatch, gibbon_match, G_TYPE_OBJECT)
 static GSList *_gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                   GibbonPosition *current,
                                                   const GibbonPosition *target,
-                                                  const GibbonMatchPlay
-                                                  *last_play,
                                                   gboolean try_move);
 static GSList *gibbon_match_try_roll (const GibbonMatch *self,
                                       GibbonPosition *current,
@@ -531,9 +529,6 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
                                   GSList **_result)
 {
         GSList *result;
-        GibbonMatchPlay *last_play;
-        GibbonGameAction *last_action;
-        GibbonPositionSide last_side;
         const GibbonPosition *last_pos;
         GibbonPosition *current;
         GibbonGame *current_game;
@@ -574,17 +569,6 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
 
                 current_game = gibbon_match_get_current_game (self);
 
-                /*
-                 * The cast removes the const from the return value.  But in
-                 * absence of a copy function for GibbonGameAction we have no
-                 * other chance here.
-                 */
-                last_action = GIBBON_GAME_ACTION (gibbon_game_get_nth_action (
-                                current_game, -1, &last_side));
-                last_play = gibbon_match_play_new (last_action, last_side);
-                if (last_action)
-                        g_object_ref (last_action);
-
                 current = gibbon_position_copy (last_pos);
         } else {
                 /* No last position.  That means that we are at the beginning
@@ -597,15 +581,11 @@ gibbon_match_get_missing_actions (const GibbonMatch *self,
                 }
                 current = gibbon_position_copy (last_pos);
                 current->match_length = target->match_length;
-                last_play = gibbon_match_play_new (NULL,
-                                                   GIBBON_POSITION_SIDE_NONE);
         }
 
         result = _gibbon_match_get_missing_actions (self, current,
-                                                    target, last_play,
-                                                    TRUE);
+                                                    target, TRUE);
         gibbon_position_free (current);
-        gibbon_match_play_free (last_play);
 
         if (result) {
                 if (_result)
@@ -620,13 +600,10 @@ static GSList *
 _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                    GibbonPosition *current,
                                    const GibbonPosition *target,
-                                   const GibbonMatchPlay *last_play,
                                    gboolean try_move)
 {
         GSList *retval = NULL;
-        GibbonGameAction *last_action = last_play->action;
         GSList *head;
-        GibbonMatchPlay *play;
         const GibbonPosition *initial;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
@@ -639,24 +616,21 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                  * whether we have to adjust the may_double flags.
                  */
         }
-        if (!last_action) {
-                retval = gibbon_match_try_roll (self, current, target,
-                                                try_move);
-                try_move = FALSE;
-        } else if (GIBBON_IS_RESIGN (last_action)) {
+
+        if (current->resigned) {
                 retval = gibbon_match_try_accept (self, current, target);
-        } else if (GIBBON_IS_ACCEPT (last_action)) {
-                retval = gibbon_match_try_roll (self, current, target,
-                                                try_move);
-                try_move = FALSE;
-        } else if (GIBBON_IS_MOVE (last_action)) {
+        } else if (current->cube_turned) {
+                retval = gibbon_match_try_take (self, current, target);
+                if (!retval)
+                        retval = gibbon_match_try_drop (self, current, target);
+        } else if (!current->dice[0]) {
                 retval = gibbon_match_try_double (self, current, target);
                 if (!retval) {
                         retval = gibbon_match_try_roll (self, current, target,
                                                         try_move);
                         try_move = FALSE;
                 }
-        } else if (GIBBON_IS_ROLL (last_action)) {
+        } else if (current->dice[0]) {
                 initial = gibbon_position_initial ();
                 /*
                  * Handle the case after an initial opening double.
@@ -668,19 +642,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                         retval = gibbon_match_try_move (self, current, target);
                         try_move = FALSE;
                 }
-        } else if (GIBBON_IS_DOUBLE (last_action)) {
-                retval = gibbon_match_try_take (self, current, target);
-                if (!retval)
-                        retval = gibbon_match_try_drop (self, current, target);
-        } else if (GIBBON_IS_TAKE (last_action)) {
-                retval = gibbon_match_try_roll (self, current, target,
-                                                try_move);
-                try_move = FALSE;
-        } else if (GIBBON_IS_DROP (last_action)) {
-                retval = gibbon_match_try_roll (self, current, target,
-                                                try_move);
-                try_move = FALSE;
-        } else if (GIBBON_IS_REJECT (last_action)) {
+        } else if (0) {
                 retval = gibbon_match_try_double (self, current, target);
                 if (!retval && try_move) {
                         retval = gibbon_match_try_move (self, current, target);
@@ -699,15 +661,14 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                                                         try_move);
                         try_move = FALSE;
                 }
+        } else {
+                retval = gibbon_match_try_roll (self, current, target,
+                                                try_move);
+                try_move = FALSE;
         }
 
         if (!retval && self->priv->debug) {
-                if (last_action) {
-                        g_printerr ("Got stuck after %s:\n",
-                                        G_OBJECT_TYPE_NAME (last_action));
-                } else {
-                        g_printerr ("Got stuck at first action:\n");
-                }
+                g_printerr ("Got stuck here:\n");
                 gibbon_dump_position (current);
         }
 
@@ -717,9 +678,8 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         if (gibbon_position_equals_technically (current, target))
                 return retval;
 
-        play = (GibbonMatchPlay *) retval->data;
         head = _gibbon_match_get_missing_actions (self, current, target,
-                                                  play, try_move);
+                                                  try_move);
 
         if (!head) {
                 g_slist_free_full (retval,
