@@ -605,6 +605,8 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         GSList *retval = NULL;
         GSList *head;
         const GibbonPosition *initial;
+        GTimeVal timeval;
+        struct tm *now;
 
         g_return_val_if_fail (GIBBON_IS_MATCH (self), FALSE);
         g_return_val_if_fail (target != NULL, FALSE);
@@ -645,7 +647,11 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
         }
 
         if (!retval && self->priv->debug) {
-                g_printerr ("Got stuck here:\n");
+                g_get_current_time (&timeval);
+                now = localtime ((time_t *) &timeval.tv_sec);
+                g_printerr ("[%02d:%02d:%02d.%06ld] Got stuck here:\n",
+                           now->tm_hour, now->tm_min, now->tm_sec,
+                           timeval.tv_usec);
                 gibbon_dump_position (current);
         }
 

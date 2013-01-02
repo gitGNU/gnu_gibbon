@@ -120,3 +120,5 @@
 - Crawford game no longer gets displayed.
 - Re-write end-of-game code.  We need a specialized method of 
   GibbonMatchTracker that takes a (known) starting position and a score.
+- With a lot of pending invitations, we never get the saved count but only
+  see the spinner.
