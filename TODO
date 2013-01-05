@@ -123,3 +123,5 @@
 - With a lot of pending invitations, we never get the saved count but only
   see the spinner.
 - Ranks are stored whenever a match was resumed.
+- Moves tab is always brought to front while playing.  This should only happen
+  once, at the beginning.
