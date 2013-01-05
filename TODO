@@ -123,5 +123,8 @@
 - With a lot of pending invitations, we never get the saved count but only
   see the spinner.
 - Ranks are stored whenever a match was resumed.
-- Moves tab is always brought to front while playing.  This should only happen
-  once, at the beginning.
+- When we watch somebody who is not playing, we send a "board" command and
+  get the reply "the_user is not playing".  After that, we can no longer 
+  send commands to the server, neither manaully from the console, nor
+  automatically with the ui.  First fix the blocking, then prevent the
+  gratuitous board command for users that are not playing.
