@@ -433,20 +433,6 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                         clip_code = gibbon_session_process_server_line (session,
                                                                         ptr);
                         if (clip_code >= 0) {
-                                /*
-                                 * This is a recognized reply to a command.
-                                 * FIBS is now ready to receive new commands.
-                                 */
-                                if (clip_code > 0) {
-                                        /*
-                                         * Our connection may have been
-                                         * cancelled.
-                                         */
-                                        if (gibbon_app_get_connection (app))
-                                                self->priv->out_ready = TRUE;
-                                        gibbon_connection_send_chunk (self);
-                                }
-
                                 gibbon_server_console_print_output (console,
                                                                 console_output);
                         } else {
@@ -464,6 +450,8 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                                                signals[LOGGED_IN],
                                                0, self);
                         }
+                        self->priv->out_ready = TRUE;
+                        gibbon_connection_send_chunk (self);
                 } else {
                         gibbon_server_console_print_info (console, ptr);
                 }
