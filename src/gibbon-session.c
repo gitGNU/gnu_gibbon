@@ -2318,6 +2318,8 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
          */
         if (0 == g_strcmp0 ("boardstyle", key)) {
                 if (self->priv->expect_boardstyle) {
+                        gibbon_session_clean_saved (self);
+                        self->priv->saved_finished = TRUE;
                         check_queues = TRUE;
                         force_queues = TRUE;
                 }
@@ -3061,15 +3063,15 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
         if (!force && self->priv->timeout_id)
                 return;
 
-        if (self->priv->expect_boardstyle) {
+        if (self->priv->expect_saved) {
+                gibbon_connection_queue_command (self->priv->connection,
+                                                 FALSE,
+                                                 "show saved");
+        } else if (self->priv->expect_boardstyle) {
                 gibbon_connection_queue_command (self->priv->connection,
                                                  self->priv->set_boardstyle,
                                                  "set boardstyle 3");
                 self->priv->set_boardstyle = TRUE;
-        } else if (self->priv->expect_saved) {
-                gibbon_connection_queue_command (self->priv->connection,
-                                                 FALSE,
-                                                 "show saved");
         } else if (self->priv->expect_notify) {
                 gibbon_connection_queue_command (self->priv->connection, TRUE,
                                                  "toggle notify");
@@ -3086,9 +3088,6 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                                                  "rawwho %s", (gchar *)
                                             self->priv->expect_who_infos->data);
         } else if (self->priv->expect_address) {
-                gibbon_session_clean_saved (self);
-                self->priv->saved_finished = TRUE;
-
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
