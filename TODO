@@ -109,7 +109,6 @@
 - Reactivate debugging code for match continuation.  Currently all matches
   must continue smoothlessly.
 - Getting saved count for inviters no longer works.
-- Fix typo: gibbon_dump_position() -> gibbon_position_dump().
 - Quick bear-off is broken, when dice are swapped.
 - 33: 3-off 3-off 1-off 1-off is not found.
 - End-of-match is saved wrongly.

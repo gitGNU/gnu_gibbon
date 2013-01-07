@@ -652,7 +652,7 @@ _gibbon_match_get_missing_actions (const GibbonMatch *self,
                 g_printerr ("[%02d:%02d:%02d.%06ld] Got stuck here:\n",
                            now->tm_hour, now->tm_min, now->tm_sec,
                            timeval.tv_usec);
-                gibbon_dump_position (current);
+                gibbon_position_dump (current);
         }
 
         if (!retval)

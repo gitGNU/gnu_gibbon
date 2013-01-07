@@ -317,9 +317,9 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                    " missing actions from here:\n",
                                    now->tm_hour, now->tm_min, now->tm_sec,
                                    timeval.tv_usec);
-                        gibbon_dump_position (current);
+                        gibbon_position_dump (current);
                         g_printerr ("to here:\n");
-                        gibbon_dump_position (target);
+                        gibbon_position_dump (target);
                         gtk_widget_error_bell (gibbon_app_get_window (app));
                 }
 
@@ -362,7 +362,7 @@ gibbon_match_tracker_update (GibbonMatchTracker *self,
                                    now->tm_hour, now->tm_min, now->tm_sec,
                                    timeval.tv_usec,
                                    G_OBJECT_TYPE_NAME (action));
-                        gibbon_dump_position (
+                        gibbon_position_dump (
                                 gibbon_match_get_current_position (match));
                         g_critical ("Error message was: %s\n", error->message);
                         g_error_free (error);

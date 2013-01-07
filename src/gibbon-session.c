@@ -1692,7 +1692,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
 
         if (self->priv->debug_board_state) {
                 g_printerr ("Board state:\n");
-                gibbon_dump_position (self->priv->position);
+                gibbon_position_dump (self->priv->position);
         }
 
         /*
