@@ -128,3 +128,6 @@
   send commands to the server, neither manaully from the console, nor
   automatically with the ui.  First fix the blocking, then prevent the
   gratuitous board command for users that are not playing.
+- After logging in, it takes about one second until we read the reply from the
+  server although it is there immediately.  The problem seems to be that 
+  g_input_stream_read_async never calls the callback before one second.
