@@ -2308,9 +2308,14 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                 return -1;
 
         /* The only setting we are interested in is "boardstyle".  */
+        /*
+         * FIXME! There are more settings that have a mandatory value for us.
+         */
         if (0 == g_strcmp0 ("boardstyle", key)) {
-                if (self->priv->expect_boardstyle)
+                if (self->priv->expect_boardstyle) {
                         check_queues = TRUE;
+                        force_queues = TRUE;
+                }
                 if (value[0] != '3' || value[1]) {
                         /*
                          * Somebody changed the boardstyle.  This is assumed an
