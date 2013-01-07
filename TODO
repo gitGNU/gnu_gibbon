@@ -124,3 +124,8 @@
 - After logging in, it takes about one second until we read the reply from the
   server although it is there immediately.  The problem seems to be that 
   g_input_stream_read_async never calls the callback before one second.
+- If we get the first rawwho for ourselves, check that it matches the 
+  mail address set by the user.  If it does not, set the address.  Bear in 
+  mind, however, that it is not possible to unset an already set address.
+  This has to be done only on the first rawwho.  Later, read the configured
+  address instead, and set it accordingly with GSettings.
