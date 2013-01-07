@@ -379,7 +379,7 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
         GtkTextIter start, end;
         struct tm *now;
         GTimeVal timeval;
-        gchar *timestamp;
+        gchar *timestamp = NULL;
         GSettings *settings;
         gchar *logfile;
         gchar *full_logfile;
@@ -408,7 +408,6 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                                              now->tm_sec,
                                              timeval.tv_usec);
                 gtk_text_buffer_insert_at_cursor (buffer, timestamp, -1);
-                g_free (timestamp);
         }
 
         if (prefix)
@@ -434,13 +433,15 @@ _gibbon_server_console_print_raw (GibbonServerConsole *self,
                 full_logfile = g_strdup_printf ("%s.%llu", logfile,
                                                 (unsigned long long) getpid ());
                 log = g_fopen (full_logfile, "a");
-                if (!log || !fprintf (log, "%s%s%s", _prefix, string, _linefeed)
+                if (!log || !fprintf (log, "%s%s%s%s", timestamp,
+                                      _prefix, string, _linefeed)
                     || fclose (log)) {
                         g_critical(_("Unable to write to logfile `%s': %s.\n"),
                                    full_logfile, strerror (errno));
                 }
         }
         g_free (logfile);
+        g_free (timestamp);
 
         g_object_unref (settings);
 }
