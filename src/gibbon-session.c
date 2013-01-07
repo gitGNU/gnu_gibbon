@@ -682,6 +682,10 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_show_toggle (self, iter);
                 break;
         case GIBBON_CLIP_CODE_SHOW_START_SAVED:
+                if (self->priv->expect_saved) {
+                        self->priv->expect_saved = FALSE;
+                        gibbon_session_check_expect_queues (self, TRUE);
+                }
                 if (self->priv->saved_finished)
                         retval = -1;
                 else
@@ -690,11 +694,12 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
-                self->priv->expect_saved = FALSE;
                 break;
         case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
-                if (self->priv->expect_saved)
+                if (self->priv->expect_saved) {
+                        self->priv->expect_saved = FALSE;
                         gibbon_session_check_expect_queues (self, TRUE);
+                }
                 if (self->priv->saved_finished)
                         retval = -1;
                 else
@@ -2471,6 +2476,7 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
+        self->priv->saved_finished = TRUE;
         if  (self->priv->expect_address) {
                 self->priv->expect_address = FALSE;
                 gibbon_session_check_expect_queues (self, TRUE);
@@ -3051,7 +3057,6 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
         GSettings *settings;
         gchar *mail;
         struct GibbonSessionSavedCountCallbackInfo *info;
-        gboolean saved_finished = TRUE;
 
         if (!force && self->priv->timeout_id)
                 return;
@@ -3061,12 +3066,10 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                                                  self->priv->set_boardstyle,
                                                  "set boardstyle 3");
                 self->priv->set_boardstyle = TRUE;
-                saved_finished = FALSE;
         } else if (self->priv->expect_saved) {
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE,
                                                  "show saved");
-                saved_finished = FALSE;
         } else if (self->priv->expect_notify) {
                 gibbon_connection_queue_command (self->priv->connection, TRUE,
                                                  "toggle notify");
@@ -3083,6 +3086,9 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                                                  "rawwho %s", (gchar *)
                                             self->priv->expect_who_infos->data);
         } else if (self->priv->expect_address) {
+                gibbon_session_clean_saved (self);
+                self->priv->saved_finished = TRUE;
+
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 mail = g_settings_get_string (settings,
                                               GIBBON_PREFS_SERVER_ADDRESS);
@@ -3096,18 +3102,9 @@ gibbon_session_check_expect_queues (GibbonSession *self, gboolean force)
                         self->priv->expect_address = FALSE;
                 }
                 g_free (mail);
-        } else if (!self->priv->saved_finished) {
-                self->priv->saved_finished = TRUE;
-                gibbon_session_clean_saved (self);
-                return;
         } else {
                 return;
         }
-
-        if (saved_finished && !self->priv->saved_finished)
-                gibbon_session_clean_saved (self);
-
-        self->priv->saved_finished = saved_finished;
 
         if (!self->priv->timeout_id)
                 self->priv->timeout_id =
