@@ -169,6 +169,8 @@ static void gibbon_session_start_playing (GibbonSession *self,
 static void gibbon_session_stop_playing (GibbonSession *self);
 static void gibbon_session_clean_saved (const GibbonSession *self);
 static void gibbon_session_update_tracker (GibbonSession *self);
+static void gibbon_session_check_address (GibbonSession *self,
+                                          const gchar *remote_address);
 
 struct _GibbonSessionPrivate {
         GibbonApp *app;
@@ -897,8 +899,6 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gboolean has_saved;
         GibbonSavedInfo *saved_info;
         GError *error = NULL;
-        GSettings *settings;
-        gchar *wanted_email;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_NAME, &who))
                 return -1;
@@ -1046,42 +1046,8 @@ gibbon_session_clip_who_info (GibbonSession *self,
         gibbon_archive_update_user (archive, server, port, account,
                                     rating, experience);
 
-        if (!g_strcmp0 (account, who)) {
-                /*
-                 * FIXME! This is not correct.  We must first check whether
-                 * this is the first rawwho we receive for ourselves.  In that
-                 * case, make sure that the address on the server matches
-                 * the address given in the connection dialog.
-                 *
-                 * For all later rawwhos, write the setting on the server
-                 * back to the settings database (actually only, when we
-                 * receive a notification "Your email address is ...").
-                 * Better write a separate method for that.
-                 */
-                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
-                wanted_email = g_settings_get_string (settings,
-                                                   GIBBON_PREFS_SERVER_ADDRESS);
-                g_object_unref (settings);
-                if (wanted_email && *wanted_email) {
-                        if (g_strcmp0 (wanted_email, current_email)) {
-                                gibbon_connection_queue_command (
-                                                self->priv->connection,
-                                                FALSE,
-                                                "address %s",
-                                                wanted_email);
-                                self->priv->expect_address = TRUE;
-                        }
-                } else if (current_email && current_email[0] != '-'
-                           && !current_email[1]) {
-                        gibbon_connection_queue_command (
-                                        self->priv->connection,
-                                        FALSE,
-                                        "address -");
-                        self->priv->expect_address = TRUE;
-                }
-
-                g_free (wanted_email);
-        }
+        if (!g_strcmp0 (account, who))
+                gibbon_session_check_address (self, current_email);
 
         return GIBBON_CLIP_CODE_WHO_INFO;
 }
@@ -2520,7 +2486,18 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
 static gint
 gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 {
+        const gchar *address;
+
         self->priv->saved_finished = TRUE;
+
+        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING,
+                                     &address)) {
+                self->priv->expect_address = FALSE;
+                return -1;
+        }
+
+        gibbon_session_check_address (self, address);
+
         if  (self->priv->expect_address) {
                 self->priv->expect_address = FALSE;
                 return GIBBON_CLIP_CODE_SHOW_ADDRESS;
@@ -2538,8 +2515,10 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
          * If the command was entered manually there is no need to display
          * an error message.  It is already visible in the server console.
          */
-        if (!self->priv->expect_address)
+        if (!self->priv->expect_address) {
+                self->priv->expect_address = FALSE;
                 return -1;
+        }
 
         self->priv->expect_address = FALSE;
 
@@ -3949,4 +3928,52 @@ gibbon_session_update_tracker (GibbonSession *self)
                 return;
 
         gibbon_session_stop_playing (self);
+}
+
+static void
+gibbon_session_check_address (GibbonSession *self, const gchar *remote_email)
+{
+        GSettings *settings;
+        gchar *local_email;
+
+        settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+        local_email = g_settings_get_string (settings,
+                                             GIBBON_PREFS_SERVER_ADDRESS);
+        g_object_unref (settings);
+
+        if (!local_email || !*local_email) {
+                g_free (local_email);
+                local_email = g_strdup ("-");
+        }
+
+        if (!g_strcmp0 (local_email, remote_email)) {
+                g_free (local_email);
+                self->priv->address_checked = TRUE;
+                return;
+        }
+
+        if (self->priv->address_checked) {
+                /*
+                 * Address has changed on the server.  Write it back to
+                 * GSettings.
+                 */
+                settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
+                g_settings_set_string (settings, GIBBON_PREFS_SERVER_ADDRESS,
+                                       local_email);
+                g_object_unref (settings);
+        } else {
+                /*
+                 * Send user configured address to the server.
+                 */
+                gibbon_connection_queue_command (
+                                self->priv->connection,
+                                FALSE,
+                                "address %s",
+                                local_email);
+                self->priv->expect_address = TRUE;
+        }
+
+        g_free (local_email);
+
+        self->priv->address_checked = TRUE;
 }
