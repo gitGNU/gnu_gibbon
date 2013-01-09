@@ -3957,6 +3957,8 @@ gibbon_session_check_address (GibbonSession *self, const gchar *remote_email)
                  * Address has changed on the server.  Write it back to
                  * GSettings.
                  */
+                if (!g_strcmp0 ("-", remote_email))
+                        remote_email = "";
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 g_settings_set_string (settings, GIBBON_PREFS_SERVER_ADDRESS,
                                        remote_email);
