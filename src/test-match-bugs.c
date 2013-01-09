@@ -29,19 +29,6 @@
 #include "gibbon-position.h"
 #include "gibbon-roll.h"
 
-static gboolean test_bug01 (void);
-
-int
-main (int argc, char *argv[])
-{
-        g_type_init ();
-
-        if (!test_bug01 ())
-                return -1;
-
-        return 0;
-}
-
 gboolean
 test_bug01 ()
 {	
@@ -90,4 +77,15 @@ test_bug01 ()
         g_object_unref (match);
 
         return TRUE;
+}
+
+int
+main (int argc, char *argv[])
+{
+        g_type_init ();
+
+        if (!test_bug01 ())
+                return -1;
+
+        return 0;
 }
