@@ -266,7 +266,7 @@ gibbon_session_init (GibbonSession *self)
         self->priv->expect_saved_counts = NULL;
         self->priv->expect_address = FALSE;
 
-        self->priv->address_checked = TRUE;
+        self->priv->address_checked = FALSE;
 
         self->priv->saved_games =
                 g_hash_table_new_full (g_str_hash,
