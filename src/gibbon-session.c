@@ -3959,7 +3959,7 @@ gibbon_session_check_address (GibbonSession *self, const gchar *remote_email)
                  */
                 settings = g_settings_new (GIBBON_PREFS_SERVER_SCHEMA);
                 g_settings_set_string (settings, GIBBON_PREFS_SERVER_ADDRESS,
-                                       local_email);
+                                       remote_email);
                 g_object_unref (settings);
         } else {
                 /*
