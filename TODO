@@ -129,3 +129,6 @@
   mind, however, that it is not possible to unset an already set address.
   This has to be done only on the first rawwho.  Later, read the configured
   address instead, and set it accordingly with GSettings.
+- Invitations are not deleted, when the inviter plays with somebody else?
+  Accepting such a stale invitation crashes Gibbon and leads to an error
+  "no match" in BaldLies.
