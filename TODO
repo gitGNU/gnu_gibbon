@@ -132,3 +132,16 @@
 - Invitations are not deleted, when the inviter plays with somebody else?
   Accepting such a stale invitation crashes Gibbon and leads to an error
   "no match" in BaldLies.
+- When starting watching an ongoing match, the first position is labelled
+  as "initial position" instead of "setup position".
+- Watching a 1-point match at 0-0 displays "Post-Crawford game" in the
+  status field.
+- Got this board state from BaldLies: board:gnubg_beginner:gnubg_world_class:13:0:2:0:-2:0:0:0:0:5:0:3:1:1:1:-4:2:0:0:0:-3:0:-3:-2:0:-1:0:1:1:1:0:0:0:0:1:0:0:1:1:-1:0:25:0:0:1:0:0:0:0:0
+  Both opponents have the may_double flag erroneously set to false here
+  (while watching).
+- The matches by the bots on BaldLies sometimes hang.  TODO: tail -f the
+  client log files.
+- Feedback for tell/say/whisper/kibitz/alert misses a newline, when send
+  back from BaldLies.
+- When watching, after white has doubled, black's may-double flag of the 
+  computed position toggles between true and false.
