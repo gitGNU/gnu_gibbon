@@ -98,7 +98,10 @@ main (int argc, char *argv[])
         }
 
         if (!g_thread_supported ()) {
+#if (GLIB_MAJOR_VERSION < 2 \
+     || (GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 32))
                 g_thread_init (NULL);
+#endif
                 gdk_threads_init ();
 	}
         gsgf_threads_init ();
