@@ -460,6 +460,8 @@ gibbon_session_process_server_line (GibbonSession *self,
         gint retval = -1;
         GSList *values, *iter;
         enum GibbonClipCode code;
+        GTimeVal timeval;
+        struct tm *now;
 
         g_return_val_if_fail (GIBBON_IS_SESSION (self), -1);
         g_return_val_if_fail (line != NULL, -1);
@@ -572,6 +574,13 @@ gibbon_session_process_server_line (GibbonSession *self,
                 retval = gibbon_session_handle_error_no_user (self, iter);
                 break;
         case GIBBON_CLIP_CODE_BOARD:
+                if (self->priv->debug_board_state) {
+                        g_get_current_time (&timeval);
+                        now = localtime ((time_t *) &timeval.tv_sec);
+                        g_printerr ("[%02d:%02d:%02d.%06ld] %s\n",
+                                   now->tm_hour, now->tm_min, now->tm_sec,
+                                   timeval.tv_usec, line);
+                }
                 retval = gibbon_session_handle_board (self, iter);
                 break;
         case GIBBON_CLIP_CODE_BAD_BOARD:
