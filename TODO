@@ -145,3 +145,4 @@
   back from BaldLies.
 - When watching, after white has doubled, black's may-double flag of the 
   computed position toggles between true and false.
+- Program currently hangs, after inviting another player.
