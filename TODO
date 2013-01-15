@@ -150,5 +150,8 @@
   from the server has been processed.  Instead, the timestamp should be 
   computed after reading and before processing.
 - Check exact impact of autoboard.  When are extra boards sent?
-- Is a "The cube now shows N" sent after an accepted double, when watching?
+- Doubles while watching are not parsed correctly.  Do not expect a
+  "The cube shows N" in that case!
 - Redoubles are not parsed.
+- Add debugging code to gibbon-connection so that all unhandled messages from
+  the server are printed on stderr.
