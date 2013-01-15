@@ -150,3 +150,4 @@
   from the server has been processed.  Instead, the timestamp should be 
   computed after reading and before processing.
 - Check exact impact of autoboard.  When are extra boards sent?
+- Is a "The cube now shows N" sent after an accepted double, when watching?
