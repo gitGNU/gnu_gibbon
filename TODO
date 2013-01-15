@@ -146,3 +146,6 @@
 - When watching, after white has doubled, black's may-double flag of the 
   computed position toggles between true and false.
 - Program currently hangs, after inviting another player.
+- Logging timestamps are flawed.  The timestamp is computed after a line read
+  from the server has been processed.  Instead, the timestamp should be 
+  computed after reading and before processing.
