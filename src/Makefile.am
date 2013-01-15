@@ -107,6 +107,7 @@ gibbon_SOURCES = 			\
         gibbon-chat-view.c		\
         gibbon-client-icons.c		\
         gibbon-clip.c			\
+        gibbon-clip-reader.c	\
         gibbon-connection.c		\
         gibbon-connection-dialog.c	\
         gibbon-country.c		\
@@ -154,6 +155,7 @@ noinst_HEADERS =			\
         gibbon-chat-view.h		\
         gibbon-client-icons.h		\
         gibbon-clip.h			\
+		gibbon-clip-reader.h	\
         gibbon-connection.h		\
         gibbon-connection-dialog.h	\
         gibbon-country.h		\
@@ -231,7 +233,7 @@ LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
-        test_clip test_pretty_print_move test_strsplit	\
+        test_clip test_clip_reader test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_add_drop test_gmd_reader_edited \
@@ -242,7 +244,7 @@ TESTS_SH = test_match_completion.sh
 TESTS = $(TESTS_SH) $(TESTS_C)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
-        test_clip test_pretty_print_move test_strsplit	\
+        test_clip test_clip_reader test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_match_complete test_add_drop \
@@ -259,6 +261,7 @@ test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
+test_clip_reader_SOURCES = $(common_SOURCES) gibbon-clip-reader.c test-clip-reader.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c
