@@ -1534,6 +1534,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         gboolean is_crawford = FALSE;
         gboolean post_crawford, no_crawford;
         const gchar *login = NULL;
+        const GibbonPosition *current;
 
         pos = gibbon_position_new ();
         if (self->priv->position) {
@@ -1710,6 +1711,14 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
         if (self->priv->debug_board_state) {
                 g_printerr ("Board state:\n");
                 gibbon_position_dump (self->priv->position);
+                GibbonMatch *match = gibbon_app_get_match (app);
+                if (match) {
+                        current = gibbon_match_get_current_position (match);
+                        if (current) {
+                                g_printerr ("Current match position:\n");
+                                gibbon_position_dump (current);
+                        }
+                }
         }
 
         /*
@@ -1736,6 +1745,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                                                       pos->match_length,
                                                       TRUE);
 
+                g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
                 gibbon_session_update_tracker (self);
         }
 
@@ -2067,6 +2077,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app), pos);
 
+g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_ROLLS;
@@ -2185,6 +2196,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
                                            target_position);
         }
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         g_object_unref (move);
@@ -2677,6 +2689,7 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_DOUBLES;
@@ -2754,6 +2767,7 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_RESIGNS;
@@ -2768,6 +2782,7 @@ gibbon_session_handle_rejects (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_REJECTS_RESIGNATION;
@@ -2881,6 +2896,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
         return GIBBON_CLIP_CODE_WIN_GAME;
@@ -3748,6 +3764,7 @@ gibbon_session_resign (GibbonSession *self, guint value)
         gibbon_position_reset_unused_dice (self->priv->position);
         gibbon_board_set_position (board, self->priv->position);
 
+        g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 }
 
