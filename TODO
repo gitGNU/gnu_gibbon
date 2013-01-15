@@ -149,3 +149,4 @@
 - Logging timestamps are flawed.  The timestamp is computed after a line read
   from the server has been processed.  Instead, the timestamp should be 
   computed after reading and before processing.
+- Check exact impact of autoboard.  When are extra boards sent?
