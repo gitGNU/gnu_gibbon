@@ -107,7 +107,9 @@ gibbon_SOURCES = 			\
         gibbon-chat-view.c		\
         gibbon-client-icons.c		\
         gibbon-clip.c			\
-        gibbon-clip-reader.c	\
+	gibbon-clip-lexer.l		\
+        gibbon-clip-reader.c		\
+	gibbon-clip-parser.y		\
         gibbon-connection.c		\
         gibbon-connection-dialog.c	\
         gibbon-country.c		\
@@ -155,7 +157,9 @@ noinst_HEADERS =			\
         gibbon-chat-view.h		\
         gibbon-client-icons.h		\
         gibbon-clip.h			\
-		gibbon-clip-reader.h	\
+	gibbon-clip-parser.h		\
+	gibbon-clip-reader.h		\
+	gibbon-clip-reader-priv.h	\
         gibbon-connection.h		\
         gibbon-connection-dialog.h	\
         gibbon-country.h		\
@@ -169,6 +173,7 @@ noinst_HEADERS =			\
 	gibbon-game-actions.h		\
         gibbon-game-chat.h		\
         gibbon-geo-ip-updater.h		\
+	gibbon-gmd-parser.h		\
 	gibbon-gmd-reader.h		\
 	gibbon-gmd-reader-priv.h	\
         gibbon-gmd-writer.h		\
@@ -176,9 +181,11 @@ noinst_HEADERS =			\
         gibbon-inviter-list.h		\
         gibbon-inviter-list-view.h	\
         gibbon-java-fibs-importer.h	\
+	gibbon-java-fibs-parser.h	\
         gibbon-java-fibs-reader.h	\
         gibbon-java-fibs-reader-priv.h	\
         gibbon-java-fibs-writer.h	\
+	gibbon-jelly-fish-parser.h	\
 	gibbon-jelly-fish-reader.h	\
 	gibbon-jelly-fish-reader-priv.h	\
         gibbon-jelly-fish-writer.h	\
@@ -261,7 +268,8 @@ test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
-test_clip_reader_SOURCES = $(common_SOURCES) gibbon-clip-reader.c test-clip-reader.c
+test_clip_reader_SOURCES = $(common_SOURCES) gibbon-clip-reader.c \
+	gibbon-clip-parser.c gibbon-clip-lexer.c test-clip-reader.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c

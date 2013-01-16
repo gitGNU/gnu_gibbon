@@ -31,9 +31,9 @@
         (gibbon_clip_reader_get_type ())
 #define GIBBON_CLIP_READER(obj) \
         (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIBBON_TYPE_CLIP_READER, \
-                GibbonClipReader))
+                GibbonCLIPReader))
 #define GIBBON_CLIP_READER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), \
-        GIBBON_TYPE_CLIP_READER, GibbonClipReaderClass))
+        GIBBON_TYPE_CLIP_READER, GibbonCLIPReaderClass))
 #define GIBBON_IS_CLIP_READER(obj) \
         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
                 GIBBON_TYPE_CLIP_READER))
@@ -42,29 +42,30 @@
                 GIBBON_TYPE_CLIP_READER))
 #define GIBBON_CLIP_READER_GET_CLASS(obj) \
         (G_TYPE_INSTANCE_GET_CLASS ((obj), \
-                GIBBON_TYPE_CLIP_READER, GibbonClipReaderClass))
+                GIBBON_TYPE_CLIP_READER, GibbonCLIPReaderClass))
 
 /**
- * GibbonClipReader:
+ * GibbonCLIPReader:
  *
- * One instance of a #GibbonClipReader.  All properties are private.
+ * One instance of a #GibbonCLIPReader, a stateful line-based parser for
+ * FIBS output.
  */
-typedef struct _GibbonClipReader GibbonClipReader;
-struct _GibbonClipReader
+typedef struct _GibbonCLIPReader GibbonCLIPReader;
+struct _GibbonCLIPReader
 {
         GObject parent_instance;
 
         /*< private >*/
-        struct _GibbonClipReaderPrivate *priv;
+        struct _GibbonCLIPReaderPrivate *priv;
 };
 
 /**
- * GibbonClipReaderClass:
+ * GibbonCLIPReaderClass:
  *
  * Parse FIBS server output.
  */
-typedef struct _GibbonClipReaderClass GibbonClipReaderClass;
-struct _GibbonClipReaderClass
+typedef struct _GibbonCLIPReaderClass GibbonCLIPReaderClass;
+struct _GibbonCLIPReaderClass
 {
         /* <private >*/
         GObjectClass parent_class;
@@ -72,11 +73,7 @@ struct _GibbonClipReaderClass
 
 GType gibbon_clip_reader_get_type (void) G_GNUC_CONST;
 
-GibbonClipReader *gibbon_clip_reader_new (int (*handler) (gpointer,
-                                                          GSList *,
-                                                          const gchar *),
-                                          gpointer data);
-void gibbon_clip_reader_on_data (GibbonClipReader *self, gchar *data,
-                                 gsize length);
+GibbonCLIPReader *gibbon_clip_reader_new ();
+GSList *gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line);
 
 #endif

@@ -23,69 +23,97 @@
  *
  * Since: 0.2.0
  *
- * This class pre-processes the output from FIBS and calls the registered
- * handlers for it.
+ * This class pre-processes the output from FIBS and translated it into
+ * simple syntax trees.
  */
+
+#include <errno.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
 
 #include "gibbon-clip-reader.h"
+#include "gibbon-clip-reader-priv.h"
+#include "gibbon-util.h"
 
-typedef struct _GibbonClipReaderPrivate GibbonClipReaderPrivate;
-struct _GibbonClipReaderPrivate {
-        int (*handler) (gpointer, GSList *, const gchar *);
-        gpointer data;
+typedef struct _GibbonCLIPReaderPrivate GibbonCLIPReaderPrivate;
+struct _GibbonCLIPReaderPrivate {
+        void *yyscanner;
 };
 
 #define GIBBON_CLIP_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-        GIBBON_TYPE_CLIP_READER, GibbonClipReaderPrivate))
+        GIBBON_TYPE_CLIP_READER, GibbonCLIPReaderPrivate))
 
-G_DEFINE_TYPE (GibbonClipReader, gibbon_clip_reader, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GibbonCLIPReader, gibbon_clip_reader, G_TYPE_OBJECT)
 
 static void 
-gibbon_clip_reader_init (GibbonClipReader *self)
+gibbon_clip_reader_init (GibbonCLIPReader *self)
 {
         self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-                GIBBON_TYPE_CLIP_READER, GibbonClipReaderPrivate);
+                GIBBON_TYPE_CLIP_READER, GibbonCLIPReaderPrivate);
 
-        self->priv->handler = NULL;
-        self->priv->data = NULL;
+        self->priv->yyscanner = NULL;
 }
 
 static void
 gibbon_clip_reader_finalize (GObject *object)
 {
+        GibbonCLIPReader *self = GIBBON_CLIP_READER (object);
+
+        if (self->priv->yyscanner)
+                gibbon_clip_lexer_lex_destroy (self->priv->yyscanner);
+
         G_OBJECT_CLASS (gibbon_clip_reader_parent_class)->finalize(object);
 }
 
 static void
-gibbon_clip_reader_class_init (GibbonClipReaderClass *klass)
+gibbon_clip_reader_class_init (GibbonCLIPReaderClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
-        g_type_class_add_private (klass, sizeof (GibbonClipReaderPrivate));
+        g_type_class_add_private (klass, sizeof (GibbonCLIPReaderPrivate));
 
         object_class->finalize = gibbon_clip_reader_finalize;
 }
 
 /**
  * gibbon_clip_reader_new:
- * @handler: Handler to call on arrival of new data.
- * @data: Argument for @handler or %NULL.
  *
- * Creates a new #GibbonClipReader.
+ * Creates a new #GibbonCLIPReader.
  *
- * Returns: The newly created #GibbonClipReader or %NULL in case of failure.
+ * Returns: The newly created #GibbonCLIPReader or %NULL in case of failure.
  */
-GibbonClipReader *
-gibbon_clip_reader_new (int (*handler) (gpointer, GSList *, const gchar *),
-                        gpointer data)
+GibbonCLIPReader *
+gibbon_clip_reader_new ()
 {
-        GibbonClipReader *self = g_object_new (GIBBON_TYPE_CLIP_READER, NULL);
+        GibbonCLIPReader *self = g_object_new (GIBBON_TYPE_CLIP_READER, NULL);
 
-        self->priv->handler = handler;
-        self->priv->data = data;
+        if (gibbon_clip_lexer_lex_init_extra (self, &self->priv->yyscanner)) {
+                g_error (_("Error creating tokenizer: %s!"),
+                         strerror (errno));
+                /* NOTREACHED */
+                return NULL;
+        }
 
         return self;
+}
+
+GSList *
+gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
+{
+        GSList *result = NULL;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
+        g_return_val_if_fail (line != NULL, NULL);
+
+        gibbon_clip_lexer_current_buffer (self->priv->yyscanner, line);
+
+        return result;
+}
+
+void
+gibbon_clip_reader_yyerror (void *scanner, const gchar *msg)
+{
+        if (gibbon_debug ("clip-parser"))
+                g_printerr ("%s\n", msg);
 }
