@@ -75,5 +75,6 @@ GType gibbon_clip_reader_get_type (void) G_GNUC_CONST;
 
 GibbonCLIPReader *gibbon_clip_reader_new ();
 GSList *gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line);
+void gibbon_clip_reader_free_result (GibbonCLIPReader *self, GSList *values);
 
 #endif

@@ -39,6 +39,7 @@
 typedef struct _GibbonCLIPReaderPrivate GibbonCLIPReaderPrivate;
 struct _GibbonCLIPReaderPrivate {
         void *yyscanner;
+        GSList *values;
 };
 
 #define GIBBON_CLIP_READER_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
@@ -53,6 +54,7 @@ gibbon_clip_reader_init (GibbonCLIPReader *self)
                 GIBBON_TYPE_CLIP_READER, GibbonCLIPReaderPrivate);
 
         self->priv->yyscanner = NULL;
+        self->priv->values = NULL;
 }
 
 static void
@@ -101,14 +103,24 @@ gibbon_clip_reader_new ()
 GSList *
 gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
 {
-        GSList *result = NULL;
+        GSList *retval;
+
+        gint status;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
         g_return_val_if_fail (line != NULL, NULL);
 
         gibbon_clip_lexer_current_buffer (self->priv->yyscanner, line);
 
-        return result;
+        status = gibbon_clip_parser_parse (self->priv->yyscanner);
+        /*
+         * FIXME! Change GibbonSession to expect tokens in the opposite
+         * order.
+         */
+        retval = g_slist_reverse (self->priv->values);
+        self->priv->values = NULL;
+
+        return retval;
 }
 
 void
@@ -116,4 +128,47 @@ gibbon_clip_reader_yyerror (void *scanner, const gchar *msg)
 {
         if (gibbon_debug ("clip-parser"))
                 g_printerr ("%s\n", msg);
+}
+
+void *
+gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
+                                const gchar *token,
+                                GType type)
+{
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+        guint64 u;
+        gint64 i;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
+        g_return_val_if_fail (token != NULL, NULL);
+        g_return_val_if_fail (type != G_TYPE_INVALID, NULL);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+
+        self->priv->values = g_slist_prepend (self->priv->values, value);
+
+        g_value_init (value, type);
+
+        switch (type) {
+        case G_TYPE_UINT64:
+                u = g_ascii_strtoull (token, NULL, 10);
+                g_value_set_uint64 (value, u);
+                break;
+        case G_TYPE_INT64:
+                i = g_ascii_strtoll (token, NULL, 10);
+                g_value_set_int64 (value, i);
+                break;
+        }
+
+        return self->priv->values->data;
+}
+
+void
+gibbon_clip_reader_free_result (GibbonCLIPReader *self, GSList *values)
+{
+        g_slist_foreach (values, (GFunc) g_value_unset, NULL);
+        g_slist_foreach (values, (GFunc) g_free, NULL);
+        g_slist_free (values);
 }

@@ -106,7 +106,7 @@ test_single_case (GibbonCLIPReader *reader, struct test_case *test_case)
                 ++expect;
         }
 
-        g_slist_free_full (result, g_free);
+        gibbon_clip_reader_free_result (reader, result);
 
         return retval;
 }
