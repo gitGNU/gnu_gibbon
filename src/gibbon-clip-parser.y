@@ -36,6 +36,9 @@
 
 #define reader gibbon_clip_lexer_get_extra(scanner)
 
+static gboolean gibbon_clip_parser_fixup_uint (void *raw, 
+                                               gint64 lower, gint64 upper);
+
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
  * as well as gratuitiously global symbol names, so we can have multiple
@@ -90,23 +93,42 @@ extern int gibbon_clip_lexer_lex (YYSTYPE * lvalp, void *scanner);
 
 %}
 
-%token CLIP_WELCOME<value>
-%token GSTRING<value>
-%token GINT64<value>
-
 %union {
 	void *value;
 }
+
+%token <value> CLIP_WELCOME
+%token <value> GSTRING
+%token <value> GINT64
 
 %pure-parser
 %lex-param {void *scanner}
 %parse-param {void *scanner}
 
 %%
-line: { yydebug = 1; } clip_welcome
+line: { yydebug = 0; } clip_welcome
     ;
 
 clip_welcome: CLIP_WELCOME GSTRING GINT64 GSTRING
+		{
+			gibbon_clip_parser_fixup_uint ($1, 1, 1);
+		}
             ;
             
 %%
+
+static gboolean
+gibbon_clip_parser_fixup_uint (void *raw, gint64 lower, gint64 upper)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+	
+	if (i64 < lower) return FALSE;
+	if (i64 > upper) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_UINT);
+	g_value_set_uint (value, (guint) i64);
+	
+	return TRUE;
+}
