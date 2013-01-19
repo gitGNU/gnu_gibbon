@@ -36,12 +36,23 @@ struct test_case {
 };
 
 static struct test_case test_clip01_0 = {
-                "1 gflohr 1306865048 gibbon.example.com",
+                "1 GibbonTestA 1306865048 gibbon.example.com",
                 {
                                 { G_TYPE_UINT, "1" },
-                                { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_INT, "1306865048" },
+                                { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_INT64, "1306865048" },
                                 { G_TYPE_STRING, "gibbon.example.com" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip01_1 = {
+                "1 GibbonTestB 1306865049 127.128.129.130",
+                {
+                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_STRING, "GibbonTestB" },
+                                { G_TYPE_INT64, "1306865049" },
+                                { G_TYPE_STRING, "127.128.129.130" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -53,7 +64,8 @@ static gboolean check_result (const gchar *line, gsize num,
                               GValue *value);
 
 static struct test_case *test_cases[] = {
-                &test_clip01_0
+                &test_clip01_0,
+                &test_clip01_1
 };
 
 int
@@ -83,7 +95,6 @@ test_single_case (GibbonCLIPReader *reader, struct test_case *test_case)
         gboolean retval = TRUE;
         struct token_pair *expect;
         gsize i = 0;
-        gchar *expect_type;
 
         expect = test_case->values;
 
@@ -116,7 +127,27 @@ check_result (const gchar *line, gsize num,
               struct token_pair *token_pair,
               GValue *value)
 {
-        g_printerr ("Cannot check result at %s:%d.\n", __FILE__, __LINE__);
+        gboolean retval = TRUE;
+        GValue stringified = G_VALUE_INIT;
+        const gchar *got_value;
+        const gchar *expect_value;
 
-        return FALSE;
+        g_value_init (&stringified, G_TYPE_STRING);
+        g_return_val_if_fail (g_value_transform (value, &stringified), FALSE);
+
+        got_value = g_value_get_string (&stringified);
+        expect_value = token_pair->value;
+
+        if (token_pair->type != G_VALUE_TYPE (value)
+            || g_strcmp0 (got_value, expect_value)) {
+                g_printerr ("%s: token #%llu:"
+                            " expected `%s' (token type %s),"
+                            " got `%s' (token type %s).\n",
+                            line, (unsigned long long) num,
+                            expect_value, g_type_name (token_pair->type),
+                            got_value, G_VALUE_TYPE_NAME (value));
+                retval = FALSE;
+        }
+
+        return retval;
 }
