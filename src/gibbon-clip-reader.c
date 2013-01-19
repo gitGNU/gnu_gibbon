@@ -160,6 +160,9 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 i = g_ascii_strtoll (token, NULL, 10);
                 g_value_set_int64 (value, i);
                 break;
+        case G_TYPE_STRING:
+                g_value_set_string (value, token);
+                break;
         }
 
         return self->priv->values->data;
