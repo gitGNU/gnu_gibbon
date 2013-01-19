@@ -122,7 +122,7 @@ static struct test_case test_clip02_2 = {
                 " unlimited 0 0 Europe/Sofia",
                 {
                                 { G_TYPE_UINT, "2" },
-                                { G_TYPE_STRING, "GIBBON_TEST_C" },
+                                { G_TYPE_STRING, "GibbonTestC" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
