@@ -57,6 +57,96 @@ static struct test_case test_clip01_1 = {
                 }
 };
 
+static struct test_case test_clip02_0 = {
+                "2 GibbonTestA 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
+                " Europe/Sofia",
+                {
+                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_UINT, "2396" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_DOUBLE, "3457.850000" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_INT, "0" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_STRING, "Europe/Sofia" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip02_1 = {
+                "2 GibbonTestB 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 2 0 0"
+                " Europe/Sofia",
+                {
+                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_STRING, "GibbonTestB" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_UINT, "2396" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_DOUBLE, "3457.850000" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_INT, "2" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_STRING, "Europe/Sofia" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip02_2 = {
+                "2 GibbonTestC 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0"
+                " unlimited 0 0 Europe/Sofia",
+                {
+                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_STRING, "GIBBON_TEST_C" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_UINT, "2396" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_DOUBLE, "3457.850000" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_INT, "-1" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_STRING, "Europe/Sofia" },
+                                { G_TYPE_INVALID }
+                }
+};
+
 static gboolean test_single_case (GibbonCLIPReader *reader,
                                   struct test_case *test_case);
 static gboolean check_result (const gchar *line, gsize num,
@@ -65,7 +155,10 @@ static gboolean check_result (const gchar *line, gsize num,
 
 static struct test_case *test_cases[] = {
                 &test_clip01_0,
-                &test_clip01_1
+                &test_clip01_1,
+                &test_clip02_0,
+                &test_clip02_1,
+                &test_clip02_2
 };
 
 int
