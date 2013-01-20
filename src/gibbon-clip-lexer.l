@@ -87,6 +87,7 @@
 
 %start MOTD
 %start USER
+%start INTEGER
 %start MESSAGE
 
 WS		[ \t]+
@@ -136,7 +137,7 @@ OWS		[ \t]*
 			yy_push_state (MESSAGE, yyscanner);
 			yy_push_state (USER, yyscanner);			
 			return CLIP_LOGIN;
-		}	
+		}
 ^8{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("8", G_TYPE_INT64);
@@ -144,11 +145,25 @@ OWS		[ \t]*
 			yy_push_state (USER, yyscanner);			
 			return CLIP_LOGOUT;
 		}	
+^9{WS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("9", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (INTEGER, yyscanner);
+			yy_push_state (USER, yyscanner);			
+			return CLIP_MESSAGE;
+		}	
 <USER>[^[:space:]]+{WS}		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (gibbon_trim (yytext), G_TYPE_STRING); 
 		yy_pop_state (yyscanner);
 		return GSTRING;
+	}
+<INTEGER>[-+]?(0|[1-9][0-9]*)[ \t]	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_INT64);
+		yy_pop_state (yyscanner);
+		return GINT64;
 	}
 <MESSAGE>(.|\n)*		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
@@ -160,7 +175,7 @@ OWS		[ \t]*
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
 		return GDOUBLE;
-	}	
+	}
 [-+]?0|[1-9][0-9]*	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_INT64); 
