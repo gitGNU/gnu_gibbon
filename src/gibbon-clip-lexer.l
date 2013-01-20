@@ -129,13 +129,20 @@ OWS		[ \t]*
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("6", G_TYPE_INT64); 
 			return CLIP_WHO_INFO_END;
-		}	
+		}
 ^7{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("7", G_TYPE_INT64);
 			yy_push_state (MESSAGE, yyscanner);
 			yy_push_state (USER, yyscanner);			
 			return CLIP_LOGIN;
+		}	
+^8{WS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("8", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);			
+			return CLIP_LOGOUT;
 		}	
 <USER>[^[:space:]]+{WS}		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
