@@ -147,19 +147,60 @@ static struct test_case test_clip02_2 = {
                 }
 };
 
-static gboolean test_single_case (GibbonCLIPReader *reader,
-                                  struct test_case *test_case);
-static gboolean check_result (const gchar *line, gsize num,
-                              struct token_pair *token_pair,
-                              GValue *value);
+static struct test_case test_clip03 = {
+                "3",
+                {
+                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip03a = {
+                "+------------------------------+",
+                {
+                                { G_TYPE_UINT, "413" },
+                                { G_TYPE_STRING,
+                                  "+------------------------------+" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip03b = {
+                "| This is the motto of the day. |",
+                {
+                                { G_TYPE_UINT, "413" },
+                                { G_TYPE_STRING,
+                                  "| This is the motto of the day. |"
+                                },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip04 = {
+                "4",
+                {
+                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INVALID }
+                }
+};
 
 static struct test_case *test_cases[] = {
                 &test_clip01_0,
                 &test_clip01_1,
                 &test_clip02_0,
                 &test_clip02_1,
-                &test_clip02_2
+                &test_clip02_2,
+                &test_clip03,
+                &test_clip03a,
+                &test_clip03b,
+                &test_clip04
 };
+
+static gboolean test_single_case (GibbonCLIPReader *reader,
+                                  struct test_case *test_case);
+static gboolean check_result (const gchar *line, gsize num,
+                              struct token_pair *token_pair,
+                              GValue *value);
 
 int
 main (int argc, char *argv[])
