@@ -31,7 +31,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_UNHANDLED = 0,
                         GIBBON_CLIP_CODE_WELCOME = 1,
                         GIBBON_CLIP_CODE_OWN_INFO = 2,
-                        GIBBON_CLIP_CODE_MOTD = 3,
+                        GIBBON_CLIP_CODE_MOTD_START = 3,
                         GIBBON_CLIP_CODE_MOTD_END = 4,
                         GIBBON_CLIP_CODE_WHO_INFO = 5,
                         GIBBON_CLIP_CODE_WHO_INFO_END = 6,
@@ -101,6 +101,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_CODE_SHOW_SAVED_NONE = 410,
                         GIBBON_CLIP_CODE_SHOW_SAVED_COUNT = 411,
                         GIBBON_CLIP_CODE_SHOW_ADDRESS = 412,
+                        GIBBON_CLIP_CODE_MOTD = 413,
 
                         /* Less important messages with two leading stars.  */
                         GIBBON_CLIP_CODE_HEARD_YOU = 500

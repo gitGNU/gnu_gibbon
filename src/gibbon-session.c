@@ -510,8 +510,8 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_CODE_OWN_INFO:
                 retval = gibbon_session_clip_own_info (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MOTD:
-                retval = GIBBON_CLIP_CODE_MOTD;
+        case GIBBON_CLIP_CODE_MOTD_START:
+                retval = GIBBON_CLIP_CODE_MOTD_START;
                 break;
         case GIBBON_CLIP_CODE_MOTD_END:
                 retval = GIBBON_CLIP_CODE_MOTD_END;

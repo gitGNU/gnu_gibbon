@@ -240,7 +240,7 @@ LDADD = ../libsvg/libsvg.a ../libsvg-cairo/libsvg-cairo.a ../libgsgf/libgsgf.a \
 
 ## Put test_gary_wong_movegen at the end because it takes the most time.
 TESTS_C = test_html_entities test_build_match test_position test_moves \
-        test_clip test_clip_reader test_pretty_print_move test_strsplit	\
+        test_clip_reader test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_add_drop test_gmd_reader_edited \
@@ -251,7 +251,7 @@ TESTS_SH = test_match_completion.sh
 TESTS = $(TESTS_SH) $(TESTS_C)
 
 check_PROGRAMS = test_html_entities test_build_match test_position test_moves \
-        test_clip test_clip_reader test_pretty_print_move test_strsplit	\
+        test_clip_reader test_pretty_print_move test_strsplit	\
 	test_crawford_detection test_gmd_reader \
 	test_java_fibs_reader test_jelly_fish_reader test_sgf_reader \
 	test_match_consistency test_match_complete test_add_drop \
@@ -267,7 +267,6 @@ test_moves_SOURCES = $(common_SOURCES) test-moves.c
 test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
-test_clip_SOURCES = $(common_SOURCES) gibbon-clip.c test-clip.c
 test_clip_reader_SOURCES = $(common_SOURCES) gibbon-clip-reader.c \
 	gibbon-clip-parser.c gibbon-clip-lexer.c test-clip-reader.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
