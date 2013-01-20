@@ -444,7 +444,7 @@ gibbon_connection_handle_input (GInputStream *input_stream,
                          */
                         if (!GIBBON_IS_CONNECTION (self))
                                 return;
-                        if (clip_code == GIBBON_CLIP_CODE_WELCOME) {
+                        if (clip_code == GIBBON_CLIP_WELCOME) {
                                 self->priv->state = WAIT_COMMANDS;
                                 g_signal_emit (self,
                                                signals[LOGGED_IN],

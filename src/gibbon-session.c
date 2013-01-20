@@ -502,78 +502,78 @@ gibbon_session_process_server_line (GibbonSession *self,
         }
 
         switch (code) {
-        case GIBBON_CLIP_CODE_UNHANDLED:
+        case GIBBON_CLIP_UNHANDLED:
                 break;
-        case GIBBON_CLIP_CODE_WELCOME:
+        case GIBBON_CLIP_WELCOME:
                 retval = gibbon_session_clip_welcome (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_OWN_INFO:
+        case GIBBON_CLIP_OWN_INFO:
                 retval = gibbon_session_clip_own_info (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MOTD_START:
-                retval = GIBBON_CLIP_CODE_MOTD_START;
+        case GIBBON_CLIP_MOTD_START:
+                retval = GIBBON_CLIP_MOTD_START;
                 break;
-        case GIBBON_CLIP_CODE_MOTD_END:
-                retval = GIBBON_CLIP_CODE_MOTD_END;
+        case GIBBON_CLIP_MOTD_END:
+                retval = GIBBON_CLIP_MOTD_END;
                 break;
-        case GIBBON_CLIP_CODE_WHO_INFO:
+        case GIBBON_CLIP_WHO_INFO:
                 retval = gibbon_session_clip_who_info (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_WHO_INFO_END:
+        case GIBBON_CLIP_WHO_INFO_END:
                 retval = gibbon_session_clip_who_info_end (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_LOGIN:
+        case GIBBON_CLIP_LOGIN:
                 retval = gibbon_session_clip_login (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_LOGOUT:
+        case GIBBON_CLIP_LOGOUT:
                 retval = gibbon_session_clip_logout (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MESSAGE:
+        case GIBBON_CLIP_MESSAGE:
                 retval = gibbon_session_clip_message (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MESSAGE_DELIVERED:
+        case GIBBON_CLIP_MESSAGE_DELIVERED:
                 retval = gibbon_session_clip_message_delivered (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MESSAGE_SAVED:
+        case GIBBON_CLIP_MESSAGE_SAVED:
                 retval = gibbon_session_clip_message_saved (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_SAYS:
+        case GIBBON_CLIP_SAYS:
                 retval = gibbon_session_clip_says (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_SHOUTS:
+        case GIBBON_CLIP_SHOUTS:
                 retval = gibbon_session_clip_shouts (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_WHISPERS:
+        case GIBBON_CLIP_WHISPERS:
                 retval = gibbon_session_clip_whispers (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_KIBITZES:
+        case GIBBON_CLIP_KIBITZES:
                 retval = gibbon_session_clip_kibitzes (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_YOU_SAY:
+        case GIBBON_CLIP_YOU_SAY:
                 retval = gibbon_session_clip_you_say (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_YOU_SHOUT:
+        case GIBBON_CLIP_YOU_SHOUT:
                 retval = gibbon_session_clip_you_shout (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_YOU_WHISPER:
+        case GIBBON_CLIP_YOU_WHISPER:
                 retval = gibbon_session_clip_you_whisper (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_YOU_KIBITZ:
+        case GIBBON_CLIP_YOU_KIBITZ:
                 retval = gibbon_session_clip_you_kibitz (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ALERTS:
+        case GIBBON_CLIP_ALERTS:
                 retval = gibbon_session_clip_alerts (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_UNKNOWN_MESSAGE:
+        case GIBBON_CLIP_UNKNOWN_MESSAGE:
                 retval = gibbon_session_handle_unknown_message (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ERROR:
+        case GIBBON_CLIP_ERROR:
                 retval = gibbon_session_handle_error (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ERROR_NO_USER:
+        case GIBBON_CLIP_ERROR_NO_USER:
                 retval = gibbon_session_handle_error_no_user (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_BOARD:
+        case GIBBON_CLIP_BOARD:
                 if (self->priv->debug_board_state) {
                         g_get_current_time (&timeval);
                         now = localtime ((time_t *) &timeval.tv_sec);
@@ -583,120 +583,120 @@ gibbon_session_process_server_line (GibbonSession *self,
                 }
                 retval = gibbon_session_handle_board (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_BAD_BOARD:
+        case GIBBON_CLIP_BAD_BOARD:
                 retval = gibbon_session_handle_bad_board (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ROLLS:
+        case GIBBON_CLIP_ROLLS:
                 retval = gibbon_session_handle_rolls (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_MOVES:
+        case GIBBON_CLIP_MOVES:
                 retval = gibbon_session_handle_moves (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_START_GAME:
+        case GIBBON_CLIP_START_GAME:
                 /* Ignored.  */
-                retval = GIBBON_CLIP_CODE_START_GAME;
+                retval = GIBBON_CLIP_START_GAME;
                 break;
-        case GIBBON_CLIP_CODE_LEFT_GAME:
+        case GIBBON_CLIP_LEFT_GAME:
                 retval = gibbon_session_handle_left_game (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_CANNOT_MOVE:
+        case GIBBON_CLIP_CANNOT_MOVE:
                 retval = gibbon_session_handle_cannot_move (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_DOUBLES:
+        case GIBBON_CLIP_DOUBLES:
                 retval = gibbon_session_handle_doubles (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ACCEPTS_DOUBLE:
+        case GIBBON_CLIP_ACCEPTS_DOUBLE:
                 retval = gibbon_session_handle_accepts_double (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_RESIGNS:
+        case GIBBON_CLIP_RESIGNS:
                 retval = gibbon_session_handle_resigns (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_REJECTS_RESIGNATION:
+        case GIBBON_CLIP_REJECTS_RESIGNATION:
                 retval = gibbon_session_handle_rejects (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_INVITATION:
+        case GIBBON_CLIP_INVITATION:
                 retval = gibbon_session_handle_invitation (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_TYPE_JOIN:
-                retval = GIBBON_CLIP_CODE_TYPE_JOIN;
+        case GIBBON_CLIP_TYPE_JOIN:
+                retval = GIBBON_CLIP_TYPE_JOIN;
                 break;
-        case GIBBON_CLIP_CODE_YOURE_WATCHING:
+        case GIBBON_CLIP_YOURE_WATCHING:
                 retval = gibbon_session_handle_youre_watching (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_NOW_PLAYING:
+        case GIBBON_CLIP_NOW_PLAYING:
                 retval = gibbon_session_handle_now_playing (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_INVITE_ERROR:
+        case GIBBON_CLIP_INVITE_ERROR:
                 retval = gibbon_session_handle_invite_error (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_RESUME:
+        case GIBBON_CLIP_RESUME:
                 retval = gibbon_session_handle_resume (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_RESUME_INFO_TURN:
-        case GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH:
-        case GIBBON_CLIP_CODE_RESUME_INFO_POINTS:
+        case GIBBON_CLIP_RESUME_INFO_TURN:
+        case GIBBON_CLIP_RESUME_INFO_MATCH_LENGTH:
+        case GIBBON_CLIP_RESUME_INFO_POINTS:
                 /* Ignored.  */
                 retval = code;
                 break;
-        case GIBBON_CLIP_CODE_RESUME_UNLIMITED:
+        case GIBBON_CLIP_RESUME_UNLIMITED:
                 /*
                  * We always assume that player wants to continue.  There is
                  * no way to terminated an unlimited match, anyway.
                  */
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE, "join");
-                retval = GIBBON_CLIP_CODE_RESUME_UNLIMITED;
+                retval = GIBBON_CLIP_RESUME_UNLIMITED;
                 break;
-        case GIBBON_CLIP_CODE_WIN_GAME:
+        case GIBBON_CLIP_WIN_GAME:
                 retval = gibbon_session_handle_win_game (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_START_MATCH:
-                retval = GIBBON_CLIP_CODE_START_MATCH;
+        case GIBBON_CLIP_START_MATCH:
+                retval = GIBBON_CLIP_START_MATCH;
                 break;
-        case GIBBON_CLIP_CODE_GAME_SCORE:
+        case GIBBON_CLIP_GAME_SCORE:
                 /*
                  * Ignored.  We know the score already from the previous
                  * win message.
                  */
-                retval = GIBBON_CLIP_CODE_GAME_SCORE;
+                retval = GIBBON_CLIP_GAME_SCORE;
                 break;
-        case GIBBON_CLIP_CODE_WAIT_JOIN_TOO:
+        case GIBBON_CLIP_WAIT_JOIN_TOO:
                 /* Ignore.  */
-                retval = GIBBON_CLIP_CODE_WAIT_JOIN_TOO;
+                retval = GIBBON_CLIP_WAIT_JOIN_TOO;
                 break;
-        case GIBBON_CLIP_CODE_RESUME_CONFIRMATION:
+        case GIBBON_CLIP_RESUME_CONFIRMATION:
                 /* Ignore.  */
-                retval = GIBBON_CLIP_CODE_RESUME_CONFIRMATION;
+                retval = GIBBON_CLIP_RESUME_CONFIRMATION;
                 break;
-        case GIBBON_CLIP_CODE_WIN_MATCH:
+        case GIBBON_CLIP_WIN_MATCH:
                 retval = gibbon_session_handle_win_match (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_STOP_WATCHING:
+        case GIBBON_CLIP_STOP_WATCHING:
                 gibbon_app_set_state_not_watching (self->priv->app);
-                retval = GIBBON_CLIP_CODE_STOP_WATCHING;
+                retval = GIBBON_CLIP_STOP_WATCHING;
                 break;
-        case GIBBON_CLIP_CODE_ASYNC_WIN_MATCH:
+        case GIBBON_CLIP_ASYNC_WIN_MATCH:
                 retval = gibbon_session_handle_async_win_match (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_RESUME_MATCH:
+        case GIBBON_CLIP_RESUME_MATCH:
                 retval = gibbon_session_handle_resume_match (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_EMPTY:
-                retval = GIBBON_CLIP_CODE_EMPTY;
+        case GIBBON_CLIP_EMPTY:
+                retval = GIBBON_CLIP_EMPTY;
                 break;
-        case GIBBON_CLIP_CODE_START_SETTINGS:
+        case GIBBON_CLIP_START_SETTINGS:
                 retval = -1;
                 break;
-        case GIBBON_CLIP_CODE_SHOW_SETTING:
+        case GIBBON_CLIP_SHOW_SETTING:
                 retval = gibbon_session_handle_show_setting (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_START_TOGGLES:
+        case GIBBON_CLIP_START_TOGGLES:
                 retval = -1;
                 break;
-        case GIBBON_CLIP_CODE_SHOW_TOGGLE:
+        case GIBBON_CLIP_SHOW_TOGGLE:
                 retval = gibbon_session_handle_show_toggle (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_SHOW_START_SAVED:
+        case GIBBON_CLIP_SHOW_START_SAVED:
                 if (self->priv->expect_saved) {
                         self->priv->expect_saved = FALSE;
                         gibbon_session_check_expect_queues (self, TRUE);
@@ -704,13 +704,13 @@ gibbon_session_process_server_line (GibbonSession *self,
                 if (self->priv->saved_finished)
                         retval = -1;
                 else
-                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                        retval = GIBBON_CLIP_SHOW_START_SAVED;
                 self->priv->expect_saved = FALSE;
                 break;
-        case GIBBON_CLIP_CODE_SHOW_SAVED:
+        case GIBBON_CLIP_SHOW_SAVED:
                 retval = gibbon_session_handle_show_saved (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_SHOW_SAVED_NONE:
+        case GIBBON_CLIP_SHOW_SAVED_NONE:
                 if (self->priv->expect_saved) {
                         self->priv->expect_saved = FALSE;
                         gibbon_session_check_expect_queues (self, TRUE);
@@ -718,20 +718,20 @@ gibbon_session_process_server_line (GibbonSession *self,
                 if (self->priv->saved_finished)
                         retval = -1;
                 else
-                        retval = GIBBON_CLIP_CODE_SHOW_START_SAVED;
+                        retval = GIBBON_CLIP_SHOW_START_SAVED;
                 self->priv->expect_saved = FALSE;
                 self->priv->saved_finished = FALSE;
                 break;
-        case GIBBON_CLIP_CODE_SHOW_SAVED_COUNT:
+        case GIBBON_CLIP_SHOW_SAVED_COUNT:
                 retval = gibbon_session_handle_show_saved_count (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_SHOW_ADDRESS:
+        case GIBBON_CLIP_SHOW_ADDRESS:
                 retval = gibbon_session_handle_show_address (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS:
+        case GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS:
                 retval = gibbon_session_handle_address_error (self, iter);
                 break;
-        case GIBBON_CLIP_CODE_HEARD_YOU:
+        case GIBBON_CLIP_HEARD_YOU:
                 /* Ignored.  */
                 retval = code;
                 break;
@@ -783,7 +783,7 @@ gibbon_session_clip_welcome (GibbonSession *self, GSList *iter)
         gibbon_server_console_print_info (console, reply);
         g_free (reply);
 
-        return GIBBON_CLIP_CODE_WELCOME;
+        return GIBBON_CLIP_WELCOME;
 }
 
 
@@ -876,7 +876,7 @@ gibbon_session_clip_own_info (GibbonSession *self, GSList *iter)
                 self->priv->available = FALSE;
                 gibbon_app_set_state_busy (self->priv->app);
         }
-        return GIBBON_CLIP_CODE_OWN_INFO;
+        return GIBBON_CLIP_OWN_INFO;
 }
 
 static gint
@@ -1058,7 +1058,7 @@ gibbon_session_clip_who_info (GibbonSession *self,
         if (!g_strcmp0 (account, who))
                 gibbon_session_check_address (self, current_email);
 
-        return GIBBON_CLIP_CODE_WHO_INFO;
+        return GIBBON_CLIP_WHO_INFO;
 }
 
 static gint
@@ -1082,7 +1082,7 @@ gibbon_session_clip_who_info_end (GibbonSession *self,
                 gibbon_session_check_expect_queues (self, TRUE);
         }
 
-        return GIBBON_CLIP_CODE_WHO_INFO_END;
+        return GIBBON_CLIP_WHO_INFO_END;
 }
 
 
@@ -1096,7 +1096,7 @@ gibbon_session_clip_login (GibbonSession *self, GSList *iter)
 
         gibbon_session_queue_who_request (self, name);
 
-        return GIBBON_CLIP_CODE_LOGIN;
+        return GIBBON_CLIP_LOGIN;
 }
 
 static gint
@@ -1158,7 +1158,7 @@ gibbon_session_clip_logout (GibbonSession *self, GSList *iter)
                 gibbon_session_stop_playing (self);
         }
 
-        return GIBBON_CLIP_CODE_LOGOUT;
+        return GIBBON_CLIP_LOGOUT;
 }
 
 static gint
@@ -1186,7 +1186,7 @@ gibbon_session_clip_message (GibbonSession *self, GSList *iter)
                                 _("User `%s' left you a message at %s: %s"),
                                 sender, last_login_str, message);
 
-       return GIBBON_CLIP_CODE_MESSAGE;
+       return GIBBON_CLIP_MESSAGE;
 }
 
 static gint
@@ -1202,7 +1202,7 @@ gibbon_session_clip_message_delivered (GibbonSession *self, GSList *iter)
                                   " delivered!"),
                                 recipient);
 
-       return GIBBON_CLIP_CODE_MESSAGE_DELIVERED;
+       return GIBBON_CLIP_MESSAGE_DELIVERED;
 }
 
 static gint
@@ -1218,7 +1218,7 @@ gibbon_session_clip_message_saved (GibbonSession *self, GSList *iter)
                                   " has been saved!"),
                                 recipient);
 
-       return GIBBON_CLIP_CODE_MESSAGE_DELIVERED;
+       return GIBBON_CLIP_MESSAGE_DELIVERED;
 }
 
 static gint
@@ -1258,7 +1258,7 @@ gibbon_session_clip_says (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_SAYS;
+        return GIBBON_CLIP_SAYS;
 }
 
 static gint
@@ -1270,7 +1270,7 @@ gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
         const gchar *sender;
         gchar *headline;
 
-        if (GIBBON_CLIP_CODE_SAYS != gibbon_session_clip_says (self, iter))
+        if (GIBBON_CLIP_SAYS != gibbon_session_clip_says (self, iter))
                 return -1;
 
         connection = gibbon_app_get_connection (self->priv->app);
@@ -1294,7 +1294,7 @@ gibbon_session_clip_alerts (GibbonSession *self, GSList *iter)
 
         gibbon_app_activate_player_list (self->priv->app);
 
-        return GIBBON_CLIP_CODE_ALERTS;
+        return GIBBON_CLIP_ALERTS;
 }
 
 static gint
@@ -1321,7 +1321,7 @@ gibbon_session_clip_shouts (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_SHOUTS;
+        return GIBBON_CLIP_SHOUTS;
 }
 
 static gint
@@ -1348,7 +1348,7 @@ gibbon_session_clip_whispers (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_WHISPERS;
+        return GIBBON_CLIP_WHISPERS;
 }
 
 static gint
@@ -1375,7 +1375,7 @@ gibbon_session_clip_kibitzes (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_KIBITZES;
+        return GIBBON_CLIP_KIBITZES;
 }
 
 static gint
@@ -1420,7 +1420,7 @@ gibbon_session_clip_you_say (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_YOU_SAY;
+        return GIBBON_CLIP_YOU_SAY;
 }
 
 static gint
@@ -1446,7 +1446,7 @@ gibbon_session_clip_you_shout (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_YOU_SHOUT;
+        return GIBBON_CLIP_YOU_SHOUT;
 }
 
 static gint
@@ -1474,7 +1474,7 @@ gibbon_session_clip_you_whisper (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_YOU_WHISPER;
+        return GIBBON_CLIP_YOU_WHISPER;
 }
 
 static gint
@@ -1502,7 +1502,7 @@ gibbon_session_clip_you_kibitz (GibbonSession *self, GSList *iter)
 
         gibbon_fibs_message_free (fibs_message);
 
-        return GIBBON_CLIP_CODE_YOU_KIBITZ;
+        return GIBBON_CLIP_YOU_KIBITZ;
 }
 
 /*
@@ -1749,7 +1749,7 @@ gibbon_session_handle_board (GibbonSession *self, GSList *iter)
                 gibbon_session_update_tracker (self);
         }
 
-        return GIBBON_CLIP_CODE_BOARD;
+        return GIBBON_CLIP_BOARD;
 
 bail_out_board:
         gibbon_position_free (pos);
@@ -1767,7 +1767,7 @@ gibbon_session_handle_error (GibbonSession *self, GSList *iter)
 
         gibbon_app_display_error (self->priv->app, NULL, "%s", message);
 
-        return GIBBON_CLIP_CODE_ERROR;
+        return GIBBON_CLIP_ERROR;
 }
 
 static gboolean
@@ -1782,7 +1782,7 @@ gibbon_session_handle_error_no_user (GibbonSession *self, GSList *iter)
         gibbon_player_list_remove (self->priv->player_list, who);
         gibbon_inviter_list_remove (self->priv->inviter_list, who);
 
-        return GIBBON_CLIP_CODE_ERROR;
+        return GIBBON_CLIP_ERROR;
 }
 
 static gboolean
@@ -1801,7 +1801,7 @@ gibbon_session_handle_bad_board (GibbonSession *self, GSList *iter)
         if (0 > gibbon_session_process_server_line (self, other))
                 return -1;
 
-        return GIBBON_CLIP_CODE_BAD_BOARD;
+        return GIBBON_CLIP_BAD_BOARD;
 }
 
 static gint
@@ -1816,7 +1816,7 @@ gibbon_session_handle_youre_watching (GibbonSession *self, GSList *iter)
 
         self->priv->watching = g_strdup (player);
 
-        return GIBBON_CLIP_CODE_YOURE_WATCHING;
+        return GIBBON_CLIP_YOURE_WATCHING;
 }
 
 static gint
@@ -1854,7 +1854,7 @@ gibbon_session_handle_now_playing (GibbonSession *self, GSList *iter)
 
         gibbon_session_start_playing (self, player, opponent, length, FALSE);
 
-        return GIBBON_CLIP_CODE_NOW_PLAYING;
+        return GIBBON_CLIP_NOW_PLAYING;
 }
 
 static gint
@@ -1871,7 +1871,7 @@ gibbon_session_handle_invite_error (GibbonSession *self, GSList *iter)
         gibbon_inviter_list_remove (self->priv->inviter_list, player);
         gibbon_app_display_error (self->priv->app, NULL, "%s", message);
 
-        return GIBBON_CLIP_CODE_INVITE_ERROR;
+        return GIBBON_CLIP_INVITE_ERROR;
 }
 
 static gint
@@ -1907,7 +1907,7 @@ gibbon_session_handle_resume (GibbonSession *self, GSList *iter)
                                          "board");
         gibbon_app_set_state_playing (self->priv->app);
 
-        return GIBBON_CLIP_CODE_RESUME;
+        return GIBBON_CLIP_RESUME;
 }
 
 static gchar *
@@ -1961,7 +1961,7 @@ gibbon_session_handle_win_match (GibbonSession *self, GSList *iter)
         gibbon_archive_save_win (self->priv->archive, hostname, port,
                                  self->priv->opponent, login);
 
-        return GIBBON_CLIP_CODE_WIN_MATCH;
+        return GIBBON_CLIP_WIN_MATCH;
 }
 
 static gboolean
@@ -1985,7 +1985,7 @@ gibbon_session_handle_async_win_match (GibbonSession *self, GSList *iter)
         gibbon_archive_save_win (self->priv->archive, hostname, port,
                                  player1, player2);
 
-        return GIBBON_CLIP_CODE_ASYNC_WIN_MATCH;
+        return GIBBON_CLIP_ASYNC_WIN_MATCH;
 }
 
 static gboolean
@@ -2009,7 +2009,7 @@ gibbon_session_handle_resume_match (GibbonSession *self, GSList *iter)
         gibbon_archive_save_resume (self->priv->archive, hostname, port,
                                     player1, player2);
 
-        return GIBBON_CLIP_CODE_RESUME_MATCH;
+        return GIBBON_CLIP_RESUME_MATCH;
 }
 
 static gboolean
@@ -2080,7 +2080,7 @@ gibbon_session_handle_rolls (GibbonSession *self, GSList *iter)
 g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
-        return GIBBON_CLIP_CODE_ROLLS;
+        return GIBBON_CLIP_ROLLS;
 }
 
 static gint
@@ -2201,7 +2201,7 @@ gibbon_session_handle_moves (GibbonSession *self, GSList *iter)
 
         g_object_unref (move);
 
-        return GIBBON_CLIP_CODE_MOVES;
+        return GIBBON_CLIP_MOVES;
 }
 
 static gboolean
@@ -2324,7 +2324,7 @@ gibbon_session_handle_invitation (GibbonSession *self, GSList *iter)
                         g_slist_append (self->priv->expect_saved_counts, info);
         gibbon_session_check_expect_queues (self, FALSE);
 
-        return GIBBON_CLIP_CODE_INVITATION;
+        return GIBBON_CLIP_INVITATION;
 }
 
 static gint
@@ -2364,7 +2364,7 @@ gibbon_session_handle_show_setting (GibbonSession *self, GSList *iter)
                         force_queues = TRUE;
                 } else if (self->priv->expect_boardstyle) {
                         self->priv->expect_boardstyle = FALSE;
-                        retval = GIBBON_CLIP_CODE_SHOW_SETTING;
+                        retval = GIBBON_CLIP_SHOW_SETTING;
                         check_queues = TRUE;
                 }
         }
@@ -2444,7 +2444,7 @@ gibbon_session_handle_show_saved (GibbonSession *self, GSList *iter)
         if (self->priv->saved_finished)
                 return -1;
         else
-                return GIBBON_CLIP_CODE_SHOW_SAVED;
+                return GIBBON_CLIP_SHOW_SAVED;
 }
 
 static gint
@@ -2478,7 +2478,7 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
                         g_free (info->who);
                         g_free (info);
                         gibbon_session_check_expect_queues (self, FALSE);
-                        return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
+                        return GIBBON_CLIP_SHOW_SAVED_COUNT;
                 }
                 iter2 = iter2->next;
         }
@@ -2501,7 +2501,7 @@ gibbon_session_handle_show_saved_count (GibbonSession *self, GSList *iter)
         gibbon_inviter_list_set_saved_count (self->priv->inviter_list, who,
                                              count);
 
-        return GIBBON_CLIP_CODE_SHOW_SAVED_COUNT;
+        return GIBBON_CLIP_SHOW_SAVED_COUNT;
 }
 
 static gint
@@ -2521,7 +2521,7 @@ gibbon_session_handle_show_address (GibbonSession *self, GSList *iter)
 
         if  (self->priv->expect_address) {
                 self->priv->expect_address = FALSE;
-                return GIBBON_CLIP_CODE_SHOW_ADDRESS;
+                return GIBBON_CLIP_SHOW_ADDRESS;
         }
 
         return -1;
@@ -2550,7 +2550,7 @@ gibbon_session_handle_address_error (GibbonSession *self, GSList *iter)
                                  _("The email address `%s' was rejected by"
                                    " the server!"), address);
 
-        return GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS;
+        return GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS;
 }
 
 static gint
@@ -2602,7 +2602,7 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         }
 
         if (!self->priv->opponent)
-                return GIBBON_CLIP_CODE_LEFT_GAME;
+                return GIBBON_CLIP_LEFT_GAME;
 
         hostname = gibbon_connection_get_hostname (self->priv->connection);
         port = gibbon_connection_get_port (self->priv->connection);
@@ -2615,7 +2615,7 @@ gibbon_session_handle_left_game (GibbonSession *self, GSList *iter)
         g_free (self->priv->opponent);
         self->priv->opponent = NULL;
 
-        return GIBBON_CLIP_CODE_LEFT_GAME;
+        return GIBBON_CLIP_LEFT_GAME;
 }
 
 static gint
@@ -2662,7 +2662,7 @@ gibbon_session_handle_cannot_move (GibbonSession *self, GSList *iter)
                 self->priv->position->unused_dice[1] = 0;
         }
 
-        return GIBBON_CLIP_CODE_CANNOT_MOVE;
+        return GIBBON_CLIP_CANNOT_MOVE;
 }
 
 static gint
@@ -2692,7 +2692,7 @@ gibbon_session_handle_doubles (GibbonSession *self, GSList *iter)
         g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
-        return GIBBON_CLIP_CODE_DOUBLES;
+        return GIBBON_CLIP_DOUBLES;
 }
 
 static gint
@@ -2732,7 +2732,7 @@ gibbon_session_handle_accepts_double (GibbonSession *self, GSList *iter)
         gibbon_board_set_position (gibbon_app_get_board (self->priv->app),
                                    self->priv->position);
 
-        return GIBBON_CLIP_CODE_ACCEPTS_DOUBLE;
+        return GIBBON_CLIP_ACCEPTS_DOUBLE;
 }
 
 static gint
@@ -2770,7 +2770,7 @@ gibbon_session_handle_resigns (GibbonSession *self, GSList *iter)
         g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
-        return GIBBON_CLIP_CODE_RESIGNS;
+        return GIBBON_CLIP_RESIGNS;
 }
 
 static gint
@@ -2785,7 +2785,7 @@ gibbon_session_handle_rejects (GibbonSession *self, GSList *iter)
         g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
-        return GIBBON_CLIP_CODE_REJECTS_RESIGNATION;
+        return GIBBON_CLIP_REJECTS_RESIGNATION;
 }
 
 static gint
@@ -2899,7 +2899,7 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
         g_printerr ("updating tracker from %s:%d\n", __FILE__, __LINE__);
         gibbon_session_update_tracker (self);
 
-        return GIBBON_CLIP_CODE_WIN_GAME;
+        return GIBBON_CLIP_WIN_GAME;
 }
 
 static gint
@@ -2913,7 +2913,7 @@ gibbon_session_handle_unknown_message (GibbonSession *self, GSList *iter)
                                   _("Message from server"),
                                   "%s", msg);
 
-        return GIBBON_CLIP_CODE_UNKNOWN_MESSAGE;
+        return GIBBON_CLIP_UNKNOWN_MESSAGE;
 }
 
 void

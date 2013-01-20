@@ -329,7 +329,7 @@ gibbon_clip_parse (const gchar *line)
         if (!tokens || !tokens[0]) {
                 g_strfreev (tokens);
                 result = gibbon_clip_alloc_int (result, GIBBON_CLIP_TYPE_UINT,
-                                                GIBBON_CLIP_CODE_EMPTY);
+                                                GIBBON_CLIP_EMPTY);
                 return result;
         }
 
@@ -733,45 +733,45 @@ gibbon_clip_parse_clip (const gchar *line, gchar **tokens,
                                                (gint64) code);
 
         switch (code) {
-                case GIBBON_CLIP_CODE_WELCOME:
+                case GIBBON_CLIP_WELCOME:
                         return gibbon_clip_parse_clip_welcome (line, tokens,
                                                                result);
-                case GIBBON_CLIP_CODE_OWN_INFO:
+                case GIBBON_CLIP_OWN_INFO:
                         return gibbon_clip_parse_clip_own_info (line, tokens,
                                                                 result);
-                case GIBBON_CLIP_CODE_WHO_INFO:
+                case GIBBON_CLIP_WHO_INFO:
                         return gibbon_clip_parse_clip_who_info (line, tokens,
                                                                 result);
-                case GIBBON_CLIP_CODE_LOGIN:
-                case GIBBON_CLIP_CODE_LOGOUT:
+                case GIBBON_CLIP_LOGIN:
+                case GIBBON_CLIP_LOGOUT:
                         return gibbon_clip_parse_clip_somebody_message (line,
                                                                         tokens,
                                                                         result);
-                case GIBBON_CLIP_CODE_SAYS:
-                case GIBBON_CLIP_CODE_SHOUTS:
-                case GIBBON_CLIP_CODE_KIBITZES:
-                case GIBBON_CLIP_CODE_WHISPERS:
-                case GIBBON_CLIP_CODE_YOU_SAY:
-                case GIBBON_CLIP_CODE_ALERTS:
+                case GIBBON_CLIP_SAYS:
+                case GIBBON_CLIP_SHOUTS:
+                case GIBBON_CLIP_KIBITZES:
+                case GIBBON_CLIP_WHISPERS:
+                case GIBBON_CLIP_YOU_SAY:
+                case GIBBON_CLIP_ALERTS:
                         return gibbon_clip_parse_clip_somebody_something (line,
                                                                           tokens,
                                                                           result);
-                case GIBBON_CLIP_CODE_MESSAGE:
+                case GIBBON_CLIP_MESSAGE:
                         return gibbon_clip_parse_clip_message (line, tokens,
                                                                result);
-                case GIBBON_CLIP_CODE_MESSAGE_DELIVERED:
-                case GIBBON_CLIP_CODE_MESSAGE_SAVED:
+                case GIBBON_CLIP_MESSAGE_DELIVERED:
+                case GIBBON_CLIP_MESSAGE_SAVED:
                         return gibbon_clip_parse_clip_somebody (line,
                                                                 tokens,
                                                                 result);
-                case GIBBON_CLIP_CODE_YOU_SHOUT:
-                case GIBBON_CLIP_CODE_YOU_KIBITZ:
-                case GIBBON_CLIP_CODE_YOU_WHISPER:
+                case GIBBON_CLIP_YOU_SHOUT:
+                case GIBBON_CLIP_YOU_KIBITZ:
+                case GIBBON_CLIP_YOU_WHISPER:
                         return gibbon_clip_parse_clip_something (line, tokens,
                                                                  result);
-                case GIBBON_CLIP_CODE_MOTD:
-                case GIBBON_CLIP_CODE_MOTD_END:
-                case GIBBON_CLIP_CODE_WHO_INFO_END:
+                case GIBBON_CLIP_MOTD:
+                case GIBBON_CLIP_MOTD_END:
+                case GIBBON_CLIP_WHO_INFO_END:
                         if (1 == g_strv_length (tokens))
                                 return TRUE;
                         break;
@@ -1125,7 +1125,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
 
         if (is_bad_board) {
                 *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_BAD_BOARD);
+                                                 GIBBON_CLIP_BAD_BOARD);
                 c = tokens[52][1];
                 tokens[52][1] = 0;
 
@@ -1146,7 +1146,7 @@ gibbon_clip_parse_board (const gchar *line, gchar **_tokens,
         }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_BOARD);
+                                         GIBBON_CLIP_BOARD);
 
         /* Player's name.  */
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -1324,7 +1324,7 @@ gibbon_clip_parse_youre_watching (const gchar *line, gchar **tokens,
                                   GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_YOURE_WATCHING);
+                                         GIBBON_CLIP_YOURE_WATCHING);
         gibbon_clip_chomp (tokens[3], '.');
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[3]);
@@ -1381,7 +1381,7 @@ gibbon_clip_parse_resuming (const gchar *line, gchar **tokens,
         }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESUME_MATCH);
+                                         GIBBON_CLIP_RESUME_MATCH);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -1417,7 +1417,7 @@ gibbon_clip_parse_start_match (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_START_MATCH);
+                                         GIBBON_CLIP_START_MATCH);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -1465,7 +1465,7 @@ gibbon_clip_parse_win_match (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_WIN_MATCH);
+                                         GIBBON_CLIP_WIN_MATCH);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -1524,7 +1524,7 @@ gibbon_clip_parse_async_win_match (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_ASYNC_WIN_MATCH);
+                                         GIBBON_CLIP_ASYNC_WIN_MATCH);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -1568,7 +1568,7 @@ gibbon_clip_parse_win_game (const gchar *line, gchar **tokens, GSList **result)
         }
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_WIN_GAME);
+                                         GIBBON_CLIP_WIN_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -1622,7 +1622,7 @@ gibbon_clip_parse_wins (const gchar *line, gchar **tokens, GSList **result)
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_WIN_MATCH);
+                                         GIBBON_CLIP_WIN_MATCH);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
@@ -1657,7 +1657,7 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                     && 0 == g_strcmp0 ("you.", tokens[8])) {
                         *result = gibbon_clip_alloc_int (*result,
                                                          GIBBON_CLIP_TYPE_UINT,
-                                                         GIBBON_CLIP_CODE_INVITATION);
+                                                         GIBBON_CLIP_INVITATION);
                         *result = gibbon_clip_alloc_string (*result,
                                                           GIBBON_CLIP_TYPE_NAME,
                                                             tokens[0]);
@@ -1676,7 +1676,7 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                     && 0 == g_strcmp0 ("you.", tokens[8])) {
                         *result = gibbon_clip_alloc_int (*result,
                                                          GIBBON_CLIP_TYPE_UINT,
-                                                         GIBBON_CLIP_CODE_INVITATION);
+                                                         GIBBON_CLIP_INVITATION);
                         *result = gibbon_clip_alloc_string (*result,
                                                           GIBBON_CLIP_TYPE_NAME,
                                                             tokens[0]);
@@ -1702,7 +1702,7 @@ gibbon_clip_parse_wants (const gchar *line, gchar **tokens, GSList **result)
                                 return FALSE;
                         *result = gibbon_clip_alloc_int (*result,
                                                          GIBBON_CLIP_TYPE_UINT,
-                                                   GIBBON_CLIP_CODE_INVITATION);
+                                                   GIBBON_CLIP_INVITATION);
                         *result = gibbon_clip_alloc_string (*result,
                                                           GIBBON_CLIP_TYPE_NAME,
                                                             tokens[0]);
@@ -1738,7 +1738,7 @@ gibbon_clip_parse_rolls (const gchar *line, gchar **tokens, GSList **result)
         gibbon_clip_chomp (tokens[4], '.');
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_ROLLS);
+                                         GIBBON_CLIP_ROLLS);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
 
@@ -1771,7 +1771,7 @@ gibbon_clip_parse_moves (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_MOVES);
+                                         GIBBON_CLIP_MOVES);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -1788,7 +1788,7 @@ gibbon_clip_parse_cannot_move (const gchar *line, gchar **tokens,
                                GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_CANNOT_MOVE);
+                                         GIBBON_CLIP_CANNOT_MOVE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
@@ -1800,7 +1800,7 @@ gibbon_clip_parse_resume_unlimited (const gchar *line, gchar **tokens,
                                     GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESUME_UNLIMITED);
+                                         GIBBON_CLIP_RESUME_UNLIMITED);
 
         return TRUE;
 }
@@ -1810,7 +1810,7 @@ gibbon_clip_parse_start_settings (const gchar *line, gchar **tokens,
                                   GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_START_SETTINGS);
+                                         GIBBON_CLIP_START_SETTINGS);
 
         return TRUE;
 }
@@ -1820,7 +1820,7 @@ gibbon_clip_parse_setting (const gchar *key, const gchar *value,
                            GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_SETTING);
+                                         GIBBON_CLIP_SHOW_SETTING);
 
         if (0 == g_strcmp0 ("boardstyle", key))
                 *result = gibbon_clip_alloc_string (*result,
@@ -1895,7 +1895,7 @@ gibbon_clip_parse_start_toggles (const gchar *line, gchar **tokens,
                                   GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_START_TOGGLES);
+                                         GIBBON_CLIP_START_TOGGLES);
 
         return TRUE;
 }
@@ -1904,7 +1904,7 @@ static gboolean
 gibbon_clip_parse_toggle (const gchar *key, gboolean value, GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_TOGGLE);
+                                         GIBBON_CLIP_SHOW_TOGGLE);
 
         if (0 == g_strcmp0 ("allowpip", key))
                 *result = gibbon_clip_alloc_string (*result,
@@ -2017,7 +2017,7 @@ gibbon_clip_parse_player (const gchar *line, gchar **tokens,
             && !tokens[9]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                                                 GIBBON_CLIP_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[1]);
@@ -2056,7 +2056,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[10]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                                                 GIBBON_CLIP_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[9]);
@@ -2080,7 +2080,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
                         return FALSE;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                                                 GIBBON_CLIP_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[10]);
@@ -2100,7 +2100,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[9]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_LEFT_GAME);
+                                                 GIBBON_CLIP_LEFT_GAME);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     "You");
@@ -2116,7 +2116,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[8]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_ERROR);
+                                                 GIBBON_CLIP_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_STRING,
                                                     _("You cannot play two"
@@ -2134,7 +2134,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
             && !tokens[9]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                          GIBBON_CLIP_CODE_RESUME_CONFIRMATION);
+                                          GIBBON_CLIP_RESUME_CONFIRMATION);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[3]);
@@ -2143,7 +2143,7 @@ gibbon_clip_parse_2stars_you (const gchar *line, gchar **tokens,
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+                                         GIBBON_CLIP_UNKNOWN_MESSAGE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             line + 3);
@@ -2173,7 +2173,7 @@ gibbon_clip_parse_2stars_number (const gchar *line, gchar **tokens,
             && !tokens[5]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_HEARD_YOU);
+                                                 GIBBON_CLIP_HEARD_YOU);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
                                                  number);
@@ -2182,7 +2182,7 @@ gibbon_clip_parse_2stars_number (const gchar *line, gchar **tokens,
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+                                         GIBBON_CLIP_UNKNOWN_MESSAGE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             line + 3);
@@ -2208,7 +2208,7 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
                                          " someone else!"), tokens[2]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_INVITE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[2]);
@@ -2229,7 +2229,7 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
                                        tokens[5]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_INVITE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[5]);
@@ -2244,7 +2244,7 @@ gibbon_clip_parse_2stars_error (const gchar *line, gchar **tokens,
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+                                         GIBBON_CLIP_UNKNOWN_MESSAGE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             line + 3);
@@ -2306,7 +2306,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                    && !tokens[10]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_ERROR);
+                                                 GIBBON_CLIP_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_STRING,
                                                     _("Your saved match was"
@@ -2330,7 +2330,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                         return FALSE;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_NOW_PLAYING);
+                                                 GIBBON_CLIP_NOW_PLAYING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[2]);
@@ -2348,7 +2348,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                    && !tokens[8]) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                GIBBON_CLIP_CODE_WAIT_JOIN_TOO);
+                                                GIBBON_CLIP_WAIT_JOIN_TOO);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[4]);
@@ -2364,7 +2364,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                    && 0 == g_strcmp0 ("saved.", tokens[9])) {
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_LEFT_GAME);
+                                                 GIBBON_CLIP_LEFT_GAME);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[2]);
@@ -2378,7 +2378,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                 gibbon_clip_chomp (tokens[6], '.');
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                GIBBON_CLIP_CODE_ERROR_NO_USER);
+                                                GIBBON_CLIP_ERROR_NO_USER);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[6]);
@@ -2399,7 +2399,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                         return FALSE;
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_SHOW_TOGGLE);
+                                                 GIBBON_CLIP_SHOW_TOGGLE);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_STRING,
                                                     "autoboard");
@@ -2418,7 +2418,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_INVITE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[1]);
@@ -2441,7 +2441,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_INVITE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[1]);
@@ -2460,7 +2460,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
                                         tokens[1]);
                 *result = gibbon_clip_alloc_int (*result,
                                                  GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_INVITE_ERROR);
+                                                 GIBBON_CLIP_INVITE_ERROR);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[1]);
@@ -2483,7 +2483,7 @@ gibbon_clip_parse_2stars (const gchar *line, gchar **tokens,
 
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_UNKNOWN_MESSAGE);
+                                         GIBBON_CLIP_UNKNOWN_MESSAGE);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_STRING,
                                             line + 3);
@@ -2496,7 +2496,7 @@ gibbon_clip_parse_start_saved (const gchar *line, gchar **tokens,
                                GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_START_SAVED);
+                                         GIBBON_CLIP_SHOW_START_SAVED);
 
         return TRUE;
 }
@@ -2506,7 +2506,7 @@ gibbon_clip_parse_show_saved_none (const gchar *line, gchar **tokens,
                                    GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_SAVED_NONE);
+                                         GIBBON_CLIP_SHOW_SAVED_NONE);
 
         return TRUE;
 }
@@ -2549,7 +2549,7 @@ gibbon_clip_parse_show_saved (const gchar *line, gchar **tokens,
                 ++opponent;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_SAVED);
+                                         GIBBON_CLIP_SHOW_SAVED);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             opponent);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -2571,7 +2571,7 @@ gibbon_clip_parse_start_game (const gchar *line, gchar **tokens,
 
         gibbon_clip_chomp (tokens[5], '.');
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_START_GAME);
+                                         GIBBON_CLIP_START_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[5]);
 
@@ -2591,7 +2591,7 @@ gibbon_clip_parse_saved_count (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                          GIBBON_CLIP_CODE_SHOW_SAVED_COUNT);
+                                          GIBBON_CLIP_SHOW_SAVED_COUNT);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -2621,7 +2621,7 @@ gibbon_clip_parse_show_address (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                          GIBBON_CLIP_CODE_SHOW_ADDRESS);
+                                          GIBBON_CLIP_SHOW_ADDRESS);
 
         gibbon_clip_chomp (quoted_address, '\'');
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
@@ -2654,7 +2654,7 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
             && !tokens[11]) {
                 gibbon_clip_chomp (tokens[5], '.');
                 *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                                 GIBBON_CLIP_CODE_RESUME);
+                                                 GIBBON_CLIP_RESUME);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[5]);
@@ -2691,7 +2691,7 @@ gibbon_clip_parse_you (const gchar *line, gchar **tokens, GSList **result)
             && !tokens[4]) {
                 gibbon_clip_chomp (tokens[3], '.');
                 *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                                GIBBON_CLIP_CODE_STOP_WATCHING);
+                                                GIBBON_CLIP_STOP_WATCHING);
                 *result = gibbon_clip_alloc_string (*result,
                                                     GIBBON_CLIP_TYPE_NAME,
                                                     tokens[3]);
@@ -2709,7 +2709,7 @@ gibbon_clip_parse_type_join (const gchar *line, gchar **tokens, GSList **result)
         gibbon_clip_chomp (opponent, '\'');
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_TYPE_JOIN);
+                                         GIBBON_CLIP_TYPE_JOIN);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             opponent);
@@ -2724,7 +2724,7 @@ gibbon_clip_parse_joined_you (const gchar *line, gchar **tokens,
         char *opponent = tokens[0];
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESUME);
+                                         GIBBON_CLIP_RESUME);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             opponent);
@@ -2742,7 +2742,7 @@ gibbon_clip_parse_resume_info_turn (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESUME_INFO_TURN);
+                                         GIBBON_CLIP_RESUME_INFO_TURN);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             who);
@@ -2764,7 +2764,7 @@ gibbon_clip_parse_resume_info_match_length (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                     GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH);
+                                     GIBBON_CLIP_RESUME_INFO_MATCH_LENGTH);
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          length);
@@ -2780,7 +2780,7 @@ gibbon_clip_parse_resume_info_unlimited (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                     GIBBON_CLIP_CODE_RESUME_INFO_MATCH_LENGTH);
+                                     GIBBON_CLIP_RESUME_INFO_MATCH_LENGTH);
         *result = gibbon_clip_alloc_int (*result,
                                          GIBBON_CLIP_TYPE_UINT,
                                          0);
@@ -2806,7 +2806,7 @@ gibbon_clip_parse_resume_info_points (const gchar *line, gchar **tokens,
         gibbon_clip_chomp (name, ':');
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESUME_INFO_POINTS);
+                                         GIBBON_CLIP_RESUME_INFO_POINTS);
         *result = gibbon_clip_alloc_string (*result,
                                             GIBBON_CLIP_TYPE_NAME,
                                             name);
@@ -2837,7 +2837,7 @@ gibbon_clip_parse_not_email_address (gchar *quoted_address,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                       GIBBON_CLIP_CODE_ERROR_NO_EMAIL_ADDRESS);
+                                       GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS);
 
         gibbon_clip_chomp (quoted_address, '\'');
         *result = gibbon_clip_alloc_string (*result,
@@ -2878,7 +2878,7 @@ gibbon_clip_parse_resigned (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_WIN_GAME);
+                                         GIBBON_CLIP_WIN_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[3]);
         *result = gibbon_clip_alloc_int (*result,
@@ -2920,7 +2920,7 @@ gibbon_clip_parse_accepts (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_WIN_GAME);
+                                         GIBBON_CLIP_WIN_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -2960,7 +2960,7 @@ gibbon_clip_parse_resigns (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_RESIGNS);
+                                         GIBBON_CLIP_RESIGNS);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -2985,7 +2985,7 @@ gibbon_clip_parse_rejects (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_REJECTS_RESIGNATION);
+                                         GIBBON_CLIP_REJECTS_RESIGNATION);
 
         return TRUE;
 }
@@ -3020,7 +3020,7 @@ gibbon_clip_parse_score (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_GAME_SCORE);
+                                         GIBBON_CLIP_GAME_SCORE);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          length);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -3067,7 +3067,7 @@ gibbon_clip_parse_score_unlimited (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_GAME_SCORE);
+                                         GIBBON_CLIP_GAME_SCORE);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
                                          0);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
@@ -3117,7 +3117,7 @@ gibbon_clip_parse_you_double (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_DOUBLES);
+                                         GIBBON_CLIP_DOUBLES);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             "You");
 
@@ -3144,7 +3144,7 @@ gibbon_clip_parse_she_doubles (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_DOUBLES);
+                                         GIBBON_CLIP_DOUBLES);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
 
@@ -3176,7 +3176,7 @@ gibbon_clip_parse_accepts_double (const gchar *line, gchar **tokens,
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_ACCEPTS_DOUBLE);
+                                         GIBBON_CLIP_ACCEPTS_DOUBLE);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
@@ -3253,7 +3253,7 @@ gibbon_clip_parse_drop (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_LEFT_GAME);
+                                         GIBBON_CLIP_LEFT_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[0]);
 
@@ -3291,7 +3291,7 @@ gibbon_clip_parse_timeout (const gchar *line, gchar **tokens, GSList **result)
                 return FALSE;
 
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_LEFT_GAME);
+                                         GIBBON_CLIP_LEFT_GAME);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_NAME,
                                             tokens[2]);
 
@@ -3612,7 +3612,7 @@ static gboolean
 gibbon_clip_toggle_ready (GSList **result, gboolean ready)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_CODE_SHOW_TOGGLE);
+                                         GIBBON_CLIP_SHOW_TOGGLE);
         *result = gibbon_clip_alloc_string (*result, GIBBON_CLIP_TYPE_STRING,
                                             "ready");
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_BOOLEAN,
