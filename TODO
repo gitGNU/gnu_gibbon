@@ -155,3 +155,4 @@
 - Redoubles are not parsed.
 - Add debugging code to gibbon-connection so that all unhandled messages from
   the server are printed on stderr.
+- Trailing input in FIBS parser does not lead to an error.
