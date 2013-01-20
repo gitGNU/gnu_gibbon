@@ -137,8 +137,8 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
 {
         GValue *value;
         GValue init = G_VALUE_INIT;
-        guint64 u;
         gint64 i;
+        gdouble d;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
         g_return_val_if_fail (token != NULL, NULL);
@@ -152,13 +152,13 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
         g_value_init (value, type);
 
         switch (type) {
-        case G_TYPE_UINT64:
-                u = g_ascii_strtoull (token, NULL, 10);
-                g_value_set_uint64 (value, u);
-                break;
         case G_TYPE_INT64:
                 i = g_ascii_strtoll (token, NULL, 10);
                 g_value_set_int64 (value, i);
+                break;
+        case G_TYPE_DOUBLE:
+                d = g_ascii_strtod (token, NULL);
+                g_value_set_double (value, d);
                 break;
         case G_TYPE_STRING:
                 g_value_set_string (value, token);

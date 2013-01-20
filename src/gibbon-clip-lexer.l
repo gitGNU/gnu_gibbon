@@ -84,7 +84,7 @@
 
 %start NOCLIP
 
-WS		[[:space:]]+
+WS		[ \t]+
 
 %%
 ^1{WS}		{
@@ -92,7 +92,17 @@ WS		[[:space:]]+
 			= alloc_value ("1", G_TYPE_INT64); 
 		return CLIP_WELCOME;
 	}
-[1-9][0-9]*	{
+^2{WS}		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("2", G_TYPE_INT64); 
+		return CLIP_OWN_INFO;
+	}
+[-+]?(0|[1-9][0-9]*)\.[0-9][0-9]*	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_DOUBLE); 
+		return GDOUBLE;
+	}	
+[-+]?0|[1-9][0-9]*	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_INT64); 
 		return GINT64;
@@ -102,7 +112,7 @@ WS		[[:space:]]+
 			= alloc_value (yytext, G_TYPE_STRING); 
 		return GSTRING;
 	}
-{WS}			/* Ignore */
+{WS}			;
 .			return yytext[0];
 %%
 

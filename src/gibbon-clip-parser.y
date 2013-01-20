@@ -34,11 +34,6 @@
 #include "gibbon-clip-parser.h"
 #include "gibbon-clip-reader-priv.h"
 
-#define reader gibbon_clip_lexer_get_extra(scanner)
-
-static gboolean gibbon_clip_parser_fixup_uint (void *raw, 
-                                               gint64 lower, gint64 upper);
-
 /*
  * Remap normal yacc parser interface names (yyparse, yylex, yyerror, etc),
  * as well as gratuitiously global symbol names, so we can have multiple
@@ -91,6 +86,16 @@ extern int gibbon_clip_lexer_lex (YYSTYPE * lvalp, void *scanner);
 
 #define YYDEBUG 42
 
+#define reader gibbon_clip_lexer_get_extra(scanner)
+
+static gboolean gibbon_clip_parser_fixup_uint (void *raw, 
+                                               gint64 lower, gint64 upper);
+static gboolean gibbon_clip_parser_fixup_uint64 (void *raw, 
+                                                 gint64 lower, gint64 upper);
+static gboolean gibbon_clip_parser_fixup_int64 (void *raw, 
+                                                gint64 lower, gint64 upper);
+static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
+
 %}
 
 %union {
@@ -98,23 +103,147 @@ extern int gibbon_clip_lexer_lex (YYSTYPE * lvalp, void *scanner);
 }
 
 %token <value> CLIP_WELCOME
+%token <value> CLIP_OWN_INFO
 %token <value> GSTRING
 %token <value> GINT64
+%token <value> GDOUBLE
+
+%type <value> redoubles
 
 %pure-parser
 %lex-param {void *scanner}
 %parse-param {void *scanner}
 
 %%
-line: { yydebug = 0; } clip_welcome
+line: { yydebug = 0; } message
     ;
 
-clip_welcome: CLIP_WELCOME GSTRING GINT64 GSTRING
+message: clip_welcome
+       | clip_own_info
+       ;
+
+clip_welcome: CLIP_WELCOME
 		{
-			gibbon_clip_parser_fixup_uint ($1, 1, 1);
+			if (!gibbon_clip_parser_fixup_uint ($1, 1, 1))
+				YYABORT;
 		}
+		GSTRING GINT64 GSTRING
             ;
             
+clip_own_info: CLIP_OWN_INFO
+		{
+			if (!gibbon_clip_parser_fixup_uint ($1, 2, 2))
+				YYABORT;
+		}
+ 	       GSTRING GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($4))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($6))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($8))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($10))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($12))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($14))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($16))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($18))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_uint64 ($20,
+			                                      0, G_MAXINT64))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($22))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($24))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($26))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($28))
+				YYABORT;
+		}
+	       GDOUBLE
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($31))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($33))
+				YYABORT;
+		}
+	       redoubles
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($36))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($38))
+				YYABORT;
+		}
+	       GSTRING
+             ;
+            
+redoubles: GINT64
+		{
+			if (!gibbon_clip_parser_fixup_int64 ($1, -1,
+			                                     G_MAXINT64))
+				YYABORT;
+		}
+         | GSTRING
+         	{
+         		GValue *v = (GValue *) $1;
+         		
+         		if (g_strcmp0 (g_value_get_string (v), "unlimited"))
+         		        YYABORT;
+         		g_value_unset (v);
+         		g_value_init (v, G_TYPE_INT64);
+         		g_value_set_int64 (v, -1);
+         	}
+         ;
+         
 %%
 
 static gboolean
@@ -122,13 +251,61 @@ gibbon_clip_parser_fixup_uint (void *raw, gint64 lower, gint64 upper)
 {
 	GValue *value = (GValue *) raw;
 	gint64 i64 = g_value_get_int64 (value);
-	
+
 	if (i64 < lower) return FALSE;
 	if (i64 > upper) return FALSE;
 	
 	g_value_unset (value);
 	g_value_init (value, G_TYPE_UINT);
 	g_value_set_uint (value, (guint) i64);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_uint64 (void *raw, gint64 lower, gint64 upper)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+
+	if (i64 < lower) return FALSE;
+	if (i64 > upper) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_UINT64);
+	g_value_set_uint64 (value, (guint64) i64);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_int64 (void *raw, gint64 lower, gint64 upper)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+
+	if (i64 < lower) return FALSE;
+	if (i64 > upper) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_INT64);
+	g_value_set_int64 (value, (gint64) i64);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_boolean (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+	
+	if (i64 < 0) return FALSE;
+	if (i64 > 1) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_BOOLEAN);
+	g_value_set_boolean (value, (gboolean) i64);
 	
 	return TRUE;
 }
