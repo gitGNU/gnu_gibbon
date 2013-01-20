@@ -99,6 +99,11 @@ OWS		[ \t]*
 				= alloc_value ("10", G_TYPE_INT64); 
 			return CLIP_MESSAGE_DELIVERED;
 		}
+^11{WS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("11", G_TYPE_INT64); 
+			return CLIP_MESSAGE_SAVED;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 
