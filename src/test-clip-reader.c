@@ -265,7 +265,7 @@ static struct test_case test_clip07 = {
                 {
                                 { G_TYPE_UINT, "7" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING, "gflohr logs in" },
+                                { G_TYPE_STRING, "gflohr logs in." },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -275,8 +275,7 @@ static struct test_case test_clip08 = {
                 {
                                 { G_TYPE_UINT, "8" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "gflohr drops connection" },
+                                { G_TYPE_STRING, "gflohr drops connection." },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -287,8 +286,7 @@ static struct test_case test_clip09 = {
                                 { G_TYPE_UINT, "9" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INT64, "-1306935184" },
-                                { G_TYPE_STRING,
-                                                "   Be back at 20 p.m." },
+                                { G_TYPE_STRING, "   Be back at 20 p.m." },
                                 { G_TYPE_INVALID }
                 }
 };

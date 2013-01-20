@@ -31,6 +31,7 @@
 
 #include "gibbon-clip-parser.h"
 #include "gibbon-clip-reader-priv.h"
+#include "gibbon-util.h"
 
 #define alloc_value(s, type) gibbon_clip_reader_alloc_value(		\
 	gibbon_clip_lexer_get_extra(yyscanner), s, type)
@@ -79,10 +80,14 @@
 %option noyywrap
 %option reentrant
 %option bison-bridge
+%option stack
+%option noyy_top_state
 
 /* %option debug */
 
 %start MOTD
+%start USER
+%start MESSAGE
 
 WS		[ \t]+
 OWS		[ \t]*
@@ -125,6 +130,25 @@ OWS		[ \t]*
 				= alloc_value ("6", G_TYPE_INT64); 
 			return CLIP_WHO_INFO_END;
 		}	
+^7{WS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("7", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);			
+			return CLIP_WHO_INFO_END;
+		}	
+<USER>[^[:space:]]+{WS}		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (gibbon_trim (yytext), G_TYPE_STRING); 
+		yy_pop_state (yyscanner);
+		return GSTRING;
+	}
+<MESSAGE>(.|\n)*		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING); 
+		yy_pop_state (yyscanner);
+		return GSTRING;
+	}
 [-+]?(0|[1-9][0-9]*)\.[0-9]+	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
@@ -134,7 +158,7 @@ OWS		[ \t]*
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_INT64); 
 		return GINT64;
-	}	
+	}
 [^[:space:]]+		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_STRING); 

@@ -111,6 +111,7 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_MOTD_END
 %token <value> CLIP_WHO_INFO
 %token <value> CLIP_WHO_INFO_END
+%token <value> LOGIN
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -132,6 +133,7 @@ message: clip_welcome
        | clip_motd_end
        | clip_who_info
        | clip_who_info_end
+       | clip_login
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -373,7 +375,16 @@ clip_who_info_end: CLIP_WHO_INFO_END
 		}
             ;
             
-            
+clip_login: CLIP_WHO_INFO_END
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_LOGIN,
+					GIBBON_CLIP_LOGIN))
+				YYABORT;
+	      }
+	    GSTRING
+            ;
+
 %%
 
 static gboolean
