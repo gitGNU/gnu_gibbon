@@ -82,9 +82,10 @@
 
 /* %option debug */
 
-%start NOCLIP
+%start MOTD
 
 WS		[ \t]+
+OWS		[ \t]*
 
 %%
 ^1{WS}		{
@@ -97,7 +98,24 @@ WS		[ \t]+
 			= alloc_value ("2", G_TYPE_INT64); 
 		return CLIP_OWN_INFO;
 	}
-[-+]?(0|[1-9][0-9]*)\.[0-9][0-9]*	{
+^3{OWS}		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("3", G_TYPE_INT64); 
+		BEGIN (MOTD);
+		return CLIP_MOTD_START;
+	}	
+^4{OWS}		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("4", G_TYPE_INT64); 
+		BEGIN (INITIAL);
+		return CLIP_MOTD_END;
+	}	
+<MOTD>(.|\n)*	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return CLIP_MOTD;
+	}
+[-+]?(0|[1-9][0-9]*)\.[0-9]+	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
 		return GDOUBLE;
@@ -124,6 +142,8 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 	 * and there is no clean way to get it.
 	 */
 	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
+	
+	yy_flex_debug = 0;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);

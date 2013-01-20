@@ -104,6 +104,9 @@ static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
 
 %token <value> CLIP_WELCOME
 %token <value> CLIP_OWN_INFO
+%token <value> CLIP_MOTD_START
+%token <value> CLIP_MOTD
+%token <value> CLIP_MOTD_END
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -120,11 +123,16 @@ line: { yydebug = 0; } message
 
 message: clip_welcome
        | clip_own_info
+       | clip_motd_start
+       | clip_motd
+       | clip_motd_end
        ;
 
 clip_welcome: CLIP_WELCOME
 		{
-			if (!gibbon_clip_parser_fixup_uint ($1, 1, 1))
+			if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_WELCOME, 
+					GIBBON_CLIP_WELCOME))
 				YYABORT;
 		}
 		GSTRING GINT64 GSTRING
@@ -132,7 +140,9 @@ clip_welcome: CLIP_WELCOME
             
 clip_own_info: CLIP_OWN_INFO
 		{
-			if (!gibbon_clip_parser_fixup_uint ($1, 2, 2))
+			if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_OWN_INFO, 
+					GIBBON_CLIP_OWN_INFO))
 				YYABORT;
 		}
  	       GSTRING GINT64
@@ -244,6 +254,37 @@ redoubles: GINT64
          	}
          ;
          
+clip_motd_start: CLIP_MOTD_START
+		{
+			if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_MOTD_START,
+					GIBBON_CLIP_MOTD_START))
+				YYABORT;
+		}
+            ;
+
+clip_motd: CLIP_MOTD
+		{	GValue *s = gibbon_clip_reader_alloc_value (
+					reader,
+					"", G_TYPE_STRING);
+			GValue *v = (GValue *) $1;
+			
+			g_value_copy (v, s);
+			g_value_unset (v);
+			g_value_init (v, G_TYPE_UINT);
+			g_value_set_uint (v, GIBBON_CLIP_MOTD);
+		}
+	    ;
+            
+clip_motd_end: CLIP_MOTD_END
+		{
+			if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_MOTD_END,
+					GIBBON_CLIP_MOTD_END))
+				YYABORT;
+		}
+            ;
+            
 %%
 
 static gboolean
