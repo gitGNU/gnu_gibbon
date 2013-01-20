@@ -184,6 +184,73 @@ static struct test_case test_clip04 = {
                 }
 };
 
+
+static struct test_case test_clip05_0 = {
+                "5 GibbonTestA barrack - 0 0 1418.61 1914 23 1306926526"
+                " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
+                {
+                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_STRING, "GibbonTestA" },
+                                { G_TYPE_STRING, "barrack" },
+                                { G_TYPE_STRING, "" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_DOUBLE, "1418.610000" },
+                                { G_TYPE_UINT, "1914" },
+                                { G_TYPE_UINT, "23" },
+                                { G_TYPE_INT64, "1306926526" },
+                                { G_TYPE_STRING, "173.223.48.110" },
+                                { G_TYPE_STRING, "Gibbon_0.1.1" },
+                                { G_TYPE_STRING,
+                                                "president@whitehouse.gov" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip05_1 = {
+                "5 GibbonTestB - - 0 0 -35.67 914 23 1306926526"
+                " 44.55.66.77 Gibbon_0.1.1 foo@bar.baz",
+                {
+                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_STRING, "GibbonTestB" },
+                                { G_TYPE_STRING, "" },
+                                { G_TYPE_STRING, "" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_DOUBLE, "-35.670000" },
+                                { G_TYPE_UINT, "914" },
+                                { G_TYPE_UINT, "23" },
+                                { G_TYPE_INT64, "1306926526" },
+                                { G_TYPE_STRING, "44.55.66.77" },
+                                { G_TYPE_STRING, "Gibbon_0.1.1" },
+                                { G_TYPE_STRING,
+                                                "foo@bar.baz" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_clip05_2 = {
+                "5 GibbonTestC barrack - 0 0 1418.61 1914 23 1306926526"
+                " 173.223.48.110* Gibbon_0.1.1 president@whitehouse.gov",
+                {
+                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_STRING, "gflohr" },
+                                { G_TYPE_STRING, "barrack" },
+                                { G_TYPE_STRING, "" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_DOUBLE, "1418.610000" },
+                                { G_TYPE_UINT, "1914" },
+                                { G_TYPE_UINT, "23" },
+                                { G_TYPE_INT64, "1306926526" },
+                                { G_TYPE_STRING, "173.223.48.110" },
+                                { G_TYPE_STRING, "Gibbon_0.1.1" },
+                                { G_TYPE_STRING,
+                                                "president@whitehouse.gov" },
+                                { G_TYPE_INVALID }
+                }
+};
+
 static struct test_case *test_cases[] = {
                 &test_clip01_0,
                 &test_clip01_1,
@@ -193,7 +260,10 @@ static struct test_case *test_cases[] = {
                 &test_clip03,
                 &test_clip03a,
                 &test_clip03b,
-                &test_clip04
+                &test_clip04,
+                &test_clip05_0,
+                &test_clip05_1,
+                &test_clip05_2
 };
 
 static gboolean test_single_case (GibbonCLIPReader *reader,
