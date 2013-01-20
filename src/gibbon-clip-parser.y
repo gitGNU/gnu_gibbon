@@ -95,6 +95,8 @@ static gboolean gibbon_clip_parser_fixup_uint64 (void *raw,
 static gboolean gibbon_clip_parser_fixup_int64 (void *raw, 
                                                 gint64 lower, gint64 upper);
 static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
+static gboolean gibbon_clip_parser_fixup_user (void *raw);
+static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 
 %}
 
@@ -107,6 +109,7 @@ static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
 %token <value> CLIP_MOTD_START
 %token <value> CLIP_MOTD
 %token <value> CLIP_MOTD_END
+%token <value> CLIP_WHO_INFO
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -126,6 +129,7 @@ message: clip_welcome
        | clip_motd_start
        | clip_motd
        | clip_motd_end
+       | clip_who_info
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -135,7 +139,12 @@ clip_welcome: CLIP_WELCOME
 					GIBBON_CLIP_WELCOME))
 				YYABORT;
 		}
-		GSTRING GINT64 GSTRING
+              GSTRING 
+		{
+			if (!gibbon_clip_parser_fixup_user ($3))
+				YYABORT;
+		}
+	      GINT64 GSTRING
             ;
             
 clip_own_info: CLIP_OWN_INFO
@@ -145,92 +154,97 @@ clip_own_info: CLIP_OWN_INFO
 					GIBBON_CLIP_OWN_INFO))
 				YYABORT;
 		}
- 	       GSTRING GINT64
+ 	       GSTRING 
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($4))
+			if (!gibbon_clip_parser_fixup_user ($3))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($6))
+			if (!gibbon_clip_parser_fixup_boolean ($5))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($8))
+			if (!gibbon_clip_parser_fixup_boolean ($7))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($10))
+			if (!gibbon_clip_parser_fixup_boolean ($9))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($12))
+			if (!gibbon_clip_parser_fixup_boolean ($11))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($14))
+			if (!gibbon_clip_parser_fixup_boolean ($13))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($16))
+			if (!gibbon_clip_parser_fixup_boolean ($15))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($18))
+			if (!gibbon_clip_parser_fixup_boolean ($17))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_uint64 ($20,
+			if (!gibbon_clip_parser_fixup_boolean ($19))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_uint64 ($21,
 			                                      0, G_MAXINT64))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($22))
+			if (!gibbon_clip_parser_fixup_boolean ($23))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($24))
+			if (!gibbon_clip_parser_fixup_boolean ($25))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($26))
+			if (!gibbon_clip_parser_fixup_boolean ($27))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($28))
+			if (!gibbon_clip_parser_fixup_boolean ($29))
 				YYABORT;
 		}
 	       GDOUBLE
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($31))
+			if (!gibbon_clip_parser_fixup_boolean ($32))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($33))
+			if (!gibbon_clip_parser_fixup_boolean ($34))
 				YYABORT;
 		}
 	       redoubles
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($36))
+			if (!gibbon_clip_parser_fixup_boolean ($37))
 				YYABORT;
 		}
  	       GINT64
 		{
-			if (!gibbon_clip_parser_fixup_boolean ($38))
+			if (!gibbon_clip_parser_fixup_boolean ($39))
 				YYABORT;
 		}
 	       GSTRING
@@ -284,6 +298,70 @@ clip_motd_end: CLIP_MOTD_END
 				YYABORT;
 		}
             ;
+            
+            
+clip_who_info: CLIP_WHO_INFO
+		{
+			if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_WHO_INFO, 
+					GIBBON_CLIP_WHO_INFO))
+				YYABORT;
+		}
+ 	       GSTRING
+		{
+			if (!gibbon_clip_parser_fixup_user ($3))
+				YYABORT;
+		}
+ 	       GSTRING
+		{
+			if (!gibbon_clip_parser_fixup_optional_user ($5))
+				YYABORT;
+		}
+ 	       GSTRING
+		{
+			if (!gibbon_clip_parser_fixup_optional_user ($7))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($9))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_boolean ($11))
+				YYABORT;
+		}
+	       GDOUBLE
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_uint64 ($14,
+			                                      0, G_MAXINT64))
+				YYABORT;
+		}
+ 	       GINT64
+		{
+			if (!gibbon_clip_parser_fixup_uint64 ($16,
+			                                      0, G_MAXINT64))
+				YYABORT;
+		}
+	       GINT64
+	       GSTRING
+	        {
+	        	GValue *v = (GValue *) $19;
+	        	const gchar *ip = g_value_get_string (v);        	
+		        size_t l = strlen (ip);
+	        	gchar *real_ip;
+        		if ('*' == ip[l - 1]) {
+        			real_ip = g_strdup (ip);
+        			real_ip[l - 1] = 0;
+            			g_value_set_string (v, real_ip);
+            			g_free (real_ip);
+			}
+	        }
+	       GSTRING
+	       GSTRING
+             ;
             
 %%
 
@@ -347,6 +425,32 @@ gibbon_clip_parser_fixup_boolean (void *raw)
 	g_value_unset (value);
 	g_value_init (value, G_TYPE_BOOLEAN);
 	g_value_set_boolean (value, (gboolean) i64);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_user (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	const gchar *string = g_value_get_string (value);
+
+	if (!g_strcmp0 (string, "You"))
+		return FALSE;
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_optional_user (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	const gchar *string = g_value_get_string (value);
+
+	if (!g_strcmp0 (string, "You"))
+		return FALSE;
+	if (!g_strcmp0 (string, "-"))
+		g_value_set_string (value, "");
 	
 	return TRUE;
 }

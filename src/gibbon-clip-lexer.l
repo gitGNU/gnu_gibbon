@@ -115,6 +115,11 @@ OWS		[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING);
 		return CLIP_MOTD;
 	}
+^5{WS}		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("5", G_TYPE_INT64); 
+		return CLIP_WHO_INFO;
+	}
 [-+]?(0|[1-9][0-9]*)\.[0-9]+	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
