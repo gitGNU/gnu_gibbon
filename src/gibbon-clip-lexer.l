@@ -94,6 +94,11 @@ WS		[ \t]+
 OWS		[ \t]*
 
 %%
+^10{WS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("10", G_TYPE_INT64); 
+			return CLIP_MESSAGE_DELIVERED;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 
