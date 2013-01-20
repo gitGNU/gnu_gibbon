@@ -135,7 +135,7 @@ OWS		[ \t]*
 				= alloc_value ("7", G_TYPE_INT64);
 			yy_push_state (MESSAGE, yyscanner);
 			yy_push_state (USER, yyscanner);			
-			return CLIP_WHO_INFO_END;
+			return CLIP_LOGIN;
 		}	
 <USER>[^[:space:]]+{WS}		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
