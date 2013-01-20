@@ -89,37 +89,42 @@ OWS		[ \t]*
 
 %%
 ^1{WS}		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("1", G_TYPE_INT64); 
-		return CLIP_WELCOME;
-	}
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("1", G_TYPE_INT64); 
+			return CLIP_WELCOME;
+		}
 ^2{WS}		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("2", G_TYPE_INT64); 
-		return CLIP_OWN_INFO;
-	}
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("2", G_TYPE_INT64); 
+			return CLIP_OWN_INFO;
+		}
 ^3{OWS}		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("3", G_TYPE_INT64); 
-		BEGIN (MOTD);
-		return CLIP_MOTD_START;
-	}	
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("3", G_TYPE_INT64); 
+			BEGIN (MOTD);
+			return CLIP_MOTD_START;
+		}
 ^4{OWS}		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("4", G_TYPE_INT64); 
-		BEGIN (INITIAL);
-		return CLIP_MOTD_END;
-	}	
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("4", G_TYPE_INT64); 
+			BEGIN (INITIAL);
+			return CLIP_MOTD_END;
+		}	
 <MOTD>(.|\n)*	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return CLIP_MOTD;
-	}
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value (yytext, G_TYPE_STRING);
+			return CLIP_MOTD;
+		}
 ^5{WS}		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("5", G_TYPE_INT64); 
-		return CLIP_WHO_INFO;
-	}
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("5", G_TYPE_INT64); 
+			return CLIP_WHO_INFO;
+		}
+^6{OWS}		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("6", G_TYPE_INT64); 
+			return CLIP_WHO_INFO_END;
+		}	
 [-+]?(0|[1-9][0-9]*)\.[0-9]+	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
