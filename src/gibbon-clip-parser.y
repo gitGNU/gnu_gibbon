@@ -116,6 +116,7 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_MESSAGE
 %token <value> CLIP_MESSAGE_DELIVERED
 %token <value> CLIP_MESSAGE_SAVED
+%token <value> CLIP_SAYS
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -142,6 +143,7 @@ message: clip_welcome
        | clip_message
        | clip_message_delivered
        | clip_message_saved
+       | clip_says
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -445,6 +447,16 @@ clip_message_saved: CLIP_MESSAGE_SAVED
 		if (!gibbon_clip_parser_fixup_user ($3))
 			YYABORT;
 	      }
+            ;
+
+clip_says: CLIP_SAYS
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_SAYS,
+					GIBBON_CLIP_SAYS))
+				YYABORT;
+	      }
+	    GSTRING
             ;
 
 %%

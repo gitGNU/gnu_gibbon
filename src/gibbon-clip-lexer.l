@@ -104,6 +104,13 @@ OWS		[ \t]*
 				= alloc_value ("11", G_TYPE_INT64); 
 			return CLIP_MESSAGE_SAVED;
 		}
+^12[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("12", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_SAYS;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 
