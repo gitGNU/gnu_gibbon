@@ -111,6 +111,34 @@ OWS		[ \t]*
 			yy_push_state (USER, yyscanner);
 			return CLIP_SAYS;
 		}
+^13[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("13", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_SHOUTS;
+		}
+^14[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("14", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_WHISPERS;
+		}
+^15[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("15", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_KIBITZES;
+		}
+^16[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("16", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_YOU_SAY;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 

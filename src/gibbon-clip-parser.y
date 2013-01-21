@@ -117,6 +117,10 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_MESSAGE_DELIVERED
 %token <value> CLIP_MESSAGE_SAVED
 %token <value> CLIP_SAYS
+%token <value> CLIP_SHOUTS
+%token <value> CLIP_WHISPERS
+%token <value> CLIP_KIBITZES
+%token <value> CLIP_YOU_SAY
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -144,6 +148,10 @@ message: clip_welcome
        | clip_message_delivered
        | clip_message_saved
        | clip_says
+       | clip_shouts
+       | clip_whispers
+       | clip_kibitzes
+       | clip_you_say
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -454,6 +462,46 @@ clip_says: CLIP_SAYS
 		if (!gibbon_clip_parser_fixup_uint (
 					$1, GIBBON_CLIP_SAYS,
 					GIBBON_CLIP_SAYS))
+				YYABORT;
+	      }
+	    GSTRING
+            ;
+
+clip_shouts: CLIP_SHOUTS
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_SHOUTS,
+					GIBBON_CLIP_SHOUTS))
+				YYABORT;
+	      }
+	    GSTRING
+            ;
+
+clip_whispers: CLIP_WHISPERS
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_WHISPERS,
+					GIBBON_CLIP_WHISPERS))
+				YYABORT;
+	      }
+	    GSTRING
+            ;
+
+clip_kibitzes: CLIP_KIBITZES
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_KIBITZES,
+					GIBBON_CLIP_KIBITZES))
+				YYABORT;
+	      }
+	    GSTRING
+            ;
+
+clip_you_say: CLIP_YOU_SAY
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_YOU_SAY,
+					GIBBON_CLIP_YOU_SAY))
 				YYABORT;
 	      }
 	    GSTRING
