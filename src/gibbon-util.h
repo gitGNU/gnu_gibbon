@@ -28,6 +28,9 @@
 
 G_BEGIN_DECLS
 
+#define GIBBON_STRINGIFY(s) GIBBON_STRINGIFY_IMPL(s)
+#define GIBBON_STRINGIFY_IMPL(s) #s
+
 #define GIBBON_ERROR gibbon_error_quark ()
 
 GQuark gibbon_error_quark (void);
