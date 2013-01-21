@@ -51,8 +51,8 @@ enum GibbonClipCode {
                         GIBBON_CLIP_ALERTS = 20,
 
                         /* Error messages.  */
-                        GIBBON_CLIP_UNKNOWN_MESSAGE = 100,
-                        GIBBON_CLIP_ERROR = 101,
+                        GIBBON_CLIP_ERROR = 100,
+                        GIBBON_CLIP_UNKNOWN_MESSAGE = 101,
                         GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS = 102,
                         GIBBON_CLIP_ERROR_NO_USER = 103,
 

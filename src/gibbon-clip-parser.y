@@ -125,6 +125,7 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_YOU_WHISPER
 %token <value> CLIP_YOU_KIBITZ
 %token <value> CLIP_ALERTS
+%token <value> CLIP_ERROR
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -160,6 +161,7 @@ message: clip_welcome
        | clip_you_whisper
        | clip_you_kibitz
        | clip_alerts
+       | clip_error
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -308,7 +310,11 @@ clip_motd_start: CLIP_MOTD_START
             ;
 
 clip_motd: CLIP_MOTD
-		{	GValue *s = gibbon_clip_reader_alloc_value (
+		{
+			/*
+			 * FIXME! Is this really needed?
+			 */
+			GValue *s = gibbon_clip_reader_alloc_value (
 					reader,
 					"", G_TYPE_STRING);
 			GValue *v = (GValue *) $1;
@@ -561,6 +567,16 @@ clip_alerts: CLIP_ALERTS
 	      }
 	    GSTRING
 	    GSTRING
+            ;
+
+clip_error: CLIP_ERROR
+	    GSTRING
+	      {
+	      	/* 
+	      	 * FIXME! Write a function that prepends a value to the
+	      	 * result list!
+	      	 */
+	      }
             ;
 
 %%

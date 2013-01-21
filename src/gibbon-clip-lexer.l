@@ -89,6 +89,7 @@
 %start USER
 %start INTEGER
 %start MESSAGE
+%start ERROR
 
 WS		[ \t]+
 OWS		[ \t]*
@@ -222,6 +223,10 @@ OWS		[ \t]*
 			yy_push_state (INTEGER, yyscanner);
 			yy_push_state (USER, yyscanner);			
 			return CLIP_MESSAGE;
+		}
+^\*\*[ \t]	{
+			yy_push_state (ERROR, yyscanner);
+			return CLIP_ERROR;
 		}	
 <USER>[^[:space:]]+{WS}		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
@@ -235,7 +240,7 @@ OWS		[ \t]*
 		yy_pop_state (yyscanner);
 		return GINT64;
 	}
-<MESSAGE>(.|\n)*		{
+<MESSAGE,ERROR>(.|\n)*		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_STRING); 
 		yy_pop_state (yyscanner);
