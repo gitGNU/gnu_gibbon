@@ -124,6 +124,7 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_YOU_SHOUT
 %token <value> CLIP_YOU_WHISPER
 %token <value> CLIP_YOU_KIBITZ
+%token <value> CLIP_ALERTS
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -158,6 +159,7 @@ message: clip_welcome
        | clip_you_shout
        | clip_you_whisper
        | clip_you_kibitz
+       | clip_alerts
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -544,6 +546,17 @@ clip_you_kibitz: CLIP_YOU_KIBITZ
 					GIBBON_CLIP_YOU_KIBITZ))
 				YYABORT;
 	      }
+	    GSTRING
+            ;
+
+clip_alerts: CLIP_ALERTS
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_ALERTS,
+					GIBBON_CLIP_ALERTS))
+				YYABORT;
+	      }
+	    GSTRING
 	    GSTRING
             ;
 

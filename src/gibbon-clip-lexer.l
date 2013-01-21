@@ -157,6 +157,13 @@ OWS		[ \t]*
 			yy_push_state (MESSAGE, yyscanner);
 			return CLIP_YOU_KIBITZ;
 		}
+^20[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("20", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			yy_push_state (USER, yyscanner);
+			return CLIP_ALERTS;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 
