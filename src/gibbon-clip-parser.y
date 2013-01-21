@@ -465,6 +465,7 @@ clip_says: CLIP_SAYS
 				YYABORT;
 	      }
 	    GSTRING
+	    GSTRING
             ;
 
 clip_shouts: CLIP_SHOUTS
@@ -474,6 +475,7 @@ clip_shouts: CLIP_SHOUTS
 					GIBBON_CLIP_SHOUTS))
 				YYABORT;
 	      }
+	    GSTRING
 	    GSTRING
             ;
 
@@ -485,6 +487,7 @@ clip_whispers: CLIP_WHISPERS
 				YYABORT;
 	      }
 	    GSTRING
+	    GSTRING
             ;
 
 clip_kibitzes: CLIP_KIBITZES
@@ -494,6 +497,7 @@ clip_kibitzes: CLIP_KIBITZES
 					GIBBON_CLIP_KIBITZES))
 				YYABORT;
 	      }
+	    GSTRING
 	    GSTRING
             ;
 
