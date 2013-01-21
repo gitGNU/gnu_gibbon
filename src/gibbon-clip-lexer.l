@@ -139,6 +139,24 @@ OWS		[ \t]*
 			yy_push_state (USER, yyscanner);
 			return CLIP_YOU_SAY;
 		}
+^17[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("17", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			return CLIP_YOU_SHOUT;
+		}
+^18[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("18", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			return CLIP_YOU_WHISPER;
+		}
+^19[ \t]		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("19", G_TYPE_INT64);
+			yy_push_state (MESSAGE, yyscanner);
+			return CLIP_YOU_KIBITZ;
+		}
 ^1{WS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("1", G_TYPE_INT64); 
