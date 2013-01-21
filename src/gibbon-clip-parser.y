@@ -409,6 +409,7 @@ clip_login: CLIP_LOGIN
 				YYABORT;
 	      }
 	    GSTRING
+	    GSTRING
             ;
 
 clip_logout: CLIP_LOGOUT
@@ -418,6 +419,7 @@ clip_logout: CLIP_LOGOUT
 					GIBBON_CLIP_LOGOUT))
 				YYABORT;
 	      }
+	    GSTRING
 	    GSTRING
             ;
 
@@ -516,6 +518,7 @@ clip_you_say: CLIP_YOU_SAY
 					GIBBON_CLIP_YOU_SAY))
 				YYABORT;
 	      }
+	    GSTRING
 	    GSTRING
             ;
 
