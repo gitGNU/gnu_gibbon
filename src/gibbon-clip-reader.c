@@ -105,14 +105,20 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
 {
         GSList *retval;
 
-        gint status;
+        gint error;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
         g_return_val_if_fail (line != NULL, NULL);
 
         gibbon_clip_lexer_current_buffer (self->priv->yyscanner, line);
 
-        status = gibbon_clip_parser_parse (self->priv->yyscanner);
+        error = gibbon_clip_parser_parse (self->priv->yyscanner);
+        if (error) {
+                gibbon_clip_reader_free_result (self, self->priv->values);
+                self->priv->values = NULL;
+                return NULL;
+        }
+
         /*
          * FIXME! Change GibbonSession to expect tokens in the opposite
          * order.
