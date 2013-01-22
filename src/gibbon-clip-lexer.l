@@ -84,14 +84,17 @@
 
 /* %option debug */
 
-%start MOTD
-%start USER
-%start INTEGER
-%start MESSAGE
-%start ERROR
+%s MOTD
+%s USER
+%s INTEGER
+%s MESSAGE
+%s ERROR
+%s FS
 
 WS		[ \t]+
 OWS		[ \t]*
+/* Think full stop.  */
+FS		[ \t]*\.[ \t]*
 
 %%
 ^10{WS}		{
@@ -226,8 +229,13 @@ OWS		[ \t]*
 ^\*\*{WS}	{
 			yy_push_state (ERROR, yyscanner);
 			return CLIP_ERROR;
-		}	
-<USER>[^[:space:]]+{WS}		{
+		}
+	/*
+	 * The trailing context is necessary so that matching a user name
+	 * plus trailing forbidden characters produces a longer match than
+	 * the catch-all GSTRING match at the end.
+	 */
+<USER>[^.[:space:]]+{OWS}/[.]?		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (gibbon_trim (yytext), G_TYPE_STRING); 
 		yy_pop_state (yyscanner);
@@ -245,6 +253,14 @@ OWS		[ \t]*
 		yy_pop_state (yyscanner);
 		return GSTRING;
 	}
+<ERROR>There{WS}is{WS}no{WS}one{WS}called{WS} {
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("103", G_TYPE_INT64);
+		yy_push_state (FS, yyscanner);
+		yy_push_state (USER, yyscanner);			
+		return CLIP_ERROR_NO_USER;
+	}
+<FS>{OWS}\.{OWS}	;
 [-+]?(0|[1-9][0-9]*)\.[0-9]+	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
