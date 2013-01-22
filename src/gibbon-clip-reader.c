@@ -116,6 +116,7 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
         if (error) {
                 gibbon_clip_reader_free_result (self, self->priv->values);
                 self->priv->values = NULL;
+                gibbon_clip_lexer_reset_condition_stack (self->priv->yyscanner);
                 return NULL;
         }
 

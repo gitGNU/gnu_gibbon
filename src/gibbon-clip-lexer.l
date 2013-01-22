@@ -81,7 +81,6 @@
 %option reentrant
 %option bison-bridge
 %option stack
-%option noyy_top_state
 
 /* %option debug */
 
@@ -268,14 +267,18 @@ OWS		[ \t]*
 void 
 gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 {
-	/*
-	 * Serious hack alarm!  YY_CURRENT_BUFFER needs a variable yyg
-	 * and there is no clean way to get it.
-	 */
 	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
 	
 	yy_flex_debug = 0;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);
+}
+
+void 
+gibbon_clip_lexer_reset_condition_stack (void *yyscanner)
+{
+	while (yy_top_state (yyscanner)) {
+		yy_pop_state (yyscanner);
+	}
 }
