@@ -223,7 +223,7 @@ OWS		[ \t]*
 			yy_push_state (USER, yyscanner);			
 			return CLIP_MESSAGE;
 		}
-^\*\*[ \t]	{
+^\*\*{WS}	{
 			yy_push_state (ERROR, yyscanner);
 			return CLIP_ERROR;
 		}	
@@ -239,7 +239,7 @@ OWS		[ \t]*
 		yy_pop_state (yyscanner);
 		return GINT64;
 	}
-<MESSAGE,ERROR>(.|\n)*		{
+<MESSAGE>(.|\n)*		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_STRING); 
 		yy_pop_state (yyscanner);

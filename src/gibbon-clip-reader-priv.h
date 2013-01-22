@@ -41,6 +41,7 @@ void gibbon_clip_lexer_current_buffer (void *yyscanner, const gchar *line);
 void *gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                                       const gchar *token,
                                       GType type);
+void gibbon_clip_reader_prepend_code (GibbonCLIPReader *self, guint code);
 void gibbon_clip_lexer_reset_condition_stack (void *yyscanner);
 
 G_END_DECLS

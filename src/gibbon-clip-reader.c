@@ -32,6 +32,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "gibbon-clip.h"
 #include "gibbon-clip-reader.h"
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
@@ -104,6 +105,9 @@ GSList *
 gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
 {
         GSList *retval;
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+        const gchar *ptr;
 
         gint error;
 
@@ -117,7 +121,30 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                 gibbon_clip_reader_free_result (self, self->priv->values);
                 self->priv->values = NULL;
                 gibbon_clip_lexer_reset_condition_stack (self->priv->yyscanner);
-                return NULL;
+
+                /*
+                 * Was this an error message?
+                 */
+                if ('*' == line[0] && '*' == line[1]
+                    && (' ' == line[2] || ' ' == line[2])) {
+                        value = g_malloc (sizeof *value);
+                        *value = init;
+
+                        self->priv->values = g_slist_prepend (
+                                        self->priv->values, value);
+
+                        g_value_init (value, G_TYPE_UINT);
+                        g_value_set_uint (value, GIBBON_CLIP_ERROR);
+
+                        ptr = line + 3;
+                        while (*ptr == ' ' || *ptr == '\t')
+                                ++ptr;
+                        gibbon_clip_reader_alloc_value (self, ptr,
+                                                        G_TYPE_STRING);
+
+                } else {
+                        return NULL;
+                }
         }
 
         /*
@@ -173,6 +200,23 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
         }
 
         return self->priv->values->data;
+}
+
+void
+gibbon_clip_reader_prepend_code (GibbonCLIPReader *self, guint code)
+{
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+
+        g_return_if_fail (GIBBON_IS_CLIP_READER (self));
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+
+        self->priv->values = g_slist_append (self->priv->values, value);
+
+        g_value_init (value, G_TYPE_UINT);
+        g_value_set_uint (value, code);
 }
 
 void

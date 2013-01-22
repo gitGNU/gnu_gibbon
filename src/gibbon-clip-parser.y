@@ -572,10 +572,7 @@ clip_alerts: CLIP_ALERTS
 clip_error: CLIP_ERROR
 	    GSTRING
 	      {
-	      	/* 
-	      	 * FIXME! Write a function that prepends a value to the
-	      	 * result list!
-	      	 */
+	      	gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ERROR);
 	      }
             ;
 
