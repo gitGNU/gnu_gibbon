@@ -52,13 +52,14 @@ enum GibbonClipCode {
 
                         /* Error messages.  */
                         GIBBON_CLIP_ERROR = 100,
-                        /* Thiis is unnecessary! */
+                        /* This is unnecessary! */
                         GIBBON_CLIP_UNKNOWN_MESSAGE = 101,
                         GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS = 102,
                         GIBBON_CLIP_ERROR_NO_USER = 103,
 
                         /* Game play.  */
                         GIBBON_CLIP_BOARD = 200,
+                        /* FIXME! This can vanish! */
                         GIBBON_CLIP_BAD_BOARD = 201,
                         GIBBON_CLIP_ROLLS = 202,
                         GIBBON_CLIP_MOVES = 203,
