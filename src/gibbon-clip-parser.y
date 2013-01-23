@@ -97,6 +97,7 @@ static gboolean gibbon_clip_parser_fixup_int64 (void *raw,
 static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
 static gboolean gibbon_clip_parser_fixup_user (void *raw);
 static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
+static gboolean gibbon_clip_parser_fixup_maybe_you (void *raw);
 
 %}
 
@@ -128,6 +129,7 @@ static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 %token <value> CLIP_ERROR
 %token <value> CLIP_ERROR_NO_EMAIL_ADDRESS
 %token <value> CLIP_ERROR_NO_USER
+%token <value> CLIP_BOARD
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -165,6 +167,7 @@ message: clip_welcome
        | clip_alerts
        | clip_error
        | clip_error_no_user
+       | clip_board
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -595,6 +598,29 @@ clip_error_no_user:
 	      }
             ;
 
+clip_board:
+	    CLIP_BOARD
+	      {
+		if (!gibbon_clip_parser_fixup_uint (
+					$1, GIBBON_CLIP_BOARD,
+					GIBBON_CLIP_BOARD))
+				YYABORT;
+	      }
+            ':' GSTRING
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($4))
+		        YYABORT;
+	      }
+            ':' GSTRING
+	      {
+		if (!gibbon_clip_parser_fixup_user ($7))
+		        YYABORT;
+	      }
+	      {
+       	      	g_print ("Board parsed until here!\n");
+	      }
+	    ;
+
 %%
 
 static gboolean
@@ -684,5 +710,16 @@ gibbon_clip_parser_fixup_optional_user (void *raw)
 	if (!g_strcmp0 (string, "-"))
 		g_value_set_string (value, "");
 	
+	return TRUE;
+}
+
+
+static gboolean
+gibbon_clip_parser_fixup_maybe_you (void *raw)
+{
+	/*
+	 * We accept all user names as long as they do not contain whitespace
+	 * or a colon and that is already enforced by the scanner.
+	 */
 	return TRUE;
 }

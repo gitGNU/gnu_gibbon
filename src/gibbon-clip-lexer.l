@@ -231,6 +231,11 @@ FS		[ \t]*\.[ \t]*
 			yy_push_state (ERROR, yyscanner);
 			return CLIP_ERROR;
 		}
+^board		{
+			((struct yyguts_t *) yyscanner)->yylval_r->value
+				= alloc_value ("200", G_TYPE_INT64);
+			return CLIP_BOARD;
+		}
 	/*
 	 * The trailing context is necessary so that matching a user name
 	 * plus trailing forbidden characters produces a longer match than
