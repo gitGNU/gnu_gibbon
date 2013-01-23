@@ -277,7 +277,7 @@ FS		[ \t]*\.[ \t]*
 		return GSTRING;
 	}
 {WS}			;
-.			return yytext[0];
+.|\n			return yytext[0];
 %%
 
 void 
