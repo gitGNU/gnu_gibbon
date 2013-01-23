@@ -272,7 +272,11 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_INT64); 
 		return GINT64;
 	}
-[^[:space:]]+		{
+	/*
+	 * We exclude the colon here so that this rule does not consume an
+	 * entire board state.
+	 */
+[^:[:space:]]+		{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_STRING); 
 		return GSTRING;
@@ -286,6 +290,10 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
 	
+	/*
+	 * In a re-entrant scanner, the debug state is initialized to 0,
+	 * not to 1.
+	 */
 	yy_flex_debug = 0;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
@@ -297,7 +305,7 @@ gibbon_clip_lexer_reset_condition_stack (void *yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
 	
-	while (yyg->yy_start_stack_ptr) {
+	while (YY_START) {
 		yy_pop_state (yyscanner);
 	}
 }
