@@ -98,7 +98,9 @@ static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
 static gboolean gibbon_clip_parser_fixup_user (void *raw);
 static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 static gboolean gibbon_clip_parser_fixup_maybe_you (void *raw);
-static gboolean gibbon_clip_parser_fixup_match_length (void *raw);
+static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw, 
+                                                       void *score1_raw,
+                                                       void *score2_raw);
 
 %}
 
@@ -620,8 +622,10 @@ clip_board:
 		        YYABORT;
 	      }
 	    ':' GINT64
+	    ':' GINT64
+	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_match_length ($10))
+		if (!gibbon_clip_parser_fixup_match_scores ($10, $12, $14))
 			YYABORT;
 	      }
 	      {
@@ -733,14 +737,26 @@ gibbon_clip_parser_fixup_maybe_you (void *raw)
 }
 
 static gboolean
-gibbon_clip_parser_fixup_match_length (void *raw)
+gibbon_clip_parser_fixup_match_scores (void *length_raw, 
+                                       void *score1_raw,
+                                       void *score2_raw)
 {
-	GValue *value = (GValue *) raw;
-	gint64 i64 = g_value_get_int64 (value);
+	GValue *length_value = (GValue *) length_raw;
+	gint64 length_i64 = g_value_get_int64 (length_value);
+	GValue *score1_value = (GValue *) score1_raw;
+	gint64 score1_i64 = g_value_get_int64 (score1_value);
+	GValue *score2_value = (GValue *) score2_raw;
+	gint64 score2_i64 = g_value_get_int64 (score2_value);
 	
-	if (i64 < 0) return FALSE;
-	if (i64 > 999) {
-		g_value_set_int64 (value, (gint64) 0);
+	if (length_i64 < 0) return FALSE;
+	if (length_i64 >= 9999) {
+		length_i64 = 0;
+		g_value_set_int64 (length_value, length_i64);
+	} else if (score1_i64 >= length_i64 && score2_i64 >= length_i64) {
+		/*
+		 * Impossible score.
+		 */
+		return FALSE;
 	}
 	
 	return TRUE;
