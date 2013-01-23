@@ -98,6 +98,7 @@ static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
 static gboolean gibbon_clip_parser_fixup_user (void *raw);
 static gboolean gibbon_clip_parser_fixup_optional_user (void *raw);
 static gboolean gibbon_clip_parser_fixup_maybe_you (void *raw);
+static gboolean gibbon_clip_parser_fixup_match_length (void *raw);
 
 %}
 
@@ -606,15 +607,22 @@ clip_board:
 					GIBBON_CLIP_BOARD))
 				YYABORT;
 	      }
+	    /* Player 1.  */
             ':' GSTRING
 	      {
 		if (!gibbon_clip_parser_fixup_maybe_you ($4))
 		        YYABORT;
 	      }
+	    /* Player 2.  */
             ':' GSTRING
 	      {
 		if (!gibbon_clip_parser_fixup_user ($7))
 		        YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_match_length ($10))
+			YYABORT;
 	      }
 	      {
        	      	g_print ("Board parsed until here!\n");
@@ -721,5 +729,19 @@ gibbon_clip_parser_fixup_maybe_you (void *raw)
 	 * We accept all user names as long as they do not contain whitespace
 	 * or a colon and that is already enforced by the scanner.
 	 */
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_match_length (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+	
+	if (i64 < 0) return FALSE;
+	if (i64 > 999) {
+		g_value_set_int64 (value, (gint64) 0);
+	}
+	
 	return TRUE;
 }
