@@ -81,6 +81,7 @@
 %option reentrant
 %option bison-bridge
 %option stack
+%option noyy_top_state
 
 /* %option debug */
 
@@ -294,7 +295,9 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 void 
 gibbon_clip_lexer_reset_condition_stack (void *yyscanner)
 {
-	while (yy_top_state (yyscanner)) {
+	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
+	
+	while (yyg->yy_start_stack_ptr) {
 		yy_pop_state (yyscanner);
 	}
 }
