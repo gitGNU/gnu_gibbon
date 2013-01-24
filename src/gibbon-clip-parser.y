@@ -92,6 +92,8 @@ static gboolean gibbon_clip_parser_fixup_uint (void *raw,
                                                gint64 lower, gint64 upper);
 static gboolean gibbon_clip_parser_fixup_uint64 (void *raw, 
                                                  gint64 lower, gint64 upper);
+static gboolean gibbon_clip_parser_fixup_int (void *raw, 
+                                              gint64 lower, gint64 upper);
 static gboolean gibbon_clip_parser_fixup_int64 (void *raw, 
                                                 gint64 lower, gint64 upper);
 static gboolean gibbon_clip_parser_fixup_boolean (void *raw);
@@ -144,7 +146,7 @@ static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw,
 %parse-param {void *scanner}
 
 %%
-line: { yydebug = 0; } message
+line: { yydebug = 1; } message
     ;
 
 message: clip_welcome
@@ -621,12 +623,173 @@ clip_board:
 		if (!gibbon_clip_parser_fixup_user ($7))
 		        YYABORT;
 	      }
+	    /* Match length.  */
 	    ':' GINT64
+	    /* Both scores.  */
 	    ':' GINT64
 	    ':' GINT64
 	      {
 		if (!gibbon_clip_parser_fixup_match_scores ($10, $12, $14))
 			YYABORT;
+	      }
+	    /* 26 points.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($17, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($20, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($23, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($26, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($29, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($32, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($35, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($38, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($41, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($44, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($47, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($50, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($53, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($56, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($59, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($62, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($65, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($68, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($71, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($74, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($77, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($80, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($83, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($86, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($89, -15, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($92, -15, 15))
+				YYABORT;
+	      }
+	    /* Turn.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($95, -1, 1))
+				YYABORT;
+	      }
+	    /* Player's dice.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($98, 0, 6))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($101, 0, 6))
+				YYABORT;
+	      }
+	    /* Opponent's dice.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($104, 0, 6))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($107, 0, 6))
+				YYABORT;
 	      }
 	      {
        	      	g_print ("Board parsed until here!\n");
@@ -663,6 +826,23 @@ gibbon_clip_parser_fixup_uint64 (void *raw, gint64 lower, gint64 upper)
 	g_value_unset (value);
 	g_value_init (value, G_TYPE_UINT64);
 	g_value_set_uint64 (value, (guint64) i64);
+	
+	return TRUE;
+}
+
+
+static gboolean
+gibbon_clip_parser_fixup_int (void *raw, gint64 lower, gint64 upper)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+
+	if (i64 < lower) return FALSE;
+	if (i64 > upper) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_INT);
+	g_value_set_int (value, (gint) i64);
 	
 	return TRUE;
 }
