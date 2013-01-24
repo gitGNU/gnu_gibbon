@@ -272,7 +272,7 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_DOUBLE); 
 		return GDOUBLE;
 	}
-[-+]?0|[1-9][0-9]*	{
+[-+]?(0|[1-9][0-9]*)	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_INT64); 
 		return GINT64;
