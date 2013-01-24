@@ -818,6 +818,15 @@ clip_board:
 		if (!gibbon_clip_parser_fixup_boolean ($116))
 				YYABORT;
 	      }
+	    /* Was doubled.  */
+	    ':' GINT64
+	      {
+	        /*
+	         * FIXME! Check that only one bit is set in the value.
+	         */
+		if (!gibbon_clip_parser_fixup_boolean ($119))
+				YYABORT;
+	      }
 	      {
        	      	g_print ("Board parsed until here!\n");
 	      }
