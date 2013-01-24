@@ -791,6 +791,15 @@ clip_board:
 		if (!gibbon_clip_parser_fixup_int ($107, 0, 6))
 				YYABORT;
 	      }
+	    /* Doubling cube.  */
+	    ':' GINT64
+	      {
+	        /*
+	         * FIXME! Check that only one bit is set in the value.
+	         */
+		if (!gibbon_clip_parser_fixup_int ($110, 1, G_MAXINT64))
+				YYABORT;
+	      }
 	      {
        	      	g_print ("Board parsed until here!\n");
 	      }
