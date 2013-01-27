@@ -889,9 +889,6 @@ clip_board:
 		if (!gibbon_clip_parser_fixup_int ($155, 0, G_MAXINT))
 				YYABORT;
 	      }
-	      {
-       	      	g_print ("Board parsed until here!\n");
-	      }
 	    ;
 
 %%
