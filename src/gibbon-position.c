@@ -1454,3 +1454,10 @@ gibbon_position_reset_unused_dice (GibbonPosition *self)
                                   = self->unused_dice[3]
                                   = self->unused_dice[0];
 }
+
+void
+gibbon_position_transform_to_string_value (const GValue *position_value,
+                                           GValue *string_value)
+{
+        g_value_set_string (string_value, "TODO! not yet implemented!");
+}

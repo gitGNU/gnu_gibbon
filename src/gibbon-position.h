@@ -188,4 +188,7 @@ void gibbon_position_reset_unused_dice (GibbonPosition *self);
  */
 void gibbon_position_reset (GibbonPosition *self);
 
+void gibbon_position_transform_to_string_value (const GValue *position_value,
+                                                GValue *string_value);
+
 #endif
