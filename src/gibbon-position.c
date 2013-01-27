@@ -1324,55 +1324,18 @@ gibbon_position_fibs_move (const GibbonPosition *self, const GibbonMove *move,
 void
 gibbon_position_dump (const GibbonPosition *self)
 {
-        gint i;
+        GValue vp = G_VALUE_INIT;
+        GValue vs = G_VALUE_INIT;
 
-        g_printerr ("=== Position ===\n");
-        g_printerr ("Opponent: %s, %d/%d points, %u pips\n",
-                    self->players[1], self->scores[1], self->match_length,
-                    gibbon_position_get_pip_count (self,
-                                                   GIBBON_POSITION_SIDE_BLACK));
-        g_printerr ("\
-  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
-        g_printerr ("  |");
-        for (i = 12; i < 18; ++i)
-                if (self->points[i])
-                        g_printerr ("%+3d", self->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" |%+3d|", self->bar[1]);
-        for (i = 18; i < 24; ++i)
-                if (self->points[i])
-                        g_printerr ("%+3d", self->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" | May double: %s\n", self->may_double[1] ? "yes" : "no");
-        g_printerr (" v| dice: %+d : %+d     ",
-                    self->dice[0], self->dice[1]);
-        g_printerr ("|BAR|                   | ");
-        g_printerr (" Cube: %d\n", self->cube);
-        g_printerr ("  |");
-        for (i = 11; i >= 6; --i)
-                if (self->points[i])
-                        g_printerr ("%+3d", self->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" |%+3d|", self->bar[0]);
-        for (i = 5; i >= 0; --i)
-                if (self->points[i])
-                        g_printerr ("%+3d", self->points[i]);
-                else
-                        g_printerr ("%s", "   ");
-        g_printerr (" | May double: %s\n", self->may_double[0] ? "yes" : "no");
-        g_printerr ("\
-  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
-        g_printerr ("Player: %s, %d/%d points, %u pips\n",
-                    self->players[0], self->scores[0], self->match_length,
-                    gibbon_position_get_pip_count (self,
-                                                   GIBBON_POSITION_SIDE_WHITE));
-        g_printerr ("Game info: %s\n", self->game_info);
-        g_printerr ("Status: %s\n", self->status);
-        g_printerr ("Turn: %d, cube turned: %d, resigned: %d, score: %d\n",
-                    self->turn, self->cube_turned, self->resigned, self->score);
+        g_value_init (&vp, GIBBON_TYPE_POSITION);
+        g_value_init (&vs, G_TYPE_STRING);
+
+        g_value_set_static_boxed (&vp, self);
+        g_value_transform (&vp, &vs);
+
+        g_printerr ("%s", g_value_get_string (&vs));
+
+        g_value_unset (&vs);
 }
 
 void
