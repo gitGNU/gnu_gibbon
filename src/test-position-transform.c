@@ -50,6 +50,19 @@ test_initial ()
         GibbonPosition *position = gibbon_position_new ();
         GValue position_value = G_VALUE_INIT;
         GValue string_value = G_VALUE_INIT;
+        gchar *expect = "\
+=== Position ===\n\
+Opponent: (null), 0/0 points, 167 pips\n\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n\
+  | +5          -3    | +0| -5             +2 | May double: yes\n\
+ v| dice: +0 : +0     |BAR|                   |  Cube: 1\n\
+  | -5          +3    | +0| +5             -2 | May double: yes\n\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
+Player: (null), 0/0 points, 167 pips\n\
+Game info: (null)\n\
+Status: (null)\n\
+Turn: 0, cube turned: 0, resigned: 0, score: 0\n";
+        gchar *got;
 
         g_return_val_if_fail (position != NULL, FALSE);
 
@@ -60,10 +73,16 @@ test_initial ()
         g_return_val_if_fail (g_value_transform (&position_value, &string_value),
                               FALSE);
 
-        g_printerr ("Value: %s\n", g_value_get_string (&string_value)); 
+        got = g_value_get_string (&string_value);
+
+        if (g_strcmp0 (expect, got)) {
+            g_printerr ("Expected:\n%s", expect);
+            g_printerr ("Got:\n%s", got);
+            return FALSE;
+        }
 
         g_value_unset (&position_value);
         g_value_unset (&string_value);
 
-        return FALSE;
+        return TRUE;
 }
