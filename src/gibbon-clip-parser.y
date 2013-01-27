@@ -103,6 +103,8 @@ static gboolean gibbon_clip_parser_fixup_maybe_you (void *raw);
 static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw, 
                                                        void *score1_raw,
                                                        void *score2_raw);
+static gboolean gibbon_clip_parser_fixup_color (void *raw);
+static gboolean gibbon_clip_parser_fixup_home_or_bar (void *raw);
 
 %}
 
@@ -146,7 +148,7 @@ static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw,
 %parse-param {void *scanner}
 
 %%
-line: { yydebug = 1; } message
+line: { yydebug = 0; } message
     ;
 
 message: clip_welcome
@@ -803,28 +805,88 @@ clip_board:
 	    /* Player may-double.  */
 	    ':' GINT64
 	      {
-	        /*
-	         * FIXME! Check that only one bit is set in the value.
-	         */
 		if (!gibbon_clip_parser_fixup_boolean ($113))
 				YYABORT;
 	      }
 	    /* Opponent may-double.  */
 	    ':' GINT64
 	      {
-	        /*
-	         * FIXME! Check that only one bit is set in the value.
-	         */
 		if (!gibbon_clip_parser_fixup_boolean ($116))
 				YYABORT;
 	      }
 	    /* Was doubled.  */
 	    ':' GINT64
 	      {
-	        /*
-	         * FIXME! Check that only one bit is set in the value.
-	         */
 		if (!gibbon_clip_parser_fixup_boolean ($119))
+				YYABORT;
+	      }
+	    /* Color.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_color ($122))
+				YYABORT;
+	      }
+	    /* Direction.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_color ($125))
+				YYABORT;
+	      }
+	    /* Home or bar.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_home_or_bar ($128))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_home_or_bar ($131))
+				YYABORT;
+	      }
+	    /* On home.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($134, 0, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($137, 0, 15))
+				YYABORT;
+	      }
+	    /* On bar.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($140, 0, 15))
+				YYABORT;
+	      }
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($143, 0, 15))
+				YYABORT;
+	      }
+	    /* Number of pieces that can be moved.  In reality bogus.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($146, 0, G_MAXINT))
+				YYABORT;
+	      }
+	    /* Forced move?  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($149, 0, G_MAXINT))
+				YYABORT;
+	      }
+	    /* Did Crawford.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_boolean ($152))
+				YYABORT;
+	      }
+	    /* Number of redoubles.  */
+	    ':' GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($155, 0, G_MAXINT))
 				YYABORT;
 	      }
 	      {
@@ -974,6 +1036,32 @@ gibbon_clip_parser_fixup_match_scores (void *length_raw,
 		 */
 		return FALSE;
 	}
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_color (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+	
+	if (i64 == 0 || i64 > 1 || i64 < -1) return FALSE;
+	
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_BOOLEAN);
+	g_value_set_boolean (value, (gboolean) i64 == 1);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_home_or_bar (void *raw)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+	
+	if (i64 != 0 && i64 != 25) return FALSE;
 	
 	return TRUE;
 }
