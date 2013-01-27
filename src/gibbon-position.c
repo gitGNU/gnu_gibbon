@@ -1459,5 +1459,61 @@ void
 gibbon_position_transform_to_string_value (const GValue *position_value,
                                            GValue *string_value)
 {
-        g_value_set_string (string_value, "TODO! not yet implemented!");
+        GibbonPosition *self =
+                (GibbonPosition *) g_value_get_boxed (position_value);
+        GString *s = g_string_new ("=== Position ===\n");
+        gint i;
+
+        g_string_append_printf (s, "Opponent: %s, %d/%d points, %u pips\n",
+                                self->players[1], self->scores[1], self->match_length,
+                                gibbon_position_get_pip_count (self,
+                                                   GIBBON_POSITION_SIDE_BLACK));
+        g_string_append (s, "\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n");
+        g_string_append (s, "  |");
+        for (i = 12; i < 18; ++i)
+                if (self->points[i])
+                        g_string_append_printf (s, "%+3d", self->points[i]);
+                else
+                        g_string_append_printf (s, "%s", "   ");
+        g_string_append_printf (s, " |%+3d|", self->bar[1]);
+        for (i = 18; i < 24; ++i)
+                if (self->points[i])
+                        g_string_append_printf (s, "%+3d", self->points[i]);
+                else
+                        g_string_append_printf (s, "%s", "   ");
+        g_string_append_printf (s, " | May double: %s\n",
+                                self->may_double[1] ? "yes" : "no");
+        g_string_append_printf (s, " v| dice: %+d : %+d     ",
+                                self->dice[0], self->dice[1]);
+        g_string_append (s, "|BAR|                   | ");
+        g_string_append_printf (s, " Cube: %d\n", self->cube);
+        g_string_append (s, "  |");
+        for (i = 11; i >= 6; --i)
+                if (self->points[i])
+                        g_string_append_printf (s, "%+3d", self->points[i]);
+                else
+                        g_string_append_printf (s, "%s", "   ");
+        g_string_append_printf (s, " |%+3d|", self->bar[0]);
+        for (i = 5; i >= 0; --i)
+                if (self->points[i])
+                        g_string_append_printf (s, "%+3d", self->points[i]);
+                else
+                        g_string_append_printf (s, "%s", "   ");
+        g_string_append_printf (s, " | May double: %s\n",
+                                self->may_double[0] ? "yes" : "no");
+        g_string_append (s, "\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n");
+        g_string_append_printf (s, "Player: %s, %d/%d points, %u pips\n",
+                    self->players[0], self->scores[0], self->match_length,
+                    gibbon_position_get_pip_count (self,
+                                                   GIBBON_POSITION_SIDE_WHITE));
+        g_string_append_printf (s, "Game info: %s\n", self->game_info);
+        g_string_append_printf (s, "Status: %s\n", self->status);
+        g_string_append_printf (s, "Turn: %d, cube turned: %d,"
+                                   " resigned: %d, score: %d\n",
+                                self->turn, self->cube_turned, self->resigned,
+                                self->score);
+
+        g_value_set_static_string (string_value, g_string_free (s, FALSE));
 }
