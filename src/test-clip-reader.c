@@ -2193,7 +2193,8 @@ test_single_case (GibbonCLIPReader *reader, struct test_case *test_case)
                                    (GValue *) iter->data))
                         retval = FALSE;
                 iter = iter->next;
-                ++expect;
+                if (expect->type != G_TYPE_INVALID)
+                        ++expect;
         }
 
         while (expect->type != G_TYPE_INVALID) {
@@ -2224,15 +2225,23 @@ check_result (const gchar *line, gsize num,
         g_return_val_if_fail (g_value_transform (value, &stringified), FALSE);
 
         got_value = g_value_get_string (&stringified);
-        expect_value = token_pair->value;
 
-        if (token_pair->type != G_VALUE_TYPE (value)
-            || g_strcmp0 (got_value, expect_value)) {
-                g_printerr ("%s: token #%llu:"
-                            " expected `%s' (token type %s),"
+        if (token_pair->type != G_TYPE_INVALID) {
+                expect_value = token_pair->value;
+                if (token_pair->type != G_VALUE_TYPE (value)
+                    || g_strcmp0 (got_value, expect_value)) {
+                        g_printerr ("%s: token #%llu:"
+                                    " expected `%s' (token type %s),"
+                                    " got `%s' (token type %s).\n",
+                                    line, (unsigned long long) num,
+                                    expect_value, g_type_name (token_pair->type),
+                                    got_value, G_VALUE_TYPE_NAME (value));
+                        retval = FALSE;
+                }
+        } else {
+                g_printerr ("%s: token #%llu: expected nothing,"
                             " got `%s' (token type %s).\n",
                             line, (unsigned long long) num,
-                            expect_value, g_type_name (token_pair->type),
                             got_value, G_VALUE_TYPE_NAME (value));
                 retval = FALSE;
         }
