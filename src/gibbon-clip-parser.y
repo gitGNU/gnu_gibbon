@@ -1033,6 +1033,16 @@ gibbon_clip_parser_fixup_match_scores (void *length_raw,
 		 */
 		return FALSE;
 	}
+
+	g_value_unset (length_value);
+	g_value_unset (score1_value);
+	g_value_unset (score2_value);
+	g_value_init (length_value, G_TYPE_UINT);
+	g_value_init (score1_value, G_TYPE_UINT);
+	g_value_init (score2_value, G_TYPE_UINT);
+	g_value_set_uint (length_value, length_i64);
+	g_value_set_uint (score1_value, score1_i64);
+	g_value_set_uint (score2_value, score2_i64);
 	
 	return TRUE;
 }
