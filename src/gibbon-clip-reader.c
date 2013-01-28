@@ -378,6 +378,17 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         pos->players[0] = g_strdup (g_value_get_string (iter->data));
 
         /*
+         * Translate FIBS' notion to who is on turn to our internal one.
+         */
+        if (turn == color) {
+                pos->turn = GIBBON_POSITION_SIDE_WHITE;
+        } else if (turn) {
+                pos->turn = GIBBON_POSITION_SIDE_BLACK;
+        } else {
+                pos->turn = GIBBON_POSITION_SIDE_NONE;
+        }
+
+        /*
          * Crawford detection.
          */
         if (!no_crawford && pos->match_length
