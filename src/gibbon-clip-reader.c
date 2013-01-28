@@ -337,12 +337,9 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         if (dice[3] && dice[2]) {
                 pos->dice[1] = -dice[3];
                 pos->dice[0] = -dice[2];
-        } else if (dice[1] && dice[0]) {
+        } else {
                 pos->dice[1] = dice[1];
                 pos->dice[0] = dice[0];
-        } else {
-                gibbon_position_free (pos);
-                return FALSE;
         }
 
         iter = iter->next;
@@ -379,6 +376,20 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         pos->players[1] = g_strdup (g_value_get_string (iter->data));
         iter = iter->next;
         pos->players[0] = g_strdup (g_value_get_string (iter->data));
+
+        /*
+         * Crawford detection.
+         */
+        if (!no_crawford && pos->match_length
+            && (pos->scores[0] == pos->match_length - 1
+                || pos->scores[1] == pos->match_length - 1)) {
+                if (post_crawford) {
+                        pos->game_info = g_strdup (_("Post-Crawford game"));
+                } else {
+                        pos->game_info = g_strdup (_("Crawford game"));
+                        pos->may_double[0] = pos->may_double[1] = FALSE;
+                }
+        }
 
         /*
          * The old list is now no longer needed.

@@ -501,10 +501,34 @@ Opponent: black_jack, 1/2 points, 83 pips\n\
   |    +2       +3    | +0| +2 +3 +3 -1       | May double: no\n\
   +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
 Player: joe_white, 1/2 points, 111 pips\n\
-Game info: (null)\n\
+Game info: Post-Crawford game\n\
 Status: (null)\n\
 Turn: 0, cube turned: 0, resigned: 0, score: 0\n"},
-                                { G_TYPE_INVALID }
+                               { G_TYPE_INVALID }
+                }
+};
+
+/*
+ * Test case for the Crawford game.
+ */
+static struct test_case test_board03 =  {
+                "board:You:GibbonTestA:2:0:1:0:0:0:-1:0:-1:5:0:3:0:0:0:-5:5:0:"
+                "0:0:-3:0:-5:1:0:0:0:1:0:1:0:0:0:0:1:1:1:0:-1:1:25:0:0:0:0:0:2:"
+                "0:0:0",
+                {
+                                { G_TYPE_STRING, "\
+=== Position ===\n\
+Opponent: GibbonTestA, 1/2 points, 163 pips\n\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n\
+  | +5          -3    | +0| -5 +1    +1       | May double: no\n\
+ v| dice: +0 : +0     |BAR|                   |  Cube: 1\n\
+  | -5          +3    | +0| +5 -1          -1 | May double: no\n\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
+Player: You, 0/2 points, 161 pips\n\
+Game info: Crawford game\n\
+Status: (null)\n\
+Turn: 0, cube turned: 0, resigned: 0, score: 0\n"},
+                               { G_TYPE_INVALID }
                 }
 };
 
@@ -1884,6 +1908,7 @@ static struct test_case *test_cases[] = {
                 &test_board00,
                 &test_board01,
                 &test_board02,
+                &test_board03,
                 &test_rolls00,
                 &test_rolls01,
                 &test_moves00,
