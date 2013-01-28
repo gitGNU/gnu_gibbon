@@ -43,6 +43,7 @@ void *gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                                       GType type);
 void gibbon_clip_reader_prepend_code (GibbonCLIPReader *self, guint code);
 void gibbon_clip_lexer_reset_condition_stack (void *yyscanner);
+gboolean gibbon_clip_reader_fixup_board (GibbonCLIPReader *self);
 
 G_END_DECLS
 

@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gibbon-clip-reader.h"
+#include "gibbon-position.h"
 
 struct token_pair {
         GType type;
@@ -449,60 +450,18 @@ static struct test_case test_board00 =  {
                 ":4:0:0:0:-3:-2:-4:3:-2:0:0:0:0:-1:0:0:6:6:1:1:1:0:1:-1:0:25:0"
                 ":0:0:0:2:6:0:0",
                 {
-                                /* Board.  */
-                                { G_TYPE_UINT, "200" },
-                                /* Player and opponent.  */
-                                { G_TYPE_STRING, "joe_white" },
-                                { G_TYPE_STRING, "black_jack" },
-                                /* Match length.  */
-                                { G_TYPE_UINT, "7" },
-                                /* Score.  */
-                                { G_TYPE_UINT, "5" },
-                                { G_TYPE_UINT, "0" },
-                                /* Position.  */
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "-1" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-1" },
-                                { G_TYPE_INT, "4" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "4" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-3" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "-4" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                /* Turn.  */
-                                { G_TYPE_INT, "-1" },
-                                /* Dice.  */
-                                { G_TYPE_INT, "-6" },
-                                { G_TYPE_INT, "-6" },
-                                /* Cube.  */
-                                { G_TYPE_UINT, "1" },
-                                /* Player and opponent may double? */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Playing direction.  */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Player's and opponent's bar.  */
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "0" },
-                                /* No Crawford? */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Post-Crawford? */
-                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_STRING, "\
+=== Position ===\n\
+Opponent: black_jack, 0/7 points, 138 pips\n\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n\
+  | +4          -3 -2 | +0| -4 +3 -2          | May double: yes\n\
+ v| dice: -6 : -6     |BAR|                   |  Cube: 1\n\
+  | -2          +2    | +0| +4 -1    -1 +2    | May double: yes\n\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
+Player: joe_white, 5/7 points, 156 pips\n\
+Game info: (null)\n\
+Status: (null)\n\
+Turn: 0, cube turned: 0, resigned: 0, score: 0\n"},
                                 { G_TYPE_INVALID }
                 }
 };
@@ -512,60 +471,18 @@ static struct test_case test_board01 =  {
                 ":-2:0:0:0:0:0:0:-3:-1:-3:-1:-4:0:1:0:0:6:2:1:1:1:0:-1:1:25:0"
                 ":0:5:0:0:2:4:0:0",
                 {
-                                /* Board.  */
-                                { G_TYPE_UINT, "200" },
-                                /* Player and opponent.  */
-                                { G_TYPE_STRING, "joe_white" },
-                                { G_TYPE_STRING, "black_jack" },
-                                /* Match length.  */
-                                { G_TYPE_UINT, "1" },
-                                /* Score.  */
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "0" },
-                                /* Position.  */
-                                { G_TYPE_INT, "4" },
-                                { G_TYPE_INT, "1" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "1" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "1" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "-6" },
-                                /* Turn.  */
-                                { G_TYPE_INT, "-1" },
-                                /* Dice.  */
-                                { G_TYPE_INT, "-6" },
-                                { G_TYPE_INT, "-2" },
-                                /* Cube.  */
-                                { G_TYPE_UINT, "1" },
-                                /* Player and opponent may double? */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Playing direction.  */
-                                { G_TYPE_BOOLEAN, "FALSE" },
-                                /* Player's and opponent's bar.  */
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "0" },
-                                /* No Crawford? */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Post-Crawford? */
-                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_STRING, "\
+=== Position ===\n\
+Opponent: black_jack, 0/1 points, 18 pips\n\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n\
+  |       +1          | +0|       -2    -2 -6 | May double: yes\n\
+ v| dice: -6 : -2     |BAR|                   |  Cube: 1\n\
+  | +2                | +0|    +3 +1 +3 +1 +4 | May double: yes\n\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
+Player: joe_white, 0/1 points, 73 pips\n\
+Game info: (null)\n\
+Status: (null)\n\
+Turn: 0, cube turned: 0, resigned: 0, score: 0\n"},
                                 { G_TYPE_INVALID }
                 }
 };
@@ -575,60 +492,18 @@ static struct test_case test_board02 =  {
                 ":0:0:0:-1:-1:-2:-2:-2:-4:-2:0:0:1:5:1:0:0:2:0:1:0:1:-1:0:25:0"
                 ":0:0:0:2:0:1:0",
                 {
-                                /* Board.  */
-                                { G_TYPE_UINT, "200" },
-                                /* Player and opponent.  */
-                                { G_TYPE_STRING, "joe_white" },
-                                { G_TYPE_STRING, "black_jack" },
-                                /* Match length.  */
-                                { G_TYPE_UINT, "2" },
-                                /* Score.  */
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "1" },
-                                /* Position.  */
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-1" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "2" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_INT, "-1" },
-                                { G_TYPE_INT, "-1" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "-4" },
-                                { G_TYPE_INT, "-2" },
-                                { G_TYPE_INT, "0" },
-                                /* Turn.  */
-                                { G_TYPE_INT, "1" },
-                                /* Dice.  */
-                                { G_TYPE_INT, "5" },
-                                { G_TYPE_INT, "1" },
-                                /* Cube.  */
-                                { G_TYPE_UINT, "2" },
-                                /* Player and opponent may double? */
-                                { G_TYPE_BOOLEAN, "FALSE" },
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Playing direction.  */
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                /* Player's and opponent's bar.  */
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "0" },
-                                /* No Crawford? */
-                                { G_TYPE_BOOLEAN, "FALSE" },
-                                /* Post-Crawford? */
-                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_STRING, "\
+=== Position ===\n\
+Opponent: black_jack, 1/2 points, 83 pips\n\
+  +-13-14-15-16-17-18-------19-20-21-22-23-24-+ negative: black or X\n\
+  | +2          -1 -1 | +0| -2 -2 -2 -4 -2    | May double: yes\n\
+ v| dice: +5 : +1     |BAR|                   |  Cube: 2\n\
+  |    +2       +3    | +0| +2 +3 +3 -1       | May double: no\n\
+  +-12-11-10--9--8--7--------6--5--4--3--2--1-+ positive: white or O\n\
+Player: joe_white, 1/2 points, 111 pips\n\
+Game info: (null)\n\
+Status: (null)\n\
+Turn: 0, cube turned: 0, resigned: 0, score: 0\n"},
                                 { G_TYPE_INVALID }
                 }
 };
@@ -2228,6 +2103,10 @@ check_result (const gchar *line, gsize num,
 
         if (token_pair->type != G_TYPE_INVALID) {
                 expect_value = token_pair->value;
+                if (token_pair->type == G_TYPE_STRING
+                    && !g_ascii_strncasecmp (expect_value,
+                                             "=== Position ===\n", 17))
+                        token_pair->type = GIBBON_TYPE_POSITION;
                 if (token_pair->type != G_VALUE_TYPE (value)
                     || g_strcmp0 (got_value, expect_value)) {
                         g_printerr ("%s: token #%llu:"

@@ -107,7 +107,7 @@ struct _GibbonPosition
 
         gint dice[2];
 
-        guint cube;
+        guint64 cube;
         gboolean may_double[2];
         GibbonPositionSide cube_turned;
 

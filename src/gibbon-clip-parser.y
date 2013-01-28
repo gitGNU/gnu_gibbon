@@ -799,7 +799,7 @@ clip_board:
 	        /*
 	         * FIXME! Check that only one bit is set in the value.
 	         */
-		if (!gibbon_clip_parser_fixup_int ($110, 1, G_MAXINT64))
+		if (!gibbon_clip_parser_fixup_int64 ($110, 1, G_MAXINT64))
 				YYABORT;
 	      }
 	    /* Player may-double.  */
@@ -846,38 +846,37 @@ clip_board:
 	    /* On home.  */
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($134, 0, 15))
+		if (!gibbon_clip_parser_fixup_uint ($134, 0, 15))
 				YYABORT;
 	      }
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($137, 0, 15))
+		if (!gibbon_clip_parser_fixup_uint ($137, 0, 15))
 				YYABORT;
 	      }
 	    /* On bar.  */
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($140, 0, 15))
+		if (!gibbon_clip_parser_fixup_uint ($140, 0, 15))
 				YYABORT;
 	      }
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($143, 0, 15))
+		if (!gibbon_clip_parser_fixup_uint ($143, 0, 15))
 				YYABORT;
 	      }
 	    /* Number of pieces that can be moved.  In reality bogus.  */
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($146, 0, G_MAXINT))
+		if (!gibbon_clip_parser_fixup_uint ($146, 0, G_MAXINT))
 				YYABORT;
 	      }
-	    /* Forced move?  */
 	    ':' GINT64
 	      {
-		if (!gibbon_clip_parser_fixup_int ($149, 0, G_MAXINT))
+		if (!gibbon_clip_parser_fixup_boolean ($149))
 				YYABORT;
 	      }
-	    /* Did Crawford.  */
+	    /* Did Crawford.  Really "post-Crawford".  */
 	    ':' GINT64
 	      {
 		if (!gibbon_clip_parser_fixup_boolean ($152))
@@ -888,6 +887,10 @@ clip_board:
 	      {
 		if (!gibbon_clip_parser_fixup_int ($155, 0, G_MAXINT))
 				YYABORT;
+	      }
+	      {
+	      	if (!gibbon_clip_reader_fixup_board (reader))
+	      		YYABORT;
 	      }
 	    ;
 
@@ -963,9 +966,6 @@ gibbon_clip_parser_fixup_boolean (void *raw)
 {
 	GValue *value = (GValue *) raw;
 	gint64 i64 = g_value_get_int64 (value);
-	
-	if (i64 < 0) return FALSE;
-	if (i64 > 1) return FALSE;
 	
 	g_value_unset (value);
 	g_value_init (value, G_TYPE_BOOLEAN);
@@ -1056,8 +1056,8 @@ gibbon_clip_parser_fixup_color (void *raw)
 	if (i64 == 0 || i64 > 1 || i64 < -1) return FALSE;
 	
 	g_value_unset (value);
-	g_value_init (value, G_TYPE_BOOLEAN);
-	g_value_set_boolean (value, (gboolean) i64 == 1);
+	g_value_init (value, G_TYPE_INT);
+	g_value_set_int (value, i64);
 	
 	return TRUE;
 }

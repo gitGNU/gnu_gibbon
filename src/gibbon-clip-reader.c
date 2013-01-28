@@ -36,6 +36,7 @@
 #include "gibbon-clip-reader.h"
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
+#include "gibbon-position.h"
 
 typedef struct _GibbonCLIPReaderPrivate GibbonCLIPReaderPrivate;
 struct _GibbonCLIPReaderPrivate {
@@ -75,6 +76,10 @@ gibbon_clip_reader_class_init (GibbonCLIPReaderClass *klass)
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         
         g_type_class_add_private (klass, sizeof (GibbonCLIPReaderPrivate));
+
+        g_value_register_transform_func (
+                GIBBON_TYPE_POSITION, G_TYPE_STRING,
+                gibbon_position_transform_to_string_value);
 
         object_class->finalize = gibbon_clip_reader_finalize;
 }
@@ -225,4 +230,166 @@ gibbon_clip_reader_free_result (GibbonCLIPReader *self, GSList *values)
         g_slist_foreach (values, (GFunc) g_value_unset, NULL);
         g_slist_foreach (values, (GFunc) g_free, NULL);
         g_slist_free (values);
+}
+
+gboolean
+gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
+{
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+        GibbonPosition *pos;
+        GSList *iter = self->priv->values;
+        GibbonPositionSide color, turn;
+        gboolean direction, cube_turned;
+        gboolean post_crawford, no_crawford;
+        gint dice[4];
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        gint i, checkers;
+
+        pos = gibbon_position_new ();
+
+        /*
+         * Clear all points.
+         */
+        memset (pos->points, 0, sizeof pos->points);
+
+        /*
+         * No iterate over the list and fill our board structure.  Remember
+         * that we are walking over the list from the tail.
+         *
+         * The documentation for the data structure is available at
+         * http://www.fibs.com/fibs_interface.html#board_state
+         */
+
+        /*
+         * Number of redoubles is ignored.
+         */
+
+        /*
+         * The next to flags are described incorrectly at the URI mentioned
+         * above.
+         *
+         * The flag called "forced move" there is really a flag
+         * indicating that the Crawford rule is active.  Unfortunately,
+         * the flag is only set for the Crawford game, or for post-Crawford
+         * games.  Before that it is always turned off.
+         *
+         * The best strategy for Crawford detection is therefore to always
+         * assume that the Crawford rule applies.  And when one opponent
+         * is 1-away, check this flag.
+         *
+         * The flag described as "Did Crawford" is really the post-Crawford
+         * flag.  If one opponent is 1-away, and the flag is set, we know
+         * that the Crawford rule applies, and that this is a post-Crawford
+         * game.
+         */
+        iter = iter->next;
+        post_crawford = g_value_get_boolean (iter->data);
+        iter = iter->next;
+        no_crawford = g_value_get_boolean (iter->data);
+
+        /* Skip "Can Move.  */
+        iter = iter->next;
+
+        /*
+         * Number of checkers on the bar.
+         */
+        iter = iter->next;
+        pos->bar[1] = g_value_get_uint (iter->data);
+        iter = iter->next;
+        pos->bar[0] = g_value_get_uint (iter->data);
+
+        /*
+         * The next four fields are "on home" and "home and bar".  We all
+         * ignore them as they are redundant.
+         */
+        iter = iter->next;
+        iter = iter->next;
+        iter = iter->next;
+        iter = iter->next;
+
+        iter = iter->next;
+        direction = g_value_get_int (iter->data);
+        iter = iter->next;
+        color = g_value_get_int (iter->data);
+        iter = iter->next;
+        cube_turned = g_value_get_boolean (iter->data);
+
+        /*
+         * May double flags.  These may have to be corrected later.
+         */
+        iter = iter->next;
+        pos->may_double[1] = g_value_get_boolean (iter->data);
+        iter = iter->next;
+        pos->may_double[0] = g_value_get_boolean (iter->data);
+
+        iter = iter->next;
+        pos->cube = g_value_get_int64 (iter->data);
+
+        iter = iter->next;
+        dice[3] = g_value_get_int (iter->data);
+        iter = iter->next;
+        dice[2] = g_value_get_int (iter->data);
+        iter = iter->next;
+        dice[1] = g_value_get_int (iter->data);
+        iter = iter->next;
+        dice[0] = g_value_get_int (iter->data);
+        if (dice[3] && dice[2]) {
+                pos->dice[1] = -dice[3];
+                pos->dice[0] = -dice[2];
+        } else if (dice[1] && dice[0]) {
+                pos->dice[1] = dice[1];
+                pos->dice[0] = dice[0];
+        } else {
+                gibbon_position_free (pos);
+                return FALSE;
+        }
+
+        iter = iter->next;
+        turn = g_value_get_int (iter->data);
+
+        /* FIBS encodes the bar and home again.  Skip it.  */
+        iter = iter->next;
+
+        if (direction == GIBBON_POSITION_SIDE_BLACK) {
+                for (i = 23; i >= 0; --i) {
+                        iter = iter->next;
+                        checkers = g_value_get_int (iter->data);
+                        pos->points[i] = color * checkers;
+                }
+        } else {
+                for (i = 0; i < 24; ++i) {
+                        iter = iter->next;
+                        checkers = g_value_get_int (iter->data);
+                        pos->points[i] = color * checkers;
+                }
+        }
+
+        /* FIBS encodes the bar and home again.  Skip it.  */
+        iter = iter->next;
+
+        iter = iter->next;
+        pos->scores[1] = g_value_get_uint (iter->data);
+        iter = iter->next;
+        pos->scores[0] = g_value_get_uint (iter->data);
+        iter = iter->next;
+        pos->match_length = g_value_get_uint (iter->data);
+
+        iter = iter->next;
+        pos->players[1] = g_strdup (g_value_get_string (iter->data));
+        iter = iter->next;
+        pos->players[0] = g_strdup (g_value_get_string (iter->data));
+
+        /*
+         * The old list is now no longer needed.
+         */
+        gibbon_clip_reader_free_result (self, self->priv->values);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (NULL, value);
+        g_value_init (value, GIBBON_TYPE_POSITION);
+        g_value_set_boxed (value, pos);
+
+        return TRUE;
 }
