@@ -91,6 +91,7 @@
 %s MESSAGE
 %s ERROR
 %s FS
+%x PARSED
 
 WS		[ \t]+
 OWS		[ \t]*
@@ -181,13 +182,13 @@ FS		[ \t]*\.[ \t]*
 ^3{OWS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("3", G_TYPE_INT64); 
-			BEGIN (MOTD);
+			yy_push_state (MOTD, yyscanner);
 			return CLIP_MOTD_START;
 		}
 ^4{OWS}		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("4", G_TYPE_INT64); 
-			BEGIN (INITIAL);
+			yy_pop_state (yyscanner);
 			return CLIP_MOTD_END;
 		}	
 <MOTD>(.|\n)*	{
@@ -236,6 +237,41 @@ FS		[ \t]*\.[ \t]*
 				= alloc_value ("200", G_TYPE_INT64);
 			return CLIP_BOARD;
 		}
+^[^:[:space:]]+{WS}rolls?	{
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		yy_push_state (PARSED, yyscanner); 
+		return CLIP_ROLLS;
+	}
+^[^:[:space:]]+{WS}moves?	{
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		yy_push_state (PARSED, yyscanner); 
+		return CLIP_MOVES;
+	}
+
+<PARSED>and	return TOKEN_AND;
+<PARSED>\.	;
+<PARSED>[-+]?(0|[1-9][0-9]*)	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_INT64);
+		return GINT64;
+	}
+<PARSED>{WS}	;
+<PARSED><<EOF>>	{
+			yy_pop_state (yyscanner);
+			yyterminate ();
+		}
+<PARSED>.|\n	return GARBAGE;
+
 	/*
 	 * The trailing context is necessary so that matching a user name
 	 * plus trailing forbidden characters produces a longer match than

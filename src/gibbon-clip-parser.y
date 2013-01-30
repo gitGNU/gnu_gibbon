@@ -137,9 +137,15 @@ static gboolean gibbon_clip_parser_fixup_home_or_bar (void *raw);
 %token <value> CLIP_ERROR_NO_EMAIL_ADDRESS
 %token <value> CLIP_ERROR_NO_USER
 %token <value> CLIP_BOARD
+%token <value> CLIP_ROLLS
+%token <value> CLIP_MOVES
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
+
+%token TOKEN_AND
+
+%token GARBAGE
 
 %type <value> redoubles
 
@@ -175,6 +181,8 @@ message: clip_welcome
        | clip_error
        | clip_error_no_user
        | clip_board
+       | clip_rolls
+       | clip_moves
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -893,6 +901,40 @@ clip_board:
 	      		YYABORT;
 	      }
 	    ;
+
+clip_rolls: 
+            CLIP_ROLLS 
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($1))
+		        YYABORT;
+	      }
+	    GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_uint ($3, 1, 6))
+		        YYABORT;
+	      }
+	    TOKEN_AND
+	    GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_uint ($6, 1, 6))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ROLLS);
+	      }
+            ;
+
+clip_moves: 
+            CLIP_MOVES
+	      {
+		if (!gibbon_clip_parser_fixup_user ($1))
+		        YYABORT;
+	      }
+	      {
+		gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ROLLS);
+	      }
+	      {
+	      	g_printerr ("Parsed until here.\n");
+	      }
+            ;
 
 %%
 
