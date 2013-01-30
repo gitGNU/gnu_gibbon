@@ -559,7 +559,6 @@ static struct test_case test_moves00 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "8" },
                                 { G_TYPE_UINT, "5" },
                                 { G_TYPE_UINT, "6" },
@@ -573,7 +572,6 @@ static struct test_case test_moves01 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "17" },
                                 { G_TYPE_UINT, "20" },
                                 { G_TYPE_UINT, "19" },
@@ -587,7 +585,6 @@ static struct test_case test_moves02 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "4" },
                                 { G_TYPE_UINT, "17" },
                                 { G_TYPE_UINT, "20" },
                                 { G_TYPE_UINT, "17" },
@@ -605,7 +602,6 @@ static struct test_case test_moves03 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "25" },
                                 { G_TYPE_UINT, "24" },
                                 { G_TYPE_UINT, "25" },
@@ -619,7 +615,6 @@ static struct test_case test_moves04 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "0" },
                                 { G_TYPE_UINT, "1" },
                                 { G_TYPE_UINT, "0" },
@@ -633,7 +628,6 @@ static struct test_case test_moves05 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "24" },
                                 { G_TYPE_UINT, "25" },
                                 { G_TYPE_UINT, "22" },
@@ -647,7 +641,6 @@ static struct test_case test_moves06 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "1" },
                                 { G_TYPE_UINT, "0" },
                                 { G_TYPE_UINT, "3" },
