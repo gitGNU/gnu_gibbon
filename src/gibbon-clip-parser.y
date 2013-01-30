@@ -140,6 +140,7 @@ static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
 %token <value> CLIP_BOARD
 %token <value> CLIP_ROLLS
 %token <value> CLIP_MOVES
+%token <value> CLIP_START_GAME
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -184,6 +185,7 @@ message: clip_welcome
        | clip_board
        | clip_rolls
        | clip_moves
+       | clip_start_game
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -948,6 +950,17 @@ move: GINT64 GINT64
         }
     ;
     
+clip_start_game: 
+            CLIP_START_GAME
+            GSTRING
+	      {
+		if (!gibbon_clip_parser_fixup_user ($2))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_START_GAME);
+	      }
+            ;
+
 %%
 
 static gboolean

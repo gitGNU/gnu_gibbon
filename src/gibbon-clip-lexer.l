@@ -247,7 +247,7 @@ FS		[ \t]*\.[ \t]*
 		yy_push_state (PARSED, yyscanner); 
 		return CLIP_ROLLS;
 	}
-^[^:[:space:]]+{WS}moves?	{
+^[^[:space:]]+{WS}moves?	{
 		char *ptr = yytext;
 		while (*ptr != ' ' && *ptr != '\t')
 			++ptr;
@@ -257,7 +257,11 @@ FS		[ \t]*\.[ \t]*
 		yy_push_state (PARSED, yyscanner); 
 		return CLIP_MOVES;
 	}
-
+^Starting{WS}a{WS}new{WS}game{WS}with	{
+		yy_push_state (PARSED, yyscanner);
+		return CLIP_START_GAME;
+	}
+	
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
@@ -281,6 +285,11 @@ FS		[ \t]*\.[ \t]*
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (yytext, G_TYPE_INT64);
 		return GINT64;
+	}
+<PARSED>[^-.0-9[:space:]]+		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING); 
+		return GSTRING;
 	}
 <PARSED>{WS}	;
 <PARSED><<EOF>>	{
