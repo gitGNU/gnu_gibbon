@@ -259,6 +259,23 @@ FS		[ \t]*\.[ \t]*
 	}
 
 <PARSED>and	return TOKEN_AND;
+	/*
+	 * We do not distinguish between bar and off.  When we convert it to
+	 * a number (0 or 25), we have to know the context anyway so that
+	 * we can take the move direction into account.  The parser does that
+	 * for us here.
+	 */
+<PARSED>bar|off	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_INT64);
+		return GINT64;
+	}
+<PARSED>-	/* 
+                 * Ignore.  The hyphen may be part of a move (e.g. "8-5") but
+                 * in that case it would be consumed by the regex for a 
+                 * (negative) integer.  We can then just as well ignore it
+                 * and "correct" the sign in the parser instead.
+                 */
 <PARSED>\.	;
 <PARSED>[-+]?(0|[1-9][0-9]*)	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value

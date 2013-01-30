@@ -105,6 +105,7 @@ static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw,
                                                        void *score2_raw);
 static gboolean gibbon_clip_parser_fixup_color (void *raw);
 static gboolean gibbon_clip_parser_fixup_home_or_bar (void *raw);
+static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
 
 %}
 
@@ -928,14 +929,25 @@ clip_moves:
 		if (!gibbon_clip_parser_fixup_user ($1))
 		        YYABORT;
 	      }
+	    moves
 	      {
-		gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ROLLS);
-	      }
-	      {
-	      	g_printerr ("Parsed until here.\n");
+		gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_MOVES);
 	      }
             ;
 
+moves: move
+     | move move
+     | move move move
+     | move move move move
+     ;
+     
+move: GINT64 GINT64
+        {
+		if (!gibbon_clip_parser_fixup_move ($1, $2))
+		        YYABORT;
+        }
+    ;
+    
 %%
 
 static gboolean
@@ -1111,6 +1123,57 @@ gibbon_clip_parser_fixup_home_or_bar (void *raw)
 	gint64 i64 = g_value_get_int64 (value);
 	
 	if (i64 != 0 && i64 != 25) return FALSE;
+	
+	return TRUE;
+}
+
+/*
+ * Transform the raw integers that came from the lexer into points.  This
+ * does two things:
+ *
+ * - The lexer will usually return -N for the destination point in a move
+ *   because it cannot distinguish between the separating hyphen and a minus
+ *   sign.
+ * - It translates a 0 into a 25 where necessary.  The lexer returns 0 for
+ *   both "bar" and "off".  We decide what was meant by looking at the other
+ *   point.
+ *
+ * Additionally, we also check the difference between the two points not
+ * being 0 or greater than 6.
+ */
+static gboolean
+gibbon_clip_parser_fixup_move (void *from, void *to)
+{
+	GValue *from_value = (GValue *) from;
+	gint64 from_i64 = ABS (g_value_get_int64 (from_value));
+	GValue *to_value = (GValue *) to;
+	gint64 to_i64 = ABS (g_value_get_int64 (to_value));
+	
+	if (from_i64 > 24)
+	    return FALSE;
+	if (to_i64 > 24)
+	    return FALSE;
+	    
+	if (from_i64 == 0) {
+            if (to_i64 > 18)
+                from_i64 = 25;
+	}
+	if (to_i64 == 0) {
+            if (from_i64 > 18)
+                to_i64 = 25;
+	}
+	
+	if (from_i64 == to_i64)
+	    return FALSE;
+	if (ABS (from_i64 - to_i64) > 6)
+	    return FALSE;
+
+	g_value_unset (from_value);
+	g_value_unset (to_value);
+	g_value_init (from_value, G_TYPE_UINT);
+	g_value_init (to_value, G_TYPE_UINT);
+	g_value_set_uint (from_value, from_i64);
+	g_value_set_uint (to_value, to_i64);
 	
 	return TRUE;
 }

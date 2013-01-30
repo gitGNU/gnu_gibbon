@@ -654,7 +654,6 @@ static struct test_case test_moves07 = {
                 {
                                 { G_TYPE_UINT, "203" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT, "1" },
                                 { G_TYPE_UINT, "2" },
                                 { G_TYPE_UINT, "0" },
                                 { G_TYPE_INVALID }
