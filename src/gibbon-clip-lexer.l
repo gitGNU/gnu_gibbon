@@ -309,6 +309,36 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING);
 		return CLIP_DOUBLES;
 	}
+^[^[:space:]]+{WS}accepts?{WS}the{WS}double{OWS}\.{OWS}The{WS}cube{WS}shows  {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		yy_push_state (PARSED, yyscanner);
+		return CLIP_ACCEPTS_DOUBLE;
+	}
+^[^[:space:]]+{WS}wants{WS}to{WS}play{WS}an? {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		yy_push_state (PARSED, yyscanner);
+		return CLIP_INVITATION;
+	}
+^[^[:space:]]+{WS}wants{WS}to{WS}resume{WS}a {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		yy_push_state (PARSED, yyscanner);
+		return CLIP_INVITATION;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
@@ -316,9 +346,14 @@ FS		[ \t]*\.[ \t]*
 	 * we can take the move direction into account.  The parser does that
 	 * for us here.
 	 */
-<PARSED>bar|off	{
+<PARSED>bar|off|unlimited	{
 		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_INT64);
+			= alloc_value ("0", G_TYPE_INT64);
+		return GINT64;
+	}
+<PARSED>saved	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("-1", G_TYPE_INT64);
 		return GINT64;
 	}
 <PARSED>You	{
@@ -351,6 +386,8 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING); 
 		return GSTRING;
 	}
+<PARSED>point{WS}match{WS}with{WS}you	; /* Ignore.  */
+<PARSED>match{WS}with{WS}you		; /* Ignore.  */
 <PARSED>{WS}	;
 <PARSED><<EOF>>	{
 			yy_pop_state (yyscanner);

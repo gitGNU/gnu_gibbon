@@ -324,7 +324,7 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         pos->may_double[0] = g_value_get_boolean (iter->data);
 
         iter = iter->next;
-        pos->cube = g_value_get_int64 (iter->data);
+        pos->cube = g_value_get_uint64 (iter->data);
 
         iter = iter->next;
         dice[3] = g_value_get_int (iter->data);

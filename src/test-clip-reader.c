@@ -756,7 +756,7 @@ static struct test_case test_doubling02 = {
                 {
                                 { G_TYPE_UINT, "208" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -766,7 +766,7 @@ static struct test_case test_doubling03 = {
                 {
                                 { G_TYPE_UINT, "208" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };

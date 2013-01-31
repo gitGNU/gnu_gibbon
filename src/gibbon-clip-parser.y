@@ -106,6 +106,7 @@ static gboolean gibbon_clip_parser_fixup_match_scores (void *length_raw,
 static gboolean gibbon_clip_parser_fixup_color (void *raw);
 static gboolean gibbon_clip_parser_fixup_home_or_bar (void *raw);
 static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
+static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 
 %}
 
@@ -145,6 +146,8 @@ static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
 %token <value> CLIP_DROPS_GAME
 %token <value> CLIP_CANNOT_MOVE
 %token <value> CLIP_DOUBLES
+%token <value> CLIP_ACCEPTS_DOUBLE
+%token <value> CLIP_INVITATION
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -194,6 +197,8 @@ message: clip_welcome
        | clip_drops_game
        | clip_cannot_move
        | clip_doubles
+       | clip_accepts_double
+       | clip_invitation
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -810,10 +815,7 @@ clip_board:
 	    /* Doubling cube.  */
 	    ':' GINT64
 	      {
-	        /*
-	         * FIXME! Check that only one bit is set in the value.
-	         */
-		if (!gibbon_clip_parser_fixup_int64 ($110, 1, G_MAXINT64))
+		if (!gibbon_clip_parser_fixup_cube ($110, 1))
 				YYABORT;
 	      }
 	    /* Player may-double.  */
@@ -1005,6 +1007,36 @@ clip_doubles:
 		        YYABORT;
 		gibbon_clip_reader_prepend_code (reader, 
 		                                 GIBBON_CLIP_DOUBLES);
+	      }
+            ;
+
+clip_accepts_double: 
+            CLIP_ACCEPTS_DOUBLE
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($1))
+		        YYABORT;
+	      }
+	    GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_cube ($3, 2))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_ACCEPTS_DOUBLE);
+	      }
+            ;
+
+clip_invitation: 
+            CLIP_INVITATION
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($1))
+		        YYABORT;
+	      }
+	    GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_int ($3, -1, 99))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_INVITATION);
 	      }
             ;
 %%
@@ -1233,6 +1265,28 @@ gibbon_clip_parser_fixup_move (void *from, void *to)
 	g_value_init (to_value, G_TYPE_UINT);
 	g_value_set_uint (from_value, from_i64);
 	g_value_set_uint (to_value, to_i64);
+	
+	return TRUE;
+}
+
+static gboolean
+gibbon_clip_parser_fixup_cube (void *raw, guint minimum)
+{
+	GValue *value = (GValue *) raw;
+	gint64 i64 = g_value_get_int64 (value);
+
+	if (i64 < minimum)
+		return FALSE;
+
+	/*
+	 * Power of 2?
+	 */
+	if (((i64 & (~i64 + 1)) != i64))
+	 	return FALSE;
+	 
+	g_value_unset (value);
+	g_value_init (value, G_TYPE_UINT64);
+	g_value_set_uint64 (value, i64);
 	
 	return TRUE;
 }
