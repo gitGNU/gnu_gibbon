@@ -278,6 +278,19 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING);
 		return CLIP_DROPS_GAME;
 	}
+^Connection{WS}with{WS}[^[:space:]]+{WS}timed{WS}out\.{WS}The{WS}game{WS}was{WS}saved.* {
+		char *ptr = 4 + strstr (yytext, "with");
+		char *user;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (user, G_TYPE_STRING);
+		return CLIP_DROPS_GAME;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
