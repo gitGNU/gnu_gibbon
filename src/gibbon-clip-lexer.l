@@ -291,6 +291,15 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (user, G_TYPE_STRING);
 		return CLIP_DROPS_GAME;
 	}
+^[^[:space:]]+{WS}can't{WS}move.* {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return CLIP_CANNOT_MOVE;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
