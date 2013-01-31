@@ -300,6 +300,15 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING);
 		return CLIP_CANNOT_MOVE;
 	}
+^[^[:space:]]+{WS}doubles?{OWS}\..*    {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return CLIP_DOUBLES;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to

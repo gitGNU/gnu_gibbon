@@ -144,6 +144,7 @@ static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
 %token <value> CLIP_LEFT_GAME
 %token <value> CLIP_DROPS_GAME
 %token <value> CLIP_CANNOT_MOVE
+%token <value> CLIP_DOUBLES
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -192,6 +193,7 @@ message: clip_welcome
        | clip_left_game
        | clip_drops_game
        | clip_cannot_move
+       | clip_doubles
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -993,6 +995,16 @@ clip_cannot_move:
 		        YYABORT;
 		gibbon_clip_reader_prepend_code (reader, 
 		                                 GIBBON_CLIP_CANNOT_MOVE);
+	      }
+            ;
+
+clip_doubles: 
+            CLIP_DOUBLES
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($1))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_DOUBLES);
 	      }
             ;
 %%
