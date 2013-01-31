@@ -89,7 +89,6 @@
 %s USER
 %s INTEGER
 %s MESSAGE
-%s ERROR
 %s FS
 %x PARSED
 
@@ -229,7 +228,7 @@ FS		[ \t]*\.[ \t]*
 			return CLIP_MESSAGE;
 		}
 ^\*\*{WS}	{
-			yy_push_state (ERROR, yyscanner);
+			yy_push_state (PARSED, yyscanner);
 			return CLIP_ERROR;
 		}
 ^board		{
@@ -321,12 +320,15 @@ FS		[ \t]*\.[ \t]*
 		yy_pop_state (yyscanner);
 		return GSTRING;
 	}
-<ERROR>There{WS}is{WS}no{WS}one{WS}called{WS} {
+<PARSED>There{WS}is{WS}no{WS}one{WS}called{WS} {
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value ("103", G_TYPE_INT64);
 		yy_push_state (FS, yyscanner);
 		yy_push_state (USER, yyscanner);			
 		return CLIP_ERROR_NO_USER;
+	}
+<PARSED>You{WS}terminated{WS}the{WS}game.* {
+		return CLIP_LEFT_GAME;
 	}
 <FS>{OWS}\.{OWS}	;
 [-+]?(0|[1-9][0-9]*)\.[0-9]+	{
