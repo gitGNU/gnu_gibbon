@@ -142,6 +142,7 @@ static gboolean gibbon_clip_parser_fixup_move (void *from, void *to);
 %token <value> CLIP_MOVES
 %token <value> CLIP_START_GAME
 %token <value> CLIP_LEFT_GAME
+%token <value> CLIP_DROPS_GAME
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -188,6 +189,7 @@ message: clip_welcome
        | clip_moves
        | clip_start_game
        | clip_left_game
+       | clip_drops_game
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -606,15 +608,10 @@ clip_error_no_user:
             CLIP_ERROR
             CLIP_ERROR_NO_USER
 	      {
-		if (!gibbon_clip_parser_fixup_uint (
-					$2, GIBBON_CLIP_ERROR_NO_USER,
-					GIBBON_CLIP_ERROR_NO_USER))
-				YYABORT;
-	      }
-	    GSTRING
-    	      {
-		if (!gibbon_clip_parser_fixup_user ($4))
+		if (!gibbon_clip_parser_fixup_user ($2))
 			YYABORT;
+	      	gibbon_clip_reader_prepend_code (reader, 
+	      	                                 GIBBON_CLIP_ERROR_NO_USER);
 	      }
             ;
 
@@ -977,6 +974,15 @@ clip_left_game:
 	      }
             ;
 
+clip_drops_game: 
+            CLIP_DROPS_GAME
+	      {
+		if (!gibbon_clip_parser_fixup_maybe_you ($1))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_DROPS_GAME);
+	      }
+            ;
 %%
 
 static gboolean

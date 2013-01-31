@@ -70,6 +70,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_ACCEPTS_DOUBLE = 208,
                         GIBBON_CLIP_RESIGNS = 209,
                         GIBBON_CLIP_REJECTS_RESIGNATION = 210,
+                        GIBBON_CLIP_DROPS_GAME = 211,
 
                         /* Between game action.  */
                         GIBBON_CLIP_INVITATION = 300,

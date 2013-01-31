@@ -691,7 +691,7 @@ static struct test_case test_game_left01 = {
 static struct test_case test_game_left02 = {
                 "GibbonTestA logs out. The game was saved.",
                 {
-                                { G_TYPE_UINT, "205" },
+                                { G_TYPE_UINT, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -700,7 +700,7 @@ static struct test_case test_game_left02 = {
 static struct test_case test_game_left03 = {
                 "GibbonTestA drops connection. The game was saved.",
                 {
-                                { G_TYPE_UINT, "205" },
+                                { G_TYPE_UINT, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -709,7 +709,7 @@ static struct test_case test_game_left03 = {
 static struct test_case test_game_left04 = {
                 "Connection with GibbonTestA timed out. The game was saved.",
                 {
-                                { G_TYPE_UINT, "205" },
+                                { G_TYPE_UINT, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }

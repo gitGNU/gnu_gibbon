@@ -260,6 +260,24 @@ FS		[ \t]*\.[ \t]*
 		yy_push_state (PARSED, yyscanner);
 		return CLIP_START_GAME;
 	}
+^[^[:space:]]+{WS}logs{WS}out.{WS}The{WS}game{WS}was{WS}saved.* {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return CLIP_DROPS_GAME;
+	}
+^[^[:space:]]+{WS}drops{WS}connection.{WS}The{WS}game{WS}was{WS}saved.* {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return CLIP_DROPS_GAME;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
@@ -283,7 +301,6 @@ FS		[ \t]*\.[ \t]*
 			++ptr;
 		((struct yyguts_t *) yyscanner)->yylval_r->value
 			= alloc_value (ptr, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner); 
 		return GSTRING;
 	}	
 <PARSED>-	/* 
@@ -306,6 +323,10 @@ FS		[ \t]*\.[ \t]*
 <PARSED>{WS}	;
 <PARSED><<EOF>>	{
 			yy_pop_state (yyscanner);
+			if (YY_START) {
+				g_printerr ("Unbalanced start condition.\n");
+				return GARBAGE;
+			}
 			yyterminate ();
 		}
 <PARSED>.|\n	return GARBAGE;
@@ -333,11 +354,17 @@ FS		[ \t]*\.[ \t]*
 		yy_pop_state (yyscanner);
 		return GSTRING;
 	}
-<PARSED>There{WS}is{WS}no{WS}one{WS}called{WS} {
+<PARSED>There{WS}is{WS}no{WS}one{WS}called{WS}[^.[:space:]]+.? {
+		char *ptr = 6 + strstr (yytext, "called");
+		char *user;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '.')
+			++ptr;
+		*ptr = 0;
 		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("103", G_TYPE_INT64);
-		yy_push_state (FS, yyscanner);
-		yy_push_state (USER, yyscanner);			
+			= alloc_value (user, G_TYPE_STRING);
 		return CLIP_ERROR_NO_USER;
 	}
 <PARSED>terminated{WS}the{WS}game.{WS}The{WS}game{WS}was{WS}saved.* {
