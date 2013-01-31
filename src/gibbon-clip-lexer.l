@@ -339,6 +339,19 @@ FS		[ \t]*\.[ \t]*
 		yy_push_state (PARSED, yyscanner);
 		return CLIP_INVITATION;
 	}
+^Type{WS}\x27join{WS}[^\x27[:space:]]+\x27{WS}to{WS}accept.*    {
+		char *ptr = 4 + strstr (yytext, "join");
+		char *user;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != '\'')
+			++ptr;
+		*ptr = 0;		
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (user, G_TYPE_STRING);
+		return CLIP_TYPE_JOIN;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
