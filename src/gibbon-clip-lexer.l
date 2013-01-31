@@ -83,7 +83,7 @@
 %option stack
 %option noyy_top_state
 
-/* %option debug */
+%option debug
 
 %s MOTD
 %s USER
@@ -273,6 +273,11 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_INT64);
 		return GINT64;
 	}
+<PARSED>You	{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING);
+		return GSTRING;
+	}
 <PARSED>-	/* 
                  * Ignore.  The hyphen may be part of a move (e.g. "8-5") but
                  * in that case it would be consumed by the regex for a 
@@ -327,7 +332,7 @@ FS		[ \t]*\.[ \t]*
 		yy_push_state (USER, yyscanner);			
 		return CLIP_ERROR_NO_USER;
 	}
-<PARSED>You{WS}terminated{WS}the{WS}game.* {
+<PARSED>terminated{WS}the{WS}game.{WS}The{WS}game{WS}was{WS}saved.* {
 		return CLIP_LEFT_GAME;
 	}
 <FS>{OWS}\.{OWS}	;
@@ -363,7 +368,7 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 	 * In a re-entrant scanner, the debug state is initialized to 0,
 	 * not to 1.
 	 */
-	yy_flex_debug = 0;
+	yy_flex_debug = 1;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);
