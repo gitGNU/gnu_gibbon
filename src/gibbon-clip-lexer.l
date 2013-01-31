@@ -352,6 +352,19 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (user, G_TYPE_STRING);
 		return CLIP_TYPE_JOIN;
 	}
+^You\x27re{WS}now{WS}watching{WS}[^[:space:]]\.?.*    {
+		char *ptr = 8 + strstr (yytext, "watching");
+		char *user;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != '.' && *ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;		
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (user, G_TYPE_STRING);
+		return CLIP_YOURE_WATCHING;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
