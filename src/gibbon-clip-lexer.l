@@ -423,6 +423,9 @@ FS		[ \t]*\.[ \t]*
 	}
 <PARSED>point{WS}match{WS}with{WS}you	; /* Ignore.  */
 <PARSED>match{WS}with{WS}you		; /* Ignore.  */
+<PARSED>is{WS}refusing{WS}games{OWS}\.?	{
+		return TOKEN_REFUSING_GAMES;
+	}
 <PARSED>{WS}	;
 <PARSED><<EOF>>	{
 			yy_pop_state (yyscanner);

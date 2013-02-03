@@ -150,6 +150,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_TYPE_JOIN
 %token <value> CLIP_YOURE_WATCHING
 %token <value> CLIP_NOW_PLAYING
+%token <value> CLIP_INVITE_ERROR
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -157,6 +158,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token TOKEN_2STARS
 %token TOKEN_AND
 %token TOKEN_MATCH_WITH
+%token TOKEN_REFUSING_GAMES
 
 %token GARBAGE
 
@@ -205,6 +207,7 @@ message: clip_welcome
        | clip_type_join
        | clip_youre_watching
        | clip_now_playing
+       | clip_invite_error
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -1074,6 +1077,26 @@ clip_now_playing:
 		        YYABORT;
 		gibbon_clip_reader_prepend_code (reader, 
 		                                 GIBBON_CLIP_NOW_PLAYING);
+	      }
+            ;
+
+clip_invite_error: 
+	    TOKEN_2STARS
+	    GSTRING
+	    TOKEN_REFUSING_GAMES
+	      {
+	        gchar *msg;
+		GValue *s;
+			        
+		if (!gibbon_clip_parser_fixup_user ($2))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_INVITE_ERROR);
+		msg = g_strdup_printf (_("Player `%s' is now refusing matches!"), 
+		                       g_value_get_string ($2));
+		s = gibbon_clip_reader_alloc_value (reader, msg,
+						    G_TYPE_STRING);
+		g_free (msg);
 	      }
             ;
 %%
