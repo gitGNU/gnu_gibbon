@@ -136,8 +136,6 @@ static gint gibbon_session_handle_accepts_double (GibbonSession *self,
 static gint gibbon_session_handle_resigns (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_rejects (GibbonSession *self, GSList *iter);
 static gint gibbon_session_handle_win_game (GibbonSession *self, GSList *iter);
-static gint gibbon_session_handle_unknown_message (GibbonSession *self,
-                                                   GSList *iter);
 
 static gchar *gibbon_session_decode_client (GibbonSession *self,
                                             const gchar *token);
@@ -563,9 +561,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_ALERTS:
                 retval = gibbon_session_clip_alerts (self, iter);
-                break;
-        case GIBBON_CLIP_UNKNOWN_MESSAGE:
-                retval = gibbon_session_handle_unknown_message (self, iter);
                 break;
         case GIBBON_CLIP_ERROR:
                 retval = gibbon_session_handle_error (self, iter);
@@ -1758,19 +1753,6 @@ bail_out_board:
 }
 
 static gboolean
-gibbon_session_handle_error (GibbonSession *self, GSList *iter)
-{
-        const gchar *message;
-
-        if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &message))
-                return -1;
-
-        gibbon_app_display_error (self->priv->app, NULL, "%s", message);
-
-        return GIBBON_CLIP_ERROR;
-}
-
-static gboolean
 gibbon_session_handle_error_no_user (GibbonSession *self, GSList *iter)
 {
         const gchar *who;
@@ -2903,17 +2885,17 @@ gibbon_session_handle_win_game (GibbonSession *self, GSList *iter)
 }
 
 static gint
-gibbon_session_handle_unknown_message (GibbonSession *self, GSList *iter)
+gibbon_session_handle_error (GibbonSession *self, GSList *iter)
 {
         const gchar *msg;
 
         if (!gibbon_clip_get_string (&iter, GIBBON_CLIP_TYPE_STRING, &msg))
                                      return -1;
         gibbon_app_display_error (self->priv->app,
-                                  _("Message from server"),
+                                  _("Error message from server"),
                                   "%s", msg);
 
-        return GIBBON_CLIP_UNKNOWN_MESSAGE;
+        return GIBBON_CLIP_ERROR;
 }
 
 void

@@ -410,6 +410,7 @@ static struct test_case test_error00 = {
                 "** Funny new message!",
                 {
                                 { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "0" },
                                 { G_TYPE_STRING,
                                 "Funny new message!"},
                                 { G_TYPE_INVALID }
@@ -420,6 +421,7 @@ static struct test_case test_error01 = {
                 "** Error: something new went wrong!",
                 {
                                 { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "0" },
                                 { G_TYPE_STRING,
                                 "Error: something new went wrong!"},
                                 { G_TYPE_INVALID }
@@ -430,6 +432,7 @@ static struct test_case test_error02 = {
                 "** You see a funny new message!",
                 {
                                 { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "0" },
                                 { G_TYPE_STRING,
                                 "You see a funny new message!"},
                                 { G_TYPE_INVALID }
@@ -439,8 +442,9 @@ static struct test_case test_error02 = {
 static struct test_case test_error03 = {
                 "** There is no one called anonymous.",
                 {
-                                { G_TYPE_UINT, "103" },
-                                { G_TYPE_STRING, "anonymous"},
+                                { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_STRING, "No player `anonymous'!"},
                                 { G_TYPE_INVALID }
                 },
 };
@@ -948,7 +952,8 @@ static struct test_case test_between10 = {
 static struct test_case test_between11 = {
                 "** You can't play two games at once",
                 {
-                                { G_TYPE_UINT, "101" },
+                                { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "3" },
                                 { G_TYPE_STRING,
                                   "You cannot play two matches at once!"},
                                 { G_TYPE_INVALID }
@@ -1828,8 +1833,10 @@ static struct test_case test_address01 = {
 static struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
-                                { G_TYPE_UINT, "102" },
-                                { G_TYPE_STRING, "http://foobar" },
+                                { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_STRING, "`http://foobar' is not a"
+                                                 " an email address!"},
                                 { G_TYPE_INVALID }
         }
 };
@@ -1837,7 +1844,7 @@ static struct test_case test_address02 = {
 static struct test_case test_corrupt = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
-                                { G_TYPE_UINT, "101" },
+                                { G_TYPE_UINT, "99999" },
                                 { G_TYPE_STRING,
                                   "Your saved match was corrupted on server. "
                                   " Please start a new one!"},

@@ -32,7 +32,9 @@
 #include "gibbon-clip-parser.h"
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
+#include "gibbon-clip.h"
 
+#define reader gibbon_clip_lexer_get_extra(yyscanner)
 #define alloc_value(s, type) gibbon_clip_reader_alloc_value(		\
 	gibbon_clip_lexer_get_extra(yyscanner), s, type)
 
@@ -231,6 +233,36 @@ FS		[ \t]*\.[ \t]*
 			yy_push_state (PARSED, yyscanner);
 			return TOKEN_2STARS;
 		}
+^\*\*{WS}There{WS}is{WS}no{WS}one{WS}called{WS}[^.[:space:]]+.* {
+		char *ptr = 6 + strstr (yytext, "called");
+		char *user;
+		char *msg;
+		
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '.')
+			++ptr;
+		*ptr = 0;
+		
+		msg = g_strdup_printf (_("No player `%s'!"), user);
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (msg, G_TYPE_STRING);
+		g_free (msg);
+		gibbon_clip_reader_prepend_code (
+			reader, GIBBON_CLIP_ERROR_NO_USER);
+		
+		return TOKEN_ERROR;
+	}
+^\*\*{WS}You{WS}can\x27t{WS}play{WS}two{WS}games{WS}at{WS}once.* {
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (_("You cannot play two matches at once!"), 
+			               G_TYPE_STRING);
+		gibbon_clip_reader_prepend_code (
+			reader, GIBBON_CLIP_ERROR_NO_TWO_MATCHES);
+		
+		return TOKEN_ERROR;
+	}
 ^board		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value
 				= alloc_value ("200", G_TYPE_INT64);
@@ -471,19 +503,6 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_STRING); 
 		yy_pop_state (yyscanner);
 		return GSTRING;
-	}
-<PARSED>There{WS}is{WS}no{WS}one{WS}called{WS}[^.[:space:]]+.? {
-		char *ptr = 6 + strstr (yytext, "called");
-		char *user;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '.')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (user, G_TYPE_STRING);
-		return CLIP_ERROR_NO_USER;
 	}
 <PARSED>terminated{WS}the{WS}game.{WS}The{WS}game{WS}was{WS}saved.* {
 		return CLIP_LEFT_GAME;

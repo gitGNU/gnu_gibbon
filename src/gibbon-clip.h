@@ -50,12 +50,16 @@ enum GibbonClipCode {
                         GIBBON_CLIP_YOU_KIBITZ = 19,
                         GIBBON_CLIP_ALERTS = 20,
 
-                        /* Error messages.  */
+                        /*
+                         * Error messages.  The second uint describes the
+                         * error more precisely.  The third one is a human
+                         * readable error message.
+                         */
                         GIBBON_CLIP_ERROR = 100,
-                        /* This is unnecessary! */
+                        /*
+                         * FIXME! GIBBON_CLIP_UNKNOWN_MESSAGE is obsolete!
+                         */
                         GIBBON_CLIP_UNKNOWN_MESSAGE = 101,
-                        GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS = 102,
-                        GIBBON_CLIP_ERROR_NO_USER = 103,
 
                         /* Game play.  */
                         GIBBON_CLIP_BOARD = 200,
@@ -110,6 +114,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_HEARD_YOU = 500
 };
 
+/* Obsolete! Remvoe! */
 enum GibbonClipType {
                         GIBBON_CLIP_TYPE_END = 0,
                         GIBBON_CLIP_TYPE_UINT,
@@ -119,6 +124,13 @@ enum GibbonClipType {
                         GIBBON_CLIP_TYPE_STRING,
                         GIBBON_CLIP_TYPE_NAME,
                         GIBBON_CLIP_TYPE_TIMESTAMP
+};
+
+enum GibbonClipErrorCode {
+        GIBBON_CLIP_ERROR_UNKNOWN = 0,
+        GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS = 1,
+        GIBBON_CLIP_ERROR_NO_USER = 2,
+        GIBBON_CLIP_ERROR_NO_TWO_MATCHES = 3
 };
 
 struct GibbonClipTokenSet {

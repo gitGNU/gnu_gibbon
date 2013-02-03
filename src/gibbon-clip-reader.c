@@ -131,15 +131,21 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                  * Was this an error message?
                  */
                 if ('*' == line[0] && '*' == line[1]
-                    && (' ' == line[2] || ' ' == line[2])) {
+                    && (' ' == line[2] || '\t' == line[2])) {
                         value = g_malloc (sizeof *value);
                         *value = init;
 
                         self->priv->values = g_slist_prepend (
                                         self->priv->values, value);
-
                         g_value_init (value, G_TYPE_UINT);
                         g_value_set_uint (value, GIBBON_CLIP_ERROR);
+
+                        value = g_malloc (sizeof *value);
+                        *value = init;
+                        self->priv->values = g_slist_prepend (
+                                        self->priv->values, value);
+                        g_value_init (value, G_TYPE_UINT);
+                        g_value_set_uint (value, GIBBON_CLIP_ERROR_UNKNOWN);
 
                         ptr = line + 3;
                         while (*ptr == ' ' || *ptr == '\t')

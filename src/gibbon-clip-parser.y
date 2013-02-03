@@ -111,6 +111,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %}
 
 %union {
+	guint error_code;
 	void *value;
 }
 
@@ -136,7 +137,6 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_YOU_KIBITZ
 %token <value> CLIP_ALERTS
 %token <value> CLIP_ERROR_NO_EMAIL_ADDRESS
-%token <value> CLIP_ERROR_NO_USER
 %token <value> CLIP_BOARD
 %token <value> CLIP_ROLLS
 %token <value> CLIP_MOVES
@@ -154,6 +154,8 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
+
+%token <error_code>TOKEN_ERROR
 
 %token TOKEN_2STARS
 %token TOKEN_AND
@@ -196,7 +198,7 @@ message: clip_welcome
        | clip_you_whisper
        | clip_you_kibitz
        | clip_alerts
-       | clip_error_no_user
+       | clip_error
        | clip_board
        | clip_rolls
        | clip_moves
@@ -618,16 +620,12 @@ clip_alerts: CLIP_ALERTS
 	    GSTRING
             ;
 
-clip_error_no_user: 
-            TOKEN_2STARS
-            CLIP_ERROR_NO_USER
+/* This is completely handled by the lexer.  */
+clip_error: TOKEN_ERROR
 	      {
-		if (!gibbon_clip_parser_fixup_user ($2))
-			YYABORT;
-	      	gibbon_clip_reader_prepend_code (reader, 
-	      	                                 GIBBON_CLIP_ERROR_NO_USER);
+		gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ERROR);
 	      }
-            ;
+          ;
 
 clip_board:
 	    CLIP_BOARD
