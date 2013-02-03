@@ -1800,7 +1800,7 @@ gibbon_clip_parse_resume_unlimited (const gchar *line, gchar **tokens,
                                     GSList **result)
 {
         *result = gibbon_clip_alloc_int (*result, GIBBON_CLIP_TYPE_UINT,
-                                         GIBBON_CLIP_RESUME_UNLIMITED);
+                                         GIBBON_CLIP_JOIN_OR_LEAVE);
 
         return TRUE;
 }

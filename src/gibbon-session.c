@@ -630,14 +630,14 @@ gibbon_session_process_server_line (GibbonSession *self,
                 /* Ignored.  */
                 retval = code;
                 break;
-        case GIBBON_CLIP_RESUME_UNLIMITED:
+        case GIBBON_CLIP_JOIN_OR_LEAVE:
                 /*
                  * We always assume that player wants to continue.  There is
                  * no way to terminated an unlimited match, anyway.
                  */
                 gibbon_connection_queue_command (self->priv->connection,
                                                  FALSE, "join");
-                retval = GIBBON_CLIP_RESUME_UNLIMITED;
+                retval = GIBBON_CLIP_JOIN_OR_LEAVE;
                 break;
         case GIBBON_CLIP_WIN_GAME:
                 retval = gibbon_session_handle_win_game (self, iter);

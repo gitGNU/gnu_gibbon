@@ -86,7 +86,7 @@ enum GibbonClipCode {
                         GIBBON_CLIP_RESUME_INFO_TURN = 306,
                         GIBBON_CLIP_RESUME_INFO_MATCH_LENGTH = 307,
                         GIBBON_CLIP_RESUME_INFO_POINTS = 308,
-                        GIBBON_CLIP_RESUME_UNLIMITED = 309,
+                        GIBBON_CLIP_JOIN_OR_LEAVE = 309,
                         GIBBON_CLIP_WIN_GAME = 310,
                         GIBBON_CLIP_GAME_SCORE = 311,
                         GIBBON_CLIP_WAIT_JOIN_TOO = 312,
