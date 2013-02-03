@@ -229,7 +229,7 @@ FS		[ \t]*\.[ \t]*
 		}
 ^\*\*{WS}	{
 			yy_push_state (PARSED, yyscanner);
-			return CLIP_ERROR;
+			return TOKEN_2STARS;
 		}
 ^board		{
 			((struct yyguts_t *) yyscanner)->yylval_r->value

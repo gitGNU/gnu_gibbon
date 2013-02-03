@@ -135,7 +135,6 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_YOU_WHISPER
 %token <value> CLIP_YOU_KIBITZ
 %token <value> CLIP_ALERTS
-%token <value> CLIP_ERROR
 %token <value> CLIP_ERROR_NO_EMAIL_ADDRESS
 %token <value> CLIP_ERROR_NO_USER
 %token <value> CLIP_BOARD
@@ -155,6 +154,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> GINT64
 %token <value> GDOUBLE
 
+%token TOKEN_2STARS
 %token TOKEN_AND
 %token TOKEN_MATCH_WITH
 
@@ -191,7 +191,6 @@ message: clip_welcome
        | clip_you_whisper
        | clip_you_kibitz
        | clip_alerts
-       | clip_error
        | clip_error_no_user
        | clip_board
        | clip_rolls
@@ -613,15 +612,8 @@ clip_alerts: CLIP_ALERTS
 	    GSTRING
             ;
 
-clip_error: CLIP_ERROR
-	    GSTRING
-	      {
-	      	gibbon_clip_reader_prepend_code (reader, GIBBON_CLIP_ERROR);
-	      }
-            ;
-
 clip_error_no_user: 
-            CLIP_ERROR
+            TOKEN_2STARS
             CLIP_ERROR_NO_USER
 	      {
 		if (!gibbon_clip_parser_fixup_user ($2))
@@ -974,7 +966,7 @@ clip_start_game:
             ;
 
 clip_left_game: 
-            CLIP_ERROR
+            TOKEN_2STARS
             GSTRING
 	      {
 		if (!gibbon_clip_parser_fixup_maybe_you ($2))
@@ -1068,7 +1060,7 @@ clip_youre_watching:
             ;
 
 clip_now_playing: 
-	    CLIP_ERROR
+	    TOKEN_2STARS
             CLIP_NOW_PLAYING
 	    GINT64
 	      {
