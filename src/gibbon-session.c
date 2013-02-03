@@ -565,9 +565,6 @@ gibbon_session_process_server_line (GibbonSession *self,
         case GIBBON_CLIP_ERROR:
                 retval = gibbon_session_handle_error (self, iter);
                 break;
-        case GIBBON_CLIP_ERROR_NO_USER:
-                retval = gibbon_session_handle_error_no_user (self, iter);
-                break;
         case GIBBON_CLIP_BOARD:
                 if (self->priv->debug_board_state) {
                         g_get_current_time (&timeval);
@@ -722,9 +719,6 @@ gibbon_session_process_server_line (GibbonSession *self,
                 break;
         case GIBBON_CLIP_SHOW_ADDRESS:
                 retval = gibbon_session_handle_show_address (self, iter);
-                break;
-        case GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS:
-                retval = gibbon_session_handle_address_error (self, iter);
                 break;
         case GIBBON_CLIP_HEARD_YOU:
                 /* Ignored.  */
