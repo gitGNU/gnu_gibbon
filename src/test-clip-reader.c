@@ -940,7 +940,7 @@ static struct test_case test_between10 = {
                                 { G_TYPE_UINT, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
-                                  "Player `gflohr' is not logged in!" },
+                                  "Player `gflohr' has logged out!" },
                                 { G_TYPE_INVALID }
                 }
 };

@@ -83,7 +83,7 @@
 %option stack
 %option noyy_top_state
 
-/* %option debug */
+%option debug
 
 %s MOTD
 %s USER
@@ -416,15 +416,27 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (yytext, G_TYPE_INT64);
 		return GINT64;
 	}
-<PARSED>[^-.0-9[:space:]]+		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING); 
-		return GSTRING;
-	}
 <PARSED>point{WS}match{WS}with{WS}you	; /* Ignore.  */
 <PARSED>match{WS}with{WS}you		; /* Ignore.  */
 <PARSED>is{WS}refusing{WS}games{OWS}\.?	{
 		return TOKEN_REFUSING_GAMES;
+	}
+<PARSED>Error:	{
+		return TOKEN_ERROR_COLON;
+	}
+<PARSED>is{WS}already{WS}playing{WS}with{WS}someone{WS}else{OWS}\.?	{
+		return TOKEN_ALREADY_PLAYING;
+	}
+<PARSED>didn't{WS}invite{WS}you{OWS}\.?	{
+		return TOKEN_ALREADY_PLAYING;
+	}
+<PARSED>can't{WS}find{WS}player	{
+		return TOKEN_CANNOT_FIND_PLAYER;
+	}
+<PARSED>[^-.0-9[:space:]]+		{
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (yytext, G_TYPE_STRING); 
+		return GSTRING;
 	}
 <PARSED>{WS}	;
 <PARSED><<EOF>>	{

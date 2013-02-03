@@ -159,6 +159,9 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token TOKEN_AND
 %token TOKEN_MATCH_WITH
 %token TOKEN_REFUSING_GAMES
+%token TOKEN_ERROR_COLON
+%token TOKEN_ALREADY_PLAYING
+%token TOKEN_CANNOT_FIND_PLAYER
 
 %token GARBAGE
 
@@ -1080,7 +1083,12 @@ clip_now_playing:
 	      }
             ;
 
-clip_invite_error: 
+clip_invite_error: clip_invite_error_refusing_games
+		 | clip_invite_error_already_playing
+		 | clip_invite_error_not_logged_in
+		 ;
+		 
+clip_invite_error_refusing_games:
 	    TOKEN_2STARS
 	    GSTRING
 	    TOKEN_REFUSING_GAMES
@@ -1094,6 +1102,68 @@ clip_invite_error:
 		                                 GIBBON_CLIP_INVITE_ERROR);
 		msg = g_strdup_printf (_("Player `%s' is now refusing matches!"), 
 		                       g_value_get_string ($2));
+		s = gibbon_clip_reader_alloc_value (reader, msg,
+						    G_TYPE_STRING);
+		g_free (msg);
+	      }
+            ;
+		 
+clip_invite_error_already_playing:
+	    TOKEN_2STARS
+	    TOKEN_ERROR_COLON
+	    GSTRING
+	    TOKEN_ALREADY_PLAYING
+	      {
+	        gchar *msg;
+		GValue *s;
+			        
+		if (!gibbon_clip_parser_fixup_user ($3))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_INVITE_ERROR);
+		msg = g_strdup_printf (_("Player `%s' is already playing"
+		                         " with someone else!"), 
+		                       g_value_get_string ($3));
+		s = gibbon_clip_reader_alloc_value (reader, msg,
+						    G_TYPE_STRING);
+		g_free (msg);
+	      }
+	    |
+	    TOKEN_2STARS
+	    GSTRING
+	    TOKEN_ALREADY_PLAYING
+	      {
+	        gchar *msg;
+		GValue *s;
+			        
+		if (!gibbon_clip_parser_fixup_user ($2))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_INVITE_ERROR);
+		msg = g_strdup_printf (_("Player `%s' is already playing"
+		                         " with someone else!"), 
+		                       g_value_get_string ($2));
+		s = gibbon_clip_reader_alloc_value (reader, msg,
+						    G_TYPE_STRING);
+		g_free (msg);
+	      }
+            ;
+
+clip_invite_error_not_logged_in:
+	    TOKEN_2STARS
+	    TOKEN_ERROR_COLON
+	    TOKEN_CANNOT_FIND_PLAYER
+	    GSTRING
+	      {
+	        gchar *msg;
+		GValue *s;
+			        
+		if (!gibbon_clip_parser_fixup_user ($4))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_INVITE_ERROR);
+		msg = g_strdup_printf (_("Player `%s' has logged out!"),
+		                       g_value_get_string ($4));
 		s = gibbon_clip_reader_alloc_value (reader, msg,
 						    G_TYPE_STRING);
 		g_free (msg);
