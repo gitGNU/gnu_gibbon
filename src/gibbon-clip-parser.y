@@ -150,11 +150,13 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_INVITATION
 %token <value> CLIP_TYPE_JOIN
 %token <value> CLIP_YOURE_WATCHING
+%token <value> CLIP_NOW_PLAYING
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
 
 %token TOKEN_AND
+%token TOKEN_MATCH_WITH
 
 %token GARBAGE
 
@@ -203,6 +205,7 @@ message: clip_welcome
        | clip_invitation
        | clip_type_join
        | clip_youre_watching
+       | clip_now_playing
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -1061,6 +1064,24 @@ clip_youre_watching:
 		        YYABORT;
 		gibbon_clip_reader_prepend_code (reader, 
 		                                 GIBBON_CLIP_YOURE_WATCHING);
+	      }
+            ;
+
+clip_now_playing: 
+	    CLIP_ERROR
+            CLIP_NOW_PLAYING
+	    GINT64
+	      {
+		if (!gibbon_clip_parser_fixup_uint ($3, 0, 99))
+		        YYABORT;
+	      }
+	    TOKEN_MATCH_WITH
+            GSTRING
+	      {
+		if (!gibbon_clip_parser_fixup_user ($6))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_NOW_PLAYING);
 	      }
             ;
 %%

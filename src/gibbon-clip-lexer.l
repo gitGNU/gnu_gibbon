@@ -395,6 +395,15 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (ptr, G_TYPE_STRING);
 		return GSTRING;
 	}	
+<PARSED>You{WS}are{WS}now{WS}playing{WS}an?    {
+		return CLIP_NOW_PLAYING;
+	}
+<PARSED>point{WS}match{WS}with    {
+		return TOKEN_MATCH_WITH;
+	}
+<PARSED>match{WS}with    {
+		return TOKEN_MATCH_WITH;
+	}
 <PARSED>-	/* 
                  * Ignore.  The hyphen may be part of a move (e.g. "8-5") but
                  * in that case it would be consumed by the regex for a 
