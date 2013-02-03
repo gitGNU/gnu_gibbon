@@ -397,6 +397,21 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value (user, G_TYPE_STRING);
 		return CLIP_YOURE_WATCHING;
 	}
+^Player{WS}[^[:space:]]+{WS}has{WS}joined{WS}you{WS}for{WS}an?{WS}unlimited{WS}match.*    {
+		char *ptr = 7 + strstr (yytext, "Player");
+		char *user;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != '.' && *ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (user, G_TYPE_STRING);
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("0", G_TYPE_UINT);
+		return CLIP_JOINED_UNLIMITED;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
