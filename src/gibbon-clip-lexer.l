@@ -436,6 +436,22 @@ FS		[ \t]*\.[ \t]*
 <PARSED>match{WS}with    {
 		return TOKEN_MATCH_WITH;
 	}
+<PARSED>has{WS}joined{WS}you{WS}for{WS}a{WS}[1-9][0-9]*{WS}point{WS}match.* {
+        	char *ptr = 4 + strstr (yytext, "for");
+        	char *number;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		++ptr;
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		number = ptr;
+		while (*ptr >= '0'&& *ptr <= '9')
+			++ptr;
+		*ptr = 0;
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value (number, G_TYPE_INT64);
+		return CLIP_JOINED_MATCH;
+        }
 <PARSED>-	/* 
                  * Ignore.  The hyphen may be part of a move (e.g. "8-5") but
                  * in that case it would be consumed by the regex for a 

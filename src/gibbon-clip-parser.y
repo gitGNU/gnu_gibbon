@@ -151,6 +151,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_YOURE_WATCHING
 %token <value> CLIP_NOW_PLAYING
 %token <value> CLIP_INVITE_ERROR
+%token <value> CLIP_JOINED_MATCH
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -1075,6 +1076,20 @@ clip_now_playing:
             GSTRING
 	      {
 		if (!gibbon_clip_parser_fixup_user ($6))
+		        YYABORT;
+		gibbon_clip_reader_prepend_code (reader, 
+		                                 GIBBON_CLIP_NOW_PLAYING);
+	      }
+	    |
+	    TOKEN_2STARS
+	    GSTRING
+	      {
+		if (!gibbon_clip_parser_fixup_user ($2))
+		        YYABORT;
+	      }
+	    CLIP_JOINED_MATCH
+	      {
+		if (!gibbon_clip_parser_fixup_uint ($4, 1, 99))
 		        YYABORT;
 		gibbon_clip_reader_prepend_code (reader, 
 		                                 GIBBON_CLIP_NOW_PLAYING);
