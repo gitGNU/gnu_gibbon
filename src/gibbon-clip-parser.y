@@ -153,6 +153,7 @@ static gboolean gibbon_clip_parser_fixup_cube (void *raw, guint minimum);
 %token <value> CLIP_INVITE_ERROR
 %token <value> CLIP_JOINED_MATCH
 %token <value> CLIP_JOINED_UNLIMITED
+%token <value> CLIP_JOIN_OR_LEAVE
 %token <value> GSTRING
 %token <value> GINT64
 %token <value> GDOUBLE
@@ -215,6 +216,7 @@ message: clip_welcome
        | clip_youre_watching
        | clip_now_playing
        | clip_invite_error
+       | clip_join_or_leave
        ;
 
 clip_welcome: CLIP_WELCOME
@@ -1189,6 +1191,10 @@ clip_invite_error_not_logged_in:
 		g_free (msg);
 	      }
             ;
+
+clip_join_or_leave: CLIP_JOIN_OR_LEAVE
+		  ;
+		  
 %%
 
 static gboolean

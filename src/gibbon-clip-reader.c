@@ -208,6 +208,20 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
         case G_TYPE_STRING:
                 g_value_set_string (value, token);
                 break;
+        case G_TYPE_UINT:
+                i = g_ascii_strtoll (token, NULL, 10);
+                if (i < 0)
+                        g_error ("CLIP parser: uint out of range: %lld\n",
+                                 (long long) i);
+                if (i > G_MAXUINT)
+                        g_error ("CLIP parser: uint out of range: %lld\n",
+                                 (long long) i);
+                g_value_set_uint (value, (guint) i);
+                break;
+        default:
+                g_error ("CLIP parser allocating value of unsupported"
+                         " type %d.\n", (gint) type);
+                break;
         }
 
         return self->priv->values->data;

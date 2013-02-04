@@ -412,6 +412,11 @@ FS		[ \t]*\.[ \t]*
 			= alloc_value ("0", G_TYPE_UINT);
 		return CLIP_JOINED_UNLIMITED;
 	}
+^Type{WS}\x27join\x27{WS}if{WS}you{WS}want{WS}to{WS}play{WS}the{WS}next{WS}game,{WS}type{WS}\x27leave\x27{WS}if{WS}you{WS}don\x27t.* {
+		((struct yyguts_t *) yyscanner)->yylval_r->value
+			= alloc_value ("309", G_TYPE_UINT);
+		return CLIP_JOIN_OR_LEAVE;
+	}
 <PARSED>and	return TOKEN_AND;
 	/*
 	 * We do not distinguish between bar and off.  When we convert it to
