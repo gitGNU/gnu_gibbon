@@ -91,6 +91,8 @@ OWS		[ \t]*
 /* Think full stop.  */
 FS		[ \t]*\.[ \t]*
 
+%x MOTD
+
 %%
 <INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
@@ -132,6 +134,33 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_END))
 			return -1;
 
+		return 1;
+	}
+<INITIAL>^3	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    FALSE,
+		                                    GIBBON_CLIP_MOTD_START,
+		                                    GIBBON_TT_END))
+			return -1;
+		BEGIN (MOTD);
+		return 1;
+	}
+<MOTD>^4	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    FALSE,
+		                                    GIBBON_CLIP_MOTD_END,
+		                                    GIBBON_TT_END))
+			return -1;
+		BEGIN (INITIAL);
+		return 1;
+	}
+<MOTD>^(.|\n)*	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 1,
+		                                    FALSE,
+		                                    GIBBON_CLIP_MOTD,
+		                                    GIBBON_TT_MESSAGE, 0,
+		                                    GIBBON_TT_END))
+			return -1;
 		return 1;
 	}
 [. \t]+		/* Ignore.  */

@@ -253,6 +253,10 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         i = g_ascii_strtoull (token, NULL, 10);
                 g_value_set_int64 (value, i);
                 break;
+        case GIBBON_TT_MESSAGE:
+                g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
         }
 
         return TRUE;
@@ -473,9 +477,9 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
 
         if (max_tokens) {
                 if (allow_dot)
-                        delimiter = " \t-:";
+                        delimiter = " \t";
                 else
-                        delimiter = " \t-:.";
+                        delimiter = " \t.";
                 tokens = g_strsplit_set (line, delimiter, max_tokens);
                 vector_length = g_strv_length (tokens);
         }

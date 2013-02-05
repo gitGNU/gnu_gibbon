@@ -33,7 +33,8 @@ enum GibbonCLIPLexerTokenType {
         GIBBON_TT_BOOLEAN,
         GIBBON_TT_NATURAL,
         GIBBON_TT_DOUBLE,
-        GIBBON_TT_REDOUBLES
+        GIBBON_TT_REDOUBLES,
+        GIBBON_TT_MESSAGE
 };
 
 #include <stdio.h>
