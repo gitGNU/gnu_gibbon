@@ -248,6 +248,18 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^12{WS}{USER}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    TRUE,
+		                                    GIBBON_CLIP_SAYS,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		BEGIN (MESSAGE);
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;

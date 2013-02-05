@@ -311,97 +311,88 @@ static struct test_case test_clip11 = {
 };
 
 static struct test_case test_clip12 = {
-                "12 gflohr Hello world.",
+                "12 gflohr    Hello world.",
                 {
                                 { G_TYPE_UINT, "12" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip13 = {
-                "13 gflohr Hello world.",
+                "13 gflohr    Hello world.",
                 {
                                 { G_TYPE_UINT, "13" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip14 = {
-                "14 gflohr Hello world.",
+                "14 gflohr    Hello world.",
                 {
                                 { G_TYPE_UINT, "14" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip15 = {
-                "15 gflohr Hello world.",
+                "15 gflohr    Hello world.",
                 {
                                 { G_TYPE_UINT, "15" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip16 = {
-                "16 gflohr Hello world.",
+                "16 gflohr    Hello world.",
                 {
                                 { G_TYPE_UINT, "16" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip17 = {
-                "17 Hello world.",
+                "17    Hello world.",
                 {
                                 { G_TYPE_UINT, "17" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip18 = {
-                "18 Hello world.",
+                "18    Hello world.",
                 {
                                 { G_TYPE_UINT, "18" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip19 = {
-                "19 Hello world.",
+                "19    Hello world.",
                 {
                                 { G_TYPE_UINT, "19" },
-                                { G_TYPE_STRING,
-                                                "Hello world." },
+                                { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_clip20 = {
-                "20 gflohr Mad world!",
+                "20 gflohr    Mad world!",
                 {
                                 { G_TYPE_UINT, "20" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_STRING,
-                                                "Mad world!" },
+                                { G_TYPE_STRING, "   Mad world!" },
                                 { G_TYPE_INVALID }
                 }
 };
