@@ -50,7 +50,7 @@ struct _GibbonCLIPReaderPrivate {
 G_DEFINE_TYPE (GibbonCLIPReader, gibbon_clip_reader, G_TYPE_OBJECT)
 
 static gboolean gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
-                                                const gchar *token,
+                                                gchar *token,
                                                 enum GibbonCLIPLexerTokenType t);
 
 static void 
@@ -179,13 +179,14 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
 
 static gboolean
 gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
-                                const gchar *token,
+                                gchar *token,
                                 enum GibbonCLIPLexerTokenType type)
 {
         GValue *value;
         GValue init = G_VALUE_INIT;
         gint64 i;
         gdouble d;
+        size_t length;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
         g_return_val_if_fail (token != NULL, FALSE);
@@ -212,6 +213,12 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 break;
         case GIBBON_TT_MAYBE_YOU:
                 g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
+        case GIBBON_TT_MAYBE_USER:
+                g_value_init (value, G_TYPE_STRING);
+                if (!g_strcmp0 (token, "-"))
+                        token = "";
                 g_value_set_string (value, token);
                 break;
         case GIBBON_TT_TIMESTAMP:
@@ -254,6 +261,13 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_MESSAGE:
+                g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
+        case GIBBON_TT_HOSTNAME:
+                length = strlen (token);
+                if ('*' == token[length - 1])
+                        token[length - 1] = 0;
                 g_value_init (value, G_TYPE_STRING);
                 g_value_set_string (value, token);
                 break;

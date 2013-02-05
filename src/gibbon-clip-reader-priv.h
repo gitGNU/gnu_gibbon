@@ -28,13 +28,15 @@ enum GibbonCLIPLexerTokenType {
         GIBBON_TT_END = 0,
         GIBBON_TT_USER,
         GIBBON_TT_MAYBE_YOU,
+        GIBBON_TT_MAYBE_USER,
         GIBBON_TT_TIMESTAMP,
         GIBBON_TT_WORD,
         GIBBON_TT_BOOLEAN,
         GIBBON_TT_NATURAL,
         GIBBON_TT_DOUBLE,
         GIBBON_TT_REDOUBLES,
-        GIBBON_TT_MESSAGE
+        GIBBON_TT_MESSAGE,
+        GIBBON_TT_HOSTNAME
 };
 
 #include <stdio.h>

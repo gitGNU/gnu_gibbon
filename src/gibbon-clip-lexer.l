@@ -84,7 +84,7 @@
 USER		[^-.:, \t]+
 CHUNK		[^ \t]+
 NUMBER		0|[1-9][0-9]*
-DOUBLE		(0|[1-9][0-9]*)(\.[0-9]+)?
+DOUBLE		[-+]?(0|[1-9][0-9]*)(\.[0-9]+)?
 FLAG		[01]
 WS		[ \t]+
 OWS		[ \t]*
@@ -98,7 +98,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
 		                                    TRUE,
 		                                    GIBBON_CLIP_WELCOME,
-		                                    GIBBON_TT_WORD, 3,
+		                                    GIBBON_TT_HOSTNAME, 3,
 		                                    GIBBON_TT_TIMESTAMP, 2,
 		                                    GIBBON_TT_USER, 1,
 		                                    GIBBON_TT_END))
@@ -161,6 +161,27 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_MESSAGE, 0,
 		                                    GIBBON_TT_END))
 			return -1;
+		return 1;
+	}
+<INITIAL>^5{WS}{USER}({WS}{CHUNK}){2}({WS}{FLAG}){2}{WS}{DOUBLE}({WS}{NUMBER}){3}({WS}{CHUNK}){3}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 13,
+		                                    TRUE,
+		                                    GIBBON_CLIP_WHO_INFO,
+		                                    GIBBON_TT_WORD, 12,
+		                                    GIBBON_TT_WORD, 11,
+		                                    GIBBON_TT_HOSTNAME, 10,
+		                                    GIBBON_TT_TIMESTAMP, 9,
+		                                    GIBBON_TT_NATURAL, 8,
+		                                    GIBBON_TT_NATURAL, 7,
+		                                    GIBBON_TT_DOUBLE, 6,
+		                                    GIBBON_TT_BOOLEAN, 5,
+		                                    GIBBON_TT_BOOLEAN, 4,
+		                                    GIBBON_TT_MAYBE_USER, 3,
+		                                    GIBBON_TT_MAYBE_USER, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
 		return 1;
 	}
 [. \t]+		/* Ignore.  */
