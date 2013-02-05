@@ -29,14 +29,11 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include "gibbon-clip-parser.h"
 #include "gibbon-clip-reader-priv.h"
 #include "gibbon-util.h"
 #include "gibbon-clip.h"
 
 #define reader gibbon_clip_lexer_get_extra(yyscanner)
-#define alloc_value(s, type) gibbon_clip_reader_alloc_value(		\
-	gibbon_clip_lexer_get_extra(yyscanner), s, type)
 
 %}
 
@@ -81,490 +78,67 @@
 %option noinput
 %option noyywrap
 %option reentrant
-%option bison-bridge
-%option stack
-%option noyy_top_state
 
 %option debug
 
-%s MOTD
-%s USER
-%s INTEGER
-%s MESSAGE
-%s FS
-%x PARSED
-
+USER		[^-.:, \t]+
+CHUNK		[^ \t]+
+NUMBER		0|[1-9][0-9]*
+DOUBLE		(0|[1-9][0-9]*)(\.[0-9]+)?
+FLAG		[01]
 WS		[ \t]+
 OWS		[ \t]*
 /* Think full stop.  */
 FS		[ \t]*\.[ \t]*
 
 %%
-^10{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("10", G_TYPE_INT64); 
-			return CLIP_MESSAGE_DELIVERED;
-		}
-^11{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("11", G_TYPE_INT64); 
-			return CLIP_MESSAGE_SAVED;
-		}
-^12[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("12", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_SAYS;
-		}
-^13[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("13", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_SHOUTS;
-		}
-^14[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("14", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_WHISPERS;
-		}
-^15[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("15", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_KIBITZES;
-		}
-^16[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("16", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_YOU_SAY;
-		}
-^17[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("17", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			return CLIP_YOU_SHOUT;
-		}
-^18[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("18", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			return CLIP_YOU_WHISPER;
-		}
-^19[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("19", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			return CLIP_YOU_KIBITZ;
-		}
-^20[ \t]		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("20", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);
-			return CLIP_ALERTS;
-		}
-^1{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("1", G_TYPE_INT64); 
-			return CLIP_WELCOME;
-		}
-^2{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("2", G_TYPE_INT64); 
-			return CLIP_OWN_INFO;
-		}
-^3{OWS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("3", G_TYPE_INT64); 
-			yy_push_state (MOTD, yyscanner);
-			return CLIP_MOTD_START;
-		}
-^4{OWS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("4", G_TYPE_INT64); 
-			yy_pop_state (yyscanner);
-			return CLIP_MOTD_END;
-		}	
-<MOTD>(.|\n)*	{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value (yytext, G_TYPE_STRING);
-			return CLIP_MOTD;
-		}
-^5{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("5", G_TYPE_INT64); 
-			return CLIP_WHO_INFO;
-		}
-^6{OWS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("6", G_TYPE_INT64); 
-			return CLIP_WHO_INFO_END;
-		}
-^7{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("7", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);			
-			return CLIP_LOGIN;
-		}
-^8{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("8", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (USER, yyscanner);			
-			return CLIP_LOGOUT;
-		}	
-^9{WS}		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("9", G_TYPE_INT64);
-			yy_push_state (MESSAGE, yyscanner);
-			yy_push_state (INTEGER, yyscanner);
-			yy_push_state (USER, yyscanner);			
-			return CLIP_MESSAGE;
-		}
-^\*\*{WS}	{
-			yy_push_state (PARSED, yyscanner);
-			return TOKEN_2STARS;
-		}
-^\*\*{WS}There{WS}is{WS}no{WS}one{WS}called{WS}[^.[:space:]]+.* {
-		char *ptr = 6 + strstr (yytext, "called");
-		char *user;
-		char *msg;
-		
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '.')
-			++ptr;
-		*ptr = 0;
-		
-		msg = g_strdup_printf (_("No player `%s'!"), user);
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (msg, G_TYPE_STRING);
-		g_free (msg);
-		gibbon_clip_reader_prepend_code (
-			reader, GIBBON_CLIP_ERROR_NO_USER);
-		
-		return TOKEN_ERROR;
-	}
-^\*\*{WS}You{WS}can\x27t{WS}play{WS}two{WS}games{WS}at{WS}once.* {
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (_("You cannot play two matches at once!"), 
-			               G_TYPE_STRING);
-		gibbon_clip_reader_prepend_code (
-			reader, GIBBON_CLIP_ERROR_NO_TWO_MATCHES);
-		
-		return TOKEN_ERROR;
-	}
-^board		{
-			((struct yyguts_t *) yyscanner)->yylval_r->value
-				= alloc_value ("200", G_TYPE_INT64);
-			return CLIP_BOARD;
-		}
-^[^:[:space:]]+{WS}rolls?	{
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner); 
-		return CLIP_ROLLS;
-	}
-^[^[:space:]]+{WS}moves?	{
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner); 
-		return CLIP_MOVES;
-	}
-^Starting{WS}a{WS}new{WS}game{WS}with	{
-		yy_push_state (PARSED, yyscanner);
-		return CLIP_START_GAME;
-	}
-^[^[:space:]]+{WS}logs{WS}out.{WS}The{WS}game{WS}was{WS}saved.* {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return CLIP_DROPS_GAME;
-	}
-^[^[:space:]]+{WS}drops{WS}connection.{WS}The{WS}game{WS}was{WS}saved.* {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return CLIP_DROPS_GAME;
-	}
-^Connection{WS}with{WS}[^[:space:]]+{WS}timed{WS}out\.{WS}The{WS}game{WS}was{WS}saved.* {
-		char *ptr = 4 + strstr (yytext, "with");
-		char *user;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (user, G_TYPE_STRING);
-		return CLIP_DROPS_GAME;
-	}
-^[^[:space:]]+{WS}can't{WS}move.* {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return CLIP_CANNOT_MOVE;
-	}
-^[^[:space:]]+{WS}doubles?{OWS}\..*    {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return CLIP_DOUBLES;
-	}
-^[^[:space:]]+{WS}accepts?{WS}the{WS}double{OWS}\.{OWS}The{WS}cube{WS}shows  {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner);
-		return CLIP_ACCEPTS_DOUBLE;
-	}
-^[^[:space:]]+{WS}wants{WS}to{WS}play{WS}an? {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner);
-		return CLIP_INVITATION;
-	}
-^[^[:space:]]+{WS}wants{WS}to{WS}resume{WS}a {
-		char *ptr = yytext;
-		while (*ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		yy_push_state (PARSED, yyscanner);
-		return CLIP_INVITATION;
-	}
-^Type{WS}\x27join{WS}[^\x27[:space:]]+\x27{WS}to{WS}accept.*    {
-		char *ptr = 4 + strstr (yytext, "join");
-		char *user;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != '\'')
-			++ptr;
-		*ptr = 0;		
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (user, G_TYPE_STRING);
-		return CLIP_TYPE_JOIN;
-	}
-^You\x27re{WS}now{WS}watching{WS}[^[:space:]]\.?.*    {
-		char *ptr = 8 + strstr (yytext, "watching");
-		char *user;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != '.' && *ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;		
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (user, G_TYPE_STRING);
-		return CLIP_YOURE_WATCHING;
-	}
-^Player{WS}[^[:space:]]+{WS}has{WS}joined{WS}you{WS}for{WS}an?{WS}unlimited{WS}match.*    {
-		char *ptr = 7 + strstr (yytext, "Player");
-		char *user;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		user = ptr;
-		while (*ptr != '.' && *ptr != ' ' && *ptr != '\t')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (user, G_TYPE_STRING);
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("0", G_TYPE_UINT);
-		return CLIP_JOINED_UNLIMITED;
-	}
-^Type{WS}\x27join\x27{WS}if{WS}you{WS}want{WS}to{WS}play{WS}the{WS}next{WS}game,{WS}type{WS}\x27leave\x27{WS}if{WS}you{WS}don\x27t.* {
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("309", G_TYPE_UINT);
-		return CLIP_JOIN_OR_LEAVE;
-	}
-<PARSED>and	return TOKEN_AND;
-	/*
-	 * We do not distinguish between bar and off.  When we convert it to
-	 * a number (0 or 25), we have to know the context anyway so that
-	 * we can take the move direction into account.  The parser does that
-	 * for us here.
-	 */
-<PARSED>bar|off|unlimited	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("0", G_TYPE_INT64);
-		return GINT64;
-	}
-<PARSED>saved	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value ("-1", G_TYPE_INT64);
-		return GINT64;
-	}
-<PARSED>You	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING);
-		return GSTRING;
-	}
-<PARSED>Player{WS}[^[:space:]]+	{
-		char *ptr = yytext + 6;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (ptr, G_TYPE_STRING);
-		return GSTRING;
-	}	
-<PARSED>You{WS}are{WS}now{WS}playing{WS}an?    {
-		return CLIP_NOW_PLAYING;
-	}
-<PARSED>point{WS}match{WS}with    {
-		return TOKEN_MATCH_WITH;
-	}
-<PARSED>match{WS}with    {
-		return TOKEN_MATCH_WITH;
-	}
-<PARSED>has{WS}joined{WS}you{WS}for{WS}a{WS}[1-9][0-9]*{WS}point{WS}match.* {
-        	char *ptr = 4 + strstr (yytext, "for");
-        	char *number;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		++ptr;
-		while (*ptr == ' ' || *ptr == '\t')
-			++ptr;
-		number = ptr;
-		while (*ptr >= '0'&& *ptr <= '9')
-			++ptr;
-		*ptr = 0;
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (number, G_TYPE_INT64);
-		return CLIP_JOINED_MATCH;
-        }
-<PARSED>-	/* 
-                 * Ignore.  The hyphen may be part of a move (e.g. "8-5") but
-                 * in that case it would be consumed by the regex for a 
-                 * (negative) integer.  We can then just as well ignore it
-                 * and "correct" the sign in the parser instead.
-                 */
-<PARSED>\.	;
-<PARSED>[-+]?(0|[1-9][0-9]*)	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_INT64);
-		return GINT64;
-	}
-<PARSED>point{WS}match{WS}with{WS}you	; /* Ignore.  */
-<PARSED>match{WS}with{WS}you		; /* Ignore.  */
-<PARSED>is{WS}refusing{WS}games{OWS}\.?	{
-		return TOKEN_REFUSING_GAMES;
-	}
-<PARSED>Error:	{
-		return TOKEN_ERROR_COLON;
-	}
-<PARSED>is{WS}already{WS}playing{WS}with{WS}someone{WS}else{OWS}\.?	{
-		return TOKEN_ALREADY_PLAYING;
-	}
-<PARSED>didn't{WS}invite{WS}you{OWS}\.?	{
-		return TOKEN_ALREADY_PLAYING;
-	}
-<PARSED>can't{WS}find{WS}player	{
-		return TOKEN_CANNOT_FIND_PLAYER;
-	}
-<PARSED>[^-.0-9[:space:]]+		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING); 
-		return GSTRING;
-	}
-<PARSED>{WS}	;
-<PARSED><<EOF>>	{
-			yy_pop_state (yyscanner);
-			if (YY_START) {
-				g_printerr ("Unbalanced start condition.\n");
-				return GARBAGE;
-			}
-			yyterminate ();
-		}
-<PARSED>.|\n	return GARBAGE;
+<INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
+		                                    TRUE,
+		                                    GIBBON_CLIP_WELCOME,
+		                                    GIBBON_TT_WORD, 3,
+		                                    GIBBON_TT_TIMESTAMP, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
 
-	/*
-	 * The trailing context is necessary so that matching a user name
-	 * plus trailing forbidden characters produces a longer match than
-	 * the catch-all GSTRING match at the end.
-	 */
-<USER>[^.[:space:]]+{OWS}/[.]?		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (gibbon_trim (yytext), G_TYPE_STRING); 
-		yy_pop_state (yyscanner);
-		return GSTRING;
+		return 1;
 	}
-<INTEGER>[-+]?(0|[1-9][0-9]*)[ \t]	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_INT64);
-		yy_pop_state (yyscanner);
-		return GINT64;
+<INITIAL>^2{WS}{USER}({WS}{FLAG}){8}{WS}{NUMBER}({WS}{FLAG}){4}{WS}{DOUBLE}({WS}{FLAG}){2}{WS}({NUMBER}|unlimited)({WS}{FLAG}){2}{WS}{CHUNK}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 22,
+		                                    TRUE,
+		                                    GIBBON_CLIP_OWN_INFO,
+		                                    GIBBON_TT_WORD, 21,
+		                                    GIBBON_TT_BOOLEAN, 20,
+		                                    GIBBON_TT_BOOLEAN, 19,
+		                                    GIBBON_TT_REDOUBLES, 18,
+		                                    GIBBON_TT_BOOLEAN, 17,
+		                                    GIBBON_TT_BOOLEAN, 16,
+		                                    GIBBON_TT_DOUBLE, 15,
+		                                    GIBBON_TT_BOOLEAN, 14,
+		                                    GIBBON_TT_BOOLEAN, 13,
+		                                    GIBBON_TT_BOOLEAN, 12,
+		                                    GIBBON_TT_BOOLEAN, 11,
+		                                    GIBBON_TT_NATURAL, 10,
+		                                    GIBBON_TT_BOOLEAN, 9,
+		                                    GIBBON_TT_BOOLEAN, 8,
+		                                    GIBBON_TT_BOOLEAN, 7,
+		                                    GIBBON_TT_BOOLEAN, 6,
+		                                    GIBBON_TT_BOOLEAN, 5,
+		                                    GIBBON_TT_BOOLEAN, 4,
+		                                    GIBBON_TT_BOOLEAN, 3,
+		                                    GIBBON_TT_BOOLEAN, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
 	}
-<MESSAGE>(.|\n)*		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING); 
-		yy_pop_state (yyscanner);
-		return GSTRING;
+[. \t]+		/* Ignore.  */
+.|\n			{
+		return -1;
+		BEGIN (INITIAL);
 	}
-<PARSED>terminated{WS}the{WS}game.{WS}The{WS}game{WS}was{WS}saved.* {
-		return CLIP_LEFT_GAME;
-	}
-<FS>{OWS}\.{OWS}	;
-[-+]?(0|[1-9][0-9]*)\.[0-9]+	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_DOUBLE); 
-		return GDOUBLE;
-	}
-[-+]?(0|[1-9][0-9]*)	{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_INT64); 
-		return GINT64;
-	}
-	/*
-	 * We exclude the colon here so that this rule does not consume an
-	 * entire board state.
-	 */
-[^:[:space:]]+		{
-		((struct yyguts_t *) yyscanner)->yylval_r->value
-			= alloc_value (yytext, G_TYPE_STRING); 
-		return GSTRING;
-	}
-{WS}			;
-.|\n			return yytext[0];
 %%
 
 void 
@@ -576,7 +150,7 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 	 * In a re-entrant scanner, the debug state is initialized to 0,
 	 * not to 1.
 	 */
-	yy_flex_debug = 0;
+	yy_flex_debug = 1;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);
@@ -587,7 +161,5 @@ gibbon_clip_lexer_reset_condition_stack (void *yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*) yyscanner;
 	
-	while (YY_START) {
-		yy_pop_state (yyscanner);
-	}
+	BEGIN (0);
 }

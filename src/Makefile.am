@@ -109,7 +109,6 @@ gibbon_SOURCES = 			\
         gibbon-clip.c			\
 	gibbon-clip-lexer.l		\
         gibbon-clip-reader.c		\
-	gibbon-clip-parser.y		\
         gibbon-connection.c		\
         gibbon-connection-dialog.c	\
         gibbon-country.c		\
@@ -157,7 +156,6 @@ noinst_HEADERS =			\
         gibbon-chat-view.h		\
         gibbon-client-icons.h		\
         gibbon-clip.h			\
-	gibbon-clip-parser.h		\
 	gibbon-clip-reader.h		\
 	gibbon-clip-reader-priv.h	\
         gibbon-connection.h		\
@@ -268,7 +266,7 @@ test_gary_wong_movegen_SOURCES = $(common_SOURCES) test-gary-wong-movegen.c
 test_pretty_print_move_SOURCES = $(common_SOURCES) test-pretty-print-move.c
 test_strsplit_SOURCES = $(common_SOURCES) test-strsplit.c
 test_clip_reader_SOURCES = $(common_SOURCES) gibbon-clip-reader.c \
-	gibbon-clip-parser.c gibbon-clip-lexer.c test-clip-reader.c
+	gibbon-clip-lexer.c test-clip-reader.c
 test_crawford_detection_SOURCES = $(common_SOURCES) test-crawford-detection.c
 test_gmd_reader_SOURCES = $(common_SOURCES) test-gmd-reader.c
 test_java_fibs_reader_SOURCES = $(common_SOURCES) test-java-fibs-reader.c

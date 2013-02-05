@@ -49,6 +49,10 @@ struct _GibbonCLIPReaderPrivate {
 
 G_DEFINE_TYPE (GibbonCLIPReader, gibbon_clip_reader, G_TYPE_OBJECT)
 
+static gboolean gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
+                                                const gchar *token,
+                                                enum GibbonCLIPLexerTokenType t);
+
 static void 
 gibbon_clip_reader_init (GibbonCLIPReader *self)
 {
@@ -113,15 +117,21 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
         GValue *value;
         GValue init = G_VALUE_INIT;
         const gchar *ptr;
-
-        gint error;
+        gint status;
+        gboolean error = FALSE;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
         g_return_val_if_fail (line != NULL, NULL);
 
         gibbon_clip_lexer_current_buffer (self->priv->yyscanner, line);
 
-        error = gibbon_clip_parser_parse (self->priv->yyscanner);
+        while (0 != (status = gibbon_clip_lexer_lex (self->priv->yyscanner))) {
+                if (status < 0) {
+                        error = TRUE;
+                        break;
+                }
+        }
+
         if (error) {
                 gibbon_clip_reader_free_result (self, self->priv->values);
                 self->priv->values = NULL;
@@ -158,98 +168,96 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                 }
         }
 
-        /*
-         * FIXME! Change GibbonSession to expect tokens in the opposite
-         * order.
-         */
-        retval = g_slist_reverse (self->priv->values);
+        retval = self->priv->values;
         self->priv->values = NULL;
 
         return retval;
 }
 
-void
-gibbon_clip_reader_yyerror (void *scanner, const gchar *msg)
-{
-        if (gibbon_debug ("clip-parser"))
-                g_printerr ("%s\n", msg);
-}
-
-void *
+static gboolean
 gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                                 const gchar *token,
-                                GType type)
+                                enum GibbonCLIPLexerTokenType type)
 {
         GValue *value;
         GValue init = G_VALUE_INIT;
         gint64 i;
         gdouble d;
 
-        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), NULL);
-        g_return_val_if_fail (token != NULL, NULL);
-        g_return_val_if_fail (type != G_TYPE_INVALID, NULL);
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+        g_return_val_if_fail (token != NULL, FALSE);
 
         value = g_malloc (sizeof *value);
         *value = init;
 
         self->priv->values = g_slist_prepend (self->priv->values, value);
 
-        g_value_init (value, type);
-
         switch (type) {
-        case G_TYPE_INT64:
+        case GIBBON_TT_END:
+                g_return_val_if_fail (type != GIBBON_TT_END, FALSE);
+                break;
+        case GIBBON_TT_USER:
+                if (!g_strcmp0 (token, "You"))
+                        return FALSE;
+                g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
+        case GIBBON_TT_MAYBE_YOU:
+                g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
+        case GIBBON_TT_TIMESTAMP:
+                g_value_init (value, G_TYPE_INT64);
                 i = g_ascii_strtoll (token, NULL, 10);
                 g_value_set_int64 (value, i);
                 break;
-        case G_TYPE_DOUBLE:
+        case GIBBON_TT_WORD:
+                g_value_init (value, G_TYPE_STRING);
+                g_value_set_string (value, token);
+                break;
+        case GIBBON_TT_BOOLEAN:
+                g_value_init (value, G_TYPE_BOOLEAN);
+                if (token[0] == '0')
+                        i = FALSE;
+                else if (token[0] == '1')
+                        i = TRUE;
+                else
+                        return FALSE;
+                if (token[1])
+                        return FALSE;
+                g_value_set_boolean (value, i);
+                break;
+        case GIBBON_TT_NATURAL:
+                g_value_init (value, G_TYPE_UINT64);
+                i = g_ascii_strtoull (token, NULL, 10);
+                g_value_set_uint64 (value, i);
+                break;
+        case GIBBON_TT_DOUBLE:
+                g_value_init (value, G_TYPE_DOUBLE);
                 d = g_ascii_strtod (token, NULL);
                 g_value_set_double (value, d);
                 break;
-        case G_TYPE_STRING:
-                g_value_set_string (value, token);
-                break;
-        case G_TYPE_UINT:
-                i = g_ascii_strtoll (token, NULL, 10);
-                if (i < 0)
-                        g_error ("CLIP parser: uint out of range: %lld\n",
-                                 (long long) i);
-                if (i > G_MAXUINT)
-                        g_error ("CLIP parser: uint out of range: %lld\n",
-                                 (long long) i);
-                g_value_set_uint (value, (guint) i);
-                break;
-        default:
-                g_error ("CLIP parser allocating value of unsupported"
-                         " type %d.\n", (gint) type);
+        case GIBBON_TT_REDOUBLES:
+                g_value_init (value, G_TYPE_INT64);
+                if (!g_strcmp0 (token, "unlimited"))
+                        i = -1;
+                else
+                        i = g_ascii_strtoull (token, NULL, 10);
+                g_value_set_int64 (value, i);
                 break;
         }
 
-        return self->priv->values->data;
-}
-
-void
-gibbon_clip_reader_prepend_code (GibbonCLIPReader *self, guint code)
-{
-        GValue *value;
-        GValue init = G_VALUE_INIT;
-
-        g_return_if_fail (GIBBON_IS_CLIP_READER (self));
-
-        value = g_malloc (sizeof *value);
-        *value = init;
-
-        self->priv->values = g_slist_append (self->priv->values, value);
-
-        g_value_init (value, G_TYPE_UINT);
-        g_value_set_uint (value, code);
+        return TRUE;
 }
 
 void
 gibbon_clip_reader_free_result (GibbonCLIPReader *self, GSList *values)
 {
-        g_slist_foreach (values, (GFunc) g_value_unset, NULL);
-        g_slist_foreach (values, (GFunc) g_free, NULL);
-        g_slist_free (values);
+        if (values) {
+                g_slist_foreach (values, (GFunc) g_value_unset, NULL);
+                g_slist_foreach (values, (GFunc) g_free, NULL);
+                g_slist_free (values);
+        }
 }
 
 gboolean
@@ -434,4 +442,66 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         g_value_set_boxed (value, pos);
 
         return TRUE;
+}
+
+gboolean
+gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
+                               gint max_tokens, gboolean allow_dot,
+                               guint clip_code, ...)
+{
+        va_list args;
+        enum GibbonCLIPLexerTokenType type;
+        int position;
+        gboolean retval = TRUE;
+        const gchar *delimiter;
+
+        gchar **tokens = NULL;
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+        gint vector_length = 0;
+
+        g_return_val_if_fail (line != NULL, FALSE);
+        g_return_val_if_fail (max_tokens >= 0, FALSE);
+
+        if (max_tokens) {
+                if (allow_dot)
+                        delimiter = " \t-:";
+                else
+                        delimiter = " \t-:.";
+                tokens = g_strsplit_set (line, delimiter, max_tokens);
+                vector_length = g_strv_length (tokens);
+        }
+
+        va_start (args, clip_code);
+
+        while ((type = va_arg (args, enum GibbonCLIPLexerTokenType))
+               != GIBBON_TT_END) {
+                position = va_arg (args, guint);
+                if (position > vector_length) {
+                        retval = FALSE;
+                        break;
+                }
+                if (!gibbon_clip_reader_alloc_value (self, tokens[position],
+                                                     type)) {
+                        retval = FALSE;
+                        break;
+                }
+        }
+
+        va_end (args);
+
+        if (tokens)
+                g_strfreev (tokens);
+
+        if (retval) {
+                value = g_malloc (sizeof *value);
+                *value = init;
+
+                g_value_init (value, G_TYPE_UINT);
+                g_value_set_uint (value, clip_code);
+                self->priv->values = g_slist_prepend (self->priv->values,
+                                                      value);
+        }
+
+        return retval;
 }

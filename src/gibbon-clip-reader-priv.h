@@ -24,6 +24,18 @@
 # include <config.h>
 #endif
 
+enum GibbonCLIPLexerTokenType {
+        GIBBON_TT_END = 0,
+        GIBBON_TT_USER,
+        GIBBON_TT_MAYBE_YOU,
+        GIBBON_TT_TIMESTAMP,
+        GIBBON_TT_WORD,
+        GIBBON_TT_BOOLEAN,
+        GIBBON_TT_NATURAL,
+        GIBBON_TT_DOUBLE,
+        GIBBON_TT_REDOUBLES
+};
+
 #include <stdio.h>
 
 #include <glib.h>
@@ -32,17 +44,17 @@
 
 G_BEGIN_DECLS
 
-void gibbon_clip_reader_yyerror (void *scanner, const gchar *msg);
+int gibbon_clip_lexer_lex (void *yyscanner);
 int gibbon_clip_lexer_lex_init_extra (void *self, void **yyscanner);
 int gibbon_clip_lexer_lex_destroy (void *yyscanner);
 void *gibbon_clip_lexer_get_extra (void *yyscanner);
 int gibbon_clip_parser_parse (void *yyscanner);
 void gibbon_clip_lexer_current_buffer (void *yyscanner, const gchar *line);
-void *gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
-                                      const gchar *token,
-                                      GType type);
-void gibbon_clip_reader_prepend_code (GibbonCLIPReader *self, guint code);
 void gibbon_clip_lexer_reset_condition_stack (void *yyscanner);
+gboolean gibbon_clip_reader_set_result (GibbonCLIPReader *self,
+                                        const gchar *line, gint max_tokens,
+                                        gboolean allow_dot,
+                                        guint clip_code, ...);
 gboolean gibbon_clip_reader_fixup_board (GibbonCLIPReader *self);
 
 G_END_DECLS
