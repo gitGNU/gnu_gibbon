@@ -248,11 +248,23 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>^12{WS}{USER}	{
+<INITIAL>^(1[2-6]|20){WS}{USER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    TRUE,
-		                                    GIBBON_CLIP_SAYS,
+		                                    10 * (yytext[0] - '0')
+		                                    + yytext[1] - '0',
 		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		BEGIN (MESSAGE);
+
+		return 1;
+	}
+<INITIAL>^(1[7-9])	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 1,
+		                                    TRUE,
+		                                    10 + yytext[1] - '0',
 		                                    GIBBON_TT_END))
 			return -1;
 
