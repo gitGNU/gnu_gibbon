@@ -160,9 +160,12 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                         ptr = line + 3;
                         while (*ptr == ' ' || *ptr == '\t')
                                 ++ptr;
-                        gibbon_clip_reader_alloc_value (self, ptr,
-                                                        G_TYPE_STRING);
-
+                        value = g_malloc (sizeof *value);
+                        *value = init;
+                        self->priv->values = g_slist_prepend (
+                                        self->priv->values, value);
+                        g_value_init (value, G_TYPE_STRING);
+                        g_value_set_string (value, ptr);
                 } else {
                         return NULL;
                 }
@@ -194,12 +197,17 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
 
         switch (type) {
         case GIBBON_TT_END:
+                /*
+                 * We have to initialize the value.  Otherwise, the test
+                 * suite will fail.
+                 */
+                g_value_init (value, G_TYPE_INT);
                 g_return_val_if_fail (type != GIBBON_TT_END, FALSE);
                 break;
         case GIBBON_TT_USER:
+                g_value_init (value, G_TYPE_STRING);
                 if (!g_strcmp0 (token, "You"))
                         return FALSE;
-                g_value_init (value, G_TYPE_STRING);
                 g_value_set_string (value, token);
                 break;
         case GIBBON_TT_MAYBE_YOU:
