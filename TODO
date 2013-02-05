@@ -155,6 +155,4 @@
 - Redoubles are not parsed.
 - Add debugging code to gibbon-connection so that all unhandled messages from
   the server are printed on stderr.
-- The CLIP parser must reset the start condition of the lexer on error.
-  Only on error, because the parser relies on the lexer for preserving
-  state.
+- Check that HTML entities are unescaped in messages from the server.

@@ -83,7 +83,7 @@
 
 USER		[^-.:, \t]+
 CHUNK		[^ \t]+
-NUMBER		0|[1-9][0-9]*
+NUMBER		[-+]?(0|[1-9][0-9]*)
 DOUBLE		[-+]?(0|[1-9][0-9]*)(\.[0-9]+)?
 FLAG		[01]
 WS		[ \t]+
@@ -92,6 +92,7 @@ OWS		[ \t]*
 FS		[ \t]*\.[ \t]*
 
 %x MOTD
+%x MESSAGE
 
 %%
 <INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
@@ -182,6 +183,53 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_END))
 			return -1;
 
+		return 1;
+	}
+<INITIAL>^6	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    FALSE,
+		                                    GIBBON_CLIP_WHO_INFO_END,
+		                                    GIBBON_TT_END))
+			return -1;
+		return 1;
+	}
+<INITIAL>^7{WS}{USER}.+	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    TRUE,
+		                                    GIBBON_CLIP_LOGIN,
+		                                    GIBBON_TT_MESSAGE, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^8{WS}{USER}.+	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    TRUE,
+		                                    GIBBON_CLIP_LOGOUT,
+		                                    GIBBON_TT_MESSAGE, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^9{WS}{USER}{WS}{NUMBER}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    TRUE,
+		                                    GIBBON_CLIP_MESSAGE,
+		                                    GIBBON_TT_TIMESTAMP, 2,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		BEGIN (MESSAGE);
+
+		return 1;
+	}
+<MESSAGE>(.|\n)*	{
+		BEGIN (INITIAL);
 		return 1;
 	}
 [. \t]+		/* Ignore.  */

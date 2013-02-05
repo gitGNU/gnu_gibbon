@@ -519,7 +519,7 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
         if (tokens)
                 g_strfreev (tokens);
 
-        if (retval) {
+        if (retval && clip_code) {
                 value = g_malloc (sizeof *value);
                 *value = init;
 
