@@ -471,7 +471,7 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
 }
 
 gboolean
-gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
+gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
                                gint max_tokens, gboolean allow_dot,
                                guint clip_code, ...)
 {
@@ -486,7 +486,7 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
         GValue init = G_VALUE_INIT;
         gint vector_length = 0;
 
-        g_return_val_if_fail (line != NULL, FALSE);
+        g_return_val_if_fail (yytext != NULL, FALSE);
         g_return_val_if_fail (max_tokens >= 0, FALSE);
 
         if (max_tokens) {
@@ -494,7 +494,7 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
                         delimiter = " \t";
                 else
                         delimiter = " \t.";
-                tokens = g_strsplit_set (line, delimiter, max_tokens);
+                tokens = g_strsplit_set (yytext, delimiter, max_tokens);
                 vector_length = g_strv_length (tokens);
         }
 
@@ -530,4 +530,23 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *line,
         }
 
         return retval;
+}
+
+gboolean
+gibbon_clip_reader_append_message (GibbonCLIPReader *self, const gchar *yytext)
+{
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+
+        g_return_val_if_fail (yytext != NULL, FALSE);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+
+        self->priv->values = g_slist_append (self->priv->values, value);
+
+        g_value_init (value, G_TYPE_STRING);
+        g_value_set_string (value, yytext);
+
+        return TRUE;
 }

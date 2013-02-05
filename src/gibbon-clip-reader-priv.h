@@ -58,6 +58,8 @@ gboolean gibbon_clip_reader_set_result (GibbonCLIPReader *self,
                                         const gchar *line, gint max_tokens,
                                         gboolean allow_dot,
                                         guint clip_code, ...);
+gboolean gibbon_clip_reader_append_message (GibbonCLIPReader *self,
+                                            const gchar *line);
 gboolean gibbon_clip_reader_fixup_board (GibbonCLIPReader *self);
 
 G_END_DECLS
