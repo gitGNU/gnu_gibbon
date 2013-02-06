@@ -503,7 +503,9 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
         while ((type = va_arg (args, enum GibbonCLIPLexerTokenType))
                != GIBBON_TT_END) {
                 position = va_arg (args, guint);
-                if (position > vector_length) {
+                if (position < 0)
+                        position = vector_length + position;
+                if (position > vector_length || position < 0) {
                         retval = FALSE;
                         break;
                 }
@@ -549,4 +551,38 @@ gibbon_clip_reader_append_message (GibbonCLIPReader *self, const gchar *yytext)
         g_value_set_string (value, yytext);
 
         return TRUE;
+}
+
+void
+gibbon_clip_reader_set_error (GibbonCLIPReader *self,
+                              enum GibbonCLIPErrorCode code,
+                              const gchar *format, ...)
+{
+        va_list args;
+        gchar *msg;
+        GValue *value;
+        GValue init = G_VALUE_INIT;
+
+        va_start (args, format);
+        msg = g_strdup_vprintf (format, args);
+        va_end (args);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (self->priv->values, value);
+        g_value_init (value, G_TYPE_STRING);
+        g_value_set_string (value, msg);
+        g_free (msg);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (self->priv->values, value);
+        g_value_init (value, G_TYPE_UINT);
+        g_value_set_uint (value, (guint) code);
+
+        value = g_malloc (sizeof *value);
+        *value = init;
+        self->priv->values = g_slist_prepend (self->priv->values, value);
+        g_value_init (value, G_TYPE_UINT);
+        g_value_set_uint (value, (guint) GIBBON_CLIP_ERROR);
 }

@@ -126,7 +126,7 @@ enum GibbonClipType {
                         GIBBON_CLIP_TYPE_TIMESTAMP
 };
 
-enum GibbonClipErrorCode {
+enum GibbonCLIPErrorCode {
         GIBBON_CLIP_ERROR_UNKNOWN = 0,
         GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS = 1,
         GIBBON_CLIP_ERROR_NO_USER = 2,

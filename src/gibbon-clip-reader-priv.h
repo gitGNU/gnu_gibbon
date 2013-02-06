@@ -44,6 +44,7 @@ enum GibbonCLIPLexerTokenType {
 #include <glib.h>
 
 #include "gibbon-clip-reader.h"
+#include "gibbon-clip.h"
 
 G_BEGIN_DECLS
 
@@ -58,6 +59,10 @@ gboolean gibbon_clip_reader_set_result (GibbonCLIPReader *self,
                                         const gchar *line, gint max_tokens,
                                         gboolean allow_dot,
                                         guint clip_code, ...);
+void gibbon_clip_reader_set_error (GibbonCLIPReader *self,
+                                   enum GibbonCLIPErrorCode code,
+                                   const gchar *format, ...)
+                                   G_GNUC_PRINTF (3, 4);
 gboolean gibbon_clip_reader_append_message (GibbonCLIPReader *self,
                                             const gchar *line);
 gboolean gibbon_clip_reader_fixup_board (GibbonCLIPReader *self);

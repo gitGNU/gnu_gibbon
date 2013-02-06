@@ -272,6 +272,18 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^\*\*{WS}There{WS}is{WS}no{OWS}one{WS}called{WS}{USER} {
+		char *user = 7 + strstr (yytext, "called");
+		while (*user == ' ' || *user == '\t')
+			++user;
+		
+		gibbon_clip_reader_set_error (reader,
+   	                                      GIBBON_CLIP_ERROR_NO_USER,
+		                              _("No such player: %s!"),
+		                              user);
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
@@ -279,7 +291,7 @@ FS		[ \t]*\.[ \t]*
 		BEGIN (INITIAL);
 		return 1;
 	}
-[. \t]+		/* Ignore (including a full-stop.  */
+[. \t]+		/* Ignore! Including a full-stop!  */
 .|\n			{
 		return -1;
 		BEGIN (INITIAL);

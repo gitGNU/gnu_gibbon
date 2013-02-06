@@ -435,7 +435,7 @@ static struct test_case test_error03 = {
                 {
                                 { G_TYPE_UINT, "100" },
                                 { G_TYPE_UINT, "2" },
-                                { G_TYPE_STRING, "No player `anonymous'!"},
+                                { G_TYPE_STRING, "No such player: anonymous!"},
                                 { G_TYPE_INVALID }
                 },
 };
