@@ -142,13 +142,16 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                  */
                 if ('*' == line[0] && '*' == line[1]
                     && (' ' == line[2] || '\t' == line[2])) {
+                        ptr = line + 3;
+                        while (*ptr == ' ' || *ptr == '\t')
+                                ++ptr;
+
                         value = g_malloc (sizeof *value);
                         *value = init;
-
                         self->priv->values = g_slist_prepend (
                                         self->priv->values, value);
-                        g_value_init (value, G_TYPE_UINT);
-                        g_value_set_uint (value, GIBBON_CLIP_ERROR);
+                        g_value_init (value, G_TYPE_STRING);
+                        g_value_set_string (value, ptr);
 
                         value = g_malloc (sizeof *value);
                         *value = init;
@@ -157,15 +160,12 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                         g_value_init (value, G_TYPE_UINT);
                         g_value_set_uint (value, GIBBON_CLIP_ERROR_UNKNOWN);
 
-                        ptr = line + 3;
-                        while (*ptr == ' ' || *ptr == '\t')
-                                ++ptr;
                         value = g_malloc (sizeof *value);
                         *value = init;
                         self->priv->values = g_slist_prepend (
                                         self->priv->values, value);
-                        g_value_init (value, G_TYPE_STRING);
-                        g_value_set_string (value, ptr);
+                        g_value_init (value, G_TYPE_UINT);
+                        g_value_set_uint (value, GIBBON_CLIP_ERROR);
                 } else {
                         return NULL;
                 }
