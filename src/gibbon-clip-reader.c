@@ -357,17 +357,17 @@ gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
         /* Regular points.  */
         if (direction == GIBBON_POSITION_SIDE_BLACK) {
                 for (i = 0; i < 24; ++i) {
-                        numbers[i] *= color;
-                        if (numbers[i] < -15 || numbers[i] > +15)
+                        numbers[i + 4] *= color;
+                        if (numbers[i + 4] < -15 || numbers[i + 4] > +15)
                                 goto bail_out_board;
                         pos->points[i] = numbers[i + 4];
                 }
         } else {
-                for (i = 23; i >= 0; --i) {
-                        numbers[i] *= color;
-                        if (numbers[i] < -15 || numbers[i] > +15)
+                for (i = 0; i < 24; ++i) {
+                        numbers[i + 4] *= color;
+                        if (numbers[i + 4] < -15 || numbers[i + 4] > +15)
                                 goto bail_out_board;
-                        pos->points[i] = numbers[i + 4];
+                        pos->points[23 - i] = numbers[i + 4];
                 }
         }
 
