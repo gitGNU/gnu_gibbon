@@ -97,7 +97,7 @@ FS		[ \t]*\.[ \t]*
 %%
 <INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_WELCOME,
 		                                    GIBBON_TT_HOSTNAME, 3,
 		                                    GIBBON_TT_TIMESTAMP, 2,
@@ -109,7 +109,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^2{WS}{USER}({WS}{FLAG}){8}{WS}{NUMBER}({WS}{FLAG}){4}{WS}{DOUBLE}({WS}{FLAG}){2}{WS}({NUMBER}|unlimited)({WS}{FLAG}){2}{WS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 22,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_OWN_INFO,
 		                                    GIBBON_TT_WORD, 21,
 		                                    GIBBON_TT_BOOLEAN, 20,
@@ -139,7 +139,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^3	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
-		                                    FALSE,
+		                                    NULL,
 		                                    GIBBON_CLIP_MOTD_START,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -148,7 +148,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <MOTD>^4	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
-		                                    FALSE,
+		                                    NULL,
 		                                    GIBBON_CLIP_MOTD_END,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -157,7 +157,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <MOTD>^(.|\n)*	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 1,
-		                                    FALSE,
+		                                    " ",
 		                                    GIBBON_CLIP_MOTD,
 		                                    GIBBON_TT_MESSAGE, 0,
 		                                    GIBBON_TT_END))
@@ -166,7 +166,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^5{WS}{USER}({WS}{CHUNK}){2}({WS}{FLAG}){2}{WS}{DOUBLE}({WS}{NUMBER}){3}({WS}{CHUNK}){3}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 13,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_WHO_INFO,
 		                                    GIBBON_TT_WORD, 12,
 		                                    GIBBON_TT_WORD, 11,
@@ -187,7 +187,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^6	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
-		                                    FALSE,
+		                                    NULL,
 		                                    GIBBON_CLIP_WHO_INFO_END,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -195,7 +195,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^7{WS}{USER}.+	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_LOGIN,
 		                                    GIBBON_TT_MESSAGE, 2,
 		                                    GIBBON_TT_USER, 1,
@@ -206,7 +206,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^8{WS}{USER}.+	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_LOGOUT,
 		                                    GIBBON_TT_MESSAGE, 2,
 		                                    GIBBON_TT_USER, 1,
@@ -217,7 +217,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^9{WS}{USER}{WS}{NUMBER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_MESSAGE,
 		                                    GIBBON_TT_TIMESTAMP, 2,
 		                                    GIBBON_TT_USER, 1,
@@ -230,7 +230,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^10{WS}{USER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_MESSAGE_DELIVERED,
 		                                    GIBBON_TT_USER, 1,
 		                                    GIBBON_TT_END))
@@ -240,7 +240,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^11{WS}{USER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    TRUE,
+		                                    " \t",
 		                                    GIBBON_CLIP_MESSAGE_SAVED,
 		                                    GIBBON_TT_USER, 1,
 		                                    GIBBON_TT_END))
@@ -250,7 +250,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^(1[2-6]|20){WS}{USER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    TRUE,
+		                                    " \t",
 		                                    10 * (yytext[0] - '0')
 		                                    + yytext[1] - '0',
 		                                    GIBBON_TT_USER, 1,
@@ -263,7 +263,7 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^(1[7-9])	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 1,
-		                                    TRUE,
+		                                    " \t",
 		                                    10 + yytext[1] - '0',
 		                                    GIBBON_TT_END))
 			return -1;
@@ -283,6 +283,18 @@ FS		[ \t]*\.[ \t]*
 		                              user);
 
 		return 1;
+	}
+<INITIAL>^board:{USER}:{USER}(:{NUMBER}){50}	{
+		gchar **tokens = g_strsplit (yytext + 6, ":", -1);
+		gboolean success = gibbon_clip_reader_set_board (reader, 
+		                                                 tokens);
+		
+		g_strfreev (tokens);
+
+		if (success)
+			return 1;
+		else
+			return -1;
 	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))

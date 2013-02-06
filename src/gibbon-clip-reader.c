@@ -287,18 +287,31 @@ gibbon_clip_reader_free_result (GibbonCLIPReader *self, GSList *values)
 }
 
 gboolean
-gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
+gibbon_clip_reader_set_board (GibbonCLIPReader *self, gchar **tokens)
 {
         GValue *value;
         GValue init = G_VALUE_INIT;
         GibbonPosition *pos;
-        GSList *iter = self->priv->values;
         GibbonPositionSide color, turn;
-        gboolean direction, cube_turned;
+        gboolean direction;
         gboolean post_crawford, no_crawford;
-        gint dice[4];
+        gint64 numbers[50];
+        gint i;
+        gchar *end = NULL;
+
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
-        gint i, checkers;
+
+        if (52 != g_strv_length (tokens))
+                return FALSE;
+
+        errno = 0;
+        for (i = 0; i < G_N_ELEMENTS (numbers); ++i) {
+                numbers[i] = g_ascii_strtoll (tokens[i + 2], &end, 10);
+                if (errno)
+                        return FALSE;
+                if (!end || *end)
+                        return FALSE;
+        }
 
         pos = gibbon_position_new ();
 
@@ -308,25 +321,131 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         memset (pos->points, 0, sizeof pos->points);
 
         /*
-         * No iterate over the list and fill our board structure.  Remember
-         * that we are walking over the list from the tail.
+         * No iterate over the list and fill our board structure.
          *
          * The documentation for the data structure is available at
          * http://www.fibs.com/fibs_interface.html#board_state
          */
 
+        pos->players[0] = g_strdup (tokens[0]);
+        pos->players[1] = g_strdup (tokens[1]);
+
+        if (numbers[0] < 1)
+                goto bail_out_board;
+        if (numbers[0] >= 9999)
+                numbers[0] = 0;
+        pos->match_length = numbers[0];
+
+        if (numbers[1] < 0)
+                goto bail_out_board;
+        pos->scores[0] = numbers[1];
+
+        if (numbers[2] < 0)
+                goto bail_out_board;
+        pos->scores[1] = numbers[2];
+
+        /* Color.  */
+        if (numbers[38] != -1 && numbers[38] != 1)
+                goto bail_out_board;
+        color = numbers[38];
+
+        /* Direction.  */
+        if (numbers[39] != -1 && numbers[39] != 1)
+                goto bail_out_board;
+        direction = numbers[39];
+
+        /* Regular points.  */
+        if (direction == GIBBON_POSITION_SIDE_BLACK) {
+                for (i = 0; i < 24; ++i) {
+                        numbers[i] *= color;
+                        if (numbers[i] < -15 || numbers[i] > +15)
+                                goto bail_out_board;
+                        pos->points[i] = numbers[i + 4];
+                }
+        } else {
+                for (i = 23; i >= 0; --i) {
+                        numbers[i] *= color;
+                        if (numbers[i] < -15 || numbers[i] > +15)
+                                goto bail_out_board;
+                        pos->points[i] = numbers[i + 4];
+                }
+        }
+
+        if (numbers[29] < -1 || numbers[29] > 1)
+                goto bail_out_board;
+        turn = numbers[29];
+
+        if (numbers[30] < 0 || numbers[30] > 6)
+                goto bail_out_board;
+        if (numbers[31] < 0 || numbers[31] > 6)
+                goto bail_out_board;
+        if (numbers[32] < 0 || numbers[32] > 6)
+                goto bail_out_board;
+        if (numbers[33] < 0 || numbers[33] > 6)
+                goto bail_out_board;
+
         /*
-         * Number of redoubles is ignored.
+         * Translate FIBS' notion to who is on turn to our internal one.
+         */
+        if (turn == color) {
+                pos->turn = GIBBON_POSITION_SIDE_WHITE;
+                pos->dice[0] = numbers[30];
+                pos->dice[1] = numbers[31];
+        } else if (turn) {
+                pos->turn = GIBBON_POSITION_SIDE_BLACK;
+                pos->dice[0] = -numbers[32];
+                pos->dice[1] = -numbers[33];
+        } else {
+                pos->turn = GIBBON_POSITION_SIDE_NONE;
+        }
+
+
+        if (numbers[34] < 0
+            || (numbers[34] & (~numbers[34] + 1)) != numbers[34])
+                goto bail_out_board;
+        pos->cube = numbers[34];
+
+        /*
+         * May double flags.  These may have to be corrected later.
+         */
+        if (numbers[35] != 0 && numbers[35] != 1)
+                goto bail_out_board;
+        pos->may_double[0] = numbers[35];
+        if (numbers[36] != 0 && numbers[36] != 1)
+                goto bail_out_board;
+        pos->may_double[1] = numbers[36];
+
+        /*
+         * Cube currently turned? Documented as "Was Doubled".
+         */
+        if (numbers[37] != 0 && numbers[37] != 1)
+                goto bail_out_board;
+        pos->cube_turned = numbers[37];
+
+        /*
+         * Number of checkers on the bar.
+         */
+        if (numbers[44] < 0 || numbers[44] > 15)
+                goto bail_out_board;
+        pos->bar[0] = numbers[44];
+        if (numbers[45] < 0 || numbers[45] > 15)
+                goto bail_out_board;
+        pos->bar[1] = numbers[45];
+
+        /*
+         * FIXME: Number of redoubles is ignored.
          */
 
         /*
-         * The next to flags are described incorrectly at the URI mentioned
+         * The next two flags are described incorrectly at the URI mentioned
          * above.
          *
          * The flag called "forced move" there is really a flag
          * indicating that the Crawford rule is active.  Unfortunately,
          * the flag is only set for the Crawford game, or for post-Crawford
-         * games.  Before that it is always turned off.
+         * games.  Before that it is always turned off.  The other oddity
+         * which is not limited to 0 and 1 but to 0 and an arbitrary
+         * integer.
          *
          * The best strategy for Crawford detection is therefore to always
          * assume that the Crawford rule applies.  And when one opponent
@@ -337,114 +456,13 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
          * that the Crawford rule applies, and that this is a post-Crawford
          * game.
          */
-        iter = iter->next;
-        post_crawford = g_value_get_boolean (iter->data);
-        iter = iter->next;
-        no_crawford = g_value_get_boolean (iter->data);
+        if (numbers[47] < 0)
+                goto bail_out_board;
+        no_crawford = (gboolean) numbers[47];
+        if (numbers[48] != 0 && numbers[48] != 1)
+                goto bail_out_board;
+        post_crawford = numbers[48];
 
-        /* Skip "Can Move.  */
-        iter = iter->next;
-
-        /*
-         * Number of checkers on the bar.
-         */
-        iter = iter->next;
-        pos->bar[1] = g_value_get_uint (iter->data);
-        iter = iter->next;
-        pos->bar[0] = g_value_get_uint (iter->data);
-
-        /*
-         * The next four fields are "on home" and "home and bar".  We all
-         * ignore them as they are redundant.
-         */
-        iter = iter->next;
-        iter = iter->next;
-        iter = iter->next;
-        iter = iter->next;
-
-        iter = iter->next;
-        direction = g_value_get_int (iter->data);
-        iter = iter->next;
-        color = g_value_get_int (iter->data);
-        iter = iter->next;
-        cube_turned = g_value_get_boolean (iter->data);
-
-        /*
-         * May double flags.  These may have to be corrected later.
-         */
-        iter = iter->next;
-        pos->may_double[1] = g_value_get_boolean (iter->data);
-        iter = iter->next;
-        pos->may_double[0] = g_value_get_boolean (iter->data);
-
-        iter = iter->next;
-        pos->cube = g_value_get_uint64 (iter->data);
-
-        iter = iter->next;
-        dice[3] = g_value_get_int (iter->data);
-        iter = iter->next;
-        dice[2] = g_value_get_int (iter->data);
-        iter = iter->next;
-        dice[1] = g_value_get_int (iter->data);
-        iter = iter->next;
-        dice[0] = g_value_get_int (iter->data);
-        if (dice[3] && dice[2]) {
-                pos->dice[1] = -dice[3];
-                pos->dice[0] = -dice[2];
-        } else {
-                pos->dice[1] = dice[1];
-                pos->dice[0] = dice[0];
-        }
-
-        iter = iter->next;
-        turn = g_value_get_int (iter->data);
-
-        /* FIBS encodes the bar and home again.  Skip it.  */
-        iter = iter->next;
-
-        if (direction == GIBBON_POSITION_SIDE_BLACK) {
-                for (i = 23; i >= 0; --i) {
-                        iter = iter->next;
-                        checkers = g_value_get_int (iter->data);
-                        pos->points[i] = color * checkers;
-                }
-        } else {
-                for (i = 0; i < 24; ++i) {
-                        iter = iter->next;
-                        checkers = g_value_get_int (iter->data);
-                        pos->points[i] = color * checkers;
-                }
-        }
-
-        /* FIBS encodes the bar and home again.  Skip it.  */
-        iter = iter->next;
-
-        iter = iter->next;
-        pos->scores[1] = g_value_get_uint (iter->data);
-        iter = iter->next;
-        pos->scores[0] = g_value_get_uint (iter->data);
-        iter = iter->next;
-        pos->match_length = g_value_get_uint (iter->data);
-
-        iter = iter->next;
-        pos->players[1] = g_strdup (g_value_get_string (iter->data));
-        iter = iter->next;
-        pos->players[0] = g_strdup (g_value_get_string (iter->data));
-
-        /*
-         * Translate FIBS' notion to who is on turn to our internal one.
-         */
-        if (turn == color) {
-                pos->turn = GIBBON_POSITION_SIDE_WHITE;
-        } else if (turn) {
-                pos->turn = GIBBON_POSITION_SIDE_BLACK;
-        } else {
-                pos->turn = GIBBON_POSITION_SIDE_NONE;
-        }
-
-        /*
-         * Crawford detection.
-         */
         if (!no_crawford && pos->match_length
             && (pos->scores[0] == pos->match_length - 1
                 || pos->scores[1] == pos->match_length - 1)) {
@@ -456,11 +474,6 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
                 }
         }
 
-        /*
-         * The old list is now no longer needed.
-         */
-        gibbon_clip_reader_free_result (self, self->priv->values);
-
         value = g_malloc (sizeof *value);
         *value = init;
         self->priv->values = g_slist_prepend (NULL, value);
@@ -468,18 +481,22 @@ gibbon_clip_reader_fixup_board (GibbonCLIPReader *self)
         g_value_set_boxed (value, pos);
 
         return TRUE;
+
+bail_out_board:
+        gibbon_position_free (pos);
+
+        return FALSE;
 }
 
 gboolean
 gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
-                               gint max_tokens, gboolean allow_dot,
+                               gint max_tokens, const gchar *delimiter,
                                guint clip_code, ...)
 {
         va_list args;
         enum GibbonCLIPLexerTokenType type;
         int position;
         gboolean retval = TRUE;
-        const gchar *delimiter;
 
         gchar **tokens = NULL;
         GValue *value;
@@ -489,11 +506,7 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
         g_return_val_if_fail (yytext != NULL, FALSE);
         g_return_val_if_fail (max_tokens >= 0, FALSE);
 
-        if (max_tokens) {
-                if (allow_dot)
-                        delimiter = " \t";
-                else
-                        delimiter = " \t.";
+        if (max_tokens && delimiter) {
                 tokens = g_strsplit_set (yytext, delimiter, max_tokens);
                 vector_length = g_strv_length (tokens);
         }
