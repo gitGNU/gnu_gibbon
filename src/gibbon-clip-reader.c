@@ -271,6 +271,13 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 g_value_init (value, G_TYPE_STRING);
                 g_value_set_string (value, token);
                 break;
+        case GIBBON_TT_DIE:
+                g_value_init (value, G_TYPE_UINT);
+                i = token[0] - '0';
+                if (token[1] || i < 1 || i > 6)
+                        return FALSE;
+                g_value_set_uint (value, i);
+                break;
         }
 
         return TRUE;
