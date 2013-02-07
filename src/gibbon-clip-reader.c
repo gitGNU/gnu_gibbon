@@ -278,6 +278,21 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         return FALSE;
                 g_value_set_uint (value, i);
                 break;
+        case GIBBON_TT_POINT:
+                g_value_init (value, G_TYPE_UINT);
+                /*
+                 * At this point we cannot decide whether off and bar
+                 * correspond to 0 or 25.  We will fix that up in a later step
+                 * by looking at the adjacent point.
+                 */
+                if (!g_strcmp0 (token, "off"))
+                        i = 0;
+                else if (!g_strcmp0 (token, "bar"))
+                        i = 0;
+                else
+                        i = g_ascii_strtoull (token, NULL, 10);
+                g_value_set_uint (value, i);
+                break;
         }
 
         return TRUE;

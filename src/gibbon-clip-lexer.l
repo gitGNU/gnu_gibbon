@@ -84,6 +84,7 @@
 USER		[^-.:, \t]+
 CHUNK		[^ \t]+
 NUMBER		[-+]?(0|[1-9][0-9]*)
+POINT		(off|bar|[1-9]|1[0-9]|2[0-4])
 DOUBLE		[-+]?(0|[1-9][0-9]*)(\.[0-9]+)?
 FLAG		[01]
 WS		[ \t]+
@@ -306,6 +307,66 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_END))
 			return -1;
 
+		return 1;
+	}
+<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){4}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
+		                                    "- \t",
+		                                    GIBBON_CLIP_MOVES,
+		                                    GIBBON_TT_POINT, 9,
+		                                    GIBBON_TT_POINT, 8,
+		                                    GIBBON_TT_POINT, 7,
+		                                    GIBBON_TT_POINT, 6,
+		                                    GIBBON_TT_POINT, 5,
+		                                    GIBBON_TT_POINT, 4,
+		                                    GIBBON_TT_POINT, 3,
+		                                    GIBBON_TT_POINT, 2,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		return 1;
+	}
+<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){3}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    "- \t",
+		                                    GIBBON_CLIP_MOVES,
+		                                    GIBBON_TT_POINT, 7,
+		                                    GIBBON_TT_POINT, 6,
+		                                    GIBBON_TT_POINT, 5,
+		                                    GIBBON_TT_POINT, 4,
+		                                    GIBBON_TT_POINT, 3,
+		                                    GIBBON_TT_POINT, 2,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		return 1;
+	}
+<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){2}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    "- \t",
+		                                    GIBBON_CLIP_MOVES,
+		                                    GIBBON_TT_POINT, 5,
+		                                    GIBBON_TT_POINT, 4,
+		                                    GIBBON_TT_POINT, 3,
+		                                    GIBBON_TT_POINT, 2,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		return 1;
+	}
+<INITIAL>{USER}{WS}moves?{WS}{POINT}{OWS}-{OWS}{POINT}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
+		                                    "- \t",
+		                                    GIBBON_CLIP_MOVES,
+		                                    GIBBON_TT_POINT, 3,
+		                                    GIBBON_TT_POINT, 2,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
 		return 1;
 	}
 <MESSAGE>[ \t](.|\n)*	{
