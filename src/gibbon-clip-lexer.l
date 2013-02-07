@@ -302,7 +302,7 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_CLIP_ROLLS,
 		                                    GIBBON_TT_DIE, 4,
 		                                    GIBBON_TT_DIE, 2,
-		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
 
