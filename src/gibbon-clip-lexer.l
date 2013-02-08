@@ -446,6 +446,37 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>You{WS}double\.{WS}Please{WS}wait{WS}for{WS}{USER}{WS}to{WS}accept{WS}or{WS}reject	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
+		                                    " \t",
+		                                    GIBBON_CLIP_DOUBLES,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>{USER}{WS}doubles\.{WS}Type{WS}\x27accept\x27{WS}or{WS}\x27reject\x27	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    " \t",
+		                                    GIBBON_CLIP_DOUBLES,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>{USER}{WS}accepts?{WS}the{WS}double\.{WS}The{WS}cube{WS}shows{WS}{NUMBER}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
+		                                    " \t",
+		                                    GIBBON_CLIP_ACCEPTS_DOUBLE,
+		                                    GIBBON_TT_CUBE, -1,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;

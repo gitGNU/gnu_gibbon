@@ -38,7 +38,8 @@ enum GibbonCLIPLexerTokenType {
         GIBBON_TT_MESSAGE,
         GIBBON_TT_HOSTNAME,
         GIBBON_TT_DIE,
-        GIBBON_TT_POINT
+        GIBBON_TT_POINT,
+        GIBBON_TT_CUBE
 };
 
 #include <stdio.h>

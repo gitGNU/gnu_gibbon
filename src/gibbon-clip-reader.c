@@ -293,6 +293,13 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         i = g_ascii_strtoull (token, NULL, 10);
                 g_value_set_uint (value, i);
                 break;
+        case GIBBON_TT_CUBE:
+                g_value_init (value, G_TYPE_UINT64);
+                i = g_ascii_strtoull (token, NULL, 10);
+                if (i == 0 || (i & (~i + 1)) != i)
+                        return FALSE;
+                g_value_set_uint64 (value, i);
+                break;
         }
 
         return TRUE;
