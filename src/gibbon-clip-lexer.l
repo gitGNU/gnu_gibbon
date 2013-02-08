@@ -376,6 +376,66 @@ FS		[ \t]*\.[ \t]*
 		
 		return 1;
 	}
+<INITIAL>Starting{WS}a{WS}new{WS}game{WS}with{WS}{USER}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    " \t",
+		                                    GIBBON_CLIP_START_GAME,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>\*\*{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
+		                                    " \t",
+		                                    GIBBON_CLIP_LEFT_GAME,
+		                                    GIBBON_TT_MAYBE_YOU, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>\*\*{WS}Player{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
+		                                    " \t",
+		                                    GIBBON_CLIP_LEFT_GAME,
+		                                    GIBBON_TT_MAYBE_YOU, 2,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>{USER}{WS}logs{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
+		                                    " \t",
+		                                    GIBBON_CLIP_DROPS_GAME,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>{USER}{WS}drops{WS}connection\.{WS}The{WS}game{WS}was{WS}saved	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
+		                                    " \t",
+		                                    GIBBON_CLIP_DROPS_GAME,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>Connection{WS}with{WS}{USER}{WS}timed{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
+		                                    " \t",
+		                                    GIBBON_CLIP_DROPS_GAME,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
@@ -399,7 +459,7 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 	 * In a re-entrant scanner, the debug state is initialized to 0,
 	 * not to 1.
 	 */
-	yy_flex_debug = 1;
+	yy_flex_debug = 0;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);
