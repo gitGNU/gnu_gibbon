@@ -324,7 +324,8 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
-		
+		if (!gibbon_clip_reader_fixup_moves (reader))
+			return -1;
 		return 1;
 	}
 <INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){3}	{
@@ -340,6 +341,8 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
+		if (!gibbon_clip_reader_fixup_moves (reader))
+			return -1;
 		
 		return 1;
 	}
@@ -354,6 +357,8 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
+		if (!gibbon_clip_reader_fixup_moves (reader))
+			return -1;
 		
 		return 1;
 	}
@@ -365,6 +370,8 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_POINT, 2,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
+			return -1;
+		if (!gibbon_clip_reader_fixup_moves (reader))
 			return -1;
 		
 		return 1;

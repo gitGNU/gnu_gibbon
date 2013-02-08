@@ -621,3 +621,54 @@ gibbon_clip_reader_set_error (GibbonCLIPReader *self,
         g_value_init (value, G_TYPE_UINT);
         g_value_set_uint (value, (guint) GIBBON_CLIP_ERROR);
 }
+
+gboolean
+gibbon_clip_reader_fixup_moves (GibbonCLIPReader *self)
+{
+        GSList *iter;
+        gint i;
+        guint from, to;
+        GValue *vfrom;
+        GValue *vto;
+
+        g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
+
+        iter = self->priv->values;
+        g_return_val_if_fail (iter != NULL, FALSE);
+
+        /*
+         * Skip GIBBON_CLIP_MOVE and the player name.
+         */
+        iter = iter->next;
+        g_return_val_if_fail (iter != NULL, FALSE);
+        iter = iter->next;
+        g_return_val_if_fail (iter != NULL, FALSE);
+
+        for (i = 0; iter != NULL && i < 4; ++i, iter = iter->next) {
+                g_return_val_if_fail (iter != NULL, FALSE);
+                vfrom = (GValue *) iter->data;
+                from = g_value_get_uint (vfrom);
+
+                iter = iter->next;
+                g_return_val_if_fail (iter != NULL, FALSE);
+                vto = (GValue *) iter->data;
+                to = g_value_get_uint (vto);
+
+                if (from == 0 && to > 18) {
+                        from = 25;
+                        g_value_set_uint (vfrom, 25);
+                }
+                if (to == 0 && from > 18) {
+                        to = 25;
+                        g_value_set_uint (vto, 25);
+                }
+                if (from == to)
+                        return FALSE;
+                if (from > to && from - to > 6)
+                        return FALSE;
+                if (to > from && to - from > 6)
+                        return FALSE;
+        }
+
+        return TRUE;
+}
