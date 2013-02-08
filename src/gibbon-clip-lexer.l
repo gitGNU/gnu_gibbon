@@ -436,6 +436,16 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>{USER}{WS}can\x27t{WS}move	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    " \t",
+		                                    GIBBON_CLIP_CANNOT_MOVE,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
