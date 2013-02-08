@@ -300,6 +300,19 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         return FALSE;
                 g_value_set_uint64 (value, i);
                 break;
+        case GIBBON_TT_MATCH_LENGTH:
+                g_value_init (value, G_TYPE_INT);
+                if (!g_strcmp0 ("unlimited", token)) {
+                        i = 0;
+                } else if (!g_strcmp0 ("resume", token)) {
+                        i = -1;
+                } else {
+                        i = g_ascii_strtoull (token, NULL, 10);
+                }
+                if (i > G_MAXINT)
+                        return FALSE;
+                g_value_set_int (value, i);
+                break;
         }
 
         return TRUE;
