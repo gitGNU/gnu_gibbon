@@ -946,7 +946,7 @@ static struct test_case test_between11 = {
                                 { G_TYPE_UINT, "100" },
                                 { G_TYPE_UINT, "3" },
                                 { G_TYPE_STRING,
-                                  "You cannot play two matches at once!"},
+                                  "You cannot play two games at once!"},
                                 { G_TYPE_INVALID }
                 }
 };

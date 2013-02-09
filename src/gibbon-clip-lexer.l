@@ -658,6 +658,15 @@ FS		[ \t]*\.[ \t]*
 		g_free (msg);
 		return 1;
 	}
+<INITIAL>^\*\*{WS}You{WS}can\x27t{WS}play{WS}two{WS}games{WS}at{WS}once {
+		gibbon_clip_reader_set_error (reader,
+   	                                      GIBBON_CLIP_ERROR_NO_TWO_MATCHES,
+		                              "%s",
+		                              _("You cannot play two games at"
+		                                " once!"));
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
