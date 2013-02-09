@@ -156,3 +156,7 @@
 - Add debugging code to gibbon-connection so that all unhandled messages from
   the server are printed on stderr.
 - Check that HTML entities are unescaped in messages from the server.
+- Use only gint64 and gdouble for numerical values in CLIP parser.  64
+  bits may be useful for timestamps.  Distinguishing between signed and
+  unsigned values does not make much sense.  This should rather be handled
+  by the lexical scanner.
