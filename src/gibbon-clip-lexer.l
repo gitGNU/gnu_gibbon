@@ -520,6 +520,16 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>You\x27re{WS}now{WS}watching{WS}{USER}   {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
+		                                    "' \t",
+		                                    GIBBON_CLIP_YOURE_WATCHING,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
