@@ -549,7 +549,7 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
         g_return_val_if_fail (max_tokens >= 0, FALSE);
 
         if (max_tokens && delimiter) {
-                tokens = g_strsplit_set (yytext, delimiter, max_tokens);
+                tokens = gibbon_strsplit_set (yytext, delimiter, max_tokens);
                 vector_length = g_strv_length (tokens);
         }
 
