@@ -772,7 +772,7 @@ static struct test_case test_resign00 = {
                 {
                                 { G_TYPE_UINT, "209" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -783,29 +783,27 @@ static struct test_case test_resign01 = {
                 {
                                 { G_TYPE_UINT, "209" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "6" },
+                                { G_TYPE_UINT64, "6" },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_resign02 = {
-                "You want to resign. GibbonTestA will win 1 point."
-                " Type 'accept' or 'reject'.",
+                "You want to resign. GibbonTestA will win 1 point.",
                 {
                                 { G_TYPE_UINT, "209" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
 
 static struct test_case test_resign03 = {
-                "You want to resign. GibbonTestA will win 4 points."
-                " Type 'accept' or 'reject'.",
+                "You want to resign. GibbonTestA will win 4 points.",
                 {
                                 { G_TYPE_UINT, "209" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
