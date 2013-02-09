@@ -297,7 +297,7 @@ FS		[ \t]*\.[ \t]*
 		else
 			return -1;
 	}
-<INITIAL>{USER}{WS}rolls?{WS}{NUMBER}{WS}and{WS}{NUMBER}	{
+<INITIAL>^{USER}{WS}rolls?{WS}{NUMBER}{WS}and{WS}{NUMBER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    " \t",
 		                                    GIBBON_CLIP_ROLLS,
@@ -309,7 +309,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){4}	{
+<INITIAL>^{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){4}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    "- \t",
 		                                    GIBBON_CLIP_MOVES,
@@ -328,7 +328,7 @@ FS		[ \t]*\.[ \t]*
 			return -1;
 		return 1;
 	}
-<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){3}	{
+<INITIAL>^{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){3}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
 		                                    "- \t",
 		                                    GIBBON_CLIP_MOVES,
@@ -346,7 +346,7 @@ FS		[ \t]*\.[ \t]*
 		
 		return 1;
 	}
-<INITIAL>{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){2}	{
+<INITIAL>^{USER}{WS}moves?({WS}{POINT}{OWS}-{OWS}{POINT}){2}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
 		                                    "- \t",
 		                                    GIBBON_CLIP_MOVES,
@@ -362,7 +362,7 @@ FS		[ \t]*\.[ \t]*
 		
 		return 1;
 	}
-<INITIAL>{USER}{WS}moves?{WS}{POINT}{OWS}-{OWS}{POINT}	{
+<INITIAL>^{USER}{WS}moves?{WS}{POINT}{OWS}-{OWS}{POINT}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
 		                                    "- \t",
 		                                    GIBBON_CLIP_MOVES,
@@ -376,7 +376,7 @@ FS		[ \t]*\.[ \t]*
 		
 		return 1;
 	}
-<INITIAL>Starting{WS}a{WS}new{WS}game{WS}with{WS}{USER}	{
+<INITIAL>^Starting{WS}a{WS}new{WS}game{WS}with{WS}{USER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
 		                                    " \t",
 		                                    GIBBON_CLIP_START_GAME,
@@ -386,7 +386,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>\*\*{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
+<INITIAL>^\*\*{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_LEFT_GAME,
@@ -396,7 +396,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>\*\*{WS}Player{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
+<INITIAL>^\*\*{WS}Player{WS}{USER}{WS}terminated{WS}the{WS}game\.{WS}The{WS}game{WS}was{WS}saved	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    " \t",
 		                                    GIBBON_CLIP_LEFT_GAME,
@@ -406,7 +406,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}logs{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
+<INITIAL>^{USER}{WS}logs{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    " \t",
 		                                    GIBBON_CLIP_DROPS_GAME,
@@ -416,7 +416,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}drops{WS}connection\.{WS}The{WS}game{WS}was{WS}saved	{
+<INITIAL>^{USER}{WS}drops{WS}connection\.{WS}The{WS}game{WS}was{WS}saved	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    " \t",
 		                                    GIBBON_CLIP_DROPS_GAME,
@@ -426,7 +426,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>Connection{WS}with{WS}{USER}{WS}timed{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
+<INITIAL>^Connection{WS}with{WS}{USER}{WS}timed{WS}out\.{WS}The{WS}game{WS}was{WS}saved	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_DROPS_GAME,
@@ -436,7 +436,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}can\x27t{WS}move	{
+<INITIAL>^{USER}{WS}can\x27t{WS}move	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
 		                                    " \t",
 		                                    GIBBON_CLIP_CANNOT_MOVE,
@@ -446,7 +446,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>You{WS}double\.{WS}Please{WS}wait{WS}for{WS}{USER}{WS}to{WS}accept{WS}or{WS}reject	{
+<INITIAL>^You{WS}double\.{WS}Please{WS}wait{WS}for{WS}{USER}{WS}to{WS}accept{WS}or{WS}reject	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    " \t",
 		                                    GIBBON_CLIP_DOUBLES,
@@ -456,7 +456,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}doubles\.{WS}Type{WS}\x27accept\x27{WS}or{WS}\x27reject\x27	{
+<INITIAL>^{USER}{WS}doubles\.{WS}Type{WS}\x27accept\x27{WS}or{WS}\x27reject\x27	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
 		                                    " \t",
 		                                    GIBBON_CLIP_DOUBLES,
@@ -466,7 +466,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}accepts?{WS}the{WS}double\.{WS}The{WS}cube{WS}shows{WS}{NUMBER}	{
+<INITIAL>^{USER}{WS}accepts?{WS}the{WS}double\.{WS}The{WS}cube{WS}shows{WS}{NUMBER}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_ACCEPTS_DOUBLE,
@@ -477,7 +477,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}wants{WS}to{WS}play{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}with{WS}you {
+<INITIAL>^{USER}{WS}wants{WS}to{WS}play{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}with{WS}you {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    " \t",
 		                                    GIBBON_CLIP_INVITATION,
@@ -488,7 +488,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}wants{WS}to{WS}play{WS}an{WS}unlimited{WS}match{WS}with{WS}you {
+<INITIAL>^{USER}{WS}wants{WS}to{WS}play{WS}an{WS}unlimited{WS}match{WS}with{WS}you {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_INVITATION,
@@ -499,7 +499,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>{USER}{WS}wants{WS}to{WS}resume{WS}a{WS}saved{WS}match{WS}with{WS}you {
+<INITIAL>^{USER}{WS}wants{WS}to{WS}resume{WS}a{WS}saved{WS}match{WS}with{WS}you {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_INVITATION,
@@ -510,7 +510,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>Type{WS}\x27join{WS}{USER}\x27{WS}to{WS}accept   {
+<INITIAL>^Type{WS}\x27join{WS}{USER}\x27{WS}to{WS}accept   {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    "' \t",
 		                                    GIBBON_CLIP_TYPE_JOIN,
@@ -520,7 +520,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>You\x27re{WS}now{WS}watching{WS}{USER}   {
+<INITIAL>^You\x27re{WS}now{WS}watching{WS}{USER}   {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
 		                                    " \t",
 		                                    GIBBON_CLIP_YOURE_WATCHING,
@@ -530,7 +530,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>\*\*{WS}You{WS}are{WS}now{WS}playing{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}with{WS}{USER}   {
+<INITIAL>^\*\*{WS}You{WS}are{WS}now{WS}playing{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}with{WS}{USER}   {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 11,
 		                                    " \t",
 		                                    GIBBON_CLIP_NOW_PLAYING,
@@ -541,7 +541,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>\*\*{WS}You{WS}are{WS}now{WS}playing{WS}an{WS}unlimited{WS}match{WS}with{WS}{USER}   {
+<INITIAL>^\*\*{WS}You{WS}are{WS}now{WS}playing{WS}an{WS}unlimited{WS}match{WS}with{WS}{USER}   {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    " \t",
 		                                    GIBBON_CLIP_NOW_PLAYING,
@@ -552,7 +552,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>\*\*{WS}{USER}{WS}is{WS}refusing{WS}games   {
+<INITIAL>^\*\*{WS}{USER}{WS}is{WS}refusing{WS}games   {
 		gchar *ptr = yytext + 3;
 		gchar *user;
 		gchar *msg;
@@ -578,7 +578,7 @@ FS		[ \t]*\.[ \t]*
 		g_free (msg);
 		return 1;
 	}
-<INITIAL>\*\*{WS}Error:{WS}{USER}{WS}is{WS}already{WS}playing{WS}with{WS}someone{WS}else   {
+<INITIAL>^\*\*{WS}Error:{WS}{USER}{WS}is{WS}already{WS}playing{WS}with{WS}someone{WS}else   {
 		gchar *ptr = 6 + strstr (yytext + 3, "Error:");
 		gchar *user;
 		gchar *msg;
@@ -605,7 +605,7 @@ FS		[ \t]*\.[ \t]*
 		g_free (msg);
 		return 1;
 	}
-<INITIAL>\*\*{WS}{USER}{WS}didn\x27t{WS}invite{WS}you   {
+<INITIAL>^\*\*{WS}{USER}{WS}didn\x27t{WS}invite{WS}you   {
 		gchar *ptr = yytext + 3;
 		gchar *user;
 		gchar *msg;
@@ -632,7 +632,7 @@ FS		[ \t]*\.[ \t]*
 		g_free (msg);
 		return 1;
 	}
-<INITIAL>\*\*{WS}Error:{WS}can\x27t{WS}find{WS}player{WS}{USER}   {
+<INITIAL>^\*\*{WS}Error:{WS}can\x27t{WS}find{WS}player{WS}{USER}   {
 		gchar *ptr = 6 + strstr (yytext + 21, "player");
 		gchar *user;
 		gchar *msg;
