@@ -552,6 +552,112 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>\*\*{WS}{USER}{WS}is{WS}refusing{WS}games   {
+		gchar *ptr = yytext + 3;
+		gchar *user;
+		gchar *msg;
+		
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_ERROR,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		
+		msg = g_strdup_printf (_("Player `%s' is now refusing to play!"),
+		                       user);
+		if (!gibbon_clip_reader_append_message (reader, msg))
+			return -1;
+		g_free (msg);
+		return 1;
+	}
+<INITIAL>\*\*{WS}Error:{WS}{USER}{WS}is{WS}already{WS}playing{WS}with{WS}someone{WS}else   {
+		gchar *ptr = 6 + strstr (yytext + 3, "Error:");
+		gchar *user;
+		gchar *msg;
+		
+		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_ERROR,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		
+		msg = g_strdup_printf (_("Player `%s' is already playing with"
+		                         " someone else!"),
+		                       user);
+		if (!gibbon_clip_reader_append_message (reader, msg))
+			return -1;
+		g_free (msg);
+		return 1;
+	}
+<INITIAL>\*\*{WS}{USER}{WS}didn\x27t{WS}invite{WS}you   {
+		gchar *ptr = yytext + 3;
+		gchar *user;
+		gchar *msg;
+		
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_ERROR,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		
+		msg = g_strdup_printf (_("Player `%s' is already playing with"
+		                         " someone else!"),
+		                       user);
+		if (!gibbon_clip_reader_append_message (reader, msg))
+			return -1;
+		g_free (msg);
+		return 1;
+	}
+<INITIAL>\*\*{WS}Error:{WS}can\x27t{WS}find{WS}player{WS}{USER}   {
+		gchar *ptr = 6 + strstr (yytext + 21, "player");
+		gchar *user;
+		gchar *msg;
+		
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    " \t",
+		                                    GIBBON_CLIP_INVITE_ERROR,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		while (*ptr == ' ' || *ptr == '\t')
+			++ptr;
+		user = ptr;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr = 0;
+		
+		msg = g_strdup_printf (_("Player `%s' has logged out!"),
+		                       user);
+		if (!gibbon_clip_reader_append_message (reader, msg))
+			return -1;
+		g_free (msg);
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;

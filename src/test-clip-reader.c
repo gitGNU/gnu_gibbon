@@ -900,7 +900,7 @@ static struct test_case test_between07 = {
                                 { G_TYPE_UINT, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
-                                  "Player `gflohr' is now refusing matches!"},
+                                  "Player `gflohr' is now refusing to play!"},
                                 { G_TYPE_INVALID }
                 }
 };
