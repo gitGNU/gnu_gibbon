@@ -1042,7 +1042,7 @@ static struct test_case test_between15 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1052,7 +1052,7 @@ static struct test_case test_between16 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1062,7 +1062,7 @@ static struct test_case test_between17 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1072,7 +1072,7 @@ static struct test_case test_between18 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1082,7 +1082,7 @@ static struct test_case test_between19 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1092,7 +1092,7 @@ static struct test_case test_between20 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1102,7 +1102,7 @@ static struct test_case test_between21 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1112,7 +1112,7 @@ static struct test_case test_between22 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1122,7 +1122,7 @@ static struct test_case test_between23 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1132,7 +1132,7 @@ static struct test_case test_between24 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1142,7 +1142,7 @@ static struct test_case test_between25 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1152,7 +1152,7 @@ static struct test_case test_between26 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1162,7 +1162,7 @@ static struct test_case test_between27 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1172,7 +1172,7 @@ static struct test_case test_between28 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1182,7 +1182,7 @@ static struct test_case test_between29 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1192,7 +1192,7 @@ static struct test_case test_between30 = {
                 {
                                 { G_TYPE_UINT, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };

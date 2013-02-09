@@ -689,6 +689,48 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^Type{WS}\x27join\x27{WS}if{WS}you{WS}want{WS}to{WS}play{WS}the{WS}next{WS}game,{WS}type{WS}\x27leave\x27{WS}if{WS}you{WS}don\x27t {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    "', \t",
+		                                    GIBBON_CLIP_JOIN_OR_LEAVE,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}wins?{WS}the{WS}game{WS}and{WS}gets?{WS}{NUMBER}{WS}point.* 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_WIN_GAME,
+		                                    GIBBON_TT_NATURAL, 6,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}gives?{WS}up\.{WS}{USER}{WS}wins?{WS}{NUMBER}{WS}point.* 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
+		                                    ". \t",
+		                                    GIBBON_CLIP_WIN_GAME,
+		                                    GIBBON_TT_NATURAL, 5,
+		                                    GIBBON_TT_MAYBE_YOU, 3,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}accepts?{WS}and{WS}wins?{WS}{NUMBER}{WS}point.* 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    " \t",
+		                                    GIBBON_CLIP_WIN_GAME,
+		                                    GIBBON_TT_NATURAL, 4,
+		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
