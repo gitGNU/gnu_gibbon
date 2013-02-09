@@ -878,7 +878,7 @@ static struct test_case test_between05 = {
                 "** You are now playing a 5 point match with gflohr",
                 {
                                 { G_TYPE_UINT, "303" },
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT, "5" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -888,7 +888,7 @@ static struct test_case test_between06 = {
                 "** You are now playing an unlimited match with gflohr",
                 {
                                 { G_TYPE_UINT, "303" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "0" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }

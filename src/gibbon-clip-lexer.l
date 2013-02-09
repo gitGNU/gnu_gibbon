@@ -522,9 +522,31 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>You\x27re{WS}now{WS}watching{WS}{USER}   {
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
-		                                    "' \t",
+		                                    " \t",
 		                                    GIBBON_CLIP_YOURE_WATCHING,
 		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>\*\*{WS}You{WS}are{WS}now{WS}playing{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}with{WS}{USER}   {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 11,
+		                                    " \t",
+		                                    GIBBON_CLIP_NOW_PLAYING,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>\*\*{WS}You{WS}are{WS}now{WS}playing{WS}an{WS}unlimited{WS}match{WS}with{WS}{USER}   {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
+		                                    " \t",
+		                                    GIBBON_CLIP_NOW_PLAYING,
+		                                    GIBBON_TT_USER, -1,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
 		                                    GIBBON_TT_END))
 			return -1;
 
