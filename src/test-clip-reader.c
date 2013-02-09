@@ -1201,11 +1201,11 @@ static struct test_case test_between31 = {
                 "score in 7 point match: GibbonTestA-3 GibbonTestB-5",
                 {
                                 { G_TYPE_UINT, "311" },
-                                { G_TYPE_UINT, "7" },
+                                { G_TYPE_INT, "7" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_UINT64, "3" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_UINT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1214,11 +1214,11 @@ static struct test_case test_between32 = {
                 "score in unlimited match: GibbonTestA-3 GibbonTestB-5",
                 {
                                 { G_TYPE_UINT, "311" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "0" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_UINT64, "3" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_UINT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
