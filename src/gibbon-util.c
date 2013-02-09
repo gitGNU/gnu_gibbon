@@ -122,6 +122,62 @@ gibbon_strsplit_ws (const gchar *string)
         return vector;
 }
 
+gchar **
+gibbon_strsplit_set (const gchar *string, const gchar *set, gint max_tokens)
+{
+        gchar **vector = NULL;
+        GSList *list = NULL;
+        GSList *iter;
+        gsize i, num_tokens = 0;
+        const gchar *start;
+        const gchar *ptr;
+        gchar lookup[256];
+
+        if (!string) {
+                vector = g_new (gchar *, num_tokens + 1);
+                vector[0] = NULL;
+                return vector;
+        }
+
+        memset (lookup, 0, sizeof lookup);
+        ptr = set;
+        while (*ptr) {
+                lookup[(guchar) *ptr] = 1;
+                ++ptr;
+        }
+
+        ptr = string;
+
+        while (1) {
+                while (lookup[(guchar) *ptr])
+                        ++ptr;
+                if (!*ptr)
+                        break;
+                if (num_tokens + 1 >= max_tokens) {
+                        ++num_tokens;
+                        list = g_slist_prepend (list, g_strdup (ptr));
+                        break;
+                }
+                start = ptr;
+                while (*ptr && !lookup[(guchar) *ptr])
+                        ++ptr;
+                list = g_slist_prepend (list, g_strndup (start, ptr - start));
+                ++num_tokens;
+        }
+
+        vector = g_new (gchar *, num_tokens + 1);
+        iter = list;
+        for (i = 0; i < num_tokens; ++i) {
+                vector[num_tokens - i - 1] = iter->data;
+                iter = iter->next;
+        }
+        vector[num_tokens] = NULL;
+
+        g_slist_free (list);
+
+        return vector;
+}
+
 const gchar *
 gibbon_skip_ws_tokens (const gchar *string, const gchar * const * const tokens,
                        gsize num)
