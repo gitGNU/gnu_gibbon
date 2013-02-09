@@ -759,6 +759,26 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^\*\*{WS}Please{WS}wait{WS}for{WS}{USER}{WS}to{WS}join{WS}too 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_WAIT_JOIN_TOO,
+		                                    GIBBON_TT_USER, 4,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^\*\*{WS}You{WS}invited{WS}{USER}{WS}to{WS}resume{WS}a{WS}saved{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    " \t",
+		                                    GIBBON_CLIP_RESUME_CONFIRMATION,
+		                                    GIBBON_TT_USER, 3,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
