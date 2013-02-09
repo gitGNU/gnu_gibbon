@@ -1002,7 +1002,7 @@ static struct test_case test_resume03 = {
                 "match length: 42",
                 {
                                 { G_TYPE_UINT, "307" },
-                                { G_TYPE_UINT, "42" },
+                                { G_TYPE_INT, "42" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1011,7 +1011,7 @@ static struct test_case test_resume04 = {
                 "unlimited match",
                 {
                                 { G_TYPE_UINT, "307" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
