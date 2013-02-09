@@ -1246,9 +1246,9 @@ static struct test_case test_between35 = {
                 {
                                 { G_TYPE_UINT, "314" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "7" },
-                                { G_TYPE_UINT, "8" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INT, "7" },
+                                { G_TYPE_UINT64, "8" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1258,9 +1258,9 @@ static struct test_case test_between36 = {
                 {
                                 { G_TYPE_UINT, "314" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "7" },
-                                { G_TYPE_UINT, "8" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INT, "7" },
+                                { G_TYPE_UINT64, "8" },
+                                { G_TYPE_UINT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
