@@ -804,10 +804,19 @@ FS		[ \t]*\.[ \t]*
 	}
 <INITIAL>^{USER}{WS}wants?{WS}to{WS}resign\.{WS}{USER}{WS}will{WS}win{WS}{NUMBER}{WS}point.* 	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
-		                                    "- \t",
+		                                    " \t",
 		                                    GIBBON_CLIP_RESIGNS,
 		                                    GIBBON_TT_NATURAL, 7,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}rejects?\.{WS}The{WS}game{WS}continues 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_REJECTS_RESIGNATION,
 		                                    GIBBON_TT_END))
 			return -1;
 
