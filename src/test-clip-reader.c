@@ -956,7 +956,7 @@ static struct test_case test_between12 = {
                 {
                                 { G_TYPE_UINT, "303" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -966,7 +966,7 @@ static struct test_case test_between13 = {
                 {
                                 { G_TYPE_UINT, "303" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "0" },
                                 { G_TYPE_INVALID }
                 }
 };

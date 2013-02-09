@@ -667,6 +667,28 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^\*\*{WS}Player{WS}{USER}{WS}has{WS}joined{WS}you{WS}for{WS}a{WS}{NUMBER}{WS}point{WS}match {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
+		                                    " \t",
+		                                    GIBBON_CLIP_NOW_PLAYING,
+		                                    GIBBON_TT_MATCH_LENGTH, 8,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^Player{WS}{USER}{WS}has{WS}joined{WS}you{WS}for{WS}an{WS}unlimited{WS}match {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_NOW_PLAYING,
+		                                    GIBBON_TT_MATCH_LENGTH, 7,
+		                                    GIBBON_TT_USER, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
