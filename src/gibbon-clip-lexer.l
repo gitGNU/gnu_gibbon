@@ -95,6 +95,7 @@ FS		[ \t]*\.[ \t]*
 
 %x MOTD
 %x MESSAGE
+%x SETTINGS
 
 %%
 <INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
@@ -953,9 +954,11 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_END))
 			return -1;
 
+		BEGIN (SETTINGS);
+		
 		return 1;
 	}
-<INITIAL>^boardstyle:{OWS}(0|[1-9][0-9]*)	{
+<SETTINGS>^{CHUNK}:{OWS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    ": \t",
 		                                    GIBBON_CLIP_SHOW_SETTING,
@@ -966,61 +969,8 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<INITIAL>^linelength:{OWS}(0|[1-9][0-9]*)	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    ": \t",
-		                                    GIBBON_CLIP_SHOW_SETTING,
-		                                    GIBBON_TT_WORD, 1,
-		                                    GIBBON_TT_WORD, 0,
-		                                    GIBBON_TT_END))
-			return -1;
-
-		return 1;
-	}
-<INITIAL>^pagelength:{OWS}(0|[1-9][0-9]*)	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    ": \t",
-		                                    GIBBON_CLIP_SHOW_SETTING,
-		                                    GIBBON_TT_WORD, 1,
-		                                    GIBBON_TT_WORD, 0,
-		                                    GIBBON_TT_END))
-			return -1;
-
-		return 1;
-	}
-<INITIAL>^redoubles:{OWS}(0|[1-9][0-9]*|unlimited|none)	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    ": \t",
-		                                    GIBBON_CLIP_SHOW_SETTING,
-		                                    GIBBON_TT_WORD, 1,
-		                                    GIBBON_TT_WORD, 0,
-		                                    GIBBON_TT_END))
-			return -1;
-
-		return 1;
-	}
-<INITIAL>^sortwho:{OWS}{CHUNK}	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    ": \t",
-		                                    GIBBON_CLIP_SHOW_SETTING,
-		                                    GIBBON_TT_WORD, 1,
-		                                    GIBBON_TT_WORD, 0,
-		                                    GIBBON_TT_END))
-			return -1;
-
-		return 1;
-	}
-<INITIAL>^timezone:{OWS}{CHUNK}	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
-		                                    ": \t",
-		                                    GIBBON_CLIP_SHOW_SETTING,
-		                                    GIBBON_TT_WORD, 1,
-		                                    GIBBON_TT_WORD, 0,
-		                                    GIBBON_TT_END))
-			return -1;
-
-		return 1;
-	}
+<SETTINGS>[ \t\n]+	/* Ignore.  */ ;
+<SETTINGS>.		BEGIN (INITIAL); REJECT;
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
