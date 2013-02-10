@@ -88,6 +88,7 @@ POINT		(off|bar|[1-9]|1[0-9]|2[0-4])
 DOUBLE		[-+]?(0|[1-9][0-9]*)(\.[0-9]+)?
 FLAG		[01]
 WS		[ \t]+
+SEP		[- \t]+
 OWS		[ \t]*
 /* Think full stop.  */
 FS		[ \t]*\.[ \t]*
@@ -915,6 +916,30 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_NATURAL, 8,
 		                                    GIBBON_TT_MATCH_LENGTH, 3,
 		                                    GIBBON_TT_USER, 7,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}and{WS}{USER}{WS}are{WS}resuming{WS}their{WS}unlimited{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    " \t",
+		                                    GIBBON_CLIP_RESUME_MATCH,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}and{WS}{USER}{WS}are{WS}resuming{WS}their{WS}{NUMBER}{SEP}point{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		                                    "- \t",
+		                                    GIBBON_CLIP_RESUME_MATCH,
+		                                    GIBBON_TT_MATCH_LENGTH, 6,
+		                                    GIBBON_TT_USER, 2,
 		                                    GIBBON_TT_USER, 0,
 		                                    GIBBON_TT_END))
 			return -1;
