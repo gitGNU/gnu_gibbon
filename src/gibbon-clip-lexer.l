@@ -907,6 +907,20 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^{USER}{WS}wins{WS}a{WS}{NUMBER}{WS}point{WS}match{WS}against{WS}{USER}{WS}{NUMBER}{OWS}-{OWS}{NUMBER} 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
+		                                    "- \t",
+		                                    GIBBON_CLIP_ASYNC_WIN_MATCH,
+		                                    GIBBON_TT_NATURAL, 9,
+		                                    GIBBON_TT_NATURAL, 8,
+		                                    GIBBON_TT_MATCH_LENGTH, 3,
+		                                    GIBBON_TT_USER, 7,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;

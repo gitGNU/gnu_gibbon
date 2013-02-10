@@ -1300,9 +1300,9 @@ static struct test_case test_various02 = {
                                 { G_TYPE_UINT, "401" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "7" },
-                                { G_TYPE_UINT, "8" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_INT, "7" },
+                                { G_TYPE_UINT64, "8" },
+                                { G_TYPE_UINT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1313,9 +1313,9 @@ static struct test_case test_various02a = {
                                 { G_TYPE_UINT, "401" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "1" },
+                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_UINT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
