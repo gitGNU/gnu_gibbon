@@ -256,6 +256,8 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 g_value_init (value, G_TYPE_INT64);
                 if (!g_strcmp0 (token, "unlimited"))
                         i = -1;
+                else if (!g_strcmp0 (token, "none"))
+                        i = 0;
                 else
                         i = g_ascii_strtoull (token, NULL, 10);
                 g_value_set_int64 (value, i);
