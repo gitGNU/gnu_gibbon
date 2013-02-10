@@ -1021,7 +1021,7 @@ static struct test_case test_resume05 = {
                 {
                                 { G_TYPE_UINT, "308" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_UINT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
