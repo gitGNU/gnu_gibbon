@@ -883,6 +883,30 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
+<INITIAL>^{USER}{WS}and{WS}{USER}{WS}start{WS}a{WS}{NUMBER}{WS}point{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    " \t",
+		                                    GIBBON_CLIP_START_MATCH,
+		                                    GIBBON_TT_MATCH_LENGTH, 5,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
+<INITIAL>^{USER}{WS}and{WS}{USER}{WS}start{WS}an?{WS}unlimited{WS}match 	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		                                    " \t",
+		                                    GIBBON_CLIP_START_MATCH,
+		                                    GIBBON_TT_MATCH_LENGTH, 5,
+		                                    GIBBON_TT_USER, 2,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
