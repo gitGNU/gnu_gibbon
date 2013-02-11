@@ -1031,6 +1031,30 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;		
 	}
+<INITIAL>\*\*{WS}You\x27ll{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
+		strcpy (yytext, "notify YES");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
+<INITIAL>\*\*{WS}You{WS}won\x27t{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
+		strcpy (yytext, "notify NO");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
