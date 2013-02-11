@@ -1656,7 +1656,7 @@ static struct test_case test_toggles17 = {
                 }
 };
 
-static struct test_case test_toggles13a = {
+static struct test_case test_toggles18 = {
                 "** You're now ready to invite or join someone.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -1666,7 +1666,7 @@ static struct test_case test_toggles13a = {
                 }
 };
 
-static struct test_case test_toggles13b = {
+static struct test_case test_toggles19 = {
                 "** You're now refusing to play with someone.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -1676,7 +1676,7 @@ static struct test_case test_toggles13b = {
                 }
 };
 
-static struct test_case test_toggles18 = {
+static struct test_case test_toggles20 = {
                 "** You won't be notified when new users log in.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -1686,7 +1686,7 @@ static struct test_case test_toggles18 = {
                 }
 };
 
-static struct test_case test_toggles19 = {
+static struct test_case test_toggles21 = {
                 "** You'll be notified when new users log in.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -1696,7 +1696,7 @@ static struct test_case test_toggles19 = {
                 }
 };
 
-static struct test_case test_toggles20 = {
+static struct test_case test_toggles22 = {
                 "** The board will be refreshed after every move.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -1706,7 +1706,7 @@ static struct test_case test_toggles20 = {
                 }
 };
 
-static struct test_case test_toggles21 = {
+static struct test_case test_toggles23 = {
                 "** The board won't be refreshed after every move.",
                 {
                                 { G_TYPE_UINT, "407" },
@@ -2008,8 +2008,6 @@ static struct test_case *test_cases[] = {
                 &test_toggles11,
                 &test_toggles12,
                 &test_toggles13,
-                &test_toggles13a,
-                &test_toggles13b,
                 &test_toggles14,
                 &test_toggles15,
                 &test_toggles16,
@@ -2018,6 +2016,8 @@ static struct test_case *test_cases[] = {
                 &test_toggles19,
                 &test_toggles20,
                 &test_toggles21,
+                &test_toggles22,
+                &test_toggles23,
 
                 &test_saved00,
                 &test_saved01,

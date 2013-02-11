@@ -1041,7 +1041,7 @@ gibbon_clip_lexer_current_buffer (yyscan_t yyscanner, const gchar *line)
 	 * In a re-entrant scanner, the debug state is initialized to 0,
 	 * not to 1.
 	 */
-	yy_flex_debug = 1;
+	yy_flex_debug = 0;
 
 	yy_delete_buffer (YY_CURRENT_BUFFER, yyscanner);
 	yy_switch_to_buffer (yy_scan_string (line, yyscanner), yyscanner);
