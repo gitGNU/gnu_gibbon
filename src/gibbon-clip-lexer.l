@@ -970,7 +970,18 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <SETTINGS>[ \t\n]+	/* Ignore.  */ ;
-<SETTINGS>.		BEGIN (INITIAL); REJECT;
+<SETTINGS>.|\n		yyless (0); BEGIN (INITIAL);
+<INITIAL>Value{WS}of{WS}\x27{CHUNK}\x27{WS}set{WS}to{WS}{CHUNK}	{
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
+		                                    "'. \t",
+		                                    GIBBON_CLIP_SHOW_SETTING,
+		                                    GIBBON_TT_WORD, 5,
+		                                    GIBBON_TT_WORD, 2,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
