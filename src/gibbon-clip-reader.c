@@ -315,6 +315,16 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         return FALSE;
                 g_value_set_int (value, i);
                 break;
+        case GIBBON_TT_YESNO:
+                g_value_init (value, G_TYPE_BOOLEAN);
+                if (!g_strcmp0 (token, "YES"))
+                        i = TRUE;
+                else if (!g_strcmp0 (token, "NO"))
+                        i = FALSE;
+                else
+                        return FALSE;
+                g_value_set_boolean (value, i);
+                break;
         }
 
         return TRUE;

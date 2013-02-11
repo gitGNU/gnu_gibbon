@@ -1616,26 +1616,6 @@ static struct test_case test_toggles13 = {
                 }
 };
 
-static struct test_case test_toggles13a = {
-                "** You're now ready to invite or join someone.",
-                {
-                                { G_TYPE_UINT, "407" },
-                                { G_TYPE_STRING, "ready" },
-                                { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_INVALID }
-                }
-};
-
-static struct test_case test_toggles13b = {
-                "** You're now refusing to play with someone.",
-                {
-                                { G_TYPE_UINT, "407" },
-                                { G_TYPE_STRING, "ready" },
-                                { G_TYPE_BOOLEAN, "FALSE" },
-                                { G_TYPE_INVALID }
-                }
-};
-
 static struct test_case test_toggles14 = {
                 "report   NO",
                 {
@@ -1671,6 +1651,26 @@ static struct test_case test_toggles17 = {
                 {
                                 { G_TYPE_UINT, "407" },
                                 { G_TYPE_STRING, "wrap" },
+                                { G_TYPE_BOOLEAN, "FALSE" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_toggles13a = {
+                "** You're now ready to invite or join someone.",
+                {
+                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_STRING, "ready" },
+                                { G_TYPE_BOOLEAN, "TRUE" },
+                                { G_TYPE_INVALID }
+                }
+};
+
+static struct test_case test_toggles13b = {
+                "** You're now refusing to play with someone.",
+                {
+                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_STRING, "ready" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
                 }
