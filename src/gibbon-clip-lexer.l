@@ -1007,6 +1007,30 @@ FS		[ \t]*\.[ \t]*
 	}
 <TOGGLES>[ \t\n]+	/* Ignore.  */ ;
 <TOGGLES>.|\n		yyless (0); BEGIN (INITIAL);
+<INITIAL>\*\*{WS}You\x27re{WS}now{WS}ready{WS}to{WS}invite{WS}or{WS}join{WS}someone {
+		strcpy (yytext, "ready YES");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
+<INITIAL>\*\*{WS}You\x27re{WS}now{WS}refusing{WS}to{WS}play{WS}with{WS}someone {
+		strcpy (yytext, "ready NO");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
 <MESSAGE>[ \t](.|\n)*	{
 		if (!gibbon_clip_reader_append_message (reader, yytext + 1))
 			return -1;
