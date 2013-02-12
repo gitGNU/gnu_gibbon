@@ -970,8 +970,8 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<SETTINGS>[ \t\n]+	/* Ignore.  */ ;
-<SETTINGS>.|\n		yyless (0); BEGIN (INITIAL);
+<SETTINGS,TOGGLES>[ \t\n]+	/* Ignore.  */ ;
+<SETTINGS,TOGGLES>.		BEGIN (INITIAL); return 2;
 <INITIAL>Value{WS}of{WS}\x27{CHUNK}\x27{WS}set{WS}to{WS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    "'. \t",
@@ -1005,9 +1005,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<TOGGLES>[ \t\n]+	/* Ignore.  */ ;
-<TOGGLES>.|\n		yyless (0); BEGIN (INITIAL);
-<INITIAL>\*\*{WS}You\x27re{WS}now{WS}ready{WS}to{WS}invite{WS}or{WS}join{WS}someone {
+<INITIAL>^\*\*{WS}You\x27re{WS}now{WS}ready{WS}to{WS}invite{WS}or{WS}join{WS}someone {
 		strcpy (yytext, "ready YES");
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    " \t",
@@ -1019,7 +1017,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;		
 	}
-<INITIAL>\*\*{WS}You\x27re{WS}now{WS}refusing{WS}to{WS}play{WS}with{WS}someone {
+<INITIAL>^\*\*{WS}You\x27re{WS}now{WS}refusing{WS}to{WS}play{WS}with{WS}someone {
 		strcpy (yytext, "ready NO");
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    " \t",
@@ -1031,7 +1029,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;		
 	}
-<INITIAL>\*\*{WS}You\x27ll{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
+<INITIAL>^\*\*{WS}You\x27ll{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
 		strcpy (yytext, "notify YES");
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    " \t",
@@ -1043,7 +1041,7 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;		
 	}
-<INITIAL>\*\*{WS}You{WS}won\x27t{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
+<INITIAL>^\*\*{WS}You{WS}won\x27t{WS}be{WS}notified{WS}when{WS}new{WS}users{WS}log{WS}in {
 		strcpy (yytext, "notify NO");
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    " \t",

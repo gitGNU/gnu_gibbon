@@ -129,6 +129,13 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                 if (status < 0) {
                         error = TRUE;
                         break;
+                } else if (status == 2) {
+                        /*
+                         * Restart the scanner.  This happens, when we are
+                         * leaving one of the multi-line states.
+                         */
+                        gibbon_clip_lexer_current_buffer (self->priv->yyscanner,
+                                                          line);
                 }
         }
 
