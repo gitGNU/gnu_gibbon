@@ -97,6 +97,7 @@ FS		[ \t]*\.[ \t]*
 %x MESSAGE
 %x SETTINGS
 %x TOGGLES
+%x SAVED
 
 %%
 <INITIAL>^1{WS}{USER}{WS}{NUMBER}{WS}{CHUNK}	{
@@ -970,8 +971,8 @@ FS		[ \t]*\.[ \t]*
 
 		return 1;
 	}
-<SETTINGS,TOGGLES>[ \t\n]+	/* Ignore.  */ ;
-<SETTINGS,TOGGLES>.		BEGIN (INITIAL); return 2;
+<SETTINGS,TOGGLES,SAVED>[ \t\n]+	/* Ignore.  */ ;
+<SETTINGS,TOGGLES,SAVED>.		BEGIN (INITIAL); return 2;
 <INITIAL>Value{WS}of{WS}\x27{CHUNK}\x27{WS}set{WS}to{WS}{CHUNK}	{
 		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    "'. \t",
@@ -1051,6 +1052,149 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_END))
 			return -1;
 
+		return 1;		
+	}
+<INITIAL>^\*\*{WS}The{WS}board{WS}will{WS}be{WS}refreshed{WS}after{WS}every{WS}move {
+		strcpy (yytext, "autoboard YES");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
+<INITIAL>^\*\*{WS}The{WS}board{WS}won\x27t{WS}be{WS}refreshed{WS}after{WS}every{WS}move {
+		strcpy (yytext, "autoboard NO");
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_TOGGLE,
+		                                    GIBBON_TT_YESNO, 1,
+		                                    GIBBON_TT_WORD, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
+<INITIAL>^{OWS}opponent{WS}matchlength{WS}score{WS}\(your{WS}points{WS}first\) {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_START_SAVED,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		BEGIN (SAVED);
+
+		return 1;		
+	}
+<SAVED>^{OWS}\*{0,2}{USER}{WS}({NUMBER}|unlimited){WS}{NUMBER}{OWS}-{OWS}{NUMBER} {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
+		                                    "*- \t",
+		                                    GIBBON_CLIP_SHOW_SAVED,
+		                                    GIBBON_TT_NATURAL, 3,
+		                                    GIBBON_TT_NATURAL, 2,
+		                                    GIBBON_TT_MATCH_LENGTH, 1,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		return 1;		
+	}
+<SAVED>^no{WS}saved{WS}games {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 0,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_SAVED_NONE,
+		                                    GIBBON_TT_END))
+			return -1;
+
+		BEGIN (INITIAL);
+
+		return 1;		
+	}
+<INITIAL>^{USER}{WS}has{WS}no{WS}saved{WS}games {
+		char *ptr = yytext;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		*ptr++ = ' ';
+		*ptr++ = '0';
+		*ptr++ = 0;
+		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
+		                                    " ",
+		                                    GIBBON_CLIP_SHOW_SAVED_COUNT,
+		                                    GIBBON_TT_NATURAL, 1,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		BEGIN (INITIAL);
+
+		return 1;		
+	}
+<INITIAL>^{USER}{WS}has{WS}{NUMBER}{WS}saved{WS}games? {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    " \t",
+		                                    GIBBON_CLIP_SHOW_SAVED_COUNT,
+		                                    GIBBON_TT_NATURAL, 2,
+		                                    GIBBON_TT_USER, 0,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		BEGIN (INITIAL);
+
+		return 1;		
+	}
+<INITIAL>^Your{WS}email{WS}address{WS}is{WS}\x27{CHUNK}\x27 {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
+		                                    "' \t",
+		                                    GIBBON_CLIP_SHOW_ADDRESS,
+		                                    GIBBON_TT_WORD, -1,
+		                                    GIBBON_TT_END))
+			return -1;
+		
+		return 1;		
+	}
+<INITIAL>^\*\*{WS}\x27{CHUNK}\x27{WS}is{WS}not{WS}an{WS}email{WS}address {
+		char *address = yytext + 3;
+		char *ptr;
+		
+		while (*address != '\'')
+			++address;
+		++address;
+		
+		ptr = address;
+		while (*ptr != ' ' && *ptr != '\t')
+			++ptr;
+		--ptr;
+		*ptr = 0;
+		 
+		gibbon_clip_reader_set_error (reader,
+   	                                      GIBBON_CLIP_ERROR_NO_EMAIL_ADDRESS,
+		                              _("`%s' is not an email"
+		                                " address!"),
+		                              address);
+
+		return 1;
+	}
+<INITIAL>^\*\*{WS}ERROR:{WS}Saved{WS}match{WS}is{WS}corrupt\.{WS}Please{WS}start{WS}another{WS}one {
+		gibbon_clip_reader_set_error (reader,
+   	                                      GIBBON_CLIP_ERROR_SAVED_CORRUPT,
+		                              "%s",
+		                              _("Your saved match was"
+		                                " corrupted on the server."
+		                                "  Please start a new one!"));
+
+		return 1;
+	}
+<INITIAL>^\*\*{WS}{NUMBER}{WS}users?{WS}heard{WS}you {
+		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
+		                                    " \t",
+		                                    GIBBON_CLIP_HEARD_YOU,
+		                                    GIBBON_TT_NATURAL, 1,
+		                                    GIBBON_TT_END))
+			return -1;
+		
 		return 1;		
 	}
 <MESSAGE>[ \t](.|\n)*	{

@@ -86,6 +86,7 @@ gibbon_strsplit_ws (const gchar *string)
         gsize i, num_tokens = 0;
         const gchar *start;
         const gchar *ptr;
+        gchar *p;
 
         if (!string) {
                 vector = g_new (gchar *, num_tokens + 1);
@@ -116,6 +117,14 @@ gibbon_strsplit_ws (const gchar *string)
                 iter = iter->next;
         }
         vector[num_tokens] = NULL;
+        if (num_tokens) {
+                /* Remove trailing whitespace.  */
+                p = vector[num_tokens - 1];
+                while (*p && *p != ' ' && *p != '\t' && *p != '\n'
+                       && *ptr != '\v' && *ptr != '\f' && *p != '\r')
+                        ++p;
+                *p = 0;
+        }
 
         g_slist_free (list);
 
@@ -132,6 +141,7 @@ gibbon_strsplit_set (const gchar *string, const gchar *set, gint max_tokens)
         const gchar *start;
         const gchar *ptr;
         gchar lookup[256];
+        gchar *p;
 
         if (!string) {
                 vector = g_new (gchar *, num_tokens + 1);
@@ -170,6 +180,13 @@ gibbon_strsplit_set (const gchar *string, const gchar *set, gint max_tokens)
         for (i = 0; i < num_tokens; ++i) {
                 vector[num_tokens - i - 1] = iter->data;
                 iter = iter->next;
+        }
+        if (num_tokens && num_tokens <= max_tokens) {
+                /* Remove trailing delimiters.  */
+                p = vector[num_tokens - 1] + strlen (vector[num_tokens - 1]);
+                --p;
+                while (lookup[(guchar) *p])
+                        *p-- = 0;
         }
         vector[num_tokens] = NULL;
 

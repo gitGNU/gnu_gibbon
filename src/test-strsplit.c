@@ -71,6 +71,10 @@ main (int argc, char *argv[])
                                "all", "delimiters", "mixed", NULL))
                 status = -1;
 
+        if (!test_strsplit_ws ("all \t\ndelimiters\v\f\rmixed\v\f\r",
+                               "all", "delimiters", "mixed", NULL))
+                status = -1;
+
         if (!test_strsplit_set ("foo bar. baz",
                                 " .", 4, "foo", "bar", "baz", NULL))
                 status = -1;
@@ -80,6 +84,10 @@ main (int argc, char *argv[])
                 status = -1;
 
         if (!test_strsplit_set ("foo bar. baz",
+                                " .", 2, "foo", "bar. baz", NULL))
+                status = -1;
+
+        if (!test_strsplit_set ("foo bar. baz ",
                                 " .", 2, "foo", "bar. baz", NULL))
                 status = -1;
 

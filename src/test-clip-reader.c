@@ -1729,9 +1729,9 @@ static struct test_case test_saved01 = {
         {
                                 { G_TYPE_UINT, "409" },
                                 { G_TYPE_STRING, "GammonBot_VII" },
-                                { G_TYPE_UINT, "5" },
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "5" },
+                                { G_TYPE_UINT64, "0" },
+                                { G_TYPE_UINT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1741,9 +1741,9 @@ static struct test_case test_saved02 = {
         {
                                 { G_TYPE_UINT, "409" },
                                 { G_TYPE_STRING, "BlunderBot_VI" },
-                                { G_TYPE_UINT, "3" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT, "3" },
+                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_UINT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1753,17 +1753,21 @@ static struct test_case test_saved03 = {
         {
                                 { G_TYPE_UINT, "409" },
                                 { G_TYPE_STRING, "bonehead" },
-                                { G_TYPE_UINT, "3" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT, "3" },
+                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
 
 static struct test_case test_saved04 = {
-        "no saved games.",
+        "**bonehead                unlimited                1 -  2",
         {
-                                { G_TYPE_UINT, "410" },
+                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_STRING, "bonehead" },
+                                { G_TYPE_INT, "0" },
+                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1773,39 +1777,47 @@ static struct test_case test_saved05 = {
         {
                                 { G_TYPE_UINT, "409" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT, "0" },
+                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_UINT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
 
 static struct test_case test_saved06 = {
-        "deadbeef has no saved games.",
+        "no saved games.",
         {
-                                { G_TYPE_UINT, "411" },
-                                { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_UINT, "410" },
                                 { G_TYPE_INVALID }
         }
 };
 
 static struct test_case test_saved07 = {
-        "deadbeef has 12 saved games.",
+        "deadbeef has no saved games.",
         {
                                 { G_TYPE_UINT, "411" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT, "12" },
+                                { G_TYPE_UINT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
 
 static struct test_case test_saved08 = {
+        "deadbeef has 12 saved games.",
+        {
+                                { G_TYPE_UINT, "411" },
+                                { G_TYPE_STRING, "deadbeef" },
+                                { G_TYPE_UINT64, "12" },
+                                { G_TYPE_INVALID }
+        }
+};
+
+static struct test_case test_saved09 = {
         "deadbeef has 1 saved game.",
         {
                                 { G_TYPE_UINT, "411" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1824,7 +1836,7 @@ static struct test_case test_address02 = {
         {
                                 { G_TYPE_UINT, "100" },
                                 { G_TYPE_UINT, "1" },
-                                { G_TYPE_STRING, "`http://foobar' is not a"
+                                { G_TYPE_STRING, "`http://foobar' is not"
                                                  " an email address!"},
                                 { G_TYPE_INVALID }
         }
@@ -1833,10 +1845,11 @@ static struct test_case test_address02 = {
 static struct test_case test_corrupt = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
-                                { G_TYPE_UINT, "99999" },
+                                { G_TYPE_UINT, "100" },
+                                { G_TYPE_UINT, "4" },
                                 { G_TYPE_STRING,
-                                  "Your saved match was corrupted on server. "
-                                  " Please start a new one!"},
+                                  "Your saved match was corrupted on the"
+                                  " server.  Please start a new one!"},
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1845,7 +1858,7 @@ static struct test_case test_heard_you00 = {
                 "** 1 user heard you.",
                 {
                                 { G_TYPE_UINT, "500" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_UINT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1854,7 +1867,7 @@ static struct test_case test_heard_you01 = {
                 "** 42 users heard you.",
                 {
                                 { G_TYPE_UINT, "500" },
-                                { G_TYPE_UINT, "42" },
+                                { G_TYPE_UINT64, "42" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -2028,6 +2041,7 @@ static struct test_case *test_cases[] = {
                 &test_saved06,
                 &test_saved07,
                 &test_saved08,
+                &test_saved09,
 
                 &test_address01,
                 &test_address02,
