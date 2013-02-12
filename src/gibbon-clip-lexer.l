@@ -127,7 +127,7 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_BOOLEAN, 13,
 		                                    GIBBON_TT_BOOLEAN, 12,
 		                                    GIBBON_TT_BOOLEAN, 11,
-		                                    GIBBON_TT_NATURAL, 10,
+		                                    GIBBON_TT_N0, 10,
 		                                    GIBBON_TT_BOOLEAN, 9,
 		                                    GIBBON_TT_BOOLEAN, 8,
 		                                    GIBBON_TT_BOOLEAN, 7,
@@ -177,8 +177,8 @@ FS		[ \t]*\.[ \t]*
 		                                    GIBBON_TT_WORD, 11,
 		                                    GIBBON_TT_HOSTNAME, 10,
 		                                    GIBBON_TT_TIMESTAMP, 9,
-		                                    GIBBON_TT_NATURAL, 8,
-		                                    GIBBON_TT_NATURAL, 7,
+		                                    GIBBON_TT_N0, 8,
+		                                    GIBBON_TT_N0, 7,
 		                                    GIBBON_TT_DOUBLE, 6,
 		                                    GIBBON_TT_BOOLEAN, 5,
 		                                    GIBBON_TT_BOOLEAN, 4,
@@ -706,7 +706,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
 		                                    " \t",
 		                                    GIBBON_CLIP_WIN_GAME,
-		                                    GIBBON_TT_NATURAL, 6,
+		                                    GIBBON_TT_POSITIVE, 6,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -717,7 +717,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    ". \t",
 		                                    GIBBON_CLIP_WIN_GAME,
-		                                    GIBBON_TT_NATURAL, 5,
+		                                    GIBBON_TT_POSITIVE, 5,
 		                                    GIBBON_TT_MAYBE_YOU, 3,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -728,7 +728,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    " \t",
 		                                    GIBBON_CLIP_WIN_GAME,
-		                                    GIBBON_TT_NATURAL, 4,
+		                                    GIBBON_TT_POSITIVE, 4,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -739,9 +739,9 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    "- \t",
 		                                    GIBBON_CLIP_GAME_SCORE,
-		                                    GIBBON_TT_NATURAL, 8,
+		                                    GIBBON_TT_N0, 8,
 		                                    GIBBON_TT_USER, 7,
-		                                    GIBBON_TT_NATURAL, 6,
+		                                    GIBBON_TT_N0, 6,
 		                                    GIBBON_TT_USER, 5,
 		                                    GIBBON_TT_MATCH_LENGTH, 2,
 		                                    GIBBON_TT_END))
@@ -753,9 +753,9 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
 		                                    "- \t",
 		                                    GIBBON_CLIP_GAME_SCORE,
-		                                    GIBBON_TT_NATURAL, 7,
+		                                    GIBBON_TT_N0, 7,
 		                                    GIBBON_TT_USER, 6,
-		                                    GIBBON_TT_NATURAL, 5,
+		                                    GIBBON_TT_N0, 5,
 		                                    GIBBON_TT_USER, 4,
 		                                    GIBBON_TT_MATCH_LENGTH, 2,
 		                                    GIBBON_TT_END))
@@ -787,8 +787,8 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    "- \t",
 		                                    GIBBON_CLIP_WIN_MATCH,
-		                                    GIBBON_TT_NATURAL, 7,
-		                                    GIBBON_TT_NATURAL, 6,
+		                                    GIBBON_TT_N0, 7,
+		                                    GIBBON_TT_N0, 6,
 		                                    GIBBON_TT_MATCH_LENGTH, 3,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
@@ -810,7 +810,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_RESIGNS,
-		                                    GIBBON_TT_NATURAL, 7,
+		                                    GIBBON_TT_POSITIVE, 7,
 		                                    GIBBON_TT_MAYBE_YOU, 0,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -880,7 +880,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    ": \t",
 		                                    GIBBON_CLIP_RESUME_INFO_POINTS,
-		                                    GIBBON_TT_NATURAL, 4,
+		                                    GIBBON_TT_N0, 4,
 		                                    GIBBON_TT_USER, 3,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -915,8 +915,8 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 10,
 		                                    "- \t",
 		                                    GIBBON_CLIP_ASYNC_WIN_MATCH,
-		                                    GIBBON_TT_NATURAL, 9,
-		                                    GIBBON_TT_NATURAL, 8,
+		                                    GIBBON_TT_N0, 9,
+		                                    GIBBON_TT_N0, 8,
 		                                    GIBBON_TT_MATCH_LENGTH, 3,
 		                                    GIBBON_TT_USER, 7,
 		                                    GIBBON_TT_USER, 0,
@@ -1093,8 +1093,8 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 4,
 		                                    "*- \t",
 		                                    GIBBON_CLIP_SHOW_SAVED,
-		                                    GIBBON_TT_NATURAL, 3,
-		                                    GIBBON_TT_NATURAL, 2,
+		                                    GIBBON_TT_N0, 3,
+		                                    GIBBON_TT_N0, 2,
 		                                    GIBBON_TT_MATCH_LENGTH, 1,
 		                                    GIBBON_TT_USER, 0,
 		                                    GIBBON_TT_END))
@@ -1123,7 +1123,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 2,
 		                                    " ",
 		                                    GIBBON_CLIP_SHOW_SAVED_COUNT,
-		                                    GIBBON_TT_NATURAL, 1,
+		                                    GIBBON_TT_N0, 1,
 		                                    GIBBON_TT_USER, 0,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -1136,7 +1136,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 5,
 		                                    " \t",
 		                                    GIBBON_CLIP_SHOW_SAVED_COUNT,
-		                                    GIBBON_TT_NATURAL, 2,
+		                                    GIBBON_TT_N0, 2,
 		                                    GIBBON_TT_USER, 0,
 		                                    GIBBON_TT_END))
 			return -1;
@@ -1191,7 +1191,7 @@ FS		[ \t]*\.[ \t]*
 		if (!gibbon_clip_reader_set_result (reader, yytext, 3,
 		                                    " \t",
 		                                    GIBBON_CLIP_HEARD_YOU,
-		                                    GIBBON_TT_NATURAL, 1,
+		                                    GIBBON_TT_N0, 1,
 		                                    GIBBON_TT_END))
 			return -1;
 		

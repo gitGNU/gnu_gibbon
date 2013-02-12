@@ -249,9 +249,16 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         return FALSE;
                 g_value_set_boolean (value, i);
                 break;
-        case GIBBON_TT_NATURAL:
+        case GIBBON_TT_N0:
                 g_value_init (value, G_TYPE_UINT64);
                 i = g_ascii_strtoull (token, NULL, 10);
+                g_value_set_uint64 (value, i);
+                break;
+        case GIBBON_TT_POSITIVE:
+                g_value_init (value, G_TYPE_UINT64);
+                i = g_ascii_strtoull (token, NULL, 10);
+                if (!i)
+                        return FALSE;
                 g_value_set_uint64 (value, i);
                 break;
         case GIBBON_TT_DOUBLE:
