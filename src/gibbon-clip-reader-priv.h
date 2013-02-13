@@ -64,7 +64,7 @@ void gibbon_clip_lexer_reset_condition_stack (void *yyscanner);
 gboolean gibbon_clip_reader_set_result (GibbonCLIPReader *self,
                                         const gchar *line, gint max_tokens,
                                         const gchar *delimiter,
-                                        guint clip_code, ...);
+                                        gint clip_code, ...);
 void gibbon_clip_reader_set_error (GibbonCLIPReader *self,
                                    enum GibbonCLIPErrorCode code,
                                    const gchar *format, ...)

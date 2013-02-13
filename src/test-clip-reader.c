@@ -39,7 +39,7 @@ struct test_case {
 static struct test_case test_clip01_0 = {
                 "1 GibbonTestA 1306865048 gibbon.example.com",
                 {
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INT64, "1306865048" },
                                 { G_TYPE_STRING, "gibbon.example.com" },
@@ -50,7 +50,7 @@ static struct test_case test_clip01_0 = {
 static struct test_case test_clip01_1 = {
                 "1 GibbonTestB 1306865049 127.128.129.130",
                 {
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_STRING, "GibbonTestB" },
                                 { G_TYPE_INT64, "1306865049" },
                                 { G_TYPE_STRING, "127.128.129.130" },
@@ -62,7 +62,7 @@ static struct test_case test_clip02_0 = {
                 "2 GibbonTestA 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0"
                 " Europe/Sofia",
                 {
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
@@ -72,7 +72,7 @@ static struct test_case test_clip02_0 = {
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_UINT64, "2396" },
+                                { G_TYPE_INT64, "2396" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
@@ -92,7 +92,7 @@ static struct test_case test_clip02_1 = {
                 "2 GibbonTestB 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 2 0 0"
                 " Europe/Sofia",
                 {
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_STRING, "GibbonTestB" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
@@ -102,7 +102,7 @@ static struct test_case test_clip02_1 = {
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_UINT64, "2396" },
+                                { G_TYPE_INT64, "2396" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
@@ -122,7 +122,7 @@ static struct test_case test_clip02_2 = {
                 "2 GibbonTestC 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0"
                 " unlimited 0 0 Europe/Sofia",
                 {
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_STRING, "GibbonTestC" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
@@ -132,7 +132,7 @@ static struct test_case test_clip02_2 = {
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
-                                { G_TYPE_UINT64, "2396" },
+                                { G_TYPE_INT64, "2396" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
@@ -151,7 +151,7 @@ static struct test_case test_clip02_2 = {
 static struct test_case test_clip03 = {
                 "3",
                 {
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -159,7 +159,7 @@ static struct test_case test_clip03 = {
 static struct test_case test_clip03a = {
                 "+------------------------------+",
                 {
-                                { G_TYPE_UINT, "413" },
+                                { G_TYPE_INT64, "413" },
                                 { G_TYPE_STRING,
                                   "+------------------------------+" },
                                 { G_TYPE_INVALID }
@@ -169,7 +169,7 @@ static struct test_case test_clip03a = {
 static struct test_case test_clip03b = {
                 "| This is the motto of the day. |",
                 {
-                                { G_TYPE_UINT, "413" },
+                                { G_TYPE_INT64, "413" },
                                 { G_TYPE_STRING,
                                   "| This is the motto of the day. |"
                                 },
@@ -180,7 +180,7 @@ static struct test_case test_clip03b = {
 static struct test_case test_clip04 = {
                 "4",
                 {
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -190,15 +190,15 @@ static struct test_case test_clip05_0 = {
                 "5 GibbonTestA barrack - 0 0 1418.61 1914 23 1306926526"
                 " 173.223.48.110 Gibbon_0.1.1 president@whitehouse.gov",
                 {
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_STRING, "barrack" },
                                 { G_TYPE_STRING, "" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_DOUBLE, "1418.610000" },
-                                { G_TYPE_UINT64, "1914" },
-                                { G_TYPE_UINT64, "23" },
+                                { G_TYPE_INT64, "1914" },
+                                { G_TYPE_INT64, "23" },
                                 { G_TYPE_INT64, "1306926526" },
                                 { G_TYPE_STRING, "173.223.48.110" },
                                 { G_TYPE_STRING, "Gibbon_0.1.1" },
@@ -212,15 +212,15 @@ static struct test_case test_clip05_1 = {
                 "5 GibbonTestB - - 0 0 -35.67 914 23 1306926526"
                 " 44.55.66.77 Gibbon_0.1.1 foo@bar.baz",
                 {
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_STRING, "GibbonTestB" },
                                 { G_TYPE_STRING, "" },
                                 { G_TYPE_STRING, "" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_DOUBLE, "-35.670000" },
-                                { G_TYPE_UINT64, "914" },
-                                { G_TYPE_UINT64, "23" },
+                                { G_TYPE_INT64, "914" },
+                                { G_TYPE_INT64, "23" },
                                 { G_TYPE_INT64, "1306926526" },
                                 { G_TYPE_STRING, "44.55.66.77" },
                                 { G_TYPE_STRING, "Gibbon_0.1.1" },
@@ -234,15 +234,15 @@ static struct test_case test_clip05_2 = {
                 "5 GibbonTestC barrack - 0 0 1418.61 1914 23 1306926526"
                 " 173.223.48.110* Gibbon_0.1.1 president@whitehouse.gov",
                 {
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_STRING, "GibbonTestC" },
                                 { G_TYPE_STRING, "barrack" },
                                 { G_TYPE_STRING, "" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_DOUBLE, "1418.610000" },
-                                { G_TYPE_UINT64, "1914" },
-                                { G_TYPE_UINT64, "23" },
+                                { G_TYPE_INT64, "1914" },
+                                { G_TYPE_INT64, "23" },
                                 { G_TYPE_INT64, "1306926526" },
                                 { G_TYPE_STRING, "173.223.48.110" },
                                 { G_TYPE_STRING, "Gibbon_0.1.1" },
@@ -256,7 +256,7 @@ static struct test_case test_clip05_2 = {
 static struct test_case test_clip06 = {
                 "6",
                 {
-                                { G_TYPE_UINT, "6" },
+                                { G_TYPE_INT64, "6" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -264,7 +264,7 @@ static struct test_case test_clip06 = {
 static struct test_case test_clip07 = {
                 "7 gflohr gflohr logs in.",
                 {
-                                { G_TYPE_UINT, "7" },
+                                { G_TYPE_INT64, "7" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "gflohr logs in." },
                                 { G_TYPE_INVALID }
@@ -274,7 +274,7 @@ static struct test_case test_clip07 = {
 static struct test_case test_clip08 = {
                 "8 gflohr gflohr drops connection.",
                 {
-                                { G_TYPE_UINT, "8" },
+                                { G_TYPE_INT64, "8" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "gflohr drops connection." },
                                 { G_TYPE_INVALID }
@@ -284,7 +284,7 @@ static struct test_case test_clip08 = {
 static struct test_case test_clip09 = {
                 "9 gflohr -1306935184    Be back at 20 p.m.",
                 {
-                                { G_TYPE_UINT, "9" },
+                                { G_TYPE_INT64, "9" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INT64, "-1306935184" },
                                 { G_TYPE_STRING, "   Be back at 20 p.m." },
@@ -295,7 +295,7 @@ static struct test_case test_clip09 = {
 static struct test_case test_clip10 = {
                 "10 gflohr",
                 {
-                                { G_TYPE_UINT, "10" },
+                                { G_TYPE_INT64, "10" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -304,7 +304,7 @@ static struct test_case test_clip10 = {
 static struct test_case test_clip11 = {
                 "11 gflohr",
                 {
-                                { G_TYPE_UINT, "11" },
+                                { G_TYPE_INT64, "11" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -313,7 +313,7 @@ static struct test_case test_clip11 = {
 static struct test_case test_clip12 = {
                 "12 gflohr    Hello world.",
                 {
-                                { G_TYPE_UINT, "12" },
+                                { G_TYPE_INT64, "12" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
@@ -323,7 +323,7 @@ static struct test_case test_clip12 = {
 static struct test_case test_clip13 = {
                 "13 gflohr    Hello world.",
                 {
-                                { G_TYPE_UINT, "13" },
+                                { G_TYPE_INT64, "13" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
@@ -333,7 +333,7 @@ static struct test_case test_clip13 = {
 static struct test_case test_clip14 = {
                 "14 gflohr    Hello world.",
                 {
-                                { G_TYPE_UINT, "14" },
+                                { G_TYPE_INT64, "14" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
@@ -343,7 +343,7 @@ static struct test_case test_clip14 = {
 static struct test_case test_clip15 = {
                 "15 gflohr    Hello world.",
                 {
-                                { G_TYPE_UINT, "15" },
+                                { G_TYPE_INT64, "15" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
@@ -353,7 +353,7 @@ static struct test_case test_clip15 = {
 static struct test_case test_clip16 = {
                 "16 gflohr    Hello world.",
                 {
-                                { G_TYPE_UINT, "16" },
+                                { G_TYPE_INT64, "16" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
@@ -363,7 +363,7 @@ static struct test_case test_clip16 = {
 static struct test_case test_clip17 = {
                 "17    Hello world.",
                 {
-                                { G_TYPE_UINT, "17" },
+                                { G_TYPE_INT64, "17" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
@@ -372,7 +372,7 @@ static struct test_case test_clip17 = {
 static struct test_case test_clip18 = {
                 "18    Hello world.",
                 {
-                                { G_TYPE_UINT, "18" },
+                                { G_TYPE_INT64, "18" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
@@ -381,7 +381,7 @@ static struct test_case test_clip18 = {
 static struct test_case test_clip19 = {
                 "19    Hello world.",
                 {
-                                { G_TYPE_UINT, "19" },
+                                { G_TYPE_INT64, "19" },
                                 { G_TYPE_STRING, "   Hello world." },
                                 { G_TYPE_INVALID }
                 }
@@ -390,7 +390,7 @@ static struct test_case test_clip19 = {
 static struct test_case test_clip20 = {
                 "20 gflohr    Mad world!",
                 {
-                                { G_TYPE_UINT, "20" },
+                                { G_TYPE_INT64, "20" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "   Mad world!" },
                                 { G_TYPE_INVALID }
@@ -400,8 +400,8 @@ static struct test_case test_clip20 = {
 static struct test_case test_error00 = {
                 "** Funny new message!",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_STRING,
                                 "Funny new message!"},
                                 { G_TYPE_INVALID }
@@ -411,8 +411,8 @@ static struct test_case test_error00 = {
 static struct test_case test_error01 = {
                 "** Error: something new went wrong!",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_STRING,
                                 "Error: something new went wrong!"},
                                 { G_TYPE_INVALID }
@@ -422,8 +422,8 @@ static struct test_case test_error01 = {
 static struct test_case test_error02 = {
                 "** You see a funny new message!",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_STRING,
                                 "You see a funny new message!"},
                                 { G_TYPE_INVALID }
@@ -433,8 +433,8 @@ static struct test_case test_error02 = {
 static struct test_case test_error03 = {
                 "** There is no one called anonymous.",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "2" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_STRING, "No such player: anonymous!"},
                                 { G_TYPE_INVALID }
                 },
@@ -530,10 +530,10 @@ Turn: -1, cube turned: 0, resigned: 0, score: 0\n"},
 static struct test_case test_rolls00 = {
                 "gflohr rolls 3 and 1.",
                 {
-                                { G_TYPE_UINT, "202" },
+                                { G_TYPE_INT64, "202" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "3" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_INT64, "3" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -541,10 +541,10 @@ static struct test_case test_rolls00 = {
 static struct test_case test_rolls01 = {
                 "You roll 6 and 4.",
                 {
-                                { G_TYPE_UINT, "202" },
+                                { G_TYPE_INT64, "202" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT, "6" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INT64, "6" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -552,12 +552,12 @@ static struct test_case test_rolls01 = {
 static struct test_case test_moves00 = {
                 "gflohr moves 8-5 6-5 .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "8" },
-                                { G_TYPE_UINT, "5" },
-                                { G_TYPE_UINT, "6" },
-                                { G_TYPE_UINT, "5" },
+                                { G_TYPE_INT64, "8" },
+                                { G_TYPE_INT64, "5" },
+                                { G_TYPE_INT64, "6" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -565,12 +565,12 @@ static struct test_case test_moves00 = {
 static struct test_case test_moves01 = {
                 "gflohr moves 17-20 19-20 .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "17" },
-                                { G_TYPE_UINT, "20" },
-                                { G_TYPE_UINT, "19" },
-                                { G_TYPE_UINT, "20" },
+                                { G_TYPE_INT64, "17" },
+                                { G_TYPE_INT64, "20" },
+                                { G_TYPE_INT64, "19" },
+                                { G_TYPE_INT64, "20" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -578,16 +578,16 @@ static struct test_case test_moves01 = {
 static struct test_case test_moves02 = {
                 "gflohr moves 17-20 17-20 19-20 19-20 .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "17" },
-                                { G_TYPE_UINT, "20" },
-                                { G_TYPE_UINT, "17" },
-                                { G_TYPE_UINT, "20" },
-                                { G_TYPE_UINT, "19" },
-                                { G_TYPE_UINT, "20" },
-                                { G_TYPE_UINT, "19" },
-                                { G_TYPE_UINT, "20" },
+                                { G_TYPE_INT64, "17" },
+                                { G_TYPE_INT64, "20" },
+                                { G_TYPE_INT64, "17" },
+                                { G_TYPE_INT64, "20" },
+                                { G_TYPE_INT64, "19" },
+                                { G_TYPE_INT64, "20" },
+                                { G_TYPE_INT64, "19" },
+                                { G_TYPE_INT64, "20" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -595,12 +595,12 @@ static struct test_case test_moves02 = {
 static struct test_case test_moves03 = {
                 "gflohr moves bar-24 bar-22 .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "25" },
-                                { G_TYPE_UINT, "24" },
-                                { G_TYPE_UINT, "25" },
-                                { G_TYPE_UINT, "22" },
+                                { G_TYPE_INT64, "25" },
+                                { G_TYPE_INT64, "24" },
+                                { G_TYPE_INT64, "25" },
+                                { G_TYPE_INT64, "22" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -608,12 +608,12 @@ static struct test_case test_moves03 = {
 static struct test_case test_moves04 = {
                 "gflohr moves bar-1 bar-3 .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -621,12 +621,12 @@ static struct test_case test_moves04 = {
 static struct test_case test_moves05 = {
                 "gflohr moves 24-off 22-off .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "24" },
-                                { G_TYPE_UINT, "25" },
-                                { G_TYPE_UINT, "22" },
-                                { G_TYPE_UINT, "25" },
+                                { G_TYPE_INT64, "24" },
+                                { G_TYPE_INT64, "25" },
+                                { G_TYPE_INT64, "22" },
+                                { G_TYPE_INT64, "25" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -634,12 +634,12 @@ static struct test_case test_moves05 = {
 static struct test_case test_moves06 = {
                 "gflohr moves 1-off 3-off .",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT, "1" },
-                                { G_TYPE_UINT, "0" },
-                                { G_TYPE_UINT, "3" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "3" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -647,10 +647,10 @@ static struct test_case test_moves06 = {
 static struct test_case test_moves07 = {
                 "GibbonTestB moves 2-off",
                 {
-                                { G_TYPE_UINT, "203" },
+                                { G_TYPE_INT64, "203" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT, "2" },
-                                { G_TYPE_UINT, "0" },
+                                { G_TYPE_INT64, "2" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -658,7 +658,7 @@ static struct test_case test_moves07 = {
 static struct test_case test_game_start00 = {
                 "Starting a new game with gflohr.",
                 {
-                                { G_TYPE_UINT, "204" },
+                                { G_TYPE_INT64, "204" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -667,7 +667,7 @@ static struct test_case test_game_start00 = {
 static struct test_case test_game_left00 = {
                 "** You terminated the game. The game was saved.",
                 {
-                                { G_TYPE_UINT, "205" },
+                                { G_TYPE_INT64, "205" },
                                 { G_TYPE_STRING, "You" },
                                 { G_TYPE_INVALID }
                 }
@@ -677,7 +677,7 @@ static struct test_case test_game_left01 = {
                 "** Player GibbonTestA terminated the game."
                 " The game was saved.",
                 {
-                                { G_TYPE_UINT, "205" },
+                                { G_TYPE_INT64, "205" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -686,7 +686,7 @@ static struct test_case test_game_left01 = {
 static struct test_case test_game_left02 = {
                 "GibbonTestA logs out. The game was saved.",
                 {
-                                { G_TYPE_UINT, "211" },
+                                { G_TYPE_INT64, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -695,7 +695,7 @@ static struct test_case test_game_left02 = {
 static struct test_case test_game_left03 = {
                 "GibbonTestA drops connection. The game was saved.",
                 {
-                                { G_TYPE_UINT, "211" },
+                                { G_TYPE_INT64, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -704,7 +704,7 @@ static struct test_case test_game_left03 = {
 static struct test_case test_game_left04 = {
                 "Connection with GibbonTestA timed out. The game was saved.",
                 {
-                                { G_TYPE_UINT, "211" },
+                                { G_TYPE_INT64, "211" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -713,7 +713,7 @@ static struct test_case test_game_left04 = {
 static struct test_case test_cannot_move00 = {
                 "You can't move.",
                 {
-                                { G_TYPE_UINT, "206" },
+                                { G_TYPE_INT64, "206" },
                                 { G_TYPE_STRING, "You" },
                                 { G_TYPE_INVALID }
                 }
@@ -722,7 +722,7 @@ static struct test_case test_cannot_move00 = {
 static struct test_case test_cannot_move01 = {
                 "GibbonTestA can't move.",
                 {
-                                { G_TYPE_UINT, "206" },
+                                { G_TYPE_INT64, "206" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -731,7 +731,7 @@ static struct test_case test_cannot_move01 = {
 static struct test_case test_doubling00 = {
                 "You double. Please wait for GibbonTestA to accept or reject.",
                 {
-                                { G_TYPE_UINT, "207" },
+                                { G_TYPE_INT64, "207" },
                                 { G_TYPE_STRING, "You" },
                                 { G_TYPE_INVALID }
                 }
@@ -740,7 +740,7 @@ static struct test_case test_doubling00 = {
 static struct test_case test_doubling01 = {
                 "GibbonTestA doubles. Type 'accept' or 'reject'.",
                 {
-                                { G_TYPE_UINT, "207" },
+                                { G_TYPE_INT64, "207" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -749,9 +749,9 @@ static struct test_case test_doubling01 = {
 static struct test_case test_doubling02 = {
                 "You accept the double.  The cube shows 2.",
                 {
-                                { G_TYPE_UINT, "208" },
+                                { G_TYPE_INT64, "208" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -759,9 +759,9 @@ static struct test_case test_doubling02 = {
 static struct test_case test_doubling03 = {
                 "GibbonTestA accepts the double.  The cube shows 4.",
                 {
-                                { G_TYPE_UINT, "208" },
+                                { G_TYPE_INT64, "208" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -770,9 +770,9 @@ static struct test_case test_resign00 = {
                 "GibbonTestA wants to resign. You will win 1 point."
                 " Type 'accept' or 'reject'.",
                 {
-                                { G_TYPE_UINT, "209" },
+                                { G_TYPE_INT64, "209" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -781,9 +781,9 @@ static struct test_case test_resign01 = {
                 "GibbonTestA wants to resign. You will win 6 points."
                 " Type 'accept' or 'reject'.",
                 {
-                                { G_TYPE_UINT, "209" },
+                                { G_TYPE_INT64, "209" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "6" },
+                                { G_TYPE_INT64, "6" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -791,9 +791,9 @@ static struct test_case test_resign01 = {
 static struct test_case test_resign02 = {
                 "You want to resign. GibbonTestA will win 1 point.",
                 {
-                                { G_TYPE_UINT, "209" },
+                                { G_TYPE_INT64, "209" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -801,9 +801,9 @@ static struct test_case test_resign02 = {
 static struct test_case test_resign03 = {
                 "You want to resign. GibbonTestA will win 4 points.",
                 {
-                                { G_TYPE_UINT, "209" },
+                                { G_TYPE_INT64, "209" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -811,7 +811,7 @@ static struct test_case test_resign03 = {
 static struct test_case test_resign04 = {
                 "You reject. The game continues.",
                 {
-                                { G_TYPE_UINT, "210" },
+                                { G_TYPE_INT64, "210" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -819,7 +819,7 @@ static struct test_case test_resign04 = {
 static struct test_case test_resign05 = {
                 "GibbonTestA rejects. The game continues.",
                 {
-                                { G_TYPE_UINT, "210" },
+                                { G_TYPE_INT64, "210" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -827,9 +827,9 @@ static struct test_case test_resign05 = {
 static struct test_case test_between00 = {
                 "GibbonTestA wants to play a 5 point match with you.",
                 {
-                                { G_TYPE_UINT, "300" },
+                                { G_TYPE_INT64, "300" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -837,9 +837,9 @@ static struct test_case test_between00 = {
 static struct test_case test_between01 = {
                 "GibbonTestA wants to play an unlimited match with you.",
                 {
-                                { G_TYPE_UINT, "300" },
+                                { G_TYPE_INT64, "300" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -847,9 +847,9 @@ static struct test_case test_between01 = {
 static struct test_case test_between02 = {
                 "GibbonTestA wants to resume a saved match with you.",
                 {
-                                { G_TYPE_UINT, "300" },
+                                { G_TYPE_INT64, "300" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "-1" },
+                                { G_TYPE_INT64, "-1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -857,7 +857,7 @@ static struct test_case test_between02 = {
 static struct test_case test_between03 = {
                 "Type 'join GibbonTestA' to accept.",
                 {
-                                { G_TYPE_UINT, "301" },
+                                { G_TYPE_INT64, "301" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -866,7 +866,7 @@ static struct test_case test_between03 = {
 static struct test_case test_between04 = {
                 "You're now watching gflohr.",
                 {
-                                { G_TYPE_UINT, "302" },
+                                { G_TYPE_INT64, "302" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -875,8 +875,8 @@ static struct test_case test_between04 = {
 static struct test_case test_between05 = {
                 "** You are now playing a 5 point match with gflohr",
                 {
-                                { G_TYPE_UINT, "303" },
-                                { G_TYPE_INT, "5" },
+                                { G_TYPE_INT64, "303" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -885,8 +885,8 @@ static struct test_case test_between05 = {
 static struct test_case test_between06 = {
                 "** You are now playing an unlimited match with gflohr",
                 {
-                                { G_TYPE_UINT, "303" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "303" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -895,7 +895,7 @@ static struct test_case test_between06 = {
 static struct test_case test_between07 = {
                 "** gflohr is refusing games.",
                 {
-                                { G_TYPE_UINT, "304" },
+                                { G_TYPE_INT64, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
                                   "Player `gflohr' is now refusing to play!"},
@@ -906,7 +906,7 @@ static struct test_case test_between07 = {
 static struct test_case test_between08 = {
                 "** Error: gflohr is already playing with someone else.",
                 {
-                                { G_TYPE_UINT, "304" },
+                                { G_TYPE_INT64, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
                                   "Player `gflohr' is already playing with"
@@ -918,7 +918,7 @@ static struct test_case test_between08 = {
 static struct test_case test_between09 = {
                 "** gflohr didn't invite you.",
                 {
-                                { G_TYPE_UINT, "304" },
+                                { G_TYPE_INT64, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
                                   "Player `gflohr' is already playing with"
@@ -930,7 +930,7 @@ static struct test_case test_between09 = {
 static struct test_case test_between10 = {
                 "** Error: can't find player gflohr",
                 {
-                                { G_TYPE_UINT, "304" },
+                                { G_TYPE_INT64, "304" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING,
                                   "Player `gflohr' has logged out!" },
@@ -941,8 +941,8 @@ static struct test_case test_between10 = {
 static struct test_case test_between11 = {
                 "** You can't play two games at once",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "3" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_STRING,
                                   "You cannot play two games at once!"},
                                 { G_TYPE_INVALID }
@@ -952,9 +952,9 @@ static struct test_case test_between11 = {
 static struct test_case test_between12 = {
                 "** Player gflohr has joined you for a 5 point match.",
                 {
-                                { G_TYPE_UINT, "303" },
+                                { G_TYPE_INT64, "303" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_INT, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -962,9 +962,9 @@ static struct test_case test_between12 = {
 static struct test_case test_between13 = {
                 "Player gflohr has joined you for an unlimited match.",
                 {
-                                { G_TYPE_UINT, "303" },
+                                { G_TYPE_INT64, "303" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -973,7 +973,7 @@ static struct test_case test_resume00 = {
                 "You are now playing with gflohr."
                 " Your running match was loaded.",
                 {
-                                { G_TYPE_UINT, "305" },
+                                { G_TYPE_INT64, "305" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -983,7 +983,7 @@ static struct test_case test_resume01 = {
                 "gflohr has joined you."
                 " Your running match was loaded.",
                 {
-                                { G_TYPE_UINT, "305" },
+                                { G_TYPE_INT64, "305" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -992,7 +992,7 @@ static struct test_case test_resume01 = {
 static struct test_case test_resume02 = {
                 "turn: gflohr",
                 {
-                                { G_TYPE_UINT, "306" },
+                                { G_TYPE_INT64, "306" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -1001,8 +1001,8 @@ static struct test_case test_resume02 = {
 static struct test_case test_resume03 = {
                 "match length: 42",
                 {
-                                { G_TYPE_UINT, "307" },
-                                { G_TYPE_INT, "42" },
+                                { G_TYPE_INT64, "307" },
+                                { G_TYPE_INT64, "42" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1010,8 +1010,8 @@ static struct test_case test_resume03 = {
 static struct test_case test_resume04 = {
                 "unlimited match",
                 {
-                                { G_TYPE_UINT, "307" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "307" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1019,9 +1019,9 @@ static struct test_case test_resume04 = {
 static struct test_case test_resume05 = {
                 "points for user gflohr: 3",
                 {
-                                { G_TYPE_UINT, "308" },
+                                { G_TYPE_INT64, "308" },
                                 { G_TYPE_STRING, "gflohr" },
-                                { G_TYPE_UINT64, "3" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1030,7 +1030,7 @@ static struct test_case test_between14 = {
                 "Type 'join' if you want to play the next game,"
                 " type 'leave' if you don't.",
                 {
-                                { G_TYPE_UINT, "309" },
+                                { G_TYPE_INT64, "309" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1038,9 +1038,9 @@ static struct test_case test_between14 = {
 static struct test_case test_between15 = {
                 "You win the game and get 1 point. Congratulations!",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1048,9 +1048,9 @@ static struct test_case test_between15 = {
 static struct test_case test_between16 = {
                 "You win the game and get 4 points. Congratulations!",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1058,9 +1058,9 @@ static struct test_case test_between16 = {
 static struct test_case test_between17 = {
                 "GibbonTestA wins the game and gets 1 point. Sorry.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1068,9 +1068,9 @@ static struct test_case test_between17 = {
 static struct test_case test_between18 = {
                 "GibbonTestA wins the game and gets 4 points. Sorry.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1078,9 +1078,9 @@ static struct test_case test_between18 = {
 static struct test_case test_between19 = {
                 "GibbonTestA gives up. You win 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1088,9 +1088,9 @@ static struct test_case test_between19 = {
 static struct test_case test_between20 = {
                 "GibbonTestA gives up. You win 2 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1098,9 +1098,9 @@ static struct test_case test_between20 = {
 static struct test_case test_between21 = {
                 "You give up. GibbonTestA wins 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1108,9 +1108,9 @@ static struct test_case test_between21 = {
 static struct test_case test_between22 = {
                 "You give up. GibbonTestA wins 2 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1118,9 +1118,9 @@ static struct test_case test_between22 = {
 static struct test_case test_between23 = {
                 "You accept and win 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1128,9 +1128,9 @@ static struct test_case test_between23 = {
 static struct test_case test_between24 = {
                 "You accept and win 2 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1138,9 +1138,9 @@ static struct test_case test_between24 = {
 static struct test_case test_between25 = {
                 "GibbonTestA accepts and wins 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1148,9 +1148,9 @@ static struct test_case test_between25 = {
 static struct test_case test_between26 = {
                 "GibbonTestA accepts and wins 2 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1158,9 +1158,9 @@ static struct test_case test_between26 = {
 static struct test_case test_between27 = {
                 "GibbonTestA wins the game and gets 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1168,9 +1168,9 @@ static struct test_case test_between27 = {
 static struct test_case test_between28 = {
                 "GibbonTestA wins the game and gets 4 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1178,9 +1178,9 @@ static struct test_case test_between28 = {
 static struct test_case test_between29 = {
                 "GibbonTestB gives up. GibbonTestA wins 1 point.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1188,9 +1188,9 @@ static struct test_case test_between29 = {
 static struct test_case test_between30 = {
                 "GibbonTestB gives up. GibbonTestA win 2 points.",
                 {
-                                { G_TYPE_UINT, "310" },
+                                { G_TYPE_INT64, "310" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1198,12 +1198,12 @@ static struct test_case test_between30 = {
 static struct test_case test_between31 = {
                 "score in 7 point match: GibbonTestA-3 GibbonTestB-5",
                 {
-                                { G_TYPE_UINT, "311" },
-                                { G_TYPE_INT, "7" },
+                                { G_TYPE_INT64, "311" },
+                                { G_TYPE_INT64, "7" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "3" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT64, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1211,12 +1211,12 @@ static struct test_case test_between31 = {
 static struct test_case test_between32 = {
                 "score in unlimited match: GibbonTestA-3 GibbonTestB-5",
                 {
-                                { G_TYPE_UINT, "311" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "311" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_UINT64, "3" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_STRING, "GibbonTestB" },
-                                { G_TYPE_UINT64, "5" },
+                                { G_TYPE_INT64, "5" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1224,7 +1224,7 @@ static struct test_case test_between32 = {
 static struct test_case test_between33 = {
                 "** Please wait for GibbonTestA to join too.",
                 {
-                                { G_TYPE_UINT, "312" },
+                                { G_TYPE_INT64, "312" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -1233,7 +1233,7 @@ static struct test_case test_between33 = {
 static struct test_case test_between34 = {
                 "** You invited GibbonTestA to resume a saved match.",
                 {
-                                { G_TYPE_UINT, "313" },
+                                { G_TYPE_INT64, "313" },
                                 { G_TYPE_STRING, "GibbonTestA" },
                                 { G_TYPE_INVALID }
                 }
@@ -1242,11 +1242,11 @@ static struct test_case test_between34 = {
 static struct test_case test_between35 = {
                 "You win the 7 point match 8-4.",
                 {
-                                { G_TYPE_UINT, "314" },
+                                { G_TYPE_INT64, "314" },
                                 { G_TYPE_STRING, "You" },
-                                { G_TYPE_INT, "7" },
-                                { G_TYPE_UINT64, "8" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "7" },
+                                { G_TYPE_INT64, "8" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1254,11 +1254,11 @@ static struct test_case test_between35 = {
 static struct test_case test_between36 = {
                 "GibbonTestA wins the 7 point match 8-4.",
                 {
-                                { G_TYPE_UINT, "314" },
+                                { G_TYPE_INT64, "314" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "7" },
-                                { G_TYPE_UINT64, "8" },
-                                { G_TYPE_UINT64, "4" },
+                                { G_TYPE_INT64, "7" },
+                                { G_TYPE_INT64, "8" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1266,7 +1266,7 @@ static struct test_case test_between36 = {
 static struct test_case test_between37 = {
                 "You stop watching gflohr.",
                 {
-                                { G_TYPE_UINT, "315" },
+                                { G_TYPE_INT64, "315" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_INVALID }
                 }
@@ -1275,10 +1275,10 @@ static struct test_case test_between37 = {
 static struct test_case test_various00 = {
                 "gflohr and GibbonTestA start a 7 point match.",
                 {
-                                { G_TYPE_UINT, "400" },
+                                { G_TYPE_INT64, "400" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "7" },
+                                { G_TYPE_INT64, "7" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1286,10 +1286,10 @@ static struct test_case test_various00 = {
 static struct test_case test_various01 = {
                 "gflohr and GibbonTestA start an unlimited match.",
                 {
-                                { G_TYPE_UINT, "400" },
+                                { G_TYPE_INT64, "400" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1297,12 +1297,12 @@ static struct test_case test_various01 = {
 static struct test_case test_various02 = {
                 "gflohr wins a 7 point match against GibbonTestA  8-3 .",
                 {
-                                { G_TYPE_UINT, "401" },
+                                { G_TYPE_INT64, "401" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "7" },
-                                { G_TYPE_UINT64, "8" },
-                                { G_TYPE_UINT64, "3" },
+                                { G_TYPE_INT64, "7" },
+                                { G_TYPE_INT64, "8" },
+                                { G_TYPE_INT64, "3" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1310,12 +1310,12 @@ static struct test_case test_various02 = {
 static struct test_case test_various02a = {
                 "gflohr wins a 1 point match against GibbonTestA  1-0 .",
                 {
-                                { G_TYPE_UINT, "401" },
+                                { G_TYPE_INT64, "401" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "1" },
-                                { G_TYPE_UINT64, "1" },
-                                { G_TYPE_UINT64, "0" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1323,10 +1323,10 @@ static struct test_case test_various02a = {
 static struct test_case test_various03 = {
                 "gflohr and GibbonTestA are resuming their 7-point match.",
                 {
-                                { G_TYPE_UINT, "402" },
+                                { G_TYPE_INT64, "402" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "7" },
+                                { G_TYPE_INT64, "7" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1334,10 +1334,10 @@ static struct test_case test_various03 = {
 static struct test_case test_various04 = {
                 "gflohr and GibbonTestA are resuming their unlimited match.",
                 {
-                                { G_TYPE_UINT, "402" },
+                                { G_TYPE_INT64, "402" },
                                 { G_TYPE_STRING, "gflohr" },
                                 { G_TYPE_STRING, "GibbonTestA" },
-                                { G_TYPE_INT, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1345,7 +1345,7 @@ static struct test_case test_various04 = {
 static struct test_case test_various05 = {
                 "   ",
                 {
-                                { G_TYPE_UINT, "403" },
+                                { G_TYPE_INT64, "403" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1353,7 +1353,7 @@ static struct test_case test_various05 = {
 static struct test_case test_settings00 = {
                 "Settings of variables:",
                 {
-                                { G_TYPE_UINT, "404" },
+                                { G_TYPE_INT64, "404" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1361,7 +1361,7 @@ static struct test_case test_settings00 = {
 static struct test_case test_settings01 = {
                 "boardstyle: 3",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "boardstyle" },
                                 { G_TYPE_STRING, "3" },
                                 { G_TYPE_INVALID }
@@ -1371,7 +1371,7 @@ static struct test_case test_settings01 = {
 static struct test_case test_settings02 = {
                 "linelength: 0",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "linelength" },
                                 { G_TYPE_STRING, "0" },
                                 { G_TYPE_INVALID }
@@ -1381,7 +1381,7 @@ static struct test_case test_settings02 = {
 static struct test_case test_settings03 = {
                 "pagelength: 0",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "pagelength" },
                                 { G_TYPE_STRING, "0" },
                                 { G_TYPE_INVALID }
@@ -1391,7 +1391,7 @@ static struct test_case test_settings03 = {
 static struct test_case test_settings04 = {
                 "redoubles: none",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "redoubles" },
                                 { G_TYPE_STRING, "none" },
                                 { G_TYPE_INVALID }
@@ -1401,7 +1401,7 @@ static struct test_case test_settings04 = {
 static struct test_case test_settings05 = {
                 "sortwho: login",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "sortwho" },
                                 { G_TYPE_STRING, "login" },
                                 { G_TYPE_INVALID }
@@ -1411,7 +1411,7 @@ static struct test_case test_settings05 = {
 static struct test_case test_settings06 = {
                 "timezone: UTC",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "timezone" },
                                 { G_TYPE_STRING, "UTC" },
                                 { G_TYPE_INVALID }
@@ -1421,7 +1421,7 @@ static struct test_case test_settings06 = {
 static struct test_case test_settings07 = {
                 "Value of 'boardstyle' set to 3.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "boardstyle" },
                                 { G_TYPE_STRING, "3" },
                                 { G_TYPE_INVALID }
@@ -1431,7 +1431,7 @@ static struct test_case test_settings07 = {
 static struct test_case test_settings08 = {
                 "Value of 'linelength' set to 0.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "linelength" },
                                 { G_TYPE_STRING, "0" },
                                 { G_TYPE_INVALID }
@@ -1441,7 +1441,7 @@ static struct test_case test_settings08 = {
 static struct test_case test_settings09 = {
                 "Value of 'pagelength' set to 0.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "pagelength" },
                                 { G_TYPE_STRING, "0" },
                                 { G_TYPE_INVALID }
@@ -1451,7 +1451,7 @@ static struct test_case test_settings09 = {
 static struct test_case test_settings10 = {
                 "Value of 'redoubles' set to none.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "redoubles" },
                                 { G_TYPE_STRING, "none" },
                                 { G_TYPE_INVALID }
@@ -1461,7 +1461,7 @@ static struct test_case test_settings10 = {
 static struct test_case test_settings11 = {
                 "Value of 'sortwho' set to login.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "sortwho" },
                                 { G_TYPE_STRING, "login" },
                                 { G_TYPE_INVALID }
@@ -1471,7 +1471,7 @@ static struct test_case test_settings11 = {
 static struct test_case test_settings12 = {
                 "Value of 'timezone' set to UTC.",
                 {
-                                { G_TYPE_UINT, "405" },
+                                { G_TYPE_INT64, "405" },
                                 { G_TYPE_STRING, "timezone" },
                                 { G_TYPE_STRING, "UTC" },
                                 { G_TYPE_INVALID }
@@ -1481,7 +1481,7 @@ static struct test_case test_settings12 = {
 static struct test_case test_toggles00 = {
                 "The current settings are:",
                 {
-                                { G_TYPE_UINT, "406" },
+                                { G_TYPE_INT64, "406" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1489,7 +1489,7 @@ static struct test_case test_toggles00 = {
 static struct test_case test_toggles01 = {
                 "allowpip   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "allowpip" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1499,7 +1499,7 @@ static struct test_case test_toggles01 = {
 static struct test_case test_toggles02 = {
                 "autoboard   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "autoboard" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1509,7 +1509,7 @@ static struct test_case test_toggles02 = {
 static struct test_case test_toggles03 = {
                 "autodouble   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "autodouble" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1519,7 +1519,7 @@ static struct test_case test_toggles03 = {
 static struct test_case test_toggles04 = {
                 "automove   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "automove" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1529,7 +1529,7 @@ static struct test_case test_toggles04 = {
 static struct test_case test_toggles05 = {
                 "bell   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "bell" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1539,7 +1539,7 @@ static struct test_case test_toggles05 = {
 static struct test_case test_toggles06 = {
                 "crawford   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "crawford" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1549,7 +1549,7 @@ static struct test_case test_toggles06 = {
 static struct test_case test_toggles07 = {
                 "double   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "double" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1559,7 +1559,7 @@ static struct test_case test_toggles07 = {
 static struct test_case test_toggles08 = {
                 "greedy   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "greedy" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1569,7 +1569,7 @@ static struct test_case test_toggles08 = {
 static struct test_case test_toggles09 = {
                 "moreboards   YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "moreboards" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1579,7 +1579,7 @@ static struct test_case test_toggles09 = {
 static struct test_case test_toggles10 = {
                 "moves   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "moves" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1589,7 +1589,7 @@ static struct test_case test_toggles10 = {
 static struct test_case test_toggles11 = {
                 "notify  YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "notify" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1599,7 +1599,7 @@ static struct test_case test_toggles11 = {
 static struct test_case test_toggles12 = {
                 "ratings   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "ratings" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1609,7 +1609,7 @@ static struct test_case test_toggles12 = {
 static struct test_case test_toggles13 = {
                 "ready   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "ready" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1619,7 +1619,7 @@ static struct test_case test_toggles13 = {
 static struct test_case test_toggles14 = {
                 "report   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "report" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1629,7 +1629,7 @@ static struct test_case test_toggles14 = {
 static struct test_case test_toggles15 = {
                 "silent   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "silent" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1639,7 +1639,7 @@ static struct test_case test_toggles15 = {
 static struct test_case test_toggles16 = {
                 "telnet  YES",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "telnet" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1649,7 +1649,7 @@ static struct test_case test_toggles16 = {
 static struct test_case test_toggles17 = {
                 "wrap   NO",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "wrap" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1659,7 +1659,7 @@ static struct test_case test_toggles17 = {
 static struct test_case test_toggles18 = {
                 "** You're now ready to invite or join someone.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "ready" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1669,7 +1669,7 @@ static struct test_case test_toggles18 = {
 static struct test_case test_toggles19 = {
                 "** You're now refusing to play with someone.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "ready" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1679,7 +1679,7 @@ static struct test_case test_toggles19 = {
 static struct test_case test_toggles20 = {
                 "** You won't be notified when new users log in.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "notify" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1689,7 +1689,7 @@ static struct test_case test_toggles20 = {
 static struct test_case test_toggles21 = {
                 "** You'll be notified when new users log in.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "notify" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1699,7 +1699,7 @@ static struct test_case test_toggles21 = {
 static struct test_case test_toggles22 = {
                 "** The board will be refreshed after every move.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "autoboard" },
                                 { G_TYPE_BOOLEAN, "TRUE" },
                                 { G_TYPE_INVALID }
@@ -1709,7 +1709,7 @@ static struct test_case test_toggles22 = {
 static struct test_case test_toggles23 = {
                 "** The board won't be refreshed after every move.",
                 {
-                                { G_TYPE_UINT, "407" },
+                                { G_TYPE_INT64, "407" },
                                 { G_TYPE_STRING, "autoboard" },
                                 { G_TYPE_BOOLEAN, "FALSE" },
                                 { G_TYPE_INVALID }
@@ -1719,7 +1719,7 @@ static struct test_case test_toggles23 = {
 static struct test_case test_saved00 = {
         "  opponent          matchlength   score (your points first)",
         {
-                                { G_TYPE_UINT, "408" },
+                                { G_TYPE_INT64, "408" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1727,11 +1727,11 @@ static struct test_case test_saved00 = {
 static struct test_case test_saved01 = {
         "  GammonBot_VII           5                0 -  0",
         {
-                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_INT64, "409" },
                                 { G_TYPE_STRING, "GammonBot_VII" },
-                                { G_TYPE_INT, "5" },
-                                { G_TYPE_UINT64, "0" },
-                                { G_TYPE_UINT64, "0" },
+                                { G_TYPE_INT64, "5" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1739,11 +1739,11 @@ static struct test_case test_saved01 = {
 static struct test_case test_saved02 = {
         " *BlunderBot_VI           3                1 -  0",
         {
-                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_INT64, "409" },
                                 { G_TYPE_STRING, "BlunderBot_VI" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_UINT64, "1" },
-                                { G_TYPE_UINT64, "0" },
+                                { G_TYPE_INT64, "3" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1751,11 +1751,11 @@ static struct test_case test_saved02 = {
 static struct test_case test_saved03 = {
         "**bonehead                3                1 -  2",
         {
-                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_INT64, "409" },
                                 { G_TYPE_STRING, "bonehead" },
-                                { G_TYPE_INT, "3" },
-                                { G_TYPE_UINT64, "1" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "3" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1763,11 +1763,11 @@ static struct test_case test_saved03 = {
 static struct test_case test_saved04 = {
         "**bonehead                unlimited                1 -  2",
         {
-                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_INT64, "409" },
                                 { G_TYPE_STRING, "bonehead" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_UINT64, "1" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1775,11 +1775,11 @@ static struct test_case test_saved04 = {
 static struct test_case test_saved05 = {
         "  deadbeef                unlimited         1 -  2",
         {
-                                { G_TYPE_UINT, "409" },
+                                { G_TYPE_INT64, "409" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_INT, "0" },
-                                { G_TYPE_UINT64, "1" },
-                                { G_TYPE_UINT64, "2" },
+                                { G_TYPE_INT64, "0" },
+                                { G_TYPE_INT64, "1" },
+                                { G_TYPE_INT64, "2" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1787,7 +1787,7 @@ static struct test_case test_saved05 = {
 static struct test_case test_saved06 = {
         "no saved games.",
         {
-                                { G_TYPE_UINT, "410" },
+                                { G_TYPE_INT64, "410" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1795,9 +1795,9 @@ static struct test_case test_saved06 = {
 static struct test_case test_saved07 = {
         "deadbeef has no saved games.",
         {
-                                { G_TYPE_UINT, "411" },
+                                { G_TYPE_INT64, "411" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT64, "0" },
+                                { G_TYPE_INT64, "0" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1805,9 +1805,9 @@ static struct test_case test_saved07 = {
 static struct test_case test_saved08 = {
         "deadbeef has 12 saved games.",
         {
-                                { G_TYPE_UINT, "411" },
+                                { G_TYPE_INT64, "411" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT64, "12" },
+                                { G_TYPE_INT64, "12" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1815,9 +1815,9 @@ static struct test_case test_saved08 = {
 static struct test_case test_saved09 = {
         "deadbeef has 1 saved game.",
         {
-                                { G_TYPE_UINT, "411" },
+                                { G_TYPE_INT64, "411" },
                                 { G_TYPE_STRING, "deadbeef" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
         }
 };
@@ -1825,7 +1825,7 @@ static struct test_case test_saved09 = {
 static struct test_case test_address01 = {
         "Your email address is 'gibbon@example.com'.",
         {
-                                { G_TYPE_UINT, "412" },
+                                { G_TYPE_INT64, "412" },
                                 { G_TYPE_STRING, "gibbon@example.com" },
                                 { G_TYPE_INVALID }
         }
@@ -1834,8 +1834,8 @@ static struct test_case test_address01 = {
 static struct test_case test_address02 = {
         "** 'http://foobar' is not an email address.",
         {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "1" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_STRING, "`http://foobar' is not"
                                                  " an email address!"},
                                 { G_TYPE_INVALID }
@@ -1845,8 +1845,8 @@ static struct test_case test_address02 = {
 static struct test_case test_corrupt = {
                 "** ERROR: Saved match is corrupt. Please start another one.",
                 {
-                                { G_TYPE_UINT, "100" },
-                                { G_TYPE_UINT, "4" },
+                                { G_TYPE_INT64, "100" },
+                                { G_TYPE_INT64, "4" },
                                 { G_TYPE_STRING,
                                   "Your saved match was corrupted on the"
                                   " server.  Please start a new one!"},
@@ -1857,8 +1857,8 @@ static struct test_case test_corrupt = {
 static struct test_case test_heard_you00 = {
                 "** 1 user heard you.",
                 {
-                                { G_TYPE_UINT, "500" },
-                                { G_TYPE_UINT64, "1" },
+                                { G_TYPE_INT64, "500" },
+                                { G_TYPE_INT64, "1" },
                                 { G_TYPE_INVALID }
                 }
 };
@@ -1866,8 +1866,8 @@ static struct test_case test_heard_you00 = {
 static struct test_case test_heard_you01 = {
                 "** 42 users heard you.",
                 {
-                                { G_TYPE_UINT, "500" },
-                                { G_TYPE_UINT64, "42" },
+                                { G_TYPE_INT64, "500" },
+                                { G_TYPE_INT64, "42" },
                                 { G_TYPE_INVALID }
                 }
 };

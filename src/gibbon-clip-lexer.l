@@ -683,7 +683,7 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <INITIAL>^Player{WS}{USER}{WS}has{WS}joined{WS}you{WS}for{WS}an{WS}unlimited{WS}match {
-		if (!gibbon_clip_reader_set_result (reader, yytext, 8,
+		if (!gibbon_clip_reader_set_result (reader, yytext, 9,
 		                                    " \t",
 		                                    GIBBON_CLIP_NOW_PLAYING,
 		                                    GIBBON_TT_MATCH_LENGTH, 7,
@@ -900,7 +900,7 @@ FS		[ \t]*\.[ \t]*
 		return 1;
 	}
 <INITIAL>^{USER}{WS}and{WS}{USER}{WS}start{WS}an?{WS}unlimited{WS}match 	{
-		if (!gibbon_clip_reader_set_result (reader, yytext, 6,
+		if (!gibbon_clip_reader_set_result (reader, yytext, 7,
 		                                    " \t",
 		                                    GIBBON_CLIP_START_MATCH,
 		                                    GIBBON_TT_MATCH_LENGTH, 5,

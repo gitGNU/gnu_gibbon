@@ -164,15 +164,15 @@ gibbon_clip_reader_parse (GibbonCLIPReader *self, const gchar *line)
                         *value = init;
                         self->priv->values = g_slist_prepend (
                                         self->priv->values, value);
-                        g_value_init (value, G_TYPE_UINT);
-                        g_value_set_uint (value, GIBBON_CLIP_ERROR_UNKNOWN);
+                        g_value_init (value, G_TYPE_INT64);
+                        g_value_set_int64 (value, GIBBON_CLIP_ERROR_UNKNOWN);
 
                         value = g_malloc (sizeof *value);
                         *value = init;
                         self->priv->values = g_slist_prepend (
                                         self->priv->values, value);
-                        g_value_init (value, G_TYPE_UINT);
-                        g_value_set_uint (value, GIBBON_CLIP_ERROR);
+                        g_value_init (value, G_TYPE_INT64);
+                        g_value_set_int64 (value, GIBBON_CLIP_ERROR);
                 } else {
                         return NULL;
                 }
@@ -209,7 +209,7 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                  * We have to initialize the value.  Otherwise, the test
                  * suite will fail.
                  */
-                g_value_init (value, G_TYPE_INT);
+                g_value_init (value, G_TYPE_INT64);
                 g_return_val_if_fail (type != GIBBON_TT_END, FALSE);
                 break;
         case GIBBON_TT_USER:
@@ -250,16 +250,18 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 g_value_set_boolean (value, i);
                 break;
         case GIBBON_TT_N0:
-                g_value_init (value, G_TYPE_UINT64);
-                i = g_ascii_strtoull (token, NULL, 10);
-                g_value_set_uint64 (value, i);
+                g_value_init (value, G_TYPE_INT64);
+                i = g_ascii_strtoll (token, NULL, 10);
+                if (i < 0)
+                        return FALSE;
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_POSITIVE:
-                g_value_init (value, G_TYPE_UINT64);
-                i = g_ascii_strtoull (token, NULL, 10);
-                if (!i)
+                g_value_init (value, G_TYPE_INT64);
+                i = g_ascii_strtoll (token, NULL, 10);
+                if (i < 1)
                         return FALSE;
-                g_value_set_uint64 (value, i);
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_DOUBLE:
                 g_value_init (value, G_TYPE_DOUBLE);
@@ -281,21 +283,21 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                 g_value_set_string (value, token);
                 break;
         case GIBBON_TT_HOSTNAME:
+                g_value_init (value, G_TYPE_STRING);
                 length = strlen (token);
                 if ('*' == token[length - 1])
                         token[length - 1] = 0;
-                g_value_init (value, G_TYPE_STRING);
                 g_value_set_string (value, token);
                 break;
         case GIBBON_TT_DIE:
-                g_value_init (value, G_TYPE_UINT);
+                g_value_init (value, G_TYPE_INT64);
                 i = token[0] - '0';
                 if (token[1] || i < 1 || i > 6)
                         return FALSE;
-                g_value_set_uint (value, i);
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_POINT:
-                g_value_init (value, G_TYPE_UINT);
+                g_value_init (value, G_TYPE_INT64);
                 /*
                  * At this point we cannot decide whether off and bar
                  * correspond to 0 or 25.  We will fix that up in a later step
@@ -307,27 +309,27 @@ gibbon_clip_reader_alloc_value (GibbonCLIPReader *self,
                         i = 0;
                 else
                         i = g_ascii_strtoull (token, NULL, 10);
-                g_value_set_uint (value, i);
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_CUBE:
-                g_value_init (value, G_TYPE_UINT64);
-                i = g_ascii_strtoull (token, NULL, 10);
-                if (i == 0 || (i & (~i + 1)) != i)
+                g_value_init (value, G_TYPE_INT64);
+                i = g_ascii_strtoll (token, NULL, 10);
+                if (i <= 0 || (i & (~i + 1)) != i)
                         return FALSE;
-                g_value_set_uint64 (value, i);
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_MATCH_LENGTH:
-                g_value_init (value, G_TYPE_INT);
+                g_value_init (value, G_TYPE_INT64);
                 if (!g_strcmp0 ("unlimited", token)) {
                         i = 0;
                 } else if (!g_strcmp0 ("resume", token)) {
                         i = -1;
                 } else {
-                        i = g_ascii_strtoull (token, NULL, 10);
+                        i = g_ascii_strtoll (token, NULL, 10);
+                        if (i < 1)
+                                return FALSE;
                 }
-                if (i > G_MAXINT)
-                        return FALSE;
-                g_value_set_int (value, i);
+                g_value_set_int64 (value, i);
                 break;
         case GIBBON_TT_YESNO:
                 g_value_init (value, G_TYPE_BOOLEAN);
@@ -559,7 +561,7 @@ bail_out_board:
 gboolean
 gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
                                gint max_tokens, const gchar *delimiter,
-                               guint clip_code, ...)
+                               gint clip_code, ...)
 {
         va_list args;
         enum GibbonCLIPLexerTokenType type;
@@ -606,8 +608,8 @@ gibbon_clip_reader_set_result (GibbonCLIPReader *self, const gchar *yytext,
                 value = g_malloc (sizeof *value);
                 *value = init;
 
-                g_value_init (value, G_TYPE_UINT);
-                g_value_set_uint (value, clip_code);
+                g_value_init (value, G_TYPE_INT64);
+                g_value_set_int64 (value, clip_code);
                 self->priv->values = g_slist_prepend (self->priv->values,
                                                       value);
         }
@@ -658,14 +660,14 @@ gibbon_clip_reader_set_error (GibbonCLIPReader *self,
         value = g_malloc (sizeof *value);
         *value = init;
         self->priv->values = g_slist_prepend (self->priv->values, value);
-        g_value_init (value, G_TYPE_UINT);
-        g_value_set_uint (value, (guint) code);
+        g_value_init (value, G_TYPE_INT64);
+        g_value_set_int64 (value, (gint64) code);
 
         value = g_malloc (sizeof *value);
         *value = init;
         self->priv->values = g_slist_prepend (self->priv->values, value);
-        g_value_init (value, G_TYPE_UINT);
-        g_value_set_uint (value, (guint) GIBBON_CLIP_ERROR);
+        g_value_init (value, G_TYPE_INT64);
+        g_value_set_int64 (value, (gint64) GIBBON_CLIP_ERROR);
 }
 
 gboolean
@@ -673,7 +675,7 @@ gibbon_clip_reader_fixup_moves (GibbonCLIPReader *self)
 {
         GSList *iter;
         gint i;
-        guint from, to;
+        gint64 from, to;
         GValue *vfrom;
         GValue *vto;
 
@@ -693,20 +695,23 @@ gibbon_clip_reader_fixup_moves (GibbonCLIPReader *self)
         for (i = 0; iter != NULL && i < 4; ++i, iter = iter->next) {
                 g_return_val_if_fail (iter != NULL, FALSE);
                 vfrom = (GValue *) iter->data;
-                from = g_value_get_uint (vfrom);
+                from = g_value_get_int64 (vfrom);
 
                 iter = iter->next;
                 g_return_val_if_fail (iter != NULL, FALSE);
                 vto = (GValue *) iter->data;
-                to = g_value_get_uint (vto);
+                to = g_value_get_int64 (vto);
+
+                if (from < 0 || to < 0)
+                        return FALSE;
 
                 if (from == 0 && to > 18) {
                         from = 25;
-                        g_value_set_uint (vfrom, 25);
+                        g_value_set_int64 (vfrom, 25);
                 }
                 if (to == 0 && from > 18) {
                         to = 25;
-                        g_value_set_uint (vto, 25);
+                        g_value_set_int64 (vto, 25);
                 }
                 if (from == to)
                         return FALSE;
