@@ -740,6 +740,8 @@ gibbon_clip_reader_get_string (const GibbonCLIPReader *self,
 
         *string = g_value_get_string (value);
 
+        *iter = (*iter)->next;
+
         return TRUE;
 }
 
@@ -764,6 +766,8 @@ gibbon_clip_reader_get_int (const GibbonCLIPReader *self,
         g_return_val_if_fail (i64 >= G_MININT, FALSE);
 
         *i = (gint) i64;
+
+        *iter = (*iter)->next;
 
         return TRUE;
 }
@@ -790,6 +794,8 @@ gibbon_clip_reader_get_boolean (const GibbonCLIPReader *self,
 
         *b = (gboolean) i64;
 
+        *iter = (*iter)->next;
+
         return TRUE;
 }
 
@@ -810,6 +816,8 @@ gibbon_clip_reader_get_int64 (const GibbonCLIPReader *self,
 
         *i64 = g_value_get_int64 (value);
 
+        *iter = (*iter)->next;
+
         return TRUE;
 }
 
@@ -829,6 +837,8 @@ gibbon_clip_reader_get_double (const GibbonCLIPReader *self,
         g_return_val_if_fail (G_VALUE_HOLDS_DOUBLE (value), FALSE);
 
         *d = g_value_get_double (value);
+
+        *iter = (*iter)->next;
 
         return TRUE;
 }
