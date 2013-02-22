@@ -500,7 +500,8 @@ gibbon_session_process_server_line (GibbonSession *self,
         iter = values;
         if (!gibbon_clip_reader_get_int (self->priv->clip_reader, &iter,
                                          (gint *) &code)) {
-                gibbon_clip_reader_free_result (self->priv->clip_reader, iter);
+                gibbon_clip_reader_free_result (self->priv->clip_reader,
+                                                values);
                 return -1;
         }
 
