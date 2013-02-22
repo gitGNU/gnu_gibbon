@@ -777,7 +777,6 @@ gibbon_clip_reader_get_boolean (const GibbonCLIPReader *self,
                             GSList **iter, gboolean *b)
 {
         GValue *value;
-        gint64 i64;
 
         g_return_val_if_fail (GIBBON_IS_CLIP_READER (self), FALSE);
         g_return_val_if_fail (iter != NULL, FALSE);
@@ -786,13 +785,9 @@ gibbon_clip_reader_get_boolean (const GibbonCLIPReader *self,
 
         value = (*iter)->data;
         g_return_val_if_fail (G_IS_VALUE (value), FALSE);
-        g_return_val_if_fail (G_VALUE_HOLDS_INT64 (value), FALSE);
+        g_return_val_if_fail (G_VALUE_HOLDS_BOOLEAN (value), FALSE);
 
-        i64 = g_value_get_int64 (value);
-        g_return_val_if_fail (i64 >= 0, FALSE);
-        g_return_val_if_fail (i64 <= 1, FALSE);
-
-        *b = (gboolean) i64;
+        *b = g_value_get_int64 (value);
 
         *iter = (*iter)->next;
 
